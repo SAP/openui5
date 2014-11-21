@@ -698,7 +698,47 @@
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
+			test("No phone special CSS class when runs on desktop", function() {
+				var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				var oDialog = new sap.m.Dialog();
+				oDialog.open();
+				ok(!oDialog.$().hasClass("sapMDialogPhone"), "Dialog shouldn't have phone CSS class on desktop");
+
+				oDialog.destroy();
+			});
+
+			test("Initial focus shouldn't be set to input DOM element on mobile device", function() {
+				var oSystem = {
+					desktop: false,
+					tablet: true,
+					mobile: true
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				var oDialog = new sap.m.Dialog({
+					content: new sap.m.Input("inputWantsFocus"),
+					initialFocus: "inputWantsFocus"
+				});
+				oDialog.open();
+				this.clock.tick(300);
+
+				var $FocusedElement = jQuery(document.activeElement);
+				var oFocusedControl = $FocusedElement.control(0);
+
+				notEqual(oFocusedControl.getId(), "inputWantsFocus", "Input control shouldn't get the focus");
+				strictEqual(oFocusedControl.getId(), oDialog.getId(), "Dialog should get the focus");
+
+				oDialog.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -1,0 +1,24 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.PredefinedMarginsResponsive.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Panel>
+	    <content>
+	    	<Text text="This is the top panel" class="sapMH4FontSize"/>
+	      	<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+	    </content>
+	</Panel>
+	<Panel class="sapUiResponsiveMargin">
+	    <content>
+	      	<Text text="This is the the middle panel which uses margin class 'sapUiResponsiveMargin' to clear space around the panel, depending on the curretnly used device." class="sapMH4FontSize"/>
+	      	<Text text="Please use your browser's developer tool's device emulation to how the margins are differnt on desktop, tablet and phone." />
+	    </content>
+	</Panel>
+	<Panel>
+	    <content>
+	        <Text text="This is the bottom panel" class="sapMH4FontSize"/>
+	      	<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+	    </content>
+	</Panel>
+</mvc:View>

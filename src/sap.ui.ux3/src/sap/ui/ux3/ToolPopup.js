@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.ToolPopup
+	 * @alias sap.ui.ux3.ToolPopup
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolPopup = Control.extend("sap.ui.ux3.ToolPopup", /** @lends sap.ui.ux3.ToolPopup.prototype */ { metadata : {
@@ -188,15 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	}});
 
 
-	/**
-	 * Returns whether the pop up is currently open
-	 *
-	 * @name sap.ui.ux3.ToolPopup#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	/**
@@ -214,29 +206,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 */
 
 
-	/**
-	 * Closes the pop up. Can be called by the Shell when the pop up's button is clicked again; or by the application
-	 * when the interaction in the pop up has been completed or canceled.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#close
-	 * @function
-	 * @param {boolean} bPreventRestoreFocus
-	 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened. This makes sense when the ToolPopup is closed programmatically from a different area of the application (outside the ToolPopup) and the focus should not move aways from that place.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#setPosition
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	/**
@@ -341,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	
 		var oElement = jQuery.sap.byId(sFirstFocusId).get(0);
 		var aFocusables = jQuery(":sapFocusable", oThis.$()).get();
-	
+
 		// if there is an initial focus it was already set to the Popup onBeforeRendering
 		if (!oThis._bFocusSet) {
 			// search the first focusable element
@@ -373,12 +346,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		if (!oThis._sLastFocusableId || !oThis._sFirstFocusableId) {
 			oThis._sLastFocusableId = sFirstFocusId;
 			oThis._sFirstFocusableId = sLastFocusId;
-		
+
 			if (aFocusables.length > 2) {
 				// using second array content since first focusable item is the fake element
-				oThis._sFirstFocusableId = aFocusables[1].id;
+				oFocusControl = jQuery(aFocusables[1]).control();
+				var oParent = oFocusControl[0].length > 0 ? oFocusControl[0].getParent() : null;
+				if (oParent && oParent.getId() != oThis.getId()) {
+					// If first focusable is part of a control, focus the controls instead
+					oThis._sFirstFocusableId = oParent.getId();
+				} else {
+					oThis._sFirstFocusableId = aFocusables[1].id;
+				}
+				
 				// using the second to last element in array since last one is the fake element
-				oThis._sLastFocusableId = aFocusables[aFocusables.length - 2].id;
+				oFocusControl = jQuery(aFocusables[aFocusables.length - 2]).control();
+				oParent = oFocusControl[0] ? oFocusControl[0].getParent() : null;
+				if (oParent && oParent.getId() != oThis.getId()) {
+					// If last focusable is part of a control, focus the controls instead
+					oThis._sLastFocusableId = oParent.getId();
+				} else {
+					oThis._sLastFocusableId = aFocusables[aFocusables.length - 2].id;
+				}
 			}
 		
 		}
@@ -414,6 +402,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	
 		var sMaxHeight = this.getMaxHeight();
 		var iMaxHeight = sMaxHeight ? parseInt(sMaxHeight, 10) : 0;
+		
+		/*
+		 * Fix the width (if necessary)
+		 */
+		var sMaxWidth = this.getMaxWidth();
+		if (sMaxWidth) {
+			var iMaxWidth = parseInt(sMaxWidth, 10);
+		
+			var sBorderLeft = $This.css("border-left-width");
+			var iBorderLeft = parseInt(sBorderLeft, 10);
+			var sBorderRight = $This.css("border-right-width");
+			var iBorderRight = parseInt(sBorderRight, 10);
+		
+			var sPaddingLeft = $This.css("padding-left");
+			var iPaddingLeft = parseInt(sPaddingLeft, 10);
+			var sPaddingRight = $This.css("padding-right");
+			var iPaddingRight = parseInt(sPaddingRight, 10);
+		
+			iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
+			$This.css("max-width", iMaxWidth + "px");
+		} else {
+			$This.css("max-width", "");
+		}
 	
 		/*
 		 * Fix the height
@@ -503,29 +514,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		
 			$Content.toggleClass("sapUiUx3TPLargeContent", true);
 		}
-	
-		/*
-		 * Fix the width (if necessary)
-		 */
-		var sMaxWidth = this.getMaxWidth();
-		if (sMaxWidth) {
-			var iMaxWidth = parseInt(sMaxWidth, 10);
-		
-			var sBorderLeft = $This.css("border-left-width");
-			var iBorderLeft = parseInt(sBorderLeft, 10);
-			var sBorderRight = $This.css("border-right-width");
-			var iBorderRight = parseInt(sBorderRight, 10);
-		
-			var sPaddingLeft = $This.css("padding-left");
-			var iPaddingLeft = parseInt(sPaddingLeft, 10);
-			var sPaddingRight = $This.css("padding-right");
-			var iPaddingRight = parseInt(sPaddingRight, 10);
-		
-			iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
-			$This.css("max-width", iMaxWidth + "px");
-		} else {
-			$This.css("max-width", "");
-		}
 
 		fnSetArrow(this);
 	};
@@ -543,6 +531,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		this.fireOpened();
 	};
 
+
+	/**
+	 * Returns whether the pop up is currently open
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ToolPopup.prototype.isOpen = function() {
 		if (this.oPopup && this.oPopup.isOpen()) {
 			return true;
@@ -839,6 +835,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			if (oOpenerRect) {
 				iZero = oOpenerRect.left - oPopRect.left;
+				if (iZero < 0) {
+					iZero = oPopRect.width - oThis.iArrowHeight;
+				}
 
 				iVal = Math.round(iZero + oOpenerRect.width / 2);
 				// if the position would exceed the ToolPopup's width
@@ -918,6 +917,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		this.fireClosed();
 	};
 
+
+	/**
+	 * Closes the pop up. Can be called by the Shell when the pop up's button is clicked again; or by the application
+	 * when the interaction in the pop up has been completed or canceled.
+	 *
+	 * @param {boolean} bPreventRestoreFocus
+	 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened. This makes sense when the ToolPopup is closed programmatically from a different area of the application (outside the ToolPopup) and the focus should not move aways from that place.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ToolPopup.prototype.close = function(bPreventRestoreFocus) {
 		if (this.oPopup && this.oPopup.isOpen()) {
 			if (this._bBoundOnResize) {
@@ -1035,6 +1045,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		return this.oPopup;
 	};
 
+
+	/**
+	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ToolPopup.prototype.setPosition = function() {
 		this._ensurePopup();
 		this.oPopup.setPosition.apply(this.oPopup, arguments);

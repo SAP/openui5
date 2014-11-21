@@ -8,17 +8,16 @@
 	margin: 0;
 }
 
-/* list placed directly in a body of a Fiori page */
-.sapUiFioriObjectPage > section > div > .sapMList:not(.sapMListInsetBG){
+.sapUiFioriObjectPage > section > .sapMList:not(.sapMListInsetBG){
 	padding: 0 1rem;
 	-webkit-box-sizing:   border-box;
 	-moz-box-sizing:      border-box;
 	box-sizing:           border-box;
 }
-.sapUiFioriObjectPage > section > div > .sapMITB + .sapMList:not(.sapMListInsetBG){
+.sapUiFioriObjectPage > section > .sapMITB + .sapMList:not(.sapMListInsetBG){
 	margin-top: 1rem;
 }
-.sap-phone .sapUiFioriObjectPage > section > div > .sapMList:not(.sapMListInsetBG){
+.sap-phone .sapUiFioriObjectPage > section > .sapMList:not(.sapMListInsetBG){
 	padding: 0;
 }
 
@@ -121,7 +120,7 @@
 	height: 3.0rem;
 }
  .sapMGrowingListBusyIndicator {
-	margin: 1.5rem 1.0rem ;
+	margin: 0.5rem 1.0rem ;
 	position: absolute;
 }
 .sapMGrowingListLoading > .sapMGrowingListBusyIndicator {
@@ -144,7 +143,6 @@
 
 /*HCB additional styles for Growing feature*/
 .sapMLIBContent > .sapMGrowingListTrigger{
-	margin: 0.25rem;
 	-webkit-box-sizing:   border-box;
 	-moz-box-sizing:      border-box;
 	box-sizing:           border-box;
@@ -160,12 +158,18 @@
 	background: @sapHCStandardBG !important;
 }
 
+//Needed to fix the margin collapsing behaviour on safari
+.sap-desktop .sapMGrowingList > .sapMCLI{
+	padding: 0.25rem;
+}
+
 .sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus{
 	outline:none;
 }
 
-.sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus > .sapMLIBContent .sapMGrowingListTrigger{
+.sap-desktop .sapMLIB-CTX:focus .sapMGrowingListTrigger {
 	border: 0.125rem dotted @sapHCStandardFG;
+	border-radius: 0;
 }
 
 /* Compact size */

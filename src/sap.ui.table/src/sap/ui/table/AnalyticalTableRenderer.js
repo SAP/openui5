@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './TableRenderer'],
 
 
 	/**
-	 * @class AnalyticalTable renderer. 
-	 * @static
+	 * AnalyticalTable renderer. 
+	 * @namespace
 	 */
 	var AnalyticalTableRenderer = Renderer.extend(TableRenderer);
 

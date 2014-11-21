@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	 * when writing the root tag of the Element. This makes sure the classes are written to the HTML.
 	 *
 	 * @public
-	 * @name sap.ui.core.CustomStyleClassSupport
+	 * @alias sap.ui.core.CustomStyleClassSupport
 	 * @function
 	 */
 	var CustomStyleClassSupport = function () {

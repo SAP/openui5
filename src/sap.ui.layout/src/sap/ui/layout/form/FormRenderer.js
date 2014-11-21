@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Form renderer.
-	 * @static
+	 * Form renderer.
+	 * @namespace
 	 */
 	var FormRenderer = {
 	};
@@ -22,12 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oForm an object representation of the control that should be rendered
 	 */
 	FormRenderer.render = function(oRenderManager, oForm){
-	
-		if (!oForm.getVisible()) {
-			// nothing to render
-			return;
-		}
-	
 		// convenience variable
 		var rm = oRenderManager;
 		var oLayout = oForm.getLayout();

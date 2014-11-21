@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.FacetFilter
+	 * @alias sap.m.FacetFilter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilter = Control.extend("sap.m.FacetFilter", /** @lends sap.m.FacetFilter.prototype */ { metadata : {
@@ -33,12 +33,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		],
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * If true the FacetFilter will not be displayed.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * If true and the FacetFilter type is Simple, then the add facet icon will be displayed and each facet button will also have a facet remove icon displayed beside it allowing the user to deactivate the facet.
 			 */
@@ -130,18 +124,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			reset : {}
 		}
 	}});
-	
-	
-	/**
-	 * Opens the facet filter dialog.
-	 *
-	 * @name sap.m.FacetFilter#openFilterDialog
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	
 	
 	// How many pixels to scroll with every overflow arrow click
@@ -269,6 +251,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	
 	
 	// API doc provided in the meta-data
+
+	/**
+	 * Opens the facet filter dialog.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilter.prototype.openFilterDialog = function() {
 	
 		var oDialog = this._getFacetDialog();
@@ -1089,7 +1079,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		var oFacetList = this._createFacetList();
 		var oFacetsSearchField = new sap.m.SearchField({
 			width : "100%",
-			tooltip : this._bundle.getText("Search"),
+			tooltip: this._bundle.getText("FACETFILTER_SEARCH"),
 			liveChange : function(oEvent) {
 	
 				var binding = oFacetList.getBinding("items");
@@ -1610,7 +1600,12 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				that._addDelegateFlag = true;
 				that._invalidateFlag = true;
 				that.fireReset();
-				
+				//clear search value when 'reset' button clicked
+				var aLists = that.getLists();
+				for (var i = 0; i < aLists.length; i++) {
+					aLists[i]._searchValue = "";
+					jQuery.sap.focus(aLists[i].getItems()[0]);
+				}
 				// Make sure we update selection texts
 				that.invalidate();
 							

@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	*
 	* @namespace
 	* @public
-	* @name sap.ui.model.BindingMode
+	* @alias sap.ui.model.BindingMode
 	*/
 	var BindingMode = /** @lends sap.ui.model.BindingMode */ {
 	

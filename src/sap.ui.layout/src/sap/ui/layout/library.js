@@ -61,10 +61,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	
 	
 	/**
-	 * @class A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large  medium  small.
+	 * @classdesc A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large  medium  small.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -109,10 +109,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	
 	
 	/**
-	 * @class A string type that represents Grid's span values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large  medium  small.
+	 * @classdesc A string type that represents Grid's span values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 12 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large  medium  small.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -129,9 +129,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	sap.ui.layout.form = sap.ui.layout.form || {};
 	
 	/**
-	 * @class A string that defines the number of used cells in a GridLayout. This can be a number from 1 to 16, "auto" or "full".
+	 * @classdesc A string that defines the number of used cells in a GridLayout. This can be a number from 1 to 16, "auto" or "full".
 	 *
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */

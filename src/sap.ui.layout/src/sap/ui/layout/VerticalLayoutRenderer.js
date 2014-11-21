@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class layout/VerticalLayout renderer.
-	 * @static
+	 * layout/VerticalLayout renderer.
+	 * @namespace
 	 */
 	var VerticalLayoutRenderer = {
 	};
@@ -24,12 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	VerticalLayoutRenderer.render = function(oRenderManager, oVerticalLayout){
 		// convenience variable
 		var rm = oRenderManager;
-	
-		// return immediately if control is invisible
-		if (!oVerticalLayout.getVisible()) {
-			return;
-		}
-	
+
 		// write the HTML into the render manager
 		rm.write("<DIV");
 		rm.writeControlData(oVerticalLayout);

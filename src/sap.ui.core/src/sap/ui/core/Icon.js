@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.11.1
-	 * @name sap.ui.core.Icon
+	 * @alias sap.ui.core.Icon
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Icon = Control.extend("sap.ui.core.Icon", /** @lends sap.ui.core.Icon.prototype */ { metadata : {
@@ -84,12 +84,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			 * Background color for Icon in active state.
 			 */
 			activeBackgroundColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
-	
-			/**
-			 * An invisible icon is not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Decorative icons don't have tab stop.
 			 * @since 1.16.4

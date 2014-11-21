@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 
 	/**
-	 * @class form/GridLayout renderer.
-	 * @static
+	 * form/GridLayout renderer.
+	 * @namespace
 	 */
 	var GridLayoutRenderer = Renderer.extend(FormLayoutRenderer);
 

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Token renderer. 
-	 * @static
+	 * Token renderer. 
+	 * @namespace
 	 */
 	var TokenRenderer = {
 	};
@@ -23,11 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
-		// Return immediately if control is invisible
-	       if (!oControl.getVisible()) {
-	             return;
-	       }
-	 
 		// write the HTML into the render manager
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);

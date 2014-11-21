@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.json.JSONModel
+	 * @alias sap.ui.model.json.JSONModel
 	 */
 	var JSONModel = ClientModel.extend("sap.ui.model.json.JSONModel", /** @lends sap.ui.model.json.JSONModel.prototype */ {
 		
@@ -49,31 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.json.JSONModel with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.json.JSONModel.extend
-	 * @function
-	 */
-	
-	/**
 	 * Sets the JSON encoded data to the model.
 	 *
 	 * @param {object} oData the data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
 	 *
 	 * @public
-	 * @name sap.ui.model.json.JSONModel#setData
-	 * @function
 	 */
 	JSONModel.prototype.setData = function(oData, bMerge){
 		if (bMerge) {
@@ -92,8 +73,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
 	 *
 	 * @public
-	 * @name sap.ui.model.json.JSONModel#setJSON
-	 * @function
 	 */
 	JSONModel.prototype.setJSON = function(sJSONText, bMerge){
 		var oJSONData;
@@ -113,8 +92,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 *
 	 * @return the JSON data serialized as string
 	 * @public
-	 * @name sap.ui.model.json.JSONModel#getJSON
-	 * @function
 	 */
 	JSONModel.prototype.getJSON = function(){
 		return JSON.stringify(this.oData);
@@ -142,8 +119,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
 	 * @public
-	 * @name sap.ui.model.json.JSONModel#loadData
-	 * @function
 	 */
 	JSONModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bMerge, bCache, mHeaders){
 		var that = this;
@@ -185,8 +160,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *
-	 * @name sap.ui.model.json.JSONModel#bindProperty
-	 * @function
 	 */
 	JSONModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new JSONPropertyBinding(this, sPath, oContext, mParameters);
@@ -196,8 +169,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	/**
 	 * @see sap.ui.model.Model.prototype.bindList
 	 *
-	 * @name sap.ui.model.json.JSONModel#bindList
-	 * @function
 	 */
 	JSONModel.prototype.bindList = function(sPath, oContext, aSorters, aFilters, mParameters) {
 		var oBinding = new JSONListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
@@ -214,8 +185,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 *         If this parameter is not specified then all found arrays in the data structure are bound.
 	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter.
 	 *         
-	 * @name sap.ui.model.json.JSONModel#bindTree
-	 * @function
 	 */
 	JSONModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
 		var oBinding = new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
@@ -230,8 +199,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {any}     oValue value to set the property to
 	 * @param {object} [oContext=null] the context which will be used to set the property
 	 * @public
-	 * @name sap.ui.model.json.JSONModel#setProperty
-	 * @function
 	 */
 	JSONModel.prototype.setProperty = function(sPath, oValue, oContext) {
 		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/")),
@@ -261,8 +228,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	* @type any
 	* @return the value of the property
 	* @public
-	* @name sap.ui.model.json.JSONModel#getProperty
-	* @function
 	*/
 	JSONModel.prototype.getProperty = function(sPath, oContext) {
 		return this._getObject(sPath, oContext);
@@ -273,8 +238,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {string} sPath
 	 * @param {object} [oContext]
 	 * @returns {any} the node of the specified path/context
-	 * @name sap.ui.model.json.JSONModel#_getObject
-	 * @function
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null;

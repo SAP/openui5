@@ -6,8 +6,8 @@ sap.ui.define(['jquery.sap.global', './TileRenderer'],
 	"use strict";
 
 /**
-	 * @class CustomTile renderer. 
-	 * @static
+	 * CustomTile renderer. 
+	 * @namespace
 	 */
 	var CustomTileRenderer = sap.ui.core.Renderer.extend(TileRenderer);
 	

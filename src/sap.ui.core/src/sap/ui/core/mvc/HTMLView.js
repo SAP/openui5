@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 	 * @constructor
 	 * @public
 	 * @since 1.9.2
-	 * @name sap.ui.core.mvc.HTMLView
+	 * @alias sap.ui.core.mvc.HTMLView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HTMLView = View.extend("sap.ui.core.mvc.HTMLView", /** @lends sap.ui.core.mvc.HTMLView.prototype */ { metadata : {

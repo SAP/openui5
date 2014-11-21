@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.RadioButtonGroup
+	 * @alias sap.ui.commons.RadioButtonGroup
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButtonGroup = Control.extend("sap.ui.commons.RadioButtonGroup", /** @lends sap.ui.commons.RadioButtonGroup.prototype */ { metadata : {
@@ -39,11 +39,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Number of RadioButtons displayed in one Line.
 			 */
 			columns : {type : "int", group : "Appearance", defaultValue : 1},
-	
-			/**
-			 * Visibility of Group
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Specifies whether the user can choose a radio button.
@@ -102,30 +97,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Returns selected item. When no item is selected, "null" is returned.
-	 *
-	 * @name sap.ui.commons.RadioButtonGroup#getSelectedItem
-	 * @function
-	 * @type sap.ui.core.Item
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Sets the item as seleced and removs the selection from the old one.
-	 *
-	 * @name sap.ui.commons.RadioButtonGroup#setSelectedItem
-	 * @function
-	 * @param {sap.ui.core.Item} oItem
-	 *         Selected item.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	RadioButtonGroup.prototype.exit = function() {
@@ -249,6 +220,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {sap.ui.core.Item} oSelectedItem the item to be selected.
 	 * @public
 	 */
+
+	/**
+	 * Sets the item as seleced and removs the selection from the old one.
+	 *
+	 * @param {sap.ui.core.Item} oItem
+	 *         Selected item.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RadioButtonGroup.prototype.setSelectedItem = function(iSelectedItem) {
 	
 		for (var i = 0; i < this.getItems().length; i++) {
@@ -262,6 +243,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * Get item of selected RadioButton
 	 * @public
+	 */
+
+	/**
+	 * Returns selected item. When no item is selected, "null" is returned.
+	 *
+	 * @type sap.ui.core.Item
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RadioButtonGroup.prototype.getSelectedItem = function() {
 	

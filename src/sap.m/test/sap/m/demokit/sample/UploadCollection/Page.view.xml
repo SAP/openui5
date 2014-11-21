@@ -1,0 +1,49 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.UploadCollection.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<l:VerticalLayout
+		width="100%">
+		<l:content>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Label
+					text="Layout:">
+				</Label>
+				<Select
+					id="tbSelect"
+					autoAdjustWidth="true"
+					items="{/items}"
+					selectedKey="{/selectedKey}"
+					change="onSelectChange" >
+					<core:Item key="{key}" text="{text}" />
+				</Select>
+			</Toolbar>
+			<UploadCollection
+				id="UploadCollection"
+				maximumFilenameLength="35"
+				multiple="true"
+				items="{/items}"
+				showSeparators="None"
+				fileDeleted="onFileDeleted"
+				fileRenamed="onFileRenamed"
+				uploadComplete="onUploadComplete" >
+				<UploadCollectionItem
+					contributor="{contributor}"
+					documentId="{documentId}"
+					fileName="{fileName}"
+					fileSize="{fileSize}"
+					mimeType="{mimeType}"
+					thumbnailUrl="{thumbnailUrl}"
+					uploadedDate="{uploadedDate}"
+					url="{url}"
+					enableEdit="{enableEdit}"
+					enableDelete="{enableDelete}" />
+			</UploadCollection>
+		</l:content>
+	</l:VerticalLayout>	
+</mvc:View>

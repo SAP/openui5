@@ -9,8 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 * @static
+	 * @namespace
 	 */
 	var FileUploaderRenderer = function() {
 	};
@@ -26,12 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		var rm = oRenderManager;
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
-	
-		// return immediately if control is invisible
-		if (!oFileUploader.getVisible()) {
-			return;
-		}
-	
+
 		rm.write('<div');
 		rm.writeControlData(oFileUploader);
 		rm.addClass("sapUiFup");

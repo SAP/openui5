@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Adapter for TreeBindings to add the ListBinding functionality and use the 
 	 * tree structure in list based controls.
 	 *
-	 * @name sap.ui.model.analytics.TreeBindingAdapter
+	 * @alias sap.ui.model.analytics.TreeBindingAdapter
 	 * @function
 	 * @experimental This module is only for experimental use!
 	 * @protected
@@ -522,8 +522,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.analytics.TreeBindingAdapter#attachContextChange
-	 * @function
 	 */
 	TreeBindingAdapter.prototype.attachContextChange = function(fnFunction, oListener) {
 		this.attachEvent("contextChange", fnFunction, oListener);
@@ -534,8 +532,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.analytics.TreeBindingAdapter#detachContextChange
-	 * @function
 	 */
 	TreeBindingAdapter.prototype.detachContextChange = function(fnFunction, oListener) {
 		this.detachEvent("contextChange", fnFunction, oListener);
@@ -545,11 +541,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Fire event contextChange to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
-	 * @name sap.ui.model.analytics.TreeBindingAdapter#_fireContextChange
-	 * @function
 	 */
 	TreeBindingAdapter.prototype._fireContextChange = function(mArguments) {
 		this.fireEvent("contextChange", mArguments);
+	};
+	
+	/**
+	 * Sets the number of expanded levels on the TreeBinding (commonly an AnalyticalBinding).
+	 * This is NOT the same as TreeBindingAdapter#collapse or TreeBindingAdapter#expand.
+	 * Setting the number of expanded levels leads to different requests.
+	 * This function is used by the AnalyticalTable for the ungroup/ungroup-all feature.
+	 * @see sap.ui.table.AnalyticalTable#_getGroupHeaderMenu
+	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
+	 * @protected
+	 * @name sap.ui.model.analytics.TreeBindingAdapter#setNumberOfExpandedLevels
+	 * @function
+	 */
+	TreeBindingAdapter.prototype.setNumberOfExpandedLevels = function(iLevels) {
+		iLevels = iLevels || 0;
+		if (iLevels < 0) {
+			jQuery.sap.log.warning("TreeBindingAdapter: numberOfExpanded levels was set to 0. Negative values are prohibited.");
+			iLevels = 0;
+		}
+		// set the numberOfExpandedLevels on the binding directly
+		// this.mParameters is inherited from the Binding super class
+		this.mParameters.numberOfExpandedLevels = iLevels;
+	};
+	
+	/**
+	 * Retrieves the currently set number of expanded levels from the Binding (commonly an AnalyticalBinding).
+	 * @protected
+	 * @name sap.ui.model.analytics.TreeBindingAdapter#getNumberOfExpandedLevels
+	 * @function
+	 * @returns {int} the number of expanded levels
+	 */
+	TreeBindingAdapter.prototype.getNumberOfExpandedLevels = function() {
+		return this.mParameters.numberOfExpandedLevels;
 	};
 
 	return TreeBindingAdapter;

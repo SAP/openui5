@@ -9,6 +9,10 @@ var moment = require('moment');
 
 module.exports = function(grunt) {
 
+	// Force unix linefeeds (see https://github.com/gruntjs/grunt/issues/1123)
+	// (grunt uses grunt.util.normalizelf when processing templates)
+	grunt.util.linefeed = '\n';
+
 	// Log time how long tasks take
 	require('grunt-timer').init(grunt, {
 		deferLogs: true,

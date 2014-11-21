@@ -22,7 +22,7 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 	 * @author Frank Weigel
 	 * @since 0.8.7
 	 * @public
-	 * @name sap.ui.debug.Highlighter
+	 * @alias sap.ui.debug.Highlighter
 	 */
 	var Highlighter = function(sId, bFilled, sColor, iBorderWidth) {
 		this.sId = sId || jQuery.sap.uid();
@@ -45,8 +45,6 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 	 *
 	 * <b>Note:</b> As the DOM node is reused across multiple calls, the highlighter must only be used
 	 * within a single document.
-	 * @name sap.ui.debug.Highlighter#highlight
-	 * @function
 	 */
 	Highlighter.prototype.highlight = function(oDomRef) {
 		if (!oDomRef || !oDomRef.parentNode) {
@@ -77,8 +75,6 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 	
 	/**
 	 * Hides the rectangle/box if it is currently shown.
-	 * @name sap.ui.debug.Highlighter#hide
-	 * @function
 	 */
 	Highlighter.prototype.hide = function() {
 		var oHighlightRect = jQuery.sap.domById(this.sId);

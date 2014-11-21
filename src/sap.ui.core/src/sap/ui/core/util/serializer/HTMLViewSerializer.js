@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.util.serializer.HTMLViewSerializer
+	 * @alias sap.ui.core.util.serializer.HTMLViewSerializer
 	 * @experimental Since 1.15.1. The HTMLViewSerializer is still under construction, so some implementation details can be changed in future.
 	 */
 	var HTMLViewSerializer = EventProvider.extend("sap.ui.core.util.serializer.HTMLViewSerializer", /** @lends sap.ui.core.util.serializer.HTMLViewSerializer.prototype */
@@ -42,8 +42,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 	 * Serializes the given HTML view.
 	 * 
 	 * @returns {string} the serialized HTML view.
-	 * @name sap.ui.core.util.serializer.HTMLViewSerializer#serialize
-	 * @function
 	 */
 	HTMLViewSerializer.prototype.serialize = function () {
 	

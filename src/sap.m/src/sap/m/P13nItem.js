@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 	 * 
 	 * @constructor
 	 * @public
-	 * @name sap.m.P13nItem
+	 * @alias sap.m.P13nItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nItem = Element.extend("sap.m.P13nItem", /** @lends sap.m.P13nItem.prototype */
@@ -71,17 +71,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 					type : "string",
 					group : "Misc",
 					defaultValue : null
+				},
+				
+				/**
+				 * tbd
+				 */
+				width : {
+					type : "string",
+					group : "Misc",
+					defaultValue : null
+				},
+				
+				/**
+				 * tbd
+				 */
+				isDefault : {
+					type : "boolean",
+					group : "Misc",
+					defaultValue : false					
 				}
 			}
 		}
 	});
 
-	// /**
-	// * This file defines behavior for the control,
-	// */
-	// sap.m.BaseItem.prototype.init = function(){
-	// // do something for initialization...
-	// };
 
 	return P13nItem;
 

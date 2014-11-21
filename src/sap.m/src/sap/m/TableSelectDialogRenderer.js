@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SelectDialog renderer.
-	 * @static
+	 * SelectDialog renderer.
+	 * @namespace
 	 */
 	var TableSelectDialogRenderer = {
 	};

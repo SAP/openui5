@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel
+	 * @alias sap.ui.model.odata.v2.ODataModel
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v2.ODataModel", /** @lends sap.ui.model.odata.v2.ODataModel.prototype */ {
 
@@ -111,7 +111,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
-
+			
+			//collect internal changes in a deferred batchgroup as default
+			this.sDefaultChangeBatchGroup = "changes";
+			this.setDeferredBatchGroups([this.sDefaultChangeBatchGroup]);
+			this.setChangeBatchGroups({"*":{batchGroupId: this.sDefaultChangeBatchGroup}});
+			
 			// Load annotations support on demand
 			if (this.sAnnotationURI) {
 				jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
@@ -223,23 +228,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			                 "setChangeBatchGroups", "getChangeBatchGroups"]
 		}
 	});
-
-	/**
-	 * Creates a new subclass of class sap.ui.model.odata.v2.ODataModel with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.odata.v2.ODataModel.extend
-	 * @function
-	 */
 
 	//
 	ODataModel.M_EVENTS = {
@@ -355,9 +343,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * @param {boolean} bDelayEvent metadataLoaded event will be fired asynchronous
-	 * @name sap.ui.model.odata.v2.ODataModel#_initializeMetadata
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._initializeMetadata = function(bDelayEvent) {
 		var that = this;
@@ -397,8 +383,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.ODataModel#refreshMetadata
-	 * @function
 	 */
 	ODataModel.prototype.refreshMetadata = function(){
 		if (this.oMetadata && this.oMetadata.refresh){
@@ -415,8 +399,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.model.odata.v2.ODataModel#fireAnnotationsLoaded
-	 * @function
 	 */
 	ODataModel.prototype.fireAnnotationsLoaded = function(mArguments) {
 		this.fireEvent("annotationsLoaded", mArguments);
@@ -437,8 +419,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#attachAnnotationsLoaded
-	 * @function
 	 */
 	ODataModel.prototype.attachAnnotationsLoaded = function(oData, fnFunction, oListener) {
 		this.attachEvent("annotationsLoaded", oData, fnFunction, oListener);
@@ -455,8 +435,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#detachAnnotationsLoaded
-	 * @function
 	 */
 	ODataModel.prototype.detachAnnotationsLoaded = function(fnFunction, oListener) {
 		this.detachEvent("annotationsLoaded", fnFunction, oListener);
@@ -474,8 +452,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.model.odata.v2.ODataModel#fireAnnotationsFailed
-	 * @function
 	 */
 	ODataModel.prototype.fireAnnotationsFailed = function(mArguments) {
 		this.fireEvent("annotationsFailed", mArguments);
@@ -528,8 +504,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.model.odata.v2.ODataModel#fireMetadataLoaded
-	 * @function
 	 */
 	ODataModel.prototype.fireMetadataLoaded = function(mArguments) {
 		this.fireEvent("metadataLoaded", mArguments);
@@ -550,8 +524,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#attachMetadataLoaded
-	 * @function
 	 */
 	ODataModel.prototype.attachMetadataLoaded = function(oData, fnFunction, oListener) {
 		this.attachEvent("metadataLoaded", oData, fnFunction, oListener);
@@ -569,8 +541,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#detachMetadataLoaded
-	 * @function
 	 */
 	ODataModel.prototype.detachMetadataLoaded = function(fnFunction, oListener) {
 		this.detachEvent("metadataLoaded", fnFunction, oListener);
@@ -588,8 +558,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.model.odata.v2.ODataModel#fireMetadataFailed
-	 * @function
 	 */
 	ODataModel.prototype.fireMetadataFailed = function(mArguments) {
 		this.fireEvent("metadataFailed", mArguments);
@@ -610,8 +578,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#attachMetadataFailed
-	 * @function
 	 */
 	ODataModel.prototype.attachMetadataFailed = function(oData, fnFunction, oListener) {
 		this.attachEvent("metadataFailed", oData, fnFunction, oListener);
@@ -629,8 +595,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#detachMetadataFailed
-	 * @function
 	 */
 	ODataModel.prototype.detachMetadataFailed = function(fnFunction, oListener) {
 		this.detachEvent("metadataFailed", fnFunction, oListener);
@@ -643,9 +607,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oResponse The response/error object
 	 * @param {object} aBatchRequests Array of batch requests
 	 * @returns {object} oEventInfo The EventInfo object
-	 * @name sap.ui.model.odata.v2.ODataModel#_createEventInfo
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._createEventInfo = function(oRequest, vResponse, aBatchRequests) {
 		var oEventInfo = {};
@@ -674,6 +636,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 							if (oInnerResponse.message) {
 								oBatchRequest.response.message = oInnerResponse.message;
 								oInnerResponse = oInnerResponse.response;
+								oBatchRequest.response.responseText = oInnerResponse.body;
 								oBatchRequest.success = false;
 							}
 							oBatchRequest.response.headers = oInnerResponse.headers;
@@ -694,6 +657,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						if (oInnerResponse.message) {
 							oBatchRequest.response.message = oInnerResponse.message;
 							oInnerResponse = oInnerResponse.response;
+							oBatchRequest.response.responseText = oInnerResponse.body;
 							oBatchRequest.success = false;
 						}
 						oBatchRequest.response.headers = oInnerResponse.headers;
@@ -717,6 +681,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oEventInfo.response.headers = vResponse.headers;
 				oEventInfo.response.statusCode = vResponse.statusCode;
 				oEventInfo.response.statusText = vResponse.statusText;
+				oEventInfo.response.responseText = vResponse.body;
 			}
 		}
 		oEventInfo.ID = oRequest.requestID;
@@ -727,8 +692,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * create a request ID
 	 *
 	 * @returns {string} sRequestID A request ID
-	 * @name sap.ui.model.odata.v2.ODataModel#_createRequestID
-	 * @function
 	 * @private
 	 */
 	ODataModel.prototype._createRequestID = function () {
@@ -745,9 +708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {array} [aUrlParams] url parameters
 	 * @param {boolean} [bBatch] for requests nested in a batch relative uri will be created
 	 * @returns {string} sUrl request url
-	 * @name sap.ui.model.odata.v2.ODataModel#_createRequestUrl
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._createRequestUrl = function(sPath, oContext, aUrlParams, bBatch) {
 
@@ -776,10 +737,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {object} oData data that should be imported
 	 * @param {map} mChangedEntities map of changed entities
-	 * @name sap.ui.model.odata.v2.ODataModel#_importData
 	 * @return {map} mChangedEntities
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._importData = function(oData, mChangedEntities) {
 		var that = this,
@@ -818,10 +777,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Remove references of navigation properties created in importData function
 	 *
 	 * @param {object} oData entry that contains references
-	 * @name sap.ui.model.odata.v2.ODataModel#_removeReferences
 	 * @returns {object} oData entry
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._removeReferences = function(oData){
 		var that = this, aList;
@@ -846,10 +803,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Restore reference entries of navigation properties created in importData function
 	 * @param {object} oData entry which references should be restored
-	 * @name sap.ui.model.odata.v2.ODataModel#_restoreReferences
 	 * @returns {object} oData entry
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._restoreReferences = function(oData){
 		var that = this,
@@ -893,9 +848,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * removes all existing data from the model
-	 * @name sap.ui.model.odata.v2.ODataModel#removeData
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.removeData = function(){
 		this.oData = {};
@@ -906,9 +859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * This will call initialize on all bindings. This is done if metadata is loaded asynchronously.
 	 *
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#initialize
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.initialize = function() {
 		// Call initialize on all bindings in case metadata was not available when they were created
@@ -928,8 +879,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.ODataModel#refresh
-	 * @function
 	 */
 	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData, sBatchGroupId) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
@@ -944,7 +893,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} [sBatchGroupId] The batchGroupId
 	 * @param {map} mChangedEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
-	 * @name sap.ui.model.odata.ODataModel#_refresh
 	 * @private
 	 */
 	ODataModel.prototype._refresh = function(bForceUpdate, sBatchGroupId, mChangedEntities, mEntityTypes) {
@@ -964,8 +912,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @param {map} mChangedEntities Map of changed entities
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#checkUpdate
-	 * @function
 	 */
 	ODataModel.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
 		var aBindings = this.aBindings.slice(0);
@@ -981,9 +927,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} [oContext] bindingContext
 	 * @param {map} [mParameters] map of parameters
 	 * @returns {object} oBinding new bindingObject
-	 * @name sap.ui.model.odata.v2.ODataModel#bindProperty
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new ODataPropertyBinding(this, sPath, oContext, mParameters);
@@ -999,9 +943,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {array} aFilters array of sap.ui.model.Filter
 	 * @param {map} [mParameters] map of parameters
 	 * @returns {object} oBinding new bindingObject
-	 * @name sap.ui.model.odata.v2.ODataModel#bindList
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.bindList = function(sPath, oContext, aSorters, aFilters, mParameters) {
 		var oBinding = new ODataListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
@@ -1015,9 +957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {array} aFilters array of sap.ui.model.Filter
 	 * @param {map} [mParameters] map of parameters
 	 * @returns {object} oBinding new bindingObject
-	 * @name sap.ui.model.odata.v2.ODataModel#bindTree
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
 		var oBinding = new ODataTreeBinding(this, sPath, oContext, aFilters, mParameters);
@@ -1036,10 +976,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} [mParameters] map of parameters
 	 * @param {function} [fnCallBack] function called when context is created
 	 * @param {boolean} [bReload] reload of data
-	 * @name sap.ui.model.odata.v2.ODataModel#createBindingContext
 	 * @return sap.ui.model.Context
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
 		var sFullPath = this.resolve(sPath, oContext);
@@ -1116,9 +1054,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oData entry object
 	 * @param {map} [mParameters] map of parameters
 	 * @returns {boolean} bReload reload needed
-	 * @name sap.ui.model.odata.ODataModel#_isReloadNeeded
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._isReloadNeeded = function(sFullPath, oData, mParameters) {
 		var sNavProps, aNavProps = [], //aChainedNavProp,
@@ -1235,10 +1171,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Create URL parameters from custom parameters
 	 *
 	 * @param {map} mParameters map of custom parameters
-	 * @name sap.ui.model.odata.v2.ODataModel#createCustomParams
 	 * @returns {string} sCustomParameters & joined parameters
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.createCustomParams = function(mParameters) {
 		var aCustomParams = [],
@@ -1271,9 +1205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oContext context object
 	 * @param {map} [mParameters] map of parameters
 	 * @returns {object} oBinding contextBinding object
-	 * @name sap.ui.model.odata.v2.ODataModel#bindContext
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.bindContext = function(sPath, oContext, mParameters) {
 		var oBinding = new ODataContextBinding(this, sPath, oContext, mParameters);
@@ -1288,8 +1220,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {sap.ui.model.odata.CountMode} sCountMode sets default count mode
 	 * @since 1.20
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#setDefaultCountMode
-	 * @function
 	 */
 	ODataModel.prototype.setDefaultCountMode = function(sCountMode) {
 		this.sDefaultCountMode = sCountMode;
@@ -1301,8 +1231,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {sap.ui.model.odata.CountMode} sCountMode returns defaultCountMode
 	 * @since 1.20
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#getDefaultCountMode
-	 * @function
 	 */
 	ODataModel.prototype.getDefaultCountMode = function() {
 		return this.sDefaultCountMode;
@@ -1314,9 +1242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {object|sap.ui.model.Context} oObject The context or entry object
 	 * @returns {string} [sKey] key of the entry
-	 * @name sap.ui.model.odata.v2.ODataModel#_getKey
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._getKey = function(oObject) {
 		var sKey, sURI;
@@ -1334,9 +1260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {object|sap.ui.model.Context} oObject The context or entry object
 	 * @returns {string} [sKey] key of the entry
-	 * @name sap.ui.model.odata.v2.ODataModel#getKey
 	 * @public
-	 * @function
 	 */
 	ODataModel.prototype.getKey = function(oObject) {
 		return this._getKey(oObject);
@@ -1348,9 +1272,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} sCollection The name of the collection
 	 * @param {object} oKeyProperties The object containing at least all the key properties of the entity type
 	 * @returns {string} [sKey] key of the entry
-	 * @name sap.ui.model.odata.v2.ODataModel#createKey
 	 * @public
-	 * @function
 	 */
 	ODataModel.prototype.createKey = function(sCollection, oKeyProperties) {
 		var oEntityType = this.oMetadata._getEntityTypeByPath(sCollection),
@@ -1395,8 +1317,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * desired entry as properties at all. This is useful for performing updates on the base entry only. Note: A copy and not a reference of the entry will be returned.
 	 * @returns {any} vValue the value of the property
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#getProperty
-	 * @function
 	 */
 	ODataModel.prototype.getProperty = function(sPath, oContext, bIncludeExpandEntries) {
 		var oValue = this._getObject(sPath, oContext);
@@ -1427,9 +1347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} sPath binding path
 	 * @param {object} oContext binding context
 	 * @returns {any} vValue the value for the given path/context
-	 * @name sap.ui.model.odata.v2.ODataModel#_getObject
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._getObject = function(sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null, sResolvedPath,
@@ -1484,9 +1402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * Update the security token, if token handling is enabled and token is not available yet
-	 * @name sap.ui.model.odata.v2.ODataModel#updateSecurityToken
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.updateSecurityToken = function() {
 		if (this.bTokenHandling) {
@@ -1503,9 +1419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * Clears the security token, as well from the service data as from the headers object
-	 * @name sap.ui.model.odata.v2.ODataModel#resetSecurityToken
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype.resetSecurityToken = function() {
 		delete this.oServiceData.securityToken;
@@ -1518,8 +1432,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {string} the CSRF security token
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#getSecurityToken
-	 * @function
 	 */
 	ODataModel.prototype.getSecurityToken = function() {
 		var sToken = this.oServiceData.securityToken;
@@ -1541,8 +1453,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#refreshSecurityToken
-	 * @function
 	 */
 	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError) {
 		var that = this, sUrl, sToken;
@@ -1595,9 +1505,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {function} [fnSuccess] Success callback function
 	 * @param {function} [fnError] Error callback function
 	 * @returns {object} oHandler request handle
-	 * @name sap.ui.model.odata.v2.ODataModel#_submitRequest
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._submitRequest = function(oRequest, fnSuccess, fnError){
 		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler;
@@ -1656,8 +1564,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {function} fnError Error callback function
 	 * @returns {object} oHandler request handle
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_submitSingleRequest
-	 * @function
 	 */
 	ODataModel.prototype._submitSingleRequest = function(oRequest, fnSuccess, fnError) {
 		var that = this,
@@ -1711,8 +1617,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {fnError} fnError Error callback function
 	 * @returns {object} orequestHandle requestHandle
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_submitBatchRequest
-	 * @function
 	 */
 	ODataModel.prototype._submitBatchRequest = function(oBatchRequest, aRequests, fnSuccess, fnError) {
 		var that = this,
@@ -1809,8 +1713,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {array} aBatchRequests array of request objects
 	 * @returns {object} oBatchRequest The batch request
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_createBatchRequest
-	 * @function
 	 */
 	ODataModel.prototype._createBatchRequest = function(aBatchRequests) {
 		var sUrl, oRequest,
@@ -1855,8 +1757,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {function} fnSuccess The success callback function
 	 * @param {function} fnError The error callback function
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_pushToRequestQueue
-	 * @function
 	 */
 	ODataModel.prototype._pushToRequestQueue = function(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError) {
 		var oChangeGroup, oRequestGroup = mRequests[sBatchGroupId];
@@ -1913,8 +1813,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} mEntityTypes Aa map containing the changed EntityTypes
 	 *
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_processRequestQueue
-	 * @function
 	 */
 	ODataModel.prototype._collectChangedEntities = function(oGroup, mChangedEntities, mEntityTypes) {
 		var that = this;
@@ -1945,8 +1843,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {function} fnError Erro callback function
 	 * @returns {object|array} oRequestHandle The request handle: array if multiple request will be sent
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_processRequestQueue
-	 * @function
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sBatchGroupId, fnSuccess, fnError){
 		var that = this,
@@ -2048,9 +1944,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} mEntityTypes map of changed entityTypes
 	 * @returns {boolean} bSuccess Processed successfully
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_processResponse
-	 * @function
-	 *
 	 */
 	ODataModel.prototype._processResponse = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
 		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
@@ -2129,9 +2022,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} [bMerge] Sets MERGE/PUT method
 	 * @returns {object} oRequest The request object
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_processChange
-	 * @function
-	 *
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, bMerge) {
 		var oPayload, oEntityType, sETag, sMethod, sUrl, oRequest, sType;
@@ -2230,8 +2120,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_handleETag
-	 * @function
 	 */
 	ODataModel.prototype._updateETag = function(oRequest, oResponse) {
 		var sUrl,
@@ -2254,8 +2142,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oError The error object
 	 * @returns {map} mParameters A map of error information
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_handleError
-	 * @function
 	 */
 	ODataModel.prototype._handleError = function(oError) {
 		var mParameters = {}, /* fnHandler, */ sToken;
@@ -2297,8 +2183,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} oData Object containing the requested data if the path is valid.
 	 * @public
 	 * @deprecated please use {@link #getProperty} instead
-	 * @name sap.ui.model.odata.v2.ODataModel#getData
-	 * @function
 	 */
 	ODataModel.prototype.getData = function(sPath, oContext, bIncludeExpandEntries) {
 		return this.getProperty(sPath, oContext, bIncludeExpandEntries);
@@ -2323,8 +2207,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oData The entry data
 	 * @returns {string} sEtag The eTag
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_getETag
-	 * @function
 	 */
 	ODataModel.prototype._getETag = function(sPath, oData) {
 		var sETag, sEntry, iIndex;
@@ -2356,8 +2238,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} [bAsync] Async request
 	 * @return {object} request object
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_createRequest
-	 * @function
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sMethod, mHeaders, oData, sETag, bAsync) {
 		var oHeader = this._getHeaders(mHeaders);
@@ -2418,8 +2298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oResponse The response
 	 * @return {boolean} bRefresh Refresh needed
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_isRefreshNeeded
-	 * @function
 	 */
 	ODataModel.prototype._isRefreshNeeded = function(oRequest, oResponse) {
 		var bRefreshNeeded = false;
@@ -2456,8 +2334,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#update
-	 * @function
 	 */
 
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
@@ -2537,8 +2413,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#create
-	 * @function
 	 */
 	ODataModel.prototype.create = function(sPath, oData, mParameters) {
 		var oRequest, /* oBatchRequest, */ sUrl, oRequestHandle, oEntityMetadata,
@@ -2613,8 +2487,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#remove
-	 * @function
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
 		var oContext, sEntry, /* oStoredEntry, */ fnSuccess, fnError, oRequest, sUrl, sBatchGroupId,
@@ -2696,8 +2568,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#callFunction
-	 * @function
 	 */
 	ODataModel.prototype.callFunction = function (sFunctionName, mParameters) {
 		var oRequest, sUrl, oRequestHandle,
@@ -2792,8 +2662,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#read
-	 * @function
 	 */
 	ODataModel.prototype.read = function(sPath, mParameters) {
 		var oRequest, sUrl, oRequestHandle, // oBatchRequest,
@@ -2876,8 +2744,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {Object} metdata object
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#getServiceMetadata
-	 * @function
 	 */
 	ODataModel.prototype.getServiceMetadata = function() {
 		if (this.oMetadata && this.oMetadata.isLoaded()) {
@@ -2893,8 +2759,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {Object} metdata object
 	 * @public
 	 * @experimental This feature has not been tested due to the lack of OData testing infrastructure. The API is NOT stable yet. Use at your own risk.
-	 * @name sap.ui.model.odata.v2.ODataModel#getServiceAnnotations
-	 * @function
 	 */
 	ODataModel.prototype.getServiceAnnotations = function() {
 		if (this.oAnnotations && this.oAnnotations.getAnnotationsData) {
@@ -2921,8 +2785,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @return {objec|array} an object which has an <code>abort</code> function to abort the current request: returns an array if multiple requests will be sent.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#submitChanges
-	 * @function
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
 		var bMerge = true, oRequest, mRequests, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
@@ -2939,7 +2801,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
 			oGroupInfo = that._resolveGroup(sKey);
 			if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
-				oRequest = that._processChange(sKey, oData, oGroupInfo, bMerge);
+				oRequest = that._processChange(sKey, oData, bMerge);
 				oRequest.key = sKey;
 				mRequests = that.mRequests;
 				if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
@@ -2956,9 +2818,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/*
 	 * updateChangedEntities
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_updateChangedEntities
 	 * @param {map} mChangedEntities Map of changedEntities
-	 * @function
 	 */
 	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
 		var that = this;
@@ -2982,8 +2842,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * 							If no array is passed all changes will be resetted.
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#resetChanges
-	 * @function
 	 */
 	ODataModel.prototype.resetChanges = function(aKeys) {
 		var that = this;
@@ -3017,8 +2875,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} [oContext=null] the context which will be used to set the property
 	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found or another entry was already updated.
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#setProperty
-	 * @function
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext) {
 
@@ -3125,8 +2981,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {object} mHeaders the header name/value map.
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#setHeaders
-	 * @function
 	 */
 	ODataModel.prototype.setHeaders = function(mHeaders) {
 		var mCheckedHeaders = {},
@@ -3166,8 +3020,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Returns all headers and custom headers which are stored in the OData model.
 	 * @return {object} the header map
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#getHeaders
-	 * @function
 	 */
 	ODataModel.prototype.getHeaders = function() {
 		return jQuery.extend({}, this.mCustomHeaders, this.oHeaders);
@@ -3178,8 +3030,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} sHeader The header
 	 * @param {map} mHeaders The map of headers
 	 * @returns {string} sHeaderValue The value of the header
-	 * @name sap.ui.model.odata.v2.ODataModel#_getHeader
-	 * @function
 	 */
 	ODataModel.prototype._getHeader = function(sHeader, mHeaders) {
 		var sHeaderName;
@@ -3195,8 +3045,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Checks if there exist pending changes in the model created by the setProperty method.
 	 * @return {boolean} true/false
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#hasPendingChanges
-	 * @function
 	 */
 	ODataModel.prototype.hasPendingChanges = function() {
 		return !jQuery.isEmptyObject(this.mChangedEntities);
@@ -3209,8 +3057,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * update all bindings
 	 * @param {boolean} [bForceUpdate=false] If set to false an update  will only be done when the value of a binding changed.
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#updateBindings
-	 * @function
 	 */
 	ODataModel.prototype.updateBindings = function(bForceUpdate) {
 		this.checkUpdate(bForceUpdate);
@@ -3220,8 +3066,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Enable/Disable XCSRF-Token handling
 	 * @param {boolean} [bTokenHandling=true] whether to use token handling or not
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#setTokenHandlingEnabled
-	 * @function
 	 */
 	ODataModel.prototype.setTokenHandlingEnabled  = function(bTokenHandling) {
 		this.bTokenHandling = bTokenHandling;
@@ -3230,8 +3074,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * @param {boolean} [bUseBatch=false] whether the requests should be encapsulated in a batch request
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#setUseBatch
-	 * @function
 	 */
 	ODataModel.prototype.setUseBatch  = function(bUseBatch) {
 		this.bUseBatch = bUseBatch;
@@ -3244,8 +3086,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
 	 * @return {string} the formatted value
-	 * @name sap.ui.model.odata.v2.ODataModel#formatValue
-	 * @function
 	 */
 	ODataModel.prototype.formatValue = function(vValue, sType) {
 		return ODataUtils.formatValue(vValue, sType);
@@ -3255,8 +3095,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Deletes a created entry from the request queue and the model.
 	 * @param {sap.ui.model.Context} oContext The context object pointing to the created entry
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#deleteCreatedEntry
-	 * @function
 	 */
 	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
 		if (oContext) {
@@ -3309,8 +3147,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @return {sap.ui.model.Context} oContext A Context object that point to the new created entry.
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#createEntry
-	 * @function
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
@@ -3329,7 +3165,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 		}
-
+		
+		sBatchGroupId = sBatchGroupId ? sBatchGroupId : this.sDefaultChangeBatchGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 		if (!jQuery.sap.startsWith(sPath, "/")) {
@@ -3411,8 +3248,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {array} aType Type splitted by dot and passed as array
 	 * @returns {any} vValue The property value
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_createPropertyValue
-	 * @function
 	 */
 	ODataModel.prototype._createPropertyValue = function(aType) {
 		var sNamespace = aType[0];
@@ -3438,8 +3273,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} sNamespace The property Namespaace
 	 * @returns {string} sDefault Returns undefined
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_getDefaultPropertyValue
-	 * @function
 	 */
 	ODataModel.prototype._getDefaultPropertyValue = function(sType, sNamespace) {
 		return undefined;
@@ -3451,9 +3284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} sPath The binding path
 	 * @param {sap.ui.model.Context} [oContext] The binding context
 	 * @returns {string} sPath The resolved path
-	 * @name sap.ui.model.odata.v2.ODataModel#_normalizePath
 	 * @private
-	 * @function
 	 */
 	ODataModel.prototype._normalizePath = function(sPath, oContext) {
 		// remove query params from path if any
@@ -3471,8 +3302,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} bRefreshAfterChange Refresh after change
 	 * @public
 	 * @since 1.16.3
-	 * @name sap.ui.model.odata.v2.ODataModel#setRefreshAfterChange
-	 * @function
 	 */
 	ODataModel.prototype.setRefreshAfterChange = function(bRefreshAfterChange) {
 		this.bRefreshAfterChange = bRefreshAfterChange;
@@ -3484,8 +3313,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {sap.ui.model.Context} [oContext] The binding context
 	 * @returns {boolean} bList Is List
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#isList
-	 * @function
 	 */
 	ODataModel.prototype.isList = function(sPath, oContext) {
 		sPath = this.resolve(sPath, oContext);
@@ -3503,8 +3330,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oMetadata The metadata object
 	 * @returns {object} oRequestHandle The request handle
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_request
-	 * @function
 	 */
 	ODataModel.prototype._request = function(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
 		var oRequestHandle;
@@ -3553,8 +3378,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * @see sap.ui.model.Model.prototype.destroy
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#destroy
-	 * @function
 	 */
 	ODataModel.prototype.destroy = function() {
 
@@ -3596,8 +3419,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {array} aGroupIds Array of batchGroupIds that should be set as deferred
 	 * @public
-	 * @name sap.ui.model.odata.v2.ODataModel#setDeferredBatchGroups
-	 * @function
 	 */
 	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
 		var that = this;
@@ -3611,9 +3432,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Returns the array of batchGroupIds that are set as deferred
 	 *
 	 * @returns {array} aGroupIds The array of deferred batchGroupIds
-	 * @name sap.ui.model.odata.v2.ODataModel#getDeferredBatchGroups
 	 * @public
-	 * @function
 	 */
 	ODataModel.prototype.getDeferredBatchGroups = function() {
 		var aGroupIds = [], i = 0;
@@ -3639,9 +3458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * bacthGroupId: Defines the bacthGroup for changes of the defined EntityTypeName
 	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
 	 * single: Defines if every change will get an own changeSet (true)
-	 * @name sap.ui.model.odata.v2.ODataModel#setChangeBatchGroups
 	 * @public
-	 * @function
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
 		this.mChangeBatchGroups = mGroups;
@@ -3650,9 +3467,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Returns the definition of batchGroups per EntityType for TwoWay changes
 	 * @returns {map} mChangeBatchGroups Definition of bactchGRoups for "TwoWay" changes
-	 * @name sap.ui.model.odata.v2.ODataModel#getChangeBatchGroups
 	 * @public
-	 * @function
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
 		return this.mChangeBatchGroups;

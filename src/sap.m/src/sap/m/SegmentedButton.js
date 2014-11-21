@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.SegmentedButton
+	 * @alias sap.m.SegmentedButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ { metadata : {
@@ -37,12 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * 
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
-			/**
-			 * boolean property to make the control visible or invisible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * If disabled all buttons look grey, you cannot focus on them, you can not even click on them.
 			 */
@@ -86,24 +81,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 	
-	
-	/**
-	 * Convenient method to add a button with a text as title OR an URI for an icon. Using both is not supported.
-	 *
-	 * @name sap.m.SegmentedButton#createButton
-	 * @function
-	 * @param {string} sText
-	 *         Set the text of a SegmentedButton button.
-	 * @param {sap.ui.core.URI} sIcon
-	 *         Icon to be displayed as graphical element within the button.
-	 * 
-	 *         Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
-	 * @param {boolean} bEnabled
-	 *         Boolean property to enable the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	EnabledPropagator.call(SegmentedButton.prototype);
 	
@@ -364,12 +341,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {string}
 	 *         sText defines the title text of the newly created button
-	 * @param {sap.ui.core.URI}
-	 *        sURI defines the icon uri of the button
-	 * @param {boolean}
-	 *        [bEnabled] sets the enabled status of the button
+	 * @param {sap.ui.core.URI} sURI 
+	 *         Icon to be displayed as graphical element within the button.
+	 *         Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
+	 * @param {boolean} [bEnabled]
+	 *         Boolean property to enable the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings
 	 * @return {sap.m.Button} the created button
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SegmentedButton.prototype.createButton = function (sText, sURI, bEnabled) {
 		var oButton = new sap.m.Button();

@@ -9,9 +9,9 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Image renderer. 
+	 * Image renderer. 
 	 * @author D051016
-	 * @static
+	 * @namespace
 	 */
 	var ImageRenderer = {
 	};
@@ -24,11 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ImageRenderer.render = function(rm, oImage){
-		// Return immediately if control is invisible
-		if (!oImage.getVisible()) {
-			return;
-		}
-		
 		// Open the <img> tag
 		rm.write("<img");
 	

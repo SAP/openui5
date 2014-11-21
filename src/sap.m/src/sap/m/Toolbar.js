@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @class
 	 * The Toolbar control is a horizontal items container that can be used to get an input from user or just to display output.
 	 * 
-	 * Note: By default, when Toolbar overflows, it provides shrinking for text controls(e.g. Text, Label) and the controls that have percentual width.(e.g. Input, Slider). This behaviour can be overwritten by providing sap.m.ToolbarLayoutData for toolbar items.
+	 * Note: By default, when the Toolbar overflows, it provides shrinking for the controls which have percentual width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behaviour can be overwritten by providing {@link sap.m.ToolbarLayoutData} for the toolbar items.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @constructor
 	 * @public
 	 * @since 1.16
-	 * @name sap.m.Toolbar
+	 * @alias sap.m.Toolbar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Toolbar = Control.extend("sap.m.Toolbar", /** @lends sap.m.Toolbar.prototype */ { metadata : {
@@ -40,12 +40,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		],
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * Sets the visibility of the control.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * Defines the width of the control.
 			 * By default the Toolbar is block element, if the the width is not explicitly set, control will simply have its own natural size.
@@ -384,11 +379,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	};
 	
 	Toolbar.prototype.onAfterRendering = function() {
-		// do nothing for invisible toolbar
-		if (this._isInvisible()) {
-			return;
-		}
-	
 		// if there is no shrinkable item, layout is not needed
 		if (!this._checkContents()) {
 			return;
@@ -456,13 +446,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	// mark to inform active handling is done by toolbar
 	Toolbar.prototype.ontouchstart = function(oEvent) {
 		this.getActive() && oEvent.setMarked();
-	};
-	
-	// determines whether toolbar is visible or not
-	Toolbar.prototype._isInvisible = function() {
-		if (!this.getVisible() || !this.getContent().length) {
-			return true;
-		}
 	};
 	
 	// mark shrinkable contents and render layout data

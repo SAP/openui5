@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.RoadMap
+	 * @alias sap.ui.commons.RoadMap
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RoadMap = Control.extend("sap.ui.commons.RoadMap", /** @lends sap.ui.commons.RoadMap.prototype */ { metadata : {
@@ -50,12 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Control width in CSS size
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
 		},
 		defaultAggregation : "steps",
 		aggregations : {

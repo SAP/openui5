@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.ObjectStatus
+	 * @alias sap.m.ObjectStatus
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectStatus = Control.extend("sap.m.ObjectStatus", /** @lends sap.m.ObjectStatus.prototype */ { metadata : {
@@ -55,12 +55,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * 
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * Shows or hides the ObjectStatus instance
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
 		}
 	}});
 	

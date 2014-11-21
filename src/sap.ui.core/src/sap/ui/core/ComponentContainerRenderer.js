@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * @class ComponentContainer renderer.
 	 * @static
-	 * @name sap.ui.core.ComponentContainerRenderer
+	 * @alias sap.ui.core.ComponentContainerRenderer
 	 */
 	var ComponentContainerRenderer = {
 	};
@@ -22,8 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl Object representation of the control that should be rendered
-	 * @name sap.ui.core.ComponentContainerRenderer.render
-	 * @function
 	 */
 	ComponentContainerRenderer.render = function(oRenderManager, oComponentContainer){
 	

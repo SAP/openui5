@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 *
 		 * @constructor
 		 * @public
-		 * @name sap.m.Slider
+		 * @alias sap.m.Slider
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata : {
@@ -39,11 +39,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				 * Determines whether the user can change the slider value.
 				 */
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-				/**
-				 * Determines whether the slider is visible. Invisible controls are not rendered.
-				 */
-				visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 				/**
 				 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
@@ -63,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				/**
 				 * Define the amount of units to change the slider when adjusting by drag and drop.
 				 *
-				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10, 15, 20).
+				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
 				 *
 				 * The step must be positive, if a negative number is provided, the default value will be used instead.
 				 * If the width of the slider converted to pixels is less than the range (max – min), the value will be rounded to multiples of the step size.
@@ -876,8 +871,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		/**
 		 * Increments the slider value by multiplying the <code>step</code> with the given parameter.
 		 *
-		 * @name sap.m.Slider.prototype.stepUp
-		 * @function
 		 * @param {int} [iStep=1] The number of steps the slider goes up.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
@@ -890,8 +883,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		/**
 		 * Decrements the slider value by multiplying the step the <code>step</code> with the given parameter.
 		 *
-		 * @name sap.m.Slider.prototype.stepDown
-		 * @function
 		 * @param {int} [iStep=1] The number of steps the slider goes down.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
@@ -909,8 +900,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @param {float} fNewValue new value for property <code>value</code>.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.Slider#setValue
-		 * @function
 		 */
 		Slider.prototype.setValue = function(fNewValue) {
 

@@ -22,19 +22,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.P13nPanel
+	 * @alias sap.m.P13nPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nPanel = Control.extend("sap.m.P13nPanel", /** @lends sap.m.P13nPanel.prototype */ { metadata : {
 	
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * This property decides whether the panel is visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Title text appears in the panel
 			 */
@@ -59,13 +53,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			items : {type : "sap.m.P13nItem", multiple : true, singularName : "item", bindable : "bindable"}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.P13nPanel.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 	
 
 	return P13nPanel;

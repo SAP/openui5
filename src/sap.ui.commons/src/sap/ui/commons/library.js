@@ -444,10 +444,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	
 	
 	/**
-	 * @class A string type that represents subset of CSS size values. For the Splitter only px and % are allowed.
+	 * @classdesc A string type that represents subset of CSS size values. For the Splitter only px and % are allowed.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */

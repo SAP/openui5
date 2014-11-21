@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @version ${version}
 	 * @since 1.7.0
 	 * @public
-	 * @name sap.ui.core.DeclarativeSupport
+	 * @alias sap.ui.core.DeclarativeSupport
 	 */
 	var DeclarativeSupport = {
 	};
@@ -29,7 +29,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * <code>mSettings</code> the settings of the control
 	 * <code>fnClass</code> the control class
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.attributes
 	 */
 	DeclarativeSupport.attributes = {
 		"data-sap-ui-type" : true,
@@ -65,8 +64,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
 	 * @public
-	 * @name sap.ui.core.DeclarativeSupport.compile
-	 * @function
 	 */
 	DeclarativeSupport.compile = function(oElement, oView, isRecursive) {
 		// Find all defined classes
@@ -87,8 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use
 	 * @param {boolean} [isRecursive] Whether the call of the function is recursive.
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._compile
-	 * @function
 	 */
 	DeclarativeSupport._compile = function(oElement, oView, isRecursive) {
 		var $element = jQuery(oElement);
@@ -155,8 +150,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {sap.ui.core.Control} reference to a Control
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._createControl
-	 * @function
 	 */
 	DeclarativeSupport._createControl = function(oElement, oView) {
 		var $element = jQuery(oElement);
@@ -204,8 +197,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {sap.ui.core.HTML} reference to a Control
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._createHtmlControl
-	 * @function
 	 */
 	DeclarativeSupport._createHtmlControl = function(oElement, oView) {
 		//include HTML content
@@ -227,8 +218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @return {object} the settings of the control.
 	 * @throws {Error} if an attribute is not supported
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._addSettingsForAttributes
-	 * @function
 	 */
 	DeclarativeSupport._addSettingsForAttributes = function(mSettings, fnClass, oElement, oView) {
 		var that = this;
@@ -337,8 +326,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {object} the settings of the control.
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._addSettingsForAggregations
-	 * @function
 	 */
 	DeclarativeSupport._addSettingsForAggregations = function(mSettings, fnClass, oElement, oView) {
 		var $element = jQuery(oElement);
@@ -412,8 +399,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {string} the id of the element
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getId
-	 * @function
 	 */
 	DeclarativeSupport._getId = function(oElement, oView) {
 		var $element = jQuery(oElement);
@@ -440,8 +425,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {string} sName the name of the property
 	 * @return {object} reference to the property object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getProperty
-	 * @function
 	 */
 	DeclarativeSupport._getProperty = function(fnClass, sName) {
 		return fnClass.getMetadata().getAllProperties()[sName];
@@ -455,8 +438,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {string} sValue the value to convert
 	 * @return {string} the converted value
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.convertValueToType
-	 * @function
 	 */
 	DeclarativeSupport.convertValueToType = function(oType, sValue) {
 		if (oType instanceof DataType) {
@@ -475,8 +456,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @return {object} the type of the property
 	 * @throws {Error} if no type for the property is found
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.getPropertyDataType
-	 * @function
 	 */
 	DeclarativeSupport.getPropertyDataType = function(oProperty) {
 		var oType = DataType.getType(oProperty.type);
@@ -496,8 +475,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {boolean} bDeprecationWarning whether to show a deprecation warning or not
 	 * @return {string} the settings name
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport.convertAttributeToSettingName
-	 * @function
 	 */
 	DeclarativeSupport.convertAttributeToSettingName = function(sAttribute, sId, bDeprecationWarning) {
 		if (sAttribute.indexOf("data-") === 0) {
@@ -518,8 +495,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {string} sName the name of the association
 	 * @return {object} reference to the association object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getAssociation
-	 * @function
 	 */
 	DeclarativeSupport._getAssociation = function(fnClass, sName) {
 		return fnClass.getMetadata().getAllAssociations()[sName];
@@ -532,8 +507,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {string} sName the name of the association
 	 * @return {object} reference to the association object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getAggregation
-	 * @function
 	 */
 	DeclarativeSupport._getAggregation = function(fnClass, sName) {
 		return fnClass.getMetadata().getAllAggregations()[sName];
@@ -547,8 +520,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {string} sName the name of the event
 	 * @return {object} reference to the event object
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getEvent
-	 * @function
 	 */
 	DeclarativeSupport._getEvent = function(fnClass, sName) {
 		return fnClass.getMetadata().getAllEvents()[sName];
@@ -562,8 +533,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @param {Element} oElement reference to a DOM element
 	 * @return {string} the default aggregation
 	 * @private
-	 * @name sap.ui.core.DeclarativeSupport._getDefaultAggregation
-	 * @function
 	 */
 	DeclarativeSupport._getDefaultAggregation = function(fnClass, oElement) {
 		var $element = jQuery(oElement);

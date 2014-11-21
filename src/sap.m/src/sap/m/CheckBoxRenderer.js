@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class CheckBox renderer.
-	 * @static
+	 * CheckBox renderer.
+	 * @namespace
 	 */
 	var CheckBoxRenderer = {
 	};
@@ -22,11 +22,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @param {sap.ui.core.Control} oCheckBox an object representation of the control that should be rendered
 	 */
 	CheckBoxRenderer.render = function(oRm, oCheckBox){
-		// Return immediately if control is invisible
-		if (!oCheckBox.getVisible()) {
-			return;
-		}
-	
 		// get control properties
 		var bEnabled = oCheckBox.getEnabled();
 		var bEditable = oCheckBox.getEditable();

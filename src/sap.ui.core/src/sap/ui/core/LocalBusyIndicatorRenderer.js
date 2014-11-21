@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * @class LocalBusyIndicator renderer.
 	 * @static
-	 * @name sap.ui.core.LocalBusyIndicatorRenderer
+	 * @alias sap.ui.core.LocalBusyIndicatorRenderer
 	 */
 	var LocalBusyIndicatorRenderer = {};
 	
@@ -24,8 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control}
 		 *            oControl an object representation of the control that should
 		 *            be rendered
-		 * @name sap.ui.core.LocalBusyIndicatorRenderer.render
-		 * @function
 		 */
 		LocalBusyIndicatorRenderer.render = function(oRm, oControl) {
 			oRm.write("<div");

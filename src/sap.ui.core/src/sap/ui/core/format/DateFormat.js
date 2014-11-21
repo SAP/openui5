@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 *
 	 * @public
 	 * @see http://unicode.org/reports/tr35/#Date_Field_Symbol_Table
-	 * @name sap.ui.core.format.DateFormat
+	 * @alias sap.ui.core.format.DateFormat
 	 */
 	var DateFormat = function() {
 		// Do not use the constructor
@@ -91,8 +91,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 
 	/**
 	 * @see sap.ui.core.format.DateFormat.getDateInstance
-	 * @name sap.ui.core.format.DateFormat.getInstance
-	 * @function
 	 */
 	DateFormat.getInstance = function(oFormatOptions, oLocale) {
 		return this.getDateInstance(oFormatOptions, oLocale);
@@ -112,8 +110,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @return {sap.ui.core.format.DateFormat} date instance of the DateFormat
 	 * @static
 	 * @public
-	 * @name sap.ui.core.format.DateFormat.getDateInstance
-	 * @function
 	 */
 	DateFormat.getDateInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oDateInfo);
@@ -130,8 +126,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @return {sap.ui.core.format.DateFormat} datetime instance of the DateFormat
 	 * @static
 	 * @public
-	 * @name sap.ui.core.format.DateFormat.getDateTimeInstance
-	 * @function
 	 */
 	DateFormat.getDateTimeInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oDateTimeInfo);
@@ -148,8 +142,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
 	 * @static
 	 * @public
-	 * @name sap.ui.core.format.DateFormat.getTimeInstance
-	 * @function
 	 */
 	DateFormat.getTimeInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oTimeInfo);
@@ -163,8 +155,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
 	 * @static
 	 * @private
-	 * @name sap.ui.core.format.DateFormat.createInstance
-	 * @function
 	 */
 	DateFormat.createInstance = function(oFormatOptions, oLocale, oInfo) {
 		// Create an instance of the DateFormat
@@ -221,8 +211,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 
 	/**
 	 * Initialize date format
-	 * @name sap.ui.core.format.DateFormat#init
-	 * @function
 	 */
 	DateFormat.prototype.init = function() {
 		this.aMonthsAbbrev = this.oLocaleData.getMonths("abbreviated");
@@ -240,7 +228,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 
 	/**
 	 * Pattern elements
-	 * @name sap.ui.core.format.DateFormat#oStates
 	 */
 	DateFormat.prototype.oStates = {
 		"G": "era",
@@ -276,8 +263,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @param {boolean} bUTC whether to use UTC
 	 * @return {string} the formatted output value
 	 * @public
-	 * @name sap.ui.core.format.DateFormat#format
-	 * @function
 	 */
 	DateFormat.prototype.format = function(oDate, bUTC) {
 		if (bUTC === undefined) {
@@ -474,8 +459,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @param {boolean} bStrict to use strict value check
 	 * @return {Date} the parsed value
 	 * @public
-	 * @name sap.ui.core.format.DateFormat#parse
-	 * @function
 	 */
 	DateFormat.prototype.parse = function(oValue, bUTC, bStrict) {
 		if (bUTC === undefined) {
@@ -858,8 +841,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 *
 	 * @param sFormat the java date format string
 	 * @returns {Array} format array
-	 * @name sap.ui.core.format.DateFormat#parseJavaDateFormat
-	 * @function
 	 */
 	DateFormat.prototype.parseJavaDateFormat = function(sFormat) {
 		var aFormatArray = [],
@@ -947,8 +928,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @param {boolean} bStrict to use strict value check
 	 * @return {Date} the parsed value or null if relative parsing not possible
 	 * @private
-	 * @name sap.ui.core.format.DateFormat#parseRelative
-	 * @function
 	 */
 	DateFormat.prototype.parseRelative = function(sValue, bUTC) {
 		if (!sValue) {
@@ -1016,8 +995,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @param {boolean} bUTC whether to use UTC
 	 * @return {string} the formatted output value or null if relative formatting not possible
 	 * @private
-	 * @name sap.ui.core.format.DateFormat#formatRelative
-	 * @function
 	 */
 	DateFormat.prototype.formatRelative = function(oDate, bUTC, aRange) {
 

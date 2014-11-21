@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @constructor
 	 * @public
 	 * @since 1.16
-	 * @name sap.m.TableSelectDialog
+	 * @alias sap.m.TableSelectDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TableSelectDialog = Control.extend("sap.m.TableSelectDialog", /** @lends sap.m.TableSelectDialog.prototype */ { metadata : {
@@ -422,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Enable/Disable multi selection mode.
 	 * @overwrite
 	 * @public
-	 * @param {boole} bMulti flag for multi selection mode
+	 * @param {boolean} bMulti flag for multi selection mode
 	 * @returns {this} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setMultiSelect = function (bMulti) {
@@ -643,7 +643,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	/**
 	 * Forwards aggregations with the name of items or columns to the internal table.
 	 * @overwrite
-	 * @public
+	 * @protected
 	 * @param {string} sAggregationName the name for the binding
 	 * @param {object} oBindingInfo the configuration parameters for the binding
 	 * @returns {this} this pointer for chaining

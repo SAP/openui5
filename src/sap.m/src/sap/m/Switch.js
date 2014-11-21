@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 *
 		 * @constructor
 		 * @public
-		 * @name sap.m.Switch
+		 * @alias sap.m.Switch
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata : {
@@ -50,11 +50,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * Beware that the given text will be cut off after three characters.
 				 */
 				customTextOff : {type : "string", group : "Misc", defaultValue : ""},
-
-				/**
-				 * Invisible switches are not rendered.
-				 */
-				visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 				/**
 				 * Whether the switch is enabled.

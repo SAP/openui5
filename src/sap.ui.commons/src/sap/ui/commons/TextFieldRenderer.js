@@ -10,8 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 	/**
 	 * TextField Renderer
-	 * @class
-	 * @static
+	 * @namespace
 	 * @author SAP
 	 * @version ${version}
 	 * @since 0.9.0
@@ -26,14 +25,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 *            oTextField The TextField control that should be rendered.
 	 */
 	TextFieldRenderer.render = function(oRenderManager, oTextField) {
-	
 		var rm = oRenderManager,
 			r  = TextFieldRenderer;
-	
-		// Return immediately if control is invisible
-		if (!oTextField.getVisible()) {
-			return;
-		}
 	
 		var sWidth = oTextField.getWidth();
 		var tooltip = ValueStateSupport.enrichTooltip(oTextField, oTextField.getTooltip_AsString());

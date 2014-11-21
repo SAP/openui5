@@ -22,19 +22,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.HorizontalDivider
+	 * @alias sap.ui.commons.HorizontalDivider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HorizontalDivider = Control.extend("sap.ui.commons.HorizontalDivider", /** @lends sap.ui.commons.HorizontalDivider.prototype */ { metadata : {
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible dividers are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Defines the width of the divider.
 			 */

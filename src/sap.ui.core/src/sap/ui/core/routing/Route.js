@@ -13,29 +13,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		 *
 		 * @param {sap.ui.core.routing.Router} The router instance, the route will be added to.
 		 * @param {object} oConfig configuration object for the route 
+		 * @param {string} [oConfig.pattern] the url pattern where it needs to match again. A pattern may consist of the following:
 		 * <ul>
 		 * <li>
-		 * oConfig.pattern:           the url pattern where it needs to match again. A pattern may consist of the following:</br>
 		 * hardcoded parts: "pattern" : "product/settings" - this pattern will only match if the hash of the browser is product/settings and no arguments will be passed to the events of the route.</br>
-		 * mandatory parameters: "pattern" : "product/{id}" - {id} is a mandatory parameter, e. g. the following hashes would match: product/5, product/3. The pattenMatched event will get 5 or 3 passed as id in its arguments.The hash product/ will not match.</br>
-		 * optional parameters: "pattern" : "product/{id}/detail/:detailId:" - :detailId: is an optional parameter, e. g. the following hashes would match: product/5/detail, product/3/detail/2</br>
-		 * query parameters: "pattern" : "product{?query}" // {?query} allows you to pass queries with any parameters, e. g. the following hashes would match: product?first=firstValue, product?first=firstValue&second=secondValue</br>
-		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </li>
-		 * <li>oConfig.name:              the name of the route - it will be used to retrieve the route from the router, it needs to be unique per router instance.</li>
-		 * <li>oConfig.viewId:            An optional id for the view which is created. No automatic id creation will be used for the view of this route.</li>
-		 * <li>oConfig.view:              The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
-		 * <li>oConfig.viewType:          The type of the view that is going to be created. eg: "XML", "JS"</li>
-		 * <li>oConfig.viewPath:          A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
-		 * <li>oConfig.targetParent:      the id of the parent of the targetControl - This should be the id view your targetControl is located in. By default, this will be the view created by a component, or if the Route is a subroute the view of the parent route is taken. You only need to specify this, if you are not using a router created by a component on your top level routes.</li>
-		 * <li>oConfig.targetControl:     Views will be put into a container Control, this might be a {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container. The id of this control has to be put in here.</li>
-		 * <li>oConfig.targetAggregation: The name of an aggregation of the targetControl, that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the {@link sap.ui.ux3.Shell} it has "content".</li>
-		 * <li>oConfig.clearTarget:       Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
-		 *</ul>
+		 * <li>
+		 * mandatory parameters: "pattern" : "product/{id}" - {id} is a mandatory parameter, e. g. the following hashes would match: product/5, product/3. The pattenMatched event will get 5 or 3 passed as id in its arguments.The hash product/ will not match.</br>
+		 * </li>
+		 * <li>
+		 * optional parameters: "pattern" : "product/{id}/detail/:detailId:" - :detailId: is an optional parameter, e. g. the following hashes would match: product/5/detail, product/3/detail/2</br>
+		 * </li>
+		 * <li>
+		 * query parameters: "pattern" : "product{?query}" // {?query} allows you to pass queries with any parameters, e. g. the following hashes would match: product?first=firstValue, product?first=firstValue&second=secondValue</br>
+		 * </li>
+		 * <li>
+		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
+		 * </ul>
+		 * @param {string} oConfig.name the name of the route - it will be used to retrieve the route from the router, it needs to be unique per router instance.</li>
+		 * @param {string} [oConfig.view] The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
+		 * @param {string} [oConfig.viewType] The type of the view that is going to be created. eg: "XML", "JS"</li>
+		 * @param {string} [oConfig.viewPath] A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
+		 * @param {string} [oConfig.targetParent] the id of the parent of the targetControl - This should be the id view your targetControl is located in. By default, this will be the view created by a component, or if the Route is a subroute the view of the parent route is taken. You only need to specify this, if you are not using a router created by a component on your top level routes.</li>
+		 * @param {string} [oConfig.targetControl] Views will be put into a container Control, this might be a {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container. The id of this control has to be put in here.</li>
+		 * @param {string} [oConfig.targetAggregation] The name of an aggregation of the targetControl, that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the {@link sap.ui.ux3.Shell} it has "content".</li>
+		 * @param {boolean} [oConfig.clearTarget] Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
+		 * @param {boolean} [oConfig.greedy] since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
 		 * @param {sap.ui.core.routing.Route} [oParent] The parent route - if a parent route is given, the routeMatched event of this route will also trigger the route matched of the parent and it will also create the view of the parent(if provided).
 		 *
 		 * @public
-		 * @name sap.ui.core.routing.Route
+		 * @alias sap.ui.core.routing.Route
 		 */
 		var Route = EventProvider.extend("sap.ui.core.routing.Route", /** @lends sap.ui.core.routing.Route.prototype */ {
 
@@ -89,7 +96,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that._aPattern[iIndex] = sRoute;
 	
 					that._aRoutes[iIndex] = oRouter._oRouter.addRoute(sRoute);
-	
+					that._aRoutes[iIndex].greedy = oConfig.greedy;
+
 					that._aRoutes[iIndex].matched.add(function() {
 						var oArguments = {};
 						jQuery.each(arguments, function(iArgumentIndex, sArgument) {
@@ -177,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			 * @function
 			 */
 			attachPatternMatched : function(oData, fnFunction, oListener) {
-				return this.attachEvent("matched", oData, fnFunction, oListener);
+				return this.attachEvent("patternMatched", oData, fnFunction, oListener);
 			},
 
 			/**
@@ -194,7 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			 * @function
 			 */
 			detachPatternMatched : function(fnFunction, oListener) {
-				return this.detachEvent("matched", fnFunction, oListener);
+				return this.detachEvent("patternMatched", fnFunction, oListener);
 			},
 
 			/**

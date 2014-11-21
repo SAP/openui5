@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.P13nSortItem
+	 * @alias sap.m.P13nSortItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nSortItem = Item.extend("sap.m.P13nSortItem", /** @lends sap.m.P13nSortItem.prototype */ { metadata : {
@@ -41,13 +41,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			columnKey : {type : "string", group : "Misc", defaultValue : null}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.FilterItem.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 	
 
 	return P13nSortItem;

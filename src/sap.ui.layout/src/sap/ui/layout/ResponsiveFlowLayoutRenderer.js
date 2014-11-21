@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ResponsiveFlowLayout renderer.
-	 * @static
+	 * ResponsiveFlowLayout renderer.
+	 * @namespace
 	 */
 	var ResponsiveFlowLayoutRenderer = {};
 	

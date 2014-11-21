@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @deprecated Since version 1.4.0. 
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
-	 * @name sap.ui.commons.MessageBar
+	 * @alias sap.ui.commons.MessageBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MessageBar = Control.extend("sap.ui.commons.MessageBar", /** @lends sap.ui.commons.MessageBar.prototype */ { metadata : {
@@ -63,43 +63,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			anchorSnapPoint : {type : "string", group : "Misc", defaultValue : "begin top"}
 		}
 	}});
-	
-	
-	/**
-	 * To add message(s).
-	 *
-	 * @name sap.ui.commons.MessageBar#addMessages
-	 * @function
-	 * @param {sap.ui.commons.Message[]} aAMessages
-	 *         Array of messages.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * To deleted messages.
-	 *
-	 * @name sap.ui.commons.MessageBar#deleteMessages
-	 * @function
-	 * @param {string[]} aIds
-	 *         Messages IDs to be deleted.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * To deleted all messages.
-	 *
-	 * @name sap.ui.commons.MessageBar#deleteAllMessages
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	MessageBar.prototype.init = function(){
@@ -719,8 +682,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * This public API adds/updates a supplied list of messages.
 	 * The messageBar is to appear should at least one message exists.
-	 * @param {sap.ui.commons.Message[]} aMessages
+	 * 
+	 * @param {sap.ui.commons.Message[]} aAMessages Array of messages.
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageBar.prototype.addMessages = function(aMessages) {
 	  if (!aMessages) {
@@ -771,8 +737,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * This public API deletes a supplied list of messages.
 	 * The messageBar is to disappear should no message remains.
-	 * @param {string[]} aIds
+	 * 
+	 * @param {string[]} aIds Messages IDs to be deleted.
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageBar.prototype.deleteMessages = function(aIds) {
 	  if (!aIds) {
@@ -792,9 +761,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * This public API deletes all recorded messages.
-	 * The messageBar is to disappear.
+	 * Deletes all messages.
+	 * 
+	 * @returns {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
+	 * 
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageBar.prototype.deleteAllMessages = function() {
 	  // Closing the corresponding Details if any:

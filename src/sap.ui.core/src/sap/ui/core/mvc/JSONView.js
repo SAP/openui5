@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.mvc.JSONView
+	 * @alias sap.ui.core.mvc.JSONView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var JSONView = View.extend("sap.ui.core.mvc.JSONView", /** @lends sap.ui.core.mvc.JSONView.prototype */ { metadata : {

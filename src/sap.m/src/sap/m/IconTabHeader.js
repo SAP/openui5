@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.IconTabHeader
+	 * @alias sap.m.IconTabHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabHeader = Control.extend("sap.m.IconTabHeader", /** @lends sap.m.IconTabHeader.prototype */ { metadata : {
@@ -428,14 +428,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._fnResize, this));
 
 		// Change ITB content height on resize when ITB stretchContentHeight is set to true (IE9 fix)
-		if (!jQuery.support.hasFlexBoxSupport && this.getParent().getStretchContentHeight()) {
+		if (!jQuery.support.newFlexBoxLayout && this.getParent().getStretchContentHeight()) {
 			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(this.getParent().getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
 			this._fnResizeNoFlexboxSupport();
 		}
 	
 	};
 	
-	/**
+	/*
 	 * Destroys the item aggregation.
 	 */
 	IconTabHeader.prototype.destroyItems = function() {

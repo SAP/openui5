@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
 	 *
 	 * This exception is thrown, when a validation error occurs while checking the
 	 * defined constraints for a type.
-	 * @name sap.ui.model.ValidateException
+	 * @alias sap.ui.model.ValidateException
 	 */
 	var ValidateException = function(message, violatedConstraints) {
 		this.name = "ValidateException";

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.layout.HorizontalLayout
+	 * @alias sap.ui.layout.HorizontalLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HorizontalLayout = Control.extend("sap.ui.layout.HorizontalLayout", /** @lends sap.ui.layout.HorizontalLayout.prototype */ { metadata : {
@@ -36,12 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			/**
 			 * Specifies whether the content inside the Layout shall be line-wrapped in the case that there is less horizontal space available than required.
 			 */
-			allowWrapping : {type : "boolean", group : "Misc", defaultValue : false},
-	
-			/**
-			 * Whether this HorizontalLayout is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			allowWrapping : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 		defaultAggregation : "content",
 		aggregations : {

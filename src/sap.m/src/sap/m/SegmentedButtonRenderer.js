@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * @class Segmented renderer. 
-	 * @static
+	 * Segmented renderer. 
+	 * @namespace
 	 */
 	var SegmentedButtonRenderer = {
 	};
@@ -27,11 +27,6 @@ sap.ui.define(['jquery.sap.global'],
 			sButtonWidth,
 			sTooltip,
 			i = 0;
-
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
 
 		// write the HTML into the render manager
 		oRM.write("<ul");

@@ -8,15 +8,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 
 	/**
-	 * @class TextArea renderer.
-	 * @static
+	 * TextArea renderer.
+	 * @namespace
 	 */
 	var TextAreaRenderer = {};
 	
 	
 	/**
-	 * @class Input renderer.
-	 * @static
+	 * Input renderer.
+	 * @namespace
 	 *
 	 * TextAreaRenderer extends the TextAreaRenderer
 	 */

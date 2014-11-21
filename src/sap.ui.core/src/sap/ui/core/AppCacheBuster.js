@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 	 *  
 	 * @namespace
 	 * @public
-	 * @name sap.ui.core.AppCacheBuster
+	 * @alias sap.ui.core.AppCacheBuster
 	 */
 	var AppCacheBuster = /** @lends sap.ui.core.AppCacheBuster */ {
 			
@@ -258,7 +258,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * 
 			 * @param {jQuery.sap.syncPoint} [oSyncPoint] the sync point
 			 *  
-			 * @namespace
 			 * @private
 			 */
 			boot: function(oSyncPoint) {
@@ -317,7 +316,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * <li><code>sap.ui.base.ManagedObject.prototype.validateProperty</code></li>
 			 * </ul>
 			 *  
-			 * @namespace
 			 * @private
 			 */
 			init: function() {
@@ -390,7 +388,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * specific functions. This will also clear the index which is used 
 			 * to prefix matching URLs.
 			 *  
-			 * @namespace
 			 * @private
 			 */
 			exit: function() {
@@ -413,7 +410,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * 
 			 * @param {string} base URL of an application providing a cachebuster index file
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			register: function(sBaseUrl) {
@@ -429,7 +425,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * @param {string} sUrl any URL
 			 * @return {string} modified URL when matching the index or unmodified when not
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			convertURL: function(sUrl) {
@@ -477,7 +472,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * @param {string} sUrl any URL
 			 * @return {string} normalized URL
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			normalizeURL: function(sUrl) {
@@ -503,7 +497,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			 * @param {string} sUrl any URL
 			 * @return {boolean} <code>true</code> to rewrite or <code>false</code> to ignore 
 			 * 
-			 * @namespace
 			 * @public
 			 */
 			handleURL: function(sUrl) {

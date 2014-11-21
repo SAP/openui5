@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.P13nGroupItem
+	 * @alias sap.m.P13nGroupItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nGroupItem = Item.extend("sap.m.P13nGroupItem", /** @lends sap.m.P13nGroupItem.prototype */ { metadata : {
@@ -43,16 +43,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			/**
 			 * tbd
 			 */
-			grouping : {type : "boolean", group : "Misc", defaultValue : false}
+			showIfGrouped : {type : "boolean", group : "Misc", defaultValue : false}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.FilterItem.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 	
 
 	return P13nGroupItem;

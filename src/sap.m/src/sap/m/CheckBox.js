@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.CheckBox
+	 * @alias sap.m.CheckBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CheckBox = Control.extend("sap.m.CheckBox", /** @lends sap.m.CheckBox.prototype */ { metadata : {
@@ -36,11 +36,6 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			 * Contains the state of the control whether it is flagged with a check mark, or not
 			 */
 			selected : {type : "boolean", group : "Data", defaultValue : false},
-	
-			/**
-			 * Invisible control is not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Using this property, the control could be disabled, if required.

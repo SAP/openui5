@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class Switch renderer.
-		 * @static
+		 * Switch renderer.
+		 * @namespace
 		 */
 		var SwitchRenderer = {};
 
@@ -32,11 +32,6 @@ sap.ui.define(['jquery.sap.global'],
 				bEnabled = oSwitch.getEnabled(),
 				sName = oSwitch.getName(),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
-
-			// suppress rendering if not visible
-			if (!oSwitch.getVisible()) {
-				return;
-			}
 
 			oRm.write('<div');
 			oRm.addClass(CSS_CLASS + "Cont");

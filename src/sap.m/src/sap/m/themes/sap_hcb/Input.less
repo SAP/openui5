@@ -5,6 +5,20 @@
 
 .sapMInput {}
 
+/* focus */
+.sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline:               0.125rem dotted @sapHCStandardFG;
+	outline-offset:        -0.188rem;
+}
+
+/* focus in IE (workaround) */
+html[data-sap-ui-browser^="ie"] .sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	border-style: dotted;
+	border-width: 0.125rem;
+	outline-style: solid;
+	outline-width: 0.0625rem;
+}
+
 /* Value Help */
 .sapMInputVH > .sapMInputBaseInner {
 	padding-right: 2.5rem;
@@ -17,8 +31,6 @@
 	height: 2.375rem;
 	width: 2.375rem;
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 }
 
 .sapMInputValHelpInner,
@@ -113,11 +125,16 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 /* suggestion popup */
- div.sapMInputSuggestionPopup {
- 	border: 0.0625rem solid @sapHCReducedAltFG;
-	-webkit-box-shadow: none;
-	box-shadow: none;
- }
+div.sapMInputSuggestionPopup {
+	border: none;
+	box-shadow: 0 0.25rem 1.875rem 0.125rem @sapHCShadowTint;
+}
+
+.sapMInputSuggestionPopup > div {
+	border: solid @sapHCStandardFG;
+	border-width: .0625rem .125rem .125rem;
+	box-sizing: border-box;
+}
 
 .sapMInputSuggestionPopup .sapMDLIValue {
 	font-size: @sapMFontMediumSize;

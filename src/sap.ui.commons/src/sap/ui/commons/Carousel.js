@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
-	 * @name sap.ui.commons.Carousel
+	 * @alias sap.ui.commons.Carousel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Carousel = Control.extend("sap.ui.commons.Carousel", /** @lends sap.ui.commons.Carousel.prototype */ { metadata : {
@@ -88,39 +88,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		}
 	}});
-	
-	
-	/**
-	 * Shows next item in carousel. This can be only used after the component is rendered.
-	 *
-	 * @name sap.ui.commons.Carousel#showNext
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Shows previous item in carousel. This can be only used after the component is rendered.
-	 *
-	 * @name sap.ui.commons.Carousel#showPrevious
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Shows the element with id specified. This can be only used after the component is rendered.
-	 *
-	 * @name sap.ui.commons.Carousel#showElementWithId
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/**
@@ -518,9 +485,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Slide to previous element
+	 * Shows previous item in carousel. This can be only used after the component is rendered.
 	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showPrevious = function() {
 		var mAnimationArguments = {};
@@ -545,9 +514,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Slide to next element
+	 * Shows next item in carousel. This can be only used after the component is rendered.
 	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showNext = function() {
 		var mAnimationArguments = {};
@@ -572,10 +543,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Slide to specific element
+	 * Shows the element with id specified. This can be only used after the component is rendered.
 	 *
+	 * @param {string} sElementId Id of the element to slide to.
+	 * @type void
 	 * @public
-	 * @param {string} sElementId
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showElementWithId = function(sElementId) {
 		this._showAllItems();
@@ -726,8 +699,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @return {sap.ui.commons.Carousel} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.11.0
-	 * @name sap.ui.commons.Carousel#setFirstVisibleIndex
-	 * @function
 	 */
 	Carousel.prototype.setFirstVisibleIndex = function(iFirstVisibleIndex) {
 		if (iFirstVisibleIndex > this.getContent().length - 1) {

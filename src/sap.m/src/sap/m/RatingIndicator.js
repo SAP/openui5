@@ -26,19 +26,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.14
-	 * @name sap.m.RatingIndicator
+	 * @alias sap.m.RatingIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ { metadata : {
 
 		library : "sap.m",
 		properties : {
-
-			/**
-			 * If set to invisible, the control is not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-
 			/**
 			 * Value "true" is required to let the user rate with this control. It is recommended to set this parameter to "false" for the "Small" size which is meant for indicating a value only
 			 */
@@ -197,7 +191,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets the icon size value. The method is automatically updating the UI components if the control has been rendered before.
 	 *
-	 * @param {float} sIconSize
+	 * @param {sap.ui.core.CSSSize} sIconSize
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
 	 * @overwrite
 	 * @public

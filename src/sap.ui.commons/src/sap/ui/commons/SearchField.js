@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.SearchField
+	 * @alias sap.ui.commons.SearchField
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchField = Control.extend("sap.ui.commons.SearchField", /** @lends sap.ui.commons.SearchField.prototype */ { metadata : {
@@ -81,11 +81,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			 * Non-editable controls have different colors, depending on custom settings
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
 			 * Control width in CSS-size
@@ -175,32 +170,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Clears the history of the control
-	 *
-	 * @name sap.ui.commons.SearchField#clearHistory
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Callback function used to provide the suggest values in the handler of the suggest event (only in list suggestion mode)
-	 *
-	 * @name sap.ui.commons.SearchField#suggest
-	 * @function
-	 * @param {string} sSSuggestValue
-	 *         The value which was provided in the corresponding suggest event (parameter 'value')
-	 * @param {string[]} aASuggestions
-	 *         The list of suggestions belonging to the suggest value
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	(function() {
@@ -329,11 +298,31 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	// Overridden getter und setter, API functions
 	//***********************************************
 	
+
+	/**
+	 * Clears the history of the control
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SearchField.prototype.clearHistory = function() {
 		this._oHistory.clear();
 	};
 	
 	
+
+	/**
+	 * Callback function used to provide the suggest values in the handler of the suggest event (only in list suggestion mode)
+	 *
+	 * @param {string} sSSuggestValue
+	 *         The value which was provided in the corresponding suggest event (parameter 'value')
+	 * @param {string[]} aASuggestions
+	 *         The list of suggestions belonging to the suggest value
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SearchField.prototype.suggest = function(sSuggestValue, aSuggestions) {
 		if (!this.getEnableListSuggest() || !sSuggestValue || !aSuggestions) {
 			return;

@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *     }
 	 * }
 	 *
-	 * @name sap.ui.base.Exception
+	 * @alias sap.ui.base.Exception
 	 */
 	var Exception = function(message) {
 		this.name = "Exception";

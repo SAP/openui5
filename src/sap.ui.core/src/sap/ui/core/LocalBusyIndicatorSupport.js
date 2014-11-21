@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	 * @constructor
 	 * @private
 	 * @deprecated
-	 * @name sap.ui.core.LocalBusyIndicatorSupport
+	 * @alias sap.ui.core.LocalBusyIndicatorSupport
 	 */
 	var LocalBusyIndicatorSupport = function() {
 		// "this" is the prototype now when called with apply()

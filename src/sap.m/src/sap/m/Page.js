@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Page
+	 * @alias sap.m.Page
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Page = Control.extend("sap.m.Page", /** @lends sap.m.Page.prototype */ { metadata : {
@@ -141,21 +141,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			navButtonPress : {}
 		}
 	}});
-	
-	
-	/**
-	 * Scrolls to the given position. Only available if enableScrolling is set to "true".
-	 *
-	 * @name sap.m.Page#scrollTo
-	 * @function
-	 * @param {int} iY
-	 *         The vertical pixel position to scroll to. Scrolling down happens with positive values.
-	 * @param {int} iTime
-	 *         The duration of animated scrolling. To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
-	 * @type sap.m.Page
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	// Return true if scrolling is allowed
@@ -392,6 +377,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	//*** API Methods ***
 	
+
+	/**
+	 * Scrolls to the given position. Only available if enableScrolling is set to "true".
+	 *
+	 * @param {int} iY
+	 *         The vertical pixel position to scroll to. Scrolling down happens with positive values.
+	 * @param {int} iTime
+	 *         The duration of animated scrolling. To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
+	 * @type sap.m.Page
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Page.prototype.scrollTo = function(y, time) {
 		if (this._oScroller) {
 			this._oScroller.scrollTo(0, y, time);

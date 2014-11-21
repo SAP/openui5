@@ -27,10 +27,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 *           converting to string with the primary format object. Vice versa, this 'source' format is also used to format an already parsed
 	 *           external value (e.g. user input) into the string format expected by the data source.
 	 *           Supports the same set of options as {@link sap.ui.core.format.FileSizeFormat.getInstance FileSizeFormat.getInstance}.
-	 * @param {object} [oConstraints] value constraints.
-	 * @param {float} [oConstraints.minimum] smallest value allowed for this type
-	 * @param {float} [oConstraints.maximum] largest value allowed for this type
-	 * @name sap.ui.model.type.FileSize
+	 * @param {object} [oConstraints] value constraints. 
+	 * @param {float} [oConstraints.minimum] smallest value allowed for this type  
+	 * @param {float} [oConstraints.maximum] largest value allowed for this type  
+	 * @alias sap.ui.model.type.FileSize 
 	 */
 	var FileSize = SimpleType.extend("sap.ui.model.type.FileSize", /** @lends sap.ui.model.type.FileSize.prototype  */ {
 
@@ -42,26 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	});
 
 	/**
-	 * Creates a new subclass of class sap.ui.model.type.FileSize with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.type.FileSize.extend
-	 * @function
-	 */
-
-	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 * @name sap.ui.model.type.FileSize#formatValue
-	 * @function
 	 */
 	FileSize.prototype.formatValue = function(vValue, sInternalType) {
 		var fValue;
@@ -102,8 +83,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 * @name sap.ui.model.type.FileSize#parseValue
-	 * @function
 	 */
 	FileSize.prototype.parseValue = function(vValue, sInternalType) {
 		var vResult;
@@ -136,8 +115,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 * @name sap.ui.model.type.FileSize#validateValue
-	 * @function
 	 */
 	FileSize.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
@@ -176,8 +153,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
-	 * @name sap.ui.model.type.FileSize#setFormatOptions
-	 * @function
 	 */
 	FileSize.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
@@ -187,8 +162,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	/**
 	 * Called by the framework when any localization setting changed
 	 * @private
-	 * @name sap.ui.model.type.FileSize#_handleLocalizationChange
-	 * @function
 	 */
 	FileSize.prototype._handleLocalizationChange = function() {
 		this.oOutputFormat = FileSizeFormat.getInstance(this.oFormatOptions);

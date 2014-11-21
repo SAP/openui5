@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	function(jQuery, Element, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new UIAreaSubstitute.
 	 *
@@ -37,14 +35,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control, 
-	// */
-	//sap.ui.demokit.UIAreaSubstitute.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-	
 
 	return UIAreaSubstitute;
 

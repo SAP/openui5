@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	function(jQuery, Control, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new HexagonButtonGroup.
 	 *
@@ -43,14 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			buttons : {type : "sap.ui.demokit.HexagonButton", multiple : true, singularName : "button"}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control, 
-	// */
-	//sap.ui.demokit.HexagonButtonGroup.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-	
 
 	return HexagonButtonGroup;
 

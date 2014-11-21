@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ExactArea renderer.
-	 * @static
+	 * ExactArea renderer.
+	 * @namespace
 	 */
 	var ExactAreaRenderer = {
 	};
@@ -24,11 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ExactAreaRenderer.render = function(oRenderManager, oControl){
 		var rm = oRenderManager;
-	
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3ExactArea");

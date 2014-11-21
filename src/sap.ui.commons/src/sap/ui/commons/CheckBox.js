@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.CheckBox
+	 * @alias sap.ui.commons.CheckBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CheckBox = Control.extend("sap.ui.commons.CheckBox", /** @lends sap.ui.commons.CheckBox.prototype */ { metadata : {
@@ -42,11 +42,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Defines the text displayed next to the check box
 			 */
 			text : {type : "string", group : "Appearance", defaultValue : null},
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
 			 * Using this property, the control could be disabled, if required.
@@ -109,17 +104,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 	
-	
-	/**
-	 * 
-	 * Inverts the current value of the control.
-	 *
-	 * @name sap.ui.commons.CheckBox#toggle
-	 * @function
-	 * @type sap.ui.commons.CheckBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	/**
 	 * Event handler called when the check box is clicked.
@@ -190,6 +174,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	// implement public method toggle()
+
+	/**
+	 * 
+	 * Inverts the current value of the control.
+	 *
+	 * @type sap.ui.commons.CheckBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	CheckBox.prototype.toggle = function() {
 		this.setChecked(!this.getChecked());
 		return this;

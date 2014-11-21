@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @param {object} oData URL where to load the data from
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.ClientModel
+	 * @alias sap.ui.model.ClientModel
 	 */
 	var ClientModel = Model.extend("sap.ui.model.ClientModel", /** @lends sap.ui.model.ClientModel.prototype */ {
 
@@ -51,30 +51,11 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	});
 
 	/**
-	 * Creates a new subclass of class sap.ui.model.ClientModel with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.ClientModel.extend
-	 * @function
-	 */
-
-	/**
 	 * Returns the current data of the model.
 	 * Be aware that the returned object is a reference to the model data so all changes to that data will also change the model data.
 	 *
 	 * @return the data object
 	 * @public
-	 * @name sap.ui.model.ClientModel#getData
-	 * @function
 	 */
 	ClientModel.prototype.getData = function(){
 		return this.oData;
@@ -86,8 +67,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @param {boolean} bForceupdate
 	 *
 	 * @private
-	 * @name sap.ui.model.ClientModel#checkUpdate
-	 * @function
 	 */
 	ClientModel.prototype.checkUpdate = function(bForceupdate) {
 		var aBindings = this.aBindings.slice(0);
@@ -103,8 +82,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	/**
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 *
-	 * @name sap.ui.model.ClientModel#createBindingContext
-	 * @function
 	 */
 	ClientModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack) {
 		// optional parameter handling
@@ -166,8 +143,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	/**
 	 * @see sap.ui.model.Model.prototype.destroy
 	 * @public
-	 * @name sap.ui.model.ClientModel#destroy
-	 * @function
 	 */
 	ClientModel.prototype.destroy = function() {
 
@@ -189,8 +164,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	/**
 	 * @see sap.ui.model.Model.prototype.destroyBindingContext
 	 *
-	 * @name sap.ui.model.ClientModel#destroyBindingContext
-	 * @function
 	 */
 	ClientModel.prototype.destroyBindingContext = function(oContext) {
 		// TODO: what todo here?
@@ -198,8 +171,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 
 	/**
 	 * @see sap.ui.model.Model.prototype.bindContext
-	 * @name sap.ui.model.ClientModel#bindContext
-	 * @function
 	 */
 	ClientModel.prototype.bindContext = function(sPath, oContext, mParameters) {
 		var oBinding = new ClientContextBinding(this, sPath, oContext, mParameters);
@@ -211,8 +182,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @param {boolean} bForceUpdate true/false: Default = false. If set to false an update
 	 * 					will only be done when the value of a binding changed.
 	 * @public
-	 * @name sap.ui.model.ClientModel#updateBindings
-	 * @function
 	 */
 	ClientModel.prototype.updateBindings = function(bForceUpdate) {
 		this.checkUpdate(bForceUpdate);
@@ -222,8 +191,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * Force no caching.
 	 * @param {boolean} [bForceNoCache=false] whether to force not to cache
 	 * @public
-	 * @name sap.ui.model.ClientModel#forceNoCache
-	 * @function
 	 */
 	ClientModel.prototype.forceNoCache = function(bForceNoCache) {
 		this.bCache = !bForceNoCache;

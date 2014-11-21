@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 
 
 	/**
-	 * @class ThingInspector renderer.
-	 * @static
+	 * ThingInspector renderer.
+	 * @namespace
 	 */
 	var ThingInspectorRenderer = Renderer.extend(OverlayRenderer);
 	

@@ -43,21 +43,13 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.layout.MatrixLayout
+	 * @alias sap.ui.commons.layout.MatrixLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MatrixLayout = Control.extend("sap.ui.commons.layout.MatrixLayout", /** @lends sap.ui.commons.layout.MatrixLayout.prototype */ { metadata : {
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * 
-			 * Determines whether the matrix layout, including all its content, is
-			 * visible. An invisible control will not be rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * CSS width of the matrix layout.
 			 * If the LayoutFixed = true a adequate width should be provided.

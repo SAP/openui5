@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.ListItemBase
+	 * @alias sap.m.ListItemBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListItemBase = Control.extend("sap.m.ListItemBase", /** @lends sap.m.ListItemBase.prototype */ { metadata : {
@@ -62,21 +62,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 	
 			/**
-			 * tap event
+			 * Event is fired when the user taps on the control.
 			 * @deprecated Since version 1.20.0. 
 			 * This event is deprecated, use the press event instead.
 			 */
 			tap : {deprecated: true}, 
 	
 			/**
-			 * detail tap event
-			 * @deprecated Since version 7.20.0. 
+			 * Event is fired when the user taps on the detail button of the control.
+			 * @deprecated Since version 1.20.0. 
 			 * This event is deprecated, use the detailPress event instead.
 			 */
 			detailTap : {deprecated: true}, 
 	
 			/**
 			 * Event is fired when the user clicks on the control.
+			 * 
+			 * Note: When the parent mode is SingleSelectMaster or includeItemInSelection is true then this event is not fired but the parent fires a selectionChange event instead.
+			 * Also if there is an interactive element that handles the press event then the list item's press is not fired.
+			 * 
+			 * If mode detection is not necessary for the press event then the itemPress event of the parent can be used. 
+			 * {@link sap.m.ListBase#attachItemPress}
 			 */
 			press : {}, 
 	
@@ -86,19 +92,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			detailPress : {}
 		}
 	}});
-	
-	
-	/**
-	 * returns the state of the item selection as a boolean
-	 *
-	 * @name sap.m.ListItemBase#isSelected
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @deprecated Since version 1.10.2. 
-	 * API Change makes this method unnecessary
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	// IE9 does not support flex-box: do special table-based rendering (see List_noFlex.css)
@@ -204,6 +197,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return true;
 	};
 	
+
+	/**
+	 * returns the state of the item selection as a boolean
+	 *
+	 * @type boolean
+	 * @public
+	 * @deprecated Since version 1.10.2. 
+	 * API Change makes this method unnecessary
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListItemBase.prototype.isSelected = function() {
 		if (this.isSelectable()) {
 			return this.getProperty("selected");

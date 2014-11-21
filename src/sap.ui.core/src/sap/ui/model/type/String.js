@@ -22,16 +22,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
-	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid
-	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have
-	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with
-	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case
-	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with
-	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case
-	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value
-	 * @param {string} [oConstraints.equals] only value that is allowed
-	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match
-	 * @name sap.ui.model.type.String
+	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid  
+	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have  
+	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with  
+	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case  
+	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with  
+	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case  
+	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value  
+	 * @param {string} [oConstraints.equals] only value that is allowed  
+	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match  
+	 * @alias sap.ui.model.type.String
 	 */
 	var StringType = SimpleType.extend("sap.ui.model.type.String", /** @lends sap.ui.model.type.String.prototype */ {
 
@@ -46,26 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	});
 
 	/**
-	 * Creates a new subclass of class sap.ui.model.type.String with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.type.String.extend
-	 * @function
-	 */
-
-	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 * @name sap.ui.model.type.String#formatValue
-	 * @function
 	 */
 	StringType.prototype.formatValue = function(sValue, sInternalType) {
 		if (sValue == undefined || sValue == null) {
@@ -102,8 +83,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 * @name sap.ui.model.type.String#parseValue
-	 * @function
 	 */
 	StringType.prototype.parseValue = function(oValue, sInternalType) {
 		switch (sInternalType) {
@@ -120,8 +99,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 * @name sap.ui.model.type.String#validateValue
-	 * @function
 	 */
 	StringType.prototype.validateValue = function(sValue) {
 		if (this.oConstraints) {

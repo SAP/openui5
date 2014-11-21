@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.MenuBar
+	 * @alias sap.ui.commons.MenuBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuBar = Control.extend("sap.ui.commons.MenuBar", /** @lends sap.ui.commons.MenuBar.prototype */ { metadata : {
@@ -39,11 +39,6 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 			 * When the MenuBar is not enabled, automatically all single menu items are also displayed as 'disabled'.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Specifies the width of the MenuBar

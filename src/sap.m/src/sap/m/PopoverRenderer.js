@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Popover renderer. 
-	 * @static
+	 * Popover renderer. 
+	 * @namespace
 	 */
 	var PopoverRenderer = {
 	};

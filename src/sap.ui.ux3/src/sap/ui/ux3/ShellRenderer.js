@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 	
 	/**
-	 * @class GoldReflectionPageLayout renderer.
-	 * @static
+	 * GoldReflectionPageLayout renderer.
+	 * @namespace
 	 */
 	var ShellRenderer = {
 	};

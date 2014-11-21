@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.odata.ODataAnnotations
+	 * @alias sap.ui.model.odata.ODataAnnotations
 	 * @extends sap.ui.base.Object
 	 * @experimental This feature has not been tested due to the lack of OData testing infrastructure. The API is NOT stable yet. Use at your own risk.
 	 */
@@ -200,8 +200,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Parses the alias definitions of the annotation document and fills the internal oAlias object.
 	 * 
 	 * @private
-	 * @name sap.ui.model.odata.ODataAnnotations#_parseAliases
-	 * @function
 	 */
 	ODataAnnotations.prototype._parseAliases = function(oXMLDoc, oAnnotationReferences, oAlias) {
 		// Alias nodes
@@ -456,8 +454,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *                  property "xmlDoc" containing the XML-Document that was returned by the 
 	 *                  request and could not be correctly parsed.
 	 * @public
-	 * @name sap.ui.model.odata.ODataAnnotations#setXML
-	 * @function
 	 */
 	ODataAnnotations.prototype.setXML = function(oXMLDocument, sXMLContent, mOptions) {
 		// Make sure there are always callable handlers

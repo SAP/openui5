@@ -25,19 +25,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.RatingIndicator
+	 * @alias sap.ui.commons.RatingIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RatingIndicator = Control.extend("sap.ui.commons.RatingIndicator", /** @lends sap.ui.commons.RatingIndicator.prototype */ { metadata : {
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * If set to invisible, the control is not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * Value 'true' is required for changes on the rating symbols.
 			 */

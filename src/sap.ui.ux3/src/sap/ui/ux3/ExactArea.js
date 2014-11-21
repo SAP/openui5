@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Contr
 	 * @public
 	 * @experimental Since version 1.6. 
 	 * API is not yet finished and might change completely
-	 * @name sap.ui.ux3.ExactArea
+	 * @alias sap.ui.ux3.ExactArea
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactArea = Control.extend("sap.ui.ux3.ExactArea", /** @lends sap.ui.ux3.ExactArea.prototype */ { metadata : {
@@ -38,12 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Contr
 			/**
 			 * Specifies whether the tool bar shall be visible
 			 */
-			toolbarVisible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * Specifies whether the control shall be visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			toolbarVisible : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
 		defaultAggregation : "content",
 		aggregations : {

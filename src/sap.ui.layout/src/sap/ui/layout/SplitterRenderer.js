@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Splitter renderer. 
-	 * @static
+	 * Splitter renderer. 
+	 * @namespace
 	 */
 	var SplitterRenderer = {
 	};

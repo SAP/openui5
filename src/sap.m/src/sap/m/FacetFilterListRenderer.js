@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', './ListRenderer', 'sap/ui/core/Renderer'],
 	
 	
 	/**
-	 * @class FacetFilterList renderer.
-	 * @static
+	 * FacetFilterList renderer.
+	 * @namespace
 	 *
 	 * ListRenderer extends the ListBaseRenderer
 	 */

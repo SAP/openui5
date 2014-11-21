@@ -8,9 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 
 
 	/**
-	 * @class ListitemBase renderer.
+	 * ListitemBase renderer.
 	 *
-	 * @static
+	 * @namespace
 	 */
 	var ListItemBaseRenderer = {};
 	

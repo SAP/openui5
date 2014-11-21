@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * 
 		 * @param {sap.ui.core.UIComponent} [oOwner] the owner of all the views that will be created by this Router.
 		 * @public
-		 * @name sap.ui.core.routing.Router
+		 * @alias sap.ui.core.routing.Router
 		 */
 		var Router = EventProvider.extend("sap.ui.core.routing.Router", /** @lends sap.ui.core.routing.Router.prototype */ {
 
@@ -85,30 +85,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		};
 
 		/**
-		 * Creates a new subclass of class sap.ui.core.routing.Router with name <code>sClassName</code> 
-		 * and enriches it with the information contained in <code>oClassInfo</code>.
-		 * 
-		 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-		 * see {@link sap.ui.base.Object.extend Object.extend}.
-		 *   
-		 * @param {string} sClassName name of the class to be created
-		 * @param {object} [oClassInfo] object literal with informations about the class  
-		 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-		 * @return {function} the created class / constructor function
-		 * @public
-		 * @static
-		 * @name sap.ui.core.routing.Router.extend
-		 * @function
-		 */
-
-		/**
 		 * Adds a route to the router
 		 * 
 		 * @param {object} oConfig configuration object for the route @see sap.ui.core.routing.Route#constructor
 		 * @param {sap.ui.core.routing.Route} oParent the parent of the route
 		 * @public
-		 * @name sap.ui.core.routing.Router#addRoute
-		 * @function
 		 */
 		Router.prototype.addRoute = function (oConfig, oParent) {
 			if (!oConfig.name) {
@@ -129,9 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * Attaches the router to the hash changer @see sap.ui.core.routing.HashChanger
 		 *
 		 * @public
-		 * @name sap.ui.core.routing.Router#initialize
 		 * @returns {sap.ui.core.routing.Router} this for chaining.
-		 * @function
 		 */
 		Router.prototype.initialize = function () {
 			var that = this,
@@ -148,6 +127,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				that.parse(oEvent.getParameter("newHash"), oEvent.getParameter("oldHash"));
 			};
 
+			if (!oHashChanger) {
+				jQuery.sap.log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.");
+				return;
+			}
+
 			oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
 			if (!oHashChanger.init()) {
@@ -161,8 +145,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * Stops to listen to the hashChange of the browser.</br>
 		 * If you want the router to start again, call initialize again.
 		 * @returns { sap.ui.core.routing.Router } this for chaining.
-		 * @name sap.ui.core.routing.Router#stop
-		 * @function
 		 * @public
 		 */
 		Router.prototype.stop = function () {
@@ -186,8 +168,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * @public
 		 * @returns { sap.ui.core.routing.Router } this for chaining.
-		 * @name sap.ui.core.routing.Router#destroy
-		 * @function
 		 */
 		Router.prototype.destroy = function () {
 			EventProvider.prototype.destroy.apply(this);
@@ -216,8 +196,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {object} oParameters Parameters for the route
 		 * @return {string} the unencoded pattern with interpolated arguments
 		 * @public
-		 * @name sap.ui.core.routing.Router#getURL
-		 * @function
 		 */
 		Router.prototype.getURL = function (sName, oParameters) {
 			if (oParameters === undefined) {
@@ -240,8 +218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @return {sap.ui.core.routing.Route} the route with the provided name or undefined.
 		 * @public
 		 * @since 1.25.1
-		 * @name sap.ui.core.routing.Router#getRoute
-		 * @function
 		 */
 		Router.prototype.getRoute = function (sName){
 			return this._oRoutes[sName];
@@ -255,8 +231,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {string} sViewId Optional view id
 		 * @return {sap.ui.core.mvc.View} the view instance
 		 * @public
-		 * @name sap.ui.core.routing.Router#getView
-		 * @function
 		 */
 		Router.prototype.getView = function (sViewName, sViewType, sViewId) {
 			if (!sViewName) {
@@ -295,8 +269,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {sap.ui.core.mvc.View} oView the view instance
 		 * @since 1.22
 		 * @public
-		 * @name sap.ui.core.routing.Router#setView
-		 * @function
 		 */
 		Router.prototype.setView = function (sViewName, oView) {
 			if (!sViewName) {
@@ -308,13 +280,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		
 		/**
 		 * Navigates to a specific route defining a set of parameters. The Parameters will be URI encoded - the characters ; , / ? : @ & = + $ are reserved and will not be encoded.
+		 * If you want to use special characters in your oParameters, you have to encode them (encodeURIComponent).
 		 * 
 		 * @param {string} sName Name of the route
 		 * @param {object} oParameters Parameters for the route
 		 * @param {boolean} bReplace Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
 		 * @public
-		 * @name sap.ui.core.routing.Router#navTo
-		 * @function
 		 */
 		Router.prototype.navTo = function (sName, oParameters, bReplace) {
 			if (bReplace) {
@@ -335,8 +306,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.routing.Router#attachRouteMatched
-		 * @function
 		 */
 		Router.prototype.attachRouteMatched = function(oData, fnFunction, oListener) {
 			this.attachEvent("routeMatched", oData, fnFunction, oListener);
@@ -352,8 +321,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.routing.Router#detachRouteMatched
-		 * @function
 		 */
 		Router.prototype.detachRouteMatched = function(fnFunction, oListener) {
 			this.detachEvent("routeMatched", fnFunction, oListener);
@@ -367,8 +334,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * 
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @protected
-		 * @name sap.ui.core.routing.Router#fireRouteMatched
-		 * @function
 		 */
 		Router.prototype.fireRouteMatched = function(mArguments) {
 			this.fireEvent("routeMatched", mArguments);
@@ -377,8 +342,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		
 		/**
 		 * Attach event-handler <code>fnFunction</code> to the 'viewCreated' event of this <code>sap.ui.core.routing.Router</code>.<br/>
-		 * @name sap.ui.core.routing.Router#attachViewCreated
-		 *
 		 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 		 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 		 * oListener-instance (if present) or in a 'static way'.
@@ -386,7 +349,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @function
 		 */
 		Router.prototype.attachViewCreated = function(oData, fnFunction, oListener) {
 			this.attachEvent("viewCreated", oData, fnFunction, oListener);
@@ -402,8 +364,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.routing.Router#detachViewCreated
-		 * @function
 		 */
 		Router.prototype.detachViewCreated = function(fnFunction, oListener) {
 			this.detachEvent("viewCreated", fnFunction, oListener);
@@ -417,8 +377,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * 
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @protected
-		 * @name sap.ui.core.routing.Router#fireViewCreated
-		 * @function
 		 */
 		Router.prototype.fireViewCreated = function(mArguments) {
 			this.fireEvent("viewCreated", mArguments);
@@ -437,8 +395,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.routing.Router#attachRoutePatternMatched
-		 * @function
 		 */
 		Router.prototype.attachRoutePatternMatched = function(oData, fnFunction, oListener) {
 			this.attachEvent("routePatternMatched", oData, fnFunction, oListener);
@@ -455,8 +411,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.routing.Router#detachRoutePatternMatched
-		 * @function
 		 */
 		Router.prototype.detachRoutePatternMatched = function(fnFunction, oListener) {
 			this.detachEvent("routePatternMatched", fnFunction, oListener);
@@ -471,8 +425,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * 
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @protected
-		 * @name sap.ui.core.routing.Router#fireRoutePatternMatched
-		 * @function
 		 */
 		Router.prototype.fireRoutePatternMatched = function(mArguments) {
 			this.fireEvent("routePatternMatched", mArguments);
@@ -484,8 +436,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * 
 		 * @param {string} sName Name of the router
 		 * @public
-		 * @name sap.ui.core.routing.Router#register
-		 * @function
 		 */
 		Router.prototype.register = function (sName) {
 			oRouters[sName] = this;
@@ -498,8 +448,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {string} sName Name of the router
 		 * @return {sap.ui.core.routing.Router} The router with the specified name, else undefined
 		 * @public
-		 * @name sap.ui.core.routing.Router.getRouter
-		 * @function
 		 */
 		Router.getRouter = function (sName) {
 			return oRouters[sName];

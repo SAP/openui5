@@ -25,19 +25,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ProgressIndicator
+	 * @alias sap.ui.commons.ProgressIndicator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ProgressIndicator = Control.extend("sap.ui.commons.ProgressIndicator", /** @lends sap.ui.commons.ProgressIndicator.prototype */ { metadata : {
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Switches enabled state of the control. Disabled fields have different colors, and can not be focused.
 			 */

@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Tab
+	 * @alias sap.ui.commons.Tab
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tab = Panel.extend("sap.ui.commons.Tab", /** @lends sap.ui.commons.Tab.prototype */ { metadata : {

@@ -254,7 +254,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 	background: @sapHCStandardBG;
 }
 
-.sapMDTICustom .dw-li{
+.sapMDTICustom .dw-li {
 	font-size: 1rem;
 	color: @sapHCStandardFG;
 	font-family: @sapUiFontFamily;
@@ -263,11 +263,15 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 	margin: 0;
 }
 
-.sapMDTICustom .dwwol{
+.sapMDTICustom .dw-li.dw-hl {
+	background: none;
+}
+
+.sapMDTICustom .dwwol {
 	display: none;
 }
 
-.sapMDTICustom .dwc{
+.sapMDTICustom .dwc {
 	margin: 0;
 	overflow: hidden;
 }
@@ -275,7 +279,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 /* ------------------------------ */
 /* DTI buttons bar                */
 /* ------------------------------ */
-.sapMDTICustom .dwbc{
+.sapMDTICustom .dwbc {
 	margin: 0;
 	padding: 0;
 	height: 3rem;
@@ -379,22 +383,19 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 
 .sap-desktop {
 	.sapMDTICustom .dwww:focus .dw-sel>.dw-i {
-		outline:          0.125rem dotted @sapHCStandardFG;
-		outline-offset:   -0.0625rem;
 		border:           none;
 		position:         relative;
 	}
 
-	.sapMDTICustom .dwww:focus .dw-sel>.dw-i:before {
+	.sapMDTICustom .dwww:focus .dw-sel>.dw-i:after {
 		content: " ";
-		-webkit-box-sizing: border-box;
-		-moz-box-sizing:  border-box;
-		box-sizing:       border-box;
-		width:            100%;
-		height:           100%;
-		position:         absolute;
-		left:             0;
-		top:              0;
+		position: absolute;
+		top: 0.125rem;
+		left: 0.125rem;
+		right: 0.125rem;
+		bottom: 0.125rem;
+		display: block;
+		outline: 0.125rem dotted @sapHCStandardFG;
 	}
 }
 

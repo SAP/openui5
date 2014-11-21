@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectNumber renderer. 
-	 * @static
+	 * ObjectNumber renderer. 
+	 * @namespace
 	 */
 	var ObjectNumberRenderer = {
 	};
@@ -22,14 +22,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ObjectNumberRenderer.render = function(oRm, oON){
-		
 		var sTooltip;
-		
-		// return immediately if control is invisible
-		if (!oON.getVisible()) {
-			return;
-		}
-		
+
 		// write the HTML into the render manager
 		oRm.write("<div"); // Number begins
 		oRm.writeControlData(oON);

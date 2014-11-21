@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Dialog
+	 * @alias sap.m.Dialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ { metadata : {
@@ -229,40 +229,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	}});
 	
 	
-	/**
-	 * Open the dialog.
-	 *
-	 * @name sap.m.Dialog#open
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Close the dialog.
-	 *
-	 * @name sap.m.Dialog#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * The method checks if the Dialog is open. It returns true when the Dialog is currently open (this includes opening and closing animations), otherwise it returns false.
-	 *
-	 * @name sap.m.Dialog#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @since 1.9.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	Dialog._bIOS7Tablet = sap.ui.Device.os.ios && sap.ui.Device.system.tablet && sap.ui.Device.os.version >= 7 && sap.ui.Device.os.version < 8 && sap.ui.Device.browser.name === "sf";
 	Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 	
@@ -378,7 +344,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 					vertical: this.getVerticalScrolling(),
 					zynga: false,
 					preventDefault: false,
-					nonTouchScrolling: "scrollbar"
+					nonTouchScrolling: "scrollbar",
+					// In android stock browser, iScroll has to be used
+					// The scrolling layer using native scrolling is transparent for the browser to dispatch events
+					iscroll: sap.ui.Device.browser.name === "an" ? "force" : undefined
 				});
 			}
 		}
@@ -390,8 +359,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		
 		if (this.isOpen()) {
 			//restore the focus after rendering when dialog is already open
-			var sFocusControlId = this._getFocusId();
-			jQuery.sap.focus(jQuery.sap.domById(sFocusControlId));
+			this._setInitialFocus();
 		}
 	};
 	
@@ -447,6 +415,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	/* =========================================================== */
 	/*                    begin: public functions                  */
 	/* =========================================================== */
+
+	/**
+	 * Open the dialog.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.open = function(){
 		var oPopup = this.oPopup;
 	
@@ -474,6 +450,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 	
+
+	/**
+	 * Close the dialog.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.close = function(){
 		var oPopup = this.oPopup;
 	
@@ -488,6 +472,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 	
+
+	/**
+	 * The method checks if the Dialog is open. It returns true when the Dialog is currently open (this includes opening and closing animations), otherwise it returns false.
+	 *
+	 * @type boolean
+	 * @public
+	 * @since 1.9.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.isOpen = function(){
 		return this.oPopup && this.oPopup.isOpen();
 	};
@@ -934,24 +927,33 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	};
 	
 	
-	//The control that needs to be focused after dialog is open is calculated in following sequence:
+	// The control that needs to be focused after dialog is open is calculated in following sequence:
 	// initialFocus, first focusable element in content area, beginButton, endButton
 	// dialog is always modal so the focus doen't need to be on the dialog when there's
 	// no initialFocus, beginButton and endButton available, but to keep the consistency,
 	// the focus will in the end fall back to dialog itself.
 	Dialog.prototype._setInitialFocus = function() {
-		
+
 		var sFocusId = this._getFocusId();
 		var oControl = sap.ui.getCore().byId(sFocusId);
 		var oFocusDomRef;
-		
+
 		if (oControl) {
 			oFocusDomRef = oControl.getFocusDomRef();
 		}
-		
+
 		oFocusDomRef = oFocusDomRef || jQuery.sap.domById(sFocusId);
-		
-		jQuery.sap.focus(oFocusDomRef);
+
+		// Setting focus to DOM Element which can open the on screen keyboard on mobile device doesn't work
+		// consistently across devices. Therefore setting focus to those elements are disabled on mobile devices
+		// and the keyboard should be opened by the User explicitly
+		if (sap.ui.Device.system.desktop || (oFocusDomRef && !/input|textarea|select/i.test(oFocusDomRef.tagName))) {
+			jQuery.sap.focus(oFocusDomRef);
+		} else {
+			// Set the focus to the popup itself in order to keep the tab chain
+			this.focus();
+		}
+
 	};
 	
 	/**
@@ -1334,6 +1336,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	
 		return this;
+	};
+
+	Dialog.prototype.setInitialFocus = function(sInitialFocus) {
+		// Skip the invalidation when sets the initialfocus
+		//
+		// The initial focus takes effect after the next open of the dialog, when it's set
+		// after the dialog is open, the current focus won't be changed
+		// SelectDialog depends on this. If this has to be changed later, please make sure to
+		// check the SelectDialog as well where setIntialFocus is called.
+		return this.setAssociation("initialFocus", sInitialFocus, true);
 	};
 	/* =========================================================== */
 	/*                           end: setters                      */

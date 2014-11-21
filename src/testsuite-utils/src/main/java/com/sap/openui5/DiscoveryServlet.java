@@ -33,6 +33,8 @@ import com.google.gson.Gson;
  * web application and in the JARs in the classpath. It can return the information 
  * what kind of web application pages, test pages or libararies are part of the
  * current web application.
+ * <p>
+ * <i>This class must not be used in productive systems.</i>
  * 
  * @author Peter Muessig
  */

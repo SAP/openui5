@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @class Helper Class for implementing the IBar interface. Should be created once per IBar instance.
 	 * @version 1.22
 	 * @protected
-	 * @name sap.m.IBarInPageEnabler
+	 * @alias sap.m.IBarInPageEnabler
 	 */
 	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", {
 		/**
@@ -120,12 +120,6 @@ sap.ui.define(['sap/ui/base/Object'],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
 		 */
 		render : function(oRM, oControl) {
-			if (!oControl.getVisible()) {
-				//render an empty div so the parent container does not get rerendered...
-				BarInPageEnabler.renderInvisible(oRM, oControl);
-				return;
-			}
-
 			var sTag = oControl.getHTMLTag().toLowerCase();
 
 			oRM.write("<" + sTag);
@@ -151,21 +145,6 @@ sap.ui.define(['sap/ui/base/Object'],
 		}
 
 	});
-
-	/**
-	 * Renders a div with display none.
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
-	 * @protected
-	 * @static
-	 */
-	BarInPageEnabler.renderInvisible = function(oRM, oControl) {
-		oRM.write("<div");
-		oRM.writeControlData(oControl);
-		oRM.addStyle("display", "none");
-		oRM.writeStyles();
-		oRM.write("></div>");
-	};
 
 	/**
 	 * Renders the tooltip for the given control

@@ -10,10 +10,7 @@
 				<ToolbarSpacer/>
 				<Label text="Entities ({entity>/entityCount})" />
 				<ToolbarSpacer/>
-				<ToggleButton
-						id="compactModeButton"
-						text="Compact"
-						press="onToggleCompactMode" />
+				<Button icon="sap-icon://action-settings" press="onOpenAppSettings" />
 			</Toolbar>
 		</customHeader>
 		<subHeader>

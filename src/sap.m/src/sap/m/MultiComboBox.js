@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @name sap.m.MultiComboBox
+	 * @alias sap.m.MultiComboBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ { metadata : {
@@ -84,31 +84,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	}});
 	
 	
-	/**
-	 * Adds selected items. Only items with valid keys are added as selected.
-	 *
-	 * @name sap.m.MultiComboBox#addSelectedKeys
-	 * @function
-	 * @param {string[]} aKeys
-	 *         An array of item keys that identifies the items to be added as selected
-	 * @type sap.m.MultiComboBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes selected items. Only items with valid keys are removed.
-	 *
-	 * @name sap.m.MultiComboBox#removeSelectedKeys
-	 * @function
-	 * @param {string[]} aKeys
-	 *         An array of item keys that identifies the items to be removed
-	 * @type sap.m.MultiComboBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	IconPool.insertFontFaceStyle();
 	EnabledPropagator.apply(MultiComboBox.prototype, [true]);
 	
@@ -121,8 +96,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @param {jQuery.Event}
 	 *          oEvent The event object.
 	 * @private
-	 * @name sap.m.MultiComboBox#onsapend
-	 * @function
 	 */
 	MultiComboBox.prototype.onsapend = function(oEvent) {
 		sap.m.Tokenizer.prototype.onsapend.apply(this._oTokenizer, arguments);
@@ -134,8 +107,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @param {jQuery.Event}
 	 *          oEvent The event object.
 	 * @private
-	 * @name sap.m.MultiComboBox#onsaphome
-	 * @function
 	 */
 	MultiComboBox.prototype.onsaphome = function(oEvent) {
 		sap.m.Tokenizer.prototype.onsaphome.apply(this._oTokenizer, arguments);
@@ -297,10 +268,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * Get the reference element which the message popup should dock to.
 	 * 
 	 * @return {object} Dom Element which the message popup should dock to.
-	 * @name sap.m.MultiInput#getDomRefForValueStateMessage
 	 * @since 1.26
 	 * @protected
-	 * @function
 	 */
 	MultiComboBox.prototype.getDomRefForValueStateMessage = function() {
 		return this.getDomRef("border");
@@ -583,7 +552,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * This hook method is called before the MultiComboBox's Pop-up is rendered.
 	 * 
 	 * @protected
-	 * @name sap.m.MultiComboBox#onBeforeRenderingPicker
 	 */
 	MultiComboBox.prototype.onBeforeRenderingPicker = function() {
 		var fnOnBeforeRenderingPopupType = this["_onBeforeRendering" + this.getPickerType()];
@@ -596,7 +564,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * This hook method is called after the MultiComboBox's Pop-up is rendered.
 	 * 
 	 * @protected
-	 * @name sap.m.MultiComboBox#onAfterRenderingPicker
 	 */
 	MultiComboBox.prototype.onAfterRenderingPicker = function() {
 		var fnOnAfterRenderingPopupType = this["_onAfterRendering" + this.getPickerType()];
@@ -1327,17 +1294,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			},
 			onfocusin : function(oEvent) {
 				this.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
-				
-				// Update Input Value accordingly
-				var oItemCurrent = oEvent.srcControl;
-				
-				if (oItemCurrent && (oItemCurrent instanceof sap.m.StandardListItem)) {
-					if (oItemCurrent.isSelected()) {
-						this.setValue("");
-					} else {
-						this.setValue(oItemCurrent.getTitle());
-					}
-				}
 			},
 			onfocusout : function(oEvent) {
 				this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
@@ -1594,7 +1550,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * Selects all previous items, starting from the given item, ending at the first preceding selected item.
 	 * @param {sap.ui.core.Item} oItem The reference item.
 	 * @private
-	 * @name sap.m.MultiComboBox#_selectPreviousItemsOf
 	 */
 	MultiComboBox.prototype._selectPreviousItemsOf = function(oItem) {
 		var bIsSelected;
@@ -1737,8 +1692,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * 
 	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.MultiComboBox#setSelectedItems
-	 * @function
 	 */
 	MultiComboBox.prototype.setSelectedItems = function(aItems) {
 		this.removeAllSelectedItems();
@@ -1785,8 +1738,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 *          oItem The selected item to add; if empty, nothing is added.
 	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.MultiComboBox#addSelectedItem
-	 * @function
 	 */
 	MultiComboBox.prototype.addSelectedItem = function(oItem) {
 		if (!oItem) {
@@ -1837,6 +1788,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		return aIds;
 	};
 	
+
+	/**
+	 * Removes selected items. Only items with valid keys are removed.
+	 *
+	 * @param {string[]} aKeys
+	 *         An array of item keys that identifies the items to be removed
+	 * @type sap.m.MultiComboBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	MultiComboBox.prototype.removeSelectedKeys = function(aKeys) {
 		var aItems = [], iIndex;
 		if (!aKeys || !aKeys.length || !jQuery.isArray(aKeys)) {
@@ -1869,6 +1830,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		return this;
 	};
 	
+
+	/**
+	 * Adds selected items. Only items with valid keys are added as selected.
+	 *
+	 * @param {string[]} aKeys
+	 *         An array of item keys that identifies the items to be added as selected
+	 * @type sap.m.MultiComboBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	MultiComboBox.prototype.addSelectedKeys = function(aKeys) {
 		if (!aKeys || !aKeys.length || !jQuery.isArray(aKeys)) {
 			return this;
@@ -1908,8 +1879,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 *          association.
 	 * @private
 	 * @since 1.26.0
-	 * @name sap.m.MultiComboBox#_getUnselectedItems
-	 * @function
 	 */
 	MultiComboBox.prototype._getUnselectedItems = function() {
 		return jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
@@ -1921,8 +1890,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @returns {sap.ui.core.Item[]} Array of sap.ui.core.Item instances. The current target of the <code>selectedItems</code>
 	 *          association.
 	 * @public
-	 * @name sap.m.MultiComboBox#getSelectedItems
-	 * @function
 	 */
 	MultiComboBox.prototype.getSelectedItems = function() {
 		var aItems = [], aItemIds = this.getAssociation("selectedItems") || [];
@@ -2014,8 +1981,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @param {boolean}
 	 *          bUnselectable
 	 * @private
-	 * @name sap.m.MultiComboBox#setSelectable
-	 * @function
 	 */
 	MultiComboBox.prototype.setSelectable = function(oItem, bSelectable) {
 		if (this.indexOfItem(oItem) < 0) {
@@ -2038,8 +2003,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @param {sap.ui.core.Item}
 	 *          oItem
 	 * @private
-	 * @name sap.m.MultiComboBox#getSelectable
-	 * @function
 	 */
 	MultiComboBox.prototype.getSelectable = function(oItem) {
 		return oItem._bSelectable;
@@ -2058,12 +2021,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (!aItems) {
 			return null;
 		}
-	
+		
+		if (!this._oListItemEnterEventDelegate) {
+			this._oListItemEnterEventDelegate = {
+				onsapenter: function(oEvent) {
+					// If ListItem is already selected, 
+					// prevent its de-selection, according to Keyboard Handling Specification.
+					if (oEvent.srcControl.isSelected()) {
+						oEvent.setMarked();
+					}
+				}
+			};
+		}
+
 		for ( var i = 0, oListItem, aItemsLength = aItems.length; i < aItemsLength; i++) {
 			// add a private property to the added item containing a reference
 			// to the corresponding mapped item
 			oListItem = this._mapItemToListItem(aItems[i]);
-	
+
+			// remove the previous event delegate
+			oListItem.removeEventDelegate(this._oListItemEnterEventDelegate);
+
+			// add the sap enter event delegate
+			oListItem.addDelegate(this._oListItemEnterEventDelegate, true, this, true);
+			
 			// add the mapped item type of sap.m.StandardListItem to the list
 			this.getList().addAggregation("items", oListItem, true);
 	
@@ -2073,6 +2054,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			}
 		}
 	};
+	
 	
 	/**
 	 * Initialization.
@@ -2094,8 +2076,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * Clear the selection.
 	 * 
 	 * @protected
-	 * @name sap.m.MultiComboBox#clearSelection
-	 * @function
 	 */
 	MultiComboBox.prototype.clearSelection = function() {
 		this.removeAllSelectedItems();
@@ -2108,8 +2088,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 *          string | sap.ui.core.Item} oItem The item to remove or its index or id.
 	 * @returns {sap.ui.core.Item} The removed item or null.
 	 * @public
-	 * @name sap.m.MultiComboBox#removeItem
-	 * @function
 	 */
 	MultiComboBox.prototype.removeItem = function(oItem) {
 	
@@ -2191,8 +2169,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * 
 	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.MultiComboBox#destroyItems
-	 * @function
 	 */
 	MultiComboBox.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
@@ -2209,8 +2185,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * 
 	 * @returns {sap.ui.core.Item[]} An array of sap.ui.core.Item of the removed items (might be empty).
 	 * @public
-	 * @name sap.m.MultiComboBox#removeAllItems
-	 * @function
 	 */
 	MultiComboBox.prototype.removeAllItems = function() {
 		var aItems = this.removeAllAggregation("items");
@@ -2229,8 +2203,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @return {sap.ui.core.Item}
 	 * @private
 	 * @since 1.24.0
-	 * @name sap.m.MultiComboBox#_getItemByListItem
-	 * @function
 	 */
 	MultiComboBox.prototype._getItemByListItem = function(oListItem) {
 		return this._getItemBy(oListItem, "ListItem");
@@ -2244,8 +2216,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @return {sap.ui.core.Item}
 	 * @private
 	 * @since 1.24.0
-	 * @name sap.m.MultiComboBox#_getItemByToken
-	 * @function
 	 */
 	MultiComboBox.prototype._getItemByToken = function(oToken) {
 		return this._getItemBy(oToken, "Token");
@@ -2261,8 +2231,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @return {sap.ui.core.Item}
 	 * @private
 	 * @since 1.24.0
-	 * @name sap.m.MultiComboBox#_getItemBy
-	 * @function
 	 */
 	MultiComboBox.prototype._getItemBy = function(oDataObject, sDataName) {
 		sDataName = sap.m.ComboBoxBaseRenderer.CSS_CLASS + sDataName;
@@ -2281,8 +2249,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @returns {sap.m.StandardListItem | null}
 	 * @private
 	 * @since 1.24.0
-	 * @name sap.m.MultiComboBox#getListItem
-	 * @function
 	 */
 	MultiComboBox.prototype.getListItem = function(oItem) {
 		return oItem ? oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem") : null;

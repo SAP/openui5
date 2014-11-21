@@ -24,29 +24,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.UploadCollectionParameter
+	 * @alias sap.m.UploadCollectionParameter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UploadCollectionParameter = Element.extend("sap.m.UploadCollectionParameter", /** @lends sap.m.UploadCollectionParameter.prototype */ { metadata : {
 	
 		library : "sap.m",
 		properties : {
-	
+
 			/**
-			 * The name of the parameter.
+			 * Specifies the name of the parameter.
 			 * @since 1.12.2
 			 */
 			name : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
-			 * The value of the parameter.
+			 * Specifies the value of the parameter.
 			 * @since 1.12.2
 			 */
 			value : {type : "string", group : "Data", defaultValue : null}
 		}
 	}});
-	
-	
 
 	return UploadCollectionParameter;
 

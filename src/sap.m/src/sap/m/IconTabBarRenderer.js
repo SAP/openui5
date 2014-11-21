@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	"use strict";
 
 /**
-	 * @class HBox renderer.
-	 * @static
+	 * HBox renderer.
+	 * @namespace
 	 */
 	var IconTabBarRenderer = {
 	};
@@ -30,12 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	IconTabBarRenderer.render = function(oRm, oControl){
 		var oContent = oControl.getContent(),
 			oHeader = oControl._getIconTabHeader();
-	
-		// return immediately if control is not visible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
+
 		// start control wrapper
 		oRm.write("<div ");
 		oRm.writeControlData(oControl);

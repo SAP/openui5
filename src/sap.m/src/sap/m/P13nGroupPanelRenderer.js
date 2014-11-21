@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class GroupPanel renderer.
-	 * @static
+	 * GroupPanel renderer.
+	 * @namespace
 	 */
 	var P13nGroupPanelRenderer = {};
 	
@@ -21,11 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *            oControl an object representation of the control that should be rendered
 	 */
 	P13nGroupPanelRenderer.render = function(oRm, oControl) {
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// start GroupPanel
 		oRm.write("<section");
 		oRm.writeControlData(oControl);

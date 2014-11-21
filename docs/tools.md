@@ -4,13 +4,14 @@ Grunt tasks
 
 The following Grunt tasks are available after [setting up the development environment](developing.md).
 
-## serve ##
+## serve
 
 Argument | Description                                                                    | Default
 -------- | ------------------------------------------------------------------------------ | -------
 mode     | `src` uses source files, `target` uses built files (see build task)            | `src`
 port     | Network port to use                                                            | `8080`
-watch    | `boolean` whether to enable watch / livereload (only possible with mode `src`)  Note: watch is currently not yet supported | `false`
+watch    | `boolean` whether to enable watch / livereload (only possible with mode `src`) | `false`
+libs     | Library name(s) to watch (comma-separated). Can reduce CPU usage!              | All libraries
 
 Runs an HTTP server.
 
@@ -19,16 +20,17 @@ Maps folders of all libraries
 - test -> /test-resources
 
 ```
-grunt serve[:<mode>] [--port=<port>] [--watch]
+grunt serve[:<mode>] [--port=<port>] [--watch] [--libs=<library-1>,<library-n>]
 
 # examples
-#  grunt serve --port=3000               # mode=src, port=3000, watch=false
-#  grunt serve:src                       # mode=src, port=8080, watch=false
-#  grunt serve:src --watch               # mode=src, port=8080, watch=true
-#  grunt serve:target --port=80          # mode=target, port=80, watch=false
+#  grunt serve --port=3000                 # mode=src, port=3000, watch=false
+#  grunt serve:src                         # mode=src, port=8080, watch=false
+#  grunt serve:src --watch                 # mode=src, port=8080, watch=true, watched libs=All
+#  grunt serve --watch=true --libs=sap.m   # mode=src, port=8080, watch=true, watched libs=sap.m
+#  grunt serve:target --port=80            # mode=target, port=80, watch=false
 ```
 
-## lint ##
+## lint
 
 Argument | Description                                                                                       | Default
 -------- | ------------------------------------------------------------------------------------------------- | -------------
@@ -47,29 +49,30 @@ grunt lint[:<path-1>:<path-n>] [--libs=<library-1>,<library-n>]
 #  grunt lint:src/sap.ui.core/src/sap/ui/model   # lint the given path only
 ```
 
-## build ##
+## build
 
-Argument               | Description                                  | Default
----------------------- | -------------------------------------------- | -------------
-libs                   | Library name(s) to build (comma-separated)   | All libraries
-production             | `boolean` whether not to copy test-resources | `false`
-minify-css             | `boolean` whether to minify css files        | `true` in production mode, `false` in non-production mode
-include-test-resources | `boolean` whether to include test-resources  | `false` in production mode, `true` in non-production mode
+Argument               | Description                                                                                                   | Default
+---------------------- | ------------------------------------------------------------------------------------------------------------- | -------------
+libs                   | Library name(s) to build (comma-separated)                                                                    | All libraries
+production             | `boolean` whether to do a production build (sets default values of `minify-css` and `include-test-resources`) | `false`
+minify-css             | `boolean` whether to minify css files                                                                         | `true` in production mode, `false` in non-production mode
+include-test-resources | `boolean` whether to include test-resources                                                                   | `false` in production mode, `true` in non-production mode
 
 Minifies / compiles / optimizes source files and puts them into
 `target/openui5`.
 
-Use ```serve:target``` to start a server with the built files (see serve task).
+Use ```serve:target``` to start a server with the built files (see [serve](#serve) task).
 
 ```
-grunt build [--libs=<library-1>,<library-n>] [--production]
+grunt build [--libs=<library-1>,<library-n>] [--production] [--minify-css] [--include-test-resources]
 
 # examples
-#  grunt build --production               # build all libraries without test-resources
-#  grunt build --libs=sap.ui.core,sap.m   # only build sap.ui.core and sap.m with test-resources
+#  grunt build --production               # build all libraries in production mode (minfied css, no test-resources)
+#  grunt build --minify-css               # build all libraries with minified css (but with test-resources)
+#  grunt build --libs=sap.ui.core,sap.m   # only build sap.ui.core and sap.m in non-production mode (non-minified css, with test-resources)
 ```
 
-## test ##
+## test
 
 Argument   | Description                                                                                   | Default
 ---------- | --------------------------------------------------------------------------------------------- | -------------

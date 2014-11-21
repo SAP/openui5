@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.DateRangeSelection
+	 * @alias sap.m.DateRangeSelection
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateRangeSelection = DatePicker.extend("sap.m.DateRangeSelection", /** @lends sap.m.DateRangeSelection.prototype */ { metadata : {
@@ -187,6 +187,17 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		};
 	
 		// Overwrite DatePicker's setDateValue to support two date range processing
+
+		/**
+		 * Setter for property <code>dateValue</code>.
+		 *
+		 * Starting date of the range.
+		 * Default value is empty/undefined
+		 *
+		 * @param {object} oDateValue new value for property dateValue
+		 * @returns {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
+		 * @protected
+		 */
 		DateRangeSelection.prototype.setDateValue = function(oDateValue) {
 	
 			if (jQuery.sap.equal(this.getDateValue(), oDateValue)) {
@@ -585,18 +596,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	
 	
 	//	to overwrite JS doc
-		/**
-		 * Setter for property <code>dateValue</code>.
-		 *
-		 * Starting date of the range.
-		 * Default value is empty/undefined
-		 *
-		 * @param {object} oDateValue new value for property dateValue
-		 * @returns {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @name sap.m.DateRangeSelection#setDateValue
-		 * @function
-		 */
+		
 	
 		/**
 		 * Getter for property <code>dateValue</code>.

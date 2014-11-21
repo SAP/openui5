@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		"use strict";
 
 		/**
-		 * @class Select renderer.
-		 * @static
+		 * Select renderer.
+		 * @namespace
 		 */
 		var SelectRenderer = {};
 
@@ -31,11 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEnabled = oSelect.getEnabled(),
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
-
-			// suppress rendering if not visible
-			if (!oSelect.getVisible()) {
-				return;
-			}
 
 			oRm.write("<div");
 			this.addStyleClass(oRm, oSelect);
@@ -134,7 +129,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
-			oRm.writeIcon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon");
+			oRm.writeIcon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
+				id: oSelect.getId() + "-icon"
+			});
 		};
 
 		/**

@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FacetFilter renderer. 
-	 * @static
+	 * FacetFilter renderer. 
+	 * @namespace
 	 */
 	var FacetFilterRenderer = {
 	};
@@ -22,12 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.render = function(oRm, oControl){
-		
-		// Return immediately if control is invisible.
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		switch (oControl.getType()) {
 	
 		case sap.m.FacetFilterType.Simple:

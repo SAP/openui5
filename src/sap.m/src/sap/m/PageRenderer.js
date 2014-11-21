@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Page renderer.
-	 * @static
+	 * Page renderer.
+	 * @namespace
 	 */
 	var PageRenderer = {};
 	

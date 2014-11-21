@@ -9,10 +9,10 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class MatrixLayout renderer.
+	 * MatrixLayout renderer.
 	 *
 	 * @author d029921
-	 * @static
+	 * @namespace
 	 */
 	var MatrixLayoutRenderer = {
 	};
@@ -24,16 +24,9 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oMatrixLayout an object representation of the control that should be rendered
 	 */
 	MatrixLayoutRenderer.render = function(oRenderManager, oMatrixLayout) {
-	
 		// some convenience variables.
 		var rm = oRenderManager;
 		var r = MatrixLayoutRenderer;
-	
-		// return immediately if control is invisible
-		if ( !oMatrixLayout.getVisible() ) {
-			return;
-		}
-	
 		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
 	
 		//ARIA

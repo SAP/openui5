@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Slider renderer.
-	 * @static
+	 * Slider renderer.
+	 * @namespace
 	 */
 	var SliderRenderer = {
 	};
@@ -24,11 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	SliderRenderer.render = function(oRenderManager, oSlider){
 		// Convenience variable
 		var rm = oRenderManager;
-	
-		// Return immediately if control is invisible
-		if (!oSlider.getVisible()) {
-			return;
-		}
 	
 		// Write the HTML into the render manager
 		rm.write('<DIV');

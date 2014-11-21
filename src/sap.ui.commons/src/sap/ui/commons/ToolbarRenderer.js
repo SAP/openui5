@@ -9,9 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 *
-	 * @static
+	 * @namespace
 	 */
 	var ToolbarRenderer = {
 	};
@@ -27,10 +25,6 @@ sap.ui.define(['jquery.sap.global'],
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 	
 		jQuery.sap.assert(oToolbar instanceof sap.ui.commons.Toolbar, "ToolbarRenderer.render: oToolbar must be a toolbar");
-	
-		if (!oToolbar.getVisible()) {
-			return;
-		}
 	
 		rm.write("<div role='toolbar' tabindex='0'"); // Tab index required for ItemNavigation, the Toolbar is actually not tabable
 		rm.writeControlData(oToolbar);

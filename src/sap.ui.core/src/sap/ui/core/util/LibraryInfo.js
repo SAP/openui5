@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @name sap.ui.core.util.LibraryInfo
+	 * @alias sap.ui.core.util.LibraryInfo
 	 */
 	var LibraryInfo = BaseObject.extend("sap.ui.core.util.LibraryInfo", {
 		constructor : function() {

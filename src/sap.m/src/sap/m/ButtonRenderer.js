@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * @class Button renderer.
-	 * @static
+	 * Button renderer.
+	 * @namespace
 	 */
 	var ButtonRenderer = {};
 
@@ -24,12 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *            the button to be rendered
 	 */
 	ButtonRenderer.render = function(oRm, oButton) {
-
-		// return immediately if control is invisible
-		if (!oButton.getVisible()) {
-			return;
-		}
-
 		// get control properties
 		var sType = oButton.getType();
 		var bEnabled = oButton.getEnabled();

@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxRenderer'],
 
 
 	/**
-	 * @class VBox renderer.
-	 * @static
+	 * VBox renderer.
+	 * @namespace
 	 */
 	var VBoxRenderer = {
 	};

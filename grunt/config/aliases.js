@@ -12,7 +12,13 @@ module.exports = function(grunt, config) {
 			if (!mode || (mode !== 'src' && mode !== 'target')) {
 				mode = 'src';
 			}
-			grunt.task.run(['openui5_connect:' + mode]);
+			var taskName = 'openui5_connect:' + mode;
+			if (grunt.option('watch') && mode === 'src') {
+				grunt.task.run([ taskName, 'watch']);
+			} else {
+				grunt.task.run(taskName + ':keepalive');
+			}
+
 		},
 
 		// Lint task
@@ -40,6 +46,8 @@ module.exports = function(grunt, config) {
 
 			// listen to the connect server startup
 			grunt.event.on('connect.*.listening', function(hostname, port) {
+
+				// 0.0.0.0 does not work in windows
 				if (hostname === '0.0.0.0') {
 					hostname = 'localhost';
 				}
@@ -47,24 +55,13 @@ module.exports = function(grunt, config) {
 				// set baseUrl (using hostname / port from connect task)
 				grunt.config(['selenium_qunit', 'options', 'baseUrl'], 'http://' + hostname + ':' + port);
 
-				// define the contextpath
-				grunt.config(['selenium_qunit', 'run', 'options', 'contextPath'], '/' + config.testsuite.name);
-
 				// run selenium task
 				grunt.task.run(['selenium_qunit:run']);
 			});
 
-			// TODO: test:target mode should also work!!!
-
-			// dynamic port
-			grunt.config(['openui5_connect', mode, 'options', 'port'], 0);
-
-			// disable keepalive for server
-			grunt.config(['openui5_connect', mode, 'options', 'keepalive'], false);
-
 			// cleanup and start connect server
 			grunt.task.run([
-				'clean:target.surefire-reports',
+				'clean:surefire-reports',
 				'openui5_connect:' + mode
 			]);
 		},
@@ -72,11 +69,21 @@ module.exports = function(grunt, config) {
 		// Build task
 		'build': function() {
 
-			// if running build in publish mode, change the version first
-			if (grunt.option('publish')) {
-				var version = semver.inc(grunt.config(['package', 'version']), 'prerelease', grunt.config('buildtime'));
-				grunt.config(['package', 'version'], version);
+			// adopt the version to "current" prerelease (with timestamp)
+			var version = grunt.config(['package', 'version']);
+			if (grunt.option('publish') === 'release') {
+				// in case of a release, check if version from package.json is NOT a prerelease version
+				// the version in package.json should be change before running the publish build
+				var parsedVersion = semver.parse(version);
+				if (parsedVersion.prerelease.length > 0) {
+					grunt.fail.fatal('Unable to publish release. "' + version + '" is a prerelease version (see package.json).');
+					return;
+				}
+			} else {
+				// only increase version for prereleases
+				version = semver.inc(version, 'prerelease', grunt.config('buildtime')) + '+sha.<%= lastchange.substr(0,7) %>';
 			}
+			grunt.config(['package', 'version'], version);
 
 			var aTasks = [ 'lastchange' ];
 

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 	 * @public
 	 * @experimental Since version 1.2. 
 	 * The whole Feed/Feeder API is still under discussion, significant changes are likely. Especially text presentation (e.g. @-references and formatted text) is not final. Also the Feed model topic is still open.
-	 * @name sap.ui.ux3.Feed
+	 * @alias sap.ui.ux3.Feed
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Feed = Control.extend("sap.ui.ux3.Feed", /** @lends sap.ui.ux3.Feed.prototype */ { metadata : {

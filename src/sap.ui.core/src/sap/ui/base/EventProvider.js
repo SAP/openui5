@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @version ${version}
 	 * @constructor
 	 * @public
-	 * @name sap.ui.base.EventProvider
+	 * @alias sap.ui.base.EventProvider
 	 */
 	var EventProvider = BaseObject.extend("sap.ui.base.EventProvider", /* @lends sap.ui.base.EventProvider */ {
 	
@@ -41,14 +41,12 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * Map of event names and ids, that are provided by this class
 	 * @private
 	 * @static
-	 * @name sap.ui.base.EventProvider.M_EVENTS
 	 */
 	EventProvider.M_EVENTS = {EventHandlerChange:"EventHandlerChange"};
 	
 	/**
 	 * Pool is defined on the prototype to be shared among all EventProviders
 	 * @private
-	 * @name sap.ui.base.EventProvider#oEventPool
 	 */
 	EventProvider.prototype.oEventPool = new ObjectPool(Event);
 	
@@ -66,8 +64,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 *            [oListener] The object, that wants to be notified, when the event occurs
 	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.base.EventProvider#attachEvent
-	 * @function
 	 */
 	EventProvider.prototype.attachEvent = function(sEventId, oData, fnFunction, oListener) {
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventProvider.attachEvent: sEventId must be a non-empty string");
@@ -107,8 +103,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 *            [oListener] The object, that wants to be notified, when the event occurs
 	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.base.EventProvider#attachEventOnce
-	 * @function
 	 */
 	EventProvider.prototype.attachEventOnce = function(sEventId, oData, fnFunction, oListener) {
 		if (typeof (oData) === "function") {
@@ -137,8 +131,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 *            [oListener] The object, that wants to be notified, when the event occurs
 	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.base.EventProvider#detachEvent
-	 * @function
 	 */
 	EventProvider.prototype.detachEvent = function(sEventId, fnFunction, oListener) {
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventProvider.detachEvent: sEventId must be a non-empty string" );
@@ -186,8 +178,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @return {sap.ui.base.EventProvider|boolean} Returns <code>this</code> to allow method chaining or
 	 *		   whether the default action should be executed, when bAllowPreventDefault has been set to true
 	 * @protected
-	 * @name sap.ui.base.EventProvider#fireEvent
-	 * @function
 	 */
 	EventProvider.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		// at least in BrowserEventManager when firing events of its E_EVENTS enumeration, the type will be an integer... thus avoid this check
@@ -252,8 +242,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @param {string} sEventId the ID of the event
 	 * @return {boolean} whether there are any listeners
 	 * @private
-	 * @name sap.ui.base.EventProvider#hasListeners
-	 * @function
 	 */
 	EventProvider.prototype.hasListeners = function(sEventId) {
 		return !!this.mEventRegistry[sEventId];
@@ -271,8 +259,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @return {object} the list of events currently having listeners attached
 	 * @private
 	 * @static
-	 * @name sap.ui.base.EventProvider.getEventList
-	 * @function
 	 */
 	EventProvider.getEventList = function(oEventProvider) {
 		return oEventProvider.mEventRegistry;
@@ -287,8 +273,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 *
 	 * @return {sap.ui.base.EventProvider} the parent event provider
 	 * @protected
-	 * @name sap.ui.base.EventProvider#getEventingParent
-	 * @function
 	 */
 	EventProvider.prototype.getEventingParent = function() {
 		return null;
@@ -302,8 +286,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 *
 	 * @return {string} a string description of this eventProvider
 	 * @public
-	 * @name sap.ui.base.EventProvider#toString
-	 * @function
 	 */
 	EventProvider.prototype.toString = function() {
 		if ( this.getMetadata ) {
@@ -317,8 +299,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	/**
 	 * @see sap.ui.base.Object.prototype.destroy
 	 * @public
-	 * @name sap.ui.base.EventProvider#destroy
-	 * @function
 	 */
 	EventProvider.prototype.destroy = function() {
 		this.mEventRegistry = {};

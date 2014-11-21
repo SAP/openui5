@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	 * @param {sap.ui.core.routing.HashChanger} oHashChanger required, without a HashChanger this class cannot work. The class needs to be aware of the hash-changes.
 	 * @public
 	 * @class
-	 * @name sap.ui.core.routing.History
+	 * @alias sap.ui.core.routing.History
 	 */
 	var History = function(oHashChanger) {
 		this._iHistoryLength = window.history.length;
@@ -37,8 +37,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 
 	/**
 	 * Detaches all events and cleans up this instance
-	 * @name sap.ui.core.routing.History#destroy
-	 * @function
 	 */
 	History.prototype.destroy = function(sNewHash) {
 		this._oHashChanger.detachEvent("hashChanged", this._onHashChange, this);
@@ -56,8 +54,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	 * @param {string} [sNewHash] optional, if this parameter is not passed the last hashChange is taken.
 	 * @returns {sap.ui.core.routing.HistoryDirection} or undefined, if no navigation has taken place yet.
 	 * @public
-	 * @name sap.ui.core.routing.History#getDirection
-	 * @function
 	 */
 	History.prototype.getDirection = function(sNewHash) {
 		//no navigation has taken place and someone asks for a direction
@@ -76,8 +72,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	 * gets the previous hash in the history - if the last direction was Unknown or there was no navigation yet, undefined will be returned
 	 * @returns {string} or undefined
 	 * @public
-	 * @name sap.ui.core.routing.History#getPreviousHash
-	 * @function
 	 */
 	History.prototype.getPreviousHash = function() {
 		return this.aHistory[this.iHistoryPosition - 1];
@@ -86,8 +80,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	/**
 	 * Empties the history array, and sets the instance back to the unknown state.
 	 * @private
-	 * @name sap.ui.core.routing.History#_reset
-	 * @function
 	 */
 	History.prototype._reset = function() {
 		this.aHistory.length = 0;
@@ -107,8 +99,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	 * @param {string} sNewHash the new hash
 	 * @returns {sap.ui.core.routing.HistoryDirection}
 	 * @private
-	 * @name sap.ui.core.routing.History#_getDirection
-	 * @function
 	 */
 	History.prototype._getDirection = function(sNewHash, bHistoryLengthIncreased) {
 		var oDirection = sap.ui.core.routing.HistoryDirection;
@@ -155,8 +145,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	/**
 	 * Handles a hash change and cleans up the History
 	 * @private
-	 * @name sap.ui.core.routing.History#_hashChange
-	 * @function
 	 */
 	History.prototype._hashChange = function(sNewHash) {
 		var oDirection = sap.ui.core.routing.HistoryDirection,
@@ -221,8 +209,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	/**
 	 * Handles a hash change and cleans up the History
 	 * @private
-	 * @name sap.ui.core.routing.History#_hashSet
-	 * @function
 	 */
 	History.prototype._hashSet = function(oEvent) {
 		this._hashChangedByApp(oEvent.getParameter("sHash"), false);
@@ -231,8 +217,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	/**
 	 * Handles a hash change and cleans up the History
 	 * @private
-	 * @name sap.ui.core.routing.History#_hashReplaced
-	 * @function
 	 */
 	History.prototype._hashReplaced = function(oEvent) {
 		this._hashChangedByApp(oEvent.getParameter("sHash"), true);
@@ -242,8 +226,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 	 * Sets the next hash that is going to happen in the hashChange function - used to determine if the app or the browserHistory/links triggered this navigation
 	 * @param {string} sNewHash 
 	 * @param {boolean} bWasReplaced
-	 * @name sap.ui.core.routing.History#_hashChangedByApp
-	 * @function
 	 */
 	History.prototype._hashChangedByApp = function(sNewHash, bWasReplaced) {
 		this._oNextHash = { sHash : sNewHash, bWasReplaced : bWasReplaced };
@@ -255,8 +237,6 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 		/**
 		 * @public 
 		 * @returns { sap.ui.core.routing.History } a global singleton that gets created as soon as the sap.ui.core.routing.History is required
-		 * @name sap.ui.core.routing.History.getInstance
-		 * @function
 		 */
 		History.getInstance = function() {
 			return instance;

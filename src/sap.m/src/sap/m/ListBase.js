@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @constructor
 	 * @public
 	 * @since 1.16
-	 * @name sap.m.ListBase
+	 * @alias sap.m.ListBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListBase = Control.extend("sap.m.ListBase", /** @lends sap.m.ListBase.prototype */ { metadata : {
@@ -39,11 +39,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			 * Inset style false/true
 			 */
 			inset : {type : "boolean", group : "Appearance", defaultValue : false},
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * The header text appearing in the list/table header.
@@ -369,136 +364,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	}});
 	
 	
-	/**
-	 * Returns selected list item. When no item is selected, "null" is returned. When "multi-selection" is enabled and multiple items are selected, only the up-most selected item is returned.
-	 *
-	 * @name sap.m.ListBase#getSelectedItem
-	 * @function
-	 * @type sap.m.ListItemBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Selects or deselects the given list item.
-	 *
-	 * @name sap.m.ListBase#setSelectedItem
-	 * @function
-	 * @param {sap.m.ListItemBase} oListItem
-	 *         The list item whose selection to be changed. This parameter is mandatory.
-	 * @param {boolean} bSelect
-	 *         Sets selected status of the list item. Default value is true.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns an array containing the selected list items. If no items are selected, an empty array is returned.
-	 *
-	 * @name sap.m.ListBase#getSelectedItems
-	 * @function
-	 * @type sap.m.ListItemBase[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Sets a list item to be selected by id. In single mode the method removes the previous selection.
-	 *
-	 * @name sap.m.ListBase#setSelectedItemById
-	 * @function
-	 * @param {string} sId
-	 *         The id of the list item whose selection to be changed.
-	 * @param {boolean} bSelect
-	 *         Sets selected status of the list item. Default value is true.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes visible selections of the current selection mode.
-	 *
-	 * @name sap.m.ListBase#removeSelections
-	 * @function
-	 * @param {boolean} bAll
-	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Select all items in "MultiSelection" mode.
-	 *
-	 * @name sap.m.ListBase#selectAll
-	 * @function
-	 * @type sap.m.ListBase
-	 * @public
-	 * @since 1.16
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns swiped list item. When no item is swiped, "null" is returned.
-	 *
-	 * @name sap.m.ListBase#getSwipedItem
-	 * @function
-	 * @type sap.m.ListItemBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * After swipeContent is shown, user can interact with this control(e.g Tap). After interaction is done, you can/should use this method to hide swipeContent from screen.
-	 * Note: If users try to tap inside of the list but outside of the swipeContent then control hides automatically.
-	 *
-	 * @name sap.m.ListBase#swipeOut
-	 * @function
-	 * @param {any} oCallback
-	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
-	 * @type sap.m.ListBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns growing information as object with "actual" and "total" keys.
-	 * Note: This function returns "null" if "growing" feature is disabled.
-	 *
-	 * @name sap.m.ListBase#getGrowingInfo
-	 * @function
-	 * @type object
-	 * @public
-	 * @since 1.16
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the binding contexts of the selected items.
-	 * Note: This method returns an empty array if no databinding is used.
-	 *
-	 * @name sap.m.ListBase#getSelectedContexts
-	 * @function
-	 * @param {boolean} bAll
-	 *         Set true to include even invisible selected items(e.g. the selections from the previous filters).
-	 *         Note: In single selection modes, only the last selected item's binding context is returned in array.
-	 * @type object[]
-	 * @public
-	 * @since 1.18.6
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	// class name for the navigation items
 	ListBase.prototype.sNavItemClass = "sapMLIB";
 	
@@ -738,6 +603,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return sNoDataText;
 	};
 	
+
+	/**
+	 * Returns selected list item. When no item is selected, "null" is returned. When "multi-selection" is enabled and multiple items are selected, only the up-most selected item is returned.
+	 *
+	 * @type sap.m.ListItemBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSelectedItem = function() {
 		var aItems = this.getItems();
 		for (var i = 0; i < aItems.length; i++) {
@@ -748,6 +621,18 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return null;
 	};
 	
+
+	/**
+	 * Selects or deselects the given list item.
+	 *
+	 * @param {sap.m.ListItemBase} oListItem
+	 *         The list item whose selection to be changed. This parameter is mandatory.
+	 * @param {boolean} bSelect
+	 *         Sets selected status of the list item. Default value is true.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
 		if (!oListItem instanceof sap.m.ListItemBase) {
 			jQuery.sap.log.warning("setSelectedItem is called without ListItem parameter on " + this);
@@ -759,17 +644,50 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	};
 	
+
+	/**
+	 * Returns an array containing the selected list items. If no items are selected, an empty array is returned.
+	 *
+	 * @type sap.m.ListItemBase[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSelectedItems = function() {
 		return this.getItems().filter(function(oItem) {
 			return oItem.getSelected();
 		});
 	};
 	
+
+	/**
+	 * Sets a list item to be selected by id. In single mode the method removes the previous selection.
+	 *
+	 * @param {string} sId
+	 *         The id of the list item whose selection to be changed.
+	 * @param {boolean} bSelect
+	 *         Sets selected status of the list item. Default value is true.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.setSelectedItemById = function(sId, bSelect) {
 		var oListItem = sap.ui.getCore().byId(sId);
 		return this.setSelectedItem(oListItem, bSelect);
 	};
 	
+
+	/**
+	 * Returns the binding contexts of the selected items.
+	 * Note: This method returns an empty array if no databinding is used.
+	 *
+	 * @param {boolean} bAll
+	 *         Set true to include even invisible selected items(e.g. the selections from the previous filters).
+	 *         Note: In single selection modes, only the last selected item's binding context is returned in array.
+	 * @type object[]
+	 * @public
+	 * @since 1.18.6
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSelectedContexts = function(bAll) {
 		var oBindingInfo = this.getBindingInfo("items"),
 			sModelName = (oBindingInfo || {}).model,
@@ -793,6 +711,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 	
+
+	/**
+	 * Removes visible selections of the current selection mode.
+	 *
+	 * @param {boolean} bAll
+	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.removeSelections = function(bAll, bFireEvent) {
 		var aChangedListItems = [];
 		this._oSelectedItem = null;
@@ -811,6 +739,15 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
+
+	/**
+	 * Select all items in "MultiSelection" mode.
+	 *
+	 * @type sap.m.ListBase
+	 * @public
+	 * @since 1.16
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.selectAll = function (bFireEvent) {
 		if (this.getMode() != "MultiSelect") {
 			return this;
@@ -846,6 +783,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
+
+	/**
+	 * Returns growing information as object with "actual" and "total" keys.
+	 * Note: This function returns "null" if "growing" feature is disabled.
+	 *
+	 * @type object
+	 * @public
+	 * @since 1.16
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getGrowingInfo = function() {
 		if (this._oGrowingDelegate) {
 			return this._oGrowingDelegate.getInfo();
@@ -857,6 +804,30 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this.setProperty("rememberSelections", bRemember, true);
 		!this.getRememberSelections() && (this._aSelectedPaths.length = 0);
 		return this;
+	};
+	
+	/*
+	 * Sets internal remembered selected context paths.
+	 * This method can be called to reset remembered selection
+	 * and does not change selection of the items until binding update.
+	 *
+	 * @param {String[]} aSelectedPaths valid binding context path array
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.setSelectedContextPaths = function(aSelectedPaths) {
+		this._aSelectedPaths = aSelectedPaths || [];
+	};
+
+	/*
+	 * Returns internal remembered selected context paths as a copy
+	 *
+	 * @return {String[]} selected items binding context path
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getSelectedContextPaths = function() {
+		return this._aSelectedPaths.slice(0);
 	};
 	
 	/* Determines is whether all selectable items are selected or not
@@ -871,7 +842,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 		return aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
 	};
-	
 	
 	/*
 	 * Returns only visible items
@@ -1317,6 +1287,17 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		sap.m.InstanceManager.removeDialogInstance(this);
 	};
 	
+
+	/**
+	 * After swipeContent is shown, user can interact with this control(e.g Tap). After interaction is done, you can/should use this method to hide swipeContent from screen.
+	 * Note: If users try to tap inside of the list but outside of the swipeContent then control hides automatically.
+	 *
+	 * @param {any} oCallback
+	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
+	 * @type sap.m.ListBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.swipeOut = function(callback) {
 		if (!this._isSwipeActive) {
 			return this;
@@ -1403,6 +1384,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this.setProperty("swipeDirection", sDirection, true);
 	};
 	
+
+	/**
+	 * Returns swiped list item. When no item is swiped, "null" is returned.
+	 *
+	 * @type sap.m.ListItemBase
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBase.prototype.getSwipedItem = function() {
 		return (this._isSwipeActive ? this._swipedItem : null);
 	};
@@ -1626,8 +1615,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handle Alt + Down
 	ListBase.prototype.onsapshow = function(oEvent) {
-		// do not handle marked events and ignore F4
-		if (oEvent.isMarked() || oEvent.which == jQuery.sap.KeyCodes.F4) {
+		// handle events that are only coming from navigation items and ignore F4
+		if (oEvent.isMarked() || 
+			oEvent.which == jQuery.sap.KeyCodes.F4 || 
+			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
 	
@@ -1663,8 +1654,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handle Alt + Up
 	ListBase.prototype.onsaphide = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
+		// handle events that are only coming from navigation items
+		if (oEvent.isMarked() || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
 	

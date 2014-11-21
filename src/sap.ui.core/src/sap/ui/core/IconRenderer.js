@@ -8,7 +8,7 @@ sap.ui.define(["jquery.sap.global"],
 	/**
 	 * @class FontIcon renderer.
 	 * @static
-	 * @name sap.ui.core.IconRenderer
+	 * @alias sap.ui.core.IconRenderer
 	 */
 	var IconRenderer = {};
 
@@ -17,16 +17,8 @@ sap.ui.define(["jquery.sap.global"],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 * @name sap.ui.core.IconRenderer.render
-	 * @function
 	 */
 	IconRenderer.render = function(oRm, oControl) {
-
-		// An invisible icon is not rendered
-		if (!oControl.getVisible()) {
-			return;
-		}
-
 		// write the HTML into the render manager
 		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getSrc()),
 			sWidth = oControl.getWidth(),

@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/tmpl/Templa
 	 * @public
 	 * @since 1.15.0
 	 * @version ${version}
-	 * @name sap.ui.core.plugin.TemplatingSupport
+	 * @alias sap.ui.core.plugin.TemplatingSupport
 	 */
 	var TemplatingSupport = function() {
 	};
@@ -29,8 +29,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/tmpl/Templa
 	 * @param {sap.ui.core.Core} oCore reference to the Core
 	 * @param {boolean} [bOnInit] whether the hook is called during core initialization
 	 * @public
-	 * @name sap.ui.core.plugin.TemplatingSupport#startPlugin
-	 * @function
 	 */
 	TemplatingSupport.prototype.startPlugin = function(oCore, bOnInit) {
 		jQuery.sap.log.info("Starting TemplatingSupport plugin.");
@@ -42,8 +40,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/tmpl/Templa
 	 * Will be invoked by <code>sap.ui.core.Core</code> to notify the plugin to start
 	 * @param {sap.ui.core.Core} oCore reference to the Core
 	 * @public
-	 * @name sap.ui.core.plugin.TemplatingSupport#stopPlugin
-	 * @function
 	 */
 	TemplatingSupport.prototype.stopPlugin = function() {
 		jQuery.sap.log.info("Stopping TemplatingSupport plugin.");

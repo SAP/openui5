@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.MultiInput
+	 * @alias sap.m.MultiInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MultiInput = Input.extend("sap.m.MultiInput", /** @lends sap.m.MultiInput.prototype */ { metadata : {
@@ -71,13 +71,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					
 					/**
 					 * the array of tokens that are added.
-					 * This parameter is used when tokenChange type is "tokenChange".
+					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					addedTokens :  { type: "sap.m.Token[]"},
 					
 					/**
 					 * the array of tokens that are removed.
-					 * This parameter is used when tokenChange type is "tokenChange".
+					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					removedTokens :  { type: "sap.m.Token[]"}
 				}
@@ -155,7 +155,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		if (this._tokenizer._bDoTouchScroll && this._oSuggestionPopup) {
 			// on certain touch devices the setting back of the selected value happens 'late', in "attachAfterClose" (in the
 			// sap.m.Input), which is why we need - slightly later - to set the value back to ""
-			this._oSuggestionPopup.attachAfterClose(function() {
+			// attach SuggestionItemSelected event to set value after item selected, not after popup is closed.
+			this.attachSuggestionItemSelected(function() {	
 				setTimeout(function() {
 					that.setValue("");
 					that._tokenizer.scrollToEnd();
@@ -277,10 +278,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	/**
 	 * Function adds an validation callback called before any new token gets added to the tokens aggregation
 	 *
-	 * @name sap.m.MultiInput#addValidator
 	 * @param {function} fValidator
 	 * @public
-	 * @function
 	 */
 	MultiInput.prototype.addValidator = function(fValidator) {
 		this._tokenizer.addValidator(fValidator);
@@ -289,10 +288,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	/**
 	 * Function removes an validation callback
 	 *
-	 * @name sap.m.MultiInput#removeValidator
 	 * @param {function} fValidator
 	 * @public
-	 * @function
 	 */
 	MultiInput.prototype.removeValidator = function(fValidator) {
 		this._tokenizer.removeValidator(fValidator);
@@ -301,9 +298,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	/**
 	 * Function removes all validation callbacks
 	 *
-	 * @name sap.m.MultiInput#removeAllValidators
 	 * @public
-	 * @function
 	 */
 	MultiInput.prototype.removeAllValidators = function() {
 		this._tokenizer.removeAllValidators();
@@ -537,10 +532,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	
 	/**
 	 * when tap on text field, deselect all tokens
-	 * @name sap.m.MultiInput#ontap
 	 * @public
 	 * @param {jQuery.Event} oEvent
-	 * @function
 	 */
 	MultiInput.prototype.ontap = function(oEvent) {
 		Input.prototype.ontap.apply(this, arguments);
@@ -554,10 +547,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	
 	/**
 	 * when press ESC, deselect all tokens and all texts
-	 * @name sap.m.MultiInput#onsapescape
 	 * @public
 	 * @param {jQuery.Event} oEvent
-	 * @function
 	 */
 	MultiInput.prototype.onsapescape = function(oEvent) {
 		
@@ -808,10 +799,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	/**
 	 * Function overwrites clone function to add tokens to MultiInput
 	 * 
-	 * @name sap.m.MultiInput#clone
 	 * @public
 	 * @return {sap.ui.core.Element} reference to the newly created clone
-	 * @function
 	 */
 	MultiInput.prototype.clone = function() {
         var oClone = Input.prototype.clone.apply(this, arguments);
@@ -840,11 +829,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	/**
 	 * Function sets an array of tokens, existing tokens will get overridden
 	 *
-	 * @name sap.m.MultiInput#setTokens
 	 * @param {sap.m.Token[]}
 	 *          aTokens - the new token set
 	 * @public
-	 * @function
 	 */
 	MultiInput.prototype.setTokens = function(aTokens) {
 		this._tokenizer.setTokens(aTokens);
@@ -862,7 +849,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * get the reference element which the message popup should dock to
 	 *
 	 * @return {DOMRef} Dom Element which the message popup should dock to
-	 * @name sap.m.MultiInput#getDomRefForValueStateMessage
 	 * @protected
 	 * @function
 	 */

@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.unified.FileUploader
+	 * @alias sap.ui.unified.FileUploader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploader = Control.extend("sap.ui.unified.FileUploader", /** @lends sap.ui.unified.FileUploader.prototype */ { metadata : {
@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			 * Disabled controls have different colors, depending on customer settings.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * Used when URL address is on a remote server.
@@ -336,40 +331,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 	}});
 
-
-	/**
-	 * Starts the upload (as defined by uploadUrl)
-	 *
-	 * @name sap.ui.unified.FileUploader#upload
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Aborts the currently running upload.
-	 *
-	 * @name sap.ui.unified.FileUploader#abort
-	 * @function
-	 * @type void
-	 * @public
-	 * @since 1.24.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Clears the content of the FileUploader. The attached additional data however is retained.
-	 *
-	 * @name sap.ui.unified.FileUploader#clear
-	 * @function
-	 * @type void
-	 * @public
-	 * @since 1.25.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 
 	/**
 	 * Initializes the control.
@@ -722,6 +683,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		return this;
 	};
 
+
+	/**
+	 * Clears the content of the FileUploader. The attached additional data however is retained.
+	 *
+	 * @type void
+	 * @public
+	 * @since 1.25.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FileUploader.prototype.clear = function () {
 		//clear the value, don't fire change event, and supress the refocusing of the file input field
 		return this.setValue("", false, true);
@@ -778,6 +748,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		return this;
 	};
 
+
+	/**
+	 * Starts the upload (as defined by uploadUrl)
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FileUploader.prototype.upload = function() {
 		//supress Upload if the FileUploader is not enabled
 		if (!this.getEnabled()) {
@@ -897,8 +875,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 	/**
-	 * Aborts the currently running Upload.
+	 * Aborts the currently running upload.
+	 *
+	 * @type void
 	 * @public
+	 * @since 1.24.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FileUploader.prototype.abort = function() {
 		if (this._uploadXHR && this._uploadXHR.abort) {

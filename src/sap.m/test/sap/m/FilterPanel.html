@@ -22,6 +22,7 @@
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nFilterPanel");
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
+	jQuery.sap.require("sap.ui.layout.Grid");	
 	
 	var oCondition1= { "key": "i1", "text": "CompanyCode: a..z"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": "a", "value2": "z"};
 	var oCondition2= { "key": "i2", "text": "CompanyCode: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "foo", "value2": ""};
@@ -82,8 +83,8 @@
 				}, {
 					"key" : "c1",
 					"text" : "Date",
-					
-					"type" : "date" 
+					"type" : "date",
+					"isDefault" : true
 				}, {
 					"key" : "c2",
 					"text" : "Number",
@@ -134,13 +135,13 @@
 				addFilterItem: function(oEvent) {
 					var params = oEvent.getParameters();
 					var oData = oModel.getData();
-					var oFilterItem = {
+ 					var oFilterItem = {
 						key : params.key,
-						columnKey : params.newItem.getColumnKey(),
-						operation : params.newItem.getOperation(),
-						exclude : params.newItem.getExclude(),
-						value1 : params.newItem.getValue1(),
-						value2 : params.newItem.getValue2()
+						columnKey : params.filterItemData.columnKey,
+						operation : params.filterItemData.operation,
+						exclude : params.filterItemData.exclude,
+						value1 : params.filterItemData.value1,
+						value2 : params.filterItemData.value2
 					};
 					if (params.index) {
 						oData.filterItems.splice(params.index, 0, oFilterItem);
@@ -158,7 +159,8 @@
 				text : "{text}",
 				tooltip : "{tooltip}",
 				type : "{type}",
-				maxLength : "{maxLength}"
+				maxLength : "{maxLength}",
+				isDefault : "{isDefault}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
 				key : "{key}",

@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP
 	 * @version ${version}
-	 * @name sap.m.TablePersoController
+	 * @alias sap.m.TablePersoController
 	 */
 	var TablePersoController = ManagedObject.extend("sap.m.TablePersoController", /** @lends sap.m.TablePersoController */
 	
@@ -80,8 +80,6 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	/**
 	 * Initializes the TablePersoController instance after creation.
 	 *
-	 * @function
-	 * @name sap.m.TablePersoController.prototype.init
 	 * @protected
 	 */
 	TablePersoController.prototype.init = function() {
@@ -107,8 +105,6 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	/**
 	 * Do some clean up: remove event delegates, etc
 	 *
-	 * @function
-	 * @name sap.m.TablePersoController.prototype.exit
 	 * @protected
 	 */
 	TablePersoController.prototype.exit = function() {

@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 *         given EntitySet (via optional mParameters.entitySet argument), or by default implicitly from 
 	 *         the binding path (see mandatory sPath argument).
 	 * 
-	 * @name sap.ui.model.analytics.AnalyticalBinding
+	 * @alias sap.ui.model.analytics.AnalyticalBinding
 	 * @extends sap.ui.model.TreeBinding
 	 * @experimental This module is only for experimental use!
 	 * @protected
@@ -92,6 +92,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				
 				this.aAnalyticalInfo = [];
 				this.mAnalyticalInfoByProperty = {};
+				
+				// maintaining request to be bundled in a single $batch request
+				this.aBatchRequestQueue = [];
 
 				// considering different count mode settings
 				if (mParameters && mParameters.countMode == sap.ui.model.odata.CountMode.None) {
@@ -267,8 +270,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.getProperty
 	 * @param {string} sPropertyName
 	 * @returns {string} The property.
 	 */
@@ -278,8 +279,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.getFilterablePropertyNames
 	 * @returns {Array} The names of the filterable properties in the given entity set.
 	 */
 	AnalyticalBinding.prototype.getFilterablePropertyNames = function() {
@@ -288,8 +287,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.getSortablePropertyNames
 	 * @returns {Array} The names of the sortable properties in the given entity set.
 	 */
 	AnalyticalBinding.prototype.getSortablePropertyNames = function() {
@@ -298,8 +295,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.getPropertyLabel
 	 * @param {string} sPropertyName
 	 * @returns {string} The label maintained for the given property.
 	 */
@@ -309,8 +304,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.getPropertyHeading
 	 * @param {string} sPropertyName
 	 * @returns {string} The heading maintained for the given property.
 	 */
@@ -320,8 +313,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.getPropertyQuickInfo
 	 * @param {string} sPropertyName
 	 * @returns {string} The quick info maintained for the given property.
 	 */
@@ -331,8 +322,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @protected
-	 * @function
-	 * @name AnalyticalBinding.prototype.isMeasure
 	 * @param {string} sPropertyName
 	 * @returns {boolean} true, if the given property is a measure
 	 */
@@ -344,8 +333,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Filters the tree according to the filter definitions.
 	 * 
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]}
 	 *            aFilter Array of sap.ui.model.Filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
@@ -376,8 +363,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Sorts the tree.
 	 * 
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.sort
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]}
 	 *            aSorter the Sorter or an array of sorter objects object which define the sort order
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
@@ -549,8 +534,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @public
-	 * @function
-	 * @name AnalyticalBinding.prototype.loadGroups
 	 * @param {Object}
 	 *            oGroupIdRanges Property names are group IDs to be loaded via the model. Property values are arrays of { startIndex, length,
 	 *            threshold } describing the index ranges to be fetched.
@@ -582,8 +565,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 	
 	/**
-	 * @function
-	 * @name AnalyticalBinding.prototype.getAnalyticalQueryResult()
 	 */
 	AnalyticalBinding.prototype.getAnalyticalQueryResult = function() {
 		return this.oAnalyticalQueryResult;
@@ -612,8 +593,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getContextsForParentContext
 	 */
 	AnalyticalBinding.prototype._getContextsForParentContext = function(oParentContext, iStartIndex, iLength,
 			iThreshold, iLevel, iNumberOfExpandedLevels) {
@@ -631,8 +610,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getContextsForParentContext
 	 */
 	AnalyticalBinding.prototype._getContextsForParentGroupId = function(sParentGroupId, iStartIndex, iLength,
 			iThreshold, iNumberOfExpandedLevels) {
@@ -730,8 +707,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				bExecuteRequest = true;
 				var aMembersRequestId;
 				if (this.bUseBatchRequests) {
-					var aRequestQueue = [];
-					
 					if (bGroupLevelAutoExpansionIsActive) {
 						aMembersRequestId = this._prepareGroupMembersAutoExpansionRequestIds(sParentGroupId, iNumberOfExpandedLevels);
 						for (var i = -1, sRequestId; (sRequestId = aMembersRequestId[++i]) !== undefined; ) {
@@ -741,26 +716,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							}
 						}
 						if (bExecuteRequest) {
-							aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
+							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
 						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
-							aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
+							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
 							aMembersRequestId = [ this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}) ];
 						}
 					}
 					if (bExecuteRequest && bNeedTotalSize) {
 						aMembersRequestId.push(this._getRequestId(AnalyticalBinding._requestType.totalSizeQuery));
 						this._considerRequestGrouping(aMembersRequestId);
-						aRequestQueue.push([ AnalyticalBinding._requestType.totalSizeQuery ]);
+						this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.totalSizeQuery ]);
 					}
 					if (bExecuteRequest) {
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
 							this._abortAllPendingRequests();  
 						}
 						
-						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [ aRequestQueue ]);
+						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
 					}
 				} else { // ! bUseBatchRequests
 					var oMemberRequestDetails;
@@ -801,6 +776,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 	
 	AnalyticalBinding.prototype._processRequestQueue = function(aRequestQueue) {
+		// if no argument is given: use the shared member aBatchRequestQueue 
+		if (aRequestQueue === undefined || aRequestQueue === null) {
+			//safety check: empty array fallback in case the "global" batch queue is not defined yet
+			aRequestQueue = this.aBatchRequestQueue || [];
+		}
+		// step out if the request queue is still empty after our previous checks
 		if (aRequestQueue.length == 0) {
 			return;
 		}
@@ -856,13 +837,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this._executeQueryRequest(aRequestDetails[0]);
 		}
 	
+		// clean up request queue after processing, if it is based on the shared member request queue
+		if (aRequestQueue === this.aBatchRequestQueue) {
+			this.aBatchRequestQueue = [];
+		}
 	};
 	
 	/** *************************************************************** */
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._prepareGroupMembersQueryRequest
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersQueryRequest = function(iRequestType, sGroupId, iStartIndex, iLength) {
 		var aGroupId = [];
@@ -1019,8 +1002,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._prepareTotalSizeQueryRequest
 	 */
 	AnalyticalBinding.prototype._prepareTotalSizeQueryRequest = function(iRequestType) {
 	
@@ -1058,8 +1039,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionQueryRequest
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionQueryRequest = function(iRequestType, sGroupId, oGroupExpansionFirstMissingMember, iLength, iNumberOfExpandedLevels) {
 		var that = this;
@@ -1418,8 +1397,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._prepareReloadMeasurePropertiesQueryRequest
 	 */
 	AnalyticalBinding.prototype._prepareReloadMeasurePropertiesQueryRequest = function(iRequestType, oGroupMembersRequestDetails, oMultiUnitRepresentative) {
 		// build OData request based on given request details
@@ -1507,8 +1484,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionRequestIds
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionRequestIds = function(sGroupId, iNumberOfExpandedLevels) {
 		// intention of this function is to encapsulate the knowledge about steps to be taken
@@ -1524,8 +1499,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getQueryODataRequestOptions
 	 */
 	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest) {
 		
@@ -1573,8 +1546,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._executeBatchRequest
 	 */
 	AnalyticalBinding.prototype._executeBatchRequest = function(aRequestDetails) {
 		var iCurrentAnalyticalInfoVersion = this.iAnalyticalInfoVersionNumber;
@@ -1731,8 +1702,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._executeQueryRequest
 	 */
 	AnalyticalBinding.prototype._executeQueryRequest = function(oRequestDetails) {
 		if (oRequestDetails.iRequestType == AnalyticalBinding._requestType.groupMembersAutoExpansionQuery) {
@@ -1847,8 +1816,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._abortAllPendingRequests
 	 */
 	AnalyticalBinding.prototype._abortAllPendingRequests = function() {
 		this._abortAllPendingRequestsByHandle();
@@ -1857,8 +1824,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._processGroupMembersQueryResponse
 	 */
 	AnalyticalBinding.prototype._processGroupMembersQueryResponse = function(oRequestDetails, oData) {
 		var sGroupId = oRequestDetails.sGroupId, 
@@ -2080,8 +2045,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aReloadMeasureRequestId = [];
 		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
 			if (this.bUseBatchRequests) {
-				var aRequestQueue = [ [AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails] ];
-				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [aRequestQueue]);
+				this.aBatchRequestQueue.push([AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails]);
+				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
 			} else {
 				for (var q = 0; q < aReloadMeasuresRequestDetails.length; q++){
 					var oReloadMeasuresRequestDetails2 = aReloadMeasuresRequestDetails[q];
@@ -2195,8 +2160,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._processTotalSizeQueryResponse
 	 */
 	AnalyticalBinding.prototype._processTotalSizeQueryResponse = function(oRequestDetails, oData) {
 		if (oData.__count == undefined) {
@@ -2208,8 +2171,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._processLevelMembersQueryResponse
 	 */
 	AnalyticalBinding.prototype._processLevelMembersQueryResponse = function(oRequestDetails, oData) {
 		// local helper function to transform a block of entries in the level response to a response for a particular parent group 
@@ -2304,8 +2265,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._processReloadMeasurePropertiesQueryResponse
 	 */
 	AnalyticalBinding.prototype._processReloadMeasurePropertiesQueryResponse = function(oRequestDetails, oData) {
 		var oMultiUnitRepresentative = oRequestDetails.oMultiUnitRepresentative;
@@ -2339,8 +2298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getLoadedContextsForGroup
 	 */
 	AnalyticalBinding.prototype._getLoadedContextsForGroup = function(sGroupId, iStartIndex, iLength) {
 		var aContext = [], oContext, fKey = this._getKeys(sGroupId), sKey;
@@ -2375,8 +2332,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._calculateRequiredGroupSection
 	 */
 	AnalyticalBinding.prototype._calculateRequiredGroupSection = function(sGroupId, iStartIndex, iLength, iThreshold, aContext) {
 		// implementation copied from ODataListBinding; name changed here, because analytical binding comprises more calculations 
@@ -2458,16 +2413,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 
 	/**
-	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._calculateRequiredGroupExpansion
-	 * 		Searches for missing members in the sub groups and subsequent siblings and ancestors of the given sGroupId
+	 * Searches for missing members in the sub groups and subsequent siblings and ancestors of the given sGroupId
 	 * @returns {Object} Either { groupId_Missing, startIndex_Missing, length_Missing } 
 	 * expressing the number (length_Missing) of missing contexts starting in group (groupId_Missing) 
 	 * at position (startIndex_Missing) using depth-first traversal of loaded data, 
 	 * or { null, length_Missing } if all groups starting with the given ID (sGroupId) and all subsequent are 
 	 * completely loaded and still (length_Missing) further members are missing, which cannot be fulfilled by loading data.
 	 * Special case: { null, 0 } denotes that everything is loaded for the requested length.
+	 * @private
 	 */
 	AnalyticalBinding.prototype._calculateRequiredGroupExpansion = function(sGroupId, iAutoExpandGroupsToLevel, iStartIndex, iLength) {
 		var oNO_MISSING_MEMBER = { groupId_Missing: null, length_Missing: 0 };
@@ -2588,8 +2541,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getResourcePath
 	 */
 	AnalyticalBinding.prototype._getResourcePath = function() {
 		return this.isRelative() ? this.oModel.resolve(this.sPath, this.getContext()) : this.sPath;
@@ -2597,8 +2548,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getEntitySet
 	 */
 	AnalyticalBinding.prototype._getEntitySet = function() {
 		var sEntitySet = this.sEntitySetName;
@@ -2616,10 +2565,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 	
 	/**
-	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getEffectiveSortOrder
 	 * get the effective sort order for a given property considering the column settings, local sort() calls and a global sort order from bindRows 
+	 * @private
 	 */
 	AnalyticalBinding.prototype._getEffectiveSortOrder = function(sPropertyName) {
 		for (var i = 0; i < this.aSorter.length; i++) {
@@ -2632,10 +2579,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	
 	/**
-	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getFilterOperatorMatchingPropertySortOrder
 	 * get the filter operator that matches the sort order set for the given property 
+	 * @private
 	 */
 	AnalyticalBinding.prototype._getFilterOperatorMatchingPropertySortOrder = function(sPropertyName, bWithEqual) {
 		var sFilterOperator;
@@ -2663,8 +2608,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._convertDeprecatedFilterObjects
 	 */
 	AnalyticalBinding.prototype._convertDeprecatedFilterObjects = function(aFilter) {
 		if (! aFilter) {
@@ -2688,8 +2631,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getGroupIdFromContext
 	 */
 	AnalyticalBinding.prototype._getGroupIdFromContext = function(oContext, iLevel) {
 	
@@ -2715,8 +2656,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getGroupIdLevel
 	 */
 	AnalyticalBinding.prototype._getGroupIdLevel = function(sGroupId) {
 		if (sGroupId == null) {
@@ -2728,8 +2667,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getGroupIdComponents
 	 */
 	AnalyticalBinding.prototype._getGroupIdComponents = function(sGroupId) {
 		if (sGroupId == null) {
@@ -2748,10 +2685,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 	
 	/**
-	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getGroupIdAncestors
 	 * @param {integer} iNumLevels anchestors starting at the root if greater than 0, or starting at the parent of sGroupId if less than 0.
+	 * @private
 	 */
 	AnalyticalBinding.prototype._getGroupIdAncestors = function(sGroupId, iNumLevels) {
 		if (!iNumLevels) {
@@ -2795,8 +2730,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	/**
 	 * @private
-	 * @function
-	 * @name AnalyticalBinding.prototype._getParentGroupId
 	 */
 	AnalyticalBinding.prototype._getParentGroupId = function(sGroupId) {
 		return this._getGroupIdAncestors(sGroupId, -1)[0];
@@ -2823,7 +2756,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Get an ID for a new request handle yet to be registered
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._getIdForNewRequestHandle = function() {
 		if (this.oPendingRequestHandle === undefined) {
@@ -2843,7 +2775,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Register a new request handle with its given request ID
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._registerNewRequestHandle = function(iRequestHandleId, oRequestHandle) {
 		if (this.oPendingRequestHandle[iRequestHandleId] !== undefined) {
@@ -2856,7 +2787,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Deregister handle of completed request
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._deregisterHandleOfCompletedRequest = function(iRequestHandleId) {
 		if (this.oPendingRequestHandle[iRequestHandleId] === undefined) {
@@ -2869,7 +2799,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Abort all currently sent requests, which have not yet been completed  
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._abortAllPendingRequestsByHandle = function() {
 // 		this._trace_enter("ReqHandle", "_abortAllPendingRequestsByHandle"); // DISABLED FOR PRODUCTION 		
@@ -2893,7 +2822,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Construct a request ID for a query request of the specified type
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._getRequestId = function(iRequestType, mParameters) {
 		switch (iRequestType) {
@@ -2928,7 +2856,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Register another request to maintain its lifecycle (pending, completed)
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._registerNewRequest = function(sRequestId) {
 		if (sRequestId == undefined || sRequestId == "") {
@@ -2946,7 +2873,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Declare a group of related (pending) requests
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._considerRequestGrouping = function(aRequestId) {
 		for (var i = -1, sRequestId; (sRequestId = aRequestId[++i]) !== undefined; ) {
@@ -2964,7 +2890,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Is a request pending for a given group ID?
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._isRequestPending = function(sRequestId) {
 		return this.oPendingRequests[sRequestId] != undefined && this.oPendingRequests[sRequestId] > 0;
@@ -2975,7 +2900,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * (not immediately, but logically) by this._cleanupGroupingForCompletedRequest to cleanup grouping information.
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype._deregisterCompletedRequest = function(sRequestId) {
 		if (!this.oPendingRequests[sRequestId]) {
@@ -2994,9 +2918,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * 
 	 * A call to this method must be preceded by this._deregisterCompletedRequest to mark the received response.
 	 * 
+	 * @return {boolean} whether or not all requests grouped together with this request have now been completed
 	 * @private
-	 * @function
-	 * @return a Boolean whether or not all requests grouped together with this request have now been completed
 	 */
 	AnalyticalBinding.prototype._cleanupGroupingForCompletedRequest = function(sRequestId) {
 		if (this._isRequestPending(sRequestId)) {
@@ -3023,9 +2946,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		return bGroupCompleted;
 	};
 
-	/********************************************************************************
-	 *** Service data consolidation (for multi-unit entities) 
-	 ********************************************************************************/
+	//********************************************************************************
+	//*** Service data consolidation (for multi-unit entities) 
+	//********************************************************************************/
 	
 	AnalyticalBinding.prototype._getKeyIndexMapping = function(sGroupId, iStartIndex) {
 		var aKeyIndex = this.mKeyIndex[sGroupId];
@@ -3470,9 +3393,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	
 	
-	/********************************
-	 *** Miscellaneous
-	 ********************************/
+	//********************************
+	//*** Miscellaneous
+	//********************************/
 	
 	AnalyticalBinding.prototype._clearAllPendingRequests = function() {
 		this.oPendingRequests = {};
@@ -3483,7 +3406,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Resets the current list data and length
 	 * 
 	 * @private
-	 * @function
 	 */
 	AnalyticalBinding.prototype.resetData = function(oContext) {
 		var sGroupId = oContext ? oContext.getPath() : undefined;
@@ -3522,14 +3444,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * the data from the service. To update a control, even if no data has been changed, e.g. to reset a control after failed validation, please use the parameter
 	 * bForceUpdate.
 	 * 
-	 * @public
-	 * @function
 	 * @param {boolean}
 	 *            [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {object}
 	 *            [mChangedEntities]
 	 * @param {object}
 	 *            [mEntityTypes]
+	 * @public
 	 */
 	AnalyticalBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
@@ -3569,11 +3490,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	/**
 	 * Check whether this Binding would provide new values and in case it changed, inform interested parties about this.
 	 * 
-	 * @public
-	 * @function
 	 * @param {boolean}
 	 *            bForceUpdate
 	 * @param {object} mChangedEntities
+	 * @public
 	 */
 	AnalyticalBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
 		var bChangeDetected = false;
@@ -3603,8 +3523,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	/**
 	 * Get download URL
 	 * @param {string} sFormat The required format for the download
-	 * @name sap.ui.model.odata.ODataListBinding#getDownloadUrl
-	 * @function
 	 * @since 1.24
 	 */
 	AnalyticalBinding.prototype.getDownloadUrl = function(sFormat) {
@@ -3700,9 +3618,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		
 	};
 	
-	/********************************
-	 *** Tracing execution
-	 ********************************/
+	//********************************
+	//*** Tracing execution
+	//********************************/
 	
 	/** DISABLED FOR PRODUCTION
 // 	 *    to enable, search using regex for "^// (.*\._trace_.*)", replace by "$1"

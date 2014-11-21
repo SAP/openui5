@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 
 
 	/**
-	 * @class Paginator renderer.
-	 * @static
+	 * Paginator renderer.
+	 * @namespace
 	 */
 	var PaginatorRenderer = {};
 	

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Image
+	 * @alias sap.ui.commons.Image
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Image = Control.extend("sap.ui.commons.Image", /** @lends sap.ui.commons.Image.prototype */ { metadata : {
@@ -42,11 +42,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Relative or absolute path to URL where the image file is stored.
 			 */
 			src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
-	
-			/**
-			 * Invisible images are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * When the empty value is kept, the original size is not changed. It is also possible to make settings for width or height only, the overall size is maintained then, considering the aspect ratio.

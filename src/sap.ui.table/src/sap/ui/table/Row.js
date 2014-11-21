@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.table.Row
+	 * @alias sap.ui.table.Row
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Row = Element.extend("sap.ui.table.Row", /** @lends sap.ui.table.Row.prototype */ { metadata : {
@@ -42,13 +42,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	/**
 	 * Returns the index of the row in the table or -1 if not added to a table.
 	 *
-	 * @name sap.ui.table.Row#getIndex
-	 * @function
-	 * @type int
+	 * @return {int}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
 	Row.prototype.getIndex = function() {
 		var oTable = this.getParent();
 		if (oTable) {

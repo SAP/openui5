@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @name sap.ui.unified.ShellHeadUserItem
+	 * @alias sap.ui.unified.ShellHeadUserItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellHeadUserItem = Element.extend("sap.ui.unified.ShellHeadUserItem", /** @lends sap.ui.unified.ShellHeadUserItem.prototype */ { metadata : {
@@ -56,6 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 	
 	ShellHeadUserItem.prototype.onclick = function(oEvent){
 		this.firePress();
+		// IE always interprets a click on an anker as navigation and thus triggers the 
+		// beforeunload-event on the window. Since a ShellHeadItem never has a valid href-attribute,
+		// the default behavior should never be triggered
+		oEvent.preventDefault();
 	};
 	
 	ShellHeadUserItem.prototype.onsapspace = ShellHeadUserItem.prototype.onclick;

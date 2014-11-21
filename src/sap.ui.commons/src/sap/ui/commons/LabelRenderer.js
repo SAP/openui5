@@ -10,11 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	
 	/**
-	 * @class
-	 *
-	 * @author SAP - TD Core UI&AM UI Infra
-	 * @version 0.1
-	 * @static
+	 * @author SAP SE
+	 * @namespace
 	 */
 	var LabelRenderer = {
 	//	sap.ui.core.Renderer.apply(this, arguments);
@@ -30,11 +27,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// Some convenience variables.
 		var rm = oRenderManager;
 		var r = LabelRenderer;
-	
-		// Return immediately if control is invisible
-		if (!oLabel.getVisible()) {
-			return;
-		}
 	
 		rm.write("<label");
 		rm.writeControlData(oLabel);

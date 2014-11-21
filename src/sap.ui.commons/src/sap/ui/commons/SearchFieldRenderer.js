@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SearchField renderer.
-	 * @static
+	 * SearchField renderer.
+	 * @namespace
 	 */
 	var SearchFieldRenderer = {
 	};
@@ -24,11 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	SearchFieldRenderer.render = function(oRenderManager, oControl){
 	    var rm = oRenderManager;
-	
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
+
 	    rm.write("<div");
 	    rm.writeControlData(oControl);
 	    rm.addClass("sapUiSearchField");

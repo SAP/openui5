@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @constructor
 		 * @public
-		 * @name sap.m.Select
+		 * @alias sap.m.Select
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ { metadata: {
@@ -34,11 +34,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				 * The name to be used in the HTML code (e.g. for HTML forms that send data to the server via submit).
 				 */
 				name: { type : "string", group : "Misc", defaultValue : "" },
-
-				/**
-				 * Determines whether the control is visible or not.
-				 */
-				visible: { type: "boolean", group: "Appearance", defaultValue: true },
 
 				/**
 				 * Determines whether the user can change the selected value.
@@ -153,8 +148,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
 		 * @private
-		 * @name sap.m.Select#findFirstEnabledItem
-		 * @function
 		 */
 		Select.prototype.findFirstEnabledItem = function(aItems) {
 			var oList = this.getList();
@@ -167,8 +160,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
 		 * @private
-		 * @name sap.m.Select#findLastEnabledItem
-		 * @function
 		 */
 		Select.prototype.findLastEnabledItem = function(aItems) {
 			var oList = this.getList();
@@ -180,8 +171,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {int} iIndex
 		 * @private
-		 * @name sap.m.Select#setSelectedIndex
-		 * @function
 		 */
 		Select.prototype.setSelectedIndex = function(iIndex, _aItems /* only for internal usage */) {
 			var oItem;
@@ -201,8 +190,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Scrolls an item into the visual viewport.
 		 *
 		 * @private
-		 * @name sap.m.Select#scrollToItem
-		 * @function
 		 */
 		Select.prototype.scrollToItem = function(oItem) {
 			var oPicker = this.getPicker(),
@@ -236,8 +223,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {string} sValue
 		 * @private
-		 * @name sap.m.Select#setValue
-		 * @function
 		 */
 		Select.prototype.setValue = function(sValue) {
 			var $Label = this.$().children("." + SelectRenderer.CSS_CLASS + "Label");
@@ -253,8 +238,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {boolean}
 		 * @private
-		 * @name sap.m.Select#_isRequiredSelectElement
-		 * @function
 		 */
 		Select.prototype._isRequiredSelectElement = function() {
 			if (this.getAutoAdjustWidth()) {
@@ -270,8 +253,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.List}
 		 * @private
 		 * @since 1.22.0
-		 * @name sap.m.Select#getList
-		 * @function
 		 */
 		Select.prototype.getList = function() {
 			if (this.bIsDestroyed) {
@@ -287,8 +268,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * according to the data model.
 		 *
 		 * @private
-		 * @name sap.m.Select#updateItems
-		 * @function
 		 */
 		Select.prototype.updateItems = function(sReason) {
 			SelectList.prototype.updateItems.apply(this, arguments);
@@ -304,8 +283,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 *
 		 * @private
-		 * @name sap.m.Select#refreshItems
-		 * @function
 		 */
 		Select.prototype.refreshItems = function() {
 			SelectList.prototype.refreshItems.apply(this, arguments);
@@ -319,8 +296,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * This event handler will be called before the Select Picker is opened.
 		 *
 		 * @private
-		 * @name sap.m.Select#onBeforeOpen
-		 * @function
 		 */
 		Select.prototype.onBeforeOpen = function() {
 			var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
@@ -338,8 +313,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * This event handler will be called after the control's picker pop-up is opened.
 		 *
 		 * @private
-		 * @name sap.m.Select#onAfterOpen
-		 * @function
 		 */
 		Select.prototype.onAfterOpen = function() {};
 
@@ -347,8 +320,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * This event handler will be called before the picker pop-up is closed.
 		 *
 		 * @private
-		 * @name sap.m.Select#onBeforeClose
-		 * @function
 		 */
 		Select.prototype.onBeforeClose = function() {
 
@@ -360,8 +331,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * This event handler will be called after the picker pop-up is closed.
 		 *
 		 * @private
-		 * @name sap.m.Select#onAfterClose
-		 * @function
 		 */
 		Select.prototype.onAfterClose = function() {};
 
@@ -370,8 +339,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling <code>createPicker()</code> method.
 		 * @private
-		 * @name sap.m.Select#getPicker
-		 * @function
 		 */
 		Select.prototype.getPicker = function() {
 			if (this.bIsDestroyed) {
@@ -386,8 +353,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Setter for property <code>_sPickerType</code>.
 		 *
 		 * @private
-		 * @name sap.m.Select#setPickerType
-		 * @function
 		 */
 		Select.prototype.setPickerType = function(sPickerType) {
 			this._sPickerType = sPickerType;
@@ -398,8 +363,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {string}
 		 * @private
-		 * @name sap.m.Select#getPickerType
-		 * @function
 		 */
 		Select.prototype.getPickerType = function() {
 			return this._sPickerType;
@@ -414,8 +377,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.m.Popover}
 		 * @private
-		 * @name sap.m.Select#_createPopover
-		 * @function
 		 */
 		Select.prototype._createPopover = function() {
 
@@ -438,8 +399,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {sap.m.Popover}
 		 * @private
-		 * @name sap.m.Select#_decoratePopover
-		 * @function
 		 */
 		Select.prototype._decoratePopover = function(oPopover) {
 			var that = this;
@@ -497,8 +456,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Required adaptations after rendering of the Popover.
 		 *
 		 * @private
-		 * @name sap.m.Select#_onAfterRenderingPopover
-		 * @function
 		 */
 		Select.prototype._onAfterRenderingPopover = function() {
 			var oPopover = this.getPicker(),
@@ -527,8 +484,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.m.Dialog}
 		 * @private
-		 * @name sap.m.Select#_createDialog
-		 * @function
 		 */
 		Select.prototype._createDialog = function() {
 			var CSS_CLASS = SelectRenderer.CSS_CLASS;
@@ -555,8 +510,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Called before the Dialog is opened.
 		 *
 		 * @private
-		 * @name sap.m.Select#_onBeforeOpenDialog
-		 * @function
 		 */
 		Select.prototype._onBeforeOpenDialog = function() {
 			var oHeader = this.getPicker().getCustomHeader();
@@ -571,8 +524,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Initialization hook for the Select.
 		 *
 		 * @private
-		 * @name sap.m.Select#init
-		 * @function
 		 */
 		Select.prototype.init = function() {
 
@@ -587,8 +538,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Required adaptations before rendering.
 		 *
 		 * @private
-		 * @name sap.m.Select#onBeforeRendering
-		 * @function
 		 */
 		Select.prototype.onBeforeRendering = function() {
 			this.synchronizeSelection();
@@ -603,8 +552,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#ontouchstart
-		 * @function
 		 */
 		Select.prototype.ontouchstart = function(oEvent) {
 
@@ -623,8 +570,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#ontouchend
-		 * @function
 		 */
 		Select.prototype.ontouchend = function(oEvent) {
 
@@ -643,8 +588,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#ontap
-		 * @function
 		 */
 		Select.prototype.ontap = function(oEvent) {
 			var CSS_CLASS = SelectRenderer.CSS_CLASS;
@@ -681,8 +624,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {sap.ui.base.Event} oControlEvent
 		 * @private
-		 * @name sap.m.Select#onSelectionChange
-		 * @function
 		 */
 		Select.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("selectedItem");
@@ -715,8 +656,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onkeypress
-		 * @function
 		 */
 		Select.prototype.onkeypress = function(oEvent) {
 
@@ -744,8 +683,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapshow
-		 * @function
 		 */
 		Select.prototype.onsapshow = function(oEvent) {
 
@@ -765,7 +702,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsaphide
 		 * @function
 		 */
 		Select.prototype.onsaphide = Select.prototype.onsapshow;
@@ -775,8 +711,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapescape
-		 * @function
 		 */
 		Select.prototype.onsapescape = function(oEvent) {
 
@@ -794,8 +728,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapenter
-		 * @function
 		 */
 		Select.prototype.onsapenter = function(oEvent) {
 
@@ -810,8 +742,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapspace
-		 * @function
 		 */
 		Select.prototype.onsapspace = function(oEvent) {
 
@@ -829,8 +759,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapdown
-		 * @function
 		 */
 		Select.prototype.onsapdown = function(oEvent) {
 
@@ -860,8 +788,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapup
-		 * @function
 		 */
 		Select.prototype.onsapup = function(oEvent) {
 
@@ -891,8 +817,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsaphome
-		 * @function
 		 */
 		Select.prototype.onsaphome = function(oEvent) {
 
@@ -919,8 +843,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapend
-		 * @function
 		 */
 		Select.prototype.onsapend = function(oEvent) {
 
@@ -947,8 +869,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsappagedown
-		 * @function
 		 */
 		Select.prototype.onsappagedown = function(oEvent) {
 
@@ -981,8 +901,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsappageup
-		 * @function
 		 */
 		Select.prototype.onsappageup = function(oEvent) {
 
@@ -1011,12 +929,28 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
+		 * Handle the focusin event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @name sap.m.Select#onfocusin
+		 * @function
+		 */
+		Select.prototype.onfocusin = function(oEvent) {
+
+			// note: in some circumstances IE browsers focus non-focusable elements
+			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
+
+				// force the focus to leave the inner element and set it back to the control's root element
+				this.focus();
+			}
+		};
+
+		/**
 		 * Handle the focus leave event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.Select#onsapfocusleave
-		 * @function
 		 */
 		Select.prototype.onsapfocusleave = function(oEvent) {
 			var oPicker = this.getAggregation("picker");
@@ -1028,27 +962,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
-			if (jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (sap.ui.Device.system.desktop && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 				// force the focus to stay in the input field
 				this.focus();
-			}
-		};
-
-		/**
-		 * Handle the focusin event.
-		 * IE FIX: the browser does not focus on sap.m.Select but on its inner span (select icon).
-		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
-		 * @name sap.m.Select#onfocusin
-		 * @function
-		 */
-		Select.prototype.onfocusin = function(oEvent) {
-			if (sap.ui.Device.browser.internet_explorer) {
-				var oSelectIcon = this.$().children(".sapMSltIcon");
-				if (oSelectIcon.is(":focus")) {
-					this.focus();
-				}
 			}
 		};
 
@@ -1126,8 +1043,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {string} sPickerType
 		 * @returns {sap.m.Popover | sap.m.Dialog}
 		 * @protected
-		 * @name sap.m.Select#createPicker
-		 * @function
 		 */
 		Select.prototype.createPicker = function(sPickerType) {
 			var oPicker = this.getAggregation("picker");
@@ -1523,8 +1438,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * <strong>Note</strong>: this is the default aggregation for Select.
 		 * @return {sap.ui.core.Item[]}
 		 * @public
-		 * @name sap.m.Select#getItems
-		 * @function
 		 */
 		Select.prototype.getItems = function() {
 			var oList = this.getList();
@@ -1541,8 +1454,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.Select#setSelectedItem
-		 * @function
 		 */
 		Select.prototype.setSelectedItem = function(vItem) {
 
@@ -1588,8 +1499,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
 		 * @since 1.12
-		 * @name sap.m.Select#setSelectedItemId
-		 * @function
 		 */
 		Select.prototype.setSelectedItemId = function(vItem) {
 			vItem = this.validateProperty("selectedItemId", vItem);
@@ -1635,8 +1544,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
 		 * @since 1.11
-		 * @name sap.m.Select#setSelectedKey
-		 * @function
 		 */
 		Select.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
@@ -1682,8 +1589,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null} Item at the given index, or null if none.
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.Select#getItemAt
-		 * @function
 		 */
 		Select.prototype.getItemAt = function(iIndex) {
 			return this.getItems()[ +iIndex] || null;
@@ -1694,8 +1599,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.ui.core.Item | null} The current target of the <code>selectedItem</code> association, or null.
 		 * @public
-		 * @name sap.m.Select#getSelectedItem
-		 * @function
 		 */
 		Select.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
@@ -1708,8 +1611,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null} The first item, or null if there are no items.
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.Select#getFirstItem
-		 * @function
 		 */
 		Select.prototype.getFirstItem = function() {
 			return this.getItems()[0] || null;
@@ -1721,8 +1622,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null} The last item, or null if there are no items.
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.Select#getLastItem
-		 * @function
 		 */
 		Select.prototype.getLastItem = function() {
 			var aItems = this.getItems();
@@ -1736,8 +1635,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @return {sap.ui.core.Item[]} An array containing the enabled items.
 		 * @public
 		 * @since 1.22.0
-		 * @name sap.m.Select#getEnabledItems
-		 * @function
 		 */
 		Select.prototype.getEnabledItems = function(aItems) {
 			var oList = this.getList();
@@ -1752,8 +1649,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.ui.core.Item | null}
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.Select#getItemByKey
-		 * @function
 		 */
 		Select.prototype.getItemByKey = function(sKey) {
 			var oList = this.getList();
@@ -1766,8 +1661,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or id.
 		 * @returns {sap.ui.core.Item} The removed item or null.
 		 * @public
-		 * @name sap.m.Select#removeItem
-		 * @function
 		 */
 		Select.prototype.removeItem = function(vItem) {
 			var oList = this.getList(),
@@ -1809,8 +1702,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
 		 * @public
-		 * @name sap.m.Select#removeAllItems
-		 * @function
 		 */
 		Select.prototype.removeAllItems = function() {
 			var oList = this.getList(),
@@ -1831,8 +1722,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.Select#destroyItems
-		 * @function
 		 */
 		Select.prototype.destroyItems = function() {
 			var oList = this.getList();
@@ -1855,8 +1744,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {boolean} Determines whether the Select is currently open (this includes opening and closing animations).
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.Select#isOpen
-		 * @function
 		 */
 		Select.prototype.isOpen = function() {
 			var oPicker = this.getAggregation("picker");
@@ -1869,8 +1756,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.Select#close
-		 * @function
 		 */
 		Select.prototype.close = function() {
 			var oPicker = this.getAggregation("picker");

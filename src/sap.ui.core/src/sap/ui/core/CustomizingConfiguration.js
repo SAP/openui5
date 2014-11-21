@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './Core'],
 		 * @constructor
 		 * @private
 		 * @since 1.15.1
-		 * @name sap.ui.core.CustomizingConfiguration
+		 * @alias sap.ui.core.CustomizingConfiguration
 		 */
 		var CustomizingConfiguration = {
 			

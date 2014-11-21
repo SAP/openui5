@@ -9,10 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class
 	 * @author SAP SE
-	 * @version 0.1
-	 * @static
+	 * @namespace
 	 */
 	var TriStateCheckBoxRenderer = {};
 	
@@ -23,17 +21,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TriStateCheckBoxRenderer.render = function(oRm, oControl) {
-	
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		var myTabIndex = 0;
 		var bReadOnly = false;
 	
 		// Collect state information
-	  var enabled = !!oControl.getEnabled();
+		var enabled = !!oControl.getEnabled();
 		var editable = !!oControl.getEditable();
 		var inErrorState = false;
 		var inWarningState = false;

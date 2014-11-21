@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 
 	/**
-	 * @class NotificationBar renderer.
-	 * @static
+	 * NotificationBar renderer.
+	 * @namespace
 	 */
 	var NotificationBarRenderer = {};
 	

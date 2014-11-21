@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 	 * @author Frank Weigel (Martin Schaus)
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.Configuration
+	 * @alias sap.ui.core.Configuration
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
@@ -90,18 +90,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"weinreId"              : { type : "string",   defaultValue : "" },
 					"preload"               : { type : "string",   defaultValue : "auto" },
 					"rootComponent"         : { type : "string",   defaultValue : "",        noUrl:true },
-					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
+					"preloadLibCss"         : { type : "string[]", defaultValue : [] },
 					"application"           : { type : "string",   defaultValue : "" },
 					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
+					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
+					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
-					"xx-preloadLibCss"      : { type : "string[]", defaultValue : [] },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
-					"xx-bindingSyntax"      : { type : "string",   defaultValue : "simple",  noUrl:true }, // simple|complex...
 					"xx-designMode"         : { type : "boolean",  defaultValue : false },
-					"xx-accessibilityMode"  : { type : "boolean",  defaultValue : false },
 					"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
 					"xx-bootTask"           : { type : "function", defaultValue : undefined, noUrl:true },
 					"xx-suppressDeactivationOfControllerCode" : { type : "boolean",  defaultValue : false }, //temporarily to suppress the deactivation of controller code in design mode
@@ -115,7 +114,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"sapMeProgessIndicator" : "1.14",
 					"sapMGrowingList"       : "1.14",
 					"sapMListAsTable"       : "1.14",
-					"sapMDialogWithPadding" : "1.14"
+					"sapMDialogWithPadding" : "1.14",
+					"sapCoreBindingSyntax"  : "1.24"
 			};
 
 			this.oFormatSettings = new Configuration.FormatSettings(this);
@@ -217,8 +217,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 			var oCfg = window["sap-ui-config"] || {};
 			oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
 			for (var n in M_SETTINGS) {
-				setValue(n, oCfg[n.toLowerCase()]);
+				if ( oCfg.hasOwnProperty(n.toLowerCase()) ) {
+					setValue(n, oCfg[n.toLowerCase()]);
+				} else if ( !/^xx-/.test(n) && oCfg.hasOwnProperty("xx-" + n.toLowerCase()) ) {
+					setValue(n, oCfg["xx-" + n.toLowerCase()]);
+				}
 			}
+			
 			// if libs are configured, convert them to modules and prepend them to the existing modules list
 			if ( oCfg.libs ) {
 				config.modules = jQuery.map(oCfg.libs.split(","), function($) {
@@ -264,16 +269,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					}
 				}
 
-				if (oUriParams.mParams['sap-accessibility']) {
-					// "" = false, "X", "x" = true
-					var sValue = oUriParams.get('sap-accessibility');
-					if (sValue === "X" || sValue === "x") {
-						setValue('xx-accessibilityMode', true);
-					} else {
-						setValue('xx-accessibilityMode', false);
-					}
-				}
-
 				if (oUriParams.mParams['sap-rtl']) {
 					// "" = false, "X", "x" = true
 					var sValue = oUriParams.get('sap-rtl');
@@ -305,6 +300,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 						continue;
 					}
 					var sValue = oUriParams.get(sUrlPrefix + n);
+					if ( sValue == null && !/^xx-/.test(n) ) {
+						sValue = oUriParams.get(sUrlPrefix + "xx-" + n);
+					}
 					if (sValue === "") {
 						//empty URL parameters set the parameter back to its system default
 						config[n] = M_SETTINGS[n].defaultValue;
@@ -315,7 +313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 				}
 			}
 
-		  // calculate RTL mode
+			// calculate RTL mode
 			this.derivedRTL = Locale._impliesRTL(config.language);
 			
 			// analyze theme parameter
@@ -345,6 +343,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 			}
 			config['xx-supportedLanguages'] = aLangs;
 			
+			// determine default for binding syntax
+			if ( config["bindingSyntax"] === "default" ) {
+				config["bindingSyntax"] = (config.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
+			}
+
 			// log  all non default value
 			for (var n in M_SETTINGS) {
 				if ( config[n] !== M_SETTINGS[n].defaultValue ) {

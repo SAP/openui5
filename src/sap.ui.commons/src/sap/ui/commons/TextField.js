@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.TextField
+	 * @alias sap.ui.commons.TextField
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextField = Control.extend("sap.ui.commons.TextField", /** @lends sap.ui.commons.TextField.prototype */ { metadata : {
@@ -57,11 +57,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Switches edit state of the control. Read-only fields have different colors, depending on customer setting.
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
 			 * Depending on theme the TextField is shown as required.
@@ -160,28 +155,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Puts the focus to this control.
-	 *
-	 * @name sap.ui.commons.TextField#focus
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the current value of the TextField. In case of editing the TextField you can access the current value via this method. The validated value is accessible via the property value.
-	 *
-	 * @name sap.ui.commons.TextField#getLiveValue
-	 * @function
-	 * @type string
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	TextField.prototype.init = function() {
@@ -726,8 +699,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return {id: this.getId(), userinput: this._getUnsavedUserInputInfo()};
 	};
 	
-	/*
-	 * Implementation of the getLiveValue method
+	/**
+	 * Returns the current value of the TextField. In case of editing the TextField you can access the current value via this method. The validated value is accessible via the property value.
+	 *
+	 * @type string
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TextField.prototype.getLiveValue = function() {
 		var oIDomRef = this.getInputDomRef();

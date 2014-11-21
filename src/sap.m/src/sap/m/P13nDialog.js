@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * @constructor
 	 * @public
 	 * @since 1.26
-	 * @name sap.m.P13nDialog
+	 * @alias sap.m.P13nDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.prototype */
@@ -35,6 +35,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 
 			library : "sap.m",
 			properties : {
+				/**
+				 * tbd
+				 */
+				defaultType : {
+					type : "sap.m.P13nPanelType",
+					group : "Misc",
+					defaultValue : null
+				},
+
 				/**
 				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to
 				 * true, clicking the 'Reset' button will trigger the 'reset' event sending a notification that model data must
@@ -128,25 +137,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	/*
 	 * Adds some DialogItem <code>oDialogItem</code> to the aggregation named <code>DialogItems</code>.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oDialogItem The DialogItem to add; if empty, nothing is added. @returns {P13nDialog}
+	 * @param {sap.m.P13nPanel} oDialogItem The DialogItem to add; if empty, nothing is added. @returns {P13nDialog}
 	 * <code>this</code> to allow method chaining. @public @name P13nDialog#addDialogItem @function
 	 */
 	P13nDialog.prototype.addPanel = function(oPanel) {
-		this.addAggregation("panels", oPanel);
 		if (this._getSegmentedButton()) {
 			var oButton = this._mapPanelToButton(oPanel);
 			this._getSegmentedButton().addButton(oButton);
 			this._setDialogTitleFor(oPanel, this.getContent().length);
 			// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
-			var bVisible = false;
-			if (this.getContent().length === 1) {
-				bVisible = true;
-			}
-			oPanel.setVisible(bVisible);
-			if (bVisible) {
-				this.setVerticalScrolling(oPanel.getVerticalScrolling());
-			}
-			this.getSubHeader().getContentLeft()[0].setVisible(!bVisible);
+			this._setVisibilityOfPanel(oPanel);
 		}
 		return this;
 	};
@@ -154,35 +154,27 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	/*
 	 * Inserts an item into the aggregation named <code>items</code>.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oItem The item to insert; if empty, nothing is inserted. @param {int} iIndex The
-	 * <code>0</code>-based index the item should be inserted at; for a negative value of <code>iIndex</code>, the
-	 * item is inserted at position 0; for a value greater than the current size of the aggregation, the item is inserted
-	 * at the last position. @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name
-	 * P13nDialog#insertItem @function
+	 * @param {sap.m.P13nPanel} oItem The item to insert; if empty, nothing is inserted. @param {int} iIndex The <code>0</code>-based
+	 * index the item should be inserted at; for a negative value of <code>iIndex</code>, the item is inserted at
+	 * position 0; for a value greater than the current size of the aggregation, the item is inserted at the last
+	 * position. @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name P13nDialog#insertItem
+	 * @function
 	 */
 	P13nDialog.prototype.insertPanel = function(oPanel, iIndex) {
-		this.insertAggregation("panels", oPanel, iIndex);
 		if (this._getSegmentedButton()) {
 			var oButton = this._mapPanelToButton(oPanel);
-			this._getSegmentedButton().insertButton(oButton);
+			this._getSegmentedButton().insertButton(oButton, iIndex);
 			// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
-			var bVisible = false;
-			if (this.getContent().length === 1) {
-				bVisible = true;
-			}
-			oPanel.setVisible(bVisible);
-			if (bVisible) {
-				this.setVerticalScrolling(oPanel.getVerticalScrolling());
-			}
+			this._setVisibilityOfPanel(oPanel);
 		}
 		return this;
-	};
+	};	
 
 	/*
 	 * Removes an item from the aggregation named <code>items</code>.
 	 * 
-	 * @param {int | string | sap.m.P13nDialogItem} vItem The item to remove or its index or id. @returns
-	 * {sap.m.P13nDialogItem} The removed item or null. @public @name P13nDialog#removeItem @function
+	 * @param {int | string | sap.m.P13nPanel} vItem The item to remove or its index or id. @returns {sap.m.P13nPanel} The
+	 * removed item or null. @public @name P13nDialog#removeItem @function
 	 */
 	P13nDialog.prototype.removePanel = function(vPanel) {
 		vPanel = this.removeAggregation("panels", vPanel);
@@ -196,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * Removes all the controls in the aggregation named <code>items</code>. Additionally unregisters them from the
 	 * hosting UIArea and clears the selection.
 	 * 
-	 * @returns {sap.m.P13nDialogItem[]} An array of the removed items (might be empty). @public @name
+	 * @returns {sap.m.P13nPanel[]} An array of the removed items (might be empty). @public @name
 	 * P13nDialog#removeAllItems @function
 	 */
 	P13nDialog.prototype.removeAllPanels = function() {
@@ -212,18 +204,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * 
 	 * @returns {sap.m.IconTabBar}
 	 * @private
-	 * @name sap.m.P13nDialog#_getSegmentedButton
-	 * @function
 	 */
 	P13nDialog.prototype._getSegmentedButton = function() {
 		return this.getSubHeader().getContentLeft()[0];
 	};
 
 	/*
-	 * Map an item type of sap.m.P13nDialogItem to an item type of sap.m.IconTabBarFilter.
+	 * Map an item type of sap.m.P13nPanel to an item type of sap.m.IconTabBarFilter.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oItem @returns {sap.m.IconTabFilter | null} @private @name
-	 * P13nDialog#_mapItemToTabBarItem @function
+	 * @param {sap.m.P13nPanel} oItem @returns {sap.m.IconTabFilter | null} @private @name P13nDialog#_mapItemToTabBarItem
+	 * @function
 	 */
 	P13nDialog.prototype._mapPanelToButton = function(oPanel) {
 		if (!oPanel) {
@@ -257,9 +247,26 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			} else {
 				oPanel_.setVisible(false);
 			}
-			this.invalidate();
-			this.rerender();
 		}, this);
+		this.invalidate();
+		this.rerender();
+	};
+
+	/**
+	 * Returns visible panel.
+	 * 
+	 * @returns {sap.m.P13nPanel || null}
+	 * @public
+	 */
+	P13nDialog.prototype.getVisiblePanel = function() {
+		var oPanel = null;
+		this.getContent().some(function(oPanel_) {
+			if (oPanel_.getVisible()) {
+				oPanel = oPanel_;
+				return true;
+			}
+		});
+		return oPanel;
 	};
 
 	/**
@@ -277,31 +284,73 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	};
 
 	/**
+	 * Set all panels to bVisible except of oPanel
+	 * 
+	 * @private
+	 */
+	P13nDialog.prototype._setVisibilityOfOtherPanels = function(oPanel, bVisible) {
+		for (var i = 0, aPanels = this.getContent(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
+			if (aPanels[i] === oPanel) {
+				continue;
+			}
+			aPanels[i].setVisible(bVisible);
+		}
+		return null;
+	};
+	
+	/**
+	 * Sets property 'visible' for oPanel regarding the 'defaultType' property and number of content objects.
+	 * 
+	 * @private
+	 */
+	P13nDialog.prototype._setVisibilityOfPanel = function(oPanel) {
+		var bVisible = this.getDefaultType() === oPanel.getType() || this.getContent().length === 1;
+		oPanel.setVisible(bVisible);
+		if (bVisible) {
+			this._setVisibilityOfOtherPanels(oPanel, false);
+			var oButton = oPanel.data(P13nDialogRenderer.CSS_CLASS + "Button");
+			this._getSegmentedButton().setSelectedButton(oButton);
+			this.setVerticalScrolling(oPanel.getVerticalScrolling());
+		}
+	};
+	
+	/**
 	 * Sets title of dialog in regard to oPanel.
 	 * 
 	 * @private
 	 */
 	P13nDialog.prototype._setDialogTitleFor = function(oPanel, iPanelCount) {
+		var sTitle = "";
+		var bSubHeaderVisible = true;
+
 		if (iPanelCount > 1) {
-			this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
-			return;
+			sTitle = this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
+			bSubHeaderVisible = true;
+		} else {
+			switch (oPanel.getType()) {
+				case sap.m.P13nPanelType.filter :
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_FILTER");
+					bSubHeaderVisible = false;
+					break;
+				case sap.m.P13nPanelType.sort :
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_SORT");
+					bSubHeaderVisible = false;
+					break;
+				case sap.m.P13nPanelType.group :
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_GROUP");
+					bSubHeaderVisible = false;
+					break;
+				case sap.m.P13nPanelType.columns :
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS");
+					bSubHeaderVisible = false;
+					break;
+				default :
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
+					bSubHeaderVisible = false;
+			}
 		}
-		switch (oPanel.getType()) {
-			case sap.m.P13nPanelType.filter :
-				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_FILTER")); // "VALUEHELPDLG_RANGESTITLE"
-				break;
-			case sap.m.P13nPanelType.sort :
-				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_SORT"));
-				break;
-			case sap.m.P13nPanelType.group :
-				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_GROUP"));
-				break;
-			case sap.m.P13nPanelType.columns :
-				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS"));
-				break;
-			default :
-				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
-		}
+		this.setTitle(sTitle);
+		this.getSubHeader().getContentLeft()[0].setVisible(bSubHeaderVisible);
 	};
 
 	/**

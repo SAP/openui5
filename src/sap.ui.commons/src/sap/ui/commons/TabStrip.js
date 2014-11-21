@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.TabStrip
+	 * @alias sap.ui.commons.TabStrip
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TabStrip = Control.extend("sap.ui.commons.TabStrip", /** @lends sap.ui.commons.TabStrip.prototype */ { metadata : {
@@ -87,33 +87,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 	
 	
-	/**
-	 * Convenient method to add a tab with a text as title and a root control as content.
-	 *
-	 * @name sap.ui.commons.TabStrip#createTab
-	 * @function
-	 * @param {string} sText
-	 *         Defines the title text of the newly created tab.
-	 * @param {sap.ui.core.Control} oContent
-	 *         Defines the root control of the content area.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
-	/**
-	 * This method closes a tab. If the tab is selecte thenext one will be selected. (If it's the last the previous one will be selected,)
-	 * This method should be called if the close event is fired. It can not be called automatically because the consumer might need to run some logic before the tab is closed.
-	 *
-	 * @name sap.ui.commons.TabStrip#closeTab
-	 * @function
-	 * @param {int} iIndex
-	 *         Index of the tab that should be closed.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
+	
 	
 	
 	TabStrip.prototype.init = function() {
@@ -150,16 +127,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
-	/*
+	/**
 	 * Convenient method to add a tab with a text as title and a root control as content.
 	 *
-	 * @param {string}
-	 *         sText defines the title text of the newly created tab
-	 * @param {sap.ui.core.Control}
-	 *        oContent defines the root control of the content of the tab
-	 * @return
-	 * @type {sap.ui.commons.Tab}
+	 * @param {string} sText
+	 *         Defines the title text of the newly created tab.
+	 * @param {sap.ui.core.Control} oContent
+	 *         Defines the root control of the content area.
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TabStrip.prototype.createTab = function(sText,oContent) {
 		var oTabs = this.getTabs(),
@@ -369,11 +346,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
-	/*
-	 * Close a tab. If selected, select the next one
+	/**
+	 * Close a tab. If the tab is selected, the next one will be selected. (If it's the last the previous one will be selected).
+	 * 
+	 * This method should be called if the close event is fired. It can not be called automatically because the consumer might need to run some logic before the tab is closed.
 	 *
-	 * @param {int} iIndex tab to be closed
+	 * @param {int} iIndex
+	 *         Index of the tab that should be closed.
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TabStrip.prototype.closeTab = function(iIndex) {
 	

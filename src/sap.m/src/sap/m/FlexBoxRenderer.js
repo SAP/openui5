@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 
 	/**
-	 * @class FlexBox renderer
-	 * @static
+	 * FlexBox renderer
+	 * @namespace
 	 */
 	var FlexBoxRenderer = {};
 	
@@ -21,11 +21,6 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FlexBoxRenderer.render = function(oRm, oControl) {
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-		
 		if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
 			jQuery.sap.log.warning("This browser does not support Flexible Box Layouts natively.");
 			FlexBoxRenderer.usePolyfill = true;

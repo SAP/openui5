@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/Hor
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.layout.HorizontalLayout
+	 * @alias sap.ui.commons.layout.HorizontalLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HorizontalLayout = HorizontalLayout1.extend("sap.ui.commons.layout.HorizontalLayout", /** @lends sap.ui.commons.layout.HorizontalLayout.prototype */ { metadata : {

@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	/**
 	 * @class JSView renderer.
 	 * @static
-	 * @name sap.ui.core.mvc.HTMLViewRenderer
+	 * @alias sap.ui.core.mvc.HTMLViewRenderer
 	 */
 	var HTMLViewRenderer = {
 	};
@@ -22,8 +22,6 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 * @name sap.ui.core.mvc.HTMLViewRenderer.render
-	 * @function
 	 */
 	HTMLViewRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
@@ -92,8 +90,6 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 * @param {string} sHTML the HTML to replace with the control HTML
 	 * @return {string} the replaced HTML. Empty string "" when the control ID was not found in the given HTML string.
 	 * @private
-	 * @name sap.ui.core.mvc.HTMLViewRenderer._getHTML
-	 * @function
 	 */
 	HTMLViewRenderer._getHTML = function (oRenderManager, oControl, sHTML) {
 		var sId = oControl.getId();

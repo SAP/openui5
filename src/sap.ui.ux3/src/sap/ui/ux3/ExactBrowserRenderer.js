@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ExactBrowser renderer.
-	 * @static
+	 * ExactBrowser renderer.
+	 * @namespace
 	 */
 	var ExactBrowserRenderer = {
 	};
@@ -23,10 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ExactBrowserRenderer.render = function(oRenderManager, oControl){
-		if (!oControl.getVisible()) {
-			return;
-		}
-		
 		var rm = oRenderManager;
 		rm.write("<div");
 		rm.writeControlData(oControl);

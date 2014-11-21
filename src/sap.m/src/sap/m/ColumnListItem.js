@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.ColumnListItem
+	 * @alias sap.m.ColumnListItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ { metadata : {

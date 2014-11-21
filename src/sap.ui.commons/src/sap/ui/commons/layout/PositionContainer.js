@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Eleme
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.layout.PositionContainer
+	 * @alias sap.ui.commons.layout.PositionContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PositionContainer = Element.extend("sap.ui.commons.layout.PositionContainer", /** @lends sap.ui.commons.layout.PositionContainer.prototype */ { metadata : {
@@ -75,19 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Eleme
 	}});
 	
 	
-	/**
-	 * Updates the position properties of the container according to the given position in JSON style.
-	 *
-	 * @name sap.ui.commons.layout.PositionContainer#updatePosition
-	 * @function
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control in the absolute layout. The object is expected
-	 *         to have one or more out of the attributes top, bottom, left, right (each with a value of type sap.ui.core.CSSSize). If no object
-	 *         is given, nothing is updated.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	(function() {
 	
@@ -167,6 +155,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Eleme
 	};
 	
 	
+
+	/**
+	 * Updates the position properties of the container according to the given position in JSON style.
+	 *
+	 * @param {object} oPos
+	 *         JSON-like object which defines the position of the child control in the absolute layout. The object is expected
+	 *         to have one or more out of the attributes top, bottom, left, right (each with a value of type sap.ui.core.CSSSize). If no object
+	 *         is given, nothing is updated.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	PositionContainer.prototype.updatePosition = function(oPos) {
 		if (!oPos) {
 			oPos = {};

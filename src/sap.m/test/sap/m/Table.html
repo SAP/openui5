@@ -165,9 +165,8 @@
 	
 	var oTableHeader = new sap.m.Toolbar({
 		content : [
-			new sap.m.Text({
-				text : "Keyboard Handling Test Page",
-				wrapping : false
+			new sap.m.Label({
+				text : "Keyboard Handling Test Page"
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Button({
@@ -298,7 +297,7 @@
 		selectionChange : function(e) {
 			sap.m.MessageToast.show("selection is changed");
 		},
-		delete : function(oEvent) {
+		"delete" : function(oEvent) {
 			var oItem = oEvent.getParameter("listItem");
 			
 			sap.m.MessageBox.confirm("Are you sure to delete this record?", {

@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ObjectListItem",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
-			"sap.m.P13nColumnItem",
+			"sap.m.P13nColumnsItem",
 			"sap.m.P13nColumnsPanel",
 			"sap.m.P13nConditionPanel",
 			"sap.m.P13nDialog",
@@ -168,8 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.IconTabFilter",
-			"sap.m.IconTabSeparator",
-			"sap.m.P13nDialogItem",
+			"sap.m.IconTabSeparator",			
 			"sap.m.P13nFilterItem",
 			"sap.m.P13nItem",
 			"sap.m.P13nSortItem",
@@ -1694,6 +1693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	}(sap.m));
 	
+	
 	/**
 	 * Touch helper.
 	 *
@@ -1701,8 +1701,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @name sap.m.touch
 	 * @public
 	 **/
-	
+
 	if (sap.m && !sap.m.touch) {
+
 		sap.m.touch = {};
 	}
 	
@@ -2515,6 +2516,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		},
 		bFinal: true
 	});
+	
+	
+	/* Android browser does not scroll a focused input into the view correctly after resize */
+	if (sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
+		jQuery(window).on("resize", function(){
+			var oActive = document.activeElement;
+			var sTagName = oActive.tagName;
+			if (sTagName == "INPUT" || sTagName == "TEXTAREA") {
+				window.setTimeout(function(){
+					oActive.scrollIntoViewIfNeeded();
+				}, 0);
+			}
+		});
+	}
 
 	return sap.m;
 

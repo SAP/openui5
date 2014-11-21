@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * @param {string|object[]} sName The name of the Controller to instantiate. If a Controller is defined as real sub-class,
 		 *                                   the "arguments" of the sub-class constructor should be given instead.
 		 * @public
-		 * @name sap.ui.core.mvc.Controller
+		 * @alias sap.ui.core.mvc.Controller
 		 */
 		var Controller = EventProvider.extend("sap.ui.core.mvc.Controller", /** @lends sap.ui.core.mvc.Controller.prototype */ {
 			
@@ -120,23 +120,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		
 		/**
-		 * Creates a new subclass of class sap.ui.core.mvc.Controller with name <code>sClassName</code> 
-		 * and enriches it with the information contained in <code>oClassInfo</code>.
-		 * 
-		 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-		 * see {@link sap.ui.base.Object.extend Object.extend}.
-		 *   
-		 * @param {string} sClassName name of the class to be created
-		 * @param {object} [oClassInfo] object literal with informations about the class  
-		 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-		 * @return {function} the created class / constructor function
-		 * @public
-		 * @static
-		 * @name sap.ui.core.mvc.Controller.extend
-		 * @function
-		 */
-	
-		/**
 		 * Defines a controller class or creates an instance of an already defined controller class.
 		 *
 		 * When a name and a controller implementation object is given, a new controller class
@@ -194,8 +177,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * Returns the view associated with this controller or undefined.
 		 * @return {sap.ui.core.mvc.View} View connected to this controller.
 		 * @public
-		 * @name sap.ui.core.mvc.Controller#getView
-		 * @function
 		 */
 		Controller.prototype.getView = function() {
 			return this.oView;
@@ -214,8 +195,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * @param {string} sId The view-local id
 		 * @return {sap.ui.core.Element} Element by its (view local) id
 		 * @public
-		 * @name sap.ui.core.mvc.Controller#byId
-		 * @function
 		 */
 		Controller.prototype.byId = function(sId) {
 			return this.oView ? this.oView.byId(sId) : undefined;
@@ -231,8 +210,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * @param {string} sId The view-local id
 		 * @return {string} The prefixed id
 		 * @public
-		 * @name sap.ui.core.mvc.Controller#createId
-		 * @function
 		 */
 		Controller.prototype.createId = function(sId) {
 			return this.oView ? this.oView.createId(sId) : undefined;
@@ -247,8 +224,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * @return {sap.ui.core.Component} The Component instance
 		 * @since 1.23.0
 		 * @public
-		 * @name sap.ui.core.mvc.Controller#getOwnerComponent 
-		 * @function
 		 */
 		Controller.prototype.getOwnerComponent = function () {
 			jQuery.sap.require("sap.ui.core.Component");

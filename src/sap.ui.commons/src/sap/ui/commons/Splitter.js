@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Splitter
+	 * @alias sap.ui.commons.Splitter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Splitter = Control.extend("sap.ui.commons.Splitter", /** @lends sap.ui.commons.Splitter.prototype */ { metadata : {
@@ -60,11 +60,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The height of the split area in px or in %
 			 */
 			height : {type : "sap.ui.commons.SplitterSize", group : "Behavior", defaultValue : '100%'},
-	
-			/**
-			 * Invisible splitters are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
 			 * Specifies if the browser should display scroll bars or simply cut the content of a splitter pane when the content does not fit into its pane.

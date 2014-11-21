@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectStatus renderer. 
-	 * @static
+	 * ObjectStatus renderer. 
+	 * @namespace
 	 */
 	var ObjectStatusRenderer = {
 	};
@@ -22,11 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
-		// Return immediately if control is invisible
-		if (!oObjStatus.getVisible()) {
-			return;
-		}
-	
 		if (!oObjStatus._isEmpty()) {
 			oRm.write("<div");
 			oRm.writeControlData(oObjStatus);

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.P13nFilterItem
+	 * @alias sap.m.P13nFilterItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nFilterItem = Item.extend("sap.m.P13nFilterItem", /** @lends sap.m.P13nFilterItem.prototype */ { metadata : {
@@ -56,13 +56,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			exclude : {type : "boolean", group : "Misc", defaultValue : false}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.FilterItem.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 	
 
 	return P13nFilterItem;

@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectAttributeA renderer. 
-	 * @static
+	 * ObjectAttributeA renderer. 
+	 * @namespace
 	 */
 	var ObjectAttributeRenderer = {
 	};
@@ -20,9 +20,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ObjectAttributeRenderer.render = function(oRm, oOA) {
-		
 		// return immediately if control is invisible
-		if (oOA.getVisible() && !oOA._isEmpty()) {
+		if (!oOA._isEmpty()) {
 			var oParent = oOA.getParent();
 			oRm.write("<div");
 			oRm.writeControlData(oOA);
@@ -38,7 +37,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
 			oRm.write(">");
-			if (oParent && (oParent instanceof sap.m.ObjectHeader && oParent.getResponsive())) {
+			if (oParent && (oParent instanceof sap.m.ObjectHeader)) {
 				if (oOA.getProperty("title")) {
 					oRm.write("<span id=\"" + oOA.getId() + "-title\"");
 					oRm.addClass("sapMObjectAttributeTitle");

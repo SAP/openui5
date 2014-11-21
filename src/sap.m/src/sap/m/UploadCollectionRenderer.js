@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	* @class UploadCollection renderer.
-	* @static
+	* UploadCollection renderer.
+	* @namespace
 	*/
 	var UploadCollectionRenderer = {};
 	

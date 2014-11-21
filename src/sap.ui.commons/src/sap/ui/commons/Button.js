@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Button
+	 * @alias sap.ui.commons.Button
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = Control.extend("sap.ui.commons.Button", /** @lends sap.ui.commons.Button.prototype */ { metadata : {
@@ -47,12 +47,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Boolean property to enable the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * 
-			 * Invisible buttons are not rendered
-			 */
-			visible : {type : "boolean", defaultValue : true},
 	
 			/**
 			 * 

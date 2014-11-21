@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Panel
+	 * @alias sap.ui.commons.Panel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Panel = Control.extend("sap.ui.commons.Panel", /** @lends sap.ui.commons.Panel.prototype */ { metadata : {
@@ -46,11 +46,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Represents the state of the of the Panel (enabled or disabled)
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Invisible Panels are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Specifies the scroll position from left to right. Value "0" means leftmost position.
@@ -114,22 +109,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 	
-	
-	/**
-	 * Property for width and height settings for the Panel
-	 *
-	 * @name sap.ui.commons.Panel#setDimensions
-	 * @function
-	 * @param {sap.ui.core.CSSSize} sWidth
-	 * 
-	 *         Panel width as CSS size
-	 * @param {sap.ui.core.CSSSize} sHeight
-	 * 
-	 *         Panel height as CSS size
-	 * @type sap.ui.commons.Panel
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	/**
 	 * Initialization
@@ -602,7 +581,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Returns the scroll position of the panel in pixels from the left. Returns 0 if not rendered yet.
 	 * Also internally updates the control property.
 	 *
-	 * @return the scroll position
+	 * @return {int} the scroll position
 	 * @public
 	 */
 	Panel.prototype.getScrollLeft = function () {
@@ -645,7 +624,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Returns the scroll position of the panel in pixels from the top. Returns 0 if not rendered yet.
 	 * Also internally updates the control property.
 	 *
-	 * @return the scroll position
+	 * @return {int} the scroll position
 	 * @public
 	 */
 	Panel.prototype.getScrollTop = function () {
@@ -678,10 +657,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Sets the dimensions of the panel.
 	 *
-	 * @param {string} sWidth the width of the panel as CSS size
-	 * @param {string} sHeight the height of the panel as CSS size
+	 * @param {sap.ui.core.CSSSize} sWidth the width of the panel as CSS size
+	 * @param {sap.ui.core.CSSSize} sHeight the height of the panel as CSS size
 	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Panel.prototype.setDimensions = function (sWidth, sHeight) {
 		jQuery.sap.assert(typeof sWidth == "string" && typeof sHeight == "string", "sWidth and sHeight must be strings");
@@ -694,7 +674,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Sets the width of the panel.
 	 *
-	 * @param {string} sWidth the width of the panel as CSS size
+	 * @param {sap.ui.core.CSSSize} sWidth the width of the panel as CSS size
 	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -711,7 +691,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Sets the height of the panel.
 	 *
-	 * @param {string} sHeight the height of the panel as CSS size
+	 * @param {sap.ui.core.CSSSize} sHeight the height of the panel as CSS size
 	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining
 	 * @public
 	 */

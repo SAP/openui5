@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.Link
+	 * @alias sap.m.Link
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ { metadata : {
@@ -46,11 +46,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Whether the link can be triggered by the user.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Invisible links are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
@@ -101,7 +96,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Also trigger link activation when space is pressed on the focused control
 	 */
 	Link.prototype.onsapspace = function(oEvent) {
-		Link.prototype._handlePress.apply(this, arguments);
+		this._handlePress(oEvent); // this calls any JS event handlers
+		// _handlePress() checks the return value of the event handler and prevents default if required or of the Link is disabled
+		if (this.getHref() && !oEvent.isDefaultPrevented()) { 
+			// Normal browser link, the browser does the job. According to the keyboard spec, Space should do the same as Enter/Click.
+			// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
+			
+			// first disarm the Space key event
+			oEvent.preventDefault(); // prevent any scrolling which the browser might do because from its perspective the Link does not handle the "space" key
+			oEvent.setMarked();
+			
+			// then create the click event
+			var oClickEvent = document.createEvent('MouseEvents');
+			oClickEvent.initEvent('click' /* event type */, false, true); // non-bubbling, cancelable
+			this.getDomRef().dispatchEvent(oClickEvent);
+		}
 	};
 	
 	

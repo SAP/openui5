@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 
 
 	/**
-	 * @class Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts, 
+	 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts, 
 	 * confirmation dialogs, or arbitrary message dialogs.
 	 *
 	 * As <code>MessageBox</code> is a static class, a <code>jQuery.sap.require("sap.m.MessageBox");</code> statement
@@ -26,7 +26,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 	 *	 );
 	 * </pre>
 	 *
-	 * @static
+	 * @namespace
+	 * @alias sap.m.MessageBox
 	 * @public
 	 * @since 1.21.2
 	 */
@@ -35,17 +36,18 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 	MessageBox._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	
 	/**
-	 * @class Enumeration of supported actions in a MessageBox.
+	 * Enumeration of supported actions in a MessageBox.
 	 *
 	 * Each action is represented as a button in the message box. The values of this enumeration are used for both,
 	 * specifying the set of allowed actions as well as reporting back the user choice.
-	 * @static
+
+	 * @namespace
 	 * @public
 	 */
 	MessageBox.Action = {
 	
 	  /**
-	   * Adds an "Ok" button to the message box.
+	   * Adds an "OK" button to the message box.
 	   * @public
 	   */
 	  OK : "OK",
@@ -100,8 +102,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 	};
 	
 	/**
-	 * @class Enumeration of the pre-defined icons that can be used in a MessageBox.
-	 * @static
+	 * Enumeration of the pre-defined icons that can be used in a MessageBox.
+	 
+	 * @namespace
 	 * @public
 	 */
 	MessageBox.Icon = {
@@ -202,6 +205,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 		 * @param {string} [mOptions.id] ID to be used for the dialog. Intended for test scenarios, not recommended for productive apps
 		 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
 		 * @public
+		 * @static
 		 */
 		MessageBox.show = function(vMessage, mOptions) {
 			var oDialog, oResult = null, that = this, aButtons = [], i,
@@ -341,6 +345,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 		 * @param {string} [mOptions.id] ID to be used for the alert dialog. Intended for test scenarios, not recommended for productive apps
 		 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the alert dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
 		 * @public
+		 * @static
 		 */
 		MessageBox.alert = function(vMessage, mOptions) {
 			var mDefaults = {
@@ -405,6 +410,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 		 * @param {string} [mOptions.id] ID to be used for the confirmation dialog. Intended for test scenarios, not recommended for productive apps
 		 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the confirmation dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
 		 * @public
+		 * @static
 		 */
 		MessageBox.confirm = function(vMessage, mOptions) {
 			var mDefaults = {

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.TileContainer
+	 * @alias sap.m.TileContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TileContainer = Control.extend("sap.m.TileContainer", /** @lends sap.m.TileContainer.prototype */ { metadata : {
@@ -103,21 +103,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	/**
-	 * Moves a given tile to the given index
-	 *
-	 * @name sap.m.TileContainer#moveTile
-	 * @function
-	 * @param {int} iTile
-	 *         The tile or tile index to move
-	 * @param {int} iNewIndex
-	 *         The new Tile position in the tiles aggregation
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
 	 * Scrolls to the page where the given tile or tile index is included.
 	 * Optionally this can be done animated or not. With IE9 the scroll is never animated.
 	 *
@@ -132,16 +117,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	
-	
-	/**
-	 * Returns the index of the first tile that is visible in the current page
-	 *
-	 * @name sap.m.TileContainer#getPageFirstTileIndex
-	 * @function
-	 * @type int
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	IconPool.insertFontFaceStyle();
 	
@@ -164,7 +139,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	
 		this.bAllowTextSelection = false;
-	
+
 		//ugly but needed, initial timeout to wait until all elements are resized. 
 		//TODO: Check whether this is needed in no less mode
 		this._iInitialResizeTimeout = 400; //needed
@@ -192,7 +167,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var fnOnHome = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
 					var iRowFirstTileIndex = this._iCurrentFocusIndex - this._iCurrentFocusIndex % this._iMaxTilesX;
-					var iTargetTileIndex = oEvent.ctrlKey ? this._iCurrentTileStartIndex : iRowFirstTileIndex;
+					var iFirstOnPageOrVeryFirstIndex = this._iCurrentTileStartIndex === this._iCurrentFocusIndex ? 0 : this._iCurrentTileStartIndex;
+					var iTargetTileIndex = oEvent.ctrlKey
+						// if we are on the first tile of the current page already, go to the very first tile
+						? iFirstOnPageOrVeryFirstIndex
+						: iRowFirstTileIndex;
 					var oFirstTile = this.getTiles()[iTargetTileIndex];
 
 					if (!!oFirstTile) {
@@ -210,7 +189,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					var iRowFirstTileIndex = this._iCurrentFocusIndex - this._iCurrentFocusIndex % this._iMaxTilesX;
 					var iRowLastTileIndex = iRowFirstTileIndex + this._iMaxTilesX < oTiles.length ? iRowFirstTileIndex + this._iMaxTilesX - 1 : oTiles.length - 1;
 					var iLastTileIndex = this._iCurrentTileStartIndex + this._iMaxTiles < oTiles.length ? this._iCurrentTileStartIndex + this._iMaxTiles - 1 : oTiles.length - 1;
-					var iTargetTileIndex = oEvent.ctrlKey ? iLastTileIndex : iRowLastTileIndex;
+					var iLastOnPageOrVeryLastIndex =  iLastTileIndex === this._iCurrentFocusIndex ? oTiles.length - 1 : iLastTileIndex;
+					var iTargetTileIndex = oEvent.ctrlKey
+						? iLastOnPageOrVeryLastIndex
+						: iRowLastTileIndex;
 		
 					if (oTiles.length > 0) {
 						this._findTile(oTiles[iTargetTileIndex].$()).focus();
@@ -255,112 +237,175 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 		
 			fnOnRight = jQuery.proxy(function(oEvent) {
-		
 				if (this._iCurrentFocusIndex >= 0) {
 					var oTiles = this.getTiles();
 					var iNextIndex = this._iCurrentFocusIndex + 1 < oTiles.length ? this._iCurrentFocusIndex + 1 : this._iCurrentFocusIndex;
-					var oNextTile = oTiles[iNextIndex];
-		
-					if (!!oNextTile) {
-						if (iNextIndex < this._iCurrentTileStartIndex + this._iMaxTiles) { // tile on same page?
-							this._findTile(oNextTile.$()).focus();
-						} else {
-							this.scrollIntoView(oNextTile, true);
-							var that = this;
-							setTimeout(function() {
-								that._findTile(oNextTile.$()).focus();
-							}, 400);
+
+					if (!oEvent.ctrlKey) {
+						var oNextTile = oTiles[iNextIndex];
+
+						if (!!oNextTile) {
+							if (iNextIndex < this._iCurrentTileStartIndex + this._iMaxTiles) { // tile on same page?
+								this._findTile(oNextTile.$()).focus();
+							} else {
+								this.scrollIntoView(oNextTile, true);
+								var that = this;
+								setTimeout(function() {
+									that._findTile(oNextTile.$()).focus();
+								}, 400);
+							}
 						}
-						// event should not trigger any further actions
-						oEvent.stopPropagation();
+					} else if (this.getEditable()) {
+						var oTile = oTiles[this._iCurrentFocusIndex];
+						this.moveTile(oTile, iNextIndex);
+						oTile.$().focus();
 					}
+
+					// event should not trigger any further actions
+					oEvent.stopPropagation();
 				}
-		
 			}, this),
 		
 			fnOnLeft = jQuery.proxy(function(oEvent) {
-		
 				if (this._iCurrentFocusIndex >= 0) {
 					var oTiles = this.getTiles();
 					var iNextIndex = this._iCurrentFocusIndex - 1 >= 0 ? this._iCurrentFocusIndex - 1 : this._iCurrentFocusIndex;
-					var oNextTile = oTiles[iNextIndex];
-		
-					if (!!oNextTile) {
-						if (iNextIndex >= this._iCurrentTileStartIndex) { // tile on same page?
-							this._findTile(oNextTile.$()).focus();
-						} else {
-							this.scrollIntoView(oNextTile, true);
-							var that = this;
-							setTimeout(function() {
-								that._findTile(oNextTile.$()).focus();
-							}, 400);
+
+					if (!oEvent.ctrlKey) {
+						var oNextTile = oTiles[iNextIndex];
+
+						if (!!oNextTile) {
+							if (iNextIndex >= this._iCurrentTileStartIndex) { // tile on same page?
+								this._findTile(oNextTile.$()).focus();
+							} else {
+								this.scrollIntoView(oNextTile, true);
+								var that = this;
+								setTimeout(function () {
+									that._findTile(oNextTile.$()).focus();
+								}, 400);
+							}
 						}
-						// event should not trigger any further actions
-						oEvent.stopPropagation();
+					} else if (this.getEditable()) {
+						var oTile = oTiles[this._iCurrentFocusIndex];
+						this.moveTile(oTile, iNextIndex);
+						oTile.$().focus();
 					}
+
+					// event should not trigger any further actions
+					oEvent.stopPropagation();
 				}
-		
 			}, this),
 		
 			fnOnDown = jQuery.proxy(function(oEvent) {
-		
 				if (this._iCurrentFocusIndex >= 0) {
-					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles, iNextIndex = this._iCurrentFocusIndex + this._iMaxTilesX, iModNext = iNextIndex % this._iMaxTiles;
-		
-					var oNextTile = this.getTiles()[iNextIndex];
-		
-					if ((iModNext > iModCurr) && !!oNextTile) {
-		
-						// '(iModNext > iModCurr)' means: still on same page
-						this._findTile(oNextTile.$()).focus();
-		
-						// event should not trigger any further actions
-						oEvent.stopPropagation();
+					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles,
+						iNextIndex = this._iCurrentFocusIndex + this._iMaxTilesX,
+						iModNext = iNextIndex % this._iMaxTiles;
+
+					if (!oEvent.ctrlKey) {
+						var oNextTile = this.getTiles()[iNextIndex];
+
+						if ((iModNext > iModCurr) && !!oNextTile) {
+							// '(iModNext > iModCurr)' means: still on same page
+							this._findTile(oNextTile.$()).focus();
+						}
+					} else if (this.getEditable()) {
+						var oTile = this.getTiles()[this._iCurrentFocusIndex];
+						this.moveTile(oTile, iNextIndex);
+						oTile.$().focus();
 					}
+
+					// event should not trigger any further actions
+					oEvent.stopPropagation();
 				}
-		
 			}, this),
 		
 			fnOnUp = jQuery.proxy(function(oEvent) {
-		
 				if (this._iCurrentFocusIndex >= 0) {
-					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles, iNextIndex = this._iCurrentFocusIndex - this._iMaxTilesX, iModNext = iNextIndex % this._iMaxTiles;
-		
-					var oNextTile = this.getTiles()[iNextIndex];
-					if ((iModNext < iModCurr) && !!oNextTile) {
-		
-						// '(iModNext < iModCurr)' means: still on same page
-						this._findTile(oNextTile.$()).focus();
-		
-						// event should not trigger any further actions
-						oEvent.stopPropagation();
+					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles,
+						iNextIndex = this._iCurrentFocusIndex - this._iMaxTilesX,
+						iModNext = iNextIndex % this._iMaxTiles;
+
+					if (!oEvent.ctrlKey) {
+						var oNextTile = this.getTiles()[iNextIndex];
+						if ((iModNext < iModCurr) && !!oNextTile) {
+							// '(iModNext < iModCurr)' means: still on same page
+							this._findTile(oNextTile.$()).focus();
+						}
+					} else if (this.getEditable()) {
+						var oTile = this.getTiles()[this._iCurrentFocusIndex];
+						this.moveTile(oTile, iNextIndex);
+						oTile.$().focus();
 					}
+
+					// event should not trigger any further actions
+					oEvent.stopPropagation();
 				}
-		
+			}, this),
+				
+			fnOnDelete = jQuery.proxy(function(oEvent) {
+				if (this._iCurrentFocusIndex >= 0 && this.getEditable()) {
+					var oTile = this.getTiles()[this._iCurrentFocusIndex];
+					if (oTile.getRemovable()) {
+						this.deleteTile(oTile);
+
+						if (this._iCurrentFocusIndex === this.getTiles().length) {
+							if (this.getTiles().length !== 0) {
+								this.getTiles()[this._iCurrentFocusIndex - 1].$().focus();
+							} else {
+								this._findNextTabbable().focus();
+							}
+						} else {
+							this.getTiles()[this._iCurrentFocusIndex].$().focus();
+						}
+					}
+
+					oEvent.stopPropagation();
+				}
 			}, this);
-		
+
 			this.onsaphome = fnOnHome;
 			this.onsaphomemodifiers = fnOnHome;
 			this.onsapend = fnOnEnd;
 			this.onsapendmodifiers = fnOnEnd;
 			this.onsapright = this._bRtl ? fnOnLeft : fnOnRight;
+			this.onsaprightmodifiers = this._bRtl ? fnOnLeft : fnOnRight;
 			this.onsapleft  = this._bRtl ? fnOnRight : fnOnLeft;
+			this.onsapleftmodifiers  = this._bRtl ? fnOnRight : fnOnLeft;
 			this.onsapup = fnOnUp;
+			this.onsapupmodifiers = fnOnUp;
 			this.onsapdown = fnOnDown;
+			this.onsapdownmodifiers = fnOnDown;
 			this.onsappageup = fnOnPageUp;
 			this.onsappagedown = fnOnPageDown;
+			this.onsapdelete = fnOnDelete;
 
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		}					
 	};
-	
+
+	/**
+	 * Finds the next tabbable element after the tile container
+	 * @returns {Element} the next tabbable element after the tile container
+	 * @private
+	 */
+	TileContainer.prototype._findNextTabbable = function() {
+		var $Ref = this.$();
+		var $Tabbables = jQuery.merge(
+			jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()).find(':sapTabbable').addBack(':sapTabbable'),
+			jQuery.merge($Ref.parents().prevAll(), $Ref.prevAll()).find(':sapTabbable').addBack(':sapTabbable')
+		);
+
+		return $Tabbables.first();
+	};
+
 	/**
 	 * Handles the internal event onBeforeRendering.
 	 *
 	 * @private
 	 */
 	TileContainer.prototype.onBeforeRendering = function() {
-	
+
 		// unregister the resize listener
 		if (this._sResizeListenerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
@@ -374,7 +419,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype.onAfterRendering = function() {
-	
+
 		// init resizing
 		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef().parentElement,  jQuery.proxy(this._resize, this));
 	
@@ -537,8 +582,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns the index of the first tile that is visible in the current page
 	 *
-	 * @returns {sap.m.TileContainer} The index of the first tile that is visible in the current page.
+	 * @returns {int} The index of the first tile that is visible in the current page.
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.getPageFirstTileIndex = function() {
 		return this._iCurrentTileStartIndex || 0;
@@ -549,9 +595,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.m.Tile} vTile The tile to move
 	 * @param {int} iNewIndex The new Tile position in the tiles aggregation.
-	
 	 * @returns {sap.m.TileContainer} This tile container.
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.moveTile = function(vTile, iNewIndex) {
 		if (!isNaN(vTile)) {
@@ -598,8 +644,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					if (!that._mFocusables) {
 						that._mFocusables = {};
 					}
-					
-					that._mFocusables[this.getId()] = this.$().find("[tabindex!='-1']").addBack().filter(that._isFocusable);			
+
+					that._mFocusables[this.getId()] = this.$().find("[tabindex!='-1']").addBack().filter(that._isFocusable);
 					that._mFocusables[this.getId()].attr('tabindex', '-1');
 				}
 			}, oTile);
@@ -611,10 +657,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						
 				
 				var iPreviousTileIndex = that._iCurrentFocusIndex >= 0 ? that._iCurrentFocusIndex : 0;
-				var oPrevTile = that.getTiles()[iPreviousTileIndex];		
-				that._mFocusables[oPrevTile.getId()].attr('tabindex', '-1');
-				that._mFocusables[this.getId()].attr('tabindex', '0');
-			
+				var oPrevTile = that.getTiles()[iPreviousTileIndex];
+
+				if (oPrevTile) {
+					that._mFocusables[oPrevTile.getId()].attr('tabindex', '-1');
+					that._mFocusables[this.getId()].attr('tabindex', '0');
+				}
 		
 				if (iPageDelta != 0) {
 					that.scrollIntoView(iIndex);
@@ -622,19 +670,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 		
 				that._iCurrentFocusIndex = iIndex;
-			},
-			fnFocusOut = function(oEvent) { // sets tabindex of all children of the focused tile to -1
-				that._mFocusables[this.getId()].filter(function(index) {
-					return index > 0;
-				}).attr('tabindex', '-1');
 			};
 
 			oTile.addEventDelegate({
 				"onfocusin": fnOnFocusIn
-			}, oTile);
-
-			oTile.addEventDelegate({
-				"onfocusout": fnFocusOut
 			}, oTile);
 		}
 
@@ -695,7 +734,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.deleteTile = function(oTile) {
-	
+
 		if (this.getDomRef()) {
 			var iIndex = this.indexOfAggregation("tiles",oTile) - 1;
 			this.removeAggregation("tiles",oTile,true);
@@ -705,7 +744,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
 					if (this._mFocusables && this._mFocusables[oTile.getId()]) {
 						delete this._mFocusables[oTile.getId()];
-					}			
+					}
 				}
 			}
 	
@@ -1312,7 +1351,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oTouchSession.fDiffY = oTouchSession.fStartY - oEvent.targetTouches[0].pageY;
 	
 		if (this._oDragSession) {
-	
+
 			if (Math.abs(oTouchSession.fDiffX) > 5) {
 				if (!this._oDragSession.bStarted) {
 					this._oDragSession.bStarted = true;
@@ -1390,7 +1429,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 				this._bAvoidChildTapEvent = true;
 			} else if (oEvent.target.className == "sapMTCRemove") {
-				this.fireTileDelete({ tile: oTouchSession.oControl });
+				if (oEvent.type === "touchend" || (oEvent.type === "mouseup" && oEvent.button === 0)) {
+					this.fireTileDelete({ tile: oTouchSession.oControl });
+				}
 			}
 		} else {
 			var oContentDimension = this._getContentDimension();
@@ -1608,6 +1649,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			delete this._oDragSession;
 			this.moveTile(oTile, iIndex);
 			this.scrollIntoView(oTile, false);
+
+			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+				this._findTile(oTile.$()).focus();
+			}
+
 			this.$("blind").css("display","none");
 		}
 	};

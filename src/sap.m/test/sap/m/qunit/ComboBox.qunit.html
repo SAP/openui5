@@ -186,35 +186,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					})
-	// 				],
-
-	// 				selectedItem: oExpectedItem
-	// 			});
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItem()", function() {
 
 				// system under test
@@ -256,49 +227,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "3",
-	// 						text: "item 3"
-	// 					})
-	// 				],
-
-	// 				selectedItem: "item-id"
-	// 			});
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "2");
-	// 			strictEqual(oComboBox.getValue(), "item 2");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 2");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedItem()", function() {
 
@@ -346,53 +274,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedItem: "item-id",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "3",
-	// 						text: "item 3"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "2");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 2");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 2");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItem()", function() {
 
 				// system under test
@@ -435,48 +316,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedKey: "1",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItem()", function() {
 
 				// system under test
@@ -495,26 +334,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: []
-	// 			});
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "");
-	// 			strictEqual(oComboBox.getSelectedKey(), "");
-	// 			ok(oComboBox.getList().getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getValue(), "");
-	// 			strictEqual(oComboBox.getProperty("value"), "");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedItem()", function() {
 
@@ -556,49 +375,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItem: null
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItem()", function() {
 
 				// system under test
@@ -638,49 +414,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: ""
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* getSelectedItemId()            */
@@ -726,49 +459,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItemId: undefined
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -808,49 +498,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItemId: ""
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* getSelectedKey()               */
@@ -896,49 +543,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: undefined
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedKey()", function() {
 
 				// system under test
@@ -966,37 +570,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedKey()", function() {
 
@@ -1045,54 +618,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "3",
-	// 						text: "item 3"
-	// 					})
-	// 				],
-
-	// 				selectedItem: "item-id"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "2");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 2");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 2");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedKey()", function() {
 
 				// system under test
@@ -1140,53 +665,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedItem: "item-id",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "3",
-	// 						text: "item 3"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "3");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 3");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 3");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedKey()", function() {
 
 				// system under test
@@ -1229,48 +707,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedKey: "1",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedKey()", function() {
 
 				// system under test
@@ -1293,30 +729,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: []
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "");
-	// 			strictEqual(oComboBox.getSelectedKey(), "");
-	// 			ok(oComboBox.getList().getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getValue(), "");
-	// 			strictEqual(oComboBox.getProperty("value"), "");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedKey()", function() {
 
@@ -1358,49 +770,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItem: null
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedKey()", function() {
 
 				// system under test
@@ -1441,49 +810,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItemId: undefined
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedKey()", function() {
 
 				// system under test
@@ -1523,49 +849,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItemId: ""
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedKey()", function() {
 
@@ -1609,49 +892,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "0"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			/* ------------------------------ */
 			/* getSelectedItemId()            */
 			/* ------------------------------ */
@@ -1683,37 +923,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "5",
-	// 						text: "item 5"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "5");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 5");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 5");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedItemId()", function() {
 
@@ -1762,54 +971,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "3",
-	// 						text: "item 3"
-	// 					})
-	// 				],
-
-	// 				selectedItem: "item-id"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "2");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 2");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 2");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -1857,53 +1018,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedItem: "item-id",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "3",
-	// 						text: "item 3"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "3");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 3");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 3");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -1946,48 +1060,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedKey: "1",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -2006,26 +1078,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: []
-	// 			});
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "");
-	// 			strictEqual(oComboBox.getSelectedKey(), "");
-	// 			ok(oComboBox.getList().getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getValue(), "");
-	// 			strictEqual(oComboBox.getProperty("value"), "");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedItemId()", function() {
 
@@ -2067,49 +1119,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItem: null
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -2149,49 +1158,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItemId: undefined
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("getSelectedItemId()", function() {
 
@@ -2233,49 +1199,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedItemId: ""
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -2316,48 +1239,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: undefined
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), oExpectedItem.getId());
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("getSelectedItemId()", function() {
 
 				// system under test
@@ -2393,45 +1274,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("getSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: ""
-	// 			});
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* addItem                        */
@@ -2593,40 +1435,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("setSelectedItem() should give a warning when called with faulty parameter, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true
-	// 			});
-
-	// 			// arrange
-	// 			var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-	// 				fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-	// 				fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
-	// 				fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-	// 				fnSetSelectedItemSpy = this.spy(oComboBox, "setSelectedItem");
-
-	// 			// act
-	// 			oComboBox.setSelectedItem({});
-
-	// 			// assert
-	// 			strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.ComboBox.prototype.setProperty() method was not called");
-	// 			strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.ComboBox.prototype.setAssociation() method was not called");
-	// 			strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
-	// 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-	// 			ok(oComboBox.getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "");
-	// 			strictEqual(oComboBox.getSelectedKey(), "");
-	// 			ok(oComboBox.getList().getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getValue(), "");
-	// 			strictEqual(oComboBox.getProperty("value"), "");
-	// 			ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("setSelectedItem()", function() {
 
 				// system under test
@@ -2676,57 +1484,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2",
-	// 						enabled: false
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-	// 				fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-	// 				fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-	// 				fnSetSelectedItemSpy = this.spy(oComboBox, "setSelectedItem");
-
-	// 			// act
-	// 			oComboBox.setSelectedItem(oComboBox.getItemAt(1));
-
-	// 			// assert
-	// 			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-	// 			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-	// 			ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
-	// 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("setSelectedItem()", function() {
 
@@ -2779,58 +1536,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("setSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2",
-	// 						enabled: false
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-	// 				fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-	// 				fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-	// 				fnSetSelectedItemSpy = this.spy(oComboBox, "setSelectedItem");
-
-	// 			// act
-	// 			oComboBox.setSelectedItem("item-id");
-
-	// 			// assert
-	// 			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-	// 			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-	// 			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-	// 			ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
-	// 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("setSelectedItem()", function() {
 
 				// system under test
@@ -2874,50 +1579,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("setSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// act
-	// 			oComboBox.setSelectedItem(oComboBox.getLastItem());
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "2");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 2");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 2");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("setSelectedItem()", function() {
 
 				// system under test
@@ -2960,52 +1621,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedItem() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "2"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// act
-	// 			oComboBox.setSelectedItem(null);
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("setSelectedItem() set the selected item when the picker popup is open", function() {
 
@@ -3052,55 +1667,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedItem() set the selected item when the picker popup is open, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "2"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			oComboBox.open();
-	// 			this.clock.tick(1000);
-
-	// 			// act
-	// 			oComboBox.setSelectedItem(null);
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* setSelectedItemId()            */
@@ -3185,57 +1751,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedItemId() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2",
-	// 						enabled: false
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-	// 				fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-	// 				fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-	// 				fnSetSelectedItemIdSpy = this.spy(oComboBox, "setSelectedItemId");
-
-	// 			// act
-	// 			oComboBox.setSelectedItemId("item-id");
-
-	// 			// assert
-	// 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-	// 			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-	// 			ok(fnSetAssociationSpy.calledWith("selectedItem", oComboBox.getItems()[1]));
-	// 			ok(fnSetSelectedItemIdSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItemId() method return the "this" reference');
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("setSelectedItemId()", function() {
 
@@ -3323,52 +1838,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("setSelectedItemId() forceSelection is true", function() {
-
-	// 			//system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "2"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// act
-	// 			oComboBox.setSelectedItemId("")
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("setSelectedItemId() set the selected item when the ComboBox's picker pop-up is open", function() {
 
 				// system under test
@@ -3414,55 +1883,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedItemId() set the selected item when the ComboBox's picker pop-up is open, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "2"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			oComboBox.open();
-	// 			this.clock.tick(500);
-
-	// 			// act
-	// 			oComboBox.setSelectedItemId("");
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* setSelectedKey()               */
@@ -3511,48 +1931,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("setSelectedKey() first rendering, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				selectedKey: "2",
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "2");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 2");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 2");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("setSelectedKey() no rendering", function() {
 
 				// system under test
@@ -3590,45 +1968,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedKey() no rendering, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "1"
-	// 			});
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("setSelectedKey() after the initial rendering", function() {
 
@@ -3684,61 +2023,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("setSelectedKey() after the initial rendering, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-	// 				fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-	// 				fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-	// 				fnSetSelectedKeySpy = this.spy(oComboBox, "setSelectedKey");
-
-	// 			// act
-	// 			oComboBox.setSelectedKey("1");
-
-	// 			// assert
-	// 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-
-	// 			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-	// 			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-	// 			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-	// 			ok(fnSetSelectedKeySpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedKey() method return the "this" reference');
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("setSelectedKey()", function() {
 
 				// system under test
@@ -3781,52 +2065,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedKey() forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "2"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// act
-	// 			oComboBox.setSelectedKey("");
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			test("setSelectedKey() set the selected item when the picker popup is open", function() {
 
@@ -3873,55 +2111,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setSelectedKey() set the selected item when the picker popup is open, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						id: "item-id",
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "1",
-	// 						text: "item 1"
-	// 					}),
-
-	// 					new sap.ui.core.Item({
-	// 						key: "2",
-	// 						text: "item 2"
-	// 					})
-	// 				],
-
-	// 				selectedKey: "2"
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			oComboBox.open();
-	// 			this.clock.tick(500);
-
-	// 			// act
-	// 			oComboBox.setSelectedKey("");
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "item-id");
-	// 			strictEqual(oComboBox.getSelectedKey(), "0");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* setMaxWidth()                  */
@@ -4107,105 +2296,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("removeItem() remove the selected item, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: {
-	// 					path: "/items",
-	// 					template: new sap.ui.core.Item({
-	// 						key: "{value}",
-	// 						text: "{text}"
-	// 					})
-	// 				},
-
-	// 				selectedKey: {
-	// 					path: "/selected",
-	// 					template: "{selected}"
-	// 				}
-	// 			});
-
-	// 			// arrange
-	// 			var oModel = new sap.ui.model.json.JSONModel();
-	// 			var fnRemoveAggregationSpy = this.spy(oComboBox, "removeAggregation");
-	// 			var fnListRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
-	// 			var mData = {
-	// 				"items": [
-	// 					{
-	// 						"value": "0",
-	// 						"text": "item 0"
-	// 					},
-
-	// 					{
-	// 						"value": "1",
-	// 						"text": "item 1"
-	// 					},
-
-	// 					{
-	// 						"value": "2",
-	// 						"text": "item 2"
-	// 					},
-
-	// 					{
-	// 						"value": "3",
-	// 						"text": "item 3"
-	// 					},
-
-	// 					{
-	// 						"value": "4",
-	// 						"text": "item 4"
-	// 					},
-
-	// 					{
-	// 						"value": "5",
-	// 						"text": "item 5"
-	// 					},
-
-	// 					{
-	// 						"value": "6",
-	// 						"text": "item 6"
-	// 					},
-
-	// 					{
-	// 						"value": "7",
-	// 						"text": "item 7"
-	// 					},
-
-	// 					{
-	// 						"value": "8",
-	// 						"text": "item 8"
-	// 					},
-	// 				],
-
-	// 				"selected": "8"
-	// 			};
-
-	// 			oModel.setData(mData);
-	// 			sap.ui.getCore().setModel(oModel);
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			var oExpectedItem = oComboBox.getFirstItem();
-
-	// 			// act
-	// 			oComboBox.removeItem(8);
-
-	// 			// assert
-	// 			strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.ComboBox.prototype.removeAggregation() method was called");
-	// 			strictEqual(fnListRemoveAggregationSpy.callCount, 1, "sap.m.List.prototype.removeAggregation() method was called");
-	// 			ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.ComboBox.prototype.removeAggregation() method was called with the expected argument");
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), oExpectedItem.getId());
-	// 			strictEqual(oComboBox.getSelectedKey(), oExpectedItem.getKey());
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 0");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 0");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("removeItem() remove the selected item", function() {
 
 				// system under test
@@ -4280,80 +2370,6 @@
 				oComboBox.destroy();
 			});
 
-	// 		test("removeItem() remove the selected item, forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: {
-	// 					path: "/items",
-	// 					template: new sap.ui.core.Item({
-	// 						key: "{value}",
-	// 						text: "{text}"
-	// 					})
-	// 				},
-
-	// 				selectedKey: {
-	// 					path : "/selected",
-	// 					template: "{selected}"
-	// 				},
-
-	// 				change: function(oControlEvent) {
-	// 					jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("selectedItem"));
-	// 				}
-	// 			});
-
-	// 			// arrange
-	// 			var oModel = new sap.ui.model.json.JSONModel();
-
-	// 			var mData = {
-	// 				"items" : [
-	// 					{
-	// 						"value": "0",
-	// 						"text": "item 0"
-	// 					},
-
-	// 					{
-	// 						"value": "1",
-	// 						"text": "item 1"
-	// 					},
-
-	// 					{
-	// 						"value": "2",
-	// 						"text": "item 2"
-	// 					},
-
-	// 					{
-	// 						"value": "3",
-	// 						"text": "item 3"
-	// 					}
-	// 				],
-
-	// 				"selected": "0"
-	// 			};
-
-	// 			oModel.setData(mData);
-	// 			sap.ui.getCore().setModel(oModel);
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-	// 			var oExpectedItem = oComboBox.getItemAt(1);
-
-	// 			// act
-	// 			oComboBox.removeItem(0);
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === oExpectedItem);
-	// 			strictEqual(oComboBox.getSelectedItemId(), oExpectedItem.getId());
-	// 			strictEqual(oComboBox.getSelectedKey(), "1");
-	// 			ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
-	// 			strictEqual(oComboBox.getValue(), "item 1");
-	// 			strictEqual(oComboBox.getProperty("value"), "item 1");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
 			test("removeItem()", function() {
 
 				// system under test
@@ -4388,42 +2404,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("removeItem(), forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var oExpectedItem;
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					oExpectedItem = new sap.ui.core.Item({
-	// 						key: "0",
-	// 						text: "item 0"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// act
-	// 			oComboBox.removeItem(0);
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// assert
-	// 			ok(oComboBox.getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "");
-	// 			strictEqual(oComboBox.getSelectedKey(), "");
-	// 			ok(oComboBox.getList().getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getValue(), "");
-	// 			strictEqual(oComboBox.getProperty("value"), "");
-	// 			ok(oExpectedItem.getDomRef() === null);
-	// 			ok(oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getDomRef() === null);
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* removeAllItems()               */
@@ -4480,59 +2460,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("removeAllItems(), forceSelection is true", function() {
-
-	// 			// system under test
-	// 			var aItems = [
-	// 				new sap.ui.core.Item({
-	// 					key: "0",
-	// 					text: "item 0"
-	// 				}),
-
-	// 				new sap.ui.core.Item({
-	// 					key: "1",
-	// 					text: "item 1"
-	// 				}),
-
-	// 				new sap.ui.core.Item({
-	// 					key: "2",
-	// 					text: "item 2"
-	// 				})
-	// 			];
-
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: aItems
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-	// 			var fnRemoveAllItemsSpy = this.spy(oComboBox, "removeAllItems");
-	// 			var fnRemoveAllAggregationSpy = this.spy(oComboBox, "removeAllAggregation");
-	// 			var fnListRemoveAllItemsSpy = this.spy(oComboBox.getList(), "removeAllItems");
-
-	// 			// act
-	// 			oComboBox.removeAllItems();
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			var mDomRefs = fnGetDomRefs(oComboBox.getId());
-
-	// 			// assert
-	// 			ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.ComboBox.prototype.removeAllAggregation() method was called with the expected argument");
-	// 			strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.List.prototype.removeAllItems() method was called");
-	// 			ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.ComboBox.prototype.removeAllItems() method returns an array of the removed items");
-	// 			ok(oComboBox.getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getSelectedItemId(), "");
-	// 			strictEqual(oComboBox.getSelectedKey(), "");
-	// 			ok(oComboBox.getList().getSelectedItem() === null);
-	// 			strictEqual(oComboBox.getValue(), "");
-	// 			strictEqual(oComboBox.getProperty("value"), "");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* destroyItems()                 */
@@ -5204,70 +3131,6 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-
-	// 		test("setValue()", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "GER",
-	// 						text: "Germany"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-	// 			var fnSetValueSpy = this.spy(oComboBox, "setValue");
-
-	// 			// act
-	// 			oComboBox.setValue("Cuba");
-
-	// 			// assert
-	// 			strictEqual(oComboBox.getValue(), "Germany", "The value is restricted, it needs to match with one of the items in the list");
-	// 			strictEqual(oComboBox.getProperty("value"), "Germany");
-	// 			strictEqual(oComboBox.getFocusDomRef().value, "Germany");
-	// 			ok(fnSetValueSpy.returned(oComboBox), "sap.m.ComboBox.prototype.setValue() method return this to allow method chaining");
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
-
-			/* ------------------------------ */
-			/* isAllowedSubstringValue()      */
-			/* ------------------------------ */
-
-	// 		test("isAllowedSubstringValue()", function() {
-
-	// 			// system under test
-	// 			var oComboBox = new sap.m.ComboBox({
-	// 				forceSelection: true,
-	// 				items: [
-	// 					new sap.ui.core.Item({
-	// 						key: "GER",
-	// 						text: "Germany"
-	// 					})
-	// 				]
-	// 			});
-
-	// 			// arrange
-	// 			oComboBox.placeAt("content");
-	// 			sap.ui.getCore().applyChanges();
-
-	// 			// act + assert
-	// 			ok(oComboBox.isAllowedSubstringValue("G"));
-	// 			ok(oComboBox.isAllowedSubstringValue("Ge"));
-	// 			ok(oComboBox.isAllowedSubstringValue("Ger"));
-	// 			ok(oComboBox.isAllowedSubstringValue("Germ"));
-	// 			ok(oComboBox.isAllowedSubstringValue("Germany"));
-	// 			ok(!oComboBox.isAllowedSubstringValue("Cuba"));
-
-	// 			// cleanup
-	// 			oComboBox.destroy();
-	// 		});
 
 			/* ------------------------------ */
 			/* destroy()                      */
@@ -6969,6 +4832,7 @@
 
 				// system under test
 				var oExpectedItem;
+				var sExpectedValue = "item 1 is selected";
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
@@ -7002,15 +4866,14 @@
 				// assert
 				strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
 					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
 				}
 
-				strictEqual(oComboBox.getFocusDomRef().value, "item 1 is selected");
+				strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
 
 				// cleanup
 				oComboBox.destroy();
@@ -7141,8 +5004,7 @@
 				// assert
 				strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 6);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "item 0");
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0");
 
@@ -7182,8 +5044,100 @@
 				// assert
 				strictEqual(oComboBox.getValue(), sExpectedValue);
 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, sExpectedValue.length);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapdown the typed value should not gets selected (test case 1)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Argentina");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "rgentina");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapdown the typed value should not gets selected (test case 2)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Argentina");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "Argentina");
 
 				// cleanup
 				oComboBox.destroy();
@@ -7233,8 +5187,7 @@
 				// assert
 				strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event was fired');
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "item 0 is selected");
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
 
@@ -7427,8 +5380,104 @@
 				// assert
 				strictEqual(oComboBox.getValue(), sExpectedValue);
 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, sExpectedValue.length);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapup the typed value should not gets selected (test case 1)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "lgeria");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapup the typed value should not gets selected (test case 2)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "Algeria");
 
 				// cleanup
 				oComboBox.destroy();
@@ -8538,8 +6587,9 @@
 			});
 
 			/* ------------------------------ */
-			/* onfocusin and onsapfocusleave */
+			/* onfocusin and onsapfocusleave  */
 			/* ------------------------------ */
+
 			test("onfocusleave", function() {
 				var focusedClass = "sapMComboBoxFocused";
 

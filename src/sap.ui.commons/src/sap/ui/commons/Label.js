@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Label
+	 * @alias sap.ui.commons.Label
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Label = Control.extend("sap.ui.commons.Label", /** @lends sap.ui.commons.Label.prototype */ { metadata : {
@@ -66,13 +66,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Text to be displayed.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : ''},
-	
-			/**
-			 * 
-			 * Invisible labels are not rendered.
-			 * @since 1.14.0
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
 			 * Icon to be displayed in the control.

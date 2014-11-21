@@ -25,19 +25,13 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.layout.AbsoluteLayout
+	 * @alias sap.ui.commons.layout.AbsoluteLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AbsoluteLayout = Control.extend("sap.ui.commons.layout.AbsoluteLayout", /** @lends sap.ui.commons.layout.AbsoluteLayout.prototype */ { metadata : {
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
 			/**
 			 * The overall width of the control. When not set, 100% is automatically set.
 			 */
@@ -67,118 +61,6 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 			positions : {type : "sap.ui.commons.layout.PositionContainer", multiple : true, singularName : "position"}
 		}
 	}});
-	
-	
-	/**
-	 * Allows to set or change the position information of the given child control
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#setPositionOfChild
-	 * @function
-	 * @param {sap.ui.core.Control} oControl
-	 *         The child control for which to change the position information; if empty or not aggregated, nothing is changed
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control. The object is expected to have one or more from the attribute set
-	 *         top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
-	 *         If no object is given, the default is used which is left=0px,right=0px.
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Destroys all aggregated position containers and their child controls. Returns 'this' to allow method chaining.
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#destroyContent
-	 * @function
-	 * @type sap.ui.commons.layout.AbsoluteLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Checks for the provided sap.ui.core.Control in the aggregated position containers, and returns the index of the container in the positions aggregation
-	 * if found, or '-1' otherwise.
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#indexOfContent
-	 * @function
-	 * @param {sap.ui.core.Control} oContent
-	 *         The content of which the index is looked for
-	 * @type int
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes all aggregated position containers. Returns an array of the controls contained in the removed position containers (might be empty).
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#removeAllContent
-	 * @function
-	 * @type sap.ui.core.Control[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes the given control and its corresponding position container from the aggregation named 'positions'.
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#removeContent
-	 * @function
-	 * @param {object} oContent
-	 *         The content control to remove, its ID, or the index of the corresponding position container in the 'positions' aggregation.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Inserts the given control and a corresponding position container into the aggregation named 'positions'. Returns 'this' to allow method chaining.
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#insertContent
-	 * @function
-	 * @param {sap.ui.core.Control} oContent
-	 *         The content to insert; if empty, nothing is inserted
-	 * @param {int} iIndex
-	 *         The '0'-based index where the content shall be inserted at. For a negative value of iIndex, the content is inserted at position '0';
-	 *         for a value greater than the current size of the aggregation, the content is inserted at the last position.
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control within the layout. The object is expected to have one or more
-	 *         from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize. If no object is given, the default is left=0px,right=0px.
-	 * @type sap.ui.commons.layout.AbsoluteLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Adds the given control and a corresponding position container into the aggregation named 'positions'. Returns 'this' to allow method chaining.
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#addContent
-	 * @function
-	 * @param {sap.ui.core.Control} oContent
-	 *         The content to add; if empty, nothing is inserted.
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control in the layout. The object is expected to have one or more from the attribute set
-	 *         top, bottom, left, right; each with a value of type sap.ui.core.CSSSize. If no object is given, the default is left=0px,right=0px
-	 * @type sap.ui.commons.layout.AbsoluteLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns an array of the controls contained in the aggregated position containers (might be empty).
-	 *
-	 * @name sap.ui.commons.layout.AbsoluteLayout#getContent
-	 * @function
-	 * @type sap.ui.core.Control[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	(function() {
@@ -261,6 +143,14 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	
 	//**** Additional API Functions ****
 	
+
+	/**
+	 * Returns an array of the controls contained in the aggregated position containers (might be empty).
+	 *
+	 * @type sap.ui.core.Control[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.getContent = function() {
 		var aControls = [];
 		var aPositions = this.getPositions();
@@ -271,6 +161,19 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	};
 	
 	
+
+	/**
+	 * Adds the given control and a corresponding position container into the aggregation named 'positions'. Returns 'this' to allow method chaining.
+	 *
+	 * @param {sap.ui.core.Control} oContent
+	 *         The content to add; if empty, nothing is inserted.
+	 * @param {object} oPos
+	 *         JSON-like object which defines the position of the child control in the layout. The object is expected to have one or more from the attribute set
+	 *         top, bottom, left, right; each with a value of type sap.ui.core.CSSSize. If no object is given, the default is left=0px,right=0px
+	 * @type sap.ui.commons.layout.AbsoluteLayout
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.addContent = function(oContent, oPos) {
 		var oPosition = PositionContainer.createPosition(oContent, oPos);
 		this.addPosition(oPosition);
@@ -278,6 +181,22 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	};
 	
 	
+
+	/**
+	 * Inserts the given control and a corresponding position container into the aggregation named 'positions'. Returns 'this' to allow method chaining.
+	 *
+	 * @param {sap.ui.core.Control} oContent
+	 *         The content to insert; if empty, nothing is inserted
+	 * @param {int} iIndex
+	 *         The '0'-based index where the content shall be inserted at. For a negative value of iIndex, the content is inserted at position '0';
+	 *         for a value greater than the current size of the aggregation, the content is inserted at the last position.
+	 * @param {object} oPos
+	 *         JSON-like object which defines the position of the child control within the layout. The object is expected to have one or more
+	 *         from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize. If no object is given, the default is left=0px,right=0px.
+	 * @type sap.ui.commons.layout.AbsoluteLayout
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.insertContent = function(oContent, iIndex, oPos) {
 		var oPosition = PositionContainer.createPosition(oContent, oPos);
 		this.insertPosition(oPosition, iIndex);
@@ -285,6 +204,16 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	};
 	
 	
+
+	/**
+	 * Removes the given control and its corresponding position container from the aggregation named 'positions'.
+	 *
+	 * @param {object} oContent
+	 *         The content control to remove, its ID, or the index of the corresponding position container in the 'positions' aggregation.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.removeContent = function(vContent) {
 		var iIndex = vContent;
 		if (typeof (vContent) == "string") { // ID of the element is given
@@ -301,6 +230,14 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	};
 	
 	
+
+	/**
+	 * Removes all aggregated position containers. Returns an array of the controls contained in the removed position containers (might be empty).
+	 *
+	 * @type sap.ui.core.Control[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.removeAllContent = function() {
 		var aControls = this.getContent();
 		this.removeAllPositions();
@@ -308,6 +245,17 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	};
 	
 	
+
+	/**
+	 * Checks for the provided sap.ui.core.Control in the aggregated position containers, and returns the index of the container in the positions aggregation
+	 * if found, or '-1' otherwise.
+	 *
+	 * @param {sap.ui.core.Control} oContent
+	 *         The content of which the index is looked for
+	 * @type int
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.indexOfContent = function(oContent) {
 		var aControls = this.getContent();
 		for (var index = 0; index < aControls.length; index++) {
@@ -319,12 +267,34 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	};
 	
 	
+
+	/**
+	 * Destroys all aggregated position containers and their child controls. Returns 'this' to allow method chaining.
+	 *
+	 * @type sap.ui.commons.layout.AbsoluteLayout
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.destroyContent = function() {
 		this.destroyPositions();
 		return this;
 	};
 	
 	
+
+	/**
+	 * Allows to set or change the position information of the given child control
+	 *
+	 * @param {sap.ui.core.Control} oControl
+	 *         The child control for which to change the position information; if empty or not aggregated, nothing is changed
+	 * @param {object} oPos
+	 *         JSON-like object which defines the position of the child control. The object is expected to have one or more from the attribute set
+	 *         top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
+	 *         If no object is given, the default is used which is left=0px,right=0px.
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AbsoluteLayout.prototype.setPositionOfChild = function(oControl, oPos) {
 		var iIdx = this.indexOfContent(oControl);
 		if (iIdx >= 0) {

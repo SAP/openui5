@@ -37,7 +37,7 @@
 .sapMSltArrow,
 .sapMSltBar::after {
 	position: absolute;
-	line-height: 3rem;
+	line-height: inherit; /* rem values for line-height do not work in pseudo elements for IE9, 10, 11 */
 	text-align: center;
 	top: 0;
 	right: -0.0625rem;
@@ -143,16 +143,6 @@ li.sapMSltItemDisabled,
 
 .sapMSltPressed > .sapMSltArrow::before {
 	color: @sapUiSelectArrowColorActive;
-}
-
-/* ------------------------------ */
-/* SelectList element             */
-/* ------------------------------ */
-
-/* focus */
-
-.sap-desktop li.sapMSelectListItem:focus {
-	outline: 1px dotted @sapUiFocus;
 }
 
 /* ------------------------------ */

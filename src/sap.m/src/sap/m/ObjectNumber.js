@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.ObjectNumber
+	 * @alias sap.m.ObjectNumber
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {
@@ -43,11 +43,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Replaced by unit property due to the number before unit is redundant.
 			 */
 			numberUnit : {type : "string", group : "Misc", defaultValue : null, deprecated: true},
-	
-			/**
-			 * Indicates if object number is visible. Invisible object number is not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Indicates if the object number should appear emphasized
@@ -78,11 +73,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ObjectNumber.prototype._sCSSPrefixObjNumberStatus = 'sapMObjectNumberStatus';
 	
-	/**
+	/*
 	 * API method to set the object number's value state
-	 *
-	 * @param {string} sState the Object Number's value state
-	 * @public
 	 */
 	ObjectNumber.prototype.setState = function(sState) {
 		//remove the current value state css class

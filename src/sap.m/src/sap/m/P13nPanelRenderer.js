@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class P13nPanel renderer.
-	 * @static
+	 * P13nPanel renderer.
+	 * @namespace
 	 */
 	var P13nPanelRenderer = {};
 	
@@ -23,9 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	P13nPanelRenderer.render = function(oRm, oControl) {
 		// write the HTML into the render manager
-		if (!oControl.getVisible()) {
-			return;
-		}
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMP13nPanel");

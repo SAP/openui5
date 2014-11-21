@@ -53,7 +53,7 @@
 .sapUiCalDay,
 .sapUiCalMonth,
 .sapUiCalYear{
-	border: 1px solid @sapHCStandardBG;	
+	border: 1px solid @sapHCStandardBG;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -182,19 +182,18 @@
 .sap-desktop .sapUiCalMonthPick:focus,
 .sap-desktop .sapUiCalYearPick:focus {
 	border: 2px dotted @sapHCStandardFG;
-	background-color: transparent;	
+	background-color: transparent;
 }
 
 .sap-desktop .sapUiCalDay:hover > .sapUiCalDayNum,
 .sap-desktop .sapUiCalDay:focus > .sapUiCalDayNum{
-	border: 2px solid @sapHCReducedAltFG;
 	line-height: 40px;
 }
 
 .sap-desktop .sapUiCalMonth:hover,
 .sap-desktop .sapUiCalMonth:focus,
 .sap-desktop .sapUiCalYear:hover,
-.sap-desktop .sapUiCalYear:focus{	
+.sap-desktop .sapUiCalYear:focus{
 	line-height: 46px;
 }
 
@@ -231,33 +230,43 @@
 }
 
 .sap-desktop[data-sap-ui-browser^="ie"] {
-  .sapUiCalMonthSel,
-  .sapUiCalYearSel,
-  .sapUiCalMonthSel:hover,
-  .sapUiCalYearSel:hover,
-  .sapUiCalMonthSel:focus,
-  .sapUiCalYearSel:focus {
-    outline: none;
-    position: relative;
-  }
-  .sapUiCalMonthSel:before,
-  .sapUiCalYearSel:before,
-  .sapUiCalMonthSel:hover:before,
-  .sapUiCalYearSel:hover:before,
-  .sapUiCalMonthSel:focus:before,
-  .sapUiCalYearSel:focus:before {
-    content: " ";
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    width: 97.5%;
-    height: 95%;
-    position: absolute;
-    left: 1px;
-    top: 1px;
-    border: 2px solid @sapHCStandardFG;
-    pointer-events: none;
-  }  
+	.sapUiCalMonthPick:active,
+	.sapUiCalYearPick:active {
+		position: relative;
+    	top: -1px;
+    	left: -1px;
+	}
+	.sapUiCalPrev:active > span,
+	.sapUiCalNext:active > span {
+		position: relative;
+	}
+	.sapUiCalMonthSel,
+	.sapUiCalYearSel,
+	.sapUiCalMonthSel:hover,
+	.sapUiCalYearSel:hover,
+	.sapUiCalMonthSel:focus,
+	.sapUiCalYearSel:focus {
+    	outline: none;
+    	position: relative;
+  	}
+  	.sapUiCalMonthSel:before,
+  	.sapUiCalYearSel:before,
+  	.sapUiCalMonthSel:hover:before,
+  	.sapUiCalYearSel:hover:before,
+  	.sapUiCalMonthSel:focus:before,
+  	.sapUiCalYearSel:focus:before {
+	    content: " ";
+	    -webkit-box-sizing: border-box;
+	    -moz-box-sizing: border-box;
+	    box-sizing: border-box;
+	    width: 97.5%;
+	    height: 95%;
+	    position: absolute;
+	    left: 1px;
+	    top: 1px;
+	    border: 2px solid @sapHCStandardFG;
+	    pointer-events: none;
+  	}
 }
 
 .sap-desktop .sapUiCalMonth:hover > .sapUiCalDayNum,
@@ -265,7 +274,7 @@
 .sap-desktop .sapUiCalDay:not(.sapUiCalDayToday):focus > .sapUiCalDayNum,
 .sap-desktop .sapUiCalDay:not(.sapUiCalDayToday):hover > .sapUiCalDayNum {
 	border: 0 none;
-	border-left: 2px solid transparent;
+	border-left: 1px solid transparent;
 }
 
 .sap-desktop .sapUiCalDay:focus,
@@ -330,7 +339,7 @@
 
 .sap-desktop .sapUiCalDayWeekEnd:not(.sapUiCalDaySel):focus {
 	background-color: @sapHCReducedBG;
-} 
+}
 
 .sap-desktop .sapUiCalDayWeekEnd:focus:hover {
 	background-color: @sapHCHighlightBG;
@@ -383,7 +392,7 @@
 
 .sapUiSizeCompact .sapUiCalDayToday > .sapUiCalDayNum{
 	line-height: 26px;
-	width: 94%;	
+	width: 94%;
 }
 
 .sapUiSizeCompact .sapUiCalMonths,
@@ -414,8 +423,9 @@
 }
 
 /*** Phone ***/
+/* make calendar full-screen if on popup (DatePicker), but not if stand alone */
 
-.sap-phone .sapUiCal{
+.sap-phone .sapUiCal[data-sap-ui-popup]{
 	position: absolute;
 	top: 0 !important;
 	bottom: 0 !important;
@@ -425,7 +435,7 @@
 	border: none;
 }
 
-.sap-phone .sapUiCancel{
+.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCancel{
 	display: block;
 	border: 0.0625rem solid @sapHCStandardFG;
 	border-radius: 0.375rem;
@@ -447,7 +457,7 @@ and (orientation: portrait) {
 		outline: 0.125rem solid @sapHCStandardFG;
 		outline-offset: -0.25rem;
 	}
-	
+
 	.sap-phone .sapUiCalDay {
 		outline: 0 none;
 	}
@@ -461,7 +471,7 @@ and (orientation: landscape) {
 	}
 
 	.sap-phone .sapUiCalHead{
-		height: 30px;	
+		height: 30px;
 		padding-right: 5rem;
 		box-sizing: border-box;
 		bottom: 0.25rem;
@@ -475,14 +485,14 @@ and (orientation: landscape) {
 	.sap-phone .sapUiCalPrev,
 	.sap-phone .sapUiCalNext,
 	.sap-phone .sapUiCalMonthPick,
-	.sap-phone .sapUiCalYearPick{	
-		height: 30px;	
+	.sap-phone .sapUiCalYearPick{
+		height: 30px;
 		position: relative;
 		float: left;
 	}
 
 	.sap-phone .sapUiCalPrev,
-	.sap-phone .sapUiCalNext{		
+	.sap-phone .sapUiCalNext{
 		box-sizing: border-box;
 	}
 
@@ -518,9 +528,9 @@ and (orientation: landscape) {
 	.sap-phone .sapUiCalYear{
 		line-height: 44px;
 	}
-	
+
 	.sap-phone .sapUiCalDayToday > .sapUiCalDayNum {
-		line-height: 38px;		
+		line-height: 38px;
 	}
 
 	.sap-phone .sapUiCalWeekNum{
@@ -535,18 +545,18 @@ and (orientation: landscape) {
 		height: 30px;
 		padding-top: 0.25rem;
 		padding-bottom: 0.25rem;
-		box-sizing: border-box;		
+		box-sizing: border-box;
 	}
-	
+
 	.sap-phone .sapUiCalNext,
 	.sap-phone .sapUiCalMonthPick {
 		margin-left: 0.5rem;
 	}
-	
+
 	.sap-phone .sapUiCalDay {
 		outline: 0 none;
 	}
-	
+
 	.sap-phone .sapUiCalMonthSel,
 	.sap-phone .sapUiCalYearSel {
 		border: 0 none;
@@ -557,7 +567,7 @@ and (orientation: landscape) {
 
 /*** Tablet ***/
 
-.sap-tablet .sapUiCalDay,  
+.sap-tablet .sapUiCalDay,
 .sap-tablet .sapUiCalMonth,
 .sap-tablet .sapUiCalYear {
 	outline: 0 none;
@@ -587,27 +597,27 @@ and (orientation: landscape) {
 	.sap-desktop .sapUiCalDay.@{class}:hover {
 		box-shadow: inset 0 -2px 0 @color;
 	}
-	
+
 	.sap-desktop .@{class}.sapUiCalDay:focus {
 		box-shadow: inset 0 -2px 0 @color;
 	}
-	
+
 	.sap-desktop .@{class}.sapUiCalDay:focus:hover {
 		background-color: @sapHCHighlightBG;
-	}	
-	
+	}
+
 	.sap-desktop .@{class}.sapUiCalFirstWDay:focus > .sapUiCalDayNum {
 		box-shadow: inset 0 0 0 @color;
-	} 
+	}
 
 	.@{class}.sapUiCalDaySel > .sapUiCalDayNum {
 		box-shadow: inset 0 -0.125rem 0 @color, inset 0 -0.1875rem @sapHCStandardFG;
 	}
-	
+
 	.sap-desktop .@{class}.sapUiCalFirstWDay.sapUiCalDaySel:focus > .sapUiCalDayNum {
 		box-shadow: inset 0 0 0 @color, inset 0 0 @sapHCStandardFG;
-	}		
-	
+	}
+
 	.@{class}.sapUiCalDayToday > .sapUiCalDayNum {
 		box-shadow: inset 0 -0.1875rem 0 @color;
 	}

@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global'],
 	
 	
 	/**
-	 * @class RoadMap renderer.
-	 * @static
+	 * RoadMap renderer.
+	 * @namespace
 	 */
 	var RoadMapRenderer = {
 	};
@@ -29,11 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 	
 		oRoadMap.doBeforeRendering(); //Inform the Roadmap that the rendering starts
-	
-		if (!oRoadMap.getVisible()) {
-			return;
-		}
-	
+
 		rm.write("<div");
 		rm.writeControlData(oRoadMap);
 		rm.addClass("sapUiRoadMap");

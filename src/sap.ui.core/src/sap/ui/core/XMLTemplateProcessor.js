@@ -41,9 +41,8 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 		/**
 		 * The XMLTemplateProcessor class is used to load and process Control trees in XML-declarative notation.
 		 * 
-		 * @static
-		 * @class sap.ui.core.XMLTemplateProcessor
-		 * @name sap.ui.core.XMLTemplateProcessor
+		 * @namespace
+		 * @alias sap.ui.core.XMLTemplateProcessor
 		 */
 		var XMLTemplateProcessor = {};
 	
@@ -58,8 +57,6 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 		 * @param {string} sTemplateName
 		 * @param {string} [sExtension]
 		 * @return {Element} an XML document root element
-		 * @name sap.ui.core.XMLTemplateProcessor.loadTemplate
-		 * @function
 		 */
 		XMLTemplateProcessor.loadTemplate = function(sTemplateName, sExtension) {
 			var sResourceName = jQuery.sap.getResourceName(sTemplateName, "." + (sExtension || "view") + ".xml");
@@ -76,8 +73,6 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 		 * @param {sap.ui.core.ManagedObject} oView the View to consider when parsing the attributes
 		 * @param {object} mSettings the settings object which should be enriched with the suitable attributes from the XML node
 		 * @return undefined
-		 * @name sap.ui.core.XMLTemplateProcessor.parseViewAttributes
-		 * @function
 		 */
 		XMLTemplateProcessor.parseViewAttributes = function(xmlNode, oView, mSettings) {
 	
@@ -109,8 +104,6 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 		 * @param {Element} xmlNode the XML element representing the View/Fragment
 		 * @param {sap.ui.core.ManagedObject} oView the View/Fragment which corresponds to the parsed XML
 		 * @return an array containing Controls and/or plain HTML element strings
-		 * @name sap.ui.core.XMLTemplateProcessor.parseTemplate
-		 * @function
 		 */
 		XMLTemplateProcessor.parseTemplate = function(xmlNode, oView) {
 	

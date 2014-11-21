@@ -23,10 +23,12 @@ import org.apache.commons.io.IOUtils;
 /**
  * The class <code>ConcatFilter</code> is used to concatenate files like 
  * sap-ui-core.js, sap-ui-core-nojQuery.js and sap-ui-debug.js.
+ * <p>
+ * <i>This class must not be used in productive systems.</i>
  * 
  * @author Peter Muessig
  */
-public class ConcatFilter implements Filter{
+public class ConcatFilter implements Filter {
 
 
   /** default prefix for the classpath */
@@ -70,73 +72,82 @@ public class ConcatFilter implements Filter{
       // determine the path of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
+      String method = httpRequest.getMethod().toUpperCase();
       String path = httpRequest.getServletPath() + httpRequest.getPathInfo();
       
-      // check for sap-ui-core.js
-      if ("/resources/sap-ui-core.js".equals(path)) {
+      // only process GET or HEAD requests
+      if (method.matches("GET|HEAD")) {
         
-        this.log("Merging module: sap-ui-core.js");
-        
-        response.setContentType(this.config.getServletContext().getMimeType(path));
-        httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
-        httpResponse.setHeader("Cache-Control", "no-cache, no-store");
-        
-        OutputStream os = response.getOutputStream();
-        IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jquery/jquery-1.11.1.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/jquery.sap.promise.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
-        IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
-        IOUtils.closeQuietly(os);
-        
-        os.flush();
-        os.close();
-        
-        return;
-        
-      } else if ("/resources/sap-ui-core-nojQuery.js".equals(path)) {
-        
-        this.log("Merging module: sap-ui-core-nojQuery.js");
-        
-        response.setContentType(this.config.getServletContext().getMimeType(path));
-        httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
-        httpResponse.setHeader("Cache-Control", "no-cache, no-store");
-        
-        OutputStream os = response.getOutputStream();
-        IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/jquery.sap.promise.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
-        IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
-        IOUtils.closeQuietly(os);
-        
-        os.flush();
-        os.close();
-        
-        return;
-        
-      } else if ("/resources/sap-ui-debug.js".equals(path)) {
-        
-        this.log("Merging module: sap-ui-core-nojQuery.js");
-        
-        response.setContentType(this.config.getServletContext().getMimeType(path));
-        httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
-        httpResponse.setHeader("Cache-Control", "no-cache, no-store");
-        
-        OutputStream os = response.getOutputStream();
-        IOUtils.write(this.loadResource("/resources/sap/ui/debug/ControlTree.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/debug/Highlighter.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/debug/LogViewer.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/debug/PropertyList.js"), os, "UTF-8");
-        IOUtils.write(this.loadResource("/resources/sap/ui/debug/DebugEnv.js"), os, "UTF-8");
-        IOUtils.closeQuietly(os);
-        
-        os.flush();
-        os.close();
-        
-        return;
+        // check for sap-ui-core.js
+        if ("/resources/sap-ui-core.js".equals(path)) {
+          
+          this.log("Merging module: sap-ui-core.js");
+          
+          response.setContentType(this.config.getServletContext().getMimeType(path));
+          httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
+          
+          if ("GET".equals(method)) {
+            OutputStream os = response.getOutputStream();
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jquery/jquery-1.11.1.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/jquery.sap.promise.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
+            IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
+            IOUtils.closeQuietly(os);
+            
+            os.flush();
+            os.close();
+          }
+          
+          return;
+          
+        } else if ("/resources/sap-ui-core-nojQuery.js".equals(path)) {
+          
+          this.log("Merging module: sap-ui-core-nojQuery.js");
+          
+          response.setContentType(this.config.getServletContext().getMimeType(path));
+          httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
+          
+          if ("GET".equals(method)) {
+            OutputStream os = response.getOutputStream();
+            IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/jquery.sap.promise.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
+            IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
+            IOUtils.closeQuietly(os);
+            
+            os.flush();
+            os.close();
+          }
+          
+          return;
+          
+        } else if ("/resources/sap-ui-debug.js".equals(path)) {
+          
+          this.log("Merging module: sap-ui-core-nojQuery.js");
+          
+          response.setContentType(this.config.getServletContext().getMimeType(path));
+          httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
+          
+          if ("GET".equals(method)) {
+            OutputStream os = response.getOutputStream();
+            IOUtils.write(this.loadResource("/resources/sap/ui/debug/ControlTree.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/debug/Highlighter.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/debug/LogViewer.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/debug/PropertyList.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/debug/DebugEnv.js"), os, "UTF-8");
+            IOUtils.closeQuietly(os);
+            
+            os.flush();
+            os.close();
+          }
+          
+          return;
+          
+        }
         
       }
       
@@ -214,4 +225,4 @@ public class ConcatFilter implements Filter{
     
   } // method: findResource
 
-} // class: LessFilter
+} // class: ConcatFilter

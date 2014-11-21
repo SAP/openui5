@@ -37,7 +37,7 @@
 .sapMSltArrow,
 .sapMSltBar::after {
 	position: absolute;
-	line-height: 3rem;
+	line-height: inherit; /* rem values for line-height do not work in pseudo elements for IE9, 10, 11 */
 	text-align: center;
 	top: 0;
 	right: -0.0625rem;
@@ -115,7 +115,7 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 	border-color: transparent;
 }
 
-// IE does not support css outline-offset
+/* IE does not support css outline-offset */
 
 .sap-desktop[data-sap-ui-browser^="ie"] {
 
@@ -144,6 +144,9 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	background: @sapHCHighlightAltBG;
+}
+
+.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	border-color: transparent;
 }
 

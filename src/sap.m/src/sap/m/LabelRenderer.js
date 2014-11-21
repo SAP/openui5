@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class Label renderer.
-	 * @static
+	 * Label renderer.
+	 * @namespace
 	 */
 	var LabelRenderer = {
 	};
@@ -23,11 +23,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oLabel an object representation of the control that should be rendered
 	 */
 	LabelRenderer.render = function(rm, oLabel){
-		// return immediately if control is invisible
-		if (!oLabel.getVisible()) {
-			return;
-		}
-	
 		// convenience variable
 		var r = LabelRenderer;
 	

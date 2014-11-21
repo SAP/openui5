@@ -14,17 +14,21 @@
 sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/model/Filter', 'sap/ui/core/format/DateFormat'],
 	function(jQuery, ODataFilter, Sorter, Filter, DateFormat) {
 	"use strict";
-	
+
 	// Static class
+
+	/**
+	 * @alias sap.ui.model.odata.ODataUtils
+	 * @namespace
+	 * @private
+	 */
 	var ODataUtils = function() {};
-	
+
 	/**
 	 * Create URL parameters for sorting
-	 * @name sap.ui.model.odata.ODataUtils#createSortParams
 	 * @param {array} aSorters an array of sap.ui.model.Sorter
 	 * @return {string} the URL encoded sorter parameters
 	 * @private
-	 * @function
 	 */
 	ODataUtils.createSortParams = function(aSorters) {
 		var sSortParam;
@@ -44,18 +48,16 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		sSortParam = sSortParam.slice(0, -1);
 		return sSortParam;
 	};
-	
+
 	/**
 	 * Creates URL parameters strings for filtering.
 	 * The Parameter string is prepended with the "$filter=" system query option to form
 	 * a valid URL part for OData Request.
-	 * @see ODataUtils._createFilterParams 
+	 * @see ODataUtils._createFilterParams
 	 * @see {array} aFilters an array of sap.ui.model.Filter
 	 * @param {object} oEntityType the entity metadata object
 	 * @return {string} the URL encoded filter parameters
-	 * @name sap.ui.model.odata.ODataUtils#createFilterParams
 	 * @private
-	 * @function
 	 */
 	ODataUtils.createFilterParams = function(aFilters, oMetadata, oEntityType) {
 		if (!aFilters || aFilters.length == 0) {
@@ -63,16 +65,14 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		}
 		return "$filter=" + this._createFilterParams(aFilters, oMetadata, oEntityType);
 	};
-	
+
 	/**
-	 * Creates a string of logically (or/and) linked filter options, 
+	 * Creates a string of logically (or/and) linked filter options,
 	 * which will be used as URL query parameters for filtering.
 	 * @param {array} aFilters an array of sap.ui.model.Filter
 	 * @param {object} oEntityType the entity metadata object
 	 * @return {string} the URL encoded filter parameters
-	 * @name sap.ui.model.odata.ODataUtils#createFilterParams
 	 * @private
-	 * @function
 	 */
 	ODataUtils._createFilterParams = function(aFilters, oMetadata, oEntityType) {
 		var sFilterParam;
@@ -150,20 +150,23 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *
 	 * @private
 	 * @param {string|object|array} vParams
-	 * @name sap.ui.model.odata.ODataUtils#_createUrlParamsArray
-	 * @function
 	 */
 	ODataUtils._createUrlParamsArray = function(vParams) {
-		var aUrlParams, sType = jQuery.type(vParams);
+		var aUrlParams, sType = jQuery.type(vParams), sParams;
 		if (sType === "array") {
 			return vParams;
 		}
 
 		aUrlParams = [];
 		if (sType === "object") {
-			aUrlParams.push(this._encodeURLParameters(vParams));
+			sParams = this._encodeURLParameters(vParams);
+			if (sParams) {
+				aUrlParams.push(sParams);
+			}
 		} else if (sType === "string") {
-			aUrlParams.push(vParams);
+			if (vParams) {
+				aUrlParams.push(vParams);
+			}
 		}
 
 		return aUrlParams;
@@ -171,7 +174,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 
 	/**
 	 * Encode a map of parameters into a combined URL parameter string
-	 * 
+	 *
 	 * @param {map} mParams The map of parameters to encode
 	 * @returns {string} sUrlParams The URL encoded parameters
 	 * @private
@@ -195,14 +198,12 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * convert multi filter to filter string
 	 *
 	 * @private
-	 * @name sap.ui.model.odata.ODataUtils#_resolveMultiFilter
-	 * @function
 	 */
 	ODataUtils._resolveMultiFilter = function(oMultiFilter, oMetadata, oEntityType){
 		var that = this,
 			aFilters = oMultiFilter.aFilters,
 			sFilterParam = "";
-		
+
 		if (aFilters) {
 			sFilterParam += "(";
 			jQuery.each(aFilters, function(i, oFilter) {
@@ -221,19 +222,17 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			});
 			sFilterParam += ")";
 		}
-		
+
 		return sFilterParam;
 	};
-	
+
 	/**
 	 * Create a single filter segment of the OData filter parameters
 	 *
 	 * @private
-	 * @name sap.ui.model.odata.ODataUtils#_createFilterSegment
-	 * @function
 	 */
 	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, sFilterParam) {
-		
+
 		var oPropertyMetadata, sType;
 		if (oEntityType) {
 			oPropertyMetadata = oMetadata._getPropertyMetadata(oEntityType, sPath);
@@ -247,14 +246,14 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		} else {
 			jQuery.sap.assert(null, "Type for filter property could not be found in metadata!");
 		}
-		
+
 		if (oValue1) {
 			oValue1 = jQuery.sap.encodeURL(String(oValue1));
 		}
 		if (oValue2) {
 			oValue2 = jQuery.sap.encodeURL(String(oValue2));
 		}
-		
+
 		// TODO embed 2nd value
 		switch (sOperator) {
 			case "EQ":
@@ -282,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		}
 		return sFilterParam;
 	};
-	
+
 	/**
 	 * Format a JavaScript value according to the given EDM type
 	 * http://www.odata.org/documentation/overview#AbstractTypeSystem
@@ -290,9 +289,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
 	 * @return {string} the formatted value
-	 * @name sap.ui.model.odata.ODataUtils#formatValue
 	 * @public
-	 * @function
 	 */
 	ODataUtils.formatValue = function(vValue, sType) {
 		// Lazy creation of format objects
@@ -307,12 +304,12 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				pattern: "'time'''HH:mm:ss''"
 			});
 		}
-		
+
 		// null values should return the null literal
 		if (vValue === null || vValue === undefined) {
 			return "null";
 		}
-	
+
 		// Format according to the given type
 		var sValue;
 		switch (sType) {
@@ -350,8 +347,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		}
 		return sValue;
 	};
-	
+
 	return ODataUtils;
 
 }, /* bExport= */ true);
-

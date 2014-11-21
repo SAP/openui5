@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Slider
+	 * @alias sap.ui.commons.Slider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Slider = Control.extend("sap.ui.commons.Slider", /** @lends sap.ui.commons.Slider.prototype */ { metadata : {
@@ -67,11 +67,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Display step numbers for the ticks on the slider.
 			 */
 			stepLabels : {type : "boolean", group : "Appearance", defaultValue : false},
-	
-			/**
-			 * Invisible sliders are not rendered.
-			 */
-			visible : {type : "boolean", defaultValue : true},
 	
 			/**
 			 * Using the slider interactively requires value "true".
@@ -162,7 +157,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	Slider.prototype.onAfterRendering = function () {
-	
 		// Warning in the case of wrong properties
 		if ( this.getMin() >= this.getMax() ) {
 			jQuery.sap.log.warning('Property wrong: Min:' + this.getMin() + ' > Max:' + this.getMax() );

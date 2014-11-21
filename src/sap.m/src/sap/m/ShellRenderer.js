@@ -8,8 +8,8 @@
 
 
 	/**
-	 * @class Shell renderer. 
-	 * @static
+	 * Shell renderer. 
+	 * @namespace
 	 */
 	var ShellRenderer = {
 	};

@@ -6,9 +6,9 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class SelectList renderer.
+		 * SelectList renderer.
 		 *
-		 * @static
+		 * @namespace
 		 */
 		var SelectListRenderer = {};
 

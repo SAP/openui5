@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {object} [mParameters]
 	 * @abstract
 	 * @public
-	 * @name sap.ui.model.Binding
+	 * @alias sap.ui.model.Binding
 	 */
 	var Binding = EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding.prototype */ {
 		
@@ -48,29 +48,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	
 	});
 	
-	/**
-	 * Creates a new subclass of class sap.ui.model.Binding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.Binding.extend
-	 * @function
-	 */
-	
 	// Getter
 	/**
 	 * Getter for path
 	 * @return {String} the binding path
-	 * @name sap.ui.model.Binding#getPath
-	 * @function
 	 */
 	Binding.prototype.getPath = function() {
 		return this.sPath;
@@ -79,8 +60,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	/**
 	 * Getter for context
 	 * @return {Object} the context object
-	 * @name sap.ui.model.Binding#getContext
-	 * @function
 	 */
 	Binding.prototype.getContext = function() {
 		return this.oContext;
@@ -89,8 +68,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	/**
 	 * Setter for context
 	 * @param {Object} oContext the new context object
-	 * @name sap.ui.model.Binding#setContext
-	 * @function
 	 */
 	Binding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
@@ -102,8 +79,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	/**
 	 * Getter for model
 	 * @return {sap.ui.core.Model} the model
-	 * @name sap.ui.model.Binding#getModel
-	 * @function
 	 */
 	Binding.prototype.getModel = function() {
 		return this.oModel;
@@ -115,8 +90,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.Binding#attachChange
-	 * @function
 	 */
 	Binding.prototype.attachChange = function(fnFunction, oListener) {
 		if (!this.hasListeners("change")) {
@@ -130,8 +103,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.Binding#detachChange
-	 * @function
 	 */
 	Binding.prototype.detachChange = function(fnFunction, oListener) {
 		this.detachEvent("change", fnFunction, oListener);
@@ -146,8 +117,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {Map}
 	 *         mArguments the arguments to pass along with the event.
 	 * @private
-	 * @name sap.ui.model.Binding#_fireChange
-	 * @function
 	 */
 	Binding.prototype._fireChange = function(mArguments) {
 		this.fireEvent("change", mArguments);
@@ -158,8 +127,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @public
-	 * @name sap.ui.model.Binding#attachDataRequested
-	 * @function
 	 */
 	Binding.prototype.attachDataRequested = function(fnFunction, oListener) {
 		this.attachEvent("dataRequested", fnFunction, oListener);
@@ -170,8 +137,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @public
-	 * @name sap.ui.model.Binding#detachDataRequested
-	 * @function
 	 */
 	Binding.prototype.detachDataRequested = function(fnFunction, oListener) {
 		this.detachEvent("dataRequested", fnFunction, oListener);
@@ -182,8 +147,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	
 	 * @param {Map} mArguments the arguments to pass along with the event.
 	 * @protected
-	 * @name sap.ui.model.Binding#fireDataRequested
-	 * @function
 	 */
 	Binding.prototype.fireDataRequested = function(mArguments) {
 		this.fireEvent("dataRequested", mArguments);
@@ -194,8 +157,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @public
-	 * @name sap.ui.model.Binding#attachDataReceived
-	 * @function
 	 */
 	Binding.prototype.attachDataReceived = function(fnFunction, oListener) {
 		this.attachEvent("dataReceived", fnFunction, oListener);
@@ -206,8 +167,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @public
-	 * @name sap.ui.model.Binding#detachDataReceived
-	 * @function
 	 */
 	Binding.prototype.detachDataReceived = function(fnFunction, oListener) {
 		this.detachEvent("dataReceived", fnFunction, oListener);
@@ -218,8 +177,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	
 	 * @param {Map} mArguments the arguments to pass along with the event.
 	 * @protected
-	 * @name sap.ui.model.Binding#fireDataReceived
-	 * @function
 	 */
 	Binding.prototype.fireDataReceived = function(mArguments) {
 		this.fireEvent("dataReceived", mArguments);
@@ -230,8 +187,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {object} oModel The model instance to compare against
 	 * @returns {boolean} true if this binding should be updated
 	 * @protected
-	 * @name sap.ui.model.Binding#updateRequired
-	 * @function
 	 */
 	Binding.prototype.updateRequired = function(oModel) {
 		return oModel && this.getModel() === oModel;
@@ -246,8 +201,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {boolean} bForceUpdate
 	 *  
 	 * @private
-	 * @name sap.ui.model.Binding#checkUpdate
-	 * @function
 	 */
 	Binding.prototype.checkUpdate = function(bForceUpdate) {
 		if (!this.bSuspended) {
@@ -264,8 +217,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {boolean} bForceUpdate Update the bound control even if no data has been changed
 	 * 
 	 * @public
-	 * @name sap.ui.model.Binding#refresh
-	 * @function
 	 */
 	Binding.prototype.refresh = function(bForceUpdate) {
 		this.checkUpdate(bForceUpdate);
@@ -276,8 +227,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * The default implementation calls checkUpdate(true). 
 	 * 
 	 * @protected
-	 * @name sap.ui.model.Binding#initialize
-	 * @function
 	 */
 	Binding.prototype.initialize = function() {
 		this.checkUpdate(true);
@@ -287,8 +236,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	/**
 	 * _refresh for compatibility
 	 * @private
-	 * @name sap.ui.model.Binding#_refresh
-	 * @function
 	 */
 	Binding.prototype._refresh = function() {
 		this.refresh();
@@ -299,8 +246,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * Returns whether the binding is initial, which means it did not get an initial value yet
 	 * @return {boolean} whether binding is initial
 	 * @public
-	 * @name sap.ui.model.Binding#isInitial
-	 * @function
 	 */
 	Binding.prototype.isInitial = function() {
 		return this.bInitial;
@@ -310,8 +255,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * Returns whether the binding is relative, which means it did not start with a /
 	 * @return {boolean} whether binding is relative
 	 * @public
-	 * @name sap.ui.model.Binding#isRelative
-	 * @function
 	 */
 	Binding.prototype.isRelative = function() {
 		return this.bRelative;
@@ -322,8 +265,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 *
 	 * @param {object} oEvents
 	 * @protected
-	 * @name sap.ui.model.Binding#attachEvents
-	 * @function
 	 */
 	Binding.prototype.attachEvents = function(oEvents) {
 		if (!oEvents) {
@@ -346,8 +287,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 *
 	 * @param {object} oEvents
 	 * @protected
-	 * @name sap.ui.model.Binding#detachEvents
-	 * @function
 	 */
 	Binding.prototype.detachEvents = function(oEvents) {
 		if (!oEvents) {
@@ -370,8 +309,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.Binding#attachRefresh
-	 * @function
 	 */
 	Binding.prototype.attachRefresh = function(fnFunction, oListener) {
 		this.attachEvent("refresh", fnFunction, oListener);
@@ -382,8 +319,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.Binding#detachRefresh
-	 * @function
 	 */
 	Binding.prototype.detachRefresh = function(fnFunction, oListener) {
 		this.detachEvent("refresh", fnFunction, oListener);
@@ -393,8 +328,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * Fire event refresh to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
-	 * @name sap.ui.model.Binding#_fireRefresh
-	 * @function
 	 */
 	Binding.prototype._fireRefresh = function(mArguments) {
 		this.fireEvent("refresh", mArguments);

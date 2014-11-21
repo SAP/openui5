@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ImageMap
+	 * @alias sap.ui.commons.ImageMap
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ImageMap = Control.extend("sap.ui.commons.ImageMap", /** @lends sap.ui.commons.ImageMap.prototype */ { metadata : {
@@ -63,24 +63,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	/**
-	 * Adds an area to the ImageMap
+	 * Adds areas to the Image Map. 
+	 * 
+	 * Each argument must be either a JSon object or a list of objects or the area element or elements.
 	 *
-	 * @name sap.ui.commons.ImageMap#createArea
-	 * @function
-	 * @param {string[]} aArea
-	 * @type void
+	 * @param {any} content Area content to add 
+	 * @return {sap.ui.commons.ImageMap} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Adds areas to the Image Map. Each argument must be either a JSon object or a
-	 * list of objects or the area element or elements.
-	 *
-	 * @param {sap.ui.commons.Area|string} Area to add
-	 * @return {sap.ui.commons.Area} <code>this</code> to allow method chaining
-	 * @public
 	 */
 	ImageMap.prototype.createArea = function() {
 		var oArea = new sap.ui.commons.Area();

@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * @constructor
 	 * @public
 	 * @since 1.25.0
-	 * @name sap.ui.layout.FixFlex
+	 * @alias sap.ui.layout.FixFlex
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FixFlex = Control.extend("sap.ui.layout.FixFlex", /** @lends sap.ui.layout.FixFlex.prototype */ { metadata : {
@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			 * Determines the direction of the layout of child elements. True for vertical and false for horizontal layout.
 			 */
 			vertical : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * Determines if the control will be rendered. If the value is false the control will not be rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
 			 * Determines whether the fixed-size area should be on the beginning/top ( if the value is 'true') or beginning/bottom ( if the value is 'false').

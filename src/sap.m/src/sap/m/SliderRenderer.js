@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class Slider renderer.
-		 * @static
+		 * Slider renderer.
+		 * @namespace
 		 */
 		var SliderRenderer = {};
 
@@ -29,11 +29,6 @@ sap.ui.define(['jquery.sap.global'],
 			var bEnabled = oSlider.getEnabled(),
 				sTooltip = oSlider.getTooltip_AsString(),
 				CSS_CLASS = SliderRenderer.CSS_CLASS;
-
-			// avoid render when not visible
-			if (!oSlider.getVisible()) {
-				return;
-			}
 
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS);

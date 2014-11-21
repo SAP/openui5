@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class Bar renderer.
-	 * @static
+	 * Bar renderer.
+	 * @namespace
 	 */
 	var BarRenderer = {};
 	

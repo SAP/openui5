@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.SegmentedButton
+	 * @alias sap.ui.commons.SegmentedButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SegmentedButton = Control.extend("sap.ui.commons.SegmentedButton", /** @lends sap.ui.commons.SegmentedButton.prototype */ { metadata : {
@@ -37,12 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * enabled
 			 */
-			enabled : {type : "boolean", group : "Misc", defaultValue : true},
-	
-			/**
-			 * hide/show all Buttons: An invisible SegmentedButton is not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			enabled : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		aggregations : {
 	

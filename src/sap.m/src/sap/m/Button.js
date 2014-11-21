@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Button
+	 * @alias sap.m.Button
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {
@@ -49,11 +49,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Boolean property to enable the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-			/**
-			 * Invisible buttons are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
 			 * Icon to be displayed as graphical element within the button. This can be an image or an icon from the icon font.

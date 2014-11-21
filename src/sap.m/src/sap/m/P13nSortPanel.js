@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 			 * 
 			 * @constructor
 			 * @public
-			 * @name sap.m.P13nSortPanel
+			 * @alias sap.m.P13nSortPanel
 			 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 			 */
 			var P13nSortPanel = P13nPanel.extend("sap.m.P13nSortPanel", /** @lends sap.m.P13nSortPanel.prototype */
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 			/**
 			 * Initialize the control
 			 * 
-			 * @public
+			 * @private
 			 */
 			P13nSortPanel.prototype.init = function() {
 				sap.ui.getCore().loadLibrary("sap.ui.layout");
@@ -235,6 +235,15 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 			};
 
+			// TODO ER:fast implementation, please check!
+			P13nSortPanel.prototype.destroyItems = function() {
+				this.destroyAggregation("items");
+				if (this._oSortPanel) {
+				this._oSortPanel.removeAllKeyFields();
+				}
+				return this;
+			};
+			
 			P13nSortPanel.prototype.addSortItem = function(oSortItem) {
 				this.addAggregation("sortItems", oSortItem);
 
@@ -280,14 +289,14 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						});
 
 						that.fireAddSortItem({
-							index : oEvent.getParameter("index"),
+							index : iIndex,
 							newItem : oSortItem
 						});
 						that._bIgnoreAdd = false;
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveSortItem({
-							index : oEvent.getParameter("index")
+							index : iIndex
 						});
 					}
 				};

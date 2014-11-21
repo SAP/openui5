@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @name sap.ui.core.support.Support
+	 * @alias sap.ui.core.support.Support
 	 */
 	var Support = EventProvider.extend("sap.ui.core.support.Support", {
 		constructor: function(sType) {
@@ -99,9 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * Enumeration providing the possible support stub types.
 	 *
 	 * @static
-	 * @namespace
 	 * @protected
-	 * @name sap.ui.core.support.Support.StubType
 	 */
 	Support.StubType = mTypes;
 
@@ -112,14 +110,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * @static
 	 * @namespace
 	 * @protected
-	 * @name sap.ui.core.support.Support.StubType
 	 */
 	Support.EventType = mEvents;
 
 	/**
 	 * Support plugin registration
 	 * @private
-	 * @name sap.ui.core.support.Support.TOOL_SIDE_PLUGINS
 	 */
 	Support.TOOL_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Debugging", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.MessageTest"];
 	Support.APP_SIDE_PLUGINS = ["sap.ui.core.support.plugins.TechInfo", "sap.ui.core.support.plugins.ControlTree", "sap.ui.core.support.plugins.Trace", "sap.ui.core.support.plugins.Performance", "sap.ui.core.support.plugins.Selector", "sap.ui.core.support.plugins.Breakpoint"];
@@ -135,8 +131,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * @return {sap.ui.core.support.Support} the support stub
 	 * @static
 	 * @protected
-	 * @name sap.ui.core.support.Support.getStub
-	 * @function
 	 */
 	Support.getStub = function(sType) {
 		if (_oStubInstance) {
@@ -159,8 +153,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * Returns the type of this support stub.
 	 *
 	 * @see sap.ui.core.support.Support.StubType
-	 * @name sap.ui.core.support.Support.prototype.getType
-	 * @function
 	 * @return {string} the type of the support stub
 	 * @protected
 	 */
@@ -172,8 +164,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	/**
 	 * Receive event handler for postMessage communication.
 	 *
-	 * @name sap.ui.core.support.Support.prototype._receiveEvent
-	 * @function
 	 * @param {object} oEvent the event
 	 * @private
 	 */
@@ -204,8 +194,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	/**
 	 * Sends an event to the remote window.
 	 *
-	 * @name sap.ui.core.support.Support.prototype.sendEvent
-	 * @function
 	 * @param {string} sEventId the event id
 	 * @param {Object} [mParams] the parameter map (JSON)
 	 * @protected
@@ -237,8 +225,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	/**
 	 * Opens the support tool in an external browser window.
 	 *
-	 * @name sap.ui.core.support.Support.prototype.openSupportTool
-	 * @function
 	 * @protected
 	 */
 	Support.prototype.openSupportTool = function() {
@@ -270,8 +256,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	/**
 	 * Event Handler which is bound to the onload event of the Internet Explorer iFrame bridge.
 	 *
-	 * @name sap.ui.core.support.Support._onSupportIFrameLoaded
-	 * @function
 	 * @static
 	 * @private
 	 */
@@ -283,8 +267,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	/**
 	 * @see sap.ui.base.EventProvider.prototype.toString
 	 *
-	 * @name sap.ui.core.support.Support.prototype.toString
-	 * @function
 	 * @protected
 	 */
 	Support.prototype.toString = function() {

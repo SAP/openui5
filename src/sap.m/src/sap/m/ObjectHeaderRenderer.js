@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 
 	/**
-	 * @class ObjectHeader renderer.
-	 * @static
+	 * ObjectHeader renderer.
+	 * @namespace
 	 */
 	var ObjectHeaderRenderer = {};
 	

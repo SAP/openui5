@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * @public
 	 * @experimental Since version 1.15. 
 	 * The templating might be changed in future versions.
-	 * @name sap.ui.core.tmpl.TemplateControl
+	 * @alias sap.ui.core.tmpl.TemplateControl
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TemplateControl = Control.extend("sap.ui.core.tmpl.TemplateControl", /** @lends sap.ui.core.tmpl.TemplateControl.prototype */ { metadata : {
@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	};
 	 
 	/*
-	 * cleanup of the  controls and bindings 
+	 * cleanup of the controls and bindings 
 	 */
 	TemplateControl.prototype.onBeforeRendering = function() {
 		this.fireBeforeRendering();
@@ -198,6 +198,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 		this.fireAfterRendering();
 	};
 			
+	
+	/*
+	 * clone the fnRenderer
+	 */
+	TemplateControl.prototype.clone = function() {
+		var oClone = Control.prototype.clone.apply(this, arguments);
+		oClone.fnRenderer = this.fnRenderer;
+		return oClone;
+	};
+	
 	
 	/*
 	 * get notified when the model changes, ...
@@ -249,9 +259,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 		return oBinding;
 	
 	};
-			
-			
-			
+	
+	
+	/**
+	 * Calculates the path by considering the binding context if the path
+	 * is a relative path otherwise the incoming path will be returned.
+	 * 
+	 * @param {string} sPath the path
+	 * @return {string} the path including the binding context
+	 * @private
+	 */
+	TemplateControl.prototype.calculatePath = function(sPath, sType) {
+		var oBindingContext = this.getBindingContext(),
+		    sBindingContextPath = oBindingContext && oBindingContext.getPath();
+		if (sPath && sBindingContextPath && !jQuery.sap.startsWith(sPath, "/")) {
+			if (!jQuery.sap.endsWith(sBindingContextPath, "/")) {
+				sBindingContextPath += "/";
+			}
+			sPath = sBindingContextPath + sPath;
+		}
+		return sPath;
+	};
+	
+	
 	/**
 	 * Creates a pseudo binding for a property to get notified once the property 
 	 * changes to invalidate the control and trigger a re-rendering.
@@ -261,7 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * @protected 
 	 */
 	TemplateControl.prototype.bindProp = function(sPath) {
-		var oBinding = this.bind(sPath, "property");
+		var oBinding = this.bind(this.calculatePath(sPath), "property");
 		return oBinding && oBinding.getExternalValue();
 	};
 			
@@ -275,7 +305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * @protected 
 	 */
 	TemplateControl.prototype.bindList = function(sPath) {
-		var oBinding = this.bind(sPath, "list"),
+		var oBinding = this.bind(this.calculatePath(sPath), "list"),
 			oModel = oBinding && oBinding.getModel(),
 			sPath = oBinding && oBinding.getPath();
 		return oBinding && oModel.getProperty(sPath);

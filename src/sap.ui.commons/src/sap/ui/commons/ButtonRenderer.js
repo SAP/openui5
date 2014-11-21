@@ -9,10 +9,9 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
 	 * @author SAP SE
 	 * @version ${version}
-	 * @static
+	 * @namespace
 	 */
 	var ButtonRenderer = {
 	};
@@ -24,12 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oButton An object representation of the control that should be rendered.
 	 */
 	ButtonRenderer.render = function(rm, oButton) {
-	
-		// return immediately if control is invisible
-		if (!oButton.getVisible()) {
-			return;
-		}
-	
 		rm.addClass("sapUiBtn");
 	
 		// button is rendered as a "<button>" element

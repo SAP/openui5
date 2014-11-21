@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	 * @constructor
 	 * @public
 	 * @since 1.9.0
-	 * @name sap.ui.ux3.Collection
+	 * @alias sap.ui.ux3.Collection
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Collection = Element.extend("sap.ui.ux3.Collection", /** @lends sap.ui.ux3.Collection.prototype */ { metadata : {
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 		this.oCollectionSelection = new SelectionModel(SelectionModel.SINGLE_SELECTION);
 	};
 	
-	/**
+	/*
 	 * Set multi selection for selection model
 	 *
 	 * @param {boolean} bMultiSelection
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 		return this.setProperty("multiSelection",bMultiSelection);
 	};
 	
-	/**
+	/*
 	 * Set editable
 	 *
 	 * @param {boolean} bEditable
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 		this.firePropertyChanged();
 	};
 	
-	/**
+	/*
 	 * Set title
 	 *
 	 * @param {string} sTitle
@@ -126,8 +126,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	 *    Alternatively, a selectedItem instance may be given. 
 	 * @return {sap.ui.ux3.Collection} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.ux3.Collection#addSelectedItem
-	 * @function
 	 */
 	Collection.prototype.addSelectedItem = function(vSelectedItem) {
 		var oSelectedItem;
@@ -156,8 +154,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	 * @param {int | string | sap.ui.core.Item} vSelectedItem the selectedItem to remove or its index or id
 	 * @return {string} the id of the removed selectedItem or null
 	 * @public
-	 * @name sap.ui.ux3.Collection#removeSelectedItem
-	 * @function
 	 */
 	Collection.prototype.removeSelectedItem = function(vSelectedItem) {
 		//Don't remove the item if there is only one item selected
@@ -181,8 +177,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Selecti
 	/**
 	 * @return {string[]} an array with the ids of the removed elements (might be empty)
 	 * @public
-	 * @name sap.ui.ux3.Collection#removeAllSelectedItems
-	 * @function
 	 */
 	Collection.prototype.removeAllSelectedItems = function() {
 		var aRemovedObjects = this.removeAllAssociation("selectedItems",true);

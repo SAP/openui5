@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FixFlex renderer
-	 * @static
+	 * FixFlex renderer
+	 * @namespace
 	 */
 	var FixFlexRenderer = {};
 	
@@ -20,11 +20,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FixFlexRenderer.render = function(oRm, oControl) {
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// Control container
 		oRm.write('<div');
 		oRm.writeControlData(oControl);
