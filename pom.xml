@@ -184,6 +184,7 @@
 			</properties>
 
 			<build>
+			
 				<pluginManagement>
 					<plugins>
 
@@ -215,6 +216,23 @@
 
 					</plugins>
 				</pluginManagement>
+				
+				<plugins>
+				
+					<!-- translation support (specify non-existent path to ignore it) -->
+					<plugin>
+						<groupId>com.sap.ldi</groupId>
+						<artifactId>translation-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<translationResources>
+								<translationResource>nonexistentpath</translationResource>
+							</translationResources>
+						</configuration>
+					</plugin>
+					
+				</plugins>
+				
 			</build>
 
 		</profile>
