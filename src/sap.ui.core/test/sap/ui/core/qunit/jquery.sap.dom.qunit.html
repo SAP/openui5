@@ -121,6 +121,12 @@
 			strictEqual($This, $Empty);
 		});
 
+		test("getSelectedText() should return an empty string when the jQuery collection is empty", function() {
+
+			// assert
+			strictEqual(jQuery().getSelectedText(), "");
+		});
+
 		function fnGetSelectedTextCase(mSettings) {
 
 			test("getSelectedText()", function() {
