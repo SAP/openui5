@@ -109,6 +109,18 @@
 			$DomRef.remove();
 		});
 
+		test("selectText() should return this to allow method chaining", function() {
+
+			// arrange
+			var $Empty = jQuery();
+
+			// act
+			var $This = $Empty.selectText(0, 6);
+
+			// assert
+			strictEqual($This, $Empty);
+		});
+
 		function fnGetSelectedTextCase(mSettings) {
 
 			test("getSelectedText()", function() {
