@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-<!-- 
-  JSUNIT: 
+<!--
+  JSUNIT:
     Tested control/class: jquery.sap.dom.js
     Author: Martin Schaus, Andreas Kunz
  -->
@@ -11,20 +10,18 @@
 		<title>Test Page for jquery.sap.dom</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-language="de"
-				data-sap-ui-noConflict="true"
-				>
+				data-sap-ui-noConflict="true">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
-		
-		test("ById", function () {
+
+		test("ById", function() {
 			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
 			equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
 
@@ -34,11 +31,12 @@
 			equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
 			equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
 		});
-		
+
 		test("focus", function () {
 			expect(1);
 			var invisibleDiv = jQuery.sap.domById("invisibleDiv");
 			var result = jQuery.sap.focus(invisibleDiv);
+
 			// result will be "false" in IE8 and "true" in other browsers, as they have no error
 			ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
 		});
@@ -48,9 +46,9 @@
 			equal(jQuery('#textinput').cursorPos(), 4, "wrong cursor position after setting and getting");
 		});
 
-		test("SelectText", function () {
-			if(window.getSelection) {// Firefox, Opera, Safari
-			
+		test("SelectText", function() {
+			if (window.getSelection) {	// Firefox, Opera, Safari
+
 				jQuery('#testsel').selectText(2,5);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
@@ -63,29 +61,27 @@
 				equal(start, 0);
 				equal(end, jQuery('#testsel').get(0).value.length);
 
-				jQuery('#testsel').selectText(2,null);
+				jQuery('#testsel').selectText(2, null);
 				var start = jQuery('#testsel').get(0).selectionStart;
 				var end = jQuery('#testsel').get(0).selectionEnd;
 				equal(start, 0);
 				equal(end, 0);
 			} else {
-				if (document.selection.createRange) {        // Internet Explorer
+				if (document.selection.createRange) {	// Internet Explorer
 
 					jQuery('#testsel').selectText(2,5);
-					seltext = document.selection.createRange().text;						
+					seltext = document.selection.createRange().text;
 					equal(seltext, "lec");
-	
-					jQuery('#testsel').selectText(-2,50);
-					seltext = document.selection.createRange().text;						
-					equal(seltext, "Selection Test");
-	
-					jQuery('#testsel').selectText(2,null);
-					seltext = document.selection.createRange().text;						
-					equal(seltext, "");
 
+					jQuery('#testsel').selectText(-2,50);
+					seltext = document.selection.createRange().text;
+					equal(seltext, "Selection Test");
+
+					jQuery('#testsel').selectText(2,null);
+					seltext = document.selection.createRange().text;
+					equal(seltext, "");
 				}
 			}
-				
 		});
 
 		test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function() {
@@ -200,14 +196,14 @@
 					var quote = sap.ui.Device.browser.internet_explorer && (document.documentMode == undefined || document.documentMode && document.documentMode < 9) ? "" : "\""; //No '"' in IE8
 					return " " + n + "=" + quote + v + quote;
 				}
-				
+
 				var sRes = "<DIV";
 				sRes += bReversAttributeOrder ? att("ID", "CONTROL3") : att("TABINDEX", "0");
 				sRes += bReversAttributeOrder ? att("TABINDEX", "0") : att("ID", "CONTROL3");
 				sRes += ">CONTROL 3</DIV>";
 				return sRes;
 			}
-			
+
 			var sOuterHTML = jQuery("#control3").outerHTML().toUpperCase(); //Uppercase needed for cross browser consistency (IE returns uppercase tags, Firefox lowercase)
 			ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '"+sOuterHTML+"'")
 		});
@@ -250,7 +246,7 @@
 			ok(oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() not found");
 			equal(oDomRef, oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() is not control6");
 		});
-		
+
 		test("ParentByAttribute", function () {
 			var oDomRef = jQuery.sap.domById('control2');
 			var oParentWithAttribute = jQuery(oDomRef).parentByAttribute("data-sap-ui-test");
@@ -268,14 +264,13 @@
 		test("OwnerWindow", 0, function () {
 			// tests not easily possible, as there is no defined, stable environment with different windows
 		});
-		
+
 		test("Focus", function () { // actually tests jQuery itself
 			var oDomRef = jQuery.sap.domById('control3');
 			jQuery(oDomRef).focus();
 			equal(document.activeElement, oDomRef, "jQuery().focus() failed");
 		});
-		
-		
+
 		test("ScrollbarSize", function () {
 			var size = jQuery.sap.scrollbarSize(true);
 			ok(size, "No size for scroll bar returned")
@@ -338,7 +333,6 @@
 		});
 		</script>
 	</head>
-	
 	<body>
 		<h1 id="qunit-header">QUnit page for jquery.sap.dom</h1>
 		<h2 id="qunit-banner"></h2>
@@ -358,7 +352,7 @@
 				<a name="control5" href="#">Control 5</a>
 				<a id="control6" href="#">Control 6</a>
 				Simple Text
-		</div>		
+		</div>
 		</b>
 		<input id="testsel" value="Selection Test"></input>
 		</div>
