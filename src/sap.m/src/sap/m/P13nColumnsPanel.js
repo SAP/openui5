@@ -951,12 +951,18 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		// Restore table items based on items aggregation information
 		var sColumnsKey = null, iNewIndex = null;
 		var aPanelItems = this.getItems();
-		var aTableItems = this._oTable.getItems(), iTableItemIndex = null, oTableItem = null, oRemovedTableItem = null;
+		var aTableItems = null, iTableItemIndex = null, oTableItem = null, oRemovedTableItem = null;
 		var aColumnsItems = this.getColumnsItems(), iColumnsItemIndex = null, oColumnsItem = null;
 
 		aPanelItems.forEach(function(oPanelItem, iIndex) {
+			oTableItem = null;
+			oColumnsItem = null;
+			oRemovedTableItem = null;
+			
 			sColumnsKey = oPanelItem.getColumnKey();
+			aTableItems = this._oTable.getItems();
 			iTableItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aTableItems);
+			
 			if (iTableItemIndex !== null && iTableItemIndex !== undefined && iTableItemIndex > -1) {
 				oTableItem = aTableItems[iTableItemIndex];
 				// remove item from table
@@ -966,7 +972,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 				// check, whether still a columnsItems exist that can be applied
 				iColumnsItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aColumnsItems);
-				if (iTableItemIndex !== null && iTableItemIndex !== undefined && iTableItemIndex > -1) {
+				if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex > -1) {
 					oColumnsItem = aColumnsItems[iColumnsItemIndex];
 				}
 
@@ -977,10 +983,17 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 					oRemovedTableItem.setSelected(oPanelItem.getVisible());
 					iNewIndex = iIndex;
 
-					// In case a columnsItem still exist for this table item take this data
+					// In case a columnsItem still exist for this table item take over it's metadata
 					if (oColumnsItem) {
-						oRemovedTableItem.setSelected(oColumnsItem.getVisible());
-						iNewIndex = oColumnsItem.getIndex();
+						if (oColumnsItem.getVisible() !== undefined) {
+							oRemovedTableItem.setSelected(oColumnsItem.getVisible());							
+						}
+						if (oColumnsItem.getIndex() !== undefined) {
+							iNewIndex = oColumnsItem.getIndex();
+						}
+						if (oColumnsItem.getWidth() !== undefined) {
+							oRemovedTableItem.data('P13nColumnWidth', oColumnsItem.getWidth);
+						}						
 					}
 					this._oTable.insertItem(oRemovedTableItem, iNewIndex);
 				}
