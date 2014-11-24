@@ -237,19 +237,27 @@
 
 	//*********************************************************************************************
 	test("14.4.10 Expression edm:Int", function () {
-		strictEqual(formatAndParseNoWarning(1234567890), "1,234,567,890");
+		var oRawValue = {
+			"@odata.type" : "#Int64",
+			value: -1234567890
+		};
+
+		strictEqual(formatAndParseNoWarning(oRawValue), "-1,234,567,890");
 
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
-		strictEqual(formatAndParseNoWarning(1234567890), "1'234'567'890");
+		strictEqual(formatAndParseNoWarning(oRawValue), "-1'234'567'890");
 
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group", "}");
-		strictEqual(formatAndParseNoWarning(-1234567890), "{1}234}567}890");
+		strictEqual(formatAndParseNoWarning(oRawValue), "{1}234}567}890");
 	});
 
 	//*********************************************************************************************
+	//TODO support large integers beyond 53 bit!
 	testIllegalValues([Infinity, -Infinity, NaN, 9007199254740992, -9007199254740992,
-	                   1234567890123456789], "14.4.10 Expression edm:Int", "#Int64", false);
+	                   1234567890123456789, 3.14, null, true, "1.0", "{}", "foo", "1a",
+	                   "9007199254740992", "-9007199254740992", "1234567890123456789"],
+	                   "14.4.10 Expression edm:Int", "#Int64", true);
 
 	//*********************************************************************************************
 	test("14.4.10 Expression edm:Int (IEEE754Compatible)", function () {
@@ -264,16 +272,6 @@
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group", "}");
 		strictEqual(formatAndParseNoWarning(oRawValue), "{1}234}567}890");
 	});
-
-	//*********************************************************************************************
-	//TODO really treat numbers as illegal here?
-	//TODO support large integers beyond 53 bit!
-	testIllegalValues([null, true, 0, "1.0", "{}", "foo", "1a", "9007199254740992",
-	                   "-9007199254740992", "1234567890123456789"],
-	                   "14.4.10 Expression edm:Int (IEEE754Compatible)", "#Int64", true);
-
-	//*********************************************************************************************
-	testIllegalValues([3.14], "14.4.10 Expression edm:Int", "#Int64", false);
 
 	//*********************************************************************************************
 	test("14.4.2 Expression edm:Bool", function () {
@@ -372,6 +370,8 @@
 
 	//*********************************************************************************************
 	test("14.4.8 Expression edm:Float", function () {
+		strictEqual(formatAndParseNoWarning(1.23e4), "12,300");
+		strictEqual(formatAndParseNoWarning(31415.926535), "31,415.926535");
 		strictEqual(formatAndParseNoWarning({
 			"@odata.type": "#Double",
 			"value": 1.23e4
@@ -396,6 +396,10 @@
 			"value": -1.23e4
 		}), "{12}300");
 	});
+
+	//*********************************************************************************************
+	testIllegalValues([-Infinity, NaN],
+			"14.4.8 Expression edm:Float", "#Double", false);
 
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, false, {}, "foo", "1a", "1e", "12.34", -Infinity, NaN],
