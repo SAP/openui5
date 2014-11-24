@@ -30,7 +30,11 @@ sap.ui.define(['jquery.sap.global',
 			oHashChanger = null;
 
 		/**
-		 * @class UI 5 extension of the OPA framework
+		 * Helps you writing tests for UI5 applications.
+		 * Provides convenience to wait and retrieve for UI5 controls without relying on global ids.
+		 * Makes it easy to wait until your UI is in the state you need for testing eg: waiting for backend data.
+		 *
+		 * @class UI5 extension of the OPA framework
 		 * @extends sap.ui.base.Object
 		 * @public
 		 * @alias sap.ui.test.Opa5
@@ -47,7 +51,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 *@alias sap.ui.test.Opa5#iStartMyAppInAFrame
+		 * @alias sap.ui.test.Opa5#iStartMyAppInAFrame
 		 * @param {string} sSource the source of the iframe
 		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
