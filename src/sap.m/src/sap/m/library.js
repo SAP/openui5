@@ -2261,17 +2261,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var _fnSuggestionItemSelected = function(oEvent) {
 			var oCtrl = oEvent.getSource();
 			var mValueListAnnotation = oCtrl.data(oCtrl.getId() + "-#valueListAnnotation");
+			var oModel = oCtrl.getModel();
+			var oInputBinding = oCtrl.getBinding("value");
+			var sInputPath = oModel.resolve(oInputBinding.getPath(), oInputBinding.getContext());
 			
 			if (!mValueListAnnotation) {
 				return;
 			}
 			var oRow = oEvent.getParameter("selectedRow");
 			jQuery.each(oRow.getCells(), function(iIndex, oCell) {
+				var oCellBinding =  oCell.getBinding("text");
 				jQuery.each(mValueListAnnotation.outParameters, function(sKey, oObj) {
-					if (!oObj.displayOnly && oObj.value == oCell.getBinding("text").getPath()) {
-						var oValue = oCell.getBinding("text").getValue();
-						if (oValue) {
-							oCtrl.getModel().setProperty(sKey,oValue,oCtrl.getBinding("value").getContext());
+					if (!oObj.displayOnly && oObj.value == oCellBinding.getPath()) {
+						var oValue = oCellBinding.getValue();
+						var sValuePath = oModel.resolve(sKey, oInputBinding.getContext());
+						if (oValue && sValuePath !== sInputPath) {
+							oModel.setProperty(sValuePath, oValue);
 						}
 					}
 				});
