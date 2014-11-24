@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Tokenizer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement'],
+	function(jQuery, library, Control, ScrollEnablement) {
 	"use strict";
 
 
@@ -95,40 +95,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	// * This file defines behavior for the control,
 	// */
 	
-	// When to create a scroll delegate (library) or using pure CSS
-	Tokenizer.prototype._bDoScrollViaLibrary = !sap.ui.Device.system.desktop;
-	Tokenizer.prototype._bDoScrollWin8 = sap.ui.Device.os.windows && sap.ui.Device.os.version === 8;
-	Tokenizer.prototype._bDoTouchScroll = Tokenizer.prototype._bDoScrollViaLibrary
-			|| Tokenizer.prototype._bDoScrollWin8;
-	
 	Tokenizer.prototype.init = function() {
 		//if bScrollToEndIsActive === true, than tokenizer will keep last token visible
 		this._bScrollToEndIsActive = false;
 		
 		this._aTokenValidators = [];
 		
-		if (this._bDoScrollViaLibrary) {
-			jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
-			var sId = this.getId() + "-scrollContainer";
-	
-			var _nonTouchScrolling;
-			if (sap.ui.Device.os.android && sap.ui.Device.os.version < 4.4 && !sap.ui.Device.browser.chrome) {
-				_nonTouchScrolling = true;
-			} else {
-				_nonTouchScrolling = false;
-			}
-	
-			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, sId, {
-				horizontal : true,
-				vertical : false,
-				nonTouchScrolling : _nonTouchScrolling
-			});
-	
-		} else if (this._bDoScrollWin8) {
-			// in the case of Windows 8 we use no special library since scrolling there is a. working nicely without it and
-			// b. there are issues with scrolling when using the ScrollEnablement
-			this.addStyleClass("sapMTokenizerWin8");
-		}
+		this._oScroller = new ScrollEnablement(this, this.getId() + "-scrollContainer", {
+			horizontal : true,
+			vertical : false,
+			nonTouchScrolling : true
+		});
 	};
 	
 	/**
@@ -309,6 +286,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._removeLastTokensTruncation();
 		
 		return this.$().children(".sapMTokenizerScrollContainer")[0].scrollWidth;
+	};
+
+	Tokenizer.prototype.onBeforeRendering = function() {
+		this._deregisterResizeHandler();
 	};
 	
 	/**
