@@ -874,6 +874,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			var that = this;
 			this._oFileUploader.removeAllHeaderParameters();
 			this._oFileUploader.removeAllParameters();
+			
+			this.fireChange(oEvent);
+			
 			var aHeaderParametersAfter = this.getAggregation("headerParameters");
 			var aParametersAfter = this.getAggregation("parameters");
 			var aUploadedFiles = this._getUploadedFilesFromUploaderEvent(oEvent);
