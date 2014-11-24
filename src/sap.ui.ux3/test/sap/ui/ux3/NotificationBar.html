@@ -312,6 +312,39 @@
 	});
 	oLayout.createRow(oCheckReadOnly);
 
+	var oCheckAlwaysShowToggler = new sap.ui.commons.CheckBox({
+		text : "Always Show Toggler",
+		checked : false,
+		change : function() {
+			oNotificationBar.setAlwaysShowToggler(this.getChecked());
+		}
+	});
+	oLayout.createRow(oCheckAlwaysShowToggler);
+
+	var iSelectedIndex = sap.ui.Device.browser.mobile ? 1 : 0;
+	var oRadioButtons = new sap.ui.commons.RadioButtonGroup({
+		items : [ new sap.ui.core.Item({
+			text : "Show NotificationBar in desktop mode",
+			key : "desktop"
+		}), new sap.ui.core.Item({
+			text : "Show NotificationBar in mobile mode",
+			key : "mobile"
+		}) ],
+		select : function() {
+			var sKey = this.getSelectedItem().getKey();
+
+			if (sKey === "desktop") {
+				sap.ui.Device.browser.mobile = false;
+			} else {
+				sap.ui.Device.browser.mobile = true;
+			}
+			oNotificationBar.setAlwaysShowToggler(oCheckAlwaysShowToggler.getChecked());
+			oNotificationBar.invalidate();
+		},
+		selectedIndex : iSelectedIndex
+	});
+	oLayout.createRow(oRadioButtons);
+
 	oLayout.placeAt("buttons");
 </script>
 
