@@ -485,6 +485,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// TODO: destroy HTML? Remember to destroy ALL HTML of several pages when backToTop has been called
 		
 		jQuery.sap.log.info(this + ": _afterTransitionCallback called, to: " + oNavInfo.toId);
+		
+		if (oNavInfo.to.hasStyleClass("sapMNavItemHidden")) {
+			jQuery.sap.log.warning(this.toString() + ": target page '" + oNavInfo.toId + "' still has CSS class 'sapMNavItemHidden' after transition. This should not be the case, please check the preceding log statements.");
+			oNavInfo.to.removeStyleClass("sapMNavItemHidden");
+		}
 	
 		if (this._aQueue.length > 0) {
 			var fnNavigate = this._aQueue.shift();
@@ -612,6 +617,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 				
 				this._pageStack.push({id:pageId,mode:transitionName,data:data}); // this actually causes/is the navigation
+				jQuery.sap.log.info(this.toString() + ": navigating to page '" + pageId + "': " + oToPage.toString());
 				this._mVisitedPages[pageId] = true;
 		
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
@@ -846,16 +852,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oToPage._handleEvent(oEvent);
 	
 				this._pageStack.pop(); // this actually causes/is the navigation
+				jQuery.sap.log.info(this.toString() + ": navigating back to page " + oToPage.toString());
 				this._mVisitedPages[oToPageId] = true;
 				
 				if (sType === "backToTop") { // if we should navigate to top, just clean up the whole stack
 					this._pageStack = [];
+					jQuery.sap.log.info(this.toString() + ": navigating back to top");
 					this.getCurrentPage(); // this properly restores the initial page on the stack
 					
 				} else if (sType === "backToPage") {
+					var aPages = [], interimPage;
 					while (this._pageStack[this._pageStack.length - 1].id !== sRequestedPageId) { // by now it is guaranteed that we will find it
-						this._pageStack.pop();
+						interimPage = this._pageStack.pop();
+						aPages.push(interimPage.id);
 					}
+					jQuery.sap.log.info(this.toString() + ": navigating back to specific page " + oToPage.toString() + " across the pages: " + aPages.join(", "));
 				}
 	
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
