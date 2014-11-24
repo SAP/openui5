@@ -371,14 +371,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
 		var sourceId = oEvent.target.id;
 		if (this.getTitleActive() && sourceId === this.getId() + "-title") {
+			if (oEvent.type === "sapspace") {
+				oEvent.preventDefault();
+			}
+
 			this.fireTitlePress({
 				domRef : this._titleText.getFocusDomRef()
 			});
 		} else if (this.getIntroActive() && sourceId === this.getId() + "-intro") {
+			if (oEvent.type === "sapspace") {
+				oEvent.preventDefault();
+			}
+
 			this.fireIntroPress({
 				domRef : jQuery.sap.domById(sourceId)
 			});
 		} else if (this.getIconActive() && jQuery(oEvent.target).hasClass('sapMOHIcon')){
+			if (oEvent.type === "sapspace") {
+				oEvent.preventDefault();
+			}
+
 			var iconOrImg = jQuery.sap.domById(this.getId() + "-icon");
 			if (!iconOrImg) {
 				iconOrImg = jQuery.sap.domById(this.getId() + "-img");
@@ -387,8 +399,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				domRef : iconOrImg
 			});
 		}
-
-		oEvent.preventDefault();
 	};
 
 	/**
