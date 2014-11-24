@@ -229,10 +229,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.selectText = function selectText(iStart, iEnd) {
 		var oDomRef = this.get(0);
 
-		if (!oDomRef) {
-			return this;
-		}
-
 		try {
 			if (typeof (oDomRef.selectionStart) === "number") { // Firefox and IE9+
 
