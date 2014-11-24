@@ -522,8 +522,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 					var oGroupColumnInfo = getGroupColumnInfo();
 
 					if (oGroupColumnInfo) {
-						var oColumn = oGroupColumnInfo.column;
-						oColumn.setShowIfGrouped(!oColumn.getShowIfGrouped());
+						var oColumn = oGroupColumnInfo.column,
+							bShowIfGrouped = oColumn.getShowIfGrouped();
+						oColumn.setShowIfGrouped(!bShowIfGrouped);
+
+						that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type:( !bShowIfGrouped ? sap.ui.table.GroupEventType.showGroupedColumn : sap.ui.table.Table.groupEventType.hideGroupedColumn )});
 					}
 				}
 			});
@@ -542,7 +545,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 							iFoundGroups++;
 							if (iFoundGroups == that._iGroupedLevel) {
 								oColumn._bSkipUpdateAI = true;
-								
+
 								// relaying the ungrouping to the AnalyticalBinding,
 								// the numberOfExpandedLevels must be reset through the TreeBindingAdapter.
 								var oBinding = that.getBinding("rows");
@@ -551,9 +554,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 								// and this will result in new requests from the AnalyticalBinding,
 								//because the initial grouping is lost (can not be restored!)
 								oColumn.setGrouped(false);
-								
+
 								oColumn._bSkipUpdateAI = false;
 								iUngroudpedIndex = i;
+								that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.ungroup});
 							} else {
 								iLastGroupedIndex = i;
 							}
@@ -584,11 +588,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 					var aColumns = that.getColumns();
 					for (var i = 0; i < aColumns.length; i++) {
 						aColumns[i]._bSkipUpdateAI = true;
-						
+
 						// same as with single "ungrouping" (see above)
 						var oBinding = that.getBinding("rows");
 						oBinding.setNumberOfExpandedLevels(0);
-						
+
 						aColumns[i].setGrouped(false);
 						aColumns[i]._bSkipUpdateAI = false;
 					}
@@ -596,6 +600,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 					that._updateTableColumnDetails();
 					that.updateAnalyticalInfo();
 					that._bSupressRefresh = false;
+					that.fireGroup({column: undefined, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.ungroupAll});
 				}
 			}));
 			this._oGroupHeaderMoveUpItem = new sap.ui.unified.MenuItem({
@@ -609,6 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 						if (iIndex > 0) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex - 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
+							that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.moveUp});
 						}
 					}
 				},
@@ -626,6 +632,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 						if (iIndex < that._aGroupedColumns.length) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex + 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
+							that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.moveDown});
 						}
 					}
 				},
