@@ -33,7 +33,68 @@
 				}
 			oEventList.addItem(item);
 		};
-		
+
+		var oDialog = new sap.m.Dialog("dialog", {
+			title: "Multi Inputs",
+			contentWidth: "420px",
+			horizontalScrolling: false,
+			content: [
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput({
+							tokens: [
+							         new sap.m.Token({text: "Token 1", key: "0001"}),
+							         new sap.m.Token({text: "Token 2", key: "0002"}),
+							         new sap.m.Token({text: "Token 3", key: "0003"}),
+							         new sap.m.Token({text: "Token 4", key: "0004"}),
+							         new sap.m.Token({text: "Token 5", key: "0005"}),
+							         new sap.m.Token({text: "Token 6", key: "0006"}),
+							         new sap.m.Token({text: "Token 7", key: "0007"}),
+							         new sap.m.Token({text: "Token 8", key: "0008"}),
+							         new sap.m.Token({text: "Token 9", key: "0009"})
+							         ]
+
+						}),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput(),
+						new sap.m.MultiInput()
+					],
+			beginButton: 
+				new sap.m.Button({
+					text: "OK",
+					type: sap.m.ButtonType.Accept,
+					press : function() {
+						oDialog.close();
+					}
+				}),
+			endButton:
+				new sap.m.Button({
+					text: "Cancel",
+					type: sap.m.ButtonType.Reject,
+					press : function() {
+						oDialog.close();
+					}
+			})
+		});
+
+
+		// open in a dialog
+		function openDialog(){
+			oDialog.open();
+		}
+
 		//*******************************
 		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
 			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
@@ -764,6 +825,7 @@
 					oMultiInput4,
 					new sap.m.Label({text: "Compact Mode"}), 
 			        theCompactMode,
+					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
 					new sap.m.Label({ text : "token databinding in MultiInput"}),
 					oTable,
 					new sap.m.Label({ text : "Token events:"}),
