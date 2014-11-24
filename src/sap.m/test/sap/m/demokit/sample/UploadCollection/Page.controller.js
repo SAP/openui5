@@ -14,7 +14,8 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 										"key": "None",
 										"text": "sap.m.ListSeparators.None"
 									}
-				]
+				],
+				"selectedKey": "None"
 		};
 
 		var oModelCB = new sap.ui.model.json.JSONModel();
