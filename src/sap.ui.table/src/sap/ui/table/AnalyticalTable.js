@@ -526,7 +526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 							bShowIfGrouped = oColumn.getShowIfGrouped();
 						oColumn.setShowIfGrouped(!bShowIfGrouped);
 
-						that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type:( !bShowIfGrouped ? sap.ui.table.GroupEventType.showGroupedColumn : sap.ui.table.Table.groupEventType.hideGroupedColumn )});
+						that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type:( !bShowIfGrouped ? sap.ui.table.GroupEventType.showGroupedColumn : sap.ui.table.GroupEventType.hideGroupedColumn )});
 					}
 				}
 			});
@@ -557,7 +557,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 
 								oColumn._bSkipUpdateAI = false;
 								iUngroudpedIndex = i;
-								that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.ungroup});
+								that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: sap.ui.table.GroupEventType.ungroup});
 							} else {
 								iLastGroupedIndex = i;
 							}
@@ -600,7 +600,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 					that._updateTableColumnDetails();
 					that.updateAnalyticalInfo();
 					that._bSupressRefresh = false;
-					that.fireGroup({column: undefined, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.ungroupAll});
+					that.fireGroup({column: undefined, groupedColumns: [], type: sap.ui.table.GroupEventType.ungroupAll});
 				}
 			}));
 			this._oGroupHeaderMoveUpItem = new sap.ui.unified.MenuItem({
@@ -614,7 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 						if (iIndex > 0) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex - 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
-							that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.moveUp});
+							that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: sap.ui.table.GroupEventType.moveUp});
 						}
 					}
 				},
@@ -632,7 +632,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 						if (iIndex < that._aGroupedColumns.length) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex + 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
-							that.fireGroup({column: oColumn, groupedColumns: this._aGroupedColumns, type: sap.ui.table.GroupEventType.moveDown});
+							that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: sap.ui.table.GroupEventType.moveDown});
 						}
 					}
 				},
