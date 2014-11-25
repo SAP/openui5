@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	Toolbar.getOrigWidth = function(sId) {
 		var oControl = sap.ui.getCore().byId(sId);
 		if (!oControl || !oControl.getWidth) {
-			return "auto";
+			return "";
 		}
 	
 		return oControl.getWidth();
@@ -367,11 +367,13 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	}());
 	
 	Toolbar.prototype.init = function() {
+		// define group for F6 handling
+		this.data("sap-ui-fastnavgroup", "true", true);
+		
+		// content delegate reference
 		this._oContentDelegate = {
 			onAfterRendering: this._onAfterContentRendering
 		};
-		
-		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	Toolbar.prototype.onBeforeRendering = function() {
@@ -479,12 +481,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	// reset overflow and mark with classname if overflows
 	Toolbar.prototype._resetOverflow = function() {
 		this._deregisterResize();
-		var $this = this.$();
-		var oDomRef = $this[0] || {};
-		$this.removeClass("sapMTBOverflow");
+		var $This = this.$();
+		var oDomRef = $This[0] || {};
+		$This.removeClass("sapMTBOverflow");
 		var bOverflow = oDomRef.scrollWidth > oDomRef.clientWidth;
-		bOverflow && $this.addClass("sapMTBOverflow");
-		this._endPoint = this._getEndPoint();
+		bOverflow && $This.addClass("sapMTBOverflow");
+		this._iEndPoint = this._getEndPoint();
 		this._registerResize();
 	};
 	
@@ -492,7 +494,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	Toolbar.prototype._reflexie = function() {
 		this._deregisterResize();
 		Toolbar.flexie(this.$());
-		this._endPoint = this._getEndPoint();
+		this._iEndPoint = this._getEndPoint();
 		this._registerResize();
 	};
 	
@@ -587,6 +589,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				iEndPoint += oLastChild.offsetWidth;
 			}
 		}
+		
 		return iEndPoint || 0;
 	};
 	
@@ -603,7 +606,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	// generic resize handler
 	Toolbar.prototype._handleResize = function(bCheckEndPoint) {
 		// check whether end point is changed or not
-		if (bCheckEndPoint && this._endPoint == this._getEndPoint()) {
+		if (bCheckEndPoint && this._iEndPoint == this._getEndPoint()) {
 			return;
 		}
 	
@@ -644,9 +647,9 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		return this._sAutoDesign || sDesign;
 	};
 	
-	/////////////////
-	//Bar in page delegation
-	/////////////////
+	///////////////////////////
+	// Bar in page delegation
+	///////////////////////////
 	/**
 	 * Returns if the bar is sensitive to the container context. Implementation of the IBar interface
 	 * @returns {bool} isContextSensitive
