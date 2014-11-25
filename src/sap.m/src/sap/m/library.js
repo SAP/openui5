@@ -2514,6 +2514,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		},
 		bFinal: true
 	});
+	
+	
+	/* Android browser does not scroll a focused input into the view correctly after resize */
+	if (sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
+		jQuery(window).on("resize", function(){
+			var oActive = document.activeElement;
+			var sTagName = oActive.tagName;
+			if (sTagName == "INPUT" || sTagName == "TEXTAREA") {
+				window.setTimeout(function(){
+					oActive.scrollIntoViewIfNeeded();
+				}, 0);
+			}
+		});
+	}
 
 	return sap.m;
 
