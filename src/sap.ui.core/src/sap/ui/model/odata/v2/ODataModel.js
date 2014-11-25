@@ -1762,6 +1762,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					//failed create Entry createEntry
 					oRequestGroup.map[oRequest.key].method = "POST";
 				}
+				// if change is aborted (resetChanges) and a change happens before submit we should delete
+				// the aborted flag
+				if (oRequestGroup.map[oRequest.key]._aborted) {
+					delete oRequestGroup.map[oRequest.key]._aborted;
+				}
 				oRequestGroup.map[oRequest.key].data = oRequest.data;
 			} else {
 				oChangeGroup = oRequestGroup.changes[sChangeSetId];
@@ -2835,12 +2840,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		if (aKeys) {
 			jQuery.each(aKeys, function(iIndex, sKey) {
+				if (sKey in this.mChangedEntities) {
+					that.mChangeHandles[sKey].abort();
+					delete that.mChangeHandles[sKey];
+					delete that.mChangedEntities[sKey];
+				} else {
+					jQuery.log.warning(this + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
+				}
+			});
+		} else {
+			jQuery.each(this.mChangedEntities, function(sKey, oObject) {
 				that.mChangeHandles[sKey].abort();
 				delete that.mChangeHandles[sKey];
 				delete that.mChangedEntities[sKey];
 			});
-		} else {
-			this.mChangedEntities = {};
 		}
 		this.checkUpdate();
 	};
@@ -2919,14 +2932,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oRequest = this._processChange(sKey, oEntry);
 		}
 		
-		oRequestHandle = {
-				abort: function() {
-					oRequest._aborted = true;
-				}
-		};
-		
-		this.mChangeHandles[sKey] = oRequestHandle;
-		
+		if (!this.mChangeHandles[sKey]) {
+			oRequestHandle = {
+					abort: function() {
+						oRequest._aborted = true;
+					}
+			};
+	
+			this.mChangeHandles[sKey] = oRequestHandle;
+		}
+
 		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 
 		if (this.bUseBatch) {
