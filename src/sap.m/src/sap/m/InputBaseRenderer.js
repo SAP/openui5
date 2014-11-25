@@ -26,14 +26,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-	
+		this.writeAccessibilityState(oRm, oControl);
+
 		// outer styles
 		this.addOuterStyles(oRm, oControl);
 	
 		if (oControl.getWidth()) {
 			oRm.addStyle("width", oControl.getWidth());
 		}
-	
+
 		oRm.writeStyles();
 	
 		// outer classes
@@ -142,7 +143,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// finish outer
 		oRm.write("</div>");
 	};
-	
+
+	/**
+	 * Writes the accessibility state.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.writeAccessibilityState = function(oRm, Control) {};
+
 	/**
 	 * This method is reserved for derived classes to add extra attributes to the Input.
 	 *
