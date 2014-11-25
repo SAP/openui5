@@ -85,6 +85,11 @@
 	height: 1.625rem;
 }
 
+// If a non-native placeholder is used, make sure that it is in front of children elements.
+.sapMMultiComboBox  > .sapMInputBasePlaceholder {
+	z-index: 1;
+}
+
 /* ------------------------------ */
 /* InputInner                     */
 /* ------------------------------ */
