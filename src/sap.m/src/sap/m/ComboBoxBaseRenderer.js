@@ -78,6 +78,7 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		ComboBoxBaseRenderer.writeInnerContent = function(oRm, oControl) {
 			oRm.write('<div tabindex="-1"');
 			oRm.writeAttribute("id", oControl.getId() + "-arrow");
+			oRm.writeAttribute("role", "presentation");
 			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS + "Arrow");
 			oRm.writeClasses();
 			oRm.write("></div>");
