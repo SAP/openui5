@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
 			iNewItemIndex = iOldItemIndex;
-			if (iOldItemIndex < iTableMaxIndex) {
+			if (iOldItemIndex < iTableMaxIndex - 1) {
 				iNewItemIndex = iTableMaxIndex - 1;
 			}
 
@@ -220,9 +220,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @private
 	 * @param {object}
-	 *          oOldItem is the first item for content swop
-	 * @param {object}
-	 *          oNewItem is the second item for content swop
+	 *          oMoveItemMetaData is a collection object of old&new item&index information about that item that shall be moved
 	 */
 	P13nColumnsPanel.prototype._handleMoveItem = function(oMoveItemMetaData) {
 		var aTableItems, i = 0;
@@ -767,7 +765,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		return oColumnsItem;
 	};
 
-	
 	/**
 	 * Updates table items based on content of ColumnsItem(s)
 	 * 
@@ -958,11 +955,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			oTableItem = null;
 			oColumnsItem = null;
 			oRemovedTableItem = null;
-			
+
 			sColumnsKey = oPanelItem.getColumnKey();
 			aTableItems = this._oTable.getItems();
 			iTableItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aTableItems);
-			
+
 			if (iTableItemIndex !== null && iTableItemIndex !== undefined && iTableItemIndex > -1) {
 				oTableItem = aTableItems[iTableItemIndex];
 				// remove item from table
@@ -986,14 +983,14 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 					// In case a columnsItem still exist for this table item take over it's metadata
 					if (oColumnsItem) {
 						if (oColumnsItem.getVisible() !== undefined) {
-							oRemovedTableItem.setSelected(oColumnsItem.getVisible());							
+							oRemovedTableItem.setSelected(oColumnsItem.getVisible());
 						}
 						if (oColumnsItem.getIndex() !== undefined) {
 							iNewIndex = oColumnsItem.getIndex();
 						}
 						if (oColumnsItem.getWidth() !== undefined) {
 							oRemovedTableItem.data('P13nColumnWidth', oColumnsItem.getWidth);
-						}						
+						}
 					}
 					this._oTable.insertItem(oRemovedTableItem, iNewIndex);
 				}
@@ -1115,12 +1112,12 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			},
 			selectionChange : function(oEvent) {
 				that._updateSelectAllDescription(oEvent);
-				
+
 				var bSelected = oEvent.getParameter('selected');
 				var aTableItems = oEvent.getParameter('listItems');
-				aTableItems.forEach(function(oTableItem){
+				aTableItems.forEach(function(oTableItem) {
 					oTableItem.setSelected(bSelected);
-					that._handleItemVisibilityChanged(oTableItem);	
+					that._handleItemVisibilityChanged(oTableItem);
 				});
 			},
 			columns : [new sap.m.Column({
