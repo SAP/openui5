@@ -258,8 +258,8 @@
 		
 		// test dummy control has no width
 		var oControl = new sap.ui.core.Control();
-		strictEqual(getOrigWidth(oControl.getId()), "auto", "Control without width property returns auto");
-		strictEqual(getOrigWidth(":)"), "auto", "For unfound controls should return auto");
+		strictEqual(getOrigWidth(oControl.getId()), "", "Control without width property returns empty text");
+		strictEqual(getOrigWidth(":)"), "", "Non-Control parameter calls should return empty text");
 		oControl.destroy();
 	
 		// test a real control's width
