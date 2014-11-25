@@ -300,6 +300,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function() {
+		this.$().toggleClass("sapMFocus", true);
 		if (sap.ui.Device.support.touch) {
 			// listen to all touch events
 			jQuery(document).on('touchstart.sapMIBtouchstart', jQuery.proxy(this._touchstartHandler, this));
@@ -369,7 +370,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onfocusout = function(oEvent) {
-
+		this.$().toggleClass("sapMFocus", false);
 		// remove touch handler from document for mobile devices
 		jQuery(document).off('.sapMIBtouchstart');
 
