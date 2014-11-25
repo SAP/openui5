@@ -135,6 +135,22 @@
 		this._oModel.setData(oData, true);
 	}, this);
 
+/* 	this._oColumnsPanel.attachRemoveColumnsItem(function(oEvent) {
+		var oData = this._oModel.getData();
+		var oParams = oEvent.getParameters();
+		var sColumnsKey = oParams.item.getColumnKey();
+
+		if (sColumnsKey !== null && sColumnsKey !== undefined && sColumnsKey !== "") {
+			oData.persistentData.columns.columnsItems.forEach(function(oColumnsItem, iIndex) {
+				if (oColumnsItem.columnKey === sColumnsKey) {
+					oData.persistentData.columns.columnsItems.splice(iIndex, 1);
+					this._oModel.setData(oData, true);
+					return;
+				}
+			}, this);
+		}
+	}, this); */
+
 	this._oColumnsPanel.setModel(this._oModel)
 	
 	var oPage = new sap.m.Page("page1", {

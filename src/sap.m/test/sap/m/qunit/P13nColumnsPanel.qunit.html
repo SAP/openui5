@@ -53,6 +53,8 @@
 			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
 			oP13nColumnsPanel._handleMoveItem = handleMoveItemSpy;
 
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+
 			//CUT -> check that the method is not executed as this._oSelectedItem is empty
 			oP13nColumnsPanel._oSelectedItem = null;
 			oP13nColumnsPanel._ItemMoveToTop();
@@ -75,9 +77,9 @@
 			oP13nColumnsPanel._ItemMoveToTop();
 
 			strictEqual(handleMoveItemSpy.calledWith({
-				"oldItem" : undefined,
+				"oldItem" : {},
 				"oldItemIndex" : 5,
-				"newItem" : undefined,
+				"newItem" : {},
 				"newItemIndex" : 0
 			}), true, "Item move was done with wrong parameter");
 		});
@@ -89,6 +91,8 @@
 			var handleMoveItemSpy = sinon.stub();
 			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
 			oP13nColumnsPanel._handleMoveItem = handleMoveItemSpy;
+
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
 
 			//CUT -> check that the method is not executed as this._oSelectedItem is empty
 			oP13nColumnsPanel._oSelectedItem = null;
@@ -112,11 +116,33 @@
 			oP13nColumnsPanel._ItemMoveUp();
 
 			strictEqual(handleMoveItemSpy.calledWith({
-				"oldItem" : undefined,
+				"oldItem" : {},
 				"oldItemIndex" : 5,
-				"newItem" : undefined,
+				"newItem" : {},
 				"newItemIndex" : 4
 			}), true, "Item move was done with wrong parameter");
+
+			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, where the new index was filled by method: _getPreviousSelectedItemIndex
+			getArrayIndexByItemKeySpy.returns(5);
+			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
+
+			var getPreviousSelectedItemIndexSpy = sinon.stub();
+			getPreviousSelectedItemIndexSpy.returns(3);
+			oP13nColumnsPanel._bShowSelected = true;
+			oP13nColumnsPanel._getPreviousSelectedItemIndex = getPreviousSelectedItemIndexSpy;
+
+			oP13nColumnsPanel._ItemMoveUp();
+
+			strictEqual(getPreviousSelectedItemIndexSpy.called, true,
+					"Method: getPreviousSelectedItemIndex shall not be called to get the previous selected item");
+			strictEqual(handleMoveItemSpy.calledWith({
+				"oldItem" : {},
+				"oldItemIndex" : 5,
+				"newItem" : {},
+				"newItemIndex" : 3
+			}), true, "Item move was done with wrong parameter");
+
 		});
 
 		test("Shall check _ItemMoveDown", function() {
@@ -156,9 +182,163 @@
 				"newItem" : {},
 				"newItemIndex" : 5
 			}), true, "Item move was done with wrong parameter");
+
+			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, whereas the new index was filled by method: _getNextSelectedItemIndex
+			getArrayIndexByItemKeySpy.returns(2);
+			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
+
+			var getNextSelectedItemIndexSpy = sinon.stub();
+			getNextSelectedItemIndexSpy.returns(4);
+			oP13nColumnsPanel._bShowSelected = true;
+			oP13nColumnsPanel._getNextSelectedItemIndex = getNextSelectedItemIndexSpy;
+			handleMoveItemSpy.reset();
+
+			oP13nColumnsPanel._ItemMoveDown();
+
+			strictEqual(getNextSelectedItemIndexSpy.called, true,
+					"Method: getNextSelectedItemIndex shall not be called to get the previous selected item");
+			strictEqual(handleMoveItemSpy.calledWith({
+				"oldItem" : {},
+				"oldItemIndex" : 2,
+				"newItem" : {},
+				"newItemIndex" : 4
+			}), true, "Item move was done with wrong parameter");
 		});
 
-		test("Shall check swopShowSelectedButton", function() {
+		test("Shall check _ItemMoveToBottom", function() {
+			ok(oP13nColumnsPanel._ItemMoveToBottom, "Method does not exist");
+
+			var getArrayIndexByItemKeySpy = sinon.stub();
+			var handleMoveItemSpy = sinon.stub();
+			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
+			oP13nColumnsPanel._handleMoveItem = handleMoveItemSpy;
+
+			//CUT -> check that the method is not executed as this._oSelectedItem is empty
+			oP13nColumnsPanel._oSelectedItem = null;
+			oP13nColumnsPanel._ItemMoveToBottom();
+
+			strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+
+			//CUT -> check that the method is executed, BUT item will not be moved as maximum boundary is reached
+			var oTableItem1 = new sap.m.ColumnListItem();
+			oTableItem1.data('P13nColumnKey', '4711');
+			var oTableItem2 = new sap.m.ColumnListItem();
+			oTableItem2.data('P13nColumnKey', '4712');
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem2, oTableItem1]);
+
+			getArrayIndexByItemKeySpy.returns(1);
+			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
+			oP13nColumnsPanel._ItemMoveToBottom();
+
+			strictEqual(handleMoveItemSpy.notCalled, true,
+					"Boundary check did fail -> general moveItem method shall not be executed");
+
+			//CUT -> check that the method _is executed with old and new Indexes
+			var oTableItem1 = new sap.m.ColumnListItem();
+			oTableItem1.data('P13nColumnKey', '4711');
+			var oTableItem2 = new sap.m.ColumnListItem();
+			oTableItem2.data('P13nColumnKey', '4712');
+			var oTableItem3 = new sap.m.ColumnListItem();
+			oTableItem3.data('P13nColumnKey', '4713');
+			var oTableItem4 = new sap.m.ColumnListItem();
+			oTableItem4.data('P13nColumnKey', '4714');
+			var oTableItem5 = new sap.m.ColumnListItem();
+			oTableItem5.data('P13nColumnKey', '4715');
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns(
+					[oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5]);
+
+			getArrayIndexByItemKeySpy.returns(1);
+			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4712');
+			oP13nColumnsPanel._ItemMoveToBottom();
+
+			strictEqual(handleMoveItemSpy.calledWith({
+				"oldItem" : oTableItem2,
+				"oldItemIndex" : 1,
+				"newItem" : oTableItem5,
+				"newItemIndex" : 4
+			}), true, "Item move was done with wrong parameter");
+		});
+
+		test("Shall check _handleMoveItem", function() {
+			ok(oP13nColumnsPanel._handleMoveItem, "Method does not exist");
+			
+			var oMoveItemMetaData = null;
+			var handleItemIndexChangedSpy = sinon.stub();
+			var afterMoveItemSpy = sinon.stub();
+			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
+			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
+
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{"typ": "Object0"}, {"typ": "Object1"}, {"typ": "Object2"}, {"typ": "Object3"}, {"typ": "Object4"}]);
+
+			//CUT -> check that the method is not executed as no meta data about which item shall be moved was passed in
+			oP13nColumnsPanel._handleMoveItem();
+			strictEqual(handleItemIndexChangedSpy.callCount, 0, 'Method was executed although it should not be done');
+			strictEqual(afterMoveItemSpy.callCount, 0, '_afterMoveItem was executed although it should not be done');
+
+			//CUT -> check that the method is executed with two item that shall be swoped, which are direct neighbors
+			oMoveItemMetaData = {
+				"oldItem" : {
+					"typ" : "oldItem"
+				},
+				"oldItemIndex" : 0,
+				"newItem" : {
+					"typ" : "newItem"
+				},
+				"newItemIndex" : 1
+			};
+			oP13nColumnsPanel._handleMoveItem(oMoveItemMetaData);
+			strictEqual(afterMoveItemSpy.callCount, 1, '_afterMoveItem was not executed although it should be done');
+			strictEqual(handleItemIndexChangedSpy.callCount, 2, 'Method was not executed although it should be done');
+			strictEqual(handleItemIndexChangedSpy.args.length, 2, 'Method was not called TWICE');
+			deepEqual(handleItemIndexChangedSpy.args[0], [{
+				"typ" : "oldItem"
+			}, 1], 'First method call was with the wrong parameter');
+			deepEqual(handleItemIndexChangedSpy.args[1], [{
+				"typ" : "newItem"
+			}, 0], 'Second method call was with the wrong parameter');
+
+			//CUT -> check that the method is executed with items that are NO direct neighbors (swop from index 0 to 3)
+			afterMoveItemSpy.reset();
+			handleItemIndexChangedSpy.reset();
+			oMoveItemMetaData = {
+				"oldItem" : {
+					"typ" : "oldItem"
+				},
+				"oldItemIndex" : 0,
+				"newItem" : {
+					"typ" : "newItem"
+				},
+				"newItemIndex" : 3
+			};
+			oP13nColumnsPanel._handleMoveItem(oMoveItemMetaData);
+			strictEqual(afterMoveItemSpy.callCount, 1, '_afterMoveItem was not executed although it should be done');
+			strictEqual(handleItemIndexChangedSpy.callCount, 6, '_handleItemIndexChanged was not executed although it should be done 6 times');
+			strictEqual(handleItemIndexChangedSpy.args.length, 6, '_handleItemIndexChanged was executed with wrong number of parameter(s)');
+			
+			//CUT -> check that the method is executed with items that are NO direct neighbors (swop from index 3 to 1)
+			afterMoveItemSpy.reset();
+			handleItemIndexChangedSpy.reset();
+			oMoveItemMetaData = {
+				"oldItem" : {
+					"typ" : "oldItem"
+				},
+				"oldItemIndex" : 3,
+				"newItem" : {
+					"typ" : "newItem"
+				},
+				"newItemIndex" : 1
+			};
+			oP13nColumnsPanel._handleMoveItem(oMoveItemMetaData);
+			strictEqual(afterMoveItemSpy.callCount, 1, '_afterMoveItem was not executed although it should be done');
+			strictEqual(handleItemIndexChangedSpy.callCount, 4, '_handleItemIndexChanged was not executed although it should be done 4 times');
+			strictEqual(handleItemIndexChangedSpy.args.length, 4, '_handleItemIndexChanged was executed with wrong number of parameter(s)');
+			
+		});
+
+		test("Shall check _swopShowSelectedButton", function() {
 			ok(oP13nColumnsPanel._swopShowSelectedButton, "Method does not exist");
 			var bShowSelected_Before = bShowSelected_After = oP13nColumnsPanel._bShowSelected;
 			oP13nColumnsPanel._filterItems = sinon.stub();
@@ -173,6 +353,17 @@
 			strictEqual(oP13nColumnsPanel._fnHandleResize.called, true, "Method _fnHandleResize wasn't called");
 		});
 
+		test("Shall check _afterMoveItem", function() {
+			ok(oP13nColumnsPanel._afterMoveItem, "Method does not exist");
+			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
+			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
+			
+			//CUT		
+			oP13nColumnsPanel._afterMoveItem();
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "Method _scrollToSelectedItem wasn't called");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Method _calculateMoveButtonAppearance wasn't called");
+		});
+		
 		test("Shall check _filterItems if no filters are activated", function() {
 			ok(oP13nColumnsPanel._filterItems, "Method does not exist");
 			var oItem = {

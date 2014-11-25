@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			/**
 			 * tbd
 			 */
-			grouping : {type : "boolean", group : "Misc", defaultValue : false}
+			showIfGrouped : {type : "boolean", group : "Misc", defaultValue : false}
 		}
 	}});
 	
