@@ -410,7 +410,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 					for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
 	
 						// inspect only element nodes
-						if ( childNode.nodeType === 1 /* ELEMENT_NODE */ ) {
+						if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
 	
 							// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
 							oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
@@ -432,7 +432,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 										if (!mSettings[name]) {
 											mSettings[name] = [];
 										}
-										if ( typeof mSettings[name].path === "string" ) {
+										if (typeof mSettings[name].path === "string") {
 											jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
 											mSettings[name].template = oControl;
 										} else {
@@ -448,9 +448,9 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 								throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
 							}
 	
-						} else if ( childNode.nodeType === 3 /* TEXT_NODE */ ) {
-							if ( jQuery.trim(childNode.textContent || childNode.text) ) { // whitespace would be okay
-								throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed");
+						} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
+							if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
+								throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
 							}
 						} // other nodes types are silently ignored
 	
