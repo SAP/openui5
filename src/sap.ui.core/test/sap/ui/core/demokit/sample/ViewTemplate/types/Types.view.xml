@@ -1,0 +1,18 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+	<layout:VerticalLayout>
+		<layout:content>
+			<!--
+			<Label text="sap.ui.model.odata.type.Decimal, scale: 3"/>
+			<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', formatOptions: {scale: 3}}"/>
+			<Label text="sap.ui.model.odata.type.Decimal, precision: 10, scale: 5"/>
+			<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 10, scale: 5}}"/>
+			-->
+			<Label text="sap.ui.model.type.Integer"/>
+			<Input value="{path: '/sap.ui.model.type.Integer', type: 'sap.ui.model.type.Integer'}"/>
+		</layout:content>
+	</layout:VerticalLayout>
+</mvc:View>

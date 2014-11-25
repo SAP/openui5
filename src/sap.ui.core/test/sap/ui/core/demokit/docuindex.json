@@ -37,6 +37,7 @@
 				"since" : "1.26",
 				"samples" : [
 					"sap.ui.core.sample.ViewTemplate.constants",
+					"sap.ui.core.sample.ViewTemplate.types",
 					"sap.ui.core.sample.ViewTemplate.scenario"
 				]
 			},
@@ -96,6 +97,11 @@
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XMLView Templating: demo scenario",
 				"description": "Complete demo scenario for XML View Templating based on OData V4 annotations"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.types",
+				"name": "XMLView Templating: UI5 OData types",
+				"description": "XMLView sample with UI5 core primitive OData types"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",
