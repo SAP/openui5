@@ -20,6 +20,16 @@
 	line-height: 1rem;
 }
 
+.sapUiExploredNoMarginInfo {
+	display: block;
+	background: #f2f8fc;
+	border: 1px solid #ddd;
+	padding : 0.5rem 1rem;
+	color: #666;
+	line-height: 1rem;
+}
+
+.sapUiExploredNoMarginInfo:before,
 .sapUiExploredInfo:before {
 	display: inline-block;
 	font-family: "SAP-icons";

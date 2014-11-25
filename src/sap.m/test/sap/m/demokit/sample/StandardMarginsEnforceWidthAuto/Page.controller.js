@@ -1,4 +1,4 @@
-sap.ui.controller("sap.m.sample.PredefinedMarginsEnforceWidthAuto.Page", {
+sap.ui.controller("sap.m.sample.StandardMarginsEnforceWidthAuto.Page", {
 
 	onInit : function (evt) {
 		// set explored app's demo model on this sample

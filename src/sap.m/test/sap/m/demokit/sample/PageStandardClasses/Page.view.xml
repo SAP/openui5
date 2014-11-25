@@ -1,14 +1,13 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.PageSpacing.Page"
+	controllerName="sap.m.sample.PageStandardClasses.Page"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
 		id="idPage"
-		title=" Product XY"
-		class="sapUiFioriObjectPage" >
+		title=" Product XY" >
 		<!-- this CSS class add a standard spacing to all the page content -->
 
 		<content>
@@ -25,7 +24,8 @@
 				</statuses>
 			</ObjectHeader>
 			<IconTabBar
-				expanded="{device>/isNoPhone}">
+				expanded="{device>/isNoPhone}"
+				class="sapUiSmallMarginBottom">
 				<items>
 					<IconTabFilter
 						text="Info">
@@ -53,16 +53,17 @@
 			</IconTabBar>
 			<f:SimpleForm
 				minWidth="1024"
-				maxContainerCols="2">
+				maxContainerCols="2"
+				class="sapUiForceWidthAuto sapUiResponsiveMargin" >
 				<f:title>
 					<core:Title text="A Form" />
 				</f:title>
 				<Label text="Label"/>
 				<Text text="Value"/>
 			</f:SimpleForm>
-			<List headerText="A List" backgroundDesign="Translucent"/>
-			<Table headerText="A Table"/>
-			<Panel headerText="A Panel"/>
+			<List headerText="A List" backgroundDesign="Translucent" width="auto" class="sapUiResponsiveMargin"/>
+			<Table headerText="A Table" width="auto" class="sapUiResponsiveMargin"/>
+			<Panel headerText="A Panel" width="auto" class="sapUiResponsiveMargin"/>
 		</content>
 	</Page>
 </mvc:View>

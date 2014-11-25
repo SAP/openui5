@@ -1,0 +1,41 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.StandardMarginsEnforceWidthAuto.Page"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	
+    <IconTabBar
+      expanded="{device>/isNoPhone}"
+      class="sapUiForceWidthAuto sapUiSmallMargin">
+      <items>
+        <IconTabFilter
+          text="Info">
+          <f:SimpleForm
+            minWidth="1024"
+            maxContainerCols="2"
+            layout="ResponsiveGridLayout" >
+            <f:title>
+              <core:Title text="A Form" />
+            </f:title>
+            <Label text="Label"/>
+            <Text text="Value"/>
+          </f:SimpleForm>
+        </IconTabFilter>
+        <IconTabFilter
+          text="Attachments">
+          <List headerText="A List" showSeparators="Inner" >
+          </List>
+        </IconTabFilter>
+        <IconTabFilter
+          text="Notes">
+          <FeedInput />
+        </IconTabFilter>
+      </items>
+    </IconTabBar>
+    
+    <Text text="The IconTabBar above does not have a width property and renders a default width of '100%'. Therefore we use margin class 'sapUiForceWidthAuto' to set its width to 'auto'. To clear a 16px (1rem) space all around, we use class 'sapUiSmallMargin'." class="sapUiExploredNoMarginInfo"/>
+	
+      
+</mvc:View>

@@ -119,6 +119,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 			oTab.setSelectedKey(sNewTab);
 		}
 	},
+	
+	onToggleFullScreen : function (oEvt) {
+		sap.ui.demokit.explored.util.ToggleFullScreenHandler.actionPerformed(oEvt, this.getView());
+	},
 
 	// ========= internal ===========================================================================
 
