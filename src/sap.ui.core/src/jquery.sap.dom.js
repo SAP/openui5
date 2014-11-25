@@ -274,10 +274,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.getSelectedText = function() {
 		var oDomRef = this.get(0);
 
-		if (!oDomRef) {
-			return "";
-		}
-
 		try {
 			if (typeof oDomRef.selectionStart === "number") {
 				return oDomRef.value.substring(oDomRef.selectionStart, oDomRef.selectionEnd);
