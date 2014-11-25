@@ -137,17 +137,21 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	cursor: pointer;
 }
 
-.sapMSFB:focus {
+/* button keyboard focus */
+.sap-desktop .sapMSFB:focus {
 	outline: none;
 	border-width: 2px;
 	border-style: dotted;
 	border-color: @sapHCStandardFG;
 	padding: 0;
-
 }
 
+/* button highlight on hover/press */
+.sap-desktop .sapMSFB:hover,
 .sapMSFB:active,
-.sapMSFB:hover{
+html[data-sap-ui-os^="iOS"] .sapMSFB:focus,
+html[data-sap-ui-os^="bb"] .sapMSFB:focus,
+html[data-sap-ui-os^="Android4"][data-sap-ui-browser^="an"] .sapMSFB:focus {
 	/* Needs repeating statements because of IE interpretation of :focus */
 	border-width: 0 0 0 1px;
 	background-color: @sapHCHighlightBG;
@@ -160,8 +164,7 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	color: @sapHCStandardFG;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA,
-.sapMSFB:active{
+.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA {
 	background-color: @sapHCHighlightBG;
 	color: @sapHCStandardFG;
 }
