@@ -719,18 +719,44 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 
 		// popup terminate upload file
-		sap.m.MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_TERMINATE_TEXT"), {
-			title : this._oRb.getText("UPLOADCOLLECTION_TERMINATE_TITLE"),
-			actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-			onClose : function(oAction) {
-				if (oAction === sap.m.MessageBox.Action.OK) {
-					// call FileUploader terminate
+		var aUploadedFiles = this._splitString2Array(oContext._getFileUploader().getProperty("value"), oContext);
+		var oFileList = new sap.m.List({});
+
+		aUploadedFiles.forEach(function(sItem) {
+			var oListItem = new sap.m.StandardListItem({
+				title : sItem,
+				icon : oContext._getIconFromFilename(sItem)
+			});
+			oFileList.addAggregation("items", oListItem, true);
+		});
+
+		var oDialog = new sap.m.Dialog({
+			title: this._oRb.getText("UPLOADCOLLECTION_TERMINATE_TITLE"),
+			content: [
+			new sap.m.Text({
+				text: this._oRb.getText("UPLOADCOLLECTION_TERMINATE_TEXT")
+			}),
+				oFileList
+			],
+			buttons:[
+			new sap.m.Button({
+				text: this._oRb.getText("UPLOADCOLLECTION_OKBUTTON_TEXT"),
+				press: function() {
+					//call FileUploader terminate
 					oContext._getFileUploader().abort();
+					oDialog.close();
 				}
-			},
-			dialogId : "messageBoxTerminateUploadFile",
+			}),
+			new sap.m.Button({
+				text: this._oRb.getText("UPLOADCOLLECTION_CANCELBUTTON_TEXT"),
+				press: function() {
+					oDialog.close();
+				}
+			})
+			],
 			styleClass : sCompact
-		});				
+		});
+		oDialog.open();
 	};
 
 	/**
@@ -1311,9 +1337,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._getUploadedFilesFromUploaderEvent = function(oEvent) {
 		var sUploadedFiles = oEvent.getSource().getProperty("value");
-		sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
-		var aUploadedFiles = sUploadedFiles.split(/\" "/);
-		return aUploadedFiles;
+		return this._splitString2Array(sUploadedFiles, this);
+	};
+
+	/**
+	 * @description Delivers an array of Filenames from a string of the FileUploader event.
+	 * @param {string} sStringOfFilenames String of concatenated file names of the FileUploader
+	 * @returns {array} aUploadedFiles A Collection of the uploaded files
+	 * @private
+	 */
+	UploadCollection.prototype._splitString2Array = function(sStringOfFilenames, oContext) {
+		if (oContext.getMultiple() == true && !(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+			sStringOfFilenames = sStringOfFilenames.substring(1, sStringOfFilenames.length - 2);
+		}
+		//return object is an array!
+		return sStringOfFilenames.split(/\" "/);
 	};
 
 	/**
