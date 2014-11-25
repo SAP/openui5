@@ -106,6 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// check disable and readonly
 		if (!oControl.getEnabled()) {
 			oRm.writeAttribute("disabled", "disabled");
+			oRm.addClass("sapMInputBaseDisabledInner");
 		} else if (!oControl.getEditable()) {
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("readonly", "readonly");
