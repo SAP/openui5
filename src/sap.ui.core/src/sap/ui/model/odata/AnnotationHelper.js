@@ -60,9 +60,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 			if (typeof vRawValue.value === "number" && isFinite(vRawValue.value)
 				// IEEE754Compatible: decimal values sent as string
 				|| rNumber && rNumber.test(vRawValue.value)) {
-				return fnEscape(NumberFormat.getFloatInstance().format(vRawValue.value));
+				return formatFloat(vRawValue.value);
 			}
 			return illegalValue(vRawValue);
+		}
+
+		/**
+		 * Returns the given float value properly formatted and escaped.
+		 *
+		 * @param {number|string} vValue
+		 *   some number value
+		 * @returns {string}
+		 *  float value properly formatted and escaped
+		 */
+		function formatFloat(vValue) {
+			return fnEscape(NumberFormat.getFloatInstance().format(vValue));
 		}
 
 		/**
@@ -172,10 +184,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 				case "boolean": // 14.4.2 Expression edm:Bool
 					return oLibraryResourceBundle.getText(vRawValue ? "YES" : "NO");
 
-				case "number": // 14.4.10 Expression edm:Int
-					return isInteger(vRawValue)
-						? formatInteger(vRawValue)
-						: illegalValue({"@odata.type": "#Int64", value: vRawValue});
+				case "number": // 14.4.8 Expression edm:Float
+					return isFinite(vRawValue)
+						? formatFloat(vRawValue)
+						: illegalValue({"@odata.type": "#Double", value: vRawValue});
 
 				case "string": // 14.4.11 Expression edm:String
 					return fnEscape(vRawValue);
@@ -244,6 +256,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 								if (isInteger(fNumber)) {
 									return formatInteger(fNumber);
 								}
+							} else if (isInteger(vRawValue.value)) {
+								return formatInteger(vRawValue.value);
 							}
 							return illegalValue(vRawValue);
 

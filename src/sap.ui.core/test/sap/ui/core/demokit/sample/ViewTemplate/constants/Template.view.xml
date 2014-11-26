@@ -28,6 +28,7 @@
 				<Text text="{path: 'meta>@A.Float#minusInf', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Text text="{path: 'meta>@A.Float#nan', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Text text="{path: 'meta>@A.Float#Element', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#withDecimals', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:Int" />
 				<Text text="{path: 'meta>@An.Int', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:String" />
