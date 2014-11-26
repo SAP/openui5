@@ -561,22 +561,24 @@ public class LogDownloader {
 		Set<Integer> handledIndices = new HashSet<Integer>();
 
 		for (int i = 0; i < dataSets.size(); i++) {
-			LogFileData currentDataSet = dataSets.get(i);
-			String currentDateString = currentDataSet.getYYYYMMDD_WithDashes();
-
-			for (int j = i+1; j < dataSets.size(); j++) {
-				if (!handledIndices.contains(j)) { // not really required (other set cannot be a hit for two days)
-					LogFileData otherDataSet = dataSets.get(j);
-					String otherDateString = otherDataSet.getYYYYMMDD_WithDashes();
-					if (otherDateString.equals(currentDateString)) { // the other data set is from the same day
-						// merge the data sets: add the other one to the current one
-						currentDataSet.addData(otherDataSet);
-						handledIndices.add(j); // mark the other data set as already used, so we don't use the other one as current set
+			if (!handledIndices.contains(i)) {
+				LogFileData currentDataSet = dataSets.get(i);
+				String currentDateString = currentDataSet.getYYYYMMDD_WithDashes();
+	
+				for (int j = i+1; j < dataSets.size(); j++) {
+					if (!handledIndices.contains(j)) { // not really required (other set cannot be a hit for two days)
+						LogFileData otherDataSet = dataSets.get(j);
+						String otherDateString = otherDataSet.getYYYYMMDD_WithDashes();
+						if (otherDateString.equals(currentDateString)) { // the other data set is from the same day
+							// merge the data sets: add the other one to the current one
+							currentDataSet.addData(otherDataSet);
+							handledIndices.add(j); // mark the other data set as already used, so we don't use the other one as current set
+						}
 					}
 				}
+				handledIndices.add(i); // not really required (we count up)
+				aggregatedDataSets.add(currentDataSet);
 			}
-			handledIndices.add(i); // not really required (we count up)
-			aggregatedDataSets.add(currentDataSet);
 		}
 
 		// sort the data sets ascending by day
@@ -922,17 +924,19 @@ public class LogDownloader {
 	 * @param originalFile
 	 */
 	private void exportJsonToWeb(File originalFile) {
-		log("Doing JSON export/copy to " + exportDir.getAbsolutePath() + "...\n");
-		
-		File exportFile = new File(exportDir + File.separator + originalFile.getName());
-		
-		try {
-			FileUtils.copyFile(originalFile, exportFile);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (exportDir != null) {
+			log("Doing JSON export/copy to " + exportDir.getAbsolutePath() + "...\n");
+			
+			File exportFile = new File(exportDir + File.separator + originalFile.getName());
+			
+			try {
+				FileUtils.copyFile(originalFile, exportFile);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			
+			log("...JSON file copied to '" + exportFile + "'.\n");
 		}
-		
-		log("...JSON file copied to '" + exportFile + "'.\n");
 	}
 
 
