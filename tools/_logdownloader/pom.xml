@@ -85,6 +85,19 @@
 				</executions>
 			</plugin>
 			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+						<configuration>
+ <archive>
+            <manifestEntries>
+              <Main-Class>org.openui5.LogDownloader</Main-Class>
+
+            </manifestEntries>
+          </archive>						</configuration>
+</plugin>
+			
 		</plugins>
 		
 	</build>
@@ -105,7 +118,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20141113</version>
+			<version>20140107</version>
 		</dependency>
 	
 	</dependencies>
