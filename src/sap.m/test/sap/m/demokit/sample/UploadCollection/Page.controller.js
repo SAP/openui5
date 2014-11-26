@@ -77,7 +77,9 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 			var oData = this.oView.getModel().getData();
 			var oItem = {};
 			var sUploadedFiles = oEvent.getParameters().oSource.mProperties.value;
-			sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
+			if (oEvent.getSource()._oFileUploader.getMultiple() && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+				sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
+			}
 			var aUploadedFiles = sUploadedFiles.split(/\" "/);
 			for (var i = 0; i < aUploadedFiles.length; i++) {
 				oItem = {
