@@ -2193,20 +2193,10 @@ sap.ui
 												method : "POST",
 												path : new RegExp("(" + sEntitySetName + ")(\\(([^/\\?#]+)\\)/?(.*)?)?"),
 												response : function(oXhr, sEntitySetName, group2, sKeys, sNavName) {
+													var bMerge = false;
+													// check for method tunneling
 													if (oXhr.requestHeaders["x-http-method"] === "MERGE") {
-														// custom method MERGE not supported in IE11, so using PATCH instead
-														if (!!Device.browser.internet_explorer) {
-															return jQuery.sap.sjax({
-																type : 'PATCH',
-																url : oXhr.url,
-																data : oXhr.requestBody
-															});
-														}
-														return jQuery.sap.sjax({
-															type : 'MERGE',
-															url : oXhr.url,
-															data : oXhr.requestBody
-														});
+														bMerge = true;
 													}
 													jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 													var sRespondData = null;
@@ -2217,19 +2207,27 @@ sap.ui
 													if (sTargetEntityName) {
 														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
 														if (oEntity) {
-															var sUri = that._getRootUri() + sTargetEntityName + "("
-																	+ that._createKeysString(that._mEntitySets[sTargetEntityName], oEntity)
-																	+ ")";
-															sRespondData = JSON.stringify({
-																d : oEntity,
-																uri : sUri
-															}); //'{"uri": "' + sUri + '" }';
 															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-															that._oMockdata[sTargetEntityName] = that._oMockdata[sTargetEntityName]
-																	.concat([ oEntity ]);
-															iResult = 201;
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
+															if (bMerge){
+																	var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																	if (oExistingEntry) { 
+																		jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																	}
+																	iResult = 204;
+															} else {
+																var sUri = that._getRootUri() + sTargetEntityName + "("
+																		+ that._createKeysString(that._mEntitySets[sTargetEntityName], oEntity)
+																		+ ")";
+																sRespondData = JSON.stringify({
+																	d : oEntity,
+																	uri : sUri
+																}); 
+																that._oMockdata[sTargetEntityName] = that._oMockdata[sTargetEntityName]
+																		.concat([ oEntity ]);
+																iResult = 201;
+															}
 														}
 													}
 													oXhr.respond(iResult, sRespondContentType, sRespondData);
