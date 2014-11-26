@@ -3530,7 +3530,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// create a new request
 		var oAnalyticalQueryRequest = new odata4analytics.QueryResultRequest(this.oAnalyticalQueryResult);
 		oAnalyticalQueryRequest.setResourcePath(this._getResourcePath());
-		
+
 		// add current list of dimensions
 		var aSelectedDimension = [];
 		var aSelectedMeasure = [];
@@ -3556,7 +3556,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oAnalyticalQueryRequest.includeMeasureRawFormattedValueUnit(oMeasureDetails.name, bIncludeRawValue,
 					bIncludeFormattedValue, bIncludeUnitProperty);
 		}
-	
 
 		// add the sorters
 		var oSortExpression = oAnalyticalQueryRequest.getSortExpression();
@@ -3576,46 +3575,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (this.aControlFilter) {
 			oFilterExpression.addUI5FilterConditions(this.aControlFilter);
 		}
-		
+
 		// determine the entityset path incl. the required params (sort, filter, ...)
 		var sPath = oAnalyticalQueryRequest.getURIToQueryResultEntitySet();
 		var aParam = this._getQueryODataRequestOptions(oAnalyticalQueryRequest);
-		
+
 		if (!aParam) {
 			// parameters could not be determined correctly
-			return undefined; 
+			return undefined;
 		}
-		
-		// search and remove the $select
-		for (var j = 0, l = aParam.length; j < l; j++) {
-			if (/^\$select/i.test(aParam[j])) {
-				aParam.splice(j, 1);
-				break;
-			}
-		}
-		
+
 		// add the new $select param which is sorted like the Table
-		var aVisibleCols = [];
+		var aExportCols = [];
 		for (var k = 0, m = this.aAnalyticalInfo.length; k < m; k++) {
 			var oCol = this.aAnalyticalInfo[k];
 			if ((oCol.visible || oCol.inResult) && oCol.name !== "") {
-				aVisibleCols.push(oCol.name);
+				aExportCols.push(oCol.name);
+
+				// add belonging currency column implicitly if present
+				if (this.oMeasureDetailsSet[oCol.name] != undefined
+					&& this.oMeasureDetailsSet[oCol.name].unitPropertyName != undefined) {
+					aExportCols.push(this.oMeasureDetailsSet[oCol.name].unitPropertyName);
+				}
 			}
 		}
-		if (aVisibleCols.length > 0) {
-			aParam.push("$select=" + aVisibleCols.join(","));
+
+		// search and replace the $select
+		for (var j = 0, l = aParam.length; j < l; j++) {
+			if (/^\$select/i.test(aParam[j])) {
+				aParam[j] = "$select=" + aExportCols.join(",");
+				break;
+			}
 		}
-		
+
 		// insert the format as first parameter
 		if (sFormat) {
 			aParam.splice(0, 0, "$format=" + encodeURIComponent(sFormat));
 		}
-		
+
 		// create the request URL
 		if (sPath) {
 			return this.oModel._createRequestUrl(sPath, null, aParam);
 		}
-		
+
 	};
 	
 	//********************************
