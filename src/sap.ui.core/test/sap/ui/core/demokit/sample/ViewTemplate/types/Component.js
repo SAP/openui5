@@ -7,8 +7,6 @@
  */
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.types.Component");
 
-jQuery.sap.require("sap.ui.model.odata.type.Decimal");
-
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 	metadata: "json",
 	createContent: function () {
