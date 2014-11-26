@@ -2915,7 +2915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		if (oGroupInfo.batchGroupId in this.mDeferredBatchGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {});
+			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
 			oRequest.key = sKey;
 		} else {
 			oRequest = this._processChange(sKey, oEntry);
@@ -3190,7 +3190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		this.oData[sKey] = oEntity;
 
-		oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: this.sServiceUrl + '/' + sKey, created: {key: sKey}};
+		oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: this.sServiceUrl + '/' + sKey, created: {key: sPath.substring(1)}};
 
 		sUrl = this._createRequestUrl(sPath, oContext, aUrlParams, this.bUseBatch);
 
