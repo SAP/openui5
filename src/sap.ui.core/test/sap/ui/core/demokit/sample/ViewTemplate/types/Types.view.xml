@@ -5,14 +5,10 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<layout:VerticalLayout>
 		<layout:content>
-			<!--
 			<Label text="sap.ui.model.odata.type.Decimal, scale: 3"/>
-			<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', formatOptions: {scale: 3}}"/>
-			<Label text="sap.ui.model.odata.type.Decimal, precision: 10, scale: 5"/>
-			<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', formatOptions: {precision: 10, scale: 5}}"/>
-			-->
-			<Label text="sap.ui.model.type.Integer"/>
-			<Input value="{path: '/sap.ui.model.type.Integer', type: 'sap.ui.model.type.Integer'}"/>
+			<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
+			<Label text="sap.ui.model.odata.type.Decimal, precision: 10, scale: &quot;variable&quot;"/>
+			<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 'variable'}}"/>
 		</layout:content>
 	</layout:VerticalLayout>
 </mvc:View>

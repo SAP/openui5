@@ -77,8 +77,9 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 		oBinding = oControl.getBinding("items");
 		oBinding.attachDataReceived(
-			function () { //select first instance
+			function onDataReceived() { //select first instance
 				this._showDetails(oBinding.getContexts()[0].getPath());
+				oBinding.detachDataReceived(onDataReceived, this);
 			},
 			this);
 	},
