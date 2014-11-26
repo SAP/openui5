@@ -400,6 +400,7 @@ sap.ui
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true, true);
 						this._enableConditions();
 						this._updateKeyFields();
+						this._updateOperations();
 					};
 
 					/**
