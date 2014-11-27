@@ -220,7 +220,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @private
 	 * @param {object}
-	 *          oMoveItemMetaData is a collection object of old&new item&index information about that item that shall be moved
+	 *          oMoveItemMetaData is a collection object of old&new item&index information about that item that shall be
+	 *          moved
 	 */
 	P13nColumnsPanel.prototype._handleMoveItem = function(oMoveItemMetaData) {
 		var aTableItems, i = 0;
@@ -648,13 +649,21 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
-		var iElementOffset;
+		var oFocusedElement = null;
 		if (oItem) {
 			sap.ui.getCore().applyChanges();
-			// oItem needs to be rendered, otherwise we cannot perform necessary calculations
+			// oItem needs to be rendered, otherwise the necessary scroll calculations cannot be performed
 			if (!!oItem.getDomRef()) {
-				iElementOffset = oItem.$().position().top;
-				this._oScrollContainer.scrollTo(0, iElementOffset);
+				// get just focused DOM element
+				oFocusedElement = document.activeElement;
+				
+				// focus actual item to get it into the scroll container viewport 
+				oItem.focus();
+				
+				// reset focus to previous DOM element
+				if (oFocusedElement && oFocusedElement.focus) {
+					oFocusedElement.focus();
+				}
 			}
 		}
 	};

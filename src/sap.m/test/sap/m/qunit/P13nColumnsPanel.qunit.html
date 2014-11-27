@@ -264,14 +264,24 @@
 
 		test("Shall check _handleMoveItem", function() {
 			ok(oP13nColumnsPanel._handleMoveItem, "Method does not exist");
-			
+
 			var oMoveItemMetaData = null;
 			var handleItemIndexChangedSpy = sinon.stub();
 			var afterMoveItemSpy = sinon.stub();
 			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
 			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
 
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{"typ": "Object0"}, {"typ": "Object1"}, {"typ": "Object2"}, {"typ": "Object3"}, {"typ": "Object4"}]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{
+				"typ" : "Object0"
+			}, {
+				"typ" : "Object1"
+			}, {
+				"typ" : "Object2"
+			}, {
+				"typ" : "Object3"
+			}, {
+				"typ" : "Object4"
+			}]);
 
 			//CUT -> check that the method is not executed as no meta data about which item shall be moved was passed in
 			oP13nColumnsPanel._handleMoveItem();
@@ -315,9 +325,11 @@
 			};
 			oP13nColumnsPanel._handleMoveItem(oMoveItemMetaData);
 			strictEqual(afterMoveItemSpy.callCount, 1, '_afterMoveItem was not executed although it should be done');
-			strictEqual(handleItemIndexChangedSpy.callCount, 6, '_handleItemIndexChanged was not executed although it should be done 6 times');
-			strictEqual(handleItemIndexChangedSpy.args.length, 6, '_handleItemIndexChanged was executed with wrong number of parameter(s)');
-			
+			strictEqual(handleItemIndexChangedSpy.callCount, 6,
+					'_handleItemIndexChanged was not executed although it should be done 6 times');
+			strictEqual(handleItemIndexChangedSpy.args.length, 6,
+					'_handleItemIndexChanged was executed with wrong number of parameter(s)');
+
 			//CUT -> check that the method is executed with items that are NO direct neighbors (swop from index 3 to 1)
 			afterMoveItemSpy.reset();
 			handleItemIndexChangedSpy.reset();
@@ -333,9 +345,11 @@
 			};
 			oP13nColumnsPanel._handleMoveItem(oMoveItemMetaData);
 			strictEqual(afterMoveItemSpy.callCount, 1, '_afterMoveItem was not executed although it should be done');
-			strictEqual(handleItemIndexChangedSpy.callCount, 4, '_handleItemIndexChanged was not executed although it should be done 4 times');
-			strictEqual(handleItemIndexChangedSpy.args.length, 4, '_handleItemIndexChanged was executed with wrong number of parameter(s)');
-			
+			strictEqual(handleItemIndexChangedSpy.callCount, 4,
+					'_handleItemIndexChanged was not executed although it should be done 4 times');
+			strictEqual(handleItemIndexChangedSpy.args.length, 4,
+					'_handleItemIndexChanged was executed with wrong number of parameter(s)');
+
 		});
 
 		test("Shall check _swopShowSelectedButton", function() {
@@ -357,13 +371,14 @@
 			ok(oP13nColumnsPanel._afterMoveItem, "Method does not exist");
 			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-			
+
 			//CUT		
 			oP13nColumnsPanel._afterMoveItem();
 			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "Method _scrollToSelectedItem wasn't called");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Method _calculateMoveButtonAppearance wasn't called");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
+					"Method _calculateMoveButtonAppearance wasn't called");
 		});
-		
+
 		test("Shall check _filterItems if no filters are activated", function() {
 			ok(oP13nColumnsPanel._filterItems, "Method does not exist");
 			var oItem = {
@@ -876,70 +891,22 @@
 			strictEqual(oP13nColumnsPanel._oTable, null, "Table shall be set to null");
 		});
 
-		test("Shall check _scrollToSelectedItem", function() {
-			ok(oP13nColumnsPanel._scrollToSelectedItem, "Method does not exist");
+		test("Shall check _scrollToSelectedItem",
+				function() {
+					ok(oP13nColumnsPanel._scrollToSelectedItem, "Method does not exist");
 
-			var oColumnItemTemplate = new sap.m.P13nItem({
-				columnKey : "{key}",
-				text : '{text}',
-				visible : '{visible}',
-				tooltip : '{tooltip}'
-			});
+					var oItem = new sap.m.ColumnListItem();
+					oItem.getDomRef = sinon.stub().returns({});
+					oItem.focus = sinon.stub();
+					document.activeElement.focus = sinon.stub();
 
-			oP13nColumnsPanel = new sap.m.P13nColumnsPanel({
-				title : "Test",
-				type : "columns",
-				items : {
-					path : '/items',
-					template : oColumnItemTemplate
-				}
-			});
-
-			var oModel = new sap.ui.model.json.JSONModel();
-			var oData = {
-				items : [{
-					name : "A",
-					color : "c",
-					number : 0
-				}, {
-					name : "B",
-					color : "b",
-					number : 1
-				}, {
-					name : "C",
-					color : "a",
-					number : 3
-				}, ],
-				cols : ["Name", "Color", "Number"]
-			};
-
-			oModel.setData(oData);
-			oP13nColumnsPanel.setModel(oModel);
-			oP13nColumnsPanel.placeAt("content");
-
-			//Get first table item and set its top position outside of the view container
-			var oItem = oP13nColumnsPanel._oTable.getItems()[1];
-			sap.ui.getCore().applyChanges();
-			oItem.$ = function() {
-				return {
-					"position" : function() {
-						return {
-							"top" : 1000,
-							"left" : 100
-						};
-					}
-				}
-			};
-
-			oP13nColumnsPanel._oScrollContainer.scrollTo = sinon.stub();
-
-			// CUT
-			oP13nColumnsPanel._scrollToSelectedItem(oItem);
-			strictEqual(oP13nColumnsPanel._oScrollContainer.scrollTo.called, true,
-					"Item is out of the visible viewport -> scrollcontainer shall scroll to it");
-			strictEqual(oP13nColumnsPanel._oScrollContainer.scrollTo.calledWith(0, 1000), true,
-					"Scroll action was executed with wrong parameter");
-		});
+					// CUT
+					oP13nColumnsPanel._scrollToSelectedItem(oItem);
+					strictEqual(oItem.focus.called, true,
+							"Item is out of the visible viewport -> scrollcontainer shall scroll to it");
+					strictEqual(oItem.getDomRef.called, true, "Given instance of oItem is corrupt as no DomRef was return");
+					strictEqual(document.activeElement.focus.called, true, "Focus was not reset to previous focused element");
+				});
 
 	}());
 </script>
