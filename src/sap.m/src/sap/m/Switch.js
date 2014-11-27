@@ -25,15 +25,15 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @alias sap.m.Switch
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata : {
+		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * A boolean value indicating whether the switch is on or off.
 				 */
-				state : {type : "boolean", group : "Misc", defaultValue : false},
+				state: { type: "boolean", group: "Misc", defaultValue: false },
 
 				/**
 				 * Custom text for the "ON" state.
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * "ON" translated to the current language is the default value.
 				 * Beware that the given text will be cut off after three characters.
 				 */
-				customTextOn : {type : "string", group : "Misc", defaultValue : ""},
+				customTextOn: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Custom text for the "OFF" state.
@@ -49,35 +49,35 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * "OFF" translated to the current language is the default value.
 				 * Beware that the given text will be cut off after three characters.
 				 */
-				customTextOff : {type : "string", group : "Misc", defaultValue : ""},
+				customTextOff: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Whether the switch is enabled.
 				 */
-				enabled : {type : "boolean", group : "Data", defaultValue : true},
+				enabled: { type: "boolean", group: "Data", defaultValue: true },
 
 				/**
 				 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : ""},
+				name: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Type of a Switch. Possibles values "Default", "AcceptReject".
 				 */
-				type : {type : "sap.m.SwitchType", group : "Appearance", defaultValue : sap.m.SwitchType.Default}
+				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: sap.m.SwitchType.Default }
 			},
-			events : {
+			events: {
 
 				/**
 				 * Triggered when a switch changes the state.
 				 */
-				change : {
-					parameters : {
+				change: {
+					parameters: {
 
 						/**
 						 * The new state of the switch.
 						 */
-						state : {type : "boolean"}
+						state: { type: "boolean" }
 					}
 				}
 			}
