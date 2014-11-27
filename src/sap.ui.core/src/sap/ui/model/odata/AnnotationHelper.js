@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 			}
 
 			if (sType === "number") { // #Decimal
-				sUiType = 'sap.ui.model.type.Float';
+				sUiType = 'sap.ui.model.odata.type.Decimal';
 			}
 			return "{path: " + JSON.stringify(vRawValue.value) + ", type: '" + sUiType + "'}";
 		}

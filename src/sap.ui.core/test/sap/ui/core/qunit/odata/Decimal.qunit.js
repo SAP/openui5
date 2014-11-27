@@ -1,5 +1,5 @@
 /*!
- * ${copyright}
+ *{copyright}
  */
 (function () {
 	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
@@ -22,17 +22,23 @@
 		}
 	});
 
+	//*********************************************************************************************
 	test("basics", function () {
-		var oType = new sap.ui.model.odata.type.Decimal();
+		var oDefaultConstraints = {precision: Infinity, scale: 0},
+			oType = new sap.ui.model.odata.type.Decimal();
 
 		ok(oType instanceof sap.ui.model.odata.type.Decimal, "is a Decimal");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		ok(!(oType instanceof sap.ui.model.type.Float), "is not a Float");
-		strictEqual(oType.sName, "Decimal", "type name");
+		strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
-		deepEqual(oType.oConstraints, {precision: Infinity, scale: 0}, "default constraints");
+		deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
+
+		oType.setConstraints();
+		deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
 	});
 
+	//*********************************************************************************************
 	test("w/ float format options", function () {
 		var oType = new sap.ui.model.odata.type.Decimal({
 				minIntegerDigits: 5,
@@ -53,6 +59,7 @@
 		strictEqual(oType.oFormatOptions, undefined, "float format options are ignored");
 	});
 
+	//*********************************************************************************************
 	test("w/ constraints", function () {
 		var oConstraints = {precision: 8, scale: 3},
 			oType = new sap.ui.model.odata.type.Decimal({}, oConstraints);
@@ -60,6 +67,7 @@
 		deepEqual(oType.oConstraints, oConstraints);
 	});
 
+	//*********************************************************************************************
 	jQuery.each([
 		{i: {precision: 8, scale: "foo"}, o: {precision: 8, scale: 0},
 			error: "Illegal scale: foo"},
@@ -85,6 +93,7 @@
 		}));
 	});
 
+	//*********************************************************************************************
 	test("format", function () {
 		var oType = new sap.ui.model.odata.type.Decimal({}, {
 				precision: 8,
@@ -104,10 +113,12 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.FormatException);
-			strictEqual("Don't know how to format Decimal to boolean", e.message);
+			strictEqual(e.message,
+				"Don't know how to format sap.ui.model.odata.type.Decimal to boolean");
 		}
 	});
 
+	//*********************************************************************************************
 	test("parse", function () {
 		var oType = new sap.ui.model.odata.type.Decimal(); // constraints do not matter
 
@@ -117,6 +128,7 @@
 		strictEqual(oType.parseValue(1234.567, "float"), "1234.567", "type float");
 	});
 
+	//*********************************************************************************************
 	jQuery.each([false, 1, "foo", "1.1", "1234"], function (i, sValue) {
 		test("validate errors", function () {
 			var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 3});
@@ -126,21 +138,24 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual("Illegal Decimal value: " + sValue, e.message);
+				strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: " + sValue);
 			}
 		});
 	});
 
+	//*********************************************************************************************
 	test("validate success", 0, function () {
 		var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 6, scale: 3});
 
-		jQuery.each(["+1.1", "+123.123", "-123.1", "+123.1", "1.123", "-1.123", "123.1", "1", "-123"],
+		jQuery.each(["+1.1", "+123.123", "-123.1", "+123.1", "1.123", "-1.123", "123.1", "1",
+		            "-123"],
 			function (i, sValue) {
 				oType.validateValue(sValue);
 			}
 		);
 	});
 
+	//*********************************************************************************************
 	test("integer + fraction", function () {
 		var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 6, scale: 3}),
 			sValue = "-1234.567";
@@ -150,10 +165,11 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual("Illegal Decimal value: " + sValue, e.message);
+			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: " + sValue);
 		}
 	});
 
+	//*********************************************************************************************
 	test("localization change", function () {
 		var oControl = new sap.ui.core.Control(),
 			oType = new sap.ui.model.odata.type.Decimal();
@@ -164,6 +180,7 @@
 	});
 
 
+	//*********************************************************************************************
 	test('scale="variable"', sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Decimal();
 
@@ -183,7 +200,7 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual("Illegal Decimal value: " + sValue, e.message);
+				strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: " + sValue);
 			}
 		});
 	}));

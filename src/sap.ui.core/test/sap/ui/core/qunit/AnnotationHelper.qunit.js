@@ -510,7 +510,7 @@
 			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
 
 			strictEqual(oSingleBindingInfo.path, oRawValue.value);
-			ok(oSingleBindingInfo.type instanceof sap.ui.model.type.Float);
+			ok(oSingleBindingInfo.type instanceof sap.ui.model.odata.type.Decimal);
 		});
 	});
 
