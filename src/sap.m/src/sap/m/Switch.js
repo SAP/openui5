@@ -389,14 +389,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 */
 		Switch.prototype.setState = function(bState, _mSettings /* for internal usage */) {
 			var sState,
-				bNewState,
+				bStateHasChanged,
 				Swt = Switch,
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
-			bNewState = !(this.getState() === bState);
+			bStateHasChanged = !(this.getState() === bState);
 
-			if (bNewState) {
-				this.setProperty("state", bState, true);	// validation and suppress re-rendering
+			if (bStateHasChanged) {
+				this.setProperty("state", bState, true);
 			}
 
 			if (!this._$Switch) {
@@ -406,7 +406,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			bState = this.getState();
 			sState = bState ? this._sOn : this._sOff;
 
-			if (bNewState) {
+			if (bStateHasChanged) {
 				this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
 
 				if (this.getName()) {
