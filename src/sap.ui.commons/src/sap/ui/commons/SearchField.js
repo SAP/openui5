@@ -618,6 +618,9 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	  
 	  onclick : function(oEvent){
 			if (oEvent.target === this.getDomRef("searchico")) {
+				if (this.oPopup && this.oPopup.isOpen()) {
+					this.oPopup.close();
+				}
 				if (this.getEditable() && this.getEnabled()) {
 					this.focus();
 				}
@@ -724,6 +727,9 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 	  onclick : function(oEvent) {
 			ComboBox.prototype.onclick.apply(this, arguments);
 			if (oEvent.target === this.getDomRef("searchico")) {
+				if (this.oPopup && this.oPopup.isOpen()) {
+					this.oPopup.close();
+				}
 				if (!this.getParent().getEnableClear()) {
 					this.getParent().fireSearch();
 				} else if (jQuery(this.getInputDomRef()).val() && this.getEditable() && this.getEnabled()) {
