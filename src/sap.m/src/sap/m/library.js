@@ -2518,8 +2518,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	});
 	
 	
-	/* Android browser does not scroll a focused input into the view correctly after resize */
-	if (sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
+	/* Android and Blackberry browsers do not scroll a focused input into the view correctly after resize */
+	if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
 		jQuery(window).on("resize", function(){
 			var oActive = document.activeElement;
 			var sTagName = oActive.tagName;
