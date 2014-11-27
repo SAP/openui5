@@ -1,4 +1,5 @@
 {
+	"sap.ui.model.odata.type.Boolean": true,
 	"sap.ui.model.odata.type.Decimal": "123.456",
 	"sap.ui.model.odata.type.String": "Hello World!"
 }

@@ -2,17 +2,25 @@
 <mvc:View
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:form="sap.ui.layout.form"
+	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
-	<form:SimpleForm>
-		<core:Title text="sap.ui.model.odata.type.Decimal" />
-		<Label text="scale: 3"/>
-		<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
-		<Label text="precision: 10, scale: &quot;variable&quot;"/>
-		<Input value="{path: '/sap.ui.model.odata.type.Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 'variable'}}"/>
-
-		<core:Title text="sap.ui.model.odata.type.String" />
-		<Label text="maxLength: 10"/>
-		<Input value="{path: '/sap.ui.model.odata.type.String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
-	</form:SimpleForm>
+	<layout:VerticalLayout>
+		<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
+		<Input value="{path: '/sap.ui.model.odata.type.Boolean',
+			 type: 'sap.ui.model.odata.type.Boolean'}"/>
+		<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
+		<CheckBox selected="{path: '/sap.ui.model.odata.type.Boolean',
+			type: 'sap.ui.model.odata.type.Boolean'}"/>
+		<Label text="sap.ui.model.odata.type.Decimal scale: 3"/>
+		<Input value="{path: '/sap.ui.model.odata.type.Decimal',
+			type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
+		<Label text="sap.ui.model.odata.type.Decimal precision: 10, scale: &quot;variable&quot;"/>
+		<Input value="{path: '/sap.ui.model.odata.type.Decimal',
+			type: 'sap.ui.model.odata.type.Decimal',
+			constraints: {precision: 10, scale: 'variable'}}"/>
+		<Label text="sap.ui.model.odata.type.String maxLength: 10"/>
+		<Input value="{path: '/sap.ui.model.odata.type.String',
+			type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
+	</layout:VerticalLayout>
 </mvc:View>
+
