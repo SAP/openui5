@@ -130,11 +130,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 		(function() {
 			var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
-
-			sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
-
-			// a boolean property to indicate if transition or not
-			Switch._bUseTransition = !!(Number(sTransitionTime));
+				sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
 
 			// the milliseconds takes the transition from one state to another
 			Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
@@ -312,7 +308,8 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 			var oTouch,
 				fnTouch = sap.m.touch,
-				assert = jQuery.sap.assert;
+				assert = jQuery.sap.assert,
+				bState = this.getState();
 
 			if (!this.getEnabled() ||
 
@@ -340,9 +337,16 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				this._$Switch.removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
 
 				// change the state
-				this.setState(this._bDragging ? this._bTempState : !this._bTempState, {
-					triggerChangeEvent: true
-				});
+				this.setState(this._bDragging ? this._bTempState : !this._bTempState);
+
+				if (bState !== this.getState()) {
+					bState = this.getState();
+
+					// fire the change event after the CSS transition is completed
+					jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+						this.fireChange({ state: bState });
+					});
+				}
 			}
 		};
 
@@ -361,6 +365,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @private
 		 */
 		Switch.prototype.onsapselect = function(oEvent) {
+			var bState;
 
 			if (this.getEnabled()) {
 
@@ -370,8 +375,13 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				// note: prevent document scrolling when space keys is pressed
 				oEvent.preventDefault();
 
-				this.setState(!this.getState(), {
-					triggerChangeEvent: true
+				this.setState(!this.getState());
+
+				bState = this.getState();
+
+				// fire the change event after the CSS transition is completed
+				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+					this.fireChange({ state: bState });
 				});
 			}
 		};
@@ -387,20 +397,17 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @public
 		 * @return {sap.m.Switch} <code>this</code> to allow method chaining.
 		 */
-		Switch.prototype.setState = function(bState, _mSettings /* for internal usage */) {
+		Switch.prototype.setState = function(bState) {
 			var sState,
-				bStateHasChanged,
-				Swt = Switch,
+				bStateHasChanged = this.getState() !== bState,
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
-			bStateHasChanged = !(this.getState() === bState);
 			this.setProperty("state", bState, true);
 
 			if (!this._$Switch) {
 				return this;
 			}
 
-			bState = this.getState();
 			sState = bState ? this._sOn : this._sOff;
 
 			if (bStateHasChanged) {
@@ -413,16 +420,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 				bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
 						: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
-
-				if (_mSettings && _mSettings.triggerChangeEvent) {
-					if (Swt._bUseTransition) {
-						jQuery.sap.delayedCall(Swt._TRANSITIONTIME, this, function() {
-							this.fireChange({ state: bState });
-						}, [bState]);
-					} else {
-						this.fireChange({ state: bState });
-					}
-				}
 			}
 
 			this._$Switch.addClass(CSS_CLASS + "Trans");
