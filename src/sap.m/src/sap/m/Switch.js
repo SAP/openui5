@@ -360,13 +360,16 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 */
 		Switch.prototype.onsapselect = function(oEvent) {
 
-			// mark the event for components that needs to know if the event was handled by the Switch
-			oEvent.setMarked();
+			if (this.getEnabled()) {
 
-			// note: prevent document scrolling when space keys is pressed
-			oEvent.preventDefault();
+				// mark the event for components that needs to know if the event was handled by the Switch
+				oEvent.setMarked();
 
-			this.setState(!this.getState(), true);
+				// note: prevent document scrolling when space keys is pressed
+				oEvent.preventDefault();
+
+				this.setState(!this.getState(), true);
+			}
 		};
 
 		/* =========================================================== */
@@ -385,10 +388,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				bNewState,
 				Swt = Switch,
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
-
-			if (!this.getEnabled() && bTriggerEvent) {
-				return this;
-			}
 
 			bNewState = !(this.getState() === bState);
 
