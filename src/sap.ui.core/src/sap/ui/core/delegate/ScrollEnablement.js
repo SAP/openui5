@@ -804,7 +804,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 
 				// Drag instead of native scroll
-				this._bDoDrag = this._bDragScroll;
+				// 1. when requested explicitly
+				// 2. bypass Windows Phone 8.1 scrolling issues when soft keyboard is opened
+				this._bDoDrag = this._bDragScroll || sap.ui.Device.os.windows_phone && /(INPUT|TEXTAREA)/i.test(document.activeElement.tagName);
 
 				// find if container is scrollable vertically or horizontally
 				if (!this._scrollable) {
