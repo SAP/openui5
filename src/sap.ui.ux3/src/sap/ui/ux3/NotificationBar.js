@@ -42,7 +42,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * This property enables the bar to be resized by the user.
 			 */
-			resizeEnabled : {type : "boolean", group : "Misc", defaultValue : true}
+			resizeEnabled : {type : "boolean", group : "Misc", defaultValue : true},
+			
+			/**
+			 * This property defines if the toggler should be displayed the whole time when the NotificationBar is shown.
+			 */
+			alwaysShowToggler : {
+				type : "boolean",
+				defaultValue : false,
+				since : "1.24.5"
+			}
 		},
 		aggregations : {
 	
@@ -522,6 +531,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
 			
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+			// set toggler always to visible if running on a mobile device
+			this.setAlwaysShowToggler(false);
 		};
 	
 		NotificationBar.prototype.exit = function() {
@@ -1369,8 +1381,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				});
 			}
 		};
+
+		/**
+		 * @param [boolean]
+		 *            {bAlwaysShow} if the toggler should be visible all the time
+		 *            set this parameter to <b>true</b>
+		 * @public
+		 * @since 1.22.11
+		 */
+		sap.ui.ux3.NotificationBar.prototype.setAlwaysShowToggler = function(bAlwaysShow) {
+			// set toggler always to visible if running on a mobile device
+			if (sap.ui.Device.browser.mobile) {
+				bAlwaysShow = true;
+			}
+			
+			this.setProperty("alwaysShowToggler", bAlwaysShow, true);
+			
+			var $toggler = this.$("toggler");
+			if (bAlwaysShow) {
+				$toggler.css("display", "block");
+			} else {
+				$toggler.css("display", "none");
+			}
+		};
 	}());
-	
 
 	return NotificationBar;
 

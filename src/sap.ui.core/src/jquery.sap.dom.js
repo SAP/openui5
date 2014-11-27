@@ -229,29 +229,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.selectText = function selectText(iStart, iEnd) {
 		var oDomRef = this.get(0);
 
-		if (!oDomRef) {
-			return this;
-		}
-
 		try {
 			if (typeof (oDomRef.selectionStart) === "number") { // Firefox and IE9+
 
-				// sanity checks
-				if (iStart < 0) {
-					iStart = 0;
-				}
-
-				if (iEnd > oDomRef.value.length) {
-					iEnd = oDomRef.value.length;
-				}
-
-				if (!iEnd || iStart > iEnd) {
-					iStart = 0;
-					iEnd = 0;
-				}
-
-				oDomRef.selectionStart = iStart; // TODO: maybe need to decouple via setTimeout?
-				oDomRef.selectionEnd = iEnd;
+				oDomRef.setSelectionRange(iStart, iEnd);
 			} else if (oDomRef.createTextRange) { // IE
 				var oTextEditRange = oDomRef.createTextRange();
 				oTextEditRange.collapse();
@@ -277,10 +258,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	jQuery.fn.getSelectedText = function() {
 		var oDomRef = this.get(0);
-
-		if (!oDomRef) {
-			return "";
-		}
 
 		try {
 			if (typeof oDomRef.selectionStart === "number") {

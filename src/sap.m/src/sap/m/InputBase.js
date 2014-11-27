@@ -300,6 +300,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function() {
+		this.$().toggleClass("sapMFocus", true);
 		if (sap.ui.Device.support.touch) {
 			// listen to all touch events
 			jQuery(document).on('touchstart.sapMIBtouchstart', jQuery.proxy(this._touchstartHandler, this));
@@ -369,7 +370,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onfocusout = function(oEvent) {
-
+		this.$().toggleClass("sapMFocus", false);
 		// remove touch handler from document for mobile devices
 		jQuery(document).off('.sapMIBtouchstart');
 
@@ -596,6 +597,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return Control.prototype.setProperty.apply(this, arguments);
+	};
+
+	/**
+	 * Returns an object representing the serialized focus information.
+	 * To be overwritten by subclasses.
+	 *
+	 * @returns {object} An object representing the serialized focus information.
+	 * @protected
+	 */
+	InputBase.prototype.getFocusInfo = function() {
+		var oFocusInfo = Control.prototype.getFocusInfo.call(this),
+			oFocusDomRef = this.getFocusDomRef();
+
+		// extend the serialized focus information with the current text selection and the cursor position
+		jQuery.extend(oFocusInfo, {
+			cursorPos: 0,
+			selectionStart: 0,
+			selectionEnd: 0
+		});
+
+		if (oFocusDomRef) {
+			oFocusInfo.cursorPos = jQuery(oFocusDomRef).cursorPos();
+
+			try {
+				oFocusInfo.selectionStart = oFocusDomRef.selectionStart;
+				oFocusInfo.selectionEnd = oFocusDomRef.selectionEnd;
+			} catch (e) {}	// note: chrome fail to read the "selectionStart" property from HTMLInputElement: The input element's type "number" does not support selection.
+		}
+
+		return oFocusInfo;
+	};
+
+	/**
+	 * Applies the focus info.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {object} oFocusInfo
+	 * @protected
+	 */
+	InputBase.prototype.applyFocusInfo = function(oFocusInfo) {
+		Control.prototype.applyFocusInfo.call(this, oFocusInfo);
+		this.$("inner").cursorPos(oFocusInfo.cursorPos);
+		this.selectText(oFocusInfo.selectionStart, oFocusInfo.selectionEnd);
+		return this;
 	};
 
 	/**
@@ -852,50 +897,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// update value property
 		this.setProperty("value", sValue, true);
 
-		return this;
-	};
-
-	/**
-	 * Returns an object representing the serialized focus information.
-	 * To be overwritten by subclasses.
-	 *
-	 * @return {object} An object representing the serialized focus information.
-	 * @protected
-	 */
-	InputBase.prototype.getFocusInfo = function() {
-		var oFocusInfo = Control.prototype.getFocusInfo.call(this),
-			oFocusDomRef = this.getFocusDomRef();
-
-		// extend the serialized focus information with the current text selection and the cursor position
-		jQuery.extend(oFocusInfo, {
-			cursorPos: 0,
-			selectionStart: 0,
-			selectionEnd: 0
-		});
-
-		if (oFocusDomRef) {
-			oFocusInfo.cursorPos = jQuery(oFocusDomRef).cursorPos();
-
-			try {
-				oFocusInfo.selectionStart = oFocusDomRef.selectionStart;
-				oFocusInfo.selectionEnd = oFocusDomRef.selectionEnd;
-			} catch (e) {}	// note: chrome fail to read the "selectionStart" property from HTMLInputElement: The input element's type "number" does not support selection.
-		}
-
-		return oFocusInfo;
-	};
-
-	/**
-	 * Applies the focus info.
-	 * To be overwritten by subclasses.
-	 *
-	 * @param {object} oFocusInfo
-	 * @protected
-	 */
-	InputBase.prototype.applyFocusInfo = function(oFocusInfo) {
-		Control.prototype.applyFocusInfo.call(this, oFocusInfo);
-		this.$("inner").cursorPos(oFocusInfo.cursorPos);
-		this.selectText(oFocusInfo.selectionStart, oFocusInfo.selectionEnd);
 		return this;
 	};
 

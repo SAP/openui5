@@ -259,6 +259,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	};
 	
 	DateTimeInput.prototype.onfocusin = function() {
+		this.$().toggleClass("sapMFocus", true);
 		this._setLabelVisibility();
 		
 		// open message when focus is back to input field

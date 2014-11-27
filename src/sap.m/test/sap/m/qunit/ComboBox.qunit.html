@@ -3290,8 +3290,7 @@
 								key: "CU",
 								text: "Cuba",
 							})
-						],
-						selectedKey: "CU"
+						]
 				});
 
 				// arrange
@@ -3299,11 +3298,11 @@
 				sap.ui.getCore().applyChanges();
 
 				oErrorComboBox.open();
-				this.clock.tick(500);
-				ok(!jQuery.sap.domById("errorcombobox-message"), "error message popup is not open when click on the open area of combobox");
+				this.clock.tick(1000);
+				ok(!jQuery.sap.domById("errorcombobox-message"), "error message popup is not open when list is open");
 
 				oErrorComboBox.close();
-				this.clock.tick(500);
+				this.clock.tick(1000);
 				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
 
 				oErrorComboBox.focus();
@@ -3314,7 +3313,8 @@
 				oErrorComboBox.getFocusDomRef().blur();
 				this.clock.tick(500);
 				ok(!jQuery.sap.domById("errorcombobox-message"), "no error message popup is closed when focus is out");
-
+				
+				
 				// cleanup
 				oErrorComboBox.destroy();
 

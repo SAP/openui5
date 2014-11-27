@@ -17,7 +17,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.tdg.Component", {
 			resourceBundle : "i18n/messageBundle.properties",
 			serviceConfig : {
 				name : "Northwind",
-				serviceUrl : "/uilib-sample/proxy/http/services.odata.org/V2/(S(sapuidemobespractices))/OData/OData.svc/"
+				serviceUrl : "../../../../../proxy/http/services.odata.org/V2/(S(sapuidemobespractices))/OData/OData.svc/"
 			}
 		},
 

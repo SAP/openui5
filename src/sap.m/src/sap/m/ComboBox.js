@@ -84,34 +84,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			return (oItem && oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem")) || null;
 		};
 
-		/**
-		 * Called, whenever the binding of the aggregation items is changed.
-		 * This method deletes all items in this aggregation and recreates them
-		 * according to the data model.
-		 *
-		 * @private
-		 */
-		ComboBox.prototype.updateItems = function(sReason) {
-			this._bDataAvailable = false;
-			this.updateAggregation("items");
-			this._bDataAvailable = true;
-		};
-
-		/**
-		 * Called, when the items aggregation needs to be refreshed.
-		 * This method does not make any change on the aggregation, but just calls the
-		 * getContexts() method to trigger fetching of new data.
-		 *
-		 * note: This method has been overwritten to prevent .updateItems()
-		 * from being called when the bindings are refreshed.
-		 * @see sap.ui.base.ManagedObject#bindAggregation
-		 *
-		 * @private
-		 */
-		ComboBox.prototype.refreshItems = function() {
-			this.refreshAggregation("items");
-		};
-
 		/* ----------------------------------------------------------- */
 		/* Popover                                                     */
 		/* ----------------------------------------------------------- */
@@ -822,7 +794,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.synchronizeSelection = function() {
 
-			// the "selectedKey" property is set and it is synchronized with the "selectedItem" association
+			// the "selectedKey" property is synchronized with the "selectedItem" association
 			if (this.isSelectionSynchronized()) {
 				return;
 			}
@@ -831,7 +803,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				vItem = this.getItemByKey("" + sKey);	// find the first item with the given key
 
 			// if there is an item that match with the "selectedKey" property and
-			// it does not have the default value
+			// the "selectedKey" property does not have the default value
 			if (vItem && (sKey !== "")) {
 
 				// update and synchronize "selectedItem" association and
@@ -843,17 +815,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				if (this._sValue === this.getValue()) {
 					this.setValue(vItem.getText());
 				}
-
-			// the aggregation items is not bound or
-			// it is bound and the data is already available
-			} else if (!this.isBound("items") || this._bDataAvailable) {
-
-				// the "selectedKey" property have the default value
-				vItem = this.getDefaultSelectedItem();
-
-				// update and synchronize "selectedItem" association,
-				// "selectedKey" and "selectedItemId" properties
-				this.setSelection(vItem, { suppressInvalidate: true });
 			}
 		};
 
@@ -1025,24 +986,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.getDefaultSelectedItem = function() {
 			return this.getForceSelection() ? this.findFirstEnabledItem() : null;
-		};
-
-		/*
-		 * Check whether the provided value match with the text of an item in the list.
-		 *
-		 * @param {string} sValue
-		 * @returns {boolean}
-		 * @protected
-		 */
-		ComboBox.prototype.isAllowedSubstringValue = function(sValue) {
-
-			if (!this.getForceSelection()) {
-				return true;
-			}
-
-			return this.getItems().some(function(oItem) {
-				return jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
-			});
 		};
 
 		/*

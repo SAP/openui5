@@ -87,7 +87,7 @@ public class SimpleProxyServlet extends HttpServlet {
   /* (non-Javadoc)
    * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({ "rawtypes", "resource" })
   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     // process the request
@@ -198,14 +198,20 @@ public class SimpleProxyServlet extends HttpServlet {
       }
       
       // apply the status of the response
-      response.setStatus(conn.getResponseCode());
-      infoLog.append("\n").append(" - response-status: ").append(conn.getResponseCode());
+      int responseCode = conn.getResponseCode();
+      response.setStatus(responseCode);
+      infoLog.append("\n").append(" - response-status: ").append(responseCode);
 
       // pipe and return the response (either the input or the error stream)
       try {
         
-        // try to access the inputstream
-        is = conn.getInputStream();
+        // try to access the inputstream (for success and redirect cases / < 400)
+        // and use the errorstream (for client side and server side errors / >= 400)
+        if (responseCode >= 200 && responseCode < 400) {
+          is = conn.getInputStream();
+        } else {
+          is = conn.getErrorStream();
+        }
         
         // forward the response headers
         infoLog.append("\n").append("  - response headers:");
@@ -244,14 +250,8 @@ public class SimpleProxyServlet extends HttpServlet {
         IOUtils.copyLarge(is, os);
 
       } catch (IOException ex) {
-        // in case of the inputstream is not available we simply forward the 
-        // errorstream of the connection (which should be the case for 400 requests)
-        // => error stream could also be null (e.g. for ABAP systems in case of 401)
-        IOUtils.closeQuietly(is);
-        is = conn.getErrorStream();
-        if (is != null) {
-          IOUtils.copyLarge(is, os);
-        }
+        // log any exception here
+        this.log(ex.getMessage(), ex);
       } finally {
         IOUtils.closeQuietly(is);
         if (os != null) {

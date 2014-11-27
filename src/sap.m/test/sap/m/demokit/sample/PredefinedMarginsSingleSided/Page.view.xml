@@ -9,10 +9,10 @@
 	      	<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
 	    </content>
 	</Panel>
-	<Panel class="sapUiLargeMarginBegin sapUiLargeMarginBottom">
+	<Panel width="auto" class="sapUiLargeMarginBegin sapUiLargeMarginBottom">
 	    <content>
-	      	<Text text="This is the the middle panel which uses margin class 'sapUiLargeMarginBegin' and 'sapUiLargeMarginBottom' to clear a 48px space to the left and bottom." class="sapMH4FontSize"/>
-	      	<Text text="Please also check this page with url parameter 'sap-ui-rtl=true' and refresh this page if you'd like to see what happens in Right-To-Left mode: paste '?sap-ui-rtl=true' right after 'explored.html' in your browser's bar." />
+	      	<Text text="This is the the middle panel which uses margin classes 'sapUiForceWidthAuto', 'sapUiLargeMarginBegin' and 'sapUiLargeMarginBottom' to clear a 48px space to the left and bottom." class="sapMH4FontSize"/>
+	      	<Text text="Since panels have a default width of 100%, horizontal margins are not displayed appropriately. Therefore we need to reset the panel's 'width' property to 'auto'. Please also check this page with url parameter 'sap-ui-rtl=true' and refresh this page if you'd like to see what happens in Right-To-Left mode: paste '?sap-ui-rtl=true' right after 'explored.html' in your browser's bar." />
 	      	</content>
 	</Panel>
 	<Panel>

@@ -81,6 +81,7 @@
 			<List id="list" headerText="A List" backgroundDesign="Translucent"/>
 			<Table id="table" headerText="A Table"/>
 			<Panel id="panel" headerText="A Panel"/>
+			<Panel id="restrictedWidthPanel" width="200px" headerText="A Panel"/>
 			<ScrollContainer
 				id="scrollCont"
               	height="200px"
@@ -159,7 +160,7 @@
 	
 	module("Apply pre-defined css classes");
 	
-	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue) {
+	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
 		assert.ok( true, " " ); //Group tests
 		assert.ok( true, "TESTING MARGIN CLASS '" + sMarginClass + "'" );
 		var oComponentContainer = new sap.ui.core.ComponentContainer();
@@ -176,11 +177,15 @@
 				oList = oTestView.byId('list'),
 				oTable = oTestView.byId('table'),
 				oPanel = oTestView.byId('panel'),
+				oRestrictedWidthPanel = oTestView.byId('restrictedWidthPanel'),
 				oScrollCont = oTestView.byId('scrollCont'),
 				oCarousel = oTestView.byId('carousel'),
 				oSplitContainer = oTestView.byId('splitContainer'),];
 		//add css classes
 		aControls.forEach(function(oControl) {
+			if(bHorizontal) {
+				oControl.addStyleClass('sapUiForceWidthAuto');
+			}
 			oControl.addStyleClass(sMarginClass);
 		});
 		sap.ui.getCore().applyChanges();
@@ -192,6 +197,14 @@
 		equal(oSimpleForm.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Simple Form " +  sExpectedMarginValue);
 		equal(oTable.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Table "  +  sExpectedMarginValue);
 		equal(oPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
+		equal(oRestrictedWidthPanel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Panel "  +  sExpectedMarginValue);
+		if(bHorizontal) {
+			//Check if 'sapUiForceWidthAuto' changes the width property as expected
+			notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
+			equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
+			
+		}
 		equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
 		equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
 		equal(oCarousel.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Carousel " +  sExpectedMarginValue );
@@ -210,17 +223,17 @@
 	
 	test("Test static margin classes", function() {
 		//Test Margins all around
-		fnTest.call(this, 'margin', 'sapUiSmallMargin', '16px');
-		fnTest.call(this, 'margin', 'sapUiMediumMargin', '32px');
-		fnTest.call(this, 'margin', 'sapUiLargeMargin', '48px');
+		fnTest.call(this, 'margin', 'sapUiSmallMargin', '16px', true);
+		fnTest.call(this, 'margin', 'sapUiMediumMargin', '32px', true);
+		fnTest.call(this, 'margin', 'sapUiLargeMargin', '48px', true);
 		
 		//Test Two-side margins
-		fnTest.call(this, 'margin-left', 'sapUiSmallMarginBeginEnd', '16px');
-		fnTest.call(this, 'margin-right', 'sapUiSmallMarginBeginEnd', '16px');
-		fnTest.call(this, 'margin-left', 'sapUiMediumMarginBeginEnd', '32px');
-		fnTest.call(this, 'margin-right', 'sapUiMediumMarginBeginEnd', '32px');
-		fnTest.call(this, 'margin-left', 'sapUiLargeMarginBeginEnd', '48px');	
-		fnTest.call(this, 'margin-right', 'sapUiLargeMarginBeginEnd', '48px');	
+		fnTest.call(this, 'margin-left', 'sapUiSmallMarginBeginEnd', '16px', true);
+		fnTest.call(this, 'margin-right', 'sapUiSmallMarginBeginEnd', '16px', true);
+		fnTest.call(this, 'margin-left', 'sapUiMediumMarginBeginEnd', '32px', true);
+		fnTest.call(this, 'margin-right', 'sapUiMediumMarginBeginEnd', '32px', true);
+		fnTest.call(this, 'margin-left', 'sapUiLargeMarginBeginEnd', '48px', true);	
+		fnTest.call(this, 'margin-right', 'sapUiLargeMarginBeginEnd', '48px', true);	
 		fnTest.call(this, 'margin-top', 'sapUiSmallMarginTopBottom', '16px');
 		fnTest.call(this, 'margin-bottom', 'sapUiSmallMarginTopBottom', '16px');
 		fnTest.call(this, 'margin-top', 'sapUiMediumMarginTopBottom', '32px');
@@ -231,18 +244,18 @@
 		//Test Single-sided margins
 		fnTest.call(this, 'margin-top', 'sapUiSmallMarginTop', '16px');
 		fnTest.call(this, 'margin-bottom', 'sapUiSmallMarginBottom', '16px');
-		fnTest.call(this, 'margin-left', 'sapUiSmallMarginBegin', '16px');
-		fnTest.call(this, 'margin-right', 'sapUiSmallMarginEnd', '16px');
+		fnTest.call(this, 'margin-left', 'sapUiSmallMarginBegin', '16px', true);
+		fnTest.call(this, 'margin-right', 'sapUiSmallMarginEnd', '16px', true);
 		
 		fnTest.call(this, 'margin-top', 'sapUiMediumMarginTop', '32px');
 		fnTest.call(this, 'margin-bottom', 'sapUiMediumMarginBottom', '32px');
-		fnTest.call(this, 'margin-left', 'sapUiMediumMarginBegin', '32px');
-		fnTest.call(this, 'margin-right', 'sapUiMediumMarginEnd', '32px');
+		fnTest.call(this, 'margin-left', 'sapUiMediumMarginBegin', '32px', true);
+		fnTest.call(this, 'margin-right', 'sapUiMediumMarginEnd', '32px', true);
 		
 		fnTest.call(this, 'margin-top', 'sapUiLargeMarginTop', '48px');
 		fnTest.call(this, 'margin-bottom', 'sapUiLargeMarginBottom', '48px');
-		fnTest.call(this, 'margin-left', 'sapUiLargeMarginBegin', '48px');
-		fnTest.call(this, 'margin-right', 'sapUiLargeMarginEnd', '48px');
+		fnTest.call(this, 'margin-left', 'sapUiLargeMarginBegin', '48px', true);
+		fnTest.call(this, 'margin-right', 'sapUiLargeMarginEnd', '48px', true);
 		
 	});
 </script>

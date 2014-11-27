@@ -400,6 +400,7 @@ sap.ui
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true, true);
 						this._enableConditions();
 						this._updateKeyFields();
+						this._updateOperations();
 					};
 
 					/**
@@ -1456,12 +1457,16 @@ sap.ui
 								// update visible of fields
 								oValue1.setVisible(false);
 								oValue2.setVisible(false);
+								oOperation.setVisible(false);
 								oShowIfGrouedvalue.setVisible(true);
 
 								// correct field span
-								oKeyfield.getLayoutData().setSpan("L4 M4 S4");
+//								oKeyfield.getLayoutData().setSpan("L4 M4 S4");
+//								oOperation.getLayoutData().setSpan("L4 M4 S4");
+//								oShowIfGrouedvalue.getLayoutData().setSpan("L2 M2 S2");
+								oKeyfield.getLayoutData().setSpan("L5 M5 S5");
 								oOperation.getLayoutData().setSpan("L4 M4 S4");
-								oShowIfGrouedvalue.getLayoutData().setSpan("L2 M2 S2");
+								oShowIfGrouedvalue.getLayoutData().setSpan("L4 M4 S4");
 							} else {
 								if (sOperation === sap.m.P13nConditionOperation.Initial
 										|| sOperation === sap.m.P13nConditionOperation.Ascending

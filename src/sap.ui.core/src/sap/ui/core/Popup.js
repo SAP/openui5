@@ -654,6 +654,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		var fnOpened = function() {
+			// internal status that any animation has been finished should set to true;
+			that.bOpen = true;
 			$Ref.css("display","block");
 
 			// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
@@ -692,8 +694,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		// and show the popup content
 		$Ref.toggleClass("sapUiShd", this._bShadow).hide().css("visibility", "visible");
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
-			// internal status that any animation has been finished should set to true;
-			this.bOpen = true;
 			fnOpened.apply(); // otherwise call after-opening functions directly
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, fnOpened);

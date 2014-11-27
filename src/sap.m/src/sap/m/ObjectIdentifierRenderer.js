@@ -24,6 +24,9 @@ sap.ui.define(['jquery.sap.global'],
 	 *            rendered
 	 */
 	ObjectIdentifierRenderer.render = function(oRm, oOI) {
+		
+		var sTooltip;
+		
 		// Return immediately if control is invisible
 		if (!oOI.getVisible()) {
 			return;
@@ -34,6 +37,12 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oOI);
 		oRm.addClass("sapMObjectIdentifier");
 		oRm.writeClasses();
+		
+		sTooltip = oOI.getTooltip_AsString();
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+		
 		oRm.write(">");
 	
 		oRm.write("<div"); // Top row begins
