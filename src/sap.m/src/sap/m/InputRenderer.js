@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * InputRenderer extends the InputBaseRenderer
 	 */
 	var InputRenderer = Renderer.extend(InputBaseRenderer);
-	
+
 	/**
 	 * Adds control specific class
 	 *
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 				oRm.addClass("sapMInputDescription");
 		}
 	};
-	
+
 	/**
 	 * Add extra styles for input container
 	 *
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 */
 	InputRenderer.addOuterStyles = function(oRm, oControl) {
 	};
-	
+
 	/**
 	 * add extra attributes to Input
 	 *
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.writeAttribute("readonly", "readonly");
 		}
 	};
-	
+
 	/**
 	 * Adds inner css classes to the input field
 	 *
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 */
 	InputRenderer.addInnerClasses = function(oRm, oControl) {
 	};
-	
+
 	/**
 	 * Add inner styles to the input field
 	 *
@@ -79,12 +79,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.addInnerStyles = function(oRm, oControl) {
-	
+
 		if (oControl.getDescription()) {
 			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
 		}
 	};
-	
+
 	/**
 	 * add extra content to Input
 	 *
@@ -92,18 +92,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.writeInnerContent = function(oRm, oControl) {
-		 if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
+		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
 			oRm.write('<div class="sapMInputValHelp">');
 			oRm.renderControl(oControl._getValueHelpIcon());
 			oRm.write("</div>");
-		 }
-		 if (oControl.getDescription()) {
-			 var sDescription = oControl.getDescription();
-			 var sSpan = "<span>" + sDescription + "</span>";
-			 oRm.write(sSpan);
-		 }
+		}
+		if (oControl.getDescription()) {
+			var sDescription = oControl.getDescription();
+			var sSpan = "<span>" + sDescription + "</span>";
+			oRm.write(sSpan);
+		}
 	};
-	
+
+	/**
+	 * Add inner styles to the placeholder
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	InputRenderer.addPlaceholderStyles = function(oRm, oControl) {
+
+		if (oControl.getDescription()) {
+			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
+		}
+
+	};
 
 	return InputRenderer;
 
