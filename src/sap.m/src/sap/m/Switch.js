@@ -340,7 +340,9 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				this._$Switch.removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
 
 				// change the state
-				this.setState(this._bDragging ? this._bTempState : !this._bTempState, true);
+				this.setState(this._bDragging ? this._bTempState : !this._bTempState, {
+					triggerChangeEvent: true
+				});
 			}
 		};
 
@@ -368,7 +370,9 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				// note: prevent document scrolling when space keys is pressed
 				oEvent.preventDefault();
 
-				this.setState(!this.getState(), true);
+				this.setState(!this.getState(), {
+					triggerChangeEvent: true
+				});
 			}
 		};
 
@@ -383,7 +387,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @public
 		 * @return {sap.m.Switch} <code>this</code> to allow method chaining.
 		 */
-		Switch.prototype.setState = function(bState, bTriggerEvent /* for internal usage */) {
+		Switch.prototype.setState = function(bState, _mSettings /* for internal usage */) {
 			var sState,
 				bNewState,
 				Swt = Switch,
@@ -413,7 +417,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
 						: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
 
-				if (bTriggerEvent) {
+				if (_mSettings && _mSettings.triggerChangeEvent) {
 					if (Swt._bUseTransition) {
 						jQuery.sap.delayedCall(Swt._TRANSITIONTIME, this, function() {
 							this.fireChange({ state: bState });
