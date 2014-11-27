@@ -939,7 +939,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		return oBinding;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {

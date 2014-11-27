@@ -38,6 +38,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} [mParameters.loadAnnotationsJoined] Whether or not to fire the metadataLoaded-event only after annotations have been loaded as well,
 	 * @param {map} [mParameters.serviceUrlParams] map of URL parameters - these parameters will be attached to all requests,
 	 * @param {map} [mParameters.metadataUrlParams] map of URL parameters for metadata requests - only attached to $metadata request.
+	 * @param {string} [mParameters.defaultBindingMode] sets the default binding mode for the model. If not set, sap.ui.model.BindingMode.OneWay is used.
+	 * @param {string} [mParameters.defaultCountMode] sets the default count mode for the model. If not set, sap.ui.model.odata.CountMode.Request is used.
+	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -971,7 +974,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} [mParameters] map of parameters
 	 * @param {function} [fnCallBack] function called when context is created
 	 * @param {boolean} [bReload] reload of data
-	 * @private
+	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
 		var sFullPath = this.resolve(sPath, oContext);
@@ -2630,7 +2633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * Trigger a GET request to the odata service that was specified in the model constructor.
-	 * The data will not be stored in the model. The requested data is returned with the response.
+	 * The data will be stored in the model. The requested data is returned with the response.
 	 *
 	 * @param {string} sPath A string containing the path to the data which should
 	 *		be retrieved. The path is concatenated to the sServiceUrl
