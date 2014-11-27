@@ -394,10 +394,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			bStateHasChanged = !(this.getState() === bState);
-
-			if (bStateHasChanged) {
-				this.setProperty("state", bState, true);
-			}
+			this.setProperty("state", bState, true);
 
 			if (!this._$Switch) {
 				return this;
