@@ -126,6 +126,10 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
 				sState = bState ? this._sOn : this._sOff;
 
+			if (!this._$Switch) {
+				return this;
+			}
+
 			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
 
 			if (this.getName()) {
@@ -418,13 +422,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @return {sap.m.Switch} <code>this</code> to allow method chaining.
 		 */
 		Switch.prototype.setState = function(bState) {
-
 			this.setProperty("state", bState, true);
-
-			if (!this._$Switch) {
-				return this;
-			}
-
 			this._setDomState(this.getState());
 			return this;
 		};
