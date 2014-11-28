@@ -1774,6 +1774,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * This is a generic method which can be used to bind any property to the
 	 * model. A managed object may flag properties in the metamodel with
 	 * bindable="bindable" to get typed bind methods for a property.
+	 * A composite property binding which may have multiple paths (also known as Calculated Fields) can be declared using the parts parameter.
+	 * Note a composite binding is read only (One Way). 
 	 *
 	 * @param {string} sName the name of the property
 	 * @param {object} oBindingInfo the binding information
@@ -1788,6 +1790,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {object} [oBindingInfo.constraints] the constraints for this value
 	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
 	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+	 * @param {object} [oBindingInfo.parts] object for definding a read only composite binding which may have multiple binding paths also in different models.
+	 * 									<code>oTxt.bindValue({
+   * 										parts: [
+   *         								{path: "/firstName", type: new sap.ui.model.type.String()},
+   *         								{path: "myModel2>/lastName"}
+   *        						]
+	 *									}); </code>
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
