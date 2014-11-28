@@ -417,13 +417,11 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
-			} else if (!this.isBound("items") || this._bDataAvailable) {
-
-				vItem = this.getDefaultSelectedItem();
+			} else if (this.getDefaultSelectedItem() && (!this.isBound("items") || this._bDataAvailable)) {
 
 				// update and synchronize "selectedItem" association,
 				// "selectedKey" and "selectedItemId" properties
-				this.setSelection(vItem);
+				this.setSelection(this.getDefaultSelectedItem());
 			}
 		};
 
