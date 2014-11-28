@@ -128,6 +128,16 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 					type : "boolean",
 					group : "Misc",
 					defaultValue : false
+				},
+				
+				/**
+				 * This represents the displayFormat of the condition Values. 
+				 * With the value "UpperCase" the entered value of the condition will be converted to upperCase.
+				 */
+				displayFormat : {
+					type : "string",
+					group : "Misc",
+					defaultValue : null
 				}
 			},
 			aggregations : {
@@ -1501,22 +1511,38 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
 
 		var sValue1 = oConditionGrid.value1.getValue();
+		if (oThat.getDisplayFormat() === "UpperCase" && sValue1) {
+			sValue1 = sValue1.toUpperCase();
+			oConditionGrid.value1.setValue(sValue1);
+		}
 		var oValue1 = sValue1;
 		if (oConditionGrid.oFormatter && sValue1) {
 			oValue1 = oConditionGrid.oFormatter.parse(sValue1);
 			if (!isNaN(oValue1) && oValue1 !== null) {
 				sValue1 = oConditionGrid.oFormatter.format(oValue1);
 				oConditionGrid.value1.setValue(sValue1);
+				oConditionGrid.value1.setValueState(sap.ui.core.ValueState.None);
+			} else {
+				oConditionGrid.value1.setValueState(sap.ui.core.ValueState.Warning);
+				oConditionGrid.value1.setValueStateText(this._sValidationDialogFieldMessage);
 			}
 		}
 
 		var sValue2 = oConditionGrid.value2.getValue();
+		if (oThat.getDisplayFormat() === "UpperCase" && sValue2) { 
+			sValue2 = sValue2.toUpperCase();
+			oConditionGrid.value2.setValue(sValue2);
+		}
 		var oValue2 = sValue2;
 		if (oConditionGrid.oFormatter && sValue2) {
 			oValue2 = oConditionGrid.oFormatter.parse(sValue2);
 			if (!isNaN(oValue2) && oValue2 !== null) {
 				sValue2 = oConditionGrid.oFormatter.format(oValue2);
 				oConditionGrid.value2.setValue(sValue2);
+				oConditionGrid.value2.setValueState(sap.ui.core.ValueState.None);
+			} else {
+				oConditionGrid.value2.setValueState(sap.ui.core.ValueState.Warning);
+				oConditionGrid.value2.setValueStateText(this._sValidationDialogFieldMessage);
 			}
 		}
 
