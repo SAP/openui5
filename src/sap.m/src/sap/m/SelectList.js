@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/**
 		 * Constructor for a new SelectList.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+		 * @param {string} [sId] id for the new control, generated automatically if no id is given
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
@@ -26,62 +26,63 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @alias sap.m.SelectList
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata : {
+		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Determines whether the user can change the selection.
 				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				enabled : { type: "boolean", group: "Behavior", defaultValue: true },
+
 				/**
 				 * Defines the width of the control. This value can be provided in all CSS units.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "auto"},
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto"},
 
 				/**
 				 * Defines the maximum width of the control. This value can be provided in all CSS units.
 				 */
-				maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
 
 				/**
 				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 */
-				selectedKey : {type : "string", group : "Data", defaultValue : ""},
+				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
 				 */
-				selectedItemId : {type : "string", group : "Misc", defaultValue : ""}
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
 			},
-			defaultAggregation : "items",
-			aggregations : {
+			defaultAggregation: "items",
+			aggregations: {
 
 				/**
 				 * Aggregation of items to be displayed.
 				 */
-				items : {type : "sap.ui.core.Item", multiple : true, singularName : "item", bindable : "bindable"}
+				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" }
 			},
-			associations : {
+			associations: {
 
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem : {type : "sap.ui.core.Item", multiple : false}
+				selectedItem: { type: "sap.ui.core.Item", multiple: false }
 			},
-			events : {
+			events: {
 
 				/**
 				 * Occurs when the user changes the selected item.
 				 */
-				selectionChange : {
-					parameters : {
+				selectionChange: {
+					parameters: {
 
 						/**
 						 * The selected item.
 						 */
-						selectedItem : {type : "sap.ui.core.Item"}
+						selectedItem: { type: "sap.ui.core.Item" }
 					}
 				}
 			}
