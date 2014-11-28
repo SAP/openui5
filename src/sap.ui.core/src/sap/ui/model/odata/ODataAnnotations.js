@@ -644,6 +644,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				for (var j in aEntityTypes) {
 					oEntityType = aEntityTypes[j];
 					oExtensions = {};
+					oProperties = {};
 					if (oEntityType.hasStream && oEntityType.hasStream === "true") {
 						continue;
 					}
