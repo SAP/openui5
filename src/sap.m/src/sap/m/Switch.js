@@ -122,6 +122,26 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			this._$Handle[0].setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
 		};
 
+		Switch.prototype._setDomState = function(bState) {
+			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
+				sState = bState ? this._sOn : this._sOff;
+
+			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
+
+			if (this.getName()) {
+				this._$Checkbox[0].setAttribute("checked", bState);
+				this._$Checkbox[0].setAttribute("value", sState);
+			}
+
+			bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
+					: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+
+			this._$Switch.addClass(CSS_CLASS + "Trans");
+
+			// remove inline styles
+			this._$SwitchInner.removeAttr("style");
+		};
+
 		Switch._getCssParameter = function(sParameter) {
 			var fnGetCssParameter = Parameters.get;
 
@@ -398,10 +418,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @return {sap.m.Switch} <code>this</code> to allow method chaining.
 		 */
 		Switch.prototype.setState = function(bState) {
-			var sState,
-				bStateHasChanged,
-				bOldState = this.getState(),
-				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			this.setProperty("state", bState, true);
 
@@ -409,27 +425,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				return this;
 			}
 
-			bState = this.getState();
-			bStateHasChanged = bState !== bOldState;
-			sState = bState ? this._sOn : this._sOff;
-
-			if (bStateHasChanged) {
-				this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
-
-				if (this.getName()) {
-					this._$Checkbox[0].setAttribute("checked", bState);
-					this._$Checkbox[0].setAttribute("value", sState);
-				}
-
-				bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
-						: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
-			}
-
-			this._$Switch.addClass(CSS_CLASS + "Trans");
-
-			// remove inline styles
-			this._$SwitchInner.removeAttr("style");
-
+			this._setDomState(this.getState());
 			return this;
 		};
 
