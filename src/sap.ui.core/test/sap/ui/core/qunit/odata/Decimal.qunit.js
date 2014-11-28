@@ -31,8 +31,8 @@
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		ok(!(oType instanceof sap.ui.model.type.Float), "is not a Float");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
-		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
+		strictEqual(oType.oFormat, null, "no formatter preload");
 
 		oType.setConstraints();
 		deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");

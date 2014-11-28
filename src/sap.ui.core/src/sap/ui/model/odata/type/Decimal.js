@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		case "int":
 			return Math.floor(parseFloat(sValue));
 		case "string":
-			return this.oFormat.format(sValue);
+			return this._getFormatter().format(sValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.sName + " to "
 				+ sTargetType);
@@ -93,7 +93,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		switch (sSourceType) {
 		case "string":
-			fResult = this.oFormat.parse(vValue);
+			fResult = this._getFormatter().parse(vValue);
 			if (isNaN(fResult)) {
 				// TODO localization? This is a user error!
 				throw new ParseException(vValue + " is not a valid " + this.sName + " value");
@@ -115,13 +115,28 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @private
 	 */
 	Decimal.prototype._handleLocalizationChange = function () {
-		var oFormatOptions = {groupingEnabled: true},
+		this.oFormat = null;
+	};
+
+	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @return {sap.ui.core.format.NumberFormat}
+	 *   the formatter
+	 * @private
+	 */
+	Decimal.prototype._getFormatter = function () {
+		var oFormatOptions, iScale;
+
+		if (!this.oFormat) {
+			oFormatOptions = {groupingEnabled: true};
 			iScale = this.oConstraints.scale;
 
-		if (iScale !== Infinity) {
-			oFormatOptions.maxFractionDigits = oFormatOptions.minFractionDigits = iScale;
+			if (iScale !== Infinity) {
+				oFormatOptions.maxFractionDigits = oFormatOptions.minFractionDigits = iScale;
+			}
+			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
-		this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
+		return this.oFormat;
 	};
 
 	/**
