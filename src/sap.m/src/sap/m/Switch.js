@@ -399,7 +399,8 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 */
 		Switch.prototype.setState = function(bState) {
 			var sState,
-				bStateHasChanged = this.getState() !== bState,
+				bStateHasChanged,
+				bOldState = this.getState(),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
 			this.setProperty("state", bState, true);
@@ -408,6 +409,8 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				return this;
 			}
 
+			bState = this.getState();
+			bStateHasChanged = bState !== bOldState;
 			sState = bState ? this._sOn : this._sOff;
 
 			if (bStateHasChanged) {
