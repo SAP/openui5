@@ -190,6 +190,32 @@
 			container.destroy();
 		});
 
+        module("Keyboard handling");
+
+        test("ShouldFirePressOnEnterOrSpace", function() {
+            //Arrange
+            var result = 0,
+            //SUT
+            sut = new sap.m.Tile({ press: handleTilePress });
+
+            function handleTilePress() {
+                result++;
+            };
+
+            sut.placeAt("qunit-fixture");
+            core.applyChanges();
+
+            //Act
+            sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+            //Assert
+            equal(result, 1);
+
+            //Act
+            sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+            //Assert
+            equal(result, 2);
+        });
+
 	</script>
 </head>
 <body class="sapUiBody">
