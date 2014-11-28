@@ -21,6 +21,18 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		ComboBoxBaseRenderer.CSS_CLASS = "sapMComboBoxBase";
 
 		/**
+		 * Add attributes to the input element.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxBaseRenderer.writeInnerAttributes = function(oRm, oControl) {
+			oRm.writeAttribute("autocomplete", "off");
+			oRm.writeAttribute("autocorrect", "off");
+			oRm.writeAttribute("autocapitalize", "off");
+		};
+
+		/**
 		 * Add extra styles for input container.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
@@ -55,18 +67,6 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 */
 		ComboBoxBaseRenderer.addInnerClasses = function(oRm, oControl) {
 			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS + "InputInner");
-		};
-
-		/**
-		 * Add inner styles to the ComboBox's input element.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 */
-		ComboBoxBaseRenderer.addInnerStyles = function(oRm, oControl) {
-			oRm.writeAttribute("autocomplete", "off");
-			oRm.writeAttribute("autocorrect", "off");
-			oRm.writeAttribute("autocapitalize", "off");
 		};
 
 		/**
