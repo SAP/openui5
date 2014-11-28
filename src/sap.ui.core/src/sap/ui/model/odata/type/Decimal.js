@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			{
 				constructor : function () {
 					SimpleType.apply(this, arguments);
-					this.sName = "Decimal";
+					this.sName = "sap.ui.model.odata.type.Decimal";
 			}
 		});
 
@@ -148,7 +148,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			}
 		}
 		// TODO localization, improve error message for end user
-		throw new ValidateException("Illegal Decimal value: " + sValue);
+		throw new ValidateException("Illegal " + this.sName + " value: " + sValue);
 	};
 
 	/**
@@ -179,8 +179,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Decimal.prototype.setConstraints = function(oConstraints) {
-		var iPrecision = oConstraints.precision,
-			iScale = oConstraints.scale;
+		var iPrecision = oConstraints && oConstraints.precision,
+			iScale = oConstraints && oConstraints.scale;
 
 		function validate(iValue, iDefault, iMinimum, sName) {
 			if (iValue === undefined) {
