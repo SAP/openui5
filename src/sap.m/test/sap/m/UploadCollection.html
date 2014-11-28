@@ -213,7 +213,7 @@
 		};
 	};
 
-	var fnfilenameLengthExceeded = function(oEvent){
+	var fnfilenameLengthExceed = function(oEvent){
 		sap.m.MessageToast.show("Filename length exceeded");
 	}
 
@@ -290,7 +290,7 @@
 		// events
 		change : fnChange,
 		fileDeleted : fnFileDeleted,
-		filenameLengthExceeded: fnfilenameLengthExceeded,
+		filenameLengthExceed: fnfilenameLengthExceed,
 		fileRenamed : fnFileRenamed,
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
