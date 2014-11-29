@@ -1763,7 +1763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			$TouchTarget;
 	
 		if (!oTouchList) {
-			return;
+			return 0;
 		}
 	
 		if (vElement instanceof Element) {
@@ -1772,7 +1772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			vElement = jQuery.sap.byId(vElement);
 		} else if (!(vElement instanceof jQuery)) {
 			jQuery.sap.assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
-			return;
+			return 0;
 		}
 	
 		iElementChildrenL = vElement.children().length;
