@@ -26,7 +26,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-		this.writeAccessibilityState(oRm, oControl);
 
 		// outer styles
 		this.addOuterStyles(oRm, oControl);
@@ -116,6 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		}
 
 		this.writeInnerValue(oRm, oControl);
+		this.writeAccessibilityState(oRm, oControl);
 		this.writeInnerAttributes(oRm, oControl);
 
 		// inner classes
