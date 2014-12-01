@@ -71,37 +71,43 @@
 }
 
 /* Custom focus outline: */
-.sapMSegBBtnFocusable:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	border: 1px solid transparent;
-	outline-offset: -0.125rem;
+.sapMSegBBtnFocusable {
+	&:focus {
+		outline: 0.125rem dotted @sapHCStandardFG;
+		outline-offset: -0.125rem;
+		border: 1px solid transparent;
+	}
+	&.sapMSegBBtnSel:focus {
+		border: 1px solid transparent;
+	}
+	&:active + .sapMSegBBtn,
+	&:focus + .sapMSegBBtn {
+		border-left: 1px solid transparent;
+		&:not(:last-child) {
+			border-right: none;
+			border-left: none;
+		}
+		&:last-child {
+			border-left: none;
+		}
+	}
+	&.sapMSegBBtnSel:focus + .sapMSegBBtn {
+		border-left: 0;
+	}
 }
 
-.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	border:	1px solid transparent;
-	outline-offset: -0.125rem;
-}
-
-.sapMSegBBtnFocusable:active {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	border:	1px solid transparent;
-	outline-offset: -0.125rem;
-}
-
-.sapMSegBBtnFocusable:focus + .sapMSegBBtn {
-	outline: none;
-	border-left: none;
-}
-
-.sapMSegBBtnFocusable.sapMSegBBtnSel:focus + .sapMSegBBtn {
-	outline: none;
-	border-left: none;
+.sapMSegB:not(.sapMSegBIcons) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+	padding-right: 1.0625rem;
+	border-right: none;
 }
 
 .sapMSegBIcons .sapMSegBBtn {
-	padding: 0;
+	padding-left: 0;
+	&:not(.sapMSegBBtnMixed ) {
+		padding: 0;
+	}
 }
+
 .sapMSegBIcons .sapMSegBBtn img {
 	padding: 0 .5rem;
 }
@@ -114,6 +120,7 @@
 		color: @sapHCStandardFG;
 	}
 }
+
 .sapMSegBBtnFocusable.sapMBtnActive {
 	background: @sapHCHighlightAltBG;
 	color: @sapHCStandardFG;
@@ -130,9 +137,10 @@
 
 .sapMSegB img {
 	line-height: 2.375rem;
-	max-height:	2.375rem;
+	max-height: 2.375rem;
 	vertical-align: middle;
 }
+
 .sapMSegBBtn .sapUiIcon {
 	font-size: 1.375rem;
 	line-height: 2.375rem;
@@ -223,6 +231,19 @@ html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
 		}
 	}
 }
+
+/* Android 4.1 to 4.3 focus fix */
+html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"],
+html[data-sap-ui-os^="Android4.2"][data-sap-ui-browser^="an"],
+html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
+	.sapMSegBBtn:not(.sapMSegBBtnSel):focus {
+		background-color: transparent;
+	}
+	.sapMSegBBtnSel:focus {
+		background-color: @sapHCHighlightBG;
+	}
+}
+
 /* Android 4.4 Specific fixes */
 html[data-sap-ui-os^="Android4.4"] {
 	.sapMSegB {
