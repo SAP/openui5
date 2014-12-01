@@ -461,7 +461,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	/**
 	 * sets the LayoutMode.
 	 * 
-	 * @public
+	 * @private
 	 * @param {string}
 	 *            sLayoutMode define the layout mode for the condition row. The value can be Desktop,
 	 *            Tablet or Phone.
@@ -785,21 +785,28 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 					break;
 
 				case "ComboBox" :
-					oControl = new sap.m.Select({
-						selectedKey : field["SelectedKey"],
-						// autoAdjustWidth: true,
-						width : "100%",
-						layoutData : new sap.ui.layout.GridData({
-							span : field["Span"]
-						})
-					});
-
 					if (field["ID"] === "keyField") {
+						//oControl = new sap.m.ComboBox({
+						oControl = new sap.m.Select({
+							selectedKey : field["SelectedKey"],
+							// autoAdjustWidth: true,
+							width : "100%",
+							layoutData : new sap.ui.layout.GridData({
+								span : field["Span"]
+							})
+						});
+
 						oThat._fillKeyFieldListItems(oControl, oThat._aKeyFields);
 
 						oControl.attachChange(function() {
 							oThat._triggerChangeKeyfield(oThat, oTargetGrid, oConditionGrid);
+							sap.m.MessageToast.show("Change");
 						});
+
+//						oControl.attachSelectionChange(function() {
+//							oThat._triggerChangeKeyfield(oThat, oTargetGrid, oConditionGrid);
+//							sap.m.MessageToast.show("SelectionChange");
+//						});
 
 						if (typeof oConditionGridData !== "undefined") {
 							oThat._aKeyFields.forEach(function(oKeyField, index) {
@@ -808,7 +815,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 									key = oKeyField;
 								}
 								if (oConditionGridData.keyField === key) {
-									oControl.setSelectedIndex(index);
+									oControl.setSelectedItem(oControl.getItems()[index]);  
 								}
 							}, this);
 						} else {
@@ -818,17 +825,17 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 									oGrid = oTargetGrid.getContent()[iPos - 1];
 									oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
 								} else {
-									oControl.setSelectedIndex(0);
+									oControl.setSelectedItem(oControl.getItems()[0]); 
 									oThat._aKeyFields.forEach(function(oKeyField, index) {
 										if (oKeyField.isDefault) {
-											oControl.setSelectedIndex(index);
+											oControl.setSelectedItem(oControl.getItems()[index]); 
 										}
 									}, this);
 								}
 							} else {
 								oThat._aKeyFields.forEach(function(oKeyField, index) {
 									if (oKeyField.isDefault) {
-										oControl.setSelectedIndex(index);
+										oControl.setSelectedItem(oControl.getItems()[index]); 
 									}
 								}, this);
 							}
@@ -836,9 +843,22 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 					}
 
 					if (field["ID"] === "operation") {
+						oControl = new sap.m.Select({
+							selectedKey : field["SelectedKey"],
+							// autoAdjustWidth: true,
+							width : "100%",
+							layoutData : new sap.ui.layout.GridData({
+								span : field["Span"]
+							})
+						});
+
 						oControl.attachChange(function() {
 							oThat._triggerChangeOperations(oThat, oTargetGrid, oConditionGrid);
 						});
+
+//						oControl.attachSelectionChange(function() {
+//							oThat._triggerChangeOperations(oThat, oTargetGrid, oConditionGrid);
+//						});
 
 						// fill some operations to the control to be able to set the selected items
 						oConditionGrid[field["ID"]] = oControl;
@@ -847,7 +867,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 						if (typeof oConditionGridData !== "undefined") {
 							oThat._oTypeOperations["default"].forEach(function(oOperation, index) {
 								if (oConditionGridData.operation === oOperation) {
-									oControl.setSelectedIndex(index);
+									oControl.setSelectedItem(oControl.getItems()[index]); 
 								}
 							}, this);
 						} else {
@@ -1200,6 +1220,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		oThat._updateOperation(oThat, oTargetGrid, oConditionGrid);
 
+		
 		// update the value fields for the KeyField
 		oThat._updateValueFields(oThat, oTargetGrid, oConditionGrid);
 
@@ -1317,7 +1338,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		if (oSelItem) {
 			oConditionGrid.operation.setSelectedKey(oSelItem.getKey());
 		} else {
-			oConditionGrid.operation.setSelectedIndex(0);
+			oConditionGrid.operation.setSelectedItem(oConditionGrid.operation.getItems()[0]); 
 		}
 	};
 
@@ -1353,7 +1374,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		var fHandledIsDefault = function(oKeyFieldItem, index) {
 			if (oKeyFieldItem.isDefault) {
-				oKeyField.setSelectedIndex(index);
+				oKeyField.setSelectedItem(oKeyField.getItems()[index]); 
 			}
 		};
 
@@ -1387,7 +1408,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				oKeyField.setSelectedKey(sOldKey);
 			} else if (oKeyField.getItems().length > 0) {
 				// make at least the first item the selected item. We need this for updating the tooltip
-				oKeyField.setSelectedIndex(0);
+				oKeyField.setSelectedItem(oKeyField.getItems()[0]); 
 			}
 
 			if (!oSelectCheckbox.getSelected()) {
@@ -1495,10 +1516,23 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	 */
 	P13nConditionPanel.prototype._changeField = function(oThat, oConditionGrid) {
 		var sKeyField = oConditionGrid.keyField.getSelectedKey();
-		oConditionGrid.keyField.setTooltip(oConditionGrid.keyField.getSelectedItem().getTooltip() || oConditionGrid.keyField.getSelectedItem().getText());
+		if (oConditionGrid.keyField.getSelectedItem()) {
+			oConditionGrid.keyField.setTooltip(oConditionGrid.keyField.getSelectedItem().getTooltip() || oConditionGrid.keyField.getSelectedItem().getText());
+		}
+//		if (oConditionGrid.keyField.getSelectedItem()) {
+//			var sValue = oConditionGrid.keyField.getValue();
+//			if (sValue !== oConditionGrid.keyField.getSelectedItem().getText()) {
+//				oConditionGrid.keyField.setValueState(sap.ui.core.ValueState.Warning);
+//			} else {
+//				oConditionGrid.keyField.setValueState(sap.ui.core.ValueState.none);
+//			}
+//		}
+
 
 		var sOperation = oConditionGrid.operation.getSelectedKey();
-		oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
+		if (oConditionGrid.operation.getSelectedItem()) {
+			oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
+		}
 
 		var sValue1 = oConditionGrid.value1.getValue();
 		var oValue1 = sValue1;
