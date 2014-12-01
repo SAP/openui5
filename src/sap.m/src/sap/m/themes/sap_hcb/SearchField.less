@@ -127,8 +127,8 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	text-align: center;
 	cursor: default;
 	margin: 0;
-	padding: 2px 2px 2px 1px;
-	right: 0;
+	padding:0;
+	right:0;
 	top: 0;
 	box-sizing: border-box;
 	vertical-align: middle;
@@ -137,36 +137,27 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	cursor: pointer;
 }
 
-.sapMSFB:focus {
-	outline: none;
-	border-width: 2px;
-	border-style: dotted;
-	border-color: @sapHCStandardFG;
-	padding: 0;
-
-}
-
-.sapMSFB:active,
-.sapMSFB:hover{
+/* button highlight on hover/press */
+.sap-desktop .sapMSFB:hover,
+.sapMSFB:active {
 	/* Needs repeating statements because of IE interpretation of :focus */
 	border-width: 0 0 0 1px;
 	background-color: @sapHCHighlightBG;
 	border-left-color: @sapHCStandardFG;
 	border-left-style: solid;
-	padding: 2px 2px 2px 1px;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB{
+.sapMFocus>.sapMSFF>.sapMSFB {
 	color: @sapHCStandardFG;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA,
-.sapMSFB:active{
+.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA {
 	background-color: @sapHCHighlightBG;
 	color: @sapHCStandardFG;
+	border-left: 1px solid @sapHCStandardFG;
 }
 
-.sapMSFB:after{
+.sapMSFB:after {
 	speak: none;
 	font-weight: normal;
 	font-family: 'SAP-icons';
@@ -185,8 +176,10 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 
 .sapMFocus>.sapMSFF>.sapMSFR:active,
 .sapMSFR:active,
-.sapMSFR:hover {
+.sapMSFB.sapMSFR:hover {
 	border-right: 1px solid @sapHCStandardFG;
+	border-left: 1px solid @sapHCStandardFG;
+	background-color: @sapHCHighlightBG;
 }
 
 .sapMSFR:after{
