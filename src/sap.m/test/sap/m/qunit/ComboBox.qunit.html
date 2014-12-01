@@ -3725,9 +3725,9 @@
 					ok(mDomRefs.$Arrow.length, "The HTML span element for the arrow exists");
 					ok(mDomRefs.$ComboBox.hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS), 'The ComboBox container html element "must have" the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + '"');
 					ok(mDomRefs.$Arrow.hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Arrow"), 'The ComboBox html span element "must have" the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Arrow"');
-					ok(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
-					ok(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
-					ok(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
 
 					// cleanup
 					oComboBox.destroy();
