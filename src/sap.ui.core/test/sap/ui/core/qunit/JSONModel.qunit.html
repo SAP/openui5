@@ -65,6 +65,28 @@
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
 	
+	test("test model setData", function(){
+		var obj1 = {a:true, b:false, c:false},
+			obj2 = {c:true, d:false},
+			objMerged = {a:true, b:false, c:true, d:false},
+			arr1 = ["a", "b", "c"],
+			arr2 = ["d", "e"],
+			arrMerged = ["d", "e", "c"];
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(obj1);
+		oModel.setData(obj2);
+		deepEqual(oModel.getData(), obj2, "setData object without merge");
+		oModel.setData(obj1);
+		oModel.setData(obj2, true);
+		deepEqual(oModel.getData(), objMerged, "setData object with merge");
+		oModel.setData(arr1);
+		oModel.setData(arr2);
+		deepEqual(oModel.getData(), arr2, "setData array without merge");
+		oModel.setData(arr1);
+		oModel.setData(arr2, true);
+		deepEqual(oModel.getData(), arrMerged, "setData array with merge");
+	});
+	
 	test("test model getProperty with context", function(){
 		var oContext;
 		oModel.createBindingContext("/teamMembers", null, function(context){
