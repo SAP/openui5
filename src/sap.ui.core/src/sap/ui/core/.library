@@ -260,7 +260,7 @@
         	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/Caja-Apache-LICENSE.txt" />
         </lib>
         <lib name="cldr" displayName="Unicode Common Locale Data Repository" homepage="http://cldr.unicode.org/">
-        	<license url="http://www.unicode.org/copyright.html" type="Unicode, Inc. License Agreement - Data Files And Software" file="../../core/cldr/Unicode-Data-Files-LICENSE.txt" />
+        	<license url="http://www.unicode.org/copyright.html" type="Unicode, Inc. License Agreement - Data Files And Software" file="../core/cldr/Unicode-Data-Files-LICENSE.txt" />
         </lib>
         <lib name="mobiscroll" displayName="MobiScroll" homepage="http://mobiscroll.com">
         	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/MobiScroll-MIT-LICENSE.txt" />
@@ -277,7 +277,7 @@
         <lib name="flexie.js" displayName="Flexie.js" homepage="https://github.com/doctyper/flexie/">
         	<license url="https://github.com/doctyper/flexie/blob/master/README.md" type="MIT License" file="../thirdparty/licenses/Flexie-MIT-LICENSE.txt" />
         </lib>
-		<lib name="handlebars" displayName="handlebars" homepage="http://handlebarsjs.com/">
+        <lib name="handlebars" displayName="handlebars" homepage="http://handlebarsjs.com/">
         	<license url="https://github.com/wycats/handlebars.js/" type="MIT License" file="../thirdparty/licenses/handlebars-MIT-LICENSE.txt" />
         </lib>
         <lib name="requirejs" displayName="requireJS" homepage="http://requirejs.org">
