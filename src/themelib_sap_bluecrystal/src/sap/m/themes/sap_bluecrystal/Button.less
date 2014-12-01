@@ -372,7 +372,15 @@ div.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
 	padding: 0;
 	border-top-width: 0;
 	border-bottom-width: 0.0625rem;
-	text-shadow: none;
+	text-shadow: 0 1px 0 @sapUiDarkShadowTint;
+}
+
+.sapMActionSelectPicker .sapMBtnDisabled {
+	opacity:          1;
+}
+
+.sapMActionSelectPicker .sapMBtnDisabled .sapMBtnContent {
+	opacity:          0.5;
 }
 
 .sapMActionSelectPicker .sapMBtnInner {
