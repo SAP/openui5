@@ -52,18 +52,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 							type : "sap.m.P13nColumnsItem"
 						}
 					}
-				},
-
-				/**
-				 * event raised when a columnsItem was removed
-				 */
-				removeColumnsItem : {
-					/**
-					 * item removed
-					 */
-					item : {
-						type : "sap.m.P13nColumnsItem"
-					}
 				}
 			}
 		}
@@ -79,28 +67,25 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveToTop = function() {
-		var iOldItemIndex = -1, iNewItemIndex = -1, sItemKey = null, aTableItems = null;
+		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
 
 		if (this._oSelectedItem) {
 			aTableItems = this._oTable.getItems();
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
+			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
-			iNewItemIndex = iOldItemIndex;
-			if (iOldItemIndex > 0) {
-				iNewItemIndex = 0;
+			iNewIndex = iOldIndex;
+			if (iOldIndex > 0) {
+				iNewIndex = 0;
 			}
 
 			// apply new item index
-			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._handleMoveItem({
-					"oldItem" : aTableItems[iOldItemIndex],
-					"oldItemIndex" : iOldItemIndex,
-					"newItem" : aTableItems[iNewItemIndex],
-					"newItemIndex" : iNewItemIndex
-				});
+			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
+				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
+				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
+				this._afterMoveItem();
 			}
 		}
 	};
@@ -111,33 +96,30 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveUp = function() {
-		var iOldItemIndex = -1, iNewItemIndex = -1, sItemKey = null, aTableItems = null;
+		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
 
 		if (this._oSelectedItem) {
 			aTableItems = this._oTable.getItems();
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
+			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
-			iNewItemIndex = iOldItemIndex;
-			if (iOldItemIndex > 0) {
+			iNewIndex = iOldIndex;
+			if (iOldIndex > 0) {
 				if (this._bShowSelected === true) {
 					// Table items are filtered by "Show Selected" --> determine previous table item that is selected
-					iNewItemIndex = this._getPreviousSelectedItemIndex(iOldItemIndex);
+					iNewIndex = this._getPreviousSelectedItemIndex(iOldIndex);
 				} else {
-					iNewItemIndex = iOldItemIndex - 1;
+					iNewIndex = iOldIndex - 1;
 				}
 			}
 
 			// apply new item index
-			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._handleMoveItem({
-					"oldItem" : aTableItems[iOldItemIndex],
-					"oldItemIndex" : iOldItemIndex,
-					"newItem" : aTableItems[iNewItemIndex],
-					"newItemIndex" : iNewItemIndex
-				});
+			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
+				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
+				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
+				this._afterMoveItem();
 			}
 		}
 	};
@@ -148,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveDown = function() {
-		var iOldItemIndex = -1, iNewItemIndex = -1, sItemKey = null, aTableItems = null;
+		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
 		var iTableMaxIndex = null;
 
 		if (this._oSelectedItem) {
@@ -157,26 +139,23 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
+			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
-			iNewItemIndex = iOldItemIndex;
-			if (iOldItemIndex < iTableMaxIndex - 1) {
+			iNewIndex = iOldIndex;
+			if (iOldIndex < iTableMaxIndex - 1) {
 				if (this._bShowSelected === true) {
 					// Table items are filtered by "Show Selected" --> determine previous table item that is selected
-					iNewItemIndex = this._getNextSelectedItemIndex(iOldItemIndex);
+					iNewIndex = this._getNextSelectedItemIndex(iOldIndex);
 				} else {
-					iNewItemIndex = iOldItemIndex + 1;
+					iNewIndex = iOldIndex + 1;
 				}
 			}
 
 			// apply new item index
-			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._handleMoveItem({
-					"oldItem" : aTableItems[iOldItemIndex],
-					"oldItemIndex" : iOldItemIndex,
-					"newItem" : aTableItems[iNewItemIndex],
-					"newItemIndex" : iNewItemIndex
-				});
+			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
+				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
+				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
+				this._afterMoveItem();
 			}
 		}
 	};
@@ -187,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveToBottom = function() {
-		var iOldItemIndex = -1, iNewItemIndex = -1, sItemKey = null, aTableItems = null;
+		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
 		var iTableMaxIndex = null;
 
 		if (this._oSelectedItem) {
@@ -196,74 +175,76 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
+			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
-			iNewItemIndex = iOldItemIndex;
-			if (iOldItemIndex < iTableMaxIndex - 1) {
-				iNewItemIndex = iTableMaxIndex - 1;
+			iNewIndex = iOldIndex;
+			if (iOldIndex < iTableMaxIndex - 1) {
+				iNewIndex = iTableMaxIndex - 1;
 			}
 
 			// apply new item index
-			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._handleMoveItem({
-					"oldItem" : aTableItems[iOldItemIndex],
-					"oldItemIndex" : iOldItemIndex,
-					"newItem" : aTableItems[iNewItemIndex],
-					"newItemIndex" : iNewItemIndex
-				});
+			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
+				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
+				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
+				this._afterMoveItem();
 			}
 		}
 	};
 
 	/**
-	 * Handles the direct item move
+	 * This method determines all columnsItems that have an index property, which are not undefined and fit into index
+	 * range of iOldIndex & iNewIndex. If such columnsItems are found take the index property and change it to a value
+	 * according to the move direction.
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oMoveItemMetaData is a collection object of old&new item&index information about that item that shall be moved
+	 * @param {int}
+	 *          iOldIndex is the index from where the correction shall start in columnsItems
+	 * @param {int}
+	 *          iNewIndex is the index to where the correction shall run in columnsItems
 	 */
-	P13nColumnsPanel.prototype._handleMoveItem = function(oMoveItemMetaData) {
-		var aTableItems, i = 0;
-		var iOldIndex = null, iNewIndex = null;
-		var oOldItem = null, oNewItem = null;
-		var oSwopTableItem1 = null, oSwopTableItem2 = null;
+	P13nColumnsPanel.prototype._changeColumnsItemsIndexes = function(iOldIndex, iNewIndex) {
+		var iMinIndex = null, iMaxIndex = null, sSelectedItemColumnKey = null, iMaxTableIndex = null;
+		var aColumnsItems = null, iColumnsItemIndex = null, sColumnKey = null;
 
-		if (oMoveItemMetaData === null || oMoveItemMetaData === undefined) {
-			return;
-		}
+		if (iOldIndex !== null && iOldIndex !== undefined && iOldIndex > -1 && iNewIndex !== null
+				&& iNewIndex !== undefined && iNewIndex > -1 && iOldIndex !== iNewIndex) {
 
-		oOldItem = oMoveItemMetaData.oldItem;
-		iOldIndex = oMoveItemMetaData.oldItemIndex;
-		oNewItem = oMoveItemMetaData.newItem;
-		iNewIndex = oMoveItemMetaData.newItemIndex;
+			iMinIndex = Math.min(iOldIndex, iNewIndex);
+			iMaxIndex = Math.max(iOldIndex, iNewIndex);
+			iMaxTableIndex = this._oTable.getItems().length - 1;
 
-		// Items are direct neighbors -> just swop it
-		if (iOldIndex !== null && iNewIndex !== null && (Math.abs(iOldIndex - iNewIndex) == 1)) {
-			this._handleItemIndexChanged(oOldItem, iNewIndex);
-			this._handleItemIndexChanged(oNewItem, iOldIndex);
-		} else {
-			// Items are NO direct neighbors -> just swop item by item as long as item did reach the new position
-			if (iOldIndex > iNewIndex) {
-				for (i = iOldIndex; i > iNewIndex; i--) {
-					aTableItems = this._oTable.getItems();
-					oSwopTableItem1 = aTableItems[i];
-					oSwopTableItem2 = aTableItems[i - 1];
+			aColumnsItems = this.getColumnsItems();
+			sSelectedItemColumnKey = this._oSelectedItem.data('P13nColumnKey');
+			aColumnsItems.forEach(function(oColumnsItem) {
 
-					this._handleItemIndexChanged(oSwopTableItem1, i - 1);
-					this._handleItemIndexChanged(oSwopTableItem2, i);
+				// Exclude columnKey for selectedItem as this one is already set right
+				sColumnKey = oColumnsItem.getColumnKey();
+				if (sColumnKey !== undefined && sColumnKey === sSelectedItemColumnKey) {
+					return;
 				}
-			} else {
-				for (i = iOldIndex; i < iNewIndex; i++) {
-					aTableItems = this._oTable.getItems();
-					oSwopTableItem1 = aTableItems[i];
-					oSwopTableItem2 = aTableItems[i + 1];
 
-					this._handleItemIndexChanged(oSwopTableItem1, i + 1);
-					this._handleItemIndexChanged(oSwopTableItem2, i);
+				iColumnsItemIndex = oColumnsItem.getIndex();
+				// identify columnsItems that does not fit into index range --> exclude them
+				if (iColumnsItemIndex === undefined || iColumnsItemIndex < 0 || iColumnsItemIndex < iMinIndex
+						|| iColumnsItemIndex > iMaxIndex) {
+					return;
 				}
-			}
+
+				// For all remain columnsItems change the index property according to the move action
+				if (iOldIndex > iNewIndex) {
+					// Action: column moved UP
+					if (iColumnsItemIndex < iMaxTableIndex) {
+						iColumnsItemIndex += 1;
+					}
+				} else {
+					// Action: column moved DOWN
+					if (iColumnsItemIndex > 0) {
+						iColumnsItemIndex -= 1;
+					}
+				}
+				oColumnsItem.setIndex(iColumnsItemIndex);
+			});
 		}
-		this._afterMoveItem();
 	};
 
 	/**
@@ -398,9 +379,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	P13nColumnsPanel.prototype._getPreviousSelectedItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0;
-		var aTableItems = this._oTable.getItems(), oTableItem = null;
+		var aTableItems = null, oTableItem = null;
 
 		if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex > 0) {
+			aTableItems = this._oTable.getItems();
 			if (aTableItems && aTableItems.length > 0) {
 				for (i = iStartIndex - 1; i >= 0; i--) {
 					oTableItem = aTableItems[i];
@@ -426,11 +408,15 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	P13nColumnsPanel.prototype._getNextSelectedItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0, iLength = null;
-		var aTableItems = this._oTable.getItems(), oTableItem = null;
+		var aTableItems = null, oTableItem = null;
 
-		if (aTableItems && aTableItems.length > 0) {
-			iLength = aTableItems.length;
-			if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex >= 0 && iStartIndex < iLength - 1) {
+		if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex > -1) {
+			aTableItems = this._oTable.getItems();
+			if (aTableItems && aTableItems.length > 0) {
+				iLength = aTableItems.length;
+			}
+
+			if (iStartIndex >= 0 && iStartIndex < iLength - 1) {
 				for (i = iStartIndex + 1; i < iLength; i++) {
 					oTableItem = aTableItems[i];
 					if (oTableItem && oTableItem.getSelected() === true) {
@@ -648,13 +634,21 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
-		var iElementOffset;
+		var oFocusedElement = null;
 		if (oItem) {
 			sap.ui.getCore().applyChanges();
-			// oItem needs to be rendered, otherwise we cannot perform necessary calculations
+			// oItem needs to be rendered, otherwise the necessary scroll calculations cannot be performed
 			if (!!oItem.getDomRef()) {
-				iElementOffset = oItem.$().position().top;
-				this._oScrollContainer.scrollTo(0, iElementOffset);
+				// get just focused DOM element
+				oFocusedElement = document.activeElement;
+
+				// focus actual item to get it into the scroll container viewport
+				oItem.focus();
+
+				// reset focus to previous DOM element
+				if (oFocusedElement && oFocusedElement.focus) {
+					oFocusedElement.focus();
+				}
 			}
 		}
 	};
@@ -663,8 +657,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * * react on item visibility changes
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oItem is the item for that the visibility was changed
+	 * @param {sap.m.ColumnListItem}
+	 *          oItem is the table item for that the index was changed
 	 * @param {int}
 	 *          iNewIndex is the item index where the item shall be inserted
 	 */
@@ -672,22 +666,24 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var sItemKey = null, iColumnsItemIndex = null;
 		var aColumnsItems, oColumnsItem = null;
 
-		sItemKey = oItem.data('P13nColumnKey');
-		aColumnsItems = this.getColumnsItems();
-		iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
-		if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
-			oColumnsItem = aColumnsItems[iColumnsItemIndex];
-		}
+		if (oItem && iNewIndex !== null && iNewIndex !== undefined && iNewIndex > -1) {
+			sItemKey = oItem.data('P13nColumnKey');
+			aColumnsItems = this.getColumnsItems();
+			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
+			if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
+				oColumnsItem = aColumnsItems[iColumnsItemIndex];
+			}
 
-		if (oColumnsItem === null) {
-			oColumnsItem = this._createNewColumnsItem(sItemKey);
-			oColumnsItem.setIndex(iNewIndex);
-			this.fireAddColumnsItem({
-				newItem : oColumnsItem
-			});
-		} else {
-			oColumnsItem.setIndex(iNewIndex);
-			this._updateTableItems(oColumnsItem);
+			if (oColumnsItem === null) {
+				oColumnsItem = this._createNewColumnsItem(sItemKey);
+				oColumnsItem.setIndex(iNewIndex);
+				this.fireAddColumnsItem({
+					newItem : oColumnsItem
+				});
+			} else {
+				oColumnsItem.setIndex(iNewIndex);
+				this._updateTableItems(oColumnsItem);
+			}
 		}
 	};
 
@@ -695,31 +691,32 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * react on item visibility changes
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oItem is the item for that the visibility was changed
+	 * @param {sap.m.ColumnListItem}
+	 *          oItem is the table item for that the visibility was changed
 	 */
 	P13nColumnsPanel.prototype._handleItemVisibilityChanged = function(oItem) {
 		var sItemKey = null, iColumnsItemIndex = null;
 		var aColumnsItems, oColumnsItem = null;
 
-		sItemKey = oItem.data('P13nColumnKey');
-		aColumnsItems = this.getColumnsItems();
-		iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
-		if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
-			oColumnsItem = aColumnsItems[iColumnsItemIndex];
-		}
+		if (oItem) {
+			sItemKey = oItem.data('P13nColumnKey');
+			aColumnsItems = this.getColumnsItems();
+			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
+			if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
+				oColumnsItem = aColumnsItems[iColumnsItemIndex];
+			}
 
-		if (oColumnsItem === null) {
-			oColumnsItem = this._createNewColumnsItem(sItemKey);
-			oColumnsItem.setVisible(oItem.getSelected());
-			this.fireAddColumnsItem({
-				newItem : oColumnsItem
-			});
-		} else {
-			oColumnsItem.setVisible(oItem.getSelected());
-			this._updateTableItems(oColumnsItem);
+			if (oColumnsItem === null) {
+				oColumnsItem = this._createNewColumnsItem(sItemKey);
+				oColumnsItem.setVisible(oItem.getSelected());
+				this.fireAddColumnsItem({
+					newItem : oColumnsItem
+				});
+			} else {
+				oColumnsItem.setVisible(oItem.getSelected());
+				this._updateTableItems(oColumnsItem);
+			}
 		}
-
 	};
 
 	/**
