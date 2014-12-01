@@ -1429,8 +1429,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		// clear invalidation
 		this._bItemNavigationInvalidated = false;
 	
-		// no item navigation for old android that breaks focus handling
-		if (sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1) {
+		// item navigation breaks scrolling in iScroll
+		if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1) {
 			return;
 		}
 	

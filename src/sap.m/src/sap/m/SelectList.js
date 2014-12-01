@@ -258,6 +258,12 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.onAfterRendering = function() {
+
+			// item navigation breaks scrolling in iScroll
+			if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1) {
+				return;
+			}
+
 			var oDomRef = this.getDomRef();
 
 			// initialize the item navigation and add apply it to the control (only once)
