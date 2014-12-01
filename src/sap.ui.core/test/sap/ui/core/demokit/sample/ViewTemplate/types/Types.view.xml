@@ -15,10 +15,10 @@
 			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Decimal" />
-			<Label text="sap.ui.model.odata.type.Decimal, scale: 3"/>
+			<Label text="scale: 3"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
-			<Label text="sap.ui.model.odata.type.Decimal, precision: 10, scale: &quot;variable&quot;"/>
-			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 'variable'}}"/>
+			<Label text="precision: 10, scale: &quot;variable&quot;, nullable: false"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, precision: 10, scale: 'variable'}}"/>
 
 			<core:Title text="sap.ui.model.odata.type.String" />
 			<Label text="maxLength: 10"/>

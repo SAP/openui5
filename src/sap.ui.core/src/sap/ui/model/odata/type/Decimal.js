@@ -78,7 +78,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * representation.
 	 *
 	 * @param {string|number} vValue
-	 *   the value to be parsed
+	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
+	 *   <code>null</code>
 	 * @param {string}
 	 *   sSourceType the source type (the expected type of <code>oValue</code>)
 	 * @return {string}
@@ -91,6 +92,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	Decimal.prototype.parseValue = function(vValue, sSourceType) {
 		var fResult;
 
+		if (vValue === null || vValue === "") {
+			return null;
+		}
 		switch (sSourceType) {
 		case "string":
 			fResult = this._getFormatter().parse(vValue);
@@ -151,6 +155,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	Decimal.prototype.validateValue = function (sValue) {
 		var iFractionDigits, iIntegerDigits, aMatches;
 
+		if (sValue === null && this.oConstraints.nullable) {
+			return;
+		}
 		if (typeof sValue === "string") {
 			aMatches = rDecimal.exec(sValue);
 			if (aMatches) {
@@ -182,6 +189,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @param {object} [oConstraints]
 	 * 	 constraints
+	 * @param {boolean} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @param {int} [oConstraints.precision=Infinity]
 	 *   the maximum number of digits allowed in the property’s value
 	 * @param {int|string} [oConstraints.scale=0]
@@ -194,7 +203,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Decimal.prototype.setConstraints = function(oConstraints) {
-		var iPrecision = oConstraints && oConstraints.precision,
+		var bNullable = oConstraints && oConstraints.nullable,
+			iPrecision = oConstraints && oConstraints.precision,
 			iScale = oConstraints && oConstraints.scale;
 
 		function validate(iValue, iDefault, iMinimum, sName) {
@@ -211,14 +221,22 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		iScale = iScale === "variable" ? Infinity : validate(iScale, 0, 0, "scale");
 		iPrecision = validate(iPrecision, Infinity, 1, "precision");
+		if (typeof bNullable !== "boolean") {
+			if (bNullable !== undefined) {
+				jQuery.sap.log.warning("Illegal nullable: " + bNullable, null,
+					"sap.ui.model.odata.type.Decimal");
+			}
+			bNullable = true;
+		}
 		if (iScale !== Infinity && iPrecision <= iScale) {
 			jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
 				+ iPrecision + ", scale=" + iScale + ")", null, "sap.ui.model.odata.type.Decimal");
 			iScale = Infinity; // "variable"
 		}
 		this.oConstraints = {
-				precision: iPrecision,
-				scale: iScale
+			nullable: bNullable,
+			precision: iPrecision,
+			scale: iScale
 		};
 
 		this._handleLocalizationChange();
