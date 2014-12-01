@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			this._$Switch.addClass(CSS_CLASS + "Trans");
 
 			// remove inline styles
-			this._$SwitchInner.removeAttr("style");
+			this._$SwitchInner[0].style.cssText = "";
 		};
 
 		Switch._getCssParameter = function(sParameter) {
