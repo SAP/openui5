@@ -499,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Initialize the popup
 		if (!this.bPopupInitialized) {
 			this.popup = new Popup(new sap.ui.commons.ToolbarOverflowPopup(this), false, true, true);
-	
+			this.popup.setAutoCloseAreas([this.getId() + "-mn"]);
 			this.bPopupInitialized = true;
 		}
 	
@@ -533,7 +533,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//Open popup with a little delay in IE8 to avoid focus calls when the popup is not yet opened
 		var iDuration = !!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version == 7 || sap.ui.Device.browser.version == 8) ? 1 : 0;
 		this.popup.open(iDuration, Popup.Dock.EndTop, Popup.Dock.EndBottom, this.$("mn"),"", "fit", true );
-		this.bOpen = true;
 	};
 	
 	Toolbar.prototype.handlePopupOpened = function() {
@@ -541,6 +540,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var iItemCount = aAllItems.length;
 		var iAllItemsBeforeBreak = this.getVisibleItemInfo().iAllItemsBeforeBreak;
 	
+		this.bOpen = true;
+
 		var aNavigableItems = [];
 		for (var i = iAllItemsBeforeBreak; i < iItemCount; i++) {
 			var oDomRef = aAllItems[i].getFocusDomRef();
