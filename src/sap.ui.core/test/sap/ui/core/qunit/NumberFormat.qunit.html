@@ -145,6 +145,11 @@
 		equal(oDefaultFloat.format("123.456789e-2"), "1.23456789", "123.456789e-2");
 		equal(oDefaultFloat.format("-123456.789e+2"), "-12,345,678.9", "-123456.789e+2");
 		equal(oDefaultFloat.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
+		equal(oDefaultFloat.format("1000.00"), "1,000.00", "1000.00");
+		equal(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
+		equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
+		equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
+		
 	});
 
 	test("float format for a specific locale", function(){
@@ -160,6 +165,8 @@
 		equal(oFloatFormat.format(12345.12345), "12.345,12345", "12345.12345");
 		equal(oFloatFormat.format(1234567890), "1.234.567.890", "1234567890");
 		equal(oFloatFormat.format(-123.23), "-123,23", "-123.23");
+		equal(oFloatFormat.format("1000.00"), "1.000,00", "1000.00");
+		equal(oFloatFormat.format("1000.0000"), "1.000,0000", "1000.0000");
 	});
 
 	test("float custom format", function(){
@@ -172,6 +179,9 @@
 		equal(oCustomFloat.format(12345.123), "????,123", "12345.123");
 		equal(oCustomFloat.format(12345.12345), "????,1235", "12345.12345");
 		equal(oCustomFloat.format(-123.23), "-123,23", "-123.23");
+		equal(oCustomFloat.format("1000.00"), "1000,00", "1000.00");
+		equal(oCustomFloat.format("1000.0000"), "1000,0000", "1000.0000");
+		
 	});
 
 	test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function(){
