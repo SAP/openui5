@@ -1748,6 +1748,66 @@
 				sap.m.IconTabBar.prototype.fireSelect.restore();
 				oIconTabBar.destroy();
 			});
+			
+			module("updating data");
+			
+			test("keep the selected tab", function() {
+				
+				// BCP: 1482007468
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+				});
+
+				oIconTabBar.bindAggregation('items', {
+					path: '/datasets',
+					template: new sap.m.IconTabFilter({
+						icon: "sap-icon://instance",
+						text: '{id}'
+					})
+				});
+
+				var oData = {
+					"datasets": [
+						{ "id": "A", "values": [{ "id": "A1", value: Math.random() }] },
+						{ "id": "B", "values": [{ "id": "B1", value: Math.random() }] }
+					]
+				};
+
+				var oJSONModel = new sap.ui.model.json.JSONModel();
+				oJSONModel.setData(oData);
+				
+				sap.ui.getCore().setModel(oJSONModel);
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Select the second item
+				oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]);
+				
+				// Update the data
+				oData = {
+					"datasets": [
+						{ "id": "A", "values": [{ "id": "A1", value: Math.random() }] },
+						{ "id": "B", "values": [{ "id": "B1", value: Math.random() }] }
+					]
+				};
+				
+				oJSONModel.setData(oData, true);
+				
+				// wait 500ms
+				this.clock.tick(500);
+				
+				var $selectedItem  = oIconTabBar.$().find('.sapMITBSelected');
+				
+				// Assert
+				ok($selectedItem.find('.sapMITBText').text() == 'B', "the second item is selected");
+		
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
 		</script>
 
 
