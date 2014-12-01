@@ -467,31 +467,68 @@
 					"getSelectedItems method shall have been called 1 time");
 		});
 
-		test("Shall check _executeSearch",
+		test(
+				"Shall check _executeSearch",
 				function() {
 					ok(oP13nColumnsPanel._executeSearch, "Method does not exist");
 					oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue')
 					oP13nColumnsPanel._deactivateSelectedItem = sinon.stub();
 					oP13nColumnsPanel._filterItems = sinon.stub();
+					oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
+					oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
 
-					//CUT
+					//CUT -> execute method -> _oSelectedItem is undefined 
+					oP13nColumnsPanel._executeSearch();
+					strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
+					strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
+					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false,
+							"method: _deactivateSelectedItem shall not be called, as _oSelectedItem is empty");
+					strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
+							"method: _calculateMoveButtonAppearance shall be called");
+					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true,
+							"method: _scrollToSelectedItem shall be called");
+					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true,
+							"method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
+
+					//CUT -> execute method with _oSelectedItem that is invisible after filterItems method
+					oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue');
+					oP13nColumnsPanel._deactivateSelectedItem.reset();
+					oP13nColumnsPanel._filterItems.reset()
+					oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
+					oP13nColumnsPanel._scrollToSelectedItem.reset();
+					oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem({
+						"visible" : false
+					});
+
 					oP13nColumnsPanel._executeSearch();
 					strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
 					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, true,
-							"From user selected item shall be deselected");
+							"method: _deactivateSelectedItem shall be called, as _oSelectedItem is NOT empty and invisble");
 					strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
+					strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
+					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true,
+							"method: _scrollToSelectedItem shall be called");
+					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(oP13nColumnsPanel._oSelectedItem), true,
+							"method: _scrollToSelectedItem shall be called with _oSelectedItem as input parameter");
 
-					//CUT (no content filled in Search field)
+					//CUT -> execute method, but no content is filled in Search field or was removed via reset button
 					oP13nColumnsPanel._oSearchField.setValue('');
 					oP13nColumnsPanel._deactivateSelectedItem.reset();
 					oP13nColumnsPanel._filterItems.reset()
-
+					oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
+					oP13nColumnsPanel._scrollToSelectedItem.reset();
+					oP13nColumnsPanel._oSelectedItem = undefined;
+					
 					oP13nColumnsPanel._executeSearch();
 					strictEqual(oP13nColumnsPanel._bSearchFilterActive, false, "Search filter shall be deactived");
 					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false,
-							"From user selected item shall NOT be deselected");
+							"method: _deactivateSelectedItem shall not be called, as _oSelectedItem is NOT empty and invisble");
 					strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
 					strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
+					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true,
+							"method: _scrollToSelectedItem shall be called");
+					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true,
+							"method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
 				});
 
 		test("Shall check _updateSelectAllDescription", function() {
@@ -1012,7 +1049,7 @@
 
 			var oItem = new sap.m.ColumnListItem();
 			oItem.getSelected = sinon.stub();
-			
+
 			oP13nColumnsPanel._createNewColumnsItem = sinon.stub();
 			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
 			oP13nColumnsPanel._updateTableItems = sinon.stub();
@@ -1073,7 +1110,7 @@
 			strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.called, true, "Method shall be executed");
 		});
-		
+
 	}());
 </script>
 

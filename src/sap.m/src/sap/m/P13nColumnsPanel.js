@@ -359,14 +359,23 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var sValue = this._oSearchField.getValue();
 		var iLength = sValue.length || 0;
 
+		// change search filter status
 		if (iLength > 0) {
 			this._bSearchFilterActive = true;
-			this._deactivateSelectedItem();
 		} else {
 			this._bSearchFilterActive = false;
 		}
 
+		// filter table items based on user selections
 		this._filterItems();
+
+		// check, whether actual selected item is still visible after filterItems -> if not -> deactivate selected item
+		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
+			this._deactivateSelectedItem();
+		}
+
+		this._calculateMoveButtonAppearance();
+		this._scrollToSelectedItem(this._oSelectedItem);
 	};
 
 	/**
@@ -463,9 +472,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
 		var oNewSelectedItem = null;
 
-		if (this._bSearchFilterActive === true) {
-			return;
-		}
+		// if (this._bSearchFilterActive === true) {
+		// return;
+		// }
 
 		// Remove highlighting from previous item
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
@@ -495,8 +504,14 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var iLength = -1, iItemIndex = -1;
 		var bMoveUp = false, bMoveDown = false;
 
-		// Calculate appearance status of the MOVE buttons
-		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
+		/*
+		 * Calculate MOVE buttons appearance
+		 */
+
+		// if search field is filled -> disable move buttons
+		if (this._bSearchFilterActive === true) {
+			bMoveUp = bMoveDown = false;
+		} else if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 
 			// Determine displayed table items dependent of "Show Selected" filter status
@@ -527,7 +542,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			bMoveUp = bMoveDown = false;
 		}
 
-		// Now change real appearance of the buttons
+		/*
+		 * Now change real appearance of the buttons
+		 */
 		if (this._oMoveToTopButton.getEnabled() !== bMoveUp) {
 			this._oMoveToTopButton.setEnabled(bMoveUp);
 			this._oMoveToTopButton.rerender();
