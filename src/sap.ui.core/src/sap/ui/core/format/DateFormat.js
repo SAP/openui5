@@ -349,6 +349,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					if (oPart.iDigits == 2 && sYear.length > 2) {
 						sYear = sYear.substr(sYear.length - 2);
 					}
+					// When parsing we assume dates less than 100 to be in the current/last century, 
+					// so when formatting we have to make sure they are differentiable by prefixing with zeros
+					if (oPart.iDigits == 1 && iYear < 100) {
+						sYear = jQuery.sap.padLeft(sYear, "0", 4);
+					}
 					aBuffer.push(jQuery.sap.padLeft(sYear, "0", oPart.iDigits));
 					break;
 				case "weekInYear":
