@@ -45,7 +45,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * @param {object} [oFormatOptions]
 	 * 	 possible format options, the type however does not support any
 	 * @param {object} [oConstraints]
-	 * 	 possible constraints, the type however does not support any
+	 * 	 constraints, see {@link #setConstraints}
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -93,7 +93,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * Parse the given value from the given type to a boolean.
 	 *
 	 * @param {boolean|string} vValue
-	 *   the value to be parsed
+	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
+	 *   <code>null</code>
 	 * @param {string}
 	 *   sSourceType the source type (the expected type of <code>sValue</code>)
 	 * @return {boolean}
@@ -104,6 +105,9 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * @public
 	 */
 	EdmBoolean.prototype.parseValue = function(vValue, sSourceType) {
+		if (vValue === null || vValue === "") {
+			return null;
+		}
 		switch (sSourceType) {
 			case "boolean":
 				return vValue;
@@ -140,9 +144,37 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * @public
 	 */
 	EdmBoolean.prototype.validateValue = function (bValue) {
+		if (bValue === null && this.oConstraints.nullable) {
+			return;
+		}
 		if (typeof bValue !== "boolean") {
 			throw new ValidateException("Illegal " + this.sName + " value: " + bValue);
 		}
+	};
+
+	/**
+	 * Set the constraints.
+	 *
+	 * @param {object} [oConstraints]
+	 * 	 constraints
+	 * @param {boolean} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 * @public
+	 */
+	EdmBoolean.prototype.setConstraints = function(oConstraints) {
+		var bNullable = oConstraints && oConstraints.nullable;
+
+		if (typeof bNullable !== "boolean") {
+			if (bNullable !== undefined) {
+				// Note: setConstraints is called by the super constructor w/ wrong this.sName
+				jQuery.sap.log.warning("Illegal nullable: " + bNullable, null,
+					"sap.ui.model.odata.type.Boolean");
+			}
+			bNullable = true;
+		}
+		this.oConstraints = {
+			nullable: bNullable
+		};
 	};
 
 	return EdmBoolean;
