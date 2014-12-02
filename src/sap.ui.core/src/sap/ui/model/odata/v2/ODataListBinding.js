@@ -484,7 +484,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 	};
-
+	
+	/**
+	 * @see sap.ui.model.ListBinding.prototype.isLengthFinal
+	 *
+	 */
+	ODataListBinding.prototype.isLengthFinal = function() {
+		return this.bLengthFinal;
+	};
+	
 	/**
 	 * Return the length of the list
 	 *
