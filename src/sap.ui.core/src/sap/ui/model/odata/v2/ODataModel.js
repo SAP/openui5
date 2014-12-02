@@ -11,7 +11,7 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
 		function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, URI1, datajs) {
 	"use strict";
 
@@ -95,6 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 			this.bJSON = bJSON !== false;
 			this.aPendingRequestHandles = [];
+			this.aCallAfterUpdate = [];
 			this.mRequests = {};
 			this.mDeferredRequests = {};
 			this.mChangedEntities = {};
@@ -927,8 +928,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
 		});
+		//handle calls after update
+		for (var i = 0; i < this.aCallAfterUpdate.length; i++) {
+			this.aCallAfterUpdate[i]();
+		}
+		this.aCallAfterUpdate = [];
 	};
-
 
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
@@ -3484,6 +3489,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
 		return this.mChangeBatchGroups;
+	};
+	
+	/**
+	 * REgister function calls that should be called after an update (e.g. calling dataReceived event of a binding)
+	 * @param {function} oFunction The callback function
+	 * @private  
+	 */
+	ODataModel.prototype.callAfterUpdate = function(oFunction) {
+		this.aCallAfterUpdate.push(oFunction);
 	};
 
 	return ODataModel;
