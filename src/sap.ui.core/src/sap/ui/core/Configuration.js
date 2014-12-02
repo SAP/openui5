@@ -1064,6 +1064,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 			return this;
 		},
 
+		/**
+		 * Defines the day used as the first day of the week. 
+		 * The day is set as an integer value between 0 (Sunday) and 6 (Saturday).
+		 * Calling this method with a null or undefined symbol removes a previously set value.
+		 * 
+		 * If a value is defined, it will be preferred over values derived from the current locale.
+		 * 
+		 * Usually in the US the week starts on Sunday while in most European countries on Monday.
+		 * There are special cases where you want to have the first day of week set independent of the 
+		 * user locale.
+		 *  
+		 * After changing the first day of week, the framework tries to update localization 
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage} 
+		 * for details and restrictions.
+		 * 
+		 * @param {number} iValue must be an integer value between 0 and 6
+		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @public   
+		 */
+		setFirstDayOfWeek : function(iValue) {
+			check(typeof iValue == "number" && iValue >= 0 && iValue <= 6, "iValue must be an integer value between 0 and 6");
+			this._set("weekData-firstDay", iValue);
+			return this;
+		},
+
 		_setDayPeriods : function(sWidth, aTexts) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
 			this._set("dayPeriods-format-" + sWidth, aTexts);
