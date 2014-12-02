@@ -159,7 +159,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			 * @returns {Element}
 			 *   <code>oRootElement</code>
 			 *
-			 * @alias sap.ui.core.util.XMLPreprocessor#process
 			 * @private
 			 */
 			process: function(oRootElement, mSettings, sCaller) {
