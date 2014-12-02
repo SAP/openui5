@@ -76,6 +76,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex > 0) {
 				iNewIndex = 0;
@@ -105,14 +106,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex > 0) {
-				if (this._bShowSelected === true) {
-					// Table items are filtered by "Show Selected" --> determine previous table item that is selected
-					iNewIndex = this._getPreviousSelectedItemIndex(iOldIndex);
-				} else {
-					iNewIndex = iOldIndex - 1;
-				}
+				iNewIndex = this._getPreviousItemIndex(iOldIndex);
 			}
 
 			// apply new item index
@@ -141,14 +138,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex < iTableMaxIndex - 1) {
-				if (this._bShowSelected === true) {
-					// Table items are filtered by "Show Selected" --> determine previous table item that is selected
-					iNewIndex = this._getNextSelectedItemIndex(iOldIndex);
-				} else {
-					iNewIndex = iOldIndex + 1;
-				}
+				iNewIndex = this._getNextItemIndex(iOldIndex);
 			}
 
 			// apply new item index
@@ -177,6 +170,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex < iTableMaxIndex - 1) {
 				iNewIndex = iTableMaxIndex - 1;
@@ -278,6 +272,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
 			this._deactivateSelectedItem();
 		}
+
+		this._scrollToSelectedItem(this._oSelectedItem);
+		this._calculateMoveButtonAppearance();
 		this._fnHandleResize();
 	};
 
@@ -379,27 +376,31 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
-	 * Determine the previous selected table item index to that position, which is coming via iStartIndex
+	 * Determine the previous table item index starting from position, which comes via iStartIndex
 	 * 
 	 * @private
 	 * @param {inteter}
 	 *          iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of the previous items that is selected; if no item is found it will be returned -1
+	 * @returns {integer} is the index of a previous items; if no item is found it will be returned -1
 	 */
-	P13nColumnsPanel.prototype._getPreviousSelectedItemIndex = function(iStartIndex) {
+	P13nColumnsPanel.prototype._getPreviousItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0;
 		var aTableItems = null, oTableItem = null;
 
 		if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex > 0) {
-			aTableItems = this._oTable.getItems();
-			if (aTableItems && aTableItems.length > 0) {
-				for (i = iStartIndex - 1; i >= 0; i--) {
-					oTableItem = aTableItems[i];
-					if (oTableItem && oTableItem.getSelected() === true) {
-						iResult = i;
-						break;
+			if (this._bShowSelected === true) {
+				aTableItems = this._oTable.getItems();
+				if (aTableItems && aTableItems.length > 0) {
+					for (i = iStartIndex - 1; i >= 0; i--) {
+						oTableItem = aTableItems[i];
+						if (oTableItem && oTableItem.getSelected() === true) {
+							iResult = i;
+							break;
+						}
 					}
 				}
+			} else {
+				iResult = iStartIndex - 1;
 			}
 		}
 
@@ -407,15 +408,14 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
-	 * Determine the next selected table item index to that position, which is coming via iStartIndex
+	 * Determine the next table item index to that position, which comes via iStartIndex
 	 * 
 	 * @private
 	 * @param {inteter}
 	 *          iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of the next items to that, which is selected; if no item is found it will be
-	 *          returned -1
+	 * @returns {integer} is the index of the next item; if no item is found it will be returned -1
 	 */
-	P13nColumnsPanel.prototype._getNextSelectedItemIndex = function(iStartIndex) {
+	P13nColumnsPanel.prototype._getNextItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0, iLength = null;
 		var aTableItems = null, oTableItem = null;
 
@@ -426,12 +426,16 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			}
 
 			if (iStartIndex >= 0 && iStartIndex < iLength - 1) {
-				for (i = iStartIndex + 1; i < iLength; i++) {
-					oTableItem = aTableItems[i];
-					if (oTableItem && oTableItem.getSelected() === true) {
-						iResult = i;
-						break;
+				if (this._bShowSelected === true) {
+					for (i = iStartIndex + 1; i < iLength; i++) {
+						oTableItem = aTableItems[i];
+						if (oTableItem && oTableItem.getSelected() === true) {
+							iResult = i;
+							break;
+						}
 					}
+				} else {
+					iResult = iStartIndex + 1;
 				}
 			}
 		}
@@ -471,10 +475,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
 		var oNewSelectedItem = null;
-
-		// if (this._bSearchFilterActive === true) {
-		// return;
-		// }
 
 		// Remove highlighting from previous item
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {

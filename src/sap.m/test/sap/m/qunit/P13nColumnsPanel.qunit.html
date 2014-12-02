@@ -121,20 +121,20 @@
 			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true,
 					"Item move was done with wrong parameter");
 
-			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, where the new index was filled by method: _getPreviousSelectedItemIndex
+			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, where the new index was filled by method: _getPreviousItemIndex
 			getArrayIndexByItemKeySpy.returns(5);
 			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 
-			var getPreviousSelectedItemIndexSpy = sinon.stub();
-			getPreviousSelectedItemIndexSpy.returns(3);
+			var getPreviousItemIndexSpy = sinon.stub();
+			getPreviousItemIndexSpy.returns(3);
 			oP13nColumnsPanel._bShowSelected = true;
-			oP13nColumnsPanel._getPreviousSelectedItemIndex = getPreviousSelectedItemIndexSpy;
+			oP13nColumnsPanel._getPreviousItemIndex = getPreviousItemIndexSpy;
 
 			oP13nColumnsPanel._ItemMoveUp();
 
-			strictEqual(getPreviousSelectedItemIndexSpy.called, true,
-					"Method: getPreviousSelectedItemIndex shall not be called to get the previous selected item");
+			strictEqual(getPreviousItemIndexSpy.called, true,
+					"Method: getPreviousItemIndex shall not be called to get the previous selected item");
 			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 3), true,
 					"Item move was done with wrong parameter");
 			strictEqual(changeColumnsItemsIndexesSpy.called, true,
@@ -185,15 +185,15 @@
 			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 
-			var getNextSelectedItemIndexSpy = sinon.stub();
-			getNextSelectedItemIndexSpy.returns(4);
+			var getNextItemIndexSpy = sinon.stub();
+			getNextItemIndexSpy.returns(4);
 			oP13nColumnsPanel._bShowSelected = true;
-			oP13nColumnsPanel._getNextSelectedItemIndex = getNextSelectedItemIndexSpy;
+			oP13nColumnsPanel._getNextItemIndex = getNextItemIndexSpy;
 			handleItemIndexChangedSpy.reset();
 			oP13nColumnsPanel._ItemMoveDown();
 
-			strictEqual(getNextSelectedItemIndexSpy.called, true,
-					"Method: getNextSelectedItemIndex shall not be called to get the previous selected item");
+			strictEqual(getNextItemIndexSpy.called, true,
+					"Method: getNextItemIndex shall not be called to get the previous selected item");
 			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true,
 					"Item move was done with wrong parameter");
 			strictEqual(changeColumnsItemsIndexesSpy.called, true,
@@ -518,7 +518,7 @@
 					oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
 					oP13nColumnsPanel._scrollToSelectedItem.reset();
 					oP13nColumnsPanel._oSelectedItem = undefined;
-					
+
 					oP13nColumnsPanel._executeSearch();
 					strictEqual(oP13nColumnsPanel._bSearchFilterActive, false, "Search filter shall be deactived");
 					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false,
@@ -911,8 +911,8 @@
 			strictEqual(document.activeElement.focus.called, true, "Focus was not reset to previous focused object");
 		});
 
-		test("Shall check _getPreviousSelectedItemIndex", function() {
-			ok(oP13nColumnsPanel._getPreviousSelectedItemIndex, "Method does not exist");
+		test("Shall check _getPreviousItemIndex", function() {
+			ok(oP13nColumnsPanel._getPreviousItemIndex, "Method does not exist");
 
 			var oResultIndex = null;
 			var oTableItem1 = new sap.m.ColumnListItem();
@@ -927,27 +927,36 @@
 			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem1, oTableItem2, oTableItem3]);
 
 			//CUT -> check that the method is NOT executed, as no start index is passed in
-			oResultIndex = oP13nColumnsPanel._getPreviousSelectedItemIndex();
+			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex();
 			strictEqual(oResultIndex, -1, "No valid index shall be found");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false,
 					"Method getItems from main table shall not be called");
 
+			//CUT -> check that the method is executed and previuos item index is returned
+			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
+			strictEqual(oResultIndex, 1, "No valid index shall be found");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false,
+					"Method getItems from main table shall not be called");
+
+			// button "show selected" will be actived and with that method _getPreviousItemIndex shall only considers selected items
+			oP13nColumnsPanel._bShowSelected = true;
+
 			//CUT -> check that the method is executed
-			oResultIndex = oP13nColumnsPanel._getPreviousSelectedItemIndex(2);
+			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
 			strictEqual(oResultIndex, 0, "Wrong index was returned");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
 
 			//CUT -> check that the method is executed, but no further valid index will be found (as no other selected items exist up to index 0)
 			oP13nColumnsPanel._oTable.getItems.reset();
 			oTableItem1.getSelected.returns(false);
-			oResultIndex = oP13nColumnsPanel._getPreviousSelectedItemIndex(2);
+			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
 			strictEqual(oResultIndex, -1, "Wrong index was returned");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
 		});
 
-		test("Shall check _getNextSelectedItemIndex", function() {
-			ok(oP13nColumnsPanel._getNextSelectedItemIndex, "Method does not exist");
-
+		test("Shall check _getNextItemIndex", function() {
+			ok(oP13nColumnsPanel._getNextItemIndex, "Method does not exist");
+			
 			var oResultIndex = null;
 			var oTableItem1 = new sap.m.ColumnListItem();
 			oTableItem1.data('P13nColumnKey', '4711');
@@ -961,20 +970,30 @@
 			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem1, oTableItem2, oTableItem3]);
 
 			//CUT -> check that the method is NOT executed, as no start index is passed in
-			oResultIndex = oP13nColumnsPanel._getNextSelectedItemIndex();
+			oResultIndex = oP13nColumnsPanel._getNextItemIndex();
 			strictEqual(oResultIndex, -1, "No valid index shall be found");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false,
 					"Method getItems from main table shall not be called");
 
+			//CUT -> check that the method is executed and next item index is returned
+			oResultIndex = oP13nColumnsPanel._getNextItemIndex(1);
+			strictEqual(oResultIndex, 2, "No valid index shall be found");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true,
+					"Method getItems from main table shall be called to get the maximum border to where an item can be moved");
+
+			// button "show selected" will be actived and with that method _getPreviousItemIndex shall only considers selected items
+			oP13nColumnsPanel._bShowSelected = true;
+
 			//CUT -> check that the method is executed
-			oResultIndex = oP13nColumnsPanel._getNextSelectedItemIndex(0);
+			oP13nColumnsPanel._oTable.getItems.reset();
+			oResultIndex = oP13nColumnsPanel._getNextItemIndex(0);
 			strictEqual(oResultIndex, 2, "Wrong index was returned");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
 
 			//CUT -> check that the method is executed, but no further valid index will be found (as no other selected items exist up to table end)
 			oP13nColumnsPanel._oTable.getItems.reset();
 			oTableItem3.getSelected.returns(false);
-			oResultIndex = oP13nColumnsPanel._getNextSelectedItemIndex(0);
+			oResultIndex = oP13nColumnsPanel._getNextItemIndex(0);
 			strictEqual(oResultIndex, -1, "Wrong index was returned");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
 		});
