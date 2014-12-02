@@ -313,10 +313,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				propertyAnnotationNodes = this.xPath.selectNodes(oXMLDoc, "./d:Annotation", annotationNode);
 				for (var nodeIndexValue = 0; nodeIndexValue < propertyAnnotationNodes.length; nodeIndexValue += 1) {
 					propertyAnnotationNode = this.xPath.nextNode(propertyAnnotationNodes, nodeIndexValue);
+					sTermValue = this.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"), oAlias);
 					if (propertyAnnotationNode.hasChildNodes() === false) {
-						sTermValue = this.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"), oAlias);
 						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValueAttributes(propertyAnnotationNode, oAlias);
+					} else {
+						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValue(oXMLDoc, propertyAnnotationNode, oAlias);
 					}
+
 				}
 				// --- Annotations ---
 			} else {
@@ -806,7 +809,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return oValue;
 	};
-	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, target, oAlias) {
+	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
 		var propertyValue = {}, recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
 		var xPath = this.getXPath();
 		
@@ -817,7 +820,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				recordNodeCnt = 0;
 				for (nodeIndex = 0; nodeIndex < recordNodes.length; nodeIndex += 1) {
 					recordNode = this.xPath.nextNode(recordNodes, nodeIndex);
-					propertyValues = this.getPropertyValues(xmlDoc, recordNode, target, oAlias);
+					propertyValues = this.getPropertyValues(xmlDoc, recordNode, oAlias);
 					if (recordNode.getAttribute("Type")) {
 						propertyValues["RecordType"] = this.replaceWithAlias(recordNode.getAttribute("Type"), oAlias);
 					}
@@ -879,7 +882,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return propertyValue;
 	};
-	ODataAnnotations.prototype.getPropertyValues = function(xmlDoc, documentNode, target, oAlias) {
+	ODataAnnotations.prototype.getPropertyValues = function(xmlDoc, documentNode, oAlias) {
 		var properties = {}, annotationNode = {}, annotationNodes, nodeIndexValue, termValue, propertyValueNodes, nodeIndex, propertyValueNode, propertyName, applyNodes, applyNode, applyNodeIndex;
 		annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
 		for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
@@ -894,7 +897,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			for (nodeIndex = 0; nodeIndex < propertyValueNodes.length; nodeIndex += 1) {
 				propertyValueNode = this.xPath.nextNode(propertyValueNodes, nodeIndex);
 				propertyName = propertyValueNode.getAttribute("Property");
-				properties[propertyName] = this.getPropertyValue(xmlDoc, propertyValueNode, target, oAlias);
+				properties[propertyName] = this.getPropertyValue(xmlDoc, propertyValueNode, oAlias);
 				applyNodes = this.xPath.selectNodes(xmlDoc, "./d:Apply", propertyValueNode);
 				applyNode = null;
 				for (applyNodeIndex = 0; applyNodeIndex < applyNodes.length; applyNodeIndex += 1) {
@@ -906,7 +909,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				}
 			}
 		} else {
-			properties = this.getPropertyValue(xmlDoc, documentNode, target, oAlias);
+			properties = this.getPropertyValue(xmlDoc, documentNode, oAlias);
 		}
 		return properties;
 	};
