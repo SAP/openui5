@@ -29,15 +29,14 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.constants.Compon
 		oMockServer.start();
 		oMetaModel.loadData(sUri + "miscellaneous.json", undefined, /*bAsync*/false);
 		//add interesting annotations not contained in the original miscellaneous.json
-		oMetaModel.setProperty("/definitions/Model1.Weird/@Some.ImageData.Binary#Blue", {
+		oMetaModel.setProperty("/schemas/org.example2/annotations/0/@Some.ImageData.Binary#Blue", {
 			"@odata.type": "#Binary",
 			"value": sLogoBlue
 		});
-		oMetaModel.setProperty("/definitions/Model1.Weird/@Some.ImageData.Binary#Gold", {
+		oMetaModel.setProperty("/schemas/org.example2/annotations/0/@Some.ImageData.Binary#Gold", {
 			"@odata.type": "#Binary",
 			"value": sLogoGold
 		});
-		oMetaModel.setProperty("/schemas/Model1/@A.Float#withDecimals", 31415.926535);
 
 		return sap.ui.view({
 			preprocessors: {
