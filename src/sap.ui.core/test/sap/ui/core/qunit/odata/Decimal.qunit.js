@@ -24,7 +24,7 @@
 
 	//*********************************************************************************************
 	test("basics", function () {
-		var oDefaultConstraints = {precision: Infinity, scale: 0},
+		var oDefaultConstraints = {nullable: true, precision: Infinity, scale: 0},
 			oType = new sap.ui.model.odata.type.Decimal();
 
 		ok(oType instanceof sap.ui.model.odata.type.Decimal, "is a Decimal");
@@ -60,33 +60,33 @@
 	});
 
 	//*********************************************************************************************
-	test("w/ constraints", function () {
-		var oConstraints = {precision: 8, scale: 3},
-			oType = new sap.ui.model.odata.type.Decimal({}, oConstraints);
-
-		deepEqual(oType.oConstraints, oConstraints);
-	});
-
-	//*********************************************************************************************
 	jQuery.each([
-		{i: {precision: 8, scale: "foo"}, o: {precision: 8, scale: 0},
-			error: "Illegal scale: foo"},
-		{i: {precision: 8, scale: -1}, o: {precision: 8, scale: 0},
-			error: "Illegal scale: -1"},
-		{i: {precision: "foo", scale: 3}, o: {precision: Infinity, scale: 3},
-			error: "Illegal precision: foo"},
-		{i: {precision: -1, scale: 3}, o: {precision: Infinity, scale: 3},
-			error: "Illegal precision: -1"},
-		{i: {precision: 0, scale: 3}, o: {precision: Infinity, scale: 3},
-			error: "Illegal precision: 0"},
-		{i: {precision: 2, scale: 3}, o: {precision: 2, scale: Infinity},
-			error: "Illegal scale: must be less than precision (precision=2, scale=3)"}
+		{i: {precision: 8, scale: 3}, o: {nullable: true, precision: 8, scale: 3}},
+		{i: {nullable: false, scale: 3}, o: {nullable: false, precision: Infinity, scale: 3}},
+		{i: {nullable: "foo"}, o: {nullable: true, precision: Infinity, scale: 0},
+			warning: "Illegal nullable: foo"},
+		{i: {precision: 8, scale: "foo"}, o: {nullable: true, precision: 8, scale: 0},
+			warning: "Illegal scale: foo"},
+		{i: {precision: 8, scale: -1}, o: {nullable: true, precision: 8, scale: 0},
+			warning: "Illegal scale: -1"},
+		{i: {precision: "foo", scale: 3}, o: {nullable: true, precision: Infinity, scale: 3},
+			warning: "Illegal precision: foo"},
+		{i: {precision: -1, scale: 3}, o: {nullable: true, precision: Infinity, scale: 3},
+			warning: "Illegal precision: -1"},
+		{i: {precision: 0, scale: 3}, o: {nullable: true, precision: Infinity, scale: 3},
+			warning: "Illegal precision: 0"},
+		{i: {precision: 2, scale: 3}, o: {nullable: true, precision: 2, scale: Infinity},
+			warning: "Illegal scale: must be less than precision (precision=2, scale=3)"}
     ], function (i, oFixture) {
-		test("constraints error #" + i, sinon.test(function () {
+		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
 			var oType = new sap.ui.model.odata.type.Decimal();
 
-			this.mock(jQuery.sap.log).expects("warning")
-				.once().withExactArgs(oFixture.error, null, "sap.ui.model.odata.type.Decimal");
+			if (oFixture.warning) {
+				this.mock(jQuery.sap.log).expects("warning")
+				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Decimal");
+			} else {
+				this.mock(jQuery.sap.log).expects("warning").never();
+			}
 
 			oType.setConstraints(oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
@@ -126,11 +126,23 @@
 		strictEqual(oType.parseValue("-12345", "string"), "-12345", "type string");
 		strictEqual(oType.parseValue(1234, "int"), "1234", "type int");
 		strictEqual(oType.parseValue(1234.567, "float"), "1234.567", "type float");
+
+		strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
+		strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
+
+		try {
+			oType.parseValue(true, "boolean");
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ParseException);
+			strictEqual(e.message,
+				"Don't know how to parse sap.ui.model.odata.type.Decimal from boolean");
+		}
 	});
 
 	//*********************************************************************************************
 	jQuery.each([false, 1, "foo", "1.1", "1234"], function (i, sValue) {
-		test("validate errors", function () {
+		test("validate errors: " + JSON.stringify(sValue), function () {
 			var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 3});
 
 			try {
@@ -179,7 +191,6 @@
 		strictEqual(oType.formatValue("1234", "string"), "1'234", "adjusted to changed language");
 	});
 
-
 	//*********************************************************************************************
 	test('scale="variable"', sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Decimal();
@@ -204,4 +215,21 @@
 			}
 		});
 	}));
+
+	//*********************************************************************************************
+	test("validate: nullable", function () {
+		var oType = new sap.ui.model.odata.type.Decimal();
+
+		// nullable=true
+		oType.validateValue(null);
+
+		oType.setConstraints({nullable: false});
+		try {
+			oType.validateValue(null);
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ValidateException);
+			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: null");
+		}
+	});
 } ());
