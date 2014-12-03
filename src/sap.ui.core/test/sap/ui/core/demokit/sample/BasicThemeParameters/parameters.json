@@ -1,0 +1,355 @@
+{
+	"params": [
+	{
+		"name": "sapUiChart1",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart2",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart3",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart4",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart5",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart6",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart7",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart8",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart9",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart10",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChart11",
+		"usage": "Chart Accent",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiChartCritical",
+		"usage": "Chart Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartGood",
+		"usage": "Chart Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartBad",
+		"usage": "Chart Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartNeutral",
+		"usage": "Chart Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartSequence1",
+		"usage": "Chart Sequential",
+		"since": "1.23",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartSequence2",
+		"usage": "Chart Sequential",
+		"since": "1.23",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartSequence3",
+		"usage": "Chart Sequential",
+		"since": "1.23",
+		"type": "semantic"
+	},{
+		"name": "sapUiChartSequenceNeutral",
+		"usage": "Chart Sequential",
+		"since": "1.23",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent1",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent2",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent3",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent4",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent5",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent6",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent7",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiAccent8",
+		"usage": "Accent",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiLightBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiLightestBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"		
+	},{
+		"name": "sapUiMediumBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiDarkBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiDarkestBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiExtraLightBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiExtraDarkBorder",
+		"usage": "Border Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiWarningBorder",
+		"usage": "Border Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiSuccessBorder",
+		"usage": "Border Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiErrorBorder",
+		"usage": "Border Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiButtonEmphasizedBG",
+		"usage": "Background Button",
+		"since": "1.16",
+		"type": "status"
+	},{
+		"name": "sapUiButtonStandardBG",
+		"usage": "Background Button",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiBrand",
+		"usage": "Background Brand",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiErrorBG",
+		"usage": "Background Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiWarningBG",
+		"usage": "Background Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiNeutralBG",
+		"usage": "Background Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiSuccessBG",
+		"usage": "Background Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiFooterBG",
+		"usage": "Background Header/Footer",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiHeaderBG",
+		"usage": "Background Header/Footer",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiHighlight",
+		"usage": "Background State",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiActiveBG",
+		"usage": "Background State",
+		"since": "1.16",
+		"type": "status"
+	},{
+		"name": "sapUiLightBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiLightestBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"		
+	},{
+		"name": "sapUiExtraLightBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiDarkBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiExtraDarkBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiDarkestBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiMediumBG",
+		"usage": "Background Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiLightShadowTint",
+		"usage": "Effect Shadow",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiDarkShadowTint",
+		"usage": "Effect Shadow",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiLightText",
+		"usage": "Font Grayscale",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiMediumText",
+		"usage": "Font Grayscale",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiDarkText",
+		"usage": "Font Grayscale",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiLink",
+		"usage": "Font Hyperlink",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiNegativeText",
+		"usage": "Font Semantic",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiPositiveText",
+		"usage": "Font Semantic",
+		"since": "1.16",
+		"type": "static"
+	},{
+		"name": "sapUiCriticalText",
+		"usage": "Font Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiNegativeElement",
+		"usage": "Foreground Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiNeutralElement",
+		"usage": "Foreground Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiPositiveElement",
+		"usage": "Foreground Semantic",
+		"since": "1.16",
+		"type": "semantic"	
+	},{
+		"name": "sapUiCriticalElement",
+		"usage": "Foreground Semantic",
+		"since": "1.16",
+		"type": "semantic"
+	},{
+		"name": "sapUiSearchHighlight",
+		"usage": "Special",
+		"since": "1.16",
+		"type": "static"	
+	},{
+		"name": "sapUiFocus",
+		"usage": "Special",
+		"since": "1.16",
+		"type": "static"
+	}
+	]
+}
