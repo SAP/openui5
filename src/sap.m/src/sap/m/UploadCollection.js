@@ -329,7 +329,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype.onAfterRendering = function() {
 		var that = this;
-		this._oList.aDelegates = []; 
+		for (var i = 0; i < this._oList.aDelegates.length; i++) {
+			if (this._oList.aDelegates[i]._sId && this._oList.aDelegates[i]._sId == "UploadCollection") {
+				this._oList.aDelegates.splice(i, 1);
+			}
+		}
 
 		if (this.aItems || (this.aItems == this.getItems())) {
 			if (this.editModeItem) {
@@ -345,6 +349,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 							sap.m.UploadCollection.prototype._handleClick(oEvent, that, sId);
 						}
 					});
+					this._oList.aDelegates[this._oList.aDelegates.length - 1]._sId = "UploadCollection";
 				}
 			} else {
 				if (this.sFocusId) {
