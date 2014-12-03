@@ -513,6 +513,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (oFirstSelectableItem && (oFirstSelectableItem !== this.getSelectedItem())) {
 				fnHandleKeyboardNavigation.call(this, oFirstSelectableItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
 		};
 
@@ -540,6 +542,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (oLastSelectableItem && (oLastSelectableItem !== this.getSelectedItem())) {
 				fnHandleKeyboardNavigation.call(this, oLastSelectableItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
 		};
 
@@ -577,6 +581,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (oItem && (oItem !== this.getSelectedItem())) {
 				fnHandleKeyboardNavigation.call(this, oItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
 		};
 
@@ -614,6 +620,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (oItem && (oItem !== this.getSelectedItem())) {
 				fnHandleKeyboardNavigation.call(this, oItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
 		};
 
