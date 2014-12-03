@@ -26,6 +26,9 @@ public class MyReleaseButton {
 
   // ---- following code is copied from phx.generator.util.IOUtils ----
 
+  private static final Pattern CORE_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)");
+  private static final Pattern CONTRIBUTOR_VERSION_PATTERN = Pattern.compile("(?<=\\.version>).*(?=</com.sap.*version>)");
+  private static final String COM_SAP_UI5_CORE = "com.sap.ui5:core";
   public static final String ISO_8859_1 = "ISO-8859-1";
   public static final String UTF8 = "UTF-8";
 
@@ -141,22 +144,30 @@ public class MyReleaseButton {
 
   enum ProcessingTypes {
     RepositoryPaths, VersionWithSnapshot, VersionWithTimestamp, VersionWithQualifier_POM, VersionWithQualifier,
-    ContributorsVersions
+    ContributorsVersions, Sapui5CoreVersion
   };
 
   static Pattern fromS, fromT, fromQ_POM, fromQ, fromR;
   static String toS, toT, toQ, toR;
   static Map<Pattern, String> contributorsPatterns = new HashMap<Pattern, String>();
+  private static String coreVersion = null;
+  private static String contributorsRange = null;
+  private static boolean applyContributors;
 
   private static void processFile(File file, String path) throws IOException {
     String encoding = UTF8;
 
     EnumSet<ProcessingTypes> processingTypes = EnumSet.noneOf(ProcessingTypes.class);
+    if (applyContributors && path.contains("uilib-collection")) {
+      processingTypes.add(ProcessingTypes.ContributorsVersions);
+    }
     if (file.getName().matches("pom(-[a-zA-Z0-9-_.]*)?.xml")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.VersionWithQualifier_POM);
       processingTypes.add(ProcessingTypes.VersionWithTimestamp);
-      processingTypes.add(ProcessingTypes.ContributorsVersions);
+      if (coreVersion != null) {
+        processingTypes.add(ProcessingTypes.Sapui5CoreVersion);
+      }
     } else if (file.getName().endsWith(".library")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     } else if (file.getName().endsWith(".target")) {
@@ -187,6 +198,9 @@ public class MyReleaseButton {
       CharSequence orig = readFile(file, encoding);
       CharSequence s = orig;
 
+      if (processingTypes.contains(ProcessingTypes.ContributorsVersions)) {
+        s = processContributorsVersions(s, file, encoding);
+      }
       // MUST RUN BEFORE VersionWithSnapshot!
       if (processingTypes.contains(ProcessingTypes.RepositoryPaths)) {
         s = fromR.matcher(s).replaceAll(toR);
@@ -204,8 +218,8 @@ public class MyReleaseButton {
       if (processingTypes.contains(ProcessingTypes.VersionWithQualifier)) {
         s = fromQ.matcher(s).replaceAll(toQ);
       }
-      if (processingTypes.contains(ProcessingTypes.ContributorsVersions)) {
-        s = processContributorsVersions(s);
+      if (processingTypes.contains(ProcessingTypes.Sapui5CoreVersion)) {
+        s = CORE_VERSION.matcher(s).replaceAll(coreVersion);
       }
       if (s != orig) {
         String str = (String) s;
@@ -305,7 +319,11 @@ public class MyReleaseButton {
       toT = newOSGiVersion + "</$1.osgi.version>";
     }
     
-    prepareContributorsPatterns(contributorsVersions);
+    applyContributors = contributorsVersions != null;
+    if (applyContributors){
+      coreVersion = contributorsVersions.get(COM_SAP_UI5_CORE).toString();
+      contributorsRange = (String)contributorsVersions.get("contributorsRange");
+    }
     
     // TODO What about target files?
 
@@ -361,32 +379,12 @@ public class MyReleaseButton {
     return diffdiffs;
   }
 
-
-  private static void prepareContributorsPatterns(Properties contributorsVersions) {
-    contributorsPatterns.clear();
-    if (contributorsVersions == null) {
-      return;
-    }
-    for (Object artifactKey : contributorsVersions.keySet()) {
-      String[] artifact = artifactKey.toString().split(":");
-      if("com.sap.ui5:core".equals(artifactKey)){
-        contributorsPatterns.put(Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)"), contributorsVersions.getProperty(artifactKey.toString()));
-        continue;
-      }
-      // artifact[0] - groupId, artifact[1] - artifactId
-      String propName = !artifact[0].startsWith("com.sap.ui5") ? artifact[0] : artifact[1].contentEquals("vbm") ? "com.sap.ui5.vbm" : "";
-      if (!"".equals(propName)) {
-        // map - pattern => version
-        contributorsPatterns.put(Pattern.compile("(?<=" + propName + ".version>).*(?=</)"), contributorsVersions.getProperty(artifactKey.toString()));
-      }
-    }
-
-  }
-
-
-  private static CharSequence processContributorsVersions(CharSequence s) {
-    for (Entry<Pattern, String> entry : contributorsPatterns.entrySet()) {
-      s = entry.getKey().matcher(s).replaceAll(entry.getValue());
+  private static CharSequence processContributorsVersions(CharSequence s, File file, String encoding) throws IOException {
+    if (contributorsRange != null){
+      s = CONTRIBUTOR_VERSION_PATTERN.matcher(s).replaceAll(contributorsRange);
+    } else {
+      MvnClient.execute(file.getParentFile(), "versions:resolve-ranges", "-DgenerateBackupPoms=false");
+      s = readFile(file, encoding);
     }
     return s;
   }

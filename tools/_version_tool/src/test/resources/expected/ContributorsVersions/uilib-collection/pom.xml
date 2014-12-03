@@ -42,14 +42,14 @@
 	***************************************************************************-->
 
 	<properties>
-		<com.sap.suite.version>1.22.3</com.sap.suite.version>
-		<com.sap.portal.ui5.version>1.22.2</com.sap.portal.ui5.version>
-		<com.sap.ushell.version>1.22.6</com.sap.ushell.version>
-		<com.sap.ui5.vbm.version>1.22.5</com.sap.ui5.vbm.version>
-		<com.sap.collaboration.version>1.22.3</com.sap.collaboration.version>
-		<com.sap.ca.version>1.22.2</com.sap.ca.version>
-		<com.sap.apf.version>1.22.2</com.sap.apf.version>
-		<com.sap.smartbusiness.version>1.22.3</com.sap.smartbusiness.version>
+		<com.sap.suite.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.suite.version>
+		<com.sap.portal.ui5.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.portal.ui5.version>
+		<com.sap.ushell.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.ushell.version>
+		<com.sap.ui5.vbm.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.ui5.vbm.version>
+		<com.sap.collaboration.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.collaboration.version>
+		<com.sap.ca.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.ca.version>
+		<com.sap.apf.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.apf.version>
+		<com.sap.smartbusiness.version>[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)</com.sap.smartbusiness.version>
 	</properties>
 
 

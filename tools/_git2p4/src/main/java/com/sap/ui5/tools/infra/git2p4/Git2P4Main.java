@@ -1,6 +1,5 @@
 package com.sap.ui5.tools.infra.git2p4;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,12 +23,13 @@ import org.w3c.dom.Element;
 
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
 import com.sap.ui5.tools.maven.LastRunInfo;
+import com.sap.ui5.tools.maven.MvnClient;
 import com.sap.ui5.tools.maven.MyReleaseButton;
 
 public class Git2P4Main {
 
   private static final String RELEASE_NOTES = "release-notes";
-  private static final String TOOLS_VERSION_HELPER_POM = "tools/_version_helper/pom";
+  private static final String TOOLS_VERSION_HELPER_CORE_VERSION = "tools/_git2p4/sapui5-core-version";
   static final GitClient git = new GitClient();
   static final P4Client p4 = new P4Client();
   static final Git2P4 git2p4 = new Git2P4(git, p4);
@@ -289,28 +289,31 @@ public class Git2P4Main {
     //read latest versions for uilib-collections.pom
     Version fromV = new Version(fromVersion);
     Version toV = new Version(toVersion);
-    String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "").toString() + "," + new Version(toV.major, toV.minor + 1, 0, "").toString() + ")";
+    String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "-SNAPSHOT").toString() + "," + new Version(toV.major, toV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
     Log.println("Contributors version range: " + versionRange);
-    MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_POM).getAbsoluteFile(), "install", "-DversionOrRange=" + versionRange);
-    File versionFile = new File(".", TOOLS_VERSION_HELPER_POM + "/target/LatestVersions.prop");
-    Log.println("Version properties file: " + versionFile.getAbsolutePath());
     Properties contributorsVersions = new Properties();
-    contributorsVersions.load(new FileInputStream(versionFile));
-    Log.println("Versions loaded from file: " + contributorsVersions.toString());
-    if (op.equals(ReleaseOperation.PatchDevelopment)){
-      //get core version
-      String coreVersion = contributorsVersions.get("com.sap.ui5:core").toString();
-      //set all versions to version range
-      Object devRange = "[" + new Version(fromV.major, fromV.minor, 0, "-SNAPSHOT").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
-      for (Object key : contributorsVersions.keySet()){
-        contributorsVersions.put(key, devRange);
-      }
-      //set next snapshot core version 
-      contributorsVersions.put("com.sap.ui5:core",  new Version(coreVersion).nextVersion(op).toString());
+    if (op.equals(ReleaseOperation.PatchDevelopment)||op.equals(ReleaseOperation.MilestoneDevelopment)){
+      //set all contributors versions to version range
+      contributorsVersions.put("contributorsRange", versionRange);
+      //set to snapshot core version 
+      contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, true));
+    } else {
+      contributorsVersions.put("com.sap.ui5:core", getLatestCoreVersion(versionRange, false));
     }
     return contributorsVersions;
   }
-
+  
+  private static Version getLatestCoreVersion(String versionRange, boolean snapshot) throws IOException {
+    MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
+    Matcher m = Pattern.compile("so unable to set version to (.*)").matcher(MvnClient.getLatestOutput());
+    if (m.find()){
+      Version coreVersion = new Version(m.group(1));
+      Log.println("Detected sapui5 core version: " + coreVersion);
+      return coreVersion;
+    }
+    Log.println("WARNING: Can't detect sapui5 core version.");
+    return null;
+  }
 
   static void createVersionTags(String branch, String fromVersion) throws IOException {
     
@@ -796,7 +799,7 @@ public class Git2P4Main {
     }
     
     if ( RELEASE_NOTES.equals(command) && context.range == null ) {
-      Version version = context.version = new Version(findVersion(branch));
+      Version version = context.version = new Version(fromVersion == null ? findVersion(branch) : fromVersion);
       context.range = "tags/" + version.major + "." + (version.minor % 2 == 1 ? version.minor - 1 : version.minor) + "." + (version.patch <= 0 ? 0 : version.patch-1) + "..origin/" + branch;
     }
     
