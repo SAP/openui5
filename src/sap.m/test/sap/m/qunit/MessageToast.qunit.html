@@ -48,7 +48,7 @@
 				sap.m.MessageToast.show("message toast");
 
 				// arrange
-				var $MessageToast = jQuery("." + sap.m.MessageToast._CSSCLASS).eq(0);
+				var $MessageToast = jQuery(".sapMMessageToast").eq(0);
 
 				// assertions
 				ok($MessageToast.length, "The message toast HTML DIV element exist");
@@ -369,7 +369,7 @@
 				test("Listeners", function() {
 					var aResizeEventListeners = jQuery._data(oDomRef, "events")[sEventType];
 					var bBoundedListeners = aResizeEventListeners.some(function(oResizeEventListener) {
-						return oResizeEventListener.namespace === sap.m.MessageToast._CSSCLASS;
+						return oResizeEventListener.namespace === "sapMMessageToast";
 					});
 
 					strictEqual(bBoundedListeners, b, "Listener to the " + '"' + sEventType + '" event deregistered');
