@@ -437,10 +437,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				minuteText : _("MINUTES"),
 				secText : _("SECONDS"),
 				nowText : _("NOW"),
-				dayNames : oLocaleData.getDaysStandAlone("wide").map($.sap.encodeHTML),
-				dayNamesShort : oLocaleData.getDaysStandAlone("abbreviated").map($.sap.encodeHTML),
-				monthNames : oLocaleData.getMonthsStandAlone("wide").map($.sap.encodeHTML),
-				monthNamesShort : oLocaleData.getMonthsStandAlone("abbreviated").map($.sap.encodeHTML)
+				dayNames : oLocaleData.getDaysStandAlone("wide"),
+				dayNamesShort : oLocaleData.getDaysStandAlone("abbreviated"),
+				monthNames : oLocaleData.getMonthsStandAlone("wide"),
+				monthNamesShort : oLocaleData.getMonthsStandAlone("abbreviated")
 			},
 			oThemeParams = Parameters.get();
 	
