@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 *           converting the Date to string with the primary format object. Vice versa, this 'source' format is also used to format an already parsed 
 	 *           external value (e.g. user input) into the string format expected by the data source.
 	 *           Supports the same set of options as {@link sap.ui.core.format.DateFormat.getDateInstance DateFormat.getDateInstance}.
+	 *           In case an empty object is given, the default is ISO date notation (yyyy-MM-dd). 
 	 * @param {object} [oConstraints] value constraints. 
 	 * @param {Date|string} [oConstraints.minimum] smallest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>  
 	 * @param {Date|string} [oConstraints.maximum] largest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>  
@@ -143,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 */
 	Date1.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
-		this._handleLocalizationChange();
+		this._createFormats();
 	};
 	
 	/**
@@ -161,14 +162,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 */
 	Date1.prototype._handleLocalizationChange = function() {
 		// recreate formatters
+		this._createFormats();
+	};
+	
+	/**
+	 * Create formatters used by this type
+	 * @private
+	 */
+	Date1.prototype._createFormats = function() {
+		var oSourceOptions = this.oFormatOptions.source;
 		this.oOutputFormat = DateFormat.getInstance(this.oFormatOptions);
-		if (this.oFormatOptions.source) {
-			this.oInputFormat = DateFormat.getInstance(this.oFormatOptions.source);
+		if (oSourceOptions) {
+			if (jQuery.isEmptyObject(oSourceOptions)) {
+				oSourceOptions = {pattern: "yyyy-MM-dd"};
+			}
+			this.oInputFormat = DateFormat.getInstance(oSourceOptions);
 		}
 	};
 	
-	
-
 	return Date1;
 
 }, /* bExport= */ true);
