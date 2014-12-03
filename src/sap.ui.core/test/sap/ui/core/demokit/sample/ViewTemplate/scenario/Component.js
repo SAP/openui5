@@ -11,12 +11,14 @@ jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.scenario.Component");
 jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
-	metadata: "json", //TODO Use component metadata from manifest file
+	metadata : "json", //TODO Use component metadata from manifest file
 
-	createContent: function () {
-		var sUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
-			sMockServerBaseUri =
-				"/testsuite/test-resources/sap/ui/core/demokit/sample/ViewTemplate/data2/",
+	createContent : function () {
+		var sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
+				+ "/Annotations(TechnicalName='ZANNO4SAMPLE_ANNO_MDL',Version='0001')/$value",
+			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
+			sMockServerBaseUri
+				= "/testsuite/test-resources/sap/ui/core/demokit/sample/ViewTemplate/data2/",
 			oLayout = new sap.m.HBox(),
 			oMockServer,
 			oModel,
@@ -25,30 +27,43 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 		if (jQuery.sap.getUriParameters().get("realOData") !== "true") {
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 
-			oMockServer = new sap.ui.core.util.MockServer({rootUri: sUri});
+			oMockServer = new sap.ui.core.util.MockServer({rootUri : sServiceUri});
 			//TODO/FIX4MASTER check mock data to allow for delivery with OpenUI5
-			oMockServer.simulate(/*TODO sUri?!*/sMockServerBaseUri + "metadata.xml", {
-				sMockdataBaseUrl: sMockServerBaseUri,
-				bGenerateMissingMockData: true
+			oMockServer.simulate(/*TODO sServiceUri?!*/sMockServerBaseUri + "metadata.xml", {
+				sMockdataBaseUrl : sMockServerBaseUri,
+				bGenerateMissingMockData : true
 			});
 			oMockServer.start();
+			// yet another mock server to handle annotations
+			new sap.ui.core.util.MockServer({
+				requests : [{
+					method : "GET",
+					//TODO have MockServer fixed and pass just the URL!
+					path : new RegExp(sap.ui.core.util.MockServer.prototype
+						._escapeStringForRegExp(sAnnotationUri)),
+					response : function(oXHR) {
+						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations.xml");
+					}
+				}]
+			}).start();
 		} else if (location.hostname === "localhost") { //for local testing prefix with proxy
-			sUri = "proxy" + sUri;
+			sAnnotationUri = "proxy" + sAnnotationUri;
+			sServiceUri = "proxy" + sServiceUri;
 		}
 
-		oModel = new sap.ui.model.odata.v2.ODataModel(sUri, {
-			annotationURI: /*TODO sUri!*/sMockServerBaseUri + "annotations.xml",
-			json: true,
-			loadMetadataAsync: true
+		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUri, {
+			annotationURI : sAnnotationUri,
+			json : true,
+			loadMetadataAsync : true
 		});
 
 		oModel.getMetaModel().loaded().then(function() {
 			oLayout.addItem(sap.ui.view({
-				type: sap.ui.core.mvc.ViewType.XML,
-				viewName: "sap.ui.core.sample.ViewTemplate.scenario.Main",
-				models: {
-					undefined: oModel,
-					"meta": oModel.getMetaModel()
+				type : sap.ui.core.mvc.ViewType.XML,
+				viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
+				models : {
+					undefined : oModel,
+					"meta" : oModel.getMetaModel()
 				}
 			}));
 		});
