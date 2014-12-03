@@ -4,7 +4,8 @@
 			"files": [
 				"Component.js",
 				"Detail.view.xml",
-				"../data2/metadataMerged.json",
+				"ODataMetaModel.json",
+				"../data2/annotations.xml",
 				"../data2/metadata.xml",
 				"../data2/Product.json"
 			]

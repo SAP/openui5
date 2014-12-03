@@ -11,8 +11,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-		function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, URI1, datajs) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/odata/v2/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
+		function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI1, datajs) {
 	"use strict";
 
 
@@ -3471,6 +3471,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
 		return this.mChangeBatchGroups;
+	};
+
+	/**
+	 * Returns the meta model of this ODataModel containing OData service metadata and annotations
+	 * in a merged fashion.
+	 * @public
+	 * @returns {sap.ui.model.MetaModel} The meta model for this ODataModel
+	 */
+	ODataModel.prototype.getMetaModel = function() {
+		if (!this.oMetaModel) {
+			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations);
+		}
+		return this.oMetaModel;
 	};
 
 	return ODataModel;

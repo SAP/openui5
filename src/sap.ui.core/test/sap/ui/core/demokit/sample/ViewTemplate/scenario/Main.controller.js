@@ -14,29 +14,25 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 						type: "BusinessPartner",
 						itemKey: "BusinessPartnerID",
 						itemKeyType: "Edm.String",
-						set: "/BusinessPartnerSet",
-						target: "GWSAMPLE_BASIC.BusinessPartner",
+						set: "/BusinessPartnerSet"
 					},
 					{
 						type: "Contact",
 						itemKey: "ContactGuid",
 						itemKeyType: "Edm.Guid",
-						set: "/ContactSet",
-						target: "GWSAMPLE_BASIC.Contact",
+						set: "/ContactSet"
 					},
 					{
 						type: "Product",
 						itemKey: "ProductID",
 						itemKeyType: "Edm.String",
-						set: "/ProductSet",
-						target: "GWSAMPLE_BASIC.Product",
+						set: "/ProductSet"
 					},
 					{
 						type: "SalesOrder",
 						itemKey: "SalesOrderID",
 						itemKeyType: "Edm.String",
-						set: "/SalesOrderSet",
-						target: "GWSAMPLE_BASIC.SalesOrder",
+						set: "/SalesOrderSet"
 					}
 				]
 			};
@@ -97,12 +93,21 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 	_showDetails: function (sPath) {
 		var oDetailView,
+			sEntityMetadataPath,
 			oView = this.getView(),
 			oMetaContext,
 			oMetaModel = oView.getModel("meta"),
-			sEntityMetadataPath = "/definitions/" + this._getSelectedType().target,
 			oModel = oView.getModel(),
+			sSelectedType = this._getSelectedType().type,
 			i;
+
+		jQuery.each(oMetaModel.getObject("/dataServices/schema/0/entityType"),
+			function (i, oEntity) {
+				if (oEntity.name === sSelectedType) {
+					sEntityMetadataPath = "/dataServices/schema/0/entityType/" + i;
+				}
+			}
+		);
 
 		oMetaContext = oMetaModel.createBindingContext(sEntityMetadataPath);
 		oDetailView = sap.ui.view({
