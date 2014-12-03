@@ -433,7 +433,6 @@ sap.ui
 						}
 					};
 
-					// TODO ER:fast implementation, please check!
 					P13nFilterPanel.prototype.destroyItems = function() {
 						this.destroyAggregation("items");
 						if (this._oIncludeFilterPanel) {
@@ -448,23 +447,53 @@ sap.ui
 					P13nFilterPanel.prototype.addFilterItem = function(oFilterItem) {
 						this.addAggregation("filterItems", oFilterItem);
 
-						var aConditions = [];
-						this.getFilterItems().forEach(function(oFilterItem_) {
-							aConditions.push({
-								exclude : oFilterItem_.getExclude(),
-								key : oFilterItem_.getKey(),
-								keyField : oFilterItem_.getColumnKey(),
-								operation : oFilterItem_.getOperation(),
-								value1 : oFilterItem_.getValue1(),
-								value2 : oFilterItem_.getValue2()
+						if (!this._bIgnoreBindCalls) {
+							var aConditions = [];
+							this.getFilterItems().forEach(function(oFilterItem_) {
+								aConditions.push({
+									exclude : oFilterItem_.getExclude(),
+									key : oFilterItem_.getKey(),
+									keyField : oFilterItem_.getColumnKey(),
+									operation : oFilterItem_.getOperation(),
+									value1 : oFilterItem_.getValue1(),
+									value2 : oFilterItem_.getValue2()
+								});
 							});
-						});
-
-						if (!this._bIgnoreAdd) {
+							
 							this.setConditions(aConditions);
 						}
 					};
+					
+					P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
+						this.insertAggregation("filterItems", oFilterItem);
+						//TODO: implement this
+						return this;
+					};
+					
+					P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
+						oFilterItem = this.removeAggregation("filterItems", oFilterItem);
+						
+						return oFilterItem;
+					};
+					
+					P13nFilterPanel.prototype.removeAllFilterItems = function(){					
+						var aFilterItems = this.removeAllAggregation("filterItems");
 
+						this.setConditions([]);
+						
+						return aFilterItems;
+					};
+				
+					P13nFilterPanel.prototype.destroyFilterItems = function(){
+						this.destroyAggregation("filterItems");
+						
+						if (!this._bIgnoreBindCalls) {
+							this.setConditions([]);
+						}
+						
+						return this;
+					};
+					
 					P13nFilterPanel.prototype._handleDataChange = function() {
 						var that = this;
 
@@ -501,13 +530,13 @@ sap.ui
 								});
 							}
 							if (sOperation === "add") {
-								that._bIgnoreAdd = true;							
+								that._bIgnoreBindCalls = true;							
 								that.fireAddFilterItem({
 									key : sKey,
 									index : iIndex,
 									filterItemData : oFilterItemData
 								});
-								that._bIgnoreAdd = false;
+								that._bIgnoreBindCalls = false;
 							}
 							if (sOperation === "remove") {
 								that.fireRemoveFilterItem({
