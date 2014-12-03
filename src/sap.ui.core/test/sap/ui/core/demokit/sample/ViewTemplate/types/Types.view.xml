@@ -11,6 +11,9 @@
 			<core:Title text="sap.ui.model.odata.type.Boolean" />
 			<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
 			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
+			<Label text="sap.ui.model.odata.type.Boolean Input Field, NOT nullable"/>
+			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean',
+				constraints: {nullable: false}}"/>
 			<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
 			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 

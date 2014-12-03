@@ -11,16 +11,16 @@
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Boolean");
 
-	test("basics", function () {
+	test("basics", sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
 		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		strictEqual(oType.sName, "sap.ui.model.odata.type.Boolean", "type name");
 		deepEqual(oType.oFormatOptions, {}, "no format options");
-		deepEqual(oType.oConstraints, {}, "no constraints");
+		deepEqual(oType.oConstraints, {nullable: true}, "no constraints, except nullable");
 		strictEqual(oType.oResourceBundle, null, "resources not preloaded");
-	});
+	}));
 
 	//*********************************************************************************************
 	test("format", function () {
@@ -50,6 +50,8 @@
 
 		strictEqual(oType.parseValue(true, "boolean"), true, "true, boolean");
 		strictEqual(oType.parseValue(false, "boolean"), false, "false, boolean");
+		strictEqual(oType.parseValue(null, "boolean"), null, "null, boolean");
+		strictEqual(oType.parseValue("", "string"), null, "empty string, string");
 		strictEqual(oType.parseValue("Yes", "string"), true, "Yes");
 		strictEqual(oType.parseValue("No", "string"), false, "No");
 		strictEqual(oType.parseValue("yes", "string"), true, "yes");
@@ -76,7 +78,7 @@
 	test("validate", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
-		jQuery.each([false, true],
+		jQuery.each([false, true, null],
 			function (i, sValue) {
 				oType.validateValue(sValue);
 			}
@@ -88,6 +90,15 @@
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
 			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: foo");
+		}
+
+		oType.setConstraints({nullable: false});
+		try {
+			oType.validateValue(null);
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ValidateException);
+			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: null");
 		}
 	});
 
@@ -104,4 +115,36 @@
 		oType.formatValue(true, "string");
 		notStrictEqual(oType.oResourceBundle, undefined, "resources loaded again");
 	});
+
+	//*********************************************************************************************
+	test("nullable", sinon.test(function () {
+		var oType = new sap.ui.model.odata.type.Boolean(null, {nullable: false});
+		deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
+
+		this.mock(jQuery.sap.log).expects("warning")
+			.once()
+			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
+
+		oType = new sap.ui.model.odata.type.Boolean(null, {nullable: "foo"});
+		deepEqual(oType.oConstraints, {nullable: true}, "illegal nullable -> default to true");
+	}));
+
+	//*********************************************************************************************
+	test("setConstraints", sinon.test(function () {
+		var oType = new sap.ui.model.odata.type.Boolean();
+
+		oType.setConstraints({nullable: false});
+		deepEqual(oType.oConstraints, {nullable: false}, "set nullable to false");
+		oType.setConstraints();
+		deepEqual(oType.oConstraints, {nullable: true}, "set nullable to default true");
+		oType.setConstraints({foo: "bar"});
+		deepEqual(oType.oConstraints, {nullable: true},
+			"illegal constraint results to default true");
+
+		this.mock(jQuery.sap.log).expects("warning")
+			.once()
+			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
+		oType.setConstraints({nullable: "foo"});
+		deepEqual(oType.oConstraints, {nullable: true}, "illegal value results to default true");
+	}));
 } ());
