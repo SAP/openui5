@@ -1592,13 +1592,32 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handle Alt + Down
 	ListBase.prototype.onsapshow = function(oEvent) {
-		// do not handle marked events and ignore F4
-		if (oEvent.isMarked() || oEvent.which == jQuery.sap.KeyCodes.F4) {
+		// handle events that are only coming from navigation items and ignore F4
+		if (oEvent.isMarked() || 
+			oEvent.which == jQuery.sap.KeyCodes.F4 || 
+			oEvent.target.id != this.getId("trigger") &&
+			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
 	
 		// move focus to the next section
 		if (this._navToSection(true)) {
+			oEvent.preventDefault();
+			oEvent.setMarked();
+		}
+	};
+	
+	// Handle Alt + Up
+	ListBase.prototype.onsaphide = function(oEvent) {
+		// handle events that are only coming from navigation items
+		if (oEvent.isMarked() || 
+			oEvent.target.id != this.getId("trigger") &&
+			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
+			return;
+		}
+	
+		// move focus to the previous section
+		if (this._navToSection(false)) {
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -1625,20 +1644,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 		
 		oEvent.setMarked();
-	};
-	
-	// Handle Alt + Up
-	ListBase.prototype.onsaphide = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
-			return;
-		}
-	
-		// move focus to the previous section
-		if (this._navToSection(false)) {
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
 	};
 	
 	// Handles focus to reposition the focus to correct place
