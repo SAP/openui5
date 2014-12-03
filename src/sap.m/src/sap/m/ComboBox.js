@@ -34,12 +34,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				/**
 				 * Key of the selected item. If the key has no corresponding item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 */
-				selectedKey: { type: "string", group: "Data", defaultValue: null },
+				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Identifier of the selected item. If the identifier has no corresponding item, no changes will apply.
 				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: null }
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
 			},
 			associations: {
 
