@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
 		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
 		 * @param {string} [oOptions.viewNamespace] get appended before the viewName - should probably be set to the OPA config.
-		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers @link sap.ui.test.matchers. All of the matchers have to match. Check will not be called if the matchers filtered out all controls before. You may also provide inline functions that will get a control passed and have to return a boolean.
+		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers @link sap.ui.test.matchers. Matchers will be applied to an every control found by the waitFor function. The matchers are a pipeline, first matcher gets a control as an input parameter, each next matcher gets the same input, as the previous one, if the previous output is 'true'. If the previous output is a truthy value, the next matcher will receive this value as an input parameter. If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values. Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
 		 * @param {string} [oOptions.controlType] eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored.
 		 * @param {boolean} [oOptions.searchOpenDialogs] if true, OPA will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [oOptions.visible] default: true - if set to false OPA will also look for not rendered and invisible controls.
@@ -164,7 +164,9 @@ sap.ui.define(['jquery.sap.global',
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
 				aMatchers,
-				fnOriginalSuccess = oOptions.success;
+				fnOriginalSuccess = oOptions.success,
+				aControls,
+				vResult;
 
 			oOptions.check = function () {
 				var vControlType = oOptions.controlType,
@@ -220,33 +222,46 @@ sap.ui.define(['jquery.sap.global',
 
 				aMatchers = this._checkMatchers(oOptions.matchers);
 
+				var iExpectedAmount;
 				if (aMatchers && aMatchers.length) {
 
 					if (!$.isArray(vControl)) {
-
-						if (!this._doesControlMatch(aMatchers, vControl)) {
-							jQuery.sap.log.debug("control was filtered out by the matchers - skipping the check");
-							return false;
-						}
-
+						iExpectedAmount = 1;
+						aControls = [vControl];
 					} else {
-
-						vControl = vControl.filter(function (oControl) {
-							return this._doesControlMatch(aMatchers, oControl);
-						}, this);
-
-						if (!vControl.length) {
-							jQuery.sap.log.debug("all controls were filtered out by the matchers - skipping the check");
-							return false;
-						}
+						aControls = vControl;
 					}
 
+					var aMatchedValues = [];
+					aControls.forEach(function (oControl) {
+						var vMatchResult =  this._doesValueMatch(aMatchers, oControl);
+						if (vMatchResult) {
+							if (vMatchResult === true) {
+								aMatchedValues.push(oControl);
+					} else {
+								// if matching result is a truthy value, then we pass this value as a result
+								aMatchedValues.push(vMatchResult);
+							}
+						}
+					}, this);
+
+					if (!aMatchedValues.length) {
+						jQuery.sap.log.debug("all results were filtered out by the matchers - skipping the check");
+							return false;
+						}
+
+					if (iExpectedAmount === 1) {
+						vResult = aMatchedValues[0];
+					} else {
+						vResult = aMatchedValues;
+					}
+
+				} else {
+					vResult = vControl;
 				}
 
 				if (fnOriginalCheck) {
-
-					return this._executeCheck(fnOriginalCheck, vControl);
-
+					return this._executeCheck(fnOriginalCheck, vResult);
 				}
 
 				//no check defined - continue
@@ -255,7 +270,7 @@ sap.ui.define(['jquery.sap.global',
 
 			if (fnOriginalSuccess) {
 				oOptions.success = function () {
-					fnOriginalSuccess.call(this, vControl);
+					fnOriginalSuccess.call(this, vResult);
 				};
 			}
 
@@ -400,13 +415,28 @@ sap.ui.define(['jquery.sap.global',
 		 */
 
 		/**
-		 * Checks if a single control matches all the matchers
+		 * Checks if a value matches all the matchers and returns result of matching
 		 * @private
 		 */
-		fnOpa5.prototype._doesControlMatch = function (aMatchers, oControl) {
-			return aMatchers.every(function (oMatcher) {
-				return oMatcher.isMatching(oControl);
+		fnOpa5.prototype._doesValueMatch = function (aMatchers, vValue) {
+			var vOriginalValue = vValue;
+			var bIsMatching = true;
+			jQuery.each(aMatchers, function (i, oMatcher) {
+				var vMatch = oMatcher.isMatching(vValue);
+				if (vMatch) {
+					if (vMatch !== true) {
+						vValue = vMatch;
+					}
+				} else {
+					bIsMatching = false;
+					return false;
+				}
 			});
+			if (bIsMatching) {
+				return (vOriginalValue === vValue) ? true : vValue;
+			} else {
+				return false;
+			}
 		};
 
 		/**
