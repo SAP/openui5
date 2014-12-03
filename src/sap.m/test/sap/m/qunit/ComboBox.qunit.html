@@ -3278,19 +3278,19 @@
 					valueState: "Error",
 					valueStateText: "Error Message",
 					items: [
-							new sap.ui.core.Item({
-								key: "DZ",
-								text: "Algeria"
-							}),
-							new sap.ui.core.Item({
-								key: "GER",
-								text: "Germany",
-							}),
-							new sap.ui.core.Item({
-								key: "CU",
-								text: "Cuba",
-							})
-						]
+						new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria"
+						}),
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany",
+						}),
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba",
+						})
+					]
 				});
 
 				// arrange
@@ -3313,8 +3313,7 @@
 				oErrorComboBox.getFocusDomRef().blur();
 				this.clock.tick(500);
 				ok(!jQuery.sap.domById("errorcombobox-message"), "no error message popup is closed when focus is out");
-				
-				
+
 				// cleanup
 				oErrorComboBox.destroy();
 
@@ -3728,6 +3727,11 @@
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-disabled"), oComboBox.getEnabled() ? "false" : "true");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "inline");
+					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-required"), "false");
 
 					// cleanup
 					oComboBox.destroy();
@@ -6652,6 +6656,76 @@
 				// assert
 				strictEqual(fnOnBeforeOpenSpy.callCount, 1, "onBeforeOpen() called exactly once");
 				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), "The ComboBox's input field must have the CSS class '" + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed'");
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-controls"), oComboBox.getList().getId(), 'the attribute "aria-controls" is set after the list is rendered');
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onAfterOpen                    */
+			/* ------------------------------ */
+
+			test("onAfterOpen", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
+				oComboBox.focus();
+
+				// act
+				oComboBox.open();
+				this.clock.tick(1000);
+
+				// assert
+				strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onAfterClose                   */
+			/* ------------------------------ */
+
+			test("onAfterClose", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnOnAfterCloseSpy = this.spy(sap.m.ComboBox.prototype, "onAfterClose");
+				oComboBox.focus();
+				oComboBox.open();
+
+				// act
+				oComboBox.close();
+				this.clock.tick(1000);
+
+				// assert
+				strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 
 				// cleanup
 				oComboBox.destroy();
@@ -6679,6 +6753,7 @@
 
 				// assert
 				strictEqual(fnOnBeforeCloseSpy.callCount, 1, "onBeforeClose() called exactly once");
+				strictEqual(oComboBox.$().attr("aria-controls"), undefined);
 
 				// cleanup
 				oComboBox.destroy();
