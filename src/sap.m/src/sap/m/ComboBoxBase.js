@@ -26,29 +26,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @alias sap.m.ComboBoxBase
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var ComboBoxBase = InputBase.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ { metadata : {
+		var ComboBoxBase = InputBase.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ { metadata: {
 
-			"abstract" : true,
-			library : "sap.m",
-			properties : {
+			"abstract": true,
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Defines the maximum width of the text field. This value can be provided in %, em, px… and all CSS units.
 				 */
-				maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: '100%'}
 			},
-			defaultAggregation : "items",
-			aggregations : {
+			defaultAggregation: "items",
+			aggregations: {
 
 				/**
 				 * Aggregation of items to be displayed.
 				 */
-				items : {type : "sap.ui.core.Item", multiple : true, singularName : "item", bindable : "bindable"}, 
+				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" },
 
 				/**
 				 * Internal aggregation to hold the inner picker pop-up.
 				 */
-				picker : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+				picker: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			}
 		}});
 
