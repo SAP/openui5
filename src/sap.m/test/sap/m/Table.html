@@ -50,7 +50,6 @@
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
-	oModel.setDefaultBindingMode("OneWay");
 	
 	var aModes = Object.keys(sap.m.ListMode).map(function(sMode) {
 		return new sap.ui.core.Item({
@@ -93,6 +92,7 @@
 		text : "Growing",
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
+			oModel.setDefaultBindingMode(oGrowing.getPressed() ? "OneWay" : "TwoWay"); 
 			oTable.bindItems("/modelData", oTemplate);
 		}
 	});
