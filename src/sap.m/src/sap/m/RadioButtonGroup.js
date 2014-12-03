@@ -44,11 +44,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			columns : {type : "int", group : "Appearance", defaultValue : 1},
 	
 			/**
-			 * Specifies whether the control is visible. Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Specifies whether the user can select the RadioButtonGroup. When the property is set to false, the control obtains visual styles different from its visual styles for the normal and the disabled state. Additionally the control is no longer interactive, but can receive focus.
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
