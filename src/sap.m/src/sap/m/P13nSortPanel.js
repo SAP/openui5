@@ -78,22 +78,17 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						/**
 						 * event raised when a Item was added
 						 */
-						addSortItem : {
-							parameters : {
-
-								/**
-								 * item added
-								 */
-								newItem : {
-									type : "sap.m.P13nSortItem"
-								}
-							}
-						},
+						addSortItem : {},
 
 						/**
 						 * remove a sort item
 						 */
-						removeSortItem : {}
+						removeSortItem : {},
+						
+						/**								 
+						 * update a sort item
+						 */
+						updateSortItem : {}						
 					}
 				}
 			});
@@ -299,31 +294,39 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					var sKey = oEvent.getParameter("key");
 					var iIndex = oEvent.getParameter("index");
 					
+					var oSortItemData = null;
+					if (oNewData) {
+						var oSortItemData = new sap.m.P13nSortItem({
+							key : sKey,
+							columnKey : oNewData.keyField,
+							operation : oNewData.operation
+						});
+					}
+
 					if (sOperation === "update") {
 						var oSortItem = that.getSortItems()[iIndex];
 						if (oSortItem) {
 							oSortItem.setColumnKey(oNewData.keyField);
 							oSortItem.setOperation(oNewData.operation);
-
-							// sap.m.MessageToast.show("update SortItem ---> " + sKey);
 						}
+						that.fireUpdateSortItem({
+							key : sKey,
+							index : iIndex,
+							sortItemData: oSortItemData
+						});	
 					}
 					if (sOperation === "add") {
 						that._bIgnoreBindCalls = true;
-						var oSortItem = new sap.m.P13nSortItem({
-							key : sKey,
-							columnKey : oNewData.keyField,
-							operation : oNewData.operation
-						});
-
 						that.fireAddSortItem({
+							key : sKey,
 							index : iIndex,
-							newItem : oSortItem
+							sortItemData: oSortItemData
 						});
 						that._bIgnoreBindCalls = false;
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveSortItem({
+							key : sKey,
 							index : iIndex
 						});
 					}

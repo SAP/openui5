@@ -80,21 +80,18 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						 */
 						addGroupItem : {
 							parameters : {
-
-								/**
-								 * item added
-								 */
-								newItem : {
-									type : "sap.m.P13nGroupItem"
-								}
 							}
 						},
 
 						/**
 						 * remove a group item
 						 */
-						removeGroupItem : {}
-					}
+						removeGroupItem : {},
+						
+						/**								 
+						 * update a group item
+						 */
+						updateGroupItem : {}					}
 				}
 			});
 
@@ -263,35 +260,41 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					var sKey = oEvent.getParameter("key");
 					var iIndex = oEvent.getParameter("index");
 					
+					var oGroupItemData = null;
+					if (oNewData) {
+						oGroupItemData = new sap.m.P13nGroupItem({
+							key : sKey,
+							columnKey : oNewData.keyField,
+							operation : oNewData.operation,
+							showIfGrouped : oNewData.showIfGrouped
+						});
+					}
+					
 					if (sOperation === "update") {
 						var oGroupItem = that.getGroupItems()[iIndex];
 						if (oGroupItem) {
 							oGroupItem.setColumnKey(oNewData.keyField);
 							oGroupItem.setOperation(oNewData.operation);
 							oGroupItem.setShowIfGrouped(oNewData.showIfGrouped);
-
-							// sap.m.MessageToast.show("update GroupItem ---> " + sKey);
 						}
+						that.fireUpdateGroupItem({
+							key : sKey,
+							index : iIndex,
+							groupItemData: oGroupItemData
+						});
 					}
 					if (sOperation === "add") {
 						that._bIgnoreAdd = true;
-						var oGroupItem = new sap.m.P13nGroupItem({
-							key : sKey,
-							columnKey : oNewData.keyField,
-							operation : oNewData.operation,
-							showIfGrouped : oNewData.showIfGrouped
-						});
-
 						that.fireAddGroupItem({
 							key : sKey,
 							index : iIndex,
-							newItem : oGroupItem
+							groupItemData : oGroupItemData
 						});
 						that._bIgnoreAdd = false;
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveGroupItem({
-							//key : sKey,
+							key : sKey,
 							index : iIndex
 						});
 					}
