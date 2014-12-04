@@ -1481,7 +1481,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 */
 	ListBase.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
 		if (oNavigationRoot) {
-			oItemNavigation.setItemDomRefs([].slice.call(oNavigationRoot.children));
+			var aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
+			oItemNavigation.setItemDomRefs(aNavigationItems);
 			oItemNavigation.setFocusedIndex(0);
 		}
 	};
