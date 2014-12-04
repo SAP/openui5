@@ -1,7 +1,7 @@
 {
 	"ColumnCollection":[
-		{"text" : "ProductId", "path" : "productId"},
-		{"text" : "Name", "path" : "name"},
+		{"text" : "ProductId", "path" : "productId", "visible" : true},
+		{"text" : "Name", "path" : "name", "visible" : true},
 		{"text" : "Category", "path" : "category"},
 		{"text" : "SupplierName", "path" : "supplierName"},
 		{"text" : "Description", "path" : "description"},

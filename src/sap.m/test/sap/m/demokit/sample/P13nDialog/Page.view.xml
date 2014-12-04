@@ -1,38 +1,13 @@
 <mvc:View height="100%" controllerName="sap.m.sample.P13nDialog.Page"
 	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<P13nDialog close="handleClose" reset="handleReset">
-		<panels>
-			<P13nColumnsPanel title="Columns" visible="true"
-				type="columns"
-				items="{
-                    path: '/ColumnCollection'
-                }">
-				<items>
-					<P13nItem columnKey="{path}" text="{text}" />
-				</items>
-			</P13nColumnsPanel>
-			<P13nSortPanel title="Sort" visible="true" type="sort"
-				containerQuer="true" layoutMode="Desktop"
-				items="{
-                    path: '/ColumnCollection'
-                }">
-				<P13nItem columnKey="{path}" text="{text}" />
-				<sortItems>
-					<P13nSortItem columnKey="name" operation="Ascending" />
-				</sortItems>
-			</P13nSortPanel>
-			<P13nFilterPanel title="Filter" visible="true" type="filter"
-				containerQuer="true" layoutMode="Desktop"
-				items="{
-                    path: '/ColumnCollection'
-                }">
-				<P13nItem columnKey="{path}" text="{text}" />
-				<filterItems>
-					<P13nFilterItem columnKey="name" operation="Contains"
-						value1="a" />
-				</filterItems>
-			</P13nFilterPanel>
-		</panels>
-	</P13nDialog>
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Button
+				text="Show Personalization Dialog"
+				press="onPersonalizationDialogPress" />			
+		</l:content>
+	</l:VerticalLayout>	
 </mvc:View>
