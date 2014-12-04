@@ -748,6 +748,61 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		return this;
 	};
 
+	FileUploader.prototype.sendFiles = function(aXhr, aFiles, iIndex) {
+
+		if (iIndex >= aFiles.length) {
+			return;
+		}
+
+		var that = this;
+		var oXhr = aXhr[iIndex];
+		var sFilename = aFiles[iIndex].name;
+		oXhr.onreadystatechange = function() {
+
+			var sResponse;
+			var sResponseRaw;
+			var mHeaders = {};
+			var sPlainHeader;
+			var aHeaderLines;
+			var iHeaderIdx;
+			var sReadyState;
+			sReadyState = oXhr.readyState;
+			var sStatus = oXhr.status;
+			if (oXhr.readyState == 4) {
+				//this check is needed, because (according to the xhr spec) the readyState is set to OPEN (4)
+				//as soon as the xhr is aborted. Only after the progress events are fired, the state is set to UNSENT (0)
+				if (oXhr.responseXML) {
+					sResponse = oXhr.responseXML.documentElement.textContent;
+				}
+				sResponseRaw = oXhr.response;
+
+				//Parse the http-header into a map
+				sPlainHeader = oXhr.getAllResponseHeaders();
+				if (sPlainHeader) {
+					aHeaderLines = sPlainHeader.split("\u000d\u000a");
+					for (var i = 0; i < aHeaderLines.length; i++) {
+						if (aHeaderLines[i]) {
+							iHeaderIdx = aHeaderLines[i].indexOf("\u003a\u0020");
+							mHeaders[aHeaderLines[i].substring(0, iHeaderIdx)] = aHeaderLines[i].substring(iHeaderIdx + 2);
+						}
+					}
+				}
+				that.fireUploadComplete({
+					"filename": sFilename,
+					"headers": mHeaders,
+					"response": sResponse,
+					"responseRaw": sResponseRaw,
+					"readyStateXHR": sReadyState,
+					"status": sStatus
+				});
+				iIndex++;
+				that.sendFiles(aXhr, aFiles, iIndex);
+			}
+			that._bUploading = false;
+		};
+		oXhr.send(aFiles[iIndex]);
+	};
+
 
 	/**
 	 * Starts the upload (as defined by uploadUrl)
@@ -761,44 +816,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (!this.getEnabled()) {
 			return;
 		}
-		var uploadForm = this.getDomRef("fu_form"),
-			that = this;
+		var uploadForm = this.getDomRef("fu_form");
+		var that = this;
 
 		try {
 			if (uploadForm) {
 				this._bUploading = true;
 				if (this.getSendXHR() && window.File) {
-					var oFiles = jQuery.sap.domById(this.getId() + "-fu").files;
-					if (oFiles.length > 0) {
-						//keep a reference on the current upload xhr
-						var xhr = this._uploadXHR = new window.XMLHttpRequest();
-						xhr.upload.addEventListener("progress", function(oProgressEvent) {
+					var aFiles = jQuery.sap.domById(this.getId() + "-fu").files;
+					if (aFiles.length > 0) {
+						if (this.getUseMultipart()) {
+							//one xhr request for all files
+							var iFiles = 1;
+						} else {
+							//several xhr requests for every file
+							var iFiles = aFiles.length;
+						}
+						var aXhr = [];
+						var fnProgressListener = function(oProgressEvent) {
 							var oProgressData = {
 								lengthComputable: !!oProgressEvent.lengthComputable,
 								loaded: oProgressEvent.loaded,
 								total: oProgressEvent.total
 							};
 							that.fireUploadProgress(oProgressData);
-						});
-						//relay the abort event, if the xhr was aborted manually
-						xhr.upload.addEventListener("abort", function(oAbortEvent){
+						};
+						var fnAbordListerner = function(oAbortEvent) {
 							that.fireUploadAborted();
-						});
-
-						xhr.open("POST", this.getUploadUrl(), true);
-						if (this.getHeaderParameters()) {
-							var oHeaderParams = this.getHeaderParameters();
-							for (var i = 0; i < oHeaderParams.length; i++) {
-								var sHeader = oHeaderParams[i].getName();
-								var sValue = oHeaderParams[i].getValue();
-								xhr.setRequestHeader(sHeader, sValue);
+						};
+						for (var j = 0; j < iFiles; j++) {
+							//keep a reference on the current upload xhr
+							aXhr[j] = this._uploadXHR = new window.XMLHttpRequest();
+							aXhr[j].upload.addEventListener("progress", fnProgressListener);
+							//relay the abort event, if the xhr was aborted manually
+							aXhr[j].upload.addEventListener("abort", fnAbordListerner);
+							aXhr[j].open("POST", this.getUploadUrl(), true);
+							if (this.getHeaderParameters()) {
+								var oHeaderParams = this.getHeaderParameters();
+								for (var i = 0; i < oHeaderParams.length; i++) {
+									var sHeader = oHeaderParams[i].getName();
+									var sValue = oHeaderParams[i].getValue();
+									aXhr[j].setRequestHeader(sHeader, sValue);
+								}
 							}
 						}
 						if (this.getUseMultipart()) {
 							var formData = new window.FormData();
 							var name = jQuery.sap.domById(this.getId() + "-fu").name;
-							for (var i = 0; i < oFiles.length; i++) {
-								formData.append(name, oFiles[i]);
+							for (var i = 0; i < aFiles.length; i++) {
+								formData.append(name, aFiles[i]);
 							}
 							formData.append("_charset_", "UTF-8");
 							var data = jQuery.sap.domById(this.getId() + "-fu_data").name;
@@ -816,49 +882,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 									formData.append(sName, sValue);
 								}
 							}
-							xhr.send(formData);
+							this.sendFiles(aXhr, [formData], 0);
 						} else {
-							xhr.send(oFiles[0]);
+							this.sendFiles(aXhr, aFiles, 0);
 						}
-
-						xhr.onreadystatechange = function() {
-							var sResponse;
-							var sResponseRaw;
-							var mHeaders = {};
-							var sPlainHeader;
-							var aHeaderLines;
-							var iHeaderIdx;
-							var sReadyState = xhr.readyState;
-							var sStatus = xhr.status;
-							if (xhr.readyState == 4) {
-								//this check is needed, because (according to the xhr spec) the readyState is set to OPEN (4)
-								//as soon as the xhr is aborted. Only after the progress events are fired, the state is set to UNSENT (0)
-								if (xhr.responseXML) {
-									sResponse = xhr.responseXML.documentElement.textContent;
-								}
-								sResponseRaw = xhr.response;
-
-								//Parse the http-header into a map
-								sPlainHeader = xhr.getAllResponseHeaders();
-								if (sPlainHeader) {
-									aHeaderLines = sPlainHeader.split("\u000d\u000a");
-									for (var i = 0; i < aHeaderLines.length; i++) {
-										if (aHeaderLines[i]) {
-											iHeaderIdx = aHeaderLines[i].indexOf("\u003a\u0020");
-											mHeaders[aHeaderLines[i].substring(0, iHeaderIdx)] = aHeaderLines[i].substring(iHeaderIdx + 2);
-										}
-									}
-								}
-								that.fireUploadComplete({
-									"headers": mHeaders,
-									"response": sResponse,
-									"responseRaw": sResponseRaw,
-									"readyStateXHR": sReadyState,
-									"status": sStatus
-								});
-							}
-							that._bUploading = false;
-						};
 						this._bUploading = false;
 					}
 				} else {
@@ -960,15 +987,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			var sFileString = '';
 
 			if (window.File) {
-				var oFiles = oEvent.target.files;
+				var aFiles = oEvent.target.files;
 
-				for (var i = 0; i < oFiles.length; i++) {
-					var sName = oFiles[i].name;
-					var sType = oFiles[i].type;
+				for (var i = 0; i < aFiles.length; i++) {
+					var sName = aFiles[i].name;
+					var sType = aFiles[i].type;
 					if (!sType) {
 						sType = "unknown";
 					}
-					var fSize = ((oFiles[i].size / 1024) / 1024);
+					var fSize = ((aFiles[i].size / 1024) / 1024);
 					if (fMaxSize && (fSize > fMaxSize)) {
 						jQuery.sap.log.info("File: " + sName + " is of size " + fSize + " MB which exceeds the file size limit of " + fMaxSize + " MB.");
 						this.fireFileSizeExceed({
@@ -1020,7 +1047,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 							return;
 						}
 					}
-					sFileString = sFileString + '"' + oFiles[i].name + '" ';
+					sFileString = sFileString + '"' + aFiles[i].name + '" ';
 				}
 				if (sFileString) {
 					this.fireFileAllowed();
