@@ -148,17 +148,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 		Switch._getCssParameter = function(sParameter) {
 			var fnGetCssParameter = Parameters.get;
-
 			return fnGetCssParameter(sParameter) || fnGetCssParameter(sParameter + "-" + sap.ui.Device.os.name.toLowerCase());
 		};
 
-		(function() {
-			var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
-				sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
+		var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
+			sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
 
-			// the milliseconds takes the transition from one state to another
-			Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
-		}());
+		// the milliseconds takes the transition from one state to another
+		Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
 
 		// the position of the inner HTML element whether the switch is "ON"
 		Switch._ONPOSITION = Number(Switch._getCssParameter("sapMSwitch-ONPOSITION"));
