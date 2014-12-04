@@ -1262,7 +1262,41 @@
 			oList.destroy();
 		});
 		
-		
+		test("ListItem visibility change should not rerender the list", function() {
+			var oListItem1 = new sap.m.StandardListItem({
+					title: "Title1"
+				}),
+				oListItem2 = new sap.m.StandardListItem({
+					title: "Title2"
+				}),
+				oList = new sap.m.List({
+					items : [oListItem1, oListItem2]
+				});
+			
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
+			
+			oListItem1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			
+			oListItem2.focus();
+			strictEqual(oList.getItemNavigation().getItemDomRefs().length, 1, "Invisible items are not in the item navigation.");
+			
+			oListItem1.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			
+			oListItem1.focus();
+			strictEqual(oList.getItemNavigation().getItemDomRefs().length, 2, "Only visible items are in the item navigation.");
+			
+			oListItem1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(fnRenderSpy.callCount, 0, "The list should not be rerendered with item visibility changes");
+			
+			oList.destroy();
+		});
 
 </script>
 

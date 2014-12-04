@@ -41,6 +41,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oControl.getBackgroundDesign) {
 			rm.addClass("sapMListBG" + oControl.getBackgroundDesign());
 		}
+		
+		// tooltip
+		var sTooltip = oControl.getTooltip_AsString();
+		if (sTooltip) {
+			rm.writeAttributeEscaped("title", sTooltip);
+		}
 	
 		// run hook method
 		this.renderContainerAttributes(rm, oControl);

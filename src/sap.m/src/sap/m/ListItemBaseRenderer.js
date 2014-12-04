@@ -24,9 +24,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 */
 	ListItemBaseRenderer.render = function(rm, oLI) {
 	
-		// return immediately if control is invisible
+		// render invisible placeholder for render manager
 		if (!oLI.getVisible()) {
-			return;
+			this.renderInvisible(rm, oLI);
+			return false;
 		}
 	
 		// define behavior: list or table
@@ -408,6 +409,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		if (hasPopin) {
 			this.renderPopin(rm, oLI, oParent);
 		}
+	};
+	
+	/**
+	 * Writes necessary invisible placeholder HTML attributes and styles.
+	 * TODO: Why this functionality does not come from RenderManager
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 */
+	ListItemBaseRenderer.writeInvisiblePlaceholderData = function(rm, oLI) {
+		var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oLI.getId();
+		var sPlaceholderHtml = ' ' +
+			'id="' + sPlaceholderId + '" ' + 
+			'data-sap-ui="' + sPlaceholderId + '" ' + 
+			'style="display: none;"' + 
+			'aria-hidden="true"';
+		
+		rm.write(sPlaceholderHtml);
+	};
+	
+	/**
+	 * This hook is called to render invisible placeholder for the render manager
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 */
+	ListItemBaseRenderer.renderInvisible = function(rm, oLI) {
+		rm.write("<li");
+		this.writeInvisiblePlaceholderData(rm, oLI);
+		rm.write("></li>");
 	};
 
 	return ListItemBaseRenderer;
