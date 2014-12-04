@@ -817,7 +817,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			// Add/Insert new table item to table
 			if (oColumnsItem) {
 				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
-				oNewTableItem.setVisible(oColumnsItem.getVisible());
+				oNewTableItem.setSelected(oColumnsItem.getVisible());
 
 				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
 				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
@@ -850,7 +850,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			// Add/Insert new table item to table
 			if (oColumnsItem) {
 				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
-				oNewTableItem.setVisible(oColumnsItem.getVisible());
+				oNewTableItem.setSelected(oColumnsItem.getVisible());
 
 				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
 				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
@@ -858,7 +858,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
 				// No columnsItems exist for current item -> INSERT the new item at iIndex
-				this._oTable.insertItem(iIndex, oNewTableItem);
+				this._oTable.insertItem(oNewTableItem, iIndex);
 			}
 		}
 	};
