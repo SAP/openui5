@@ -22,6 +22,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.NumberFormat.getIntegerInstance NumberFormat.getIntegerInstance}
+	 * @param {object} [oFormatOptions.source] additional set of format options to be used if the property in the model is not of type string and needs formatting as well. 
+	 * 										   In case an empty object is given, the default is disabled grouping and a dot as decimal separator. 
 	 * @param {object} [oConstraints] value constraints. 
 	 * @param {int} [oConstraints.minimum] smallest value allowed for this type  
 	 * @param {int} [oConstraints.maximum] largest value allowed for this type  
@@ -39,13 +41,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 */
-	Integer.prototype.formatValue = function(iValue, sInternalType) {
-		if (iValue == undefined || iValue == null) {
+	Integer.prototype.formatValue = function(vValue, sInternalType) {
+		var iValue = vValue;
+		if (vValue == undefined || vValue == null) {
 			return null;
+		}
+		if (this.oInputFormat) {
+			iValue = this.oInputFormat.parse(vValue);
+			if (iValue == null) {
+				throw new sap.ui.model.FormatException("Cannot format float: " + vValue + " has the wrong format");
+			}
 		}
 		switch (sInternalType) {
 			case "string":
-				return this.oFormat.format(iValue);
+				return this.oOutputFormat.format(iValue);
 			case "int":
 			case "float":
 				return iValue;
@@ -57,21 +66,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
-	Integer.prototype.parseValue = function(oValue, sInternalType) {
+	Integer.prototype.parseValue = function(vValue, sInternalType) {
 		var iResult;
 		switch (sInternalType) {
-			case "float":
 			case "string":
-				iResult = this.oFormat.parse(String(oValue));
+				iResult = this.oOutputFormat.parse(String(vValue));
 				if (isNaN(iResult)) {
-					throw new sap.ui.model.ParseException(oValue + " is not a valid Integer value");
+					throw new sap.ui.model.ParseException(vValue + " is not a valid Integer value");
 				}
-				return iResult;
+				break;
+			case "float":
+				iResult = Math.floor(vValue);
+				if (iResult != vValue) {
+					throw new sap.ui.model.ParseException(vValue + " is not a valid Integer value");
+				}
+				break;
 			case "int":
-				return oValue;
+				iResult = vValue;
+				break;
 			default:
 				throw new sap.ui.model.ParseException("Don't know how to parse Integer from " + sInternalType);
 		}
+		if (this.oInputFormat) {
+			iResult = this.oInputFormat.format(iResult);
+		}				
+		return iResult;
 	};
 	
 	/**
@@ -104,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	Integer.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
-		this._handleLocalizationChange();
+		this._createFormats();
 	};
 	
 	/**
@@ -112,9 +131,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @private
 	 */
 	Integer.prototype._handleLocalizationChange = function() {
-		this.oFormat = NumberFormat.getIntegerInstance(this.oFormatOptions);
+		this._createFormats();
 	};
 	
+	/**
+	 * Create formatters used by this type
+	 * @private
+	 */
+	Integer.prototype._createFormats = function() {
+		var oSourceOptions = this.oFormatOptions.source;
+		this.oOutputFormat = NumberFormat.getIntegerInstance(this.oFormatOptions);
+		if (oSourceOptions) {
+			if (jQuery.isEmptyObject(oSourceOptions)) {
+				oSourceOptions = {
+					groupingEnabled: false,
+					groupingSeparator: ",",
+					decimalSeparator: "."
+				};
+			}
+			this.oInputFormat = NumberFormat.getIntegerInstance(oSourceOptions);
+		}
+	};
 
 	return Integer;
 
