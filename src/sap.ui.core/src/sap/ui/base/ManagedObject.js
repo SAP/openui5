@@ -120,6 +120,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			// data binding
 			this.oModels = {};
 			this.oBindingContexts = {};
+			this.mElementBindingContexts = {};
 			this.mBindingInfos = {};
 			this.sBindingPath = null;
 			this.mBindingParameters = null;
@@ -1676,7 +1677,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		if (oldBoundObject && oldBoundObject.binding) {
 			oldBoundObject.binding.detachChange(oldBoundObject.fChangeHandler);
 			oldBoundObject.binding.detachEvents(oldBoundObject.events);
+			//clear elementContext
+			delete this.mElementBindingContexts[sModelName];
 		}
+		
 		this.mBoundObjects[sModelName] = boundObject;
 
 		// if the models are already available, create the binding
@@ -1693,21 +1697,19 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 */
 	ManagedObject.prototype._bindObject = function(sModelName, oBoundObject) {
 		var oBinding,
-			oParentContext,
+			oContext,
 			oModel,
 			that = this;
 
 		var fChangeHandler = function(oEvent) {
-			that.setBindingContext(oBinding.getBoundContext(), sModelName);
+			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
 		};
 
 		oModel = this.getModel(sModelName);
 
-		if (this.oParent && oModel == this.oParent.getModel(sModelName)) {
-			oParentContext = this.oParent.getBindingContext(sModelName);
-		}
+		oContext = this.getBindingContext(sModelName);
 
-		oBinding = oModel.bindContext(oBoundObject.sBindingPath, oParentContext, oBoundObject.mBindingParameters);
+		oBinding = oModel.bindContext(oBoundObject.sBindingPath, oContext, oBoundObject.mBindingParameters);
 		oBinding.attachChange(fChangeHandler);
 		oBoundObject.binding = oBinding;
 		oBoundObject.fChangeHandler = fChangeHandler;
@@ -1753,7 +1755,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 */
 	ManagedObject.prototype.unbindObject = function(sModelName) {
-		//TODO detach changerHandler
 		var oBoundObject = this.mBoundObjects[sModelName];
 		if (oBoundObject) {
 			if (oBoundObject.binding) {
@@ -1761,7 +1762,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oBoundObject.binding.detachEvents(oBoundObject.events);
 			}
 			delete this.mBoundObjects[sModelName];
-			delete this.oBindingContexts[sModelName];
+			delete this.mElementBindingContexts[sModelName];
 			this.updateBindingContext(false, false, sModelName);
 		}
 		return this;
@@ -2525,12 +2526,27 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
+			this.updateBindingContext(false, true, sModelName);
+			this.propagateProperties(sModelName);
+		}
+		return this;
+	};
+	
+	/**
+	 * @private
+	 */
+	ManagedObject.prototype.setElementBindingContext = function(oContext, sModelName){
+		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
+		var oOldContext = this.mElementBindingContexts[sModelName];
+
+		if (oOldContext !== oContext) {
+			this.mElementBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(true, true, sModelName);
 			this.propagateProperties(sModelName);
 		}
 		return this;
 	};
-
+	
 	/**
 	 * Update the binding context in this object and all aggregated children
 	 * @private
@@ -2539,7 +2555,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		var oModel,
 			oModelNames = {},
-			oParentContext,
+			oContext,
 			oBoundObject,
 			that = this;
 
@@ -2569,12 +2585,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					if (!oBoundObject.binding) {
 						this._bindObject(sModelName, oBoundObject);
 					} else {
-						oParentContext = null;
-						if (this.oParent && oModel == this.oParent.getModel(sModelName)) {
-							oParentContext = this.oParent.getBindingContext(sModelName);
-						}
-						if (oParentContext !== oBoundObject.binding.getContext()) {
-							oBoundObject.binding.setContext(oParentContext);
+						oContext = this.getBindingContext(sModelName);
+						if (oContext !== oBoundObject.binding.getContext()) {
+							oBoundObject.binding.setContext(oContext);
 						}
 					}
 					continue;
@@ -2644,8 +2657,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
 		var oModel = this.getModel(sModelName);
-
-		if (this.oBindingContexts[sModelName]) {
+		
+		if (this.mElementBindingContexts[sModelName]) {
+			return this.mElementBindingContexts[sModelName];
+		} else if (this.oBindingContexts[sModelName]) {
 			return this.oBindingContexts[sModelName];
 		} else if (oModel && this.oParent && this.oParent.getModel(sModelName) && oModel != this.oParent.getModel(sModelName)) {
 			return undefined;
@@ -2755,20 +2770,21 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 */
 	ManagedObject.prototype._getPropertiesToPropagate = function() {
 		var bNoOwnModels = jQuery.isEmptyObject(this.oModels),
-			bNoOwnContexts = jQuery.isEmptyObject(this.oBindingContexts);
+			bNoOwnContexts = jQuery.isEmptyObject(this.oBindingContexts),
+			bNoOwnElementContexts = jQuery.isEmptyObject(this.mElementBindingContexts);
 
-		function merge(empty,o1,o2) {
-			return empty ? o1 : jQuery.extend({}, o1, o2);
+		function merge(empty,o1,o2,o3) {
+			return empty ? o1 : jQuery.extend({}, o1, o2, o3);
 		}
 
-		if (bNoOwnContexts && bNoOwnModels) {
+		if (bNoOwnContexts && bNoOwnModels && bNoOwnElementContexts) {
 			//propagate the existing container
 			return this.oPropagatedProperties;
 		} else {
 			//merge propagated and own properties
 			return {
 					oModels : merge(bNoOwnModels, this.oPropagatedProperties.oModels, this.oModels),
-					oBindingContexts : merge(bNoOwnContexts, this.oPropagatedProperties.oBindingContexts, this.oBindingContexts)
+					oBindingContexts : merge((bNoOwnContexts && bNoOwnElementContexts), this.oPropagatedProperties.oBindingContexts, this.oBindingContexts, this.mElementBindingContexts)
 			};
 		}
 	};

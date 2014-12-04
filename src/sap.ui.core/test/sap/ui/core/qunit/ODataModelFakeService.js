@@ -58,6 +58,11 @@ xhr.onCreate = function(request) {
 				request.respond(200, oXMLHeaders, sCategoriesXML)
 			}, responseDelay); 
 		}
+		if (request.url == baseURL + "Products(2)/Category") {
+			_setTimeout(function() {
+				request.respond(200, oXMLHeaders, sCategories2XML)
+			}, responseDelay); 
+		}
 		if (request.url == baseURL + "Categories?$skip=0&$top=100&$inlinecount=allpages") {
 			_setTimeout(function() {
 				request.respond(200, oXMLHeaders, sCategoriesXML)
@@ -5314,6 +5319,8 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 		"</entry>\n" + 
 		"</feed>";
 		
+		var sProductsCategory = 
+		{"odata.metadata":"http://veui5infra.dhcp.wdf.sap.corp:8080/databinding/proxy/http/services.odata.org/Northwind/Northwind.svc/$metadata#Categories/@Element","CategoryID":1,"CategoryName":"Beverages","Description":"Soft drinks, coffees, teas, beers, and ales","Picture":""}
 		var sRegionsJSON = "{\n" + 
 		"\"d\" : {\n" + 
 		"\"results\": [\n" + 

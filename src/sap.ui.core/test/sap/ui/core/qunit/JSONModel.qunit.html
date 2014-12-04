@@ -40,7 +40,15 @@
    		            {firstName:"Steave", lastName:"Ander"},
    		            {firstName:"Michael", lastName:"Spring"},
    		            {firstName:"Marc", lastName:"Green"},
-   		            {firstName:"Frank", lastName:"Wallace"}]
+   		            {firstName:"Frank", lastName:"Wallace"}],
+   		additionalData:{
+   			level1:{
+   				text:"level1",
+   				level2: {
+   					text:"level2"
+   				}
+   			}
+   		}
 	};
 	
 	var testdataChild = {
@@ -478,9 +486,47 @@
 		ok(testModel.bDestroyed, "Model should be destroyed");
 		equal(spy.callCount, 1, "number of requests should be still 1");
 		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
-
 	});
-
+	
+	test("bind Element", function() {
+		var oContext;
+		oModel.createBindingContext("/additionalData", null, function(context){
+			oContext = context;
+		});
+		var oLabel = new sap.ui.commons.Label("myLabel2");
+		oLabel.setText("testText");
+		oLabel.placeAt("target1");
+		oLabel.setBindingContext(oContext);
+		oLabel.bindElement("level1");
+		equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
+		oLabel.bindProperty("text","text");
+		equal(oLabel.getText(), "level1", "text value from model");
+		oLabel.bindElement("level1/level2");
+		equal(oLabel.getText(), "level2", "text value from model");
+		oLabel.unbindElement();
+		equal(oLabel.getText(), "", "text value from model");
+		oLabel.destroy();
+	});
+	
+	test("bind Element", function() {
+		var oContext;
+		oModel.createBindingContext("/additionalData", null, function(context){
+			oContext = context;
+		});
+		var oLabel = new sap.ui.commons.Label("myLabel2");
+		oLabel.setText("testText");
+		oLabel.placeAt("target1");
+		oLabel.bindElement("level1");
+		oLabel.setBindingContext(oContext);
+		equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
+		oLabel.bindProperty("text","text");
+		equal(oLabel.getText(), "level1", "text value from model");
+		oLabel.bindElement("level1/level2");
+		equal(oLabel.getText(), "level2", "text value from model");
+		oLabel.unbindElement();
+		equal(oLabel.getText(), "", "text value from model");
+		oLabel.destroy();
+	});
 	</script>
 
 </head>
