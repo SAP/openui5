@@ -25,16 +25,18 @@
 			});
 		};
 
+		var iEvent = 0;
+
 		function handleChange(oEvent) {
 			var oDRS = oEvent.oSource;
 			var sFrom = oEvent.getParameter("from");
 			var sTo = oEvent.getParameter("to");
 			var bValid = oEvent.getParameter("valid");
 
-			this._iEvent++;
+			iEvent++;
 
 			var oText = sap.ui.getCore().byId("TextEvent");
-			oText.setText("Id: " + oEvent.oSource.getId() + "\nFrom: " + sFrom + "\nTo: " + sTo);
+			oText.setText("Event " + iEvent + "\nId: " + oEvent.oSource.getId() + "\nFrom: " + sFrom + "\nTo: " + sTo + "\nvalid: " + bValid);
 			if (bValid) {
 				oDRS.setValueState(sap.ui.core.ValueState.None);
 			} else {
