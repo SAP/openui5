@@ -222,7 +222,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					 */
 					status : {type : "string"}
 				}
-			}
+			},
+			/**
+			 * The event is triggered as soon as the upload request was terminated by the user.
+			 * @since 1.26.2
+			 */
+			uploadTerminated : {}
 		}
 	}});
 
@@ -238,6 +243,90 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {});
 		this._oList.addStyleClass("sapMUCList");
+	};
+
+	/* =========================================================== */
+	/* redefinition of setters methods                             */
+	/* =========================================================== */
+
+	sap.m.UploadCollection.prototype.setFileType = function(aFileTypes) {
+		this.setProperty("fileType", aFileTypes);
+		if (this._getFileUploader().getFileType() !== aFileTypes) {
+			this._getFileUploader().setFileType(aFileTypes);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setMaximumFilenameLength = function(iMaximumFilenameLength) {
+		this.setProperty("maximumFilenameLength", iMaximumFilenameLength);
+		if (this._getFileUploader().getMaximumFilenameLength() !== iMaximumFilenameLength) {
+			this._getFileUploader().setMaximumFilenameLength(iMaximumFilenameLength);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setMaximumFileSize = function(iMaximumFileSize) {
+		this.setProperty("maximumFileSize", iMaximumFileSize);
+		if (this._getFileUploader().getMaximumFileSize() !== iMaximumFileSize) {
+			this._getFileUploader().setMaximumFileSize(iMaximumFileSize);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setMimeType = function(aMimeTypes) {
+		this.setProperty("mimeType", aMimeTypes);
+		if (this._getFileUploader().getMimeType() !== aMimeTypes) {
+			this._getFileUploader().setMimeType(aMimeTypes);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setMultiple = function(bMultiple) {
+		this.setProperty("multiple", bMultiple);
+		if (this._getFileUploader().getMultiple() !== bMultiple) {
+			this._getFileUploader().setMultiple(bMultiple);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setNoDataText = function(sNoDataText) {
+		this.setProperty("noDataText", sNoDataText);
+		if (this._oList.getNoDataText() !== sNoDataText) {
+			this._oList.setNoDataText(sNoDataText);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setSameFilenameAllowed = function(bSameFilenameAllowed) {
+		this.setProperty("sameFilenameAllowed", bSameFilenameAllowed);
+		if (this._getFileUploader().getSameFilenameAllowed() !== bSameFilenameAllowed) {
+			this._getFileUploader().setSameFilenameAllowed(bSameFilenameAllowed);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setShowSeparators = function(bShowSeparators) {
+		this.setProperty("showSeparators", bShowSeparators);
+		if (this._oList.getShowSeparators() !== bShowSeparators) {
+			this._oList.setShowSeparators(bShowSeparators);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setUploadEnabled = function(bUploadEnabled) {
+		this.setProperty("uploadEnabled", bUploadEnabled);
+		if (this._getFileUploader().getEnabled() !== bUploadEnabled) {
+			this._getFileUploader().setEnabled(bUploadEnabled);
+		}
+		return this;
+	};
+
+	sap.m.UploadCollection.prototype.setUploadUrl = function(sUploadUrl) {
+		this.setProperty("uploadUrl", sUploadUrl);
+		if (this._getFileUploader().getUploadUrl() !== sUploadUrl) {
+			this._getFileUploader().setUploadUrl(sUploadUrl);
+		}
+		return this;
 	};
 
 	/* =========================================================== */
@@ -269,50 +358,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		this.oHeaderToolbar.addStyleClass("sapMUCListHeader");
 
-//		forward settings of the UploadCollection to the FileUploader
-		//UploadUrl
-		if (this.getUploadUrl() != this._oFileUploader.getUploadUrl()) {
-			this._oFileUploader.setProperty("uploadUrl", this.getUploadUrl(), true);
-		}
-		//Enabled
-		if (this.sErrorState != "Error") {
+		// enable/disable FileUploader according to error state 
+		if (this.sErrorState !== "Error") {
 			if (this.getUploadEnabled() != this._oFileUploader.getEnabled()) {
-				this._oFileUploader.setProperty("enabled", this.getUploadEnabled(), true);
+				this._oFileUploader.setEnabled(this.getUploadEnabled());
 			}
 		} else {
-			this._oFileUploader.setProperty("enabled", false, true);
-		}
-		//FileType
-		if (this.getFileType() != this._oFileUploader.getFileType()) {
-			this._oFileUploader.setProperty("fileType", this.getFileType(), true);
-		}
-		//MaximumFileNameLength
-		if (this.getMaximumFilenameLength() != this._oFileUploader.getMaximumFilenameLength()) {
-			this._oFileUploader.setProperty("maximumFilenameLength", this.getMaximumFilenameLength(), true);
-		}
-		//MaximumFileSize
-		if (this.getMaximumFileSize() != this._oFileUploader.getMaximumFileSize()) {
-			this._oFileUploader.setProperty("maximumFileSize", this.getMaximumFileSize(), true);
-		}
-		//MimeType
-		if (this.getMimeType() != this._oFileUploader.getMimeType()) {
-			this._oFileUploader.setProperty("mimeType", this.getMimeType(), true);
-		}
-		//Multiple
-		if (this.getMultiple() != this._oFileUploader.getMultiple()) {
-			this._oFileUploader.setProperty("multiple", this.getMultiple(), true);
-		}
-		//SameFilenameAllowed
-		if (this.getSameFilenameAllowed() != this._oFileUploader.getSameFilenameAllowed()) {
-			this._oFileUploader.setProperty("sameFilenameAllowed", this.getSameFilenameAllowed(), true);
+			this._oFileUploader.setEnabled(false);
 		}
 
 		//prepare the list with list items
 		this._clearList();
 		this._fillList(this.aItems);
-		this._oList.setProperty("noDataText", sNoDataText, true);
 		this._oList.setHeaderToolbar(this.oHeaderToolbar);
-		this._oList.setProperty("showSeparators", this.getShowSeparators(), true);
 	};
 
 	/**
@@ -909,6 +967,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._onChange = function(oEvent) {
 		if (oEvent) {
 			var that = this;
+			var aUploadedFiles = this._getUploadedFilesFromUploaderEvent(oEvent);
+			//sometimes onChange is called if no data was selected
+			if (aUploadedFiles == "") {
+				return;
+			}
 			this._oFileUploader.removeAllHeaderParameters();
 			this._oFileUploader.removeAllParameters();
 			
@@ -1006,7 +1069,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadTerminated = function(oEvent) {
-		// TODO not implemented
+		for (var i = this.aItems.length - 1; i >= 0 ; i--) {
+			if (this.aItems[i]._status === "Uploading") {
+				this.aItems.splice(i, 1);
+				this.removeItem(i);
+			}
+		}
+		this.fireUploadTerminated();
 	};
 
 	/**
@@ -1266,7 +1335,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
 				break;
 			case "-cancelButton" :
-				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, oContext.editModeItem, true);
+				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, oContext.editModeItem);
 				break;
 			default :
 				return;
@@ -1284,9 +1353,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			var o$Obj = jQuery.sap.byId(oEvent.target.id);
 			var o$DeleteButton = o$Obj.find("[id$='-deleteButton']");
 			var oDeleteButton = sap.ui.getCore().byId(o$DeleteButton[0].id);
-			if (oDeleteButton.getEnabled()) {
 				oDeleteButton.firePress();
-			}
 		}
 	};
 
@@ -1361,7 +1428,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (oContext.getMultiple() == true && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
 			sStringOfFilenames = sStringOfFilenames.substring(1, sStringOfFilenames.length - 2);
 		}
-		//return object is an array!
 		return sStringOfFilenames.split(/\" "/);
 	};
 
