@@ -15,3 +15,6 @@
 .sapMScrollContV .sapMScrollContScroll {
 	display: block; /* when there is only vertical scrolling, the whole available width should be consumed */
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMScrollCont", ~"> .sapMScrollContScroll");

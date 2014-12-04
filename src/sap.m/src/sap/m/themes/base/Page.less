@@ -89,3 +89,6 @@ html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"]:not(.sap-tablet){
 	/* header has to be on top of the Scroll container */
 	z-index : 1;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPage", ~"> section");

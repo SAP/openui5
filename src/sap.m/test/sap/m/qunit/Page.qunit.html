@@ -227,6 +227,40 @@
 					equal(getScrollPos(), -100, "Page 2 should be scrolled to position 100");
 				});
 
+				test("Container Padding Classes", function () {
+					// System under Test + Act
+					var oContainer = new sap.m.Page(),
+						sContentSelector = "section",
+						sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
+						$container,
+						$containerContent;
+
+					// Act
+					oContainer.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					oContainer.addStyleClass("sapUiNoContentPadding");
+					$containerContent = oContainer.$().find(sContentSelector);
+
+					// Assert
+					strictEqual($containerContent.css("padding"), "0px", "The container has no content padding when class \"sapUiNoContentPadding\" is set");
+
+					// Act
+					oContainer.removeStyleClass("sapUiNoContentPadding");
+					oContainer.addStyleClass("sapUiContentPadding");
+
+					// Assert
+					strictEqual($containerContent.css("padding"), "16px", "The container has 1rem content padding when class \"sapUiContentPadding\" is set");
+
+					// Act
+					oContainer.removeStyleClass("sapUiContentPadding");
+					oContainer.addStyleClass("sapUiResponsiveContentPadding");
+
+					// Assert
+					strictEqual($containerContent.css("padding"), sResponsiveSize, "The container has " + sResponsiveSize + " content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+
+					// Cleanup
+					oContainer.destroy();
+				});
 			} // end of scrolling test "if" which filters out IE8
 		</script>
 
