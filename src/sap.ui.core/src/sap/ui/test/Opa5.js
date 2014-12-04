@@ -151,7 +151,6 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked.
 		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
 		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is qunit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
-		 * @alias sap.ui.test.Opa5#waitFor
 		 * @function
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
