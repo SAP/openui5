@@ -41,6 +41,8 @@
 			<core:Title text="sap.ui.model.odata.type.String" />
 			<Label text="maxLength: 10"/>
 			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {nullable: false}}"/>
 		</form:SimpleForm>
 	</VBox>
 </mvc:View>
