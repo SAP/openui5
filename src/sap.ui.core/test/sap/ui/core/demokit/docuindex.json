@@ -36,7 +36,6 @@
 				"category" : "Display",
 				"since" : "1.26",
 				"samples" : [
-					"sap.ui.core.sample.ViewTemplate.constants",
 					"sap.ui.core.sample.ViewTemplate.types",
 					"sap.ui.core.sample.ViewTemplate.scenario"
 				]
@@ -87,11 +86,6 @@
 				"id": "sap.ui.core.sample.Icon",
 				"name": "Icon",
 				"description": "Built with an embedded font, icons scale well, and can be altered with CSS. They can also fire a press event. See the Icon Explorer for more icons."
-			},
-			{
-				"id": "sap.ui.core.sample.ViewTemplate.constants",
-				"name": "XMLView Templating: constant expressions",
-				"description": "Simple example for XML View Templating with OData v4 constant expressions"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
