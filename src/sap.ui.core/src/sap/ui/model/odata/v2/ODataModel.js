@@ -11,8 +11,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-		function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI1, datajs) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/OperationMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
+		function(jQuery, Model, ODataUtils, CountMode, OperationMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI1, datajs) {
 	"use strict";
 
 
@@ -40,6 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} [mParameters.metadataUrlParams] map of URL parameters for metadata requests - only attached to $metadata request.
 	 * @param {string} [mParameters.defaultBindingMode] sets the default binding mode for the model. If not set, sap.ui.model.BindingMode.OneWay is used.
 	 * @param {string} [mParameters.defaultCountMode] sets the default count mode for the model. If not set, sap.ui.model.odata.CountMode.Request is used.
+	 * @param {string} [mParameters.defaultOperationMode] sets the default operation mode for the model. If not set, sap.ui.model.odata.OperationModel.Server is used.
 	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 *
 	 * @class
@@ -63,8 +64,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mHeaders, bTokenHandling,
 			bWithCredentials, sMaxDataServiceVersion,
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
-			sDefaultCountMode, sDefaultBindingMode, mMetadataNamespaces, mServiceUrlParams,
-			mMetadataUrlParams, bJSON, that = this;
+			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces, 
+			mServiceUrlParams, mMetadataUrlParams, bJSON, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -84,6 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				bLoadAnnotationsJoined = mParameters.loadAnnotationsJoined;
 				sDefaultBindingMode = mParameters.defaultBindingMode;
 				sDefaultCountMode = mParameters.defaultCountMode;
+				sDefaultOperationMode = mParameters.defaultOperationMode;
 				mMetadataNamespaces = mParameters.metadataNamespaces;
 				mServiceUrlParams = mParameters.serviceUrlParams;
 				mMetadataUrlParams = mParameters.metadataUrlParams;
@@ -112,6 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.bLoadAnnotationsJoined = bLoadAnnotationsJoined !== false;
 			this.sAnnotationURI = sAnnotationURI;
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
+			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Server;
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
