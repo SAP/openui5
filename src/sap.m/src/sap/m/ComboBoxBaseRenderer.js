@@ -33,6 +33,23 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		};
 
 		/**
+		 * Writes the accessibility state.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
+			InputBaseRenderer.writeAccessibilityState.apply(this, arguments);
+			oRm.writeAccessibilityState(oControl, {
+				role: "combobox",
+				expanded: oControl.isOpen(),
+				autocomplete: "inline",
+				required: "false"
+			});
+		};
+
+		/**
 		 * Add extra styles for input container.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.

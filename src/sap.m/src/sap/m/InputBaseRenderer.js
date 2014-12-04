@@ -152,7 +152,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
-	InputBaseRenderer.writeAccessibilityState = function(oRm, Control) {};
+	InputBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
+		oRm.writeAccessibilityState(oControl, {
+			disabled: !oControl.getEnabled()
+		});
+	};
 
 	/**
 	 * This method is reserved for derived classes to add extra attributes to the Input.
