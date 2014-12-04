@@ -27,6 +27,7 @@
 <script type="text/javascript">
 	(function() {
 		jQuery.sap.require("sap.m.P13nColumnsPanel");
+		jQuery.sap.require("sap.m.P13nColumnsItem");
 		jQuery.sap.require("sap.m.ColumnListItem");
 		jQuery.sap.require("sap.m.P13nItem");
 		var oP13nColumnsPanel = null;
@@ -956,7 +957,7 @@
 
 		test("Shall check _getNextItemIndex", function() {
 			ok(oP13nColumnsPanel._getNextItemIndex, "Method does not exist");
-			
+
 			var oResultIndex = null;
 			var oTableItem1 = new sap.m.ColumnListItem();
 			oTableItem1.data('P13nColumnKey', '4711');
@@ -1129,6 +1130,280 @@
 			strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.called, true, "Method shall be executed");
 		});
+
+		test("Shall check _createNewColumnsItem", function() {
+			ok(oP13nColumnsPanel._createNewColumnsItem, "Method does not exist");
+
+			//CUT -> check that method is executed and a new columnsItem instance created
+			var sItemKey = "4711"
+			var oNewColumnsItem = oP13nColumnsPanel._createNewColumnsItem(sItemKey);
+			notEqual(oNewColumnsItem, null, "columnsItem shall be instanciated");
+			strictEqual(oNewColumnsItem.getColumnKey(), sItemKey, "New columnsItem shall conatins the given key");
+			strictEqual(oNewColumnsItem instanceof sap.m.P13nColumnsItem, true,
+					"new columnsItem shall be an instance of type sap.m.P13nColumnsItem");
+		});
+
+		test("Shall check _getColumnsItemByKey", function() {
+			ok(oP13nColumnsPanel._getColumnsItemByKey, "Method does not exist");
+
+			var oColumnsItem = null;
+
+			//CUT -> check that method is executed and null is returned as no itemKey is passed in
+			oColumnsItem = oP13nColumnsPanel._getColumnsItemByKey();
+			strictEqual(oColumnsItem, null,
+					"no columnsItem shall be returned as no itemKey is passed in for that can be searched");
+
+			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
+				"getColumnKey" : sinon.stub().returns("4711"),
+				"getIndex" : sinon.stub().returns(1),
+				"setIndex" : sinon.stub()
+			}, {
+				"getColumnKey" : sinon.stub().returns("4712"),
+				"getIndex" : sinon.stub().returns(2),
+				"setIndex" : sinon.stub()
+			}]);
+
+			//CUT -> check that method is executed and a well defined columnsItem is returned
+			oColumnsItem = null;
+			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
+			oColumnsItem = oP13nColumnsPanel._getColumnsItemByKey("4712");
+
+			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method getColumnsItems shall be executed");
+			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true,
+					"Method _getArrayIndexByItemKey shall be executed");
+			notEqual(oColumnsItem, null, "columnsItem shall not be null as a valid columnsItem does exist with key 4712");
+			strictEqual(oColumnsItem.getColumnKey(), "4712",
+					"returned columnsItem instance is wrong as it shall have the columnKey 4712");
+		});
+
+		test("Shall check _updateTableItems",
+				function() {
+					ok(oP13nColumnsPanel._updateTableItems, "Method does not exist");
+
+					var oColumnsItem = new sap.m.P13nColumnsItem({
+						"columnKey" : "4711"
+					});
+
+					var oTableItem1 = new sap.m.ColumnListItem();
+					oTableItem1.data('P13nColumnKey', '4711');
+					var oTableItem2 = new sap.m.ColumnListItem();
+					oTableItem2.data('P13nColumnKey', '4712');
+					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem2, oTableItem1]);
+
+					oP13nColumnsPanel._applyColumnsItem2TableItem = sinon.stub();
+
+					//CUT -> check that method is executed for the given columnsItem
+					oP13nColumnsPanel._updateTableItems(oColumnsItem);
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true,
+							"Method _applyColumnsItem2TableItem shall be executed");
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 1,
+							'Method _applyColumnsItem2TableItem was executed to often');
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oColumnsItem, oTableItem1), true,
+							'Method _applyColumnsItem2TableItem was called with the wrong input parameter');
+
+					//CUT -> check that method is executed for all existing columnsItems & corresponding table items (in the example 2 times)
+					oP13nColumnsPanel._applyColumnsItem2TableItem.reset();
+					oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
+						"getColumnKey" : sinon.stub().returns("4711"),
+						"getIndex" : sinon.stub().returns(1),
+						"setIndex" : sinon.stub()
+					}, {
+						"getColumnKey" : sinon.stub().returns("4712"),
+						"getIndex" : sinon.stub().returns(2),
+						"setIndex" : sinon.stub()
+					}]);
+
+					oP13nColumnsPanel._updateTableItems();
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true,
+							"Method _applyColumnsItem2TableItem shall be executed");
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 2,
+							'Method _applyColumnsItem2TableItem was executed to often');
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[0],
+							oTableItem1), true,
+							'Method _applyColumnsItem2TableItem was first time called with the wrong input parameter');
+					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[1],
+							oTableItem2), true,
+							'Method _applyColumnsItem2TableItem was second time called with the wrong input parameter');
+				});
+
+		test("Shall check _addTableItem ", function() {
+			ok(oP13nColumnsPanel._addTableItem, "Method does not exist");
+
+			var oNewCreatedTableItem = null, oItem = null;
+
+			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
+			oP13nColumnsPanel._oTable.addItem = sinon.stub();
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
+				"getColumnKey" : sinon.stub().returns("4711"),
+				"getIndex" : sinon.stub().returns(1),
+				"getVisible" : sinon.stub().returns(true),
+				"getWidth" : sinon.stub().returns("100px")
+			}, {
+				"getColumnKey" : sinon.stub().returns("4712"),
+				"getIndex" : sinon.stub().returns(2),
+				"getVisible" : sinon.stub().returns(true),
+				"getWidth" : sinon.stub().returns("120px")
+			}]);
+
+			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			oP13nColumnsPanel._addTableItem();
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
+
+			// CUT -> method shall be executed and new item shall be added as no columnsItem can be found for it
+			oItem = new sap.m.P13nItem({
+				"columnKey" : "4713"
+			})
+			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
+			oNewCreatedTableItem.setSelected = sinon.stub();
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem = sinon.stub();
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+
+			oP13nColumnsPanel._addTableItem(oItem);
+			strictEqual(oNewCreatedTableItem.setSelected.called, false,
+					"Method oNewCreatedTableItem.setSelected shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
+
+			// CUT -> method shall be executed and new item shall be inserted as a valid columnsItem is found for it
+			oP13nColumnsPanel._oTable.addItem.reset();
+			oP13nColumnsPanel._oTable.insertItem.reset();
+			oItem = new sap.m.P13nItem({
+				"columnKey" : "4711"
+			})
+			oNewCreatedTableItem.data('P13nColumnKey', "4711");
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+
+			oP13nColumnsPanel._addTableItem(oItem);
+			strictEqual(oNewCreatedTableItem.setSelected.called, true,
+					"Method oNewCreatedTableItem.setSelected shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.addItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true,
+					"Method _oTable.insertItem shall be called with right input parameter");
+		});
+
+		test("Shall check _insertTableItem", function() {
+			ok(oP13nColumnsPanel._insertTableItem, "Method does not exist");
+
+			var oNewCreatedTableItem = null, oItem = null;
+
+			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
+			oP13nColumnsPanel._oTable.addItem = sinon.stub();
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
+				"getColumnKey" : sinon.stub().returns("4711"),
+				"getIndex" : sinon.stub().returns(1),
+				"getVisible" : sinon.stub().returns(true),
+				"getWidth" : sinon.stub().returns("100px")
+			}, {
+				"getColumnKey" : sinon.stub().returns("4712"),
+				"getIndex" : sinon.stub().returns(2),
+				"getVisible" : sinon.stub().returns(true),
+				"getWidth" : sinon.stub().returns("120px")
+			}]);
+
+			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			oP13nColumnsPanel._insertTableItem();
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
+
+			// CUT -> method shall be executed and new item shall be inserted at the passed input parameter, as no columnsItem can be found for it
+			oItem = new sap.m.P13nItem({
+				"columnKey" : "4713"
+			})
+			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
+			oNewCreatedTableItem.setSelected = sinon.stub();
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem = sinon.stub();
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+
+			oP13nColumnsPanel._insertTableItem(3, oItem);
+			strictEqual(oNewCreatedTableItem.setSelected.called, false,
+					"Method oNewCreatedTableItem.setSelected shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall never be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 3), true,
+					"Method _oTable.insertItem shall be called with right input parameter");
+
+			// CUT -> method shall be executed and new item shall be inserted at the index found from a valid columnsItem
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.reset();
+			oP13nColumnsPanel._oTable.addItem.reset();
+			oP13nColumnsPanel._oTable.insertItem.reset();
+			oItem = new sap.m.P13nItem({
+				"columnKey" : "4711"
+			})
+			oNewCreatedTableItem.data('P13nColumnKey', "4711");
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+
+			oP13nColumnsPanel._insertTableItem(3, oItem);
+			strictEqual(oNewCreatedTableItem.setSelected.called, true,
+					"Method oNewCreatedTableItem.setSelected shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall never be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true,
+					"Method _oTable.insertItem shall be called with right input parameter");
+		});
+
+		test("Shall check _createNewTableItemBasedOnP13nItem", function() {
+			ok(oP13nColumnsPanel._createNewTableItemBasedOnP13nItem, "Method does not exist");
+
+			var oNewCreatedTableItem = null, oItem = null;
+
+			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem();
+			strictEqual(oNewCreatedTableItem, null, "No new table item instance shall be created");
+
+			// CUT -> method shall be executed and new table item instance shall be created
+			oItem = new sap.m.P13nItem();
+			oItem.getColumnKey = sinon.stub().returns("4711");
+			oItem.getText = sinon.stub().returns("New table item");
+			oItem.getVisible = sinon.stub().returns(true);
+			oItem.getTooltip = sinon.stub().returns("tooltip");
+
+			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
+			notEqual(oNewCreatedTableItem, null, "A new table item instance shall be created");
+			strictEqual(oNewCreatedTableItem.data('P13nColumnKey'), "4711",
+					"New created table item instance shall have custom data for P13nColumnKey");
+			strictEqual(oItem.getColumnKey.called, true, "Method getColumnKey() shall be called to get data of oItem");
+		});
+
+		test(
+				"Shall check _applyColumnsItem2TableItem",
+				function() {
+					ok(oP13nColumnsPanel._applyColumnsItem2TableItem, "Method does not exist");
+
+					var oColumnsItem = new sap.m.P13nColumnsItem({
+						"columnKey" : "4711",
+						"index" : 1,
+						"visible" : true,
+						"width" : "100px"
+					});
+
+					var oTableItem = new sap.m.ColumnListItem();
+					oTableItem.data('P13nColumnKey', '4711');
+					oTableItem.setSelected = sinon.stub();
+					oP13nColumnsPanel._oTable.removeItem = sinon.stub();
+					oP13nColumnsPanel._oTable.insertItem = sinon.stub();
+
+					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem]);
+
+					// CUT -> method shall be executed but due to missing input parameter nothing shall happen
+					oP13nColumnsPanel._applyColumnsItem2TableItem();
+					strictEqual(oTableItem.setSelected.called, false, "Method oTableItem.setSelected shall not be executed");
+					strictEqual(oP13nColumnsPanel._oTable.removeItem.called, false,
+							"Method _oTable.removeItem shall not be executed");
+					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false,
+							"Method _oTable.insertItem shall not be executed");
+					strictEqual(oTableItem.data('P13nColumnWidth'), null, "Table item shall not contains any width information");
+
+					// CUT -> method shall be executed and changes from oColumnsItem shall be taken over into oTableItem
+					oP13nColumnsPanel._applyColumnsItem2TableItem(oColumnsItem, oTableItem);
+					strictEqual(oTableItem.setSelected.called, true, "Method oTableItem.setSelected shall be executed");
+					strictEqual(oP13nColumnsPanel._oTable.removeItem.called, true, "Method _oTable.removeItem shall be executed");
+					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
+					strictEqual(oTableItem.data('P13nColumnWidth'), "100px",
+							"Table item shall contain the defined width information");
+				});
 
 	}());
 </script>
