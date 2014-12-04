@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 					var oDomNode = oEvent.target,
 						oPopupDomNode = this._$().get(0),
-						bInsidePopup = jQuery.contains(oPopupDomNode, oDomNode);
+						bInsidePopup = jQuery.sap.containsOrEquals(oPopupDomNode, oDomNode);
 
 					if (!bInsidePopup) {
 						var aChildPopups = this.getChildPopups();
@@ -767,7 +767,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		if (type == "focus") {
 			var oDomRef = this._$().get(0);
 			if (oDomRef) {
-				bContains = oDomRef == oEvent.target || jQuery.contains(oDomRef, oEvent.target);
+				bContains = jQuery.sap.containsOrEquals(oDomRef, oEvent.target);
 
 				var aChildPopups = this.getChildPopups();
 				if (!bContains) {
@@ -776,7 +776,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 						// this Popup: oDomRef is reused below.
 						var oChildDomRef = jQuery.sap.domById(aChildPopups[i]);
 						if (oChildDomRef) {
-							bContains = oChildDomRef == oEvent.target || jQuery.contains(oChildDomRef, oEvent.target);
+							bContains = jQuery.sap.containsOrEquals(oChildDomRef, oEvent.target);
 							if (bContains) {
 								break;
 							}
@@ -867,7 +867,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				 * events if using a scroll-bar within a Popup
 				 */
 				if ((typeof (sAutoclose) == "string" && sAutoclose == "autocloseBlur") &&
-				     (oDomRef && jQuery.contains(oDomRef, document.activeElement))) {
+				     (oDomRef && jQuery.sap.containsOrEquals(oDomRef, document.activeElement))) {
 					return;
 				}
 			}
