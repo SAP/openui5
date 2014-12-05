@@ -55,7 +55,7 @@
 	test("Should match across multiple level's ancestor", function() {
 		this.oLayout2.placeAt(this.oLayout1);
 
-		bResult = new sap.ui.test.matchers.Ancestor(this.oLayout1)(this.oButton);
+		var bResult = new sap.ui.test.matchers.Ancestor(this.oLayout1)(this.oButton);
 		strictEqual(bResult, true, "Layout1 is an ancestor");
 
 		bResult = new sap.ui.test.matchers.Ancestor(this.oLayout1, true)(this.oButton);
@@ -64,7 +64,7 @@
 
 
 	test("Should match undefined ancestor", function() {
-		bResult = new sap.ui.test.matchers.Ancestor(undefined)(this.oButton);
+		var bResult = new sap.ui.test.matchers.Ancestor(undefined)(this.oButton);
 		strictEqual(bResult, true, "No ancestor means valid");
 	});
 
