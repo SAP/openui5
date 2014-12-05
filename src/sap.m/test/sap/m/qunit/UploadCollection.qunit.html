@@ -113,42 +113,42 @@
 	});
 
 	test("fileType", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 
 		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
 	})
 
 	test("maximumFilenameLength", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var iMaximumFilenameLength = 4711;
 
 		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, bPropagateTrue);
 	})
 
 	test("maximumFileSize", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var iMaximumFileSize = 4711;
 
 		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, bPropagateTrue);
 	})
 
 	test("mimeType", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var aMimeTypes = ["text", "image", "unittest"];
 
 		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, bPropagateTrue);
 	})
 
 	test("multiple", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var bMultiple = true;
 
 		testSetter(this.oUploadCollection, "multiple", bMultiple, bPropagateTrue);
 	})
 
 	test("noDataText", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var sNoDataText = "myNoDataText";
 
 		testSetter(this.oUploadCollection, "noDataText", sNoDataText, bPropagateTrue);
@@ -156,8 +156,8 @@
 	})
 
 	test("sameFilenameAllowed", function() {
-		const bPropagateTrue = true;
-		const bSameFilenameAllowed = true;
+		var bPropagateTrue = true;
+		var bSameFilenameAllowed = true;
 
 		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, bPropagateTrue);
 	})
@@ -169,15 +169,15 @@
 	})
 
 	test("uploadEnabled", function() {
-		const bPropagateTrue = true;
+		var bPropagateTrue = true;
 		var bUploadEnabled = false;
 
 		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, bPropagateTrue);
 	})
 
 	test("uploadUrl", function() {
-		const bPropagateTrue = true;
-		const sUploadUrl = "my/upload/url";
+		var bPropagateTrue = true;
+		var sUploadUrl = "my/upload/url";
 
 		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, bPropagateTrue);
 	})
