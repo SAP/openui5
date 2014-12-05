@@ -3017,49 +3017,79 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			fnFactory = oBindingInfo.factory,
 			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
 			oClone,
-			oNewGroup = null,
-			sGroupFunction = null,
-			bGrouped = null,
 			sGroup = null,
+			bGrouped,
+			aContexts,
+			sGroupFunction = oAggregationInfo._sMutator + "Group",
 			that = this;
-		this[oAggregationInfo._sDestructor]();
-		if (this.isTreeBinding(sName)) {
-			var iNodeIndex = 0,
-				update = function(aContexts, fnFactory, oBinding, oParent){
-					jQuery.each(aContexts, function(iIndex, oContext) {
-						var sId = that.getId() + "-" + iNodeIndex++;
-						oClone = fnFactory(sId, oContext);
-						oClone.setBindingContext(oContext, oBindingInfo.model);
-						oParent[oAggregationInfo._sMutator](oClone); // also sets the Parent
-						update(oBinding.getNodeContexts(oContext), fnFactory, oBinding, oClone);
-					});
-				};
-			update(oBinding.getRootContexts(), fnFactory, oBinding, this);
-		} else {
-			sGroupFunction = oAggregationInfo._sMutator + "Group";
-			bGrouped = oBinding.isGrouped() && this[sGroupFunction];
-			jQuery.each(oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length), function(iIndex, oContext) {
-				if (bGrouped && oBinding.aSorters.length > 0) {
-					oNewGroup = oBinding.aSorters[0].fnGroup(oContext);
-					if (typeof oNewGroup == "string") {
-						oNewGroup = {
-							key: oNewGroup
-						};
+		
+		// Update a single aggregation with the array of contexts. Reuse existing children
+		// and just append or remove at the end, if some are missing or too many.
+		function update(oControl, aContexts, fnBefore, fnAfter) {
+			var aChildren = oControl[oAggregationInfo._sGetter](),
+				oContext;
+			for (var i = 0; i < Math.min(aChildren.length, aContexts.length); i++) {
+				aChildren[i].setBindingContext(aContexts[i], oBindingInfo.model);
+			}
+			if (aChildren.length > aContexts.length) {
+				for (var i = aContexts.length; i < aChildren.length; i++) {
+					aChildren[i].destroy();
+				}
+			}
+			if (aChildren.length < aContexts.length) {
+				for (var i = aChildren.length; i < aContexts.length; i++) {
+					oContext = aContexts[i];
+					if (fnBefore) {
+						fnBefore(oContext);
 					}
-					if (oNewGroup.key !== sGroup) {
-						var oGroupHeader;
-						//If factory is defined use it
-						if (oBindingInfo.groupHeaderFactory) {
-							oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
-						}
-						that[sGroupFunction](oNewGroup, oGroupHeader);
-						sGroup = oNewGroup.key;
+					var sId = oControl.getId() + "-" + i;
+					oClone = fnFactory(sId, oContext);
+					oClone.setBindingContext(oContext, oBindingInfo.model);
+					oControl[oAggregationInfo._sMutator](oClone);
+					if (fnAfter) {
+						fnAfter(oContext, oClone);
 					}
 				}
-				var sId = that.getId() + "-" + iIndex;
-				oClone = fnFactory(sId, oContext);
-				oClone.setBindingContext(oContext, oBindingInfo.model);
-				that[oAggregationInfo._sMutator](oClone);
+			}
+		}
+		
+		// Check the current context for its group. If the group key changes, call the 
+		// group function on the control.
+		function updateGroup(oContext) {
+			var oNewGroup = oBinding.aSorters[0].fnGroup(oContext);
+			if (typeof oNewGroup == "string") {
+				oNewGroup = {
+					key: oNewGroup
+				};
+			}
+			if (oNewGroup.key !== sGroup) {
+				var oGroupHeader;
+				//If factory is defined use it
+				if (oBindingInfo.groupHeaderFactory) {
+					oGroupHeader = oBindingInfo.groupHeaderFactory(oNewGroup);
+				}
+				that[sGroupFunction](oNewGroup, oGroupHeader);
+				sGroup = oNewGroup.key;
+			}
+		}
+		
+		// If a factory function is used, aggregation must be completely rebuild
+		if (!oBindingInfo.template) {
+			this[oAggregationInfo._sDestructor]();
+		}
+		
+		if (oBinding instanceof sap.ui.model.ListBinding) {
+			// If grouping is enabled, use updateGroup as fnBefore to create groups
+			bGrouped = oBinding.isGrouped() && sGroupFunction;
+			if (bGrouped) {
+				this[oAggregationInfo._sDestructor]();
+			}
+			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+			update(this, aContexts, bGrouped ? updateGroup : null);
+		} else if (oBinding instanceof sap.ui.model.TreeBinding) {
+			// In fnAfter call update recursively for the child nodes of the current tree node
+			update(this, oBinding.getRootContexts(), null, function(oContext, oClone) {
+				update(oClone, oBinding.getNodeContexts(oContext));
 			});
 		}
 	};
