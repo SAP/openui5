@@ -28,7 +28,6 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 
 			oMockServer = new sap.ui.core.util.MockServer({rootUri : sServiceUri});
-			//TODO/FIX4MASTER check mock data to allow for delivery with OpenUI5
 			oMockServer.simulate(/*TODO sServiceUri?!*/sMockServerBaseUri + "metadata.xml", {
 				sMockdataBaseUrl : sMockServerBaseUri,
 				bGenerateMissingMockData : true
