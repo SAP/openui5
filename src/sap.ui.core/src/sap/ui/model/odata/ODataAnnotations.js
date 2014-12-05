@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					if (annotationQualifier) {
 						annotationTerm += "#" + annotationQualifier;
 					}
-					valueAnnotation = this.getPropertyValue(oXMLDoc, propertyAnnotationNode, targetAnnotation, oAlias);
+					valueAnnotation = this.getPropertyValue(oXMLDoc, propertyAnnotationNode, oAlias);
 					valueAnnotation = this.setEdmTypes(valueAnnotation, oMetadataProperties.types, annotation, oSchema);
 					mappingList[annotation][annotationTerm] = valueAnnotation;
 				}
