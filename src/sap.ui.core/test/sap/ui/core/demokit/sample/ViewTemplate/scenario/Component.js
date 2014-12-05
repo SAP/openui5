@@ -21,10 +21,14 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 				= "/testsuite/test-resources/sap/ui/core/demokit/sample/ViewTemplate/data2/",
 			oLayout = new sap.m.HBox(),
 			oMockServer,
+			oUriParameters = jQuery.sap.getUriParameters(),
+			fnModel = oUriParameters.get("oldOData") === "true"
+				? sap.ui.model.odata.ODataModel
+				: sap.ui.model.odata.v2.ODataModel,
 			oModel,
 			oMetaModel;
 
-		if (jQuery.sap.getUriParameters().get("realOData") !== "true") {
+		if (oUriParameters.get("realOData") !== "true") {
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 
 			oMockServer = new sap.ui.core.util.MockServer({rootUri : sServiceUri});
@@ -50,7 +54,7 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 			sServiceUri = "proxy" + sServiceUri;
 		}
 
-		oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUri, {
+		oModel = new fnModel(sServiceUri, {
 			annotationURI : sAnnotationUri,
 			json : true,
 			loadMetadataAsync : true

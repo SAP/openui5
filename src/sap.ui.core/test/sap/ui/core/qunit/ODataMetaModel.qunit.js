@@ -131,7 +131,7 @@
 	}
 
 	// *********************************************************************************************
-	module("sap.ui.model.odata.v2.ODataMetaModel", {
+	module("sap.ui.model.odata.ODataMetaModel", {
 		teardown : function () {
 			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
 		}
@@ -149,7 +149,7 @@
 		oModel.attachMetadataFailed(onFailed);
 
 		oMetaModel = oModel.getMetaModel();
-		ok(oMetaModel instanceof sap.ui.model.odata.v2.ODataMetaModel);
+		ok(oMetaModel instanceof sap.ui.model.odata.ODataMetaModel);
 
 		oMetaModel.loaded().then(function() {
 			var oAnnotations = oModel.getServiceAnnotations(),
@@ -190,7 +190,8 @@
 				var oAnnotations = oModel.getServiceAnnotations(),
 					oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getData(),
-					oBusinessPartner = oMetaModelData.dataServices.schema[0].entityType[0],
+					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
+					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					sSAPData = "http://www.sap.com/Protocols/SAPData";
 
@@ -200,13 +201,18 @@
 				strictEqual(oBusinessPartner.name, "BusinessPartner");
 				strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
 
-				//TODO needed?
-//				deepEqual(oBusinessPartnerId.extensions[sSAPData], {
-//					"label" : "Bus. Part. ID",
-//					"creatable" : "false",
-//					"updatable" : "false"
-//				});
-//				delete oBusinessPartnerId.extensions[sSAPData];
+				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
+				delete oGWSampleBasic["sap:schema-version"];
+
+				deepEqual(oBusinessPartner["sap:content-version"], "1");
+				delete oBusinessPartner["sap:content-version"];
+
+				deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
+				delete oBusinessPartnerId["sap:label"];
+				deepEqual(oBusinessPartnerId["sap:creatable"], "false");
+				delete oBusinessPartnerId["sap:creatable"];
+				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
+				delete oBusinessPartnerId["sap:updatable"];
 
 				deepEqual(oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"], {
 					"Path" : "CurrencyCode"
@@ -254,12 +260,10 @@
 					delete oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"];
 				}
 
-				//TODO deepEqual() cannot handle arrays with additional properties;
-				// JSON.stringify() works the same...
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			})["catch"](onError);
 		}));
 	});
 
-	//TODO test failure handling
+	//TODO test failure handling; incl. missing "extensions" array etc.
 }());

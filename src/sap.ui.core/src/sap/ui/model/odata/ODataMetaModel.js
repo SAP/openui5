@@ -20,14 +20,14 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 	 *
 	 * @constructor
 	 * @public
-	 * @alias sap.ui.model.odata.v2.ODataMetaModel
+	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @param {string} sMetadataUrl
 	 *   The URL for the OData service metadata
 	 * @param {string|string[]} vAnnotationUrl
 	 *   URL or array of URLs to load the annotations of the OData service
 	 */
-	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v2.ODataMetaModel",
-			/** @lends sap.ui.model.odata.v2.ODataMetaModel.prototype */ {
+	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
+			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
 			/**
 			 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 			 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
@@ -62,6 +62,21 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 	 */
 	function load(oModel, oMetadata, oAnnotations) {
 		/*
+		 * Lift all extensions from the <a href="http://www.sap.com/Protocols/SAPData">
+		 * SAP Annotations for OData Version 2.0</a> namespace up as attributes with "sap:" prefix.
+		 *
+		 * @param {object} o
+		 *   any object
+		 */
+		function liftSAPData(o) {
+			jQuery.each(o.extensions, function (i, oExtension) {
+				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
+					o["sap:" + oExtension.name] = oExtension.value;
+				}
+			});
+		}
+
+		/*
 		 * Calls the given handler as soon as the given object is "loaded".
 		 *
 		 * @param {object} o
@@ -82,17 +97,17 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		 */
 		function merge(oAnnotations, oData) {
 			jQuery.each(oData.dataServices.schema, function (i, oSchema) {
+				liftSAPData(oSchema);
 				jQuery.each(oSchema.entityType, function (j, oEntity) {
 					var sEntityName = oSchema.namespace + "." + oEntity.name,
 						mPropertyAnnotations = oAnnotations.propertyAnnotations[sEntityName];
 
+					liftSAPData(oEntity);
 					jQuery.extend(oEntity, oAnnotations[sEntityName]);
 
 					if (mPropertyAnnotations) {
 						jQuery.each(oEntity.property, function (k, oProperty) {
-							//TODO needed? useful? beware of array with additional properties!
-//							jQuery.extend(oProperty.extensions, // an array!
-//								oAnnotations.propertyExtensions[sEntityName][oProperty.name]);
+							liftSAPData(oProperty);
 							jQuery.extend(oProperty, mPropertyAnnotations[oProperty.name]);
 						});
 					}
