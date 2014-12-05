@@ -6533,6 +6533,38 @@
 				oComboBox.destroy();
 			});
 
+			test("oninput clear the selection if not match is found", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany",
+						})
+					],
+					selectedKey: "GER"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+
+				// act
+				oComboBox.getFocusDomRef().value = "v";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+
+				// assert
+				ok(oComboBox.getSelectedItem() === null);
+				strictEqual(oComboBox.getSelectedItemId(), "");
+				strictEqual(oComboBox.getSelectedKey(), "");
+				ok(oComboBox.getList().getSelectedItem() === null);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onfocusin                      */
 			/* ------------------------------ */
