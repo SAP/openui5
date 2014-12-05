@@ -270,14 +270,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				oListItem,
 				i = 0;
 
-			if (sValue === "") {
-				this.setSelection(null, { suppressInvalidate: true });
-
-				if (oSelectedItem !== this.getSelectedItem()) {
-					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-				}
-			}
-
 			for (; i < aItems.length; i++) {
 
 				// the item match with the value
@@ -315,6 +307,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 					}
 
 					this.scrollToItem(this.getList().getSelectedItem());
+				}
+			}
+
+			if (sValue === "") {
+				this.setSelection(null, { suppressInvalidate: true });
+
+				if (oSelectedItem !== this.getSelectedItem()) {
+					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
 				}
 			}
 
