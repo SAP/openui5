@@ -47,7 +47,6 @@
 	<modules>
 		<module>_version_tool</module>
 		<module>_git2p4</module>
-		<module>_version_helper</module>
 	</modules>
 
 </project>
