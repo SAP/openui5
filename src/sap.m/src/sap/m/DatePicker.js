@@ -63,6 +63,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			this._bIntervalSelection = false;
 
+			this._bValid = true;
+
+			this._oMinDate = new Date(1, 0, 1);
+			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
+			this._oMaxDate = new Date(9999, 11, 31);
 		};
 
 		DatePicker.prototype.exit = function() {
@@ -120,6 +125,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 		DatePicker.prototype.getWidth = function(sWidth) {
 
 			return this.getProperty("width") || "100%";
+
+		};
+
+		DatePicker.prototype.applyFocusInfo = function(oFocusInfo) {
+
+			this._bFocusNoPopup = true;
+			InputBase.prototype.applyFocusInfo.apply(this, arguments);
 
 		};
 
@@ -241,15 +253,30 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			// set the property in any case but check validity on output
 			this.setProperty("value", sValue, true); // no rerendering
+			this._bValid = true;
 
 			// convert to date object
-			var oDate = this._parseValue(sValue);
-			this.setProperty("dateValue", oDate, true); // no rerendering
+			var oDate;
+			if (sValue) {
+				oDate = this._parseValue(sValue);
+				if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
+					this._bValid = false;
+					jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+				}
+			}
+			if (this._bValid) {
+				this.setProperty("dateValue", oDate, true); // no rerendering
+			}
 
 			// do not call InputBase.setValue because the displayed value and the output value might have different pattern
 			if (this.getDomRef()) {
 				// convert to output
-				var sOutputValue = this._formatValue(oDate);
+				var sOutputValue;
+				if (oDate) {
+					sOutputValue = this._formatValue(oDate);
+				} else {
+					sOutputValue = sValue;
+				}
 
 				if (this._$input.val() !== sOutputValue) {
 					this._$input.val(sOutputValue);
@@ -268,7 +295,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				return this;
 			}
 
-			this.setProperty("dateValue", oDate, true); // no rerendering
+			if (oDate && (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime())) {
+				this._bValid = false;
+				jQuery.sap.assert(this._bValid, "Date must be in valid range");
+			}else {
+				this._bValid = true;
+				this.setProperty("dateValue", oDate, true); // no rerendering
+			}
 
 			// convert date object to value
 			var sValue = this._formatValue(oDate, true);
@@ -303,7 +336,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			if (sValue) {
 				var oDate = this._parseValue(sValue);
-				this.setProperty("dateValue", oDate, true); // no rerendering
+				if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
+					this._bValid = false;
+					jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+				}else {
+					this._bValid = true;
+					this.setProperty("dateValue", oDate, true); // no rerendering
+				}
 			}
 
 			return this;
@@ -336,16 +375,23 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			// set date before fire change event
 			var sValue = this._$input.val();
+			var sOldValue = this._formatValue(this.getDateValue());
+
+			if (sValue == sOldValue && this._bValid) {
+				// only needed if value really changed
+				return;
+			}
+
 			var oDate;
-			var bValid = true;
+			this._bValid = true;
 			if (sValue != "") {
 				oDate = this._parseValue(sValue, true);
-				if (oDate) {
+				if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
+					this._bValid = false;
+					oDate = undefined;
+				}else {
 					// check if Formatter changed the value (it correct some wrong inputs or known patterns)
 					sValue = this._formatValue(oDate);
-				} else {
-					bValid = false;
-					//				sValue = "";
 				}
 			}
 
@@ -366,14 +412,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			// compare with the old known value
 			if (sValue !== this._lastValue) {
 				this.setProperty("value", sValue, true); // no rerendering
-				if (bValid) {
+				if (this._bValid) {
 					this.setProperty("dateValue", oDate, true); // no rerendering
 				}
 
 				// remember the last value on change
 				this._lastValue = sValue;
 
-				this.fireChangeEvent(sValue, {valid: bValid});
+				this.fireChangeEvent(sValue, {valid: this._bValid});
 
 				if (this._oPopup && this._oPopup.isOpen()) {
 					this._oCalendar.focusDate(oDate);
@@ -512,7 +558,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				oThis._oCalendar.setParent(oThis, undefined, true); // don't invalidate DatePicker
 			}
 
-			oThis.onChange(); // to check manually typed in text
+			var sValue = oThis._formatValue(oThis.getDateValue());
+			if (sValue != oThis._$input.val()) {
+				oThis.onChange(); // to check manually typed in text
+			}
 
 			oThis._fillDateRange();
 
@@ -562,6 +611,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			var aSelectedDates = this._oCalendar.getSelectedDates();
 			var oDateOld = this.getDateValue();
 			var oDate;
+			var sValue = "";
 
 			this._oPopup.close();
 			this._bFocusNoPopup = true;
@@ -570,18 +620,29 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			if (aSelectedDates.length > 0) {
 				oDate = aSelectedDates[0].getStartDate();
 			}
-			this.setDateValue(oDate);
 
 			// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 			if (!jQuery.sap.equal(oDate, oDateOld)) {
+				this.setDateValue(oDate);
 				// compare Dates because value can be the same if only 2 digits for year 
-				var sValue = this.getValue();
+				sValue = this.getValue();
 				this.fireChangeEvent(sValue, {valid: true});
 				if (this.getDomRef()) { // as control could be destroyed during update binding
 					this._curpos = this._$input.val().length;
 					this._$input.cursorPos(this._curpos);
 				}
-			}	
+			}else if (!this._bValid){
+				// wrong input before open calendar
+				sValue = this._formatValue(oDate);
+				if (sValue != this._$input.val()) {
+					this._bValid = true;
+					if (this.getDomRef()) { // as control could be destroyed during update binding
+						this._$input.val(sValue);
+					}
+					this.fireChangeEvent(sValue, {valid: true});
+				}
+			}
+
 		};
 
 		function _cancel(oEvent) {
@@ -621,6 +682,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 				default:
 					break;
+				}
+
+				if (oDate.getTime() < oThis._oMinDate.getTime()) {
+					oDate = new Date(oThis._oMinDate.getTime());
+				}else if (oDate.getTime() > oThis._oMaxDate.getTime()){
+					oDate = new Date(oThis._oMaxDate.getTime());
 				}
 
 				oThis.setDateValue(oDate);
