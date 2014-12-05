@@ -31,9 +31,9 @@
 		<script id='sap-ui-bootstrap' type='text/javascript'
 			src='https://openui5.hana.ondemand.com/resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_bluecrystal'
-			data-sap-ui-libs='sap.ui.commons'></script>
+			data-sap-ui-libs='sap.ui.m'></script>
 		<script>
-			var btn = new sap.ui.commons.Button({
+			var btn = new sap.m.Button({
 					text:'Press me!',
 					press: function() {
 						alert("Hello!")
@@ -100,7 +100,7 @@
 <span class="shTag">&lt;script</span><span class="shAttr"> id</span>=<sspan class="shString">"sap-ui-bootstrap"</span>
    <span class="shAttr">src</span>=<span class="shString">"resources/sap-ui-core.js"</span>
    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">"sap_bluecrystal"</span>
-   <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">"sap.ui.commons"</span><span class="shTag">&gt;
+   <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">"sap.m"</span><span class="shTag">&gt;
 &lt;/script&gt;</span>
 </pre>
 				<p>The parameters used above determine which resources are loaded apart from the UI5 core. For instance, the <code><span class="shAttr">data-sap-ui-theme</span></code> parameter determines which of the available themes the application will be using, 
@@ -108,7 +108,6 @@
 				</p>
 				<p>
 					A very simple application would look like this:<br>
-					<span class="smaller">(Note: This example uses the "sap.ui.commons" control library. To run it with the reduced mobile OpenUI5 package, use the "sap.m" library instead.)</span>
 				</p>
 				<pre class="codeblock">
 <span class="shTag">&lt;!DOCTYPE html&gt;</span>
@@ -119,11 +118,11 @@
 <span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
     <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
     <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
-    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.ui.commons'</span><span class="shTag">&gt;</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span><span class="shTag">&gt;</span>
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
-    <span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button({
+    <span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.m.Button({
         <span class="shAttr">text</span>:<span class="shString">'Press me!'</span>,
         <span class="shAttr">press</span>: <span class="sh-js-keyword">function</span>() {
             alert(<span class="shString">"Hello!"</span>)
@@ -138,19 +137,19 @@
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
 				<p>Let's take a closer look at the code above. Here we're basically instantiating a simple control using these lines:</p>
-				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button({
+				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.m.Button({
 	<span class="shAttr">text</span>:<span class="shString">'Press me!'</span>,
 	<span class="shAttr">press</span>: <span class="sh-js-keyword">function</span>() {
 		alert(<span class="shString">"Hello!"</span>)
 	}
     });</pre>
-				<p>What we're actually doing is creating a new instance of a control named Button, which is part of our commons library. 
+				<p>What we're actually doing is creating a new instance of a control named Button, which is part of our sap.m library. 
 				Within the constructor call, we're making use of the JSON notation to pass some initial values to the control right away, namely: </p>
 				<ul><li>The value for the text displayed on the button </li>
 				<li>The handler attached to the button's "press" event, which in this case does nothing more than alerting "Hello" to the person who clicks the button.</li>
 				</ul>
 				<p>Note that we could have achieved the same output by doing something like this:</p>
-				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button();
+				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.m.Button();
 btn.setText(<span class="shString">'Press me!'</span>);
 btn.attachPress(<span class="sh-js-keyword">function</span>() {
 			alert(<span class="shString">"Hello!"</span>);
@@ -173,7 +172,7 @@ btn.placeAt(<span class="shString">'content'</span>);
 						Try it out yourself - feel free to modify and extend this example!
 					</p>
 					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/1347/embed?html,output&height=600px&width=1000px">Hello World</a>
+						<a class="jsbin-embed" href="http://jsbin.com/jemepilelu/2/embed?html,output&height=600px&width=1000px">Hello World</a>
 						<script src="http://static.jsbin.com/js/embed.js"></script>
 					</div>
 				</div>
@@ -189,12 +188,12 @@ btn.placeAt(<span class="shString">'content'</span>);
 				Let’s see how we could replace the simple control with a view, and find out how to use MVC in UI5.
 				We'll start with an XML view, which you'd usually define as a separate file to your index page.</p>
 				<p>Here’s the code for the view:</p>
-				<pre class="codeblock"><span class="shTag">&lt;mvc:View <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> xmlns</span>=<span class="shString">"sap.ui.commons"</span> 
+				<pre class="codeblock"><span class="shTag">&lt;mvc:View <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> xmlns</span>=<span class="shString">"sap.m"</span> 
 		controllerName</span>=<span class="shString">"getStarted"</span> xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;</span>
 	
 	Get started with MVC<span class="shTag">&lthtml:br/<span class="shTag">&gt;</span></span>
 	<span class="shTag">&lt;Panel</span> <span class="shAttr">text</span>=<span class="shString">"Hello World"</span><span class="shTag">&gt;</span></span>
-		<span class="shTag">&lt;Button</span> <span class="shAttr">text</span>=<span class="shString">"{/actionName}"</span> <span class="shAttr">press</span>=<span class="shString">"doSomething"</span>&lt;/Button<span class="shTag">&gt;</span></span>
+		<span class="shTag">&lt;Button</span> <span class="shAttr">text</span>=<span class="shString">"{/actionName}"</span> <span class="shAttr">press</span>=<span class="shString">"doSomething"</span><span class="shTag">/&gt;</span></span>
 		<span class="shTag">&lt;html:table</span> <span class="shAttr">border</span>="5"<span class="shTag"><span class="shTag">&gt;</span></span>
 			<span class="shTag">&lt;html:tr&gt;</span>
 				<span class="shTag">&lt;html:td&gt;</span>An<span class="shTag">&lt;/html:td&gt;</span>
@@ -227,7 +226,7 @@ btn.placeAt(<span class="shString">'content'</span>);
 	<span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span> <span class="shAttr">type</span>=<span class="shString">'text/javascript'</span>
 		<span class="shAttr">src</span>=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span>
 		<span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
-		<span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.ui.commons'</span><span class="shTag">&gt;</span>
+		<span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span><span class="shTag">&gt;</span>
 	<span class="shTag">&lt;/script&gt;</span>
 	<span class="shTag">&lt;script&gt;</span>
 	/*** THIS IS THE "APPLICATION" CODE ***/
@@ -254,19 +253,19 @@ btn.placeAt(<span class="shString">'content'</span>);
 				Next, we're instantiating our view and then placing it within a div tag that has the id “content” on our page, using the placeAt method you already know from earlier.</p>
 				<p>If you want to see this example in action and start modifying it, check out the following JSBin:<br/>
 					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/openui5-js-view/6/embed?html,output&height=600px&width=1000px">UI5 MVC example with JS view</a>
+						<a class="jsbin-embed" href="http://jsbin.com/cizoqo/2/embed?html,output&height=600px&width=1000px">UI5 MVC example with XML view</a>
 						<script src="http://static.jsbin.com/js/embed.js"></script>
 					</div>
 				</p>
 				<p>This link lets you open the JSBin example in a separate window::</p>
-				<a href="http://jsbin.com/openui5-js-view/6/edit?html,output" target="_blank">UI5 MVC example with JS view</a>
+				<a href="http://jsbin.com/cizoqo/2/edit?html,output" target="_blank">UI5 MVC example with XML view</a>
 				</p>
 				<p>Note that in the JSBin examples, we had to use a little workaround for the sake of making all of the code available. JSBin does not have an option to combine several files, so we had to tweak the code a bit to show you the view, the controller and the code from the actual page.</p>
 				<p>If you want to find out more about the different view types available in UI5, check the documentation <a href="https://openui5.hana.ondemand.com/#docs/guide/91f27e3e6f4d1014b6dd926db0e91070.html" target="_blank">here</a> or try an example with a JSView:<br/>
-						<a target="_blank" href="http://jsbin.com/openui5-xml-view/7/edit?html,output">Another UI5 MVC example with JS view</a>
+						<a target="_blank" href="http://jsbin.com/cosoqa/2/edit?html,output">Another UI5 MVC example with JS view</a>
 				</p>
 				<p>XMLViews and JSViews not really your thing?  Here’s an example of how to use HTML templates with UI5:<br/>
-						<a target="_blank" href="http://jsbin.com/openui5-HTML-templates/1/edit">UI5 with HTML templating</a>
+						<a target="_blank" href="http://jsbin.com/mutezo/2/edit">UI5 with HTML templating</a>
 				</p>
 				<h4>Read More:</h4>
 				<ul>
@@ -277,18 +276,18 @@ btn.placeAt(<span class="shString">'content'</span>);
 
 				<h3>Wiring the Elements – Data Binding in UI5</h3>
 				<p>Databinding in UI5 is simple yet powerful - check out a more complex control like our Table bound to a JSON model here:</p>
-				<a href="http://jsbin.com/openui5-table-json/6/edit?html,output" target="_blank">JSBin sample - UI5 table example with local JSON model</a></p>
+				<a href="http://jsbin.com/fohizi/2/edit?html,output" target="_blank">JSBin sample - UI5 table example with local JSON model</a></p>
 				<p>(As these examples are now getting more complex, open the JSBin code in a separate window - that way there's more space available, and you can start modifying straight away while reading the code explanations below.)</p>
 				<p>Like in the previous example, this example also features a JSON model, but UI5 also supports other models as well of course – you can easily connect your application to an OData service, for instance.</p>
 				<p>We start by creating an instance of a Table control:</p>
 				<pre class="codeblock"><span class="sh-js-keyword">var</span> oTable = <span class="sh-js-keyword">new</span> sap.ui.table.Table({<span class="shAttr">editable</span>:<span class="sh-js-keyword">true</span>});</pre>
 				<p>Now let's create the columns. For these, we first need to decide what the columns are supposed to contain. Let’s say, my first column should contain the last names from the model entries. 
 				For this content, we'll use a TextView control which will contain the model data, so let's create an instance like this:</p>
-				<pre class="codeblock"><span class="sh-js-keyword">var</span> oControl = <span class="sh-js-keyword">new</span> sap.ui.commons.TextView({text:<span class="shString">"{lastName}"</span>});</pre>
+				<pre class="codeblock"><span class="sh-js-keyword">var</span> oControl = <span class="sh-js-keyword">new</span> sap.m.Text({text:<span class="shString">"{lastName}"</span>});</pre>
 				<p>Note that this control is bound to a particular attribute from the model, namely <span class="shString">lastName</span>, but not to a particular node in the model. This is of course intentional, as we'll see in a minute.
 				To make our table repeat the control in the first column as often as there are entries in the model, we just pass the control as a template into our table column instance, like this:</p>
 				<pre class="codeblock">oTable.addColumn(<span class="sh-js-keyword">new</span> sap.ui.table.Column({
-	<span class="shAttr">label</span>: <span class="sh-js-keyword">new</span> sap.ui.commons.Label({<span class="shAttr">text</span>: <span class="shString">"Last Name"</span>}), 
+	<span class="shAttr">label</span>: <span class="sh-js-keyword">new</span> sap.m.Label({<span class="shAttr">text</span>: <span class="shString">"Last Name"</span>}), 
 	<span class="shAttr">template</span>: oControl, // our previously created TextView control
 	<span class="shAttr">sortProperty</span>: <span class="shString">"lastName"</span>, // with this property, sorting on a table column is activated
 	<span class="shAttr">filterProperty</span>: <span class="shString">"lastName"</span>, // with this property, filtering on values within a table column is activated
