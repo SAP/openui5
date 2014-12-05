@@ -131,6 +131,15 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 			};
 
 			/**
+			 * removes all errors/warning states from of all sort conditions.
+			 * 
+			 * @public
+			 */
+			P13nGroupPanel.prototype.removeValidationErrors = function() {
+				this._oGroupPanel.removeValidationErrors();
+			};
+
+			/**
 			 * setter for the supported operations array
 			 * 
 			 * @public

@@ -194,6 +194,16 @@ sap.ui
 					};
 
 					/**
+					 * removes all errors/warning states from of all filter conditions.
+					 * 
+					 * @public
+					 */
+					P13nFilterPanel.prototype.removeValidationErrors = function() {
+						this._oIncludeFilterPanel.removeValidationErrors();
+						this._oExcludeFilterPanel.removeValidationErrors();
+					};
+
+					/**
 					 * setter for the supported Include operations array
 					 * 
 					 * @public
