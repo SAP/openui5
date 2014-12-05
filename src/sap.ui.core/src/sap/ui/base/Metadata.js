@@ -92,10 +92,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		this._bDeprecated = !!oStaticInfo["deprecated"];
 
 		// handle interfaces
-		this._aInterfaces = jQuery.sap.unique(oStaticInfo.interfaces || []);
+		this._aInterfaces = oStaticInfo.interfaces || [];
 	
 		// take over metadata from static info
-		this._aPublicMethods = jQuery.sap.unique(oStaticInfo.publicMethods || []);
+		this._aPublicMethods = oStaticInfo.publicMethods || [];
+
+		// interfaces info possibly not unique
+		this._bInterfacesUnique = false;
 	
 		// enrich prototype
 		oPrototype = this._oClass.prototype;
@@ -123,7 +126,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		// create the flattened "all" view
 		if ( this._oParent ) {
 			//this._aAllInterfaces = jQuery.sap.unique(this._oParent._aAllInterfaces.concat(this._aInterfaces));
-			this._aAllPublicMethods = jQuery.sap.unique(this._oParent._aAllPublicMethods.concat(this._aPublicMethods));
+			this._aAllPublicMethods = this._oParent._aAllPublicMethods.concat(this._aPublicMethods);
+			this._bInterfacesUnique = false;
 		} else {
 			//this._aAllInterfaces = this._aInterfaces;
 			this._aAllPublicMethods = this._aPublicMethods;
@@ -169,12 +173,27 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
+	 * Removes duplicate names in place from the interfaces and public methods members of this metadata object.
+	 *
+	 * @private
+	 */
+	Metadata.prototype._dedupInterfaces = function () {
+		if (!this._bInterfacesUnique) {
+			jQuery.sap.unique(this._aInterfaces);
+			jQuery.sap.unique(this._aPublicMethods);
+			jQuery.sap.unique(this._aAllPublicMethods);
+			this._bInterfacesUnique = true;
+		}
+	};
+
+	/**
 	 * Returns an array with the names of the public methods declared by the described class.
 	 *
 	 * @return {string[]} array with names of public methods declared by the described class
 	 * @public
 	 */
 	Metadata.prototype.getPublicMethods = function() {
+		this._dedupInterfaces();
 		return this._aPublicMethods;
 	};
 	
@@ -186,6 +205,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * @public
 	 */
 	Metadata.prototype.getAllPublicMethods = function() {
+		this._dedupInterfaces();
 		return this._aAllPublicMethods;
 	};
 	
@@ -197,6 +217,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * @private
 	 */
 	Metadata.prototype.getInterfaces = function() {
+		this._dedupInterfaces();
 		return this._aInterfaces;
 	};
 	
@@ -268,12 +289,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 */
 	Metadata.prototype.addPublicMethods = function(sMethod /* ... */) {
 		var aNames = (sMethod instanceof Array) ? sMethod : arguments;
-		function upush(a,v) {
-			Array.prototype.push.apply(a, v); // appends "inplace"
-			jQuery.sap.unique(a);
-		}
-		upush(this._aPublicMethods, aNames);
-		upush(this._aAllPublicMethods, aNames);
+		Array.prototype.push.apply(this._aPublicMethods, aNames);
+		Array.prototype.push.apply(this._aAllPublicMethods, aNames);
+		this._bInterfacesUnique = false;
 	};
 	
 	/**
