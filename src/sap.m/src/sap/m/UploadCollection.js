@@ -475,7 +475,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (sStatus == "Uploading") {
 			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
 				visible: true
-			}).setSize('2.5rem').addStyleClass("sapMUCloadingIcon");
+			}).setSize("2.5rem").addStyleClass("sapMUCloadingIcon");
 		}
 
 		// /////////////////// ListItem Button Layout
@@ -679,7 +679,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._fillList = function(aItems) {
 		var that = this;
 		var	iMaxIndex = aItems.length - 1;
-
 		jQuery.each(aItems, function (iIndex, oItem) {
 			if (!oItem._status) {
 				//set default status value -> "Display"
@@ -1109,15 +1108,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadProgress = function(oEvent) {
+		var i, j;
 		if (oEvent) {
 			var aUploadedFiles = this._getUploadedFilesFromUploaderEvent(oEvent);
 			var sProcentUploaded;
 			var $ProcentUploaded;
-			for (var i = 0; i < aUploadedFiles.length; i++) {
-				sProcentUploaded = (Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100)).toString();
-				sProcentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sProcentUploaded]);
-				$ProcentUploaded = jQuery.sap.byId(this.aItems[i].getId() + "-ta_progress");
-				$ProcentUploaded.text(sProcentUploaded);
+			sProcentUploaded = (Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100)).toString();
+			sProcentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sProcentUploaded]);
+			for (i = 0; i < aUploadedFiles.length; i++) {
+				j = 0;
+				for (j = 0; j < this.aItems.length; j++) {
+					if (this.aItems[j].getProperty("fileName") === aUploadedFiles[i] && this.aItems[j]._status === "Uploading") {
+						$ProcentUploaded = jQuery.sap.byId(this.aItems[i].getId() + "-ta_progress");
+						$ProcentUploaded.text(sProcentUploaded);
+					}
+					else if (this.aItems[j]._status === "Display") {
+						break;
+					}
+				}
 			}
 		}
 	};
