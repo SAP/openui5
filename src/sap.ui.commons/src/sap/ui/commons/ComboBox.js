@@ -294,7 +294,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	ComboBox.prototype.onsapfocusleave = function(oEvent) {
 
 		var oLB = this._getListBox();
-		if (oEvent.relatedControlId && jQuery.sap.containsOrEquals(oLB.getFocusDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if ((oEvent.relatedControlId && jQuery.sap.containsOrEquals(oLB.getFocusDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) ||
+				this._bOpening) {
 			this.focus();
 		} else {
 			// we left the ComboBox to another (unrelated) control and thus have to fire the change (if needed).
@@ -902,6 +903,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 */
 	ComboBox.prototype._prepareOpen = function(oListBox) {
 		// update the list and the input field
+		this._bOpening = true;
+
 		var $Ref = jQuery(this.getInputDomRef()),
 			oValue = $Ref.val(),
 			oNewValue,
@@ -960,6 +963,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 * @private
 	 */
 	ComboBox.prototype._handleOpened = function(){
+
 		this.oPopup.detachOpened(this._handleOpened, this);
 		var oListBox = this._getListBox();
 		oListBox.scrollToIndex(this._iClosedUpDownIdx, true);
@@ -979,6 +983,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		if (jQuery(this.getFocusDomRef()).data("sap.InNavArea")) {
 			jQuery(this.getFocusDomRef()).data("sap.InNavArea", false);
 		}
+
+		this._bOpening = false;
 
 	};
 
