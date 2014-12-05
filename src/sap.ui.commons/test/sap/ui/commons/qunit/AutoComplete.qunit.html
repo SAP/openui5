@@ -82,6 +82,7 @@
 			
 			setTimeout(function(){
 				sap.ui.test.qunit.triggerCharacterInput(oAuto.getFocusDomRef(), sChar);
+				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), sChar);
 				setTimeout(function(){
 					start();
@@ -217,6 +218,7 @@
 			setTimeout(function(){
 				checkPopup(oAuto1, false);
 				sap.ui.test.qunit.triggerCharacterInput(oAuto1.getFocusDomRef(), "a");
+				sap.ui.test.qunit.triggerEvent("input", oAuto1.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto1.getFocusDomRef(), "a");
 				setTimeout(function(){
 					checkPopup(oAuto1, true);
@@ -239,6 +241,7 @@
 		asyncTest("Empty AutoComplete", function() {
 			popupClosingTest(function(oAuto){
 				jQuery(oAuto.getInputDomRef()).val("");
+				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
 			});
 		});
@@ -251,6 +254,8 @@
 		
 		asyncTest("Escape", function() {
 			popupClosingTest(function(oAuto){
+				sap.ui.test.qunit.triggerKeydown(oAuto.getFocusDomRef(), "ESCAPE");
+				sap.ui.test.qunit.triggerKeypress(oAuto.getFocusDomRef(), "ESCAPE");
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), "ESCAPE");
 			});
 		});
@@ -300,6 +305,7 @@
 			setTimeout(function(){
 				checkAriaAttributes(-1, -1, false, "when popup is closed");
 				sap.ui.test.qunit.triggerCharacterInput(oAuto1.getFocusDomRef(), "a");
+				sap.ui.test.qunit.triggerEvent("input", oAuto1.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto1.getFocusDomRef(), "a");
 				setTimeout(function(){
 					checkAriaAttributes(-1, 4, true, "when popup is open");
