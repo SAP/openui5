@@ -24,11 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 	
-		// Return immediately if control is invisible or has no RadioButtons
-		if (!oRBGroup.getVisible() || !oRBGroup.aRBs) {
-			return;
-		}
-	
 		var iColumns = oRBGroup.getColumns();
 		var bEnabled = oRBGroup.getEnabled();
 	

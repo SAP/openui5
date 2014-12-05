@@ -179,7 +179,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 					that._initializeMetadata();
 					that.initialize();
 				}, this);
-				this.oMetadata.attachFailed(this.fireMetadataFailed, this);
+				this.oMetadata.attachFailed(function(oEvent) {
+					that.fireMetadataFailed(oEvent.getParameters());
+				});
 			}
 			if (this.oMetadata.isFailed()){
 				this.refreshMetadata();
@@ -187,8 +189,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 			if (this.sAnnotationURI) {
 				this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(this.sAnnotationURI, this.oMetadata, { async: this.bLoadMetadataAsync });
-				this.oAnnotations.attachFailed(this.fireAnnotationsFailed, this);
-				this.oAnnotations.attachLoaded(this.fireAnnotationsLoaded, this);
+				this.oAnnotations.attachFailed(function(oEvent) {
+					that.fireAnnotationsFailed(oEvent.getParameters());
+				});
+				this.oAnnotations.attachLoaded(function(oEvent) {
+					that.fireAnnotationsLoaded(oEvent.getParameters());
+				});
 			}
 
 			if (this.oMetadata.isLoaded()) {

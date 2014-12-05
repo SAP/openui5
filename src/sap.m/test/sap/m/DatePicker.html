@@ -36,7 +36,7 @@
 			var sValue = oEvent.getParameter("value");
 			var bValid = oEvent.getParameter("valid");
 			iEvent++;
-			oInput.setValue("Change - Event " + iEvent + ": DatePicker " + oDP.getId() + ":" + sValue);
+			oInput.setValue("Change - Event " + iEvent + ": DatePicker " + oDP.getId() + ":" + sValue + " ;valid: " + bValid);
 			if (bValid) {
 				oDP.setValueState(sap.ui.core.ValueState.None);
 			} else {

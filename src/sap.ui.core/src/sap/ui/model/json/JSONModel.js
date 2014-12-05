@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	JSONModel.prototype.setData = function(oData, bMerge){
 		if (bMerge) {
 			// do a deep copy
-			this.oData = jQuery.extend(true, {}, this.oData, oData);
+			this.oData = jQuery.extend(true, jQuery.isArray(this.oData) ? [] : {}, this.oData, oData);
 		} else {
 			this.oData = oData;
 		}

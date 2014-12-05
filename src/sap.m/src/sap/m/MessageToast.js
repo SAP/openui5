@@ -53,9 +53,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		/* Internal methods and properties                             */
 		/* =========================================================== */
 
-		MessageToast._OFFSET = "0 -64";
-
-		MessageToast._CSSCLASS = "sapMMessageToast";
+		var OFFSET = "0 -64",
+			CSSCLASS = "sapMMessageToast";
 
 		MessageToast._mSettings = {
 			duration: 3000,
@@ -176,7 +175,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			}
 		};
 
-		MessageToast._hasDefaulPosition = function(mOptions) {
+		function hasDefaulPosition(mOptions) {
 			for (var aPositionOptions = ["my", "at", "of", "offset"], i = 0; i < aPositionOptions.length; i++) {
 				if (mOptions[aPositionOptions[i]] !== undefined) {
 					return false;
@@ -184,26 +183,26 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			}
 
 			return true;
-		};
+		}
 
-		MessageToast._createHTMLMarkup = function(mSettings) {
+		function createHTMLMarkup(mSettings) {
 			var oMessageToastDomRef = document.createElement("div");
 
 			oMessageToastDomRef.style.width = mSettings.width;
-			oMessageToastDomRef.className = MessageToast._CSSCLASS;
+			oMessageToastDomRef.className = CSSCLASS;
 			oMessageToastDomRef.appendChild(document.createTextNode(mSettings.message));
 
 			return oMessageToastDomRef;
-		};
+		}
 
-		MessageToast._normalizeOptions = function(mOptions) {
+		function normalizeOptions(mOptions) {
 			if (mOptions) {
 
 				// if no position options are provided
-				if (this._hasDefaulPosition(mOptions)) {
+				if (hasDefaulPosition(mOptions)) {
 
 					// change the default offset
-					mOptions.offset = this._OFFSET;
+					mOptions.offset = OFFSET;
 				}
 
 				// if the document object is provided as an option, replace it with the window object,
@@ -216,12 +215,12 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				mOptions = {
 
 					// if no options are provided, change the default offset
-					offset: this._OFFSET
+					offset: OFFSET
 				};
 			}
 
 			return mOptions;
-		};
+		}
 
 		/* =========================================================== */
 		/* Event handlers                                              */
@@ -283,7 +282,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 		MessageToast._setCloseAnimation = function($MessageToastDomRef, iDuration, fnClose, mSettings) {
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
-				sTransitionEnd = "webkitTransitionEnd." + MessageToast._CSSCLASS + " transitionend." + MessageToast._CSSCLASS;
+				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS;
 
 			if (mSettings.animationDuration > 0) {
 				$MessageToastDomRef[0].style.webkitTransition = sCssTransition;
@@ -337,7 +336,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				iPos,
 				oMessageToastDomRef;
 
-			mOptions = this._normalizeOptions(mOptions);
+			mOptions = normalizeOptions(mOptions);
 
 			// merge mOptions into mSettings
 			jQuery.extend(mSettings, mOptions);
@@ -346,7 +345,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			this._validateSettings(mSettings);
 
 			// create the message toast HTML markup
-			oMessageToastDomRef = this._createHTMLMarkup(mSettings);
+			oMessageToastDomRef = createHTMLMarkup(mSettings);
 
 			// save this pop-up instance and the position,
 			// to be used inside fnMTAttachClosed closure
@@ -361,7 +360,6 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			if (jQuery.support.cssTransitions) {
 
 				// sets the animation functions to use for opening and closing the message toast
-				// note: this custom animations are using CSS3 transitions
 				oPopup.setAnimations(function fnMessageToastOpen($MessageToast, iDuration, fnOpened) {
 					fnOpened();
 				}, function fnMessageToastClose($MessageToastDomRef, iDuration, fnClose) {
@@ -382,8 +380,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			if (!this._bBoundedEvents) {
 
 				// bind to the resize event to handle orientation change and resize events
-				jQuery(window).on("resize." + MessageToast._CSSCLASS, this._handleResizeEvent.bind(this));
-				jQuery(document).on("mousedown." + MessageToast._CSSCLASS, this._handleMouseDownEvent.bind(this));
+				jQuery(window).on("resize." + CSSCLASS, this._handleResizeEvent.bind(this));
+				jQuery(document).on("mousedown." + CSSCLASS, this._handleMouseDownEvent.bind(this));
 
 				this._bBoundedEvents = true;
 			}
@@ -402,8 +400,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 				if (that._iOpenedPopups === 0) {
 					that._aPopups = [];
-					jQuery(window).off("resize." + MessageToast._CSSCLASS);
-					jQuery(document).off("mousedown." + MessageToast._CSSCLASS);
+					jQuery(window).off("resize." + CSSCLASS);
+					jQuery(document).off("mousedown." + CSSCLASS);
 
 					that._bBoundedEvents = false;
 				}

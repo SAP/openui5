@@ -154,6 +154,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		}
 	};
 
+	/**
+	 * If the IconTabFilter doesn't have a key, the function returns the id of the IconTabFilter, 
+	 * so the IconTabBar can remember the selected IconTabFilter. 
+	 * 
+	 * @private
+	 */
+	IconTabFilter.prototype._getNonEmptyKey = function () {
+		
+		// BCP: 1482007468
+		var sKey = this.getKey();
+		
+		if (sKey) {
+			return sKey;
+		}
+
+		return this.getId();
+	};
+
 	return IconTabFilter;
 
 }, /* bExport= */ true);

@@ -177,7 +177,6 @@
 			equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
 		});
 
-		
 		test("Browser Version Test", 5, function() {
 			var browser = sap.ui.Device.browser;
 			var ua = navigator.userAgent;
@@ -210,6 +209,23 @@
 			ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
 		});
 
+		// now check the locale configuration to be applied as lang attribute
+		test("Locale configuration", function() {
+			
+			var $html = jQuery("html");
+			var oConfig = sap.ui.getCore().getConfiguration();
+			var oLocale = oConfig.getLocale();
+			var sLocale = oLocale && oLocale.toString();
+			
+			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
+			
+			sLocale = "de";
+			oConfig.setLanguage(sLocale);
+			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
+			
+		});
+
+		
 		</script>
 	</head>
 	<body>

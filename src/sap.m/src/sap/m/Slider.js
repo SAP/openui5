@@ -25,35 +25,35 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @alias sap.m.Slider
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata : {
+		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Defines the width of the slider, this value can be provided in %, em, px… and all possible CSS units.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
+				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
 
 				/**
 				 * Determines whether the user can change the slider value.
 				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
 				 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : ""},
+				name: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * The minimum value of the slider.
 				 */
-				min : {type : "float", group : "Data", defaultValue : 0},
+				min: { type: "float", group: "Data", defaultValue: 0 },
 
 				/**
 				 * The maximum value of the slider.
 				 */
-				max : {type : "float", group : "Data", defaultValue : 100},
+				max: { type: "float", group: "Data", defaultValue: 100 },
 
 				/**
 				 * Define the amount of units to change the slider when adjusting by drag and drop.
@@ -63,45 +63,45 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				 * The step must be positive, if a negative number is provided, the default value will be used instead.
 				 * If the width of the slider converted to pixels is less than the range (max – min), the value will be rounded to multiples of the step size.
 				 */
-				step : {type : "float", group : "Data", defaultValue : 1},
+				step: { type: "float", group: "Data", defaultValue: 1 },
 
 				/**
 				 * Show a progress bar indicator.
 				 */
-				progress : {type : "boolean", group : "Misc", defaultValue : true},
+				progress: { type: "boolean", group: "Misc", defaultValue: true },
 
 				/**
 				 * Define the value of the slider.
 				 *
 				 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties "min"/"max" are used instead.
 				 */
-				value : {type : "float", group : "Data", defaultValue : 0}
+				value: { type: "float", group: "Data", defaultValue: 0 }
 			},
-			events : {
+			events: {
 
 				/**
 				 * This event is triggered after the end user finishes interacting, if there is any change.
 				 */
-				change : {
-					parameters : {
+				change: {
+					parameters: {
 
 						/**
 						 * The current value of the slider after a change.
 						 */
-						value : {type : "float"}
+						value: { type: "float" }
 					}
 				},
 
 				/**
 				 * This event is triggered during the dragging period, each time the slider value changes.
 				 */
-				liveChange : {
-					parameters : {
+				liveChange: {
+					parameters: {
 
 						/**
 						 * The current value of the slider after a live change.
 						 */
-						value : {type : "float"}
+						value: { type: "float" }
 					}
 				}
 			}

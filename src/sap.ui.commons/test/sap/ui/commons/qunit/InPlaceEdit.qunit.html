@@ -216,7 +216,7 @@
 		qutils.triggerEvent("click", "IPE6--Edit");
 		ok(jQuery.sap.domById("IPE6--input"), "Edit mode: TextField rendered")
 		ok(!jQuery("#IPE6--Edit").get(0), "Edit mode: no edit button rendered");
-	 });
+	});
 
 	asyncTest("Typing with undo", function() {
 		oIPE1.focus();
@@ -224,6 +224,7 @@
 		setTimeout(function(){
 			equal(jQuery("#IPE1--X").css("visibility"), "hidden", "Undo button invisible");
 			qutils.triggerCharacterInput("TF1", "A");
+			qutils.triggerEvent("input", "TF1");
 			qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
 			equal(jQuery("#TF1").val(), sStartText + "A", "Displayed text");
 			equal(jQuery("#IPE1--X").css("visibility"), "visible", "Undo button visible");
@@ -338,7 +339,7 @@
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.InPlaceEdit</h1>
 	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
+	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 	<br>

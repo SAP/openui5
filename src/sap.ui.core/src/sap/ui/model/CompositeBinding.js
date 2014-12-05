@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './SimpleType'],
 		constructor : function (aBindings, bRawValues) {
 			PropertyBinding.apply(this, [null,""]);
 			this.aBindings = aBindings;
+			this.aValues = null;
 			this.bRawValues = bRawValues;
 		},
 		metadata : {
@@ -218,9 +219,9 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './SimpleType'],
 	 * 
 	 */
 	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
-		var oValue = this.getExternalValue();
-		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
-			this.oValue = oValue;
+		var aValues = this.getValue();
+		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
+			this.aValues = aValues;
 			this._fireChange({reason: sap.ui.model.ChangeReason.Change});
 		}
 	};

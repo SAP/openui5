@@ -26,40 +26,40 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @alias sap.m.ComboBox
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ { metadata : {
+		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Key of the selected item. If the key has no corresponding item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 */
-				selectedKey : {type : "string", group : "Data", defaultValue : null},
+				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Identifier of the selected item. If the identifier has no corresponding item, no changes will apply.
 				 */
-				selectedItemId : {type : "string", group : "Misc", defaultValue : null}
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
 			},
-			associations : {
+			associations: {
 
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem : {type : "sap.ui.core.Item", multiple : false}
+				selectedItem: { type: "sap.ui.core.Item", multiple: false }
 			},
-			events : {
+			events: {
 
 				/**
 				 * Occurs when the user changes the selected item.
 				 */
-				selectionChange : {
-					parameters : {
+				selectionChange: {
+					parameters: {
 
 						/**
 						 * The selected item.
 						 */
-						selectedItem : {type : "sap.ui.core.Item"}
+						selectedItem: { type: "sap.ui.core.Item" }
 					}
 				}
 			}
@@ -83,6 +83,37 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			var oItem = this.getSelectedItem();
 			return (oItem && oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem")) || null;
 		};
+
+		function fnHandleKeyboardNavigation(oItem) {
+			var oDomRef = this.getFocusDomRef(),
+				iSelectionStart = oDomRef.selectionStart,
+				iSelectionEnd = oDomRef.selectionEnd,
+				bIsTextSelected = iSelectionStart !== iSelectionEnd,
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
+				oListDomRef;
+
+			if (oItem) {
+				oListDomRef = this.getList().getDomRef();
+				this.updateDomValue(oItem.getText());
+				this.setSelection(oItem, { suppressInvalidate: true });
+				this.fireSelectionChange({ selectedItem: oItem });
+				oItem = this.getSelectedItem();
+
+				// the attribute aria-activedescendant is set when the List is rendered,
+				// allowing screen readers to read the content within the edit input field as intended
+				if (oDomRef && oListDomRef && oItem && this.isOpen()) {
+					oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+				}
+
+				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
+					iSelectionStart = 0;
+				}
+
+				this.selectText(iSelectionStart, oDomRef.value.length);
+			}
+
+			this.scrollToItem(this.getList().getSelectedItem());
+		}
 
 		/* ----------------------------------------------------------- */
 		/* Popover                                                     */
@@ -435,28 +466,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oNextSelectableItem,
-				aSelectableItems = this.getSelectableItems(),
-				oDomRef = this.getFocusDomRef(),
-				iSelectionStart = oDomRef.selectionStart,
-				iSelectionEnd = oDomRef.selectionEnd,
-				bIsTextSelected = iSelectionStart !== iSelectionEnd,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
+				aSelectableItems = this.getSelectableItems();
 
 			oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
-
-			if (oNextSelectableItem) {
-				this.updateDomValue(oNextSelectableItem.getText());
-				this.setSelection(oNextSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: oNextSelectableItem });
-
-				if (!jQuery.sap.startsWithIgnoreCase(oNextSelectableItem.getText(), sTypedValue) || !bIsTextSelected) {
-					iSelectionStart = 0;
-				}
-
-				this.selectText(iSelectionStart, oDomRef.value.length);
-			}
-
-			this.scrollToItem(this.getList().getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oNextSelectableItem);
 		};
 
 		/**
@@ -479,28 +492,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oPrevSelectableItem,
-				aSelectableItems = this.getSelectableItems(),
-				oDomRef = this.getFocusDomRef(),
-				iSelectionStart = oDomRef.selectionStart,
-				iSelectionEnd = oDomRef.selectionEnd,
-				bIsTextSelected = iSelectionStart !== iSelectionEnd,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
+				aSelectableItems = this.getSelectableItems();
 
 			oPrevSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) - 1];
-
-			if (oPrevSelectableItem) {
-				this.updateDomValue(oPrevSelectableItem.getText());
-				this.setSelection(oPrevSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: oPrevSelectableItem });
-
-				if (!jQuery.sap.startsWithIgnoreCase(oPrevSelectableItem.getText(), sTypedValue) || !bIsTextSelected) {
-					iSelectionStart = 0;
-				}
-
-				this.selectText(iSelectionStart, oDomRef.value.length);
-			}
-
-			this.scrollToItem(this.getList().getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oPrevSelectableItem);
 		};
 
 		/**
@@ -526,13 +521,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			var oFirstSelectableItem = this.getSelectableItems()[0];
 
 			if (oFirstSelectableItem && (oFirstSelectableItem !== this.getSelectedItem())) {
-				this.updateDomValue(oFirstSelectableItem.getText());
-				this.setSelection(oFirstSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: oFirstSelectableItem });
-				this.selectText(0, this.getFocusDomRef().value.length);
+				fnHandleKeyboardNavigation.call(this, oFirstSelectableItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
-
-			this.scrollToItem(this.getList().getSelectedItem());
 		};
 
 		/**
@@ -558,13 +550,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			var oLastSelectableItem = this.findLastEnabledItem(this.getSelectableItems());
 
 			if (oLastSelectableItem && (oLastSelectableItem !== this.getSelectedItem())) {
-				this.updateDomValue(oLastSelectableItem.getText());
-				this.setSelection(oLastSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: oLastSelectableItem });
-				this.selectText(0, this.getFocusDomRef().value.length);
+				fnHandleKeyboardNavigation.call(this, oLastSelectableItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
-
-			this.scrollToItem(this.getList().getSelectedItem());
 		};
 
 		/**
@@ -600,13 +589,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oItem = aSelectableItems[iIndex];
 
 			if (oItem && (oItem !== this.getSelectedItem())) {
-				this.updateDomValue(oItem.getText());
-				this.setSelection(oItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: oItem });
-				this.selectText(0, this.getFocusDomRef().value.length);
+				fnHandleKeyboardNavigation.call(this, oItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
-
-			this.scrollToItem(this.getList().getSelectedItem());
 		};
 
 		/**
@@ -642,13 +628,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oItem = aSelectableItems[iIndex];
 
 			if (oItem && (oItem !== this.getSelectedItem())) {
-				this.updateDomValue(oItem.getText());
-				this.setSelection(oItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: oItem });
-				this.selectText(0, this.getFocusDomRef().value.length);
+				fnHandleKeyboardNavigation.call(this, oItem);
+			} else {
+				this.scrollToItem(this.getList().getSelectedItem());
 			}
-
-			this.scrollToItem(this.getList().getSelectedItem());
 		};
 
 		/**
@@ -909,10 +892,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeOpen = function() {
-			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()];
+			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
+				oDomRef = this.getFocusDomRef(),
+				oItem = this.getSelectedItem();
 
 			// add the active state to the control field
 			this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+
+			// set the attributes "aria-controls" and "aria-activedescendant" when the List is rendered
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-controls", this.getList().getId());
+				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+			}
 
 			// call the hook to add additional content to the List
 			this.addContent();
@@ -939,7 +930,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 *
 		 * @protected
 		 */
-		ComboBox.prototype.onAfterOpen = function() {};
+		ComboBox.prototype.onAfterOpen = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "true");
+			}
+		};
 
 		/*
 		 * This event handler will be called before the picker pop-up is closed.
@@ -947,6 +944,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeClose = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			// remove the attribute aria-controls when the list is not visible
+			if (oDomRef) {
+				oDomRef.removeAttribute("aria-controls");
+				oDomRef.removeAttribute("aria-activedescendant");
+			}
 
 			// remove the active state of the control's field
 			this.removeStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
@@ -958,12 +962,16 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.onAfterClose = function() {
+			var oDomRef = this.getFocusDomRef();
 
-			// if the focus is back to the input after close the picker, the message should be open
-			if ( document.activeElement === this.getFocusDomRef() ) {
-				this.openValueStateMessage();
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "false");
 			}
 
+			// if the focus is back to the input after close the picker, the message should be open
+			if (document.activeElement === oDomRef) {
+				this.openValueStateMessage();
+			}
 		};
 
 		/*

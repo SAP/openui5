@@ -225,7 +225,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 
 			var oBinding = this.getBinding("rows");
 			var that = this;
-			if (oBinding) {
+			// The "contextChange" event is idiosyncratic for the TreeBindingAdapter.
+			// Neither the TreeBinding, nor the AnalyticalBinding know this event.
+			// Also make sure, the contextChange handler is only attached once, otherwise the selection is messed up.
+			if (oBinding && !oBinding.hasListeners("contextChange")) {
 				oBinding.attachContextChange(function(oEvent) {
 					if (!that._oSelection) {
 						return;

@@ -54,13 +54,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 	HandlebarsTemplate.RENDER_HELPERS = (function() {
 	
 		// TODO: ERROR HANDLING!!!
-		// TODO: implement support for "if", "unless", "with", ...
+		// TODO: implement support for "with", ...
 	
 		// extended helpers:
 		//   - each
+		//   - if
+		//   - unless
 		//   - with   (TODO)
-		//   - if     (TODO)
-		//   - unless (TODO)
 		
 		// custom helpers:
 		//   - control: allows to declare a UI5 control
@@ -147,6 +147,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				if (!options.hash.path) {
 					// call the original function
 					return fnIf.apply(this, arguments);
+				} else {
+					
+					// lookup the required infos
+					var oRootControl = options.data.rootControl,
+					sParentPath = options.data.path,
+					sPath = (jQuery.sap.startsWith(options.hash.path, "/") ? "" : (sParentPath || "")) + options.hash.path;
+					
+					// only in case of a path is specified the handler can work
+					if (sPath) {
+						// bind and returns true/false dependent on the value
+						var oValue = oRootControl.bindProp(sPath);
+						if (oValue) {
+							return options.fn(this);
+						} else {
+							return options.inverse(this);
+						}
+					}
+					
 				}
 			},
 			
@@ -155,6 +173,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				if (!options.hash.path) {
 					// call the original function
 					return fnUnless.apply(this, arguments);
+				} else {
+					
+					// lookup the required infos
+					var oRootControl = options.data.rootControl,
+					sParentPath = options.data.path,
+					sPath = (jQuery.sap.startsWith(options.hash.path, "/") ? "" : (sParentPath || "")) + options.hash.path;
+					
+					// only in case of a path is specified the handler can work
+					if (sPath) {
+						// bind and returns true/false dependent on the value
+						var oValue = oRootControl.bindProp(sPath);
+						if (!oValue) {
+							return options.fn(this);
+						} else {
+							return options.inverse(this);
+						}
+					}
+					
 				}
 			},
 			

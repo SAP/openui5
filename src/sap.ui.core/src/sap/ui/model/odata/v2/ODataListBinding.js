@@ -430,8 +430,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 			that.bIgnoreSuspend = true;
 
-			//delay dataReceived event - checkupdate must be done before
-			jQuery.sap.delayedCall(0,that, that.fireDataReceived, [{data: oData}]);
+			//register datareceived call as  callAfterUpdate
+			that.oModel.callAfterUpdate(function() {
+				that.fireDataReceived({data: oData});
+			});
 		}
 
 		function fnError(oError, bAborted) {
@@ -482,7 +484,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 	};
-
+	
+	/**
+	 * @see sap.ui.model.ListBinding.prototype.isLengthFinal
+	 *
+	 */
+	ODataListBinding.prototype.isLengthFinal = function() {
+		return this.bLengthFinal;
+	};
+	
 	/**
 	 * Return the length of the list
 	 *

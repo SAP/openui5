@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ResponsivePopover
+		title="About"
+		class="sapUiPopupWithPadding">
+		<content>
+			<Text text="... more content goes here" />
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>
