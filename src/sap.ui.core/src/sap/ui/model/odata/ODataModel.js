@@ -672,7 +672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				if (fnSuccess) {
 					fnSuccess(oResultData);
 				}
-				that.checkUpdate(false, mChangedEntities);
+				that.checkUpdate(false, false, mChangedEntities);
 				if (fnCompleted) {
 					fnCompleted(oResultData);
 				}
@@ -909,11 +909,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * Private method iterating the registered bindings of this model instance and initiating their check for update
 	 *
 	 * @param {boolean} bForceUpdate
+	 * @param {boolean} bAsync
 	 * @param {object} mChangedEntities
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
+	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities) {
+		if (bAsync) {
+			if (!this.sUpdateTimer) {
+				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
+					this.checkUpdate(bForceUpdate, false, mChangedEntities);
+				});
+			}
+			return;
+		}
+		if (this.sUpdateTimer) {
+			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			this.sUpdateTimer = null;
+		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
@@ -2713,10 +2726,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @param {string}  sPath path of the property to set
 	 * @param {any}     oValue value to set the property to
 	 * @param {object} [oContext=null] the context which will be used to set the property
+	 * @param {boolean} [bAsyncUpdate] whether to update other bindings dependent on this property asynchronously
 	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found or another entry was already updated.
 	 * @public
 	 */
-	ODataModel.prototype.setProperty = function(sPath, oValue, oContext) {
+	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 
 		var sProperty, oEntry = { }, oData = { },
 			sChangeKey = this._createRequestUrl(sPath, oContext),
@@ -2766,7 +2780,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		if (oData._bCreate) {
 			oData[sProperty] = oValue;
 			success = true;
-			this.checkUpdate(false, mChangedEntities);
+			this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 		} else {
 			if (!this.sChangeKey) {
 				this.sChangeKey = sChangeKey;
@@ -2775,7 +2789,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			if (this.sChangeKey == sChangeKey) {
 				oData[sProperty] = oValue;
 				success = true;
-				this.checkUpdate(false, mChangedEntities);
+				this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 			} else {
 				this.fireRejectChange(
 						{rejectedValue : oValue,

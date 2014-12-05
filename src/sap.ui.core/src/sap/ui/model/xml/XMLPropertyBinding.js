@@ -27,8 +27,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientPropertyBinding'],
 	 */
 	XMLPropertyBinding.prototype.setValue = function(oValue){
 		if (this.oValue != oValue) {
-			// the binding value will be updated by the model. The model calls checkupdate on all bindings after updating its value.
-			this.oModel.setProperty(this.sPath, oValue, this.oContext);
+			if (this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
+				this.oValue = oValue;
+			}
 		}
 	};
 	

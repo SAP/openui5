@@ -65,10 +65,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding'],
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	ODataPropertyBinding.prototype.setValue = function(oValue){
-		if (this.oValue != oValue) {
-			//the binding value will be updated by the model. The model calls checkupdate on all bindings after updating its value.
-			if (!this.oModel.setProperty(this.sPath, oValue, this.oContext)) {
-				this._fireChange();
+		if (!jQuery.sap.equal(oValue, this.oValue)) {
+			if (this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
+				this.oValue = oValue;
 			}
 		}
 	};

@@ -62,20 +62,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	};
 	
 	/**
-	 * Private method iterating the registered bindings of this model instance and initiating their check for update
-	 *
-	 * @param {boolean} bForceupdate
-	 *
-	 * @private
-	 */
-	ClientModel.prototype.checkUpdate = function(bForceupdate) {
-		var aBindings = this.aBindings.slice(0);
-		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceupdate);
-		});
-	};
-	
-	/**
 	 * @see sap.ui.model.Model.prototype.bindElement
 	 *
 	 */
