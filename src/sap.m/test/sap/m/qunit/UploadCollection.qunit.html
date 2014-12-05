@@ -18,14 +18,14 @@
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
-	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	}
 
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
-	module("Basic tests for rendering and default values of properties", {
+	module("Rendering", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection();
 			this.oUploadCollection.placeAt("uiArea");
@@ -36,7 +36,7 @@
 		}
 	});
 
-	test("Rendering", function() {
+	test("Basic tests", function() {
 		ok(this.oUploadCollection, "UploadCollection instantiated")
 		ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
 		ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
@@ -44,37 +44,9 @@
 		ok(jQuery.sap.domById("__collection0-uploader"), "FileUploader is rendered");
 	});
 
-	test("Default values of properties", function() {
-		var	sFileType,
-			sMaximumFilenameLength = 0,
-			nMaximumFileSize = 0,
-			sMimeType,
-			bMultiple = false,
-			sNoDataText = "",
-			sName = "",
-			bDeleteEnabled = true,
-			bRenameEnabled = true,
-			bSameFilenameAllowed = false,
-			bUploadEnabled = true,
-			sUploadUrl = "../../../upload",
-			sValue = "";
-
-		strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
-		strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
-		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
-		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
-		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
-		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
-		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
-		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
-		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
-		});
-
 	module("Properties", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection({
-				noDataText : "myNoDataText"
-			});
+			this.oUploadCollection = new sap.m.UploadCollection()
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
@@ -82,12 +54,135 @@
 			this.oUploadCollection.destroy();
 		}
 	});
-	
-	test("Set properties' values", function() {
+
+	testSetter = function(oUploadCollection, sProperty, oPropertyValue, bPropagate) {
+		if (!bPropagate) {
+			// set default value
+			bPropagate = false;
+		}
+
+		var sSetterMethod = "set" + sProperty[0].toUpperCase() + sProperty.slice(1);
+		var sGetterMethod = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
+		var sGetterMethodFileUploader = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
+
+		switch (sProperty) {
+			case "uploadEnabled":
+				sPropertyFileUploader = "enabled";
+				break;
+			default:
+				sPropertyFileUploader = sProperty;
+		}
+		var sGetterMethodFileUploader = "get" + sPropertyFileUploader[0].toUpperCase() + sPropertyFileUploader.slice(1);
+
+		oUploadCollection[sSetterMethod](oPropertyValue);
+		deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
+		if (bPropagate) {
+			switch (sProperty) {
+				case "noDataText":
+					deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
+					break;
+				default:
+					deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
+			}
+		}
+	}
+
+	test("Default values", function() {
+		var sFileType,
+			sMaximumFilenameLength = 0,
+			nMaximumFileSize = 0,
+			sMimeType,
+			bMultiple = false,
+			sNoDataText = "",
+			bSameFilenameAllowed = false,
+			bShowSeparators = "None",
+			bUploadEnabled = true,
+			sUploadUrl = "../../../upload";
+
+		strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
+		strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
+		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
+		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
+		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
+		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
+		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
+		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
+		strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
+	});
+
+	test("fileType", function() {
+		var bPropagateTrue = true;
+		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
+
+		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
+	})
+
+	test("maximumFilenameLength", function() {
+		var bPropagateTrue = true;
+		var iMaximumFilenameLength = 4711;
+
+		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, bPropagateTrue);
+	})
+
+	test("maximumFileSize", function() {
+		var bPropagateTrue = true;
+		var iMaximumFileSize = 4711;
+
+		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, bPropagateTrue);
+	})
+
+	test("mimeType", function() {
+		var bPropagateTrue = true;
+		var aMimeTypes = ["text", "image", "unittest"];
+
+		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, bPropagateTrue);
+	})
+
+	test("multiple", function() {
+		var bPropagateTrue = true;
+		var bMultiple = true;
+
+		testSetter(this.oUploadCollection, "multiple", bMultiple, bPropagateTrue);
+	})
+
+	test("noDataText", function() {
+		var bPropagateTrue = true;
 		var sNoDataText = "myNoDataText";
 
-		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' set properly");
-		});
+		testSetter(this.oUploadCollection, "noDataText", sNoDataText, bPropagateTrue);
+		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
+	})
+
+	test("sameFilenameAllowed", function() {
+		var bPropagateTrue = true;
+		var bSameFilenameAllowed = true;
+
+		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, bPropagateTrue);
+	})
+
+	test("showSeparators", function() {
+		var bShowSeparators = "All";
+
+		testSetter(this.oUploadCollection, "showSeparators", bShowSeparators);
+	})
+
+	test("uploadEnabled", function() {
+		var bPropagateTrue = true;
+		var bUploadEnabled = false;
+
+		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, bPropagateTrue);
+	})
+
+	test("uploadUrl", function() {
+		var bPropagateTrue = true;
+		var sUploadUrl = "my/upload/url";
+
+		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, bPropagateTrue);
+	})
+
+
 	
 	/* --------------------------------------- */
 	/* Test methods                            */
@@ -114,8 +209,9 @@
 // 	});
 	
 	test("Get number of attachments label", function() {
+		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
-		equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), 'Attachments (999)', "Correct label for number of attachments returned");
+		equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), sText, "Correct label for number of attachments returned");
 	});
 
 	test("Determine icon from filename", function() {
@@ -160,7 +256,8 @@
 		sFilename = null;
 		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
 	});
-	
+
+
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
@@ -226,8 +323,8 @@
 	
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oData);
-		sap.ui.getCore().setModel(oModel);	
-	
+		sap.ui.getCore().setModel(oModel);
+
 	module("Event tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -305,13 +402,13 @@
 	});
 	
 	test("Edit", function() {
-		//trigger edit button of line 2 and check the status of the line 
+		//trigger edit button of line 2 and check the status of the line
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
 		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2")
 		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct")
-		
+
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();
