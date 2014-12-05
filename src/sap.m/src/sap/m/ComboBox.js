@@ -310,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				}
 			}
 
-			if (sValue === "") {
+			if (sValue === "" || !bVisibleItems) {
 				this.setSelection(null, { suppressInvalidate: true });
 
 				if (oSelectedItem !== this.getSelectedItem()) {
