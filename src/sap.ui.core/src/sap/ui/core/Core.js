@@ -1128,7 +1128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				vValue = oInfo[sKey];
 
 				// don't set name again, don't copy undefined values
-				if ( sKey != 'name' && vValue !== undefined ) {
+				if ( vValue !== undefined ) {
 				
 					if ( jQuery.isArray(oLibrary[sKey]) ) {
 						// concat array typed values 
@@ -1152,6 +1152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 		// Create lib info object or merge with existing 'adhoc' library 
 		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
+			name : sLibName,
 			dependencies : [],
 			types : [],
 			interfaces : [],
@@ -1768,6 +1769,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		// don't set 'loaded' marker, so it might be loaded later
 		if ( !oLibrary ) {
 			oLibrary = this.mLibraries[sLibraryName] = {
+				name: sLibraryName,
 				dependencies : [],
 				types : [],
 				interfaces : [],
