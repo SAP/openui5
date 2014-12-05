@@ -31,8 +31,13 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeControlData(oControl);
 		
 		rm.addClass("sapMNav");
-		rm.addStyle("width", oControl.getWidth());
-		rm.addStyle("height", oControl.getHeight());
+		if (oControl.getWidth()) {
+			rm.addStyle("width", oControl.getWidth());
+		}
+		var sHeight = oControl.getHeight();
+		if (sHeight && sHeight != "100%") {
+			rm.addStyle("height", sHeight);
+		}
 	
 		if (this.renderAttributes) {
 			this.renderAttributes(rm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
