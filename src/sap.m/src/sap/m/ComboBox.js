@@ -899,9 +899,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// add the active state to the control field
 			this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
 
-			// set the attributes "aria-controls" and "aria-activedescendant" when the List is rendered
 			if (oDomRef) {
-				oDomRef.setAttribute("aria-controls", this.getList().getId());
+
+				// expose a parent/child contextual relationship to assistive technologies
+				// note: the "aria-owns" attribute is set when the list is visible and in view
+				oDomRef.setAttribute("aria-owns", this.getList().getId());
+
+				// set the attribute "aria-activedescendant" when the List is rendered
 				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
 			}
 
@@ -946,9 +950,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.onBeforeClose = function() {
 			var oDomRef = this.getFocusDomRef();
 
-			// remove the attribute aria-controls when the list is not visible
 			if (oDomRef) {
-				oDomRef.removeAttribute("aria-controls");
+
+				// note: the "aria-owns" attribute is removed when the list is not visible and in view
+				oDomRef.removeAttribute("aria-owns");
+
+				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");
 			}
 
