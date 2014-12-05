@@ -8,7 +8,7 @@
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -344,6 +344,49 @@
 		oSegmentedButton.destroy();
 	});
 
+	test("Add ghost button", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button(),
+			oButton2 = new sap.m.Button();
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [oButton1, oButton2]
+		});
+		oSegmentedButton._addGhostButton();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(jQuery("#segMtBtn_calc").length > 0, "Ghost button should be rendered");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("Remove ghost button", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button(),
+			oButton2 = new sap.m.Button();
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [oButton1, oButton2]
+		});
+		oSegmentedButton._addGhostButton();
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSegmentedButton._removeGhostButton();
+
+		this.clock.tick(1100);
+
+		// Assert
+		ok(jQuery("#segMtBtn_calc").length === 0, "Ghost button should be removed");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
@@ -365,13 +408,13 @@
 		oSegmentedButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		// Act 
+		// Act
 		oButton1.firePress();
 
 		// Assert
 		strictEqual(fnFireSelectSpy.callCount, 0, "Event should not be fired, because the button is selected");
 
-		// Act 
+		// Act
 		oButton2.firePress();
 		// Assert
 		strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
@@ -400,7 +443,7 @@
 		// Assert
 		ok(fnCallback.calledOnce, "select event callback should be called just once");
 
-		// Act 
+		// Act
 		oButton3.firePress();
 		// Assert
 		strictEqual(fnCallback.callCount, 2, "select event callback should be called twice");
@@ -417,7 +460,7 @@
 		setup : function () { sinon.config.useFakeTimers = false; },
 		teardown : function () { sinon.config.useFakeTimers = true; }
 	})
-	
+
 	asyncTest("SegmentedButton in Dialog's header", function() {
 		// Arrange
 		var oButton1 = new sap.m.Button();
@@ -473,11 +516,11 @@
 						"Buttons in SegmentedButton should have identical width");
 				ok(Math.abs(oBar.$().find(".sapMBarPH").width() - oButton1.$().outerWidth() - oButton2.$().outerWidth()
 						- oButton3.$().outerWidth()) <= 3, "SegmentedButton should occupy the whole width of dialog");
-	
+
 				// Cleanup
 				oDialog.destroy();
 				oApp.destroy();
-	
+
 				start();
 			}, 0);
 		});
@@ -553,7 +596,7 @@
 		});
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		
+
 		strictEqual(oSegmentedButton.getSelectedButton(), null, "by default the \"selectedButton\" aggregation is not filled before rendering");
 		sap.ui.getCore().applyChanges();
 
@@ -864,7 +907,7 @@
 				"Button enabled property should be equal to Model enabled property");
 		strictEqual(oSegmentedButton.getButtons()[6].getText(), 'sLabel',
 				"Button should have label: 'sLabel'");
-		
+
 		// Cleanup
 		oSegmentedButton.destroy();
 	});
@@ -920,7 +963,7 @@
 	checkKeyboardEventhandling("Firing SPACE event", {
 		keyCode : jQuery.sap.KeyCodes.SPACE
 	});
-	
+
 	function testNavigationSegmentedButton4Items(options) {
 		//Arrange
 		var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
@@ -933,7 +976,7 @@
 			type: sap.m.ButtonType.Default,
 			icon: sAddIconURI,
 			enabled: true,
-		}); 
+		});
 		var oButton3 = new sap.m.Button('buttonIcon2', {
 			type: sap.m.ButtonType.Default,
 			icon: sAddIconURI,
@@ -944,7 +987,7 @@
 			icon: sAddIconURI,
 			enabled: true,
 		});
-		
+
 		//System under test
 		var SegmentedIcons = new sap.m.SegmentedButton('SegmentedIcons', {
 			buttons: [oButton1, oButton2, oButton3, oButton4],
@@ -954,89 +997,89 @@
 		});
 		SegmentedIcons.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-						
+
 		//Arrange
 		var btn = SegmentedIcons.getButtons()[options.initialSelectedIndex];
 		SegmentedIcons.setSelectedButton(btn);
-		
+
 		//Act
 		sap.ui.test.qunit.triggerKeydown(btn.getDomRef(), options.keycode);
 		sap.ui.test.qunit.triggerKeyup(btn.getDomRef(), options.keycode);
-		
+
 		//Assert
-		var focussedButton = SegmentedIcons.$().find('.sapMSegBBtn').filter(":focus");		
-		strictEqual(focussedButton.attr('id'), 
-				'buttonIcon'+ options.expectedFocusedIndex, 
-				"Button with index " + options.expectedFocusedIndex + " should be focussed.");		
-		
+		var focussedButton = SegmentedIcons.$().find('.sapMSegBBtn').filter(":focus");
+		strictEqual(focussedButton.attr('id'),
+				'buttonIcon'+ options.expectedFocusedIndex,
+				"Button with index " + options.expectedFocusedIndex + " should be focussed.");
+
 		//Clean up
 		SegmentedIcons.destroy();
 	}
-	
-	test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function() {			
+
+	test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_LEFT});
 	});
-	
-	test('Left Arrow when the first button has the focus', function() {			
+
+	test('Left Arrow when the first button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_LEFT});
 	});
-	
-	test('Right Arrow', function() {			
+
+	test('Right Arrow', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_RIGHT});
 	});
-	
-	test('Right Arrow when the last button has the focus', function() {			
+
+	test('Right Arrow when the last button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_RIGHT});
 	});
-	
-	test('Up Arrow', function() {			
+
+	test('Up Arrow', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_UP});
 	});
-	
-	test('Up Arrow when the first button has the focus', function() {			
+
+	test('Up Arrow when the first button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_UP});
 	});
-	
-	test('Down Arrow', function() {			
+
+	test('Down Arrow', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
 	});
-	
-	test('Down Arrow when the last button has the focus', function() {			
+
+	test('Down Arrow when the last button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
 	});
-	
-	test('Home', function() {			
+
+	test('Home', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
 	});
-	
-	test('Home when the first button has the focus', function() {			
+
+	test('Home when the first button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
 	});
-	
-	test('Page up', function() {			
+
+	test('Page up', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
 	});
-	
-	test('Page up when the first button has the focus', function() {			
+
+	test('Page up when the first button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
 	});
-	
-	test('End', function() {			
+
+	test('End', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
 	});
-	
-	test('End when the last button has the focus', function() {			
+
+	test('End when the last button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
 	});
-	
-	test('Page up', function() {			
+
+	test('Page up', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
 	});
-	
-	test('Page up when the last button has the focus', function() {			
+
+	test('Page up when the last button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
 	});
-	
+
 </script>
 </head>
 <body>
