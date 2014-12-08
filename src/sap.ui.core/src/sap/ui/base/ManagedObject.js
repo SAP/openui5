@@ -435,6 +435,25 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	}, /* Metadata constructor */ ManagedObjectMetadata);
 
 	/**
+	 * Returns the metadata for the ManagedObject class.
+	 * 
+	 * @return {sap.ui.base.ManagedObjectMetadata} Metadata for the ManagedObject class.
+	 * @static
+	 * @public
+	 * @name sap.ui.base.ManagedObject.getMetadata
+	 * @function
+	 */
+	
+	/**
+	 * Returns the metadata for the class that this object belongs to.
+	 * 
+	 * @return {sap.ui.base.ManagedObjectMetadata} Metadata for the class of the object
+	 * @public
+	 * @name sap.ui.base.ManagedObject#getMetadata
+	 * @function
+	 */
+	
+	/**
 	 * Defines a new subclass of ManagedObject with name <code>sClassName</code> and enriches it with 
 	 * the information contained in <code>oClassInfo</code>.
 	 * 
@@ -3827,8 +3846,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		}
 
 		for (var sPrefix in mFunc) {
-			var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo._sName);
-			var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo._sName);
+			var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo.name);
+			var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo.name);
 			oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
 		}
 	};

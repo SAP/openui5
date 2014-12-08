@@ -7,7 +7,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	function(jQuery, DataType, Metadata) {
 	"use strict";
 
-
 	/**
 	 * Creates a new metadata object that describes a subclass of ManagedObject.
 	 *
@@ -59,11 +58,48 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 	};
 
-	//chain the prototypes
+	// chain the prototypes
 	ManagedObjectMetadata.prototype = jQuery.sap.newObject(Metadata.prototype);
+
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+	function capitalize(sName) {
+		return sName.charAt(0).toUpperCase() + sName.slice(1);
+	}
 
 	var rPlural = /(children|ies|ves|oes|ses|ches|shes|xes|s)$/i;
 	var mSingular = {'children' : -3, 'ies' : 'y', 'ves' : 'f', 'oes' : -2, 'ses' : -2, 'ches' : -2, 'shes' : -2, 'xes' : -2, 's' : -1 };
+
+	function guessSingularName(sName) {
+		return sName.replace(rPlural, function($,sPlural) {
+			var vRepl = mSingular[sPlural.toLowerCase()];
+			return typeof vRepl === "string" ? vRepl : sPlural.slice(0,vRepl);
+		});
+	}
+
+	function deprecation(fn, name) {
+		return function() {
+			jQuery.sap.log.warning("Usage of deprecated feature: " + name);
+			return fn.apply(this, arguments);
+		};
+	}
+
+	function remainder(obj, info) {
+		var result = null;
+
+		for (var n in info) {
+			if ( hasOwnProperty.call(info, n) && typeof obj[n] === 'undefined' ) {
+				result = result || {};
+				result[n] = info[n];
+			}
+		}
+
+		return result;
+	}
+
+	var Kind = {
+		SPECIAL_SETTING : -1, PROPERTY : 0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
+	};
 
 	/**
 	 * Guess a singular name for a given plural name.
@@ -72,50 +108,343 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * the singular name for an aggregation/association should be specified in the class metadata.
 	 *
 	 * @private
+	 * @function
 	 */
-	ManagedObjectMetadata._guessSingularName = function(sName) {
-		return sName.replace(rPlural, function($,sPlural) {
-			var vRepl = mSingular[sPlural.toLowerCase()];
-			return typeof vRepl === "string" ? vRepl : sPlural.slice(0,vRepl);
-		});
+	ManagedObjectMetadata._guessSingularName = guessSingularName;
+
+	// ---- SpecialSetting --------------------------------------------------------------------
+
+	/**
+	/* SpecialSetting info object
+	 * @private
+	 * @since 1.27.1
+	 */
+	function SpecialSetting(oClass, name, info) {
+		info = typeof info !== 'object' ? { type: info } : info;
+		this.name = name;
+		this.type = info.type || 'any';
+		this._oParent = oClass;
+		this._sUID = "special:" + name;
+		this._iKind = Kind.SPECIAL_SETTING;
+	}
+
+	// ---- Property --------------------------------------------------------------------------
+
+	/**
+	/* Property info object
+	 * @private
+	 * @since 1.27.1
+	 */
+	function Property(oClass, name, info) {
+		info = typeof info !== 'object' ? { type: info } : info;
+		this.name = name;
+		this.type = info.type || 'string';
+		this.group = info.group || 'Misc';
+		this.defaultValue = info.defaultValue !== null ? info.defaultValue : null;
+		this.bindable = info.bindable === 'bindable' ? info.bindable : undefined;
+		this.deprecated = !!info.deprecated || false;
+		this.visibility = 'public';
+		this.appData = remainder(this, info);
+		this._oParent = oClass;
+		this._sUID = name;
+		this._iKind = Kind.PROPERTY;
+		var N = capitalize(name);
+		this._sMutator = 'set' + N;
+		this._sGetter = 'get' + N;
+		if ( this.bindable === 'bindable' ) {
+			this._sBind =  'bind' + N;
+			this._sUnbind = 'unbind' + N;
+		} else {
+			this._sBind =
+			this._sUnbind = undefined;
+		}
+		this._oType = null;
+	}
+
+	/**
+	 * @private
+	 */
+	Property.prototype.generate = function(add) {
+		var that = this,
+			n = that.name;
+
+		add(that._sGetter, function() { return this.getProperty(n); });
+		add(that._sMutator, function(v) { this.setProperty(n,v); return this; }, that);
+		if ( that.bindable === 'bindable' ) {
+			add(that._sBind, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, that);
+			add(that._sUnbind, function(p) { this.unbindProperty(n,p); return this; });
+		}
 	};
+
+	Property.prototype.getType = function() {
+		return this._oType || (this._oType = DataType.getType(this.type));
+	};
+
+	Property.prototype.get = function(that) {
+		return that[this._sGetter]();
+	};
+
+	Property.prototype.set = function(that, oValue) {
+		return that[this._sMutator](oValue);
+	};
+
+	// ---- Aggregation -----------------------------------------------------------------------
+
+	/**
+	 * Aggregation info object
+	 * @private
+	 * @since 1.27.1
+	 */
+	function Aggregation(oClass, name, info) {
+		info = typeof info !== 'object' ? { type: info } : info;
+		this.name = name;
+		this.type = info.type || 'sap.ui.core.Control';
+		this.altTypes = info.altTypes || undefined;
+		this.multiple = typeof info.multiple === 'boolean' ? info.multiple : true;
+		this.singularName = this.multiple ? info.singularName || guessSingularName(name) : undefined;
+		this.bindable = info.bindable === 'bindable' ? info.bindable : undefined;
+		this.deprecated = info.deprecated || false;
+		this.visibility = info.visibility || 'public';
+		this._doesNotRequireFactory = !!info._doesNotRequireFactory; // TODO clarify if public
+		this.appData = remainder(this, info);
+		this._oParent = oClass;
+		this._sUID = 'aggregation:' + name;
+		this._iKind = this.multiple ? Kind.MULTIPLE_AGGREGATION : Kind.SINGLE_AGGREGATION;
+		var N = capitalize(name);
+		this._sGetter = 'get' + N;
+		if ( this.multiple ) {
+			var N1 = capitalize(this.singularName);
+			this._sMutator = 'add' + N1;
+			this._sInsertMutator = 'insert' + N1;
+			this._sRemoveMutator = 'remove' + N1;
+			this._sRemoveAllMutator = 'removeAll' + N;
+			this._sIndexGetter = 'indexOf' + N1;
+		} else {
+			this._sMutator = 'set' + N;
+			this._sInsertMutator =
+			this._sRemoveMutator =
+			this._sRemoveAllMutator =
+			this._sIndexGetter = undefined;
+		}
+		this._sDestructor = 'destroy' + N;
+		if ( this.bindable === 'bindable' ) {
+			this._sBind = 'bind' + N;
+			this._sUnbind = 'unbind' + N;
+		} else {
+			this._sBind =
+			this._sUnbind = undefined;
+		}
+	}
+
+	/**
+	 * @private
+	 */
+	Aggregation.prototype.generate = function(add) {
+		var that = this,
+			n = that.name;
+
+		if ( !that.multiple ) {
+			add(that._sGetter, function() { return this.getAggregation(n); });
+			add(that._sMutator, function(v) { this.setAggregation(n,v); return this; }, that);
+		} else {
+			add(that._sGetter, function() { return this.getAggregation(n,[]); });
+			add(that._sMutator, function(a) { this.addAggregation(n,a); return this; }, that);
+			add(that._sInsertMutator, function(i,a) { this.insertAggregation(n,i,a); return this; }, that);
+			add(that._sRemoveMutator, function(a) { return this.removeAggregation(n,a); });
+			add(that._sRemoveAllMutator, function() { return this.removeAllAggregation(n); });
+			add(that._sIndexGetter, function(a) { return this.indexOfAggregation(n,a); });
+		}
+		add(that._sDestructor, function() { this.destroyAggregation(n); return this; });
+		if ( that.bindable === 'bindable' ) {
+			add(that._sBind, function(p,t,s,f) { this.bindAggregation(n,p,t,s,f); return this; }, that);
+			add(that._sUnbind, function(p) { this.unbindAggregation(n,p); return this; });
+		}
+	};
+
+	Aggregation.prototype.getType = function() {
+		return this._oType || (this._oType = DataType.getType(this.type));
+	};
+
+	Aggregation.prototype.get = function(that) {
+		return that[this._sGetter]();
+	};
+
+	Aggregation.prototype.set = function(that, oValue) {
+		return that[this._sMutator](oValue);
+	};
+
+	Aggregation.prototype.add = function(that, oValue) {
+		return that[this._sMutator](oValue);
+	};
+
+	Aggregation.prototype.insert = function(that, oValue, iPos) {
+		return that[this._sInsertMutator](oValue, iPos);
+	};
+
+	Aggregation.prototype.remove = function(that, vValue) {
+		return that[this._sRemoveMutator](vValue);
+	};
+
+	Aggregation.prototype.removeAll = function(that) {
+		return that[this._sRemoveAllMutator]();
+	};
+
+	Aggregation.prototype.indexOf = function(that, oValue) {
+		return that[this._sIndexGetter](oValue);
+	};
+
+	// ---- Association -----------------------------------------------------------------------
+
+	/**
+	 * Association info object
+	 * @private
+	 * @since 1.27.1
+	 */
+	function Association(oClass, name, info) {
+		info = typeof info !== 'object' ? { type: info } : info;
+		this.name = name;
+		this.type = info.type || 'sap.ui.core.Control';
+		this.multiple = info.multiple || false;
+		this.singularName = this.multiple ? info.singularName || guessSingularName(name) : undefined;
+		this.deprecated = info.deprecated || false;
+		this.visibility = 'public';
+		this.appData = remainder(this, info);
+		this._oParent = oClass;
+		this._sUID = 'association:' + name;
+		this._iKind = this.multiple ? Kind.MULTIPLE_ASSOCIATION : Kind.SINGLE_ASSOCIATION;
+		var N = capitalize(name);
+		this._sGetter = 'get' + N;
+		if ( this.multiple ) {
+			var N1 = capitalize(this.singularName);
+			this._sMutator = 'add' + N1;
+			this._sRemoveMutator = 'remove' + N1;
+			this._sRemoveAllMutator = 'removeAll' + N1;
+		} else {
+			this._sMutator = 'set' + N;
+			this._sRemoveMutator =
+			this._sRemoveAllMutator = undefined;
+		}
+	}
+
+	/**
+	 * @private
+	 */
+	Association.prototype.generate = function(add) {
+		var that = this,
+			n = that.name;
+
+		if ( !that.multiple ) {
+			add(that._sGetter, function() { return this.getAssociation(n); });
+			add(that._sMutator, function(v) { this.setAssociation(n,v); return this; }, that);
+		} else {
+			add(that._sGetter, function() { return this.getAssociation(n,[]); });
+			add(that._sMutator, function(a) { this.addAssociation(n,a); return this; }, that);
+			add(that._sRemoveMutator, function(a) { return this.removeAssociation(n,a); });
+			add(that._sRemoveAllMutator, function() { return this.removeAllAssociation(n); });
+		}
+	};
+
+	Association.prototype.getType = function() {
+		return this._oType || (this._oType = DataType.getType(this.type));
+	};
+
+	Association.prototype.get = function(that) {
+		return that[this._sGetter]();
+	};
+
+	Association.prototype.set = function(that, oValue) {
+		return that[this._sMutator](oValue);
+	};
+
+	Association.prototype.remove = function(that, vValue) {
+		return that[this._sRemoveMutator](vValue);
+	};
+
+	Association.prototype.removeAll = function(that) {
+		return that[this._sRemoveAllMutator]();
+	};
+
+	// ---- Event -----------------------------------------------------------------------------
+
+	/**
+	 * Event info object
+	 * @private
+	 * @since 1.27.1
+	 */
+	function Event(oClass, name, info) {
+		this.name = name;
+		this.allowPreventDefault = info.allowPreventDefault || false;
+		this.deprecated = info.deprecated || false;
+		this.visibility = 'public';
+		this.allowPreventDefault = !!info.allowPreventDefault;
+		this.enableEventBubbling = !!info.enableEventBubbling;
+		this.appData = remainder(this, info);
+		this._oParent = oClass;
+		this._sUID = 'event:' + name;
+		this._iKind = Kind.EVENT;
+		var N = capitalize(name);
+		this._sMutator = 'attach' + N;
+		this._sDetachMutator = 'detach' + N;
+		this._sTrigger = 'fire' + N;
+	}
+
+	/**
+	 * @private
+	 */
+	Event.prototype.generate = function(add) {
+		var that = this,
+			n = that.name,
+			allowPreventDefault = that.allowPreventDefault,
+			enableEventBubbling = that.enableEventBubbling;
+
+		add(that._sMutator, function(d,f,o) { this.attachEvent(n,d,f,o); return this; }, that);
+		add(that._sDetachMutator, function(f,o) { this.detachEvent(n,f,o); return this; });
+		add(that._sTrigger, function(p) { return this.fireEvent(n,p, allowPreventDefault, enableEventBubbling); });
+	};
+
+	Event.prototype.attach = function(that,data,fn,listener) {
+		return that[this._sMutator](data,fn,listener);
+	};
+
+	Event.prototype.detach = function(that,fn,listener) {
+		return that[this._sDetachMutator](fn,listener);
+	};
+
+	Event.prototype.fire = function(that,params, allowPreventDefault, enableEventBubbling) {
+		return that[this._sTrigger](params, allowPreventDefault, enableEventBubbling);
+	};
+
+	// ----------------------------------------------------------------------------------------
+
+	ManagedObjectMetadata.prototype.metaFactorySpecialSetting = SpecialSetting;
+	ManagedObjectMetadata.prototype.metaFactoryProperty = Property;
+	ManagedObjectMetadata.prototype.metaFactoryAggregation = Aggregation;
+	ManagedObjectMetadata.prototype.metaFactoryAssociation = Association;
+	ManagedObjectMetadata.prototype.metaFactoryEvent = Event;
 
 	/**
 	 * @private
 	 */
 	ManagedObjectMetadata.prototype.applySettings = function(oClassInfo) {
 
-		var oStaticInfo = oClassInfo.metadata;
+		var that = this,
+			oStaticInfo = oClassInfo.metadata;
 
 		Metadata.prototype.applySettings.call(this, oClassInfo);
 
-		function normalize(mInfoMap, sDefaultName, oDefaultValues) {
-			var sName,oInfo;
-			mInfoMap = mInfoMap || {};
-			for (sName in mInfoMap) {
-				oInfo = mInfoMap[sName];
-				// if settings are not an object literal and if there is a default setting, set it
-				if ( sDefaultName && typeof oInfo !== "object" ) {
-					oInfo = {};
-					oInfo[sDefaultName] = mInfoMap[sName];
-				}
-				oInfo = jQuery.extend({}, oDefaultValues, oInfo);
-				oInfo.name = sName;
-				// if info contains a multiple flag but no singular name, calculate one
-				if ( oInfo.multiple === true && !oInfo.singularName) {
-					oInfo.singularName = ManagedObjectMetadata._guessSingularName(sName);
-				}
-				mInfoMap[sName] = oInfo;
-			}
-			return mInfoMap;
-		}
+		function normalize(mInfoMap, FNClass) {
+			var mResult = {},
+				sName;
 
-		function emptyMap(mInfoMap) {
-			mInfoMap = mInfoMap || {};
-			for (var sName in mInfoMap) {
-				mInfoMap[sName] = {};
+			if ( mInfoMap ) {
+				for (sName in mInfoMap) {
+					if ( hasOwnProperty.call(mInfoMap, sName) ) {
+						mResult[sName] = new FNClass(that, sName, mInfoMap[sName]);
+					}
+				}
 			}
-			return mInfoMap;
+
+			return mResult;
 		}
 
 		function filter(mInfoMap, bPublic) {
@@ -131,22 +460,20 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		var rLibName = /([a-z][^.]*(?:\.[a-z][^.]*)*)\./;
 
 		function defaultLibName(sName) {
-		  var m = rLibName.exec(sName);
-		  return (m && m[1]) || "";
+			var m = rLibName.exec(sName);
+			return (m && m[1]) || "";
 		}
 
 		// init basic metadata from static infos and fallback to defaults
 		this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
-		this._mProperties = normalize(oStaticInfo.properties, "type", { type : "string", group : "Misc" });
-		var mAllAggregations = normalize(oStaticInfo.aggregations, "type", { type : "sap.ui.core.Control", multiple : true, visibility : 'public' });
+		this._mSpecialSettings = normalize(oStaticInfo.specialSettings, this.metaFactorySpecialSetting);
+		this._mProperties = normalize(oStaticInfo.properties, this.metaFactoryProperty);
+		var mAllAggregations = normalize(oStaticInfo.aggregations, this.metaFactoryAggregation);
 		this._mAggregations = filter(mAllAggregations, true);
 		this._mPrivateAggregations = filter(mAllAggregations, false);
 		this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
-		this._mAssociations = normalize(oStaticInfo.associations, "type", { type : "sap.ui.core.Control", multiple : false});
-		this._mEvents = normalize(oStaticInfo.events, /* no default setting */ null, { allowPreventDefault : false });
-		this._mSpecialSettings = emptyMap(oStaticInfo.specialSettings);
-
-		this._bEnriched = false;
+		this._mAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
+		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();
@@ -172,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			this._mAllAssociations = jQuery.extend({}, oParent._mAllAssociations, this._mAssociations);
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
 			if ( oParent._mHiddenAggregations ) {
-			  this._mHiddenAggregations = jQuery.extend({}, oParent._mHiddenAggregations);
+				this._mHiddenAggregations = jQuery.extend({}, oParent._mHiddenAggregations);
 			}
 			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
 		} else {
@@ -186,10 +513,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 	};
 
-	ManagedObjectMetadata.Kind = {
-		SPECIAL_SETTING : -1, PROPERTY : 0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
-	};
-
+	ManagedObjectMetadata.Kind = Kind;
 
 	/**
 	 * Returns the name of the library that contains the described UIElement.
@@ -198,15 +522,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 */
 	ManagedObjectMetadata.prototype.getLibraryName = function() {
 		return this._sLibraryName;
-	};
-
-	/**
-	 * Returns whether the class/control is abstract
-	 * @return {boolean} whether the class/control is abstract
-	 * @public
-	 */
-	ManagedObjectMetadata.prototype.isAbstract = function() {
-		return this._bAbstract;
 	};
 
 	// ---- properties ------------------------------------------------------------------------
@@ -224,15 +539,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @see sap.ui.core.EnabledPropagator
 	 */
 	ManagedObjectMetadata.prototype.addProperty = function(sName, oInfo) {
-		oInfo.name = sName;
-		this._mProperties[sName] = oInfo;
+		var oProp = this._mProperties[sName] = new Property(this, sName, oInfo);
 		if (!this._mAllProperties[sName]) {// ensure extended AllProperties meta-data is also enriched
-			this._mAllProperties[sName] = oInfo;
-		}
-
-		if ( this._bEnriched ) {
-			this._bEnriched = false;
-			this._enrichChildInfos();
+			this._mAllProperties[sName] = oProp;
 		}
 		// TODO notify listeners (subclasses) about change
 	};
@@ -264,9 +573,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getProperty = function(sName) {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		var oProp = this._mAllProperties[sName];
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
 		return typeof oProp === 'object' ? oProp : undefined;
@@ -285,12 +591,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getProperties = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mProperties;
 	};
-
 
 	/**
 	 * Returns a map of info objects for all public properties of the described class,
@@ -305,9 +607,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllProperties = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAllProperties;
 	};
 
@@ -343,9 +642,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAggregation = function(sName) {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		sName = sName || this._sDefaultAggregation;
 		var oAggr = sName ? this._mAllAggregations[sName] : undefined;
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
@@ -366,9 +662,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAggregations = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAggregations;
 	};
 
@@ -387,9 +680,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllAggregations = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAllAggregations;
 	};
 
@@ -407,9 +697,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAllPrivateAggregations;
 	};
 
@@ -428,9 +715,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		sAggregationName = sAggregationName || this._sDefaultAggregation;
 		var oAggr = sAggregationName ? this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName] : undefined;
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
@@ -480,9 +764,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getPropertyLikeSetting = function(sName) {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
 		var oProp = this._mAllProperties[sName];
 		if ( typeof oProp === 'object' ) {
@@ -522,9 +803,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAssociation = function(sName) {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		var oAssoc = this._mAllAssociations[sName];
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
 		return typeof oAssoc === 'object' ? oAssoc : undefined;
@@ -544,9 +822,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAssociations = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAssociations;
 	};
 
@@ -564,9 +839,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAllAssociations;
 	};
 
@@ -600,14 +872,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getEvent = function(sName) {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		var oEvent = this._mAllEvents[sName];
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
 		return typeof oEvent === 'object' ? oEvent : undefined;
 	};
-
 
 	/**
 	 * Returns a map of info objects for the public events of the described class.
@@ -622,9 +890,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getEvents = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mEvents;
 	};
 
@@ -641,11 +906,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
-		if ( !this._bEnriched ) {
-			this._enrichChildInfos();
-		}
 		return this._mAllEvents;
 	};
+
+	// ---- special settings ------------------------------------------------------------------
 
 	/**
 	 * Checks the existence of the given special setting.
@@ -704,7 +968,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return mDefaults;
 	};
 
-
 	ManagedObjectMetadata.prototype.createPropertyBag = function() {
 		if ( !this._fnPropertyBagFactory ) {
 			this._fnPropertyBagFactory = jQuery.sap.factory(this.getPropertyDefaults());
@@ -721,99 +984,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @private
 	 */
 	ManagedObjectMetadata.prototype._enrichChildInfos = function() {
-
-		if ( this._bEnriched ) {
-			return;
-		}
-
-		if ( this.getParent() instanceof ManagedObjectMetadata ) {
-			this.getParent()._enrichChildInfos();
-		}
-
-		var m,sName,oInfo;
-
-		function method(sPrefix, sName) {
-			return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-		}
-
-		// adapt special settings
-		m = this._mSpecialSettings;
-		for (sName in m) {
-			oInfo = m[sName];
-			oInfo._sName = sName;
-			oInfo._sUID = "special:" + sName;
-			oInfo._oParent = this;
-			oInfo._iKind = ManagedObjectMetadata.Kind.SPECIAL_SETTING;
-		}
-
-		// adapt properties
-		m = this._mProperties;
-		for (sName in m) {
-			oInfo = m[sName];
-			oInfo._sName = sName;
-			oInfo._sUID = sName;
-			oInfo._oParent = this;
-			oInfo._iKind = ManagedObjectMetadata.Kind.PROPERTY;
-			oInfo._sMutator = method("set", sName);
-			oInfo._sGetter = method("get", sName);
-		}
-
-		// adapt aggregations
-		m = this._mAggregations;
-		for (sName in m) {
-			oInfo = m[sName];
-			oInfo._sName = sName;
-			oInfo._sUID = "aggregation:" + sName;
-			oInfo._oParent = this;
-			oInfo._sDestructor = method("destroy", sName);
-			oInfo._sGetter = method("get", sName);
-			if ( oInfo.multiple ) {
-				oInfo._iKind = ManagedObjectMetadata.Kind.MULTIPLE_AGGREGATION;
-				oInfo._sMutator = method("add", oInfo.singularName);
-				oInfo._sRemoveMutator = method("remove", oInfo.singularName);
-				oInfo._sRemoveAllMutator = method("removeAll", sName);
-			} else {
-				oInfo._iKind = ManagedObjectMetadata.Kind.SINGLE_AGGREGATION;
-				oInfo._sMutator = method("set", sName);
-			}
-		}
-
-		// adapt associations
-		m = this._mAssociations;
-		for (sName in m) {
-			oInfo = m[sName];
-			oInfo._sName = sName;
-			oInfo._sUID = "association:" + sName;
-			oInfo._oParent = this;
-			oInfo._sGetter = method("get", sName);
-			if ( oInfo.multiple ) {
-				oInfo._iKind = ManagedObjectMetadata.Kind.MULTIPLE_ASSOCIATION;
-				oInfo._sMutator = method("add", oInfo.singularName);
-			} else {
-				oInfo._iKind = ManagedObjectMetadata.Kind.SINGLE_ASSOCIATION;
-				oInfo._sMutator = method("set", sName);
-			}
-		}
-
-		// adapt events
-		m = this._mEvents;
-		for (sName in m) {
-			oInfo = m[sName];
-			oInfo._sName = sName;
-			oInfo._sUID = "event:" + sName;
-			oInfo._oParent = this;
-			oInfo._iKind = ManagedObjectMetadata.Kind.EVENT;
-			oInfo._sMutator = method("attach", sName);
-		}
-
-		this._bEnriched = true;
+		jQuery.sap.log.error("obsolete call to ManagedObjectMetadata._enrichChildInfos. This private method will be deleted soon");
 	};
 
 	/**
-	 * Builds a "reflection like" map of setters/type infos keyed by the possible JSON names.
-	 * Mainly used for the {@link sap.ui.core.Element.applySettings} method.
+	 * Returns a map with all settings of the described class..
+	 * Mainly used for the {@link sap.ui.base.ManagedObject#applySettings} method.
 	 *
-	 * @see sap.ui.core.Element.prototype.applySettings
+	 * @see sap.ui.base.ManagedObject#applySettings
 	 * @private
 	 */
 	ManagedObjectMetadata.prototype.getJSONKeys = function() {
@@ -822,16 +1000,15 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			return this._mJSONKeys;
 		}
 
-		this._enrichChildInfos();
-
 		var mAllSettings = {},
 			mJSONKeys = {};
 
 		function addKeys(m) {
-			var sName, oInfo;
+			var sName, oInfo, oPrevInfo;
 			for (sName in m) {
 				oInfo = m[sName];
-				if ( !mJSONKeys[sName] || oInfo._iKind < mJSONKeys[sName]._iKind ) {
+				oPrevInfo = mAllSettings[sName];
+				if ( !oPrevInfo || oInfo._iKind < oPrevInfo._iKind ) {
 					mAllSettings[sName] = mJSONKeys[sName] = oInfo;
 				}
 				mJSONKeys[oInfo._sUID] = oInfo;
@@ -880,8 +1057,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			mResult = {},
 			sName;
 
-		for ( sName in  mSettings ) {
-			if ( mValidKeys.hasOwnProperty(sName) ) {
+		for ( sName in mSettings ) {
+			if ( hasOwnProperty.call(mValidKeys, sName) ) {
 				mResult[sName] = mSettings[sName];
 			}
 		}
@@ -891,127 +1068,93 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 	ManagedObjectMetadata.prototype.generateAccessors = function() {
 
-		var that = this;
-		var proto = this.getClass().prototype;
-		function method(sPrefix, sName, fn, bDeprecated) {
-			sName = sPrefix + sName.slice(0,1).toUpperCase() + sName.slice(1);
-			if ( !proto[sName] ) {
-				proto[sName] = bDeprecated ? function() {
-					jQuery.sap.log.warning("Usage of deprecated feature: " + that.getName() + "." + sName);
-					return fn.apply(this, arguments);
-				} : fn;
-				that._aPublicMethods.push(sName);
+		var proto = this.getClass().prototype,
+			prefix = this.getName() + ".",
+			methods = this._aPublicMethods,
+			n;
+
+		function add(name, fn, info) {
+			if ( !proto[name] ) {
+				proto[name] = (info && info.deprecated) ? deprecation(fn, prefix + info.name) : fn;
 			}
+			methods.push(name);
 		}
 
-		jQuery.each(this._mProperties, function(n,info) {
-			method("get", n, function() { return this.getProperty(n); });
-			method("set", n, function(v) { this.setProperty(n,v); return this; }, info.deprecated);
-			if ( info.bindable ) {
-				method("bind", n, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, info.deprecated);
-				method("unbind", n, function(p) { this.unbindProperty(n,p); return this; });
-			}
-		});
-		jQuery.each(this._mAggregations, function(n,info) {
-			if ( !info.multiple ) {
-				method("get", n, function() { return this.getAggregation(n); });
-				method("set", n, function(v) { this.setAggregation(n,v); return this; }, info.deprecated);
-			} else {
-				var n1 = info.singularName;
-				method("get", n, function() { return this.getAggregation(n,[]); });
-				method("add", n1, function(a) { this.addAggregation(n,a); return this; }, info.deprecated);
-				method("insert", n1, function(i,a) { this.insertAggregation(n,i,a); return this; }, info.deprecated);
-				method("remove", n1, function(a) { return this.removeAggregation(n,a); });
-				method("removeAll", n, function() { return this.removeAllAggregation(n); });
-				method("indexOf", n1, function(a) { return this.indexOfAggregation(n,a); });
-			}
-			method("destroy", n, function() { this.destroyAggregation(n); return this; });
-			if ( info.bindable ) {
-				method("bind", n, function(p,t,s,f) { this.bindAggregation(n,p,t,s,f); return this; }, info.deprecated);
-				method("unbind", n, function(p) { this.unbindAggregation(n,p); return this; });
-			}
-		});
-		jQuery.each(this._mAssociations, function(n,info) {
-			if ( !info.multiple ) {
-				method("get", n, function() { return this.getAssociation(n); });
-				method("set", n, function(v) { this.setAssociation(n,v); return this; }, info.deprecated);
-			} else {
-				var n1 = info.singularName;
-				method("get", n, function() { return this.getAssociation(n,[]); });
-				method("add", n1, function(a) { this.addAssociation(n,a); return this; }, info.deprecated);
-				method("remove", n1, function(a) { return this.removeAssociation(n,a); });
-				method("removeAll", n, function() { return this.removeAllAssociation(n); });
-			}
-		});
-		jQuery.each(this._mEvents, function(n,info) {
-			method("attach", n, function(d,f,o) { this.attachEvent(n,d,f,o); return this; }, info.deprecated);
-			method("detach", n, function(f,o) { this.detachEvent(n,f,o); return this; });
-			var n1 = !!info.allowPreventDefault;
-			var n2 = !!info.enableEventBubbling;
-			method("fire", n, function(p) { return this.fireEvent(n,p, n1, n2); });
-		});
-
+		for (n in this._mProperties) {
+			this._mProperties[n].generate(add);
+		}
+		for (n in this._mAggregations) {
+			this._mAggregations[n].generate(add);
+		}
+		for (n in this._mAssociations) {
+			this._mAssociations[n].generate(add);
+		}
+		for (n in this._mEvents) {
+			this._mEvents[n].generate(add);
+		}
 	};
 
-	(function() {
-
-		/**
-		 * Usage counters for the different UID tokens
-		 */
-		var mUIDCounts = {};
-
-		function uid(sId) {
-			jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
-
-			sId = sap.ui.getCore().getConfiguration().getUIDPrefix() + sId;
-
-			// initialize counter
-			mUIDCounts[sId] = mUIDCounts[sId] || 0;
-
-			// combine prefix + counter
-			// concatenating sId and a counter is only safe because we don't allow trailing numbers in sId!
-			return (sId + mUIDCounts[sId]++);
-		}
-
-		/**
-		 * Calculates a new id based on a prefix.
-		 *
-		 * @return {string} A (hopefully unique) control id
-		 * @public
-		 * @function
-		 */
-		ManagedObjectMetadata.uid = uid;
-
-		/**
-		 * Calculates a new id for an instance of this class.
-		 *
-		 * Note that the calculated short name part is usually not unique across
-		 * all classes, but doesn't have to be. It might even be empty when the
-		 * class name consists of invalid characters only.
-		 *
-		 * @return {string} A (hopefully unique) control id
-		 * @public
-		 */
-		ManagedObjectMetadata.prototype.uid = function() {
-
-			var sId = this._sUIDToken;
-			if ( typeof sId !== "string" ) {
-				// start with qualified class name
-				sId  = this.getName();
-				// reduce to unqualified name
-				sId = sId.slice(sId.lastIndexOf('.') + 1);
-				// reduce a camel case, multi word name to the last word
-				sId = sId.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").slice(-1)[0];
-				// remove unwanted chars (and no trailing digits!) and convert to lower case
-				sId = this._sUIDToken = sId.replace(/([^A-Za-z0-9-_.:])|([0-9]+$)/g,"").toLowerCase();
-			}
-
-			return uid(sId);
-		};
+	// ---- autoid creation -------------------------------------------------------------
 
 	/**
-	 * Test whether a given ID looks like it was automatically generated
+	 * Usage counters for the different UID tokens
+	 */
+	var mUIDCounts = {};
+
+	function uid(sId) {
+		jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
+
+		sId = sap.ui.getCore().getConfiguration().getUIDPrefix() + sId;
+
+		// initialize counter
+		mUIDCounts[sId] = mUIDCounts[sId] || 0;
+
+		// combine prefix + counter
+		// concatenating sId and a counter is only safe because we don't allow trailing numbers in sId!
+		return (sId + mUIDCounts[sId]++);
+	}
+
+	/**
+	 * Calculates a new id based on a prefix.
+	 *
+	 * @return {string} A (hopefully unique) control id
+	 * @public
+	 * @function
+	 */
+	ManagedObjectMetadata.uid = uid;
+
+	/**
+	 * Calculates a new id for an instance of this class.
+	 *
+	 * Note that the calculated short name part is usually not unique across
+	 * all classes, but doesn't have to be. It might even be empty when the
+	 * class name consists of invalid characters only.
+	 *
+	 * @return {string} A (hopefully unique) control id
+	 * @public
+	 */
+	ManagedObjectMetadata.prototype.uid = function() {
+
+		var sId = this._sUIDToken;
+		if ( typeof sId !== "string" ) {
+			// start with qualified class name
+			sId = this.getName();
+			// reduce to unqualified name
+			sId = sId.slice(sId.lastIndexOf('.') + 1);
+			// reduce a camel case, multi word name to the last word
+			sId = sId.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").slice(-1)[0];
+			// remove unwanted chars (and no trailing digits!) and convert to lower case
+			sId = this._sUIDToken = sId.replace(/([^A-Za-z0-9-_.:])|([0-9]+$)/g,"").toLowerCase();
+		}
+
+		return uid(sId);
+	};
+
+	/**
+	 * Test whether a given ID looks like it was automatically generated.
+	 *
 	 * Examples:
+	 * <pre>
 	 * True for:
 	 *   "foo--__bar04--baz"
 	 *   "foo--__bar04"
@@ -1022,11 +1165,11 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * False for:
 	 *   "foo__bar04"
 	 *   "foo__bar04--baz"
+	 * </pre>
 	 *
-	 *
-	 * @see ManagedObjectMetadata.prototype.uid for details on Id generation
-	 * @param {string} sId - The Id that should be tested
-	 * @return {boolean}
+	 * @see ManagedObjectMetadata.prototype.uid for details on ID generation
+	 * @param {string} sId the ID that should be tested
+	 * @return {boolean} whether the ID is llikely to be generated
 	 * @static
 	 * @public
 	 */
@@ -1039,8 +1182,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 		return rIsGenerated.test(sId);
 	};
-
-	}());
 
 	return ManagedObjectMetadata;
 

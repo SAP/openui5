@@ -11,7 +11,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	/**
 	 * Creates a new metadata object from the given static infos.
 	 *
-	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
+	 * Note: throughout this class documentation, the described subclass of Object
+	 * is referenced as <i>the described class</i>.
+	 *
+	 * @param {string} sClassName fully qualified name of the described class
 	 * @param {object} oClassInfo info to construct the class and its metadata from
 	 *
 	 * @class Metadata for a class.
@@ -137,18 +140,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Whether this class is deprecated and should not be used any more 
-	 * 
-	 * @return {boolean} whether this class is considered deprecated
-	 * @public
-	 * @since 1.26.4
-	 */
-	Metadata.prototype.isDeprecated = function() {
-		return this._bDeprecated;
-	};
-	
-	/**
-	 * Returns the fully qualified name of the class that is described by this metadata object
+	 * Returns the fully qualified name of the described class
 	 * @return {string} name of the described class
 	 * @public
 	 */
@@ -157,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Returns the (constructor of the) class described by this metadata object.
+	 * Returns the (constructor of the) described class
 	 * @return {function} class described by this metadata
 	 * @public
 	 */
@@ -166,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Returns the metadata object of the base class of the class described by this metadata object
+	 * Returns the metadata object of the base class of the described class
 	 * or null if the class has no (documented) base class.
 	 *
 	 * @return {sap.ui.base.Metadata} metadata of the base class
@@ -177,9 +169,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Returns an array with the names of the public methods declared by this class.
+	 * Returns an array with the names of the public methods declared by the described class.
 	 *
-	 * @return {string[]} array with names of public methods declared by this class
+	 * @return {string[]} array with names of public methods declared by the described class
 	 * @public
 	 */
 	Metadata.prototype.getPublicMethods = function() {
@@ -187,10 +179,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Returns an array with the names of all public methods declared by this class
+	 * Returns an array with the names of all public methods declared by the described class
 	 * and its ancestors.
 	 *
-	 * @return {string[]} array with names of all public methods provided by this class and its ancestors
+	 * @return {string[]} array with names of all public methods provided by the described class and its ancestors
 	 * @public
 	 */
 	Metadata.prototype.getAllPublicMethods = function() {
@@ -198,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Returns the names of interfaces implemented by this class.
+	 * Returns the names of interfaces implemented by the described class.
 	 * As the representation of interfaces is not clear yet, this method is still private.
 	 *
 	 * @return {string} array of names of implemented interfaces
@@ -209,8 +201,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	/**
-	 * Checks whether the class described by this object or one of its ancestors
-	 * implements the given interface.
+	 * Checks whether the described class or one of its ancestor classes implements the given interface.
 	 *
 	 * @param {string} sInterface name of the interface to test for (in dot notation)
 	 * @return {boolean} whether this class implements the interface
@@ -235,12 +226,33 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	};
 	
 	
+	/**
+	 * Returns whether the described class is abstract
+	 * @return {boolean} whether the class is abstract
+	 * @public
+	 */
 	Metadata.prototype.isAbstract = function() {
 		return this._bAbstract;
 	};
 	
+	/**
+	 * Returns whether the described class is final
+	 * @return {boolean} whether the class is final
+	 * @public
+	 */
 	Metadata.prototype.isFinal = function() {
 		return this._bFinal;
+	};
+	
+	/**
+	 * Whether the described class is deprecated and should not be used any more 
+	 * 
+	 * @return {boolean} whether the class is considered deprecated
+	 * @public
+	 * @since 1.26.4
+	 */
+	Metadata.prototype.isDeprecated = function() {
+		return this._bDeprecated;
 	};
 	
 	/**

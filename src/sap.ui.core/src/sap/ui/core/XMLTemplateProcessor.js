@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 								for (var j = 0; j < aControls.length; j++) {
 									var oControl = aControls[j];
 									// append the child to the aggregation
-									var name = oAggregation._sName;
+									var name = oAggregation.name;
 									if (oAggregation.multiple) {
 										// 1..n AGGREGATION
 										if (!mSettings[name]) {
