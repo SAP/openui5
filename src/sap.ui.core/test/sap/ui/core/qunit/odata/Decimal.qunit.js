@@ -141,6 +141,32 @@
 	});
 
 	//*********************************************************************************************
+	jQuery.each([
+		{constraints: {scale: 1},
+			error: "Enter a number with a maximum of 1 decimal places."},
+		{constraints: {precision: 10, scale: 3},
+			error: "Enter a number with a maximum of 10 digits and 3 decimal places."},
+		{constraints: {precision: 1, scale: "variable"},
+			error: "Enter a number with a maximum of 1 digits."},
+		{constraints: {scale: "variable"},
+			error: "Enter a number."}
+	], function (i, oFixture) {
+		test("parse: user error: " + JSON.stringify(oFixture.constraints), function () {
+			var oType = new sap.ui.model.odata.type.Decimal();
+
+			oType.setConstraints(oFixture.constraints);
+
+			try {
+				oType.parseValue("foo", "string");
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, oFixture.error);
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	jQuery.each([false, 1, "foo", "1.1", "1234"], function (i, sValue) {
 		test("validate errors: " + JSON.stringify(sValue), function () {
 			var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 3});
@@ -150,7 +176,8 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: " + sValue);
+				strictEqual(e.message,
+					"Enter a number with a maximum of 3 digits and 0 decimal places.");
 			}
 		});
 	});
@@ -177,7 +204,8 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: " + sValue);
+			strictEqual(e.message,
+				"Enter a number with a maximum of 6 digits and 3 decimal places.");
 		}
 	});
 
@@ -211,7 +239,7 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: " + sValue);
+				strictEqual(e.message, "Enter a number with a maximum of 3 digits.");
 			}
 		});
 	}));
@@ -223,13 +251,13 @@
 		// nullable=true
 		oType.validateValue(null);
 
-		oType.setConstraints({nullable: false});
+		oType.setConstraints({nullable: false, scale: "variable"});
 		try {
 			oType.validateValue(null);
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Decimal value: null");
+			strictEqual(e.message, "Enter a number.");
 		}
 	});
 } ());

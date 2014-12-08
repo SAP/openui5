@@ -7,9 +7,17 @@
 	*/
 	"use strict";
 
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.Boolean");
+	module("sap.ui.model.odata.type.Boolean", {
+		setup: function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		},
+		teardown: function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	test("basics", sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
@@ -57,20 +65,25 @@
 		strictEqual(oType.parseValue("yes", "string"), true, "yes");
 		strictEqual(oType.parseValue("no", "string"), false, "no");
 		try {
-			oType.parseValue("foo", "string");
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message, "foo is not a valid sap.ui.model.odata.type.Boolean value");
-		}
-
-		try {
 			oType.parseValue(42, "int");
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ParseException);
 			strictEqual(e.message,
 				"Don't know how to parse sap.ui.model.odata.type.Boolean from int");
+		}
+	});
+
+	//*********************************************************************************************
+	test("parse: user error", function () {
+		var oType = new sap.ui.model.odata.type.Boolean();
+
+		try {
+			oType.parseValue("foo", "string");
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ParseException);
+			strictEqual(e.message, 'Enter "Yes" or "No".');
 		}
 	});
 
@@ -98,7 +111,7 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: null");
+			strictEqual(e.message, 'Enter "Yes" or "No".');
 		}
 	});
 
