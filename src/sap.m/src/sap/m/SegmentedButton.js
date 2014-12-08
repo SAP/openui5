@@ -214,6 +214,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//Flag if control is inside the bar. If inside bar the buttons always use the width they need.
 		this._bInsideBar = (this.$().closest('.sapMIBar').length > 0) ? true : false;
 
+		//Flag if control is inside a dialog
+		this._bInsideDialog = (this.$().closest('.sapMDialogScrollCont').length > 0);
+
 		var aButtons = this.getButtons();
 		var bAllIcons = true;
 		var that = this;
@@ -225,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (bAllIcons) {
 			this.$().toggleClass("sapMSegBIcons", true);
 		}
-		if (this._isMie) {
+		if (this._isMie || this._bInsideDialog) {
 			setTimeout(function () {
 				that._fCalcBtnWidth();
 			},0);
