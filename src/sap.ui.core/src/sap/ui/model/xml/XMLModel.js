@@ -188,35 +188,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	 * @param {string}  sPath path of the property to set
 	 * @param {any}     oValue value to set the property to
 	 * @param {object} [oContext=null] the context which will be used to set the property
+	 * @param {boolean} [bAsyncUpdate] whether to update other bindings dependent on this property asynchronously
+	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found.
 	 * @public
 	 */
-	XMLModel.prototype.setProperty = function(sPath, oValue, oContext) {
+	XMLModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/") + 1),
 			sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
 		
 		// check if path / context is valid
 		if (!this.resolve(sPath, oContext)) {
-			return;
+			return false;
 		}
 		
 		if (!this.oData.documentElement) {
 			jQuery.sap.log.warning("Trying to set property " + sPath + ", but no document exists.");
-			return;
+			return false;
 		}
 		var oObject;
 		if (sProperty.indexOf("@") == 0) {
 			oObject = this._getObject(sObjectPath, oContext);
 			if (oObject[0]) {
 				oObject[0].setAttribute(sProperty.substr(1), oValue);
-				this.checkUpdate();
+				this.checkUpdate(false, bAsyncUpdate);
+				return true;
 			}
 		} else {
 			oObject = this._getObject(sPath, oContext);
 			if (oObject[0]) {
 				jQuery(oObject[0]).text(oValue);
-				this.checkUpdate();
+				this.checkUpdate(false, bAsyncUpdate);
+				return true;
 			}
 		}
+		return false;
 		
 	};
 	

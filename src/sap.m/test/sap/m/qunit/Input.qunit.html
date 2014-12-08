@@ -1359,7 +1359,7 @@
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
 
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].$().find("tbody").children().length, 1, "Suggestions are filtered");
+		equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
@@ -1507,7 +1507,7 @@
 
 
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].$().find("tbody").children().length, 1, "Suggestions are filtered");
+		equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
@@ -1674,7 +1674,7 @@
 		this.clock.tick(400);
 
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		equal(oPopup.getContent()[0].$().find("tbody").children().length, 1, "Suggestions are filtered");
+		equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered when changing the input value to a another value");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
@@ -1833,7 +1833,7 @@
 		oPopup = oInput._oSuggestionPopup;
 
 		ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		strictEqual(oPopup.getContent()[0].$().find("tbody").children().length, 1, "Suggestions are filtered");
+		strictEqual(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		strictEqual(oPopup.getContent()[0].$().find("tbody").find(".name").find("label").html(), oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		// TODO: trigger selection with pseudo-events here

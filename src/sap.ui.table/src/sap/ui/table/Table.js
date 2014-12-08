@@ -2507,11 +2507,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype.oncontextmenu = function(oEvent) {
 		var $Target = jQuery(oEvent.target);
-		var $Header = $Target.closest('.sapUiTableCol').addBack('.sapUiTableCol');
+		var $Header = $Target.closest('.sapUiTableCol');
 		if ($Header.length > 0) {
-			var iColIndex = parseInt($Header.attr('data-sap-ui-colindex'), 10);
-			var oColumn = this._getVisibleColumns()[iColIndex];
-			oColumn._openMenu();
+			var oColumn = $Header.control(0);
+			if (oColumn) {
+				oColumn._openMenu();
+			}
 			oEvent.preventDefault();
 		} else {
 			if (this._findAndfireCellEvent(this.fireCellContextmenu, oEvent, this._oncellcontextmenu)) {
@@ -4061,6 +4062,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			
 			oEvent.preventDefault();
 			oEvent.stopImmediatePropagation(true);
+		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
+			// SHIFT + 10 should open the context menu
+			this.oncontextmenu(oEvent);
 		}
 	};
 

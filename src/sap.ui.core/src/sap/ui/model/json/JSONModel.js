@@ -198,15 +198,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {string}  sPath path of the property to set
 	 * @param {any}     oValue value to set the property to
 	 * @param {object} [oContext=null] the context which will be used to set the property
+	 * @param {boolean} [bAsyncUpdate] whether to update other bindings dependent on this property asynchronously
+	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found.
 	 * @public
 	 */
-	JSONModel.prototype.setProperty = function(sPath, oValue, oContext) {
+	JSONModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/")),
 			sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
 		
 		// check if path / context is valid
 		if (!this.resolve(sPath, oContext)) {
-			return;
+			return false;
 		}
 		
 		if (!sObjectPath && !oContext) {
@@ -216,8 +218,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		var oObject = this._getObject(sObjectPath, oContext);
 		if (oObject) {
 			oObject[sProperty] = oValue;
-			this.checkUpdate();
+			this.checkUpdate(false, bAsyncUpdate);
+			return true;
 		}
+		return false;
 	};
 	
 	/**

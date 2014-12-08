@@ -6533,6 +6533,38 @@
 				oComboBox.destroy();
 			});
 
+			test("oninput clear the selection if not match is found", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany",
+						})
+					],
+					selectedKey: "GER"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+
+				// act
+				oComboBox.getFocusDomRef().value = "v";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+
+				// assert
+				ok(oComboBox.getSelectedItem() === null);
+				strictEqual(oComboBox.getSelectedItemId(), "");
+				strictEqual(oComboBox.getSelectedKey(), "");
+				ok(oComboBox.getList().getSelectedItem() === null);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onfocusin                      */
 			/* ------------------------------ */
@@ -6656,7 +6688,7 @@
 				// assert
 				strictEqual(fnOnBeforeOpenSpy.callCount, 1, "onBeforeOpen() called exactly once");
 				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), "The ComboBox's input field must have the CSS class '" + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed'");
-				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-controls"), oComboBox.getList().getId(), 'the attribute "aria-controls" is set after the list is rendered');
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-owns"), oComboBox.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
 
 				// cleanup
 				oComboBox.destroy();
@@ -6753,7 +6785,7 @@
 
 				// assert
 				strictEqual(fnOnBeforeCloseSpy.callCount, 1, "onBeforeClose() called exactly once");
-				strictEqual(oComboBox.$().attr("aria-controls"), undefined);
+				strictEqual(oComboBox.$().attr("aria-owns"), undefined);
 
 				// cleanup
 				oComboBox.destroy();

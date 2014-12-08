@@ -83,7 +83,7 @@
 	 			alwaysShowAddIcon: false
 			});
 			
-			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxLength: "10", tooltip : "Company Code", isDefault: true}, {key: "CompanyName", text: "Name", type: "text"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", precision: "5", scale: "2", tooltip : "Company Code", isDefault: true}, {key: "CompanyName", text: "Name", type: "text", maxLength: "10"}, {key: "CompanyDate", text: "Date", type: "date"}]);
  			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.EQ, 
 				                     		sap.m.P13nConditionOperation.BT, 
 		                             		sap.m.P13nConditionOperation.Contains, 
@@ -150,6 +150,13 @@
 			}
 	});
 	
+	var btnClearErrors = new sap.m.Button({
+		text: "Clear Errors",
+		press: function() {
+			oConditionPanel.removeValidationErrors();
+		}
+	});
+	
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
@@ -185,6 +192,7 @@
 	btnShow3.placeAt("content");
 	btnShow4.placeAt("content");
 	btnValidate.placeAt("content");
+	btnClearErrors.placeAt("content");
 	btnConditions.placeAt("content");
 	theCompactMode.placeAt("content");
 	theDialogMode.placeAt("content");

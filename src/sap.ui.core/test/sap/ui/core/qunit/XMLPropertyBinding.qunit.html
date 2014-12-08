@@ -93,6 +93,22 @@
 		equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
 	});
 
+	test("PropertyBinding async update", 4, function() {
+		setup();
+		var oBinding1 = oModel.bindProperty("/name"),
+			oBinding2 = oModel.bindProperty("/name");
+		oBinding1.attachChange(function(){});
+		oBinding2.attachChange(function(){});
+		oBinding1.initialize();
+		oBinding2.initialize();
+		equal(oBinding1.getValue(), "Peter", "Property Binding 1 returns value");
+		oBinding1.setValue("Jonas");
+		equal(oBinding1.getValue(), "Jonas", "Property Binding 1 returns updated value");
+		equal(oBinding2.getValue(), "Peter", "Property Binding 2 returns old value");
+		oModel.refresh();
+		equal(oBinding2.getValue(), "Jonas", "Property Binding 2 returns updated value after refresh");
+	});
+
 	test("PropertyBinding getExternalValue", function(){
 		setup();
 		createPropertyBindings("/values/value", "@value");

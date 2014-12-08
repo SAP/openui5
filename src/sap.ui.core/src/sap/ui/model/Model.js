@@ -50,6 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 			this.sDefaultBindingMode = BindingMode.TwoWay;
 			this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
 			this.bLegacySyntax = false;
+			this.sUpdateTimer = null;
 		},
 
 		metadata : {
@@ -721,9 +722,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	/**
 	 * Private method iterating the registered bindings of this model instance and initiating their check for update
 	 * @param {boolean} bForceUpdate
+	 * @param {boolean} bAsync
 	 * @private
 	 */
-	Model.prototype.checkUpdate = function(bForceUpdate) {
+	Model.prototype.checkUpdate = function(bForceUpdate, bAsync) {
+		if (bAsync) {
+			if (!this.sUpdateTimer) {
+				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
+					this.checkUpdate(bForceUpdate);
+				});
+			}
+			return;
+		}
+		if (this.sUpdateTimer) {
+			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+			this.sUpdateTimer = null;
+		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
@@ -742,6 +756,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 		this.oData = {};
 		this.aBindings = [];
 		this.mContexts = {};
+		if (this.sUpdateTimer) {
+			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
+		}
 		this.bDestroyed = true;
 		EventProvider.prototype.destroy.apply(this, arguments);
 	};

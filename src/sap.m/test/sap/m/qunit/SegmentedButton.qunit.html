@@ -387,6 +387,47 @@
 		oSegmentedButton.destroy();
 	});
 
+	test("Check when in bar container with button width set in percent", function() {
+
+		// Arrange
+		var oButton1 = new sap.m.Button('buttonInBar1', {
+			text: "hallo",
+			enabled: true,
+			width: "50%"
+		});
+
+		var oButton2 = new sap.m.Button('buttonInBar2', {
+			text: "hallo",
+			width: "50%",
+			enabled: true
+		});
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton("buttonInBar", {
+			buttons: [oButton1, oButton2]
+		});
+
+		var oBar = new sap.m.Bar({contentMiddle: oSegmentedButton});
+
+		oBar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var elementWidth = oSegmentedButton.$().width();
+		var expectedButtonOuterWidth = Math.floor((elementWidth / 2));
+
+		// Assert
+		// + 1 are border compensations
+		equal(elementWidth, (expectedButtonOuterWidth * 2) + 1, "Control width should be " + ((expectedButtonOuterWidth * 2) + 1) + "px");
+		equal(oButton1.$().outerWidth(), expectedButtonOuterWidth, 'First button width should be ' + expectedButtonOuterWidth + 'px');
+		equal(oButton2.$().outerWidth(), expectedButtonOuterWidth + 1, 'Second button width should be ' + (expectedButtonOuterWidth + 1) + 'px');
+		equal(oButton1.$().width(), 33, 'First button width withouth padding shoud be 33px');
+		equal(oButton2.$().width(), 33, 'Second button width withouth padding shoud be 33px');
+
+		// Cleanup
+		oBar.destroy();
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */

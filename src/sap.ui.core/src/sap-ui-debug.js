@@ -44,7 +44,7 @@ jQuery.sap.declare('sap-ui-debug');
 		req.send(null);
 	}
 
-	var lowerIE10 = /MSIE 8|9.0/g.test(navigator.userAgent);
+	var lowerIE10 = /MSIE (8|9)\.0/i.test(navigator.userAgent);
 
 	for (i = 0; i < aScriptIncludes.length; i++) {
 		sSrc = aScriptIncludes[i];

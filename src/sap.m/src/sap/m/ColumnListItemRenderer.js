@@ -194,6 +194,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	
 		rm.write("</div></td></tr>");
 	};
+	
+	ColumnListItemRenderer.renderInvisible = function(rm, oLI) {
+		rm.write("<tr");
+		this.writeInvisiblePlaceholderData(rm, oLI);
+		rm.write("></tr>");
+	};
 
 	return ColumnListItemRenderer;
 
