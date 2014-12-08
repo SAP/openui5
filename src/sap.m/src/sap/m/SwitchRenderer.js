@@ -68,8 +68,11 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.writeClasses();
 
+			oRm.write("><div");
+			oRm.addClass(CSS_CLASS + "Inner");
+			oRm.writeAttribute("id", oSwitch.getId() + "-inner");
+			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write('<div class="' + CSS_CLASS + 'Inner">');
 
 			// text
 			this.renderText(oRm, oSwitch);
@@ -94,7 +97,13 @@ sap.ui.define(['jquery.sap.global'],
 				bDefaultType = oSwitch.getType() === "Default";
 
 			// on
-			oRm.write('<div class="' + CSS_CLASS + 'Text ' + CSS_CLASS + 'TextOn">');
+			oRm.write("<div");
+			oRm.addClass(CSS_CLASS + "Text");
+			oRm.addClass(CSS_CLASS + "TextOn");
+			oRm.writeAttribute("id", oSwitch.getId() + "-on");
+			oRm.writeClasses();
+			oRm.write(">");
+
 			oRm.write("<span>");
 
 			if (bDefaultType) {
@@ -105,7 +114,13 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</div>");
 
 			// off
-			oRm.write('<div class="' + CSS_CLASS + 'Text ' + CSS_CLASS + 'TextOff">');
+			oRm.write("<div");
+			oRm.addClass(CSS_CLASS + "Text");
+			oRm.addClass(CSS_CLASS + "TextOff");
+			oRm.writeAttribute("id", oSwitch.getId() + "-off");
+			oRm.writeClasses();
+			oRm.write(">");
+
 			oRm.write("<span>");
 
 			if (bDefaultType) {
