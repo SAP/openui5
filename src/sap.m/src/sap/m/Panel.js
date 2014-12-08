@@ -202,6 +202,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var $this = this.$();
 		$this.find(".sapMPanelExpandableIcon").toggleClass("sapMPanelExpandableIconExpanded");
 
+		// ARIA
+		this._getIcon().$().attr("aria-expanded", bExpanded.toString());
+
 		// need empty object as parameter to toggle since otherwise duration is set to 0
 		var oOptions = {};
 		if (!this.getExpandAnimation()) {
@@ -227,15 +230,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._setContentHeight();
 
 		if (this.getExpandable()) {
+			var $iconButton = this._getIcon().$();
+			$iconButton.attr("role", "button");
 			if (this.getExpanded()) {
 				// this is relevant when we create Panel specifying the expanded property as 'constructor parameter'
 				$this.find(".sapMPanelWrappingDiv").addClass("sapMPanelWrappingDivExpanded");
+				//ARIA
+				$iconButton.attr("aria-expanded", "true");
 			} else {
 				// hide those parts which are collapsible (w/o animation, otherwise initial loading doesn't look good ...)
 				$this.find(".sapMPanelExpandablePart").hide();
+				//ARIA
+				$iconButton.attr("aria-expanded", "false");
 			}
 		}
-
 	};
 
 	Panel.prototype.exit = function() {
