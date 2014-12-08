@@ -13,6 +13,7 @@ sap.ui
 						jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 					}
 
+					
 					/**
 					 * Creates a mocked server. This helps to mock all or some backend calls, e.g. for OData/JSON Models or simple XHR calls, without
 					 * changing the application code. This class can also be used for qunit tests.
@@ -123,7 +124,23 @@ sap.ui
 						_oMetadata : null,
 						_sMetadataUrl : null,
 						_sMockdataBaseUrl : null,
-						_mEntitySets : null
+						_mEntitySets : null,
+						_oErrorMessages : {
+							INVALID_SYSTEM_QUERY_OPTION_VALUE : "Invalid system query options value",
+							IS_NOT_A_VALID_SYSTEM_QUERY_OPTION : "## is not a valid system query option",
+							URI_VIOLATING_CONSTRUCTION_RULES : "The URI is violating the construction rules defined in the Data Services specification",
+							UNSUPPORTED_FORMAT_VALUE : "Unsupported format value. Only json format is supported",
+							MALFORMED_SYNTAX : "The Data Services Request could not be understood due to malformed syntax",
+							RESOURCE_NOT_FOUND : "Resource not found",
+							INVALID_SORTORDER_DETECTED : "Invalid sortorder ## detected",
+							PROPERTY_NOT_FOUND : "Property ## not found",
+							INVALID_FILTER_QUERY_STATEMENT : "Invalid filter query statement",
+							INVALID_FILTER_OPERATOR : "Invalid $filter operator ##",
+							RESOURCE_NOT_FOUND_FOR_SEGMENT : "Resource not found for the segment ##",
+							MALFORMED_URI_LITERAL_SYNTAX_IN_KEY : "Malformed URI literal syntax in key ##",
+							INVALID_KEY_NAME : "Invalid key name in key predicate. Expected name is ##",
+							INVALID_KEY_PREDICATE_QUANTITY : "Invalid key predicate. The quantity of provided keys does not match the expected value"
+						}
 
 					});
 
@@ -142,6 +159,7 @@ sap.ui
 						}
 					};
 
+					
 					/**
 					 * Stops the server.
 					 * @public
@@ -209,22 +227,19 @@ sap.ui
 						if (sODataQueryValue === "") {
 							return;
 						}
-						if (sODataQueryValue.lastIndexOf(',') === sODataQueryValue.length) {
-							jQuery.sap.log.error("The URI is violating the construction rules defined in the Data Services specification!");
-							throw new Error("400");
+						if (sODataQueryValue.lastIndexOf(',') === sODataQueryValue.length - 1) {
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES);
 						}
 						switch (aQuery[0]) {
 						case "$top":
 							if (!(new RegExp(/^\d+$/).test(sODataQueryValue))) {
-								jQuery.sap.log.error("Invalid system query options value!");
-								throw new Error("400");
+								this._logAndThrowMockServerCustomError(400, this._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
 							}
 							oFilteredData.results = oFilteredData.results.slice(0, sODataQueryValue);
 							break;
 						case "$skip":
 							if (!(new RegExp(/^\d+$/).test(sODataQueryValue))) {
-								jQuery.sap.log.error("Invalid system query options value!");
-								throw new Error("400");
+								this._logAndThrowMockServerCustomError(400, this._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
 							}
 							oFilteredData.results = oFilteredData.results.slice(sODataQueryValue, oFilteredData.results.length);
 							break;
@@ -250,8 +265,7 @@ sap.ui
 							oFilteredData.results = this._getOdataQueryFormat(oFilteredData.results, sODataQueryValue);
 							break;
 						default:
-							jQuery.sap.log.error("Invalid system query options value!");
-							throw new Error("400");
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.IS_NOT_A_VALID_SYSTEM_QUERY_OPTION, aQuery[0]);
 						}
 					};
 
@@ -268,9 +282,8 @@ sap.ui
 						if (sODataQueryValue === "") {
 							return;
 						}
-						if (sODataQueryValue.lastIndexOf(',') === sODataQueryValue.length) {
-							jQuery.sap.log.error("The URI is violating the construction rules defined in the Data Services specification!");
-							throw new Error("400");
+						if (sODataQueryValue.lastIndexOf(',') === sODataQueryValue.length - 1) {
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES);
 						}
 						switch (aQuery[0]) {
 						case "$filter":
@@ -282,8 +295,7 @@ sap.ui
 						case "$format":
 							return this._getOdataQueryFormat([ oEntry ], sODataQueryValue);
 						default:
-							jQuery.sap.log.error("Invalid system query options value!");
-							throw new Error("400");
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.IS_NOT_A_VALID_SYSTEM_QUERY_OPTION, aQuery[0]);
 						}
 					};
 
@@ -318,8 +330,7 @@ sap.ui
 										iSorter = -1;
 										break;
 									default:
-										jQuery.sap.log.error("Invalid sortorder '" + aSort[1] + "' detected!");
-										throw new Error("400");
+										that._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_SORTORDER_DETECTED, aSort[1]);
 									}
 								}
 								// support for 1 level complex type property
@@ -329,8 +340,7 @@ sap.ui
 									sPropName = aSort[0].substring(iComplexType + 1);
 									sComplexType = aSort[0].substring(0, iComplexType);
 									if (!a[sComplexType].hasOwnProperty(sPropName)) {
-										jQuery.sap.log.error("Property " + sPropName + " not found!");
-										throw new Error("400");
+										that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND , sPropName);
 									}
 									if (a[sComplexType][sPropName] < b[sComplexType][sPropName]) {
 										return -1 * iSorter;
@@ -341,8 +351,7 @@ sap.ui
 								} else {
 									sPropName = aSort[0];
 									if (!a.hasOwnProperty(sPropName)) {
-										jQuery.sap.log.error("Property " + sPropName + " not found!");
-										throw new Error("400");
+										that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND , sPropName);
 									}
 									if (a[sPropName] < b[sPropName]) {
 										return -1 * iSorter;
@@ -518,7 +527,7 @@ sap.ui
 							if (aODataFilterValues) {
 								sODataFilterMethod = aODataFilterValues[1];
 							} else {
-								throw new Error("400");
+								this._logAndThrowMockServerCustomError(400, this._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT);
 							}
 						}
 						var that = this;
@@ -555,15 +564,13 @@ sap.ui
 								var sPropName = sPath.substring(iComplexType + 1);
 								var sComplexType = sPath.substring(0, iComplexType);
 								if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
-									jQuery.sap.log.error("Property " + sPropName + " not found!");
-									throw new Error("400");
+									that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND , sPropName);
 								}
 								return fnSelectFilteredData(sPath, sValue, sComplexType, sPropName);
 							} else {
 								//check if sPath exists as property of the entityset
 								if (!aDataSet[0].hasOwnProperty(sPath)) {
-									jQuery.sap.log.error("Property " + sPath + " not found for " + aDataSet[0].__metadata.type + "!");
-									throw new Error("400");
+									that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND , sPath);
 								}
 								return fnSelectFilteredData(sPath, sValue);
 							}
@@ -654,8 +661,7 @@ sap.ui
 								});
 							});
 						default:
-							jQuery.sap.log.error("Invalid $filter operator '" + sODataFilterMethod + "'!");
-							throw new Error("400");
+							this._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_FILTER_OPERATOR, sODataFilterMethod);
 						}
 					};
 
@@ -688,8 +694,7 @@ sap.ui
 								// this is a simple property
 								} else {
 									if (oData && !oData.hasOwnProperty(sPropertyName)) {
-										jQuery.sap.log.error("Resource not found for the selection clause '" + sPropertyName + "'!");
-										throw new Error("404");
+										that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
 									}
 									oPushedObject[sPropertyName] = oData[sPropertyName];
 								}
@@ -726,8 +731,7 @@ sap.ui
 						var aProperties = sODataQueryValue.split(',');
 
 						if (aProperties.length !== 1 || (aProperties[0] !== 'none' && aProperties[0] !== 'allpages')) {
-							jQuery.sap.log.error("Invalid system query options value!");
-							throw new Error("400");
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
 						}
 						if (aProperties[0] === 'none') {
 							return;
@@ -742,8 +746,7 @@ sap.ui
 					 */
 					MockServer.prototype._getOdataQueryFormat = function(aDataSet, sODataQueryValue) {
 						if (sODataQueryValue !== 'json') {
-							jQuery.sap.log.error("Unsupported format value. Only json format is supported!");
-							throw new Error("400");
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.UNSUPPORTED_FORMAT_VALUE);
 						}
 						return aDataSet;
 					};
@@ -769,7 +772,7 @@ sap.ui
 								var sNavProp = aNavProps[0];
 
 								if (!oRecord[sNavProp]) {
-									throw new Error("404");
+									that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sNavProp);
 								}
 
 								//check if an expanded operation was already executed. for 1:* check results . otherwise, check if there is __deferred for clean start.
@@ -1213,23 +1216,27 @@ sap.ui
 
 							if (oEntitySet.keysType[sKey] === "Edm.String") {
 								if (sFirstChar !== "'" || sLastChar !== "'") {
-									return false;
+									this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 								}
 							} else if (oEntitySet.keysType[sKey] === "Edm.DateTime") {
 								if (sFirstChar === "'" || sLastChar !== "'") {
-									return false;
+									this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 								}
 							} else if (oEntitySet.keysType[sKey] === "Edm.Guid") {
 								if (sFirstChar === "'" || sLastChar !== "'") {
-									return false;
+									this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 								}
 							} else {
-								if (sFirstChar === "'" || sLastChar === "'") {
-									return false;
+								if ((sFirstChar === "'" && sLastChar !== "'") || (sLastChar === "'" && sFirstChar !== "'")) {
+									this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 								}
 							}
+
+							var sKeys = oEntitySet.keys.join(",");
+							if (oEntitySet.keys.indexOf(sKey) === -1) {
+								this._logAndThrowMockServerCustomError(400, this._oErrorMessages.INVALID_KEY_NAME, sKeys);
+							}
 						}
-						return true;
 					};
 
 					/**
@@ -1481,7 +1488,7 @@ sap.ui
 						var oEntitySet = this._mEntitySets[sEntitySetName];
 						var oNavProp = oEntitySet.navprops[sNavProp];
 						if (!oNavProp) {
-							throw new Error("404");
+							this._logAndThrowMockServerCustomError(404, this._oErrorMessages.RESOURCE_NOT_FOUND);
 						}
 
 						var aEntries = [];
@@ -1559,10 +1566,10 @@ sap.ui
 							var aRequestedKeys = sKeys.split(',');
 
 							// check number of keys to be equal to the entity keys and validates keys type for quotations
-							if (aRequestedKeys.length !== aKeys.length || !that._isRequestedKeysValid(oEntitySet, aRequestedKeys)) {
-								return oFoundEntry;
+							if (aRequestedKeys.length !== aKeys.length) {
+								that._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY);
 							}
-
+							that._isRequestedKeysValid(oEntitySet, aRequestedKeys);	
 							if (aRequestedKeys.length === 1 && !aRequestedKeys[0].split('=')[1]) {
 								aRequestedKeys = [ aKeys[0] + "=" + aRequestedKeys[0] ];
 							}
@@ -1624,6 +1631,7 @@ sap.ui
 							});
 							return oFoundEntry;
 						};
+
 
 						// helper to resolve an entity set for insert/delete/update operations
 						var fnResolveTargetEntityName = function(oEntitySet, sKeys, sUrlParams) {
@@ -1858,8 +1866,8 @@ sap.ui
 											}//END Main FOR
 											//CREATE BATCH RESPONSE
 											var sRespondData = "--ejjeeffe0";
-											for ( var i = 0; i < aBatchBodyResponse.length; i++) {
-												sRespondData += aBatchBodyResponse[i] + "--ejjeeffe0";
+											for ( var m = 0; m < aBatchBodyResponse.length; m++) {
+												sRespondData += aBatchBodyResponse[m] + "--ejjeeffe0";
 											}
 											sRespondData += "--";
 											var mHeaders = {
@@ -1890,17 +1898,16 @@ sap.ui
 														"Content-Type" : "text/plain;charset=utf-8"
 													};
 													fnHandleXsrfTokenHeader(oXhr, mHeaders);
-													var aData = that._oMockdata[sEntitySetName];
-													if (aData) {
-														// using extend to copy the data to a new array
-														var oFilteredData = {
-															results : jQuery.extend(true, [], aData)
-														};
-														if (sUrlParams) {
-															// sUrlParams should not contains ?, but only & in its stead
-															var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
-															
-															try {
+													try {
+														var aData = that._oMockdata[sEntitySetName];
+														if (aData) {
+															// using extend to copy the data to a new array
+															var oFilteredData = {
+																results : jQuery.extend(true, [], aData)
+															};
+															if (sUrlParams) {
+																// sUrlParams should not contains ?, but only & in its stead
+																var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
 																if (aUrlParams.length > 1) {
 																	aUrlParams = that._orderQueryOptions(aUrlParams);
 																}
@@ -1908,18 +1915,22 @@ sap.ui
 																	that._applyQueryOnCollection(oFilteredData, sQuery,
 																			sEntitySetName);
 																});
-															} catch (e) {
-																jQuery.sap.log.error("MockServer: request failed due to invalid system query options value!");
-																oXhr.respond(parseInt(e.message || e.number, 10));
-																return;
 															}
+															oXhr.respond(200, mHeaders, "" + oFilteredData.results.length);
+															jQuery.sap.log.debug("MockServer: response sent with: 200, " +
+																	oFilteredData.results.length);
+														} else {
+															that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND);
 														}
-														oXhr.respond(200, mHeaders, "" + oFilteredData.results.length);
-														jQuery.sap.log.debug("MockServer: response sent with: 200, " +
-																oFilteredData.results.length);
-													} else {
-														oXhr.respond(404);
-														jQuery.sap.log.debug("MockServer: response sent with: 404");
+													} catch (e) {
+														if (e.error){
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															jQuery.sap.log.error("MockServer: request failed due to invalid system query options value!");
+															oXhr.respond(parseInt(e.message || e.number, 10));
+														}
+														
+														return;
 													}
 												}
 											});
@@ -1938,17 +1949,16 @@ sap.ui
 																	"Content-Type" : "application/json;charset=utf-8"
 															};
 															fnHandleXsrfTokenHeader(oXhr, mHeaders);
-															var aData = that._oMockdata[sEntitySetName];
-															if (aData) {
-																// using extend to copy the data to a new array
-																var oFilteredData = {
-																	results : jQuery.extend(true, [], aData)
-																};
-																if (sUrlParams) {
-																	// sUrlParams should not contains ?, but only & in its stead
-																	var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
-																	
-																	try {
+															try {
+																var aData = that._oMockdata[sEntitySetName];
+																if (aData) {
+																	// using extend to copy the data to a new array
+																	var oFilteredData = {
+																		results : jQuery.extend(true, [], aData)
+																	};
+																	if (sUrlParams) {
+																		// sUrlParams should not contains ?, but only & in its stead
+																		var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
 																		if (aUrlParams.length > 1) {
 																			aUrlParams = that._orderQueryOptions(aUrlParams);
 																		}
@@ -1956,22 +1966,26 @@ sap.ui
 																			that._applyQueryOnCollection(oFilteredData, sQuery,
 																					sEntitySetName);
 																		});
-																	} catch (e) {
-																		jQuery.sap.log.error("MockServer: request failed due to invalid system query options value!");
-																		oXhr.respond(parseInt(e.message || e.number, 10));
-																		return;
 																	}
+																	oXhr.respond(200, mHeaders, JSON.stringify({
+																		d : oFilteredData
+																	}));
+																	jQuery.sap.log.debug("MockServer: response sent with: 200, "
+																			+ JSON.stringify({
+																				d : oFilteredData
+																			}));
+																} else {
+																	that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND);
 																}
-																oXhr.respond(200, mHeaders, JSON.stringify({
-																	d : oFilteredData
-																}));
-																jQuery.sap.log.debug("MockServer: response sent with: 200, "
-																		+ JSON.stringify({
-																			d : oFilteredData
-																		}));
-															} else {
-																oXhr.respond(404);
-																jQuery.sap.log.debug("MockServer: response sent with: 404");
+															} catch (e) {
+																if (e.error){
+																	oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+																} else {
+																	jQuery.sap.log.debug("MockServer: response sent with: "
+																			+ parseInt(e.message || e.number, 10));
+																	oXhr.respond(parseInt(e.message || e.number, 10));
+																}
+																return;
 															}
 														}
 													});
@@ -1989,40 +2003,43 @@ sap.ui
 															var mHeaders = {
 																	"Content-Type" : "application/json;charset=utf-8"
 															};
-															var oEntry = jQuery
-																	.extend(true, {}, fnGetEntitySetEntry(sEntitySetName, sKeys));
-															if (!jQuery.isEmptyObject(oEntry)) {
-																if (sUrlParams) {
-																	// sUrlParams should not contains ?, but only & in its stead
-																	var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
-																	
-																	try {
-																		if (aUrlParams.length > 1) {
-																			aUrlParams = that._orderQueryOptions(aUrlParams);
-																		}
-
-																		jQuery.each(aUrlParams, function(iIndex, sQuery) {
-																			oEntry.entry = that._applyQueryOnEntry(oEntry.entry, sQuery,
-																					sEntitySetName);
-																		});
-																	} catch (e) {
-																		oXhr.respond(parseInt(e.message || e.number, 10));
-																		jQuery.sap.log.debug("MockServer: response sent with: "
-																				+ parseInt(e.message || e.number, 10));
-																		return;
-																	}
-																}
-																oXhr.respond(200, mHeaders, JSON.stringify({
-																	d : oEntry.entry
-																}));
-																jQuery.sap.log.debug("MockServer: response sent with: 200, "
-																		+ JSON.stringify({
+															try {
+																	var oEntry = jQuery
+																			.extend(true, {}, fnGetEntitySetEntry(sEntitySetName, sKeys));
+																	if (!jQuery.isEmptyObject(oEntry)) {
+																		if (sUrlParams) {
+																			// sUrlParams should not contains ?, but only & in its stead
+																			var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
+																			
+																			
+																				if (aUrlParams.length > 1) {
+																					aUrlParams = that._orderQueryOptions(aUrlParams);
+																				}
+		
+																				jQuery.each(aUrlParams, function(iIndex, sQuery) {
+																					oEntry.entry = that._applyQueryOnEntry(oEntry.entry, sQuery,
+																							sEntitySetName);
+																				});
+																			}
+																		oXhr.respond(200, mHeaders, JSON.stringify({
 																			d : oEntry.entry
 																		}));
-															} else {
-																oXhr.respond(404);
-																jQuery.sap.log.debug("MockServer: response sent with: 404");
-															}
+																		jQuery.sap.log.debug("MockServer: response sent with: 200, "
+																				+ JSON.stringify({
+																					d : oEntry.entry
+																				}));
+																	} else {
+																		that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND);
+																	}
+																} catch (e) {
+																	if (e.error){
+																		oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+																} else {
+																	jQuery.sap.log.debug("MockServer: response sent with: "
+																			+ parseInt(e.message || e.number, 10));
+																		oXhr.respond(parseInt(e.message || e.number, 10));
+																	}
+																}
 														}
 													});
 
@@ -2043,85 +2060,80 @@ sap.ui
 																				"Content-Type" : "text/plain;charset=utf-8"
 																		};
 																		fnHandleXsrfTokenHeader(oXhr, mHeaders);
-
-																		var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-																		if (oEntry) {
-																			var aEntries, oFilteredData = {};
-																			try {
-																				aEntries = that._resolveNavigation(sEntitySetName,
-																						oEntry.entry, sNavProp);
-																				var sMultiplicity = that._mEntitySets[sEntitySetName].navprops[sNavProp].to.multiplicity;
-																				if (sMultiplicity === "*") {
-																					oFilteredData = {
-																						results : jQuery.extend(true, [],
-																								aEntries)
-																					};
-																				} else {
-																					oFilteredData = jQuery.extend(true, {},
-																							aEntries[0]);
-																				}
-																				if (aEntries && aEntries.length !== 0) {
-																					if (sUrlParams) {
-																						// sUrlParams should not contains ?, but only & in its stead
-																						var aUrlParams = decodeURIComponent(
-																								sUrlParams).replace("?", "&").split("&");
-
-																						if (aUrlParams.length > 1) {
-																							aUrlParams = that
-																									._orderQueryOptions(aUrlParams);
-																						}
-
-																						if (sMultiplicity === "*") {
-																							jQuery
-																									.each(
-																											aUrlParams,
-																											function(iIndex, sQuery) {
-																												that
-																														._applyQueryOnCollection(
-																																oFilteredData,
-																																sQuery,
-																																that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																											});
-																						} else {
-																							jQuery
-																									.each(
-																											aUrlParams,
-																											function(iIndex, sQuery) {
-																												oFilteredData = that
-																														._applyQueryOnEntry(
-																																oFilteredData,
-																																sQuery,
-																																that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																											});
+																		
+																		try {
+																			var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																				if (oEntry) {
+																					var aEntries, oFilteredData = {};
+																					
+																					aEntries = that._resolveNavigation(sEntitySetName,
+																							oEntry.entry, sNavProp);
+																					var sMultiplicity = that._mEntitySets[sEntitySetName].navprops[sNavProp].to.multiplicity;
+																					if (sMultiplicity === "*") {
+																						oFilteredData = {
+																							results : jQuery.extend(true, [],
+																									aEntries)
+																						};
+																					} else {
+																						oFilteredData = jQuery.extend(true, {},
+																								aEntries[0]);
+																					}
+																					if (aEntries && aEntries.length !== 0) {
+																						if (sUrlParams) {
+																							// sUrlParams should not contains ?, but only & in its stead
+																							var aUrlParams = decodeURIComponent(
+																									sUrlParams).replace("?", "&").split("&");
+	
+																							if (aUrlParams.length > 1) {
+																								aUrlParams = that
+																										._orderQueryOptions(aUrlParams);
+																							}
+	
+																							if (sMultiplicity === "*") {
+																								jQuery
+																										.each(
+																												aUrlParams,
+																												function(iIndex, sQuery) {
+																													that
+																															._applyQueryOnCollection(
+																																	oFilteredData,
+																																	sQuery,
+																																	that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
+																												});
+																							} else {
+																								jQuery
+																										.each(
+																												aUrlParams,
+																												function(iIndex, sQuery) {
+																													oFilteredData = that
+																															._applyQueryOnEntry(
+																																	oFilteredData,
+																																	sQuery,
+																																	that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
+																												});
+																							}
 																						}
 																					}
+																					oXhr
+																							.respond(
+																									200,
+																									mHeaders, "" + oFilteredData.results.length);
+																					jQuery.sap.log
+																							.debug("MockServer: response sent with: 200, "
+																									+ oFilteredData.results.length);
+																					return;
+																				} else {
+																					that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND);
 																				}
-																				oXhr
-																						.respond(
-																								200,
-																								mHeaders, "" + oFilteredData.results.length);
-																				jQuery.sap.log
-																						.debug("MockServer: response sent with: 200, "
-																								+ oFilteredData.results.length);
-																				return;
 																			} catch (e) {
-																				oXhr.respond(parseInt(e.message || e.number, 10));
-																				jQuery.sap.log
-																						.debug("MockServer: response sent with: "
-																								+ parseInt(e.message || e.number,
-																										10));
-																				return;
-																			}
-//																			var aEntries = that._resolveNavigation(sEntitySetName,
-//																					oEntry.entry, sNavProp);
-//																			oXhr.respond(200, mHeaders, "" + aEntries.length);
-//																			jQuery.sap.log.debug("MockServer: response sent with: 200, "
-//																					+ aEntries.length);
-
-																		} else {
-																			oXhr.respond(404);
-																			jQuery.sap.log.debug("MockServer: response sent with: 404");
-																		}
+																				if (e.error){
+																						oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+																				} else {
+																					jQuery.sap.log.debug("MockServer: response sent with: "
+																							+ parseInt(e.message || e.number, 10));
+																						oXhr.respond(parseInt(e.message || e.number, 10));
+																					}
+																				}
 																	}
 																});
 
@@ -2144,81 +2156,85 @@ sap.ui
 																						"Content-Type" : "application/json;charset=utf-8"
 																				};
 																				fnHandleXsrfTokenHeader(oXhr, mHeaders);
-																				var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-																				if (oEntry) {
-																					var aEntries, oFilteredData = {};
-																					try {
-																						aEntries = that._resolveNavigation(sEntitySetName,
-																								oEntry.entry, sNavProp);
-																						var sMultiplicity = that._mEntitySets[sEntitySetName].navprops[sNavProp].to.multiplicity;
-																						if (sMultiplicity === "*") {
-																							oFilteredData = {
-																								results : jQuery.extend(true, [],
-																										aEntries)
-																							};
-																						} else {
-																							oFilteredData = jQuery.extend(true, {},
-																									aEntries[0]);
-																						}
-																						if (aEntries && aEntries.length !== 0) {
-																							if (sUrlParams) {
-																								// sUrlParams should not contains ?, but only & in its stead
-																								var aUrlParams = decodeURIComponent(
-																										sUrlParams).replace("?", "&").split("&");
-
-																								if (aUrlParams.length > 1) {
-																									aUrlParams = that
-																											._orderQueryOptions(aUrlParams);
-																								}
-
-																								if (sMultiplicity === "*") {
-																									jQuery
-																											.each(
-																													aUrlParams,
-																													function(iIndex, sQuery) {
-																														that
-																																._applyQueryOnCollection(
-																																		oFilteredData,
-																																		sQuery,
-																																		that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																													});
-																								} else {
-																									jQuery
-																											.each(
-																													aUrlParams,
-																													function(iIndex, sQuery) {
-																														oFilteredData = that
-																																._applyQueryOnEntry(
-																																		oFilteredData,
-																																		sQuery,
-																																		that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
-																													});
+																				try {
+																						var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																						if (oEntry) {
+																							var aEntries, oFilteredData = {};
+																							
+																							aEntries = that._resolveNavigation(sEntitySetName,
+																									oEntry.entry, sNavProp);
+																							var sMultiplicity = that._mEntitySets[sEntitySetName].navprops[sNavProp].to.multiplicity;
+																							if (sMultiplicity === "*") {
+																								oFilteredData = {
+																									results : jQuery.extend(true, [],
+																											aEntries)
+																								};
+																							} else {
+																								oFilteredData = jQuery.extend(true, {},
+																										aEntries[0]);
+																							}
+																							if (aEntries && aEntries.length !== 0) {
+																								if (sUrlParams) {
+																									// sUrlParams should not contains ?, but only & in its stead
+																									var aUrlParams = decodeURIComponent(
+																											sUrlParams).replace("?", "&").split("&");
+	
+																									if (aUrlParams.length > 1) {
+																										aUrlParams = that
+																												._orderQueryOptions(aUrlParams);
+																									}
+	
+																									if (sMultiplicity === "*") {
+																										jQuery
+																												.each(
+																														aUrlParams,
+																														function(iIndex, sQuery) {
+																															that
+																																	._applyQueryOnCollection(
+																																			oFilteredData,
+																																			sQuery,
+																																			that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
+																														});
+																									} else {
+																										jQuery
+																												.each(
+																														aUrlParams,
+																														function(iIndex, sQuery) {
+																															oFilteredData = that
+																																	._applyQueryOnEntry(
+																																			oFilteredData,
+																																			sQuery,
+																																			that._mEntitySets[sEntitySetName].navprops[sNavProp].to.entitySet);
+																														});
+																									}
 																								}
 																							}
-																						}
-																						oXhr
-																								.respond(
-																										200,
-																										mHeaders, JSON.stringify({
-																											d : oFilteredData
-																										}));
-																						jQuery.sap.log
-																								.debug("MockServer: response sent with: 200, "
-																										+ JSON.stringify({
-																											d : oFilteredData
-																										}));
-																						return;
+																							oXhr
+																									.respond(
+																											200,
+																											mHeaders, JSON.stringify({
+																												d : oFilteredData
+																											}));
+																							jQuery.sap.log
+																									.debug("MockServer: response sent with: 200, "
+																											+ JSON.stringify({
+																												d : oFilteredData
+																											}));
+																							return;
+																						} else {
+																							that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND);
+																						}		
 																					} catch (e) {
-																						oXhr.respond(parseInt(e.message || e.number, 10));
-																						jQuery.sap.log
-																								.debug("MockServer: response sent with: "
-																										+ parseInt(e.message || e.number,
-																												10));
-																						return;
+																						if (e.error){
+																							oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+																						} else {
+																							oXhr.respond(parseInt(e.message || e.number, 10));
+																							jQuery.sap.log
+																							.debug("MockServer: response sent with: "
+																									+ parseInt(e.message || e.number,
+																											10));
+																						}
 																					}
-																				}
-																				oXhr.respond(404);
-																				jQuery.sap.log.debug("MockServer: response sent with: 404");
 																			}
 																		});
 
@@ -2238,37 +2254,53 @@ sap.ui
 													var sRespondData = null;
 													var sRespondContentType = null;
 													var iResult = 405; // default: method not allowed
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																	"Content-Type" : "application/json;charset=utf-8"
-																};
-															if (bMerge){
-																	var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-																	if (oExistingEntry) { 
-																		jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
-																	}
-																	iResult = 204;
-															} else {
-																var sUri = that._getRootUri() + sTargetEntityName + "("
-																		+ that._createKeysString(that._mEntitySets[sTargetEntityName], oEntity)
-																		+ ")";
-																sRespondData = JSON.stringify({
-																	d : oEntity,
-																	uri : sUri
-																}); 
-																that._oMockdata[sTargetEntityName] = that._oMockdata[sTargetEntityName]
-																		.concat([ oEntity ]);
-																iResult = 201;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																		"Content-Type" : "application/json;charset=utf-8"
+																	};
+																if (bMerge){
+																		var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																		if (oExistingEntry) { 
+																			jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																		}
+																		iResult = 204;
+																} else {
+																	var sUri = that._getRootUri() + sTargetEntityName + "("
+																			+ that._createKeysString(that._mEntitySets[sTargetEntityName], oEntity)
+																			+ ")";
+																	sRespondData = JSON.stringify({
+																		d : oEntity,
+																		uri : sUri
+																	}); 
+																	that._oMockdata[sTargetEntityName] = that._oMockdata[sTargetEntityName]
+																			.concat([ oEntity ]);
+																	iResult = 201;
+																}
 															}
 														}
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													} catch (e) {
+														if (e.error){
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log
+															.debug("MockServer: response sent with: "
+																	+ parseInt(e.message || e.number,
+																			10));
+														}
+														
 													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
 
@@ -2281,26 +2313,40 @@ sap.ui
 													var iResult = 405; // default: method not allowed 
 													var sRespondData = null;
 													var sRespondContentType = null;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
 
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-
-															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-															if (oExistingEntry) { // Overwrite existing
-																that._oMockdata[sEntitySetName][oExistingEntry.index] = oEntity;
+																var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																if (oExistingEntry) { // Overwrite existing
+																	that._oMockdata[sEntitySetName][oExistingEntry.index] = oEntity;
+																}
+																iResult = 204;
 															}
-															iResult = 204;
+														}
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													} catch (e) {
+														if (e.error){
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log
+															.debug("MockServer: response sent with: "
+																	+ parseInt(e.message || e.number,
+																			10));
 														}
 													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
 											
@@ -2313,26 +2359,37 @@ sap.ui
 													var iResult = 405; // default: method not allowed 
 													var sRespondData = null;
 													var sRespondContentType = null;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
 
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-
-															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-															if (oExistingEntry) { 
-																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																if (oExistingEntry) { 
+																	jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																}
+																iResult = 204;
 															}
-															iResult = 204;
 														}
-													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													}catch (e) {
+														if (e.error) {
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
+														}
+													}	
 												}
 											});
 											
@@ -2345,26 +2402,38 @@ sap.ui
 													var iResult = 405; // default: method not allowed 
 													var sRespondData = null;
 													var sRespondContentType = null;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
 
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-
-															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-															if (oExistingEntry) { 
-																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																if (oExistingEntry) { 
+																	jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																}
+																iResult = 204;
 															}
-															iResult = 204;
 														}
-													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													} catch (e) {
+														if (e.error) {
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log
+															.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
+														}
+													}		
 												}
 											});
 
@@ -2374,19 +2443,29 @@ sap.ui
 												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 												response : function(oXhr, sEntitySetName, sKeys, sUrlParams) {
 													jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
-
 													var iResult = 204;
-													var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-													if (oEntry) {
-														that._oMockdata[sEntitySetName].splice(oEntry.index, 1);
-													} else {
-														iResult = 400;
-													}
-													oXhr.respond(iResult, null, null);
-													jQuery.sap.log.debug("MockServer: response sent with: " + iResult);
+													try {
+														var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+														if (oEntry) {
+															that._oMockdata[sEntitySetName].splice(oEntry.index, 1);
+														} else {
+															iResult = 400;
+														}
+														oXhr.respond(iResult, null, null);
+														jQuery.sap.log.debug("MockServer: response sent with: " + iResult);
+													} catch (e) {
+														if (e.error){
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
+														}
+													}	
 												}
 											});
-
 										});
 
 						// apply the request handlers
@@ -2401,6 +2480,7 @@ sap.ui
 					 */
 					MockServer.prototype._orderQueryOptions = function(aUrlParams) {
 						var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, aOrderedUrlParams = [];
+						var that = this;
 						jQuery.each(aUrlParams, function(iIndex, sQuery) {
 							switch (sQuery.split('=')[0]) {
 							case "$top":
@@ -2429,8 +2509,7 @@ sap.ui
 								break;
 							default:
 								if (sQuery.split('=')[0].indexOf('$') === 0) {
-									jQuery.sap.log.error("Invalid system query options value!");
-									throw new Error("400");
+									that._logAndThrowMockServerCustomError(400, that._oErrorMessages.IS_NOT_A_VALID_SYSTEM_QUERY_OPTION, sQuery.split('=')[0]);
 								}
 							}
 						});
@@ -2659,6 +2738,23 @@ sap.ui
 						return function(sMethod, sUri, bAsync, sUsername, sPassword) {
 							return sRequestMethod === sMethod && oRegExp.test(sUri);
 						};
+					};
+					
+					/**
+					 * Logs and throws an error
+					 * 
+					 * @param {int} iErrorStatus HTTP status code
+					 * @param {string} sErrorMessage the error message
+					 * @param {string} sParam dynamic parameter of the error message
+					 * 
+					 * @private
+					 */
+					MockServer.prototype._logAndThrowMockServerCustomError = function(iErrorStatus, sErrorMessage, sParam) {
+						if (sErrorMessage.indexOf('##') > -1 && sParam) {
+							sErrorMessage = sErrorMessage.replace("##" , "'" + sParam + "'");
+						}
+						jQuery.sap.log.error("MockServer: " + sErrorMessage);
+						throw {error : {code : iErrorStatus, message : {lang : "en", value: sErrorMessage}}};
 					};
 
 					/**
