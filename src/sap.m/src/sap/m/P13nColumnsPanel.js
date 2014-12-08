@@ -831,17 +831,25 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
 			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
 
-			// Add/Insert new table item to table
+			// columnsItem was found -> take over included data
 			if (oColumnsItem) {
 				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
-				oNewTableItem.setSelected(oColumnsItem.getVisible());
-				
-				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+				if (oColumnsItem.getVisible() !== undefined) {
+					oNewTableItem.setSelected(oColumnsItem.getVisible());
+				}
 
+				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
+				if (oColumnsItem.getWidth() !== undefined) {
+					oNewTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
+				}
+			}
+
+			// Add/Insert new table item to table
+			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
+				// columnsItems with valid index property found -> INSERT the new item at the index
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
-				// No columnsItems exist for current item -> ADD the new item at the end
+				// No columnsItems exist Or found columnsItem does not contains index property -> ADD the new item at the end
 				this._oTable.addItem(oNewTableItem);
 			}
 		}
@@ -864,14 +872,22 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
 			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
 
-			// Add/Insert new table item to table
+			// columnsItem was found -> take over included data
 			if (oColumnsItem) {
 				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
-				oNewTableItem.setSelected(oColumnsItem.getVisible());
+				if (oColumnsItem.getVisible() !== undefined) {
+					oNewTableItem.setSelected(oColumnsItem.getVisible());
+				}
 
 				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+				if (oColumnsItem.getWidth() !== undefined) {
+					oNewTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
+				}
+			}
 
+			// Insert new table item to table
+			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
+				// columnsItems with valid index property found -> INSERT the new item at the index
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
 				// No columnsItems exist for current item -> INSERT the new item at iIndex
