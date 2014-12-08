@@ -175,6 +175,13 @@
 		}
 	});
 	
+	var btnRemoveInvalidConditions = new sap.m.Button({
+		text: "Remove Invalid Conditions",
+		press: function() {
+			oGroupPanel.removeInvalidConditions();
+		}
+	});
+	
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
@@ -267,6 +274,7 @@
 	btnShow2.placeAt("content2");
 	btnValidate.placeAt("content");
 	btnClearErrors.placeAt("content");
+	btnRemoveInvalidConditions.placeAt("content");
 	btnConditions.placeAt("content");
 	oFieldKey.placeAt("content2");
 	oFieldKeyField.placeAt("content2");

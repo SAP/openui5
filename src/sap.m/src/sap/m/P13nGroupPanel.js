@@ -121,17 +121,23 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 			 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and
 			 * opens a popup message dialog to give the user the feedback that some values are wrong or missing.
 			 * 
-			 * @private
-			 * @param {function}
-			 *            fnCallback which we call when all conditions are valid or the user ignores the wrong/missing
-			 *            fields by pressing Yes on a message dialog.
+			 * @public
 			 */
 			P13nGroupPanel.prototype.validateConditions = function() {
 				return this._oGroupPanel.validateConditions();
 			};
 
 			/**
-			 * removes all errors/warning states from of all sort conditions.
+			 * removes all invalid Group conditions.					 
+			 *  
+			 * @public
+			 */
+			P13nGroupPanel.prototype.removeInvalidConditions = function() {
+				this._oGroupPanel.removeInvalidConditions();
+			};
+			
+			/**
+			 * removes all errors/warning states from of all group conditions.
 			 * 
 			 * @public
 			 */

@@ -53,7 +53,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When
-				 * the ConditionPanel is used on a dialog the property should be set to true!
+				 * the P13nConditionPanel is used on a dialog the property should be set to true!
 				 */
 				containerQuery : {
 					type : "boolean",
@@ -1781,6 +1781,28 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			var oValue2 = oConditionGrid.value2;
 			oValue1.setValueState(sap.ui.core.ValueState.None);
 			oValue2.setValueState(sap.ui.core.ValueState.None);
+		}, this);
+	};
+
+	/**
+	 * removes all invalid conditions.
+	 * 
+	 * @public
+	 */
+	P13nConditionPanel.prototype.removeInvalidConditions = function() {
+		var aInvalidConditionGrids = [];
+		this._oConditionsGrid.getContent().forEach(function( oConditionGrid) {
+			if (oConditionGrid.value1.getValueState() !== sap.ui.core.ValueState.None || oConditionGrid.value2.getValueState() !== sap.ui.core.ValueState.None) {
+				aInvalidConditionGrids.push(oConditionGrid);
+			}
+		}, this);
+
+		aInvalidConditionGrids.forEach(function( oConditionGrid) {
+			this._removeCondition(this, this._oConditionsGrid, oConditionGrid);
+
+			if (this.getAutoReduceKeyFieldItems()) {
+				this._updateKeyFieldItems(this, this._oConditionsGrid, false);
+			}
 		}, this);
 	};
 

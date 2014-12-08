@@ -128,13 +128,19 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 			 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and
 			 * opens a popup message dialog to give the user the feedback that some values are wrong or missing.
 			 * 
-			 * @private
-			 * @param {function}
-			 *            fnCallback which we call when all conditions are valid or the user ignores the wrong/missing
-			 *            fields by pressing Yes on a message dialog.
+			 * @public
 			 */
 			P13nSortPanel.prototype.validateConditions = function() {
 				return this._oSortPanel.validateConditions();
+			};
+
+			/**
+			 * removes all invalid sort conditions.					 
+			 *  
+			 * @public
+			 */
+			P13nSortPanel.prototype.removeInvalidConditions = function() {
+				this._oSortPanel.removeInvalidConditions();
 			};
 
 			/**
