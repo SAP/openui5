@@ -194,9 +194,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		Calendar.prototype.focusDate = function(oDate){
 
-			if (oDate && !this._oFocusedDate || this._oFocusedDate.getTime() != oDate.getTime()) {
+			if (oDate && (!this._oFocusedDate || this._oFocusedDate.getTime() != oDate.getTime())) {
+				if (!(oDate instanceof Date)) {
+					throw new Error("Date must be a JavaScript date object; " + this);
+				}
+
 				var iYear = oDate.getFullYear();
-				jQuery.sap.assert(iYear <= 9999 && iYear >= 1, "Date must not be in valid range (between 0001-01-01 and 9999-12-31)");
+				if (iYear < 1 || iYear > 9999) {
+					throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+				}
+
 				this._setFocusedDate(_createUTCDate(oDate));
 
 				if (this.getDomRef() && this._iMode == 0) {
@@ -651,7 +658,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		Calendar.prototype._checkDateSelected = function(oDate){
 
-			jQuery.sap.assert(oDate instanceof Date, "Date must be a JavaScript date object");
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
 
 			var iSelected = 0;
 			var aSelectedDates = this.getSelectedDates();
@@ -713,7 +722,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		Calendar.prototype._getDateType = function(oDate){
 
-			jQuery.sap.assert(oDate instanceof Date, "Date must be a JavaScript date object");
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
 
 			var oType;
 			var aSpecialDates = this.getSpecialDates();
