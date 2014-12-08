@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @alias sap.ui.model.type.String
 	 */
 	var StringType = SimpleType.extend("sap.ui.model.type.String", /** @lends sap.ui.model.type.String.prototype */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "String";
@@ -42,9 +42,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				this.oConstraints.search = new RegExp(this.oConstraints.search);
 			}
 		}
-	
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 */
@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		switch (sInternalType) {
 			case "string":
+			case "any":
 				return sValue;
 			case "int":
 				var iResult = parseInt(sValue, 10);
@@ -79,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.FormatException("Don't know how to format String to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
@@ -95,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.ParseException("Don't know how to parse String from " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
@@ -156,8 +157,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			}
 		}
 	};
-	
-	
+
+
 
 	return StringType;
 

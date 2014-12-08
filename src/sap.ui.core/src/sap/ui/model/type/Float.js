@@ -30,14 +30,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @alias sap.ui.model.type.Float 
 	 */
 	var Float = SimpleType.extend("sap.ui.model.type.Float", /** @lends sap.ui.model.type.Float.prototype  */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "Float";
 		}
-	
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 */
@@ -58,12 +58,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "int":
 				return Math.floor(fValue);
 			case "float":
+			case "any":
 				return fValue;
 			default:
 				throw new sap.ui.model.FormatException("Don't know how to format Float to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
@@ -88,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}				
 		return fResult;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
@@ -113,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			}
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
 	 */
@@ -121,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		this.oFormatOptions = oFormatOptions;
 		this._createFormats();
 	};
-	
+
 	/**
 	 * Called by the framework when any localization setting changed
 	 * @private

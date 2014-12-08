@@ -1,0 +1,1890 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1000",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "1137.64",
+					"NetAmount" : "956.0",
+					"TaxAmount" : "181.64",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1001",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "2972.62",
+					"NetAmount" : "2498.0",
+					"TaxAmount" : "474.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1002",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "3736.6",
+					"NetAmount" : "3140.0",
+					"TaxAmount" : "596.6",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1003",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "3927.0",
+					"NetAmount" : "3300.0",
+					"TaxAmount" : "627.0",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1007",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "1067.43",
+					"NetAmount" : "897.0",
+					"TaxAmount" : "170.43",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000060",
+					"ProductID" : "HT-1010",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000060",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "4757.62",
+					"NetAmount" : "3998.0",
+					"TaxAmount" : "759.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000070",
+					"ProductID" : "HT-1011",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000070",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "JPY",
+					"GrossAmount" : "5471.62",
+					"NetAmount" : "4598.0",
+					"TaxAmount" : "873.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000080",
+					"ProductID" : "HT-1030",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000080",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "547.4",
+					"NetAmount" : "460.0",
+					"TaxAmount" : "87.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000090",
+					"ProductID" : "HT-1031",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000090",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "GBP",
+					"GrossAmount" : "1017.45",
+					"NetAmount" : "855.0",
+					"TaxAmount" : "162.45",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0000000100",
+					"ProductID" : "HT-1032",
+					"Note" : "EPM DG: SO ID 0500000000 Item 0000000100",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "1231.65",
+					"NetAmount" : "1035.0",
+					"TaxAmount" : "196.65",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1030",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "547.4",
+					"NetAmount" : "460.0",
+					"TaxAmount" : "87.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1031",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "GBP",
+					"GrossAmount" : "339.15",
+					"NetAmount" : "285.0",
+					"TaxAmount" : "54.15",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1032",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "821.1",
+					"NetAmount" : "690.0",
+					"TaxAmount" : "131.1",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1035",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "949.62",
+					"NetAmount" : "798.0",
+					"TaxAmount" : "151.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1036",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "CAD",
+					"GrossAmount" : "1023.4",
+					"NetAmount" : "860.0",
+					"TaxAmount" : "163.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000060",
+					"ProductID" : "HT-1037",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000060",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "MXN",
+					"GrossAmount" : "2927.4",
+					"NetAmount" : "2460.0",
+					"TaxAmount" : "467.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000070",
+					"ProductID" : "HT-1020",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000070",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "1638.63",
+					"NetAmount" : "1377.0",
+					"TaxAmount" : "261.63",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000080",
+					"ProductID" : "HT-1021",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000080",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "MXN",
+					"GrossAmount" : "531.93",
+					"NetAmount" : "447.0",
+					"TaxAmount" : "84.93",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000090",
+					"ProductID" : "HT-1022",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000090",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "ARS",
+					"GrossAmount" : "3996.02",
+					"NetAmount" : "3358.0",
+					"TaxAmount" : "638.02",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000001",
+					"ItemPosition" : "0000000100",
+					"ProductID" : "HT-1023",
+					"Note" : "EPM DG: SO ID 0500000001 Item 0000000100",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "1827.84",
+					"NetAmount" : "1536.0",
+					"TaxAmount" : "291.84",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1040",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "2963.1",
+					"NetAmount" : "2490.0",
+					"TaxAmount" : "473.1",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1041",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "ARS",
+					"GrossAmount" : "583.1",
+					"NetAmount" : "490.0",
+					"TaxAmount" : "93.1",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1042",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "830.62",
+					"NetAmount" : "698.0",
+					"TaxAmount" : "132.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1050",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "RUB",
+					"GrossAmount" : "330.82",
+					"NetAmount" : "278.0",
+					"TaxAmount" : "52.82",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1051",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "117.81",
+					"NetAmount" : "99.0",
+					"TaxAmount" : "18.81",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000060",
+					"ProductID" : "HT-1052",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000060",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "404.6",
+					"NetAmount" : "340.0",
+					"TaxAmount" : "64.6",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000070",
+					"ProductID" : "HT-1055",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000070",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "117.81",
+					"NetAmount" : "99.0",
+					"TaxAmount" : "18.81",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000002",
+					"ItemPosition" : "0000000080",
+					"ProductID" : "HT-1056",
+					"Note" : "EPM DG: SO ID 0500000002 Item 0000000080",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "JPY",
+					"GrossAmount" : "283.22",
+					"NetAmount" : "238.0",
+					"TaxAmount" : "45.22",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000003",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1073",
+					"Note" : "EPM DG: SO ID 0500000003 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "499.76",
+					"NetAmount" : "419.97",
+					"TaxAmount" : "79.79",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000003",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1080",
+					"Note" : "EPM DG: SO ID 0500000003 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "INR",
+					"GrossAmount" : "460.53",
+					"NetAmount" : "387.0",
+					"TaxAmount" : "73.53",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000003",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1081",
+					"Note" : "EPM DG: SO ID 0500000003 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "PLN",
+					"GrossAmount" : "317.73",
+					"NetAmount" : "267.0",
+					"TaxAmount" : "50.73",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000003",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1082",
+					"Note" : "EPM DG: SO ID 0500000003 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "ARS",
+					"GrossAmount" : "201.11",
+					"NetAmount" : "169.0",
+					"TaxAmount" : "32.11",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000003",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1083",
+					"Note" : "EPM DG: SO ID 0500000003 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "CNY",
+					"GrossAmount" : "224.91",
+					"NetAmount" : "189.0",
+					"TaxAmount" : "35.91",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000004",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1100",
+					"Note" : "EPM DG: SO ID 0500000004 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "213.96",
+					"NetAmount" : "179.8",
+					"TaxAmount" : "34.16",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000004",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1101",
+					"Note" : "EPM DG: SO ID 0500000004 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "95.08",
+					"NetAmount" : "79.9",
+					"TaxAmount" : "15.18",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000004",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1102",
+					"Note" : "EPM DG: SO ID 0500000004 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "164.22",
+					"NetAmount" : "138.0",
+					"TaxAmount" : "26.22",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000004",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1103",
+					"Note" : "EPM DG: SO ID 0500000004 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "91.63",
+					"NetAmount" : "77.0",
+					"TaxAmount" : "14.63",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000004",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1104",
+					"Note" : "EPM DG: SO ID 0500000004 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "JPY",
+					"GrossAmount" : "196.35",
+					"NetAmount" : "165.0",
+					"TaxAmount" : "31.35",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1500",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "5950.0",
+					"NetAmount" : "5000.0",
+					"TaxAmount" : "950.0",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1501",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "JPY",
+					"GrossAmount" : "35700.0",
+					"NetAmount" : "30000.0",
+					"TaxAmount" : "5700.0",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1502",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "59500.0",
+					"NetAmount" : "50000.0",
+					"TaxAmount" : "9500.0",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1110",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "31.77",
+					"NetAmount" : "26.7",
+					"TaxAmount" : "5.07",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1111",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "16.42",
+					"NetAmount" : "13.8",
+					"TaxAmount" : "2.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000060",
+					"ProductID" : "HT-1112",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000060",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "GBP",
+					"GrossAmount" : "92.82",
+					"NetAmount" : "78.0",
+					"TaxAmount" : "14.82",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000005",
+					"ItemPosition" : "0000000070",
+					"ProductID" : "HT-1113",
+					"Note" : "EPM DG: SO ID 0500000005 Item 0000000070",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "8.21",
+					"NetAmount" : "6.9",
+					"TaxAmount" : "1.31",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000006",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1105",
+					"Note" : "EPM DG: SO ID 0500000006 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "103.53",
+					"NetAmount" : "87.0",
+					"TaxAmount" : "16.53",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000006",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1106",
+					"Note" : "EPM DG: SO ID 0500000006 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "MXN",
+					"GrossAmount" : "40.46",
+					"NetAmount" : "34.0",
+					"TaxAmount" : "6.46",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000006",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1107",
+					"Note" : "EPM DG: SO ID 0500000006 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "ARS",
+					"GrossAmount" : "106.74",
+					"NetAmount" : "89.7",
+					"TaxAmount" : "17.04",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1030",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "547.4",
+					"NetAmount" : "460.0",
+					"TaxAmount" : "87.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1031",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "GBP",
+					"GrossAmount" : "1017.45",
+					"NetAmount" : "855.0",
+					"TaxAmount" : "162.45",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1032",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "410.55",
+					"NetAmount" : "345.0",
+					"TaxAmount" : "65.55",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1035",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "USD",
+					"GrossAmount" : "949.62",
+					"NetAmount" : "798.0",
+					"TaxAmount" : "151.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1036",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "CAD",
+					"GrossAmount" : "1023.4",
+					"NetAmount" : "860.0",
+					"TaxAmount" : "163.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000060",
+					"ProductID" : "HT-1037",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000060",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "MXN",
+					"GrossAmount" : "1463.7",
+					"NetAmount" : "1230.0",
+					"TaxAmount" : "233.7",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000070",
+					"ProductID" : "HT-1000",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000070",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "3412.92",
+					"NetAmount" : "2868.0",
+					"TaxAmount" : "544.92",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000007",
+					"ItemPosition" : "0000000080",
+					"ProductID" : "HT-1001",
+					"Note" : "EPM DG: SO ID 0500000007 Item 0000000080",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "1486.31",
+					"NetAmount" : "1249.0",
+					"TaxAmount" : "237.31",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000008",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1060",
+					"Note" : "EPM DG: SO ID 0500000008 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "21.42",
+					"NetAmount" : "18.0",
+					"TaxAmount" : "3.42",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000008",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1061",
+					"Note" : "EPM DG: SO ID 0500000008 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "16.66",
+					"NetAmount" : "14.0",
+					"TaxAmount" : "2.66",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000008",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1062",
+					"Note" : "EPM DG: SO ID 0500000008 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "ARS",
+					"GrossAmount" : "26.18",
+					"NetAmount" : "22.0",
+					"TaxAmount" : "4.18",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000008",
+					"ItemPosition" : "0000000040",
+					"ProductID" : "HT-1063",
+					"Note" : "EPM DG: SO ID 0500000008 Item 0000000040",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "BRL",
+					"GrossAmount" : "49.98",
+					"NetAmount" : "42.0",
+					"TaxAmount" : "7.98",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "3.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000008",
+					"ItemPosition" : "0000000050",
+					"ProductID" : "HT-1064",
+					"Note" : "EPM DG: SO ID 0500000008 Item 0000000050",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "CAD",
+					"GrossAmount" : "19.04",
+					"NetAmount" : "16.0",
+					"TaxAmount" : "3.04",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "1.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000008",
+					"ItemPosition" : "0000000060",
+					"ProductID" : "HT-1065",
+					"Note" : "EPM DG: SO ID 0500000008 Item 0000000060",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "CHF",
+					"GrossAmount" : "61.88",
+					"NetAmount" : "52.0",
+					"TaxAmount" : "9.88",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000009",
+					"ItemPosition" : "0000000010",
+					"ProductID" : "HT-1040",
+					"Note" : "EPM DG: SO ID 0500000009 Item 0000000010",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "1975.4",
+					"NetAmount" : "1660.0",
+					"TaxAmount" : "315.4",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000009",
+					"ItemPosition" : "0000000020",
+					"ProductID" : "HT-1041",
+					"Note" : "EPM DG: SO ID 0500000009 Item 0000000020",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "ARS",
+					"GrossAmount" : "1166.2",
+					"NetAmount" : "980.0",
+					"TaxAmount" : "186.2",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')/ToProduct"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')",
+						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+					},
+					"SalesOrderID" : "0500000009",
+					"ItemPosition" : "0000000030",
+					"ProductID" : "HT-1042",
+					"Note" : "EPM DG: SO ID 0500000009 Item 0000000030",
+					"NoteLanguage" : "E",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "830.62",
+					"NetAmount" : "698.0",
+					"TaxAmount" : "132.62",
+					"DeliveryDate" : "\/Date(1415228400000)\/",
+					"Quantity" : "2.0",
+					"QuantityUnit" : "EA",
+					"ToHeader" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')/ToHeader"
+						}
+					},
+					"ToProduct" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')/ToProduct"
+						}
+					}
+				}]
+	}
+}

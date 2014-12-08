@@ -1,0 +1,49 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	controllerName="sap.ui.core.sample.ViewTemplate.types.Types"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Button text="Save" press="onSave" />
+		<form:SimpleForm>
+			<core:Title text="sap.ui.model.odata.type.Boolean" />
+			<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
+			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
+			<Label text="sap.ui.model.odata.type.Boolean Input Field, NOT nullable"/>
+			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean',
+				constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
+			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
+
+			<core:Title text="sap.ui.model.odata.type.Decimal" />
+			<Label text="scale: 3"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
+			<Label text="precision: 10, scale: &quot;variable&quot;, nullable: false"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, precision: 10, scale: 'variable'}}"/>
+
+			<core:Title text="Integer-Based Data Types" />
+			<Label text="sap.ui.model.odata.type.Int16"/>
+			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16'}"/>
+			<Label text="sap.ui.model.odata.type.Int16, nullable=false"/>
+			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16', constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Int32"/>
+			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32'}"/>
+			<Label text="sap.ui.model.odata.type.Int32, nullable=false"/>
+			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}"/>
+<!--
+			<Label text="sap.ui.model.odata.type.SByte"/>
+			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}"/>
+			<Label text="sap.ui.model.odata.type.SByte, nullable=false""/>
+			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}"/>
+-->
+			<core:Title text="sap.ui.model.odata.type.String" />
+			<Label text="maxLength: 10"/>
+			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {nullable: false}}"/>
+		</form:SimpleForm>
+	</VBox>
+</mvc:View>
+

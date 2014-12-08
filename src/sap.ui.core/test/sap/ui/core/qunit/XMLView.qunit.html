@@ -30,7 +30,12 @@ sap.ui.core.mvc.Controller</title>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="AnyView.qunit.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+
+	// WARNING! These are on by default and break the Promise polyfill...
+	sinon.config.useFakeTimers = false;
 
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
@@ -182,6 +187,24 @@ sap.ui.core.mvc.Controller</title>
 
 	});
 
+	test("Preprocessor", sinon.test(function() {
+		var oResult,
+			oView,
+			sViewContent = [
+			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
+	   		].join('');
+
+		this.stub(sap.ui.core.mvc.View.prototype, "runPreprocessor", function (sType, vSource) {
+			strictEqual(sType, "xml");
+			oResult = vSource.cloneNode(false);
+			return oResult;
+		});
+
+   		oView = sap.ui.xmlview({viewContent: sViewContent});
+
+   		sinon.assert.calledOnce(sap.ui.core.mvc.View.prototype.runPreprocessor);
+   		strictEqual(oView._xContent, oResult);
+	}));
 </script>
 </head>
 <body>
@@ -189,6 +212,7 @@ sap.ui.core.mvc.Controller</title>
 sap.ui.core.mvc.Controller</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
 <ol id="qunit-tests"></ol>
 <div id="content"></div>
 </body>

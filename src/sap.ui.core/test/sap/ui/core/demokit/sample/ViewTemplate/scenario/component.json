@@ -1,0 +1,18 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Detail.view.xml",
+				"ODataMetaModel.json",
+				"../data2/annotations.xml",
+				"../data2/metadata.xml",
+				"../data2/Product.json"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for XMLView template sample scenario",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.scenario",
+	"version": "1.25.0-SNAPSHOT"
+}

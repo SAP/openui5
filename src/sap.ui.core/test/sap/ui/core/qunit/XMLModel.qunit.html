@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.xml.XMLModel
   Author: d050084
 -->
@@ -28,13 +28,13 @@
 <!-- Test functions -->
 <script language="javascript">
 
-	var testdata = "<teamMembers>" + 
+	var testdata = "<teamMembers>" +
 						"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
-						"<member firstName=\"Peter\" lastName=\"Miller\"></member>" + 
-						"<member firstName=\"Gina\" lastName=\"Rush\"></member>" + 
-						"<member firstName=\"Steave\" lastName=\"Ander\"></member>" + 
-						"<member firstName=\"Michael\" lastName=\"Spring\"></member>" + 
-						"<member firstName=\"Marc\" lastName=\"Green\"></member>" + 
+						"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
+						"<member firstName=\"Gina\" lastName=\"Rush\"></member>" +
+						"<member firstName=\"Steave\" lastName=\"Ander\"></member>" +
+						"<member firstName=\"Michael\" lastName=\"Spring\"></member>" +
+						"<member firstName=\"Marc\" lastName=\"Green\"></member>" +
 						"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
 					"</teamMembers>";
 	var testdataChild = "<pets>" +
@@ -44,94 +44,82 @@
 	  		      		"<pet type=\"fish\" age=\"4\"></pet>" +
 	  		    		"<pet type=\"dog\" age=\"5\"></pet>" +
 	  		    	"</pets>";
-	  		    		
+
 	var oModel = new sap.ui.model.xml.XMLModel();
 	oModel.setXML(testdata);
 	sap.ui.getCore().setModel(oModel);
 
 	var oModelChild = new sap.ui.model.xml.XMLModel();
 	oModelChild.setXML(testdataChild);
-	
+
 	var oLayout = new sap.ui.layout.VerticalLayout();
-	
+
 	var oLabel = new sap.ui.commons.Label("myLabel");
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
-	
+
 	test("test model getProperty with context", function(){
-		var oContext;
-		oModel.createBindingContext("/member/6", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("/member/6");
 		var value = oModel.getProperty("@lastName", oContext); // relative path when using context
 		equal(value, "Wallace", "model value");
 	});
-	
-	
+
+
 	test("test model getProperty", function(){
 		var value = oModel.getProperty("/member/6/@lastName");
 		equal(value, "Wallace", "model value");
 	});
-	
+
 	test("test model setProperty", function(){
 		oModel.setProperty("/member/4/@lastName", "Jackson");
 		var value = oModel.getProperty("/member/4/@lastName");
 		equal(value, "Jackson", "model value");
 	});
-	
+
 	test("test getProperty on label", function(){
 		equal(oLabel.getText(),"testText", "old text value");
 		oLabel.bindProperty("text", "/member/4/@firstName");
 		equal(oLabel.getText(), "Michael", "text value from model");
 		oLabel.unbindProperty("text");
 	});
-	
+
 	test("test model setProperty onlabel", function(){
 		oLabel.setText("test");
-		equal(oLabel.getText(),"test", "old text value");		
+		equal(oLabel.getText(),"test", "old text value");
 		oLabel.bindProperty("text", "/member/1/@firstName");
 		equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("/member/1/@firstName", "Petre");
 		equal(oLabel.getText(), "Petre", "new text value from model");
 	});
-	
+
 	test("test model setProperty with invalid bindingContext and relative path", function(){
-		var oContext;
-		oModel.createBindingContext("/member/HorstDerGrosse", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oModel.setProperty("@firstName", "Petre", oContext);
 		expect(0);
 	});
-	
+
 	test("test model setProperty onlabel with bindingContext and relative path", function(){
-		var oContext;
-		oModel.createBindingContext("/member", null, function(context){
-			oContext = context;
-		});
-		oLabel.setBindingContext(oContext);		
+		var oContext = oModel.createBindingContext("/member");
+		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/@firstName");
 		equal(oLabel.getText(), "Petre", "text value from model");
 		// modify model value
 		oModel.setProperty("1/@firstName", "Petri", oLabel.getBindingContext());
 		equal(oLabel.getText(), "Petri", "new text value from model");
 	});
-	
+
 	test("test model setProperty onlabel with bindingContext and absolute path", function(){
-		var oContext;
-		oModel.createBindingContext("/member/HorstDerGrosse", null, function(context){
-			oContext = context;
-		});
-		oLabel.setBindingContext(oContext);		
+		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
+		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/member/1/@firstName");
 		equal(oLabel.getText(), "Petri", "text value from model");
 		// modify model value
 		oModel.setProperty("/member/1/@firstName", "Petre");
 		equal(oLabel.getText(), "Petre", "new text value from model");
-		oLabel.setBindingContext(undefined);		
+		oLabel.setBindingContext(undefined);
 	});
-	
+
 	test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(){
 		oModel.setLegacySyntax(true);
 		oLabel.bindProperty("text", "member/1/@firstName");
@@ -141,13 +129,10 @@
 		equal(oLabel.getText(), "Petro", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
-	
+
 	test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(){
 		oModel.setLegacySyntax(true);
-		var oContext;
-		oModel.createBindingContext("/member", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("/member");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/@firstName");
 		equal(oLabel.getText(), "Petro", "text value from model");
@@ -156,13 +141,10 @@
 		equal(oLabel.getText(), "Petri", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
-	
+
 	test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(){
-		var oContext;
 		oModel.setLegacySyntax(true);
-		oModel.createBindingContext("/member/HorstDerGrosse", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/member/1/@firstName");
 		equal(oLabel.getText(), "Petri", "text value from model");
@@ -171,20 +153,14 @@
 		equal(oLabel.getText(), "Petre", "new text value from model");
 		oModel.setLegacySyntax(false);
 	});
-	
+
 	test("test model getProperty with bindingContext and path = null", function(){
-		var oContext;
-		oModel.createBindingContext("/member", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("/member");
 		equal(oModel.getProperty(null, oContext).length, 0 , "array of teammembers");
 	});
-	
+
 	test("test createBindingContext with two models", function(){
-		var oContext;
-		oModel.createBindingContext("/member", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("/member");
 		oLayout.addContent(oLabel);
 		oLayout.setModel(oModel);
 		oLayout.setBindingContext(oContext);
@@ -194,36 +170,36 @@
 		oModelChild.setProperty("/pet/0/@type", "hamster");
 		equal(oLabel.getText(), "hamster", "new text value from model");
 	});
-	
+
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-	var oItemTemplate = new sap.ui.core.ListItem();	
+	var oItemTemplate = new sap.ui.core.ListItem();
 	oLB.placeAt("target2");
-	
+
 	test("test model bindAggregation on Listbox", function(){
-	
+
 		oItemTemplate.bindProperty("text", "@firstName").bindProperty("additionalText", "@lastName");
 		oLB.bindAggregation("items", "/member", oItemTemplate);
-		
-		var listItems = oLB.getItems(); 
+
+		var listItems = oLB.getItems();
 		equal(listItems.length, 7, "length of items");
 		var oBinding = oLB.getBinding("items");
-		
+
 		ok(oBinding, "oBinding should not be null");
 		equal(oBinding.getLength(), 7, "oBinding length");
-		
+
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), oModel.getProperty("/member/" + i + "/@firstName"), "firstname check");
 			equal(item.getAdditionalText(), oModel.getProperty("/member/" + i + "/@lastName"), "lastname check");
 		});
-		
+
 	});
-	
+
 	test("test XMLModel XML constructor", function(){
-		
+
 		var testModel = new sap.ui.model.xml.XMLModel(
-				
+
 		);
-		testModel.setXML("<root>" + 
+		testModel.setXML("<root>" +
 				"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
 				"<bar>ABCDEFG</bar>" +
 				"<baz>52</baz>" +
@@ -231,10 +207,13 @@
 		equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 		equal(testModel.getProperty("/bar"), "ABCDEFG");
 		equal(testModel.getProperty("/baz"), 52);
-		
+
 	});
-	
+
 	test("test create binding context", function(){
+		var oContext = oModel.createBindingContext("/root/test/subtest/name");
+		equal(oContext.getPath(), "/root/test/subtest/name", "newContext returnValue");
+
 		oModel.createBindingContext("/root/test/subtest/name", null, function(context){
 			equal(context.getPath(), "/root/test/subtest/name", "newContext");
 		});
@@ -251,29 +230,24 @@
 			equal(context.getPath(), "/myContext/root/test/subtest/name", "newContext");
 		});
 	});
-	
+
 	test("test inheritance of context", function(){
 		var oContext;
 		oLabel.setBindingContext(undefined);
-		oModel.createBindingContext("/member", null, function(context){
-			oContext = context;
-		});
+		oContext = oModel.createBindingContext("/member");
 		oLayout.setModel(oModel);
 		oLayout.setBindingContext(oContext);
 		oLabel.setModel(oModelChild);
 		oLabel.bindProperty("text", "/pet/0/@type");
 		oLayout.addContent(oLabel);
 		ok(oLabel.getBindingContext() == undefined, "context undefined");
-		var oContext;
-		oModel.createBindingContext("/pet", null, function(context){
-			oContext = context;
-		});
+		oContext = oModel.createBindingContext("/pet");
 		oLabel.setBindingContext(oContext);
 		equal(oLabel.getBindingContext().getPath(), "/pet", "context set correctly");
 		oModelChild.setProperty("0/@type", "rat",oLabel.getBindingContext());
 		equal(oLabel.getText(), "rat", "new text value from model");
 	});
-	
+
 	asyncTest("test XMLModel loadData",function(){
 		var testModel = new sap.ui.model.xml.XMLModel();
 		testModel.loadData("testdata.xml");
@@ -284,7 +258,7 @@
 			start();          // resume normal testing
 		});
 	});
-	
+
 	asyncTest("test XMLModel loadData constructor",function(){
 		var testModel = new sap.ui.model.xml.XMLModel("testdata.xml");
 		testModel.attachRequestCompleted(function() {
@@ -294,17 +268,17 @@
 			start();          // resume normal testing
 		});
 	});
-	
-	
+
+
 	test("test XML setXML error", function() {
 		var oModel = new sap.ui.model.xml.XMLModel();
-		var sXML = "<?xml version=\"1.0\"><teamMembers>" + 
+		var sXML = "<?xml version=\"1.0\"><teamMembers>" +
 		"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
-		"<member firstName=\"Peter\" lastName=\"Miller\"></member>" + 
-		"<member firstName=\"Gina\" lastName=\"Rush\"></member>" + 
-		"<member firstName=\"Steave\" lastName=\"Ander\"></member>" + 
-		"<member firstName=\"Michael\" lastName=\"Spring\"></member>" + 
-		"<member firstName=\"Marc\" lastName=\"Green\"></member>" + 
+		"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
+		"<member firstName=\"Gina\" lastName=\"Rush\"></member>" +
+		"<member firstName=\"Steave\" lastName=\"Ander\"></member>" +
+		"<member firstName=\"Michael\" lastName=\"Spring\"></member>" +
+		"<member firstName=\"Marc\" lastName=\"Green\"></member>" +
 		"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
 	"</teamMembers>";
 		var error = false;
@@ -316,10 +290,10 @@
 		ok(error, "error occurred");
 
 	});
-	
+
 	test("test XML getXML", function() {
 		var oModel = new sap.ui.model.xml.XMLModel();
-		var sXML = "<root>" + 
+		var sXML = "<root>" +
 				"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
 				"<bar>ABCDEFG</bar>" +
 				"<baz>52</baz>" +
@@ -327,10 +301,10 @@
 		oModel.setXML(sXML);
 		equal(jQuery.trim(oModel.getXML()), jQuery.trim(sXML), "get XML test");
 	});
-	
+
 	test("test XML getData", function() {
 		var oModel = new sap.ui.model.xml.XMLModel();
-		var sXML = "<root>" + 
+		var sXML = "<root>" +
 		"<foo>The quick brown fox jumps over the lazy dog.</foo>" +
 		"<bar>ABCDEFG</bar>" +
 		"<baz>52</baz>" +
@@ -339,7 +313,7 @@
 		if (sap.ui.Device.browser.internet_explorer && parseInt(sap.ui.Device.browser.version) < 9){
 			equal(oModel.getData().getElementsByTagName("bar")[0].text, "ABCDEFG", "get XML test");
 		}else {
-			equal(oModel.getData().getElementsByTagName("bar")[0].textContent, "ABCDEFG", "get XML test");			
+			equal(oModel.getData().getElementsByTagName("bar")[0].textContent, "ABCDEFG", "get XML test");
 		}
 	});
 
@@ -352,10 +326,7 @@
 		oModel.setProperty("member/4/@lastName", "Jackson");
 		var value = oModel.getProperty("/member/4/@lastName");
 		equal(value, "Jackson", "model value");
-		var oContext;
-		oModel.createBindingContext("member/6", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("member/6");
 		var value = oModel.getProperty("@lastName", oContext);
 		equal(value, "Wallace", "model value");
 	});
@@ -372,25 +343,22 @@
 		} catch (e) {}
 		var value = oModel.getProperty("/member/4/@lastName");
 		equal(value, "Ander", "model value");
-		var oContext;
-		oModel.createBindingContext("member/6", null, function(context){
-			oContext = context;
-		});
+		var oContext = oModel.createBindingContext("member/6");
 		equal(oContext, undefined, "model value");
 	});
-	
+
 	test("text XML getObject", function() {
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setXML(testdata);
 		var oNode = oModel.getObject("/member/4/@lastName"); // direkt attribute access
 		ok(oNode);
 		equal(oNode, "Spring", "node attribute value");
-		oNode = oModel.getObject("/member/4/"); 
+		oNode = oModel.getObject("/member/4/");
 		ok(oNode);
 		equal(oNode.nodeName, "member", "node text name");
 		equal(oNode.getAttribute('firstName'), "Michael", "node attribute value");
 	});
-	
+
 	test("test XMLModel destroy", function(){
 		var testModel = new sap.ui.model.xml.XMLModel();
 		testModel.attachRequestCompleted(function() {
@@ -405,10 +373,10 @@
 		ok(testModel.bDestroyed, "Model should be destroyed");
 		equal(spy.callCount, 1, "number of requests should be still 1");
 		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
-		
+
 	});
 
-	
+
 	test("test XMLModel loadData after destroy", function(){
 		//var server = this.sandbox.useFakeServer();
 		//server.respondWith("data.json", function(xhr, id) {
@@ -418,30 +386,30 @@
 
 		var spy = this.spy(jQuery, "ajax");
 		var testModel = new sap.ui.model.xml.XMLModel();
-		
+
 		testModel.attachRequestCompleted(function() {
 			ok(false, "Request should be aborted!");
 		});
 		testModel.attachRequestFailed(function() {
 			ok(false, "Error handler should not be called when request is aborted via destroy!");
 		});
-		
+
 		testModel.loadData("testdata.xml", null, true);
 		testModel.destroy();
 		ok(testModel.bDestroyed, "Model should be destroyed");
 		equal(spy.callCount, 1, "number of requests");
 		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
-		
+
 		// call loaddata again
 		testModel.loadData("testdata.xml", null, true);
-		
+
 		ok(testModel.bDestroyed, "Model should be destroyed");
 		equal(spy.callCount, 1, "number of requests should be still 1");
 		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 
 	});
-	
-	
+
+
 	</script>
 
 </head>

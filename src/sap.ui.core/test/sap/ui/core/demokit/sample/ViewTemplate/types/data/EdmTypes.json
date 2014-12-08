@@ -1,0 +1,29 @@
+{
+	"d" : {
+		"results" : [{
+			"__metadata" : {
+				"id" : "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/EdmTypesCollection(ID='%20%201',DateTime=datetime'2014-03-25T00%3A00%3A00')",
+				"uri" : "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/EdmTypesCollection(ID='%20%201',DateTime=datetime'2014-03-25T00%3A00%3A00')",
+				"type" : "com.sap.TEA.TestApplication.EdmTypes",
+				"etag" : "W/\"datetime'2014-03-25T11%3A33%3A55.1122330',1.2345678901234559E+40d\""
+			},
+			"ID" : "  1",
+			"Boolean" : true,
+			"DateTime" : "\/Date(1395705600000)\/",
+			"TimeStampShort" : "\/Date(1395747235000)\/",
+			"TimeStampLong" : "\/Date(1395747235112)\/",
+			"Time" : "PT11H33M55S",
+			"String" : "String Expression",
+			"Char" : "Char Expression",
+			"Numc" : "0000000001",
+			"Int16" : 12345,
+			"Int32" : 1234567890,
+			"Int64" : "123456789012345",
+			"Decimal" : "1234567890.12345678901234",
+			"Single" : "12345.678",
+			"Double" : "1.2345678901234559E+40",
+			"Float" : "12345678901.23456",
+			"GlobalUID" : "0050568D-393C-1ED4-9D97-E65F0F3FCC23"
+		}]
+	}
+}

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+  Tested classes: sap.ui.core.mvc.View
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.mvc.View</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-xx-bindingSyntax="complex">
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script  src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script  src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script>
+
+	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
+
+	module("sap.ui.core.mvc.View");
+
+	test("runPreprocessor w/o config", sinon.test(function () {
+		var oSource = {},
+			oView = new sap.ui.core.mvc.View({});
+
+		deepEqual(oView.mPreprocessors, {}, "empty preprocessors stored at view");
+		this.mock(sap.ui.core.util.XMLPreprocessor).expects("process").never();
+
+		strictEqual(oView.runPreprocessor("xml", oSource), oSource);
+	}));
+
+	test("runPreprocessor w/ config", sinon.test(function () {
+		var sCaller,
+			oPreprocessors = {
+				foo: { // Note: the type does not matter as long as we supply a preprocessor below
+					preprocessor: undefined, // replace below once we have a mock in place!
+					bindingContexts: {},
+					models: {}
+				}
+			},
+			oResult = {},
+			oSource = {},
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: oPreprocessors,
+				viewName: "foo"
+			});
+
+		sCaller = oView + " (" + oView.sViewName + ")";
+		this.mock(sap.ui.core.util.XMLPreprocessor).expects("process")
+			.once().withExactArgs(oSource, oPreprocessors.foo, sCaller).returns(oResult);
+		this.mock(jQuery.sap.log).expects("debug")
+			.once().withExactArgs(sCaller + ": Running preprocessor for foo",
+				null, "sap.ui.core.mvc.View");
+		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
+
+		strictEqual(oView.mPreprocessors, oPreprocessors, "preprocessors stored at view");
+
+		strictEqual(oView.runPreprocessor("foo", oSource), oResult);
+	}));
+
+	test("runPreprocessor w/ invalid preprocessor", sinon.test(function () {
+		var oSource = {},
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: {
+					xml: {
+						preprocessor: "sap.ui.core.util.XMLPreprocessor.process",
+					}
+				}
+			});
+
+		// Do not use a mock because it throws an exception which might be caught by our try..catch
+		// block and make the test green
+		this.stub(sap.ui.core.util.XMLPreprocessor, "process");
+
+		try {
+			oView.runPreprocessor("xml", oSource);
+			ok(false);
+		} catch (ex) {
+			ok(true, ex); // TypeError: string is not a function
+		}
+		sinon.assert.notCalled(sap.ui.core.util.XMLPreprocessor.process);
+	}));
+
+	test("runPreprocessor w/ default preprocessor", sinon.test(function () {
+		var sCaller,
+			oConfig = {},
+			oResult = {},
+			oSource = {},
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: {
+					xml: oConfig // the type is of course important here!
+				}
+			});
+
+		sCaller = oView + " (" + oView.sViewName + ")";
+		this.mock(sap.ui.core.util.XMLPreprocessor).expects("process")
+			.once().withExactArgs(oSource, oConfig, sCaller).returns(oResult);
+
+		strictEqual(oView.runPreprocessor("xml", oSource), oResult);
+	}));
+
+	test("runPreprocessor w/o known preprocessor", sinon.test(function () {
+		var oSource = {},
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: {
+					foo: {}
+				}
+			});
+
+		// Do not use a mock because it throws an exception which might be caught by our try..catch
+		// block and make the test green
+		this.stub(sap.ui.core.util.XMLPreprocessor, "process");
+
+		try {
+			oView.runPreprocessor("foo", oSource);
+			ok(false);
+		} catch (ex) {
+			ok(true, ex);
+		}
+		sinon.assert.notCalled(sap.ui.core.util.XMLPreprocessor.process);
+	}));
+</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for sap.ui.core.mvc.View</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
+</html>

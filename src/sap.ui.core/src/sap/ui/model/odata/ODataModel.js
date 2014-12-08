@@ -958,7 +958,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		return oBinding;
 	};
 
-	/*
+	/**
+	 * Creates a binding context for the given path
+	 * If the data of the context is not yet available, it can not be created, but first the
+	 * entity needs to be fetched from the server asynchronously. In case no callback function
+	 * is provided, the request will not be triggered.
+	 *
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
@@ -987,8 +992,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		if (!bReload) {
 			sKey = this._getKey(oData);
 			oNewContext = this.getContext('/' + sKey);
-			fnCallBack(oNewContext);
-		} else {
+			if (fnCallBack) {
+				fnCallBack(oNewContext);
+			}
+			return oNewContext;
+		}
+
+		if (fnCallBack) {
 			var bIsRelative = !jQuery.sap.startsWith(sPath, "/");
 			if (sFullPath) {
 				var aParams = [],

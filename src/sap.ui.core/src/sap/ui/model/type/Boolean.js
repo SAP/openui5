@@ -26,14 +26,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @alias sap.ui.model.type.Boolean
 	 */
 	var BooleanType = SimpleType.extend("sap.ui.model.type.Boolean", /** @lends sap.ui.model.type.Boolean.prototype */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "Boolean";
 		}
-	
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 */
@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		switch (sInternalType) {
 			case "boolean":
+			case "any":
 				return bValue;
 			case "string":
 				return bValue.toString();
@@ -52,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.FormatException("Don't know how to format Boolean to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
@@ -74,15 +75,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.ParseException("Don't know how to parse Boolean from " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
 	BooleanType.prototype.validateValue = function(sValue) {
-	
+
 	};
-	
-	
+
+
 
 	return BooleanType;
 

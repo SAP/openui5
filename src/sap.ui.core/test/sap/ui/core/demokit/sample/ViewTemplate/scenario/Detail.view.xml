@@ -1,0 +1,28 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<VBox>
+		<form:SimpleForm>
+			<core:Title text="HeaderInfo"/>
+			<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo">
+				<Label text="Type Name"/>
+				<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<template:if test="{meta>Description}"> <!-- HeaderInfo Description is Nullable -->
+					<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				</template:if>
+			</template:with>
+			<core:Title text="Identification"/>
+			<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
+				<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+			</template:repeat>
+		</form:SimpleForm>
+	</VBox>
+</mvc:View>

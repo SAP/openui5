@@ -11,8 +11,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-		function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, URI1, datajs) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/odata/v2/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
+		function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI1, datajs) {
 	"use strict";
 
 
@@ -992,12 +992,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
+	 * Creates a binding context for the given path
+	 * If the data of the context is not yet available, it can not be created, but first the
+	 * entity needs to be fetched from the server asynchronously. In case no callback function
+	 * is provided, the request will not be triggered.
+	 *
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath binding path
 	 * @param {object} [oContext] bindingContext
 	 * @param {map} [mParameters] map of parameters
 	 * @param {function} [fnCallBack] function called when context is created
 	 * @param {boolean} [bReload] reload of data
+	 * @return sap.ui.model.Context
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
@@ -1028,8 +1034,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (!bReload) {
 			sKey = this._getKey(oData);
 			oNewContext = this.getContext('/' + sKey);
-			fnCallBack(oNewContext);
-		} else {
+			if (fnCallBack) {
+				fnCallBack(oNewContext);
+			}
+			return oNewContext;
+		}
+
+		if (fnCallBack) {
 			var bIsRelative = !jQuery.sap.startsWith(sPath, "/");
 			if (sFullPath) {
 				var aParams = [],
@@ -3512,6 +3523,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.callAfterUpdate = function(oFunction) {
 		this.aCallAfterUpdate.push(oFunction);
+	};
+
+	/**
+	 * Returns the meta model of this ODataModel containing OData service metadata and annotations
+	 * in a merged fashion.
+	 * @public
+	 * @returns {sap.ui.model.MetaModel} The meta model for this ODataModel
+	 */
+	ODataModel.prototype.getMetaModel = function() {
+		if (!this.oMetaModel) {
+			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations);
+		}
+		return this.oMetaModel;
 	};
 
 	return ODataModel;

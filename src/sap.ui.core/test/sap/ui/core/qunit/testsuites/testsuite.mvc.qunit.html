@@ -11,6 +11,7 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/View.qunit.html");
 		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HTMLView.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONView.qunit.html");
 		    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSView.qunit.html");

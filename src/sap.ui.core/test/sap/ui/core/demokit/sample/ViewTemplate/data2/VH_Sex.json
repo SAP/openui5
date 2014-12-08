@@ -1,0 +1,23 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('F')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('F')",
+						"type" : "GWSAMPLE_BASIC.VH_Sex"
+					},
+					"Sex" : "F",
+					"Shorttext" : "Female"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('M')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('M')",
+						"type" : "GWSAMPLE_BASIC.VH_Sex"
+					},
+					"Sex" : "M",
+					"Shorttext" : "Male"
+				}]
+	}
+}

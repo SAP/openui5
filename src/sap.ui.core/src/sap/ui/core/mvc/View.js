@@ -106,7 +106,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 		this.oViewData = mSettings.viewData;
 		// remember the name of this View
 		this.sViewName = mSettings.viewName;
-		
+		// remember the preprocessors
+		this.mPreprocessors	= mSettings.preprocessors || {};
+
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
 		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName)) {
 			var that = this;
@@ -292,6 +294,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 		return oClone;
 	};
 
+	/**
+	 * @param {string} sType
+	 *   the type of preprocessor, e.g. "json", "text", or "xml"
+	 * @param {object|string|Element} vSource
+	 *   the view source as a JSON object, a raw text, or an XML document element
+	 * @returns {object|string|Element}
+	 *   the processed source (same type, of course!)
+	 * @protected
+	 */
+	View.prototype.runPreprocessor = function (sType, vSource) {
+		var sCaller,
+			oConfig = this.mPreprocessors[sType],
+			fnPreprocessor;
+
+		if (oConfig) {
+			fnPreprocessor = oConfig.preprocessor;
+			if (!fnPreprocessor && sType === "xml") {
+				jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
+				fnPreprocessor = sap.ui.core.util.XMLPreprocessor.process;
+			}
+			sCaller = this + " (" + this.sViewName + ")";
+			jQuery.sap.log.debug(sCaller + ": Running preprocessor for " + sType, null,
+				"sap.ui.core.mvc.View");
+			return fnPreprocessor(vSource, oConfig, sCaller);
+		}
+		return vSource;
+	};
 
 	/**
 	 * An (optional) method to be implemented by Views.
@@ -308,23 +337,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 	/**
 	 * Creates a view of the given type, name and with the given id.
 	 *
-	 * The <code>oView</code> configuration object can have the following properties for the view
+	 * The <code>vView</code> configuration object can have the following properties for the view
 	 * instantiation:
 	 * <ul>
-	 * <li>The ID <code>oView.id</code> specifies an ID for the View instance. If no ID is given,
+	 * <li>The ID <code>vView.id</code> specifies an ID for the View instance. If no ID is given,
 	 * an ID will be generated.</li>
-	 * <li>The view name <code>oView.viewName</code> corresponds to an XML module that can be loaded
-	 * via the module system (oView.viewName + suffix ".view.xml")</li>
-	 * <li>The controller instance <code>oView.controller</code> must be a valid controller implementation.
+	 * <li>The view name <code>vView.viewName</code> corresponds to an XML module that can be loaded
+	 * via the module system (vView.viewName + suffix ".view.xml")</li>
+	 * <li>The controller instance <code>vView.controller</code> must be a valid controller implementation.
 	 * The given controller instance overrides the controller defined in the view definition</li>
-	 * <li>The view type <code>oView.type</code> specifies what kind of view will be instantiated. All valid
+	 * <li>The view type <code>vView.type</code> specifies what kind of view will be instantiated. All valid
 	 * view types are listed in the enumeration sap.ui.core.mvc.ViewType.</li>
-	 * <li>The view data <code>oView.viewData</code> can hold user specific data. This data is available
+	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller</li>
+	 * <li><code>vView.preprocessors</li> can hold a map from source type (e.g. "xml") to
+	 * preprocessor configuration; the configuration consists of an optional
+	 * <code>preprocessor</code> property of type function and may contain further
+	 * preprocessor-specific settings. The preprocessor must be a function with the following
+	 * signature:
+	 *   <ul>
+	 *   <li>Parameter <code>vSource</code> with type depending on the source type. For "xml"
+	 *    it is an XML DOM Element. It is allowed to modify the object.</li>
+	 *   <li>Parameter <code>oConfig</code> is the preprocessor configuration
+	 *   <li>Parameter <code>sCaller</code> of type string may be used to identify the caller
+	 *   in log or exception messages.
+	 *   <li>The function must return an equivalent of <code>vSource</code> or
+	 *   <code>vSource</code> itself.
+	 *   </ul>
+	 * For certain source types a default function is known. For "xml" it is a preprocessor
+	 * capable of template processing (for the XML namespace
+	 * "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1").
+	 * </li>
 	 * </ul>
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
-	 * @param {object} [vView] the view configuration object
+	 * @param {string|object} [vView] the view name or view configuration object
 	 * @public
 	 * @static
 	 * @return {sap.ui.core.mvc.View} the created View instance
@@ -450,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 
 		// return undefined
 	};
-	
+
 	return View;
 
 }, /* bExport= */ true);
