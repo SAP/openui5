@@ -174,9 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.aUrlParams = this.aUrlParams.concat(ODataUtils._createUrlParamsArray(mServiceUrlParams));
 			}
 
-			if (this.oMetadata.isLoaded()) {
-				this._initializeMetadata(true);
-			} else {
+			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachLoaded(function(oEvent){
 					that._initializeMetadata();
 				}, this);
@@ -197,6 +195,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.oAnnotations.attachLoaded(function(oEvent) {
 					that.fireAnnotationsLoaded(oEvent.getParameters());
 				});
+			}
+
+			if (this.oMetadata.isLoaded()) {
+				this._initializeMetadata(true);
 			}
 
 			// prepare variables for request headers, data and metadata
