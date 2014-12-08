@@ -320,6 +320,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				} else {
 					$this.children('#' + this.getButtons()[i].getId()).width(iMaxWidth);
 				}
+			} else {
+				var sBtnWidth = this.getButtons()[i].getWidth();
+				var iWidth = sBtnWidth.indexOf("%") !== -1 ? iInnerWidth : sBtnWidth;
+				$this.children('#' + this.getButtons()[i].getId()).width(iWidth);
 			}
 		}
 		this._removeGhostButton();
