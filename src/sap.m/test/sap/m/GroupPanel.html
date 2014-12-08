@@ -168,6 +168,13 @@
 		}
 	});
 	
+	var btnClearErrors = new sap.m.Button({
+		text: "Clear Errors",
+		press: function() {
+			oGroupPanel.removeValidationErrors();
+		}
+	});
+	
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
@@ -259,6 +266,7 @@
 	btnShow.placeAt("content");
 	btnShow2.placeAt("content2");
 	btnValidate.placeAt("content");
+	btnClearErrors.placeAt("content");
 	btnConditions.placeAt("content");
 	oFieldKey.placeAt("content2");
 	oFieldKeyField.placeAt("content2");

@@ -1114,22 +1114,19 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		switch (sCtrlType) {
 			case "numeric" :
-				// var oFloatFormatOptions;
-				// //if (oFieldViewMetadata.precision || oFieldViewMetadata.scale) {
-				// oFloatFormatOptions = {};
-				// //if (oFieldViewMetadata.precision) {
-				// oFloatFormatOptions["maxIntegerDigits"] = parseInt("5"
-				// /*oFieldViewMetadata.precision*/, 10);
-				// //}
-				// //if (oFieldViewMetadata.scale) {
-				// oFloatFormatOptions["maxFractionDigits"] = parseInt("1" /*oFieldViewMetadata.scale*/,
-				// 10);
-				// //}
-				// //}
-				//								
-				// oConditionGrid.oFormatter = NumberFormat.getFloatInstance(oFloatFormatOptions);
+				var oFloatFormatOptions;
+				if (oCurrentKeyField.precision || oCurrentKeyField.scale) {
+					oFloatFormatOptions = {};
+					if (oCurrentKeyField.precision) {
+						oFloatFormatOptions["maxIntegerDigits"] = parseInt(oCurrentKeyField.precision, 10);
+					}
+					if (oCurrentKeyField.scale) {
+						oFloatFormatOptions["maxFractionDigits"] = parseInt(oCurrentKeyField.scale, 10);
+					}
+				}
+				oConditionGrid.oFormatter = NumberFormat.getFloatInstance(oFloatFormatOptions);
 
-				oConditionGrid.oFormatter = NumberFormat.getFloatInstance();
+				//oConditionGrid.oFormatter = NumberFormat.getFloatInstance();
 				oControl = new sap.m.Input(params);
 				break;
 			case "date" :
@@ -1771,6 +1768,20 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		};
 
 		return fnCheckConditions(this._oConditionsGrid.getContent());
+	};
+
+	/**
+	 * removes all errors/warning states from the value1/2 fields of all conditions.
+	 * 
+	 * @public
+	 */
+	P13nConditionPanel.prototype.removeValidationErrors = function() {
+		this._oConditionsGrid.getContent().forEach(function( oConditionGrid) {
+			var oValue1 = oConditionGrid.value1;
+			var oValue2 = oConditionGrid.value2;
+			oValue1.setValueState(sap.ui.core.ValueState.None);
+			oValue2.setValueState(sap.ui.core.ValueState.None);
+		}, this);
 	};
 
 	/**
