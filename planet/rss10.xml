@@ -38,7 +38,10 @@
 <item rdf:about="http://openui5picks.tumblr.com/post/98138885150">
 	<title>Demos: Using Badges on Buttons</title>
 	<link>http://openui5picks.tumblr.com/post/98138885150</link>
-	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/f1c45e5ff103de71fe5219c3344d2328/tumblr_inline_ncawzfnAiv1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I needed to add some button notifications (known as badges) to some buttons. The following example uses css styled badges attached to buttons using the custom-data...</content:encoded>
+	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/f1c45e5ff103de71fe5219c3344d2328/tumblr_inline_ncawzfnAiv1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I needed to add some button notifications (known as badges) to some buttons. The following example uses css styled badges attached to buttons using the custom-data property.
+
+
+</content:encoded>
 	<dc:date>2014-08-26T11:36:00+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/98138078515">
@@ -53,7 +56,7 @@
 	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/d165a06948b8688771813f6efd9cfb1f/tumblr_inline_n7pzstrZff1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 Have a look at this great world cup prediction game app built with OpenUI5. It shows your game predictions and infos on the stadiums as well.
-[source: http://www.tippfieber.de]</content:encoded>
+</content:encoded>
 	<dc:date>2014-06-25T10:26:00+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/100831992435">
