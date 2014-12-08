@@ -1450,7 +1450,7 @@
 			FRAGMENT = "fragment",
 			VIEW = "view",
 			mKnownSubtypes = {
-				js :  [VIEW, FRAGMENT, "controller"],
+				js :  [VIEW, FRAGMENT, "controller", "designtime"],
 				xml:  [VIEW, FRAGMENT],
 				json: [VIEW, FRAGMENT],
 				html: [VIEW, FRAGMENT]

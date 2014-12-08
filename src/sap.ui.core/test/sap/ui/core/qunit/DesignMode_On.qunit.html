@@ -60,6 +60,36 @@ test("Create a XMLView instance and check controller methods are replaced by emp
 	oView.destroy();
 });
 
+asyncTest("Get Design Time Metadata", 2, function() {
+	
+	jQuery.sap.require("example.designmode.Button");
+	jQuery.sap.require("example.designmode.TextField");
+	
+	Promise.all([example.designmode.Button.getMetadata().loadDesignTime(),
+		example.designmode.TextField.getMetadata().loadDesignTime()]).then(function(aValues) {
+	
+		var oButtonDesignTime = aValues[0];
+		var oTextFieldDesignTime = aValues[1];
+		
+		deepEqual(oButtonDesignTime, {
+			css: "Button.designtime.css",
+			icon: "Button.png",
+			name: "{name}",
+			description: "{description}"
+		});
+		
+		deepEqual(oTextFieldDesignTime, {
+			css: "TextField.designtime.css",
+			icon: "TextField.png",
+			name: "{name}",
+			description: "{description}"
+		});
+		
+		start();
+		
+	});
+	
+});
 
 </script>
 </head>
