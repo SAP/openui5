@@ -7,15 +7,23 @@
 
 .sapMPanelHdr {
 	box-sizing: border-box;
-	-webkit-text-size-adjust: none;
-	/* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	text-transform: none;
+	height: 3rem;
+	line-height: 3rem;
+	padding: 0 1rem;
+
+	/*
+	* To improve readability Mobile Safari automatically increases
+	* the size of small text so let's disable this
+	*/
+	-webkit-text-size-adjust: none;
 }
 
 .sapMPanelContent {
+	padding: 1rem;
 	box-sizing: border-box;
 	overflow: auto;
 }
@@ -26,6 +34,9 @@
 
 .sapMPanelExpandableIcon {
 	position : absolute;
+	width: 3rem;
+	line-height: 3rem;
+	font-size: 1rem;
 	top: 50%;
 	-webkit-transform: translateY(-50%);
 	-ms-transform: translateY(-50%);
@@ -61,6 +72,36 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanel
 .sapMPanelWrappingDiv,
 .sapMPanelWrappingDivTb {
 	position: relative;
+}
+
+/* if Panel is expandable, we do not wish toolbar to come with own border */
+.sapMPanelWrappingDivTb > .sapMPanelHdrExpandable.sapMTB {
+	border-width: 0;
+}
+
+.sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded {
+	border-bottom-width: 0;
+}
+
+.sap-tablet .sapUiFioriObjectPage > section > .sapMPanel,
+.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
+	margin: 1rem 0;
+	padding: 0 1rem;
+	box-sizing: border-box;
+}
+
+.sapMPanelHdrExpandable.sapMPanelHdr,
+.sapMPanelHdrExpandable.sapMTB-Transparent-CTX.sapMTB {
+	padding-left: 0;
+}
+
+.sapMIBar.sapMPanelHdrExpandable .sapMBarChild:first-child {
+	margin-left: 0;
+}
+
+.sapMPanelHdrExpandable.sapMPanelHdr,
+.sapMPanelWrappingDivTb > .sapMTB {
+	margin-left: 3rem;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */

@@ -5,11 +5,6 @@
 	background-color: fade(@sapUiPanelBG, 80%);
 }
 
-/* if Panel is expandable, we do not wish toolbar to come with own border */
-.sapMPanelWrappingDivTb > .sapMPanelHdrExpandable.sapMTB {
-	border-width: 0;
-}
-
 /* if Panel is not expandable, we do wish header to come with own border */
 .sapMPanelHdr:not(.sapMPanelHdrExpandable),
 /* notice: sapMPanelWrappingDiv is available if Panel is expandable */
@@ -19,55 +14,19 @@
 	border-bottom: 1px solid @sapUiToolbarBorder;
 }
 
-.sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded {
-	border-bottom-width: 0;
-}
-
 .sapMPanelHdr {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 	font: @sapUiFontHeaderWeight @sapMFontHeader5Size @sapUiFontHeaderFamily;
 	text-shadow: 0 0.0625rem 0 @sapUiLightShadowTint;
 	color: @sapUiHeaderText;
-	height: 3rem;
-	line-height: 3rem;
-	padding: 0 1rem;
 	background-color: fade(@sapUiLightestBG, 0%);
 }
 
 .sapMPanelContent {
-	padding: 1rem;
 	border-bottom: 1px solid @sapUiExtraLightBorder;
 }
 
-.sap-tablet .sapUiFioriObjectPage > section > .sapMPanel,
-.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
-	margin: 1rem 0;
-	padding: 0 1rem;
-	box-sizing: border-box;
-}
-
-.sapMPanelHdrExpandable.sapMPanelHdr,
-.sapMPanelHdrExpandable.sapMTB-Transparent-CTX.sapMTB {
-	padding-left: 0;
-}
-
-.sapMIBar.sapMPanelHdrExpandable .sapMBarChild:first-child {
-	margin-left: 0;
-}
-
-/* 3rem is standard height in this context */
 .sapMPanelExpandableIcon {
-	width: 3rem;
-	line-height: 3rem;
-	font-size: 1rem;
 	color: @sapUiElement;
-}
-
-.sapMPanelHdrExpandable.sapMPanelHdr,
-.sapMPanelWrappingDivTb > .sapMTB {
-	margin-left: 3rem;
 }
 
 .sapMPanelExpandableIcon:focus {
