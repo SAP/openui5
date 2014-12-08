@@ -604,7 +604,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -654,8 +654,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/rmtsampleflight/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		var sMockdataBaseUrl = "testdata/rmtsampleflight/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -774,7 +774,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -830,7 +830,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		
 		oMockServer.start();
@@ -887,12 +887,73 @@
 		
 	});
 	
+	test("test deep insert!", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "testdata/rmtsampleflight/");
+		
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 18);
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 1);
+		
+		var oDeepCreate = oResponse.data.d.results[0];
+		
+		oDeepCreate["FlightCarrier"].CARRNAME = "Deeply Created";
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : JSON.stringify(oDeepCreate)
+		});
+		ok(oResponse.success, "Mock server responded the POST resquest");
+		equal(oResponse.statusCode, 201, "resource successfully created");
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 19);
+		
+		oMockServer.setEntitySetData("CarrierCollection", []);
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			type : 'POST',
+			data : JSON.stringify(oDeepCreate)
+		});
+		ok(oResponse.success, "Mock server responded the POST resquest");
+		equal(oResponse.statusCode, 201, "resource successfully created");
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		equal(oResponse.data.d.results.length, 1);
+		
+		
+		oMockServer.destroy();
+		
+	});
+	
 	test("test mockdata linkage to entityset", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -919,7 +980,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -967,7 +1028,7 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
-				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -1026,7 +1087,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1086,7 +1147,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1160,8 +1221,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1217,8 +1278,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1592,8 +1653,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1643,8 +1704,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1685,7 +1746,7 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
-				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -1778,7 +1839,7 @@
 				oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
-				var sMetadataUrl = "testdata/metadata.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/metadata.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -1799,8 +1860,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1854,7 +1915,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1871,7 +1932,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/Model10Entities.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/Model10Entities.xml";
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1888,8 +1949,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -1908,8 +1969,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -2087,7 +2148,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/DataModel.xml";
 		var sMockdataUrl = "testdata/MockData.json"// JSON file which contains the mockdata
 		oMockServer.simulate(sMetadataUrl, sMockdataUrl);
 		oMockServer.start();
@@ -2125,7 +2186,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/DataModel.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -2162,7 +2223,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/DataModel.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -2239,7 +2300,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -2328,7 +2389,7 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/?sap-client=001"
 				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
+				var sMetadataUrl = "testdata/DataModel.xml";
 				oMockServer.simulate(sMetadataUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -2391,8 +2452,8 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : sUri
 				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
 				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -2460,8 +2521,8 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : sUri
 				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
 				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -2531,8 +2592,8 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : sUri
 				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
 				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -2612,8 +2673,8 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : sUri
 				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
 				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -2695,8 +2756,8 @@
 				var oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : sUri
 				});
-				var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-				var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+				var sMetadataUrl = "testdata/DataModel.xml";
+				var sMockdataBaseUrl = "testdata/";
 				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
@@ -2742,8 +2803,8 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : sUri
 		});
-		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
@@ -2783,7 +2844,7 @@
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : sURI
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 		var oModel = initModel(sURI, true);
