@@ -83,6 +83,9 @@
 	test("parse", function () {
 		var oType = new sap.ui.model.odata.type.String(); // constraints do not matter
 
+		strictEqual(oType.parseValue(null, "string"), null, "null");
+		strictEqual(oType.parseValue("", "string"), null, "empty string is converted to null");
+		strictEqual(oType.parseValue(undefined, "string"), undefined, "undefined");
 		strictEqual(oType.parseValue(true, "boolean"), "true", "source type boolean");
 		strictEqual(oType.parseValue(3.1415, "float"), "3.1415", "source type float");
 		strictEqual(oType.parseValue(42, "int"), "42", "source type int");
@@ -115,4 +118,27 @@
 			deepEqual(e.violatedConstraints, ["maxLength"]);
 		}
 	});
+
+	//*********************************************************************************************
+	test("nullable", sinon.test(function () {
+		var oType = new sap.ui.model.odata.type.String({}, {nullable: false});
+
+		deepEqual(oType.oConstraints, {nullable: false}, "nullable: false");
+		try {
+			oType.validateValue(null);
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ValidateException);
+			strictEqual(e.message, "Illegal sap.ui.model.odata.type.String value: null");
+		}
+		oType.setConstraints({nullable: true});
+		oType.validateValue(null); // does not throw
+		deepEqual(oType.oConstraints, {}, "nullable: true");
+
+		this.mock(jQuery.sap.log).expects("warning").once()
+			.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
+
+		oType = new sap.ui.model.odata.type.String(null, {nullable: ""});
+		deepEqual(oType.oConstraints, {}, "illegal nullable -> default to true");
+	}));
 } ());

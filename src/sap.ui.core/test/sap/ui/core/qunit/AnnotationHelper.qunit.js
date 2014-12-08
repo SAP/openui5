@@ -30,12 +30,11 @@
 		},
 		oString10 = {
 			name : "sap.ui.model.odata.type.String",
-			//TODO "nullable" support for String!
-			constraints : {/*"nullable" : false,*/ "maxLength" : 10}
+			constraints : {"nullable" : false, "maxLength" : 10}
 		},
 		oString80 = {
 			name : "sap.ui.model.odata.type.String",
-			constraints : {/*"nullable" : true,*/ "maxLength" : 80}
+			constraints : {"maxLength" : 80}
 		},
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		oMetaModel = new sap.ui.model.json.JSONModel({
