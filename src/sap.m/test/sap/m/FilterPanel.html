@@ -59,7 +59,8 @@
 			var oData = {
 				"items" : [{
 					"key" : "c0",
-					"text" : "Name"
+					"text" : "Name",
+					"maxLength" : "10" 
 				}, {
 					"key" : "c1",
 					"text" : "Date",
@@ -69,8 +70,9 @@
 					"key" : "c2",
 					"text" : "Number",
 					"tooltip" : "My Tooltip",
-					"maxLength" : "10", 
-					"type" : "numeric"
+					"type" : "numeric",
+					"precision" : "5", 
+					"scale": "2"
 				}],
 				"filterItems" : [{
 					"key" : "f0",
@@ -140,6 +142,8 @@
 				tooltip : "{tooltip}",
 				type : "{type}",
 				maxLength : "{maxLength}",
+				precision: "{precision}", 
+				scale: "{scale}",				
 				isDefault : "{isDefault}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({

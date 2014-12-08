@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 				},
 
 				/**
-				 * tbd
+				 * data type of the column (text, numeric or date is supported)
 				 */
 				type : {
 					type : "string",
@@ -65,7 +65,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 				},
 
 				/**
-				 * tbd
+				 * if type==numeric the precision will be used to format the entered value (maxIntegerDigits  of the used Formatter)
+				 */
+				precision : {
+					type : "string",
+					group : "Misc",
+					defaultValue : null
+				},
+
+				/**
+				 * if type==numeric the scale will be used to format the entered value (maxFractionDigits of the used Formatter)
+				 */
+				scale : {
+					type : "string",
+					group : "Misc",
+					defaultValue : null
+				},
+
+				/**
+				 * specifies the number of characters which can be entered in the value fields of the condition panel  
 				 */
 				maxLength : {
 					type : "string",
@@ -83,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 				},
 				
 				/**
-				 * tbd
+				 * the column with isDefault==true will be used as the selected column item on the conditionPanel 
 				 */
 				isDefault : {
 					type : "boolean",
