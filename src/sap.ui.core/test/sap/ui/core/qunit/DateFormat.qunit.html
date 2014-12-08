@@ -293,6 +293,24 @@
 		ok((oDateOut.toString() === oDate.toString()), "ISO fallback: "+sDateIn + " to " + oDateOut);
 	});
 
+	test("parse and format two digit years", function() {
+		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern:"M/d/y"}),
+			sDate, oDate;
+		oDate = oFormat.parse("1/1/1");
+		equal(oDate.getFullYear(), 2001, "Parsed as 2001");
+		sDate = oFormat.format(oDate);
+		equal(sDate, "1/1/2001", "Formatted as 2001");
+		oDate = new Date();
+		oDate.setFullYear(1);
+		oDate.setMonth(0);
+		oDate.setDate(1);
+		equal(oDate.getFullYear(), 1, "Fullyear is 1");
+		sDate = oFormat.format(oDate);
+		equal(sDate, "1/1/0001", "Formatted as 0001");
+		oDate = oFormat.parse(sDate);
+		equal(oDate.getFullYear(), 1, "Fullyear is still 1");
+	});
+	
 	test("origin info", function() {
 		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")

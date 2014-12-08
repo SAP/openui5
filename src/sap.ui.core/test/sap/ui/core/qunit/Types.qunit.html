@@ -220,6 +220,24 @@
 		// see NumberFormat.qunit for further formatting tests...
 		
 	});
+
+	test("integer formatOptions.source", function(){
+		var intType = new sap.ui.model.type.Integer({
+			source:{
+				groupingEnabled: true
+			}
+		});
+		
+		equal(intType.formatValue("22","string"),"22", "format test");
+		equal(intType.formatValue("333","string"),"333", "format test");
+		equal(intType.formatValue("6,666","string"),"6666", "format test");
+		equal(intType.formatValue("-6622","string"),"-6622", "format test");
+		equal(intType.parseValue("3333","string"),"3,333", "parse test");
+		equal(intType.parseValue("3,555","string"),"3,555", "parse test");
+		equal(intType.parseValue("-3,555","string"),"-3,555", "parse test");
+		
+	});
+	
 	
 	// float type tests
 	module("float type");
@@ -305,6 +323,24 @@
 		equal(floatType.formatValue(134.00,"float"),134, "format test");
 		equal(floatType.formatValue(134.000,"float"),134, "format test");
 		
+	});
+
+	test("float formatOptions.source", function(){
+		var floatType = new sap.ui.model.type.Float({
+			source:{}
+ 		});
+		
+		equal(floatType.parseValue("3333","string"),"3333", "parse test");
+		equal(floatType.parseValue("3333.555","string"),"3333.555", "parse test");
+		equal(floatType.parseValue("3.555","string"),"3.555", "parse test");
+		equal(floatType.parseValue("-3.555","string"),"-3.555", "parse test");
+		equal(floatType.parseValue(-3.555,"float"),"-3.555", "parse test");
+		equal(floatType.parseValue(-222,"int"),"-222", "parse test");
+
+		equal(floatType.formatValue("22","string"),"22", "format test");
+		equal(floatType.formatValue("-6622.333","string"),"-6,622.333", "format test");
+		equal(floatType.formatValue("-6622.339","string"),"-6,622.339", "format test");
+
 	});
 	
 	// date type tests

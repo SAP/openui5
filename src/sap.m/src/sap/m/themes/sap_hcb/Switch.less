@@ -31,7 +31,7 @@
 
 /* focus */
 
-.sap-desktop .sapMSwtCont:focus .sapMSwt {
+.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	outline: 0.125rem dotted @sapHCStandardFG;
 }
 
@@ -87,18 +87,22 @@
 /* Switch inner                   */
 /* ------------------------------ */
 
-.sapMSwtOff .sapMSwtInner {
+.sapMSwtOff > .sapMSwtInner {
 	left: -2rem;
+}
+
+.sapMSwtOn > .sapMSwtInner {
+	left: 0;
 }
 
 /* CSS transitions */
 
-.sapMSwtTrans .sapMSwtInner {
+.sapMSwtTrans > .sapMSwtInner {
 	-webkit-transition: left 0.125s ease-in-out;
 	transition: left 0.125s ease-in-out;
 }
 
-html[dir=rtl] .sapMSwtTrans .sapMSwtInner {
+html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	-webkit-transition-property: right;
 	transition-property: right;
 }

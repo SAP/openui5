@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new DropdownBox.
 	 *
@@ -27,30 +26,30 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DropdownBox = ComboBox.extend("sap.ui.commons.DropdownBox", /** @lends sap.ui.commons.DropdownBox.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Whether the DropdownBox's search help should be enabled.
 			 */
 			searchHelpEnabled : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * (optional) The text to use for the search help entry.
 			 */
 			searchHelpText : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * (optional) The additional Text to use for the search help entry.
 			 */
 			searchHelpAdditionalText : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * (optional) The src of the icon to use for the search help entry.
 			 */
 			searchHelpIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Maximum number of history items in the list.
 			 * If 0 no history is displayed or stored. The history is locally stored on the client. Therefore do not activate this feature when this control handles confidential data.
@@ -58,13 +57,13 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			maxHistoryItems : {type : "int", group : "Behavior", defaultValue : 0}
 		},
 		events : {
-	
+
 			/**
 			 * Event fired whenever the configured searchHelpItem is clicked or the searchHelpItem is configured and F4 key is pressed.
 			 */
 			searchHelp : {
 				parameters : {
-	
+
 					/**
 					 * The current value of the DropdownBox.
 					 */
@@ -73,8 +72,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Initialization method.
 	 * @private
@@ -94,67 +93,69 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		this._iItemsForHistory = 10; // UX defined history shall appear if there are more than 10 items
 		this._oHistory = new History(this.getId());
 	};
-	
+
 	/**
 	 * Cleanup instance.
 	 * @private
 	 */
 	DropdownBox.prototype.exit = function() {
-		var sIdPrefix = this.getId() + "-h-",i;
+		var sIdPrefix = this.getId() + "-h-";
 		// destroys searchHelpItems
 		if ( this._searchHelpItem ) {
 			this._searchHelpItem[0].destroy();
 			this._searchHelpItem[1].destroy();
 			this._searchHelpItem = null;
 		}
-	
+
 		ComboBox.prototype.exit.apply(this, arguments);
 		// check for and remaining history items and destroy them
 		function remove(id) {
-		  var oItem = sap.ui.getCore().byId(id);
-		  oItem && oItem.destroy();
+			var oItem = sap.ui.getCore().byId(id);
+			if (oItem) {
+				oItem.destroy();
+			}
 		}
 		for (var i = 0; i < this.getMaxHistoryItems(); i++) {
-		  remove(sIdPrefix + i);
+			remove(sIdPrefix + i);
 		}
 		if (this.__oSeparator) {
 			this.__oSeparator.destroy();
 			this.__oSeparator = null;
 		}
 		this._oHistory = null;
-	
+
 		this.__aItems = null;
 		this._sWantedValue = undefined;
 	};
-	
+
 	/**
 	 * Ensure that handed in ListBoxes are taken from the visible UI immediately.
-	 * @param {object} oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	DropdownBox.prototype.onAfterRendering = function(oEvent){
-	
+
 		ComboBox.prototype.onAfterRendering.apply(this, arguments);
-	
+
 		if (!this._sHandleItemsChanged) {
 			// if _handleItemsChanges is executed, checkValueInItems is executed inside
 			this.checkValueInItems();
 		}
-	
+
 	};
-	
+
 	/*
 	 * Handle items aggregation (if Popup is opened, ListBox has invalid data because of history and filter)
 	 */
 	DropdownBox.prototype.getItems = function(){
-	
+
 		if (this.oPopup && this.oPopup.isOpen()) {
 			// take items from typeAhead array
 			return this.__aItems;
 		} else {
 			return ComboBox.prototype.getItems.apply(this, arguments);
 		}
-	
+
 	};
 	DropdownBox.prototype.insertItem = function(oItem, iIndex){
 		if (this.oPopup && this.oPopup.isOpen()) {
@@ -199,11 +200,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			// take items from typeAhead array
 			var oItem = null;
 			var vOriginalElement = vElement;
-	
+
 			if (typeof (vElement) == "string") { // ID of the element is given
 				vElement = sap.ui.getCore().byId(vElement);
 			}
-	
+
 			if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
 				for (var i = 0; i < this.__aItems.length; i++) {
 					if (this.__aItems[i] == vElement) {
@@ -212,11 +213,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 					}
 				}
 			}
-	
+
 			if (typeof (vElement) == "number") { // "vElement" is the index now
 				if (vElement < 0 || vElement >= this.__aItems.length) {
 					jQuery.sap.log.warning("Element.removeAggregation called with invalid index: Items, " + vElement);
-	
+
 				} else {
 					oItem = this.__aItems[vElement];
 					this.__aItems.splice(vElement, 1);
@@ -244,12 +245,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			if (!aItems) {
 				return [];
 			}
-	
+
 			// as an empty list can not have an history or an searchHelp just clear List
 			ComboBox.prototype.removeAllItems.apply(this, arguments);
-	
+
 			this.__aItems = [];
-	
+
 			return aItems;
 		} else {
 			return ComboBox.prototype.removeAllItems.apply(this, arguments);
@@ -262,7 +263,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				if (this.__aItems.length == undefined) {
 					return -2;
 				} // not a multiple aggregation
-	
+
 				for (var i = 0; i < this.__aItems.length; i++) {
 					if (this.__aItems[i] == oItem) {
 						return i;
@@ -280,44 +281,44 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			if (!this.__aItems) {
 				return this;
 			}
-	
+
 			// first remove all items from ListBox and then destroy them,
 			// do not use destroy function from ListBox because history items and search field item
 			// must not be destroyed
 			this._getListBox().removeAllItems();
-	
+
 			for (var i = 0; i < this.__aItems.length; i++) {
 				if (this.__aItems[i]) {
 					this.__aItems[i].destroy();
 				}
 			}
 			this.__aItems = [];
-	
+
 			return this;
 		} else {
 			return ComboBox.prototype.destroyItems.apply(this, arguments);
 		}
 	};
-	
+
 	DropdownBox.prototype.updateItems = function(){
-	
+
 		ComboBox.prototype.updateItems.apply(this, arguments);
-	
+
 		if (this.oPopup && this.oPopup.isOpen()) {
 			// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 			var $Ref = jQuery(this.getInputDomRef());
 			var iCursorPos = $Ref.cursorPos();
 			this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
 		}
-	
+
 	};
-	
+
 	DropdownBox.prototype._handleItemsChanged = function(oEvent, bDelayed){
-	
+
 		if (this.bNoItemCheck) {
 			return;
 		}
-	
+
 		if (this.__aItems && (!this.oPopup || !this.oPopup.isOpen())) {
 			// if popup is closed internal typeAhead item array must be cleared -> otherwise items could be inconsistent
 			throw new Error("DropdownBox " + this.getId() + " : this.__aItems is not empty!");
@@ -325,10 +326,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		if (this.getListBox() && this.oPopup && this.oPopup.isOpen()) {
 			// items are maintained directly on ListBox adjust internal item array
 			if (this.__aItems.length > this._iItemsForHistory || this._searchHelpItem) {
+				var oItem;
+				var i = 0;
 				switch (oEvent.getParameter("event")) {
 				case "destroyItems":
 					// destroy items not destroyed from ListBox
-					for (var i = 0; i < this.__aItems.length; i++) {
+					for (i = 0; i < this.__aItems.length; i++) {
 						oItem = this.__aItems[i];
 						if ( !oItem.bIsDestroyed ) {
 							oItem.destroy();
@@ -345,8 +348,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 					this.__aItems = [];
 					break;
 				case "removeItem":
-					var oItem = oEvent.getParameter("item");
-					for (var i = 0; i < this.__aItems.length; i++) {
+					oItem = oEvent.getParameter("item");
+					for (i = 0; i < this.__aItems.length; i++) {
 						if (this.__aItems[i] == oItem) {
 							this.__aItems.splice(i, 1);
 							break;
@@ -368,7 +371,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 					break;
 				case "updateItems":
 					// destroy items not destroyed from ListBox
-					for (var i = 0; i < this.__aItems.length; i++) {
+					for (i = 0; i < this.__aItems.length; i++) {
 						oItem = this.__aItems[i];
 						if ( !oItem.bIsDestroyed ) {
 							oItem.destroy();
@@ -393,23 +396,23 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			var iCursorPos = $Ref.cursorPos();
 			this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
 		}
-	
+
 		ComboBox.prototype._handleItemsChanged.apply(this, arguments);
-	
+
 		this.checkValueInItems();
 	};
-	
+
 	//***********************************************************
 	//Mouse handling...
 	//***********************************************************
-	
+
 	/**
 	 * Handle the click event happening in the DropdownBox
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	DropdownBox.prototype.onclick = function(oEvent) {
-	
+
 		if (!this.mobile && this.getEnabled && this.getEnabled() && this.getEditable()) {
 			if (this.oPopup && this.oPopup.isOpen()) {
 				this._close();
@@ -419,9 +422,9 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			this.focus();
 		}
 		this._F4ForClose = false;
-	
+
 	};
-	
+
 	/**
 	 * Handle mouseup event
 	 * @param {jQuery.Event} oEvent the occuring event
@@ -431,51 +434,51 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		if (oEvent.target == this.getF4ButtonDomRef() || this.mobile) {
 			return;
 		}
-	
+
 		this._doSelect();
 		oEvent.preventDefault();
-	
+
 	};
-	
+
 	DropdownBox.prototype.onmousedown = function(oEvent){
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		// DropdownBox opens and closes on cleck on F4-Button and on input field
 		if (this.oPopup && this.oPopup.isOpen()) {
 			this._F4ForClose = true;
 		} else {
 			this._F4ForOpen = true;
 		}
-	
+
 		ComboBox.prototype.onmousedown.apply(this, arguments);
-	
+
 	};
-	
-	
+
+
 	//***********************************************************
 	//Keyboard handling...
 	//***********************************************************
-	
+
 	/**
 	 * Handle sapshow pseudo events on the control
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	DropdownBox.prototype.onsapshow = function(oEvent){
-	
+
 		if (this.mobile) {
 			return;
 		}
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			oEvent.preventDefault();
 			oEvent.stopImmediatePropagation();
 			return;
 		}
-	
+
 		if (oEvent.which === jQuery.sap.KeyCodes.F4 && this._searchHelpItem) {
 			this._close();
 			this.fireSearchHelp({value: jQuery(this.getInputDomRef()).val()});
@@ -494,51 +497,72 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		oEvent.preventDefault();
 		oEvent.stopImmediatePropagation();
 	};
-	
+
 	/**
 	 * Handle keydown event
 	 * @param {jQuery.Event} oEvent the occuring event
 	 * @protected
 	 */
 	DropdownBox.prototype.onkeydown = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if ((!!sap.ui.Device.browser.internet_explorer && (oEvent.which == jQuery.sap.KeyCodes.DELETE || oEvent.which == jQuery.sap.KeyCodes.BACKSPACE)) ||
 		   (!!sap.ui.Device.browser.webkit && (oEvent.which == jQuery.sap.KeyCodes.DELETE || oEvent.which == jQuery.sap.KeyCodes.BACKSPACE))) {
 			//as IE and Webkit do not fire keypress event for DELETE or BACKSPACE
 			this.onkeypress(oEvent);
 		}
-	
+
 		if (!!!sap.ui.Device.browser.internet_explorer || oEvent.which !== jQuery.sap.KeyCodes.BACKSPACE) {
 			return;
 		}
-	
+
 		// Quite a trick to solve the issue with 'delete from last cursorPos' vs. 'delete last (proposed / auto-completed) character in IE
 		this._iCursorPosBeforeBackspace = jQuery(this.getInputDomRef()).cursorPos();
 	};
-	
+
 	/**
 	 * Handle paste event
 	 * @param {jQuery.Event} oEvent the occuring event
 	 * @protected
 	 */
 	DropdownBox.prototype.onpaste = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		//prevent 'multiple-pastes' by e.g. holding down paste combination.
 		if (this._oValueBeforePaste === null) {
 			this._oValueBeforePaste = jQuery(this.getInputDomRef()).val();
 		}
+
 	};
-	
+
+	DropdownBox.prototype.oncut = DropdownBox.prototype.onpaste;
+
+	DropdownBox.prototype.oninput = function(oEvent) {
+
+		var $Ref = jQuery(this.getInputDomRef());
+		var sVal = $Ref.val();
+		if (!this.oPopup || !this.oPopup.isOpen()) {
+			this.noTypeAheadByOpen = true; // no typeahead and rerendering during open because of ARIA update issues
+			this._open();
+			this.noTypeAheadByOpen = undefined;
+		}
+		var bValid = this._doTypeAhead(sVal, "");
+		if (!bValid && this._oValueBeforePaste) {
+			this._doTypeAhead("", this._oValueBeforePaste);
+		}
+		this._oValueBeforePaste = null;
+		this._fireLiveChange(oEvent);
+
+	};
+
 	/**
 	 * Handle keyup event
 	 * This must only be considered if it is from Backspace-key in IE or after paste.
@@ -547,27 +571,27 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @protected
 	 */
 	DropdownBox.prototype.onkeyup = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		var iKC = oEvent.which,
 			oKC = jQuery.sap.KeyCodes;
-	
+
 		// call keyup function of TextField to get liveChange event
 		sap.ui.commons.TextField.prototype.onkeyup.apply(this, arguments);
-	
+
 		if (!(!!sap.ui.Device.browser.internet_explorer && iKC === oKC.BACKSPACE) && this._oValueBeforePaste === null || iKC === oKC.TAB) {
 			return;
 		}
 		// it's either backspace in IE or after paste (cumulating potentially multiple pastes, too)
-	
+
 		// as it is keyboard interaction, open the proposal list (if not yet done)
 		if (!this.oPopup || !this.oPopup.isOpen()) {
 			this.noTypeAheadByOpen = true; // no typeahead and rerendering during open because of ARIA update issues
@@ -593,22 +617,22 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		if (bValid) {
 			this._getListBox().rerender();
 		}
-	
+
 		this._oValueBeforePaste = null;
 	};
-	
+
 	/**
 	 * Handle pseudo event onsaphome
 	 * @param {jQuery.Event} oEvent the occuring event
 	 * @protected
 	 */
 	DropdownBox.prototype.onsaphome = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if ((!this.oPopup || !this.oPopup.isOpen()) && this.getEditable() && this.getEnabled()) {
 			sap.ui.commons.TextField.prototype.onsaphome.apply(this, arguments); // before setting the cursor to have old cursor position in there
 			var $Ref = jQuery(this.getInputDomRef());
@@ -619,7 +643,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			ComboBox.prototype.onsaphome.apply(this, arguments);
 		}
 	};
-	
+
 	/**
 	 * Handle pseudo event onsapdelete.
 	 * If triggered with open dropdown and current item provided by history feature,
@@ -628,12 +652,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @protected
 	 */
 	DropdownBox.prototype.onsapdelete = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if (!this.oPopup || !this.oPopup.isOpen()) {
 			return;
 		}
@@ -658,23 +682,23 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			this.setValue(oLB.getSelectedItem().getText());
 		}
 	};
-	
+
 	/**
 	 * Handle keypress event
 	 * @param {jQuery.Event} oEvent the occuring event
 	 * @protected
 	 */
 	DropdownBox.prototype.onkeypress = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		var iKC = oEvent.which,
 			iKeyCode = oEvent.keyCode,
 			oKC = jQuery.sap.KeyCodes;
@@ -696,7 +720,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			iCursorPos = $Ref.cursorPos(),
 			sVal = $Ref.val();
 		//jQuery.sap.log.debug("current value is: " + sVal + " with cursorPos: " + iCursorPos + " and newChar is: " + oNewChar);
-	
+
 		if (!this.oPopup || !this.oPopup.isOpen()) {
 			this.noTypeAheadByOpen = true; // no typeahead and rerendering during open because of ARIA update issues
 			this._open();
@@ -707,26 +731,27 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		} else {
 			this._doTypeAhead(sVal.substr(0, iCursorPos), oNewChar);
 		}
-	
+		this._fireLiveChange(oEvent);
+
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * Move the cursor one step to the right (and adapt selection)
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	DropdownBox.prototype.onsapright = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		if (!bRtl) {
 			this._updateSelection(1);
@@ -735,23 +760,23 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * Move the cursor one step to the left (and adapt selection)
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	DropdownBox.prototype.onsapleft = function(oEvent) {
-	
+
 		if (oEvent.target.id == this.getId() + "-select") {
 			// on native dropdown -> no own keyboard handling
 			return;
 		}
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		if (!bRtl) {
 			this._updateSelection( -1);
@@ -760,12 +785,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		oEvent.preventDefault();
 	};
-	
-	
+
+
 	//***********************************************************
 	// Focus handling...
 	//***********************************************************
-	
+
 	/**
 	 * Handle focusin event
 	 * Ensures the text gets selected when focus gets into the field
@@ -773,7 +798,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @protected
 	 */
 	DropdownBox.prototype.onfocusin = function(oEvent) {
-	
+
 		if (!this.oPopup || !this.oPopup.isOpen() || this._bFocusByOpen) {
 			// if popup is open the text-selection is made by doTypeAhead
 			// do not select all text in this case
@@ -786,21 +811,21 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		ComboBox.prototype.onfocusin.apply(this, arguments);
 	};
-	
-	
+
+
 	//***********************************************************
 	// Text selection handling...
 	//***********************************************************
-	
+
 	/**
 	 * Handle the select event happening in the DropdownBox
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	DropdownBox.prototype.onselect = function(oEvent) {
-	
+
 		var iTimeStamp = new Date().getTime();
-	
+
 		if (this._bIgnoreSelect) {
 			this._bIgnoreSelect = false;
 			this.iOldTimestamp = iTimeStamp;
@@ -811,11 +836,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			return;
 		}
 		this.iOldTimestamp = undefined;
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		var $Ref = jQuery(this.getInputDomRef()),
 			iNewCursor = $Ref.cursorPos(),
 			sVal = $Ref.val();
@@ -829,17 +854,17 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		oEvent.preventDefault();
 	};
-	
+
 	DropdownBox.prototype._determinePosinset = function(aItems, iNewIndex){
-	
+
 		var iPos = iNewIndex + 1;
-	
+
 		if (this.oPopup && this.oPopup.isOpen()) {
 			this.dontSetPoisinset = undefined;
 			var oItem = aItems[iNewIndex];
 			// history and search help only available if open
 			var bHistory = aItems[0].getId().search(this.getId() + "-h-") != -1;
-	
+
 			if (oItem.getId().search(this.getId() + "-h-") == -1) {
 				// no history item
 				if (bHistory) {
@@ -852,11 +877,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				}
 			}
 		}
-	
+
 		return iPos;
-	
+
 	};
-	
+
 	/**
 	 * Selects the text of the InputDomRef in the given range
 	 * @param {int} [iStart=0] start position of the text selection
@@ -865,22 +890,22 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @private
 	 */
 	DropdownBox.prototype._doSelect = function(iStart, iEnd){
-	
+
 		this._bIgnoreSelect = true;
-	
+
 		var oDomRef = this.getInputDomRef();
-	
+
 		if (oDomRef) {
 			//if no Dom-Ref - no selection (Maybe popup closed)
 			var $Ref = jQuery(oDomRef);
 			// do not call focus in DropdownBox
 			$Ref.selectText(iStart ? iStart : 0, iEnd ? iEnd : $Ref.val().length);
 		}
-	
+
 		return this;
-	
+
 	};
-	
+
 	/**
 	 * Adapt the selection to the cursor position and move the curser beforehand (if parameter iMoveBy is given)
 	 * @param {int} iMoveBy the number of places the cursor should move (can be positive (move right) or negative (move left))
@@ -898,12 +923,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			this._getListBox().rerender();
 		}
 	};
-	
-	
+
+
 	//***********************************************************
 	// Type ahead and list box related
 	//***********************************************************
-	
+
 	/*
 	 * Returns whether the new value is a valid one
 	 * @param {object} oValue the value before the event
@@ -921,7 +946,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		this._sWantedSelectedKey = undefined; // something typed -> do not search again for not existing items
 		this._sWantedSelectedItemId = undefined;
 		this._sWantedValue = undefined;
-	
+
 		var oLB = this._getListBox(),
 			//oSelectedItem = oLB.getSelectedItem(),
 			iMaxPopupItems = this.getMaxPopupItems(),
@@ -936,20 +961,20 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			rValFilter = RegExp("^" + sRegExpValue + ".*$"),
 			iMove = oNewChar && oNewChar.length || 0,
 			$Ref = jQuery(this.getInputDomRef());
-	
+
 		this.__aItems = aItems;
-	
+
 		if (iVisibleItemsCnt <= 0) {
 			// no items -> no typeAhead possible -> everything is wrong
 			this.__doTypeAhead = false;
 			return false;
 		}
-	
+
 		var aCurrentItems,
 			// identify items matching already entered value (for autocomplete, item selection)
 			aFilteredItems = this._getFilteredItems(aItems, rValFilter),
 			bValid = aFilteredItems.length > 0;
-	
+
 		if (!bValid) {
 			// if not valid just show all items
 			bFilter = false;
@@ -960,7 +985,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		} else {
 			aCurrentItems = aItems.slice(0);
 		}
-	
+
 		var aHistoryItems = [];
 		if (bHistory) {
 			aHistoryItems = this._addHistoryItems(aCurrentItems, bFilter && rValFilter);
@@ -968,10 +993,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			iVisibleItemsCnt = aCurrentItems.length;
 		}
 		oLB.setVisibleItems(iMaxPopupItems < iVisibleItemsCnt ? iMaxPopupItems : -1);
-	
+
 		var oItem,
 		iHistLength = aHistoryItems.length;
-	
+		var i = 0;
+
 		if (iItemIndex >= 0) {
 			// use the required item
 			oItem = aItems[iItemIndex];
@@ -991,15 +1017,21 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				oItem = aFilteredItems[0];
 			} else {// use last valid item
 				var sOldValue = $Ref.val();
-				for ( var i = 0; i < aCurrentItems.length; i++) {
+				var iFirstItem = 0;
+				for ( i = 0; i < aCurrentItems.length; i++) {
 					var oCheckItem = aCurrentItems[i];
-					if (oCheckItem.getEnabled() && oCheckItem.getText() == sOldValue) {
-						oItem = oCheckItem;
-						break;
+					if (oCheckItem.getEnabled()) {
+						if (!iFirstItem) {
+							iFirstItem = i;
+						}
+						if (oCheckItem.getText() == sOldValue) {
+							oItem = oCheckItem;
+							break;
+						}
 					}
 				}
 				if (!oItem) {// still no item found - use first one (can this happen???)
-					oItem = aCurrentItems[0];
+					oItem = aCurrentItems[iFirstItem];
 				}
 			}
 		}
@@ -1010,8 +1042,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			oLB.setItems(aCurrentItems, false, true); // fire no itemsChanged event because this would update Value property
 		}
 		// find and select the item and update the text and the selection in the inputfield
-		var i = oLB.indexOfItem(oItem),
-		oText = oItem.getText();
+		i = oLB.indexOfItem(oItem);
+		var oText = oItem.getText();
 		var iPos = i + 1;
 		var iSize = aCurrentItems.length;
 		if (aHistoryItems.length > 0) {
@@ -1035,7 +1067,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		$Ref.val(oText);
 		this._sTypedChars = oNewValue;
 		this._doSelect(oValue.length + iMove, oText.length);
-	
+
 		oLB.setSelectedIndex(i);
 		if (oSHI && i == 2) {
 			// special case -> search help item exist and first real item selected -> show search help too
@@ -1044,7 +1076,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			oLB.scrollToIndex(i);
 		}
 		this._iClosedUpDownIdx = i;
-	
+
 		if (!bValid) {
 			$Ref = this.$();
 			$Ref.addClass("sapUiTfErr");
@@ -1056,22 +1088,22 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		this.__doTypeAhead = false;
 		return bValid;
 	};
-	
+
 	/**
 	 * Walks over the list of available items in the given oListBox and updates the visual selection.
 	 * Also updates the Popup to show the right content.
 	 *
 	 * @param {sap.ui.commons.ListBox} oListBox listBox belonging to this ComboBox instance.
 	 * @param {sap.ui.core.Popup} oPopup the instance of the Popup functionality used for opening the proposal list
-	 * @returns {sap.ui.commons.DropdownBox}
+	 * @returns {sap.ui.commons.DropdownBox} DropdownBox
 	 * @private
 	 */
 	DropdownBox.prototype._prepareOpen = function(oListBox, oPopup){
 		this._oValueBeforeOpen = this.$().val();
-	
+
 		// remember we opening the popup (needed in applyFocusInfo called after rerendering of ListBox)
 		this._Opening = true;
-	
+
 		if (!this.noTypeAheadByOpen) {
 			// there might be items with same text -> try to find out what is currently selected.
 			var iItemIndex;
@@ -1084,20 +1116,20 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		return this;
 	};
-	
+
 	DropdownBox.prototype._handleOpened = function(){
-	
+
 		ComboBox.prototype._handleOpened.apply(this, arguments);
-	
+
 		if (!sap.ui.Device.browser.internet_explorer) {
 			// because in IE already async made in ComboBox
 			jQuery(this.getInputDomRef()).focus();
 		} else {
 			this._bFocusByOpen = true;
 		}
-	
+
 	};
-	
+
 	/**
 	 * Ensures the given listbox is 'cleaned-up'.
 	 * @param {sap.ui.commons.ListBox} oListBox the listBox to clean up
@@ -1117,7 +1149,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		this._Opening = undefined;
 		return this;
 	};
-	
+
 	/**
 	 * Returns an array of ListItems matching given rValFilter.
 	 *
@@ -1137,7 +1169,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		return aTmpItems;
 	};
-	
+
 	/**
 	 * Enriches provided array of listitems with history if history entries matching given rFilter exist.
 	 *
@@ -1160,7 +1192,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				j++;
 			}
 		}
-	
+
 		if (aNewItems.length > 0) {
 			var sSepId = sIdPrefix + "separator",
 				oSeparator = this._getSeparator(sSepId);
@@ -1169,7 +1201,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		aItems.unshift.apply(aItems, aNewItems);
 		return aNewItems;
 	};
-	
+
 	/**
 	 * Returns the separator instance for this DropdownBox.
 	 * If sSepId is given, this id will be used to either find or create the Separator.
@@ -1184,23 +1216,23 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		return this.__oSeparator || null;
 	};
-	
-	
+
+
 	//***************************************************
 	// Overwritten methods from API
 	//***************************************************
-	
+
 	/* overwrite standard generated fireChange method */
 	DropdownBox.prototype.fireChange = function(mArguments) {
 		this.fireEvent("change", mArguments);
 		if (mArguments.newValue && (this.getMaxHistoryItems() > 0)) {
 			this._oHistory.add(mArguments.newValue);
 		}
-	
+
 		this._sWantedValue = undefined;
 		return this;
 	};
-	
+
 	/* overrides generated setValue-method */
 	DropdownBox.prototype.setValue = function(sValue, bNotSetSelectedKey) {
 		// normalize 'empty'  values
@@ -1209,7 +1241,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			sText,
 			bValueOK = false,
 			sFirstEnabledValue;
-	
+
 		// it might be necessary to also check for history... but as this should only contain valid entries, don't worry.
 		for (var i = 0, l = aItems.length; i < l && !bValueOK; i++) {
 			var oItem = aItems[i];
@@ -1220,7 +1252,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			}
 			bValueOK = sText === sValue && bEnabled;
 		}
-	
+
 		// only set the value in case the given one is valid
 		if (bValueOK) {
 			ComboBox.prototype.setValue.call(this, sValue, bNotSetSelectedKey);
@@ -1232,43 +1264,44 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			// remember wanted value for check if items are updated
 			this._sWantedValue = sValue;
 		}
-	
+
 		return this;
 	};
-	
-	
+
+
 	//***********************************************************
 	//Focus information handling and rendering related
 	//***********************************************************
-	
+
 	/**
 	 * Applies the focus info and ensures the typeAhead feature is re-established again.
 	 *
 	 * @param {object} oFocusInfo the focus information belonging to this dropdown
+	 * @returns {sap.ui.commons.DropdownBox} DropdownBox
 	 * @private
 	 */
 	DropdownBox.prototype.applyFocusInfo = function(oFocusInfo){
-	 var $Inp = jQuery(this.getInputDomRef());
-	 if (jQuery.sap.startsWithIgnoreCase(this.getValue(), oFocusInfo.sTypedChars)) {
-		 $Inp.val(oFocusInfo.sTypedChars);
-		 this.focus();
-		 if (!this.getSelectedItemId() || sap.ui.getCore().byId(this.getSelectedItemId()).getText() != oFocusInfo.sTypedChars) {
-			// text entred before and is not the currently selected item -> just restore type-ahead
-			 this._doTypeAhead(oFocusInfo.sTypedChars, "");
+		var $Inp = jQuery(this.getInputDomRef());
+		if (jQuery.sap.startsWithIgnoreCase(this.getValue(), oFocusInfo.sTypedChars)) {
+			$Inp.val(oFocusInfo.sTypedChars);
+			this.focus();
+			if (!this.getSelectedItemId() || sap.ui.getCore().byId(this.getSelectedItemId()).getText() != oFocusInfo.sTypedChars) {
+				// text entred before and is not the currently selected item -> just restore type-ahead
+				this._doTypeAhead(oFocusInfo.sTypedChars, "");
+			}
+			if (!this._Opening && (!this.oPopup || !this.oPopup.isOpen())) {
+				// as popup is not open restore listbox item like on popup close
+				this._cleanupClose(this._getListBox());
+			}
+		} else {
+			oFocusInfo.sTypedChars = "";
+			//	 $Inp.val(this.getValue()); // enable if really needed
+			this.focus();
+			this._doSelect();
 		}
-		 if (!this._Opening && (!this.oPopup || !this.oPopup.isOpen())) {
-			 // as popup is not open restore listbox item like on popup close
-			 this._cleanupClose(this._getListBox());
-		 }
-	 } else {
-		 oFocusInfo.sTypedChars = "";
-	//	 $Inp.val(this.getValue()); // enable if really needed
-		 this.focus();
-		 this._doSelect();
-	 }
-	 return this;
+		return this;
 	};
-	
+
 	/*
 	 * Handle the sapfocusleave pseudo event and ensure that when the focus moves to the list box,
 	 * the check change functionality (incl. fireChange) is not triggered.
@@ -1277,7 +1310,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @protected
 	 */
 	DropdownBox.prototype.onsapfocusleave = function(oEvent) {
-	
+
 		var oLB = this._getListBox();
 		if (oEvent.relatedControlId && jQuery.sap.containsOrEquals(oLB.getFocusDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 			this.focus();
@@ -1293,12 +1326,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 					this._cleanupClose(this._getListBox());
 				}
 			}
-	
+
 			sap.ui.commons.TextField.prototype.onsapfocusleave.apply(this, arguments);
 		}
-	
+
 	};
-	
+
 	/**
 	 * Extends the method inherited from sap.ui.core.Element by providing information on Search Help access (if needed)
 	 *
@@ -1320,12 +1353,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			return (sTooltipString ? sTooltipString + " - " : "") + sSearchHelp;
 		}
 	};
-	
-	
+
+
 	//***************************************************
 	// Handling of list events
 	//***************************************************
-	
+
 	/**
 	 * This method is attached to the ListBox instance when it is open
 	 * to handle the click event occurring in the ListBox.
@@ -1333,11 +1366,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * If clicked on SearchHelp entry triggers the appropriate handling
 	 *
 	 * @param {sap.ui.base.Event} oControlEvent The event that was raised by the Listbox
+	 * @return {sap.ui.core.ListItem} item
 	 * @private
 	 */
 	DropdownBox.prototype._handleSelect = function(oControlEvent) {
 		if (this._searchHelpItem && oControlEvent.getParameter("selectedItem") === this._searchHelpItem[0]) {
-			var oEvent = jQuery.Event("sapshow");
+			var oEvent = new jQuery.Event("sapshow");
 			oEvent.which = jQuery.sap.KeyCodes.F4;
 			this.onsapshow(oEvent);
 		} else {
@@ -1371,17 +1405,17 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 					}
 				}
 			}
-	
+
 			this._sWantedValue = undefined;
 			return ComboBox.prototype._handleSelect.apply(this, arguments);
 		}
 	};
-	
-	
+
+
 	//***************************************************
 	// API method implementation
 	//***************************************************
-	
+
 	/**
 	 * Overwrite of Setter for property <code>searchHelpEnabled</code>.
 	 * This method accepts additional parameter to be compatiple with the
@@ -1397,9 +1431,9 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpEnabled = function(bEnabled, sText, sAdditionalText, sIcon) {
-	
+
 		this.setProperty("searchHelpEnabled", bEnabled);
-	
+
 		// set additional optional properties
 		if (sText) {
 			this.setProperty("searchHelpText", sText);
@@ -1416,7 +1450,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		} else {
 			sIcon = this.getSearchHelpIcon();
 		}
-	
+
 		if (bEnabled) {
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 			if ( rb ) {
@@ -1445,10 +1479,10 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				this._searchHelpItem = null;
 			}
 		}
-	
+
 		return this;
 	};
-	
+
 	/**
 	 * Overwrite of Setter for property <code>searchHelpText</code>.
 	 *
@@ -1459,13 +1493,13 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpText = function(sSearchHelpText) {
-	 this.setProperty("searchHelpText", sSearchHelpText);
-	
-	 this.setSearchHelpEnabled(this.getSearchHelpEnabled(), sSearchHelpText, this.getSearchHelpAdditionalText(), this.getSearchHelpIcon());
-	
-	 return this;
+		this.setProperty("searchHelpText", sSearchHelpText);
+
+		this.setSearchHelpEnabled(this.getSearchHelpEnabled(), sSearchHelpText, this.getSearchHelpAdditionalText(), this.getSearchHelpIcon());
+
+		return this;
 	};
-	
+
 	/**
 	 * Overwrite of Setter for property <code>searchHelpAdditionalText</code>.
 	 *
@@ -1476,13 +1510,13 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpAdditionalText = function(sSearchHelpAdditionalText) {
-	 this.setProperty("searchHelpAdditionalText", sSearchHelpAdditionalText);
-	
-	 this.setSearchHelpEnabled(this.getSearchHelpEnabled(), this.getSearchHelpText(), sSearchHelpAdditionalText, this.getSearchHelpIcon());
-	
-	 return this;
+		this.setProperty("searchHelpAdditionalText", sSearchHelpAdditionalText);
+
+		this.setSearchHelpEnabled(this.getSearchHelpEnabled(), this.getSearchHelpText(), sSearchHelpAdditionalText, this.getSearchHelpIcon());
+
+		return this;
 	};
-	
+
 	/**
 	 * Overwrite of Setter for property <code>searchHelpIcon</code>.
 	 *
@@ -1493,44 +1527,49 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpIcon = function(sSearchHelpIcon) {
-	 this.setProperty("searchHelpIcon", sSearchHelpIcon);
-	
-	 this.setSearchHelpEnabled(this.getSearchHelpEnabled(), this.getSearchHelpText(), this.getSearchHelpAdditionalText(), sSearchHelpIcon);
-	
-	 return this;
+		this.setProperty("searchHelpIcon", sSearchHelpIcon);
+
+		this.setSearchHelpEnabled(this.getSearchHelpEnabled(), this.getSearchHelpText(), this.getSearchHelpAdditionalText(), sSearchHelpIcon);
+
+		return this;
 	};
-	
+
 	/**
 	 * Check if value fits to items. If not, set to first item
+	 * @return {string} value
 	 * @private
 	 */
 	DropdownBox.prototype.checkValueInItems = function() {
-	
+
 		var sValue = this.getValue();
 		var aItems = this.getItems();
 		// save and restore wanted item
 		var sWantedSelectedKey = this._sWantedSelectedKey;
 		var sWantedSelectedItemId = this._sWantedSelectedItemId;
-	
+
 		// only check the value in the items when items are available
 		// TODO: reset the value?
 		if (aItems && aItems.length > 0) {
-	
+
 			var bValueOK = false;
 			var sFirstEnabledValue;
-	
+			var i = 0, l = 0;
+			var oItem;
+			var bEnabled = false;
+			var sText = "";
+
 			if (this._sWantedValue) {
 				// value set but item not exists -> check now
-				for (var i = 0, l = aItems.length; i < l && !bValueOK; i++) {
-					var oItem = aItems[i];
-					var bEnabled = oItem.getEnabled();
-					var sText = oItem.getText();
+				for (i = 0, l = aItems.length; i < l && !bValueOK; i++) {
+					oItem = aItems[i];
+					bEnabled = oItem.getEnabled();
+					sText = oItem.getText();
 					if ( bEnabled && !sFirstEnabledValue) {
 						sFirstEnabledValue = sText;
 					}
 					bValueOK = sText === this._sWantedValue && bEnabled;
 				}
-	
+
 				if (bValueOK) {
 					sValue = this._sWantedValue;
 					this._sWantedValue = undefined;
@@ -1539,48 +1578,48 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 					ComboBox.prototype.setValue.call(this, sValue);
 				}
 			}
-	
+
 			if (!bValueOK) {
-				for (var i = 0, l = aItems.length; i < l && !bValueOK; i++) {
-					var oItem = aItems[i];
-					var bEnabled = oItem.getEnabled();
-					var sText = oItem.getText();
+				for (i = 0, l = aItems.length; i < l && !bValueOK; i++) {
+					oItem = aItems[i];
+					bEnabled = oItem.getEnabled();
+					sText = oItem.getText();
 					if ( bEnabled && !sFirstEnabledValue) {
 						sFirstEnabledValue = sText;
 					}
 					bValueOK = sText === sValue && bEnabled;
 				}
 			}
-	
+
 			if (!bValueOK) {
 				sValue = sFirstEnabledValue;
 				ComboBox.prototype.setValue.call(this, sValue);
 			}
-	
+
 		} else {
 			// no items
 			sValue = "";
 			ComboBox.prototype.setValue.call(this, sValue);
-	
+
 		}
-	
+
 		this._sWantedSelectedKey = sWantedSelectedKey;
 		this._sWantedSelectedItemId = sWantedSelectedItemId;
 		return sValue;
-	
+
 	};
-	
+
 	/*
 	 * Overwrite generated setter to delete old history items if not longer needed
 	 */
 	DropdownBox.prototype.setMaxHistoryItems = function(iMaxHistoryItems) {
-	
+
 		var iOldMaxHistoryItems = this.getMaxHistoryItems();
 		var sIdPrefix = this.getId() + "-h-";
 		var oItem;
-	
+
 		this.setProperty('maxHistoryItems', iMaxHistoryItems, true); // No re-rendering
-	
+
 		if (iMaxHistoryItems < iOldMaxHistoryItems) {
 			// delete not longer visible history items
 			var oListBox = this._getListBox();
@@ -1598,26 +1637,25 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		// new items are added automatically by opening listbox (no support to change property while 
 		// listbox is open)
-	
+
 	};
-	
+
 
 	/**
 	 * Using this method the history of the DropdownBox can be cleared.
 	 * This might be necessary if the items of the DropdownBox have changed. Otherwise invalid items may appear in the history.
 	 *
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DropdownBox.prototype.clearHistory = function() {
-	
+
 		this._oHistory.clear();
-	
+
 		var sIdPrefix = this.getId() + "-h-";
 		var oListBox = this._getListBox();
 		var oItem;
-	
+
 		for (var i = 0; i < this.getMaxHistoryItems(); i++) {
 			oItem = sap.ui.getCore().byId(sIdPrefix + i);
 			if (oItem) {
@@ -1629,25 +1667,25 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			// remove separator but do not destroy it because it might be used again
 			oListBox.removeItem(this.__oSeparator);
 		}
-	
+
 	};
-	
+
 	DropdownBox.prototype.ondrop = function(oEvent) {
-	
+
 		// dropping text in DropdownBox makes no sense.
 		oEvent.preventDefault();
-	
+
 	};
-	
+
 	/*
 	 * in ComboBox an empty selected Key is not allowed (execute same logig as for defined keys)
 	 */
-	ComboBox.prototype._isSetEmptySelectedKeyAllowed = function() {
-	
-			return false;
-	
+	DropdownBox.prototype._isSetEmptySelectedKeyAllowed = function() {
+
+		return false;
+
 	};
-	
+
 
 	return DropdownBox;
 

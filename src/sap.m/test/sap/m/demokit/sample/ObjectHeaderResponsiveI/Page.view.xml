@@ -7,9 +7,10 @@
 	<ObjectHeader
 		id="oh1"
 		responsive="true"
+		fullScreenOptimized="true"
 		binding="{/ProductCollection/0}"
 		intro="{Description}"
-		title="{Name}"
+		title="Long title truncated to 80 chars on all devices and to 50 chars on phone portrait"
 		number="{Price}"
 		numberUnit="{CurrencyCode}"
 		showMarkers="true"

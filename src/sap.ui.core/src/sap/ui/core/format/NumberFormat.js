@@ -38,7 +38,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * <li>showMeasure: Show the measure according to the format in the formatted string</li>
 	 * <li>style: either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
 	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by maxFractionDigits.
-	 *  This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode} or a function which will be used for rounding the number. The function
+	 *  Rounding will only be applied, if the passed value if of type number. This can be assigned by value in 
+	 *  {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode} or a function which will be used for rounding the number. The function
 	 *  is called with two parameters: the number and how many decimal digits should be reserved.</li>
 	 * </ul>
 	 * For format options which are not specified default values according to the type and locale settings are used.
@@ -443,11 +444,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * @public
 	 */
 	NumberFormat.prototype.format = function(oValue, sMeasure) {
-		// oValue may come with string type, convert it to a number
-		if (typeof oValue === "string") {
-			oValue = parseFloat(oValue);
-		}
-
 		var sIntegerPart = "",
 			sFractionPart = "",
 			sGroupedIntegerPart = "",
@@ -470,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		}
 
 		if (oOptions.type == NumberFormat.PERCENT) {
-			oValue = shiftDecimalPoint(oValue, 2);
+			oValue = shiftDecimalPoint(+oValue, 2);
 		}
 
 		//handle measure
@@ -485,7 +481,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// If the number of fraction digits are equal or less than oOptions.maxFractionDigits, the
 		// number isn't changed. After this operation, the number of fraction digits is
 		// equal or less than oOptions.maxFractionDigits.
-		oValue = rounding(oValue, oOptions);
+		if (typeof oValue == "number") {
+			oValue = rounding(oValue, oOptions);
+		}
+		
 		sNumber = this.convertToDecimal(oValue);
 
 		if (sNumber == "NaN") {
@@ -517,6 +516,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// fraction part length
 		if (sFractionPart.length < oOptions.minFractionDigits) {
 			sFractionPart = jQuery.sap.padRight(sFractionPart, "0", oOptions.minFractionDigits);
+		} 
+		else if (sFractionPart.length > oOptions.maxFractionDigits) {
+			sFractionPart = sFractionPart.substr(0, oOptions.maxFractionDigits);
 		}
 
 		// grouping

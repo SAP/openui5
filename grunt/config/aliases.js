@@ -151,8 +151,13 @@ module.exports = function(grunt, config) {
 					var hash = result.stdout;
 					grunt.config('lastchange', hash);
 					grunt.log.writeln('lastchange: ' + hash);
+				} else {
+					// do not fail if e.g. git command is not found or no git repo exists
+					// log the error instead
+					grunt.log.error('could not read lastchange:');
+					grunt.log.errorlns(error.message);
 				}
-				done(error);
+				done();
 			});
 
 		},

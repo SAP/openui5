@@ -2,17 +2,17 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>sap.m.ObjectHeader - Responsive</title>
 		<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<style>
 		.label {
-			font-weight:bold;
+			font-weight: bold;
 			padding: 3rem 1rem 1rem;
 			width: auto;
-			white-space: normal; 
+			white-space: normal;
 		}
 		</style>
 		<script>
@@ -41,43 +41,40 @@
 			sap.ui.getCore().setModel(model);
 
 			// create and add app
-			var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
+			var app = new sap.m.App("myApp");
 			app.placeAt("body");
 
 			var label1 = new sap.m.Label({
-				text: "ObjectHeader with states (2), no markers, IconTabBar with 3 text tabs."
+				text: "ObjectHeader in fullScreenOptimized mode with states (2), no markers"
+			}).addStyleClass("label");
+
+			var label1Small = new sap.m.Label({
+				text: "ObjectHeader in Master / Detail mode (fullScreenOptimized = false) with states (2), no markers"
 			}).addStyleClass("label");
 
 			var label2 = new sap.m.Label({
-				text: "ObjectHeader with no states + IconTabBar with 13 tabs."
+				text: "ObjectHeader with no states and very long title which should be truncated to 80 chars on all devices except on phone portrait where it is truncated to 50 chars"
 			}).addStyleClass("label");
 
 			var label3 = new sap.m.Label({
-				text: "ObjectHeader with no states + IconTabBar with 2 tabs (markers)"
+				text: "ObjectHeader with markers and arrow"
 			}).addStyleClass("label");
-			
+
 			var label3a = new sap.m.Label({
-				text: "ObjectHeader with no states + IconTabBar with 2 tabs (no markers)"
+				text: "ObjectHeader with arrow and no markers"
 			}).addStyleClass("label");
 
 			var label4 = new sap.m.Label({
-				text: "ObjectHeader with 8 states (progressBar) + IconTabBar with 1 tab."
+				text: "ObjectHeader in fullScreenOptimized mode container with active title with 8 states (progressBar)."
 			}).addStyleClass("label");
 
-			var label5 = new sap.m.Label({
-				text: "ObjectHeader with 3 states + IconTabBar with 1 tabs (no markers)."
+			var label4Small = new sap.m.Label({
+				text: "ObjectHeader in Master / Detail mode container with active title with 8 states (progressBar)."
 			}).addStyleClass("label");
 
-			var label6 = new sap.m.Label({
-				text: "Full Blown ObjectHeader with states, markers, ... + IconTabBar with 4 tabs condensed"
-			}).addStyleClass("label");
-			
+
 			var label7 = new sap.m.Label({
-				text: "Full Blown ObjectHeader with states (3), markers, no tabs"
-			}).addStyleClass("label");
-			
-			var label8 = new sap.m.Label({
-				text: "Full Blown ObjectHeader with states (2), markers, ... + IconTabBar with 3 tabs"
+				text: "ObjectHeader with short title with markers, states (3), no tabs"
 			}).addStyleClass("label");
 
 			var label9 = new sap.m.Label({
@@ -89,15 +86,15 @@
 			}).addStyleClass("label");
 
 			var label11 = new sap.m.Label({
-				text: "Full Blown ObjectHeader, 2 states, 3 tabs and no number/unit"
+				text: "ObjectHeader, 2 states and NO number/unit"
 			}).addStyleClass("label");
 
 			var label11a = new sap.m.Label({
-				text: "Full Blown ObjectHeader, 2 states, 3 tabs and no number/unit (no markers)"
+				text: "ObjectHeader, 2 states and NO number/unit (no markers)"
 			}).addStyleClass("label");
 
 			var label12 = new sap.m.Label({
-				text: "ObjectHeader with no title"
+				text: "ObjectHeader with NO TITLE will through warning in the console"
 			}).addStyleClass("label");
 			var label13 = new sap.m.Label({
 				text: "ObjectHeader with title and 2 attribute and more than 7 tabs"
@@ -109,15 +106,16 @@
 				text: "ObjectHeader with no markers, no tabs, and states"
 			}).addStyleClass("label");
 
-			/* use case 1: full blow object header + 4 tabs with content in iconTabBar */
-
 			var oh1 = new sap.m.ObjectHeader("oh1", {
 				responsive: true,
-				backgroundDesign: "Translucent",
+				backgroundDesign: "Solid",
 				intro: "Type XS",
-				title: "Flat Screen",
+				title: "Example 1 Large container",
+				titleActive: true,
+				titlePress: function(){ alert('you click the title');},
 				number: "624,00",
 				numberUnit: "Euro",
+				fullScreenOptimized: true,
 				showMarkers: false,
 				markFlagged: true,
 				markFavorite: true,
@@ -133,8 +131,8 @@
 					new sap.m.ObjectStatus({
 						title: "Approval",
 						text: "Pending",
-						state: sap.ui.core.ValueState.Warning
-		
+						state: sap.ui.core.ValueState.Success
+
 					})
 				]
 			});
@@ -150,7 +148,7 @@
 						content: [
 							new sap.m.Label({
 								text: "Here goes the info content..."
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -164,7 +162,7 @@
 							})
 						]
 					}),
-					
+
 					new sap.m.IconTabFilter({
 						text: "Attachments",
 						key: "key4",
@@ -181,18 +179,89 @@
 			// connect IconTabBar and ObjectHeader
 			oh1.setHeaderContainer(itb1);
 
-			/* use case 2: object header with no states + iconTabBar with many tabs */
-
-			var oh2 = new sap.m.ObjectHeader("oh2", {
+			var oh1Small = new sap.m.ObjectHeader("oh1Small", {
 				responsive: true,
-				title: "An apple a day keeps the doctor away",
-				icon: "sap-icon://nutrition-activity",
-				number: "3.624,00",
+				backgroundDesign: "Translucent",
+				intro: "Type XS",
+				title: "Example 2 Small container",
+				number: "624,00",
 				numberUnit: "Euro",
-				showMarkers: true,
+				fullScreenOptimized: false,
+				showMarkers: false,
 				markFlagged: true,
 				markFavorite: true,
 				numberState: sap.ui.core.ValueState.Success,
+				attributes: [
+					new sap.m.ObjectAttribute({
+						title: "Manufacturer",
+						text: "ACME Corp",
+						active: true
+					})
+				],
+				statuses: [
+					new sap.m.ObjectStatus({
+						title: "Approval",
+						text: "Pending",
+						state: sap.ui.core.ValueState.Warning
+
+					})
+				]
+			});
+
+			var itb1Small = new sap.m.IconTabBar("itb1Small", {
+				selectedKey: "key3",
+				upperCase: true,
+				items: [
+					new sap.m.IconTabFilter({
+						text: "Info",
+						iconColor: sap.ui.core.IconColor.Default,
+						key: "key1",
+						content: [
+							new sap.m.Label({
+								text: "Here goes the info content..."
+							})
+						]
+					}),
+					new sap.m.IconTabFilter({
+						text: "Notes",
+						iconColor: sap.ui.core.IconColor.Default,
+						count: "2",
+						key: "key2",
+						content: [
+							new sap.m.Label({
+								text: "Notes go here..."
+							})
+						]
+					}),
+
+					new sap.m.IconTabFilter({
+						text: "Attachments",
+						key: "key4",
+						count: "3",
+						content: [
+							new sap.m.Label({
+								text:'Attachments go here...'
+							})
+						]
+					})
+				]
+			});
+
+			// connect IconTabBar and ObjectHeader
+			oh1Small.setHeaderContainer(itb1Small);
+
+
+			var oh2 = new sap.m.ObjectHeader("oh2", {
+				responsive: true,
+				title: "Ex3 very long title truncated to 50 characters on phone portrait and to 80 on other devices",
+				icon: "sap-icon://nutrition-activity",
+				iconActive: true,
+				number: "33233333.624,00",
+				numberUnit: "Euro long currency",
+				showMarkers: true,
+				markFlagged: true,
+				markFavorite: true,
+				numberState: sap.ui.core.ValueState.Success
 			});
 
 			var itb2 = new sap.m.IconTabBar("itb2", {
@@ -206,7 +275,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -217,7 +286,7 @@
 						content: [
 							new sap.m.Input({
 								placeholder: "input placeholder"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -231,7 +300,7 @@
 									jQuery.sap.require("sap.m.MessageBox");
 									sap.m.MessageBox.alert("Link was clicked!");
 								}
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -243,7 +312,7 @@
 								text:'hallo',
 								target: "_blank",
 								href: "http://www.sap.com/"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -253,7 +322,7 @@
 						content: [
 							new sap.m.Label({
 							text: "alert alert alert"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -264,7 +333,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -275,7 +344,7 @@
 						content: [
 							new sap.m.Input({
 								placeholder: "input placeholder"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -285,7 +354,7 @@
 						content: [
 							new sap.m.RatingIndicator({
 								value: 3
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -295,7 +364,7 @@
 						content: [
 							new sap.m.Text({
 								text : "Tab Notes\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea  dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. Pellentesque tincidunt fermentum lectus, eu luctus mi ultrices quis. Sed luctus nulla sit amet sapien consequat quis pretium eros tincidunt. Nullam quam erat, ultricies in malesuada non, tincidunt at nibh. Curabitur nec lectus et justo auctor tincidunt. In rhoncus risus vitae turpis suscipit eget porta metus facilisis. Vestibulum bibendum vehicula velit eu porta. Donec tincidunt rutrum lacus at egestas. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque eu velit non quam facilisis ullamcorper.\rUt faucibus, dolor eu congue fringilla, libero leo dignissim eros, dignissim porta eros augue id orci. Phasellus in enim sed orci hendrerit accumsan. Vestibulum nibh libero, viverra sit amet pulvinar quis, molestie placerat velit. Suspendisse fringilla venenatis eleifend. Etiam in eros augue. Donec elit leo, aliquet nec vestibulum eu, blandit a lacus. Quisque ullamcorper consectetur lectus, cursus aliquam dolor consequat eu.\rProin orci turpis, rhoncus et egestas vitae, gravida nec diam. Pellentesque ante nisl, interdum id dictum ut, scelerisque at neque. Morbi egestas lobortis vestibulum. Nunc metus purus, facilisis id interdum at, rutrum at ante. Etiam euismod ultrices magna, sit amet hendrerit enim tempor sed. Quisque lacinia tempus risus, in feugiat leo dictum sit amet. Vestibulum non erat massa, ut placerat velit. In quis neque est, sed eleifend orci. Nulla ullamcorper porttitor cursus. Sed a massa tortor. Curabitur auctor, turpis et congue viverra, turpis sem eleifend justo, ut pellentesque nisl orci non leo. Ut vitae nibh eu ligula feugiat mollis vel a erat. Vivamus vel turpis auctor lorem fringilla blandit sit amet sit amet nulla. Fusce tempus lacus sit amet felis auctor fermentum."
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -305,7 +374,7 @@
 						content: [
 							new sap.m.Label({
 							text: "alert alert alert"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -316,7 +385,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -327,7 +396,7 @@
 						content: [
 							new sap.m.Input({
 								placeholder: "input placeholder"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -337,7 +406,7 @@
 						content: [
 							new sap.m.RatingIndicator({
 								value: 3
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -347,7 +416,7 @@
 						content: [
 							new sap.m.Text({
 								text : "Tab Notes\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea  dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. Pellentesque tincidunt fermentum lectus, eu luctus mi ultrices quis. Sed luctus nulla sit amet sapien consequat quis pretium eros tincidunt. Nullam quam erat, ultricies in malesuada non, tincidunt at nibh. Curabitur nec lectus et justo auctor tincidunt. In rhoncus risus vitae turpis suscipit eget porta metus facilisis. Vestibulum bibendum vehicula velit eu porta. Donec tincidunt rutrum lacus at egestas. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque eu velit non quam facilisis ullamcorper.\rUt faucibus, dolor eu congue fringilla, libero leo dignissim eros, dignissim porta eros augue id orci. Phasellus in enim sed orci hendrerit accumsan. Vestibulum nibh libero, viverra sit amet pulvinar quis, molestie placerat velit. Suspendisse fringilla venenatis eleifend. Etiam in eros augue. Donec elit leo, aliquet nec vestibulum eu, blandit a lacus. Quisque ullamcorper consectetur lectus, cursus aliquam dolor consequat eu.\rProin orci turpis, rhoncus et egestas vitae, gravida nec diam. Pellentesque ante nisl, interdum id dictum ut, scelerisque at neque. Morbi egestas lobortis vestibulum. Nunc metus purus, facilisis id interdum at, rutrum at ante. Etiam euismod ultrices magna, sit amet hendrerit enim tempor sed. Quisque lacinia tempus risus, in feugiat leo dictum sit amet. Vestibulum non erat massa, ut placerat velit. In quis neque est, sed eleifend orci. Nulla ullamcorper porttitor cursus. Sed a massa tortor. Curabitur auctor, turpis et congue viverra, turpis sem eleifend justo, ut pellentesque nisl orci non leo. Ut vitae nibh eu ligula feugiat mollis vel a erat. Vivamus vel turpis auctor lorem fringilla blandit sit amet sit amet nulla. Fusce tempus lacus sit amet felis auctor fermentum."
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -357,7 +426,7 @@
 						content: [
 							new sap.m.Label({
 							text: "alert alert alert"
-							}),
+							})
 						]
 					})
 				]
@@ -371,9 +440,9 @@
 			var titleSelectorEventHandler = function(oEvent) {
 				domRef = oEvent.getParameters().domRef;
 				var popover = new sap.m.Popover({
-					   placement: sap.m.PlacementType.Bottom,
-					   showHeader: true,
-					   content: new sap.m.List({
+						placement: sap.m.PlacementType.Bottom,
+						showHeader: true,
+						content: new sap.m.List({
 							 mode: "SingleSelectMaster",
 							 includeItemInSelection : true,
 							 select : function (evt) {
@@ -386,41 +455,39 @@
 										  selected : true
 									}),
 									new sap.m.StandardListItem({
-										  title : "Lorem ipsum",
+										  title : "Lorem ipsum"
 									}),
 									new sap.m.StandardListItem({
-										  title : "Lorem ipsum dolor sit amet et sineat",
+										  title : "Lorem ipsum dolor sit amet et sineat"
 									}),
 									new sap.m.StandardListItem({
-										  title : "Lorem ipsum",
+										  title : "Lorem ipsum"
 									}),
 									new sap.m.ActionListItem({
-										  text : "Lorem ipsum",
+										  text : "Lorem ipsum"
 									}),
 									new sap.m.ActionListItem({
-										  text : "Lorem ipsum",
+										  text : "Lorem ipsum"
 									})
 							 ] //end of item
-					   }) // end of content
+					}) // end of content
 				}); //end of popover
 				popover.openBy(domRef);
 			}
-			
 
-			/* use case 3: object header with no states + iconTabBar with 2 tabs */
 
 			var oh3 = new sap.m.ObjectHeader("oh3", {
 				responsive: true,
-				title: "An apple a day keeps the doctor away",
+				title: "An apple a day keeps the doctor away An apple a day keeps the doctor away",
 				icon: "sap-icon://nutrition-activity",
-				number: "3.624,00",
+				number: "3.624.123.456.789.111.222.333,00",
 				numberUnit: "here we have a long currency Euro",
 				showTitleSelector : true,
 				titleSelectorPress : titleSelectorEventHandler,
 				showMarkers: true,
 				markFlagged: true,
 				markFavorite: true,
-				numberState: sap.ui.core.ValueState.Success,
+				numberState: sap.ui.core.ValueState.Success
 			});
 
 			var itb3 = new sap.m.IconTabBar("itb3", {
@@ -434,7 +501,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -445,7 +512,7 @@
 						content: [
 							new sap.m.Input({
 								placeholder: "input placeholder"
-							}),
+							})
 						]
 					})
 				]
@@ -454,17 +521,15 @@
 			// connect IconTabBar and ObjectHeader
 			oh3.setHeaderContainer(itb3);
 
-			/* use case 3a: object header with no states + iconTabBar with 2 tabs and no markers*/
-
 			var oh3a = new sap.m.ObjectHeader("oh3a", {
 				responsive: true,
-				title: "An apple a day keeps the doctor away",
+				title: "An apple a day keeps the doctor away An apple a day keeps the doctor away An apple a day keeps the doctor away An apple a day keeps the doctor away An apple a day keeps the doctor away",
 				icon: "sap-icon://nutrition-activity",
 				number: "3.624,00",
 				numberUnit: "here we have a long currency Euro",
 				showTitleSelector : true,
 				titleSelectorPress : titleSelectorEventHandler,
-				numberState: sap.ui.core.ValueState.Success,
+				numberState: sap.ui.core.ValueState.Success
 			});
 
 			var itb3a = new sap.m.IconTabBar("itb3a", {
@@ -478,7 +543,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -489,7 +554,7 @@
 						content: [
 							new sap.m.Input({
 								placeholder: "input placeholder"
-							}),
+							})
 						]
 					})
 				]
@@ -497,8 +562,6 @@
 
 			// connect IconTabBar and ObjectHeader
 			oh3a.setHeaderContainer(itb3a);
-
-			/* use case 4: object header with 8 states + iconTabBar with 1 tab */
 
 			var oh4 = new sap.m.ObjectHeader("oh4", {
 				responsive: true,
@@ -511,9 +574,15 @@
 				titleSelectorPress : titleSelectorEventHandler,
 				introActive: true,
 				titleActive: true,
+				fullScreenOptimized: true,
 				showMarkers: true,
 				markFlagged: true,
 				numberState: sap.ui.core.ValueState.Success,
+				_objectNumber : [ new sap.m.ObjectNumber({
+					number: "3.624,00",
+					numberUnit: "Euro Dollar Lev",
+					numberState: sap.ui.core.ValueState.Success
+				})],
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Order Shipping slow"
 				}), new sap.m.ProgressIndicator("oh18-pi", {
@@ -541,7 +610,7 @@
 				}) ],
 				attributes : [ new sap.m.ObjectAttribute({
 					title: "Order Shipping",
-					text: "Order Shipping Flag"
+					text: "Ñagçyfox"
 				}), new sap.m.ObjectAttribute({
 					title: "Order Shipping",
 					text: "Order Shipping Speed"
@@ -550,11 +619,11 @@
 					text: "Order Shipping Progress Indicator"
 				}), new sap.m.ObjectAttribute({
 					title: "Check this",
-					text: "Productivity"
+					text: "Ñagçyfox"
 				}), new sap.m.ObjectAttribute({
 					title: "Productivity",
 					text: "Progress Indicator"
-				}), ],
+				})]
 			});
 
 			var itb4 = new sap.m.IconTabBar("itb4", {
@@ -568,7 +637,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					})
 				]
@@ -577,34 +646,65 @@
 			// connect IconTabBar and ObjectHeader
 			oh4.setHeaderContainer(itb4);
 
-			/* use case 5: object header with 3 attributes + iconTabBar with 1 tab */
-
-			var oh5 = new sap.m.ObjectHeader("oh5", {
+			var oh4Small = new sap.m.ObjectHeader("oh4Small", {
 				responsive: true,
 				intro: "On behalf of John Smith Ñagçyfox",
 				title: "An apple a day keeps the doctor away",
-				number: "3.624,00",
-				numberUnit: "Euro",
-				showTitleSelector : true,
+				icon: "sap-icon://nutrition-activity",
+				number: "335.624,00",
+				numberUnit: "EURO",
+				showTitleSelector: true,
 				titleSelectorPress : titleSelectorEventHandler,
-				showMarkers: false,
+				introActive: true,
+				titleActive: true,
+				fullScreenOptimized: false,
+				showMarkers: true,
 				markFlagged: true,
 				numberState: sap.ui.core.ValueState.Success,
-				attributes : [
-					new sap.m.ObjectAttribute({
-						title: "Order Shipping",
-						text: "Flag"
-					}), new sap.m.ObjectAttribute({
-						title: "Order Shipping",
-						text: "Speed"
-					}), new sap.m.ObjectAttribute({
-						title: "Order Boring",
-						text: "Mode"
-					})
-				],
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Order Shipping slow"
+				}), new sap.m.ProgressIndicator("oh18-piSmall", {
+					visible : true,
+					enabled : true,
+					barColor : sap.ui.core.BarColor.NEUTRAL,
+					//displayValue : '56%',
+					percentValue : 56,
+					showValue : false,
+					height : '1rem'
+				}), new sap.m.ObjectStatus({
+					title: "Productivity",
+					text : "High"
+				}), new sap.m.ProgressIndicator("oh18-pi2Small", {
+					visible : true,
+					enabled : true,
+					barColor : sap.ui.core.BarColor.NEUTRAL,
+					//displayValue : '90%',
+					percentValue : 90,
+					showValue : false,
+					height : '1rem'
+				}), new sap.m.ObjectStatus({
+					title: "Quality ",
+					text: "Good"
+				}) ],
+				attributes : [ new sap.m.ObjectAttribute({
+					title: "Order Shipping",
+					text: "Order Shipping Flag"
+				}), new sap.m.ObjectAttribute({
+					title: "Order Shipping",
+					text: "Order Shipping Speed"
+				}), new sap.m.ObjectAttribute({
+					title: "Order Shipping",
+					text: "Order Shipping Progress Indicator"
+				}), new sap.m.ObjectAttribute({
+					title: "Check this",
+					text: "Productivity"
+				}), new sap.m.ObjectAttribute({
+					title: "Productivity",
+					text: "Progress Indicator"
+				})]
 			});
 
-			var itb5 = new sap.m.IconTabBar("itb5", {
+			var itb4Small = new sap.m.IconTabBar("itb4Small", {
 				selectedKey: "key13",
 				items: [
 					new sap.m.IconTabFilter({
@@ -615,94 +715,6 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
-						]
-					})
-				]
-			});
-
-			// connect IconTabBar and ObjectHeader
-			oh5.setHeaderContainer(itb5);
-
-			/* use case 1: as first example, but condensed */
-
-			var oh6 = new sap.m.ObjectHeader("oh6", {
-				responsive: true,
-				title: "An apple a day keeps the doctor away",
-				icon: "sap-icon://nutrition-activity",
-				number: "3.624,00",
-				numberUnit: "Euro",
-				condensed: true,
-				backgroundDesign: "Solid",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
-				numberState: sap.ui.core.ValueState.Success,
-				attributes: [
-					new sap.m.ObjectAttribute({
-						title: "Manufacturer",
-						text: "ACME Corp"
-					})
-				],
-				statuses: [
-					new sap.m.ObjectStatus({
-						title: "Approval",
-						text: "Pending",
-						icon: "sap-icon://inbox",
-						state: sap.ui.core.ValueState.Warning
-					})
-				]
-			});
-
-			var itb6 = new sap.m.IconTabBar("itb6", {
-				showHeader: false,
-				selectedKey: "key3",
-				items: [
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://hint",
-						iconColor: sap.ui.core.IconColor.Default,
-						count: "3222",
-						key: "key1",
-						content: [
-							new sap.m.Label({
-								text: "info info info"
-							}),
-						]
-					}),
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://activity-items",
-						iconColor: sap.ui.core.IconColor.Default,
-						count: "322",
-						key: "key2",
-						content: [
-							new sap.m.Input({
-								placeholder: "input placeholder"
-							})
-						]
-					}),
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://attachment",
-						iconColor: sap.ui.core.IconColor.Default,
-						key: "key3",
-						content: [
-							new sap.m.Link({
-								text:'hallo',
-								press: function () {
-									jQuery.sap.require("sap.m.MessageBox");
-									sap.m.MessageBox.alert("Link was clicked!");
-								}
-							})
-						]
-					}),
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://collaborate",
-						key: "key4",
-						count: "537733",
-						content: [
-							new sap.m.Link({
-								text:'hallo',
-								target: "_blank",
-								href: "http://www.sap.com/"
 							})
 						]
 					})
@@ -710,9 +722,8 @@
 			});
 
 			// connect IconTabBar and ObjectHeader
-			oh6.setHeaderContainer(itb6);
+			oh4Small.setHeaderContainer(itb4Small);
 
-			/* use case 7 like use case 1 but with only 1 attribute */
 			var oh7 = new sap.m.ObjectHeader("oh7", {
 				responsive: true,
 				backgroundDesign: "Translucent",
@@ -746,7 +757,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -779,77 +790,6 @@
 			// connect IconTabBar and ObjectHeader
 			oh7.setHeaderContainer(itb7);
 
-
-			/*use case 8 like use case 1  but with many attributes */
-			var oh8 = new sap.m.ObjectHeader("oh8", {
-				responsive: true,
-				title: "This is a title",
-				number: "1.684,00",
-				numberUnit: "Euro",
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
-				numberState: sap.ui.core.ValueState.Success,
-				attributes: [
-					new sap.m.ObjectAttribute({
-						title: "Manufacturer",
-						text: "ACME Corp"
-					 })
-				],
-				statuses: [
-					new sap.m.ObjectStatus({
-						title: "Approval",
-						text: "Pending",
-						icon: "sap-icon://inbox",
-						state: sap.ui.core.ValueState.Warning
-				 	})
-				]
-			});
-
-			var itb8 = new sap.m.IconTabBar("itb8", {
-				selectedKey: "key1",
-				items: [
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://hint",
-						iconColor: sap.ui.core.IconColor.Default,
-						count: "3222",
-						key: "key1",
-						content: [
-							new sap.m.Label({
-								text: "info info info"
-							}),
-						]
-					}),
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://activity-items",
-						iconColor: sap.ui.core.IconColor.Default,
-						count: "322",
-						key: "key2",
-						content: [
-							new sap.m.Input({
-								placeholder: "input placeholder"
-							})
-						]
-					}),
-					new sap.m.IconTabFilter({
-						icon: "sap-icon://collaborate",
-						key: "key4",
-						count: "537733",
-						content: [
-							new sap.m.Link({
-								text:'hallo',
-								target: "_blank",
-								href: "http://www.sap.com/"
-							})
-						]
-					})
-				]
-			});
-
-			// connect IconTabBar and ObjectHeader
-			oh8.setHeaderContainer(itb8);
-
-			/*use case 9 object header + header container */
 			var oh9 = new sap.m.ObjectHeader("oh9", {
 				responsive: true,
 				//intro: "On behalf of John Smith Ñagçyfox",
@@ -904,7 +844,7 @@
 											title: "APAC",
 											value: 197,
 											color: "Critical"
-										}),
+										})
 									]
 								})
 							}),
@@ -952,118 +892,118 @@
 
 			if (sap.suite) {
 				var xml = '' +
-				'<HeaderContainer xmlns="sap.suite.ui.commons" xmlns:m="sap.m" scrollStep="200" scrollTime="500">' + 
-				'	<items>' + 
-				'		<HeaderCell>' + 
-				'			<north>' + 
-				'				<HeaderCellItem height="90%">' + 
-				'					<content>' + 
-				'						<ComparisonChart size="S" scale="M">' + 
-				'					        <data>' + 
-				'					        	<ComparisonData	title="Americas" value="234" color="Good"/>' + 
-				'					        	<ComparisonData	title="EMEA" value="97" color="Error"/>' + 
-				'					        	<ComparisonData	title="APAC" value="197" color="Critical"/>' + 
-				'					        </data>' + 
-				'				        </ComparisonChart>' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</north>' + 
-				'			<south>' + 
-				'				<HeaderCellItem height="10%">' + 
-				'					<content>' + 
-				'						<m:Label text="EUR, Compare across regions" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</south>' + 
-				'		</HeaderCell>' + 
-				'		<HeaderCell>' + 
-				'			<north>' + 
-				'				<HeaderCellItem height="90%">' + 
-				'					<content>' + 
-				'						<NumericContent size="S" scale="M" value="1.96" valueColor="Error" indicator="Up"/>' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</north>' + 
-				'			<south>' + 
-				'				<HeaderCellItem height="10%">' + 
-				'					<content>' + 
-				'						<m:Label text="EUR, Current Quarter" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</south>' + 
-				'		</HeaderCell>' + 
-				'		<HeaderCell>' + 
-				'			<north>' + 
-				'				<HeaderCellItem height="90%">' + 
-				'					<content>' + 
-				'						<BulletChart size="S" scale="M" targetValue="75" targetValueLabel="75c" minValue="0" maxValue="150">' + 
-				'							<actual>' + 
-				'								<BulletChartData value="125" color="Error"/>' + 
-				'							</actual>' + 
-				'							<thresholds>' + 
-				'								<BulletChartData value="35" color="Critical"/>' + 
-				'								<BulletChartData value="115" color="Error"/>' + 
-				'							</thresholds>' + 
-				'						</BulletChart> ' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</north>' + 
-				'			<south>' + 
-				'				<HeaderCellItem height="10%">' + 
-				'					<content>' + 
-				'						<m:Label text="EUR, Current and Target" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</south>' + 
-				'		</HeaderCell>' + 
-				'		<HeaderCell>' + 
-				'			<north>' + 
-				'				<HeaderCellItem height="90%">' + 
-				'					<content>' + 
-				'						<NumericContent size="S" value="3" icon="sap-icon://travel-expense" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</north>' + 
-				'			<south>' + 
-				'				<HeaderCellItem height="10%">' + 
-				'					<content>' + 
-				'						<m:Label text="Leave Requests" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</south>' + 
-				'		</HeaderCell>' + 
-				'		<HeaderCell>' + 
-				'			<north>' + 
-				'				<HeaderCellItem height="90%">' + 
-				'					<content>' + 
-				'						<NumericContent size="S" value="9" icon="sap-icon://locked" /> ' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</north>' + 
-				'			<south>' + 
-				'				<HeaderCellItem height="10%">' + 
-				'					<content>' + 
-				'						<m:Label text="Hours since last Activity" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</south>' + 
-				'		</HeaderCell>' + 
-				'		<HeaderCell>' + 
-				'			<north>' + 
-				'				<HeaderCellItem height="90%">' + 
-				'					<content>' + 
-				'						<NumericContent size="S" scale="M" value="1.25" valueColor="Good" indicator="Up"/>' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</north>' + 
-				'			<south>' + 
-				'				<HeaderCellItem height="10%">' + 
-				'					<content>' + 
-				'						<m:Label text="EUR, Current Quarter" />' + 
-				'					</content>' + 
-				'				</HeaderCellItem>' + 
-				'			</south>' + 
-				'		</HeaderCell>' + 
+				'<HeaderContainer xmlns="sap.suite.ui.commons" xmlns:m="sap.m" scrollStep="200" scrollTime="500">' +
+				'	<items>' +
+				'		<HeaderCell>' +
+				'			<north>' +
+				'				<HeaderCellItem height="90%">' +
+				'					<content>' +
+				'						<ComparisonChart size="S" scale="M">' +
+				'					        <data>' +
+				'					        	<ComparisonData	title="Americas" value="234" color="Good"/>' +
+				'					        	<ComparisonData	title="EMEA" value="97" color="Error"/>' +
+				'					        	<ComparisonData	title="APAC" value="197" color="Critical"/>' +
+				'					        </data>' +
+				'				        </ComparisonChart>' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</north>' +
+				'			<south>' +
+				'				<HeaderCellItem height="10%">' +
+				'					<content>' +
+				'						<m:Label text="EUR, Compare across regions" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</south>' +
+				'		</HeaderCell>' +
+				'		<HeaderCell>' +
+				'			<north>' +
+				'				<HeaderCellItem height="90%">' +
+				'					<content>' +
+				'						<NumericContent size="S" scale="M" value="1.96" valueColor="Error" indicator="Up"/>' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</north>' +
+				'			<south>' +
+				'				<HeaderCellItem height="10%">' +
+				'					<content>' +
+				'						<m:Label text="EUR, Current Quarter" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</south>' +
+				'		</HeaderCell>' +
+				'		<HeaderCell>' +
+				'			<north>' +
+				'				<HeaderCellItem height="90%">' +
+				'					<content>' +
+				'						<BulletChart size="S" scale="M" targetValue="75" targetValueLabel="75c" minValue="0" maxValue="150">' +
+				'							<actual>' +
+				'								<BulletChartData value="125" color="Error"/>' +
+				'							</actual>' +
+				'							<thresholds>' +
+				'								<BulletChartData value="35" color="Critical"/>' +
+				'								<BulletChartData value="115" color="Error"/>' +
+				'							</thresholds>' +
+				'						</BulletChart> ' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</north>' +
+				'			<south>' +
+				'				<HeaderCellItem height="10%">' +
+				'					<content>' +
+				'						<m:Label text="EUR, Current and Target" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</south>' +
+				'		</HeaderCell>' +
+				'		<HeaderCell>' +
+				'			<north>' +
+				'				<HeaderCellItem height="90%">' +
+				'					<content>' +
+				'						<NumericContent size="S" value="3" icon="sap-icon://travel-expense" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</north>' +
+				'			<south>' +
+				'				<HeaderCellItem height="10%">' +
+				'					<content>' +
+				'						<m:Label text="Leave Requests" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</south>' +
+				'		</HeaderCell>' +
+				'		<HeaderCell>' +
+				'			<north>' +
+				'				<HeaderCellItem height="90%">' +
+				'					<content>' +
+				'						<NumericContent size="S" value="9" icon="sap-icon://locked" /> ' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</north>' +
+				'			<south>' +
+				'				<HeaderCellItem height="10%">' +
+				'					<content>' +
+				'						<m:Label text="Hours since last Activity" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</south>' +
+				'		</HeaderCell>' +
+				'		<HeaderCell>' +
+				'			<north>' +
+				'				<HeaderCellItem height="90%">' +
+				'					<content>' +
+				'						<NumericContent size="S" scale="M" value="1.25" valueColor="Good" indicator="Up"/>' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</north>' +
+				'			<south>' +
+				'				<HeaderCellItem height="10%">' +
+				'					<content>' +
+				'						<m:Label text="EUR, Current Quarter" />' +
+				'					</content>' +
+				'				</HeaderCellItem>' +
+				'			</south>' +
+				'		</HeaderCell>' +
 				'	</items>'+
 				'</HeaderContainer>';
 				oFragmentHeaderContainer = sap.ui.xmlfragment({fragmentContent:xml});
@@ -1071,15 +1011,13 @@
 				oh10.setHeaderContainer(oFragmentHeaderContainer);
 			}
 
-			/* use case 11 is like use case 1  but with many attributes */
 			var oh11 = new sap.m.ObjectHeader("oh11", {
 				responsive: true,
 				intro: "On behalf of John Smith Ñagçyfox",
-				title: "This is a title",
+				title: "11 This is a title",
 				showMarkers: true,
 				markFlagged: true,
 				markFavorite: true,
-				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
 						title: "Manufacturer",
@@ -1107,7 +1045,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1139,12 +1077,10 @@
 			// connect IconTabBar and ObjectHeader
 			oh11.setHeaderContainer(itb11);
 
-			/* use case 11a like use case 11  but with no markers */
 			var oh11a = new sap.m.ObjectHeader("oh11a", {
 				responsive: true,
 				intro: "On behalf of John Smith Ñagçyfox",
 				title: "This is a title",
-				numberState: sap.ui.core.ValueState.Success,
 				attributes: [
 					new sap.m.ObjectAttribute({
 						title: "Manufacturer",
@@ -1172,7 +1108,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1204,7 +1140,6 @@
 			// connect IconTabBar and ObjectHeader
 			oh11a.setHeaderContainer(itb11a);
 
-			/*use case 8 like use case 1  but with many attributes */
 			var oh12 = new sap.m.ObjectHeader("oh12", {
 				responsive: true,
 				number: "1.684,00",
@@ -1240,7 +1175,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1283,7 +1218,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1317,7 +1252,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1339,7 +1274,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1361,7 +1296,7 @@
 						content: [
 							new sap.m.Label({
 								text: "info info info"
-							}),
+							})
 						]
 					}),
 					new sap.m.IconTabFilter({
@@ -1379,17 +1314,18 @@
 			});
 
 			var oh13 = oh2.clone();
-			oh13.addAttribute(new sap.m.ObjectAttribute({text: "Attribut1"}));
-			oh13.addAttribute(new sap.m.ObjectAttribute({text: "Attribut2"}));
+			oh13.addAttribute(new sap.m.ObjectAttribute({text: "Attribute1"}));
+			oh13.addAttribute(new sap.m.ObjectAttribute({text: "Attribute2"}));
 			oh13.setHeaderContainer(itb13);
 
 			/* special case: responsive with markers, but not states, attributes, and tabs */
 			var oh14 = new sap.m.ObjectHeader("oh14", {
 				responsive: true,
 				intro: "On behalf of John Smith Ñagçyfox",
-				title: "This is a title",
+				title: "This is a title This is a title a very long title test if it will be truncated to 80 chars",
 				number: "1.684,00",
 				numberUnit: "Euro",
+				showTitleSelector : true,
 				showMarkers: true,
 				markFlagged: true,
 				markFavorite: true,
@@ -1406,12 +1342,14 @@
 				numberState: sap.ui.core.ValueState.Success
 			});
 
-			// create and add a page with icon tab bar 
+			// create and add a page with icon tab bar
 			var page = new sap.m.Page("page", {
 				title:"ObjectHeader (Responsive)",
 				content : [
 					label1,
 					oh1,
+					label1Small,
+					oh1Small,
 					label2,
 					oh2,
 					label3,
@@ -1420,22 +1358,12 @@
 					oh3a,
 					label4,
 					oh4,
-					label5,
-					oh5,
-					label6,
-					oh6,
+					label4Small,
+					oh4Small,
 					label7,
 					oh7,
-					label8,
-					oh8,
-					label9,
-					oh9,
-					label10,
-					oh10,
 					label11,
 					oh11,
-					label11a,
-					oh11a,
 					label12,
 					oh12,
 					label13,
@@ -1444,11 +1372,15 @@
 					oh14,
 					label15,
 					oh15,
-					new sap.m.Label({text: "THE END!"}), // placeholder to see content below
+					label9,
+					oh9,
+					label10,
+					oh10,
+					new sap.m.Label({text: "THE END!"}) // placeholder to see content below
 				]
 			});
 			app.addPage(page);
-		
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

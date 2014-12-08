@@ -54,7 +54,7 @@ public class ResourceServlet extends HttpServlet {
     
     String method = request.getMethod().toUpperCase();
     String path = request.getServletPath() + request.getPathInfo();
-    if (path == null || path != null && path.endsWith("/")) {
+    if (path == null || path.endsWith("/")) {
       
       // serve folder listing
       response.setStatus(HttpServletResponse.SC_OK);

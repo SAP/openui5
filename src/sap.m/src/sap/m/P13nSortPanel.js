@@ -78,22 +78,17 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						/**
 						 * event raised when a Item was added
 						 */
-						addSortItem : {
-							parameters : {
-
-								/**
-								 * item added
-								 */
-								newItem : {
-									type : "sap.m.P13nSortItem"
-								}
-							}
-						},
+						addSortItem : {},
 
 						/**
 						 * remove a sort item
 						 */
-						removeSortItem : {}
+						removeSortItem : {},
+						
+						/**								 
+						 * update a sort item
+						 */
+						updateSortItem : {}						
 					}
 				}
 			});
@@ -235,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 			};
 
-			// TODO ER:fast implementation, please check!
+			
 			P13nSortPanel.prototype.destroyItems = function() {
 				this.destroyAggregation("items");
 				if (this._oSortPanel) {
@@ -247,20 +242,48 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 			P13nSortPanel.prototype.addSortItem = function(oSortItem) {
 				this.addAggregation("sortItems", oSortItem);
 
-				var aConditions = [];
-
-				this.getSortItems().forEach(function(oSortItem_) {
-					aConditions.push({
-						key : oSortItem_.getKey(),
-						keyField : oSortItem_.getColumnKey(),
-						operation : oSortItem_.getOperation()
+				if (!this._bIgnoreBindCalls) {
+					var aConditions = [];
+					this.getSortItems().forEach(function(oSortItem_) {
+						aConditions.push({
+							key : oSortItem_.getKey(),
+							keyField : oSortItem_.getColumnKey(),
+							operation : oSortItem_.getOperation()
+						});
 					});
-				});
-
-				if (!this._bIgnoreAdd) {
 					this.setConditions(aConditions);
 				}
 			};
+			
+			P13nSortPanel.prototype.insertSortItem = function(oSortItem) {
+				this.insertAggregation("sortItems", oSortItem);
+				//TODO: implement this
+				return this;
+			};
+			
+			P13nSortPanel.prototype.removeSortItem = function(oSortItem) {
+				oSortItem = this.removeAggregation("sortItems", oSortItem);
+				
+				return oSortItem;
+			};
+			
+			P13nSortPanel.prototype.removeAllSortItems = function(){					
+				var aSortItems = this.removeAllAggregation("sortItems");
+
+				this.setConditions([]);
+				
+				return aSortItems;
+			};
+		
+			P13nSortPanel.prototype.destroySortItems = function(){
+				this.destroyAggregation("sortItems");
+				
+				if (!this._bIgnoreBindCalls) {
+					this.setConditions([]);
+				}
+				
+				return this;
+			};			
 
 			P13nSortPanel.prototype._handleDataChange = function() {
 				var that = this;
@@ -271,31 +294,39 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					var sKey = oEvent.getParameter("key");
 					var iIndex = oEvent.getParameter("index");
 					
+					var oSortItemData = null;
+					if (oNewData) {
+						var oSortItemData = new sap.m.P13nSortItem({
+							key : sKey,
+							columnKey : oNewData.keyField,
+							operation : oNewData.operation
+						});
+					}
+
 					if (sOperation === "update") {
 						var oSortItem = that.getSortItems()[iIndex];
 						if (oSortItem) {
 							oSortItem.setColumnKey(oNewData.keyField);
 							oSortItem.setOperation(oNewData.operation);
-
-							// sap.m.MessageToast.show("update SortItem ---> " + sKey);
 						}
+						that.fireUpdateSortItem({
+							key : sKey,
+							index : iIndex,
+							sortItemData: oSortItemData
+						});	
 					}
 					if (sOperation === "add") {
-						that._bIgnoreAdd = true;
-						var oSortItem = new sap.m.P13nSortItem({
-							key : sKey,
-							columnKey : oNewData.keyField,
-							operation : oNewData.operation
-						});
-
+						that._bIgnoreBindCalls = true;
 						that.fireAddSortItem({
+							key : sKey,
 							index : iIndex,
-							newItem : oSortItem
+							sortItemData: oSortItemData
 						});
-						that._bIgnoreAdd = false;
+						that._bIgnoreBindCalls = false;
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveSortItem({
+							key : sKey,
 							index : iIndex
 						});
 					}

@@ -6,7 +6,7 @@
 }
 
 /* if Panel is expandable, we do not wish toolbar to come with own border */
-.sapMPanelWrappingDivTb>.sapMPanelHdrExpandable.sapMTB {
+.sapMPanelWrappingDivTb > .sapMPanelHdrExpandable.sapMTB {
 	border-width: 0;
 }
 
@@ -14,7 +14,7 @@
 .sapMPanelHdr:not(.sapMPanelHdrExpandable),
 /* notice: sapMPanelWrappingDiv is available if Panel is expandable */
 .sapMPanelWrappingDiv,
-/* do not want border if expanded and if only header text */ 
+/* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
 	border-bottom: 1px solid @sapUiToolbarBorder;
 }
@@ -42,16 +42,13 @@
 }
 
 .sap-tablet .sapUiFioriObjectPage > section > .sapMPanel,
-.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel
-	{
+.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 	padding: 0 1rem;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-.sapMPanelHdrExpandable.sapMPanelHdr,.sapMPanelHdrExpandable.sapMTB-Transparent-CTX.sapMTB
-	{
+.sapMPanelHdrExpandable.sapMPanelHdr,
+.sapMPanelHdrExpandable.sapMTB-Transparent-CTX.sapMTB {
 	padding-left: 0;
 }
 

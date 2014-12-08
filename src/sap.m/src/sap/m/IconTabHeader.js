@@ -167,11 +167,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	
 		if (aItems.length > 0) {
-			if (!this.oSelectedItem || sSelectedKey && sSelectedKey !== this.oSelectedItem.getKey()) {
+			if (!this.oSelectedItem || sSelectedKey && sSelectedKey !== this.oSelectedItem._getNonEmptyKey()) {
 				if (sSelectedKey) {
 					// selected key was specified by API: set oSelectedItem to the item specified by key
 					for (; i < aItems.length; i++) {
-						if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getKey() === sSelectedKey) {
+						if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i]._getNonEmptyKey() === sSelectedKey) {
 							this.oSelectedItem = aItems[i];
 							break;
 						}
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 	
 			if (this.oSelectedItem) {
-				this.setProperty("selectedKey", this.oSelectedItem.getKey(), true);
+				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
 			}
 		}
 		
@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// adjust UI and internal variables if already rendered (otherwise taken care by onBeforeRendering)
 		if (this.$().length) {
 			for (; i < aItems.length; i++) {
-				if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getKey() === sKey) {
+				if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i]._getNonEmptyKey() === sKey) {
 					this.setSelectedItem(aItems[i], true);
 					break;
 				}
@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else {
 				// set new item
 				this.oSelectedItem = oItem;
-				this.setProperty("selectedKey", this.oSelectedItem.getKey(), true);
+				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
 	
 				//if the IconTabBar is not expandable and the content not expanded (which means content can never be expanded), we do not need
 				//to visualize the selection and we do not need to render the content
@@ -317,7 +317,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	
-		var sSelectedKey = this.oSelectedItem.getKey();
+		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
 		this.oSelectedItem = oItem;
 		this.setProperty("selectedKey", sSelectedKey, true);
 		
@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype.addItem = function(oItem) {
 		if (!(oItem instanceof sap.m.IconTabSeparator)) {
 			var sKey = oItem.getKey();
-			//check if key is a duplicate
+			// check if key is a duplicate
 			if (this._aTabKeys.indexOf(sKey) !== -1) {
 				jQuery.sap.log.warning("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
 			}
@@ -565,8 +565,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns icon of the requested arrow
 	 */
 	IconTabHeader.prototype._getScrollingArrow = function(sName) {
+		var src;
+		
+		if (sap.ui.Device.system.desktop) {
+			// use navigation arrows on desktop and win8 combi devices
+			src = "sap-icon://navigation-" + sName + "-arrow";
+		} else {
+			// use slim arrows on mobile devices
+			src = "sap-icon://slim-arrow-" + sName;
+		}
+		
 		var mProperties = {
-			src : "sap-icon://navigation-" + sName + "-arrow"
+			src : src
 		};
 		
 		var sSuffix = this._bTextOnly ? "TextOnly" : "";

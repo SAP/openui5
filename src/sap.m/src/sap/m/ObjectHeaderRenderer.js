@@ -1,4 +1,4 @@
-/*
+/**
  * @copyright
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
@@ -11,42 +11,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @namespace
 	 */
 	var ObjectHeaderRenderer = {};
-	
+
 	/**
 	 * Check if the object exists. In case object has _isEmpty() method then this method is called. If there is no such method then object is not empty.
-	 * 
+	 *
 	 * @param {sap.ui.core.Control}
 	 *            oObject to be checked
-	 * 
+	 *
 	 * @returns true is the object is not empty, false - otherwise.
-	 * 
 	 * @private
 	 */
 	ObjectHeaderRenderer._isEmptyObject = function(oObject) {
-	
+
 		if (!oObject) {
 			return true;
 		}
-	
+
 		if ((!oObject._isEmpty || !oObject._isEmpty()) && (!oObject.getVisible || oObject.getVisible())) {
 			return false;
 		}
 		return true;
 	};
-	
+
 	/**
 	 * Array is considered empty if it is null or undefined or has no controls or all the controls are empty.
-	 * 
+	 *
 	 * @param {sap.ui.core.Control[]}
 	 *            aArray array of controls to be checked
-	 * 
+	 *
 	 * @returns true if array is empty, false - otherwise.
 	 * @private
 	 */
 	ObjectHeaderRenderer._isEmptyArray = function(aArray) {
-	
+
 		if (aArray) {
-			for ( var i = 0; i < aArray.length; i++) {
+			for (var i = 0; i < aArray.length; i++) {
 				if (!ObjectHeaderRenderer._isEmptyObject(aArray[i])) {
 					return false;
 				}
@@ -54,191 +53,118 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		return true;
 	};
-	
+
 	/**
 	 * A row is considered empty if both input parameters are empty.
-	 * 
+	 *
 	 * @param {sap.ui.core.Control}
 	 *            aLeft control to be checked
-	 * 
+	 *
 	 * @param {sap.ui.core.Control[]}
 	 *            aRight array of controls to be checked
-	 * 
+	 *
 	 * @returns true if array is empty, false - otherwise.
 	 * @private
 	 */
 	ObjectHeaderRenderer._isEmptyRow = function(oLeft, aRight) {
-	
+
 		return ObjectHeaderRenderer._isEmptyObject(oLeft) && ObjectHeaderRenderer._isEmptyArray(aRight);
 	};
-	
+
 	/**
 	 * Render an array of controls.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * 
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 *
 	 * @param {sap.ui.core.Control[]}
 	 *            aObjects array of controls to be rendered
 	 * @private
 	 */
-	ObjectHeaderRenderer._renderObjects = function(rm, aObjects, oOH) {
-	
-		for ( var i = 0; i < aObjects.length; i++) {
+	ObjectHeaderRenderer._renderObjects = function(oRM, aObjects, oOH) {
+
+		for (var i = 0; i < aObjects.length; i++) {
 			if (aObjects[i] instanceof sap.ui.core.Control) {
-				this._renderChildControl(rm, oOH, aObjects[i]);
+				this._renderChildControl(oRM, oOH, aObjects[i]);
 			}
 		}
 	};
-	
+
 	/**
 	 * Returns the array of icons from ObjectHeader.
-	 * 
+	 *
 	 * @param {sap.m.ObjectHeader}
 	 *            oOH the ObjectHeader that contains icons
-	 * 
+	 *
 	 * @returns array of {sap.m.Image} controls
-	 * 
+	 *
 	 * @private
 	 */
 	ObjectHeaderRenderer._getIcons = function(oOH) {
-	
+
 		var icons = [];
-	
+
 		if (oOH.getShowMarkers()) {
 			oOH._oFavIcon.setVisible(oOH.getMarkFavorite());
 			oOH._oFlagIcon.setVisible(oOH.getMarkFlagged());
-	
+
 			icons.push(oOH._oPlaceholderIcon);
 			icons.push(oOH._oFavIcon);
 			icons.push(oOH._oFlagIcon);
 		}
-	
+
 		return icons;
 	};
-	
-	
-	
-	
+
 	/**
 	 * Renders the HTML for Attribute.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object to be rendered
 	 * @param {sap.m.ObjectAttribute}
 	 *            oAttr an attribute to be rendered
 	 * @param {boolean} bFullWidth set the attribute width to 100%
+	 * @private
 	 */
-	ObjectHeaderRenderer.renderAttribute = function(rm, oOH, oAttr, bFullWidth) {
-		rm.write("<div");
-		rm.addClass("sapMOHAttr");
-		rm.writeClasses();
+	ObjectHeaderRenderer._renderAttribute = function(oRM, oOH, oAttr, bFullWidth) {
+		oRM.write("<div");
+		oRM.addClass("sapMOHAttr");
+		oRM.writeClasses();
 		if (bFullWidth) {
-			rm.addStyle("width", "100%");
-			rm.writeStyles();
+			oRM.addStyle("width", "100%");
+			oRM.writeStyles();
 		}
-		rm.write(">");
-		this._renderChildControl(rm, oOH, oAttr);
-		rm.write("</div>");
+		oRM.write(">");
+		this._renderChildControl(oRM, oOH, oAttr);
+		oRM.write("</div>");
 	};
-	
+
 	/**
-	 * Renders the HTML for single line of Attribute and Status.
+	 * Validate the statuses control list to only display sap.m.ObjectStatus and
+	 * sap.m.ProgressIndicator and returns only the visible once that should be rendered
 	 * 
-	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object to be rendered
-	 * @param {sap.m.ObjectAttribute}
-	 *            oLeft an attribute to be rendered
-	 * @param {sap.ui.core.Control[]} aRight a status or Progress Indicator Array to be rendered
+	 * @private
 	 */
-	ObjectHeaderRenderer.renderRow = function(rm, oOH, oLeft, aRight) {
-	
-		if (ObjectHeaderRenderer._isEmptyRow(oLeft, aRight)) {
-			return; // nothing to render
+	ObjectHeaderRenderer._getVisibleStatuses = function(oOH) {
+		var aVisibleStatuses = [];
+
+		if (oOH.getFirstStatus() && oOH.getFirstStatus().getVisible()) {
+			aVisibleStatuses.push([oOH.getFirstStatus()]);
 		}
-	
-		rm.write("<div"); // Start attribute row container
-		rm.addClass("sapMOHAttrRow");
-		rm.writeClasses();
-		rm.write(">");
-	
-		if (!ObjectHeaderRenderer._isEmptyObject(oLeft)) {
-			this.renderAttribute(rm, oOH, oLeft, ObjectHeaderRenderer._isEmptyArray(aRight));
-		} else if (ObjectHeaderRenderer._isEmptyObject(oLeft) && !ObjectHeaderRenderer._isEmptyArray(aRight)) {
-			if (aRight[0] instanceof sap.m.ProgressIndicator) {
-				rm.write("<div");
-				rm.addClass("sapMOHAttr");
-				rm.writeClasses();
-				rm.write(">");
-				rm.write("</div>");
-			}
+		if (oOH.getSecondStatus() && oOH.getSecondStatus().getVisible()) {
+			aVisibleStatuses.push([oOH.getSecondStatus()]);
 		}
-	
-		if (!ObjectHeaderRenderer._isEmptyArray(aRight)) {
-			rm.write("<div");
-			if (aRight[0] instanceof sap.m.ProgressIndicator) {
-				rm.addClass("sapMOHStatusFixedWidth");
-			}
-			else if (aRight[0] instanceof sap.ui.core.Icon) {
-				rm.addClass("sapMOHStatusFixedWidth");
-				rm.addClass("sapMObjStatusMarker");
-			} else {
-				rm.addClass("sapMOHStatus");
-			}
-			rm.writeClasses();
-			rm.write(">");
-			ObjectHeaderRenderer._renderObjects(rm, aRight, oOH);
-			rm.write("</div>");
-		}
-	
-		rm.write("</div>"); // Start attribute row container
-	};
-	
-	/**
-	 * Renders the HTML for attributes and statuses, using the provided {@link sap.ui.core.RenderManager}. Validate the statuses control list to only display ObjectStatus and
-	 * ProgressIndicator
-	 * 
-	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object to be rendered
-	 */
-	ObjectHeaderRenderer.renderAttributesAndStatuses = function(rm, oOH) {
-	
-		var aAttribs = oOH.getAttributes();
-		var aVisibleAttribs = [];
-	
-		for (var i = 0; i < aAttribs.length; i ++) {
-			if (aAttribs[i].getVisible()) {
-				aVisibleAttribs.push(aAttribs[i]);
-			}
-		}
-	
-		var iAttribsLength = aVisibleAttribs.length;
-	
-		var aIconsAndStatuses = [];
-		var aIcons = ObjectHeaderRenderer._getIcons(oOH);
-		// flag and favorite are not rendered here in responsive mode
-		if (!oOH.getResponsive() && !ObjectHeaderRenderer._isEmptyArray(aIcons)) {
-			aIconsAndStatuses.push(aIcons);
-		}
-	
-		if (oOH.getFirstStatus()) {
-			aIconsAndStatuses.push([ oOH.getFirstStatus() ]);
-		}
-		if (oOH.getSecondStatus()) {
-			aIconsAndStatuses.push([ oOH.getSecondStatus() ]);
-		}
+
 		if (oOH.getStatuses()) {
 			var aStatuses = oOH.getStatuses();
 			for (var i = 0; i < aStatuses.length; i++) {
 				if (!aStatuses[i].getVisible || aStatuses[i].getVisible()) {
 					if (aStatuses[i] instanceof sap.m.ObjectStatus || aStatuses[i] instanceof sap.m.ProgressIndicator) {
-						aIconsAndStatuses.push([aStatuses[i]]);
+						aVisibleStatuses.push([aStatuses[i]]);
 					} else {
 						jQuery.sap.log.warning("Only sap.m.ObjectStatus or sap.m.ProgressIndicator are allowed in \"sap.m.ObjectHeader.statuses\" aggregation." + " Current object is "
 								+ aStatuses[i].constructor.getMetadata().getName() + " with id \"" + aStatuses[i].getId() + "\"");
@@ -246,755 +172,428 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				}
 			}
 		}
-	
-		var iIconsAndStatusesLength = aIconsAndStatuses.length;
-	
-		var iNoOfRows = iAttribsLength > iIconsAndStatusesLength ? iAttribsLength : iIconsAndStatusesLength;
-	
-		if (oOH.getResponsive()) {
-			this.renderRowResponsive(rm, oOH, aVisibleAttribs, aIconsAndStatuses);
-		} else {
-			for (var i = 0; i < iNoOfRows; i++) {
-				this.renderRow(rm, oOH, aVisibleAttribs[i], aIconsAndStatuses[i]);
-			}
-		}
 		
+		return aVisibleStatuses;
 	};
-	
+
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
-	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
+	 * Returns only the visible statuses and attributes that should be rendered
+	 *
+	 * @param {sap.m.ObjectHeader}
 	 *            oOH an object representation of the control that should be rendered
+	 * @private
 	 */
-	ObjectHeaderRenderer.renderNumber = function(rm, oOH) {
-		if (oOH.getNumber()) {
-			// Container for a number and a units qualifier.
-			rm.write("<div"); // Start Number/units container
-			rm.writeAttribute("id", oOH.getId() + "-numberdiv");
-			rm.addClass("sapMOHNumberDiv");
-			rm.writeClasses();
-			rm.write(">");
-	
-			rm.write("<span");
-			rm.writeAttribute("id", oOH.getId() + "-number");
-			rm.addClass("sapMOHNumber");
-			rm.addClass("sapMOHNumberState" + oOH.getNumberState());
-	
-			rm.writeClasses();
-			rm.write(">");
-			rm.writeEscaped(oOH.getNumber());
-	
-			rm.write("</span>");
-	
-			if (oOH.getNumberUnit()) {
-				rm.write("<span");
-				rm.writeAttribute("id", oOH.getId() + "-numberUnit");
-				rm.addClass("sapMOHNumberUnit");
-				rm.addClass("sapMOHNumberState" + oOH.getNumberState());
-				
-				rm.writeClasses();
-				rm.write(">");
-				rm.writeEscaped(oOH.getNumberUnit());
-				rm.write("</span>");
+	ObjectHeaderRenderer._getVisibleAttribsAndStatuses = function(oOH) {
+		var aResult = [],
+			aAttribs = oOH.getAttributes(),
+			aVisibleAttribs = [];
+
+		for (var j = 0; j < aAttribs.length; j ++) {
+			if (aAttribs[j].getVisible()) {
+				aVisibleAttribs.push(aAttribs[j]);
 			}
-	
-			rm.write("</div>"); // End Number/units container
 		}
+
+		var aVisibleStatuses = this._getVisibleStatuses(oOH);
+
+		aResult[0] = aVisibleAttribs;
+		aResult[1] = aVisibleStatuses;
+
+		return aResult;
 	};
-	
+
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 * Renders the HTML for single line of Attribute and Status.
+	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader}
+	 *            oOH an object to be rendered
+	 * @param {sap.m.ObjectAttribute}
+	 *            oLeft an attribute to be rendered
+	 * @param {sap.ui.core.Control[]} 
+	 * aRight a status or Progress Indicator Array to be rendered
+	 * @private
 	 */
-	ObjectHeaderRenderer.renderTitle = function(rm, oOH) {
-		// Start title text and title arrow container
-		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
-		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
-			rm.write("<div");
-			rm.addClass("sapMOHTitleAndArrow");
-			rm.writeClasses();
-			rm.write(">");
+	ObjectHeaderRenderer._renderRow = function(oRM, oOH, oLeft, aRight) {
+
+		if (ObjectHeaderRenderer._isEmptyRow(oLeft, aRight)) {
+			return; // nothing to render
 		}
-	
-		if (oOH.getTitle()) {
-			oOH._titleText.setText(oOH.getTitle());
-			rm.write("<span"); // Start Title Text container
-			rm.writeAttribute("id", oOH.getId() + "-title");
-			rm.addClass("sapMOHTitle");
-			if (oOH.getTitleActive()) {
-				rm.writeAttribute("tabindex", "0");
-				rm.addClass("sapMOHTitleActive");
+
+		oRM.write("<div"); // Start attribute row container
+		oRM.addClass("sapMOHAttrRow");
+		oRM.writeClasses();
+		oRM.write(">");
+
+		if (!ObjectHeaderRenderer._isEmptyObject(oLeft)) { // if the object with the attributes is not empty then render the attributes
+			this._renderAttribute(oRM, oOH, oLeft, ObjectHeaderRenderer._isEmptyArray(aRight));
+		} else if (ObjectHeaderRenderer._isEmptyObject(oLeft) && !ObjectHeaderRenderer._isEmptyArray(aRight)) { 
+			// if there are no attributes at all and the array containing statuses and progress indicators isn't empty
+			if (aRight[0] instanceof sap.m.ProgressIndicator) { // check if the first element in the array is progress indicator, and if it's so then place an empty "attribute" div before the progress indicator
+				oRM.write("<div");
+				oRM.addClass("sapMOHAttr");
+				oRM.writeClasses();
+				oRM.write(">");
+				oRM.write("</div>");
 			}
-			if (oOH.getShowTitleSelector()) {
-				rm.addClass("sapMOHTitleFollowArrow");
+		}
+
+		if (!ObjectHeaderRenderer._isEmptyArray(aRight)) { // check do we have statuses, icons or progress indicators and render them accordingly
+			oRM.write("<div");
+			if (aRight[0] instanceof sap.m.ProgressIndicator) {
+				oRM.addClass("sapMOHStatusFixedWidth");
 			}
-			rm.writeClasses();
-			rm.write(">");
-			// TODO: why is sapMOHTitle added here and to parent??? remove one
-			if (!oOH.getResponsive()) {
-				oOH._titleText.addStyleClass("sapMOHTitle");
+			else if (aRight[0] instanceof sap.ui.core.Icon) {
+				oRM.addClass("sapMOHStatusFixedWidth");
+				oRM.addClass("sapMObjStatusMarker");
+			} else {
+				oRM.addClass("sapMOHStatus");
 			}
-	
-			this._renderChildControl(rm, oOH, oOH._titleText);
-			rm.write("</span>"); // End Title Text container
+			oRM.writeClasses();
+			oRM.write(">");
+			ObjectHeaderRenderer._renderObjects(oRM, aRight, oOH);
+			oRM.write("</div>");
 		}
-	
-		if (oOH.getShowTitleSelector()) {
-			rm.write("<span"); // Start title arrow container
-			rm.addClass("sapMOHTitleArrow");
-			rm.writeClasses();
-			rm.write(">");
-			this._renderChildControl(rm, oOH, oOH._oTitleArrowIcon);
-			rm.write("</span>"); // end title arrow container
-		}
-	
-		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
-			rm.write("</div>"); // end title text and title arrow container
-		}
+
+		oRM.write("</div>"); // end attribute row container
 	};
-	
+
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 * Renders the HTML for attributes and statuses, using the provided {@link sap.ui.core.RenderManager}. Validate the statuses control list to only display ObjectStatus and
+	 * ProgressIndicator
+	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader}
+	 *            oOH an object to be rendered
+	 * @private
 	 */
-	ObjectHeaderRenderer.renderFullTitle = function(rm, oOH) {
-		if (!oOH.getNumber()) {
-			rm.addClass("sapMOHTitleDivFull");
-		}
-	};
-	
-	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
-	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
-	 */
-	ObjectHeaderRenderer.renderFullOH = function(rm, oOH) {
-		// Introductory text at the top of the item, like "On behalf of Julie..."
-		if (oOH.getIntro()) {
-			rm.write("<div");
-			rm.addClass("sapMOHIntro");
-			if (oOH.getIntroActive()) {
-				rm.addClass("sapMOHIntroActive");
-			}
-			rm.writeClasses();
-			rm.write(">");
-			rm.write("<span");
-			rm.writeAttribute("id", oOH.getId() + "-intro");
-			if (oOH.getIntroActive()) {
-				rm.writeAttribute("tabindex", "0");
-			}
-			rm.write(">");
-			rm.writeEscaped(oOH.getIntro());
-			rm.write("</span>");
-			rm.write("</div>");
-		}
-	
-		// Container for fields placed on the top half of the item, below the intro. This
-		// includes title icon, title, title arrow, number, and number units.
-		rm.write("<div"); // Start Top row container
-		rm.addClass("sapMOHTopRow");
-		rm.writeClasses();
-		rm.write(">");
-	
-		// Title container displayed to the left of the number and number units container.
-		rm.write("<div"); // Start Title container
-		rm.writeAttribute("id", oOH.getId() + "-titlediv");
-		rm.addClass("sapMOHTitleDiv");
-		if (oOH._hasIcon()) {
-			rm.addClass("sapMOHTitleIcon");
-		}
-		
-		this.renderFullTitle(rm, oOH);
-		rm.writeClasses();
-		rm.write(">");
-	
-		// Container for icon
-		if (oOH._hasIcon()) {
-			rm.write("<div"); // Start icon container
-			rm.addClass("sapMOHIcon");
-			if (oOH.getIconActive()) {
-				rm.writeAttribute("tabindex", "0");
-				rm.addClass("sapMPointer");
-			}
-			rm.writeClasses();
-			rm.write(">");
-			this._renderChildControl(rm, oOH, oOH._getImageControl());
-			rm.write("</div>"); // end icon container
-		}
-		
-		this.renderTitle(rm, oOH);
-		
-		rm.write("</div>"); // End Title container
-	
-		this.renderNumber(rm, oOH);
-		
-		rm.write("<div class=\"sapMOHDivider\"/>");
-		rm.write("</div>"); // End Top row container
-	
-		if (oOH._hasBottomContent()) {
-			rm.write("<div"); // Start Bottom row container
-			rm.addClass("sapMOHBottomRow");
-			rm.writeClasses();
-			rm.write(">");
-	
-			this.renderAttributesAndStatuses(rm, oOH);
-	
-			rm.write("<div class=\"sapMOHDivider\"/>");
-			rm.write("</div>"); // End Bottom row container
-		}
-	};
-	
-	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
-	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
-	 */
-	ObjectHeaderRenderer.renderCondensedOH = function(rm, oOH) {
-		// Title container displayed to the left of the number and number units container.
-		rm.write("<div"); // Start Title container
-		rm.writeAttribute("id", oOH.getId() + "-titlediv");
-		rm.addClass("sapMOHTitleDiv");
-		
-		this.renderFullTitle(rm, oOH);
-	
-		rm.writeClasses();
-		rm.write(">");
-		
-		this.renderTitle(rm, oOH);
-	
-		rm.write("</div>"); // End Title container
-	
-		this.renderNumber(rm, oOH);
-		
-		var oFirstAttr = oOH.getAttributes()[0];
-	
-		if (oFirstAttr && !oFirstAttr._isEmpty()) {
-			this.renderAttribute(rm, oOH, oFirstAttr);
-		}
-	};
-	
-	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
-	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.Control}
-	 *            oOH an object representation of the control that should be rendered
-	 */
-	ObjectHeaderRenderer.render = function(rm, oOH) {
-		
-		this._computeChildControlsToBeRendered(oOH);
-		
-		// return immediately if control is invisible
-		if (!oOH.getVisible()) {
-			this._cleanupNotRenderedChildControls(rm, oOH);
-			return;
-		}
-	
-		// responsive prototype
-		if (oOH.getResponsive()) {
-			this.renderResponsive(rm, oOH);
-			this._cleanupNotRenderedChildControls(rm, oOH);
-			return;
-		}
-	
-		// === old renderer, no changes here for downwards compatibility
-	
-		var bCondensed = oOH.getCondensed();
-		
-		rm.write("<div"); // Start Main container
-		rm.writeControlData(oOH);
-		rm.addClass("sapMOH");
-		if (bCondensed) {
-			rm.addClass("sapMOHC");
-			rm.addClass("sapMOHBg" + oOH.getBackgroundDesign());
-		}
-		
-		rm.writeClasses();
-		var sTooltip = oOH.getTooltip_AsString();
-		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
-		}
-	
-		rm.write(">");
-	
-		if (bCondensed) {
-			this.renderCondensedOH(rm, oOH);
-		} else {
-			this.renderFullOH(rm, oOH);
-		}
-		
-		rm.write("<div class=\"sapMOHLastDivider\"/>");
-	
-		rm.write("</div>"); // End Main container\
-		
-		this._cleanupNotRenderedChildControls(rm, oOH);
-	};
-	
-	/**** responsive rendering start (barely any methods from above are used in this part to not break old UIs, it replaces most parts of renderer) ****/
-	
-	ObjectHeaderRenderer.renderResponsive = function(oRm, oControl) {
-		var bCondensed,
-			bTitle = true, // TODO: determine whether title 
-			bMarkers = this.hasResponsiveMarkers(oControl),
-			bStates = this.hasResponsiveStates(oControl), // TODO: determine whether states need to be rendered or not
-			bTabs = this.hasResponsiveTabs(oControl),
-			oHeaderContainer = oControl.getHeaderContainer(),
-			// this is a switch for android < 4.4 special case in CSS
-			bSupportCalc = !(sap.ui.Device.os.name === "Android" && sap.ui.Device.os.version < 4.4 && sap.ui.Device.browser.name === "an" && sap.ui.Device.browser.version < 4.4);
-	
-		// do not render if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
-		// initialization
-		bCondensed = oControl.getCondensed();
-	
-		// start outer div (containing ObjectHeader and IconTabBar content div)
-		oRm.write('<div class="sapMOHROuter"');
-		oRm.writeControlData(oControl);
-		oRm.write(">");
-	
-		// start object wrapper div (containing the sections title, stats, tabs, markers)
-		oRm.write("<div");
-		oRm.addClass("sapMOH");
-		oRm.addClass("sapMOHR"); // this will allow to make a distinction for responsiveness in CSS
-		if (!bSupportCalc) {
-			oRm.addClass("sapMOHNoCalc");
-		}
-	
-		if (oControl.getHeaderContainer() instanceof sap.m.IconTabBar) {
-			oRm.addClass("sapMOHWithITB");
-		}
-		oRm.addClass("sapMOHBg" + oControl.getBackgroundDesign());
-		if (bCondensed) {
-			oRm.addClass("sapMOHC");
-		}
-	
-		if (oControl._iCountVisAttrStat <= 2) {
-			oRm.addClass("sapMOHStatesTwoOrLess");
-		} else if (oControl._iCountVisAttrStat <= 4) {
-			oRm.addClass("sapMOHStatesThreeOrFour");
-		} else {
-			oRm.addClass("sapMOHStatesFiveOrMore");
-		}
-	
-		if (!bMarkers) {
-			oRm.addClass("sapMOHNoMarkers");
-		}
-		if (!bTabs) {
-			oRm.addClass("sapMOHNoTabs");
-		}
-		if (oControl._iCountVisTabs > 7) {
-			oRm.addClass("sapMOHTabsMoreThanSeven");
-		}
-	
-		oRm.writeClasses();
-	
-		// write tooltip
-		var sTooltip = oControl.getTooltip_AsString();
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
-		}
-		oRm.write(">");
-	
-		if (bMarkers) {
-			this.renderResponsiveMarkers(oRm, oControl, bTitle, bMarkers, bStates, bTabs);
-		}
-		this.renderResponsiveTitle(oRm, oControl, bTitle, bMarkers, bStates, bTabs);
-		if (bStates) {
-			this.renderResponsiveStates(oRm, oControl, bTitle, bMarkers, bStates, bTabs);
-		}
-		if (bTabs) {
-			this.renderResponsiveTabs(oRm, oControl, bTitle, bMarkers, bStates, bTabs);
-		}
-	
-		// end wrapper div
-		oRm.write("</div>");
-	
-		// render the IconTabBar content section after the object header div
-		if (oHeaderContainer && oHeaderContainer instanceof sap.m.IconTabBar) {
-			this._renderChildControl(oRm, oControl, oHeaderContainer);
-		}
-	
-		// end outer div
-		oRm.write("</div>");
-	};
-	
-	// first building block for the responsive header, it contains
-	// - intro
-	// - image
-	// - title
-	// - number and unit
-	ObjectHeaderRenderer.renderResponsiveTitle = function(oRm, oControl, bTitle, bMarkers, bStates, bTabs) {
-		// Title container displayed to the left of the number and number units container.
-		oRm.write("<div"); // Start Title container
-		oRm.writeAttribute("id", oControl.getId() + "-titlediv");
-		oRm.addClass("sapMOHTitleDiv");
-		if (!bTabs) {
-			oRm.addClass("sapMOHTitleDivNoTabs");
-		}
-		if (!bStates) {
-			oRm.addClass("sapMOHTitleDivNoStates");
-		}
-		if (oControl._hasIcon()) {
-			oRm.addClass("sapMOHTitleIcon");
-		}
-		if (!oControl.getNumber()) {
-			oRm.addClass("sapMOHTitleDivFull");
-		}
-		oRm.writeClasses();
-		oRm.write(">");
-	
-		if (!oControl.getNumber()) {
-			oRm.addClass("sapMOHTitleDivFull");
-		}
-	
-		// TODO: put this in behaviour
-		oControl._titleText.setMaxLines(2);
-	
-		this.renderTitleResponsive(oRm, oControl);
-	
-		// render the title icon in a separate container
-		if (oControl._hasIcon()) {
-			oRm.write("<div");
-			oRm.addClass("sapMOHIcon");
-			if (oControl.getIconActive()) {
-				oRm.addClass("sapMPointer");
-			}
-			oRm.writeClasses();
-			oRm.write(">");
-			this._renderChildControl(oRm, oControl, oControl._getImageControl());
-			oRm.write("</div>"); // end icon container
-		}
-	
-		this.renderResponsiveNumber(oRm, oControl);
-	
-		oRm.write("</div>"); // End Title container
-	};
-	
-	// helper function to determine wheter markers need to be rendered or not
-	// TODO: put this in control
-	ObjectHeaderRenderer.hasResponsiveMarkers = function (oControl) {
-		return (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged()));
-	};
-		
-	// render flag and favorite icon with float right (in wrapper div)
-	ObjectHeaderRenderer.renderResponsiveMarkers = function(oRm, oControl) {
-		var aIcons = [],
-			i = 0;
-	
-		// load icons based on control state
-		if (oControl.getShowMarkers()) {
-			oControl._oFavIcon.setVisible(oControl.getMarkFavorite());
-			oControl._oFlagIcon.setVisible(oControl.getMarkFlagged());
-			// TODO: check if placeholder can be safely removed now (see comment in behaviour) 
-			//aIcons.push(oControl._oPlaceholderIcon);
-			aIcons.push(oControl._oFavIcon);
-			aIcons.push(oControl._oFlagIcon);
-	
-			// render icons
-			oRm.write("<div class=\"sapMObjStatusMarker\">");
-			for (; i < aIcons.length; i++) {
-				this._renderChildControl(oRm, oControl, aIcons[i]);
-			}
-			oRm.write("</div>");
-		}
-	};
-	
-	ObjectHeaderRenderer.renderResponsiveNumber = function(oRm, oControl) {
-		var oObjectNumber = oControl.getAggregation("_objectNumber");
-		if (oObjectNumber && oObjectNumber.getNumber()) {
-			oObjectNumber.toggleStyleClass("sapMObjectNumberFull", !oControl.getTitle());
-			this._renderChildControl(oRm, oControl, oObjectNumber);
-		}
-	};
-	
-	//helper function to determine wheter states need to be rendered or not
-	//TODO: put this in control and make it nicer (it is too conplex, copied logic from above)
-	ObjectHeaderRenderer.hasResponsiveStates = function (oControl) {
-		var aAttribs = oControl.getAttributes();
+	ObjectHeaderRenderer._renderAttributesAndStatuses = function(oRM, oOH) {
+		var aAttribs = oOH.getAttributes();
 		var aVisibleAttribs = [];
-	
-		if (!(oControl._hasAttributes() || oControl._hasStatus())) {
-			oControl._iCountVisAttrStat = 0;
-			return false;
-		}
-	
-		for ( var i = 0; i < aAttribs.length; i ++) {
-			if (aAttribs[i].getVisible()) {
-				aVisibleAttribs.push(aAttribs[i]);
+
+		for (var j = 0; j < aAttribs.length; j ++) {
+			if (aAttribs[j].getVisible()) {
+				aVisibleAttribs.push(aAttribs[j]);
 			}
 		}
-	
+
+		var iAttribsLength = aVisibleAttribs.length;
+
 		var aIconsAndStatuses = [];
-		var aIcons = ObjectHeaderRenderer._getIcons(oControl);
+		var aIcons = ObjectHeaderRenderer._getIcons(oOH);
 		// flag and favorite are not rendered here in responsive mode
-		if (!oControl.getResponsive() && !ObjectHeaderRenderer._isEmptyArray(aIcons)) {
+		if (!oOH.getResponsive() && !ObjectHeaderRenderer._isEmptyArray(aIcons)) {
 			aIconsAndStatuses.push(aIcons);
 		}
-	
-		if (oControl.getFirstStatus() && oControl.getFirstStatus().getVisible()) {
-			aIconsAndStatuses.push([ oControl.getFirstStatus() ]);
-		}
-		if (oControl.getSecondStatus() && oControl.getSecondStatus().getVisible()) {
-			aIconsAndStatuses.push([ oControl.getSecondStatus() ]);
-		}
-		var aStatuses = oControl.getStatuses();
-		for (var i = 0; i < aStatuses.length; i++) {
-			if (!aStatuses[i].getVisible || aStatuses[i].getVisible()) {
-				if (aStatuses[i] instanceof sap.m.ObjectStatus || aStatuses[i] instanceof sap.m.ProgressIndicator) {
-					aIconsAndStatuses.push([ aStatuses[i] ]);
-				} else {
-					jQuery.sap.log.warning("Only sap.m.ObjectStatus or sap.m.ProgressIndicator are allowed in \"sap.m.ObjectHeader.statuses\" aggregation." + " Current object is "
-							+ aStatuses[i].constructor.getMetadata().getName() + " with id \"" + aStatuses[i].getId() + "\"");
-				}
-			}
-		}
-	
-		//this value needs to be adapted when an attribute or status is set to visible(false) after rendering
-		oControl._iCountVisAttrStat = aVisibleAttribs.length + aIconsAndStatuses.length;
-	
-		return !!(aVisibleAttribs.length + aIconsAndStatuses.length);
-	};
-	
-	ObjectHeaderRenderer.renderResponsiveStates = function(oRm, oControl, bTitle, bMarkers, bStates, bTabs) {
-		oRm.write("<div");
-		oRm.addClass("sapMOHStates");
-	//	if (oControl._iCountVisAttrStat <= 2) {
-	//		oRm.addClass("sapMOHStatesTwoOrLess");
-	//	} else if (oControl._iCountVisAttrStat <= 4) {
-	//		oRm.addClass("sapMOHStatesThreeOrFour");
-	//	} else {
-	//		oRm.addClass("sapMOHStatesFiveOrMore");
-	//	}
-		if (!bTabs) {
-			oRm.addClass("sapMOHStatesNoTabs");
-		}
-		oRm.writeClasses();
-		oRm.write("\">");
-	
-		//oRm.write("<div class=\"sapMOHStates" + (oControl._iCountVisAttrStat <= 2 ? " sapMOHStatesTwoOrLess" : " sapMOHStatesThreeOrMore") + (!bTabs ? " sapMOHStatesNoTabs" : "") + "\">");
-		this.renderAttributesAndStatuses(oRm, oControl);
-		oRm.write("</div>");
-	};
-	
-	// helper function to determine whether tabs need to be rendered or not
-	// TODO: put this in control
-	ObjectHeaderRenderer.hasResponsiveTabs = function (oControl) {
-		var oHeaderContainer = oControl.getHeaderContainer(),
-			oIconTabHeader;
-	
-		if (oHeaderContainer) {
-			if (oHeaderContainer instanceof sap.m.IconTabBar) {
-				oIconTabHeader = oHeaderContainer._getIconTabHeader();
-				if (oIconTabHeader.getVisible()) {
-					oControl._iCountVisTabs = oIconTabHeader.getItems().length;
-					return !!oIconTabHeader.getItems().length;
-				}
-			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
-				return !!oHeaderContainer.getItems().length;
-			}
-		}
-		return false;
-	};
-	
-	ObjectHeaderRenderer.renderResponsiveTabs = function(oRm, oControl, bTitle, bMarkers, bStates, bTabs) {
-		var oHeaderContainer = oControl.getHeaderContainer(),
-			oIconTabHeader;
-	
-		oRm.write("<div class=\"sapMOHTabs" + (oHeaderContainer instanceof sap.m.IconTabBar ? " sapmMOHTabsITB" : "") + (!bStates ? " sapMOHTabsNoStates" : "") + "\">");
-		if (oHeaderContainer) {
-			if (oHeaderContainer instanceof sap.m.IconTabBar) {
-				// TODO: use a public function
-				oIconTabHeader = oHeaderContainer._getIconTabHeader();
-				this._renderChildControl(oRm, oControl, oIconTabHeader);
-				// tell iconTabBar to not render the header
-				oHeaderContainer._bHideHeader = true;
-			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
-				// render the header container
-				this._renderChildControl(oRm, oControl, oHeaderContainer);
-			} else {
-				jQuery.sap.log.warning("The control " + oHeaderContainer + " is not supported for aggregation \"headerContainer\"");
-			}
-		}
-		oRm.write("</div>");
-	};
-	
-	ObjectHeaderRenderer.renderRowResponsive = function(rm, oOH, aVisibleAttribs, aIconsAndStatuses) {
-		var aVisibleAttrAndStat = aVisibleAttribs.concat(aIconsAndStatuses),
-			iCountVisibleAttr = aVisibleAttribs.length,
-			iCountAttrAndStat = aVisibleAttrAndStat.length;
-	
-		if (iCountAttrAndStat === 0) {
-			return; //nothing to render
-		}
-	
-		rm.write("<div"); // Start first container
-		rm.addClass("sapMOHStatesFirstCont");
-		rm.writeClasses();
-		rm.write(">");
-	
-		//render first attr
-		if (iCountVisibleAttr >= 1) {
-			this.renderAttribute(rm, oOH, aVisibleAttrAndStat[0]);
-		} else {
-			this.renderStatus(rm, oOH, aVisibleAttrAndStat[0]);
-		}
-	
-		if (iCountAttrAndStat >= 2) {
-			//render second attr
-			if (iCountVisibleAttr >= 2) {
-				this.renderAttribute(rm, oOH, aVisibleAttrAndStat[1]);
-			} else {
-				this.renderStatus(rm, oOH, aVisibleAttrAndStat[1]);
-			}
-		}
-		var i = 2;
-		if (iCountAttrAndStat > 4) {
-			for (; i < iCountAttrAndStat / 2; i++) {
-				if (iCountVisibleAttr > i) {
-					this.renderAttribute(rm, oOH, aVisibleAttrAndStat[i]);
-				} else {
-					this.renderStatus(rm, oOH, aVisibleAttrAndStat[i]);
-				}
-			}
-		}
-	
-		rm.write("</div>"); //close first container
 		
-		if (iCountAttrAndStat === 2) {
-			//no more attr and stat to render
-			//add class sapMOHStates das nur zwei Attribute vorhanden
-			return;
-		}
-	
-		rm.write("<div"); // Start second container
-		rm.addClass("sapMOHStatesSecondCont");
-		rm.writeClasses();
-		rm.write(">");
-	
-		//render all remaining attr
-		for (; i < iCountAttrAndStat; i++) {
-			//render attr[i]
-			if (iCountVisibleAttr > i) {
-				this.renderAttribute(rm, oOH, aVisibleAttrAndStat[i]);
-			} else {
-				this.renderStatus(rm, oOH, aVisibleAttrAndStat[i]);
+		var aVisibleStatuses = this._getVisibleStatuses(oOH);
+		
+		aIconsAndStatuses = aIconsAndStatuses.concat(aVisibleStatuses);
+
+		var iIconsAndStatusesLength = aIconsAndStatuses.length;
+
+		var iNoOfRows = iAttribsLength > iIconsAndStatusesLength ? iAttribsLength : iIconsAndStatusesLength;
+
+		if (!oOH.getResponsive()) {
+			for (var iCount = 0; iCount < iNoOfRows; iCount++) {
+				this._renderRow(oRM, oOH, aVisibleAttribs[iCount], aIconsAndStatuses[iCount]);
 			}
 		}
-	
-		rm.write("</div>"); //close second container
-	};
-	
-	ObjectHeaderRenderer.renderStatus = function(rm, oOH, oStatus, bFullWidth) {
-		rm.write("<div");
-		rm.addClass("sapMOHStatus");
-		rm.writeClasses();
-		if (bFullWidth) {
-			rm.addStyle("width", "100%");
-			rm.writeStyles();
-		}
-		rm.write(">");
-		this._renderChildControl(rm, oOH, oStatus[0]);
-		rm.write("</div>");
+
 	};
 	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm the RenderManager that can be used for writing to the render output buffer
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.Control}
 	 *            oOH an object representation of the control that should be rendered
+	 * @private
 	 */
-	ObjectHeaderRenderer.renderTitleResponsive = function(oRm, oOH) {
+	ObjectHeaderRenderer._renderNumber = function(oRM, oOH) {
+		if (!oOH.getNumber()) {
+			return;
+		}
+
+		// Container for a number and a units qualifier.
+		oRM.write("<div"); // Start Number/units container
+		oRM.writeAttribute("id", oOH.getId() + "-numberdiv");
+		oRM.addClass("sapMOHNumberDiv");
+		oRM.writeClasses();
+		oRM.write(">");
+
+		oRM.write("<span");
+		oRM.writeAttribute("id", oOH.getId() + "-number");
+		oRM.addClass("sapMOHNumber");
+		oRM.addClass("sapMOHNumberState" + oOH.getNumberState());
+
+		oRM.writeClasses();
+		oRM.write(">");
+		oRM.writeEscaped(oOH.getNumber());
+
+		oRM.write("</span>");
+
+		if (oOH.getNumberUnit()) {
+			oRM.write("<span");
+			oRM.writeAttribute("id", oOH.getId() + "-numberUnit");
+			oRM.addClass("sapMOHNumberUnit");
+			oRM.addClass("sapMOHNumberState" + oOH.getNumberState());
+
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.writeEscaped(oOH.getNumberUnit());
+			oRM.write("</span>");
+		}
+
+		oRM.write("</div>"); // End Number/units container
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderTitle = function(oRM, oOH) {
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
-			oRm.write("<div");
-			oRm.addClass("sapMOHTitleAndArrow");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRM.write("<div");
+			oRM.addClass("sapMOHTitleAndArrow");
+			oRM.writeClasses();
+			oRM.write(">");
 		}
-	
+
 		if (oOH.getTitle()) {
 			oOH._titleText.setText(oOH.getTitle());
-			oRm.write("<div"); // Start Title Text container
-			oRm.writeAttribute("id", oOH.getId() + "-title");
-			oRm.addClass("sapMOHTitle");
-			// CSN# 1385618/2014: title should not break: remove when a better solution is found
-			oRm.addClass("sapMOHRTitleNoWordBreak");
-	
+			oRM.write("<span"); // Start Title Text container
+			oRM.writeAttribute("id", oOH.getId() + "-title");
+			oRM.addClass("sapMOHTitle");
 			if (oOH.getTitleActive()) {
-				oRm.addClass("sapMOHTitleActive");
+				oRM.writeAttribute("tabindex", "0");
+				oRM.addClass("sapMOHTitleActive");
 			}
 			if (oOH.getShowTitleSelector()) {
-				oRm.addClass("sapMOHTitleFollowArrow");
+				oRM.addClass("sapMOHTitleFollowArrow");
 			}
-			oRm.writeClasses();
-			oRm.write(">");
-			// TODO: why is sapMOHTitle added here and to parent??? remove one
-			if (!oOH.getResponsive()) {
-				oOH._titleText.addStyleClass("sapMOHTitle");
-			}
-	
-			this._renderChildControl(oRm, oOH, oOH._titleText);
-	
-			if (oOH.getShowTitleSelector()) {
-				oRm.write("<span"); // Start title arrow container
-				oRm.addClass("sapMOHTitleArrow");
-				oRm.writeClasses();
-				oRm.write(">");
-				this._renderChildControl(oRm, oOH, oOH._oTitleArrowIcon);
-				oRm.write("</span>"); // end title arrow container
-			}
-	
-			// Introductory text at the top of the item, like "On behalf of Julie..."
-			if (oOH.getIntro()) {
-				oRm.write("<div");
-				oRm.addClass("sapMOHIntro");
-				if (oOH.getIntroActive()) {
-					oRm.addClass("sapMOHIntroActive");
-				}
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write("<span");
-				oRm.writeAttribute("id", oOH.getId() + "-intro");
-				oRm.write(">");
-				oRm.writeEscaped(oOH.getIntro());
-				oRm.write("</span>");
-				oRm.write("</div>");
-			}
-	
-			oRm.write("</div>"); // End Title Text container
+			oRM.writeClasses();
+			oRM.write(">");
+
+			this._renderChildControl(oRM, oOH, oOH._titleText);
+			oRM.write("</span>"); // End Title Text container
 		}
-	
+
+		if (oOH.getShowTitleSelector()) {
+			oRM.write("<span"); // Start title arrow container
+			oRM.addClass("sapMOHTitleArrow");
+			oRM.writeClasses();
+			oRM.write(">");
+			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
+			oRM.write("</span>"); // end title arrow container
+		}
+
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
-			oRm.write("</div>"); // end title text and title arrow container
+			oRM.write("</div>"); // end title text and title arrow container
 		}
 	};
-	
-	/**** responsive rendering end ****/
-	
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderFullTitle = function(oRM, oOH) {
+		if (!oOH.getNumber()) {
+			oRM.addClass("sapMOHTitleDivFull");
+		}
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderFullOH = function(oRM, oOH) {
+		// Introductory text at the top of the item, like "On behalf of Julie..."
+		if (oOH.getIntro()) {
+			oRM.write("<div");
+			oRM.addClass("sapMOHIntro");
+			if (oOH.getIntroActive()) {
+				oRM.addClass("sapMOHIntroActive");
+			}
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.write("<span");
+			oRM.writeAttribute("id", oOH.getId() + "-intro");
+			if (oOH.getIntroActive()) {
+				oRM.writeAttribute("tabindex", "0");
+			}
+			oRM.write(">");
+			oRM.writeEscaped(oOH.getIntro());
+			oRM.write("</span>");
+			oRM.write("</div>");
+		}
+
+		// Container for fields placed on the top half of the item, below the intro. This
+		// includes title icon, title, title arrow, number, and number units.
+		oRM.write("<div"); // Start Top row container
+		oRM.addClass("sapMOHTopRow");
+		oRM.writeClasses();
+		oRM.write(">");
+
+		// Title container displayed to the left of the number and number units container.
+		oRM.write("<div"); // Start Title container
+		oRM.writeAttribute("id", oOH.getId() + "-titlediv");
+		oRM.addClass("sapMOHTitleDiv");
+		if (oOH._hasIcon()) {
+			oRM.addClass("sapMOHTitleIcon");
+		}
+
+		this._renderFullTitle(oRM, oOH);
+		oRM.writeClasses();
+		oRM.write(">");
+
+		// Container for icon
+		if (oOH._hasIcon()) {
+			oRM.write("<div"); // Start icon container
+			oRM.addClass("sapMOHIcon");
+			if (oOH.getIconActive()) {
+				oRM.writeAttribute("tabindex", "0");
+				oRM.addClass("sapMPointer");
+			}
+			oRM.writeClasses();
+			oRM.write(">");
+			this._renderChildControl(oRM, oOH, oOH._getImageControl());
+			oRM.write("</div>"); // end icon container
+		}
+
+		this._renderTitle(oRM, oOH);
+
+		oRM.write("</div>"); // End Title container
+
+		this._renderNumber(oRM, oOH);
+
+		oRM.write("<div class=\"sapMOHDivider\"/>");
+		oRM.write("</div>"); // End Top row container
+
+		if (oOH._hasBottomContent()) {
+			oRM.write("<div"); // Start Bottom row container
+			oRM.addClass("sapMOHBottomRow");
+			oRM.writeClasses();
+			oRM.write(">");
+
+			this._renderAttributesAndStatuses(oRM, oOH);
+
+			oRM.write("<div class=\"sapMOHDivider\"/>");
+			oRM.write("</div>"); // End Bottom row container
+		}
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderCondensedOH = function(oRM, oOH) {
+		// Title container displayed to the left of the number and number units container.
+		oRM.write("<div"); // Start Title container
+		oRM.writeAttribute("id", oOH.getId() + "-titlediv");
+		oRM.addClass("sapMOHTitleDiv");
+
+		this._renderFullTitle(oRM, oOH);
+
+		oRM.writeClasses();
+		oRM.write(">");
+
+		this._renderTitle(oRM, oOH);
+
+		oRM.write("</div>"); // End Title container
+
+		this._renderNumber(oRM, oOH);
+
+		var oFirstAttr = oOH.getAttributes()[0];
+
+		if (oFirstAttr && !oFirstAttr._isEmpty()) {
+			this._renderAttribute(oRM, oOH, oFirstAttr);
+		}
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 */
+	ObjectHeaderRenderer.render = function(oRM, oOH) {
+
+		this._computeChildControlsToBeRendered(oOH);
+
+		// render responsive OH
+		if (oOH.getResponsive()) {
+			this._renderResponsive(oRM, oOH);
+			return;
+		}
+
+		// === old renderer, no changes here for downwards compatibility
+
+		var bCondensed = oOH.getCondensed();
+
+		oRM.write("<div"); // Start Main container
+		oRM.writeControlData(oOH);
+		oRM.addClass("sapMOH");
+		if (bCondensed) {
+			oRM.addClass("sapMOHC");
+			oRM.addClass("sapMOHBg" + oOH.getBackgroundDesign());
+		}
+
+		oRM.writeClasses();
+		var sTooltip = oOH.getTooltip_AsString();
+		if (sTooltip) {
+			oRM.writeAttributeEscaped("title", sTooltip);
+		}
+
+		oRM.write(">");
+
+		if (bCondensed) {
+			this._renderCondensedOH(oRM, oOH);
+		} else {
+			this._renderFullOH(oRM, oOH);
+		}
+
+		oRM.write("<div class=\"sapMOHLastDivider\"/>");
+
+		oRM.write("</div>"); // End Main container\
+
+		this._cleanupNotRenderedChildControls(oRM, oOH);
+	};
+
+
+	/**
+	 * Get all controls that should be rendered
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
 	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
 		oOH.__controlsToBeRendered = {};
 		var aChildren = oOH.getAttributes();
@@ -1002,8 +601,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
 		}
 		aChildren = oOH.getStatuses();
-		for (var i = 0; i < aChildren.length; i++) {
-			oOH.__controlsToBeRendered[aChildren[i].getId()] = aChildren[i];
+		for (var j = 0; j < aChildren.length; j++) {
+			oOH.__controlsToBeRendered[aChildren[j].getId()] = aChildren[j];
 		}
 		var oChild = oOH.getFirstStatus();
 		if (oChild) {
@@ -1018,21 +617,675 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
 		}
 	};
-	
-	ObjectHeaderRenderer._renderChildControl = function(rm, oOH, oControl){
-		rm.renderControl(oControl);
-		if (oControl) {
-			delete oOH.__controlsToBeRendered[oControl.getId()];
-		}
+
+	/**
+	 * Renders the child control contained in the OH
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.Control}
+	 *            oControl an object representation of the child control that should be rendered
+	 * @private
+	 **/
+	ObjectHeaderRenderer._renderChildControl = function(oRM, oOH, oControl){
+		oRM.renderControl(oControl);
 	};
-	
-	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(rm, oOH){
-		for (var id in oOH.__controlsToBeRendered) {
-			rm.cleanupControlWithoutRendering(oOH.__controlsToBeRendered[id]);
+
+	/**
+	 * Clean not rendered controls
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 **/
+	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(oRM, oOH){
+		for (var sId in oOH.__controlsToBeRendered) {
+			oRM.cleanupControlWithoutRendering(oOH.__controlsToBeRendered[sId]);
 		}
 		delete oOH.__controlsToBeRendered;
 	};
+
+	/**
+	 * Responsive rendering start
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 **/
+	ObjectHeaderRenderer._renderResponsive = function(oRM, oOH) {
+		var bStates = this._hasResponsiveStates(oOH),
+			bTabs = this._hasResponsiveTabs(oOH),
+			oHeaderContainer = oOH.getHeaderContainer();
+
+		// start outer div (containing ObjectHeader and IconTabBar content div)
+		oRM.write("<div");
+		oRM.addClass("sapMOHROuter");
+		oRM.writeClasses();
+		oRM.writeControlData(oOH);
+		oRM.write(">");
+
+		oRM.write("<div");
+		oRM.addClass("sapMOHR");
+		oRM.writeClasses();
+		oRM.write(">");
+		oRM.write("<div");
+
+		oRM.addClass("sapMOHRBg" + oOH.getBackgroundDesign());
+
+		if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
+			oRM.addClass("sapMOHRStatesOneOrThree");
+		}
+
+		oRM.writeClasses();
+		oRM.write(">");
+
+		this._renderResponsiveTitleBlock(oRM, oOH);
+
+		if (bStates) {
+			this._renderResponsiveStates(oRM, oOH);
+		}
+
+		oRM.write("</div>"); // end wrapper div
+
+		if (bTabs) {
+			this._renderResponsiveTabs(oRM, oOH);
+		}
+
+		oRM.write("</div>");
+
+		if (oHeaderContainer && oHeaderContainer instanceof sap.m.IconTabBar) {
+			this._renderChildControl(oRM, oOH, oHeaderContainer);
+		}
+
+		oRM.write("</div>"); // end outer div
+
+		this._cleanupNotRenderedChildControls(oRM, oOH);
+
+		if (!oOH.getTitle()) {
+			 //if value is set through data binding, there is time delay and fake warning will be logged, so set warning only if not data binding
+			if (!oOH.getBinding("title")) {
+				jQuery.sap.log.warning("The title shouldn't be empty!");
+			}
+		}
+	};
+
+	/**
+	 * first building block for the responsive object header, it contains
+	 * - intro
+	 * - image
+	 * - title
+	 * - number and unit
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 **/
+	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
+		// Title container displayed to the left of the number and number units container.
+		oRM.write("<div"); // Start Title and Number container (block1 and block2)
+		oRM.writeAttribute("id", oControl.getId() + "-titlenumdiv");
+		oRM.addClass("sapMOHRTitleNumberDiv"); // first block class
+		oRM.writeClasses();
+		oRM.write(">");
+
+		oRM.write("<div"); // Start Title container
+		oRM.writeAttribute("id", oControl.getId() + "-titlediv");
+		oRM.addClass("sapMOHRTitleDiv");
+
+		if (oControl._hasIcon()) {
+			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+				if (sap.ui.Device.orientation.landscape || (jQuery('html').hasClass("sapUiMedia-Std-Phone") && !sap.ui.Device.system.phone)) {
+					oRM.addClass("sapMOHRTitleIcon");
+				}
+			} else {
+				oRM.addClass("sapMOHRTitleIcon");
+			}
+		}
+
+		if (!oControl.getAggregation("_objectNumber")) {
+			oRM.addClass("sapMOHRTitleDivFull");
+		}
+		oRM.writeClasses();
+		oRM.write(">");
+
+		this._renderResponsiveTitle(oRM, oControl);
+
+		// render the title icon in a separate container
+		if (oControl._hasIcon()) {
+			oRM.write("<div");
+			oRM.writeAttribute("id", oControl.getId() + "-titleIcon");
+			oRM.addClass("sapMOHRIcon");
+			if ((sap.ui.Device.system.phone && sap.ui.Device.orientation.portrait)) {
+				oRM.addClass("sapMOHRHideIcon");
+			}
+			if (oControl.getIconActive()) {
+				oRM.addClass("sapMPointer");
+				oRM.writeAttribute("tabindex", "0");
+			}
+			oRM.writeClasses();
+			oRM.write(">");
+			this._renderChildControl(oRM, oControl, oControl._getImageControl());
+			oRM.write("</div>"); // end icon container
+		}
+		oRM.write("</div>"); // End Title container
+
+		this._renderResponsiveNumber(oRM, oControl);
+		oRM.write("</div>"); // End Title and Number container
+	};
+
+
+	/**
+	 * Renders the HTML for attributes and statuses, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader}
+	 *            oOH an object to be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveStates = function(oRM, oControl) {
+		oRM.write("<div");
+		oRM.writeAttribute("id", oControl.getId() + "-states");
+		oRM.addClass("sapMOHRStates");
+		oRM.writeClasses();
+		oRM.write("\">");
+		this._renderResponsiveRow(oRM, oControl);
+		oRM.write("</div>");
+	};
+
+	/**
+	 * Renders the HTML for the row which contains columns in which attributes and statuses are displayed.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveRow = function(oRM, oOH) {
+		var aVisAtribsStatuses = [];
+		aVisAtribsStatuses = this._getVisibleAttribsAndStatuses(oOH);
+
+		var aVisibleAttrAndStat = aVisAtribsStatuses[0].concat(aVisAtribsStatuses[1]),
+			iCountVisibleAttr = aVisAtribsStatuses[0].length,
+			iCountAttrAndStat = aVisibleAttrAndStat.length,
+			iRenderCols = 1,
+			sClassColCount = '';
+
+		if (iCountAttrAndStat === 0) {
+			return; //nothing to render
+		}
+
+		if (sap.ui.Device.system.desktop) {
+			if (!oOH.getFullScreenOptimized()) { // if master detail
+				if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 4) {
+					iRenderCols = 2; // render two columns
+					sClassColCount = 'sapMOHRTwoCols';
+				}
+				if (iCountAttrAndStat >= 5) {
+					iRenderCols = 3; // render three columns
+					sClassColCount = 'sapMOHRThreeCols';
+				}
+			} else { // if full screen
+				if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 3) {
+					iRenderCols = 1; // render one column
+					sClassColCount = 'sapMOHROneCols';
+				}
+				if (iCountAttrAndStat >= 4) {
+					iRenderCols = 4; // render four columns
+					sClassColCount = 'sapMOHRFourCols';
+				}
+			}
+		}
+
+		if (sap.ui.Device.system.tablet || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Tablet"))) {
+			if (!oOH.getFullScreenOptimized() || (sap.ui.Device.orientation.portrait && oOH.getFullScreenOptimized())) { // full screen portrait or master detail
+				iRenderCols = 2; //render two columns
+				sClassColCount = 'sapMOHRTwoCols';
+			} else {
+				if (oOH.getFullScreenOptimized() && ( sap.ui.Device.orientation.landscape || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Tablet")))) { //full screen landscape
+					if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 2) {
+						iRenderCols = 2; // render two columns
+						sClassColCount = 'sapMOHRTwoCols';
+					}
+
+					if (iCountAttrAndStat >= 3) {
+						iRenderCols = 3; // render three columns
+						sClassColCount = 'sapMOHRThreeCols';
+					}
+				}
+			}
+		}
+
+		if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
+			iRenderCols = 1; // render one column
+			sClassColCount = 'sapMOHROneCols';
+		}
+
+		for (var i = 0; i < iRenderCols; i++) {
+			this._renderResponsiveStatesColumn(oRM, oOH, i, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
+		}
+	};
+
+	/**
+	 * Renders the HTML for the columns containing the states.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @param {iColumnIndex}
+	 *            number of the column in which the element should be rendered
+	 * @param {iRenderCols}
+	 *            number of columns that should be rendered
+	 * @param {aVisibleAttrAndStat}
+	 *            array of attributes and statuses that should be rendered
+	 * @param {iCountVisibleAttr}
+	 *            number of attributes that should be rendered, since they should be rendered before the states
+	 * @param {sClassColCount}
+	 *            the name of the appropriate css class that should be set
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveStatesColumn = function(oRM, oOH, iColumnIndex, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount) {
+		oRM.write("<div"); // Start first container
+		oRM.addClass("sapMOHRStatesCont" + ( iColumnIndex + 1) );
+		oRM.addClass(sClassColCount);
+		oRM.writeClasses();
+		oRM.write(">");
+
+		for (var i = iColumnIndex; i < aVisibleAttrAndStat.length; i += iRenderCols) {
+			if (i < iCountVisibleAttr) {
+				this._renderResponsiveAttribute(oRM, oOH, aVisibleAttrAndStat[i]);
+			} else {
+				this._renderResponsiveStatus(oRM, oOH, aVisibleAttrAndStat[i]);
+			}
+		}
+
+		oRM.write("</div>");
+	};
+
+	/**
+	 * Renders the HTML for Attribute.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectAtribute}
+	 *            oAttr an object representation of the sap.m.ObjectAtribute that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveAttribute = function(oRM, oOH, oAttr) {
+		oRM.write("<div");
+		oRM.addClass("sapMOHRAttr");
+		oRM.writeClasses();
+		oRM.write(">");
+		this._renderChildControl(oRM, oOH, oAttr);
+		oRM.write("</div>");
+	};
+
+	/**
+	 * Renders the HTML for Status.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectStatus}
+	 *            oStatus an object representation of the sap.m.ObjectStatus that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveStatus = function(oRM, oOH, oStatus) {
+		oRM.write("<div");
+		oRM.addClass("sapMOHRStatus");
+		oRM.writeClasses();
+		oRM.write(">");
+		this._renderChildControl(oRM, oOH, oStatus[0]);
+		oRM.write("</div>");
+	};
+
+	/**
+	 * Renders flag and favorite icon
+	 *
+	* @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oControl an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveMarkers = function(oRM, oControl) {
+		var aIcons = [];
+
+		// load icons based on control state
+		if (oControl.getShowMarkers()) {
+			oControl._oFavIcon.setVisible(oControl.getMarkFavorite());
+			oControl._oFlagIcon.setVisible(oControl.getMarkFlagged());
+
+			aIcons.push(oControl._oFavIcon);
+			aIcons.push(oControl._oFlagIcon);
+
+			// render icons
+			oRM.write("<span class=\"sapMObjStatusMarker\"");
+			oRM.writeAttribute("id", oControl.getId() + "-markers");
+			oRM.write(">");
+			for (var i = 0; i < aIcons.length; i++) {
+				this._renderChildControl(oRM, oControl, aIcons[i]);
+			}
+			oRM.write("</span>");
+		}
+	};
+
+	/**
+	 * Renders the ObjectNumber, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oControl an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveNumber = function(oRM, oControl) {
+		var oObjectNumber = oControl.getAggregation("_objectNumber");
+
+		if (oObjectNumber && oObjectNumber.getNumber()) {
+			this._renderChildControl(oRM, oControl, oObjectNumber);
+		}
+	};
+
+	/**
+	 * helper function to determine wheter states need to be rendered or not
+	 *
+	 * @param {sap.m.Control}
+	 *
+	 * @private
+	 */
+	ObjectHeaderRenderer._hasResponsiveStates = function (oControl) {
+		var aAttribs = oControl.getAttributes(),
+			aVisibleAttribs = [];
+
+		if (!(oControl._hasAttributes() || oControl._hasStatus())) {
+			oControl._iCountVisAttrStat = 0;
+			return false;
+		}
+
+		for (var j = 0; j < aAttribs.length; j ++) {
+			if (aAttribs[j].getVisible()) {
+				aVisibleAttribs.push(aAttribs[j]);
+			}
+		}
+
+		var aVisibleStatuses = this._getVisibleStatuses(oControl);
+		
+		//this value needs to be adapted when an attribute or status is set to visible(false) after rendering
+		oControl._iCountVisAttrStat = aVisibleAttribs.length + aVisibleStatuses.length;
+
+		return !!(aVisibleAttribs.length + aVisibleStatuses.length);
+	};
+
+	/**
+	 * helper function to determine whether tabs need to be rendered or not
+	 *  @param {sap.m.Control}
+	 *
+	 * @private
+	 */
+	ObjectHeaderRenderer._hasResponsiveTabs = function (oControl) {
+		var oHeaderContainer = oControl.getHeaderContainer(),
+			oIconTabHeader;
+
+		if (oHeaderContainer) {
+			if (oHeaderContainer instanceof sap.m.IconTabBar) {
+				oIconTabHeader = oHeaderContainer._getIconTabHeader();
+				if (oIconTabHeader.getVisible()) {
+					oControl._iCountVisTabs = oIconTabHeader.getItems().length;
+					return !!oIconTabHeader.getItems().length;
+				}
+			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
+				return !!oHeaderContainer.getItems().length;
+			}
+		}
+		return false;
+	};
+
+
+	/**
+	 * Renders the ITB, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveTabs = function(oRM, oControl) {
+		var oHeaderContainer = oControl.getHeaderContainer(),
+			oIconTabHeader;
+
+		oRM.write("<div class=\"sapMOHRTabs" + (oHeaderContainer instanceof sap.m.IconTabBar ? " sapMOHRTabsITB" : "") + "\">");
+		if (oHeaderContainer) {
+			if (oHeaderContainer instanceof sap.m.IconTabBar) {
+				oIconTabHeader = oHeaderContainer._getIconTabHeader();
+				this._renderChildControl(oRM, oControl, oIconTabHeader);
+				// tell iconTabBar to not render the header
+				oHeaderContainer._bHideHeader = true;
+			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
+				// render the header container
+				this._renderChildControl(oRM, oControl, oHeaderContainer);
+			} else {
+				jQuery.sap.log.warning("The control " + oHeaderContainer + " is not supported for aggregation \"headerContainer\"");
+			}
+		}
+		oRM.write("</div>");
+	};
+
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveTitle = function(oRM, oOH) {
+		var nCutLen;
+
+		// Start title text and title arrow container
+		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
+
+		oRM.write("<div"); // Start Title Text container
+		oRM.writeAttribute("id", oOH.getId() + "-title");
+		oRM.addClass("sapMOHRTitle");
+
+		if (oOH.getTitleActive()) {
+			oRM.addClass("sapMOHRTitleActive");
+		}
+		if (oOH.getShowTitleSelector()) {
+			oRM.addClass("sapMOHRTitleFollowArrow");
+		}
+		oRM.writeClasses();
+		oRM.write(">");
+		
+		// Cut the title to 50 or 80 chars according to the design specification
+		if ((sap.ui.Device.system.phone && sap.ui.Device.orientation.portrait)) {
+			nCutLen = 50;
+		} else {
+			nCutLen = 80;
+		}
+		
+		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
+
+		// Introductory text at the top of the item, like "On behalf of Julie..."
+		if (oOH.getIntro()) {
+			oRM.write("<div");
+			oRM.addClass("sapMOHRIntro");
+			if (oOH.getIntroActive()) {
+				oRM.addClass("sapMOHRIntroActive");
+			}
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.write("<span");
+			oRM.writeAttribute("id", oOH.getId() + "-intro");
+			if (oOH.getIntroActive()) {
+				oRM.writeAttribute("tabindex", "0");
+			}
+			oRM.write(">");
+			oRM.writeEscaped(oOH.getIntro());
+			oRM.write("</span>");
+			oRM.write("</div>");
+		}
+
+		oRM.write("</div>"); // End Title Text container
+	};
+
+	/**
+	 * Rerenders the HTML for the title of the Object Header, also called on rerender Title.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @param {nCutLen}
+	 *            number of chars to which the title should be cutted
+	 * @private
+	 */
+	ObjectHeaderRenderer._rerenderTitle = function(oRM, oOH, nCutLen) {
+		var sId = oOH.getId();
+		
+		this._renderResponsiveTitleAndArrow(oRM, oOH, nCutLen);
+		oRM.flush(jQuery.sap.byId(sId + "-title"));
+	};
 	
+	/**
+	 * Renders the HTML for the title and arrow.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @param {nCutLen}
+	 *            number of chars to which the title should be cutted
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
+		var sOHTitle, sEllipsis = '';
+		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
+
+		oRM.write("<span");
+		oRM.addClass("sapMOHRTitleTextContainer");
+		oRM.writeClasses();
+		oRM.write(">");
+		oRM.write("<span");
+		if (oOH.getTitleActive()) {
+			oRM.writeAttribute("tabindex", "0");
+		}
+		oRM.writeAttribute("id", oOH.getId() + "-txt");
+		oRM.addClass("sapMOHRTitleText");
+		oRM.writeClasses();
+		oRM.write(">");
+
+		oRM.write("<span");
+		oRM.addClass("sapMOHRTitleTextWrappable");
+		oRM.writeClasses();
+		oRM.write(">");
+
+		if (oOH.getTitle().length > nCutLen) {
+			sOHTitle = oOH.getTitle().substr(0, nCutLen).trim();
+			sEllipsis = '...';
+		} else {
+			sOHTitle = oOH.getTitle();
+		}
+
+		if (bMarkers) {
+			var sOHTitleEnd = sOHTitle.substr(sOHTitle.lastIndexOf(" ") + 1);
+			var sOHTitleStart = sOHTitle.substr(0, sOHTitle.lastIndexOf(" ") + 1);
+
+			if (sOHTitleEnd.length === 1) {
+				sOHTitleEnd = sOHTitle;
+				sOHTitleStart = '';
+			}
+
+			oRM.writeEscaped(sOHTitleStart);
+			oRM.write("</span>");
+
+			oRM.writeEscaped(sOHTitleEnd);
+			oRM.write(sEllipsis);
+			oRM.write("</span>");
+			this._renderResponsiveMarkers(oRM, oOH);
+			oRM.write("</span>");
+		} else {
+			if (!sEllipsis){
+				oRM.writeEscaped(sOHTitle);
+				oRM.write("</span></span></span>");
+			} else {
+				oRM.writeEscaped(sOHTitle + sEllipsis);
+				oRM.write("</span></span></span>");
+			}
+		}
+		
+		if (oOH.getShowTitleSelector()) {
+			oRM.write("<span"); // Start title arrow container
+			oRM.addClass("sapMOHRTitleArrow");
+			oRM.writeClasses();
+			oRM.write(">");
+			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
+			oRM.write("</span>"); // end title arrow container
+		}
+	};
+	
+	/**
+	 * Rerenders the HTML for the states of the responsive Object Header.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the control that should be rendered
+	 * @private
+	 */
+	ObjectHeaderRenderer._rerenderResponsiveStates = function(oRM, oOH) {
+		var sId = oOH.getId(),
+			aVisAtribsStatuses  = this._getVisibleAttribsAndStatuses(oOH),
+			aVisibleAttrAndStat = aVisAtribsStatuses[0].concat(aVisAtribsStatuses[1]),
+			iCountVisibleAttr = aVisAtribsStatuses[0].length,
+			iCountAttrAndStat = aVisibleAttrAndStat.length,
+			iRenderCols = 1,
+			sClassColCount = '';
+
+		if (iCountAttrAndStat === 0) {
+			return; //nothing to render
+		}
+
+		// tablet case
+		if (sap.ui.Device.orientation.portrait) { // full screen portrait or master detail
+			iRenderCols = 2; //render two columns
+			sClassColCount = 'sapMOHRTwoCols';
+		} else {
+			if (iCountAttrAndStat >= 1 && iCountAttrAndStat <= 2) {
+				iRenderCols = 2; // render two columns
+				sClassColCount = 'sapMOHRTwoCols';
+			}
+			if (iCountAttrAndStat >= 3) {
+				iRenderCols = 3; // render three columns
+				sClassColCount = 'sapMOHRThreeCols';
+			}
+		}
+
+		for (var i = 0; i < iRenderCols; i++) {
+			this._renderResponsiveStatesColumn(oRM, oOH, i, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
+		}
+
+		oRM.flush(jQuery.sap.byId(sId + "-states")[0]);
+	};
+
+	/**** responsive rendering end ****/
 
 	return ObjectHeaderRenderer;
 

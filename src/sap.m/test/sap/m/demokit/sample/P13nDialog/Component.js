@@ -12,10 +12,11 @@ sap.ui.core.UIComponent.extend("sap.m.sample.P13nDialog.Component", {
 		},
 		config : {
 			sample : {
-				stretch : true,
 				files : [
 					"Page.view.xml",
-					"Page.controller.js"
+					"Page.controller.js",
+					"PersonalizationDialog.fragment.xml",
+					"products.json"
 				]
 			}
 		}

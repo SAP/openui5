@@ -293,7 +293,8 @@
 					"sap.m.sample.InputSuggestionsDynamic",
 					"sap.m.sample.InputSuggestionsOpenSearch",
 					"sap.m.sample.InputTypes",
-					"sap.m.sample.InputStates"
+					"sap.m.sample.InputStates",
+					"sap.m.sample.InputValueUpdate"
 				]
 			},
 			{
@@ -993,27 +994,27 @@
 			{
 				"id": "sap.m.sample.ObjectHeaderResponsiveI",
 				"name": "Object Header Responsive I",
-				"description": "This is a responsive Object Header with a Title, 2 States/Attributes and Tabs."
+				"description": "This is a responsive Object Header with a Title, 2 Statuses/Attributes rendered next to the title in a fullScreenOptimized mode (fullScreenOptimized = true)."
 			},
 			{
 				"id": "sap.m.sample.ObjectHeaderResponsiveII",
 				"name": "Object Header Responsive II",
-				"description": "This is a responsive Object Header with a Title, 4 States/Attributes and no Tabs."
+				"description": "This is a responsive Object Header with a Title, 2 Statuses/Attributes rendered below the title in a Master/Detail mode (fullScreenOptimized = false)."
 			},
 			{
 				"id": "sap.m.sample.ObjectHeaderResponsiveIII",
 				"name": "Object Header Responsive III",
-				"description": "This is a responsive Object Header with a Title, 4 States/Attributes and Tabs."
+				"description": "This is a responsive Object Header with a Title, number, 6 Statuses/Attributes rendered in 4 columns in a fullScreenOptimized mode (fullScreenOptimized = true)."
 			},
 			{
 				"id": "sap.m.sample.ObjectHeaderResponsiveIV",
 				"name": "Object Header Responsive IV",
-				"description": "This is a responsive Object Header with a Title, 6 States/Attributes and Tabs."
+				"description": "This is a responsive Object Header with a Title, number, 6 Statuses/Attributes rendered in 3 columns in a Master/Detail mode (fullScreenOptimized = false)."
 			},
 			{
 				"id": "sap.m.sample.ObjectHeaderResponsiveV",
 				"name": "Object Header Responsive V",
-				"description": "This is a responsive Object Header with a Title, 2 States/Attributes and 9 Tabs/Separators."
+				"description": "This is a responsive Object Header without a number and with a Title, 3 Statuses/Attributes."
 			},
 			{
 				"id" : "sap.m.sample.ObjectIdentifier",
@@ -1199,6 +1200,11 @@
 				"id": "sap.m.sample.InputStates",
 				"name": "Input - States",
 				"description": "This example demonstrates the different input field states, e.g. disabled, editable, with value help and value help only."
+			},
+			{
+				"id": "sap.m.sample.InputValueUpdate",
+				"name": "Input - Value Update",
+				"description": "Since 1.24 the value property of sap.m.Input is not updated on every keystroke, but first when the user presses Enter or leaves the input. The change was necessary to fully support the standard UI5 data binding with formatters and types. If you still need immediate update you have 2 options: Handle liveChange events or enable the boolean property valueLiveUpdate."
 			},
 			{
 				"id": "sap.m.sample.InputDescription",

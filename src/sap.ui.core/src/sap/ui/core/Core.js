@@ -305,7 +305,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			if (osCSS) {
 				$html.addClass(osCSS);
 			}
-		
+			
+			// append the lang info to the document (required for ARIA support)
+			var fnUpdateLangAttr = function() {
+				var oLocale = this.oConfiguration.getLocale();
+				if (oLocale) {
+					$html.attr("lang", oLocale.toString());
+				} else {
+					$html.removeAttr("lang");
+				}
+			};
+			fnUpdateLangAttr.call(this);
+			
+			// listen to localization change event to update the lang info
+			this.attachLocalizationChanged(fnUpdateLangAttr, this);
+			
 			//if weinre id is set, load weinre target script
 			if (this.oConfiguration.getWeinreId()) {
 				log.info("Starting WEINRE Remote Web Inspector");

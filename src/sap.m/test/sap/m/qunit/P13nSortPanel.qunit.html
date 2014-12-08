@@ -151,8 +151,8 @@
 				var oData = oModel.getData();
 				var oSortItem = {
 					key : params.key,
-					columnKey : params.newItem.getColumnKey(),
-					operation : params.newItem.getOperation()
+					columnKey : params.sortItemData.getColumnKey(),
+					operation : params.sortItemData.getOperation()
 				};
 				if (params.index) {
 					oData.sortItems.splice(params.index, 0, oSortItem);
