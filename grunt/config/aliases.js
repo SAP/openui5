@@ -102,17 +102,18 @@ module.exports = function(grunt, config) {
 
 				// theme
 				aTasks.push('openui5_theme:target-' + library.name);
-
 			});
 
 			aTasks.push('replace');
 			aTasks.push('concat');
 
 			config.libraries.forEach(function(library) {
+
 				// library preload
 				if (library.type !== 'theme') {
-					aTasks.push('openui5_library_preload:target-preload-' + library.name);
+					aTasks.push('openui5_preload:library-' + library.name);
 				}
+
 			});
 
 			if (grunt.option('publish')) {

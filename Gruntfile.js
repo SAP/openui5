@@ -52,10 +52,21 @@ module.exports = function(grunt) {
 					name: 'sap.ui.core',
 					path: 'src/sap.ui.core',
 					preload: {
-						src : [
-							'sap/ui/base/**/*.js',
-							'sap/ui/model/**/*.js',
-							'!sap/ui/core/cldr/**'
+						src: [
+
+							'*.js',
+
+							// files are already part of sap-ui-core.js
+							'!jquery.sap.promise.js',
+							'!jquery.sap.global.js',
+							'!sap-ui-*.js',
+
+							'sap/ui/core/**',
+							'!sap/ui/core/cldr/**',
+							'!sap/ui/core/messagebundle*',
+
+							'sap/ui/base/**',
+							'sap/ui/model/**',
 						]
 					}
 			},
@@ -122,7 +133,7 @@ module.exports = function(grunt) {
 				'replace': 'grunt-text-replace',
 				'openui5_connect': 'grunt-openui5',
 				'openui5_theme': 'grunt-openui5',
-				'openui5_library_preload': 'grunt-openui5'
+				'openui5_preload': 'grunt-openui5'
 			}
 		},
 

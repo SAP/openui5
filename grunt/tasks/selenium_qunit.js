@@ -112,7 +112,7 @@ module.exports = function(grunt) {
 
 		var binFolder = __dirname + '/../bin';
 
-		var seleniumServerJar = binFolder + '/selenium-server-standalone-2.43.1.jar';
+		var seleniumServerJar = binFolder + '/selenium-server-standalone-2.44.0.jar';
 
 		fs.stat(seleniumServerJar, function(err, stat) {
 
@@ -120,9 +120,8 @@ module.exports = function(grunt) {
 				grunt.log.writeln('selenium-server-standalone.jar not found. Downloading... (' + binFolder + ')');
 				new Download()
 				.get(
-					'http://selenium-release.storage.googleapis.com/2.43/selenium-server-standalone-2.43.1.jar',
-					binFolder
-				).run(function(err) {
+					'http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar'
+				).dest(binFolder).run(function(err, files, stream) {
 
 					if (err) {
 						grunt.log.error(err);
