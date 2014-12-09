@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<HBox>
+		<template:if test="{path: 'meta>Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isSemanticsEmail'}" >
+			<core:Icon src="sap-icon://email" />
+		</template:if>
+		<template:if test="{path: 'meta>Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isSemanticsTel'}" >
+			<core:Icon src="sap-icon://phone" />
+		</template:if>
+		<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+	</HBox>
+</core:FragmentDefinition>
