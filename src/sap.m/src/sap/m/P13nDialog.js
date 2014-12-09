@@ -109,7 +109,24 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 		this.addButton(new sap.m.Button({
 			text : this._oResourceBundle.getText("P13NDIALOG_OK"),
 			press : function() {
-				that.fireOk();
+				// TODO: current implementation finds only the first invalid panel. Should go through all panels and put all
+				// error messages together
+				var oPanel = null;
+				var fCallbackOK = function() {
+					oPanel.onAfterNavigation();
+					that.fireOk();
+				};
+				that.getContent().some(function(_oPanel) {
+					if (!_oPanel.onBeforeNavigation()) {
+						oPanel = _oPanel;
+						return true;
+					}
+				});
+				if (!oPanel) {
+					that.fireOk();
+					return;
+				}
+				that.showValidationDialog(fCallbackOK, null);
 			}
 		}));
 		this.addButton(new sap.m.Button({
@@ -207,6 +224,27 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 		return this.getSubHeader().getContentLeft()[0];
 	};
 
+	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, fCallbackCancel) {
+		jQuery.sap.require("sap.m.MessageBox");
+		sap.m.MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE"),
+				{
+					icon : sap.m.MessageBox.Icon.WARNING,
+					title : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
+					actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+					onClose : function(oAction) {
+						// CANCLE: Stay on the current panel. There is incorrect entry and user decided to correct this.
+						// OK: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
+						// leave the current panel. Delete incorrect condition set.
+						if (oAction === sap.m.MessageBox.Action.OK) {
+							fCallbackOK();
+						} else if (oAction === sap.m.MessageBox.Action.OK) {
+							fCallbackCancel();
+						}
+					},
+					styleClass : !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+				});
+	};
+
 	/*
 	 * Map an item type of sap.m.P13nPanel to an item type of sap.m.IconTabBarFilter.
 	 * 
@@ -226,28 +264,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			ontap : function(oEvent) {
 				var oButtonClicked = oEvent.srcControl;
 				var oPanelVisible = this.getVisiblePanel();
+
 				if (oPanelVisible && oPanelVisible.onBeforeNavigation && !oPanelVisible.onBeforeNavigation()) {
 					oEvent.stopImmediatePropagation(true);
-					jQuery.sap.require("sap.m.MessageBox");
 					var that = this;
-					sap.m.MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(
-							"P13NDIALOG_VALIDATION_MESSAGE"), {
-						icon : sap.m.MessageBox.Icon.WARNING,
-						title : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
-						actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-						onClose : function(oAction) {
-							// CANCLE: Stay on the current panel. There is incorrect entry and user decided to correct this.
-							// OK: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
-							// leave the current panel. Delete incorrect condition set.
-							if (oAction === sap.m.MessageBox.Action.OK) {
-								oPanelVisible.removeInvalidConditions();
-								that._getSegmentedButton().setSelectedButton(oButtonClicked);
-								that._switchPanel(oButtonClicked);
-							}
-						},
-						styleClass : !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
-					});
-					return true;
+					var fCallbackOK = function() {
+						oPanelVisible.onAfterNavigation();
+						that._getSegmentedButton().setSelectedButton(oButtonClicked);
+						that._switchPanel(oButtonClicked);
+					};
+					this.showValidationDialog(fCallbackOK, null);
 				}
 			}
 		}, true, this);

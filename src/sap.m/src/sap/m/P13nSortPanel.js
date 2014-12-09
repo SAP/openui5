@@ -152,6 +152,14 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				this._oSortPanel.removeValidationErrors();
 			};
 
+			P13nSortPanel.prototype.onBeforeNavigation = function() {
+				return this.validateConditions();
+			};
+			
+			P13nSortPanel.prototype.onAfterNavigation = function() {
+				return this.removeInvalidConditions();
+			};
+			
 			/**
 			 * setter for the supported operations array
 			 * 

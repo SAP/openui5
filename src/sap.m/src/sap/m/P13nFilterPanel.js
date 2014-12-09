@@ -192,7 +192,7 @@ sap.ui
 						return this._oIncludeFilterPanel.validateConditions()
 								&& this._oExcludeFilterPanel.validateConditions();
 					};
-
+					
 					/**
 					 * removes all invalid conditions.					 
 					 *  
@@ -213,6 +213,14 @@ sap.ui
 						this._oExcludeFilterPanel.removeValidationErrors();
 					};
 
+					P13nFilterPanel.prototype.onBeforeNavigation = function() {
+						return this.validateConditions();
+					};
+					
+					P13nFilterPanel.prototype.onAfterNavigation = function() {
+						return this.removeInvalidConditions();
+					};
+					
 					/**
 					 * setter for the supported Include operations array
 					 * 
