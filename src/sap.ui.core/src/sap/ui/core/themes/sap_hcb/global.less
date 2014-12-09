@@ -67,10 +67,6 @@
 // Grayscale Backgrounds
 @sapUiWhite: #000000;
 @sapUiWhiteBG: #000000;
-@sapUiExtraLightBG: @sapUiBaseBG;
-@sapUiLightBG: @sapUiHighlight;
-@sapUiMediumBG: @sapUiLightBG;
-@sapUiDarkBG: @sapUiLightBG;
 @sapUiDeepBG: #FFFFFF;
 @sapUiBlackBG: #FFFFFF;
 
@@ -81,8 +77,6 @@
 @sapUiButtonPositiveBG: @sapUiButtonStandardBG;
 
 // Semantic Background Colors
-@sapUiErrorBG: #AA0000;
-@sapUiWarningBG: #CCAA00;
 @sapUiReadOnlyBG: #585858;
 
 // Link
@@ -312,7 +306,9 @@
 @sapUiButtonEmphasizedDisabledBorderColor: @sapUiButtonDisabledBorderColor;
 @sapUiButtonAcceptDisabledBorderColor: @sapUiButtonDisabledBorderColor;
 @sapUiButtonRejectDisabledBorderColor: @sapUiButtonDisabledBorderColor;
-@sapUiToggleButtonPressedBackground: @sapUiMediumBG;
+
+@sapUiToggleButtonPressedBackground: @sapHCHighlightBG;
+@sapUiButtonActiveBackground: @sapHCHighlightBG;
 @sapUiToggleButtonPressedDisabledBackground: @sapUiExtraLightBG;
 
 @sapUiDatePickerTableBackground: lighten(desaturate(spin(@sapUiHighlightColor,165),18),8);
@@ -334,3 +330,86 @@
 @sapUiToolbarSeparatorBG: @sapHCStandardFG;
 @sapUiToolbarSeparatorFooterBG: @sapHCStandardFG;
 
+
+
+
+/* ------------------------------------------------------------------- */
+/* Generic Mapping: not for usage in standard control development !!!! */
+/* ------------------------------------------------------------------- */
+
+
+/* Semantic Text Colors */
+@sapUiNegativeText: @sapHCNegative;
+@sapUiPositiveText: @sapHCPositive;
+@sapUiCriticalText: @sapHCCritical;
+
+/* Semantic Element Colors */
+@sapUiNegativeElement: @sapHCNegative;
+@sapUiNeutralElement: @sapHCNeutral;
+@sapUiPositiveElement: @sapHCPositive;
+@sapUiCriticalElement: @sapHCCritical;
+
+/* Semantic Backgrounds */
+@sapUiErrorBG: @sapHCStandardBG;
+@sapUiWarningBG: @sapHCStandardBG;
+@sapUiNeutralBG: @sapHCStandardBG;
+@sapUISuccessBG: @sapHCStandardBG;
+
+
+@sapUiActiveBG: @sapHCHighlightAltBG;
+
+@sapUiSearchHighlight: @sapHCHighlightBG;
+
+/* Background Brand */
+@sapUiBrand: @sapHCStandardFG;
+
+
+@sapUiFocus: @sapHCStandardFG;
+
+
+/* Text Colors */
+@sapUiDarkText: @sapHCStandardFG;
+@sapUiLightText: @sapHCStandardFG;
+@sapUiMediumText: @sapHCStandardFG;
+@sapUiExtraLightText: @sapHCStandardFG;
+
+
+/* Border Colors */
+@sapUiDarkBorder: @sapHCStandardFG;
+@sapUiDarkestBorder: @sapHCStandardFG;
+@sapUiExtraDarkBorder: @sapHCStandardFG;
+@sapUiLightestBorder: @sapHCStandardFG;
+/* @sapUiLightBorder: @sapHCStandardFG; */
+/* @sapUiExtraLightBorder: @sapHCStandardFG; */
+@sapUiMediumBorder: @sapHCStandardFG;
+
+
+@sapUiErrorBorder: @sapHCStandardFG;
+@sapUiSuccessBorder: @sapHCStandardFG;
+
+/* Accent */
+@sapUiAccent1: @sapHCStandardFG;
+@sapUiAccent2: @sapHCStandardFG;
+@sapUiAccent3: @sapHCStandardFG;
+@sapUiAccent4: @sapHCStandardFG;
+@sapUiAccent5: @sapHCStandardFG;
+@sapUiAccent6: @sapHCStandardFG;
+@sapUiAccent7: @sapHCStandardFG;
+@sapUiAccent8: @sapHCStandardFG;
+
+
+@sapUiDarkShadowTint: @sapHCStandardFG;
+@sapUiLightShadowTint: @sapHCStandardFG;
+
+/* Backgrounds Header/Footer */
+@sapUiFooterBG: @sapHCStandardBG;
+@sapUiHeaderBG: @sapHCStandardBG;
+
+/* Background */
+@sapUiLightestBG: @sapHCStandardBG;
+@sapUiDarkestBG: @sapHCStandardBG;
+@sapUiExtraDarkBG: @sapHCStandardBG;
+@sapUiExtraLightBG: @sapHCStandardBG;
+@sapUiLightBG: @sapHCStandardBG;
+@sapUiMediumBG: @sapHCStandardBG; 
+@sapUiDarkBG: @sapHCStandardBG;
