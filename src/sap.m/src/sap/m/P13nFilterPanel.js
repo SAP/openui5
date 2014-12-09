@@ -194,6 +194,16 @@ sap.ui
 					};
 
 					/**
+					 * removes all invalid conditions.					 
+					 *  
+					 * @public
+					 */
+					P13nFilterPanel.prototype.removeInvalidConditions = function() {
+						this._oIncludeFilterPanel.removeInvalidConditions();
+						this._oExcludeFilterPanel.removeInvalidConditions();
+					};
+
+					/**
 					 * removes all errors/warning states from of all filter conditions.
 					 * 
 					 * @public
