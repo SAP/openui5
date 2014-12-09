@@ -361,11 +361,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 				// fire the change event after the CSS transition is completed
 				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+					var bState = this.getState();
 
 					// change the state
-					this.setState(this._bDragging ? this._bTempState : !this.getState());
+					this.setState(this._bDragging ? this._bTempState : !bState);
 
-					this.fireChange({ state: this.getState() });
+					if (bState !== this.getState()) {
+						this.fireChange({ state: this.getState() });
+					}
 				});
 			}
 		};
