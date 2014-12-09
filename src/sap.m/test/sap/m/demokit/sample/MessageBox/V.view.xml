@@ -9,10 +9,22 @@
 		<l:content>
 			<Button
 				text="Show Confirmation"
-				press="handleConfirmationMessageBoxPress" />
+				press="handleConfirmationMessageBoxPress"
+				width="250px"/>
 			<Button
 				text="Show Alert"
-				press="handleAlertMessageBoxPress" />
+				press="handleAlertMessageBoxPress"
+				width="250px"/>
+			<Text
+					text="Set initial button focus by:"/>
+			<Button
+					text="Action"
+					press="handleConfirmMessageBoxPress_InitialFocus"
+					width="250px"/>
+			<Button
+					text="Button text"
+					press="handleShowMessageBoxPress_InitialFocus"
+					width="250px"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
