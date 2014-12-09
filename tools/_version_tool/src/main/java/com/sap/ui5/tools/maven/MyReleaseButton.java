@@ -16,7 +16,6 @@ import java.io.Writer;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -142,10 +141,25 @@ public class MyReleaseButton {
     }
   }
 
-  enum ProcessingTypes {
+  public enum ProcessingTypes {
     RepositoryPaths, VersionWithSnapshot, VersionWithTimestamp, VersionWithQualifier_POM, VersionWithQualifier,
     ContributorsVersions, Sapui5CoreVersion
   };
+  
+  public static class ProcessingFilter {
+    
+    public ProcessingFilter(){
+      
+    }
+    
+    public ProcessingFilter(String name, EnumSet<ProcessingTypes> filter) {
+      this.name = name;
+      this.processingTypes = filter;
+    }
+    
+    public String name = "default";
+    public EnumSet<ProcessingTypes> processingTypes = EnumSet.allOf(ProcessingTypes.class);
+  }
 
   static Pattern fromS, fromT, fromQ_POM, fromQ, fromR;
   static String toS, toT, toQ, toR;
@@ -153,6 +167,7 @@ public class MyReleaseButton {
   private static String coreVersion = null;
   private static String contributorsRange = null;
   private static boolean applyContributors;
+  private static ProcessingFilter filter;
 
   private static void processFile(File file, String path) throws IOException {
     String encoding = UTF8;
@@ -194,6 +209,8 @@ public class MyReleaseButton {
     }
     
 
+    processingTypes.removeAll(EnumSet.complementOf(filter.processingTypes));
+    
     if ( !processingTypes.isEmpty() ) {
       CharSequence orig = readFile(file, encoding);
       CharSequence s = orig;
@@ -256,17 +273,23 @@ public class MyReleaseButton {
     return updateVersion(repository, oldVersion, newVersion, null, diffDescs);
   }
   
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, Map<String, String[]> diffDescs) throws IOException {
+    return updateVersion(repository, oldVersion, newVersion, contributorsVersions, new ProcessingFilter(), diffDescs);
+  }
   
   /**
    * @param args
    */
-  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, Map<String,String[]> diffDescs) throws IOException {
-    File root = repository.getCanonicalFile();
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, ProcessingFilter filter, Map<String, String[]> diffDescs)
+      throws IOException {
+  File root = repository.getCanonicalFile();
     if (!root.isDirectory()) {
       throw new RuntimeException(
           "root dir must be specified and must be an existing directory");
     }
 
+    MyReleaseButton.filter = filter;
+    
     // convert the versions to Maven versions (if required)
     String oldMavenVersion = Maven2OsgiConverter.isMavenVersion(oldVersion) ? oldVersion : Maven2OsgiConverter.getMavenVersion(oldVersion);
     String newMavenVersion = Maven2OsgiConverter.isMavenVersion(newVersion) ? newVersion : Maven2OsgiConverter.getMavenVersion(newVersion);
@@ -339,7 +362,7 @@ public class MyReleaseButton {
     scan(root, "");
 
     int diffdiffs = -1; // UNKNOWN
-    LastRunInfo lastRunInfo = new LastRunInfo(root);
+    LastRunInfo lastRunInfo = new LastRunInfo(root, filter.name);
     Properties prop = lastRunInfo.getDiffs();
     if ( !prop.isEmpty() ) {
       System.out.println("Comparing diff summary against results from last run");

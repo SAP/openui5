@@ -10,9 +10,17 @@ package com.sap.ui5.tools.maven;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Map;
 import java.util.Properties;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 
 /**
  * 
@@ -24,43 +32,62 @@ import java.util.Properties;
  */
 public class LastRunInfo {
   private static final String LAST_COMMIT_ID = "lastCommitId";
-  private Properties diffs = new Properties();
-  private String lastCommitId;
   private File lastVersionToolResultsFile;
+  private String profile;
+  private VersionTool versionTool;
   
-  public LastRunInfo (File root) throws IOException{
+  private class VersionTool{
+    Map<String, Properties> changes;
+    String lastCommitId;
+  }
+  
+  public LastRunInfo (File root) throws IOException {
+    this(root, "default");
+  }
+   
+  public LastRunInfo (File root, String profile) throws IOException {
+    this.profile = profile;
     lastVersionToolResultsFile = new File(root, ".version-tool.xml");
     if ( lastVersionToolResultsFile.canRead() ) {
-      getDiffs().loadFromXML(new FileInputStream(lastVersionToolResultsFile));
-      setLastCommitId((String)getDiffs().get(LAST_COMMIT_ID));
-      if (getLastCommitId() != null){
-        diffs.remove(LAST_COMMIT_ID);
+      try {
+        //try the old format
+        Properties diffs = new Properties();
+        diffs.loadFromXML(new FileInputStream(lastVersionToolResultsFile));
+        versionTool = new VersionTool();
+        setLastCommitId((String)diffs.get(LAST_COMMIT_ID));
+        if (getLastCommitId() != null){
+          diffs.remove(LAST_COMMIT_ID);
+        }
+        versionTool.changes = new HashMap<String, Properties>();
+        versionTool.changes.put(profile, diffs);
+      } catch (InvalidPropertiesFormatException e) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        versionTool = gson.fromJson(new JsonReader(new FileReader(lastVersionToolResultsFile)), VersionTool.class);
       }
     }
   }
   
   public void save() throws IOException{
-    if (lastCommitId != null){
-      diffs.put(LAST_COMMIT_ID, lastCommitId);
-    }
-    if (!diffs.isEmpty()) {
-      diffs.storeToXML(new FileOutputStream(lastVersionToolResultsFile), "Last Version-Tool Changes");
-    }
-    if (lastCommitId != null){
-      diffs.remove(LAST_COMMIT_ID);
-    }
+    Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+    String json = gson.toJson(versionTool);
+    FileWriter fw = new FileWriter(lastVersionToolResultsFile);
+    fw.write(json);
+    fw.close();
   }
   
   public String getLastCommitId() {
-    return this.lastCommitId;
+    return versionTool.lastCommitId;
   }
   public void setLastCommitId(String lastCommitId) {
-    this.lastCommitId = lastCommitId;
+    versionTool.lastCommitId = lastCommitId;
   }
   public Properties getDiffs() {
-    return this.diffs;
+    if (!versionTool.changes.containsKey(profile)) {
+      versionTool.changes.put(profile, new Properties());
+    }
+    return versionTool.changes.get(profile);
   }
   public void setDiffs(Properties diffs) {
-    this.diffs = diffs;
+    versionTool.changes.put(profile, diffs);
   }
 }
