@@ -371,6 +371,7 @@
 					}
 				});
 
+				this.clock.tick(200);
 				strictEqual(oSwitch0.getState(), true, "On tap the switch state is true");
 				ok(!oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchend event the switch muss not have the css class “sapMSwtPressed”');
 
@@ -482,6 +483,75 @@
 						length: 0
 					}
 				});
+			});
+
+			// github #234
+			test("double click/tap test case", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					state: true
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oTouchstart = {
+					touches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					targetTouches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch8.getDomRef()
+						},
+
+						length: 1
+					}
+				};
+
+				var oTouchend = {
+					changedTouches: {
+						0: {
+							pageX: 1,
+							identifier: 1,
+							target: oSwitch.getDomRef()
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				};
+
+				var iClickThreshold = 100;	// threshold between clicks
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+				this.clock.tick(iClickThreshold);
+				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
+				this.clock.tick(sap.m.Switch._TRANSITIONTIME - iClickThreshold);
+
+				// assert
+				strictEqual(oSwitch.getState(), false);
+				this.clock.tick(iClickThreshold);
+				strictEqual(oSwitch.getState(), true);
+
+				// cleanup
+				oSwitch.destroy();
 			});
 
 			/* ------------------------------ */
