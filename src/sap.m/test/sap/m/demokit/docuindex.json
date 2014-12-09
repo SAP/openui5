@@ -518,6 +518,7 @@
 				"name" : "Segmented Button",
 				"category" : "User Input",
 				"since" : "1.10",
+				"appComponent" : "CA-UI5-CTR",
 				"samples" : [ "sap.m.sample.SegmentedButton" ]
 			},
 			{
