@@ -329,8 +329,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 			var oTouch,
 				fnTouch = sap.m.touch,
-				assert = jQuery.sap.assert,
-				bState = this.getState();
+				assert = jQuery.sap.assert;
 
 			if (!this.getEnabled() ||
 
@@ -357,17 +356,17 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				// remove active state
 				this._$Switch.removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
 
-				// change the state
-				this.setState(this._bDragging ? this._bTempState : !this._bTempState);
+				// note: update the DOM before the change event is fired for better user experience
+				this._setDomState(this._bDragging ? this._bTempState : !this.getState());
 
-				if (bState !== this.getState()) {
-					bState = this.getState();
+				// fire the change event after the CSS transition is completed
+				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
 
-					// fire the change event after the CSS transition is completed
-					jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
-						this.fireChange({ state: bState });
-					});
-				}
+					// change the state
+					this.setState(this._bDragging ? this._bTempState : !this.getState());
+
+					this.fireChange({ state: this.getState() });
+				});
 			}
 		};
 
