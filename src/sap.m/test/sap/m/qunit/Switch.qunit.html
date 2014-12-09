@@ -291,15 +291,6 @@
 
 			module("Updating");
 
-			if (sap.ui.Device.os.ios) {
-				asyncTest('Check the width for html elements "ON" and "OFF" state. Switch is "ON"', function() {
-					setTimeout(function() {
-						testSwitchON(oSwitch7);
-						start();
-					}, 175);
-				});
-			}
-
 			// test switch disabled
 			test("When the method setEnabled is invoked with a boolean false argument", function() {
 				oSwitch7.setState(false);
@@ -339,22 +330,6 @@
 
 			module("Event");
 
-			test("Event binding", function() {
-				var oSwitch7 = sap.ui.getCore().byId("__switch7");
-
-				function test() {
-					strictEqual(typeof oSwitch7.ontouchstart, "function");
-					if (sap.ui.Device.os.os === "ios" && sap.ui.Device.os.version <= 5 && sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true") {
-						strictEqual(oSwitch7.ontouchmove, null);
-					} else {
-						strictEqual(typeof oSwitch7.ontouchmove, "function");
-					}
-					strictEqual(typeof oSwitch7.ontouchend, "function");
-				}
-
-				test();
-			});
-
 			test("Firing events", function() {
 				var j,
 					i,
@@ -385,25 +360,11 @@
 					}
 				});
 
-				if (jQuery.device.is.desktop) {
-
-					// assertion
-	// 				ok(fnDelayedCallSpy.calledOnce, "delayedCall() method was called exactly once on " + oSwitch0);
-	// 				ok(fnDelayedCallSpy.alwaysCalledWithExactly(0, oSwitch0, "handleFocus"), "handleFocus() method was called");
-				} else {
-
-					// assertion
-					strictEqual(fnDelayedCallSpy.callCount, 0, "delayedCall() method must be called exactly once");
-				}
 
 				// cleanup
 				fnDelayedCallSpy.restore();
 
 				ok(oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchstart event the switch first-child html element muss have the css class “sapMSwtPressed”');
-
-				if (sap.ui.Device.os.ios) {
-					ok(!oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtTrans"), 'On touchstart event the switch first-child html element muss not have the css class “sapMSwtTrans”');
-				}
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch0.getDomRef(), {
 					changedTouches: {
