@@ -11,27 +11,23 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 	/**
 	 * Constructor for a new ODataMetaModel.
 	 *
-	 * @class Model implementation for meta models
-	 * @abstract
+	 * @class Model implementation for OData meta models
 	 * @extends sap.ui.model.MetaModel
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
 	 * @alias sap.ui.model.odata.ODataMetaModel
-	 * @param {string} sMetadataUrl
-	 *   The URL for the OData service metadata
-	 * @param {string|string[]} vAnnotationUrl
-	 *   URL or array of URLs to load the annotations of the OData service
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+	 *   the OData model's metadata object
+	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
+	 *   the OData model's annotations object
+	 * @public
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
 			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
-			/**
-			 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
-			 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
-			 */
+
 			constructor : function(oMetadata, oAnnotations) {
 				this.oModel = new JSONModel();
 				this.oLoadedPromise = load(this.oModel, oMetadata, oAnnotations);
@@ -46,15 +42,15 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 	/**
 	 * Returns a Promise which is fulfilled once the meta model data is loaded and can be accessed
 	 * via {@link #getData} or similar methods. In error cases like issues on loading the metadata
-	 * or annotations from the URLs given the Promise is rejected with the respective Error object.
+	 * or annotations from the given URLs, the Promise is rejected with a respective Error object.
+	 * @return {Promise} a Promise
 	 * @public
-	 * @return {Promise} the Promise
 	 */
 	ODataMetaModel.prototype.loaded = function(){
 		return this.oLoadedPromise;
 	};
 
-	/**
+	/*
 	 * @param {sap.ui.model.json.JSONModel} oModel
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
@@ -77,16 +73,24 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		}
 
 		/*
-		 * Calls the given handler as soon as the given object is "loaded".
+		 * Calls the given success handler as soon as the given object is "loaded".
+		 * Calls the given error handler as soon as the given object is "failed".
 		 *
 		 * @param {object} o
-		 * @param {function(void)} fnLoaded
+		 * @param {function(void)} fnSuccess
+		 * @param {function(Error)} fnError
 		 */
-		function loaded(o, fnLoaded) {
+		function loaded(o, fnSuccess, fnError) {
 			if (!o || o.isLoaded()) {
-				fnLoaded();
+				fnSuccess();
+			} else if (o.isFailed()) {
+				fnError(new Error("Error loading meta model"));
 			} else {
-				o.attachLoaded(fnLoaded);
+				o.attachLoaded(fnSuccess);
+				o.attachFailed(function (oEvent) {
+					fnError(new Error("Error loading meta model: "
+						+ oEvent.getParameter("message")));
+				});
 			}
 		}
 
@@ -96,17 +100,18 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		 * @param {object} oData
 		 */
 		function merge(oAnnotations, oData) {
-			jQuery.each(oData.dataServices.schema, function (i, oSchema) {
+			jQuery.each(oData.dataServices.schema || [], function (i, oSchema) {
 				liftSAPData(oSchema);
-				jQuery.each(oSchema.entityType, function (j, oEntity) {
+				jQuery.each(oSchema.entityType || [], function (j, oEntity) {
 					var sEntityName = oSchema.namespace + "." + oEntity.name,
-						mPropertyAnnotations = oAnnotations.propertyAnnotations[sEntityName];
+						mPropertyAnnotations = oAnnotations.propertyAnnotations
+							&& oAnnotations.propertyAnnotations[sEntityName];
 
 					liftSAPData(oEntity);
 					jQuery.extend(oEntity, oAnnotations[sEntityName]);
 
 					if (mPropertyAnnotations) {
-						jQuery.each(oEntity.property, function (k, oProperty) {
+						jQuery.each(oEntity.property || [], function (k, oProperty) {
 							liftSAPData(oProperty);
 							jQuery.extend(oProperty, mPropertyAnnotations[oProperty.name]);
 						});
@@ -118,17 +123,22 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		return new Promise(function (fnResolve, fnReject) {
 			loaded(oMetadata, function () {
 				loaded(oAnnotations, function () {
-					var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
-					if (oAnnotations) {
-						merge(oAnnotations.getAnnotationsData(), oData);
+					try {
+						var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
+						if (oAnnotations) {
+							merge(oAnnotations.getAnnotationsData(), oData);
+						}
+						oModel.setData(oData);
+						fnResolve();
+					} catch (ex) {
+						fnReject(ex);
 					}
-					oModel.setData(oData);
-					fnResolve();
-				});
-			});
+				}, fnReject);
+			}, fnReject);
 		});
 	}
 
+	//TODO how do we get the correct, full list of methods to delegate here? what about pub/sub for events?
 	ODataMetaModel.prototype.bindContext = function () {
 		return this.oModel.bindContext.apply(this.oModel, arguments);
 	};
@@ -145,10 +155,12 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		return this.oModel.bindTree.apply(this.oModel, arguments);
 	};
 
+	//TODO @private in base class sap.ui.model.Model
 	ODataMetaModel.prototype.checkUpdate = function () {
 		return this.oModel.checkUpdate.apply(this.oModel, arguments);
 	};
 
+	//TODO missing JsDoc, does this belong to base class sap.ui.model.MetaModel?
 	ODataMetaModel.prototype.getData = function () {
 		return this.oModel.getData.apply(this.oModel, arguments);
 	};
@@ -161,6 +173,7 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		return this.oModel.getObject.apply(this.oModel, arguments);
 	};
 
+	//TODO JsDoc does not appear for base class sap.ui.model.Model
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
 	};

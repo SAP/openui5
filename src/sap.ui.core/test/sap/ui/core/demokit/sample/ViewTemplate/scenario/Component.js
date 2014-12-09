@@ -61,7 +61,7 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 			loadMetadataAsync : true
 		});
 
-		oModel.getMetaModel().loaded().then(function() {
+		oModel.getMetaModel().loaded().then(function () {
 			oLayout.addItem(sap.ui.view({
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
@@ -70,6 +70,11 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 					"meta" : oModel.getMetaModel()
 				}
 			}));
+		}, function (oError) {
+			jQuery.sap.require("sap.m.MessageBox");
+			sap.m.MessageBox.alert(oError.message, {
+				icon: sap.m.MessageBox.Icon.ERROR,
+				title: "Error"});
 		});
 
 		return oLayout;
