@@ -18,7 +18,6 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
-			var oApp = new sap.m.App("myApp");
 			var oPage = new sap.m.Page("page1", {
 				title: "Mobile Switch Control",
 				content: [
@@ -79,9 +78,7 @@
 				]
 			});
 
-			oApp.addPage(oPage);
-			oApp.placeAt("content");
-
+			oPage.placeAt("content");
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -96,19 +93,16 @@
 					$SwtTextOff = $SwtInner.children(".sapMSwtTextOff"),
 					$SwtSpanOn = $SwtTextOn.children(),
 					$SwtSpanOff = $SwtTextOff.children(),
-					$SwtHandle = $SwtInner.children(".sapMSwtHandle"),
 					$Checkbox = $SwtCont.children("input[type=checkbox]");
 
 				return {
 					oSwitch: oSwitch,
-					$SwtCont: $SwtCont,
 					$Swt: $Swt,
 					$SwtInner: $SwtInner,
 					$SwtTextOn: $SwtTextOn,
 					$SwtTextOff: $SwtTextOff,
 					$SwtSpanOn: $SwtSpanOn,
 					$SwtSpanOff: $SwtSpanOff,
-					$SwtHandle: $SwtHandle,
 					$Checkbox: $Checkbox
 				}
 			};
@@ -193,7 +187,7 @@
 					var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
 					// assertions
-					ok(mDomRefs.$SwtCont.length, "The switch container html div element exists");
+					ok(oSwitch.$().length, "The switch container html div element exists");
 					ok(mDomRefs.$Swt.length, "The switch first-child html div element exists");
 					ok(mDomRefs.$SwtInner.length, "The switch first-child html div inner element exists");
 					ok(mDomRefs.$SwtTextOn.length, "The switch html div text element exists");
@@ -205,7 +199,7 @@
 						ok(mDomRefs.$Checkbox.length, 'The checkbox html input element exists');
 					}
 
-					ok(mDomRefs.$SwtHandle.length, "The switch handler html div element exists");
+					ok(oSwitch.$("handle").length, "The switch handle html div element exists");
 				});
 			});
 
@@ -227,7 +221,7 @@
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
 				// assertions
-				ok(mDomRefs.$SwtCont.hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
+				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch first-child html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must have" the css class "sapMSwtOn"');
 				ok(!mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch first-child html element "must not have" the css class "sapMSwtOff"');
@@ -237,12 +231,12 @@
 					strictEqual(mDomRefs.$Checkbox.attr("checked"), "checked", 'The input checkbox is "checked"');
 				}
 
-				strictEqual(mDomRefs.$SwtHandle.attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON"), 'The switch handler "data-sap-ui-swt" attribute must have the value of "On"');
+				strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON"), 'The switch handle "data-sap-ui-swt" attribute must have the value of "On"');
 
 				if (oSwitch.getEnabled()) {
-					equal(mDomRefs.$SwtCont.attr("tabindex"), 0, 'The switch "tabindext" attribute must have the value of "0"');
+					equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindext" attribute must have the value of "0"');
 				} else {
-					ok(mDomRefs.$SwtCont.attr("tabindex"), 'The "tabindex" attribute of the switch is not rendered');
+					ok(oSwitch.$().attr("tabindex"), 'The "tabindex" attribute of the switch is not rendered');
 				}
 
 				testSwitchEnabled(oSwitch);
@@ -257,7 +251,7 @@
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
 				// assertions
-				ok(mDomRefs.$SwtCont.hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
+				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch html element "must have" the css class "sapMSwtOff"');
 				ok(!mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must not have" the css class "sapMSwtOn"');
@@ -267,10 +261,10 @@
 					strictEqual(mDomRefs.$Checkbox.attr("checked"), undefined, 'The input checkbox is not "checked"');
 				}
 
-				strictEqual(mDomRefs.$SwtHandle.attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF"), 'The switch handler "data-sap-ui-swt" attribute must have the value of "Off"');
+				strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF"), 'The switch handle "data-sap-ui-swt" attribute must have the value of "Off"');
 
 				if (mDomRefs.oSwitch.getEnabled()) {
-					equal(mDomRefs.$SwtCont.attr("tabindex"), 0, 'The switch "tabindex" attribute must have the value of "0"');
+					equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindex" attribute must have the value of "0"');
 				}
 			}
 
@@ -281,10 +275,10 @@
 
 				// assertions
 				if (oSwitch.getEnabled()) {
-					ok(!mDomRefs.$SwtCont.hasClass("sapMSwtContDisabled"), 'The switch container html element "must not have" the css class "sapMSwtContDisabled"');
+					ok(!oSwitch.$().hasClass("sapMSwtContDisabled"), 'The switch container html element "must not have" the css class "sapMSwtContDisabled"');
 					ok(!mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must not have" the css class "sapMSwtDisabled"');
 				} else {
-					ok(mDomRefs.$SwtCont.hasClass("sapMSwtContDisabled"), 'The switch container html element "must have" the css class "sapMSwtContDisabled"');
+					ok(oSwitch.$().hasClass("sapMSwtContDisabled"), 'The switch container html element "must have" the css class "sapMSwtContDisabled"');
 					ok(mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must have" the css class "sapMSwtDisabled"');
 				}
 			}
@@ -335,8 +329,7 @@
 					i,
 					oTouchMove,
 					oSwitch0 = sap.ui.getCore().byId("__switch0"),
-					oSwitch8 = sap.ui.getCore().byId("__switch8"),
-					fnDelayedCallSpy = this.spy(jQuery.sap, "delayedCall");
+					oSwitch8 = sap.ui.getCore().byId("__switch8");
 
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
 					touches: {
@@ -360,10 +353,6 @@
 					}
 				});
 
-
-				// cleanup
-				fnDelayedCallSpy.restore();
-
 				ok(oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchstart event the switch first-child html element muss have the css class “sapMSwtPressed”');
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch0.getDomRef(), {
@@ -383,7 +372,6 @@
 				});
 
 				strictEqual(oSwitch0.getState(), true, "On tap the switch state is true");
-
 				ok(!oSwitch0.$().children(".sapMSwt").hasClass("sapMSwtPressed"), 'On touchend event the switch muss not have the css class “sapMSwtPressed”');
 
 				/*	Only process single touches. If there is already a touch
@@ -456,7 +444,7 @@
 						0: {
 							pageX: 636,
 							identifier: 3,
-							target: oSwitch8.$().find(".sapMSwtHandle")[0]
+							target: oSwitch8.$("handle")[0]
 						},
 
 						length: 1
@@ -466,7 +454,7 @@
 						0: {
 							pageX: 636,
 							identifier: 3,
-							target: oSwitch8.$().find(".sapMSwtHandle")[0]
+							target: oSwitch8.$("handle")[0]
 						},
 
 						length: 1
@@ -476,7 +464,7 @@
 				j = 636;
 				for (i = j + 1; i < j + 41; i++) {
 					oTouchMove.changedTouches[0].pageX = i;
-					sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch8.$().find(".sapMSwtHandle")[0], oTouchMove);
+					sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch8.$("handle")[0], oTouchMove);
 				}
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch8.getDomRef(), {
