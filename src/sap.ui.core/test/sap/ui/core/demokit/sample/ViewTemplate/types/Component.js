@@ -13,7 +13,7 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 		var sUri = "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/",
 			oLayout = new sap.m.HBox(),
 			sMockServerBaseUri =
-				"/testsuite/test-resources/sap/ui/core/demokit/sample/ViewTemplate/types/data/",
+				"test-resources/sap/ui/core/demokit/sample/ViewTemplate/types/data/",
 			oMockServer,
 			oModel,
 			oView;
