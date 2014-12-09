@@ -96,6 +96,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
 	PropertyBinding.prototype.setExternalValue = function(oValue) {
 		// formatter doesn't support two way binding
 		if (this.fnFormatter) {
+			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
 			return;
 		}
 		if (this.oType) {

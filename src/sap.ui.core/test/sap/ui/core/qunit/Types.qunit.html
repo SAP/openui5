@@ -8,6 +8,8 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -340,6 +342,95 @@
 		equal(floatType.formatValue("22","string"),"22", "format test");
 		equal(floatType.formatValue("-6622.333","string"),"-6,622.333", "format test");
 		equal(floatType.formatValue("-6622.339","string"),"-6,622.339", "format test");
+
+	});
+	
+	// currency type tests
+	module("currency type");
+	
+	test("currency formatValue", function(){
+		var currencyType = new sap.ui.model.type.Currency();
+		equal(currencyType.formatValue([22, "EUR"],"string"),"EUR22.00", "format test");
+		equal(currencyType.formatValue([22, "JPY"],"string"),"JPY22", "format test");
+		equal(currencyType.formatValue([-6622.333, "EUR"],"string"),"EUR-6,622.33", "format test");
+		equal(currencyType.formatValue([1.0, "EUR"],"string"),"EUR1.00", "format test");
+		equal(currencyType.formatValue([1.0000, "EUR"],"string"),"EUR1.00", "format test");
+		
+		raises(function(){currencyType.formatValue(22.0,"int")},sap.ui.model.FormatException, "format test");
+		raises(function(){currencyType.formatValue(22.0,"float")},sap.ui.model.FormatException, "format test");
+		raises(function(){currencyType.formatValue(22.0,"untype")},sap.ui.model.FormatException, "format test");
+	});
+	
+	test("currency parseValue", function(){
+		var currencyType = new sap.ui.model.type.Currency();
+	
+		deepEqual(currencyType.parseValue("3333","string"),[3333, ""], "parse test");
+		deepEqual(currencyType.parseValue("USD3333.555","string"),[3333.555, "USD"], "parse test");
+		deepEqual(currencyType.parseValue("EUR3.555","string"),[3.555, "EUR"], "parse test");
+		deepEqual(currencyType.parseValue("JP¥-3.555","string"),[-3.555, "JPY"], "parse test");
+		
+		raises(function(){currencyType.parseValue(true,"untype")},sap.ui.model.ParseException, "parse test");
+		raises(function(){currencyType.parseValue(true,"boolean")},sap.ui.model.ParseException, "parse test");
+		raises(function(){currencyType.parseValue("test","string")},sap.ui.model.ParseException, "parse test");
+	});
+	
+	test("currency validateValue", function(){
+		var currencyType = new sap.ui.model.type.Currency(null, {
+			minimum: 3,
+			maximum : 10
+		});
+		try{
+			equal(currencyType.validateValue([3.0, "EUR"]),undefined, "validate test");
+			equal(currencyType.validateValue([3.01, "USD"]),undefined, "validate test");
+			equal(currencyType.validateValue([10, "JPY"]),undefined, "validate test");
+		}catch (e){
+			ok(false, "one of the validation tests failed please check");
+		}
+		raises(function(){currencyType.validateValue([2.99999, "USD"])},sap.ui.model.ValidateException, "validate test");
+		raises(function(){currencyType.validateValue([10.0000001, "EUR"])},sap.ui.model.ValidateException, "validate test");
+		
+	});
+	
+	test("currency formatOptions", function(){
+		var currencyType = new sap.ui.model.type.Currency({
+			showMeasure: false
+		});
+		
+		equal(currencyType.formatValue([22, "USD"],"string"),"22.00", "format test");
+		equal(currencyType.formatValue([-6622.333, "USD"],"string"),"-6,622.33", "format test");
+		equal(currencyType.formatValue([-6622.339, "EUR"],"string"),"-6,622.34", "format test");
+		equal(currencyType.formatValue([1.0, "USD"],"string"),"1.00", "format test");
+		equal(currencyType.formatValue([1.0000, "JPY"],"string"),"1", "format test");
+		equal(currencyType.formatValue([1.009, "EUR"],"string"),"1.01", "format test");
+		equal(currencyType.formatValue([1.00001, "USD"],"string"),"1.00", "format test");
+
+		var currencyType = new sap.ui.model.type.Currency({
+			currencyCode: false
+		});
+		
+		equal(currencyType.formatValue([22, "USD"],"string"),"US$22.00", "format test");
+		equal(currencyType.formatValue([-6622.333, "USD"],"string"),"US$-6,622.33", "format test");
+		equal(currencyType.formatValue([-6622.339, "EUR"],"string"),"€-6,622.34", "format test");
+		equal(currencyType.formatValue([1.0, "USD"],"string"),"US$1.00", "format test");
+		equal(currencyType.formatValue([1.0000, "JPY"],"string"),"JP¥1", "format test");
+		equal(currencyType.formatValue([1.009, "EUR"],"string"),"€1.01", "format test");
+		equal(currencyType.formatValue([1.00001, "USD"],"string"),"US$1.00", "format test");
+				
+	});
+
+	test("currency formatOptions.source", function(){
+		var currencyType = new sap.ui.model.type.Currency({
+			source:{}
+ 		});
+		
+		equal(currencyType.parseValue("EUR3333","string"),"EUR3333.00", "parse test");
+		equal(currencyType.parseValue("USD3333.555","string"),"USD3333.56", "parse test");
+		equal(currencyType.parseValue("US$3.555","string"),"USD3.56", "parse test");
+		equal(currencyType.parseValue("JPY-3.555","string"),"JPY-4", "parse test");
+
+		equal(currencyType.formatValue("EUR22","string"),"EUR22.00", "format test");
+		equal(currencyType.formatValue("USD-6622.333","string"),"USD-6,622.33", "format test");
+		equal(currencyType.formatValue("JPY-6622.339","string"),"JPY-6,622", "format test");
 
 	});
 	
