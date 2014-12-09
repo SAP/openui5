@@ -11,10 +11,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	/**
 	 * Constructor for a new P13nDialog.
 	 * 
-	 * @param {string}
-	 *          [sId] id for the new control, generated automatically if no id is given
-	 * @param {object}
-	 *          [mSettings] initial settings for the new control
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 * 
 	 * @class The P13nDialog control provides dialog that contains one or more panels. On each of the panels, one or more
 	 *        changes with regards to a table can be processed. For example, a panel to set a column to invisible, change
@@ -168,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			this._setVisibilityOfPanel(oPanel);
 		}
 		return this;
-	};	
+	};
 
 	/*
 	 * Removes an item from the aggregation named <code>items</code>.
@@ -224,6 +222,35 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			type : sap.m.ButtonType.Default,
 			text : oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
 		});
+		oButton.addDelegate({
+			ontap : function(oEvent) {
+				var oButtonClicked = oEvent.srcControl;
+				var oPanelVisible = this.getVisiblePanel();
+				if (oPanelVisible && oPanelVisible.onBeforeNavigation && !oPanelVisible.onBeforeNavigation()) {
+					oEvent.stopImmediatePropagation(true);
+					jQuery.sap.require("sap.m.MessageBox");
+					var that = this;
+					sap.m.MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(
+							"P13NDIALOG_VALIDATION_MESSAGE"), {
+						icon : sap.m.MessageBox.Icon.WARNING,
+						title : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
+						actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+						onClose : function(oAction) {
+							// CANCLE: Stay on the current panel. There is incorrect entry and user decided to correct this.
+							// OK: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
+							// leave the current panel. Delete incorrect condition set.
+							if (oAction === sap.m.MessageBox.Action.OK) {
+								oPanelVisible.removeInvalidConditions();
+								that._getSegmentedButton().setSelectedButton(oButtonClicked);
+								that._switchPanel(oButtonClicked);
+							}
+						},
+						styleClass : !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+					});
+					return true;
+				}
+			}
+		}, true, this);
 
 		oButton.setModel(oPanel.getModel());
 		oPanel.data(P13nDialogRenderer.CSS_CLASS + "Button", oButton);
@@ -297,7 +324,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 		}
 		return null;
 	};
-	
+
 	/**
 	 * Sets property 'visible' for oPanel regarding the 'defaultType' property and number of content objects.
 	 * 
@@ -313,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		}
 	};
-	
+
 	/**
 	 * Sets title of dialog in regard to oPanel.
 	 * 
