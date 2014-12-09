@@ -1,0 +1,18 @@
+<mvc:View
+	controllerName="sap.m.sample.MessageBoxTypes.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Button text="Default Message Box" press="defaultMessageBoxClickHandler" width="220px" />
+			<Button text="Success Message Box" press="successMessageBoxClickHandler" icon="sap-icon://message-success" width="220px" />
+			<Button text="Warning Message Box" press="warningMessageBoxClickHandler" icon="sap-icon://message-warning" width="220px" />
+			<Button text="Error Message Box" press="errorMessageBoxClickHandler" icon="sap-icon://message-error" width="220px" />
+			<Button text="Information Message Box" press="informationMessageBoxClickHandler" icon="sap-icon://message-information" width="220px" />
+			<Button text="Question Message Box" press="questionMessageBoxClickHandler" icon="sap-icon://question-mark" width="220px" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>
