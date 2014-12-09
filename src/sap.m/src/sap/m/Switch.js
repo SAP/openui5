@@ -25,15 +25,15 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @alias sap.m.Switch
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata : {
+		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * A boolean value indicating whether the switch is on or off.
 				 */
-				state : {type : "boolean", group : "Misc", defaultValue : false},
+				state: { type: "boolean", group: "Misc", defaultValue: false },
 
 				/**
 				 * Custom text for the "ON" state.
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * "ON" translated to the current language is the default value.
 				 * Beware that the given text will be cut off after three characters.
 				 */
-				customTextOn : {type : "string", group : "Misc", defaultValue : ""},
+				customTextOn: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Custom text for the "OFF" state.
@@ -49,35 +49,35 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * "OFF" translated to the current language is the default value.
 				 * Beware that the given text will be cut off after three characters.
 				 */
-				customTextOff : {type : "string", group : "Misc", defaultValue : ""},
+				customTextOff: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Whether the switch is enabled.
 				 */
-				enabled : {type : "boolean", group : "Data", defaultValue : true},
+				enabled: { type: "boolean", group: "Data", defaultValue: true },
 
 				/**
 				 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : ""},
+				name: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Type of a Switch. Possibles values "Default", "AcceptReject".
 				 */
-				type : {type : "sap.m.SwitchType", group : "Appearance", defaultValue : sap.m.SwitchType.Default}
+				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: sap.m.SwitchType.Default }
 			},
-			events : {
+			events: {
 
 				/**
 				 * Triggered when a switch changes the state.
 				 */
-				change : {
-					parameters : {
+				change: {
+					parameters: {
 
 						/**
 						 * The new state of the switch.
 						 */
-						state : {type : "boolean"}
+						state: { type: "boolean" }
 					}
 				}
 			}
@@ -122,23 +122,40 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			this._$Handle[0].setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
 		};
 
+		Switch.prototype._setDomState = function(bState) {
+			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
+				sState = bState ? this._sOn : this._sOff;
+
+			if (!this._$Switch) {
+				return this;
+			}
+
+			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
+
+			if (this.getName()) {
+				this._$Checkbox[0].setAttribute("checked", bState);
+				this._$Checkbox[0].setAttribute("value", sState);
+			}
+
+			bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
+					: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+
+			this._$Switch.addClass(CSS_CLASS + "Trans");
+
+			// remove inline styles
+			this._$SwitchInner[0].style.cssText = "";
+		};
+
 		Switch._getCssParameter = function(sParameter) {
 			var fnGetCssParameter = Parameters.get;
-
 			return fnGetCssParameter(sParameter) || fnGetCssParameter(sParameter + "-" + sap.ui.Device.os.name.toLowerCase());
 		};
 
-		(function() {
-			var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
-
+		var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
 			sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
 
-			// a boolean property to indicate if transition or not
-			Switch._bUseTransition = !!(Number(sTransitionTime));
-
-			// the milliseconds takes the transition from one state to another
-			Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
-		}());
+		// the milliseconds takes the transition from one state to another
+		Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
 
 		// the position of the inner HTML element whether the switch is "ON"
 		Switch._ONPOSITION = Number(Switch._getCssParameter("sapMSwitch-ONPOSITION"));
@@ -339,8 +356,20 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				// remove active state
 				this._$Switch.removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
 
-				// change the state
-				this.setState(this._bDragging ? this._bTempState : !this._bTempState, true);
+				// note: update the DOM before the change event is fired for better user experience
+				this._setDomState(this._bDragging ? this._bTempState : !this.getState());
+
+				// fire the change event after the CSS transition is completed
+				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+					var bState = this.getState();
+
+					// change the state
+					this.setState(this._bDragging ? this._bTempState : !bState);
+
+					if (bState !== this.getState()) {
+						this.fireChange({ state: this.getState() });
+					}
+				});
 			}
 		};
 
@@ -359,6 +388,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @private
 		 */
 		Switch.prototype.onsapselect = function(oEvent) {
+			var bState;
 
 			if (this.getEnabled()) {
 
@@ -368,7 +398,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				// note: prevent document scrolling when space keys is pressed
 				oEvent.preventDefault();
 
-				this.setState(!this.getState(), true);
+				this.setState(!this.getState());
+
+				bState = this.getState();
+
+				// fire the change event after the CSS transition is completed
+				jQuery.sap.delayedCall(Switch._TRANSITIONTIME, this, function() {
+					this.fireChange({ state: bState });
+				});
 			}
 		};
 
@@ -383,52 +420,9 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @public
 		 * @return {sap.m.Switch} <code>this</code> to allow method chaining.
 		 */
-		Switch.prototype.setState = function(bState, bTriggerEvent /* for internal usage */) {
-			var sState,
-				bNewState,
-				Swt = Switch,
-				CSS_CLASS = SwitchRenderer.CSS_CLASS;
-
-			bNewState = !(this.getState() === bState);
-
-			if (bNewState) {
-				this.setProperty("state", bState, true);	// validation and suppress re-rendering
-			}
-
-			if (!this._$Switch) {
-				return this;
-			}
-
-			bState = this.getState();
-			sState = bState ? this._sOn : this._sOff;
-
-			if (bNewState) {
-				this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
-
-				if (this.getName()) {
-					this._$Checkbox[0].setAttribute("checked", bState);
-					this._$Checkbox[0].setAttribute("value", sState);
-				}
-
-				bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
-						: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
-
-				if (bTriggerEvent) {
-					if (Swt._bUseTransition) {
-						jQuery.sap.delayedCall(Swt._TRANSITIONTIME, this, function() {
-							this.fireChange({ state: bState });
-						}, [bState]);
-					} else {
-						this.fireChange({ state: bState });
-					}
-				}
-			}
-
-			this._$Switch.addClass(CSS_CLASS + "Trans");
-
-			// remove inline styles
-			this._$SwitchInner.removeAttr("style");
-
+		Switch.prototype.setState = function(bState) {
+			this.setProperty("state", bState, true);
+			this._setDomState(this.getState());
 			return this;
 		};
 

@@ -22,7 +22,7 @@
 			var oSwitch0 = new sap.m.Switch({
 				state: true,
 				change: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' state property to " + oControlEvent.getParameter("state") + " on " + this);
+					jQuery.sap.log.info("Event fired: 'change' state property to " + this.getState() + " on " + this);
 				}
 			});
 
