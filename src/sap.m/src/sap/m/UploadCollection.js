@@ -1337,17 +1337,34 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._handleENTER = function (oEvent, oContext) {
-		var sTarget = oEvent.target.id.split(oContext.editModeItem).pop();
+		var sTarget;
+		var sLinkId;
+		if (oContext.editModeItem) {
+			sTarget = oEvent.target.id.split(oContext.editModeItem).pop();
+		} else {
+			sTarget = oEvent.target.id.split("-").pop();
+		}
 
 		switch (sTarget) {
 			case "-ta_editFileName-inner" :
 			case "-okButton" :
-				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem);
+				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
 				break;
 			case "-cancelButton" :
 				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, oContext.editModeItem);
 				break;
+			case "ia_iconHL" :
+			case "ia_imageHL" :
+				sLinkId = oEvent.target.id.split(sTarget)[0] + "ta_filenameHL";
+				sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+				break;
 			default :
+				if (sTarget.substring(0,6) == "__item") {
+					var sListItemId = jQuery.sap.byId(sTarget).find("[id$='ta_HL']")[0].id;
+					sLinkId = sListItemId.split("ta_HL")[0] + "ta_filenameHL";
+					sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+					break;
+				}
 				return;
 		}
 	};
@@ -1412,7 +1429,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		} else {
 			if (oEvent.target.id.search(oContext.editModeItem) == 0) {
 				//focus at Inputpield (status = "Edit"), F2 pressed --> status = "Display" changes will be saved
-				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem);
+				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
 			}
 		}
 	};
