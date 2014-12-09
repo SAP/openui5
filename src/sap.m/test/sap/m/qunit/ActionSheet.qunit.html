@@ -307,7 +307,14 @@
 			
 			module("keyboard handling")
 
-			 asyncTest('PageDown keyboard handling mobile phone', function(){
+			asyncTest('PageDown keyboard handling mobile phone', function(){
+				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+						// this test is not supported by IE9
+						expect(0);
+						start();
+						return;
+				}
+				
 				var oSystem = {
 						desktop: false,
 						phone: true,
