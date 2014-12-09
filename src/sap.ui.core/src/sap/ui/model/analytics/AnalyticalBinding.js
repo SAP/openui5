@@ -294,22 +294,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 		
 // 		this._trace_enter("API", "getNodeContexts", "groupId=" + this._getGroupIdFromContext(oContext, mParameters.level), mParameters,["startIndex","length","threshold"]); // DISABLED FOR PRODUCTION
-		var iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels;
+		var iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels, bSupressRequest;
 		if (typeof mParameters == "object") {
 			iStartIndex = mParameters.startIndex;
 			iLength = mParameters.length;
 			iThreshold = mParameters.threshold;
 			iLevel = mParameters.level;
 			iNumberOfExpandedLevels = mParameters.numberOfExpandedLevels;
+			bSupressRequest = mParameters.supressRequest;
 		} else { // due to compatibility; can be removed if table is adapted
 			iStartIndex = arguments[1];
 			iLength = arguments[2];
 			iThreshold = arguments[3];
 			iLevel = arguments[4];
 			iNumberOfExpandedLevels = arguments[5];
+			bSupressRequest = arguments[6];
 		}
 
-		var aContext = this._getContextsForParentContext(oContext, iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels);
+		var aContext = this._getContextsForParentContext(oContext, iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels, bSupressRequest);
 // 		this._trace_leave("API", "getNodeContexts", "", aContext, ["length"]); // DISABLED FOR PRODUCTION
 		return aContext;
 	};
@@ -685,7 +687,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		this.aSorter = aSorter ? aSorter : [];
 
 		this._abortAllPendingRequests();
-		this.resetData();
+		this.resetData(undefined, {reason: ChangeReason.Sort});
 		this._fireRefresh({
 			reason : ChangeReason.Sort
 		});
@@ -976,7 +978,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getContextsForParentContext = function(oParentContext, iStartIndex, iLength,
-			iThreshold, iLevel, iNumberOfExpandedLevels) {
+			iThreshold, iLevel, iNumberOfExpandedLevels, bSupressRequest) {
 
 		if (oParentContext === undefined) {
 			return []; // API robustness
@@ -986,14 +988,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oParentContext = this.getModel().getContext("/");
 		}
 		var sParentGroupId = this._getGroupIdFromContext(oParentContext, iLevel);
-		return this._getContextsForParentGroupId(sParentGroupId, iStartIndex, iLength, iThreshold, iNumberOfExpandedLevels);
+		return this._getContextsForParentGroupId(sParentGroupId, iStartIndex, iLength, iThreshold, iNumberOfExpandedLevels, bSupressRequest);
 	};
 
 	/**
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getContextsForParentGroupId = function(sParentGroupId, iStartIndex, iLength,
-			iThreshold, iNumberOfExpandedLevels) {
+			iThreshold, iNumberOfExpandedLevels, bSupressRequest) {
 		if (sParentGroupId === undefined) {
 			return []; // API robustness
 		}
@@ -1047,14 +1049,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (bGroupLevelAutoExpansionIsActive) {
 			var iMinRequiredLevel = this._getGroupIdLevel(sParentGroupId);
 			var iAutoExpandGroupsToLevel = iMinRequiredLevel + iNumberOfExpandedLevels;
-			oGroupExpansionFirstMissingMember = this._calculateRequiredGroupExpansion(sParentGroupId, iAutoExpandGroupsToLevel, iStartIndex, iLength + iThreshold);
-			var bDataAvailable = oGroupExpansionFirstMissingMember.groupId_Missing == null;
-			// the following line further reliefs the condition to load data by just looking at the sub-tree
-			bDataAvailable = bDataAvailable
-				// first missing member is in a different upper level sub-tree, e.g. sParentGroupId: /A/B/C groupId_Missing: /A/X
-				|| oGroupExpansionFirstMissingMember.groupId_Missing.length < sParentGroupId.length
-				// first missing member is in a different lower level sub-tree, e.g. sParentGroupId: /A/B groupId_Missing: /A/C/D
-				|| oGroupExpansionFirstMissingMember.groupId_Missing.substring(0, sParentGroupId.length) != sParentGroupId;
+			var bDataAvailable = true;
+			if (!bSupressRequest) {
+				oGroupExpansionFirstMissingMember = this._calculateRequiredGroupExpansion(sParentGroupId, iAutoExpandGroupsToLevel, iStartIndex, iLength + iThreshold);
+				bDataAvailable = oGroupExpansionFirstMissingMember.groupId_Missing == null;
+				// the following line further reliefs the condition to load data by just looking at the sub-tree
+				bDataAvailable = bDataAvailable
+					// first missing member is in a different upper level sub-tree, e.g. sParentGroupId: /A/B/C groupId_Missing: /A/X
+					|| oGroupExpansionFirstMissingMember.groupId_Missing.length < sParentGroupId.length
+					// first missing member is in a different lower level sub-tree, e.g. sParentGroupId: /A/B groupId_Missing: /A/C/D
+					|| oGroupExpansionFirstMissingMember.groupId_Missing.substring(0, sParentGroupId.length) != sParentGroupId;
+			}
 			if (bDataAvailable) {
 				aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength);
 			} else {
@@ -1064,14 +1069,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// finally adjust the number of entities to be loaded by the load factor (after(!) all calculations have been made)
 			missingMemberCount = Math.ceil(missingMemberCount * this.aMultiUnitLoadFactor[iAggregationLevel]);
 		} else { // no automatic expansion of group levels
-			aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength);
-			oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold, aContext);
-			var bPreloadContexts = oGroupSection.length > 0 && iLength < oGroupSection.length;
-			bLoadContexts = (aContext.length != iLength
-							 && !(this.mFinalLength[sParentGroupId] && aContext.length >= this.mLength[sParentGroupId] - iStartIndex))
-							|| bPreloadContexts;
-			// finally adjust the number of entities to be loaded by the load factor (after(!) all calculations have been made)
-			oGroupSection.length = Math.ceil(oGroupSection.length * this.aMultiUnitLoadFactor[iAggregationLevel]);
+			aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength, bSupressRequest);
+			bLoadContexts = false;
+			if (!bSupressRequest) {
+				oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold, aContext);
+				var bPreloadContexts = oGroupSection.length > 0 && iLength < oGroupSection.length;
+				bLoadContexts = (aContext.length != iLength
+								 && !(this.mFinalLength[sParentGroupId] && aContext.length >= this.mLength[sParentGroupId] - iStartIndex))
+								|| bPreloadContexts;
+				// finally adjust the number of entities to be loaded by the load factor (after(!) all calculations have been made)
+				oGroupSection.length = Math.ceil(oGroupSection.length * this.aMultiUnitLoadFactor[iAggregationLevel]);
+			}
 		}
 
 		if (!bLoadContexts) {
@@ -1669,9 +1677,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			var iEffectiveStartIndex = iStartIndex;
 			if (!bUseStartIndexForSkip) {
 				iEffectiveStartIndex = 0; // and the skip-value is encoded in the filter expression; still the start index is relevant and kept (see below) for booking the result entries
+			} else {
+				// when bUseStartIndexForSkip is set and no filter conditions are given, the top level must also be paged
+				// calculate the number of loaded entries per level
+				var iServiceLengthForGroupIdMissing = 0;
+				for (var sGID in that.mServiceKey) {
+					if (sGID.split("/").length === iLevel + 1) {
+						iServiceLengthForGroupIdMissing += that.mServiceKey[sGID].length;
+					}
+				}
+				
+				iEffectiveStartIndex = Math.max(iEffectiveStartIndex, iServiceLengthForGroupIdMissing);
 			}
-			oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iEffectiveStartIndex + iLength);
 
+			oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			
 			return {
 				iRequestType : iRequestType,
 				sRequestId : null, // set by caller
@@ -1725,13 +1745,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				sGroupIdAtLevel = sGroupIdAtParentLevel;
 				iStartIndex++; // point to first missing position
 			}
+			
 			// determine other parameters of the request
 			var iLengthForLevel = iLength > iLevel ? Math.ceil((iLength - iLevel) / (iAutoExpandGroupsToLevel - iLevel + 1)) : iLength;
 			var oLevelFilter = aFilterArray[iLevel - 1];
 			
 			if (this.bUseAcceleratedAutoExpand) {
 				var oLevelMembersRequestDetails = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-						iLevel, oLevelFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+						iLevel, oLevelFilter, iStartIndex, iLengthForLevel, false, oLevelFilter == null ? true : false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
 				oLevelMembersRequestDetails.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
 				oLevelMembersRequestDetails.sRequestId = this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel });
 				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails);
@@ -1743,7 +1764,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				for (var i = 0; i < oLevelFilter.aFilters.length; i++) { // break up level filter into its tuple filters combined with logical OR
 					var oTupleFilter = oLevelFilter.aFilters[i];
 					var oLevelMembersRequestDetails2 = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-							iLevel, oTupleFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+							iLevel, oTupleFilter, iStartIndex, iLengthForLevel, false, oLevelFilter == null ? true : false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
 					oLevelMembersRequestDetails2.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
 					oLevelMembersRequestDetails2.sRequestId = this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel, tupleIndex: i });
 					aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails2);
@@ -1751,7 +1772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				}
 			} else { // no level filter given, so no need to break up anything, hence a single request is sufficient for this level
 				var oLevelMembersRequestDetails3 = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-						iLevel, null /*oLevelFilter*/, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+						iLevel, null /*oLevelFilter*/, iStartIndex, iLengthForLevel, false, oLevelFilter == null ? true : false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
 				oLevelMembersRequestDetails3.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
 				oLevelMembersRequestDetails3.sRequestId = this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel });
 				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails3);
@@ -2006,7 +2027,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		//var iRequestHandleId = this._getIdForNewRequestHandle();
 		if (aBatchQueryRequest.length > 0) {
 			jQuery.sap.log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
-
+//			this._trace_message("ReqExec", "submitting batch with " + aExecutedRequestDetails.length + " operations");
+			
 			var oBatchRequestHandle;
 			var iRequestHandleId = this._getIdForNewRequestHandle();
 			
@@ -2416,6 +2438,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 /*start code block*
 					this.bNewMUKey = oMultiUnitRepresentative.bIsNewEntry;
 *end code block*/
+					// adjust mEntityKey for detected and handled multi-unit situation
+					var sMultiUnitKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
+					var oMultiUnitContext = this.oModel.getContext('/' + sMultiUnitKey);
+					this._getGroupIdFromContext(oMultiUnitContext, iGroupMembersLevel);
+					this.mEntityKey[sEntryGroupId] =  sMultiUnitKey;
+
+					// reset multi-unit indicator
 					iFirstMatchingEntryIndex = undefined;
 
 					// add current entry if it has different key combination
@@ -2592,6 +2621,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				this.aMultiUnitLoadFactor[aAggregationLevel.length] = 2;
 			}
 		}
+		// #TH
+		jQuery.sap.log.info("MultiUnit Situation in Group (" + sGroupId + "), discarded: " + iDiscardedEntriesCount + ", load-factor is now: " + this.aMultiUnitLoadFactor[aAggregationLevel.length]);
 // 		this._trace_debug_if(this.iMultiUnitLoadFactor < 1, "load factor cannot be lower than 1!");
 
 /* multi-unit verification: check length of loaded data with colected cumulated discarded counts */
@@ -2766,7 +2797,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	/**
 	 * @private
 	 */
-	AnalyticalBinding.prototype._getLoadedContextsForGroup = function(sGroupId, iStartIndex, iLength) {
+	AnalyticalBinding.prototype._getLoadedContextsForGroup = function(sGroupId, iStartIndex, iLength, bFetchAll) {
 		var aContext = [], oContext, fKey = this._getKeys(sGroupId), sKey;
 
 		if (!fKey) {
@@ -2779,12 +2810,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
-			if (this.mFinalLength[sGroupId] && this.mLength[sGroupId] < iLength) {
+			//if the length is known, do not use the size limit of the model, but the known length
+			if (this.mFinalLength[sGroupId]) { // && this.mLength[sGroupId] < iLength) {
 				iLength = this.mLength[sGroupId];
 			}
 		}
+		
+		if (bFetchAll) {
+			i = iStartIndex || 0;
+			sKey = fKey(i);
+			while (sKey) {
+				oContext = this.oModel.getContext('/' + sKey);
+				aContext.push(oContext);
+				i++;
+				sKey = fKey(i);
+			}
+			return aContext;
+		}
 
-		//	Loop through known data and check whether we already have all rows loaded
+		// Loop through known data and check whether we already have all rows loaded
 		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
 			sKey = fKey(i);
 			if (!sKey) {
@@ -2977,12 +3021,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					// determine position of sGroupId in members of group w/ ID sParentGroupId
 					var sGroupKey = this.mEntityKey[sGroupId];
 					if (!sGroupKey) {
-						jQuery.sap.log.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
+						//jQuery.sap.log.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
 						return oNO_MISSING_MEMBER;
 					}
 					var iGroupIndex = this._findKeyIndex(sParentGroupId,sGroupKey);
 					if (iGroupIndex == -1) {
-						jQuery.sap.log.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
+						//jQuery.sap.log.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
 						return oNO_MISSING_MEMBER;
 					}
 					if (iGroupIndex == this._getKeyCount(sParentGroupId) - 1) {
