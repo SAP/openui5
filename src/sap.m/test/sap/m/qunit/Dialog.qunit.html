@@ -755,6 +755,38 @@
 
 				oDialog.destroy();
 			});
+
+			test("Controls in custom header is also in tab chain", function() {
+				var oDialog = new sap.m.Dialog({
+					customHeader: new sap.m.Bar({
+						contentRight: [
+							new sap.m.Button("tabChainButton", {
+								text: "Want Focus"
+							})
+						]
+					}),
+					buttons: [
+						new sap.m.Button("initialFocusButton", {
+							text: "Initial Focus"
+						})
+					],
+					initialFocus: "initialFocusButton"
+				});
+
+				overwriteAnimationIE9(oDialog);
+
+				oDialog.open();
+				this.clock.tick(400);
+
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				equal(oFocusedControl.getId(), "initialFocusButton", "Initial focus should be set correctly");
+
+				oDialog.$("lastfe").focus();
+				oFocusedControl = jQuery(document.activeElement).control(0);
+				equal(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom header");
+
+				oDialog.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
