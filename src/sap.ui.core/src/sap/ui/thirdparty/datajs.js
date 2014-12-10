@@ -987,7 +987,7 @@
         // added usage of _createAttributeNS as fallback (see function above)
         var attribute =
             dom.createAttributeNS && dom.createAttributeNS(namespaceURI, qualifiedName) ||
-            dom.createNode && dom.createNode(2, qualifiedName, namespaceURI || undefined) ||
+            "createNode" in dom && dom.createNode(2, qualifiedName, namespaceURI || undefined) ||
             _createAttributeNS(namespaceURI, qualifiedName);
         // ##### END: MODIFIED BY SAP
 
