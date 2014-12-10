@@ -3,19 +3,24 @@
 /* CSS for control sap.m/ObjectNumber.control */
 /* ============================================= */
 
-.sapMObjectNumber{
+.sapMObjectNumber {
 	white-space: nowrap;
 	overflow: hidden;
-	text-overflow: ellipsis;	
+	text-overflow: ellipsis;
 	word-wrap: normal;
 	color: @sapUiDarkText;
 }
 
-.sapMObjectNumberEmph > .sapMObjectNumberText{
+.sapMObjectNumberEmph > .sapMObjectNumberText {
 	font-weight: bold;
 }
 
-.sapMObjectNumberUnit{
+.sapMObjectNumberUnit {
 	padding-left: .25rem;
 	font-size: .75rem;
+}
+
+.sapMObjectNumberUnit.sapMRTLOpposite {
+	padding-left: 0;
+	padding-right: .25rem;
 }

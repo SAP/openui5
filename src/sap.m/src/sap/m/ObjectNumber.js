@@ -58,7 +58,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Number units qualifier. If numberUnit and unit are both set, the unit value is used.
 			 * @since 1.16.1
 			 */
-			unit : {type : "string", group : "Misc", defaultValue : null}
+			unit : {type : "string", group : "Misc", defaultValue : null},
+
+			/**
+			 * Available options for the number and unit text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Sets the horizontal alignment of the number and unit.
+			 */
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin}
 		}
 	}});
 	
