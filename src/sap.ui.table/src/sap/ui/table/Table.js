@@ -5049,22 +5049,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 	};
 
+	/**
+	 * Calculates the maximum rows to display within the table.
+	 */
 	Table.prototype._calculateRowsToDisplay = function(iHeight) {
+		var iMinRowCount = this.getMinAutoRowCount() || 5;
+
+		// If no iHeight is passed, return minimum row count.
+		if (!iHeight) {
+			return iMinRowCount;
+		}
 		var $this = this.$();
 		var iControlHeight = this.$().outerHeight();
 		var iContentHeight = $this.find('.sapUiTableCCnt').outerHeight();
-		var iMinRowCount = this.getMinAutoRowCount() || 5;
 
-		var iRowHeight = $this.find(".sapUiTableCtrl tr[data-sap-ui-rowindex='0']").outerHeight();
-		//No rows displayed when visible row count == 0, now row height can be determined, therefore we set standard row height
-		if (iRowHeight == null) {
+		// Determine default row height.
+		var iRowHeight = jQuery("tr:not(.sapUiAnalyticalTableSum) .sapUiTableCell").parent().outerHeight();
+
+		// No rows displayed when visible row count == 0, no row height can be determined, therefore we set standard row height
+		if (!iRowHeight) {
 			var sRowHeightParamName = "sap.ui.table.Table:sapUiTableRowHeight";
 			if ($this.parents().hasClass('sapUiSizeCompact')) {
 				sRowHeightParamName = "sap.ui.table.Table:sapUiTableCompactRowHeight";
 			}
 			iRowHeight = parseInt(Parameters.get(sRowHeightParamName), 10);
 		}
-		var iAvailableSpace = iHeight - (iControlHeight - iContentHeight);
+
+		// Maximum height of the table is the height of the window minus two row height, reserved for header and footer.
+		var iMaxHeight = jQuery(window).height() - 2 * iRowHeight;
+		var iCalculatedSpace = iHeight - (iControlHeight - iContentHeight);
+
+		// Make sure that table does not grow to infinity
+		var iAvailableSpace = Math.min(iCalculatedSpace, iMaxHeight);
 
 		// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
 		return Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight));
