@@ -131,7 +131,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oSelectedContextMap = {};
 		this.aLeadSelection = null;
 		this.bDelFlag = null;
-		this.aExpandedTree = [];
 	
 		//Create Buttons for Header
 	
@@ -204,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Tree.prototype.expandAll = function(){
-		var aNodes = this.getNodes();
+		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
 			aNodes[i].expand(true);
 		}
@@ -219,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Tree.prototype.collapseAll = function(){
-		var aNodes = this.getNodes();
+		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
 			aNodes[i].collapse(true);
 		}
@@ -588,7 +587,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (fnMatch(oNode)) {
 			return oNode;
 		}
-		jQuery.each(oNode.getNodes(), function(i, oNode) {
+		jQuery.each(oNode._getNodes(), function(i, oNode) {
 			oFoundNode = that.findNode(oNode, fnMatch);
 			if (oFoundNode) {
 				return false;
@@ -677,7 +676,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Tree.prototype.updateSelection = function (oNode, bExpanded) {
 		var that = this;
-		jQuery.each(oNode.getNodes(), function(i, oNode) {
+		jQuery.each(oNode._getNodes(), function(i, oNode) {
 			if (oNode.getIsSelected()) {
 				switch (that.getSelectionMode()) {
 					case sap.ui.commons.TreeSelectionMode.None:
@@ -739,8 +738,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	Tree.prototype._setSelectedNodeMapRange = function(oNode, bSuppressEvent) {
-		var aNodes = [], aNodeContexts = [];
-		var that = this;
+		var aSelectableNodes,
+			aSelectedNodes = [], 
+			aSelectedNodeContexts = [],
+			iStartIndex, iEndIndex, iFrom, iTo,
+			that = this;
 	
 		if (this.bDelFlag == true) {
 			jQuery.each(this.oSelectedNodeMap, function(sId, oNode){
@@ -751,52 +753,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this.oSelectedNodeMap[oNode.getId()] == oNode) {
 			return; //Nothing to do!
 		} else {
-			this.aExpandedTree.length = 0;
-			var aNodes = oNode.getTree().getNodes();
-			var i, a, b;
-			if (aNodes.length > 0) {
-				this._getSelectableNodes(aNodes);
-				var oStartIndex = this.aExpandedTree.indexOf(this.oLeadSelection);
-				var oEndIndex = this.aExpandedTree.indexOf(oNode);
-				if (oStartIndex < oEndIndex) {
-					a = oStartIndex;
-					b = oEndIndex;
-				} else {
-					a = oEndIndex;
-					b = oStartIndex;
-				}
-				for (i = a;i <= b;i++) {
-					var oSelNode = this.aExpandedTree[i];
-					this._setMultiSelection(oSelNode, bSuppressEvent);
+			if (this._getNodes().length > 0) {
+				aSelectableNodes = this._getSelectableNodes();
+				iStartIndex = aSelectableNodes.indexOf(this.oLeadSelection);
+				iEndIndex = aSelectableNodes.indexOf(oNode);
+				iFrom = iStartIndex < iEndIndex ? iStartIndex : iEndIndex;
+				iTo = iStartIndex < iEndIndex ? iEndIndex : iStartIndex;
+				for (var i = iFrom; i <= iTo; i++) {
+					this._setMultiSelection(aSelectableNodes[i], bSuppressEvent);
 				}
 			}
 		}
 	
 		if (!bSuppressEvent) {
-			jQuery.map(this.oSelectedNodeMap, function(sId, oNode) {aNodes.push(oNode);});
-			jQuery.map(this.oSelectedContextMap, function(sId, oNode) {aNodeContexts.push(oNode);});
-			this.fireSelectionChange({nodes: aNodes, nodeContexts: aNodeContexts});
+			jQuery.map(this.oSelectedNodeMap, function(oNode) {aSelectedNodes.push(oNode);});
+			jQuery.map(this.oSelectedContextMap, function(oContext) {aSelectedNodeContexts.push(oContext);});
+			this.fireSelectionChange({nodes: aSelectedNodes, nodeContexts: aSelectedNodeContexts});
 		}
 	};
 	
 	Tree.prototype._getSelectableNodes = function(aNodes) {
-		if (aNodes.length > 0) {
-			var i;
-			for (i = 0;i < aNodes.length;i++) {
-				var oNode = aNodes[i];
+		var aSelectableNodes = [];
+		function collectSelectableNodes(aNodes) {
+			jQuery.each(aNodes, function(i, oNode) {
 				if (oNode.getSelectable()) {
-					this.aExpandedTree.push(oNode);
+					aSelectableNodes.push(oNode);
 				}
 				if (oNode.getExpanded()) {
-					var aSubNodes = oNode.getNodes();
-					this._getSelectableNodes(aSubNodes);
+					collectSelectableNodes(oNode._getNodes());
 				}
-			}
+			});
 		}
+		collectSelectableNodes(this._getNodes());
+		return aSelectableNodes;
 	};
 	
 	Tree.prototype._setNodeSelection = function(oNode, bIsSelected, bSuppressEvent) {
-		var aNodes = [], aNodeContexts = [];
+		var aSelectedNodes = [], 
+			aSelectedNodeContexts = [];
+		
+		if (bIsSelected && this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
+			this._setSelectedNode(oNode, bSuppressEvent);
+			return;
+		}
+		
 		this.bDelFlag = true;
 	
 		if (bIsSelected) {
@@ -807,9 +807,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.oLeadSelection = oNode;
 		}
 		if (!bSuppressEvent) {
-			jQuery.map(this.oSelectedNodeMap, function(sId, oNode) {aNodes.push(oNode);});
-			jQuery.map(this.oSelectedContextMap, function(sId, oNode) {aNodeContexts.push(oNode);});
-			this.fireSelectionChange({nodes: aNodes, nodeContexts: aNodeContexts});
+			jQuery.map(this.oSelectedNodeMap, function(oNode) {aSelectedNodes.push(oNode);});
+			jQuery.map(this.oSelectedContextMap, function(oContext) {aSelectedNodeContexts.push(oContext);});
+			this.fireSelectionChange({nodes: aSelectedNodes, nodeContexts: aSelectedNodeContexts});
 		}
 	};
 	
@@ -843,6 +843,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 	
+	Tree.prototype._getNodes = function() {
+		return this.mAggregations.nodes || [];
+	};
 
 	return Tree;
 

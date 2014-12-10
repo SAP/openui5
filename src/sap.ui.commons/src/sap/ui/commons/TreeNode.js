@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		this.setProperty("expanded", true, true); //Suppress Re-rendering
 	
 		if (bExpandChildren) {
-			var aNodes = this.getNodes();
+			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
 				aNodes[i].expand(bExpandChildren);
 			}
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		this.setProperty("expanded", false, true); //Suppress Re-rendering
 	
 		if (bCollapseChildren) {
-			var aNodes = this.getNodes();
+			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
 				aNodes[i].collapse(bCollapseChildren);
 			}
@@ -233,13 +233,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			this.$().removeClass("sapUiTreeNodeSelected").removeAttr("aria-selected");
 		}
 	};
+
+	/**
+	 * Private getter for child nodes without creating a copy of the nodes array
+	 */
+	TreeNode.prototype._getNodes = function() {
+		return this.mAggregations.nodes || [];
+	};
 	
 	/**Returns true if the node has a selected child node, which is not visible
 	 * @returns True if the node has such child node
 	 * @private
 	 */
 	TreeNode.prototype.hasSelectedHiddenChild = function(){
-		var aNodes = this.getNodes();
+		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
 	
 			if ((!aNodes[i].isVisible() && aNodes[i].getIsSelected()) || aNodes[i].hasSelectedHiddenChild()) {
@@ -297,6 +304,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 		this.setProperty("selectable", bSelectable);
 		return this;
 	};
+	
+	
+	
 	
 	//***********************************************************************************
 	//* EVENTS HANDLING
@@ -464,7 +474,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 * @private
 	 */
 	TreeNode.prototype.hasChildren = function(){
-		var aSubNodes = this.getNodes();
+		var aSubNodes = this._getNodes();
 		if (aSubNodes.length) {
 			return true;
 		}
