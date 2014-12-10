@@ -20,7 +20,7 @@
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMOHIntro.sapMOHIntroActive,
+.sapMOHIntro.sapMOHIntroActive > span,
 .sapMOHTitle.sapMOHTitleActive>.sapMText{
 	color: @sapUiLink;
 	cursor: pointer;
@@ -86,7 +86,7 @@
 	outline-offset: -1px;
 }
 
-.sapMOHIntro.sapMOHIntroActive > *:focus {
+.sapMOHIntro.sapMOHIntroActive > span:focus {
 	outline: 1px dotted @sapUiFocus;
 	outline-offset: -1px;
 }
@@ -116,7 +116,7 @@ html[data-sap-ui-browser ^= "ff"] {
 
 html[data-sap-ui-browser ^= "ie"] {
 	.sapMOH {
-		.sapMOHTitleArrow .sapUiIcon , .sapMOHTitleActive {
+		.sapMOHTitleArrow .sapUiIcon , .sapMOHTitleActive, .sapMOHTitle {
 			border: 1px solid transparent;
 			margin-top: 0.125rem;
 			padding-top: 0.125rem;
@@ -128,13 +128,13 @@ html[data-sap-ui-browser ^= "ie"] {
 			border: 1px dotted @sapUiFocus;
 		}
 
-		.sapMObjectAttributeActive , .sapMOHIntroActive {
-			padding: 0.125rem;
-			span {
-				margin: 0.125rem;
-			}
+		.sapMOHIntro {
+			padding: 0.125rem 0.125rem 0.125rem 0.25rem;
 		}
-
+		
+		.sapMObjectAttributeDiv {
+			padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+		}
 		.sapMObjStatusMarker .sapUiIcon:focus {
 			outline: none;
 		}
@@ -190,7 +190,7 @@ html[data-sap-ui-browser ^= "ie"] {
 	outline-offset: -1px;
 }
 
-.sapMObjStatusMarker{
+.sapMOHR .sapMObjStatusMarker{
 	color: @sapUiAccent5;
 }
 
@@ -215,7 +215,7 @@ html[data-sap-ui-browser ^= "ie"] {
 
 html[data-sap-ui-browser ^= "ie"] {
 	.sapMOHR {
-		.sapMOHRTitleActive .sapMOHRTitleText {
+		.sapMOHRTitleText {
 			border: 1px solid transparent;
 			margin-top: 0.125rem;
 			padding-top: 0.125rem;
@@ -236,15 +236,27 @@ html[data-sap-ui-browser ^= "ie"] {
 			border: 1px dotted @sapUiFocus;
 		}
 
-		.sapMOHRIntroActive {
+		.sapMOHRIntro, .sapMOHRIntroActive {
 			padding: 0.125rem;
 			span {
 				margin: 0.125rem;
 			}
 		}
+		
+		.sapMOHRStates {
+			padding-left: 0.125rem;
+		}
 
 		.sapMObjStatusMarker .sapUiIcon:focus {
 			outline: none;
+		}
+		
+		.sapMObjectAttributeDiv {
+			padding: 0.125rem 0.125rem 0 0.125rem;
+		}
+		
+		.sapMOHRStatus {
+			padding: 0.125rem 0.125rem 0.5rem 0.125rem;
 		}
 	}
 }
