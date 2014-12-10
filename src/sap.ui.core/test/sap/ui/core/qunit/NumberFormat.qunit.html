@@ -379,20 +379,55 @@
 		ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
 	});
 
-	test("Currency format with sMeasure", function(){
+	test("Currency format with sMeasure", function() {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
-		equal(oFormat.format(123456.789, "EUR"), String.fromCharCode(8364) + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), String.fromCharCode(8364) + "-123,456.79", "123456.789 EUR");
+		equal(oFormat.format(123456.789, "EUR"), "EUR123,456.79", "123456.789 EUR");
+		equal(oFormat.format([123456.789, "EUR"]), "EUR123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "EUR-123,456.79", "123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "EUR-123,456.79", "123456.789 EUR");
 	});
 
-	test("Currency format with sMeasure specific locale ko", function(){
+	test("Currency format with sMeasure and showMeasure as symbol", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		equal(oFormat.format(123456.789, "EUR"), String.fromCharCode(8364) + "123,456.79", "123456.789 EUR");
+		equal(oFormat.format([123456.789, "EUR"]), String.fromCharCode(8364) + "123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), String.fromCharCode(8364) + "-123,456.79", "123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), String.fromCharCode(8364) + "-123,456.79", "123456.789 EUR");
+	});
+
+	test("Currency format with sMeasure and showMeasure set to none", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			showMeasure: false
+		});
+		equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
+		equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "-123,456.79", "123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
+	});
+
+	test("Currency format with sMeasure specific locale ko", function() {
 		// The currency pattern is definde in "ko" as: ¤#,##0.00;(¤#,##0.00) where the pattern after ';'
 		// should be used for negative numbers.
 		var oLocale = new sap.ui.core.Locale("ko");
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oLocale);
 
-		equal(oFormat.format(123456.789, "EUR"), String.fromCharCode(8364) + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "(" + String.fromCharCode(8364) + "123,456.79)", "-123456.789 EUR");
+		equal(oFormat.format(123456.789, "EUR"), "EUR123,456.79", "123456.789 EUR");
+		equal(oFormat.format([123456.789, "EUR"]), "EUR123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "(EUR123,456.79)", "-123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "(EUR123,456.79)", "-123456.789 EUR");
+	});
+
+	test("Currency format with sMeaure and set decimal option to overwrite the default number of decimal", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			decimals: 1
+		});
+
+		equal(oFormat.format(123456.789, "EUR"), "EUR123,456.8", "123456.789 EUR");
+		equal(oFormat.format([123456.789, "EUR"]), "EUR123,456.8", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "EUR-123,456.8", "123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "EUR-123,456.8", "123456.789 EUR");
 	});
 
 	test("Percent format with default rounding mode", function(){
@@ -457,6 +492,55 @@
 		equal(oCustomFloat.parse(",5e-3"), 5e-4, ",5e-3");
 		equal(isNaN(oCustomFloat.parse("123,x5")), true, "123,x5");
 
+	});
+
+	test("parse currency format",  function() {
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
+		var aResult = oFormat.parse("-12,345.67 EUR");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], -12345.67, "Number is parsed correctly");
+		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("USD23.4567");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 23.4567, "Number is parsed correctly");
+		equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("EUR-1234567.89");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], -1234567.89, "Number is parsed correctly");
+		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("EUR");
+		ok(isNaN(aResult), "String with currency code only can't be parsed");
+
+		aResult = oFormat.parse("1234567.89");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		strictEqual(aResult[1], "", "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+
+		aResult = oFormat.parse(String.fromCharCode(8364) + " 1,234,567.89");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("$ 1234567.89");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		strictEqual(aResult[1], "$", "Currency Code is parsed correctly: expected $, parsed " + aResult[1]);
+	});
+
+	test("float short style", function() {
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short",
+			decimals: 2,
+			shortDecimals: 1
+		});
+
+		equal(oFormat.format(234.567), "234.57", "234.567 is formatted with 2 decimals");
+		equal(oFormat.format(3456.78), "3.5K", "3456.78 is formatted with 1 decimal");
+		equal(oFormat.format(234.5), "234.50", "234.5 is formatted with 2 decimals");
+		equal(oFormat.format(3000), "3.0K", "3000 is formatted with 1 decimal");
 	});
 
 	test("float long style", function(){
