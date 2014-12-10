@@ -24,10 +24,10 @@
 		});
 
 		test("basics", function () {
+			// TODO do not store these in the constraints, they are type- not instance-specific
 			var oDefaultConstraints = {
 					minimum: iMin,
-					maximum: iMax,
-					nullable: true
+					maximum: iMax
 				};
 
 			ok(oType instanceof sap.ui.model.odata.type.Int, "is an Int");
@@ -132,8 +132,7 @@
 			oType.setConstraints();
 			deepEqual(oType.oConstraints, {
 				minimum: iMin,
-				maximum: iMax,
-				nullable: true
+				maximum: iMax
 			}, "default constraints");
 		});
 
@@ -141,9 +140,12 @@
 			test("setConstraints: nullable=" + bNullable, function () {
 				var oExpectedConstraints = {
 					minimum: iMin,
-					maximum: iMax,
-					nullable: bNullable !== false
+					maximum: iMax
 				};
+
+				if (bNullable === false) {
+					oExpectedConstraints.nullable = false;
+				}
 
 				oType.setConstraints({minimum: -100, maximum: 100, nullable: bNullable});
 				deepEqual(oType.oConstraints, oExpectedConstraints, "only nullable accepted");
@@ -172,8 +174,28 @@
 				});
 		});
 
-		test("validation: null", function () {
+		test("nullable", sinon.test(function () {
 			oType.validateValue(null);
+
+			this.mock(jQuery.sap.log).expects("warning").never();
+
+			oType.setConstraints({nullable: true});
+			ok(!oType.oConstraints.hasOwnProperty("nullable"));
+
+			oType.setConstraints({nullable: "true"});
+			ok(!oType.oConstraints.hasOwnProperty("nullable"));
+
+			oType.setConstraints({nullable: false});
+			strictEqual(oType.oConstraints.nullable, false);
+
+			oType.setConstraints({nullable: "false"});
+			strictEqual(oType.oConstraints.nullable, false);
+
+			oType.setConstraints({nullable: true});
+			strictEqual(oType.oConstraints.nullable, true);
+
+			oType.setConstraints({nullable: "true"});
+			strictEqual(oType.oConstraints.nullable, true);
 
 			oType.setConstraints({nullable: false});
 			try {
@@ -183,7 +205,7 @@
 				ok(e instanceof sap.ui.model.ValidateException)
 				equal(e.message, "null (of type object) is not a valid " + sName + " value");
 			}
-		});
+		}));
 	}
 
 	anyInt("sap.ui.model.odata.type.Int16", -32768, 32767);

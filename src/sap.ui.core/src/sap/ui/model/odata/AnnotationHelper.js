@@ -56,9 +56,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 						case "Edm.Decimal":
 							sType = 'sap.ui.model.odata.type.Decimal';
-							oConstraints.precision = parseInt(oProperty.precision, 10);
-							//TODO this fails for scale = "variable"!
-							oConstraints.scale = parseInt(oProperty.scale, 10);
+							oConstraints.precision = oProperty.precision;
+							oConstraints.scale = oProperty.scale;
 							break;
 
 						case "Edm.Int32":
@@ -67,12 +66,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 						case "Edm.String":
 							sType = 'sap.ui.model.odata.type.String';
-							oConstraints.maxLength = parseInt(oProperty.maxLength, 10);
+							oConstraints.maxLength = oProperty.maxLength;
 							break;
 
 						//TODO default: what?
 						}
-						oConstraints.nullable = oProperty.nullable !== "false";
+						oConstraints.nullable = oProperty.nullable;
 					}
 				});
 			}

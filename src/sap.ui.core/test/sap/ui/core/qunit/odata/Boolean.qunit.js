@@ -26,7 +26,7 @@
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		strictEqual(oType.sName, "sap.ui.model.odata.type.Boolean", "type name");
 		deepEqual(oType.oFormatOptions, {}, "no format options");
-		deepEqual(oType.oConstraints, {nullable: true}, "no constraints, except nullable");
+		deepEqual(oType.oConstraints, {}, "no constraints");
 		strictEqual(oType.oResourceBundle, null, "resources not preloaded");
 	}));
 
@@ -130,34 +130,26 @@
 	});
 
 	//*********************************************************************************************
-	test("nullable", sinon.test(function () {
-		var oType = new sap.ui.model.odata.type.Boolean(null, {nullable: false});
-		deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
-
-		this.mock(jQuery.sap.log).expects("warning")
-			.once()
-			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
-
-		oType = new sap.ui.model.odata.type.Boolean(null, {nullable: "foo"});
-		deepEqual(oType.oConstraints, {nullable: true}, "illegal nullable -> default to true");
-	}));
-
-	//*********************************************************************************************
 	test("setConstraints", sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
-		oType.setConstraints({nullable: false});
-		deepEqual(oType.oConstraints, {nullable: false}, "set nullable to false");
-		oType.setConstraints();
-		deepEqual(oType.oConstraints, {nullable: true}, "set nullable to default true");
-		oType.setConstraints({foo: "bar"});
-		deepEqual(oType.oConstraints, {nullable: true},
-			"illegal constraint results to default true");
-
 		this.mock(jQuery.sap.log).expects("warning")
 			.once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
+
+		oType.setConstraints({nullable: false});
+		deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
+
+		oType.setConstraints({nullable: "false"});
+		deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
+
+		oType.setConstraints({nullable: true});
+		deepEqual(oType.oConstraints, {}, "nullable true");
+
+		oType.setConstraints({nullable: "true"});
+		deepEqual(oType.oConstraints, {}, 'nullable "true"');
+
 		oType.setConstraints({nullable: "foo"});
-		deepEqual(oType.oConstraints, {nullable: true}, "illegal value results to default true");
+		deepEqual(oType.oConstraints, {}, "illegal nullable -> ignored");
 	}));
 } ());

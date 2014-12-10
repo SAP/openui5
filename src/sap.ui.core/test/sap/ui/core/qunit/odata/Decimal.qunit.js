@@ -24,7 +24,8 @@
 
 	//*********************************************************************************************
 	test("basics", function () {
-		var oDefaultConstraints = {nullable: true, precision: Infinity, scale: 0},
+		// TODO avoid storing Infinity to save memory
+		var oDefaultConstraints = {precision: Infinity, scale: 0},
 			oType = new sap.ui.model.odata.type.Decimal();
 
 		ok(oType instanceof sap.ui.model.odata.type.Decimal, "is a Decimal");
@@ -61,21 +62,21 @@
 
 	//*********************************************************************************************
 	jQuery.each([
-		{i: {precision: 8, scale: 3}, o: {nullable: true, precision: 8, scale: 3}},
+		{i: {precision: 8, scale: 3}, o: {precision: 8, scale: 3}},
 		{i: {nullable: false, scale: 3}, o: {nullable: false, precision: Infinity, scale: 3}},
-		{i: {nullable: "foo"}, o: {nullable: true, precision: Infinity, scale: 0},
+		{i: {nullable: "foo"}, o: {precision: Infinity, scale: 0},
 			warning: "Illegal nullable: foo"},
-		{i: {precision: 8, scale: "foo"}, o: {nullable: true, precision: 8, scale: 0},
+		{i: {precision: 8, scale: "foo"}, o: {precision: 8, scale: 0},
 			warning: "Illegal scale: foo"},
-		{i: {precision: 8, scale: -1}, o: {nullable: true, precision: 8, scale: 0},
+		{i: {precision: 8, scale: -1}, o: {precision: 8, scale: 0},
 			warning: "Illegal scale: -1"},
-		{i: {precision: "foo", scale: 3}, o: {nullable: true, precision: Infinity, scale: 3},
+		{i: {precision: "foo", scale: 3}, o: {precision: Infinity, scale: 3},
 			warning: "Illegal precision: foo"},
-		{i: {precision: -1, scale: 3}, o: {nullable: true, precision: Infinity, scale: 3},
+		{i: {precision: -1, scale: 3}, o: {precision: Infinity, scale: 3},
 			warning: "Illegal precision: -1"},
-		{i: {precision: 0, scale: 3}, o: {nullable: true, precision: Infinity, scale: 3},
+		{i: {precision: 0, scale: 3}, o: {precision: Infinity, scale: 3},
 			warning: "Illegal precision: 0"},
-		{i: {precision: 2, scale: 3}, o: {nullable: true, precision: 2, scale: Infinity},
+		{i: {precision: 2, scale: 3}, o: {precision: 2, scale: Infinity},
 			warning: "Illegal scale: must be less than precision (precision=2, scale=3)"}
     ], function (i, oFixture) {
 		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
@@ -260,4 +261,17 @@
 			strictEqual(e.message, "Enter a number.");
 		}
 	});
+
+	//*********************************************************************************************
+	test("setConstraints w/ strings", sinon.test(function () {
+		var oType = new sap.ui.model.odata.type.Decimal();
+
+		this.mock(jQuery.sap.log).expects("warning").never();
+
+		oType.setConstraints({nullable: "false", precision: "10", scale: "3"});
+		deepEqual(oType.oConstraints, {nullable: false, precision: 10, scale: 3});
+
+		oType.setConstraints({nullable: "true"});
+		deepEqual(oType.oConstraints, {precision: Infinity, scale: 0});
+	}));
 } ());

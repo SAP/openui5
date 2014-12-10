@@ -160,7 +160,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 */
 	EdmBoolean.prototype.validateValue = function (bValue) {
 		if (bValue === null) {
-			if (this.oConstraints.nullable) {
+			if (this.oConstraints.nullable !== false) {
 				return;
 			}
 			throw new ValidateException(getErrorMessage());
@@ -176,24 +176,21 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 *
 	 * @param {object} [oConstraints]
 	 * 	 constraints
-	 * @param {boolean} [oConstraints.nullable=true]
+	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 */
 	EdmBoolean.prototype.setConstraints = function(oConstraints) {
-		var bNullable = oConstraints && oConstraints.nullable;
+		var vNullable = oConstraints && oConstraints.nullable;
 
-		if (typeof bNullable !== "boolean") {
-			if (bNullable !== undefined) {
-				// Note: setConstraints is called by the super constructor w/ wrong this.sName
-				jQuery.sap.log.warning("Illegal nullable: " + bNullable, null,
-					"sap.ui.model.odata.type.Boolean");
-			}
-			bNullable = true;
+		this.oConstraints = {};
+		if (vNullable === false || vNullable === "false") {
+			this.oConstraints.nullable = false;
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			// Note: setConstraints is called by the super constructor w/ wrong this.sName
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
+				"sap.ui.model.odata.type.Boolean");
 		}
-		this.oConstraints = {
-			nullable: bNullable
-		};
 	};
 
 	return EdmBoolean;
