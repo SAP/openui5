@@ -1126,7 +1126,6 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				}
 				oConditionGrid.oFormatter = NumberFormat.getFloatInstance(oFloatFormatOptions);
 
-				//oConditionGrid.oFormatter = NumberFormat.getFloatInstance();
 				oControl = new sap.m.Input(params);
 				break;
 			case "date" :
@@ -1264,45 +1263,35 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		// update the value fields for the KeyField
 		var oCurrentKeyField = this._getCurrentKeyField(oConditionGrid.keyField);
 
-		// update Value1 field control
-		var sOldValue1 = oConditionGrid.value1.getValue();
-		oConditionGrid.removeContent(oConditionGrid.value1);
-		delete oConditionGrid.value1;
-		var fieldInfo = oThat._aConditionsFields[5];
-		var oNewValue1 = this._createField(oCurrentKeyField, fieldInfo, oThat, oConditionGrid);
-		oConditionGrid[fieldInfo["ID"]] = oNewValue1;
-		oConditionGrid.insertContent(oNewValue1, 5);
+		var fnCreateAndUpdateField = function(oCtrl, index) {
+			var oConditionGrid = oCtrl.getParent();
+			var sOldValue = oCtrl.getValue();
+			
+			oConditionGrid.removeContent(oCtrl);
+			//delete oConditionGrid.value1;
+			var fieldInfo = this._aConditionsFields[index];
+			oCtrl = this._createField(oCurrentKeyField, fieldInfo, this, oConditionGrid);
+			oConditionGrid[fieldInfo["ID"]] = oCtrl;
+			oConditionGrid.insertContent(oCtrl, index);
 
-		var oValue1 = sOldValue1;
-		if (oConditionGrid.oFormatter && sOldValue1) {
-			oValue1 = oConditionGrid.oFormatter.parse(sOldValue1);
-			if (!isNaN(oValue1) && oValue1 !== null) {
-				var sValue1 = oConditionGrid.oFormatter.format(oValue1);
-				oConditionGrid.value1.setValue(sValue1);
+			var oValue, sValue;
+			if (oConditionGrid.oFormatter && sOldValue) {
+				oValue = oConditionGrid.oFormatter.parse(sOldValue);
+				if (!isNaN(oValue) && oValue !== null) {
+					sValue = oConditionGrid.oFormatter.format(oValue);
+					oCtrl.setValue(sValue);
+				} 
+			} 
+			if (!sValue) {
+				oCtrl.setValue(sOldValue);
 			}
-		} else {
-			oConditionGrid.value1.setValue(sOldValue1);
-		}
+		};
+
+		// update Value1 field control
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
 
 		// update Value2 field control
-		var sOldValue2 = oConditionGrid.value2.getValue();
-		oConditionGrid.removeContent(oConditionGrid.value2);
-		delete oConditionGrid.value2;
-		var fieldInfo = oThat._aConditionsFields[6];
-		var oNewValue2 = this._createField(oCurrentKeyField, fieldInfo, oThat, oConditionGrid);
-		oConditionGrid[fieldInfo["ID"]] = oNewValue2;
-		oConditionGrid.insertContent(oNewValue2, 6);
-
-		var oValue2 = sOldValue2;
-		if (oConditionGrid.oFormatter && sOldValue1) {
-			oValue2 = oConditionGrid.oFormatter.parse(sOldValue2);
-			if (!isNaN(oValue2) && oValue2 !== null) {
-				var sValue2 = oConditionGrid.oFormatter.format(oValue2);
-				oConditionGrid.value1.setValue(sValue2);
-			}
-		} else {
-			oConditionGrid.value2.setValue(sOldValue2);
-		}
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
 	};
 
 	P13nConditionPanel.prototype._updateOperations = function() {
@@ -1526,56 +1515,51 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		if (oConditionGrid.keyField.getSelectedItem()) {
 			oConditionGrid.keyField.setTooltip(oConditionGrid.keyField.getSelectedItem().getTooltip() || oConditionGrid.keyField.getSelectedItem().getText());
 		}
-//		if (oConditionGrid.keyField.getSelectedItem()) {
-//			var sValue = oConditionGrid.keyField.getValue();
-//			if (sValue !== oConditionGrid.keyField.getSelectedItem().getText()) {
-//				oConditionGrid.keyField.setValueState(sap.ui.core.ValueState.Warning);
-//			} else {
-//				oConditionGrid.keyField.setValueState(sap.ui.core.ValueState.none);
-//			}
-//		}
-
 
 		var sOperation = oConditionGrid.operation.getSelectedKey();
 		if (oConditionGrid.operation.getSelectedItem()) {
 			oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
 		}
 
-		var sValue1 = oConditionGrid.value1.getValue();
-		if (oThat.getDisplayFormat() === "UpperCase" && sValue1) {
-			sValue1 = sValue1.toUpperCase();
-			oConditionGrid.value1.setValue(sValue1);
-		}
-		var oValue1 = sValue1;
+
+		var fnFormatFieldValue = function(oCtrl) {
+			var oConditionGrid = oCtrl.getParent();
+			var sValue = oCtrl.getValue();
+			
+			if (oThat.getDisplayFormat() === "UpperCase" && sValue) {
+				sValue = sValue.toUpperCase();
+				oCtrl.setValue(sValue);
+			}
+			
+			if (oConditionGrid.oFormatter && sValue) {
+				var oValue = oConditionGrid.oFormatter.parse(sValue);
+				if (!isNaN(oValue) && oValue !== null) {
+					sValue = oConditionGrid.oFormatter.format(oValue);
+					oCtrl.setValue(sValue);
+					oCtrl.setValueState(sap.ui.core.ValueState.None);
+				} else {
+					oCtrl.setValueState(sap.ui.core.ValueState.Warning);
+					oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
+				}
+			}
+		};
+
+		// update Value1 field control
+		jQuery.proxy(fnFormatFieldValue, this)(oConditionGrid.value1);
+		var oValue1 = oConditionGrid.value1.getValue();
+		var sValue1 = oValue1; 
 		if (oConditionGrid.oFormatter && sValue1) {
 			oValue1 = oConditionGrid.oFormatter.parse(sValue1);
-			if (!isNaN(oValue1) && oValue1 !== null) {
-				sValue1 = oConditionGrid.oFormatter.format(oValue1);
-				oConditionGrid.value1.setValue(sValue1);
-				oConditionGrid.value1.setValueState(sap.ui.core.ValueState.None);
-			} else {
-				oConditionGrid.value1.setValueState(sap.ui.core.ValueState.Warning);
-				oConditionGrid.value1.setValueStateText(this._sValidationDialogFieldMessage);
-			}
 		}
-
-		var sValue2 = oConditionGrid.value2.getValue();
-		if (oThat.getDisplayFormat() === "UpperCase" && sValue2) { 
-			sValue2 = sValue2.toUpperCase();
-			oConditionGrid.value2.setValue(sValue2);
-		}
-		var oValue2 = sValue2;
+		
+		// update Value2 field control
+		jQuery.proxy(fnFormatFieldValue, this)(oConditionGrid.value2);
+		var oValue2 = oConditionGrid.value2.getValue();
+		var sValue2 = oValue2; 
 		if (oConditionGrid.oFormatter && sValue2) {
 			oValue2 = oConditionGrid.oFormatter.parse(sValue2);
-			if (!isNaN(oValue2) && oValue2 !== null) {
-				sValue2 = oConditionGrid.oFormatter.format(oValue2);
-				oConditionGrid.value2.setValue(sValue2);
-				oConditionGrid.value2.setValueState(sap.ui.core.ValueState.None);
-			} else {
-				oConditionGrid.value2.setValueState(sap.ui.core.ValueState.Warning);
-				oConditionGrid.value2.setValueStateText(this._sValidationDialogFieldMessage);
-			}
 		}
+
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();
 		var bExclude = this.getExclude();
