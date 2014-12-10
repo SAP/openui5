@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.Dialog</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -15,7 +15,7 @@
 
 		<style>
 			html {
-				/* This is needed because Popup.js sets the overflow hidden to html tag after modal popup is positioned which makes the position calculation wrong 
+				/* This is needed because Popup.js sets the overflow hidden to html tag after modal popup is positioned which makes the position calculation wrong
 					because the scrollbar is visible before positioning and hidden after positioning*/
 				overflow: hidden;
 			}
@@ -27,12 +27,26 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		
 
 		<script language="javascript">
 			sinon.config.useFakeTimers = true;
 
 			sap.ui.test.qunit.delayTestStart();
+
+			function overwriteAnimationIE9(oDialog) {
+				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+					// Sinon fake timer doesn't work correctly with jQuery fadeIn. The fadeIn Animation which is used in IE9
+					// can't be controlled by the sinon fake timer. Therefore the animation has to be overwritten with no
+					// animation when runs in IE9
+					oDialog.oPopup.setAnimations(
+						function($Ref, iDuration, fnOpen) {
+							fnOpen();
+						}, function($Ref, iDuration, fnClosed) {
+							fnClosed();
+						}
+					);
+				}
+			}
 
 			var core = sap.ui.getCore();
 
@@ -50,7 +64,7 @@
 					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"}),
 				],
 				icon: "../images/SAPUI5Icon.png",
-				beginButton: 
+				beginButton:
 					new sap.m.Button("leftButton", {
 						text: "Reject",
 						type: sap.m.ButtonType.Reject,
@@ -105,7 +119,7 @@
 
 			test("Initialization", function() {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
-			});	
+			});
 
 			module("Open and Close");
 
@@ -382,7 +396,7 @@
 
 					$Dialog = oDialog.$();
 					// when runs on a phone in portrait mode, dialog always has a fixed width which is calculated based on the screen size.
-					// window_width - fixed margin to screen - dialog border 
+					// window_width - fixed margin to screen - dialog border
 					iValue = jQuery(window).width() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10) - 64;
 
 					equal(oDialog._$content.width(), iValue, "Portrait: contentWidth should be set to content div");
@@ -543,11 +557,10 @@
 					oButton.destroy();
 				});
 			});
-			
+
 			module("Initial focus");
-						
+
 			test("Association initialFocus", function() {
-				
 				// Arrange
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
@@ -555,44 +568,44 @@
 					content : [ oInput1, oInput2 ],
 					initialFocus : oInput2
 				});
-				
+
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oInput2.getId(), "oInput2 has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oInput2.getId(), "oInput2 has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
 			test("Focusable elements in content area", function() {
-				
 				// Arrange
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
 				var oDialog = new sap.m.Dialog({
 					content : [ oInput1, oInput2 ]
 				});
-				
+
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oInput1.getId(), "oInput1 has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oInput1.getId(), "oInput1 has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
-						
+
 			test("Aggregations \"beginButton\" and \"endButton\" - both visible", function() {
-				
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
@@ -600,22 +613,22 @@
 					beginButton : oButton1,
 					endButton : oButton2
 				});
-				
+
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
 			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function() {
-				
 				// Arrange
 				var oButton1 = new sap.m.Button({visible : false});
 				var oButton2 = new sap.m.Button();
@@ -623,78 +636,78 @@
 					beginButton : oButton1,
 					endButton : oButton2
 				});
-				
+
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oButton2.getId(), "oButton2 has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oButton2.getId(), "oButton2 has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
 			test("Aggregation \"buttons\" - two visible buttons", function() {
-				
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
 					buttons : [oButton1, oButton2]
 				});
-				
+
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
 			test("Aggregation \"buttons\" - only second button is visible", function() {
-				
 				// Arrange
 				var oButton1 = new sap.m.Button({visible : false});
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
 					buttons : [oButton1, oButton2]
 				});
-				
+
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oButton2.getId(), "oButton2 has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oButton2.getId(), "oButton2 has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
 			test("No interactive elements or buttons", function() {
-				
 				// Arrange
 				var oDialog = new sap.m.Dialog();
-				
+				overwriteAnimationIE9(oDialog);
+
 				// Act
 				oDialog.open();
 				this.clock.tick(500);
-				
+
 				// Assert
-				var $focusedElement = jQuery(":focus");
-				var oFocusedControl = $focusedElement.control()[0];
-				strictEqual(oFocusedControl.getId(), oDialog.getId(), "oDialog has focus.");				
-				
+				var oFocusedControl = jQuery(document.activeElement).control(0);
+				strictEqual(oFocusedControl.getId(), oDialog.getId(), "oDialog has focus.");
+
 				// Clean up
 				oDialog.destroy();
 			});
@@ -728,6 +741,9 @@
 					content: new sap.m.Input("inputWantsFocus"),
 					initialFocus: "inputWantsFocus"
 				});
+
+				overwriteAnimationIE9(oDialog)
+
 				oDialog.open();
 				this.clock.tick(300);
 
