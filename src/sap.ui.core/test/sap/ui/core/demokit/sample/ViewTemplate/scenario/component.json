@@ -7,7 +7,9 @@
 				"ODataMetaModel.json",
 				"../data2/annotations.xml",
 				"../data2/metadata.xml",
-				"../data2/Product.json"
+				"../data2/Product.json",
+				"Main.controller.js",
+				"Main.view.xml"
 			]
 		}
 	},
