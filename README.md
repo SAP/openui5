@@ -19,6 +19,11 @@ Get it!
 It's free. Go to the [download page](http://openui5.org/download.html) and get the complete UI5 runtime
 and the UI5 SDK containing the documentation and many example apps as well as the complete runtime.
 
+You can also consume [each OpenUI5 library](https://github.com/openui5?query=packaged-) individually via [bower](http://bower.io/), for example:
+```sh
+bower install openui5/packaged-sap.ui.core
+```
+
 Get started!
 ------------
 Try the [Hello World](http://openui5.org/getstarted.html), read
