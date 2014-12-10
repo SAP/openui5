@@ -173,7 +173,7 @@ module.exports = function(grunt, config) {
 					return;
 				}
 
-				var bowerFilename = '../bower-openui5-' + library.name + '/bower.json';
+				var bowerFilename = '../packaged-' + library.name + '/bower.json';
 
 				grunt.log.subhead(library.name);
 
@@ -190,9 +190,12 @@ module.exports = function(grunt, config) {
 					Object.keys(bower.dependencies).forEach(function(dependency) {
 
 						var oldDependencyVersion = bower.dependencies[dependency];
-						bower.dependencies[dependency] = version;
+						var oldDependencyVersionParts = oldDependencyVersion.split('#', 1);
+						var newDependencyVersion = oldDependencyVersionParts[0] + '#' + version;
 
-						grunt.log.writeln('dependencies.' + dependency + ': ' + oldDependencyVersion + ' => ' + version);
+						bower.dependencies[dependency] = newDependencyVersion;
+
+						grunt.log.writeln('dependencies.' + dependency + ': ' + oldDependencyVersion + ' => ' + newDependencyVersion);
 
 					});
 				}
@@ -217,10 +220,11 @@ module.exports = function(grunt, config) {
 							cmd: 'git',
 							args: args,
 							opts: {
-								cwd: '../bower-openui5-' + library.name
+								cwd: '../packaged-' + library.name
 							}
 					}, function () {
-							callback.apply(this, arguments);
+						console.dir(arguments);
+						callback.apply(this, arguments);
 					});
 				}
 

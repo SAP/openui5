@@ -59,12 +59,12 @@ module.exports = function(grunt, config) {
 						dot: true,
 						cwd: 'target/openui5-' + library.name,
 						src: '**',
-						dest: '../bower-openui5-' + library.name
+						dest: '../packaged-' + library.name
 					},
 					// license file should also be present in each bower repo
 					{
 						src: 'LICENSE.txt',
-						dest: '../bower-openui5-' + library.name + '/LICENSE.txt'
+						dest: '../packaged-' + library.name + '/LICENSE.txt'
 					}
 				]
 			};
