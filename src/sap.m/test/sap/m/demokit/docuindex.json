@@ -317,7 +317,7 @@
 				"name" : "Link",
 				"category" : "Action",
 				"since" : "1.12",
-				"samples" : [ 
+				"samples" : [
 					"sap.m.sample.Link",
 					"sap.m.sample.LinkSubtle",
 					"sap.m.sample.LinkEmphasized"
@@ -350,7 +350,7 @@
 				"name" : "Message Box",
 				"category" : "Popup",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.MessageBox", "sap.m.sample.MessageBoxCustom" ]
+				"samples" : [ "sap.m.sample.MessageBox", "sap.m.sample.MessageBoxTypes", "sap.m.sample.MessageBoxCustom" ]
 			},
 			{
 				"id" : "sap.m.MessageToast",
@@ -577,8 +577,8 @@
 				"name" : "Standard List Item",
 				"category" : "List",
 				"since" : "1.10",
-				"samples" : [ 
-					"sap.m.sample.StandardListItem", 
+				"samples" : [
+					"sap.m.sample.StandardListItem",
 					"sap.m.sample.StandardListItemTitle",
 					"sap.m.sample.StandardListItemDescription",
 					"sap.m.sample.StandardListItemIcon",
@@ -1084,32 +1084,32 @@
 			},
 			{
 				"id": "sap.m.sample.MultiComboBox",
-				"name": "MultiComboBox", 
+				"name": "MultiComboBox",
 				"description": "Choose one or more out of multiple options with the MultiComboBox control."
 			},
 			{
 				"id": "sap.m.sample.P13nDialog",
-				"name": "Personalization Dialog", 
+				"name": "Personalization Dialog",
 				"description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
 			},
 			{
 				"id": "sap.m.sample.MultiInput",
-				"name": "MultiInput", 
+				"name": "MultiInput",
 				"description": "MultiInput provides functionality to add / remove / enter tokens."
 			},
 			{
 				"id": "sap.m.sample.MultiInputValidators",
-				"name": "MultiInput Validators", 
+				"name": "MultiInput Validators",
 				"description": "MultiInput uses validators to accept, decline and change tokens."
 			},
 			{
 				"id": "sap.m.sample.Token",
-				"name": "Token", 
+				"name": "Token",
 				"description": "Token renders a token containing text and an optional delete icon."
 			},
 			{
 				"id": "sap.m.sample.Tokenizer",
-				"name": "Tokenizer", 
+				"name": "Tokenizer",
 				"description": "Tokenizer displays multiple tokens."
 			},
 			{
@@ -1386,6 +1386,11 @@
 				"id": "sap.m.sample.MessageBox",
 				"name": "Message Box",
 				"description": "MessageBox is an easier way of showing a message type dialog. You only need to provide the message that you want to show to the user."
+			},
+			{
+				"id": "sap.m.sample.MessageBoxTypes",
+				"name": "Message Box Header Icons",
+				"description": "MessageBox icons can be used to show the different value states that a MessageBox can display: success, warning, error, information and question."
 			},
 			{
 				"id": "sap.m.sample.MessageBoxCustom",
