@@ -753,6 +753,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.bPendingRequest = false;
 		}
 	};
+	
+	/**
+	 * Get download URL
+	 * @param {string} sFormat The required format for the download
+	 * @since 1.24
+	 */
+	ODataListBinding.prototype.getDownloadUrl = function(sFormat) {
+		var aParams = [],
+			sPath;
+		
+		if (sFormat) {
+			aParams.push("$format=" + encodeURIComponent(sFormat));
+		}
+		if (this.sSortParams) {
+			aParams.push(this.sSortParams);
+		}
+		if (this.sFilterParams) {
+			aParams.push(this.sFilterParams);
+		}
+		if (this.sCustomParams) {
+			aParams.push(this.sCustomParams);
+		}
+		
+		sPath = this.oModel.resolve(this.sPath,this.oContext);
+
+		if (sPath) {
+			return this.oModel._createRequestUrl(sPath, null, aParams);
+		}
+	};
 
 	/**
 	 * Sorts the list.
