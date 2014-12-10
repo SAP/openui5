@@ -51,7 +51,7 @@
 	});
 
 	test("With non-existing properties", function() {
-		bResult = new sap.ui.test.matchers.Properties({
+		var bResult = new sap.ui.test.matchers.Properties({
 			text : "text to test",
 			notExistingProperty : "not existing value"
 		})(this.oButton);
@@ -59,7 +59,7 @@
 	});
 
 	test("With regexp", function() {
-		bResult = new sap.ui.test.matchers.Properties({
+		var bResult = new sap.ui.test.matchers.Properties({
 			text : /test/i
 		})(this.oButton);
 		strictEqual(bResult, true, "Should match regexp");
