@@ -94,6 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"application"           : { type : "string",   defaultValue : "" },
 					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
+					"xx-appCacheBusterHooks" : { type : "object",  defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
@@ -165,6 +166,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					} else {
 						throw new Error("unsupported value");
 					}
+					break;
+				case "object":
+					if ( typeof sValue !== "object" ) {
+						throw new Error("unsupported value");
+					}
+					config[sName] = sValue;
 					break;
 				default:
 					throw new Error("illegal state");
@@ -766,6 +773,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		 */
 		getAppCacheBusterMode : function() {
 			return this["xx-appCacheBusterMode"];
+		},
+
+		/**
+		 * Object defining the callback hooks for the AppCacheBuster like e.g. 
+		 * <code>handleURL</code>, <code>onIndexLoad</code> or <code>onIndexLoaded</code>.
+		 *
+		 * @returns {object} object containing the callback functions for the AppCacheBuster
+		 * @public
+		 * @experimental Since 1.27.0
+		 */
+		getAppCacheBusterHooks : function() {
+			return this["xx-appCacheBusterHooks"];
 		},
 
 		/**
