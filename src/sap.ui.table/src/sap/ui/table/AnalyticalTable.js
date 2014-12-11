@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 
 				return {
 					column: oGroupedColumn,
-					index: jQuery.inArray(oGroupedColumn, that.getColumns()) + 1
+					index: iIndex
 				};
 			}else {
 				return undefined;
@@ -695,7 +695,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				this._oGroupHeaderMenuVisibilityItem.setText(this._oResBundle.getText("TBL_SHOW_COLUMN"));
 			}
 			this._oGroupHeaderMoveUpItem.setEnabled(oGroupColumnInfo.index > 0);
-			this._oGroupHeaderMoveDownItem.setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 2);
+			this._oGroupHeaderMoveDownItem.setEnabled(oGroupColumnInfo.index < this._aGroupedColumns.length - 1);
 		} else {
 			this._oGroupHeaderMoveUpItem.setEnabled(true);
 			this._oGroupHeaderMoveDownItem.setEnabled(true);
@@ -999,6 +999,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 			this._aGroupedColumns.push(sColumn);
 		}
 	};
+
+    AnalyticalTable.prototype.getGroupedColumns = function () {
+        return this._aGroupedColumns;
+    };
 
 	/**
 	 * returns the count of rows which can ca selected when bound or 0
