@@ -130,6 +130,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 					type : "boolean",
 					group : "Behavior",
 					defaultValue : true
+				},
+
+				/**
+				 * Show/Hide the Edit pushbutton.
+				 * If the value is true, the Edit pushbutton is visible.
+				 * If the value is false, the Edit pushbutton is not visible.
+				 */
+				visibleEdit : {
+					type : "boolean",
+					group : "Behavior",
+					defaultValue : true
+				},
+
+				/**
+				 * Show/Hide the Delete pushbutton.
+				 * If the value is true, the Delete pushbutton is visible.
+				 * If the value is false, the Delete pushbutton is not visible.
+				 */
+				visibleDelete : {
+					type : "boolean",
+					group : "Behavior",
+					defaultValue : true
 				}
 			}
 		}
