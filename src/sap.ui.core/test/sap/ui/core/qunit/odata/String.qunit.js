@@ -158,4 +158,17 @@
 		oType = new sap.ui.model.odata.type.String(null, {nullable: ""});
 		deepEqual(oType.oConstraints, {}, "illegal nullable -> default to true");
 	}));
+
+	//*********************************************************************************************
+	test("setConstraints w/ strings", sinon.test(function () {
+		var oType = new sap.ui.model.odata.type.String();
+
+		this.mock(jQuery.sap.log).expects("warning").never();
+
+		oType.setConstraints({nullable: "true", maxLength: "10"});
+		deepEqual(oType.oConstraints, {maxLength: 10});
+
+		oType.setConstraints({nullable: "false"});
+		deepEqual(oType.oConstraints, {nullable: false});
+	}));
 } ());

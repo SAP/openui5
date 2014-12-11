@@ -185,7 +185,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	Decimal.prototype.validateValue = function (sValue) {
 		var iFractionDigits, iIntegerDigits, aMatches;
 
-		if (sValue === null && this.oConstraints.nullable) {
+		if (sValue === null && this.oConstraints.nullable !== false) {
 			return;
 		}
 		if (typeof sValue === "string") {
@@ -218,9 +218,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @param {object} [oConstraints]
 	 * 	 constraints
-	 * @param {boolean} [oConstraints.nullable=true]
+	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @param {int} [oConstraints.precision=Infinity]
+	 * @param {int|string} [oConstraints.precision=Infinity]
 	 *   the maximum number of digits allowed in the property’s value
 	 * @param {int|string} [oConstraints.scale=0]
 	 *   the maximum number of digits allowed to the right of the decimal point; the number must be
@@ -232,41 +232,42 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Decimal.prototype.setConstraints = function(oConstraints) {
-		var bNullable = oConstraints && oConstraints.nullable,
-			iPrecision = oConstraints && oConstraints.precision,
-			iScale = oConstraints && oConstraints.scale;
+		var vNullable = oConstraints && oConstraints.nullable,
+			vPrecision = oConstraints && oConstraints.precision,
+			vScale = oConstraints && oConstraints.scale,
+			iPrecision, iScale;
 
-		function validate(iValue, iDefault, iMinimum, sName) {
+		function validate(vValue, iDefault, iMinimum, sName) {
+			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
+
 			if (iValue === undefined) {
 				return iDefault;
 			}
-			if (typeof iValue !== "number" || iValue < iMinimum) {
-				jQuery.sap.log.warning("Illegal " + sName + ": " + iValue,
+			if (typeof iValue !== "number" || isNaN(iValue) || iValue < iMinimum) {
+				jQuery.sap.log.warning("Illegal " + sName + ": " + vValue,
 					null, "sap.ui.model.odata.type.Decimal");
 				return iDefault;
 			}
 			return iValue;
 		}
 
-		iScale = iScale === "variable" ? Infinity : validate(iScale, 0, 0, "scale");
-		iPrecision = validate(iPrecision, Infinity, 1, "precision");
-		if (typeof bNullable !== "boolean") {
-			if (bNullable !== undefined) {
-				jQuery.sap.log.warning("Illegal nullable: " + bNullable, null,
-					"sap.ui.model.odata.type.Decimal");
-			}
-			bNullable = true;
-		}
+		iScale = vScale === "variable" ? Infinity : validate(vScale, 0, 0, "scale");
+		iPrecision = validate(vPrecision, Infinity, 1, "precision");
 		if (iScale !== Infinity && iPrecision <= iScale) {
 			jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
-				+ iPrecision + ", scale=" + iScale + ")", null, "sap.ui.model.odata.type.Decimal");
+				+ vPrecision + ", scale=" + vScale + ")", null, "sap.ui.model.odata.type.Decimal");
 			iScale = Infinity; // "variable"
 		}
 		this.oConstraints = {
-			nullable: bNullable,
 			precision: iPrecision,
 			scale: iScale
 		};
+		if (vNullable === false || vNullable === "false") {
+			this.oConstraints.nullable = false;
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
+				"sap.ui.model.odata.type.Decimal");
+		}
 
 		this._handleLocalizationChange();
 	};

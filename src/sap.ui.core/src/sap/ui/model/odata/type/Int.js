@@ -162,12 +162,29 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @param {object} oConstraints
 	 *   the constraints
-	 * @param {boolean} [oConstraints.nullable=true]
+	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 */
 	Int.prototype.setConstraints = function(oConstraints) {
-		this.oConstraints.nullable = !(oConstraints && oConstraints.nullable === false);
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		// TODO get minimum and maximum out of this.oConstraints, they are not instance-specific
+		switch (vNullable) {
+		case false:
+		case "false":
+			this.oConstraints.nullable = false;
+			break;
+		case true:
+		case "true":
+			if (this.oConstraints.nullable === false) {
+				this.oConstraints.nullable = true;
+			}
+			break;
+		default:
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
+				"sap.ui.model.odata.type.Int");
+		}
 	};
 
 	/**
@@ -191,7 +208,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Int.prototype.validateValue = function(iValue) {
-		if (iValue === null && this.oConstraints.nullable) {
+		if (iValue === null && this.oConstraints.nullable !== false) {
 			return;
 		}
 		if (typeof iValue !== "number") {

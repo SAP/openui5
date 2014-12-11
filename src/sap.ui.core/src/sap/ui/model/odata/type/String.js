@@ -104,32 +104,35 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 *
 	 * @param {object} [oConstraints]
 	 * 	 constraints
-	 * @param {int} [oConstraints.maxLength]
+	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
-	 * @param {boolean} [oConstraints.nullable=true]
+	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted; note that
 	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
 	 * @public
 	 */
 	EdmString.prototype.setConstraints = function(oConstraints) {
-		var iMaxLength;
+		var vMaxLength, vNullable;
 
 		this.oConstraints = {};
 		if (oConstraints) {
-			iMaxLength = oConstraints.maxLength;
-			if (typeof iMaxLength === "number" && iMaxLength > 0) {
-				this.oConstraints.maxLength = iMaxLength;
-			} else if (iMaxLength !== undefined) {
-				jQuery.sap.log.warning("Illegal maxLength: " + iMaxLength,
+			vMaxLength = oConstraints.maxLength;
+			if (typeof vMaxLength === "string") {
+				vMaxLength = parseInt(vMaxLength, 10);
+			}
+			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
+				this.oConstraints.maxLength = vMaxLength;
+			} else if (vMaxLength !== undefined) {
+				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
 					null, "sap.ui.model.odata.type.String");
 			}
 
-			if (oConstraints.nullable === false) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
 				this.oConstraints.nullable = false;
-			} else if (oConstraints.nullable !== undefined
-					&& typeof oConstraints.nullable !== "boolean") {
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
 				// Note: setConstraints is called by the super constructor w/ wrong this.sName
-				jQuery.sap.log.warning("Illegal nullable: " + oConstraints.nullable, null,
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
 					"sap.ui.model.odata.type.String");
 			}
 		}

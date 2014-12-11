@@ -19,9 +19,7 @@
 		},
 		oDecimal = {
 			name : "sap.ui.model.odata.type.Decimal",
-			//TODO really store default values explicitly? save memory?!
-			//TODO who converts string values to boolean/number?
-			constraints : {"nullable" : true, "precision" : 13, "scale" : 3}
+			constraints : {"precision" : 13, "scale" : 3}
 		},
 		oInt32 = {
 			name : "sap.ui.model.odata.type.Int32",
