@@ -1235,7 +1235,7 @@ if (typeof window.sap.ui !== "object") {
 		var t = isTablet();
 		
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && t;
+		s.tablet = ((device.support.touch && !isWin7) || isWin8 || !!_simMobileOnDesktop) && t;
 		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
 		s.desktop = (!s.tablet && !s.phone) || isWin8 || isWin7;
 		s.combi = (s.desktop && s.tablet);
@@ -1289,9 +1289,10 @@ if (typeof window.sap.ui !== "object") {
 				return bTablet;
 
 			} else {
-				//in desktop browser
-				var android_tablet = (device.os.name === device.os.OS.ANDROID) && !android_phone;
-				return android_tablet;
+				// in desktop browser, it's detected as tablet when
+				// 1. Windows 8 device with a touch screen where "Touch" is contained in the userAgent
+				// 2. Android emulation and it's not an Android phone
+				return (device.browser.msie && ua.indexOf("Touch") !== -1) || (device.os.name === device.os.OS.ANDROID && !android_phone);
 			}
 		}
 	}
