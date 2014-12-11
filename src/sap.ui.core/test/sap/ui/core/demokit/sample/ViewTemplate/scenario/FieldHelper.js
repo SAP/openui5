@@ -37,19 +37,16 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		function getPropertyAnnotation(sPath, oBinding, sAnnotationName) {
-			var oProperty = getProperty(sPath, oBinding),
-				sAnnotation;
+			var oProperty = getProperty(sPath, oBinding);
 
-			if (!oProperty /*TODO Error?*/ || !oProperty.extensions) {
-				return undefined;
+			return oProperty && oProperty[sAnnotationName];
+		}
+
+		function isSemantics(oControl, vRawValue, sExpectedSemantics) {
+			if (vRawValue && vRawValue.hasOwnProperty("Path")) {
+				return sExpectedSemantics === getPropertyAnnotation(vRawValue.Path,
+					oControl.currentBinding(), "sap:semantics");
 			}
-			jQuery.each(oProperty.extensions, function(i, oExtension) {
-				if (oExtension.name === sAnnotationName) {
-					sAnnotation = oExtension.value;
-					return false; //break
-				}
-			});
-			return sAnnotation;
 		}
 
 		/**
@@ -60,14 +57,10 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		return {
 			isSemanticsEmail: function (vRawValue) {
-				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
-					return getPropertyAnnotation(vRawValue.Path, this.currentBinding(), "semantics") === "email";
-				}
+				return isSemantics(this, vRawValue, "email");
 			},
 			isSemanticsTel: function (vRawValue) {
-				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
-					return getPropertyAnnotation(vRawValue.Path, this.currentBinding(), "semantics") === "tel";
-				}
+				return isSemantics(this, vRawValue, "tel");
 			}
 		};
 	}, /* bExport= */ true);

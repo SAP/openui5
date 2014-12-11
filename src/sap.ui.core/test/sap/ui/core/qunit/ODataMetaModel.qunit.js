@@ -46,6 +46,7 @@
 					sap:creatable="false" sap:updatable="false">\
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
+				<Property Name="NakedProperty" Type="Edm.String"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
@@ -186,43 +187,55 @@
 		oServer.autoRespond = true;
 	}
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	module("sap.ui.model.odata.ODataMetaModel", {
 		teardown : function () {
 			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
 		}
 	});
 
-	// *********************************************************************************************
-	asyncTest("ODataMetaModel loaded: no annotations", sinon.test(function() {
-		var oMetaModel, oModel;
+	//*********************************************************************************************
+	test("basics", sinon.test(function() {
+		var oMetaModel = new sap.ui.model.odata.ODataMetaModel({
+				getServiceMetadata : function () { return {}; },
+				isLoaded : function () { return true; }
+			}),
+			oModelMock = this.mock(oMetaModel.oModel),
+			oResult = {};
 
-		setupSandbox(this);
-		oModel = new sap.ui.model.odata.v2.ODataModel("/fake/service", {
-			json : true,
-			loadMetadataAsync : true
+		// generic dispatching
+		jQuery.each(["bindContext", "bindList", "bindProperty", "bindTree",
+			"getObject", "getProperty", "isList", "setSizeLimit"], function (i, sName) {
+			oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
+
+			strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
 		});
-		oModel.attachMetadataFailed(onFailed);
 
-		oMetaModel = oModel.getMetaModel();
-		ok(oMetaModel instanceof sap.ui.model.odata.ODataMetaModel);
+		raises(function () {
+			oMetaModel.refresh();
+		}, /Unsupported operation: ODataMetaModel#refresh/);
 
-		oMetaModel.loaded().then(function() {
-			var oAnnotations = oModel.getServiceAnnotations(),
-				oMetadata = oModel.getServiceMetadata();
+		oMetaModel.setLegacySyntax(); // allowed
+		oMetaModel.setLegacySyntax(false); // allowed
+		raises(function () {
+			oMetaModel.setLegacySyntax(true);
+		}, /Legacy syntax not supported by ODataMetaModel/);
 
-			start();
-			strictEqual(arguments.length, 1, "almost no args");
-			deepEqual(arguments[0], undefined, "almost no args");
-
-			ok(oMetadata, "metadata is loaded");
-
-			deepEqual(oMetaModel.getData(), oMetadata, JSON.stringify(oMetaModel.getData()));
-		})["catch"](onError);
+		strictEqual(oMetaModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
+		strictEqual(oMetaModel.oModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
+		raises(function () {
+			oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+		});
+		raises(function () {
+			oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		});
 	}));
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	jQuery.each([{
+		annotationURI : null,
+		title : "no annotations"
+	}, {
 		annotationURI : "/fake/annotations",
 		title : "one annotation file"
 	}, {
@@ -242,20 +255,24 @@
 			oModel.attachAnnotationsFailed(onFailed);
 
 			oMetaModel = oModel.getMetaModel();
+			ok(oMetaModel instanceof sap.ui.model.odata.ODataMetaModel);
+
 			oMetaModel.loaded().then(function() {
 				var oAnnotations = oModel.getServiceAnnotations(),
 					oMetadata = oModel.getServiceMetadata(),
-					oMetaModelData = oMetaModel.getData(),
+					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					sSAPData = "http://www.sap.com/Protocols/SAPData";
 
 				start();
-
-				ok(oAnnotations, "annotations are also loaded");
 				strictEqual(oBusinessPartner.name, "BusinessPartner");
 				strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
+
+				strictEqual(arguments.length, 1, "almost no args");
+				deepEqual(arguments[0], undefined, "almost no args");
+				ok(oMetadata, "metadata is loaded");
 
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
@@ -270,59 +287,62 @@
 				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
 
-				deepEqual(oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"], {
-					"Path" : "CurrencyCode"
-				});
-				delete oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"];
+				if (i > 0) {
+					ok(oAnnotations, "annotations are also loaded");
 
-				deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
-					"String" : "Label via external annotation: Business Partner"
-				});
-				delete oBusinessPartner["com.sap.vocabularies.Common.v1.Label"];
-
-				deepEqual(oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"], {
-					"RecordType" : "com.sap.vocabularies.UI.v1.HeaderInfoType",
-					"Title" : {
-						"Label" : {
-							"String" : "Name"
-						},
-						"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
-						"Value" : {
-							"Apply" : {
-								"Name" : "odata.concat",
-								"Parameters" : [{
-									"Type" : "Path",
-									"Value" : "CompanyName"
-								}, {
-									"Type" : "String",
-									"Value" : ""
-								}, {
-									"Type" : "Path",
-									"Value" : "LegalForm"
-								}]
-							}
-						}
-					},
-					"TypeName" : {
-						"String" : "Business Partner"
-					}
-				});
-				delete oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"];
-
-				if (i > 0) { // additional tests for 2nd annotations file
-					deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"], {
-						"String" : "foo"
+					deepEqual(oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"], {
+						"Path" : "CurrencyCode"
 					});
-					delete oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"];
+					delete oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"];
+
+					deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
+						"String" : "Label via external annotation: Business Partner"
+					});
+					delete oBusinessPartner["com.sap.vocabularies.Common.v1.Label"];
+
+					deepEqual(oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"], {
+						"RecordType" : "com.sap.vocabularies.UI.v1.HeaderInfoType",
+						"Title" : {
+							"Label" : {
+								"String" : "Name"
+							},
+							"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+							"Value" : {
+								"Apply" : {
+									"Name" : "odata.concat",
+									"Parameters" : [{
+										"Type" : "Path",
+										"Value" : "CompanyName"
+									}, {
+										"Type" : "String",
+										"Value" : ""
+									}, {
+										"Type" : "Path",
+										"Value" : "LegalForm"
+									}]
+								}
+							}
+						},
+						"TypeName" : {
+							"String" : "Business Partner"
+						}
+					});
+					delete oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"];
+
+					if (i > 1) { // additional tests for 2nd annotations file
+						deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"], {
+							"String" : "foo"
+						});
+						delete oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"];
+					}
 				}
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
-			})["catch"](onError);
+			}, onError)["catch"](onError);
 		}));
 	});
 
-
-	// *********************************************************************************************
+	//*********************************************************************************************
 	jQuery.each([false, true, false, true], function (i, bAsync) {
 		asyncTest("Error loading" + (i < 2 ? " meta data" : " annotations" )
 				+ ", async: " + bAsync, sinon.test(function() {
@@ -352,7 +372,7 @@
 		}));
 	});
 
-	// *********************************************************************************************
+	//*********************************************************************************************
 	jQuery.each(["annotations", "emptyAnnotations"], function (i, sAnnotation) {
 		jQuery.each(["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"],
 			function (j, sPath) {
@@ -375,4 +395,5 @@
 			}
 		);
 	});
+	//TODO test liftSAPData() in case no extensions available!
 }());
