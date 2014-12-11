@@ -57,7 +57,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * A reference to the currently selected button control. By default or if the association is set to a falsy value (null, undefined, "", false), the first button will be selected.
 			 * If the association is set to an invalid value (e.g. an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
 			 */
-			selectedButton : {type : "sap.m.Button", multiple : false}
+			selectedButton : {type : "sap.m.Button", multiple : false},
+		
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
+	
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}			
 		},
 		events : {
 
@@ -224,6 +234,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (aButtons[i].getIcon() === "") {
 				bAllIcons = false;
 			}
+			
+			// update ARIA information of Buttons
+			aButtons[i].$().attr("aria-posinset", i + 1).attr("aria-setsize", aButtons.length);
 		}
 		if (bAllIcons) {
 			this.$().toggleClass("sapMSegBIcons", true);
@@ -237,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		this.$().removeClass("sapMSegBHide");
 		// Keyboard
-		this._setItemNavigation();
+		this._setItemNavigation();		
 	};
 
 	/**
@@ -269,7 +282,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iParentWidth = 0,
 			iCntOutWidth = $this.outerWidth(true) - $this.width(),
 			iBarContainerPadding = $this.closest('.sapMBarContainer').outerWidth() - $this.closest('.sapMBarContainer').width(),
-            iBarContainerPaddingFix = 2,//Temporary solution to fix the segmentedButton with 100% width in dialog issue.
+			iBarContainerPaddingFix = 2,//Temporary solution to fix the segmentedButton with 100% width in dialog issue.
 			iInnerWidth = $this.children('#' + this.getButtons()[0].getId()).outerWidth(true) - $this.children('#' + this.getButtons()[0].getId()).width();
 			// If parent width is bigger than actual screen width set parent width to screen width => android 2.3
 			iParentWidth;
@@ -285,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// fix: in 1.22 a padding was added to the bar container, we have to take this into account for the size calculations here
 		if (this._bInsideBar && iBarContainerPadding > 0) {
 			iParentWidth -= iBarContainerPadding + iBarContainerPaddingFix;
-        }
+		}
 
 		if (this.getWidth() && this.getWidth().indexOf("%") === -1) {
 			iMaxWidth = parseInt(this.getWidth(), 10);
@@ -470,8 +483,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// CSN# 0001429454/2014: remove class for all other items
 			this.getButtons().forEach(function (oButton) {
 				oButton.$().removeClass("sapMSegBBtnSel");
+				oButton.$().attr("aria-checked", false);
 			});
 			oButtonPressed.$().addClass("sapMSegBBtnSel");
+			oButtonPressed.$().attr("aria-checked", true);
 
 			this.setAssociation('selectedButton', oButtonPressed, true);
 			this.fireSelect({
@@ -521,9 +536,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
 				this.getButtons().forEach(function (oButton) {
 					oButton.$().removeClass("sapMSegBBtnSel");
+					oButton.$().attr("aria-checked", false);
 				});
 				if (oSelectedButton) {
 					oSelectedButton.$().addClass("sapMSegBBtnSel");
+					oSelectedButton.$().attr("aria-checked", true);
 				}
 				this._focusSelectedButton();
 			}

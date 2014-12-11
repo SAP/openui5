@@ -42,6 +42,12 @@ sap.ui.define(['jquery.sap.global'],
 		if (sTooltip) {
 			oRM.writeAttributeEscaped("title", sTooltip);
 		}
+		
+		// ARIA
+		oRM.writeAccessibilityState(oControl, {
+			role : "radiogroup"
+		});
+		
 		oRM.write(">");
 
 		for (; i < aButtons.length; i++) {
@@ -74,6 +80,13 @@ sap.ui.define(['jquery.sap.global'],
 				oRM.writeAttributeEscaped("title", sTooltip);
 			}
 			oRM.writeAttribute("tabindex", oButton.getEnabled() ? "0" : "-1");
+
+			// ARIA
+			oRM.writeAccessibilityState(oButton, {
+				role : "radio",
+				checked : sSelectedButton === oButton.getId()
+			});
+			
 			oRM.write('>');
 
 			// render icon
