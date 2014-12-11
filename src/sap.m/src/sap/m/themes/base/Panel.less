@@ -62,3 +62,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanel
 .sapMPanelWrappingDivTb {
 	position: relative;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPanel", ~"> .sapMPanelContent");

@@ -57,11 +57,7 @@
 	left: 0;
 }
 
-.sapMITBNoContentPadding > .sapMITBContainerContent {
-	border: 0;
-}
-
-.sapMITBNoContentPadding > .sapMITBContainerContent > .sapMITBContent {
+.sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent > .sapMITBContent {
 	padding: 0;
 }
 
@@ -73,3 +69,12 @@
 .sap-bb .sapMITBContainerContent {
 	overflow : hidden;
 }
+
+.sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent, /* legacy class */ 
+.sapMITB.sapUiNoContentPadding > .sapMITBContainerContent {
+	border-top: 0;
+	border-bottom: 0;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMITB", ~"> .sapMITBContainerContent > .sapMITBContent");

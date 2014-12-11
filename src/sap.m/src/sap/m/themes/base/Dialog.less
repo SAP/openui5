@@ -228,3 +228,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
 	-moz-transition: opacity 0.2s linear;
 	transition: opacity 0.2s linear;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMDialog", ~"> section > .sapMDialogScroll > .sapMDialogScrollCont");

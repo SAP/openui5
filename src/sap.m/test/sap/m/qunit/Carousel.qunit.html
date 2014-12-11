@@ -1107,6 +1107,44 @@ test("PAGE_DOWN less than 10 goes to first page", function() {
        oCarousel.destroy();
 });
 
+test("Container Padding Classes", function () {
+	// System under Test + Act
+	var oContainer = new sap.m.Carousel({
+		pages: [
+			new sap.m.Page("keyTestPage1")
+		]}),
+		sContentSelector = ".sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll",
+		sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
+		$container,
+		$containerContent;
+
+	// Act
+	oContainer.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+	oContainer.addStyleClass("sapUiNoContentPadding");
+	$containerContent = oContainer.$().find(sContentSelector);
+
+	// Assert
+	strictEqual($containerContent.css("padding"), "0px", "The container has no content padding when class \"sapUiNoContentPadding\" is set");
+
+	// Act
+	oContainer.removeStyleClass("sapUiNoContentPadding");
+	oContainer.addStyleClass("sapUiContentPadding");
+
+	// Assert
+	strictEqual($containerContent.css("padding"), "16px", "The container has 1rem content padding when class \"sapUiContentPadding\" is set");
+
+	// Act
+	oContainer.removeStyleClass("sapUiContentPadding");
+	oContainer.addStyleClass("sapUiResponsiveContentPadding");
+
+	// Assert
+	strictEqual($containerContent.css("padding"), sResponsiveSize, "The container has " + sResponsiveSize + " content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+
+	// Cleanup
+	oContainer.destroy();
+});
+
 </script>
 
 <style>

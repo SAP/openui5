@@ -277,3 +277,62 @@
 @sapUiMarginSmall  : 1rem; /*make small margin themable*/
 @sapUiMarginMedium : 2rem; /*make medium margin themable*/
 @sapUiMarginLarge  : 3rem; /*make large margin themable*/
+
+/* 
+ * This is a mixin for creating the predefined container content padding
+ * classes:
+ * sapUiNoContainerContentPadding
+ * sapUiContainerContentPadding
+ * sapUiResponsiveContainerContentPadding
+ * These classes can be set on many UI5 containers and will 
+ * add padding inside the container's content padding based 
+ * on the selectors that are arguments for this mix-in.
+ *
+ * Arguments to this function-like mixin are the rootClass selector and
+ * the content selector where the padding should be applied.
+ */
+
+.sapUiContainerContentPadding(@rootClass, @contentSelector: ~"") {
+	@{rootClass}.sapUiContentPadding @{contentSelector} {
+		padding: 1rem !important;
+		box-sizing: border-box;
+	}
+
+	@media (max-width:599px) {
+		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		.sapMSplitContainerPortrait > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+			padding: 0 !important;
+		}
+	}
+
+	@media (min-width:600px) and (max-width:1023px) {
+		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+			padding: 1rem !important;
+			box-sizing: border-box;
+		}
+	}
+
+	@media (min-width:1024px) {
+		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
+		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+			padding: 1rem 2rem !important;
+			box-sizing: border-box;
+		}
+	}
+
+	@{rootClass}.sapUiNoContentPadding @{contentSelector} {
+		padding: 0 !important;
+	}
+}
+
+/* overrides the responsive settings for the split app master page */
+.sapMSplitContainerMaster .sapUiResponsiveContentPadding {
+	padding: 0 !important;
+}
+
+/* overrides the responsive settings for the split app detail page */
+.sapMSplitContainerDetail .sapUiResponsiveContentPadding {
+	padding: 1rem !important;
+}
