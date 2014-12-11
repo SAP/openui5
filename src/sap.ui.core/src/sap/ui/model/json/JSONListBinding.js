@@ -73,18 +73,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		
 		return aContexts;
 	};
-	
+
+	/**
+	 * Get indices of the list
+	 */
+	sap.ui.model.json.JSONListBinding.prototype.updateIndices = function() {
+		var i;
+
+		this.aIndices = [];
+		if (jQuery.isArray(this.oList)) {
+			for (i = 0; i < this.oList.length; i++) {
+				this.aIndices.push(i);
+			}
+		} else {
+			for (i in this.oList) {
+				this.aIndices.push(i);
+			}
+		}
+	};
+
 	/**
 	 * Update the list, indices array and apply sorting and filtering
 	 * @private
 	 */
 	JSONListBinding.prototype.update = function(){
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
-		if (oList && jQuery.isArray(oList)) {
-			if (this.bUseExtendedChangeDetection) {
-				this.oList = jQuery.extend(true, [], oList);
+		if (oList) {
+			if (jQuery.isArray(oList)) {
+				if (this.bUseExtendedChangeDetection) {
+					this.oList = jQuery.extend(true, [], oList);
+				} else {
+					this.oList = oList.slice(0);
+				}
 			} else {
-				this.oList = oList.slice(0);
+				this.oList = jQuery.extend(this.bUseExtendedChangeDetection, {}, oList);
 			}
 			this.updateIndices();
 			this.applyFilter();

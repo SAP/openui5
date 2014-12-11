@@ -78,7 +78,12 @@
 						{ "name": "subitem3" }
 					]
 				}
-			]
+			],
+			map : {
+				first : {lastName : "Dente", name : "Al", checked : true, linkText : "www.sap.com", href : "http://www.sap.com", rating : 4},
+				second : {lastName : "Friese", name : "Andy", checked : true, linkText : "www.spiegel.de", href : "http://www.spiegel.de", rating : 2},
+				third : {lastName : "Mann", name : "Anita", checked : false, linkText : "www.kicker.de", href : "http://www.kicker.de", rating : 3}
+			}
 		};
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
@@ -99,7 +104,25 @@
 	function callBackOnChange(){
 		ok(true,"ChangeEvent fired");
 	};
-	
+
+	test("ListBinding with map, not array", function(){
+		var aKeysInMap = ["first", "second", "third"];
+		setup();
+		createListBinding("/map");
+
+		equal(bindings.length, 1, "amount of ListBindings");
+		var listBinding = bindings[0];
+		equal(listBinding.getPath(), "/map", "ListBinding path");
+		equal(listBinding.getModel(), oModel, "ListBinding model");
+		equal(listBinding.getLength(), 3, "ListBinding getLength");
+		equal(listBinding.isLengthFinal(), true, "ListBinding isLengthFinal");
+
+		jQuery(listBinding.getContexts()).each(function(i, context){
+			equal(context.getPath(), "/map/" + aKeysInMap[i], "ListBinding context");
+		});
+
+	});
+
 	test("ListBinding getContexts", function(){
 		setup();
 		createListBinding("/teamMembers", "");
