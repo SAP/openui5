@@ -22,7 +22,7 @@ sap.ui
 					 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
 					 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
 					 * 
-					 * @class Class to mock a server
+					 * @class Class to mock http requests made to a remote server
 					 * @extends sap.ui.base.ManagedObject
 					 * @abstract
 					 * @author SAP SE
@@ -162,6 +162,38 @@ sap.ui
 					 */
 					MockServer.prototype.isStarted = function() {
 						return !!this._oServer;
+					};
+					
+					/**
+					 * Returns the data model of the given EntitySet name.
+					 * 
+					 * @param sEntitySetName EntitySet name
+					 * @return {array} data model of the given EntitySet
+					 * @public
+					 */
+					MockServer.prototype.getEntitySetData = function(sEntitySetName) {
+						var that = this;
+						var aCopiedMockdata;
+						if (this._oMockdata && this._oMockdata.hasOwnProperty(sEntitySetName)) {
+							aCopiedMockdata = jQuery.extend(true, [], that._oMockdata[sEntitySetName]);
+						} else {
+							jQuery.sap.log.error("Unrecognized EntitySet name: " + sEntitySetName);
+						}
+						return aCopiedMockdata;
+					};
+					
+					/**
+					 * Sets the data of the given EntitySet name with the given array.
+					 * @param sEntitySetName EntitySet name
+					 * @param aData
+					 * @public
+					 */
+					MockServer.prototype.setEntitySetData = function(sEntitySetName, aData) {
+						if (this._oMockdata && this._oMockdata.hasOwnProperty(sEntitySetName)) {
+							this._oMockdata[sEntitySetName] = aData;
+						} else {
+							jQuery.sap.log.error("Unrecognized EntitySet name: " + sEntitySetName);
+						}
 					};
 
 					/**
