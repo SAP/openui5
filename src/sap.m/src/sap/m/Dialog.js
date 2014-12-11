@@ -516,14 +516,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		//Check if the invisible FIRST focusable element (suffix '-firstfe') has gained focus
 		if (oSourceDomRef.id === this.getId() + "-firstfe") {
 			//Check if buttons are available
-			var oLastFocusableDomRef = this.$("footer").lastFocusableDomRef() || this.$("cont").lastFocusableDomRef() || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || this.$("header").lastFocusableDomRef();
+			var oLastFocusableDomRef = this.$("footer").lastFocusableDomRef() || this.$("cont").lastFocusableDomRef() || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || (this._getAnyHeader() && this._getAnyHeader().$().lastFocusableDomRef());
 			if (oLastFocusableDomRef) {
 				jQuery.sap.focus(oLastFocusableDomRef);
 			}
 		} else if (oSourceDomRef.id === this.getId() + "-lastfe") {
 			//Check if the invisible LAST focusable element (suffix '-lastfe') has gained focus
 			//First check if header content is available
-			var oFirstFocusableDomRef = this.$("header").firstFocusableDomRef() ||  (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || this.$("cont").firstFocusableDomRef() || this.$("footer").firstFocusableDomRef();
+			var oFirstFocusableDomRef = (this._getAnyHeader() && this._getAnyHeader().$().firstFocusableDomRef()) ||  (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || this.$("cont").firstFocusableDomRef() || this.$("footer").firstFocusableDomRef();
 			if (oFirstFocusableDomRef) {
 				jQuery.sap.focus(oFirstFocusableDomRef);
 			}
