@@ -433,6 +433,7 @@
 				"samples" : [
 					"sap.m.sample.Page",
 					"sap.m.sample.PageSpacing",
+					"sap.m.sample.PageStandardClasses",
 					"sap.m.sample.PageListReportIconTabBar",
 					"sap.m.sample.PageListReportToolbar"
 				]
@@ -698,12 +699,13 @@
 				"samples" : [ "sap.m.sample.UrlHelper" ]
 			},
 			{
-				"id" : "sap.m.sample.PredefinedMargins",
-				"name" : "Predefined CSS Margin Classes",
+				"id" : "sap.ui.core.StandardMargins",
+				"name" : "Standard Margins",
+				"appComponent" : "CA-UI5-COR",
 				"category" : "Layout",
 				"since" : "1.28",
 				"formFactors" : "-",
-				"samples" : [ "sap.m.sample.PredefinedMarginsAll", "sap.m.sample.PredefinedMarginsSingleSided", "sap.m.sample.PredefinedMarginsTwoSided", "sap.m.sample.PredefinedMarginsEnforceWidthAuto" ]
+				"samples" : [ "sap.m.sample.StandardMarginsAll", "sap.m.sample.StandardMarginsSingleSided", "sap.m.sample.StandardMarginsTwoSided", "sap.m.sample.StandardMarginsEnforceWidthAuto", "sap.m.sample.StandardMarginsResponsive", "sap.m.sample.StandardMarginsCollapse", "sap.m.sample.StandardNoMargins" ]
 			}
 		],
 		"samples" : [
@@ -879,8 +881,13 @@
 			},
 			{
 				"id": "sap.m.sample.PageSpacing",
-				"name": "Fiori Object Page",
+				"name": "Fiori Object Page - sapUiFioriObjectPage",
 				"description": "This page shows a standard setup for showing the details of an object based on: Object Header, Icon Tab Bar, Form, List, Table and Panel. By applying the CSS class 'sapUiFioriObjectPage' you arrange all the controls with a standard spacing."
+			},
+			{
+				"id": "sap.m.sample.PageStandardClasses",
+				"name": "Fiori Object Page - Standard Classes",
+				"description": "This page realizes the same sample as in 'Fiori Sample Page - sapUiFioriObjectPage' using standard margin classes. Other than using 'sapUiFioriObjectPage', this page has a little more vertical spacing and the margins used for form, list table and panel are responsive: the margins adapt to the size of the browser. For more information, please search for 'Standard Margins' and take a look at our samples."
 			},
 			{
 				"id": "sap.m.sample.PageListReportIconTabBar",
@@ -1458,34 +1465,44 @@
 				"description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
 			},
 			{
-				"id": "sap.m.sample.PredefinedMarginsAbout",
+				"id": "sap.m.sample.StandardMarginsAbout",
 				"name": "Predefined Margin CSS Classes",
 				"description": "Since version 1.28, UI5 provides predefined CSS classes for application developers to add margins to their controls."
 			},
 			{
-				"id": "sap.m.sample.PredefinedMarginsAll",
-				"name": "Standard Margins",
-				"description": "Use pre-defined margin classes 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 16, 32 or 48 px margin to your control. This will clear the area all around your control (outside its border)."
+				"id": "sap.m.sample.StandardMarginsAll",
+				"name": "Margins All Around",
+				"description": "Use standard margin classes 'sapUiTinyMargin', 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) margin to your control. This will clear the area all around your control (outside its border)."
 			},
 			{
-				"id": "sap.m.sample.PredefinedMarginsSingleSided",
+				"id": "sap.m.sample.StandardMarginsSingleSided",
 				"name": "Single-Sided Margins",
-				"description": "Clear the space to the left, right, top or bottom of your control. Choose a size ('Small', 'Medium' or 'Large', which stands for 16, 32 or 48 px respectively) and a direction ('Begin', 'End', 'Top' or 'Bottom', where 'Begin' is left and 'End' is right and vice versa in right-to-left mode). If you would like to clear a 32px space to the left (resp. right in rtl mode), you would add class 'sapUiMediumBegin'. You may also add several classes which have to point to different directions though, for example you would add classes 'sapUiLargeEnd sapUiLargeBottom' to clear a 48px space to the bottom and to the right (resp. to the left in rtl mode)."
+				"description": "Clear the space to the left, right, top or bottom of your control. Choose a size ('Tiny', 'Small', 'Medium' or 'Large', which stands for 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) respectively) and a direction ('Begin', 'End', 'Top' or 'Bottom', where 'Begin' is left and 'End' is right and vice versa in right-to-left mode). If you would like to clear a 32px space to the left (resp. right in rtl mode), you would add class 'sapUiMediumBegin'. You may also add several classes which have to point to different directions though, for example you would add classes 'sapUiLargeEnd sapUiLargeBottom' to clear a 48px space to the bottom and to the right (resp. to the left in rtl mode)."
 			},
 			{
-				"id": "sap.m.sample.PredefinedMarginsTwoSided",
+				"id": "sap.m.sample.StandardMarginsTwoSided",
 				"name": "Two-Sided Margins",
-				"description": "Clear the space to the left and right, top and bottom of your control. Choose a size ('Small', 'Medium' or 'Large', which stands for 16, 32 or 48 px respectively) and an orientation ('BeginEnd', 'TopBottom'). If you would like to clear a 32px space to the left and right, you would add class 'sapUiMediumBeginEnd'."
+				"description": "Clear the space to the left and right, top and bottom of your control. Choose a size ('Tiny', 'Small', 'Medium' or 'Large', which stands for 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) respectively) and an orientation ('BeginEnd', 'TopBottom'). If you would like to clear a 32px space to the left and right, you would add class 'sapUiMediumBeginEnd'."
 			},
 			{
-				"id": "sap.m.sample.PredefinedMarginsEnforceWidthAuto",
+				"id": "sap.m.sample.StandardMarginsEnforceWidthAuto",
 				"name": "Enforce Width 'auto'",
-				"description": "Some controls (for example the SimpleForm) do not have a 'width' property but still have a default width of 100%. We provide css class 'sapUiForceWidthAuto' to overwrite the control's width in such a case."
+				"description": "Some controls (for example the IconTabBar) do not have a 'width' property but still have a default width of 100%. We provide css class 'sapUiForceWidthAuto' to overwrite the control's width in such a case."
 			},
 			{
-				"id": "sap.m.sample.PredefinedMarginsResponsive",
+				"id": "sap.m.sample.StandardMarginsResponsive",
 				"name": "Responsive Margins",
 				"description": "Clear the space around your control, where the margin depends on the device your are using."
+			},
+			{
+				"id": "sap.m.sample.StandardMarginsCollapse",
+				"name": "Collapsing Margins",
+				"description": "See how adjacent margins collapse to a single margin."
+			},
+			{
+				"id": "sap.m.sample.StandardNoMargins",
+				"name": "Remove Margins",
+				"description": "Use our standard 'No-Margins' classes to remove exising margins from your control. You can either remove all margins at once or remove the margin on or more sides."
 			}
 		]
 	}

@@ -63,6 +63,13 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 		var sRouteName = oEvt.getParameter("name");
 		if (sRouteName !== "home" && sRouteName != "notFound") {
+			var oView = oEvt.getParameter('view');
+			if (oView) {
+				var oToggleFullScreenBtn = oView.byId("toggleFullScreenBtn");
+				if (oToggleFullScreenBtn) {
+					sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateToggleFullScreenBtn(oToggleFullScreenBtn, oView);
+				} 
+			}
 			return;
 		}
 

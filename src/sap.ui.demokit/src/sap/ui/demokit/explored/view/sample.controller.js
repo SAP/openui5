@@ -128,5 +128,11 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 		this.router.navTo("code", {
 			id : this._sId
 		}, false);
+	},
+	
+	onToggleFullScreen : function (oEvt) {
+		sap.ui.demokit.explored.util.ToggleFullScreenHandler.actionPerformed(oEvt, this.getView());
 	}
+	
+	
 });

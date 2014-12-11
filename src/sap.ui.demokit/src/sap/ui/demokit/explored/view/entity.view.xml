@@ -9,8 +9,17 @@
 		title="Entity"
 		class="sapUiFioriObjectPage"
 		navButtonPress="onNavBack"
-		id="page" >
-
+		id="page">
+		<headerContent>
+			<Button
+			    id="toggleFullScreenBtn"
+				class="sapUiHideOnPhone"
+				text="{i18n>sampleFullScreen}"
+				icon="sap-icon://full-screen"
+				tooltip="{i18n>sampleFullScreenTooltip}"
+				press="onToggleFullScreen" />
+		</headerContent>
+		
 		<ObjectHeader
 			title="{/name}"
 			responsive="true"

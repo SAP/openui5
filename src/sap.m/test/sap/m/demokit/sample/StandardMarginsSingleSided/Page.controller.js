@@ -1,4 +1,4 @@
-sap.ui.controller("sap.m.sample.PredefinedMarginsAll.Page", {
+sap.ui.controller("sap.m.sample.StandardMarginsSingleSided.Page", {
 
 	onInit : function (evt) {
 		// set explored app's demo model on this sample

@@ -1,0 +1,26 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.StandardMarginsResponsive.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Panel width="auto" class="sapUiResponsiveMargin">
+	    <content>
+	    	<Text text="All panels on this page use css class 'sapUiResponsiveMargin' to clear space all around, depending on the available width."/>
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiResponsiveMargin">
+	    <content>
+	      	<Text text="Please resize the the browser window and/or use the 'Full Screen' button to see how the margins change." />
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiResponsiveMargin">
+	    <content>
+	      	<Text text="Since panels have a default width of 100%, horizontal margins are not displayed appropriately." />
+	    </content>
+	</Panel>
+	<Panel width="auto" class="sapUiResponsiveMargin">
+	    <content>
+	      	<Text text="Therefore we need to set each panel's 'width' property to 'auto'." />
+	    </content>
+	</Panel>
+</mvc:View>

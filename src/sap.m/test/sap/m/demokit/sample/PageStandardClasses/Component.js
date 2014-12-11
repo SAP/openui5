@@ -1,9 +1,9 @@
-jQuery.sap.declare("sap.m.sample.PredefinedMarginsTwoSided.Component");
+jQuery.sap.declare("sap.m.sample.PageStandardClasses.Component");
 
-sap.ui.core.UIComponent.extend("sap.m.sample.PredefinedMarginsTwoSided.Component", {
+sap.ui.core.UIComponent.extend("sap.m.sample.PageStandardClasses.Component", {
 
 	metadata : {
-		rootView : "sap.m.sample.PredefinedMarginsTwoSided.Page",
+		rootView : "sap.m.sample.PageStandardClasses.Page",
 		dependencies : {
 			libs : [
 				"sap.m",

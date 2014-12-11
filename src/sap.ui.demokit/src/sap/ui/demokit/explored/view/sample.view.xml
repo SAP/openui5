@@ -8,12 +8,20 @@
 		<headerContent>
 			<Button
 				class="sapUiHideOnPhone"
-				text="Show Code"
-				icon="sap-icon://display"
+				text="{i18n>sampleShowCode}"
+				tooltip="{i18n>sampleShowCodeTooltip}"
+				icon="sap-icon://syntax"
 				press="onNavToCode" />
 			<Button
+			    id="toggleFullScreenBtn"
+				class="sapUiHideOnPhone"
+				text="{i18n>sampleFullScreen}"
+				icon="sap-icon://full-screen"
+				tooltip="{i18n>sampleFullScreenTooltip}"
+				press="onToggleFullScreen" />
+			<Button
 				class="sapUiVisibleOnlyOnPhone"
-				icon="sap-icon://display"
+				icon="sap-icon://syntax"
 				press="onNavToCode" />
 		</headerContent>
 	</Page>

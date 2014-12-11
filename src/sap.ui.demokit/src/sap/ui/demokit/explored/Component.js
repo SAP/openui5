@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 	
 			// 1. some very generic requires
 			jQuery.sap.require("sap.ui.demokit.explored.util.ObjectSearch");
+			jQuery.sap.require("sap.ui.demokit.explored.util.ToggleFullScreenHandler");
 					jQuery.sap.require("sap.ui.core.routing.History");
 			jQuery.sap.require("sap.m.InstanceManager");
 			jQuery.sap.require("sap.m.routing.RouteMatchedHandler");

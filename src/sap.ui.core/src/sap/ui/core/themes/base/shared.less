@@ -158,11 +158,20 @@
  */
 
 /* Margins all around */
+.sapUiTinyMargin 	{ margin: @sapUiMarginTiny !important; }
 .sapUiSmallMargin 	{ margin: @sapUiMarginSmall !important; }
 .sapUiMediumMargin 	{ margin: @sapUiMarginMedium !important; }
 .sapUiLargeMargin 	{ margin: @sapUiMarginLarge !important; }
 
 /* Two-sided margins */
+.sapUiTinyMarginBeginEnd { 
+	margin-left: @sapUiMarginTiny !important; 
+	margin-right: @sapUiMarginTiny !important; 
+}
+.sapUiTinyMarginTopBottom {
+	margin-top: @sapUiMarginTiny !important; 
+	margin-bottom: @sapUiMarginTiny !important; 
+}
 .sapUiSmallMarginBeginEnd { 
 	margin-left: @sapUiMarginSmall !important; 
 	margin-right: @sapUiMarginSmall !important; 
@@ -189,6 +198,11 @@
 }
 
 /* Single-sided margins */
+.sapUiTinyMarginTop    { margin-top: @sapUiMarginTiny !important; }
+.sapUiTinyMarginBottom { margin-bottom: @sapUiMarginTiny !important; }
+.sapUiTinyMarginBegin  { margin-left: @sapUiMarginTiny !important; }
+.sapUiTinyMarginEnd    { margin-right: @sapUiMarginTiny !important; }
+
 .sapUiSmallMarginTop    { margin-top: @sapUiMarginSmall !important; }
 .sapUiSmallMarginBottom { margin-bottom: @sapUiMarginSmall !important; }
 .sapUiSmallMarginBegin  { margin-left: @sapUiMarginSmall !important; }
@@ -204,5 +218,67 @@
 .sapUiLargeMarginBegin  { margin-left: @sapUiMarginLarge !important; }
 .sapUiLargeMarginEnd    { margin-right: @sapUiMarginLarge !important; }
 
+
+/* 
+ * Class for responsive margins which adapts to the screen size of the currently used device
+ */
+@media (max-width:599px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiResponsiveMargin,
+	.sapMSplitContainerPortrait > .sapMSplitContainerDetail .sapUiResponsiveMargin,
+	.sapUiResponsiveMargin {
+		margin: 0 0 1rem 0 !important;
+	}
+}
+
+@media (min-width:600px) and (max-width:1023px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiResponsiveMargin,
+	.sapUiResponsiveMargin {
+		margin: 1rem !important;
+	}
+}
+
+@media (min-width:1024px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiResponsiveMargin,
+	.sapUiResponsiveMargin {
+		margin: 1rem 2rem !important;
+	}
+}
+
+/*
+ * Content of SplitContainer Master
+ * (Left hand-side of SplitContainer)
+ */
+.sapMSplitContainerMaster .sapUiResponsiveMargin
+{
+	margin: 0 0 1rem 0 !important;
+}
+
+/*
+ * Content of SplitContainer Detail 
+ * (Right hand-side of SplitContainer)
+ */
+.sapMSplitContainerDetail .sapUiResponsiveMargin{
+	margin: 1rem !important;
+}
+
+
+/*
+ * No margins, use these classes to remove existing margins.
+ * IMPORTANT: THESE CLASSES MUST COME AFTER ALL OTHER PRE-DEFINED MARGINS
+ * to make sure that their 'IMPORTANT' statement wins
+ */
+.sapUiNoMargin    { margin: 0 !important; } /*Removes ALL margins*/
+/*Use the following to remove a margin on a particular side of your container*/    
+.sapUiNoMarginTop    { margin-top: 0 !important; }
+.sapUiNoMarginBottom { margin-bottom: 0 !important; }
+.sapUiNoMarginBegin  { margin-left: 0 !important; }
+.sapUiNoMarginEnd    { margin-right: 0 !important; }
+
+
+
+
+
+
+ 
 
 
