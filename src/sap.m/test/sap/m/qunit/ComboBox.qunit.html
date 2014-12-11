@@ -6457,7 +6457,7 @@
 				oComboBox.destroy();
 			});
 
-			test("oninput close the picker popup if there not are suggestions", function() {
+			test("oninput close the picker popup if there are not suggestions", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
@@ -6698,7 +6698,7 @@
 			/* onAfterOpen                    */
 			/* ------------------------------ */
 
-			test("onAfterOpen", function() {
+			test("onAfterOpen test case 1", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
@@ -6723,6 +6723,37 @@
 				// assert
 				strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true");
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onAfterOpen test case 2", function() {
+
+				// system under test
+				var oItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oItem = new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					],
+					selectedKey: "GER"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+
+				// act
+				oComboBox.open();
+				this.clock.tick(1000);
+
+				// assert
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
 
 				// cleanup
 				oComboBox.destroy();
@@ -6758,6 +6789,7 @@
 				// assert
 				strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined);
 
 				// cleanup
 				oComboBox.destroy();
@@ -6767,7 +6799,7 @@
 			/* onBeforeClose                  */
 			/* ------------------------------ */
 
-			test("onAfterClose", function() {
+			test("onBeforeClose", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox();

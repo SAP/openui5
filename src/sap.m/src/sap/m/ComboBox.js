@@ -893,8 +893,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.onBeforeOpen = function() {
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
-				oDomRef = this.getFocusDomRef(),
-				oItem = this.getSelectedItem();
+				oDomRef = this.getFocusDomRef();
 
 			// add the active state to the control field
 			this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
@@ -904,9 +903,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// expose a parent/child contextual relationship to assistive technologies
 				// note: the "aria-owns" attribute is set when the list is visible and in view
 				oDomRef.setAttribute("aria-owns", this.getList().getId());
-
-				// set the attribute "aria-activedescendant" when the List is rendered
-				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
 			}
 
 			// call the hook to add additional content to the List
@@ -935,10 +931,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
-			var oDomRef = this.getFocusDomRef();
+			var oDomRef = this.getFocusDomRef(),
+				oItem = this.getSelectedItem();
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "true");
+
+				// note: the "aria-activedescendant" attribute is set when the currently active descendant is visible and in view
+				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
 			}
 		};
 
