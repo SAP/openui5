@@ -566,7 +566,7 @@
 			/* setEnabled()                   */
 			/* ------------------------------ */
 
-			test("method: setEnabled() initial rendering", function() {
+			test("method: setEnabled() initial rendering test case 1", function() {
 
 				// system under test
 				var oInput = new sap.m.InputBase();
@@ -581,12 +581,13 @@
 
 				// assertions
 				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
+				strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
 
 				// cleanup
 				oInput.destroy();
 			});
 
-			test("method: setEnabled()", function() {
+			test("method: setEnabled() test case 2", function() {
 
 				// system under test
 				var oInput = new sap.m.InputBase({
@@ -599,6 +600,23 @@
 
 				// assertions
 				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
+				strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("method: setEnabled() test case 3", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(jQuery(oInput.getFocusDomRef()).attr("aria-disabled"), undefined);
 
 				// cleanup
 				oInput.destroy();

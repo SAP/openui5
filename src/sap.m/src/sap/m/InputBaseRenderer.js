@@ -153,9 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
-		oRm.writeAccessibilityState(oControl, {
-			disabled: !oControl.getEnabled()
-		});
+		oRm.writeAccessibilityState(oControl);
 	};
 
 	/**
