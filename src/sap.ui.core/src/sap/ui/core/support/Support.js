@@ -168,6 +168,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 * @private
 	 */
 	Support.prototype._receiveEvent = function(oEvent) {
+		var sData = oEvent.data;
+
+		if (sData.indexOf("SAPUI5SupportTool*") === 0) {
+			sData = sData.substr(18); // length of SAPUI5SupportTool*
+		} else {
+			return;
+		}
+
 		if (jQuery("html").attr("data-sap-ui-browser") != "ie8") {
 			if (oEvent.source != this._oRemoteWindow) {
 				return;
@@ -178,12 +186,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 
 		if (this._sType === mTypes.IFRAME) {
 			var that = this;
-			var data = oEvent.data;
 			setTimeout(function(){
-				that._oOpenedWindow.sap.ui.core.support.Support.getStub(mTypes.TOOL)._receiveEvent({source: window, data: data, origin: that._sLocalOrigin});
+				that._oOpenedWindow.sap.ui.core.support.Support.getStub(mTypes.TOOL)._receiveEvent({source: window, data: oEvent.data, origin: that._sLocalOrigin});
 			}, 0);
 		} else {
-			var oData = window.JSON.parse(oEvent.data);
+			var oData = window.JSON.parse(sData);
 			var sEventId = oData.eventId;
 			var mParams = oData.params;
 			this.fireEvent(sEventId, mParams);
@@ -216,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 				jQuery.extend(true, mParamsLocal, mParams);
 			}
 			var oData = {"eventId": sEventId, "params": mParamsLocal};
-			var sData = window.JSON.stringify(oData);
+			var sData = "SAPUI5SupportTool*" + window.JSON.stringify(oData);
 			this._oRemoteWindow.postMessage(sData, this._sRemoteOrigin);
 		}
 	};
