@@ -905,15 +905,24 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 					if (typeof oConditionGridData !== "undefined") {
 						if (typeof oConditionGridData[field["ID"]] !== "undefined") {
-							var oValue = oConditionGridData[field["ID"]];
-							var sValue = "";
-							if (typeof oValue === "string") {
-								oValue = oConditionGrid.oFormatter ? oConditionGrid.oFormatter.parse(oValue) : oValue;
+							var sValue = oConditionGridData[field["ID"]];
+							var oValue;
+
+							if (typeof sValue === "string" && oConditionGrid.oFormatter) {
+								oValue = oConditionGrid.oFormatter.parse(sValue);
+							} else {
+								oValue = sValue;
 							}
 
-							var sValue = oConditionGrid.oFormatter && oValue ? oConditionGrid.oFormatter.format(oValue) : oValue;
-
-							oControl.setValue(sValue);
+							if (!isNaN(oValue) && oValue !== null && oConditionGrid.oFormatter) {
+								sValue = oConditionGrid.oFormatter.format(oValue);
+								oControl.setValue(sValue);
+								//oCtrl.setValueState(sap.ui.core.ValueState.None);
+							} else {
+								oControl.setValue(oValue);
+								//oCtrl.setValueState(sap.ui.core.ValueState.Warning);
+								//oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
+							}
 						}
 					}
 					break;
@@ -1526,7 +1535,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			var oConditionGrid = oCtrl.getParent();
 			var sValue = oCtrl.getValue();
 			
-			if (oThat.getDisplayFormat() === "UpperCase" && sValue) {
+			if (this.getDisplayFormat() === "UpperCase" && sValue) {
 				sValue = sValue.toUpperCase();
 				oCtrl.setValue(sValue);
 			}
@@ -1550,6 +1559,9 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		var sValue1 = oValue1; 
 		if (oConditionGrid.oFormatter && sValue1) {
 			oValue1 = oConditionGrid.oFormatter.parse(sValue1);
+			if (isNaN(oValue1) || oValue1 === null) {
+				sValue1 = "";
+			}
 		}
 		
 		// update Value2 field control
@@ -1558,6 +1570,9 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		var sValue2 = oValue2; 
 		if (oConditionGrid.oFormatter && sValue2) {
 			oValue2 = oConditionGrid.oFormatter.parse(sValue2);
+			if (isNaN(oValue2) || oValue2 === null) {
+				sValue2 = "";
+			}
 		}
 
 
@@ -1740,12 +1755,8 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			var bValid = true;
 			for (var i = 0; i < aGrids.length; i++) {
 				var oGrid = aGrids[i];
-				var sOperation = oGrid.operation.getSelectedKey();
-
-				if (i < aGrids.length - 1 || sOperation === sap.m.P13nConditionOperation.BT) {
-					var bIsValid = that._checkCondition(oGrid, i === aGrids.length - 1);
-					bValid = bValid && bIsValid;
-				}
+				var bIsValid = that._checkCondition(oGrid, i === aGrids.length - 1);
+				bValid = bValid && bIsValid;
 			}
 
 			return bValid;
@@ -1829,7 +1840,37 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				value1.setValueState(sap.ui.core.ValueState.None);
 				value2.setValueState(sap.ui.core.ValueState.None);
 			}
+		} 
+		
+		if (!isLast) {
+			var fnFormatFieldValue = function(oCtrl) {
+				var oConditionGrid = oCtrl.getParent();
+				var sValue = oCtrl.getValue();
+				
+				if (this.getDisplayFormat() === "UpperCase" && sValue) {
+					sValue = sValue.toUpperCase();
+					oCtrl.setValue(sValue);
+				}
+				
+				if (oConditionGrid.oFormatter && sValue) {
+					var oValue = oConditionGrid.oFormatter.parse(sValue);
+					if (!isNaN(oValue) && oValue !== null) {
+						sValue = oConditionGrid.oFormatter.format(oValue);
+						oCtrl.setValue(sValue);
+						oCtrl.setValueState(sap.ui.core.ValueState.None);
+					} else {
+						oCtrl.setValueState(sap.ui.core.ValueState.Warning);
+						oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
+					}
+				}
+			};
 
+			jQuery.proxy(fnFormatFieldValue, this)(value1);
+			jQuery.proxy(fnFormatFieldValue, this)(value2);
+			
+			if (value1.getValueState() !== sap.ui.core.ValueState.None || value2.getValueState() !== sap.ui.core.ValueState.None) {
+				bValid = false;
+			}
 		}
 
 		return bValid;
