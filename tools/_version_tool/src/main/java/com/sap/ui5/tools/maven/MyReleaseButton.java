@@ -383,7 +383,7 @@ public class MyReleaseButton {
     if (contributorsRange != null){
       s = CONTRIBUTOR_VERSION_PATTERN.matcher(s).replaceAll(contributorsRange);
     } else {
-      MvnClient.execute(file.getParentFile(), "versions:resolve-ranges", "-DgenerateBackupPoms=false");
+      MvnClient.execute(file.getParentFile(), "versions:resolve-ranges", "-U", "-DgenerateBackupPoms=false");
       s = readFile(file, encoding);
     }
     return s;

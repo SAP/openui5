@@ -304,7 +304,7 @@ public class Git2P4Main {
   }
   
   private static Version getLatestCoreVersion(String versionRange, boolean snapshot) throws IOException {
-    MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
+    MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_CORE_VERSION).getAbsoluteFile(), "versions:resolve-ranges", "-U", "-Dsapui5.core.version=" + versionRange, snapshot ? "-DallowSnapshots=true" : "");
     Matcher m = Pattern.compile("so unable to set version to (.*)").matcher(MvnClient.getLatestOutput());
     if (m.find()){
       Version coreVersion = new Version(m.group(1));
