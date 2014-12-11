@@ -338,7 +338,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		if (this._bInitBusy && this._bFirstRender) {
 			this._setBusy(true);
 			this._bInitBusy = false;
-			this._firstRender = false;
 		}
 
 		return this;
