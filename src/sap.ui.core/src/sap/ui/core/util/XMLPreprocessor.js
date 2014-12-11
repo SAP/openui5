@@ -3,8 +3,8 @@
  */
 
 // Provides object sap.ui.core.util.XMLPreprocessor
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XMLTemplateProcessor'],
+	function(jQuery, ManagedObject, XMLTemplateProcessor) {
 		'use strict';
 
 		var oUNBOUND = {}, // @see getAny
@@ -256,11 +256,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				}
 
 				/**
+				 * Loads and inlines the content of a sap.ui.core:Fragment element.
+				 * @param {Element} oElement
+				 *   the <sap.ui.core:Fragment> element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the parent's "with" control
+				 */
+				function templateFragment(oElement, oWithControl) {
+					var sFragmentName = oElement.getAttribute("fragmentName"),
+						oFragmentElement = XMLTemplateProcessor.loadTemplate(
+							sFragmentName, "fragment");
+
+					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
+					if (oWithControl.$mFragmentContexts[sFragmentName]) {
+						oElement.appendChild(oElement.ownerDocument.createTextNode(
+							"Error: Stopped due to cyclic fragment reference"));
+						jQuery.sap.log.error(
+							'Stopped due to cyclic reference in fragment ' + sFragmentName,
+							jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
+							"sap.ui.core.util.XMLPreprocessor");
+						return;
+					}
+
+					oWithControl.$mFragmentContexts[sFragmentName] = true;
+
+					if (localName(oFragmentElement) === "FragmentDefinition" &&
+							oFragmentElement.namespaceURI === "sap.ui.core") {
+						liftChildNodes(oFragmentElement, oWithControl, oElement);
+					} else {
+						oElement.appendChild(oFragmentElement);
+						liftChildNodes(oElement, oWithControl);
+					}
+					oElement.parentNode.removeChild(oElement);
+					oWithControl.$mFragmentContexts[sFragmentName] = false;
+				}
+
+				/**
 				 * Processes a <template:if> instruction.
 				 *
 				 * @param {Element} oElement
 				 *   the <template:if> element
-				 * @param {sap.ui.core.util._with} oWithControl the "with" control
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the "with" control
 				 */
 				function templateIf(oElement, oWithControl) {
 					var vTest = oElement.getAttribute("test"),
@@ -472,6 +509,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						default:
 							unexpectedTag(oNode);
 						}
+					} else if (oNode.namespaceURI === "sap.ui.core"
+						&& localName(oNode) === "Fragment"
+						&& oNode.getAttribute("type") === "XML") {
+						templateFragment(oNode, oWithControl);
 					}
 
 					visitAttributes(oNode, oWithControl);

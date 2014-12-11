@@ -4,6 +4,8 @@
 			"files": [
 				"Component.js",
 				"Detail.view.xml",
+				"Field.fragment.xml",
+				"FieldHelper.js",
 				"ODataMetaModel.json",
 				"../data2/annotations.xml",
 				"../data2/metadata.xml",

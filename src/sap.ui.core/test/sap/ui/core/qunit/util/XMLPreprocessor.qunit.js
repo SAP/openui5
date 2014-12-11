@@ -53,14 +53,20 @@
 	 * Checks if document is equal to the concatenation of the given strings.
 	 *
 	 * @param {Element} oElement the actual XML document's root element
-	 * @param {string[]} aStrings the expected XML
+	 * @param {string[]|RegExp} vExpected
+	 *   the expected XML as array of String (exact match) or a regular expression
 	 */
-	function checkXml(oElement, aStrings) {
-		var sActual = jQuery.sap.serializeXML(oElement),
-			sExpected = aStrings.join("");
+	function checkXml(oElement, vExpected) {
+		var sActual = normalizeXml(jQuery.sap.serializeXML(oElement)),
+			sExpected;
 
-		strictEqual(normalizeXml(sActual), normalizeXml(sExpected),
-			"XML looks as expected: " + sExpected);
+		if (jQuery.isArray(vExpected)) {
+			sExpected = vExpected.join("");
+			strictEqual(sActual, normalizeXml(sExpected),
+					"XML looks as expected: " + sExpected);
+		} else {
+			ok(vExpected.test(sActual), "XML: " + sActual + " matches " + vExpected);
+		}
 	}
 
 	/**
@@ -136,27 +142,30 @@
 	 *   the original view content
 	 * @param {object} [mSettings={}]
 	 *   a settings object for the preprocessor
-	 * @param {string[]} [aExpected]
-	 *   the expected content, with root element omitted; if missing, the expectation is derived
-	 *   from the original view content by smart filtering
+	 * @param {string[]|RegExp} [vExpected]
+	 *   the expected content as string array, with root element omitted; if missing, the
+	 *   expectation is derived from the original view content by smart filtering. Alternatively
+	 *   a regular expression which is expected to match the serialized original view content.
 	 */
-	function check(aViewContent, mSettings, aExpected) {
+	function check(aViewContent, mSettings, vExpected) {
 		var oViewContent = xml(aViewContent),
 			i;
 
 		// setup
-		if (!aExpected) { // derive expectations by smart filtering
-			aExpected = [];
+		if (!vExpected) { // derive expectations by smart filtering
+			vExpected = [];
 			for (i = 1; i < aViewContent.length - 1; i += 1) {
 				// Note: <In> should really have some attributes to make sure they are kept!
 				if (aViewContent[i].indexOf("<In ") === 0
 					|| aViewContent[i] === "<!-- prevent empty tag -->") {
-					aExpected.push(aViewContent[i]);
+					vExpected.push(aViewContent[i]);
 				}
 			}
 		}
-		aExpected.unshift(aViewContent[0]); // 1st line is always in
-		aExpected.push(aViewContent[aViewContent.length - 1]); // last line is always in
+		if (jQuery.isArray(vExpected)) {
+			vExpected.unshift(aViewContent[0]); // 1st line is always in
+			vExpected.push(aViewContent[aViewContent.length - 1]); // last line is always in
+		}
 
 		withBalancedBindAggregation(function () {
 			withBalancedBindProperty(function () {
@@ -168,7 +177,7 @@
 		});
 
 		// assertions
-		checkXml(oViewContent, aExpected);
+		checkXml(oViewContent, vExpected);
 	}
 
 	/**
@@ -1005,7 +1014,133 @@
 		}, [
 			'<In src="A"/>',
 			'<In src="B"/>',
-			'<In src="C"/>',
+			'<In src="C"/>'
 		]);
 	});
+
+	//*********************************************************************************************
+	test("fragment support", sinon.test(function () {
+		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
+			return xml(['<In xmlns="foo"/>']);
+		});
+		check([
+				mvcView(),
+				'<Fragment fragmentName="myFragment" type="XML"/>',
+				'<\/mvc:View>'
+			],
+			{},
+			[
+				'<In />'
+			]);
+		sinon.assert.calledWithExactly(sap.ui.core.XMLTemplateProcessor.loadTemplate, "myFragment",
+			"fragment");
+	}));
+
+	//*********************************************************************************************
+	test("fragment with FragmentDefinition", sinon.test(function () {
+		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
+			return xml(['<FragmentDefinition xmlns="sap.ui.core">',
+			            '<In id="first"/>',
+			            '<In id="last"/>',
+			            '</FragmentDefinition>']);
+		});
+		check([
+				mvcView(),
+				'<Fragment fragmentName="myFragment" type="XML"/>',
+				'<\/mvc:View>'
+			],
+			{},
+			[
+				'<In id="first"/>',
+				'<In id="last"/>'
+			]);
+		sinon.assert.calledWithExactly(sap.ui.core.XMLTemplateProcessor.loadTemplate, "myFragment",
+			"fragment");
+	}));
+
+	//*********************************************************************************************
+	test("fragment in repeat", sinon.test(function () {
+		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
+			return xml(['<In xmlns="foo" src="{src}" />']);
+		});
+
+		check([
+			mvcView(),
+			'<template:repeat list="{/items}">',
+			'<Fragment fragmentName="A" type="XML"/>',,
+			'<\/template:repeat>',
+			'<\/mvc:View>'
+		], {
+			models: new sap.ui.model.json.JSONModel({
+				items: [{
+					src: "A"
+				}, {
+					src: "B"
+				}, {
+					src: "C"
+				}]
+			})
+		}, [
+			'<In src="A"/>',
+			'<In src="B"/>',
+			'<In src="C"/>'
+		]);
+	}));
+
+	//*********************************************************************************************
+	test("fragment with type != XML", sinon.test(function () {
+		var oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
+
+		check([
+				mvcView(),
+				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
+				'<\/mvc:View>'
+			],
+			{},
+			new RegExp('<Fragment (fragmentName="nonXMLFragment" type="JS"'
+				+ '|type="JS" fragmentName="nonXMLFragment")\/>')
+			);
+		oXMLTemplateProcessorMock.expects("loadTemplate").never();
+	}));
+
+	//*********************************************************************************************
+	test("error on fragment with simple cyclic reference", sinon.test(function () {
+		var oLogMock = this.mock(jQuery.sap.log);
+
+		oLogMock.expects("error")
+			.once()
+			.withExactArgs('Stopped due to cyclic reference in fragment cycle',
+				sinon.match(/Error: Stopped due to cyclic fragment reference/),
+				"sap.ui.core.util.XMLPreprocessor");
+
+		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
+			return xml(['<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>']);
+		});
+		check([
+				mvcView(),
+				'<Fragment fragmentName="cycle" type="XML"/>',
+				'<\/mvc:View>'
+			],
+			{},
+			/Error: Stopped due to cyclic fragment reference/
+			);
+	}));
+
+	//*********************************************************************************************
+	test("error on fragment with ping pong cyclic reference", sinon.test(function () {
+		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
+			if (sTemplateName === "A") {
+				return xml(['<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>']);
+			}
+			return xml(['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']);
+		});
+		check([
+				mvcView(),
+				'<Fragment fragmentName="A" type="XML"/>',
+				'<\/mvc:View>'
+			],
+			{},
+			/Error: Stopped due to cyclic fragment reference/
+			);
+	}));
 } ());
