@@ -108,12 +108,12 @@
 					}
 					catch (e) {
 						ok(e instanceof sap.ui.model.ParseException)
-						equal(e.message, oValue + " is not a valid " + sName + " value");
+						equal(e.message, "Enter an integer.");
 					}
 				});
 		});
 
-		jQuery.each(["123", undefined, 123.456, NaN], function (i, iValue) {
+		jQuery.each(["123", undefined, false], function (i, iValue) {
 			test("illegal values and value type: " + iValue,
 				function () {
 					try {
@@ -156,18 +156,32 @@
 			});
 		});
 
+		test("validate w/ decimal", function () {
+			try {
+				oType.validateValue(123.456);
+				ok(false, "Expected ValidateException not thrown");
+			}
+			catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException)
+				equal(e.message, "Enter an integer.");
+			}
+		});
+
 		jQuery.each([-Infinity, iMin - 1, iMax + 1, Infinity], function (i, iValue) {
 			test("not in value range: " + iValue,
 				function () {
+					var oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+							groupingEnabled:true});
+
 					try {
 						oType.validateValue(iValue);
 						ok(false, "Expected ValidateException not thrown");
 					}
 					catch (e) {
 						ok(e instanceof sap.ui.model.ValidateException)
-						equal(e.message, iValue + " is out of range for " + sName + " [" + iMin
-							+ ", " + iMax + "]",
-							"out of range");
+						equal(e.message, "Enter an integer within the "
+							+ oNumberFormat.format(iMin) + " to "
+							+ oNumberFormat.format(iMax) + " range.");
 					}
 				});
 		});
