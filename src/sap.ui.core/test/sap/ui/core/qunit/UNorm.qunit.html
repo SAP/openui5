@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.thirdparty.unorm
+  Author: d061987
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title>qUnit Page for UNorm Support and Polyfill Test</title>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.core">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script language="javascript">
+		// only run test when not on mobile devices because normalize polyfill is only for desktop
+		if(sap.ui.Device.browser.mobile == false) {
+
+			// apply the polyfill if needed
+			jQuery.sap.require("sap.ui.core.util.UnicodeNormalizer");
+			var s, sRef;
+
+			// helper function for printing char codes
+			function printCharCodes(s) {
+				var chars = "";
+				for (var i = 0; i < s.length; i++) {
+					chars += "\\u" + s.charCodeAt(i).toString(16);
+				}
+				return chars;
+			}
+	
+			module("Normalization", {
+				setup: function() {
+					// U+1E9B: latin small letter s with dot above
+					// U+0323: combining dot below
+					s = "\u1E9B\u0323";
+				},
+	
+				teardown: function() {
+				}
+			});
+	
+			test("Initial String", function() {
+				equal(s, 'ẛ̣', "Char representation: " + printCharCodes(s));
+			});
+			
+			test("Canonically-composed form (NFC) as default behaviour", function() {
+				var sRef = 'ẛ̣';
+				var sNorm = s.normalize();
+				equal(sNorm, sRef, "Chars normalized from : \"" + printCharCodes(s) + "\" to \"" + printCharCodes(sNorm) + "\"");
+			});
+	
+			test("Canonically-composed form (NFC)", function() {
+				var sRef = 'ẛ̣';
+				var sNorm = s.normalize('NFC');
+				equal(sNorm, sRef, "Chars normalized from : \"" + printCharCodes(s) + "\" to \"" + printCharCodes(sNorm) + "\"");
+			});
+	
+			test("Canonically-decomposed form (NFD)", function() {
+				var sRef = 'ẛ̣';
+				var sNorm = s.normalize('NFD');
+				equal(sNorm, sRef, "Chars normalized from : \"" + printCharCodes(s) + "\" to \"" + printCharCodes(sNorm) + "\"");
+			});
+	
+			test("Compatibly-composed (NFKC)", function() {
+				var sRef = 'ṩ';
+				var sNorm = s.normalize('NFKC');
+				equal(sNorm, sRef, "Chars normalized from : \"" + printCharCodes(s) + "\" to \"" + printCharCodes(sNorm) + "\"");
+			});
+	
+			test("Compatibly-decomposed (NFKD)", function() {
+				var sRef = 'ṩ';
+				var sNorm = s.normalize('NFKD');
+				equal(sNorm, sRef, "Chars normalized from : \"" + printCharCodes(s) + "\" to \"" + printCharCodes(sNorm) + "\"");
+			});
+		}
+	</script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="area1"></div>
+	<div id="area2"></div>
+</body>
+</html>
