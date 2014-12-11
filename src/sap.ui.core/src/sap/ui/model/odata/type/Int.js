@@ -9,6 +9,28 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	"use strict";
 
 	/**
+	 * Returns the error message for the type.
+	 *
+	 * @param {sap.ui.model.odata.type.Int} oType
+	 *   the type
+	 * @param {boolean} bShowRange
+	 *   if true, the range values are shown
+	 * @returns {string}
+	 *   the message
+	 */
+	function getErrorMessage(oType, bShowRange) {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
+
+		if (bShowRange) {
+			return oResourceBundle.getText("EnterIntRange", [
+				oType._getFormatter().format(oType.oConstraints.minimum),
+				oType._getFormatter().format(oType.oConstraints.maximum)
+			]);
+		}
+		return oResourceBundle.getText("EnterInt");
+	}
+
+	/**
 	 * Constructor for a new <code>Int</code>.
 	 * Subtypes have to initialize <code>this.oConstraints</code> with <code>minimum<code> and
 	 * <code>maximum</code> value range before calling this constructor.
@@ -45,7 +67,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 	/**
 	 * Returns the formatter. Creates it lazily.
-	 * @return {sap.ui.core.format.NumberFormat}
+	 * @returns {sap.ui.core.format.NumberFormat}
 	 *   the formatter
 	 * @private
 	 */
@@ -72,7 +94,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the value in model representation to be formatted
 	 * @param {string} sTargetType
 	 *   the target type
-	 * @return {number|string}
+	 * @returns {number|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   will be formatted to <code>null</code>
 	 * @throws sap.ui.model.FormatException
@@ -108,7 +130,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @throws sap.ui.model.ParseException
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to an
 	 *   integer type
-	 * @return {number}
+	 * @returns {number}
 	 *   the parsed value
 	 * @public
 	 */
@@ -122,9 +144,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			case "string":
 				iResult = this._getFormatter().parse(vValue);
 				if (isNaN(iResult)) {
-					// TODO: localization
-					throw new ParseException(vValue + " is not a valid "
-						+ this.getName() + " value");
+					throw new ParseException(getErrorMessage(this, false));
 				}
 				return iResult;
 			case "float":
@@ -132,7 +152,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			case "int":
 				return vValue;
 			default:
-				// TODO: localization
 				throw new ParseException("Don't know how to parse " + this.getName()
 					+ " from " + sSourceType);
 		}
@@ -175,16 +194,16 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		if (iValue === null && this.oConstraints.nullable) {
 			return;
 		}
-		if (typeof iValue !== "number" || Math.floor(iValue) !== iValue) {
-			// TODO localization
+		if (typeof iValue !== "number") {
+			// These are "technical" errors by calling validate w/o parse
 			throw new ValidateException(iValue + " (of type " + typeof iValue + ") is not a valid "
 				+ this.getName() + " value");
 		}
-
-		if (iValue > this.oConstraints.maximum || iValue < this.oConstraints.minimum) {
-			// TODO: localization
-			throw new ValidateException(iValue + " is out of range for " + this.sName +
-				" [" + this.oConstraints.minimum + ", " + this.oConstraints.maximum + "]");
+		if (Math.floor(iValue) !== iValue) {
+			throw new ValidateException(getErrorMessage(this, false));
+		}
+		if (iValue < this.oConstraints.minimum || iValue > this.oConstraints.maximum) {
+			throw new ValidateException(getErrorMessage(this, true));
 		}
 	};
 	return Int;
