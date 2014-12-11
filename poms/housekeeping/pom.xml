@@ -490,6 +490,12 @@
                   <artifactId>services</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
+                <!-- only because of Anila! -->
+                <deployable>
+                  <groupId>com.sap.ca</groupId>
+                  <artifactId>scfld.md.sample</artifactId>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
+                </deployable>
               </deployables>
             </configuration>
           </plugin>
