@@ -256,6 +256,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setAggregation("_textControl", oTextControl);
 		}
 
+		oTextControl.setVisible(!!this.getText());
+		
 		return oTextControl;
 	};
 	
@@ -304,9 +306,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectIdentifier.prototype.setText = function (sText) {
 		//always suppress rerendering because text div is rendered
 		//if text is empty or not
+		this.setProperty("text", sText, true);
+		
 		var oTextControl = this._getTextControl();
 		oTextControl.setProperty("text", sText, false);
-		this.setProperty("text", sText, true);
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow", 
 				!!this.getProperty("text") && !!this.getProperty("title"));
 	
