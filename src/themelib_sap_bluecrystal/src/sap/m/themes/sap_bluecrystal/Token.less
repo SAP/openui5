@@ -18,7 +18,7 @@
 	padding: 0.25rem 0.375rem;
 }
 
-.sapMToken:hover {
+.sap-desktop .sapMToken:hover {
 	background: darken(@sapUiButtonStandardBG, 5);
 	border: darken(@sapUiButtonStandardBG,10) 1px solid;
 	border-radius: 0.125rem;
@@ -35,7 +35,7 @@
 	border-radius: 0.125rem;
 }
 
-.sapMTokenSelected:hover {
+.sapMToken.sapMTokenSelected:hover {
 	background: darken(@sapUiHighlight, 5);
 	border: darken(@sapUiHighlight,5) 1px solid;
 	border-radius: 0.125rem;
@@ -70,4 +70,8 @@
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
 	font-size: 0.75rem;
+}
+
+.sapMToken.sapMTokenActive {
+	background: darken(@sapUiButtonStandardBG, 5);
 }
