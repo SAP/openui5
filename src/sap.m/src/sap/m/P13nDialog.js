@@ -396,6 +396,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 		}
 	};
 
+	P13nDialog.prototype.onBeforeRendering = function() {
+		if (this.getVisiblePanel()) {
+			this.setDefaultType(this.getVisiblePanel().getType());
+		}
+		Dialog.prototype.onBeforeRendering.apply(this, arguments);
+	};
+
 	/**
 	 * Sets title of dialog in regard to oPanel.
 	 * 
@@ -431,9 +438,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 */
 	P13nDialog.prototype.exit = function() {
 		Dialog.prototype.exit.apply(this, arguments);
-		if (this.getSubHeader()) {
-			this.getSubHeader().destroy();
-		}
 	};
 
 	return P13nDialog;
