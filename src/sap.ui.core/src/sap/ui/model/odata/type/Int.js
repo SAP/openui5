@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Called by the framework when any localization setting changed
+	 * Called by the framework when any localization setting changed.
 	 * @private
 	 */
 	Int.prototype._handleLocalizationChange = function () {
