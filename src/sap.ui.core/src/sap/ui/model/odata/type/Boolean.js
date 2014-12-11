@@ -8,25 +8,41 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	"use strict";
 
 	/**
+	 * Returns the error message for the type.
+	 *
+	 * @returns {string}
+	 *   the message
+	 */
+	function getErrorMessage() {
+		return getMessage("EnterYesOrNo", [getText(true), getText(false)]);
+	}
+
+	/**
+	 * Returns the locale-dependent text for the given key. Fetches the resource bundle
+	 * and stores it in the type if necessary.
+	 *
+	 * @param {string} sKey
+	 *   the key
+	 * @param {any[]} aParameters
+	 *   the parameters
+	 * @returns {string}
+	 *   the locale-dependent text for the key
+	 */
+	function getMessage(sKey, aParameters) {
+		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParameters);
+	}
+
+	/**
 	 * Returns the locale-dependent text for the given boolean value. Fetches the resource bundle
 	 * and stores it in the type if necessary.
 	 *
-	 * @param {sap.ui.model.odata.type.Boolean} oType
-	 *   the type
 	 * @param {boolean} bValue
 	 *   the value
-	 * @return {string}
+	 * @returns {string}
 	 *   the locale-dependent text for the value
 	 */
-	function getText(oType, bValue) {
-		var oCore;
-
-		if (!oType.oResourceBundle) {
-			oCore = sap.ui.getCore();
-			oType.oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.core",
-				oCore.getConfiguration().getFormatSettings().getFormatLocale().toString());
-		}
-		return oType.oResourceBundle.getText(bValue ? "YES" : "NO");
+	function getText(bValue) {
+		return getMessage(bValue ? "YES" : "NO");
 	}
 
 	/**
@@ -66,7 +82,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 *   the value to be formatted
 	 * @param {string} sTargetType
 	 *   the target type
-	 * @return {boolean|string}
+	 * @returns {boolean|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   will be formatted to <code>null</code>
 	 * @throws sap.ui.model.FormatException
@@ -82,7 +98,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 		case "boolean":
 			return bValue;
 		case "string":
-			return getText(this, bValue);
+			return getText(bValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.sName + " to "
 				+ sTargetType);
@@ -97,7 +113,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 *   <code>null</code>
 	 * @param {string}
 	 *   sSourceType the source type (the expected type of <code>sValue</code>)
-	 * @return {boolean}
+	 * @returns {boolean}
 	 *   the parsed value
 	 * @throws sap.ui.model.ParseException
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
@@ -112,14 +128,13 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 			case "boolean":
 				return vValue;
 			case "string":
-				if (getText(this, true).toLowerCase() === vValue.toLowerCase()) {
+				if (getText(true).toLowerCase() === vValue.toLowerCase()) {
 					return true;
 				}
-				if (getText(this, false).toLowerCase() === vValue.toLowerCase()) {
+				if (getText(false).toLowerCase() === vValue.toLowerCase()) {
 					return false;
 				}
-				// TODO localization
-				throw new ParseException(vValue + " is not a valid " + this.sName + " value");
+				throw new ParseException(getErrorMessage());
 			default:
 				throw new ParseException("Don't know how to parse " + this.sName + " from "
 					+ sSourceType);
@@ -144,10 +159,14 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * @public
 	 */
 	EdmBoolean.prototype.validateValue = function (bValue) {
-		if (bValue === null && this.oConstraints.nullable) {
-			return;
+		if (bValue === null) {
+			if (this.oConstraints.nullable) {
+				return;
+			}
+			throw new ValidateException(getErrorMessage());
 		}
 		if (typeof bValue !== "boolean") {
+			// This is a "technical" error by calling validate w/o parse
 			throw new ValidateException("Illegal " + this.sName + " value: " + bValue);
 		}
 	};

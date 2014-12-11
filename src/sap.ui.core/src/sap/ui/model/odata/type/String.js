@@ -83,13 +83,20 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 * @public
 	 */
 	EdmString.prototype.validateValue = function (sValue) {
+		var oConstraints = this.oConstraints,
+			iMaxLength = oConstraints.maxLength;
+
 		if (sValue === null) {
-			if (this.oConstraints.nullable === false) {
-				throw new ValidateException("Illegal " + this.sName + " value: " + sValue);
+			if (oConstraints.nullable !== false) {
+				return;
 			}
-		} else {
-			StringType.prototype.validateValue.apply(this, arguments);
+		} else if (typeof sValue !== "string") {
+			throw new ValidateException("Illegal " + this.sName + " value: " + sValue);
+		} else if (!iMaxLength || sValue.length <= iMaxLength) {
+			return;
 		}
+		throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle().getText(
+			iMaxLength ? "EnterTextMaxLength" : "EnterText", [iMaxLength]));
 	};
 
 	/**

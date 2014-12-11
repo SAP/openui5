@@ -22,6 +22,10 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
 			<Label text="precision: 10, scale: &quot;variable&quot;, nullable: false"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, precision: 10, scale: 'variable'}}"/>
+			<Label text="precision:10, scale: 3"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
+			<Label text="scale: &quot;variable&quot;, nullable: false"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}}"/>
 
 			<core:Title text="Integer-Based Data Types" />
 			<Label text="sap.ui.model.odata.type.Int16"/>

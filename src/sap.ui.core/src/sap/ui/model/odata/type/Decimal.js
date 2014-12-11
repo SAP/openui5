@@ -11,6 +11,37 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
 
 	/**
+	 * Returns the matching error key for the type based on the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type
+	 * @returns {string}
+	 *   the key
+	 */
+	function getErrorKey(oType) {
+		var oConstraints = oType.oConstraints;
+
+		if (oConstraints.scale === Infinity) {
+			return oConstraints.precision === Infinity ? "EnterNumber" : "EnterNumberPrecision";
+		}
+		return oConstraints.precision === Infinity ?
+			"EnterNumberScale" : "EnterNumberPrecisionScale";
+	}
+
+	/**
+	 * Returns the matching error message for the type based on the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type
+	 * @returns {string}
+	 *   the message
+	 */
+	function getErrorMessage(oType) {
+		return sap.ui.getCore().getLibraryResourceBundle().getText(getErrorKey(oType),
+			[oType.oConstraints.precision, oType.oConstraints.scale]);
+	}
+
+	/**
 	 * Constructor for a primitive type <code>Edm.Decimal</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
@@ -47,7 +78,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the value to be formatted, which is represented as a string in the model
 	 * @param {string} sTargetType
 	 *   the target type
-	 * @return {number|string}
+	 * @returns {number|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   will be formatted to <code>null</code>
 	 * @throws sap.ui.model.FormatException
@@ -82,7 +113,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   <code>null</code>
 	 * @param {string}
 	 *   sSourceType the source type (the expected type of <code>oValue</code>)
-	 * @return {string}
+	 * @returns {string}
 	 *   the parsed value
 	 * @throws sap.ui.model.ParseException
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
@@ -99,8 +130,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		case "string":
 			fResult = this._getFormatter().parse(vValue);
 			if (isNaN(fResult)) {
-				// TODO localization? This is a user error!
-				throw new ParseException(vValue + " is not a valid " + this.sName + " value");
+				throw new ParseException(getErrorMessage(this));
 			}
 			break;
 		case "int":
@@ -124,7 +154,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 	/**
 	 * Returns the formatter. Creates it lazily.
-	 * @return {sap.ui.core.format.NumberFormat}
+	 * @returns {sap.ui.core.format.NumberFormat}
 	 *   the formatter
 	 * @private
 	 */
@@ -169,8 +199,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 				}
 			}
 		}
-		// TODO localization, improve error message for end user
-		throw new ValidateException("Illegal " + this.sName + " value: " + sValue);
+		throw new ValidateException(getErrorMessage(this));
 	};
 
 	/**

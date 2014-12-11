@@ -114,8 +114,15 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Validation of type constraints failed");
-			deepEqual(e.violatedConstraints, ["maxLength"]);
+			strictEqual(e.message, "Enter a text with a maximum of 3 characters.");
+		}
+
+		try {
+			oType.validateValue(42);
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ValidateException);
+			strictEqual(e.message, "Illegal sap.ui.model.odata.type.String value: 42");
 		}
 	});
 
@@ -129,8 +136,18 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal sap.ui.model.odata.type.String value: null");
+			strictEqual(e.message, "Enter a text.");
 		}
+
+		oType.setConstraints({nullable: false, maxLength: 3});
+		try {
+			oType.validateValue(null);
+			ok(false);
+		} catch (e) {
+			ok(e instanceof sap.ui.model.ValidateException);
+			strictEqual(e.message, "Enter a text with a maximum of 3 characters.");
+		}
+
 		oType.setConstraints({nullable: true});
 		oType.validateValue(null); // does not throw
 		deepEqual(oType.oConstraints, {}, "nullable: true");
