@@ -49,9 +49,13 @@ sap.ui.define(['jquery.sap.global'],
 
 		//ARIA attributes
 		oRm.writeAccessibilityState(oButton, {
-			role: 'button',
 			disabled: !oButton.getEnabled()
 		});
+
+		//descendants (e.g. ToggleButton) callback
+		if (this.renderAccessibilityAttributes) {
+			this.renderAccessibilityAttributes(oRm, oButton);
+		}
 
 		// check if the button is disabled
 		if (!bEnabled) {
