@@ -19,12 +19,13 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the message
 	 */
 	function getErrorMessage(oType, bShowRange) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			oRange = oType.getRange();
 
 		if (bShowRange) {
 			return oResourceBundle.getText("EnterIntRange", [
-				oType._getFormatter().format(oType.oConstraints.minimum),
-				oType._getFormatter().format(oType.oConstraints.maximum)
+				oType._getFormatter().format(oRange.minimum),
+				oType._getFormatter().format(oRange.maximum)
 			]);
 		}
 		return oResourceBundle.getText("EnterInt");
@@ -169,17 +170,14 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	Int.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable;
 
-		// TODO get minimum and maximum out of this.oConstraints, they are not instance-specific
+		this.oConstraints = undefined;
 		switch (vNullable) {
 		case false:
 		case "false":
-			this.oConstraints.nullable = false;
+			this.oConstraints = {nullable: false};
 			break;
 		case true:
 		case "true":
-			if (this.oConstraints.nullable === false) {
-				this.oConstraints.nullable = true;
-			}
 			break;
 		default:
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
@@ -208,7 +206,12 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Int.prototype.validateValue = function(iValue) {
-		if (iValue === null && this.oConstraints.nullable !== false) {
+		var oRange = this.getRange();
+
+		if (iValue === null) {
+			if (this.oConstraints && this.oConstraints.nullable === false) {
+				throw new ValidateException(getErrorMessage(this, false));
+			}
 			return;
 		}
 		if (typeof iValue !== "number") {
@@ -219,9 +222,19 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		if (Math.floor(iValue) !== iValue) {
 			throw new ValidateException(getErrorMessage(this, false));
 		}
-		if (iValue < this.oConstraints.minimum || iValue > this.oConstraints.maximum) {
+		if (iValue < oRange.minimum || iValue > oRange.maximum) {
 			throw new ValidateException(getErrorMessage(this, true));
 		}
 	};
+
+	/**
+	 * Returns the type's supported range as object with properties <code>minimum</code> and
+	 * <code>maximum</code>.
+	 *
+	 * @name sap.ui.model.odata.type.Int#getRange
+	 * @function
+	 * @protected
+	 */
+
 	return Int;
 });

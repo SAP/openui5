@@ -6,6 +6,8 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	function(Int) {
 	"use strict";
 
+	var oRange = {minimum: -2147483648, maximum: 2147483647};
+
 	/**
 	 * Constructor for a primitive type <code>Edm.Int32</code>.
 	 *
@@ -31,11 +33,31 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 		/** @lends sap.ui.model.odata.type.Int32.prototype */
 		{
 			constructor : function () {
-				this.oConstraints = {minimum: -2147483648 , maximum: 2147483647};
 				Int.apply(this, arguments);
-				this.sName = "sap.ui.model.odata.type.Int32";
 			}
 		});
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {String}
+	 *   the type's name
+	 * @public
+	 */
+	Int32.prototype.getName = function () {
+		return "sap.ui.model.odata.type.Int32";
+	};
+
+	/**
+	 * Returns the type's supported range as object with properties <code>minimum</code> and
+	 * <code>maximum</code>.
+	 *
+	 * @returns {object} the range
+	 * @protected
+	 */
+	Int32.prototype.getRange = function () {
+		return oRange;
+	};
 
 	return Int32;
 });

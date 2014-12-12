@@ -24,11 +24,7 @@
 		});
 
 		test("basics", function () {
-			// TODO do not store these in the constraints, they are type- not instance-specific
-			var oDefaultConstraints = {
-					minimum: iMin,
-					maximum: iMax
-				};
+			var oDefaultConstraints = undefined;
 
 			ok(oType instanceof sap.ui.model.odata.type.Int, "is an Int");
 			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
@@ -130,22 +126,12 @@
 
 		test("setConstraints: empty", function () {
 			oType.setConstraints();
-			deepEqual(oType.oConstraints, {
-				minimum: iMin,
-				maximum: iMax
-			}, "default constraints");
+			strictEqual(oType.oConstraints, undefined, "default constraints");
 		});
 
 		jQuery.each([undefined, false, true], function (i, bNullable) {
 			test("setConstraints: nullable=" + bNullable, function () {
-				var oExpectedConstraints = {
-					minimum: iMin,
-					maximum: iMax
-				};
-
-				if (bNullable === false) {
-					oExpectedConstraints.nullable = false;
-				}
+				var oExpectedConstraints = bNullable === false ? {nullable: false} : undefined;
 
 				oType.setConstraints({minimum: -100, maximum: 100, nullable: bNullable});
 				deepEqual(oType.oConstraints, oExpectedConstraints, "only nullable accepted");
@@ -194,10 +180,10 @@
 			this.mock(jQuery.sap.log).expects("warning").never();
 
 			oType.setConstraints({nullable: true});
-			ok(!oType.oConstraints.hasOwnProperty("nullable"));
+			strictEqual(oType.oConstraints, undefined);
 
 			oType.setConstraints({nullable: "true"});
-			ok(!oType.oConstraints.hasOwnProperty("nullable"));
+			strictEqual(oType.oConstraints, undefined);
 
 			oType.setConstraints({nullable: false});
 			strictEqual(oType.oConstraints.nullable, false);
@@ -206,10 +192,10 @@
 			strictEqual(oType.oConstraints.nullable, false);
 
 			oType.setConstraints({nullable: true});
-			strictEqual(oType.oConstraints.nullable, true);
+			strictEqual(oType.oConstraints, undefined);
 
 			oType.setConstraints({nullable: "true"});
-			strictEqual(oType.oConstraints.nullable, true);
+			strictEqual(oType.oConstraints, undefined);
 
 			oType.setConstraints({nullable: false});
 			try {
@@ -217,7 +203,7 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "null (of type object) is not a valid " + sName + " value");
+				equal(e.message, "Enter an integer.");
 			}
 		}));
 	}

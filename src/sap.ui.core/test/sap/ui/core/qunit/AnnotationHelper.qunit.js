@@ -23,8 +23,7 @@
 		},
 		oInt32 = {
 			name : "sap.ui.model.odata.type.Int32",
-			//TODO why are max/min public visible?
-			constraints : {"nullable" : false, "maximum": 2147483647, "minimum": -2147483648}
+			constraints : {"nullable" : false}
 		},
 		oString10 = {
 			name : "sap.ui.model.odata.type.String",
