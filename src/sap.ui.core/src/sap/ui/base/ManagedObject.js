@@ -2011,6 +2011,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					oldValue : this.getProperty(sName),
 					exception: oException
 				}, false, true); // bAllowPreventDefault, bEnableEventBubbling
+				oBindingInfo.skipModelUpdate = true;
+				this[oPropertyInfo._sMutator](null);
+				oBindingInfo.skipModelUpdate = false;
 			} else {
 				throw oException;
 			}
