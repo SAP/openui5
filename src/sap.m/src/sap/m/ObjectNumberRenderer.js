@@ -2,8 +2,8 @@
  * @copyright
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
+	function(jQuery, Renderer) {
 	"use strict";
 
 
@@ -22,7 +22,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ObjectNumberRenderer.render = function(oRm, oON){
-		var sTooltip;
+		var sTooltip,
+			sTextDir = oON.getTextDirection(),
+			sTextAlign = oON.getTextAlign(),
+			bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		// write the HTML into the render manager
 		oRm.write("<div"); // Number begins
@@ -39,7 +42,17 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMObjectNumberEmph");
 		}
 		oRm.addClass(oON._sCSSPrefixObjNumberStatus + oON.getState());
+
+		sTextDir && oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		if (sTextAlign) {
+			sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
+			if (sTextAlign) {
+				oRm.addStyle("text-align", sTextAlign);
+			}
+		}
+
 		oRm.writeClasses();
+		oRm.writeStyles();
 		oRm.write(">");
 	
 		oRm.write("<span"); // Number text begins
@@ -51,6 +64,14 @@ sap.ui.define(['jquery.sap.global'],
 	
 		oRm.write("<span"); // Number unit begins
 		oRm.addClass("sapMObjectNumberUnit");
+
+		//this handles the case where we want the opposite text direction, not that set on the page
+		//in this case we want the padding of the object number unit element to be applied on the other side
+		if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) ||
+			(sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
+			oRm.addClass("sapMRTLOpposite");
+		}
+
 		oRm.writeClasses();
 		oRm.write(">");
 		
