@@ -37,6 +37,12 @@
 			<Label text="scale: &quot;variable&quot;, nullable: false"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}}"/>
 
+			<core:Title text="sap.ui.model.odata.type.Guid" />
+			<Label text="no constraints"/>
+			<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid'}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}"/>
+
 			<core:Title text="Integer-Based Data Types" />
 			<Label text="sap.ui.model.odata.type.Int16"/>
 			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16'}"/>
