@@ -23,94 +23,76 @@
 	text-align:center;
 }
 
-.sapUiCalPrev,
-.sapUiCalNext,
-.sapUiCalMonthPick,
-.sapUiCalYearPick,
-.sapUiCancel{
+.sapUiCalHead > button,
+.sapUiCalCancel{
 	background-color: @sapUiButtonLiteBackground;
 	border: none;
 	color: @sapUiButtonTextColor;
 	cursor: pointer;
 }
 
-.sapUiCalPrev,
-.sapUiCalNext{
+.sapUiCalHeadPrev,
+.sapUiCalHeadNext{
 	position: absolute;
 }
 
-.sapUiCalPrev{
+.sapUiCalHeadPrev{
 	left: 0;
 }
 
-.sapUiCalNext{
+.sapUiCalHeadNext{
 	right: 0;
 }
 
 /* no default (browser) outline, if device needs focus visualization its defined later */
-.sapUiCalPrev:focus,
-.sapUiCalNext:focus,
-.sapUiCalMonthPick:focus,
-.sapUiCalYearPick:focus,
-.sapUiCancel:focus{
+.sapUiCalHead > button:focus,
+.sapUiCalCancel:focus{
 	outline: none;
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-.sap-desktop .sapUiCalPrev:focus,
-.sap-desktop .sapUiCalNext:focus,
-.sap-desktop .sapUiCalMonthPick:focus,
-.sap-desktop .sapUiCalYearPick:focus,
-.sap-desktop .sapUiCancel:focus{
+.sap-desktop .sapUiCalHead > button:focus,
+.sap-desktop .sapUiCalCancel:focus{
 	background-color: @sapUiButtonHoverBackground;
 	color: @sapUiButtonHoverTextColor;
 }
 
-.sap-desktop .sapUiCalPrev:hover,
-.sap-desktop .sapUiCalNext:hover,
-.sap-desktop .sapUiCalMonthPick:hover,
-.sap-desktop .sapUiCalYearPick:hover,
-.sap-desktop .sapUiCancel:hover{
+.sap-desktop .sapUiCalHead > button:hover,
+.sap-desktop .sapUiCalCancel:hover{
 	background-color: @sapUiButtonHoverBackground;
 	color: @sapUiButtonHoverTextColor;
 }
 
 /* once for desktop to overwrite focus and once for all devices needed */
-.sapUiCalPrev:active,
-.sapUiCalNext:active,
-.sapUiCalMonthPick:active,
-.sapUiCalYearPick:active,
-.sapUiCancel:active,
-.sap-desktop .sapUiCalPrev:active,
-.sap-desktop .sapUiCalNext:active,
-.sap-desktop .sapUiCalMonthPick:active,
-.sap-desktop .sapUiCalYearPick:active,
-.sap-desktop .sapUiCancel:active{
+.sapUiCalHead > button:active,
+.sapUiCalCancel:active,
+.sap-desktop .sapUiCalHead > button:active,
+.sap-desktop .sapUiCalCancel:active{
 	background-color: @sapUiHighlight;
 	color: @sapUiTextSelection;
 }
 
-.sapUiCalPrev.sapUiCalDsbl,
-.sapUiCalNext.sapUiCalDsbl{
+.sapUiCalHead > button.sapUiCalDsbl{
 	cursor: default;
 	opacity: .3;
 	filter: alpha(opacity=30);
 }
 
-.sap-desktop .sapUiCalPrev.sapUiCalDsbl:focus,
-.sap-desktop .sapUiCalNext.sapUiCalDsbl:focus,
-.sap-desktop .sapUiCalPrev.sapUiCalDsbl:hover,
-.sap-desktop .sapUiCalNext.sapUiCalDsbl:hover,
-.sapUiCalPrev.sapUiCalDsbl:active,
-.sapUiCalNext.sapUiCalDsbl:active{
+.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
+.sapUiCalHead > button.sapUiCalDsbl:hover,
+.sapUiCalHead > button.sapUiCalDsbl:active{
 	background-color: @sapUiButtonLiteBackground;
 	color: @sapUiButtonTextColor;
 }
 
 /*** days, months, years ***/
-.sapUiCalDays,
-.sapUiCalMonths,
-.sapUiCalYears{
+.sapUiCalMonthView,
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker{
+	display: inline-block;
+}
+
+.sapUiCalDays{
 	display: inline-block;
 	width: 100%;
 }
@@ -194,8 +176,8 @@
 	background-color: @sapUiSelected;
 }
 
-.sapUiCalMonths,
-.sapUiCalYears{
+.sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalContent > .sapUiCalYearPicker{
 	position: absolute;
 	top: @sapUiLineHeight;
 	bottom: 0;
@@ -212,7 +194,7 @@
 	width: 25%;
 }
 
-.sapUiCancel{
+.sapUiCalCancel{
 	display: none; /* cancel button only visible on phones */
 	position: absolute;
 }

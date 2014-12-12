@@ -14,27 +14,30 @@
 	height: 22px;
 }
 
-.sapUiCalPrev,
-.sapUiCalNext,
-.sapUiCalMonthPick,
-.sapUiCalYearPick{
+.sapUiCalHead > button{
 	height: 22px;
 	padding: 0;
 }
 
-.sapUiCalPrev,
-.sapUiCalNext{
+.sapUiCalHeadPrev,
+.sapUiCalHeadNext{
 	width: 22px;
 	padding-top: 2px; /* to set arrows in middle */
 }
 
-.sapUiCalMonthPick,
-.sapUiCalYearPick{
+.sapUiCalHeadB{
 	width: 70px;
 	font-weight: bold;
 }
 
 /*** days, months, years ***/
+.sapUiCalMonthView,
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker{
+	width: 190px;
+	background-color: @sapUiFieldBackground;
+}
+
 .sapUiCalWH,
 .sapUiCalDay,
 .sapUiCalWeekNum,
@@ -136,8 +139,8 @@ html[data-sap-ui-browser="ie8"] .sapUiCalDayToday > .sapUiCalDayNum{
 	-webkit-box-shadow: inset 1px 1px 0 0 @sapUiFieldBackground, inset -1px -1px 0 0 @sapUiFieldBackground;
 }
 
-.sapUiCalMonths,
-.sapUiCalYears{
+.sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalContent > .sapUiCalYearPicker{
 	top: 31px;
 	padding-top: 24px;
 }

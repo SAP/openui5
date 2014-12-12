@@ -32,6 +32,10 @@ sap.ui.define(['jquery.sap.global',
 		],
 		interfaces: [],
 		controls: [
+			"sap.ui.unified.calendar.Header",
+			"sap.ui.unified.calendar.Month",
+			"sap.ui.unified.calendar.MonthPicker",
+			"sap.ui.unified.calendar.YearPicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarLegend",
 			"sap.ui.unified.ContentSwitcher",
@@ -252,6 +256,8 @@ sap.ui.define(['jquery.sap.global',
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};
 	}
+
+	sap.ui.unified.calendar = sap.ui.unified.calendar || {};
 
 	return sap.ui.unified;
 

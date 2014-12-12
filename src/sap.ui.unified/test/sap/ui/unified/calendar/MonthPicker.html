@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>MonthPicker - sap.ui.unified.calendat</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.Calendar.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				src="../../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+			var oMonthPicker = new sap.ui.unified.calendar.MonthPicker("MP1",{
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF1");
+					var oMP = oEvent.oSource;
+					var iMonth = oMP.getMonth();
+					oTF.setValue(iMonth);
+				}
+			}).placeAt("sample1");
+
+			var oLabel = new sap.ui.commons.Label({text: "selected month", labelFor: "TF1"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF1",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oMP = sap.ui.getCore().byId("MP1");
+					if(sValue && !isNaN(sValue)){
+						var iMonth = parseInt(sValue);
+						if(iMonth > 11) {
+							iMonth = 11;
+						}else if(iMonth <0) {
+							iMonth = 0;
+						}
+						oMP.setMonth(iMonth);
+					}
+				}
+			}).placeAt("event1");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.calendar.MonthPicker</code></h1>
+		<br>
+		<div>
+		<div id="sample1" style="display:inline-block;"></div>
+		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+
+	</body>
+</html>
