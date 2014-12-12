@@ -323,17 +323,17 @@
 		}
 	}
 
+	/* overrides the responsive settings for the split app master page */
+	.sapMSplitContainerMaster @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+		padding: 0 !important;
+	}
+	
+	/* overrides the responsive settings for the split app detail page */
+	.sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
+		padding: 1rem !important;
+	}
+
 	@{rootClass}.sapUiNoContentPadding @{contentSelector} {
 		padding: 0 !important;
 	}
-}
-
-/* overrides the responsive settings for the split app master page */
-.sapMSplitContainerMaster .sapUiResponsiveContentPadding {
-	padding: 0 !important;
-}
-
-/* overrides the responsive settings for the split app detail page */
-.sapMSplitContainerDetail .sapUiResponsiveContentPadding {
-	padding: 1rem !important;
 }
