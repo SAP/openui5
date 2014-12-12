@@ -629,7 +629,27 @@
 		equal(filtered[2].firstName, "Frank", "ListBinding filter value");
 
 	});
-	
+
+	test("ListBinding with test function", function() {
+		setup();
+		createListBinding("/teamMembers");
+
+		var listBinding = bindings[0];
+
+		var oFilter = new sap.ui.model.Filter("firstName", function(sValue) {
+			return (sValue.indexOf("A") !== -1 && sValue.indexOf("G") === 0); 
+		});
+
+		listBinding.filter(oFilter);
+		var filteredContexts = listBinding.getContexts();
+		var filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		equal(filtered.length, 1, "ListBinding filtered length");
+		equal(filtered[0].firstName, "Gina", "ListBinding filter value");
+	});
+
 	test("ListBinding filter change event test", function(){
 		setup();
 		createListBinding("/teamMembers");
