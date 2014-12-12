@@ -32,6 +32,15 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					properties : {
 
 						/**
+						 * defines the max number of groups.
+						 */
+						maxGroups : {
+							type : "string",
+							group : "Misc",
+							defaultValue : '-1'
+						},
+						
+						/**
 						 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the
 						 * ConditionPanel is used on a dialog the property should be set to true!
 						 */
@@ -95,6 +104,14 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 			});
 
+			
+			P13nGroupPanel.prototype.setMaxGroups = function(sMax) {
+				this.setProperty("maxGroups", sMax);
+				
+				if (this._oGroupPanel) {
+					this._oGroupPanel.setMaxConditions(sMax);
+				}
+			};
 			
 			/**
 			 * returns the array of conditions.
@@ -208,6 +225,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 
 				this._oGroupPanel = new P13nConditionPanel({
+					maxConditions : this.getMaxGroups(),
 					autoReduceKeyFieldItems : true,
 					layoutMode : this.getLayoutMode(),
 					dataChange : this._handleDataChange()
