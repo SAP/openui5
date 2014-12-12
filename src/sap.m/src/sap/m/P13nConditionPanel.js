@@ -1711,6 +1711,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	 */
 	P13nConditionPanel.prototype._updateConditionButtons = function(oTargetGrid) {
 		var iMax = parseInt(this.getMaxConditions(), 10);
+		if (iMax === -1) { iMax = 1000; }
 
 		var n = oTargetGrid.getContent().length;
 
@@ -1722,7 +1723,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		for (var i = 0; i < n; i++) {
 			var oAddBtn = oTargetGrid.getContent()[i].add;
-			if ((this.getAlwaysShowAddIcon() && (iMax !== 0)) || (i === n - 1 && (iMax === -1 || i < iMax - 1))) {
+			if ((this.getAlwaysShowAddIcon() && (n < iMax)) || (i === n - 1 && i < iMax - 1)) {
 				// show the Add only for the last condition row and if the Max value is not reached
 				oAddBtn.removeStyleClass("displayNone");
 			} else {
