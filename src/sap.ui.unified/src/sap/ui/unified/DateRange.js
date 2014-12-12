@@ -49,10 +49,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	DateRange.prototype.setStartDate = function(oDate){
 
-		jQuery.sap.assert(!oDate || oDate instanceof Date, "Date must be a JavaScript date object");
 		if (oDate) {
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
 			var iYear = oDate.getFullYear();
-			jQuery.sap.assert(iYear <= 9999 && iYear >= 1, "Date must not be in valid range (between 0001-01-01 and 9999-12-31)");
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+			}
 		}
 
 		this.setProperty("startDate", oDate);
@@ -61,10 +66,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	DateRange.prototype.setEndDate = function(oDate){
 
-		jQuery.sap.assert(!oDate || oDate instanceof Date, "Date must be a JavaScript date object");
 		if (oDate) {
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
 			var iYear = oDate.getFullYear();
-			jQuery.sap.assert(iYear <= 9999 && iYear >= 1, "Date must not be in valid range (between 0001-01-01 and 9999-12-31)");
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+			}
 		}
 
 		this.setProperty("endDate", oDate);

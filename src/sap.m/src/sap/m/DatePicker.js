@@ -295,6 +295,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				return this;
 			}
 
+			if (oDate && !(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
 			if (oDate && (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime())) {
 				this._bValid = false;
 				jQuery.sap.assert(this._bValid, "Date must be in valid range");
@@ -695,7 +699,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				oThis._curpos = iCurpos;
 				oThis._$input.cursorPos(oThis._curpos);
 
-				var sValue = oThis._getInputValue();
+				var sValue = oThis.getValue();
 				oThis.fireChangeEvent(sValue, {valid: true});
 			}
 
