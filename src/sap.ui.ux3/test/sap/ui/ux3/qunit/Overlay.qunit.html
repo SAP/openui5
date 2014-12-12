@@ -91,16 +91,21 @@
 
 	// at the end close
 	stop();
-	asyncTest("Close Event", function() {
-		expect(3);
+	asyncTest("Close Events", function() {
+		oOverlay.attachClose(function(oEvent) {
+			equal(oOverlay.getId(),oEvent.getParameter("id"),  "Close event fired");
+		})
+		oOverlay.attachClosed(function(oEvent) {
+			equal(oOverlay.getId(),oEvent.getParameter("id"),  "Closed event fired");
+			ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
+			start();
+		})
+		expect(5);
 		ok(oOverlay.isOpen(), "Rendered Overlay is open");
 		qutils.triggerMouseEvent(jQuery.sap.byId(oOverlay.getId() + "-close"), "click", 1, 1, 1, 1);
-		setTimeout(function() {
-			start();
-			ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
-		}, 500);
 	});
-
+	
+	
 	test("Destroy and remove control", function() {
 		oOverlay.destroy();
 		sap.ui.getCore().applyChanges();
