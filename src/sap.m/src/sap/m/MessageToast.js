@@ -9,8 +9,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		/**
 		 * @class
 		 * A message toast notification offers simple feedback about an operation in a pop-up.
-		 * Toasts automatically disappear after a timeout and will never receive focus in order
-		 * to be unobtrusive as possible.
+		 * Toasts automatically disappear after a timeout unless the user moves the mouse over
+		 * the toast or taps on it. In this case the toast will remain on the screen and can
+		 * be closed when the user moves the mouse out or taps out of the toast.
 		 * Toasts appears close the bottom of the screen, centered horizontally, but you can change
 		 * this position which is not dependent on the default values of the position settings.
 		 * The default position applies as long as the application does not do any position setting.
@@ -54,7 +55,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		/* =========================================================== */
 
 		var OFFSET = "0 -64",
-			CSSCLASS = "sapMMessageToast";
+			CSSCLASS = "sapMMessageToast",
+			ENABLESELECTIONCLASS = "sapUiSelectable";
 
 		MessageToast._mSettings = {
 			duration: 3000,
@@ -189,7 +191,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			var oMessageToastDomRef = document.createElement("div");
 
 			oMessageToastDomRef.style.width = mSettings.width;
-			oMessageToastDomRef.className = CSSCLASS;
+			oMessageToastDomRef.className = CSSCLASS + " " + ENABLESELECTIONCLASS;
 			oMessageToastDomRef.appendChild(document.createTextNode(mSettings.message));
 
 			return oMessageToastDomRef;
@@ -236,8 +238,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		};
 
 		MessageToast._handleMouseDownEvent = function(oEvent) {
+			if (oEvent.isMarked("delayedMouseEvent") ||
+				oEvent.target.className.indexOf(CSSCLASS) !== -1) {
 
-			if (oEvent.isMarked("delayedMouseEvent")) {
 				return;
 			}
 
@@ -334,7 +337,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				mSettings = jQuery.extend({}, this._mSettings, { message: sMessage }),
 				oPopup = new Popup(),
 				iPos,
-				oMessageToastDomRef;
+				oMessageToastDomRef,
+				iCloseTimeoutId;
 
 			mOptions = normalizeOptions(mOptions);
 
@@ -415,7 +419,22 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			oPopup.attachClosed(handleMTClosed);
 
 			// close the message toast
-			jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+			iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+
+			function fnClearTimeout() {
+				jQuery.sap.clearDelayedCall(iCloseTimeoutId);
+				iCloseTimeoutId = null;
+			}
+
+			oPopup.getContent().addEventListener("touchstart", fnClearTimeout);
+			oPopup.getContent().addEventListener("mouseover", fnClearTimeout);
+
+			// WP 8.1 fires mouseleave event on tap
+			if (sap.ui.Device.system.desktop) {
+				oPopup.getContent().addEventListener("mouseleave", function () {
+					iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration,  oPopup, "close");
+				});
+			}
 		};
 
 		MessageToast.toString = function() {
