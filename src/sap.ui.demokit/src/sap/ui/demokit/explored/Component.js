@@ -98,6 +98,7 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 			if (this.routeHandler) {
 				this.routeHandler.destroy();
 			}
+			sap.ui.demokit.explored.util.ToggleFullScreenHandler.cleanUp();
 			
 			// call overridden destroy
 			sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);

@@ -887,7 +887,7 @@
 			{
 				"id": "sap.m.sample.PageStandardClasses",
 				"name": "Fiori Object Page - Standard Classes",
-				"description": "This page realizes the same sample as in 'Fiori Sample Page - sapUiFioriObjectPage' using standard margin classes. Other than using 'sapUiFioriObjectPage', this page has a little more vertical spacing and the margins used for form, list table and panel are responsive: the margins adapt to the size of the browser. For more information, please search for 'Standard Margins' and take a look at our samples."
+				"description": "This page implements the same sample as in 'Fiori Sample Page - sapUiFioriObjectPage' using standard margin classes. In contrast to using 'sapUiFioriObjectPage', the margins used for form, list, table and panel are responsive: they adapt to the available screen width. For more information, please search for 'Standard Margins' and take a look at our samples."
 			},
 			{
 				"id": "sap.m.sample.PageListReportIconTabBar",
@@ -1502,7 +1502,7 @@
 			{
 				"id": "sap.m.sample.StandardNoMargins",
 				"name": "Remove Margins",
-				"description": "Use our standard 'No-Margins' classes to remove exising margins from your control. You can either remove all margins at once or remove the margin on or more sides."
+				"description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
 			}
 		]
 	}

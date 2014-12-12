@@ -62,8 +62,8 @@ function runSuite( suite ) {
 	QUnit.asyncTest( suite, function() {
 		iframe.setAttribute( "src", path );
 		// QUnit.start is called from the child iframe's QUnit.done hook.
-		var iFrameWidth = getUrlParam(path, 'iFrameWidth'),
-			iFrameHeight = getUrlParam(path, 'iFrameHeight');
+		var iFrameWidth = getUrlParam(path, 'sap-ui-width'),
+			iFrameHeight = getUrlParam(path, 'sap-ui-height');
 		if (iFrameWidth) {
 			iframe.style.width = iFrameWidth;
 		}

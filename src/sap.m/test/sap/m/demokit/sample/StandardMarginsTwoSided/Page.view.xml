@@ -12,7 +12,7 @@
 	</Panel>
 	<Panel width="auto" class="sapUiMediumMarginBeginEnd">
 	    <content>
-	      	<Text text="This panel uses margin class 'sapUiMediumMarginBeginEnd' to clear a 32px space at the panel's left and rigth side." class="sapMH4FontSize"/>
+	      	<Text text="This panel uses margin class 'sapUiMediumMarginBeginEnd' to clear a 32px space at the panel's left and right side." class="sapMH4FontSize"/>
 	      	<Text text="Since we do apply horizontal margins in this case, we have to set the panel's width to 'auto'." />
 	    </content>
 	</Panel>

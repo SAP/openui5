@@ -67,7 +67,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			if (oView) {
 				var oToggleFullScreenBtn = oView.byId("toggleFullScreenBtn");
 				if (oToggleFullScreenBtn) {
-					sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateToggleFullScreenBtn(oToggleFullScreenBtn, oView);
+					sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateControl(oToggleFullScreenBtn, oView);
 				} 
 			}
 			return;
