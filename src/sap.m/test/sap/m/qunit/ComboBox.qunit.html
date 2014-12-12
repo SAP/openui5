@@ -4880,6 +4880,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -4916,6 +4917,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -4967,6 +4969,7 @@
 
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5017,6 +5020,8 @@
 				if (oComboBox.getList()) {
 					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
 				}
+
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5149,6 +5154,36 @@
 				oComboBox.destroy();
 			});
 
+			test('onsapdown the attribute "aria-activedescendant" is set', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oExpectedItem = new sap.ui.core.Item({
+							text: "Algeria"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onsapup                        */
 			/* ------------------------------ */
@@ -5201,6 +5236,8 @@
 					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
 				}
 
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+
 				// cleanup
 				oComboBox.destroy();
 			});
@@ -5243,6 +5280,8 @@
 				if (oComboBox.getList()) {
 					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
 				}
+
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5293,6 +5332,7 @@
 
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5346,6 +5386,7 @@
 
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5489,6 +5530,41 @@
 				oComboBox.destroy();
 			});
 
+			test('onsapup the attribute "aria-activedescendant" is set', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oExpectedItem = new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+						new sap.ui.core.Item({
+							key: "AR",
+							text: "Argentina"
+						})
+					],
+					selectedKey: "AR"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onsaphome                      */
 			/* ------------------------------ */
@@ -5553,6 +5629,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5584,6 +5661,7 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5648,6 +5726,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "item 1 is selected");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5706,6 +5785,55 @@
 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, sExpectedValue.length);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsaphome the attribute aria-activedescendant is set", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "0",
+							text: "item 0",
+							enabled: false
+						}),
+
+						oExpectedItem = new sap.ui.core.Item({
+							key: "1",
+							text: "item 1 is selected"
+						}),
+
+						new sap.ui.core.Item({
+							key: "2",
+							text: "item 2"
+						}),
+
+						new sap.ui.core.Item({
+							key: "3",
+							text: "item 3"
+						})
+					],
+
+					selectedKey: "3"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
 
 				// cleanup
 				oComboBox.destroy();
@@ -5770,6 +5898,7 @@
 					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
 				}
 
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 				strictEqual(oComboBox.getFocusDomRef().value, "item 4 is selected");
 
 				// cleanup
@@ -5868,6 +5997,48 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapend the attribute aria-activedescendant is set", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "0",
+							text: "item 0",
+						}),
+
+						new sap.ui.core.Item({
+							key: "1",
+							text: "item 1"
+						}),
+
+						oExpectedItem = new sap.ui.core.Item({
+							key: "2",
+							text: "item 2"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
 
 				// cleanup
 				oComboBox.destroy();
@@ -6136,6 +6307,58 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsappagedown the attribute aria-activedescendant is set", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AR",
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AU",
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AT",
+							text: "Austria"
+						}),
+
+						oExpectedItem = new sap.ui.core.Item({
+							key: "BH",
+							text: "Bahrain is selected"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
 
 				// cleanup
 				oComboBox.destroy();
@@ -6407,6 +6630,59 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsappageup the attribute aria-activedescendant is set", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oExpectedItem = new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AR",
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AU",
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AT",
+							text: "Austria"
+						}),
+
+						new sap.ui.core.Item({
+							key: "BH",
+							text: "Bahrain is selected"
+						})
+					],
+					selectedKey: "BH"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
 
 				// cleanup
 				oComboBox.destroy();
@@ -6419,12 +6695,13 @@
 			test("oninput the ComboBox's picker pop-up should open", function() {
 
 				// system under test
+				var oExpectedItem;
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
 							text: "Egypt"
 						}),
-						new sap.ui.core.Item({
+						oExpectedItem = new sap.ui.core.Item({
 							text: "Germany"
 						}),
 						new sap.ui.core.Item({
@@ -6442,6 +6719,8 @@
 				oComboBox.focus();
 				var fnOpenSpy = this.spy(oComboBox, "open");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 				// act
 				oComboBox.getFocusDomRef().value = "G";
@@ -6451,6 +6730,7 @@
 				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 				strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
+				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
 
 				// cleanup
 				oComboBox.destroy();
@@ -6488,6 +6768,7 @@
 				strictEqual(fnCloseSpy.callCount, 1, "close() method was called");
 				strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sOpenState);
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event is not fired');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -6722,7 +7003,7 @@
 				// assert
 				strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true");
-				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined);
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -6731,10 +7012,10 @@
 			test("onAfterOpen test case 2", function() {
 
 				// system under test
-				var oItem;
+				var oExpectedItem;
 				var oComboBox = new sap.m.ComboBox({
 					items: [
-						oItem = new sap.ui.core.Item({
+						oExpectedItem = new sap.ui.core.Item({
 							key: "GER",
 							text: "Germany"
 						})
@@ -6746,13 +7027,14 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
 
 				// act
 				oComboBox.open();
 				this.clock.tick(1000);
 
 				// assert
-				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), sExpectedActiveDescendantId);
 
 				// cleanup
 				oComboBox.destroy();
@@ -6788,7 +7070,7 @@
 				// assert
 				strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
-				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined);
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oComboBox.destroy();

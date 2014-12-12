@@ -300,6 +300,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 					if (oSelectedItem !== this.getSelectedItem()) {
 						this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+
+						oItem = this.getSelectedItem();
+
+						// the attribute aria-activedescendant is set when the List is rendered,
+						// allowing screen readers to read the content within the edit input field as intended
+						if (this.getList().isActive() && oItem) {
+							oInputDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+						}
 					}
 
 					if (this._bDoTypeAhead) {
@@ -315,6 +323,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 				if (oSelectedItem !== this.getSelectedItem()) {
 					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+
+					// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
+					oInputDomRef.removeAttribute("aria-activedescendant");
 				}
 			}
 
