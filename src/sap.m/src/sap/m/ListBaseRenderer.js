@@ -194,11 +194,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.writeClasses();
 		rm.write(">");
 		
-		rm.write("<span");
+		rm.write("<div");
+		rm.addClass("sapMListNoDataText");
 		rm.writeAttribute("id", oControl.getId("nodata-text"));
+		rm.writeClasses();
 		rm.write(">");
 		rm.writeEscaped(oControl.getNoDataText(true));
-		rm.write("</span>");
+		rm.write("</div>");
 		
 		rm.write("</li>");
 	};

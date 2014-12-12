@@ -36,11 +36,9 @@
 	opacity: 0;
 	pointer-events: auto;
 	display: -webkit-box;
-	display: -moz-box;
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
 }
@@ -97,18 +95,22 @@
 	user-select: none;
 	list-style-type: none;
 	display: -webkit-box;
-	display: -moz-box;
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-align: center;
-	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
 	-webkit-box-pack: center;
-	-moz-box-pack: center;
-	-ms-justify-content: center;
+	-ms-flex-pack: center;
 	justify-content: center;
 	height: 2.75em;
+}
+
+.sapMListNoDataText{
+	-ms-flex-negative: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .sapMListShowSeparatorsAll{
