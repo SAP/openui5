@@ -92,6 +92,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
+	 * Checks whether annotations loading has already failed.
+	 * Note:
+	 * For asynchronous annotations {@link #attachFailed} has to be used also.
+	 *
+	 * @public
+	 * @returns {boolean} whether annotations request has failed
+	 */
+	ODataAnnotations.prototype.isFailed = function() {
+		return this.error !== null;
+	};
+
+	/**
 	 * Fire event loaded to attached listeners.
 	 *
 	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
@@ -636,8 +648,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		sPropertyName,
 		sType,
 		oPropExtension,
-		oReturn;
-	
+		oReturn = {
+			types : oPropertyTypes
+		};
+
+		if (!oMetadata.dataServices.schema) {
+			return oReturn;
+		}
+
 		for (var i = oMetadata.dataServices.schema.length - 1; i >= 0; i -= 1) {
 			oMetadataSchema = oMetadata.dataServices.schema[i];
 			if (oMetadataSchema.entityType) {
@@ -701,10 +719,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			oReturn = {
 				types : oPropertyTypes,
 				extensions : oPropertyExtensions
-			};
-		} else {
-			oReturn = {
-				types : oPropertyTypes
 			};
 		}
 		return oReturn;

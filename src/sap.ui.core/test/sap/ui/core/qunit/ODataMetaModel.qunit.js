@@ -17,7 +17,7 @@
 
 	function onError(oError) {
 		start();
-		ok(false, oError.message);
+		ok(false, oError.message + ", stack: " + oError.stack);
 	}
 
 	function onFailed(oEvent) {
@@ -93,20 +93,76 @@
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 <edmx:DataServices>\
-<Schema Namespace="zanno4sample_anno_mdl.v1" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+<Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
 <Annotations Target="GWSAMPLE_BASIC.BusinessPartner">\
 	<Annotation Term="com.sap.vocabularies.Common.v1.Foo" String="foo" />\
 </Annotations>\
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
-		', mFixture = {
-		"/fake/service/$metadata" : [200, {"Content-Type" : "application/xml"}, sMetadata],
-		//TODO separate test for V4 metadata with inline annotations
-		"/fake/annotations" : [200, {"Content-Type" : "application/xml"}, sAnnotations],
-		//TODO cleanup GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID (artificial example)
-		"/fake/annotations2" : [200, {"Content-Type" : "application/xml"}, sAnnotations2]
-	};
+		', sEmptyAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+<edmx:DataServices>\
+<Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>\
+</edmx:DataServices>\
+</edmx:Edmx>\
+		', sEmptyMetadata = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	/>\
+		', sEmptyDataServices = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	>\
+	<edmx:DataServices m:DataServiceVersion="2.0"/>\
+</edmx:Edmx>\
+		', sEmptySchema = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en"/>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		', sEmptyEntityType = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en"\
+			sap:schema-version="0000">\
+			<EntityType Name="BusinessPartner" sap:content-version="1"/>\
+			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
+				m:IsDefaultEntityContainer="true">\
+				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
+					sap:content-version="1" />\
+			</EntityContainer>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
+		', mHeaders = {"Content-Type" : "application/xml"},
+		mFixture = {
+			"/fake/emptyDataServices/$metadata" : [200, mHeaders, sEmptyDataServices],
+			"/fake/emptyEntityType/$metadata" : [200, mHeaders, sEmptyEntityType],
+			"/fake/emptyMetadata/$metadata" : [200, mHeaders, sEmptyDataServices],
+			"/fake/emptySchema/$metadata" : [200, mHeaders, sEmptySchema],
+			"/fake/service/$metadata" : [200, mHeaders, sMetadata],
+			//TODO separate test for V4 metadata with inline annotations
+			"/fake/annotations" : [200, mHeaders, sAnnotations],
+			//TODO cleanup GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID (artificial example)
+			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
+			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations]
+		};
 
 	/**
 	 * Sets up the given sandbox in order to use the URLs and responses defined in mFixture;
@@ -265,5 +321,58 @@
 		}));
 	});
 
-	//TODO test failure handling; incl. missing "extensions" array etc.
+
+	// *********************************************************************************************
+	jQuery.each([false, true, false, true], function (i, bAsync) {
+		asyncTest("Error loading" + (i < 2 ? " meta data" : " annotations" )
+				+ ", async: " + bAsync, sinon.test(function() {
+			var oModel,
+				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
+				sAnnotationsURL = i < 2 ? "" : "/invalid/annotations",
+				fnConstructor = bAsync
+					? sap.ui.model.odata.v2.ODataModel
+					: sap.ui.model.odata.ODataModel;
+
+			setupSandbox(this);
+			oModel = new fnConstructor(sMetadataURL, {
+				annotationURI : sAnnotationsURL,
+				json : true
+			});
+
+			// code under test
+			oModel.getMetaModel().loaded().then(function () {
+				start();
+				ok(false, "not expected");
+			}, function (ex) {
+				start();
+				ok(ex instanceof Error);
+				ok(/Error loading meta model/.test(ex.message), ex.message);
+				ok(true, "error handler called as expected");
+			})["catch"](onError);
+		}));
+	});
+
+	// *********************************************************************************************
+	jQuery.each(["annotations", "emptyAnnotations"], function (i, sAnnotation) {
+		jQuery.each(["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"],
+			function (j, sPath) {
+				asyncTest(sAnnotation + ", " + sPath, sinon.test(function() {
+					var oModel;
+
+					setupSandbox(this);
+					oModel = new sap.ui.model.odata.v2.ODataModel("/fake/" + sPath, {
+						// annotations are mandatory for this test case
+						annotationURI : "/fake/" + sAnnotation,
+						json : true
+					});
+
+					// code under test
+					oModel.getMetaModel().loaded().then(function () {
+						start();
+						ok(true, "expected");
+					}, onError)["catch"](onError);
+				}));
+			}
+		);
+	});
 }());
