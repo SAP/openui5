@@ -142,7 +142,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	};
 
 	/**
-	 * Called by the framework when any localization setting changed
+	 * Called by the framework when any localization setting changed.
 	 * @private
 	 */
 	EdmBoolean.prototype._handleLocalizationChange = function () {
