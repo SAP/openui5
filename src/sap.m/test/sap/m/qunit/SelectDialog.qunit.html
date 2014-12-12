@@ -411,8 +411,53 @@
 		module("Events");
 		/********************************************************************************/
 
-		// TODO: search event
-		// TODO: liveChange event
+		asyncTest("Search event", function () {
+			// Arrange
+			var fnFireSelectSpy = sinon.spy();
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				title: "SelectDialog",
+				search: fnFireSelectSpy
+			});
+
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+			oSelectDialog.open();
+
+			setTimeout(function() {
+				//act
+				oSelectDialog._oSearchField.fireSearch();
+
+				//assert
+				ok(fnFireSelectSpy.callCount, 1);
+				start();
+				oSelectDialog.destroy();
+			}, 500);
+		});
+
+		asyncTest("liveChange event", function () {
+			// Arrange
+			var fnFireLiveChangeSpy = sinon.spy();
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				title: "SelectDialog",
+				liveChange: fnFireLiveChangeSpy
+			});
+
+
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				// Act
+				oSelectDialog._oSearchField.$('I').focus().val("abc").trigger("input");
+			});
+
+			oSelectDialog.open();
+
+			setTimeout(function() {
+				// Asert
+				ok(fnFireLiveChangeSpy.callCount, 1);
+
+				// Delete
+				oSelectDialog.destroy();
+				start();
+			}, 500);
+		});
 
 		asyncTest("Confirm Event", function () {
 			expect(11);
@@ -433,7 +478,6 @@
 					aSelectedContexts = oEvent.getParameter("selectedContexts");
 
 				// items 2,3,4,8 are selected in the model
-				// TODO: check why item 2 is not returned by list as selectedItems
 				ok(true, 'The event "confirm" has been fired');
 				strictEqual(oSelectedItem.getTitle(), oSelectDialog.getItems()[1].getTitle(), 'The selected item property of the event should be "Title2"');
 				strictEqual(aSelectedItems.length, 4, '4 items where selected');
