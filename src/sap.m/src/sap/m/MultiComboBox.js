@@ -540,14 +540,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
-	
+		
 		var aItems = this.getItems();
+
 		this._synchronizeSelectedItemAndKey(aItems);
 		this._clearList();
 		this._clearTokenizer();
 		this._fillList(aItems);
+
+		// Re-apply editable state to make sure tokens are rendered in right state.
+		this.setEditable(this.getEditable());
 	};
-	
+
 	/**
 	 * This hook method is called before the MultiComboBox's Pop-up is rendered.
 	 * 
@@ -803,6 +807,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			this.getList().setSelectedItem(this.getListItem(mOptions.item), true);
 		}
 	
+		
 		// Fill Tokenizer
 		var oToken = new sap.m.Token({
 			key : mOptions.key,
