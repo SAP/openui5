@@ -9,6 +9,8 @@
 </script>
 
 <script>
+	var oApp = new sap.m.App;
+
 	jQuery.sap.require("sap.m.MessageToast");
 
 	var data = {
@@ -223,10 +225,7 @@
 	oTable.setModel(oModel);
 	oTable.bindAggregation("items", "/navigation", oTemplate);
 	
-	var oApp = new sap.m.App({
-		pages : [oPage]
-	}).placeAt("body");
-
+	oApp.addPage(oPage).placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody">

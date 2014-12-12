@@ -84,11 +84,14 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 	
+		var $Table = jQuery(this.getTableDomRef());
+		
 		// if any item has navigation, add required class
-		if (this._navRenderedBy) {
-			jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
-		}
-	
+		this._navRenderedBy && $Table.addClass("sapMListTblHasNav");
+		
+		// notify columns after rendering
+		this._notifyColumns("ColumnRendered", $Table, !this.getFixedLayout());
+
 		this.updateSelectAllCheckbox();
 		this._renderOverlay();
 	};
@@ -331,7 +334,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		if (aVisibleColumns.length == 1) {
 			$firstVisibleCol.width("");	// cover the space
 		} else {
-			$firstVisibleCol.width($firstVisibleCol.attr("data-sap-orig-width"));
+			$firstVisibleCol.width($firstVisibleCol.attr("data-sap-width"));
 		}
 	
 		// update GroupHeader colspan according to visible column count
@@ -346,9 +349,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	};
 	
 	// notify all columns with given action and param
-	Table.prototype._notifyColumns = function(action, param) {
+	Table.prototype._notifyColumns = function(sAction, vParam1, vParam2) {
 		this.getColumns().forEach(function(oColumn) {
-			oColumn["on" + action](param);
+			oColumn["on" + sAction](vParam1, vParam2);
 		});
 	};
 	

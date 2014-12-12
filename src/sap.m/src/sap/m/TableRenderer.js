@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			rm.addClass(clsPrefix + "Cell");
 			rm.addClass(clsPrefix + type + "erCell");
 			rm.writeAttribute("id", idPrefix + type + index);
-			rm.writeAttribute("data-sap-orig-width", oColumn.getWidth());
+			rm.writeAttribute("data-sap-width", oColumn.getWidth());
 			width && rm.addStyle("width", width);
 			
 			if (align) {
