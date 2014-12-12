@@ -751,11 +751,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (oData.results) {
 			aList = [];
 			jQuery.each(oData.results, function(i, entry) {
-				aList.push(that._importData(entry, mChangedEntities));
+				var sKey = that._importData(entry, mChangedEntities); 
+				if (sKey) {
+					aList.push(sKey);
+				}
 			});
 			return aList;
 		} else {
 			sKey = this._getKey(oData);
+			if (!sKey) {
+				return sKey;
+			}
 			oEntry = this.oData[sKey];
 			if (!oEntry) {
 				oEntry = oData;
@@ -2554,15 +2560,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Trigger a request to the function import odata service that was specified in the model constructor.
-	 *
-	 * @param {string} sFunctionName A string containing the name of the function to call.
-	 *		The name is concatenated to the sServiceUrl which was specified in the model constructor.
+	 * Trigger a request to the function import odata service that was specified in the model constructor. 
+	 * 
+	 * If the ReturnType of the function import is either an EntityType or a collection of EntityType the 
+	 * changes are reflected in the model, otherwise they are ignored, and the <code>response</code> can 
+	 * be processed in the successHandler.
+	 * 
+	 * @param {string} sFunctionName A string containing the name of the function to call. The name is concatenated to the sServiceUrl which was
+	 *        specified in the model constructor.
 	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {string} [mParameters.method] A string containing the type of method to call this function with
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved. The handler can have
+	 *        the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
