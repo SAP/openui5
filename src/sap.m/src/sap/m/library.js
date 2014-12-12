@@ -1204,17 +1204,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.PopinDisplay = {
 	
 		/**
-		 * Inside the table popin, header is displayed in first line and value field is displayed in next line.
+		 * Inside the table popin, header is displayed at the first line and cell content is displayed at the next line.
 		 * @public
 		 */
 		Block : "Block",
 	
 		/**
-		 * Inside the table popin, value field is displayed next to the header in the same line. Note: If there is no enough space for the value field then goes to next line.
+		 * Inside the table popin, cell content is displayed next to the header in the same line. Note: If there is not enough space for the cell content then it jumps to the next line.
 		 * @public
 		 */
-		Inline : "Inline"
-	
+		Inline : "Inline",
+		
+
+		/**
+		 * Inside the table popin, only the cell content will be visible.
+		 * @public
+		 * @since 1.28
+		 */
+		WithoutHeader : "WithoutHeader"
 	};
 	
 	
