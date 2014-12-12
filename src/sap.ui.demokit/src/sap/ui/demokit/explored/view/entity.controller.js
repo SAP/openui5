@@ -121,7 +121,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 	},
 	
 	onToggleFullScreen : function (oEvt) {
-		sap.ui.demokit.explored.util.ToggleFullScreenHandler.actionPerformed(oEvt, this.getView());
+		sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateMode(oEvt, this.getView());
 	},
 
 	// ========= internal ===========================================================================

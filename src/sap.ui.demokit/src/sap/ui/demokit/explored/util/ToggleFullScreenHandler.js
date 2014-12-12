@@ -10,32 +10,32 @@ sap.ui.define(['jquery.sap.global'],
 
 	var ToggleFullScreenHandler = {
 		
-		actionPerformed : function(oEvt, oView) {	
-			if (!this.oShell) {
-				this.oShell = sap.ui.getCore().byId('Shell');
+		updateMode : function(oEvt, oView) {	
+			if (!this._oShell) {
+				this._oShell = sap.ui.getCore().byId('Shell');
 			}
-			var bSwitchToFullScreen = (this._getSplitApp().getMode() == "ShowHideMode");
+			var bSwitchToFullScreen = (this._getSplitApp().getMode() === "ShowHideMode");
 			if (bSwitchToFullScreen) {
 				this._getSplitApp().setMode('HideMode');
-				this.oShell.setAppWidthLimited(false);
+				this._oShell.setAppWidthLimited(false);
 			} else {
 				this._getSplitApp().setMode('ShowHideMode');
-				this.oShell.setAppWidthLimited(true);
+				this._oShell.setAppWidthLimited(true);
 			}
-			this.updateToggleFullScreenBtn(oEvt.getSource(), oView, bSwitchToFullScreen);
+			this.updateControl(oEvt.getSource(), oView, bSwitchToFullScreen);
 		},
 		
 		
 		_getSplitApp : function () {
-			if (!this.oSplitApp) {
-				this.oSplitApp = sap.ui.getCore().byId('splitApp');
+			if (!this._oSplitApp) {
+				this._oSplitApp = sap.ui.getCore().byId('splitApp');
 			}
-			return this.oSplitApp;
+			return this._oSplitApp;
 		},
 	
-		updateToggleFullScreenBtn : function (oButton, oView, bFullScreen) {
-			if (arguments.length == 2) {
-				bFullScreen = !(this._getSplitApp().getMode() == "ShowHideMode");
+		updateControl : function (oButton, oView, bFullScreen) {
+			if (arguments.length === 2) {
+				bFullScreen = !(this._getSplitApp().getMode() === "ShowHideMode");
 			}
 			var i18nModel = oView.getModel('i18n');
 			if (!bFullScreen) {
@@ -50,8 +50,8 @@ sap.ui.define(['jquery.sap.global'],
 		},
 		
 		cleanUp : function() {
-			this.oSplitApp = null;
-			this.oShell = null;
+			this._oSplitApp = null;
+			this._oShell = null;
 		}
 	};
 

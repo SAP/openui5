@@ -124,6 +124,7 @@
         <exclude name="jquery-ui-datepicker.js" />
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/qunit/qunit.js" />
+        <exclude name="sap/ui/qunit/qunit-composite.js" />
         <exclude name="sap/ui/qunit/qunit-reporter-junit.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
         <!-- Third party libs which should NOT be part of the all-in-one file -->
@@ -229,8 +230,11 @@
         <lib name="jquery_mobile" displayName="jQuery Mobile" homepage="http://jquerymobile.com">
         	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
         </lib>
+        <lib name="qunit-composite" displayName="JUnit reporter for QUnit v1.0.2pre" homepage="https://github.com/jquery/qunit-composite">
+        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        </lib>
         <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/jquery/qunit-reporter-junit">
-        	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
         </lib>
         <lib name="iscroll" displayName="cubiq.org - iscroll" homepage="http://cubiq.org/iscroll-4">
         	<license url="http://cubiq.org/license" type="MIT License" file="../thirdparty/licenses/iscroll-MIT-LICENSE.txt" />

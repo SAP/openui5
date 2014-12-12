@@ -10,7 +10,7 @@
 				<ToolbarSpacer/>
 				<Label text="Entities ({entity>/entityCount})" />
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://action-settings" press="onOpenAppSettings" />
+				<Button icon="sap-icon://action-settings" tooltip="{i18n>settings}" press="onOpenAppSettings" />
 			</Toolbar>
 		</customHeader>
 		<subHeader>

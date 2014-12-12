@@ -233,7 +233,7 @@
 		//elements respond.
 		//First check the margins for large desktop screens
 		var oUriParams = jQuery.sap.getUriParameters(),
-			sExpectedMargin = oUriParams.get('expected-result');
+			sExpectedMargin = oUriParams.get('sap-ui-expect');
 		if(!sExpectedMargin) {
 			assert.ok( false, "Test Url " + window.location.href + " does not contain parameter 'expected-result'.");
 		} else {
