@@ -1,9 +1,11 @@
 /* ============================================= */
 /* CSS for control sap.m/Panel.control           */
 /* ============================================= */
+.sapMPanel {
+	overflow: hidden;
+}
+
 .sapMPanelHdr {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	-webkit-text-size-adjust: none;
 	/* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
@@ -11,6 +13,11 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	text-transform: none;
+}
+
+.sapMPanelContent {
+	box-sizing: border-box;
+	overflow: auto;
 }
 
 .sapMPanelExpandablePart {
@@ -35,7 +42,7 @@
 	transform: translateY(-50%) rotate(90deg);
 	/* 400ms is standard jQuery duration */
 	-webkit-transition: all 0.4s ease-out;
-	transition: all 0.4s ease-out;	
+	transition: all 0.4s ease-out;
 }
 
 html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanelExpandableIcon {
