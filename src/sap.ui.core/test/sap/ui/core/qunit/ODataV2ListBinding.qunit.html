@@ -531,6 +531,14 @@
 			oBinding.getContexts(0, 2, 0);
 		})
 	});
+	test("Export to file URL", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("/Categories");
+		var sUrl = oBinding.getDownloadUrl("csv");
+		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=csv", "Download URL for csv correctly constructed.")
+		sUrl = oBinding.getDownloadUrl("xlsx");
+		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
+	});
 	</script>
 
 </head>
