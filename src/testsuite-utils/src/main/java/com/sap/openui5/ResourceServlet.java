@@ -1,11 +1,14 @@
 package com.sap.openui5;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,6 +144,22 @@ public class ResourceServlet extends HttpServlet {
     // lookup the resource in the local classloader
     if (url == null) {
       url = ResourceServlet.class.getClassLoader().getResource(classPath);
+    }
+    
+    // make sure that also the file system URLs are handled case sensitive 
+    // to have a similar behavior like the classloader (avoid case issues!)
+    if (url != null && "file".equals(url.getProtocol())) {
+      try {
+        File file = new File(url.toURI());
+        File folder = file.getParentFile();
+        if (folder != null && !Arrays.asList(folder.list()).contains(file.getName())) {
+          url = null;
+        }
+      } catch (URISyntaxException ex) {
+        // we just forward the exception as MalformedURLException 
+        // but normally this issue will not happen here!
+        throw new MalformedURLException(ex.getMessage());
+      }
     }
     
     // theme fallback? 
