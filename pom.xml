@@ -299,7 +299,7 @@
 								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>
 							</plugins>
 							<formatters>
-								<formatter implementation="com.sap.eslint.java.formatters.JSLintFormatter">
+								<formatter implementation="com.sap.eslint.java.formatters.JSLintSonarFormatter">
 									<outputFile>${project.build.directory}/jslint/jslint.xml</outputFile>
 								</formatter>
 							</formatters>
