@@ -2510,7 +2510,11 @@
 	 * @param {function}
 	 *          [fnLoadCallback] callback function to get notified once the link has been loaded
 	 * @param {function}
-	 *          [fnErrorCallback] callback function to get notified once the link loading failed
+	 *          [fnErrorCallback] callback function to get notified once the link loading failed.
+	 *          In case of usage in IE the error callback will also be executed if an empty stylesheet
+	 *          is loaded. This is the only option how to determine in IE if the load was successful
+	 *          or not since the native onerror callback for link elements doesn't work in IE. The IE 
+	 *          always calls the onload callback of the link element.
 	 *
 	 * @public
 	 * @static
@@ -2528,20 +2532,50 @@
 			if (sId) {
 				oLink.id = sId;
 			}
-
-			jQuery(oLink).load(function() {
-				jQuery(oLink).attr("sap-ui-ready", "true");
-				if (fnLoadCallback) {
-					fnLoadCallback();
-				}
-			});
-
-			jQuery(oLink).error(function() {
+			
+			var fnError = function() {
 				jQuery(oLink).attr("sap-ui-ready", "false");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
-			});
+			};
+
+			var fnLoad = function() {
+				jQuery(oLink).attr("sap-ui-ready", "true");
+				if (fnLoadCallback) {
+					fnLoadCallback();
+				}
+			};
+			
+			// for IE we will check if the stylesheet contains any rule and then
+			// either trigger the load callback or the error callback
+			if (!!sap.ui.Device.browser.internet_explorer) {
+				var fnLoadOrg = fnLoad;
+				fnLoad = function(oEvent) {
+					var aRules;
+					try {
+						// in cross-origin scenarios the IE can still access the rules of the stylesheet
+						// if the stylesheet has been loaded properly
+						aRules = oEvent.target && oEvent.target.sheet && oEvent.target.sheet.rules;
+						// in cross-origin scenarios now the catch block will be executed because we
+						// cannot access the rules of the stylesheet but for non cross-origin stylesheets
+						// we will get an empty rules array and finally we cannot differ between 
+						// empty stylesheet or loading issue correctly => documented in JSDoc!
+					} catch (ex) {
+						// exception happens when the stylesheet could not be loaded from the server
+						// we now ignore this and know that the stylesheet doesn't exists => trigger error
+					}
+					// no rules means error
+					if (aRules && aRules.length > 0) {
+						fnLoadOrg();
+					} else {
+						fnError();
+					}
+				};
+			}
+			
+			jQuery(oLink).load(fnLoad);
+			jQuery(oLink).error(fnError);
 			return oLink;
 
 		};
