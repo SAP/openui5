@@ -923,10 +923,10 @@ sap.ui
 							jQuery.each(aKeys, function(iIndex, oPropRef) {
 								var sKeyName = jQuery(oPropRef).attr("Name");
 								oEntitySet.keys.push(sKeyName);
-								oEntitySet.keysType[sKeyName] = jQuery($EntityType).find("Property[Name=" + sKeyName + "]").attr("Type");
+								oEntitySet.keysType[sKeyName] = jQuery($EntityType).find("Property[Name='" + sKeyName + "']").attr("Type");
 							});
 							// resolve the navigation properties
-							var aNavProps = jQuery(oMetadata).find("EntityType[Name=" + oEntitySet.type + "] NavigationProperty");
+							var aNavProps = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "'] NavigationProperty");
 							jQuery.each(aNavProps, function(iIndex, oNavProp) {
 								var $NavProp = jQuery(oNavProp);
 								oEntitySet.navprops[$NavProp.attr("Name")] = {
