@@ -33,6 +33,8 @@
 		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR"}
 	];
 	
+	var oApp = new sap.m.App;
+	
 	jQuery.sap.require("sap.m.MessageBox");
 	jQuery.sap.require("sap.m.MessageToast");
 	
@@ -329,13 +331,7 @@
 		content : [oTable]
 	});
 
-	var oApp = new sap.m.App({
-		pages : [oPage]
-	});
-	
-	oApp.placeAt("body");
-
-
+	oApp.addPage(oPage).placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody sapUiSizeCompact">
