@@ -46,12 +46,13 @@
 	margin-bottom: 1rem;
 }
 
-.sapMOHIntroActive,.sapMOHTitleActive {
+.sapMOHIntroActive > a,.sapMOHTitleActive {
 	color: @sapUiLink;
+	text-decoration: none;
 }
 
-.sapMOHIntroActive > span:active,
-.sap-desktop .sapMOHIntroActive > span:hover,
+.sapMOHIntroActive > a:active,
+.sap-desktop .sapMOHIntroActive > a:hover,
 .sapMOHTitleActive .sapMText:active,
 .sap-desktop .sapMOHTitleActive .sapMText:hover {
 	text-decoration: underline;
@@ -359,6 +360,7 @@ html[data-sap-ui-browser ^= "ie"] {
 
 .sapMOHRTitleText {
 	margin-top: 0.4rem;
+	text-decoration:none;
 }
 
 .sapMOHRTitleTextContainer {
@@ -395,8 +397,8 @@ html[data-sap-ui-browser ^= "ie"] {
 	margin-top: -0.3rem;
 }
 
-.sapMOHRIntroActive > span:active,
-.sap-desktop .sapMOHRIntroActive > span:hover,
+.sapMOHRIntroActive > a:active,
+.sap-desktop .sapMOHRIntroActive > a:hover,
 .sapMOHRTitleActive .sapMOHRTitleText:active,
 .sap-desktop .sapMOHRTitleActive .sapMOHRTitleText:hover {
 	text-decoration: underline;
@@ -446,10 +448,10 @@ html[data-sap-ui-browser ^= "ie"] {
 	float: none;
 }
 
+
 .sapMOHR .sapMObjectNumber {
 	display: inline-block;
 	white-space: normal;
-	text-align: right;
 	padding: 0.4rem 0 0 1rem;
 }
 
@@ -472,40 +474,25 @@ html[data-sap-ui-browser ^= "ie"] {
 	max-width: 100%;
 }
 
-.sap-desktop .sapMOHR .sapMObjectNumber {
+.sap-desktop .sapMOHR .sapMObjectNumber { 
 	width: 30%;
 	box-sizing: border-box;
-}
-
-.sap-desktop .sapMOHRStatesOneOrThree .sapMObjectNumber {
-	text-align: left;
-}
-
-.sap-desktop .sapMOHRStatesOneOrThree .sapMObjectNumber .sapMObjectNumberText {
-	padding-right: 0.25rem;
-}
-
-.sap-desktop .sapMOHRStatesOneOrThree .sapMObjectNumber .sapMObjectNumberUnit {
-	padding-left: 0;
 }
 
 .sap-desktop.sapUiMedia-Std-Tablet .sapMOHR .sapMObjectNumber,
 .sap-tablet .sapMOHR .sapMObjectNumber {
 	width: 35%;
 	box-sizing: border-box;
-	text-align: right;
 }
 
 .sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumber,
 .sap-phone .sapMOHR .sapMObjectNumber {
 	box-sizing: border-box;
 	float: right;
-	text-align: right;
 }
 
 .sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle,
 .sap-phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle {
-	text-align: left;
 	width: 100%;
 	padding: 0.5rem 0 0 0;
 }
@@ -513,13 +500,11 @@ html[data-sap-ui-browser ^= "ie"] {
 .sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumberText,
 .sap-phone .sapMOHR .sapMObjectNumberText {
 	display: inline-block;
-	padding-right: 0.25rem;
 }
 
 .sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumberUnit,
 .sap-phone .sapMOHR .sapMObjectNumberUnit {
 	display: inline-block;
-	padding-left: 0;
 }
 
 .sap-desktop.sapUiMedia-Std-Phone .sapMOHRNumberWrap,

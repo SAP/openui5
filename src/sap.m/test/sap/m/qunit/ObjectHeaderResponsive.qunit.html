@@ -226,7 +226,6 @@
 				});
 				
 				test("Info shouldn't be rendered", function () {
-					var sIntro = "Some intro text that describes the object!";
 
 					// Arrange
 					var oObjectHeader = createObjectHeader();
@@ -238,6 +237,84 @@
 					// Assert
 					var introEl = jQuery.sap.domById(sControlId + "-intro");
 					ok(!introEl, "Intro isn't rendered");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title is active and is rendered as a link", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true,
+						titleHref: "http://www.sap.com"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok($sTitle.attr("href"), "Title has attribute href and is a link.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title is active but it's not a link", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok(!$sTitle.attr("href"), "Title does not have an attribute href and it's not a link.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Intro is active and is rendered as a link", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						intro: "OH intro text",
+						introActive: true,
+						introHref: "http://www.sap.com"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sIntro = oObjectHeader.$("intro");
+					ok($sIntro.attr("href"), "Intro has attribute href and is a link.");
+					
+					// Clean up
+					oObjectHeader.destroy();
+				});
+				
+				test("Title is active but it's not a link", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						intro: "OH title",
+						introActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sIntro = oObjectHeader.$("intro");
+					ok(!$sIntro.attr("href"), "Intro does not have an attribute href and it's not a link.");
 					
 					// Clean up
 					oObjectHeader.destroy();

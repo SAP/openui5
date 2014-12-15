@@ -98,6 +98,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		return this;
 	};
+	
+	/*
+	 * API method to set the text alignment of the control without rerendering the whole object number
+	 * @override
+	 * @public
+	 * @param {sap.ui.core.TextAlign} sAlign the new value
+	 */
+	ObjectNumber.prototype.setTextAlign = function(sAlign) {
+		//do suppress rerendering
+		this.setProperty("textAlign", sAlign, true);
+		
+		var sAlignVal = this.getRenderer()._getTextAlignment(sAlign, this.getTextDirection());
+		if (sAlignVal) {
+			//change the inline style
+			this.$().css("text-align", sAlignVal);
+		} else {
+			// if empty set what was given by the user
+			this.$().css("text-align", sAlign);
+		}
+	};
 
 	return ObjectNumber;
 
