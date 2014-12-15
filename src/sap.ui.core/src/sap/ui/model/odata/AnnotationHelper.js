@@ -59,6 +59,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							oConstraints.displayFormat = oProperty["sap:display-format"];
 							break;
 
+						case "Edm.DateTimeOffset":
+							sType = 'sap.ui.model.odata.type.DateTimeOffset';
+							break;
+
 						case "Edm.Decimal":
 							sType = 'sap.ui.model.odata.type.Decimal';
 							oConstraints.precision = oProperty.precision;

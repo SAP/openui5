@@ -23,20 +23,19 @@
 				<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
 				<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 
-				<core:Title text="sap.ui.model.odata.type.DateTime" />
-				<Label text="default"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
-				<Label text="nullable: false"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
-				<Label text="displayFormat=&quot;Date&quot;"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
-				<Label text="displayFormat=&quot;Date&quot;, nullable: false"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
-				<!-- TODO: Replace with sap.ui.model.odata.type.DateTimeOffset data type once available -->
-				<Label text="DateTimeOffset default"/>
-				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTime'}"/>
-				<Label text="DateTimeOffset with nullable: false"/>
-				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
+				<core:Title text="DateTime variants" />
+				<Label text="DateTime"/>
+				<Input value="{path: 'RealDateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
+				<Label text="DateTime, nullable: false"/>
+				<Input value="{path: 'RealDateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
+				<Label text="DateTime, displayFormat: &quot;Date&quot;"/>
+				<Input value="{path: 'DateOnly', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
+				<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false"/>
+				<Input value="{path: 'DateOnly', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
+				<Label text="DateTimeOffset"/>
+				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
+				<Label text="DateTimeOffset, nullable: false"/>
+				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Decimal" />
 				<Label text="scale: 3"/>

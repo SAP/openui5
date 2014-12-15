@@ -228,12 +228,22 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
+	 * Returns the type's name.
+	 *
+	 * @name sap.ui.model.odata.type.Int#getName
+	 * @function
+	 * @protected
+	 * @abstract
+	 */
+
+	/**
 	 * Returns the type's supported range as object with properties <code>minimum</code> and
 	 * <code>maximum</code>.
 	 *
 	 * @name sap.ui.model.odata.type.Int#getRange
 	 * @function
 	 * @protected
+	 * @abstract
 	 */
 
 	return Int;

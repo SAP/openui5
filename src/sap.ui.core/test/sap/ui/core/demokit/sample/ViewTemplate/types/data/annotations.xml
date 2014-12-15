@@ -20,8 +20,16 @@
 							<PropertyValue Property="Value" Path="Boolean"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Label" String="DateTime"/>
-							<PropertyValue Property="Value" Path="DateTime"/>
+							<PropertyValue Property="Label" String="RealDateTime"/>
+							<PropertyValue Property="Value" Path="RealDateTime"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DateOnly"/>
+							<PropertyValue Property="Value" Path="DateOnly"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DateTimeOffset"/>
+							<PropertyValue Property="Value" Path="DateTimeOffset"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Label" String="TimeStampShort"/>
