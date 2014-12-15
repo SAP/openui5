@@ -32,18 +32,29 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass("sapUiUfdShellOvrlyAnim");
 		}
 		rm.writeClasses();
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAccessibilityState(oControl, {
+				role: "dialog"
+			});
+		}
 		rm.write("><div>");
 		
 		rm.write("<header class='sapUiUfdShellOvrlyHead'>");
 		rm.write("<hr class='sapUiUfdShellOvrlyBrand'/>");
-		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'>");
-		rm.write("<div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
+		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "toolbar");
+		}
+		rm.write("><div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
 		ShellOverlayRenderer.renderSearch(rm, oControl);
 		rm.write("</div>");
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sCloseTxt = rb.getText("SHELL_OVERLAY_CLOSE");
 		rm.write("<a tabindex='0' href='javascript:void(0);' id='" + oControl.getId() + "-close' class='sapUiUfdShellOvrlyHeadClose'");
 		rm.writeAttributeEscaped("title", sCloseTxt);
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "button");
+		}
 		rm.write(">");
 		rm.writeEscaped(sCloseTxt);
 		rm.write("</a></div></header>");

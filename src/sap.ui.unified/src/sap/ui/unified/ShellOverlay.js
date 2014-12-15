@@ -49,7 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 			/**
 			 * Reference to the sap.ui.unified.Shell or sap.ui.unified.ShellLayout control.
 			 */
-			shell : {type : "sap.ui.unified.ShellLayout", multiple : false}
+			shell : {type : "sap.ui.unified.ShellLayout", multiple : false},
+			
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 	
@@ -219,8 +224,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	ShellOverlay.prototype.onclick = function(oEvent){
 		if (jQuery(oEvent.target).attr("id") === this.getId() + "-close") {
 			this.close();
+			// IE always interprets a click on an anker as navigation and thus triggers the 
+			// beforeunload-event on the window. Since a ShellHeadItem never has a valid href-attribute,
+			// the default behavior should never be triggered
+			oEvent.preventDefault();
 		}
 	};
+	
+	ShellOverlay.prototype.onsapspace = ShellOverlay.prototype.onclick;
 	
 	ShellOverlay.prototype.onThemeChanged = function(){
 		this._animOpenDuration = -1;
