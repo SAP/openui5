@@ -21,7 +21,7 @@ module.exports = function(grunt, config) {
 				},
 				files: [ {
 					expand: true,
-					cwd: '../bower-openui5-' + library.name,
+					cwd: '../packaged-' + library.name,
 					src: [
 						'**/*.*',
 						'**/.*',
