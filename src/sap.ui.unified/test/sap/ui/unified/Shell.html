@@ -38,10 +38,13 @@
 		}
 	});
 	
+	(new sap.ui.core.InvisibleText("homeItm-txt", {text: "Home Screen"})).toStatic();
+	
 	var homeItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Home",
 		icon: sap.ui.core.IconPool.getIconURI("home"),
-		press: function(){setState("HOME");}
+		press: function(){setState("HOME");},
+		ariaLabelledBy: ["homeItm-txt"]
 	});
 	
 	var filterItm = new sap.ui.unified.ShellHeadItem({

@@ -69,6 +69,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
+		associations : {
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -109,6 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 		bSelected = !!bSelected;
 		this.setProperty("selected", bSelected, true);
 		this.$().toggleClass("sapUiUfdShellHeadItmSel", bSelected);
+		this.$().attr("aria-pressed", bSelected);
 		return this;
 	};
 	
