@@ -3,8 +3,9 @@
  */
 
 // Provides control sap.m.P13nConditionPanel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat'], 
-function(jQuery, library, Control, DateFormat, NumberFormat) {
+sap.ui.define([
+	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat'
+], function(jQuery, library, Control, DateFormat, NumberFormat) {
 	"use strict";
 
 	/**
@@ -28,75 +29,75 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	 */
 	var P13nConditionPanel = Control.extend("sap.m.P13nConditionPanel", /** @lends sap.m.P13nConditionPanel.prototype */
 	{
-		metadata : {
+		metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * defines the max number of conditions on the ConditionPanel
 				 */
-				maxConditions : {
-					type : "string",
-					group : "Misc",
-					defaultValue : '-1'
+				maxConditions: {
+					type: "string",
+					group: "Misc",
+					defaultValue: '-1'
 				},
 
 				/**
 				 * exclude options for filter
 				 */
-				exclude : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : false
+				exclude: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				},
 
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When
 				 * the P13nConditionPanel is used on a dialog the property should be set to true!
 				 */
-				containerQuery : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : false
+				containerQuery: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				},
 
 				/**
 				 * adds initial a new empty condition row
 				 */
-				autoAddNewRow : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : false
+				autoAddNewRow: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				},
 
 				/**
 				 * makes the remove icon on the first condition row disabled when only one condition
 				 * exist.
 				 */
-				disableFirstRemoveIcon : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : false
+				disableFirstRemoveIcon: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				},
 
 				/**
 				 * makes the Add icon visible on each condition row. If is set to false the Add is only
 				 * visible at the end and you can only append a new condition.
 				 */
-				alwaysShowAddIcon : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : true
+				alwaysShowAddIcon: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: true
 				},
 
 				/**
 				 * new added condition use the settings from the previous condition as default.
 				 */
-				usePrevConditionSetting : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : true
+				usePrevConditionSetting: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: true
 				},
 
 				/**
@@ -105,59 +106,59 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				 * which are not used. The default behavior is that in each keyField dropdown all
 				 * keyfields are listed.
 				 */
-				autoReduceKeyFieldItems : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : false
+				autoReduceKeyFieldItems: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				},
 
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically
 				 * change the layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
 				 */
-				layoutMode : {
-					type : "string",
-					group : "Misc",
-					defaultValue : null
+				layoutMode: {
+					type: "string",
+					group: "Misc",
+					defaultValue: null
 				},
 
 				/**
 				 * show additional labels in the condition
 				 */
-				showLabel : {
-					type : "boolean",
-					group : "Misc",
-					defaultValue : false
+				showLabel: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				},
-				
+
 				/**
 				 * This represents the displayFormat of the condition Values. 
 				 * With the value "UpperCase" the entered value of the condition will be converted to upperCase.
 				 */
-				displayFormat : {
-					type : "string",
-					group : "Misc",
-					defaultValue : null
+				displayFormat: {
+					type: "string",
+					group: "Misc",
+					defaultValue: null
 				}
 			},
-			aggregations : {
+			aggregations: {
 
 				/**
 				 * Content for the ConditionPanel. This property is not public!
 				 */
-				content : {
-					type : "sap.ui.core.Control",
-					multiple : true,
-					singularName : "content",
-					visibility : "hidden"
+				content: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					singularName: "content",
+					visibility: "hidden"
 				}
 			},
-			events : {
+			events: {
 
 				/**
 				 * Workaround for updating the binding
 				 */
-				dataChange : {}
+				dataChange: {}
 			}
 		}
 	});
@@ -287,20 +288,19 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				oCondition = this._oConditionsMap[conditionId];
 				var sValue = oCondition.value;
 				if (!sValue) {
-					sValue = this._getFormatedConditionText(oCondition.operation, oCondition.value1, oCondition.value2, oCondition.exclude, oCondition.keyField,
-							oCondition.showIfGrouped);
+					sValue = this._getFormatedConditionText(oCondition.operation, oCondition.value1, oCondition.value2, oCondition.exclude, oCondition.keyField, oCondition.showIfGrouped);
 				}
 
 				if (!oCondition._oGrid || oCondition._oGrid.select.getSelected()) {
 					aConditions.push({
-						"key" : conditionId,
-						"text" : sValue,
-						"exclude" : oCondition.exclude,
-						"operation" : oCondition.operation,
-						"keyField" : oCondition.keyField,
-						"value1" : oCondition.value1,
-						"value2" : oCondition.value2,
-						"showIfGrouped" : oCondition.showIfGrouped
+						"key": conditionId,
+						"text": sValue,
+						"exclude": oCondition.exclude,
+						"operation": oCondition.operation,
+						"keyField": oCondition.keyField,
+						"value1": oCondition.value1,
+						"value2": oCondition.value2,
+						"showIfGrouped": oCondition.showIfGrouped
 					});
 
 				}
@@ -401,7 +401,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		this._updateKeyFieldItems(this, this._oConditionsGrid, true, true);
 		this._enableConditions();
 		this._updateKeyFields();
-		this._updateOperations();		
+		this._updateOperations();
 	};
 
 	/**
@@ -526,7 +526,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		this._sValidationDialogFieldMessage = this._oRb.getText("CONDITIONPANEL_FIELDMESSAGE");
 
 		this._oTypeOperations = {
-			"default" : []
+			"default": []
 		};
 
 		this._aKeyFields = [];
@@ -540,61 +540,63 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		// create the main grid and add it into the hidden content aggregation
 		this._oConditionsGrid = new sap.ui.layout.Grid({
-			width : "100%",
-			defaultSpan : "L12 M12 S12",
-			hSpacing : 0,
-			vSpacing : 0
+			width: "100%",
+			defaultSpan: "L12 M12 S12",
+			hSpacing: 0,
+			vSpacing: 0
 		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop" && !this.getAlwaysShowAddIcon());
 
 		this.addAggregation("content", this._oConditionsGrid);
 
-		this._aConditionsFields = [{
-			"ID" : "select",
-			"Label" : "",
-			"Span" : "L1 M1 S1",
-			"Control" : "CheckBox",
-			"Value" : ""
-		}, {
-			"ID" : "keyFieldLabel",
-			"Text" : "Sort By",
-			"Span" : "L1 M1 S1",
-			"Control" : "Label"
-		}, {
-			"ID" : "keyField",
-			"Label" : "",
-			"Span" : "L3 M5 S10",
-			"Control" : "ComboBox",
-			"SelectedKey" : "0"
-		}, {
-			"ID" : "operationLabel",
-			"Text" : "Sort Order",
-			"Span" : "L1 M1 S1",
-			"Control" : "Label"
-		}, {
-			"ID" : "operation",
-			"Label" : "",
-			"Span" : "L2 M5 S10",
-			"Control" : "ComboBox",
-			"SelectedKey" : "0"
-		}, {
-			"ID" : "value1",
-			"Label" : this._sFromLabelText,
-			"Span" : "L3 M10 S10",
-			"Control" : "TextField",
-			"Value" : ""
-		}, {
-			"ID" : "value2",
-			"Label" : this._sToLabelText,
-			"Span" : "L2 M10 S10",
-			"Control" : "TextField",
-			"Value" : ""
-		}, {
-			"ID" : "showIfGrouped",
-			"Label" : this._sShowIfGroupedLabelText,
-			"Span" : "L1 M10 S10",
-			"Control" : "CheckBox",
-			"Value" : "false"
-		}];
+		this._aConditionsFields = [
+			{
+				"ID": "select",
+				"Label": "",
+				"Span": "L1 M1 S1",
+				"Control": "CheckBox",
+				"Value": ""
+			}, {
+				"ID": "keyFieldLabel",
+				"Text": "Sort By",
+				"Span": "L1 M1 S1",
+				"Control": "Label"
+			}, {
+				"ID": "keyField",
+				"Label": "",
+				"Span": "L3 M5 S10",
+				"Control": "ComboBox",
+				"SelectedKey": "0"
+			}, {
+				"ID": "operationLabel",
+				"Text": "Sort Order",
+				"Span": "L1 M1 S1",
+				"Control": "Label"
+			}, {
+				"ID": "operation",
+				"Label": "",
+				"Span": "L2 M5 S10",
+				"Control": "ComboBox",
+				"SelectedKey": "0"
+			}, {
+				"ID": "value1",
+				"Label": this._sFromLabelText,
+				"Span": "L3 M10 S10",
+				"Control": "TextField",
+				"Value": ""
+			}, {
+				"ID": "value2",
+				"Label": this._sToLabelText,
+				"Span": "L2 M10 S10",
+				"Control": "TextField",
+				"Value": ""
+			}, {
+				"ID": "showIfGrouped",
+				"Label": this._sShowIfGroupedLabelText,
+				"Span": "L1 M10 S10",
+				"Control": "CheckBox",
+				"Value": "false"
+			}
+		];
 		this._updateConditionFieldSpans(this.getLayoutMode());
 
 		// fill/update the content "oConditionGrid"s
@@ -743,11 +745,11 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		this._iConditionCount++;
 
 		var oConditionGrid = new sap.ui.layout.Grid({
-			width : "100%",
-			defaultSpan : "L12 M12 S12",
-			hSpacing : 1,
-			vSpacing : 0,
-			containerQuery : this.getContainerQuery()
+			width: "100%",
+			defaultSpan: "L12 M12 S12",
+			hSpacing: 1,
+			vSpacing: 0,
+			containerQuery: this.getContainerQuery()
 		}).data("_key", sKey);
 
 		for ( var iField in oThat._aConditionsFields) {
@@ -755,14 +757,14 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			var field = oThat._aConditionsFields[iField];
 
 			switch (field["Control"]) {
-				case "CheckBox" :
+				case "CheckBox":
 					// the CheckBox is not visible and only used internal to validate if a condition is
 					// filled correct.
 					oControl = new sap.m.CheckBox({
-						enabled : false,
-						visible : false,
-						layoutData : new sap.ui.layout.GridData({
-							span : field["Span"]
+						enabled: false,
+						visible: false,
+						layoutData: new sap.ui.layout.GridData({
+							span: field["Span"]
 						})
 					});
 
@@ -794,16 +796,16 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 					}
 					break;
 
-				case "ComboBox" :
+				case "ComboBox":
 					if (field["ID"] === "keyField") {
 						//oControl = new sap.m.ComboBox({
 						//oControl.setForceSelection(true); 
 						oControl = new sap.m.Select({
-							selectedKey : field["SelectedKey"],
+							selectedKey: field["SelectedKey"],
 							// autoAdjustWidth: true,
-							width : "100%",
-							layoutData : new sap.ui.layout.GridData({
-								span : field["Span"]
+							width: "100%",
+							layoutData: new sap.ui.layout.GridData({
+								span: field["Span"]
 							})
 						});
 
@@ -826,7 +828,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 									key = oKeyField;
 								}
 								if (oConditionGridData.keyField === key) {
-									oControl.setSelectedItem(oControl.getItems()[index]);  
+									oControl.setSelectedItem(oControl.getItems()[index]);
 								}
 							}, this);
 						} else {
@@ -836,17 +838,17 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 									oGrid = oTargetGrid.getContent()[iPos - 1];
 									oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
 								} else {
-									oControl.setSelectedItem(oControl.getItems()[0]); 
+									oControl.setSelectedItem(oControl.getItems()[0]);
 									oThat._aKeyFields.forEach(function(oKeyField, index) {
 										if (oKeyField.isDefault) {
-											oControl.setSelectedItem(oControl.getItems()[index]); 
+											oControl.setSelectedItem(oControl.getItems()[index]);
 										}
 									}, this);
 								}
 							} else {
 								oThat._aKeyFields.forEach(function(oKeyField, index) {
 									if (oKeyField.isDefault) {
-										oControl.setSelectedItem(oControl.getItems()[index]); 
+										oControl.setSelectedItem(oControl.getItems()[index]);
 									}
 								}, this);
 							}
@@ -855,11 +857,11 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 					if (field["ID"] === "operation") {
 						oControl = new sap.m.Select({
-							selectedKey : field["SelectedKey"],
+							selectedKey: field["SelectedKey"],
 							// autoAdjustWidth: true,
-							width : "100%",
-							layoutData : new sap.ui.layout.GridData({
-								span : field["Span"]
+							width: "100%",
+							layoutData: new sap.ui.layout.GridData({
+								span: field["Span"]
 							})
 						});
 
@@ -883,10 +885,10 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 									aOperations = oThat._oTypeOperations[oKeyField.type];
 								}
 							}
-									
+
 							aOperations.forEach(function(oOperation, index) {
 								if (oConditionGridData.operation === oOperation) {
-									oControl.setSelectedItem(oControl.getItems()[index]); 
+									oControl.setSelectedItem(oControl.getItems()[index]);
 								}
 							}, this);
 						} else {
@@ -907,7 +909,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 					break;
 
-				case "TextField" :
+				case "TextField":
 					var oCurrentKeyField = this._getCurrentKeyField(oConditionGrid.keyField);
 					oControl = this._createField(oCurrentKeyField, field, oThat, oConditionGrid);
 					oControl.oTargetGrid = oTargetGrid;
@@ -936,12 +938,12 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 					}
 					break;
 
-				case "Label" :
+				case "Label":
 					oControl = new sap.m.Label({
-						text : field["Text"] + ":",
-						visible : this.getShowLabel(),
-						layoutData : new sap.ui.layout.GridData({
-							span : field["Span"]
+						text: field["Text"] + ":",
+						visible: this.getShowLabel(),
+						layoutData: new sap.ui.layout.GridData({
+							span: field["Span"]
 						})
 					}).addStyleClass("conditionLabel");
 
@@ -955,8 +957,8 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		// create a hLayout container for the remove and add buttons
 		oButtonContainer = new sap.ui.layout.HorizontalLayout({
-			layoutData : new sap.ui.layout.GridData({
-				span : this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L1 M2 S2"
+			layoutData: new sap.ui.layout.GridData({
+				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L1 M2 S2"
 			})
 		});
 		oConditionGrid.addContent(oButtonContainer);
@@ -964,13 +966,13 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		// create "Remove button"
 		var oRemoveControl = new sap.m.Button({
-			type : sap.m.ButtonType.Transparent,
-			icon : sap.ui.core.IconPool.getIconURI("sys-cancel"),
-			press : function() {
+			type: sap.m.ButtonType.Transparent,
+			icon: sap.ui.core.IconPool.getIconURI("sys-cancel"),
+			press: function() {
 				oThat._triggerRemoveCondition(oThat, this.oTargetGrid, oConditionGrid);
 			},
-			layoutData : new sap.ui.layout.GridData({
-				span : this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M2 S2"
+			layoutData: new sap.ui.layout.GridData({
+				span: this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M2 S2"
 			})
 		});
 
@@ -981,14 +983,14 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		// create "Add button"
 		var oAddControl = new sap.m.Button({
-			type : sap.m.ButtonType.Transparent,
-			icon : sap.ui.core.IconPool.getIconURI("add"),
-			tooltip : this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
-			press : function() {
+			type: sap.m.ButtonType.Transparent,
+			icon: sap.ui.core.IconPool.getIconURI("add"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
+			press: function() {
 				oThat._triggerAddCondition(oThat, this.oTargetGrid, oConditionGrid);
 			},
-			layoutData : new sap.ui.layout.GridData({
-				span : this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M10 S10"
+			layoutData: new sap.ui.layout.GridData({
+				span: this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M10 S10"
 			})
 		});
 
@@ -1017,13 +1019,12 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		if (this._sLayoutMode) {
 			this._updateLayout({
-				name : this._sLayoutMode
+				name: this._sLayoutMode
 			});
 		}
 
 		if (typeof oConditionGridData !== "undefined") {
-			var sConditionText = oThat._getFormatedConditionText(oConditionGridData.operation, oConditionGridData.value1, oConditionGridData.value2, oConditionGridData.exclude,
-					oConditionGridData.keyField, oConditionGridData.showIfGrouped);
+			var sConditionText = oThat._getFormatedConditionText(oConditionGridData.operation, oConditionGridData.value1, oConditionGridData.value2, oConditionGridData.exclude, oConditionGridData.keyField, oConditionGridData.showIfGrouped);
 
 			oConditionGridData._oGrid = oConditionGrid;
 			oConditionGridData.value = sConditionText;
@@ -1119,19 +1120,19 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		var sCtrlType = oCurrentKeyField ? oCurrentKeyField.type : "";
 
 		var params = {
-			value : oFieldInfo["Value"],
-			width : "100%",
-			placeholder : oFieldInfo["Label"],
-			change : function() {
+			value: oFieldInfo["Value"],
+			width: "100%",
+			placeholder: oFieldInfo["Label"],
+			change: function() {
 				oThat._changeField(oThat, oConditionGrid);
 			},
-			layoutData : new sap.ui.layout.GridData({
-				span : oFieldInfo["Span"]
+			layoutData: new sap.ui.layout.GridData({
+				span: oFieldInfo["Span"]
 			})
 		};
 
 		switch (sCtrlType) {
-			case "numeric" :
+			case "numeric":
 				var oFloatFormatOptions;
 				if (oCurrentKeyField.precision || oCurrentKeyField.scale) {
 					oFloatFormatOptions = {};
@@ -1146,11 +1147,11 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 				oControl = new sap.m.Input(params);
 				break;
-			case "date" :
+			case "date":
 				oConditionGrid.oFormatter = DateFormat.getDateInstance();
 				oControl = new sap.m.DatePicker(params);
 				break;
-			default :
+			default:
 				oConditionGrid.oFormatter = null;
 				oControl = new sap.m.Input(params);
 		}
@@ -1185,9 +1186,9 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
 			oSelect.addItem(new sap.ui.core.ListItem({
-				text : sText,
-				tooltip : sText,
-				key : aOperations[iOperation]
+				text: sText,
+				tooltip: sText,
+				key: aOperations[iOperation]
 			}));
 		}
 	};
@@ -1206,9 +1207,9 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		for ( var iItem in aItems) {
 			var oItem = aItems[iItem];
 			oSelect.addItem(new sap.ui.core.ListItem({
-				key : oItem.key,
-				text : oItem.text,
-				tooltip : oItem.tooltip ? oItem.tooltip : oItem.text
+				key: oItem.key,
+				text: oItem.text,
+				tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
 			}));
 		}
 	};
@@ -1244,7 +1245,6 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		oThat._updateOperation(oThat, oTargetGrid, oConditionGrid);
 
-		
 		// update the value fields for the KeyField
 		oThat._updateValueFields(oThat, oTargetGrid, oConditionGrid);
 
@@ -1284,7 +1284,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		var fnCreateAndUpdateField = function(oCtrl, index) {
 			var oConditionGrid = oCtrl.getParent();
 			var sOldValue = oCtrl.getValue();
-			
+
 			oConditionGrid.removeContent(oCtrl);
 			//delete oConditionGrid.value1;
 			var fieldInfo = this._aConditionsFields[index];
@@ -1298,8 +1298,8 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				if (!isNaN(oValue) && oValue !== null) {
 					sValue = oConditionGrid.oFormatter.format(oValue);
 					oCtrl.setValue(sValue);
-				} 
-			} 
+				}
+			}
 			if (!sValue) {
 				oCtrl.setValue(sOldValue);
 			}
@@ -1352,7 +1352,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		if (oSelItem) {
 			oConditionGrid.operation.setSelectedKey(oSelItem.getKey());
 		} else {
-			oConditionGrid.operation.setSelectedItem(oConditionGrid.operation.getItems()[0]); 
+			oConditionGrid.operation.setSelectedItem(oConditionGrid.operation.getItems()[0]);
 		}
 	};
 
@@ -1388,7 +1388,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		var fHandledIsDefault = function(oKeyFieldItem, index) {
 			if (oKeyFieldItem.isDefault) {
-				oKeyField.setSelectedItem(oKeyField.getItems()[index]); 
+				oKeyField.setSelectedItem(oKeyField.getItems()[index]);
 			}
 		};
 
@@ -1411,9 +1411,9 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				var oItem = aItems[j];
 				if (oItem.key == null || oItem.key === "" || !oUsedItems[oItem.key] || oItem.key === sOldKey) {
 					oKeyField.addItem(new sap.ui.core.ListItem({
-						key : oItem.key,
-						text : oItem.text,
-						tooltip : oItem.tooltip ? oItem.tooltip : oItem.text
+						key: oItem.key,
+						text: oItem.text,
+						tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
 					}));
 				}
 			}
@@ -1422,7 +1422,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				oKeyField.setSelectedKey(sOldKey);
 			} else if (oKeyField.getItems().length > 0) {
 				// make at least the first item the selected item. We need this for updating the tooltip
-				oKeyField.setSelectedItem(oKeyField.getItems()[0]); 
+				oKeyField.setSelectedItem(oKeyField.getItems()[0]);
 			}
 
 			if (!oSelectCheckbox.getSelected()) {
@@ -1485,10 +1485,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				oOperation.getLayoutData().setSpan("L4 M4 S4");
 				oShowIfGrouedvalue.getLayoutData().setSpan("L4 M4 S4");
 			} else {
-				if (sOperation === sap.m.P13nConditionOperation.Initial || sOperation === sap.m.P13nConditionOperation.Ascending
-						|| sOperation === sap.m.P13nConditionOperation.Descending || sOperation === sap.m.P13nConditionOperation.Total
-						|| sOperation === sap.m.P13nConditionOperation.Average || sOperation === sap.m.P13nConditionOperation.Minimum
-						|| sOperation === sap.m.P13nConditionOperation.Maximum) {
+				if (sOperation === sap.m.P13nConditionOperation.Initial || sOperation === sap.m.P13nConditionOperation.Ascending || sOperation === sap.m.P13nConditionOperation.Descending || sOperation === sap.m.P13nConditionOperation.Total || sOperation === sap.m.P13nConditionOperation.Average || sOperation === sap.m.P13nConditionOperation.Minimum || sOperation === sap.m.P13nConditionOperation.Maximum) {
 
 					// for this operations we disable both value fields
 					oValue1.setVisible(false);
@@ -1539,16 +1536,15 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
 		}
 
-
 		var fnFormatFieldValue = function(oCtrl) {
 			var oConditionGrid = oCtrl.getParent();
 			var sValue = oCtrl.getValue();
-			
+
 			if (this.getDisplayFormat() === "UpperCase" && sValue) {
 				sValue = sValue.toUpperCase();
 				oCtrl.setValue(sValue);
 			}
-			
+
 			if (oConditionGrid.oFormatter && sValue) {
 				var oValue = oConditionGrid.oFormatter.parse(sValue);
 				if (!isNaN(oValue) && oValue !== null) {
@@ -1565,25 +1561,24 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		// update Value1 field control
 		jQuery.proxy(fnFormatFieldValue, this)(oConditionGrid.value1);
 		var oValue1 = oConditionGrid.value1.getValue();
-		var sValue1 = oValue1; 
+		var sValue1 = oValue1;
 		if (oConditionGrid.oFormatter && sValue1) {
 			oValue1 = oConditionGrid.oFormatter.parse(sValue1);
 			if (isNaN(oValue1) || oValue1 === null) {
 				sValue1 = "";
 			}
 		}
-		
+
 		// update Value2 field control
 		jQuery.proxy(fnFormatFieldValue, this)(oConditionGrid.value2);
 		var oValue2 = oConditionGrid.value2.getValue();
-		var sValue2 = oValue2; 
+		var sValue2 = oValue2;
 		if (oConditionGrid.oFormatter && sValue2) {
 			oValue2 = oConditionGrid.oFormatter.parse(sValue2);
 			if (isNaN(oValue2) || oValue2 === null) {
 				sValue2 = "";
 			}
 		}
-
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();
 		var bExclude = this.getExclude();
@@ -1604,10 +1599,10 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 			this._bIgnoreSetConditions = true;
 			this.fireDataChange({
-				key : sKey,
-				index : oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-				operation : "remove",
-				newData : null
+				key: sKey,
+				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
+				operation: "remove",
+				newData: null
 			});
 			this._bIgnoreSetConditions = false;
 			return;
@@ -1618,13 +1613,13 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 		sValue = oThat._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField, bShowIfGrouped);
 
 		var oConditionData = {
-			"value" : sValue,
-			"exclude" : bExclude,
-			"operation" : sOperation,
-			"keyField" : sKeyField,
-			"value1" : oValue1,
-			"value2" : oValue2,
-			"showIfGrouped" : bShowIfGrouped
+			"value": sValue,
+			"exclude": bExclude,
+			"operation": sOperation,
+			"keyField": sKeyField,
+			"value1": oValue1,
+			"value2": oValue2,
+			"showIfGrouped": bShowIfGrouped
 		};
 		sKey = oConditionGrid.data("_key");
 
@@ -1639,10 +1634,10 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			oSelectCheckbox.setEnabled(true);
 
 			this.fireDataChange({
-				key : sKey,
-				index : oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-				operation : sOperation,
-				newData : oConditionData
+				key: sKey,
+				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
+				operation: sOperation,
+				newData: oConditionData
 			});
 		} else {
 			delete this._oConditionsMap[sKey];
@@ -1652,10 +1647,10 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 			this._bIgnoreSetConditions = true;
 			this.fireDataChange({
-				key : sKey,
-				index : oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-				operation : "remove",
-				newData : null
+				key: sKey,
+				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
+				operation: "remove",
+				newData: null
 			});
 			this._bIgnoreSetConditions = false;
 		}
@@ -1704,10 +1699,10 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			}
 
 			this.fireDataChange({
-				key : sKey,
-				index : iIndex,
-				operation : "remove",
-				newData : null
+				key: sKey,
+				index: iIndex,
+				operation: "remove",
+				newData: null
 			});
 
 		}
@@ -1720,7 +1715,9 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	 */
 	P13nConditionPanel.prototype._updateConditionButtons = function(oTargetGrid) {
 		var iMax = parseInt(this.getMaxConditions(), 10);
-		if (iMax === -1) { iMax = 1000; }
+		if (iMax === -1) {
+			iMax = 1000;
+		}
 
 		var n = oTargetGrid.getContent().length;
 
@@ -1781,7 +1778,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	 * @public
 	 */
 	P13nConditionPanel.prototype.removeValidationErrors = function() {
-		this._oConditionsGrid.getContent().forEach(function( oConditionGrid) {
+		this._oConditionsGrid.getContent().forEach(function(oConditionGrid) {
 			var oValue1 = oConditionGrid.value1;
 			var oValue2 = oConditionGrid.value2;
 			oValue1.setValueState(sap.ui.core.ValueState.None);
@@ -1796,13 +1793,13 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 	 */
 	P13nConditionPanel.prototype.removeInvalidConditions = function() {
 		var aInvalidConditionGrids = [];
-		this._oConditionsGrid.getContent().forEach(function( oConditionGrid) {
+		this._oConditionsGrid.getContent().forEach(function(oConditionGrid) {
 			if (oConditionGrid.value1.getValueState() !== sap.ui.core.ValueState.None || oConditionGrid.value2.getValueState() !== sap.ui.core.ValueState.None) {
 				aInvalidConditionGrids.push(oConditionGrid);
 			}
 		}, this);
 
-		aInvalidConditionGrids.forEach(function( oConditionGrid) {
+		aInvalidConditionGrids.forEach(function(oConditionGrid) {
 			this._removeCondition(this, this._oConditionsGrid, oConditionGrid);
 
 			if (this.getAutoReduceKeyFieldItems()) {
@@ -1850,18 +1847,18 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				value1.setValueState(sap.ui.core.ValueState.None);
 				value2.setValueState(sap.ui.core.ValueState.None);
 			}
-		} 
-		
+		}
+
 		if (!isLast) {
 			var fnFormatFieldValue = function(oCtrl) {
 				var oConditionGrid = oCtrl.getParent();
 				var sValue = oCtrl.getValue();
-				
+
 				if (this.getDisplayFormat() === "UpperCase" && sValue) {
 					sValue = sValue.toUpperCase();
 					oCtrl.setValue(sValue);
 				}
-				
+
 				if (oConditionGrid.oFormatter && sValue) {
 					var oValue = oConditionGrid.oFormatter.parse(sValue);
 					if (!isNaN(oValue) && oValue !== null) {
@@ -1877,9 +1874,8 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 			jQuery.proxy(fnFormatFieldValue, this)(value1);
 			jQuery.proxy(fnFormatFieldValue, this)(value2);
-			
-			if ((value1.getVisible() && value1.getValueState() !== sap.ui.core.ValueState.None) || 
-				(value2.getVisible() && value2.getValueState() !== sap.ui.core.ValueState.None)) {
+
+			if ((value1.getVisible() && value1.getValueState() !== sap.ui.core.ValueState.None) || (value2.getVisible() && value2.getValueState() !== sap.ui.core.ValueState.None)) {
 				bValid = false;
 			}
 		}
@@ -1921,37 +1917,37 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 		if (sValue1 !== "" && sValue1 !== undefined) {
 			switch (sOperation) {
-				case sap.m.P13nConditionOperation.EQ :
+				case sap.m.P13nConditionOperation.EQ:
 					sConditionText = "=" + sValue1;
 					break;
-				case sap.m.P13nConditionOperation.GT :
+				case sap.m.P13nConditionOperation.GT:
 					sConditionText = ">" + sValue1;
 					break;
-				case sap.m.P13nConditionOperation.GE :
+				case sap.m.P13nConditionOperation.GE:
 					sConditionText = ">=" + sValue1;
 					break;
 
-				case sap.m.P13nConditionOperation.LT :
+				case sap.m.P13nConditionOperation.LT:
 					sConditionText = "<" + sValue1;
 					break;
 
-				case sap.m.P13nConditionOperation.LE :
+				case sap.m.P13nConditionOperation.LE:
 					sConditionText = "<=" + sValue1;
 					break;
 
-				case sap.m.P13nConditionOperation.Contains :
+				case sap.m.P13nConditionOperation.Contains:
 					sConditionText = "*" + sValue1 + "*";
 					break;
 
-				case sap.m.P13nConditionOperation.StartsWith :
+				case sap.m.P13nConditionOperation.StartsWith:
 					sConditionText = sValue1 + "*";
 					break;
 
-				case sap.m.P13nConditionOperation.EndsWith :
+				case sap.m.P13nConditionOperation.EndsWith:
 					sConditionText = "*" + sValue1;
 					break;
 
-				case sap.m.P13nConditionOperation.BT :
+				case sap.m.P13nConditionOperation.BT:
 					if (sValue2 !== "") {
 						sConditionText = sValue1 + "..." + sValue2;
 						break;
@@ -1959,39 +1955,39 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			}
 		} else {
 			switch (sOperation) {
-				case sap.m.P13nConditionOperation.Initial :
+				case sap.m.P13nConditionOperation.Initial:
 					sConditionText = "=''";
 					break;
 
-				case sap.m.P13nConditionOperation.Ascending :
+				case sap.m.P13nConditionOperation.Ascending:
 					sConditionText = "ascending";
 					break;
-				case sap.m.P13nConditionOperation.GroupAscending :
+				case sap.m.P13nConditionOperation.GroupAscending:
 					sConditionText = "ascending";
 					sConditionText += " showIfGrouped:" + bShowIfGrouped;
 					break;
 
-				case sap.m.P13nConditionOperation.Descending :
+				case sap.m.P13nConditionOperation.Descending:
 					sConditionText = "descending";
 					break;
-				case sap.m.P13nConditionOperation.GroupDescending :
+				case sap.m.P13nConditionOperation.GroupDescending:
 					sConditionText = "descending";
 					sConditionText += " showIfGrouped:" + bShowIfGrouped;
 					break;
 
-				case sap.m.P13nConditionOperation.Total :
+				case sap.m.P13nConditionOperation.Total:
 					sConditionText = "total";
 					break;
 
-				case sap.m.P13nConditionOperation.Average :
+				case sap.m.P13nConditionOperation.Average:
 					sConditionText = "average";
 					break;
 
-				case sap.m.P13nConditionOperation.Minimum :
+				case sap.m.P13nConditionOperation.Minimum:
 					sConditionText = "minimum";
 					break;
 
-				case sap.m.P13nConditionOperation.Maximum :
+				case sap.m.P13nConditionOperation.Maximum:
 					sConditionText = "maximum";
 					break;
 			}
@@ -2083,30 +2079,30 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 
 	sap.m.P13nConditionOperation = {
 		// filter operations
-		BT : "BT",
-		EQ : "EQ",
-		Contains : "Contains",
-		StartsWith : "StartsWith",
-		EndsWith : "EndsWith",
-		LT : "LT",
-		LE : "LE",
-		GT : "GT",
-		GE : "GE",
-		Initial : "Initial",
+		BT: "BT",
+		EQ: "EQ",
+		Contains: "Contains",
+		StartsWith: "StartsWith",
+		EndsWith: "EndsWith",
+		LT: "LT",
+		LE: "LE",
+		GT: "GT",
+		GE: "GE",
+		Initial: "Initial",
 
 		// sort operations
-		Ascending : "Ascending",
-		Descending : "Descending",
+		Ascending: "Ascending",
+		Descending: "Descending",
 
 		// group operations
-		GroupAscending : "GroupAscending",
-		GroupDescending : "GroupDescending",
+		GroupAscending: "GroupAscending",
+		GroupDescending: "GroupDescending",
 
 		// calculation operations
-		Total : "Total",
-		Average : "Average",
-		Minimum : "Minimum",
-		Maximum : "Maximum"
+		Total: "Total",
+		Average: "Average",
+		Minimum: "Minimum",
+		Maximum: "Maximum"
 	};
 
 	return P13nConditionPanel;
