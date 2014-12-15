@@ -1,17 +1,17 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([
+	'jquery.sap.global'
+], function(jQuery) {
 	"use strict";
-
 
 	/**
 	 * GroupPanel renderer.
 	 * @namespace
 	 */
 	var P13nGroupPanelRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -25,17 +25,17 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<section");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMGroupPanel");
-	//	oRm.addStyle("width", oControl.getWidth());
-	//	oRm.addStyle("height", oControl.getHeight());
+		//	oRm.addStyle("width", oControl.getWidth());
+		//	oRm.addStyle("height", oControl.getHeight());
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">");
-	
+
 		// render content
 		oRm.write("<div");
 		oRm.addClass("sapMGroupPanelContent");
 		oRm.addClass("sapMGroupPanelBG");
-	
+
 		oRm.writeClasses();
 		oRm.write(">");
 		var aChildren = oControl.getAggregation("content");
@@ -44,10 +44,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.renderControl(aChildren[i]);
 		}
 		oRm.write("</div>");
-	
+
 		oRm.write("</section>");
 	};
 
 	return P13nGroupPanelRenderer;
 
-}, /* bExport= */ true);
+}, /* bExport= */true);
