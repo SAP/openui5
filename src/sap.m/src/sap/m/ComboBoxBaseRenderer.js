@@ -21,6 +21,20 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		ComboBoxBaseRenderer.CSS_CLASS = "sapMComboBoxBase";
 
 		/**
+		 * Writes attributes to the control's root element.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxBaseRenderer.writeOuterAttributes = function(oRm, oControl) {
+
+			// note: in IE browsers, JAWS 15.0 announce the ComboBox only if
+			// the role combobox is set to the control's root element
+			oRm.writeAttribute("role", "combobox");
+		};
+
+		/**
 		 * Add attributes to the input element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
