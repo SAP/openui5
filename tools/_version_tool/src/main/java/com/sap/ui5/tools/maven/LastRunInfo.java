@@ -47,18 +47,18 @@ public class LastRunInfo {
    
   public LastRunInfo (File root, String profile) throws IOException {
     this.profile = profile;
+    versionTool = new VersionTool();
+    versionTool.changes = new HashMap<String, Properties>();
     lastVersionToolResultsFile = new File(root, ".version-tool.xml");
     if ( lastVersionToolResultsFile.canRead() ) {
       try {
         //try the old format
         Properties diffs = new Properties();
         diffs.loadFromXML(new FileInputStream(lastVersionToolResultsFile));
-        versionTool = new VersionTool();
         setLastCommitId((String)diffs.get(LAST_COMMIT_ID));
         if (getLastCommitId() != null){
           diffs.remove(LAST_COMMIT_ID);
         }
-        versionTool.changes = new HashMap<String, Properties>();
         versionTool.changes.put(profile, diffs);
       } catch (InvalidPropertiesFormatException e) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
