@@ -2,7 +2,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<P13nDialog ok="handleClose" cancel="handleClose" showReset="true"
-		reset="handleReset" defaultType="sort">
+		reset="handleReset" initialVisiblePanelType="sort">
 		<panels>
 			<P13nColumnsPanel title="Columns" visible="true" addColumnsItem="onAddColumnsItem"
 				type="columns"

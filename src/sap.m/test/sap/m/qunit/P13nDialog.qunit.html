@@ -46,7 +46,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nDialog.getDefaultType(), "sort", "getDefaultType is 'sort'");
+			strictEqual(oP13nDialog.getInitialVisiblePanelType(), "sort", "getInitialVisiblePanelType is 'sort'");
 			strictEqual(oP13nDialog.getShowReset(), false, "getShowReset is false");
 			strictEqual(oP13nDialog.getVerticalScrolling(), true, "getVerticalScrolling is true");
 			strictEqual(oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
@@ -62,7 +62,7 @@
 			// cleanup
 			oP13nDialog.destroy();
 		});
-
+		
 		/*test("destroy", function() {
 
 			// system under test			
@@ -127,7 +127,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nDialog.getDefaultType(), "filter", "getDefaultType is 'filter'");
+			strictEqual(oP13nDialog.getInitialVisiblePanelType(), "filter", "getInitialVisiblePanelType is 'filter'");
 			strictEqual(oP13nDialog._getSegmentedButton(), null, "segmented button does not exist");
 			ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(
 					"P13NDIALOG_VIEW_SETTINGS"), "default title");
@@ -156,7 +156,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nDialog.getDefaultType(), "sort", "getDefaultType is 'sort'");
+			strictEqual(oP13nDialog.getInitialVisiblePanelType(), "sort", "getInitialVisiblePanelType is 'sort'");
 			ok(oP13nDialog._getSegmentedButton(), "segmented button does exist");
 			strictEqual(oP13nDialog._getSegmentedButton().getButtons().length, 2, "segmented button has 2 buttons");
 			strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(
@@ -192,7 +192,7 @@
 			oP13nDialog._switchPanel(oButton);
 
 			// assertions
-			strictEqual(oP13nDialog.getDefaultType(), "sort", "getDefaultType is 'sort'");
+			strictEqual(oP13nDialog.getInitialVisiblePanelType(), "sort", "getInitialVisiblePanelType is 'sort'");
 			strictEqual(oP13nDialog._getSegmentedButton().getButtons().length, 2, "segmented button has 2 buttons");
 			deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "switched panel is shown");
 			strictEqual(oP13nDialog._getSegmentedButton().getSelectedButton(), oP13nDialog._getButtonByPanel(oPanel).getId(),

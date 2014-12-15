@@ -1068,7 +1068,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	
 	/**
-	 * tbd
+	 * Type of Panels used on the Personalization Dialog
 	 *
 	 * @enum {string}
 	 * @public
@@ -1077,25 +1077,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.P13nPanelType = {
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for sorting
 		 * @public
 		 */
 		sort : "sort",
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for filtering
 		 * @public
 		 */
 		filter : "filter",
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for grouping
 		 * @public
 		 */
 		group : "group",
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for columns setting
 		 * @public
 		 */
 		columns : "columns"

@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 				/**
 				 * tbd
 				 */
-				defaultType : {
+				initialVisiblePanelType : {
 					type : "sap.m.P13nPanelType",
 					group : "Misc",
 					defaultValue : null
@@ -379,12 +379,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	};
 
 	/**
-	 * Sets property 'visible' for oPanel regarding the 'defaultType' property and number of content objects.
+	 * Sets property 'visible' for oPanel regarding the 'initialVisiblePanelType' property and number of content objects.
 	 * 
 	 * @private
 	 */
 	P13nDialog.prototype._setVisibilityOfPanel = function(oPanel) {
-		var bVisible = this.getDefaultType() === oPanel.getType() || this.getContent().length === 1;
+		var bVisible = this.getInitialVisiblePanelType() === oPanel.getType() || this.getContent().length === 1;
 		oPanel.setVisible(bVisible);
 		if (bVisible) {
 			this._setVisibilityOfOtherPanels(oPanel, false);
@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 
 	P13nDialog.prototype.onBeforeRendering = function() {
 		if (this.getVisiblePanel()) {
-			this.setDefaultType(this.getVisiblePanel().getType());
+			this.setInitialVisiblePanelType(this.getVisiblePanel().getType());
 		}
 		Dialog.prototype.onBeforeRendering.apply(this, arguments);
 	};
