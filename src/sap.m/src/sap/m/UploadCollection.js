@@ -503,6 +503,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				icon : "sap-icon://edit",
 				type : sap.m.ButtonType.Transparent,
 				enabled : bEnabled,
+				visible : oItem.getVisibleEdit(),
 				press : function(oEvent) {
 					sap.m.UploadCollection.prototype._handleEdit(oEvent, that);
 				}
@@ -522,7 +523,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				id : sButtonId,
 				icon : "sap-icon://sys-cancel",
 				type : sap.m.ButtonType.Transparent,
-				enabled : bEnabled
+				enabled : bEnabled,
+				visible : oItem.getVisibleDelete()
 //				press : function(oEvent) {
 //					sap.m.UploadCollection.prototype._handleAbort(oEvent, that);
 //				}
@@ -628,7 +630,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					src : sap.m.UploadCollection.prototype._getThumbnail(sThumbnailUrl, sFileNameLong),
 					decorative : bDecorative,
 					press : function(oEvent) {
-						sap.m.UploadCollection.prototype._triggerLink(oEvent);
+						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
 					}
 				}).addStyleClass("sapMUCItemImage");
 			} else {
@@ -636,7 +638,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					src : sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong),
 					decorative : bDecorative,
 					press : function(oEvent) {
-						sap.m.UploadCollection.prototype._triggerLink(oEvent);
+						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
 					}
 				}).setSize('2.5rem').addStyleClass("sapMUCItemIcon");
 			}
@@ -1244,15 +1246,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @param {Object} oEvent of the click/press of the icon/image
 	 * @private
 	 */
-	UploadCollection.prototype._triggerLink = function(oEvent) {
+	UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
 		var sLinkId = null;
-		if (oEvent.oSource.sId.lastIndexOf("ia_iconHL") > 0) {
-			sLinkId = oEvent.oSource.sId.split("-ia_iconHL")[0] + "-ta_filenameHL";
-		} else {
-			sLinkId = oEvent.oSource.sId.split("-ia_imageHL")[0] + "-ta_filenameHL";
-		}
+		var iLine;
+		var sId = oEvent.getParameter("id");
 
-		sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+		if (oContext.editModeItem) {
+			iLine = oContext.editModeItem.split("-").pop();
+			sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), false);
+			return;
+		} else {
+			sLinkId = sId.split(sId.split("-").pop())[0] + "ta_filenameHL";
+			sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+		}
 	};
 
 	// ================================================================================
@@ -1329,12 +1335,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (!sFocusId) {
 			return;
 		}
-		var oObj = jQuery.sap.byId(sFocusId);
-		var oListObj = oObj.parentsUntil("ul");
-		var oFocusObj = oListObj.filter("li");
-		oFocusObj.attr("tabIndex", -1);
+		var $oObj = jQuery.sap.byId(sFocusId);
+		var $oListObj = $oObj.parentsUntil("ul");
+		var $oFocusObj = $oListObj.filter("li");
+		$oFocusObj.attr("tabIndex", -1);
 
-		jQuery.sap.focus(oFocusObj);
+		jQuery.sap.focus($oFocusObj);
 	};
 
 	/**
@@ -1359,10 +1365,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
 				break;
 			case "-cancelButton" :
+				oEvent.preventDefault();
 				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, oContext.editModeItem);
+				break;
+			case "-ia_iconHL" :
+			case "-ia_imageHL" :
+				//Edit mode
+				var iLine = oContext.editModeItem.split("-").pop();
+				sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), false);
 				break;
 			case "ia_iconHL" :
 			case "ia_imageHL" :
+				//Display mode
 				sLinkId = oEvent.target.id.split(sTarget)[0] + "ta_filenameHL";
 				sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
 				break;
