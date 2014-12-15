@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Data binding test page with Tree sap.ui.commons.Tree using TreeBinding</title>
+
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_bluecrystal"
+	>
+    </script>
+
+	<script type="text/javascript">
+
+  		 try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+ 		 try{
+ 			sap.ui.getCore().loadLibrary("sap.ui.layout");
+ 		}catch(e){
+ 			alert("This test page requires the library 'sap.ui.layout' which is not available.");
+ 			throw(e);
+ 		}
+
+		function createTreeData(length, depth) {
+			var oData = {
+				name: "Node",
+				children: []
+			}, iCount = 0;
+			function create(oNode, currentDepth) {
+				if (currentDepth < depth) {
+					for (var i = 0; i < length; i++) {
+						iCount++;
+						var oChildNode = {
+							name: oNode.name + "." + i,
+							children: []
+						};
+						create(oChildNode, currentDepth + 1);
+						oNode.children.push(oChildNode);
+					}
+				}
+			};
+			create(oData, 0);
+			oModel.setProperty("/count", iCount);
+			return oData;
+		}
+		
+	    // data has to be tree structured
+	    var oModel = new sap.ui.model.json.JSONModel({
+	    		length: 3,
+	    		depth: 3,
+	    		count: 0,
+	    		jsonTime: 0,
+	    		bindingTime: 0,
+	    		renderTime: 0,
+	    		expanded: false,
+	    		icons: false
+	    	}),
+	    	oTreeModel = new sap.ui.model.json.JSONModel(createTreeData(3, 3));
+	    
+	    sap.ui.getCore().setModel(oModel);
+	    
+	    var oForm = new sap.ui.layout.form.SimpleForm({
+	    	content: [
+	    		new sap.ui.commons.Label({text: "Child nodes per node"}),
+	    		new sap.ui.commons.TextField({value: "{/length}"}),
+	    		new sap.ui.commons.Label({text: "Hierarchy depth"}),
+	    		new sap.ui.commons.TextField({value: "{/depth}"}),
+	    		new sap.ui.commons.Label({text: "Number of nodes"}),
+	    		new sap.ui.commons.TextView({text: "{/count}"}),
+	    		new sap.ui.commons.Label({text: "Time to create JSON (ms)"}),
+	    		new sap.ui.commons.TextView({text: "{/jsonTime}"}),
+	    		new sap.ui.commons.Label({text: "Time to create controls"}),
+	    		new sap.ui.commons.TextView({text: "{/bindingTime}"}),
+	    		new sap.ui.commons.Label({text: "Time to render"}),
+	    		new sap.ui.commons.TextView({text: "{/renderTime}"}),
+	    		new sap.ui.commons.Label({text: "Initial expanded"}),
+	    		new sap.ui.commons.CheckBox({checked: "{/expanded}"}),
+	    		new sap.ui.commons.Label({text: "Nodes have icons"}),
+	    		new sap.ui.commons.CheckBox({checked: "{/icons}"}),
+	    		new sap.ui.commons.Button({text: "Update Tree data", press: function() {
+	    			var iTime, 
+	    				iLength = oModel.getProperty("/length"),
+	    				iDepth = oModel.getProperty("/depth"),
+	    				oData;
+	    			oTreeModel.setData({});
+	    			sap.ui.getCore().applyChanges();
+	    			iTime = new Date().valueOf()
+	    			oData = createTreeData(iLength, iDepth)
+	    			oModel.setProperty("/jsonTime", new Date().valueOf() - iTime);
+	    			iTime = new Date().valueOf();
+	    			oTreeModel.setData(oData);
+	    			oModel.setProperty("/bindingTime", new Date().valueOf() - iTime);
+	    			iTime = new Date().valueOf();
+	    			sap.ui.getCore().applyChanges();
+	    			oModel.setProperty("/renderTime", new Date().valueOf() - iTime);
+	    		}}),
+	    	]
+	    });
+	    oForm.placeAt("form");
+	    
+	    
+	    var oTree = new sap.ui.commons.Tree({
+	    	models: {
+	    		tree: oTreeModel
+	    	},
+	    	nodes: {
+	    		path: "tree>/",
+	    		template: sap.ui.commons.TreeNode({
+	    			expanded: false,
+	    			text: "{tree>name}"
+	    		}),
+	    		parameters: {
+	    			arrayNames: ["children"]
+	    		}
+	    	}
+	    });
+	    oTree.placeAt("tree");
+	    
+	    var oExpandedBinding = oModel.bindProperty("/expanded");
+	    oExpandedBinding.attachChange(function() {
+	    	oTree.getBindingInfo("nodes").template.setExpanded(oExpandedBinding.getValue());
+	    });
+
+	    var oIconsBinding = oModel.bindProperty("/icons");
+	    oIconsBinding.attachChange(function() {
+	    	oTree.getBindingInfo("nodes").template.setIcon(oIconsBinding.getValue() ? "sap-icon://lead" : null);
+	    });
+
+	    
+	</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Large tree testpage</h1>
+		<div id="form"></div>
+		<div id="tree"></div>
+	</body>
+</html>
