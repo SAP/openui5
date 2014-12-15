@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -25,9 +26,12 @@ import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
 import com.sap.ui5.tools.maven.LastRunInfo;
 import com.sap.ui5.tools.maven.MvnClient;
 import com.sap.ui5.tools.maven.MyReleaseButton;
+import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingFilter;
+import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingTypes;
 
 public class Git2P4Main {
 
+  private static final String UPDATE_ONLY_CORE_FILTER_NAME = "update-only-core";
   private static final String RELEASE_NOTES = "release-notes";
   private static final String TOOLS_VERSION_HELPER_CORE_VERSION = "tools/_git2p4/sapui5-core-version";
   static final GitClient git = new GitClient();
@@ -82,6 +86,7 @@ public class Git2P4Main {
   }
   
   static Context context = new Context();
+  private static ProcessingFilter filter = new ProcessingFilter(); 
   
   static void updateRepository(Mapping repo) throws IOException {
     git.setRepository(repo.gitRepository);
@@ -228,7 +233,7 @@ public class Git2P4Main {
       git.checkout("origin/" + branch);
 
       Map<String,String[]> suspiciousChanges = new TreeMap<String,String[]>();
-      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, contributorsVersions, suspiciousChanges);
+      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, contributorsVersions, filter, suspiciousChanges);
 
       git.addAll();
 
@@ -733,6 +738,8 @@ public class Git2P4Main {
         useLastCommit = false;
       } else if ( "--do-not-update-contributors".equals(args[i]) ) {
         skipContributorsVersions = true;
+      } else if ( "--update-only-core".equals(args[i]) ) {
+        filter = new ProcessingFilter(UPDATE_ONLY_CORE_FILTER_NAME, EnumSet.of(ProcessingTypes.Sapui5CoreVersion));
       } else if ( "--rebuild".equals(args[i]) ) {
         command = "noop";
       } else if ( args[i].startsWith("-") ) {
@@ -778,6 +785,9 @@ public class Git2P4Main {
     } else if ( "dist".equals(mappingSet) ) {
       createUI5DistMappings(gitDir, p4depotPath, branch);
       applyContributorsVersions = true;
+      if (!UPDATE_ONLY_CORE_FILTER_NAME.equals(filter.name)) {
+        filter.name = (EnumSet.of(ReleaseOperation.PatchDevelopment, ReleaseOperation.MilestoneDevelopment).contains(op)) ? "after" : "before";
+      }
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }

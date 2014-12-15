@@ -1,0 +1,51 @@
+{
+  "changes": {
+    "update-core-only": {
+      "pom.xml": "3",
+      "osgi-tools-dist/com.sap.ui5.tools.build.feature/pom.xml": "1",
+      "osgi-tools-dist/com.sap.ui5.tools.updatesite/site.xml": "1",
+      "osgi-runtime-dist/com.sap.ui5.branding/META-INF/MANIFEST.MF": "1",
+      "sapui5-sdk-dist/pom.xml": "2",
+      "osgi-tools-dist/com.sap.ui5.tools.build.feature/feature.xml": "1",
+      "osgi-runtime-dist/com.sap.ui5.updatesite/site.xml": "2",
+      "sapui5-incubation/pom.xml": "2",
+      "osgi-tools-dist/com.sap.ui5.org.mozilla.rhino/META-INF/MANIFEST.MF": "1",
+      "osgi-runtime-dist/com.sap.ui5.target/pom.xml": "1",
+      "merged-jsdoc/pom.xml": "2",
+      "osgi-tools-dist/com.sap.ui5.tools.branding/META-INF/MANIFEST.MF": "1",
+      "sapui5-dist-hana/pom.xml": "2",
+      "osgi-tools-dist/com.sap.ui5.tools.branding/pom.xml": "1",
+      "osgi-tools-dist/com.sap.ui5.org.antlr/META-INF/MANIFEST.MF": "1",
+      "osgi-runtime-dist/com.sap.ui5.updatesite/pom.xml": "1",
+      "osgi-runtime-dist/com.sap.ui5.runtime.feature/feature.xml": "1",
+      "osgi-tools-dist/pom.xml": "2",
+      "osgi-runtime-dist/com.sap.ui5.target/consumer.target": "1",
+      "sap.fiori/pom.xml": "2",
+      "osgi-runtime-dist/com.sap.ui5.runtime.feature/pom.xml": "1",
+      "osgi-runtime-dist/com.sap.ui5.uilib.feature/feature.xml": "1",
+      "poms/jslib/pom.xml": "2",
+      "osgi-runtime-dist/com.sap.ui5.branding/pom.xml": "1",
+      "uilib-collection/pom.xml": "10",
+      "sapui5-dist-abap/pom.xml": "1",
+      "osgi-tools-dist/com.sap.ui5.org.antlr/pom.xml": "1",
+      "assemble-drop/pom.xml": "2",
+      "sapui5-mobile/pom.xml": "2",
+      "sapui5-dist/pom.xml": "2",
+      "qunit-testrunner/pom.xml": "2",
+      "osgi-tools-dist/com.sap.ui5.org.mozilla.rhino/pom.xml": "1",
+      "osgi-tools-dist/com.sap.ui5.tools.updatesite/pom.xml": "1",
+      "osgi-runtime-dist/pom.xml": "2",
+      "sapui5-dist-helium/pom.xml": "1",
+      "osgi-runtime-dist/com.sap.ui5.uilib.feature/pom.xml": "1",
+      "osgi-runtime-dist/com.sap.ui5.resource.osgi/pom.xml": "1",
+      "poms/webapp/pom.xml": "2",
+      "runtime-collection/pom.xml": "1",
+      "osgi-tools-dist/com.sap.ui5.tools.target/pom.xml": "1",
+      "poms/uilib/pom.xml": "2",
+      "osgi-runtime-dist/com.sap.ui5.resource.osgi/META-INF/MANIFEST.MF": "1"
+    },
+    "default": {
+      "pom.xml": "2"
+    }
+  }
+}
