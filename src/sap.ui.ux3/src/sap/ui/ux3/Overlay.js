@@ -49,39 +49,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		events : {
 	
 			/**
-			 * Event is fired when the ThingInspector is closed
+			 * Event is fired when the Overlay starts closing
 			 */
 			close : {allowPreventDefault : true,
 				parameters : {
 	
 					/**
-					 * The Id of the Thing which is inspected in this ThingInspector instance
+					 * The Id of the Overlay instance
+					 */
+					id : {type : "string"}
+				}
+			}, 
+			
+			/**
+			 * Event is fired when the Overlay is closed
+			 */
+			closed : {allowPreventDefault : true,
+				parameters : {
+	
+					/**
+					 * The Id of the Overlay instance
 					 */
 					id : {type : "string"}
 				}
 			}, 
 	
 			/**
-			 * Event is fired when the 'Open' button of the ThingInspector is clicked
+			 * Event is fired when the 'Open' button of the Overlay is clicked
 			 */
 			openNew : {
 				parameters : {
 	
 					/**
-					 * The Id of the Thing which is inspected in this ThingInspector instance
+					 * The Id of the Overlay instance
 					 */
 					id : {type : "string"}
 				}
 			}, 
 	
 			/**
-			 * Event is fired when the ThingInspector is opened
+			 * Event is fired when the Overlay is opened
 			 */
 			open : {
 				parameters : {
 	
 					/**
-					 * The Id of the Thing which is inspected in this ThingInspector instance
+					 * The Id of the Overlay instance
 					 */
 					id : {type : "string"}
 				}
@@ -112,7 +125,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 				jQuery.sap.focus(domRef);
 			}
 		});
-		
+		this._oPopup.attachClosed(function(oEvent){
+			that.fireClosed({id : that.getId()});
+		});
 		this._overridePopupEventing();
 	};
 	
