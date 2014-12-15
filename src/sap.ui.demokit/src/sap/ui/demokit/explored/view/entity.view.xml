@@ -64,7 +64,7 @@
 							key="about"
 							text="About"
 							visible="{/show/about}" >
-							<Text text="{/description}" class="entityAbout" />
+							<Text text="{/description}" />
 							<Table
 								class="myTable"
 								visible="{/show/values}"

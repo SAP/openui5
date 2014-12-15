@@ -1,35 +1,42 @@
 <mvc:View
 	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 
 			<Label text="Text" />
 			<Input
 				type="Text"
+				class="sapUiSmallMarginBottom"
 				placeholder="Enter Text ..." />
 
 			<Label text="Email" />
 			<Input
 				type="Email"
+				class="sapUiSmallMarginBottom"
 				placeholder="Enter Email ..." />
 
 			<Label text="Telephone" />
 			<Input
 				type="Tel"
+				class="sapUiSmallMarginBottom"
 				placeholder="Enter Telephone Number ..." />
 
 			<Label text="Number" />
 			<Input
 				type="Number"
+				class="sapUiSmallMarginBottom"
 				placeholder="Enter a Number ..." />
 
 			<Label text="URL" />
 			<Input
 				type="Url"
+				class="sapUiSmallMarginBottom"
 				placeholder="Enter URL ..." />
-		</items>
-	</VBox>
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

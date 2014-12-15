@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="panelBoxContainer sapUiFioriObjectPage"
+		class="panelBoxContainer"
 		width="100%" >
 		<l:content>
 

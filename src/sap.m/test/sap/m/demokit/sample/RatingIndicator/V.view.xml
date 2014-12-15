@@ -3,11 +3,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent">
-		<RatingIndicator maxValue="8" value="4"   tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="7" value="3.5" tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="6" value="3"   tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="5" value="2.5" />
-		<RatingIndicator maxValue="4" value="2" />
+		class="sapUiContentPadding">
+		<RatingIndicator maxValue="8" class="sapUiSmallMarginBottom" value="4"   tooltip="Rating Tooltip" />
+		<RatingIndicator maxValue="7" class="sapUiSmallMarginBottom" value="3.5" tooltip="Rating Tooltip" />
+		<RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="3"   tooltip="Rating Tooltip" />
+		<RatingIndicator maxValue="5" class="sapUiSmallMarginBottom" value="2.5" />
+		<RatingIndicator maxValue="4" class="sapUiSmallMarginBottom" value="2" />
 	</l:VerticalLayout>
 </mvc:View>

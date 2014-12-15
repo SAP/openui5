@@ -4,7 +4,7 @@
 	xmlns="sap.m">
 	<Page
 		title="Centered Title"
-		class="marginBoxContent"
+		class="sapUiContentPadding"
 		showNavButton="true" >
 		<headerContent>
 			<Button icon="sap-icon://action" />

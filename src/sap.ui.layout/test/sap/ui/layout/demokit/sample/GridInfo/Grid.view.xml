@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<l:Grid
 		binding="{/PersonCollection}"
-		class="gridMarginTop"
+		class="sapUiSmallMarginTop"
 		hSpacing="2"
 		defaultSpan="L6 M6 S10">
 		<l:content>

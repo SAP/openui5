@@ -4,7 +4,7 @@
 	xmlns="sap.m">
 	<Page
 		showHeader="false"
-		class="marginBoxContent" >
+		class="sapUiContentPadding" >
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
@@ -18,13 +18,12 @@
 		</subHeader>
 		<content>
 			<VBox width="100%" alignItems="Center">
-				<SegmentedButton selectedButton="satellite">
+				<SegmentedButton selectedButton="satellite" class="sapUiSmallMarginBottom" >
 					<Button text="Map" />
 					<Button text="Satellite" id="satellite" />
 					<Button text="Hybrid" />
 				</SegmentedButton>
-				<SegmentedButton selectedButton="competitor"
-					class="marginOnlyTop">
+				<SegmentedButton selectedButton="competitor">
 					<Button icon="sap-icon://taxi" />
 					<Button icon="sap-icon://lab" />
 					<Button icon="sap-icon://competitor" id="competitor" />

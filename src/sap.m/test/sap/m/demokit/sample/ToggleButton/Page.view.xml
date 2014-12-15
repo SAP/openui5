@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<Page
 		title="Page"
-		class="marginBoxContent" >
+		class="sapUiContentPadding" >
 		<customHeader>
 			<Bar>
 				<contentMiddle>

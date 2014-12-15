@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<l:VerticalLayout
 		binding="{/ProductCollection/0}"
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<ObjectIdentifier title="{Name}" text="{Description}" titleActive="true" titlePress="titleClicked"/>

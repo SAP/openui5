@@ -3,13 +3,15 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 
 			<Label text="Name" />
 			<Input
 				id="nameInput"
+				class="sapUiSmallMarginBottom"
 				type="Text"
 				placeholder="Enter Name ..."
 				valueStateText="Name must not be empty. Maximum 10 characters."
@@ -25,6 +27,7 @@
 			<Label text="EMail" />
 			<Input
 				id="emailInput"
+				class="sapUiSmallMarginBottom"
 				type="Email"
 				placeholder="Enter EMail ..."
 				valueStateText="EMail must be a valid email address."
@@ -36,6 +39,6 @@
 			<Button
 				text="Continue"
 				press="handleContinue" />
-		</items>
-	</VBox>
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

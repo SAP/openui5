@@ -2,7 +2,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:Grid defaultSpan="L3 M4 S6" class="gridMarginTop">
+	<l:Grid defaultSpan="L3 M4 S6" class="sapUiSmallMarginTop">
 		<l:content>
 			<StandardListItem
 				title="Active"

@@ -5,7 +5,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="navigationExamples sapUiFioriObjectPage"
+		class="navigationExamples"
 		width="100%" >
 		<l:content>
 

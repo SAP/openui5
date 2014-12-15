@@ -2,7 +2,6 @@
 /* Public, For Samples */
 
 .sapUiExploredWarning {
-	margin : 1rem;
 	padding : 1rem;
 	color : red;
 	border: 1px red solid;
@@ -46,9 +45,6 @@
 	text-decoration: line-through;
 }
 
-.entityAbout {
-	margin: 1rem;
-}
 .sapMListTbl .entitySampleName.sapMText  {
 	font-weight: bold;
 }
@@ -77,7 +73,7 @@ code {
 }
 
 /* Samples */
-
+/*TODO remove once comp and viz explored samples are updated*/
 .marginOnlyTop {
 	margin-top: 1em;
 }
@@ -103,27 +99,30 @@ code {
 	margin: 1em 0 0 1em;
 }
 
+/*TODO remove once comp and viz explored samples are updated*/
 /* Margins for content in Vertical Layout */
 .marginVerticalContent.sapUiVlt {
 	margin: 1em;
 }
+/*TODO remove once comp and viz explored samples are updated*/
 .marginVerticalContent .sapUiVltCell:not(:first-child) {
 	margin-top: 1em;
 }
 
+/*TODO remove once comp and viz explored samples are updated*/
 /* Margins for content in VBox */
 .sapMVBox.marginBoxContent{
 	padding: 1em;
 }
-.marginBoxContent .description {
-	margin-top: 1em;
-}
+/*TODO remove once comp and viz explored samples are updated*/
 .sapMPage.marginBoxContent > section > .sapMPageScroll{
 	padding: 1rem;
 }
+/*TODO remove once comp and viz explored samples are updated*/
 .gridMarginTop {
 	margin-top: 1rem;
 }
+/*TODO remove once comp and viz explored samples are updated*/
 .iconTabBarPaddingTop .sapMITBContent {
 	padding-top: 1rem;
 }
@@ -138,7 +137,8 @@ code {
 	margin: 3px;
 	padding: 3px;
 }
-/* Provide IconTabBar content padding */
+/*TODO remove once comp and viz explored samples are updated*/
+/*Provide IconTabBar content padding */
 .sap-phone .iconTabBarPaddingTop .sapMITBContent {
 	padding: 1rem;
 }

@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<IconTabBar
-		class="iconTabBarPaddingTop"
+		class="sapUiContentPadding"
 		id="idIconTabBarMulti"
 		expanded="{device>/isNoPhone}">
 		<items>

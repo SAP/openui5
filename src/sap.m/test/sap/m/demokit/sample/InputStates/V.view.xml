@@ -1,16 +1,17 @@
 <mvc:View
 	controllerName="sap.m.sample.InputStates.C"
 	xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 
 			<Label text="Product not editable" />
 			<Input
 				id="InputNoEdit"
+				class="sapUiSmallMarginBottom"
 				type="Text"
 				placeholder="Product..."
 				enabled="true"
@@ -20,6 +21,7 @@
 			<Label text="Product not enabled" />
 			<Input
 				id="InputDisabled"
+				class="sapUiSmallMarginBottom"
 				type="Text"
 				placeholder="Product ..."
 				enabled="false"
@@ -28,6 +30,7 @@
 			<Label text="Product editable" />
 			<Input
 				id="InputEdit"
+				class="sapUiSmallMarginBottom"
 				type="Text"
 				placeholder="Enter Product..."
 				enabled="true"
@@ -37,6 +40,7 @@
 			<Label text="Product with Value Help" />
 			<Input
 				id="InputValueHelp"
+				class="sapUiSmallMarginBottom"
 				type="Text"
 				placeholder="Enter Product..."
 				enabled="true"
@@ -48,6 +52,7 @@
 			<Label text="Product with Value Help Only" />
 			<Input
 				id="productInputVHO"
+				class="sapUiSmallMarginBottom"
 				type="Text"
 				placeholder="Enter Product..."
 				enabled="true"
@@ -56,6 +61,6 @@
 				valueHelpOnly="true"
 				valueHelpRequest="handleValueHelp"
 			/>
-		</items>
-	</VBox>
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>
