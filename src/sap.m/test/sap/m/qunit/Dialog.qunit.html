@@ -558,6 +558,39 @@
 				});
 			});
 
+			test("Setting starting and ending buttons", function() {
+				// Arrange
+				var oDialog = new sap.m.Dialog();
+				var testButton = new sap.m.Button();
+				var testButton2 = new sap.m.Button();
+
+				// Act
+				oDialog.setLeftButton(testButton);
+				oDialog.setRightButton(testButton2);
+
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				strictEqual(oDialog.getLeftButton(), testButton.getId(), 'Setting the left button');
+				strictEqual(oDialog.getRightButton(), testButton2.getId(), 'Setting the left button');
+
+				// Clean up
+				oDialog.destroy();
+			});
+
+			test("Setting name aggregation title", function() {
+				// Arrange
+				var oDialog = new sap.m.Dialog();
+
+				// Assert
+				strictEqual(oDialog._composeAggreNameInHeader('Begin'), 'contentLeft', '"Begin" should set the dialog in right position');
+				strictEqual(oDialog._composeAggreNameInHeader('End'), 'contentRight', '"End" should set the dialog in right position');
+				strictEqual(oDialog._composeAggreNameInHeader('-different'), 'content-different', 'Custom position will set custom header');
+
+				// Clean up
+				oDialog.destroy();
+			});
+
 			module("Initial focus");
 
 			test("Association initialFocus", function() {
