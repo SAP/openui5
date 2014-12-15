@@ -109,6 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		// Initialize the ItemNavigation
 		this._oItemNavigation = new ItemNavigation().setCycling(false);
 		this.addDelegate(this._oItemNavigation);
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	
 		if (jQuery.sap.touchEventMode === "ON") {
 			var fnTouchStart = function(evt) {
