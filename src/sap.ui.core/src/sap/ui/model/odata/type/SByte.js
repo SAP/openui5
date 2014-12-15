@@ -6,6 +6,8 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	function(Int) {
 	"use strict";
 
+	var oRange = {minimum: -128, maximum: 127};
+
 	/**
 	 * Constructor for a primitive type <code>Edm.SByte</code>.
 	 *
@@ -31,11 +33,31 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 		/** @lends sap.ui.model.odata.type.SByte.prototype */
 		{
 			constructor : function () {
-				this.oConstraints = {minimum: -128, maximum: 127};
 				Int.apply(this, arguments);
-				this.sName = "sap.ui.model.odata.type.SByte";
 			}
 		});
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {String}
+	 *   the type's name
+	 * @public
+	 */
+	SByte.prototype.getName = function () {
+		return "sap.ui.model.odata.type.SByte";
+	};
+
+	/**
+	 * Returns the type's supported range as object with properties <code>minimum</code> and
+	 * <code>maximum</code>.
+	 *
+	 * @returns {object} the range
+	 * @protected
+	 */
+	SByte.prototype.getRange = function () {
+		return oRange;
+	};
 
 	return SByte;
 });
