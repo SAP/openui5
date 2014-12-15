@@ -797,6 +797,7 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 				case "ComboBox" :
 					if (field["ID"] === "keyField") {
 						//oControl = new sap.m.ComboBox({
+						//oControl.setForceSelection(true); 
 						oControl = new sap.m.Select({
 							selectedKey : field["SelectedKey"],
 							// autoAdjustWidth: true,
@@ -875,7 +876,15 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 						oThat._updateOperation(oThat, oTargetGrid, oConditionGrid);
 
 						if (typeof oConditionGridData !== "undefined") {
-							oThat._oTypeOperations["default"].forEach(function(oOperation, index) {
+							var oKeyField = oThat._getCurrentKeyField(oConditionGrid.keyField);
+							var aOperations = oThat._oTypeOperations["default"];
+							if (oKeyField) {
+								if (oKeyField.type && oThat._oTypeOperations[oKeyField.type]) {
+									aOperations = oThat._oTypeOperations[oKeyField.type];
+								}
+							}
+									
+							aOperations.forEach(function(oOperation, index) {
 								if (oConditionGridData.operation === oOperation) {
 									oControl.setSelectedItem(oControl.getItems()[index]); 
 								}
@@ -1869,7 +1878,8 @@ function(jQuery, library, Control, DateFormat, NumberFormat) {
 			jQuery.proxy(fnFormatFieldValue, this)(value1);
 			jQuery.proxy(fnFormatFieldValue, this)(value2);
 			
-			if (value1.getValueState() !== sap.ui.core.ValueState.None || value2.getValueState() !== sap.ui.core.ValueState.None) {
+			if ((value1.getVisible() && value1.getValueState() !== sap.ui.core.ValueState.None) || 
+				(value2.getVisible() && value2.getValueState() !== sap.ui.core.ValueState.None)) {
 				bValid = false;
 			}
 		}
