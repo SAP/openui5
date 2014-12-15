@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>sap.m.UploadCollection</title>
-<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
 </script>
 
@@ -236,7 +236,6 @@
 	var fnTypeMissmatch = function(oEvent) {
 		sap.m.MessageToast.show("File type mismatch");
 	};
-
 	var fnUploadComplete = function(oEvent) {
 		if (oEvent) {
 			var oData = oModel.getData();
