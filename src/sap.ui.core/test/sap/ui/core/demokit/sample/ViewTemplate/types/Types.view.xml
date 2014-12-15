@@ -8,6 +8,9 @@
 	<VBox>
 		<Button text="Save" press="onSave" />
 		<form:SimpleForm>
+<!--TODO: sap.ui.model.odata.type.Binary not yet available
+			<core:Title text="sap.ui.model.odata.type.Binary" />
+ 			<Image src="data:image/png;base64, {path: 'Binary'}" /> -->
 			<core:Title text="sap.ui.model.odata.type.Boolean" />
 			<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
 			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
@@ -26,6 +29,11 @@
 			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
 			<Label text="displayFormat=&quot;Date&quot;, nullable: false"/>
 			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
+			<!-- TODO: Replace with sap.ui.model.odata.type.DateTimeOffset data type once available -->
+			<Label text="DateTimeOffset default"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTime'}"/>
+			<Label text="DateTimeOffset with nullable: false"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Decimal" />
 			<Label text="scale: 3"/>
@@ -46,12 +54,16 @@
 			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32'}"/>
 			<Label text="sap.ui.model.odata.type.Int32, nullable=false"/>
 			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}"/>
-<!--
 			<Label text="sap.ui.model.odata.type.SByte"/>
 			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}"/>
-			<Label text="sap.ui.model.odata.type.SByte, nullable=false""/>
+			<Label text="sap.ui.model.odata.type.SByte, nullable=false"/>
 			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}"/>
--->
+<!--TODO: sap.ui.model.odata.type.Byte missing
+			<Label text="sap.ui.model.odata.type.Byte"/>
+			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.Byte'}"/>
+			<Label text="sap.ui.model.odata.type.Byte, nullable=false"/>
+			<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte', constraints: {nullable: false}}"/>
+ -->
 			<core:Title text="sap.ui.model.odata.type.String" />
 			<Label text="maxLength: 10"/>
 			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
