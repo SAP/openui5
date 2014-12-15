@@ -2163,8 +2163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._updateETag = function(oRequest, oResponse) {
-		var sUrl,
-		oEntry;
+		var sUrl, oEntry, sETag;
 
 		// refresh ETag from response directly. We can not wait for the refresh.
 		sUrl = oRequest.requestUri.replace(this.sServiceUrl + '/', '');
@@ -2172,8 +2171,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sUrl = "/" + sUrl;
 		}
 		oEntry = this._getObject(sUrl);
-		if (oEntry && oEntry.__metadata && oResponse.headers.ETag){
-			oEntry.__metadata.etag = oResponse.headers.ETag;
+		sETag = this._getHeader("etag", oResponse.headers);
+		if (oEntry && oEntry.__metadata && sETag){
+			oEntry.__metadata.etag = sETag;
 		}
 	};
 
