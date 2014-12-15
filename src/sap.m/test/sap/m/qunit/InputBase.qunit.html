@@ -1163,6 +1163,84 @@
 			});
 
 			/* =========================================================== */
+			/* Text direction module                                       */
+			/* =========================================================== */
+
+			module("Text direction");
+
+			test("textDirection set to RTL", function() {
+
+				var oInput = new sap.m.InputBase({
+					placeholder: "Text direction set to RTL",
+					textDirection: sap.ui.core.TextDirection.RTL
+				});
+
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
+
+				oInput.destroy();
+
+			});
+
+			test("textDirection set to LTR", function() {
+
+				var oInput = new sap.m.InputBase({
+					placeholder: "Text direction set to LTR",
+					textDirection: sap.ui.core.TextDirection.LTR
+				});
+
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
+
+				oInput.destroy();
+
+			});
+
+			test("textDirection set to RTL and textAlign set to BEGIN", function() {
+
+				var oInput = new sap.m.InputBase({
+					placeholder: "Text direction set to RTL",
+					textDirection: sap.ui.core.TextDirection.RTL,
+					textAlign: sap.ui.core.TextAlign.Begin
+				});
+
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var $Input = jQuery(oInput.getFocusDomRef());
+
+				strictEqual($Input.attr("dir"), "rtl", "Dir attribute is set to rtl");
+				strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
+
+				oInput.destroy();
+
+			});
+
+			test("textDirection set to LTR and textAlign set to END", function() {
+
+				var oInput = new sap.m.InputBase({
+					placeholder: "Text direction set to LTR",
+					textDirection: sap.ui.core.TextDirection.LTR,
+					textAlign: sap.ui.core.TextAlign.End
+				});
+
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var $Input = jQuery(oInput.getFocusDomRef());
+
+				strictEqual($Input.attr("dir"), "ltr", "Dir attribute is set to ltr");
+				strictEqual($Input.css("text-align"), "right", "Text align style is shifted to left");
+
+				oInput.destroy();
+
+			});
+
+			/* =========================================================== */
 			/* Events module                                               */
 			/* =========================================================== */
 

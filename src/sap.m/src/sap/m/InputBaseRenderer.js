@@ -22,7 +22,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 */
 	InputBaseRenderer.render = function(oRm, oControl) {
 		var sValueState = oControl.getValueState();
-		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign());
+		var sTextDir = oControl.getTextDirection();
+		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir);
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -112,6 +113,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("readonly", "readonly");
 			oRm.addClass("sapMInputBaseReadonlyInner");
+		}
+
+		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
 		this.writeInnerValue(oRm, oControl);
