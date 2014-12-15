@@ -91,13 +91,18 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			 * As preserving the existing DOM is the most common use case of the HTML control, the default value is true.
 			 */
 			preferDOM : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Whether to run the HTML sanitizer once the content (HTML markup) is applied or not.
 			 *  
 			 * To configure allowed URLs please use the whitelist API via jQuery.sap.addUrlWhitelist.
 			 */
-			sanitizeContent : {type : "boolean", group : "Misc", defaultValue : false}
+			sanitizeContent : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Specifies whether the control is visible. Invisible controls are not rendered.
+			 */
+			visible : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
 		events : {
 	
@@ -180,7 +185,11 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * If the HTML doesn't contain own content, it tries to reproduce existing content
 	 */
 	HTML.prototype.onAfterRendering = function() {
-	
+		if (!this.getVisible()) {
+			// Just leave the placeholder there
+			return;
+		}
+
 		var $placeholder = jQuery(jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + this.getId()));
 		var $oldContent = sap.ui.core.RenderManager.findPreservedContent(this.getId());
 		var $newContent;
