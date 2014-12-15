@@ -250,9 +250,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var aItemDomRefs = $Header.add($Rows).add($Footer).get();
 		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
 		
-		// header and footer in the item navigation but initial focus is the first item row 
-		if ($Header[0] && aItemDomRefs.length && oItemNavigation.getFocusedIndex() == -1) {
-			oItemNavigation.setFocusedIndex(1);
+		// header and footer are in the item navigation but 
+		// initial focus should be at the first item row
+		if (oItemNavigation.getFocusedIndex() == -1) {
+			oItemNavigation.setFocusedIndex($Header[0] ? 1 : 0);
 		}
 	};
 	
