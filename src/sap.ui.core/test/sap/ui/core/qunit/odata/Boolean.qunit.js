@@ -24,10 +24,9 @@
 
 		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
-		strictEqual(oType.sName, "sap.ui.model.odata.type.Boolean", "type name");
+		strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
 		deepEqual(oType.oFormatOptions, {}, "no format options");
-		deepEqual(oType.oConstraints, {}, "no constraints");
-		strictEqual(oType.oResourceBundle, null, "resources not preloaded");
+		deepEqual(oType.oConstraints, undefined, "no constraints");
 	}));
 
 	//*********************************************************************************************
@@ -60,10 +59,10 @@
 		strictEqual(oType.parseValue(false, "boolean"), false, "false, boolean");
 		strictEqual(oType.parseValue(null, "boolean"), null, "null, boolean");
 		strictEqual(oType.parseValue("", "string"), null, "empty string, string");
-		strictEqual(oType.parseValue("Yes", "string"), true, "Yes");
-		strictEqual(oType.parseValue("No", "string"), false, "No");
-		strictEqual(oType.parseValue("yes", "string"), true, "yes");
-		strictEqual(oType.parseValue("no", "string"), false, "no");
+		strictEqual(oType.parseValue("Yes  ", "string"), true, "Yes");
+		strictEqual(oType.parseValue("  No", "string"), false, "No");
+		strictEqual(oType.parseValue("yes  ", "string"), true, "yes");
+		strictEqual(oType.parseValue(" no ", "string"), false, "no");
 		try {
 			oType.parseValue(42, "int");
 			ok(false);
@@ -116,20 +115,6 @@
 	});
 
 	//*********************************************************************************************
-	test("localization change", function () {
-		var oControl = new sap.ui.core.Control(),
-			oType = new sap.ui.model.odata.type.Boolean();
-
-		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
-		oType.formatValue(true, "string");
-		notStrictEqual(oType.oResourceBundle, undefined, "resources loaded");
-		sap.ui.getCore().getConfiguration().setLanguage("en-GB");
-		strictEqual(oType.oResourceBundle, null, "resources cleared");
-		oType.formatValue(true, "string");
-		notStrictEqual(oType.oResourceBundle, undefined, "resources loaded again");
-	});
-
-	//*********************************************************************************************
 	test("setConstraints", sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
@@ -144,12 +129,12 @@
 		deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
 
 		oType.setConstraints({nullable: true});
-		deepEqual(oType.oConstraints, {}, "nullable true");
+		strictEqual(oType.oConstraints, undefined, "nullable true");
 
 		oType.setConstraints({nullable: "true"});
-		deepEqual(oType.oConstraints, {}, 'nullable "true"');
+		strictEqual(oType.oConstraints, undefined, 'nullable "true"');
 
 		oType.setConstraints({nullable: "foo"});
-		deepEqual(oType.oConstraints, {}, "illegal nullable -> ignored");
+		strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
 	}));
 } ());

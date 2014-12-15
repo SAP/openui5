@@ -70,8 +70,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 			{
 				constructor : function () {
 					SimpleType.apply(this, arguments);
-					this.sName = "sap.ui.model.odata.type.Boolean";
-					this._handleLocalizationChange();
 			}
 		});
 
@@ -100,7 +98,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 		case "string":
 			return getText(bValue);
 		default:
-			throw new FormatException("Don't know how to format " + this.sName + " to "
+			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
 		}
 	};
@@ -121,6 +119,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * @public
 	 */
 	EdmBoolean.prototype.parseValue = function(vValue, sSourceType) {
+		var sValue;
+
 		if (vValue === null || vValue === "") {
 			return null;
 		}
@@ -128,25 +128,19 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 			case "boolean":
 				return vValue;
 			case "string":
-				if (getText(true).toLowerCase() === vValue.toLowerCase()) {
+				// Do not use String#trim as it is not supported in IE8
+				sValue = jQuery.trim(vValue).toLowerCase();
+				if (sValue === getText(true).toLowerCase()) {
 					return true;
 				}
-				if (getText(false).toLowerCase() === vValue.toLowerCase()) {
+				if (sValue === getText(false).toLowerCase()) {
 					return false;
 				}
 				throw new ParseException(getErrorMessage());
 			default:
-				throw new ParseException("Don't know how to parse " + this.sName + " from "
+				throw new ParseException("Don't know how to parse " + this.getName() + " from "
 					+ sSourceType);
 		}
-	};
-
-	/**
-	 * Called by the framework when any localization setting changed.
-	 * @private
-	 */
-	EdmBoolean.prototype._handleLocalizationChange = function () {
-		this.oResourceBundle = null;
 	};
 
 	/**
@@ -160,14 +154,14 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 */
 	EdmBoolean.prototype.validateValue = function (bValue) {
 		if (bValue === null) {
-			if (this.oConstraints.nullable !== false) {
-				return;
+			if (this.oConstraints && this.oConstraints.nullable === false) {
+				throw new ValidateException(getErrorMessage());
 			}
-			throw new ValidateException(getErrorMessage());
+			return;
 		}
 		if (typeof bValue !== "boolean") {
 			// This is a "technical" error by calling validate w/o parse
-			throw new ValidateException("Illegal " + this.sName + " value: " + bValue);
+			throw new ValidateException("Illegal " + this.getName() + " value: " + bValue);
 		}
 	};
 
@@ -183,14 +177,22 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	EdmBoolean.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable;
 
-		this.oConstraints = {};
+		this.oConstraints = undefined;
 		if (vNullable === false || vNullable === "false") {
-			this.oConstraints.nullable = false;
+			this.oConstraints = {nullable : false};
 		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			// Note: setConstraints is called by the super constructor w/ wrong this.sName
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
-				"sap.ui.model.odata.type.Boolean");
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
 		}
+	};
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {string}
+	 *   the type's name
+	 */
+	EdmBoolean.prototype.getName = function () {
+		return "sap.ui.model.odata.type.Boolean";
 	};
 
 	return EdmBoolean;
