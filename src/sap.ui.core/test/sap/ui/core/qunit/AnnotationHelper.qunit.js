@@ -17,12 +17,24 @@
 			name : "sap.ui.model.odata.type.Boolean",
 			constraints : {"nullable" : false}
 		},
+		oDateTime = {
+			name : "sap.ui.model.odata.type.DateTime",
+			constraints : {"nullable": false, "displayFormat": "Date"}
+		},
 		oDecimal = {
 			name : "sap.ui.model.odata.type.Decimal",
 			constraints : {"precision" : 13, "scale" : 3}
 		},
+		oInt16 = {
+			name : "sap.ui.model.odata.type.Int16",
+			constraints : {"nullable" : false}
+		},
 		oInt32 = {
 			name : "sap.ui.model.odata.type.Int32",
+			constraints : {"nullable" : false}
+		},
+		oSByte = {
+			name : "sap.ui.model.odata.type.SByte",
 			constraints : {"nullable" : false}
 		},
 		oString10 = {
@@ -66,9 +78,22 @@
 							"type" : "Edm.Boolean",
 							"nullable" : "false"
 						}, {
+							"name" : "_Int16",
+							"type" : "Edm.Int16",
+							"nullable" : "false"
+						}, {
 							"name" : "_Int32",
 							"type" : "Edm.Int32",
 							"nullable" : "false"
+						}, {
+							"name" : "_SByte",
+							"type" : "Edm.SByte",
+							"nullable" : "false"
+						}, {
+							"name" : "_DateTime",
+							"type" : "Edm.DateTime",
+							"nullable" : "false",
+							"sap:display-format" : "Date"
 						}],
 						"com.sap.vocabularies.UI.v1.DataPoint" : {
 							"Value" : {
@@ -85,7 +110,13 @@
 						}, {
 							"Value" : {"Path" : "_Boolean"}
 						}, {
+							"Value" : {"Path" : "_DateTime"}
+						}, {
+							"Value" : {"Path" : "_Int16"}
+						}, {
 							"Value" : {"Path" : "_Int32"}
+						}, {
+							"Value" : {"Path" : "_SByte"}
 						}]
 					}]
 				}]
@@ -266,7 +297,16 @@
 		type : oBoolean
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/4/Value",
+		type : oDateTime
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/5/Value",
+		type : oInt16
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/6/Value",
 		type : oInt32
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/7/Value",
+		type : oSByte
 	}, {
 		path : "Value",
 		context : oMetaModel.createBindingContext(
