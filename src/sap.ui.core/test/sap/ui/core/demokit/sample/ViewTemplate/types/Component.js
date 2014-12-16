@@ -6,6 +6,7 @@
  * @version @version@
  */
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.types.Component");
+jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 	metadata: "json",
@@ -30,8 +31,11 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 			sUri = "proxy" + sUri;
 		}
 
-		oModel = new sap.ui.model.odata.v2.ODataModel(
-				sUri, {defaultBindingMode: sap.ui.model.BindingMode.TwoWay, useBatch: false});
+		oModel = new sap.ui.model.odata.v2.ODataModel(sUri, {
+			annotationURI: sMockServerBaseUri + "annotations.xml",
+			defaultBindingMode: sap.ui.model.BindingMode.TwoWay,
+			useBatch: false
+		});
 
 		/**
 		 * Sets the value state of the control if possible.
@@ -59,9 +63,18 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 			setState(sap.ui.core.ValueState.Error, oEvent);
 		}
 
-		function createView() {
-			var oView = sap.ui.view({
-				models: oModel,
+		oModel.getMetaModel().loaded().then(function () {
+			var oMetaModel = oModel.getMetaModel(),
+				oView = sap.ui.view({
+				models : oModel,
+				preprocessors: {
+					xml: {
+						bindingContexts: {meta:
+							oMetaModel.createBindingContext("/dataServices/schema/0/entityType/7")
+						},
+						models: {meta: oMetaModel}
+					}
+				},
 				type: sap.ui.core.mvc.ViewType.XML,
 				viewName: "sap.ui.core.sample.ViewTemplate.types.Types"
 			});
@@ -84,17 +97,14 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 			oView.attachValidationSuccess(function (oEvent) {
 				setState(sap.ui.core.ValueState.Success, oEvent);
 			});
-
+			oView.setLayoutData(new sap.m.FlexItemData({growFactor: 1.0}));
 			oLayout.addItem(oView);
-		}
-
-		// _after_ meta data is loaded, create and add view
-		//TODO Investigate with UI5 why we need to wait for loaded metadata if these are loaded async
-		if (oModel.getServiceMetadata()) {
-			createView();
-		} else {
-			oModel.attachMetadataLoaded(createView);
-		}
+		}, function (oError) {
+			jQuery.sap.require("sap.m.MessageBox");
+			sap.m.MessageBox.alert(oError.message, {
+				icon: sap.m.MessageBox.Icon.ERROR,
+				title: "Error"});
+		});
 		return oLayout;
 	}
 });

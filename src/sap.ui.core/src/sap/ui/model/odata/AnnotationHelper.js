@@ -65,6 +65,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							oConstraints.scale = oProperty.scale;
 							break;
 
+						case "Edm.Guid":
+							sType = 'sap.ui.model.odata.type.Guid';
+							break;
+
 						case "Edm.Int16":
 							sType = 'sap.ui.model.odata.type.Int16';
 							break;
