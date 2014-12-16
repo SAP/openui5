@@ -22,14 +22,17 @@ sap.ui.define(['jquery.sap.global'],
 	PageRenderer.render = function(rm, oPage) {
 		var oHeader = null,
 			oFooter = null,
+			oSubHeader = null,
 			sEnableScrolling = oPage.getEnableScrolling() ? " sapMPageScrollEnabled" : "";
 	
 		if (oPage.getShowHeader()) {
 			oHeader = oPage._getAnyHeader();
 		}
 	
-		var oSubHeader = oPage.getSubHeader();
-		
+		if (oPage.getShowSubHeader()) {
+			oSubHeader = oPage.getSubHeader();
+		}
+	
 		if (oPage.getShowFooter()) {
 			oFooter = oPage.getFooter();
 		}
