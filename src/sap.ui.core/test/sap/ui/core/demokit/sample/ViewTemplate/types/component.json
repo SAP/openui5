@@ -3,7 +3,11 @@
 		"sample": {
 			"files": [
 				"Component.js",
-				"Types.view.xml"
+				"Types.controller.js",
+				"Types.view.xml",
+				"data/annotations.xml",
+				"data/EdmTypes.json",
+				"data/metadata.xml"
 			]
 		}
 	},

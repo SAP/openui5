@@ -25,6 +25,10 @@
 			name : "sap.ui.model.odata.type.Decimal",
 			constraints : {"precision" : 13, "scale" : 3}
 		},
+		oGuid = {
+			name : "sap.ui.model.odata.type.Guid",
+			constraints : {"nullable": false}
+		},
 		oInt16 = {
 			name : "sap.ui.model.odata.type.Int16",
 			constraints : {"nullable" : false}
@@ -78,6 +82,10 @@
 							"type" : "Edm.Boolean",
 							"nullable" : "false"
 						}, {
+							"name" : "_Guid",
+							"type" : "Edm.Guid",
+							"nullable" : "false"
+						}, {
 							"name" : "_Int16",
 							"type" : "Edm.Int16",
 							"nullable" : "false"
@@ -111,6 +119,8 @@
 							"Value" : {"Path" : "_Boolean"}
 						}, {
 							"Value" : {"Path" : "_DateTime"}
+						}, {
+							"Value" : {"Path" : "_Guid"}
 						}, {
 							"Value" : {"Path" : "_Int16"}
 						}, {
@@ -300,12 +310,15 @@
 		type : oDateTime
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/5/Value",
-		type : oInt16
+		type : oGuid
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/6/Value",
-		type : oInt32
+		type : oInt16
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/7/Value",
+		type : oInt32
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/8/Value",
 		type : oSByte
 	}, {
 		path : "Value",
