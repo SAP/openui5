@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides enumeration sap.ui.model.FilterOperator
+// Provides enumeration sap.ui.model.CountMode
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";

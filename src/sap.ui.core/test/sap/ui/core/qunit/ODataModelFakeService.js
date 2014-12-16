@@ -48,6 +48,11 @@ xhr.onCreate = function(request) {
 				request.respond(200, oXMLHeaders, sCategories2XML)
 			}, responseDelay); 
 		}
+		if (request.url == baseURL + "Categories") {
+			_setTimeout(function() {
+				request.respond(200, oXMLHeaders, sCategoriesXML)
+			}, responseDelay); 
+		}
 		if (request.url == baseURL + "Categories?$skip=0&$top=8") {
 			_setTimeout(function() {
 				request.respond(200, oXMLHeaders, sCategoriesXML)

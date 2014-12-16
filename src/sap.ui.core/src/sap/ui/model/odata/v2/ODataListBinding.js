@@ -3,8 +3,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/Filter'],
-		function(jQuery, DateFormat, FilterType, ListBinding, ODataUtils, CountMode, Filter) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/model/FilterType', 'sap/ui/model/ListBinding', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/OperationMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterProcessor', 'sap/ui/model/SorterProcessor'],
+		function(jQuery, DateFormat, FilterType, ListBinding, ODataUtils, CountMode, OperationMode, ChangeReason, Filter, FilterProcessor, SorterProcessor) {
 	"use strict";
 
 
@@ -19,7 +19,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {array} [aSorters] initial sort order (can be either a sorter or an array of sorters)
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters] a map which contains additional parameters option for the binding
+	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] defines the count mode of this binding
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] defines the operation mode of this binding
 	 * @param {boolean} [mParameters.faultTolerant] turns on the fault tolerance mode, data is not reset if a backend request returns an error
+	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
 	 *
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
@@ -36,8 +39,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.iStartIndex = 0;
 			this.iLength = 0;
 			this.bPendingChange = false;
+			this.aAllKeys = null;
 			this.aKeys = [];
 			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
+			this.sOperationMode = (mParameters && mParameters.operationMode) || this.oModel.sDefaultOperationMode;
 			this.bRefresh = false;
 			this.bNeedsUpdate = false;
 			this.bDataAvailable = false;
@@ -131,17 +136,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		oContextData = {},
 		oSection;
 
-		oSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
-		bLoadContexts = aContexts.length !== iLength && !(this.bLengthFinal && aContexts.length >= this.iLength - iStartIndex);
-
-		// check if metadata are already available
-		if (this.oModel.getServiceMetadata()) {
-			// If rows are missing send a request
-			if (!this.bPendingRequest && oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
-				this.loadData(oSection.startIndex, oSection.length);
+		if (this.sOperationMode == OperationMode.Server) {
+			oSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
+			bLoadContexts = aContexts.length !== iLength && !(this.bLengthFinal && aContexts.length >= this.iLength - iStartIndex);
+	
+			// check if metadata are already available
+			if (this.oModel.getServiceMetadata()) {
+				// If rows are missing send a request
+				if (!this.bPendingRequest && oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
+					this.loadData(oSection.startIndex, oSection.length);
+					aContexts.dataRequested = true;
+				}
+			}
+		} else if (this.sOperationMode == OperationMode.Client) {
+			if (!this.aAllKeys) {
+				this.loadData();
 				aContexts.dataRequested = true;
 			}
-		}
+		}	
 
 		if (this.bRefresh) {
 			// if refreshing and length is 0, pretend a request to be fired to make a refresh with
@@ -422,6 +434,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				that.bLengthFinal = true;
 			}
 
+			// For clientside sorting filtering store all keys separately and set length to final
+			if (that.sOperationMode == OperationMode.Client) {
+				that.aAllKeys = that.aKeys.slice();
+				that.applyFilter();
+				that.applySort();
+				that.iLength = that.aKeys.length;
+				that.bLengthFinal = true;
+			}
+			
 			delete that.mRequestHandles[sPath];
 			that.bPendingRequest = false;
 
@@ -451,7 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				that.iLength = 0;
 				that.bLengthFinal = true;
 				that.bDataAvailable = true;
-				that._fireChange({reason: sap.ui.model.ChangeReason.Change});
+				that._fireChange({reason: ChangeReason.Change});
 			}
 			that.fireDataReceived();
 		}
@@ -606,7 +627,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (bForceUpdate || bChangeDetected) {
 			this.abortPendingRequest();
 			this.resetData();
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 
@@ -636,9 +657,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.bInitial = false;
 			this._initSortersFilters();
 			if (this.bDataAvailable) {
-				this._fireChange({reason: sap.ui.model.ChangeReason.Change});
+				this._fireChange({reason: ChangeReason.Change});
 			} else {
-				this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+				this._fireRefresh({reason: ChangeReason.Refresh});
 			}
 		}
 		return this;
@@ -654,7 +675,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @private
 	 */
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
-		var bChangeReason = this.sChangeReason ? this.sChangeReason : sap.ui.model.ChangeReason.Change,
+		var bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 				bChangeDetected = false,
 				oLastData, oCurrentData,
 				that = this,
@@ -802,24 +823,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 		this.aSorters = aSorters;
-		this.createSortParams(aSorters);
-
-		if (!this.bInitial) {
-			// Only reset the keys, length usually doesn't change when sorting
-			this.aKeys = [];
-			this.abortPendingRequest();
-			this.sChangeReason = sap.ui.model.ChangeReason.Sort;
-			this._fireRefresh({reason : this.sChangeReason});
-			// TODO remove this if the sort event gets removed which is now deprecated
-			this._fireSort({sorter: aSorters});
-			bSuccess = true;
+		
+		if (this.sOperationMode == OperationMode.Server) {
+			this.createSortParams(aSorters);
 		}
+		
+		if (!this.bInitial) {
+			if (this.sOperationMode == OperationMode.Server) {
+				// Only reset the keys, length usually doesn't change when sorting
+				this.aKeys = [];
+				this.abortPendingRequest();
+				this.sChangeReason = ChangeReason.Sort;
+				this._fireRefresh({reason : this.sChangeReason});
+				// TODO remove this if the sort event gets removed which is now deprecated
+				this._fireSort({sorter: aSorters});
+				bSuccess = true;
+			} else if (this.sOperationMode == OperationMode.Client) {
+				this.applySort();
+				this._fireChange({reason: ChangeReason.Sort});
+			}
+		}
+		
 		if (bReturnSuccess) {
 			return bSuccess;
 		} else {
 			return this;
 		}
 	};
+
+	ODataListBinding.prototype.applySort = function() {
+		var that = this,
+			oContext;
+		
+		this.aKeys = SorterProcessor.apply(this.aKeys, this.aSorters, function(vRef, sPath) {
+			oContext = that.oModel.getContext('/' + vRef);
+			return that.oModel.getProperty(sPath, oContext);
+		});
+	};
+	
 
 	ODataListBinding.prototype.createSortParams = function(aSorters) {
 		this.sSortParams = ODataUtils.createSortParams(aSorters);
@@ -866,26 +907,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.aApplicationFilters = [];
 		}
 
-		this.createFilterParams(aFilters);
-
-		if (!this.bInitial) {
-			this.resetData();
-			this.abortPendingRequest();
-			this.sChangeReason = sap.ui.model.ChangeReason.Filter;
-			this._fireRefresh({reason : this.sChangeReason});
-			// TODO remove this if the filter event gets removed which is now deprecated
-			if (sFilterType === FilterType.Application) {
-				this._fireFilter({filters: this.aApplicationFilters});
-			} else {
-				this._fireFilter({filters: this.aFilters});
-			}
-			bSuccess = true;
+		if (this.sOperationMode == OperationMode.Server) {
+			this.createFilterParams(aFilters);
 		}
+		
+		if (!this.bInitial) {
+			if (this.sOperationMode == OperationMode.Server) {
+				this.resetData();
+				this.abortPendingRequest();
+				this.sChangeReason = ChangeReason.Filter;
+				this._fireRefresh({reason: this.sChangeReason});
+				// TODO remove this if the filter event gets removed which is now deprecated
+				if (sFilterType === FilterType.Application) {
+					this._fireFilter({filters: this.aApplicationFilters});
+				} else {
+					this._fireFilter({filters: this.aFilters});
+				}
+				bSuccess = true;
+			} else if (this.sOperationMode == OperationMode.Client) {
+				this.applyFilter();
+				this.applySort();
+				this._fireChange({reason: ChangeReason.Filter});
+			}
+		}
+			
 		if (bReturnSuccess) {
 			return bSuccess;
 		} else {
 			return this;
 		}
+	};
+	
+	ODataListBinding.prototype.applyFilter = function() {
+		var that = this,
+			oContext,
+			aFilters = this.aFilters.concat(this.aApplicationFilters),
+			aConvertedFilters = [];
+		
+		jQuery.each(aFilters, function(i, oFilter) {
+			if (oFilter instanceof sap.ui.model.odata.Filter) {
+				aConvertedFilters.push(oFilter.convert());
+			} else {
+				aConvertedFilters.push(oFilter);
+			}
+		});
+		
+		this.aKeys = FilterProcessor.apply(this.aAllKeys, aConvertedFilters, function(vRef, sPath) {
+			oContext = that.oModel.getContext('/' + vRef);
+			return that.oModel.getProperty(sPath, oContext);
+		});
+		this.iLength = this.aKeys.length;
 	};
 
 	ODataListBinding.prototype.createFilterParams = function(aFilters) {
@@ -900,8 +971,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			return;
 		}
 		this.oEntityType = this._getEntityType();
-		this.createSortParams(this.aSorters);
-		this.createFilterParams(this.aFilters.concat(this.aApplicationFilters));
+		if (this.sOperationMode == OperationMode.Server) {
+			this.createSortParams(this.aSorters);
+			this.createFilterParams(this.aFilters.concat(this.aApplicationFilters));
+		}
 	};
 
 	ODataListBinding.prototype._getEntityType = function(){

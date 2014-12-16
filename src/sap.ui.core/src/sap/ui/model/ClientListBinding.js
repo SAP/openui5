@@ -3,11 +3,9 @@
  */
 
 // Provides the JSON model implementation of a list binding
-sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
-	function(jQuery, FilterType, ListBinding) {
+sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding', './FilterProcessor', './SorterProcessor'],
+	function(jQuery, FilterType, ListBinding, FilterProcessor, SorterProcessor) {
 	"use strict";
-
-
 	
 	/**
 	 *
@@ -118,7 +116,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	
 	/**
 	 * @see sap.ui.model.ListBinding.prototype.sort
-	 *
 	 */
 	ClientListBinding.prototype.sort = function(aSorters){
 		if (!aSorters) {
@@ -148,81 +145,17 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * @private
 	 */
 	ClientListBinding.prototype.applySort = function(){
-		var that = this,
-			aSortValues = [],
-			aCompareFunctions = [],
-			oValue,
-			oSorter;
+		var that = this;
 	
 		if (!this.aSorters || this.aSorters.length == 0) {
 			return;
 		}
 		
-		function fnCompare(a, b) {
-			if (b == null) {
-				return -1;
-			}
-			if (a == null) {
-				return 1;
-			}
-			if (typeof a == "string" && typeof b == "string") {
-				return a.localeCompare(b);
-			}
-			if (a < b) {
-				return -1;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return 0;
-		}
-		
-		for (var j = 0; j < this.aSorters.length; j++) {
-			oSorter = this.aSorters[j];
-			aCompareFunctions[j] = oSorter.fnCompare;
-			
-			if (!aCompareFunctions[j]) {
-				aCompareFunctions[j] = fnCompare;
-			}
-			/*eslint-disable no-loop-func */
-			jQuery.each(this.aIndices, function(i, iIndex) {
-				oValue = that.oModel.getProperty(oSorter.sPath, that.oList[iIndex]);
-				if (typeof oValue == "string") {
-					oValue = oValue.toLocaleUpperCase();
-				}
-				if (!aSortValues[j]) {
-					aSortValues[j] = [];
-				}
-				aSortValues[j][iIndex] = oValue;
-			});
-			/*eslint-enable no-loop-func */
-		}
-	
-		this.aIndices.sort(function(a, b) {
-			var valueA = aSortValues[0][a],
-				valueB = aSortValues[0][b];
-			
-			return that._applySortCompare(a, b, valueA, valueB, aSortValues, aCompareFunctions, 0);
+		this.aIndices = SorterProcessor.apply(this.aIndices, this.aSorters, function(vRef, sPath) {
+			return that.oModel.getProperty(sPath, that.oList[vRef]);
 		});
 	};
-	
-	ClientListBinding.prototype._applySortCompare = function(a, b, valueA, valueB, aSortValues, aCompareFunctions, iDepth){
-		var oSorter = this.aSorters[iDepth],
-			fnCompare = aCompareFunctions[iDepth],
-			returnValue;
-	
-		returnValue = fnCompare(valueA, valueB);
-		if (oSorter.bDescending) {
-			returnValue = -returnValue;
-		}
-		if (returnValue == 0 && this.aSorters[iDepth + 1]) {
-			valueA = aSortValues[iDepth + 1][a];
-			valueB = aSortValues[iDepth + 1][b];
-			returnValue = this._applySortCompare(a, b, valueA, valueB, aSortValues, aCompareFunctions, iDepth + 1);
-		}
-		return returnValue;
-	};
-	
+		
 	/**
 	 * Filters the list.
 	 * 
@@ -277,21 +210,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	};
 	
 	/**
-	 * Normalize filter value
-	 * 
-	 * @private
-	 */
-	ClientListBinding.prototype.normalizeFilterValue = function(oValue){
-		if (typeof oValue == "string") {
-			return oValue.toUpperCase();
-		}
-		if (oValue instanceof Date) {
-			return oValue.getTime();
-		}
-		return oValue;
-	};
-	
-	/**
 	 * Filters the list
 	 * Filters are first grouped according to their binding path.
 	 * All filters belonging to a group are ORed and after that the
@@ -306,159 +224,14 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 		if (!this.aFilters) {
 			return;
 		}
-		var that = this,
-			oFilterGroups = {},
-			aFilterGroup,
-			aFiltered = [],
-			bGroupFiltered = false,
-			bFiltered = true,
-			aFilters = this.aFilters.concat(this.aApplicationFilters);
-	
-		jQuery.each(aFilters, function(j, oFilter) {
-			if (oFilter.sPath !== undefined) {
-				aFilterGroup = oFilterGroups[oFilter.sPath];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups[oFilter.sPath] = [];
-				}
-			} else {
-				aFilterGroup = oFilterGroups["__multiFilter"];
-				if (!aFilterGroup) {
-					aFilterGroup = oFilterGroups["__multiFilter"] = [];
-				}
-			}
-			aFilterGroup.push(oFilter);
-		});
-		jQuery.each(this.aIndices, function(i, iIndex) {
-			bFiltered = true;
-			jQuery.each(oFilterGroups, function(sPath, aFilterGroup) {
-				if (sPath !== "__multiFilter") {
-					var oValue = that.oModel.getProperty(sPath, that.oList[iIndex]);
-					oValue = that.normalizeFilterValue(oValue);
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						var fnTest = that.getFilterFunction(oFilter);
-						if (oValue != undefined && fnTest(oValue)) {
-							bGroupFiltered = true;
-							return false;
-						}
-					});
-				} else {
-					bGroupFiltered = false;
-					jQuery.each(aFilterGroup, function(j, oFilter) {
-						bGroupFiltered = that._resolveMultiFilter(oFilter, iIndex);
-						if (bGroupFiltered) {
-							return false;
-						}
-					});
-				}
-				if (!bGroupFiltered) {
-					bFiltered = false;
-					return false;
-				}
-			});
-			if (bFiltered) {
-				aFiltered.push(iIndex);
-			}
-		});
-		this.aIndices = aFiltered;
-		this.iLength = aFiltered.length;
-	};
-	
-	/**
-	 * Resolve the client list binding and check if an index matches
-	 *
-	 * @private
-	 */
-	ClientListBinding.prototype._resolveMultiFilter = function(oMultiFilter, iIndex){
-		var that = this,
-			bMatched = false,
-			aFilters = oMultiFilter.aFilters;
+		var aFilters = this.aFilters.concat(this.aApplicationFilters),
+			that = this;
 		
-		if (aFilters) {
-			jQuery.each(aFilters, function(i, oFilter) {
-				var bLocalMatch = false;
-				if (oFilter._bMultiFilter) {
-					bLocalMatch = that._resolveMultiFilter(oFilter, iIndex);
-				} else if (oFilter.sPath !== undefined) {
-					var oValue = that.oModel.getProperty(oFilter.sPath, that.oList[iIndex]);
-					oValue = that.normalizeFilterValue(oValue);
-					var fnTest = that.getFilterFunction(oFilter);
-					if (oValue != undefined && fnTest(oValue)) {
-						bLocalMatch = true;
-					}
-				}
-				if (bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = true;
-				} else if (!bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = false;
-					return false;
-				} else if (bLocalMatch) {
-					bMatched = true;
-					return false;
-				}
-			});
-		}
+		this.aIndices = FilterProcessor.apply(this.aIndices, aFilters, function(vRef, sPath) {
+			return that.oModel.getProperty(sPath, that.oList[vRef]);
+		});
 		
-		return bMatched;
-	};
-	
-	/**
-	 * Provides a JS filter function for the given filter
-	 */
-	ClientListBinding.prototype.getFilterFunction = function(oFilter){
-		if (oFilter.fnTest) {
-			return oFilter.fnTest;
-		}
-		var oValue1 = this.normalizeFilterValue(oFilter.oValue1),
-			oValue2 = this.normalizeFilterValue(oFilter.oValue2);
-	
-		switch (oFilter.sOperator) {
-			case "EQ":
-				oFilter.fnTest = function(value) { return value == oValue1; }; break;
-			case "NE":
-				oFilter.fnTest = function(value) { return value != oValue1; }; break;
-			case "LT":
-				oFilter.fnTest = function(value) { return value < oValue1; }; break;
-			case "LE":
-				oFilter.fnTest = function(value) { return value <= oValue1; }; break;
-			case "GT":
-				oFilter.fnTest = function(value) { return value > oValue1; }; break;
-			case "GE":
-				oFilter.fnTest = function(value) { return value >= oValue1; }; break;
-			case "BT":
-				oFilter.fnTest = function(value) { return (value >= oValue1) && (value <= oValue2); }; break;
-			case "Contains":
-				oFilter.fnTest = function(value) {
-					if (typeof value != "string") {
-						throw new Error("Only \"String\" values are supported for the FilterOperator: \"Contains\".");
-					}
-					return value.indexOf(oValue1) != -1;
-				};
-				break;
-			case "StartsWith":
-				oFilter.fnTest = function(value) {
-					if (typeof value != "string") {
-						throw new Error("Only \"String\" values are supported for the FilterOperator: \"StartsWith\".");
-					}
-					return value.indexOf(oValue1) == 0;
-				};
-				break;
-			case "EndsWith":
-				oFilter.fnTest = function(value) {
-					if (typeof value != "string") {
-						throw new Error("Only \"String\" values are supported for the FilterOperator: \"EndsWith\".");
-					}
-					var iPos = value.lastIndexOf(oValue1);
-					if (iPos == -1) {
-						return false;
-					}
-					return iPos == value.length - new String(oFilter.oValue1).length;
-				};
-				break;
-			default:
-				oFilter.fnTest = function(value) { return true; };
-		}
-		return oFilter.fnTest;
+		this.iLength = this.aIndices.length;
 	};
 	
 	/**

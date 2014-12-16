@@ -173,6 +173,77 @@
 		oBinding.attachChange(handler0);
 	});
 
+	asyncTest("ListBinding clientside sort", function(){
+		var oBinding = oModel.bindList("/Categories", null, null, null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 8);			    
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+
+			oBinding.detachChange(handler);
+			// descending
+			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
+			oBinding.sort(oSorter);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 8);
+			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
+
+			// ascending again
+			oSorter = new sap.ui.model.Sorter("CategoryName", false);
+			oBinding.sort(oSorter);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 8);
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding after 2nd sort");
+			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding after 2nd sort");
+			
+			oBinding.sort(null);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 8);
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[3]), "Dairy Products", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[4]), "Grains/Cereals", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[5]), "Meat/Poultry", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[6]), "Produce", "ListBinding before sort");
+			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "ListBinding before sort");
+			
+			start();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+	
+	
 	asyncTest("ListBinding expand", function(){
 		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});
 		var handler = function() { // delay the following test
@@ -303,6 +374,99 @@
 		oBinding.attachRefresh(fnFilter);
 	});
 
+	asyncTest("ListBinding clientside filter", function(){	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+
+			oBinding.detachChange(handler);
+			// NE, contains
+			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
+			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+			oBinding.filter([oFilter, oFilter2]);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 2, "NE, contains, filtered content length");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+
+			// between
+			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
+			oBinding.filter([oFilter]);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 3, "between filtered content length");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "between filtered content");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "between filtered content");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[2]), "Confections", "between filtered content");
+
+			// startsWith, endsWith
+			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.StartsWith, "C");
+			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ngs");
+			oBinding.filter([oFilter, oFilter2]);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 1, "startsWith, endsWith filtered content length");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "startsWith, endsWith filtered content");
+
+			// ANDed filters
+			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
+			oBinding.filter([oFilter]);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 7, "sap.ui.model.odata.Filter, ANDed");
+			ok(oModel.getProperty("CategoryName",aFilteredContexts[0]) != "Beverages" && oModel.getProperty("CategoryName",aFilteredContexts[0]) == "Condiments", "sap.ui.model.odata.Filter, ANDed");
+
+			// ORed filters
+			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
+			oBinding.filter([oFilter]);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 2, "sap.ui.model.odata.Filter, ORed");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "sap.ui.model.odata.Filter, ORed");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Condiments", "sap.ui.model.odata.Filter, ORed");
+
+			// ORed + ANDed filters
+			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
+			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ings");
+			oBinding.filter([oFilter, oFilter2]);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 1, "sap.ui.model.odata.Filter + normal Filter");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
+
+			//check (ProductID=male AND (SupplierID = Green OR (CategoryName = Peter OR CategoryName = Frank OR CategoryName = Gina)))
+			var oFilter1 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Dairy Products");
+			var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Grains/Cereals");
+			var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
+			var oFilter4 = new sap.ui.model.Filter("CategoryID", sap.ui.model.FilterOperator.EQ, 3);
+			var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
+			var oFilter5 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "s");
+			var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
+			oBinding.filter(oMultiFilter3);
+
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
+
+			start(); 
+		};
+		//check EQ
+		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+		oBinding.filter([oFilter]);
+		
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+	});
+	
 	asyncTest("ListBinding Diff", function(){
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function(oEvent) {
