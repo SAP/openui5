@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 * @since 1.27.0
+			 * @since 1.26.3
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
