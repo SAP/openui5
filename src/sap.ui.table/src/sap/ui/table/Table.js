@@ -1410,6 +1410,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				oClone.setBindingContext(aContexts[i], oBindingInfo.model);
 				oClone._bHidden = false;
 			} else {
+				if (oBindingInfo) {
+					oClone.setBindingContext(null, oBindingInfo.model);
+				} else {
+					oClone.setBindingContext(null);
+				}
+
 				oClone._bHidden = true;
 			}
 			this.addAggregation("rows", oClone, true);
