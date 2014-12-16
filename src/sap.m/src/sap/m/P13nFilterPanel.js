@@ -118,6 +118,7 @@ sap.ui.define([
 	/**
 	 * sets the array of conditions.
 	 * 
+	 * @public
 	 * @param {object[]}
 	 *            aConditions the complete list of conditions
 	 */
@@ -146,7 +147,7 @@ sap.ui.define([
 	/**
 	 * returns the array of conditions.
 	 * 
-	 * @private
+	 * @public
 	 */
 	P13nFilterPanel.prototype.getConditions = function() {
 		var aIConditions = this._oIncludeFilterPanel.getConditions();
@@ -162,10 +163,10 @@ sap.ui.define([
 	 * @param {string}
 	 *            sKey the key of the condition
 	 */
-	P13nFilterPanel.prototype.removeCondition = function(sKey) {
-		this._oIncludeFilterPanel.removeCondition(sKey);
-		this._oExcludeFilterPanel.removeCondition(sKey);
-	};
+//	P13nFilterPanel.prototype.removeCondition = function(sKey) {
+//		this._oIncludeFilterPanel.removeCondition(sKey);
+//		this._oExcludeFilterPanel.removeCondition(sKey);
+//	};
 
 	P13nFilterPanel.prototype.setContainerQuery = function(bContainerQuery) {
 		this.setProperty("containerQuery", bContainerQuery);

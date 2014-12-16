@@ -24,10 +24,7 @@
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
 	jQuery.sap.require("sap.ui.layout.Grid");	
 	
-	var oCondition1= { "key": "i1", "text": "CompanyCode: a..z"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": "a", "value2": "z"};
-	var oCondition2= { "key": "i2", "text": "CompanyCode: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "foo", "value2": ""};
-	var oCondition3= { "key": "e1", "text": "CompanyCode: !(=foo)", "exclude": true , "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "foo", "value2": ""};
-	var	aConditions= [oCondition1, oCondition2, oCondition3];   
+ 	var	aConditions= [];   
 	var oFilterPanel;
 	var oModel;
 	var iCount= 100;
@@ -55,25 +52,8 @@
 		}		
 	};	
 	
+
 	var btnShow = new sap.m.Button({
-		text: "show FilterPanel",
-		press: function() {
-			oFilterPanel = new sap.m.P13nFilterPanel({
-	 			maxIncludes: -1,
-	  			maxExcludes: -1
-			});
-			
-			oFilterPanel.setKeyFields([{key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}]); 
-			//oFilterPanel.setIncludeOperations([ sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ ]);			
-			oFilterPanel.setExcludeOperations([ sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ ]);			
-			oFilterPanel.setConditions(aConditions);			
-	
-			show(oFilterPanel, "Filter");
-		}		
-	});
-	
-	
-	var btnShow2 = new sap.m.Button({
 		text: "show bound FilterPanel",
 		press: function() {
 			var oData = {
@@ -211,7 +191,7 @@
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
-			aConditions = oFilterPanel.getConditions();
+			aConditions = oFilterPanel._getConditions();
 	
 			var sConditions= ""; 
 			for (i = 0; i < aConditions.length; i++) {
@@ -303,7 +283,6 @@
 	
 	
 	btnShow.placeAt("content");
-	btnShow2.placeAt("content2");
 	btnValidate.placeAt("content");
 	btnClearErrors.placeAt("content");
 	btnRemoveInvalidConditions.placeAt("content");

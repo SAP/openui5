@@ -127,7 +127,7 @@
 
 		// assertions
 		var nItems= 3;
-		strictEqual(oP13nFilterPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+		strictEqual(oP13nFilterPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nFilterPanel.destroy();
@@ -146,7 +146,7 @@
 
 		// assertions
 		var nItems= 3;
-		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nFilterPanel.destroy();
@@ -237,12 +237,12 @@
 		oConditionGrid.value1.setValue("foo");
 		oConditionPanel._changeField(oConditionGrid);		
 		var sValue1 = "foo";
-		strictEqual(oP13nFilterPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+		strictEqual(oP13nFilterPanel.getFilterItems()[1].getValue1(), sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
 		// Remove item
  		var nItems= 2;
 		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 		
 		// Add item
 		nItems= 3;
@@ -250,7 +250,7 @@
 		oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.value1.setValue("new");
 		oConditionPanel._changeField(oConditionGrid);		
-		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nFilterPanel.destroy();

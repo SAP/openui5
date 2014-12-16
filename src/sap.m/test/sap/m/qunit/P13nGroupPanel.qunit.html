@@ -108,7 +108,7 @@
 
 		// assertions
 		var nItems= 4;
-		strictEqual(oP13nGroupPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+		strictEqual(oP13nGroupPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nGroupPanel.destroy();
@@ -127,7 +127,7 @@
 
 		// assertions
 		var nItems= 2;
-		strictEqual(oP13nGroupPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nGroupPanel.destroy();
@@ -179,7 +179,7 @@
  		var nItems= 1;
 		var oConditionPanel= oP13nGroupPanel._oGroupPanel;
 		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nGroupPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 		
 		// Add item
 		nItems= 2;
@@ -190,7 +190,7 @@
 		oConditionGrid.keyField.setSelectedKey("c0");
 		oConditionPanel._changeField(oConditionGrid);		
 		
-		strictEqual(oP13nGroupPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 		// cleanup
 		oP13nGroupPanel.destroy();
