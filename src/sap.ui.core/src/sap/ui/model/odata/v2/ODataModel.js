@@ -1526,7 +1526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			// If error is a 403 with XSRF token "Required" reset the token and retry sending request
 			if (that.bTokenHandling && oError.response) {
 				var sToken = that._getHeader("x-csrf-token", oError.response.headers);
-				if (!oRequest.bTokenReset && oError.response.statusCode === '403' && sToken && sToken.toLowerCase() === "required") {
+				if (!oRequest.bTokenReset && oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					that.resetSecurityToken();
 					oRequest.bTokenReset = true;
 					_submit();
@@ -2162,7 +2162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
 				// a new token will be fetched in the refresh afterwards.
 				sToken = this._getHeader("x-csrf-token", oError.response.headers);
-				if (oError.response.statusCode === '403' && sToken && sToken.toLowerCase() === "required") {
+				if (oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					this.resetSecurityToken();
 				}
 			}
