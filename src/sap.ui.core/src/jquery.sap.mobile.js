@@ -391,17 +391,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					});
 				}
 			}
-	
-			if (options.homeIcon) {
-	
+
+			if (options && options.homeIcon) {
 				var oIcons;
-	
+
 				if (typeof options.homeIcon === "string") {
 					oIcons = { phone: options.homeIcon };
 				} else {
 					oIcons = $.extend({}, options.homeIcon);
 				}
-	
+
 				oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
 				oIcons.favicon = options.homeIcon.icon || oIcons.favicon;
 				oIcons.icon = undefined;
