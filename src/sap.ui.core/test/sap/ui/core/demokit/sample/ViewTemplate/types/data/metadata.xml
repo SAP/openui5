@@ -187,6 +187,11 @@
 				<Property Name="Double" Type="Edm.Double" ConcurrencyMode="Fixed" />
 				<Property Name="Float" Type="Edm.Float" />
 				<Property Name="GlobalUID" Type="Edm.Guid" sap:label="GUID" />
+				<Property Name="Binary" Type="Edm.Binary" />
+				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset"
+					Precision="7" sap:label="Time Stamp" />
+				<Property Name="Byte" Type="Edm.Byte" />
+				<Property Name="SByte" Type="Edm.SByte" />
 			</EntityType>
 			<EntityType Name="Manager" BaseType="com.sap.TEA.TestApplication.Worker"
 				sap:content-version="1">
@@ -520,10 +525,10 @@
 				</Annotation>
 			</Annotations>
 			<atom:link rel="self"
-				href="/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/$metadata"
+				href="/sap/opu/odata/sap/ZKTH_TEA_TEST_APPLICATION/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />
 			<atom:link rel="latest-version"
-				href="/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/$metadata"
+				href="/sap/opu/odata/sap/ZKTH_TEA_TEST_APPLICATION/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />
 		</Schema>
 	</edmx:DataServices>

@@ -10,7 +10,7 @@ jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.types.Component");
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 	metadata: "json",
 	createContent: function () {
-		var sUri = "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/",
+		var sUri = "/sap/opu/odata/sap/ZKTH_TEA_TEST_APPLICATION/",
 			oLayout = new sap.m.HBox(),
 			sMockServerBaseUri =
 				"test-resources/sap/ui/core/demokit/sample/ViewTemplate/types/data/",
