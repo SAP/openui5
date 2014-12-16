@@ -494,15 +494,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	};
 	
 	/**
-	 * Return the length of the list
+	 * Return the length of the list.
+	 * 
+	 * In case the final length is unknown (e.g. when searching on a large dataset), this will 
+	 * return an estimated length. 
 	 *
 	 * @return {number} the length
 	 * @public
 	 */
 	ODataListBinding.prototype.getLength = function() {
-		// If length is not final, add some additional length to enable scrolling/paging for
-		// controls who only enable this if more items are available
-		if (this.bLengthFinal) {
+		// If length is not final and larger than zero, add some additional length to enable 
+		// scrolling/paging for controls that only do this if more items are available
+		if (this.bLengthFinal || this.iLength == 0) {
 			return this.iLength;
 		} else {
 			var iAdditionalLength = this.iLastThreshold || this.iLastLength || 10;
