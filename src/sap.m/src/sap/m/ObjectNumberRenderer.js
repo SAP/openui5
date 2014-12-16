@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ObjectNumberRenderer.render = function(oRm, oON){
+	ObjectNumberRenderer.render = function(oRm, oON) {
 		var sTooltip,
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign(),
@@ -85,7 +85,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.write("</div>"); // Number ends
 	};
 	
-
+	/**
+	 * Gets text alignment by calling the Renderer function getTextAlign
+	 * 
+	 * @param {sap.ui.core.TextAlign}
+	 *            sTextAlign text align
+	 * @param {sap.ui.core.TextDirection}
+	 *            sTextDir text direction
+	 * @private
+	 */
+	ObjectNumberRenderer._getTextAlignment = function(sTextAlign, sTextDir) {
+		sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
+		
+		return sTextAlign;
+	};
+	
 	return ObjectNumberRenderer;
 
 }, /* bExport= */ true);

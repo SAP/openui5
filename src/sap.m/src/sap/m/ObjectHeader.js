@@ -72,11 +72,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Indicates if object header is visible. Invisible object headers are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
-			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
 			 *
 			 * If bandwidth is the key for the application, set this value to false.
@@ -137,7 +132,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * If it is set to false, the control is optimized for the master detail view.
 			 * @since 1.28
 			 */
-			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false}
+			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
+			
+			/**
+			 * The title link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "titlePress" event should be registered.
+			 */
+			titleHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+
+			/**
+			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
+			 */
+			titleTarget : {type : "string", group : "Behavior", defaultValue : null},
+			
+			/**
+			 * The intro link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "introPress" event should be registered.
+			 */
+			introHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+
+			/**
+			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
+			 */
+			introTarget : {type : "string", group : "Behavior", defaultValue : null}
+
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
@@ -346,6 +362,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oControl = new sap.m.ObjectNumber(this.getId() + "-number", {
 				emphasized: false
 			});
+			
 			this.setAggregation("_objectNumber", oControl, true);
 		}
 		return oControl;
@@ -358,13 +375,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				domRef : jQuery.sap.domById(sSourceId)
 			});
 		} else if (!this.getResponsive() && this.getTitleActive() && oEvent.srcControl === this._titleText) {
-			this.fireTitlePress({
-				domRef : this._titleText.getFocusDomRef()
-			});
+			if (!this.getTitleHref()) {
+				this.fireTitlePress({
+					domRef : this._titleText.getFocusDomRef()
+				});
+			}
 		} else if (this.getResponsive() && this.getTitleActive() && sSourceId === this.getId() + "-txt") {
-			this.fireTitlePress({
-				domRef : jQuery.sap.domById(sSourceId)
-			});
+			if (!this.getTitleHref()) {
+				this.fireTitlePress({
+					domRef : jQuery.sap.domById(sSourceId)
+				});
+			}
 		} else if (this.getIconActive() && (sSourceId === this.getId() + "-img" || sSourceId === this.getId() + "-icon")) {
 			this.fireIconPress({
 				domRef : jQuery.sap.domById(sSourceId)
@@ -383,26 +404,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
-
-			this.fireTitlePress({
-				domRef : this._titleText.getFocusDomRef()
-			});
+			
+			if (!this.getTitleHref()) {
+				this.fireTitlePress({
+					domRef : this._titleText.getFocusDomRef()
+				});
+			} else {
+				if (oEvent.type === "sapspace") {
+					this._linkClick(oEvent, sSourceId);
+				}
+			}
 		} else if (this.getResponsive() && this.getTitleActive() && sSourceId === this.getId() + "-txt") {
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
-
-			this.fireTitlePress({
-				domRef : jQuery.sap.domById(sSourceId)
-			});
+			if (!this.getTitleHref()) {
+				this.fireTitlePress({
+					domRef : jQuery.sap.domById(sSourceId)
+				});
+			} else {
+				if (oEvent.type === "sapspace") {
+					this._linkClick(oEvent, sSourceId);
+				}
+			}
 		} else if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
-
-			this.fireIntroPress({
-				domRef : jQuery.sap.domById(sSourceId)
-			});
+			
+			if (!this.getTitleHref()) {
+				this.fireIntroPress({
+					domRef : jQuery.sap.domById(sSourceId)
+				});
+			} else {
+				if (oEvent.type === "sapspace") {
+					this._linkClick(oEvent, sSourceId);
+				}
+			}
 		} else if (this.getIconActive() && jQuery(oEvent.target).hasClass('sapMOHIcon')){
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
@@ -432,6 +470,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype.onsapenter = ObjectHeader.prototype._handleSpaceOrEnter;
+	
+	/**
+	 * Handle link behaviour of the link and title when are active
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype._linkClick = function(oEvent, sSourceId) {
+		// mark the event for components that needs to know if the event was handled
+		oEvent.setMarked();
+		
+		// When there is the normal browser link, the browser does the job. According to the keyboard specification, Space should do the same as Enter or Click.
+		// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
+		var oClickEvent = document.createEvent('MouseEvents');
+		oClickEvent.initEvent('click', false, true); //event type, non-bubbling, cancelable
+		jQuery.sap.domById(sSourceId).dispatchEvent(oClickEvent);
+	};
 
 	/**
 	 * The title or states are rendered in a different way depending of the device
@@ -594,6 +648,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._adjustNumberDiv();
 			this._adjustIntroDiv();
 			
+			if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && this.getFullScreenOptimized() && this._iCountVisAttrStat >= 1 && this._iCountVisAttrStat <= 3) {
+				// Adjust ObjectNumber alignment depending of the page RTL settings
+				this._setNumberTextAlignment(sap.ui.core.TextAlign.Right, sap.ui.core.TextAlign.Left);
+			}
+			
 			// watch for orientation change only on tablet and phone
 			if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 				sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
@@ -627,9 +686,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oObjectNumber && oObjectNumber.getNumber()) {
 			var $numberDiv = jQuery.sap.byId(sId + "-number");
 			var $titleDiv = jQuery.sap.byId(sId + "-titlediv");
-
+			
 			if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
+					// change alignment to fit the design depending if the RTL of the page is set to true or false
+					this._setNumberTextAlignment(sap.ui.core.TextAlign.Left, sap.ui.core.TextAlign.Right);
 					$numberDiv.removeClass("sapMObjectNumberBelowTitle");
 					$titleDiv.removeClass("sapMOHRTitleDivFull");
 				}
@@ -637,6 +698,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var nParentWidth40 = $numberDiv.parent().width() * 0.4; //calculate 40% number div in pixels
 				
 				if ($numberDiv.outerWidth() > nParentWidth40) {
+					// change alignment to fit the design depending if the RTL of the page is set to true or false
+					this._setNumberTextAlignment(sap.ui.core.TextAlign.Right, sap.ui.core.TextAlign.Left);
 					$numberDiv.addClass("sapMObjectNumberBelowTitle");
 					$titleDiv.addClass("sapMOHRTitleDivFull");
 				}
@@ -663,6 +726,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$intro.parent().addClass("sapMOHRIntroMargin");
 		}
 	};
+	
+	/**
+	 * Adjust ObjectNumber alignment depending of the page RTL settings
+	 *            sAlignRTL align position if the page is in RTL
+	 *            sAlignLTR align position if the page is in LTR
+	 * @private
+	 */
+	ObjectHeader.prototype._setNumberTextAlignment = function(sAlignRTL, sAlignLTR) {
+		var oObjectNumber = this.getAggregation("_objectNumber");
+		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+		
+		if (bPageRTL) {
+			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Right);
+		} else {
+			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Left);
+		}
+	};
+	
 	/**
 	 * @param [string]
 	 *            sId control id to be escaped

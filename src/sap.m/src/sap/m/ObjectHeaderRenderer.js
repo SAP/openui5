@@ -372,7 +372,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		if (oOH.getTitle()) {
 			oOH._titleText.setText(oOH.getTitle());
-			oRM.write("<span"); // Start Title Text container
+			if (oOH.getTitleActive()) {
+				oRM.write("<a"); // Start Title Text container
+				if (oOH.getTitleHref()) { // if title is link write it
+					oRM.writeAttributeEscaped("href", oOH.getTitleHref());
+					if (oOH.getTitleTarget()) {
+						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+					}
+				}
+			} else {
+				oRM.write("<span"); // Start Title Text container
+			}
+			
 			oRM.writeAttribute("id", oOH.getId() + "-title");
 			oRM.addClass("sapMOHTitle");
 			if (oOH.getTitleActive()) {
@@ -386,7 +397,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write(">");
 
 			this._renderChildControl(oRM, oOH, oOH._titleText);
-			oRM.write("</span>"); // End Title Text container
+			if (oOH.getTitleActive()) {
+				oRM.write("</a>"); // End Title Text container
+			} else {
+				oRM.write("</span>"); // End Title Text container
+			}
 		}
 
 		if (oOH.getShowTitleSelector()) {
@@ -437,14 +452,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			oRM.writeClasses();
 			oRM.write(">");
-			oRM.write("<span");
-			oRM.writeAttribute("id", oOH.getId() + "-intro");
 			if (oOH.getIntroActive()) {
+				oRM.write("<a");
+				if (oOH.getIntroHref()) { // if title is link write it
+					oRM.writeAttributeEscaped("href", oOH.getIntroHref());
+					if (oOH.getIntroTarget()) {
+						oRM.writeAttributeEscaped("target", oOH.getIntroTarget());
+					}
+				}
 				oRM.writeAttribute("tabindex", "0");
+			} else {
+				oRM.write("<span");
 			}
+			
+			oRM.writeAttribute("id", oOH.getId() + "-intro");
 			oRM.write(">");
 			oRM.writeEscaped(oOH.getIntro());
-			oRM.write("</span>");
+			if (oOH.getIntroActive()) {
+				oRM.write("</a>");
+			} else {
+				oRM.write("</span>");
+			}
 			oRM.write("</div>");
 		}
 
@@ -778,6 +806,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("</div>"); // End Title container
 
 		this._renderResponsiveNumber(oRM, oControl);
+
 		oRM.write("</div>"); // End Title and Number container
 	};
 
@@ -996,6 +1025,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var oObjectNumber = oControl.getAggregation("_objectNumber");
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
+			var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+			
+			if (bPageRTL) {
+				oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Left);
+			} else {
+				oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Right);
+			}
 			this._renderChildControl(oRM, oControl, oObjectNumber);
 		}
 	};
@@ -1100,8 +1136,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
-
+		
 		oRM.write("<div"); // Start Title Text container
+		
 		oRM.writeAttribute("id", oOH.getId() + "-title");
 		oRM.addClass("sapMOHRTitle");
 
@@ -1132,14 +1169,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			oRM.writeClasses();
 			oRM.write(">");
-			oRM.write("<span");
-			oRM.writeAttribute("id", oOH.getId() + "-intro");
 			if (oOH.getIntroActive()) {
+				oRM.write("<a");
+				if (oOH.getIntroHref()) { // if title is link write it
+					oRM.writeAttributeEscaped("href", oOH.getIntroHref());
+					if (oOH.getIntroTarget()) {
+						oRM.writeAttributeEscaped("target", oOH.getIntroTarget());
+					}
+				}
 				oRM.writeAttribute("tabindex", "0");
+			} else {
+				oRM.write("<span");
 			}
+			oRM.writeAttribute("id", oOH.getId() + "-intro");
+			
 			oRM.write(">");
 			oRM.writeEscaped(oOH.getIntro());
-			oRM.write("</span>");
+			if (oOH.getIntroActive()) {
+				oRM.write("</a>");
+			} else {
+				oRM.write("</span>");
+			}
 			oRM.write("</div>");
 		}
 
@@ -1183,9 +1233,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOHRTitleTextContainer");
 		oRM.writeClasses();
 		oRM.write(">");
-		oRM.write("<span");
 		if (oOH.getTitleActive()) {
+			oRM.write("<a");
+			if (oOH.getTitleHref()) { // if title is link write it
+				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
+				if (oOH.getTitleTarget()) {
+					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+				}
+			}		
 			oRM.writeAttribute("tabindex", "0");
+		} else {
+			oRM.write("<span");
 		}
 		oRM.writeAttribute("id", oOH.getId() + "-txt");
 		oRM.addClass("sapMOHRTitleText");
@@ -1218,15 +1276,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 			oRM.writeEscaped(sOHTitleEnd);
 			oRM.write(sEllipsis);
-			oRM.write("</span>");
+			if (oOH.getTitleActive()) {
+				oRM.write("</a>");
+			} else {
+				oRM.write("</span>");
+			}
 			this._renderResponsiveMarkers(oRM, oOH);
 			oRM.write("</span>");
 		} else {
 			if (!sEllipsis){
 				oRM.writeEscaped(sOHTitle);
-				oRM.write("</span></span></span>");
 			} else {
 				oRM.writeEscaped(sOHTitle + sEllipsis);
+			}
+			if (oOH.getTitleActive()) {
+				oRM.write("</span></a></span>");
+			} else {
 				oRM.write("</span></span></span>");
 			}
 		}

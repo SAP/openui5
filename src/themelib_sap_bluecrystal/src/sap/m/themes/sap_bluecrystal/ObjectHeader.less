@@ -201,13 +201,14 @@ html[data-sap-ui-browser ^= "ie"] {
 	color: @sapUiLightText;
 }
 
-.sapMOHRIntroActive > span,
+.sapMOHRIntroActive > a,
 .sapMOHRTitleActive .sapMOHRTitleText {
 	cursor: pointer;
 	color: @sapUiLink;
+	text-decoration: none;
 }
 
-.sapMOHRIntroActive > span:focus,
+.sapMOHRIntroActive > a:focus,
 .sapMOHRTitleActive .sapMOHRTitleText:focus {
 	outline: @sapUiFocus dotted 1px;
 	outline-offset: -1px;
@@ -238,7 +239,7 @@ html[data-sap-ui-browser ^= "ie"] {
 
 		.sapMOHRIntro, .sapMOHRIntroActive {
 			padding: 0.125rem;
-			span {
+			span, a {
 				margin: 0.125rem;
 			}
 		}
