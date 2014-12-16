@@ -452,11 +452,11 @@
 			setTimeout(function() {
 				// Asert
 				ok(fnFireLiveChangeSpy.callCount, 1);
-
+				
 				// Delete
 				oSelectDialog.destroy();
 				start();
-			}, 500);
+			}, 1000);
 		});
 
 		asyncTest("Confirm Event", function () {
