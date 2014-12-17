@@ -74,11 +74,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './MenuItemBase', '.
 	
 		// ARIA
 		if (oInfo.bAccessible) {
-			rm.writeAttribute("role", "menuitem");
-			rm.writeAttribute("aria-labelledby", oMenu.getId() + " " + this.getId() + "-txt " + this.getId() + "-scuttxt");
-			rm.writeAttribute("aria-disabled", !oMenu.checkEnabled(oItem));
-			rm.writeAttribute("aria-posinset", oInfo.iItemNo);
-			rm.writeAttribute("aria-setsize", oInfo.iTotalItems);
+			rm.writeAccessibilityState(oMenu, { //Pass the Menu here to write aria-labelledby
+				role: "menuitem",
+				disabled: !oMenu.checkEnabled(oItem),
+				posinset: oInfo.iItemNo,
+				setsize: oInfo.iTotalItems,
+				labelledby: {value: oMenu.getId() + "-label " + this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
+			});
 			if (oSubMenu) {
 				rm.writeAttribute("aria-haspopup", true);
 				rm.writeAttribute("aria-owns", oSubMenu.getId());

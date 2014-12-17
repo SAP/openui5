@@ -66,6 +66,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			 */
 			items : {type : "sap.ui.unified.MenuItemBase", multiple : true, singularName : "item"}
 		},
+		associations : {
+	
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.26.3
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -303,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		
 		// Mark the first item when using the keyboard
 		if (bWithKeyboard) {
-			this.setHoveredItem(this.getNextSelectableItem( -1));
+			this.setHoveredItem(this.getNextSelectableItem(-1));
 		}
 	
 		jQuery.sap.bindAnyEvent(this.fAnyEventHandlerProxy);
@@ -715,11 +723,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	
 		this.oHoveredItem = oItem;
 		oItem.hover(true, this);
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-			jQuery(this.getDomRef()).attr("aria-activedescendant", oItem.getId());
-		}
+		this._setActiveDescendant(this.oHoveredItem);
 		
 		this.scrollToItem(this.oHoveredItem);
+	};
+	
+	Menu.prototype._setActiveDescendant = function(oItem){
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			var that = this;
+			setTimeout(function(){
+				//Setting active descendant must be a bit delayed. Otherwise the screenreader does not announce it.
+				if (that.oHoveredItem === oItem) {
+					that.$().attr("aria-activedescendant", that.oHoveredItem.getId());
+				}
+			}, 10);
+		}
 	};
 	
 	Menu.prototype.openSubmenu = function(oItem, bWithKeyboard, bWithHover){
