@@ -58,8 +58,7 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 			oRm.writeAccessibilityState(oControl, {
 				role: "combobox",
 				expanded: oControl.isOpen(),
-				autocomplete: "both",
-				required: "false"
+				autocomplete: "both"
 			});
 		};
 
