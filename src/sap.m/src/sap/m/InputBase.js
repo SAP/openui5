@@ -705,8 +705,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					jQuery.sap.byId(sMessageId).remove();
 				});
 			}
-	
-			var $This = jQuery(this.getDomRefForValueStateMessage());
 			var $Input = jQuery(this.getFocusDomRef());
 			var mDock = Popup.Dock;
 			var bIsRightAligned = $Input.css("text-align") === "right";
@@ -715,8 +713,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var sTextClass = "sapMInputBaseMessageText";
 			var $Content = jQuery("<div>",{
 				"id": sMessageId,
-				"class": sClass,
-				"style": "max-width:" + $This.outerWidth() + "px"
+				"class": sClass
 			}).append(
 				jQuery("<span>",{
 					"id": sMessageId + "-text",
