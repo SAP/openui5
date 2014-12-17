@@ -731,8 +731,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	};
 	
 	Menu.prototype._setActiveDescendant = function(oItem){
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (sap.ui.getCore().getConfiguration().getAccessibility() && oItem) {
 			var that = this;
+			that.$().removeAttr("aria-activedescendant");
 			setTimeout(function(){
 				//Setting active descendant must be a bit delayed. Otherwise the screenreader does not announce it.
 				if (that.oHoveredItem === oItem) {
@@ -881,6 +882,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	
 		oMenu.invalidate();
 		oMenu.rerender();
+	};
+	
+	Menu.prototype.focus = function(){
+		var res = sap.ui.core.Control.prototype.focus.apply(this, arguments);
+		this._setActiveDescendant(this.oHoveredItem);
+		return res;
 	};
 	
 	
