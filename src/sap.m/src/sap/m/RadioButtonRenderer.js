@@ -39,15 +39,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		oRm.write("<div"); // Control - DIV
 		oRm.writeControlData(oRadioButton);
 
+		var sTooltipWithStateMessage = ValueStateSupport.enrichTooltip(oRadioButton, oRadioButton.getTooltip_AsString());
+		if (sTooltipWithStateMessage) {
+			oRm.writeAttributeEscaped("title", sTooltipWithStateMessage);
+		}
+
 		// ARIA
 		oRm.writeAccessibilityState(oRadioButton, {
 			role: "radio",
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected() === true,
-			invalid: oRadioButton.getValueState() == sap.ui.core.ValueState.Error,
-			disabled: !oRadioButton.getEditable(),
+			disabled: !oRadioButton.getEditable() ? true : undefined, // Avoid output aria-disabled=false when the button is editable
 			labelledby: sId + "-label",
-			describedby: oRadioButton.getValueState() !== "None" ? sId + "-Descr" : undefined
+			describedby: sTooltipWithStateMessage ? sId + "-Descr" : undefined
 		});
 
 		// Add classes and properties depending on the state
@@ -72,11 +76,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		}
 
 		oRm.writeClasses();
-
-		var sTooltip = ValueStateSupport.enrichTooltip(oRadioButton, oRadioButton.getTooltip_AsString());
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
-		}
 
 		if (bEnabled) {
 			oRm.writeAttribute("tabindex", oRadioButton.hasOwnProperty("_iTabIndex") ? oRadioButton._iTabIndex : 0);
@@ -124,11 +123,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		oRm.write("</div>");
 		oRm.renderControl(oRadioButton._oLabel);
-		if (oRadioButton.getValueState() !== "None") {
+
+		if (sTooltipWithStateMessage) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
 			oRm.write("<span id=\"" + sId + "-Descr\" style=\"display: none;\">");
-			oRm.write(oRadioButton.getValueState());
+			oRm.writeEscaped(sTooltipWithStateMessage);
 			oRm.write("</span>");
 		}
 		oRm.write("</div>"); // Control - DIVs close
