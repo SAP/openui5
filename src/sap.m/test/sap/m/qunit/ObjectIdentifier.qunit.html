@@ -243,6 +243,7 @@
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
 		strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
+		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -268,6 +269,7 @@
 		// Assert
 		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
 	
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -293,7 +295,45 @@
 		// Assert
 		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 	
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("The text control should be invisible if the text is empty", function() {
+		
+		//Arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "Title"
+		});
+		
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		//Assert
+		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("The text control should be visible if the text is not empty", function() {
+		
+		//Arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "Title",
+			text : "Text"
+		});
+		
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		//Assert
+		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
