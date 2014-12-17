@@ -79,6 +79,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			emphasized : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -159,12 +171,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Link.prototype.setSubtle = function(bSubtle){
 		this.setProperty("subtle", bSubtle, true);
 		this.$().toggleClass("sapMLnkSubtle", bSubtle);
+		if (bSubtle) {
+			if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
+				this.$().append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
+				this.$().attr("aria-describedby", this.$().attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
+			}
+		} else {
+			this.$().attr("aria-describedby", this.$().attr("aria-describedby").replace(this.getId() + "-linkSubtle", ""));			
+			jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
+		}
 		return this;
 	};
 	
 	Link.prototype.setEmphasized = function(bEmphasized){
 		this.setProperty("emphasized", bEmphasized, true);
 		this.$().toggleClass("sapMLnkEmphasized", bEmphasized);
+		if (bEmphasized) {
+			if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
+				this.$().append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+				this.$().attr("aria-describedby", this.$().attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
+			}
+		} else {
+			this.$().attr("aria-describedby", this.$().attr("aria-describedby").replace(" " + this.getId() + "-linkEmphasized", ""));
+			jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
+		}
 		return this;
 	};
 	
@@ -180,9 +210,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (bEnbabled) {
 			this.$().attr("disabled", false);
 			this.$().attr("tabindex", "0");
+			this.$().removeAttr("aria-disabled");
 		} else {
 			this.$().attr("disabled", true);
 			this.$().attr("tabindex", "-1");
+			this.$().attr("aria-disabled", true);
 		}
 		return this;
 	};
@@ -204,6 +236,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
+	/**
+	 * Function that calculates aria-describedby value.
+	 *
+	 * @private
+	 * @returns {String} the calculated value
+	 */
+	Link.prototype._getAriaDescribedByIds = function() {
+		var describedValue;
+		if (this.getSubtle()) {
+			describedValue = this.getId() + "-linkSubtle";
+		} else if (this.getEmphasized()) {
+			describedValue = this.getId() + "-linkEmphasized";
+		} else if (this.getSubtle() && this.getEmphasized()) {
+			describedValue = this.getId() + "-linkSubtle " + this.getId() + "-linkEmphasized";
+		} else {
+			describedValue = " ";
+		}
+		return describedValue;
+	};
+	
+	/**
+	 * Function that translates the resource text.
+	 *
+	 * @param {String} sKey the resource to be translated
+	 * @private
+	 * @returns {String} the translated text
+	 */
+	Link.prototype._getLinkDescription = function(sKey) {
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var sText = oRb.getText(sKey);
+		return sText;
+	};
 
 	return Link;
 
