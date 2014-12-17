@@ -20,7 +20,6 @@
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMOHIntro.sapMOHIntroActive > span,
 .sapMOHTitle.sapMOHTitleActive>.sapMText{
 	color: @sapUiLink;
 	cursor: pointer;
@@ -86,9 +85,8 @@
 	outline-offset: -1px;
 }
 
-.sapMOHIntro.sapMOHIntroActive > span:focus {
-	outline: 1px dotted @sapUiFocus;
-	outline-offset: -1px;
+.sapMOHIntro.sapMOHIntroActive >.sapMLnk:active {
+	background: none;
 }
 
 .sapMOHTitleIcon > .sapMOHIcon:focus,
@@ -201,17 +199,19 @@ html[data-sap-ui-browser ^= "ie"] {
 	color: @sapUiLightText;
 }
 
-.sapMOHRIntroActive > a,
 .sapMOHRTitleActive .sapMOHRTitleText {
 	cursor: pointer;
 	color: @sapUiLink;
 	text-decoration: none;
 }
 
-.sapMOHRIntroActive > a:focus,
 .sapMOHRTitleActive .sapMOHRTitleText:focus {
 	outline: @sapUiFocus dotted 1px;
 	outline-offset: -1px;
+}
+
+.sapMOHRIntro.sapMOHRIntroActive >.sapMLnk:active {
+	background: none;
 }
 
 html[data-sap-ui-browser ^= "ie"] {

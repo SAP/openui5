@@ -115,6 +115,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		return icons;
 	};
+	
+	/**
+	 * Render intro as sap.m.Text or sap.m.Link depending if it's active or not.
+	 * used in both ObjectHeader and ObjectHeaderResponsive
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader}
+	 *            oOH the ObjectHeader that contains icons
+	 * @param {string}
+	 *            sIntroClass the css class of the intro container
+	 * @param {string}
+	 *            sIntroActiveClass the css class of the intro container if the intro is active
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderIntro = function(oRM, oOH, sIntroClass, sIntroActiveClass) {
+		if (oOH.getIntroActive()) {
+			oOH._introText = new sap.m.Link(oOH.getId() + "-intro");
+			oOH._introText.setText(oOH.getIntro());
+			oOH._introText.setHref(oOH.getIntroHref());
+			oOH._introText.setTarget(oOH.getIntroTarget());
+			oOH._introText.press = oOH.introPress;
+		} else {
+			oOH._introText = new sap.m.Text(oOH.getId() + "-intro");
+			oOH._introText.setText(oOH.getIntro());
+		}
+		oRM.write("<div");
+		oRM.addClass(sIntroClass);
+		if (oOH.getIntroActive()) {
+			oRM.addClass(sIntroActiveClass);
+		}
+		oRM.writeClasses();
+		oRM.write(">");
+		this._renderChildControl(oRM, oOH, oOH._introText);
+		oRM.write("</div>");
+	};
 
 	/**
 	 * Renders the HTML for Attribute.
@@ -445,35 +481,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderFullOH = function(oRM, oOH) {
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
-			oRM.write("<div");
-			oRM.addClass("sapMOHIntro");
-			if (oOH.getIntroActive()) {
-				oRM.addClass("sapMOHIntroActive");
-			}
-			oRM.writeClasses();
-			oRM.write(">");
-			if (oOH.getIntroActive()) {
-				oRM.write("<a");
-				if (oOH.getIntroHref()) { // if title is link write it
-					oRM.writeAttributeEscaped("href", oOH.getIntroHref());
-					if (oOH.getIntroTarget()) {
-						oRM.writeAttributeEscaped("target", oOH.getIntroTarget());
-					}
-				}
-				oRM.writeAttribute("tabindex", "0");
-			} else {
-				oRM.write("<span");
-			}
-			
-			oRM.writeAttribute("id", oOH.getId() + "-intro");
-			oRM.write(">");
-			oRM.writeEscaped(oOH.getIntro());
-			if (oOH.getIntroActive()) {
-				oRM.write("</a>");
-			} else {
-				oRM.write("</span>");
-			}
-			oRM.write("</div>");
+			this._renderIntro(oRM, oOH, "sapMOHIntro", "sapMOHIntroActive");
 		}
 
 		// Container for fields placed on the top half of the item, below the intro. This
@@ -705,7 +713,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div");
 
 		oRM.addClass("sapMOHRBg" + oOH.getBackgroundDesign());
-
 		if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
 			oRM.addClass("sapMOHRStatesOneOrThree");
 		}
@@ -1162,35 +1169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
-			oRM.write("<div");
-			oRM.addClass("sapMOHRIntro");
-			if (oOH.getIntroActive()) {
-				oRM.addClass("sapMOHRIntroActive");
-			}
-			oRM.writeClasses();
-			oRM.write(">");
-			if (oOH.getIntroActive()) {
-				oRM.write("<a");
-				if (oOH.getIntroHref()) { // if title is link write it
-					oRM.writeAttributeEscaped("href", oOH.getIntroHref());
-					if (oOH.getIntroTarget()) {
-						oRM.writeAttributeEscaped("target", oOH.getIntroTarget());
-					}
-				}
-				oRM.writeAttribute("tabindex", "0");
-			} else {
-				oRM.write("<span");
-			}
-			oRM.writeAttribute("id", oOH.getId() + "-intro");
-			
-			oRM.write(">");
-			oRM.writeEscaped(oOH.getIntro());
-			if (oOH.getIntroActive()) {
-				oRM.write("</a>");
-			} else {
-				oRM.write("</span>");
-			}
-			oRM.write("</div>");
+			this._renderIntro(oRM, oOH, "sapMOHRIntro", "sapMOHRIntroActive");
 		}
 
 		oRM.write("</div>"); // End Title Text container
@@ -1317,7 +1296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 */
 	ObjectHeaderRenderer._rerenderResponsiveStates = function(oRM, oOH) {
 		var sId = oOH.getId(),
-			aVisAtribsStatuses  = this._getVisibleAttribsAndStatuses(oOH),
+			aVisAtribsStatuses = this._getVisibleAttribsAndStatuses(oOH),
 			aVisibleAttrAndStat = aVisAtribsStatuses[0].concat(aVisAtribsStatuses[1]),
 			iCountVisibleAttr = aVisAtribsStatuses[0].length,
 			iCountAttrAndStat = aVisibleAttrAndStat.length,

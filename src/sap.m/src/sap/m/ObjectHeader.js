@@ -136,21 +136,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			
 			/**
 			 * The title link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "titlePress" event should be registered.
+			 * @since 1.28
 			 */
 			titleHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
 			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
+			 * @since 1.28
 			 */
 			titleTarget : {type : "string", group : "Behavior", defaultValue : null},
 			
 			/**
 			 * The intro link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "introPress" event should be registered.
+			 * @since 1.28
 			 */
 			introHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
 			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
+			 * @since 1.28
 			 */
 			introTarget : {type : "string", group : "Behavior", defaultValue : null}
 
@@ -292,6 +296,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._fNumberWidth = undefined;
 		this._titleText = new sap.m.Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
+		
 	};
 
 	/**
@@ -371,9 +376,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype.ontap = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 		if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
-			this.fireIntroPress({
-				domRef : jQuery.sap.domById(sSourceId)
-			});
+			if (!this.getIntroHref()) {
+				this.fireIntroPress({
+					domRef : jQuery.sap.domById(sSourceId)
+				});
+			}
 		} else if (!this.getResponsive() && this.getTitleActive() && oEvent.srcControl === this._titleText) {
 			if (!this.getTitleHref()) {
 				this.fireTitlePress({
@@ -431,15 +438,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
-			
-			if (!this.getTitleHref()) {
+			if (!this.getIntroHref()) {
 				this.fireIntroPress({
 					domRef : jQuery.sap.domById(sSourceId)
 				});
-			} else {
-				if (oEvent.type === "sapspace") {
-					this._linkClick(oEvent, sSourceId);
-				}
 			}
 		} else if (this.getIconActive() && jQuery(oEvent.target).hasClass('sapMOHIcon')){
 			if (oEvent.type === "sapspace") {
@@ -596,6 +598,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._titleText.destroy();
 			this._titleText = undefined;
 		}
+		
+		if (this._introText) {
+			this._introText.destroy();
+			this._introText = undefined;
+		}
 	};
 
 	/**
@@ -640,6 +647,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		if (sap.ui.Device.system.desktop) {
 			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		}
+		
+		if (this._introText) {
+			this._introText.destroy();
+			this._introText = undefined;
 		}
 	};
 

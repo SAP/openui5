@@ -314,7 +314,7 @@
 					
 					// Assert
 					var $sIntro = oObjectHeader.$("intro");
-					ok(!$sIntro.attr("href"), "Intro does not have an attribute href and it's not a link.");
+					ok($sIntro.attr("href") === "javascript:void(0);", "Intro does not have a valid href and it's not a link.");
 					
 					// Clean up
 					oObjectHeader.destroy();
