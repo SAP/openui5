@@ -121,6 +121,23 @@
 		oPanel.destroy();
 	});
 
+	QUnit.test("Line heigh should equal the height of the header when header toolbar is not present", function(assert) {
+		var oPanel = new sap.m.Panel({
+			headerText: "This is the Panel header",
+			content: [new sap.m.Text({
+				text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+			})]
+		});
+
+		oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $header = oPanel.$().find(".sapMPanelHdr");
+		assert.strictEqual($header.css("height"), $header.css("lineHeight"), "Height and line height should be equal");
+
+		oPanel.destroy();
+	});
+
 	QUnit.test("Header toolbar should override header text", function(assert) {
 		var oPanel = new sap.m.Panel({
 			headerText: "This is the Panel header",
