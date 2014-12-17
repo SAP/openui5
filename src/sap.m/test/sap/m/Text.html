@@ -6,7 +6,6 @@
 		<style>
 			#text1, #text2, #text3, #text4, #text5, #text6, #text7, #text8 {
 				margin: 0.4375em 0.4375em 0em 0.4375em;
-				border
 			}
 			#text4 {
 				padding: 0em 0.4375em 0em 0.4375em;
@@ -18,7 +17,7 @@
 			}
 		</style>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
@@ -28,14 +27,14 @@
 			// create and add app
 			var app = new sap.m.App("myApp", {initialPage:"textPage"});
 			app.placeAt("body");
-			
-			// create and add a page with texts 
+
+			// create and add a page with texts
 			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
 			var page = new sap.m.Page("textPage", {
 				title:"Text",
-				content : [ 
+				content : [
 			   		new sap.m.Text("text1", {
-			   			text: "[1. STANDARD] " + lorem 
+			   			text: "[1. STANDARD] " + lorem
 			   		}),
 			   		new sap.m.Text("text2", {
 			   			text: "[2. NO WRAPPING] " + lorem,
@@ -75,9 +74,9 @@
 	            ]
 			});
 			app.addPage(page);
-		
+
 		</script>
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>
