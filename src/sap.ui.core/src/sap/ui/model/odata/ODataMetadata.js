@@ -5,8 +5,8 @@
 
 
 // Provides class sap.ui.model.odata.ODataMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs'],
+	function(jQuery, EventProvider, datajs) {
 	"use strict";
 
 	/*global OData *///declare unusual global vars for JSLint/SAPUI5 validation
@@ -14,11 +14,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Constructor for a new ODataMetadata.
 	 *
-	 * @param {string} sMetadataURI
-	 * @param {object} mParams
-	 * @param {boolean} mParams.async
-	 * @param {boolean} mParams.user
-	 * @param {boolean} mParams.password
+	 * @param {string} sMetadataURI needs the correct metadata uri including $metadata
+	 * @param {object} [mParams] optional map of parameters.
+	 * @param {boolean} [mParams.async=true] request is per default async
+	 * @param {string} [mParams.user] user for the service,
+	 * @param {string} [mParams.password] password for service
+	 * @param {object} [mParams.headers] (optional) map of custom headers which should be set with the request.
 	 * 
 	 * @class
 	 * Implementation to access oData metadata
@@ -630,6 +631,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	 * Get the the use-batch extension value if any
+	 * @return {boolean} true/false
 	 * @public
 	 */
 	ODataMetadata.prototype.getUseBatch = function() {
