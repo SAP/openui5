@@ -44,15 +44,11 @@ sap.ui.define(['sap/ui/base/Object'],
 
 		/**
 		 * Sets the HTML tag of the root element.
-		 * @param {sap.m.IBarHTMLTag} sTag
+		 * @param {string} sTag
 		 * @returns {sap.m.IBar} this for chaining
 		 * @protected
 		 */
 		setHTMLTag : function (sNewTag) {
-			if (!sap.m.IBarHTMLTag.hasOwnProperty(sNewTag)) {
-				jQuery.sap.log.error(sNewTag + " is no valid entry for sap.m.IBarHTMLTag", this);
-			}
-
 			if (sNewTag === this.sTag) {
 				return this;
 			}
@@ -64,7 +60,7 @@ sap.ui.define(['sap/ui/base/Object'],
 
 		/**
 		 * Gets the HTML tag of the root domref.
-		 * @returns {sap.m.IBarHTMLTag} the HTML-tag
+		 * @returns {string} the HTML-tag
 		 * @protected
 		 */
 		getHTMLTag : function () {
