@@ -74,10 +74,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		return aContexts;
 	};
 
+	JSONListBinding.prototype.getCurrentContexts = function() {
+		if (this.bUseExtendedChangeDetection) {
+			return this.aLastContexts || [];
+		} else {
+			return this.getContexts(this.iLastStartIndex, this.iLastLength);
+		}
+	};
+	
 	/**
 	 * Get indices of the list
 	 */
-	sap.ui.model.json.JSONListBinding.prototype.updateIndices = function() {
+	JSONListBinding.prototype.updateIndices = function() {
 		var i;
 
 		this.aIndices = [];

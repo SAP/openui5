@@ -75,7 +75,7 @@
 			removeSharedMetadata();
 		}
 	});
-	
+
 	asyncTest("ListBinding getLength, getContexts", function(){
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function() {
@@ -93,6 +93,25 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 	});
 
+	asyncTest("ListBinding getCurrentContexts", function(){
+		var oBinding = oModel.bindList("/Categories");
+
+		var handler = function() {
+			var aContexts = oBinding.getContexts(0, 5),
+				aCurrentContexts = oBinding.getCurrentContexts();
+			
+			equal(aCurrentContexts.length, 5, "amount of items in current contexts");
+			jQuery(aCurrentContexts).each(function(i, context){
+				equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+			});
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		}
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
+		oBinding.attachChange(handler);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+	});
+	
 	asyncTest("ListBinding sort", function(){
 		var oBinding = oModel.bindList("/Categories");
 		var handler3 = function(oEvent){

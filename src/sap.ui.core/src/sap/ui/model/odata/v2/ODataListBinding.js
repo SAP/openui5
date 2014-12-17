@@ -190,6 +190,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 		return aContexts;
 	};
+	
+	ODataListBinding.prototype.getCurrentContexts = function() {
+		return this.aLastContexts || [];
+	};
 
 	/**
 	 * Return contexts for the list
