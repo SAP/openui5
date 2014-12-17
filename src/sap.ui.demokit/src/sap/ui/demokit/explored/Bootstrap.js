@@ -34,7 +34,8 @@ sap.ui.define(['jquery.sap.global'],
 				"User Input",
 				"Testing",
 				"Theming",
-				"Routing"
+				"Routing",
+				"Map"
 			];
 			var afilterProps = [ "namespace", "since", "category", "appComponent"]; // form factors are set manually
 			var oFilterSets = {
