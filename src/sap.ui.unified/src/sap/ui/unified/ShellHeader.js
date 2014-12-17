@@ -103,6 +103,9 @@ sap.ui.define(['jquery.sap.global', './library'],
 					rm.write("<a tabindex='0' href='javascript:void(0);'");
 					rm.writeElementData(oUser);
 					rm.addClass("sapUiUfdShellHeadUsrItm");
+					if (!oUser.getShowPopupIndicator()) {
+						rm.addClass("sapUiUfdShellHeadUsrItmWithoutPopup");
+					}
 					rm.writeClasses();
 					var tooltip = oUser.getTooltip_AsString();
 					if (tooltip) {
@@ -110,10 +113,13 @@ sap.ui.define(['jquery.sap.global', './library'],
 					}
 					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 						rm.writeAccessibilityState(oUser, {
-							role: "button"/*,
-							haspopup: "true"*/
+							role: "button"
 						});
+						if (oUser.getShowPopupIndicator()) {
+							rm.writeAttribute("aria-haspopup", "true");
+						}
 					}
+					
 					rm.write("><span id='", oUser.getId(), "-img' aria-hidden='true' class='sapUiUfdShellHeadUsrItmImg'></span>");
 					rm.write("<span id='" + oUser.getId() + "-name' class='sapUiUfdShellHeadUsrItmName'");
 					var sUserName = oUser.getUsername() || "";
