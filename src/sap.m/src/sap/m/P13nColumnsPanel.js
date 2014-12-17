@@ -1,20 +1,18 @@
-/*!
- * ${copyright}
+/*
+ * ! ${copyright}
  */
 
 // Provides control sap.m.P13nColumnsPanel.
-sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table',
-		'./library', 'sap/ui/core/Control'], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField,
-		Table, library, Control) {
+sap.ui.define([
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/Control'
+], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, Control) {
 	"use strict";
 
 	/**
 	 * Constructor for a new P13nColumnsPanel.
 	 * 
-	 * @param {string}
-	 *          [sId] id for the new control, generated automatically if no id is given
-	 * @param {object}
-	 *          [mSettings] initial settings for the new control
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ColumnsPanel can be used for personalization of the table to define column specific settings
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
@@ -25,31 +23,31 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	var P13nColumnsPanel = P13nPanel.extend("sap.m.P13nColumnsPanel", /** @lends sap.m.P13nColumnsPanel.prototype */
 	{
-		metadata : {
-			library : "sap.m",
-			aggregations : {
+		metadata: {
+			library: "sap.m",
+			aggregations: {
 				/**
 				 * list of columns that has been changed
 				 */
-				columnsItems : {
-					type : "sap.m.P13nColumnsItem",
-					multiple : true,
-					singularName : "columnsItem",
-					bindable : "bindable"
+				columnsItems: {
+					type: "sap.m.P13nColumnsItem",
+					multiple: true,
+					singularName: "columnsItem",
+					bindable: "bindable"
 				}
 			},
-			events : {
+			events: {
 
 				/**
 				 * event raised when a columnsItem was added
 				 */
-				addColumnsItem : {
-					parameters : {
+				addColumnsItem: {
+					parameters: {
 						/**
 						 * item added
 						 */
-						newItem : {
-							type : "sap.m.P13nColumnsItem"
+						newItem: {
+							type: "sap.m.P13nColumnsItem"
 						}
 					}
 				}
@@ -76,6 +74,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex > 0) {
 				iNewIndex = 0;
@@ -105,14 +104,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex > 0) {
-				if (this._bShowSelected === true) {
-					// Table items are filtered by "Show Selected" --> determine previous table item that is selected
-					iNewIndex = this._getPreviousSelectedItemIndex(iOldIndex);
-				} else {
-					iNewIndex = iOldIndex - 1;
-				}
+				iNewIndex = this._getPreviousItemIndex(iOldIndex);
 			}
 
 			// apply new item index
@@ -141,14 +136,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex < iTableMaxIndex - 1) {
-				if (this._bShowSelected === true) {
-					// Table items are filtered by "Show Selected" --> determine previous table item that is selected
-					iNewIndex = this._getNextSelectedItemIndex(iOldIndex);
-				} else {
-					iNewIndex = iOldIndex + 1;
-				}
+				iNewIndex = this._getNextItemIndex(iOldIndex);
 			}
 
 			// apply new item index
@@ -177,6 +168,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
+			// calculate new item index
 			iNewIndex = iOldIndex;
 			if (iOldIndex < iTableMaxIndex - 1) {
 				iNewIndex = iTableMaxIndex - 1;
@@ -192,22 +184,18 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
-	 * This method determines all columnsItems that have an index property, which are not undefined and fit into index
-	 * range of iOldIndex & iNewIndex. If such columnsItems are found take the index property and change it to a value
-	 * according to the move direction.
+	 * This method determines all columnsItems that have an index property, which are not undefined and fit into index range of iOldIndex & iNewIndex.
+	 * If such columnsItems are found take the index property and change it to a value according to the move direction.
 	 * 
 	 * @private
-	 * @param {int}
-	 *          iOldIndex is the index from where the correction shall start in columnsItems
-	 * @param {int}
-	 *          iNewIndex is the index to where the correction shall run in columnsItems
+	 * @param {int} iOldIndex is the index from where the correction shall start in columnsItems
+	 * @param {int} iNewIndex is the index to where the correction shall run in columnsItems
 	 */
 	P13nColumnsPanel.prototype._changeColumnsItemsIndexes = function(iOldIndex, iNewIndex) {
 		var iMinIndex = null, iMaxIndex = null, sSelectedItemColumnKey = null, iMaxTableIndex = null;
 		var aColumnsItems = null, iColumnsItemIndex = null, sColumnKey = null;
 
-		if (iOldIndex !== null && iOldIndex !== undefined && iOldIndex > -1 && iNewIndex !== null
-				&& iNewIndex !== undefined && iNewIndex > -1 && iOldIndex !== iNewIndex) {
+		if (iOldIndex !== null && iOldIndex !== undefined && iOldIndex > -1 && iNewIndex !== null && iNewIndex !== undefined && iNewIndex > -1 && iOldIndex !== iNewIndex) {
 
 			iMinIndex = Math.min(iOldIndex, iNewIndex);
 			iMaxIndex = Math.max(iOldIndex, iNewIndex);
@@ -225,8 +213,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 				iColumnsItemIndex = oColumnsItem.getIndex();
 				// identify columnsItems that does not fit into index range --> exclude them
-				if (iColumnsItemIndex === undefined || iColumnsItemIndex < 0 || iColumnsItemIndex < iMinIndex
-						|| iColumnsItemIndex > iMaxIndex) {
+				if (iColumnsItemIndex === undefined || iColumnsItemIndex < 0 || iColumnsItemIndex < iMinIndex || iColumnsItemIndex > iMaxIndex) {
 					return;
 				}
 
@@ -278,6 +265,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
 			this._deactivateSelectedItem();
 		}
+
+		this._scrollToSelectedItem(this._oSelectedItem);
+		this._calculateMoveButtonAppearance();
 		this._fnHandleResize();
 	};
 
@@ -327,9 +317,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 				// search in tooltip text of actual item
 				if (bItemVisibleBySearchText !== true && oItem.getTooltip_Text) {
-					sItemText = (oItem.getTooltip() instanceof sap.ui.core.TooltipBase
-							? oItem.getTooltip().getTooltip_Text()
-							: oItem.getTooltip_Text());
+					sItemText = (oItem.getTooltip() instanceof sap.ui.core.TooltipBase ? oItem.getTooltip().getTooltip_Text() : oItem.getTooltip_Text());
 					if (sItemText && regExp !== null && sItemText.match(regExp) !== null) {
 						bItemVisibleBySearchText = true;
 					}
@@ -359,38 +347,50 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var sValue = this._oSearchField.getValue();
 		var iLength = sValue.length || 0;
 
+		// change search filter status
 		if (iLength > 0) {
 			this._bSearchFilterActive = true;
-			this._deactivateSelectedItem();
 		} else {
 			this._bSearchFilterActive = false;
 		}
 
+		// filter table items based on user selections
 		this._filterItems();
+
+		// check, whether actual selected item is still visible after filterItems -> if not -> deactivate selected item
+		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
+			this._deactivateSelectedItem();
+		}
+
+		this._calculateMoveButtonAppearance();
+		this._scrollToSelectedItem(this._oSelectedItem);
 	};
 
 	/**
-	 * Determine the previous selected table item index to that position, which is coming via iStartIndex
+	 * Determine the previous table item index starting from position, which comes via iStartIndex
 	 * 
 	 * @private
-	 * @param {inteter}
-	 *          iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of the previous items that is selected; if no item is found it will be returned -1
+	 * @param {inteter} iStartIndex is the table index from where the search start
+	 * @returns {integer} is the index of a previous items; if no item is found it will be returned -1
 	 */
-	P13nColumnsPanel.prototype._getPreviousSelectedItemIndex = function(iStartIndex) {
+	P13nColumnsPanel.prototype._getPreviousItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0;
 		var aTableItems = null, oTableItem = null;
 
 		if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex > 0) {
-			aTableItems = this._oTable.getItems();
-			if (aTableItems && aTableItems.length > 0) {
-				for (i = iStartIndex - 1; i >= 0; i--) {
-					oTableItem = aTableItems[i];
-					if (oTableItem && oTableItem.getSelected() === true) {
-						iResult = i;
-						break;
+			if (this._bShowSelected === true) {
+				aTableItems = this._oTable.getItems();
+				if (aTableItems && aTableItems.length > 0) {
+					for (i = iStartIndex - 1; i >= 0; i--) {
+						oTableItem = aTableItems[i];
+						if (oTableItem && oTableItem.getSelected() === true) {
+							iResult = i;
+							break;
+						}
 					}
 				}
+			} else {
+				iResult = iStartIndex - 1;
 			}
 		}
 
@@ -398,15 +398,13 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
-	 * Determine the next selected table item index to that position, which is coming via iStartIndex
+	 * Determine the next table item index to that position, which comes via iStartIndex
 	 * 
 	 * @private
-	 * @param {inteter}
-	 *          iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of the next items to that, which is selected; if no item is found it will be
-	 *          returned -1
+	 * @param {inteter} iStartIndex is the table index from where the search start
+	 * @returns {integer} is the index of the next item; if no item is found it will be returned -1
 	 */
-	P13nColumnsPanel.prototype._getNextSelectedItemIndex = function(iStartIndex) {
+	P13nColumnsPanel.prototype._getNextItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0, iLength = null;
 		var aTableItems = null, oTableItem = null;
 
@@ -417,12 +415,16 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			}
 
 			if (iStartIndex >= 0 && iStartIndex < iLength - 1) {
-				for (i = iStartIndex + 1; i < iLength; i++) {
-					oTableItem = aTableItems[i];
-					if (oTableItem && oTableItem.getSelected() === true) {
-						iResult = i;
-						break;
+				if (this._bShowSelected === true) {
+					for (i = iStartIndex + 1; i < iLength; i++) {
+						oTableItem = aTableItems[i];
+						if (oTableItem && oTableItem.getSelected() === true) {
+							iResult = i;
+							break;
+						}
 					}
+				} else {
+					iResult = iStartIndex + 1;
 				}
 			}
 		}
@@ -445,7 +447,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		if (oColumn) {
 			sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL');
 			if (iSelectedItems && iSelectedItems > 0 && iSelectedItems < iTableItems) {
-				sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [iSelectedItems, iTableItems]);
+				sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
+					iSelectedItems, iTableItems
+				]);
 			}
 			oColumn.getHeader().setText(sSelectAllText);
 		}
@@ -462,10 +466,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
 		var oNewSelectedItem = null;
-
-		if (this._bSearchFilterActive === true) {
-			return;
-		}
 
 		// Remove highlighting from previous item
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
@@ -495,8 +495,14 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var iLength = -1, iItemIndex = -1;
 		var bMoveUp = false, bMoveDown = false;
 
-		// Calculate appearance status of the MOVE buttons
-		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
+		/*
+		 * Calculate MOVE buttons appearance
+		 */
+
+		// if search field is filled -> disable move buttons
+		if (this._bSearchFilterActive === true) {
+			bMoveUp = bMoveDown = false;
+		} else if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 
 			// Determine displayed table items dependent of "Show Selected" filter status
@@ -527,7 +533,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			bMoveUp = bMoveDown = false;
 		}
 
-		// Now change real appearance of the buttons
+		/*
+		 * Now change real appearance of the buttons
+		 */
 		if (this._oMoveToTopButton.getEnabled() !== bMoveUp) {
 			this._oMoveToTopButton.setEnabled(bMoveUp);
 			this._oMoveToTopButton.rerender();
@@ -550,8 +558,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Set highlighting to an item
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oItem is that item that shall be highlighted
+	 * @param {object} oItem is that item that shall be highlighted
 	 */
 	P13nColumnsPanel.prototype._setHighLightingToItem = function(oItem) {
 		if (oItem !== null && oItem !== undefined && oItem.addStyleClass) {
@@ -563,8 +570,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Remove highlighting from an item
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oItem is that item that where highlighting shall be removed from
+	 * @param {object} oItem is that item that where highlighting shall be removed from
 	 */
 	P13nColumnsPanel.prototype._removeHighLightingFromItem = function(oItem) {
 		if (oItem !== null && oItem !== undefined && oItem.removeStyleClass) {
@@ -589,10 +595,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Delivers the index of an item in the given array identified by its key
 	 * 
 	 * @private
-	 * @param {string}
-	 *          sItemKey is the key for that item for that the index shall be found in the array
-	 * @param {array}
-	 *          aItems is the array in that the item will be searched
+	 * @param {string} sItemKey is the key for that item for that the index shall be found in the array
+	 * @param {array} aItems is the array in that the item will be searched
 	 * @returns {integer} is the index of the identified item
 	 */
 	P13nColumnsPanel.prototype._getArrayIndexByItemKey = function(sItemKey, aItems) {
@@ -657,10 +661,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * * react on item visibility changes
 	 * 
 	 * @private
-	 * @param {sap.m.ColumnListItem}
-	 *          oItem is the table item for that the index was changed
-	 * @param {int}
-	 *          iNewIndex is the item index where the item shall be inserted
+	 * @param {sap.m.ColumnListItem} oItem is the table item for that the index was changed
+	 * @param {int} iNewIndex is the item index where the item shall be inserted
 	 */
 	P13nColumnsPanel.prototype._handleItemIndexChanged = function(oItem, iNewIndex) {
 		var sItemKey = null, iColumnsItemIndex = null;
@@ -678,7 +680,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 				oColumnsItem = this._createNewColumnsItem(sItemKey);
 				oColumnsItem.setIndex(iNewIndex);
 				this.fireAddColumnsItem({
-					newItem : oColumnsItem
+					newItem: oColumnsItem
 				});
 			} else {
 				oColumnsItem.setIndex(iNewIndex);
@@ -691,8 +693,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * react on item visibility changes
 	 * 
 	 * @private
-	 * @param {sap.m.ColumnListItem}
-	 *          oItem is the table item for that the visibility was changed
+	 * @param {sap.m.ColumnListItem} oItem is the table item for that the visibility was changed
 	 */
 	P13nColumnsPanel.prototype._handleItemVisibilityChanged = function(oItem) {
 		var sItemKey = null, iColumnsItemIndex = null;
@@ -710,7 +711,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 				oColumnsItem = this._createNewColumnsItem(sItemKey);
 				oColumnsItem.setVisible(oItem.getSelected());
 				this.fireAddColumnsItem({
-					newItem : oColumnsItem
+					newItem: oColumnsItem
 				});
 			} else {
 				oColumnsItem.setVisible(oItem.getSelected());
@@ -723,17 +724,13 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * get ColumnsItem by a given ColumnsKey
 	 * 
 	 * @private
-	 * @param {string}
-	 *          sItemKey is the columns key with that a ColumnsItem can be identified
-	 * @param {boolean}
-	 *          bCreateIfNotFound determines whether a ColumnsItems will be created if no ColumnsItem was found by the
-	 *          given key
-	 * 
+	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
+	 * @param {boolean} bCreateIfNotFound determines whether a ColumnsItems will be created if no ColumnsItem was found by the given key
 	 * @returns {object} ColumnsItem that was found by the key or created if required
 	 */
 	P13nColumnsPanel.prototype._createNewColumnsItem = function(sItemKey) {
 		var oNewColumnsItem = new sap.m.P13nColumnsItem({
-			"columnKey" : sItemKey
+			"columnKey": sItemKey
 		});
 		return oNewColumnsItem;
 	};
@@ -742,8 +739,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * get ColumnsItem by a given ColumnsKey
 	 * 
 	 * @private
-	 * @param {string}
-	 *          sItemKey is the columns key with that a ColumnsItem can be identified
+	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
 	 * @returns {object} ColumnsItem that was found by the key or created if required
 	 */
 	P13nColumnsPanel.prototype._getColumnsItemByKey = function(sItemKey) {
@@ -766,8 +762,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Updates table items based on content of ColumnsItem(s)
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oColumnsItem is an item from columnsItems aggregation
+	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 */
 	P13nColumnsPanel.prototype._updateTableItems = function(oColumnsItem) {
 		var aTableItems = null, iTableItemIndex, oTableItem = null;
@@ -802,8 +797,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Add a new table item based on the given P13nItem content
 	 * 
 	 * @private
-	 * @param {sap.m.P13nItem}
-	 *          oItem is used to create and added a new table item
+	 * @param {sap.m.P13nItem} oItem is used to create and added a new table item
 	 */
 	P13nColumnsPanel.prototype._addTableItem = function(oItem) {
 		var oColumnsItem = null;
@@ -814,17 +808,25 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
 			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
 
-			// Add/Insert new table item to table
+			// columnsItem was found -> take over included data
 			if (oColumnsItem) {
 				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
-				oNewTableItem.setSelected(oColumnsItem.getVisible());
+				if (oColumnsItem.getVisible() !== undefined) {
+					oNewTableItem.setSelected(oColumnsItem.getVisible());
+				}
 
 				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+				if (oColumnsItem.getWidth() !== undefined) {
+					oNewTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
+				}
+			}
 
+			// Add/Insert new table item to table
+			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
+				// columnsItems with valid index property found -> INSERT the new item at the index
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
-				// No columnsItems exist for current item -> ADD the new item at the end
+				// No columnsItems exist Or found columnsItem does not contains index property -> ADD the new item at the end
 				this._oTable.addItem(oNewTableItem);
 			}
 		}
@@ -834,10 +836,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Inserts a new table item based on the given P13nItem content
 	 * 
 	 * @private
-	 * @param {int}
-	 *          iIndex is the index where the new item shall be inserted
-	 * @param {sap.m.P13nItem}
-	 *          oItem is used to create and insert a new table item
+	 * @param {int} iIndex is the index where the new item shall be inserted
+	 * @param {sap.m.P13nItem} oItem is used to create and insert a new table item
 	 */
 	P13nColumnsPanel.prototype._insertTableItem = function(iIndex, oItem) {
 		var oColumnsItem = null, oNewTableItem = null, sColumnKeys = null;
@@ -847,14 +847,22 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
 			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
 
-			// Add/Insert new table item to table
+			// columnsItem was found -> take over included data
 			if (oColumnsItem) {
 				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
-				oNewTableItem.setSelected(oColumnsItem.getVisible());
+				if (oColumnsItem.getVisible() !== undefined) {
+					oNewTableItem.setSelected(oColumnsItem.getVisible());
+				}
 
 				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+				if (oColumnsItem.getWidth() !== undefined) {
+					oNewTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
+				}
+			}
 
+			// Insert new table item to table
+			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
+				// columnsItems with valid index property found -> INSERT the new item at the index
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
 				// No columnsItems exist for current item -> INSERT the new item at iIndex
@@ -867,8 +875,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Inserts a new table item based on the given P13nItem content
 	 * 
 	 * @private
-	 * @param {sap.m.P13nItem}
-	 *          oItem is the information template to create a new table item
+	 * @param {sap.m.P13nItem} oItem is the information template to create a new table item
 	 * @returns {sap.m.ColumnListItem} oNewTableItem is the new created table item or null
 	 */
 	P13nColumnsPanel.prototype._createNewTableItemBasedOnP13nItem = function(oItem) {
@@ -877,13 +884,15 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		if (oItem) {
 			sColumnKeys = oItem.getColumnKey();
 			oNewTableItem = new sap.m.ColumnListItem({
-				cells : [new sap.m.Text({
-					text : oItem.getText()
-				})],
-				visible : true,
-				selected : oItem.getVisible(),
-				tooltip : oItem.getTooltip(),
-				type : sap.m.ListType.Active
+				cells: [
+					new sap.m.Text({
+						text: oItem.getText()
+					})
+				],
+				visible: true,
+				selected: oItem.getVisible(),
+				tooltip: oItem.getTooltip(),
+				type: sap.m.ListType.Active
 			});
 			oNewTableItem.data('P13nColumnKey', sColumnKeys);
 
@@ -898,10 +907,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Apply all ColumnsItem changes (that are stored in its properties) to the proper table item (if it already exist)
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oColumnsItem is an item from columnsItems aggregation
-	 * @param {object}
-	 *          oTableItem is that item (in this._oTable) where all ColumnsItem changes will be applied to
+	 * @param {object} oColumnsItem is an item from columnsItems aggregation
+	 * @param {object} oTableItem is that item (in this._oTable) where all ColumnsItem changes will be applied to
 	 */
 	P13nColumnsPanel.prototype._applyColumnsItem2TableItem = function(oColumnsItem, oTableItem) {
 		var aTableItems = this._oTable.getItems();
@@ -912,8 +919,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			iTableItemIndex = aTableItems.indexOf(oTableItem);
 
 			// apply index property
-			if (oColumnsItem.getIndex() !== undefined && iTableItemIndex !== oColumnsItem.getIndex()
-					&& oColumnsItem.getIndex() <= iMaxTableIndex) {
+			if (oColumnsItem.getIndex() !== undefined && iTableItemIndex !== oColumnsItem.getIndex() && oColumnsItem.getIndex() <= iMaxTableIndex) {
 
 				oRemovedItem = this._oTable.removeItem(oTableItem);
 				this._oTable.insertItem(oRemovedItem, oColumnsItem.getIndex());
@@ -925,11 +931,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			}
 
 			// apply width property
-			if (oColumnsItem.getWidth() !== undefined) {
-				var iColumnsWidth = oTableItem.data('P13nColumnWidth');
-				if (iColumnsWidth !== undefined && iColumnsWidth !== null && iColumnsWidth !== oColumnsItem.getWidth()) {
-					oTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
-				}
+			if (oColumnsItem.getWidth() !== undefined && oTableItem.data('P13nColumnWidth') !== oColumnsItem.getWidth()) {
+				oTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
 			}
 
 		}
@@ -1031,40 +1034,40 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oMoveToTopButton = new sap.m.Button({
-			icon : sap.ui.core.IconPool.getIconURI("collapse-group"),
-			tooltip : this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			press : function() {
+			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
+			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+			press: function() {
 				that._ItemMoveToTop();
 			}
 		});
 
 		this._oMoveUpButton = new sap.m.Button({
-			icon : sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
-			tooltip : this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			press : function() {
+			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
+			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
+			press: function() {
 				that._ItemMoveUp();
 			}
 		});
 
 		this._oMoveDownButton = new sap.m.Button({
-			icon : sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
-			tooltip : this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			press : function() {
+			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+			press: function() {
 				that._ItemMoveDown();
 			}
 		});
 
 		this._oMoveToBottomButton = new sap.m.Button({
-			icon : sap.ui.core.IconPool.getIconURI("expand-group"),
-			tooltip : this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			press : function() {
+			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
+			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+			press: function() {
 				that._ItemMoveToBottom();
 			}
 		});
 
 		this._oShowSelectedButton = new sap.m.Button({
-			text : this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
-			press : function() {
+			text: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
+			press: function() {
 				that._swopShowSelectedButton();
 			}
 		});
@@ -1072,8 +1075,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		this._bSearchFilterActive = false;
 
 		this._oSearchField = new SearchField(this.getId() + "-searchField", {
-			width : "100%",
-			liveChange : function(oEvent) {
+			width: "100%",
+			liveChange: function(oEvent) {
 				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
 				// execute search after user stops typing for 300ms
@@ -1087,27 +1090,28 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 				}
 			},
 			// execute the standard search
-			search : function(oEvent) {
+			search: function(oEvent) {
 				that._executeSearch();
 			}
 		});
 
 		this._oToolbar = new sap.m.Toolbar({
-			active : true,
-			design : sap.m.ToolbarDesign.Solid, // Transparent,
-			content : [this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton,
-					this._oSearchField, this._oShowSelectedButton]
+			active: true,
+			design: sap.m.ToolbarDesign.Solid, // Transparent,
+			content: [
+				this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton, this._oSearchField, this._oShowSelectedButton
+			]
 		});
 
 		this._oTable = new Table({
 			// growing: false,
 			// growingScrollToLoad: true,
-			mode : sap.m.ListMode.MultiSelect,
-			rememberSelections : false,
-			itemPress : function(oEvent) {
+			mode: sap.m.ListMode.MultiSelect,
+			rememberSelections: false,
+			itemPress: function(oEvent) {
 				that._itemPressed(oEvent);
 			},
-			selectionChange : function(oEvent) {
+			selectionChange: function(oEvent) {
 				that._updateSelectAllDescription(oEvent);
 
 				var bSelected = oEvent.getParameter('selected');
@@ -1117,19 +1121,23 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 					that._handleItemVisibilityChanged(oTableItem);
 				});
 			},
-			columns : [new sap.m.Column({
-				header : new sap.m.Text({
-					text : this._oRb.getText('COLUMNSPANEL_SELECT_ALL')
+			columns: [
+				new sap.m.Column({
+					header: new sap.m.Text({
+						text: this._oRb.getText('COLUMNSPANEL_SELECT_ALL')
+					})
 				})
-			})]
+			]
 		});
 
 		this._oScrollContainer = new sap.m.ScrollContainer({
-			horizontal : false,
-			vertical : true,
-			content : [this._oTable],
-			width : '100%',
-			height : '100%'
+			horizontal: false,
+			vertical: true,
+			content: [
+				this._oTable
+			],
+			width: '100%',
+			height: '100%'
 		});
 
 		this._oScrollContainer.setParent(this);
@@ -1199,8 +1207,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @public
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {sap.m.P13nItem}
-	 *          oItem is the new item that shall be added
+	 * @param {sap.m.P13nItem} oItem is the new item that shall be added
 	 */
 	P13nColumnsPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
@@ -1214,10 +1221,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @public
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {int}
-	 *          iIndex is the index where the new item shall be inserted
-	 * @param {sap.m.P13nItem}
-	 *          oItem is the new item that shall be added
+	 * @param {int} iIndex is the index where the new item shall be inserted
+	 * @param {sap.m.P13nItem} oItem is the new item that shall be added
 	 */
 	P13nColumnsPanel.prototype.insertItem = function(iIndex, oItem) {
 		P13nPanel.prototype.insertItem.apply(this, arguments);
@@ -1231,8 +1236,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @public
 	 * @returns {sap.m.P13nItem} The removed item or null.
-	 * @param {sap.m.P13nItem}
-	 *          oItem is the item that shall be removed
+	 * @param {sap.m.P13nItem} oItem is the item that shall be removed
 	 */
 	P13nColumnsPanel.prototype.removeItem = function(oItem) {
 		var oTableItemToBeRemoved = null, iItemIndex = null, aTableItems = null, sItemKey = null;
@@ -1292,8 +1296,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @public
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {sap.m.P13nColumnsItem}
-	 *          oColumnsItem is the new ColumnsItem that shall be added
+	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the new ColumnsItem that shall be added
 	 */
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
 		this.addAggregation("columnsItems", oColumnsItem);
@@ -1306,10 +1309,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @public
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
-	 * @param {int}
-	 *          iIndex is the index where the columnsItem item shall be inserted
-	 * @param {sap.m.P13nColumnsItem}
-	 *          oColumnsItem is the new columnsItem that shall be inserted
+	 * @param {int} iIndex is the index where the columnsItem item shall be inserted
+	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the new columnsItem that shall be inserted
 	 */
 	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
 		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
@@ -1322,8 +1323,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * 
 	 * @public
 	 * @returns {sap.m.P13nColumnsItem} The removed item or null.
-	 * @param {sap.m.P13nColumnsItem}
-	 *          oColumnsItem is the ColumnsItem that shall be removed
+	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the ColumnsItem that shall be removed
 	 */
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
 		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
