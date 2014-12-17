@@ -102,6 +102,26 @@
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
 		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
+	
+	test("Screen reader", function() {
+		
+		// Arrange
+		var oObjectAttribute = new sap.m.ObjectAttribute({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+		
+		// System under Test
+		oObjectAttribute.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
+		
+		// Clean up
+		oObjectAttribute.destroy();
+		
+	});
 
 	module("Attributes Wrapping");
 	
@@ -267,8 +287,8 @@
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
 		oObjectAttribute.destroy();
-	});	
-		
+	});
+	
 </script>
 </head>
 

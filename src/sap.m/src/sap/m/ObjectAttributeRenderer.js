@@ -36,6 +36,14 @@ sap.ui.define(['jquery.sap.global'],
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
+			
+			// ARIA
+			if (oOA.getActive()) {
+				oRm.writeAccessibilityState(oOA, {
+					role: "link"
+				});
+			}
+			
 			oRm.write(">");
 			if (oParent && (oParent instanceof sap.m.ObjectHeader)) {
 				if (oOA.getProperty("title")) {
