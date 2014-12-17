@@ -36,10 +36,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @see sap.ui.model.Binding.prototype.initialize
 	 */
 	ODataContextBinding.prototype.initialize = function() {
-		var that = this,
-		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-		oData = this.oModel._getObject(this.sPath, this.oContext),
-		bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
+		var that = this, oData,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			oData = this.oModel._getObject(this.sPath, this.oContext),
+			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
 
 		// don't fire any requests if metadata is not loaded yet.
 		if (this.oModel.oMetadata.isLoaded()) {
@@ -50,9 +50,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 				that.oElementContext = oContext;
 				that._fireChange();
 				if (bReloadNeeded) {
+					if (that.oElementContext) {
+						oData = that.oElementContext.getObject();
+					}
 					//register datareceived call as  callAfterUpdate
 					that.oModel.callAfterUpdate(function() {
-						that.fireDataReceived({data: that.oElementContext.getObject()});
+						that.fireDataReceived({data: oData});
 					});
 				}
 			}, bReloadNeeded);
@@ -68,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @private
 	 */
 	ODataContextBinding.prototype.refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, sKey, oStoredEntry, bChangeDetected = false;
+		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false;
 
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
@@ -94,9 +97,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 					that.oElementContext = oContext;
 					that._fireChange();
 				}
+				if (that.oElementContext) {
+					oData = that.oElementContext.getObject();
+				}
 				//register datareceived call as  callAfterUpdate
 				that.oModel.callAfterUpdate(function() {
-					that.fireDataReceived({data: that.oElementContext.getObject()});
+					that.fireDataReceived({data: oData});
 				});
 			}, true);
 		}
@@ -110,9 +116,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 */
 	ODataContextBinding.prototype.setContext = function(oContext) {
 		var that = this,
-		sResolvedPath,
-		oData,
-		bReloadNeeded;
+			oData,
+			sResolvedPath,
+			oData,
+			bReloadNeeded;
 
 		if (this.oContext !== oContext && this.isRelative()) {
 			this.oContext = oContext;
@@ -127,9 +134,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 				that.oElementContext = oContext;
 				that._fireChange();
 				if (bReloadNeeded) {
+					if (that.oElementContext) {
+						oData = that.oElementContext.getObject();
+					}
 					//register datareceived call as  callAfterUpdate
 					that.oModel.callAfterUpdate(function() {
-						that.fireDataReceived({data: that.oElementContext.getObject()});
+						that.fireDataReceived({data: oData});
 					});
 				}
 			}, bReloadNeeded);
