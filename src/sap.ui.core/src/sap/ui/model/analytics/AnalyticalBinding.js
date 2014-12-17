@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				this.bProvideTotalSize = (mParameters && mParameters.provideTotalResultSize === false) ? false : true;
 				this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
 				this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
-				this.bUseAcceleratedAutoExpand = true; // TODO verify simple auto expand method // (mParameters && mParameters.useAcceleratedAutoExpand === true) ? true : false;
+				this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
 
 				// attribute members for maintaining loaded data; mapping from groupId to related information
 				this.iTotalSize = -1;
@@ -1162,9 +1162,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			return aFilterArray;
 		};
-
-		// local helper function for requesting members of a given level (across groups) - copied from _prepareGroupMembersQueryRequest & adapted
-		var prepareLevelMembersQueryRequest = function(iRequestType, sGroupId, iLevel, aGroupContextFilter,
+		
+		// local helper function for requesting members of a given level (across groups) - copied from _prepareGroupMembersQueryRequest & adapted  
+		var prepareLevelMembersQueryRequest = function(iRequestType, sGroupId, iLevel, oGroupContextFilter,
 				iStartIndex, iLength, bAvoidLengthUpdate, bUseStartIndexForSkip) {
 
 			// (1) set up analytical OData request object
@@ -1230,7 +1230,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			if (that.aControlFilter) {
 				oFilterExpression.addUI5FilterConditions(that.aControlFilter);
 			}
-			oFilterExpression.addUI5FilterConditions(aGroupContextFilter);
+			if (oGroupContextFilter) {
+				oFilterExpression.addUI5FilterConditions([oGroupContextFilter]);
+			}
 
 			// (5) set measures as requested per column
 			var bIncludeRawValue;
@@ -1291,7 +1293,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			return {
 				iRequestType : iRequestType,
-				sRequestId : that._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel }),
+				sRequestId : null, // set by caller
 				oAnalyticalQueryRequest : oAnalyticalQueryRequest,
 				iLevel : iLevel,
 				aSelectedUnitPropertyName : aSelectedUnitPropertyName,
@@ -1307,83 +1309,72 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// function implementation starts here
 		var aGroupMembersAutoExpansionRequestDetails = [];
 		var aRequestId = [];
-
-		if (oGroupExpansionFirstMissingMember && this.bUseAcceleratedAutoExpand) {
-			var iAutoExpandGroupsToLevel = this._getGroupIdLevel(sGroupId) + iNumberOfExpandedLevels + 1;
-			var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
-			var iGroupIdLevel_Missing = aGroupIdComponents_Missing.length;
-			var aFilterArray = prepareLevelFilterExpressions(oGroupExpansionFirstMissingMember, iAutoExpandGroupsToLevel);
-			var sGroupIdAtLevel;
-
-			for (var iLevel = 1; iLevel <= iAutoExpandGroupsToLevel; iLevel++) {
-				var iStartIndex;
-				// determine start index
-				if (iLevel >= iGroupIdLevel_Missing + 2) {
-					iStartIndex = 0;
-					sGroupIdAtLevel = undefined;
-				} else if (iLevel == iGroupIdLevel_Missing + 1) {
-					iStartIndex = oGroupExpansionFirstMissingMember.startIndex_Missing;
+		if (!oGroupExpansionFirstMissingMember) {
+			jQuery.sap.log.fatal("no first missing group member specified");
+		}
+		var iAutoExpandGroupsToLevel = this._getGroupIdLevel(sGroupId) + iNumberOfExpandedLevels + 1;
+		var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
+		var iGroupIdLevel_Missing = aGroupIdComponents_Missing.length;
+		var aFilterArray = prepareLevelFilterExpressions(oGroupExpansionFirstMissingMember, iAutoExpandGroupsToLevel);
+		var sGroupIdAtLevel;
+			
+		for (var iLevel = 1; iLevel <= iAutoExpandGroupsToLevel; iLevel++) {
+			var iStartIndex;
+			// determine start index
+			if (iLevel >= iGroupIdLevel_Missing + 2) {
+				iStartIndex = 0;
+				sGroupIdAtLevel = undefined;
+			} else if (iLevel == iGroupIdLevel_Missing + 1) {
+				iStartIndex = oGroupExpansionFirstMissingMember.startIndex_Missing;
+				sGroupIdAtLevel = oGroupExpansionFirstMissingMember.groupId_Missing;
+			} else if (iGroupIdLevel_Missing > 0) {
+				if (iLevel == iGroupIdLevel_Missing) {
 					sGroupIdAtLevel = oGroupExpansionFirstMissingMember.groupId_Missing;
-				} else if (iGroupIdLevel_Missing > 0) {
-					if (iLevel == iGroupIdLevel_Missing) {
-						sGroupIdAtLevel = oGroupExpansionFirstMissingMember.groupId_Missing;
-					} else {
-						sGroupIdAtLevel = this._getGroupIdAncestors(oGroupExpansionFirstMissingMember.groupId_Missing, -(iGroupIdLevel_Missing - iLevel))[0];
-					}
-					var sGroupIdAtParentLevel = this._getGroupIdAncestors(oGroupExpansionFirstMissingMember.groupId_Missing, -(iGroupIdLevel_Missing - iLevel + 1))[0];
-					if (!sGroupIdAtParentLevel) {
-						jQuery.sap.log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
-					}
-					iStartIndex = this._findKeyIndex(sGroupIdAtParentLevel, this.mEntityKey[sGroupIdAtLevel]);
-					if (iStartIndex == -1) {
-						jQuery.sap.log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
-					}
-					sGroupIdAtLevel = sGroupIdAtParentLevel;
-					iStartIndex++; // point to first missing position
+				} else {
+					sGroupIdAtLevel = this._getGroupIdAncestors(oGroupExpansionFirstMissingMember.groupId_Missing, -(iGroupIdLevel_Missing - iLevel))[0];
 				}
-				// determine other parameters of the request
-				var iLengthForLevel = iLength > iLevel ? Math.ceil((iLength - iLevel) / (iAutoExpandGroupsToLevel - iLevel + 1)) : iLength;
-				var aFilter = aFilterArray[iLevel - 1] ? [ aFilterArray[iLevel - 1] ] : [];
-
+				var sGroupIdAtParentLevel = this._getGroupIdAncestors(oGroupExpansionFirstMissingMember.groupId_Missing, -(iGroupIdLevel_Missing - iLevel + 1))[0];
+				if (!sGroupIdAtParentLevel) {
+					jQuery.sap.log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
+				}
+				iStartIndex = this._findKeyIndex(sGroupIdAtParentLevel, this.mEntityKey[sGroupIdAtLevel]); 
+				if (iStartIndex == -1) {
+					jQuery.sap.log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
+				}
+				sGroupIdAtLevel = sGroupIdAtParentLevel;
+				iStartIndex++; // point to first missing position
+			}
+			// determine other parameters of the request
+			var iLengthForLevel = iLength > iLevel ? Math.ceil((iLength - iLevel) / (iAutoExpandGroupsToLevel - iLevel + 1)) : iLength;
+			var oLevelFilter = aFilterArray[iLevel - 1];
+			
+			if (this.bUseAcceleratedAutoExpand) {
 				var oLevelMembersRequestDetails = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-						iLevel, aFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+						iLevel, oLevelFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
 				oLevelMembersRequestDetails.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
+				oLevelMembersRequestDetails.sRequestId = this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel });
 				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails);
-				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel }));
-			}
-		} else { // simple auto expand (i.e. the not accelerated method)
-			var iMinRequiredLevel = this._getGroupIdLevel(sGroupId) + 1;
-			var iAutoExpandGroupsToLevel2 = iMinRequiredLevel + iNumberOfExpandedLevels;
-
-			// construct filter condition for addressing the selected group
-			var aFilter2 = [];
-			var aGroupIdComponent = this._getGroupIdComponents(sGroupId);
-			for (var i = 0; i < aGroupIdComponent.length; i++) {
-				aFilter2.push(new sap.ui.model.Filter(this.aAggregationLevel[i], sap.ui.model.FilterOperator.EQ, aGroupIdComponent[i]));
-			}
-			// reflect iStartIndex > 0 (in calling _getContextsForParentContext())
-			// by adding one more condition for the aggregation level component that comes directly after all components in sGroupId
-			//  with the value that is provided for this component in oGroupExpansionFirstMissingMember
-			var bAvoidLengthUpdateOnMinLevel = false;
-			if (oGroupExpansionFirstMissingMember) {
-				var sPropertyName = this.aAggregationLevel[aGroupIdComponent.length];
-				var sPropertyValue = this._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing)[aGroupIdComponent.length];
-				if (sPropertyValue)	{
-					var sFilterOperator = this._getFilterOperatorMatchingPropertySortOrder(sPropertyName, true);
-					aFilter2.push(new sap.ui.model.Filter(sPropertyName, sFilterOperator, sPropertyValue));
-					// this extra condition restricts the entities returned for the first minimum level, so we must not update the group length from the result!
-					bAvoidLengthUpdateOnMinLevel = true;
+				aRequestId.push(oLevelMembersRequestDetails.sRequestId);
+			} else if (oLevelFilter && oLevelFilter.aFilters.length > 0) {
+				if (!oLevelFilter._bMultiFilter || oLevelFilter.bAnd) { // TODO remove this test once impl got mature to get rid of access to internal member; it is a consistency check if break-up will deliver expected results...
+					jQuery.sap.log.fatal("level filter in wrong shape; cannot break it up");
 				}
-			}
-
-			for (var iLevel2 = iMinRequiredLevel; iLevel2 <= iAutoExpandGroupsToLevel2; iLevel2++) {
-				var iLengthForLevel2 = iLength > iLevel2 ? Math.ceil((iLength - iLevel2) / (iAutoExpandGroupsToLevel2 - iLevel2 + 1)) : iLength;
-				var oLevelMembersRequestDetails2 = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-						iLevel2, aFilter2, 0 /* iStartIndex */, iLengthForLevel2,
-						iLevel2 == iMinRequiredLevel ? bAvoidLengthUpdateOnMinLevel : false,
-								true);
-				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails2);
-				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel2 }));
+				for (var i = 0; i < oLevelFilter.aFilters.length; i++) { // break up level filter into its tuple filters combined with logical OR
+					var oTupleFilter = oLevelFilter.aFilters[i];
+					var oLevelMembersRequestDetails2 = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
+							iLevel, oTupleFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+					oLevelMembersRequestDetails2.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
+					oLevelMembersRequestDetails2.sRequestId = this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel, tupleIndex: i });
+					aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails2);
+					aRequestId.push(oLevelMembersRequestDetails2.sRequestId);
+				}
+			} else { // no level filter given, so no need to break up anything, hence a single request is sufficient for this level
+				var oLevelMembersRequestDetails3 = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
+						iLevel, null /*oLevelFilter*/, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+				oLevelMembersRequestDetails3.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
+				oLevelMembersRequestDetails3.sRequestId = this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel });
+				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails3);
+				aRequestId.push(oLevelMembersRequestDetails3.sRequestId);
 			}
 		}
 		return {
@@ -1394,7 +1385,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			iLength : iLength
 		};
 	};
-
+		
 	/**
 	 * @private
 	 */
@@ -1482,7 +1473,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 	};
 
-	/**
+	/** 
 	 * @private
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionRequestIds = function(sGroupId, iNumberOfExpandedLevels) {
@@ -2838,7 +2829,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				jQuery.sap.log.fatal("missing groupId");
 			}
 			// for accelerated auto-expand, group Id does not provide context, i.e. filter condition, for the requested data, but is only a starting point
-			return "" + AnalyticalBinding._requestType.levelMembersQuery + mParameters.level + (this.bUseAcceleratedAutoExpand == true ? "" : mParameters.groupId);
+			return "" + AnalyticalBinding._requestType.levelMembersQuery + mParameters.level + (mParameters.tupleIndex ? "-" + mParameters.tupleIndex : "");
 		case AnalyticalBinding._requestType.totalSizeQuery:
 			return AnalyticalBinding._requestType.totalSizeQuery;
 		case AnalyticalBinding._requestType.reloadMeasuresQuery:
