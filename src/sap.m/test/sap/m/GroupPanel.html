@@ -23,12 +23,9 @@
 	jQuery.sap.require("sap.m.P13nGroupItem");
 	jQuery.sap.require("sap.m.P13nGroupPanel");
 	jQuery.sap.require("sap.ui.layout.Grid");	
-	
-	var oCondition0= { "key": "g0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date", showIfGrouped: true};
-	var oCondition1= { "key": "g1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", showIfGrouped: true};
-	var oCondition2= { "key": "g2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", showIfGrouped: false};
-	aConditions= [oCondition0, oCondition1, oCondition2];    	
-	var oGroupPanel;
+
+ 	var aConditions= [];
+ 	var oGroupPanel;
 	var oModel;
 	var iCount= 100;
 	
@@ -55,21 +52,6 @@
 	};	
 	
 	var btnShow = new sap.m.Button({
-		text: "show GroupPanel",
-		press: function() {
-			oGroupPanel = new sap.m.P13nGroupPanel({
-			});
-			
-			oGroupPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
-			
-			oGroupPanel._oGroupPanel.setConditions(aConditions);			
-	
-			show(oGroupPanel, "Group");
-		}		
-	});
-	
-	
-	var btnShow2 = new sap.m.Button({
 		text: "show bound GroupPanel",
 		press: function() {
 			var oData = {
@@ -121,9 +103,9 @@
 					var oData = oModel.getData();
 					var oGroupItem = {
 						key : params.key,
-						columnKey : params.newItem.getColumnKey(),
-						operation : params.newItem.getOperation(),
-						showIfGrouped : params.newItem.getShowIfGrouped()
+						columnKey : params.groupItemData.getColumnKey(),
+						operation : params.groupItemData.getOperation(),
+						showIfGrouped : params.groupItemData.getShowIfGrouped()
 					};
 					if (params.index) {
 						oData.groupItems.splice(params.index, 0, oGroupItem);
@@ -185,7 +167,7 @@
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
-			aConditions = oGroupPanel.getConditions();
+			aConditions = oGroupPanel._getConditions();
 	
 			var sConditions= ""; 
 			for (i = 0; i < aConditions.length; i++) {
@@ -271,7 +253,6 @@
 	
 	
 	btnShow.placeAt("content");
-	btnShow2.placeAt("content2");
 	btnValidate.placeAt("content");
 	btnClearErrors.placeAt("content");
 	btnRemoveInvalidConditions.placeAt("content");

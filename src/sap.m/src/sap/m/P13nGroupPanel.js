@@ -118,7 +118,7 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nGroupPanel.prototype.getConditions = function() {
+	P13nGroupPanel.prototype._getConditions = function() {
 		return this._oGroupPanel.getConditions();
 	};
 
@@ -192,17 +192,17 @@ sap.ui.define([
 	 * @param {array}
 	 *            array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
-	P13nGroupPanel.prototype.setKeyFields = function(aKeyFields) {
-		this._aKeyFields = aKeyFields;
-
-		if (this._oGroupPanel) {
-			this._oGroupPanel.setKeyFields(this._aKeyFields);
-		}
-	};
-
-	P13nGroupPanel.prototype.getKeyFields = function() {
-		return this._aKeyFields;
-	};
+//	P13nGroupPanel.prototype.setKeyFields = function(aKeyFields) {
+//		this._aKeyFields = aKeyFields;
+//
+//		if (this._oGroupPanel) {
+//			this._oGroupPanel.setKeyFields(this._aKeyFields);
+//		}
+//	};
+//
+//	P13nGroupPanel.prototype.getKeyFields = function() {
+//		return this._aKeyFields;
+//	};
 
 	/**
 	 * Initialize the control
@@ -287,11 +287,41 @@ sap.ui.define([
 			});
 		});
 
-		if (!this._bIgnoreAdd) {
+		if (!this._bIgnoreBindCalls) {
 			this._oGroupPanel.setConditions(aConditions);
 		}
 	};
 
+	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
+		this.insertAggregation("groupItems", oGroupItem);
+		//TODO: implement this
+		return this;
+	};
+
+	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
+		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
+
+		return oGroupItem;
+	};
+
+	P13nGroupPanel.prototype.removeAllGroupItems = function() {
+		var aGroupItems = this.removeAllAggregation("groupItems");
+
+		this._oGroupPanel.setConditions([]);
+
+		return aGroupItems;
+	};
+
+	P13nGroupPanel.prototype.destroyGroupItems = function() {
+		this.destroyAggregation("groupItems");
+
+		if (!this._bIgnoreBindCalls) {
+			this._oGroupPanel.setConditions([]);
+		}
+
+		return this;
+	};
+	
 	P13nGroupPanel.prototype._handleDataChange = function() {
 		var that = this;
 
@@ -325,13 +355,13 @@ sap.ui.define([
 				});
 			}
 			if (sOperation === "add") {
-				that._bIgnoreAdd = true;
+				that._bIgnoreBindCalls = true;
 				that.fireAddGroupItem({
 					key: sKey,
 					index: iIndex,
 					groupItemData: oGroupItemData
 				});
-				that._bIgnoreAdd = false;
+				that._bIgnoreBindCalls = false;
 			}
 			if (sOperation === "remove") {
 				that.fireRemoveGroupItem({

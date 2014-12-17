@@ -95,21 +95,11 @@ sap.ui.define([
 	});
 
 	/**
-	 * sets the array of conditions.
-	 * 
-	 * @param {object[]}
-	 *            aConditions the complete list of conditions
-	 */
-	P13nSortPanel.prototype.setConditions = function(aConditions) {
-		this._oSortPanel.setConditions(aConditions);
-	};
-
-	/**
 	 * returns the array of conditions.
 	 * 
 	 * @private
 	 */
-	P13nSortPanel.prototype.getConditions = function() {
+	P13nSortPanel.prototype._getConditions = function() {
 		return this._oSortPanel.getConditions();
 	};
 
@@ -183,17 +173,17 @@ sap.ui.define([
 	 * @param {array}
 	 *            array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
-	P13nSortPanel.prototype.setKeyFields = function(aKeyFields) {
-		this._aKeyFields = aKeyFields;
-
-		if (this._oSortPanel) {
-			this._oSortPanel.setKeyFields(this._aKeyFields);
-		}
-	};
-
-	P13nSortPanel.prototype.getKeyFields = function() {
-		return this._aKeyFields;
-	};
+//	P13nSortPanel.prototype.setKeyFields = function(aKeyFields) {
+//		this._aKeyFields = aKeyFields;
+//
+//		if (this._oSortPanel) {
+//			this._oSortPanel.setKeyFields(this._aKeyFields);
+//		}
+//	};
+//
+//	P13nSortPanel.prototype.getKeyFields = function() {
+//		return this._aKeyFields;
+//	};
 
 	/**
 	 * Initialize the control
@@ -274,7 +264,7 @@ sap.ui.define([
 					operation: oSortItem_.getOperation()
 				});
 			});
-			this.setConditions(aConditions);
+			this._oSortPanel.setConditions(aConditions);
 		}
 	};
 
@@ -293,7 +283,7 @@ sap.ui.define([
 	P13nSortPanel.prototype.removeAllSortItems = function() {
 		var aSortItems = this.removeAllAggregation("sortItems");
 
-		this.setConditions([]);
+		this._oSortPanel.setConditions([]);
 
 		return aSortItems;
 	};
@@ -302,7 +292,7 @@ sap.ui.define([
 		this.destroyAggregation("sortItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this.setConditions([]);
+			this._oSortPanel.setConditions([]);
 		}
 
 		return this;
