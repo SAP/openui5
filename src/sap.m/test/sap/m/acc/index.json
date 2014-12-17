@@ -1,0 +1,9 @@
+{
+	"tests" : [
+		{
+			"control" : "sap.m.ComboBox",
+			"url" : "../ComboBox.html",
+			"appComponent" : "CA-UI5-CTR-WDF"
+		}
+	]
+}
