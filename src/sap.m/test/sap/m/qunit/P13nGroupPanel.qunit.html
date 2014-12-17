@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<title>Test Page for sap.m.P13nSortPanel</title>
+<title>Test Page for sap.m.P13nGroupPanel</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
@@ -26,7 +26,8 @@
 
 <script type="text/javascript">
 	(function() {
-		jQuery.sap.require("sap.m.P13nSortPanel");
+		jQuery.sap.require("sap.m.P13nGroupPanel");
+		jQuery.sap.require("sap.m.P13nGroupItem");
 
 		module("Properties", {
 			setup: function() {
@@ -35,7 +36,7 @@
 			}
 		});
 
-		var bindSortPanel = function(oP13nSortPanel) {
+		var bindGroupPanel = function(oP13nGroupPanel) {
 			var oData = {
 				"items": [
 					{
@@ -53,31 +54,34 @@
 						"text": "Number"
 					}
 				],
-				"sortItems": [
+				"groupItems": [
 					{
 						"key": "s0",
 						"columnKey": "c1",
-						"operation": "Ascending"
+						"operation": "Ascending",
+						"showIfGrouped": true
 					}, {
 						"key": "s1",
 						"columnKey": "c0",
-						"operation": "Descending"
+						"operation": "Descending",
+						"showIfGrouped": false
 					}
 				]
 			};
 
 			var oModel = new sap.ui.model.json.JSONModel(oData);
 
-			oP13nSortPanel.setModel(oModel);
-			oP13nSortPanel.bindItems("/items", new sap.m.P13nItem({
+			oP13nGroupPanel.setModel(oModel);
+			oP13nGroupPanel.bindItems("/items", new sap.m.P13nItem({
 				columnKey: "{key}",
 				text: "{text}",
 				tooltip: "{tooltip}"
 			}));
-			oP13nSortPanel.bindSortItems("/sortItems", new sap.m.P13nSortItem({
+			oP13nGroupPanel.bindGroupItems("/groupItems", new sap.m.P13nGroupItem({
 				key: "{key}",
 				operation: "{operation}",
-				columnKey: "{columnKey}"
+				columnKey: "{columnKey}",
+				showIfGrouped: "{showIfGrouped}"
 			}));
 
 		};
@@ -85,105 +89,106 @@
 		test("Default Values", function() {
 
 			// system under test
-			var oP13nSortPanel = new sap.m.P13nSortPanel({
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
 				layoutMode: "Desktop"
 			});
 
 			// arrange
-			oP13nSortPanel.placeAt("content");
+			oP13nGroupPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
+			strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
 			// cleanup
-			oP13nSortPanel.destroy();
+			oP13nGroupPanel.destroy();
 		});
 
 		test("bind Items test", function() {
 
 			// system under test
-			var oP13nSortPanel = new sap.m.P13nSortPanel();
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
 
-			bindSortPanel(oP13nSortPanel);
+			bindGroupPanel(oP13nGroupPanel);
 
 			// arrange
-			oP13nSortPanel.placeAt("content");
+			oP13nGroupPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assertions
 			var nItems = 4;
-			strictEqual(oP13nSortPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+			strictEqual(oP13nGroupPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
 
 			// cleanup
-			oP13nSortPanel.destroy();
+			oP13nGroupPanel.destroy();
 		});
 
-		test("bind SortItems test", function() {
+		test("bind GroupItems test", function() {
 
 			// system under test
-			var oP13nSortPanel = new sap.m.P13nSortPanel();
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
 
-			bindSortPanel(oP13nSortPanel);
+			bindGroupPanel(oP13nGroupPanel);
 
 			// arrange
-			oP13nSortPanel.placeAt("content");
+			oP13nGroupPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assertions
 			var nItems = 2;
-			strictEqual(oP13nSortPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+			strictEqual(oP13nGroupPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
 
 			// cleanup
-			oP13nSortPanel.destroy();
+			oP13nGroupPanel.destroy();
 		});
 
 		test("test model update events", function() {
 
 			// system under test
-			var oP13nSortPanel = new sap.m.P13nSortPanel({
-				removeSortItem: function(oEvent) {
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+				removeGroupItem: function(oEvent) {
 					var params = oEvent.getParameters();
-					var oModel = oP13nSortPanel.getModel();
+					var oModel = oP13nGroupPanel.getModel();
 					var oData = oModel.getData();
-					oData.sortItems.forEach(function(oItem, iIndex) {
+					oData.groupItems.forEach(function(oItem, iIndex) {
 						if (oItem.key === params.key) {
-							oData.sortItems.splice(iIndex, 1);
+							oData.groupItems.splice(iIndex, 1);
 							oModel.setData(oData, true);
 							return;
 						}
 					});
 				},
-				addSortItem: function(oEvent) {
+				addGroupItem: function(oEvent) {
 					var params = oEvent.getParameters();
-					var oModel = oP13nSortPanel.getModel();
+					var oModel = oP13nGroupPanel.getModel();
 					var oData = oModel.getData();
-					var oSortItem = {
+					var oGroupItem = {
 						key: params.key,
-						columnKey: params.sortItemData.getColumnKey(),
-						operation: params.sortItemData.getOperation()
+						columnKey: params.groupItemData.getColumnKey(),
+						operation: params.groupItemData.getOperation(),
+						showIfGrouped: params.groupItemData.getShowIfGrouped()
 					};
 					if (params.index) {
-						oData.sortItems.splice(params.index, 0, oSortItem);
+						oData.groupItems.splice(params.index, 0, oGroupItem);
 					} else {
-						oData.sortItems.push(oSortItem);
+						oData.groupItems.push(oGroupItem);
 					}
 					oModel.setData(oData, true);
 				}
 			});
 
-			bindSortPanel(oP13nSortPanel);
+			bindGroupPanel(oP13nGroupPanel);
 
 			// arrange
-			oP13nSortPanel.placeAt("content");
+			oP13nGroupPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// assertions
 			// Remove item
 			var nItems = 1;
-			var oConditionPanel = oP13nSortPanel._oSortPanel;
+			var oConditionPanel = oP13nGroupPanel._oGroupPanel;
 			oConditionPanel._triggerRemoveCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-			strictEqual(oP13nSortPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+			strictEqual(oP13nGroupPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
 
 			// Add item
 			nItems = 2;
@@ -194,10 +199,10 @@
 			oConditionGrid.keyField.setSelectedKey("c0");
 			oConditionPanel._changeField(oConditionPanel, oConditionGrid);
 
-			strictEqual(oP13nSortPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+			strictEqual(oP13nGroupPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
 
 			// cleanup
-			oP13nSortPanel.destroy();
+			oP13nGroupPanel.destroy();
 		});
 
 	}());
@@ -206,7 +211,7 @@
 
 </head>
 <body id="body" class="sapUiBody">
-	<h1 id="qunit-header">qUnit Page for sap.m.P13nSortPanel</h1>
+	<h1 id="qunit-header">qUnit Page for sap.m.P13nGroupPanel</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
