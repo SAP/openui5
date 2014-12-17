@@ -143,15 +143,72 @@
 	test("ListBinding refresh", 3, function() {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers");
+		oBinding.initialize();
 		equal(oBinding.getLength(), 7, "ListBinding returns correct length");
 		oBinding.attachChange(function() {
-			ok("ListBinding fires change event when changed");
+			ok(true, "ListBinding fires change event when changed");
 		});
 		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
 		oBinding.refresh();
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
+	test("ListBinding refresh with getContexts", 1, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers");
+		oBinding.initialize();
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+		});
+		testData.teamMembers[6].firstName = "Jonas";
+		oBinding.refresh();
+	});
+
+	test("ListBinding refresh with extended change detection and getContexts", 1, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers");
+		oBinding.enableExtendedChangeDetection();
+		oBinding.initialize();
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+		});
+		testData.teamMembers[6].firstName = "Jonas";
+		oBinding.refresh();
+	});
+	
+	test("ListBinding refresh with getContexts und length change", 3, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers");
+		oBinding.initialize();
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event, as length has changed");
+		});
+		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
+		oBinding.refresh();
+		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+	
+	test("ListBinding refresh with extended change detection, getContexts und length change", 3, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers");
+		oBinding.enableExtendedChangeDetection();
+		oBinding.initialize();
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event, as length has changed");
+		});
+		testData.teamMembers.push({firstName:"Jonas", lastName:"Janus", gender:"male"});
+		oBinding.refresh();
+		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+	
 	test("ListBinding getContexts with wrong path", function(){
 		setup();
 		createListBinding("/xyz", "");
