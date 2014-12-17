@@ -51,13 +51,10 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @alias sap.ui.test.Opa5#iStartMyAppInAFrame
 		 * @param {string} sSource the source of the iframe
 		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
-		 * @function
-		 * @static
 		 */
 		fnOpa5.iStartMyAppInAFrame = function (sSource, iTimeout) {
 			//invalidate the cache
@@ -93,22 +90,17 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @alias sap.ui.test.Opa5#iStartMyAppInAFrame
 		 * @param {string} sSource the source of the iframe
 		 * @param {integer} [iTimeout] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @function
 		 * @public
 		 */
 		fnOpa5.prototype.iStartMyAppInAFrame = fnOpa5.iStartMyAppInAFrame;
 
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @alias sap.ui.test.Opa5#iTeardownMyAppFrame
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
-		 * @function
-		 * @static
 		 */
 		fnOpa5.iTeardownMyAppFrame = function () {
 
@@ -126,9 +118,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @alias sap.ui.test.Opa5#iTeardownMyAppFrame
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @function
 		 * @public
 		 */
 		fnOpa5.prototype.iTeardownMyAppFrame = fnOpa5.iTeardownMyAppFrame;
@@ -136,7 +126,6 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Same as the waitFor method of Opa. Also allows you to specify additional parameters:
 		 *
-		 * @alias sap.ui.test.Opa5#waitFor
 		 * @param {object} oOptions an Object containing conditions for waiting and callbacks
 		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
 		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
@@ -151,7 +140,6 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked.
 		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
 		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is qunit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
-		 * @function
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 */
@@ -279,10 +267,7 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Returns the opa plugin used for retrieving controls. If an iframe is used it will return the iFrame's plugin.
 		 * @returns {sap.ui.test.OpaPlugin} the plugin instance
-		 * @alias sap.ui.test.Opa5#getPlugin
 		 * @public
-		 * @function
-		 * @static
 		 */
 		fnOpa5.getPlugin = function () {
 			return oFramePlugin || oPlugin;
@@ -290,11 +275,8 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns the jQuery object of the iframe. If the iframe is not loaded it will return null.
-		 * @alias sap.ui.test.Opa5#getJQuery
 		 * @returns {jQuery} the jQuery object
-		 * @static
 		 * @public
-		 * @function
 		 */
 		fnOpa5.getJQuery = function () {
 			return oFrameJQuery;
@@ -302,11 +284,8 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns the window object of the iframe or the current window. If the iframe is not loaded it will return null.
-		 * @alias sap.ui.test.Opa5#getWindow
 		 * @returns {oWindow} the window of the iframe
-		 * @static
 		 * @public
-		 * @function
 		 */
 		fnOpa5.getWindow = function () {
 			return oFrameWindow;
@@ -314,10 +293,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
-		 * @alias sap.ui.test.Opa5#getUtils
 		 * @public
-		 * @static
-		 * @function
 		 * @returns {sap.ui.test.qunit} the qunit utils
 		 */
 		fnOpa5.getUtils = function () {
@@ -326,10 +302,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
-		 * @alias sap.ui.test.Opa5#getHashChanger
 		 * @public
-		 * @static
-		 * @function
 		 * @returns {sap.ui.core.routing.HashChanger} the hashchange
 		 */
 		fnOpa5.getHashChanger = function () {
@@ -339,19 +312,13 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Extends the default config of Opa
-		 * @alias sap.ui.test.Opa5#extendConfig
 		 * @public
-		 * @function
-		 * @static
 		 */
 		fnOpa5.extendConfig = Opa.extendConfig;
 
 		/**
 		 * Reset Opa.config to its default values
-		 * @alias sap.ui.test.Op5a#resetConfig
-		 * @static
 		 * @public
-		 * @function
 		 * @since 1.25
 		 */
 		fnOpa5.resetConfig = function() {
@@ -367,11 +334,8 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Waits until all waitFor calls are done
-		 * @alias sap.ui.test.Opa5#emptyQueue
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
-		 * @function
-		 * @static
 		 */
 		fnOpa5.emptyQueue = Opa.emptyQueue;
 
@@ -384,7 +348,6 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
-		 * @alias sap.ui.test.Opa5#createPageObjects
 		 * @param {map} mPageObjects
 		 * @param {map} mPageObjects.<your page object name> Multiple page objects are possible, provide at least actions or assertions
 		 * @param {function} [mPageObjects.<your page object name>.baseClass] Base class for the page object's actions and assertions, default: Opa5
@@ -400,8 +363,6 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {object} mPageObject.<your page object name>.actions an instance of baseClass or Opa5 with all the actions defined above
 		 * @returns {object} mPageObject.<your page object name>.assertions an instance of baseClass or Opa5 with all the assertions defined above
 		 * @public
-		 * @function
-		 * @static
 		 * @since 1.25
 		 */
 		fnOpa5.createPageObjects = function(mPageObjects) {
