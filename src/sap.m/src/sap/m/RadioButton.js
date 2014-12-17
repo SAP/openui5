@@ -34,11 +34,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Invisible radio buttons are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
-			/**
 			 * Disabled controls are displayed in another color.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},

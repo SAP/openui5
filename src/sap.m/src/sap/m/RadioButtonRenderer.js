@@ -20,11 +20,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @param {sap.ui.core.Control} oRadioButton an object representation of the control that should be rendered
 	 */
 	RadioButtonRenderer.render = function(oRm, oRadioButton) {
-		// Return immediately if control is invisible
-		if (!oRadioButton.getVisible()) {
-			return;
-		}
-
 		// get control properties
 		var sId = oRadioButton.getId();
 		var bEnabled = oRadioButton.getEnabled();
