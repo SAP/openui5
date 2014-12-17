@@ -25,6 +25,11 @@
 	display: inline-block;
 }
 
+.sapMSlt,
+.sapMSltLabel {
+	overflow: hidden;
+}
+
 .sapMSlt:not(.sapMSltDisabled),
 .sapMSlt:not(.sapMSltDisabled) > .sapMSltLabel {
 	cursor: pointer;
@@ -53,7 +58,6 @@ li.sapMSltItemDisabled,
 	position: absolute;
 	left: 0;
 	right: 0;
-	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	text-decoration: none;
