@@ -1120,6 +1120,39 @@
 	test('Page up when the last button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
 	});
+	
+	/* Module ARIA*/
+	
+	module('ARIA');
+	
+	test("Check aria atributes", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button();
+		var oButton2 = new sap.m.Button();
+		var oButton3 = new sap.m.Button({ enabled : false });
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [oButton1, oButton2, oButton3]
+		});
+		oSegmentedButton.setSelectedButton(oButton1);
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oButton1.$().attr("aria-checked"), "true", "Property 'aria-checked' of Button1 should be 'true'");
+		strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
+		strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
+		
+		oButton2.$().trigger("tap");
+		
+		strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
+		strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
 
 </script>
 </head>
