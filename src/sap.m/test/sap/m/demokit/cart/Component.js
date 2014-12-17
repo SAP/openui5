@@ -1,7 +1,7 @@
 jQuery.sap.declare("sap.ui.demo.cart.Component");
 
 sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
-	
+
 	metadata: {
 		routing: {
 			config: {
@@ -48,11 +48,11 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 							targetAggregation: "detailPages"
 						},
 						{
-						pattern : "{all*}",
-						name : "notFound",
-						view : "notFound",
-						viewLevel : 3,
-						targetAggregation : "detailPages"
+							pattern : "{all*}",
+							name : "notFound",
+							view : "notFound",
+							viewLevel : 3,
+							targetAggregation : "detailPages"
 						}
 					]
 				}
@@ -72,12 +72,12 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 		//extend the router
 		this._router = this.getRouter();
 		jQuery.extend(this._router, sap.ui.demo.cart.myRouter);
-		
+
 		//navigate to initial page for !phone
 		if (!sap.ui.Device.system.phone) {
 			this._router._myNavToWithoutHash("view.Welcome", "XML", false);
 		}
-		
+
 		// initialize the router
 		this._routeHandler = new sap.m.routing.RouteMatchedHandler(this._router);
 		this._router.initialize();
@@ -85,7 +85,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 	},
 
 	destroy : function () {
-		
+
 		if (this._routeHandler) {
 			this._routeHandler.destroy();
 		}
@@ -112,7 +112,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 
 		oView.setModel(oI18nModel, "i18n");
 
-		
+
 		jQuery.sap.require("model.Config");
 		// set data model
 		var sUrl = model.Config.getServiceUrl();
@@ -138,7 +138,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 		oModel.setCountSupported(false);
 
 		oView.setModel(oModel);
-		
+
 		//create and set cart model
 		var oCartModel = new sap.ui.model.json.JSONModel({
 			entries : [],
@@ -146,8 +146,8 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 			showEditAndProceedButton: false
 		});
 		oView.setModel(oCartModel, "cartProducts");
-		
-		
+
+
 		// set device model
 		var oDeviceModel = new sap.ui.model.json.JSONModel({
 			isTouch : sap.ui.Device.support.touch,
