@@ -292,8 +292,14 @@
  * Arguments to this function-like mixin are the rootClass selector and
  * the content selector where the padding should be applied.
  */
+ 
+ /* 
+  * the sapLess-parser has problems with an escaped string as default value for the parameterized mixin
+  * therefore we need to temporarily use a parameter assigning the default value
+  */
+@sapUiEscapedEmptyString: ~"";
 
-.sapUiContainerContentPadding(@rootClass, @contentSelector: ~"") {
+.sapUiContainerContentPadding(@rootClass, @contentSelector: @sapUiEscapedEmptyString) {
 	@{rootClass}.sapUiContentPadding @{contentSelector} {
 		padding: 1rem !important;
 		box-sizing: border-box;
