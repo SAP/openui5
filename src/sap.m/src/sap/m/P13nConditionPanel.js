@@ -767,8 +767,7 @@ sap.ui.define([
 						oThat._fillKeyFieldListItems(oControl, oThat._aKeyFields);
 
 						oControl.attachChange(function() {
-							oThat._triggerChangeKeyfield(oThat, oTargetGrid, oConditionGrid);
-							sap.m.MessageToast.show("Change");
+							oThat._triggerChangeKeyfield(oThat, oTargetGrid, oConditionGrid);							
 						});
 
 // oControl.attachSelectionChange(function() {
