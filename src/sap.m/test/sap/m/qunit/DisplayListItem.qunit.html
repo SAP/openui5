@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>Test Page for sap.m.DisplayListItem</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+
+	<script>
+
+		module("Rendering");
+
+		test("test rendering", function() {
+			var oDLI = sap.m.DisplayListItem({
+				label : "text",
+				value : "value"
+			});
+
+			oDLI.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
+			ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
+
+			oDLI.destroy();
+		});
+
+		module("Right to left support");
+
+		test("Value text direction set to RTL", function() {
+			var sDisplayListItem = new sap.m.DisplayListItem({
+				label: "Title text",
+				value: "(+359) 111 222 333",
+				valueTextDirection: sap.ui.core.TextDirection.RTL
+			});
+
+			sDisplayListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+
+			sDisplayListItem.destroy();
+		});
+
+		test("Value text direction set to LTR", function() {
+			var sDisplayListItem = new sap.m.DisplayListItem({
+				label: "Title text",
+				value: "(+359) 111 222 333",
+				valueTextDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			sDisplayListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+
+			sDisplayListItem.destroy();
+		});
+
+		test("Value text direction not set", function() {
+			var sDisplayListItem = new sap.m.DisplayListItem({
+				label: "Title text",
+				value: "(+359) 111 222 333"
+			});
+
+			sDisplayListItem.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), undefined, "The dir attribute should not be rendered");
+
+			sDisplayListItem.destroy();
+		});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.DisplayListItem</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+</body>
+</html>

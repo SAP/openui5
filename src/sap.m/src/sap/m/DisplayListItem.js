@@ -39,7 +39,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			/**
 			 * List item value
 			 */
-			value : {type : "string", group : "Data", defaultValue : null}
+			value : {type : "string", group : "Data", defaultValue : null},
+
+			/**
+			 * This property specifies the value text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			valueTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
 
