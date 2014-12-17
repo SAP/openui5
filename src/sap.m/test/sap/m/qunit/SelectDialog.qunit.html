@@ -445,18 +445,19 @@
 			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
 				// Act
 				oSelectDialog._oSearchField.$('I').focus().val("abc").trigger("input");
-			});
 
-			oSelectDialog.open();
-
-			setTimeout(function() {
+				setTimeout(function() {
 				// Asert
 				ok(fnFireLiveChangeSpy.callCount, 1);
 				
 				// Delete
 				oSelectDialog.destroy();
 				start();
-			}, 1000);
+				
+				}, 500);
+			});
+
+			oSelectDialog.open();
 		});
 
 		asyncTest("Confirm Event", function () {
