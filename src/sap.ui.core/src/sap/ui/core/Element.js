@@ -595,6 +595,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @private
 	 */
 	Element.prototype.addDelegate = function (oDelegate, bCallBefore, oThis, bClone) {
+		jQuery.sap.assert(oDelegate, "oDelegate must be not null or undefined");
+		
+		if (!oDelegate) {
+			return this;
+		}
+		
 		this.removeDelegate(oDelegate);
 		
 		// shift parameters
@@ -608,7 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 			bClone = oThis;
 			oThis = undefined;
 		}
-	
+
 		(bCallBefore ? this.aBeforeDelegates : this.aDelegates).push({oDelegate:oDelegate, bClone: !!bClone, vThis: ((oThis === this) ? true : oThis)}); // special case: if this element is the given context, set a flag, so this also works after cloning (it should be the cloned element then, not the given one)
 		return this;
 	};
