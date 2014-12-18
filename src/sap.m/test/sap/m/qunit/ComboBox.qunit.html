@@ -3731,7 +3731,7 @@
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
-					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-required"), "false");
+					strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 
 					// cleanup
 					oComboBox.destroy();
