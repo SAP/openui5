@@ -28,6 +28,12 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addStyle("height", oControl.getHeight());
 		oRm.writeClasses();
 		oRm.writeStyles();
+
+		// ARIA
+		oRm.writeAccessibilityState(oControl, {
+			role: "form"
+		});
+
 		oRm.write(">");
 
 		var bIsExpandable = oControl.getExpandable();
@@ -81,7 +87,9 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.writeClasses();
-			oRm.write(">");
+
+			// ARIA
+			oRm.write(" role=\"heading\">");
 
 			oRm.writeEscaped(sHeaderText);
 			oRm.write("</div>");
