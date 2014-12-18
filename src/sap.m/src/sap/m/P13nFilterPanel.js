@@ -443,6 +443,8 @@ sap.ui.define([
 			tooltip: oItem.getTooltip(),
 			maxLength: oItem.getMaxLength(),
 			type: oItem.getType(),
+			precision: oItem.getPrecision(),
+			scale: oItem.getScale(),
 			isDefault: oItem.getIsDefault()
 		};
 
