@@ -11,15 +11,16 @@ jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 	metadata: "json",
 	createContent: function () {
-		var sUri = "/sap/opu/odata/sap/ZKTH_TEA_TEST_APPLICATION/",
+		var sUri = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 			oLayout = new sap.m.HBox(),
 			sMockServerBaseUri =
 				"test-resources/sap/ui/core/demokit/sample/ViewTemplate/types/data/",
 			oMockServer,
 			oModel,
+			bRealOData = (jQuery.sap.getUriParameters().get("realOData") === "true"),
 			oView;
 
-		if (jQuery.sap.getUriParameters().get("realOData") !== "true") {
+		if (!bRealOData) {
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 
 			oMockServer = new sap.ui.core.util.MockServer({rootUri: sUri});
@@ -33,8 +34,7 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 
 		oModel = new sap.ui.model.odata.v2.ODataModel(sUri, {
 			annotationURI: sMockServerBaseUri + "annotations.xml",
-			defaultBindingMode: sap.ui.model.BindingMode.TwoWay,
-			useBatch: false
+			defaultBindingMode: sap.ui.model.BindingMode.TwoWay
 		});
 
 		/**
@@ -66,31 +66,22 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 		oModel.getMetaModel().loaded().then(function () {
 			var oMetaModel = oModel.getMetaModel(),
 				oView = sap.ui.view({
-				models : oModel,
-				preprocessors: {
-					xml: {
-						bindingContexts: {meta:
-							oMetaModel.createBindingContext("/dataServices/schema/0/entityType/7")
-						},
-						models: {meta: oMetaModel}
-					}
-				},
-				type: sap.ui.core.mvc.ViewType.XML,
-				viewName: "sap.ui.core.sample.ViewTemplate.types.Types"
-			});
-			//TODO check why list binding does not work
-//			var oListBinding = oModel.bindList("/EdmTypesCollection");
-//
-//			oListBinding.attachDataReceived(function () {
-//				oView.bindElement(oListBinding.getContexts()[0].getPath(), {models: oModel});
-//			});
-//			oListBinding.initialize();
-//			oListBinding.refresh(true); //needed?
-			var oContext = oModel.createBindingContext(
-					"/EdmTypesCollection(ID='%20%201',DateTime=datetime'2014-03-25T00%3A00%3A00')",
-					function(oContext) {
-						oView.setBindingContext(oContext);
-					});
+					models : {
+						undefined: oModel,
+						ui: new sap.ui.model.json.JSONModel({realOData: bRealOData})
+					},
+					preprocessors: {
+						xml: {
+							bindingContexts: {meta: oMetaModel.createBindingContext(
+								"/dataServices/schema/0/entityType/0")
+							},
+							models: {meta: oMetaModel}
+						}
+					},
+					type: sap.ui.core.mvc.ViewType.XML,
+					viewName: "sap.ui.core.sample.ViewTemplate.types.Types"
+				});
+
 			oView.attachFormatError(setErrorState);
 			oView.attachParseError(setErrorState);
 			oView.attachValidationError(setErrorState);
