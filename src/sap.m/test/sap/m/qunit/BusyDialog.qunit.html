@@ -65,13 +65,14 @@
 			busyDialog1.open();
 			var $busyDialog1 = jQuery.sap.byId("busyDialog1");
 			ok(jQuery.sap.domById("busyDialog1"), "busyDialog1 is rendered after it's opened.");
-			equal(jQuery.sap.byId("busyDialog1").css("display"), "block", "Busy dialog opened");
-			equal(jQuery("#busyDialog1").children('header').length, 1, "busyDialog1 is rendered after it's opened.");
-			equal(jQuery("#busyDialog1").children('label').length, 1, "busyDialog1 is rendered after it's opened.");
-			equal(jQuery("#busyDialog1").children('footer').children().length, 2, "toolbar is rendered.");
-			equal(jQuery("#busyDialog1").children('footer').children()[0].id, "busyDialog1-toolbarspacer", "spacer is rendered.");
-			equal(jQuery("#busyDialog1").children('footer').children()[1].id, "busyDialog1busyCancelBtn", "cancel button is rendered.");
-			equal(jQuery("#busyDialog1").children('footer').text(), "Abort", "button text should be'Abort'.");
+			equal($busyDialog1.css("display"), "block", "Busy dialog opened");
+			equal($busyDialog1.children('header').length, 1, "busyDialog1 is rendered after it's opened.");
+			equal($busyDialog1.children('label').length, 1, "busyDialog1 is rendered after it's opened.");
+			equal($busyDialog1.children('footer').children().length, 3, "toolbar is rendered.");
+            equal($busyDialog1.children('footer').children()[0].id, "busyDialog1-toolbar-ariaLabel", "aria label rendered.");
+			equal($busyDialog1.children('footer').children()[1].id, "busyDialog1-toolbarspacer", "spacer is rendered.");
+			equal($busyDialog1.children('footer').children()[2].id, "busyDialog1busyCancelBtn", "cancel button is rendered.");
+			equal($busyDialog1.children('footer').children().eq(2).text(), "Abort", "button text should be'Abort'.");
 		});
 		
 		test("Open with Title, Text and Button - Phone", function(){
