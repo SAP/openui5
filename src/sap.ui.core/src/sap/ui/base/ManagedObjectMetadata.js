@@ -395,8 +395,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
 		return this._mAllEvents;
-	};
-	
+	};	
+
 	/**
 	 * Returns a map of default values for all properties declared by the
 	 * described class and its ancestors, keyed by the property name.

@@ -393,9 +393,10 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						} else {
 							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
 						}
-	
-					} else if ( sName !== "xmlns" ) {
-						jQuery.sap.log.warning(oView + ": XMLTemplateProcessor encountered and ignored unknown attribute '" + sName + "' (value: '" + sValue + "')");
+					} else if (oInfo && oInfo._iKind === 6 /* SPECIAL SETTING */ ) /*eslint-disable no-empty */ {
+						// No assert
+					} /*eslint-disable no-empty */ else {
+						jQuery.sap.assert(( sName === "xmlns" ), oMetadata.getName() + ": XMLTemplateProcessor encountered and ignored unknown attribute '" + sName + "' (value: '" + sValue + "')");
 					}
 				}
 				if (aCustomData.length > 0) {

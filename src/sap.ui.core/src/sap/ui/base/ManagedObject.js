@@ -443,9 +443,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					}
 						//this[oKeyInfo._sMutator].apply(this, oValue); // could be replacement for line before
 					break;
+				case 6: // SPECIAL SETTING
+					// No assert
 				default:
 					break;
 				}
+			} else {
+				// check for other valid options
+				jQuery.sap.assert((sKey === "id"), oMetadata.getName() + ": ManagedObject encountered and ignored unknown attribute '" + sKey + "' (value: '" + oValue + "')");
 			}
 		}
 
