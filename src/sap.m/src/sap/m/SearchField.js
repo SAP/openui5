@@ -378,9 +378,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onFocus = function(event) {
-	
+
 		this.$().toggleClass("sapMFocus", true);
-	
+
 		// clear tooltip of the refresh button
 		if (this.getShowRefreshButton()) {
 			this.$("search").removeAttr("title");
@@ -391,10 +391,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Disable selection by focus:
 		var input = this._inputElement;
 		if (input && input.value && !this.getSelectOnFocus()) {
-			window.setTimeout(function(){input.setSelectionRange(input.value.length,input.value.length);},0);
+			input.setSelectionRange(input.value.length,input.value.length);
 		}
 	};
-	
+
 	/**
 	 * Restore the background color on blur.
 	 *
