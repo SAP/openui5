@@ -435,26 +435,22 @@
 
 		asyncTest("liveChange event", function () {
 			// Arrange
-			var fnFireLiveChangeSpy = sinon.spy();
-			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
-				title: "SelectDialog",
-				liveChange: fnFireLiveChangeSpy
-			});
-
-
-			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
-				// Act
-				oSelectDialog._oSearchField.$('I').focus().val("abc").trigger("input");
-
-				setTimeout(function() {
+			var fnFireLiveChangeSpy = sinon.spy(function(oEvent){
 				// Asert
-				ok(fnFireLiveChangeSpy.callCount, 1);
+				equal(oEvent.getParameter('value'), 'abc');
 				
 				// Delete
 				oSelectDialog.destroy();
 				start();
-				
-				}, 500);
+			});
+			
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				liveChange: fnFireLiveChangeSpy
+			});
+
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				// Act
+				oSelectDialog._oSearchField.$('I').focus().val("abc").trigger("input");
 			});
 
 			oSelectDialog.open();
