@@ -394,6 +394,7 @@
 					"sap.m.sample.ObjectHeaderResponsiveIII",
 					"sap.m.sample.ObjectHeaderResponsiveIV",
 					"sap.m.sample.ObjectHeaderResponsiveV",
+					"sap.m.sample.ObjectHeaderResponsiveVI",
 					"sap.suite.ui.commons.sample.HeaderContainerOH"
 				]
 			},
@@ -1023,6 +1024,11 @@
 				"id": "sap.m.sample.ObjectHeaderResponsiveV",
 				"name": "Object Header Responsive V",
 				"description": "This is a responsive Object Header without a number and with a Title, 3 Statuses/Attributes."
+			},
+			{
+				"id": "sap.m.sample.ObjectHeaderResponsiveVI",
+				"name": "Object Header Responsive VI",
+				"description": "This is a responsive Object Header with title and intro having link functionality"
 			},
 			{
 				"id" : "sap.m.sample.ObjectIdentifier",

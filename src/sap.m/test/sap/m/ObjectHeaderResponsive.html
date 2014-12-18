@@ -110,9 +110,12 @@
 				responsive: true,
 				backgroundDesign: "Solid",
 				intro: "Type XS",
+				introActive: true,
+				introPress: function(){ alert('you click the title');},
 				title: "Example 1 Large container",
 				titleActive: true,
 				titlePress: function(){ alert('you click the title');},
+				titleHref:'http://google.com',
 				number: "624,00",
 				numberUnit: "Euro",
 				fullScreenOptimized: true,
@@ -132,7 +135,6 @@
 						title: "Approval",
 						text: "Pending",
 						state: sap.ui.core.ValueState.Success
-
 					})
 				]
 			});

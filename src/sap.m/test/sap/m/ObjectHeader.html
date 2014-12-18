@@ -185,12 +185,10 @@
 			{
 				intro : "On behalf of John Smith",
 				introActive : true,
-				introHref: "http://www.google.com",
-				introTarget: "_blank",
 				introPress : function() {
-
-					oh5
-							.setTitle("Intro pressed. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.");
+					alert("intro is pressed");
+					//oh5
+						//	.setTitle("Intro pressed. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.");
 				},
 				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 				titleActive : true,
@@ -226,6 +224,10 @@
 		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 		titleActive : true,
 		titlePress : oh7PressHandler,
+		intro : "On behalf of John Smith",
+		introActive : true,
+		introHref: "http://www.google.com",
+		introTarget: "_blank",
 		number : "3,00",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Success,
