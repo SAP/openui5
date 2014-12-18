@@ -86,7 +86,16 @@
 			new sap.m.SearchField("SF2", {
 					value: "selectOnFocus:false", placeholder: "selectOnFocus:false..", selectOnFocus: false,
 					showRefreshButton: true, refreshButtonTooltip: "Reload..",
-					search:onSearch, liveChange:onLiveChange
+					search: function(event){
+						onSearch(event);
+						jQuery.sap.log.debug("Page is invalidated");
+						page.invalidate();
+					},
+					liveChange:function(event){
+						onLiveChange(event);
+						jQuery.sap.log.debug("Page is invalidated");
+						page.invalidate();
+					}
 				}),
 			new sap.m.SearchField("SF3", {
 					placeholder: "disabled...", value: "disabled", enabled: false,
