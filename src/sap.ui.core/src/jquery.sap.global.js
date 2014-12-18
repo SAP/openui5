@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, alert, console, XMLHttpRequest */
+/*global URI, Promise, alert, console, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -2776,6 +2776,80 @@
 			return mOptions.async ? window.Promise.resolve(oDeferred) : oData;
 		};
 
+		/*
+		 * register a global event handler to detect script execution errors.
+		 * Only works for browsers that support document.currentScript.
+		 * /
+		window.addEventListener("error", function(e) {
+			if ( document.currentScript && document.currentScript.dataset.sapUiModule ) {
+				var error = {
+					message: e.message,
+					filename: e.filename,
+					lineno: e.lineno,
+					colno: e.colno
+				};
+				document.currentScript.dataset.sapUiModuleError = JSON.stringify(error);
+			}
+		});
+		*/
+		
+		/**
+		 * Loads the given Javascript resource (URN) asynchronously via as script tag.
+		 * Returns a promise that will be resolved when the load event is fired or reject
+		 * when the error event is fired. 
+		 * 
+		 * Note: execution errors of the script are not reported as 'error'.
+		 * 
+		 * This method is not a full implementation of require. It is intended only for 
+		 * loading "preload" files that do not define an own module / module value.
+		 * 
+		 * Functionality might be removed/renamed in future, so no code outside the 
+		 * sap.ui.core library must use it. 
+		 * 
+		 * @experimental
+		 * @private
+		 */
+		jQuery.sap._loadJSResourceAsync = function(sResource, bIgnoreErrors) {
+			
+			return new Promise(function(resolve,reject) {
+				
+				var oModule = mModules[sResource] || (mModules[sResource] = { state : INITIAL });
+				var sUrl = oModule.url = getResourcePath(sResource);
+				oModule.state = LOADING;
+				
+				var oScript = window.document.createElement('SCRIPT');
+				oScript.src = sUrl;
+				oScript.dataset.sapUiModule = sResource;
+				oScript.dataset.sapUiModuleError = '';
+				oScript.addEventListener('load', function(e) {
+					jQuery.sap.log.info("Javascript resource loaded: " + sResource);
+// TODO either find a cross-browser solution to detect and assign execution errros or document behavior
+//					var error = e.target.dataset.sapUiModuleError;
+//					if ( error ) {
+//						oModule.state = FAILED;
+//						oModule.error = JSON.parse(error);
+//						jQuery.sap.log.error("failed to load Javascript resource: " + sResource + ":" + error);
+//						reject(oModule.error);
+//					} 
+					oModule.state = READY;
+					// TODO oModule.data = ?
+					resolve();
+				});
+				oScript.addEventListener('error', function(e) {
+					jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
+					oModule.state = FAILED;
+					// TODO oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
+					if ( bIgnoreErrors ) {
+						resolve();
+					} else {
+						reject();
+					}
+				});
+				appendHead(oScript);
+			});
+
+		};
+		
 		return function() {
 			
 			//remove final information in mUrlPrefixes 

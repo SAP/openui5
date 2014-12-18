@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	function(jQuery, ManagedObject, ComponentMetadata, Core) {
 	"use strict";
 
-//jQuery.sap.require("sap.ui.model.json.JSONModel");
+	/*global Promise */
 	
 	/**
 	 * Creates and initializes a new component with the given <code>sId</code> and
@@ -542,44 +542,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 *   });
 	 * </pre>
 	 * 
-	 * @param {string|object} oComponent the id of an existing Component or the configuration object to create the Component
-	 * @param {string} oComponent.name the name of the Component to load
-	 * @param {string} [oComponent.url] an alternate location from where to load the Component
-	 * @param {object} [oComponent.componentData] initial data of the Component (@see sap.ui.core.Component#getComponentData)
-	 * @param {string} [oComponent.id] the sId of the new Component
-	 * @param {object} [oComponent.settings] the mSettings of the new Component 
-	 * @return {sap.ui.core.Component} the Component instance 
+	 * @param {string|object} vConfig the id of an existing Component or the configuration object to create the Component
+	 * @param {string} vConfig.name the name of the Component to load
+	 * @param {string} [vConfig.url] an alternate location from where to load the Component
+	 * @param {object} [vConfig.componentData] initial data of the Component (@see sap.ui.core.Component#getComponentData)
+	 * @param {string} [vConfig.id] the sId of the new Component
+	 * @param {object} [vConfig.settings] the mSettings of the new Component 
+	 * @param {boolean} [vConfig.async=false] whether the component creation should be done asynchronously (experimental setting)
+	 * @param {object} [vConfig.asyncHints] hints for the asynchronous loading (experimental setting) 
+	 * @param {string[]} [vConfig.asyncHints.libs] libraries that should be (pre-)loaded before the component (experimental setting) 
+	 * @param {string[]} [vConfig.asyncHints.components] components that should be (pre-)loaded before the component (experimental setting)
+	 * @return {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading 
 	 * 
 	 * @public
 	 * @static
 	 * @since 1.15.0
+	 * @experimental Since 1.27.0. Support for asynchronous loading and the corresponding hints is still experimental 
+	 *   and might be modified or removed completely again. It must not be used in productive code, except in code 
+	 *   delivered by the UI5 teams. The synchronous usage of the API is not experimental and can be used without 
+	 *   restrictions.
 	 */
-	sap.ui.component = function(oComponent) {
+	sap.ui.component = function(vConfig) {
 		
 		// a parameter must be given!
-		if (!oComponent) {
+		if (!vConfig) {
 			throw new Error("sap.ui.component cannot be called without parameter!");
 		}
 		
 		// when only a string is given then this function behaves like a 
 		// getter and returns an existing component instance
-		if (typeof oComponent === "string") {
+		if (typeof vConfig === 'string') {
 			
 			// lookup and return the component
-			return sap.ui.getCore().getComponent(oComponent);
+			return sap.ui.getCore().getComponent(vConfig);
 			
-		} else {
-			
+		} 
+		
+		function createInstance(oClass) {
+
 			// retrieve the required properties
-			var sName = oComponent.name,
-				sId = oComponent.id,
-				oComponentData = oComponent.componentData,
-				sController = sName + ".Component",
-				mSettings = oComponent.settings;
-			
-			// load the component class 
-			var oClass = sap.ui.component.load(oComponent, true);
-			
+			var sName = vConfig.name,
+				sId = vConfig.id,
+				oComponentData = vConfig.componentData,
+				sController = sName + '.Component',
+				mSettings = vConfig.settings;
+
 			// create an instance
 			var oInstance = new oClass(jQuery.extend({}, mSettings, {
 				id: sId,
@@ -589,65 +596,160 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
 			
 			return oInstance;
+			
+		}
+			
+		// load the component class 
+		var vClassOrPromise = sap.ui.component.load(vConfig, true);
+		if ( vConfig.async ) {
+			// async: instantiate component after Promise has been fulfilled with component constructor
+			return vClassOrPromise.then(createInstance);
+		} else {
+			// sync: constructor has been returned, instantiate component immediately
+			return createInstance(vClassOrPromise);
 		}
 	};
 	
 	/**
 	 * Load a component without instantiating it.
-	 * @param {object} oComponent the Component's setting. See {@link sap.ui.component} for more Information.
+	 * 
+	 * Provides experimental support for loading components asynchronously by setting 
+	 * <code>oConfig.async</code> to true. In that case, the method returns a Javascript 6 
+	 * Promise that will be fulfilled with the component class after loading. 
+	 * 
+	 * Using <code>async = true</code> doesn't necessarily mean that no more synchronous loading
+	 * occurs. Both the framework as well as component implementations might still execute 
+	 * synchronous requests. The contract for <code>async = true</code> just allows to use 
+	 * async calls.
+	 * 
+	 * When asynchronous loading is used, additional <code>hints</code> can be provided :
+	 * <ul>
+	 * <li><code>oConfig.asyncHints.components : string[]</code>a list of components needed by the current component and its subcomponents
+	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
+	 *     Please note that the framework has no knowledge about whether a component provides a preload file or whether it is bundled 
+	 *     in some library preload. If components are listed in the hints section, they will be preloaded.</li>
+	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the component and its subcomponents.
+	 *     The framework will asynchronously load those libraries, if they're not loaded yet.</li>
+	 * </ul>
+	 * 
+	 * If components and/or libraries are listed in the hints section, all the corresponding preload files will 
+	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
+	 * 
+	 * Note: so far, only the requests for the preload files (library and/or component) are executed asynchronously.
+	 * If a preload is deactivated by configuration (e.g. debug mode), then requests won't be asynchronous.
+	 *  
+	 * @param {object} oConfig a configuration object describing the component to be loaded. See {@link sap.ui.component} for more Information.
+	 * @return {function|Promise} the constructor of the component class or a Promise that will be fulfilled with the same
 	 * 
 	 * @since 1.16.3
 	 * @static
 	 * @public
+	 * @experimental Since 1.27.0. Support for asynchronous loading and the corresponding hints is still experimental 
+	 *   and might be modified or removed completely again. It must not be used in productive code, except in code 
+	 *   delivered by the UI5 teams. The synchronous usage of the API is not experimental and can be used without 
+	 *   restrictions.
 	 */
-	sap.ui.component.load = function(oComponent, bFailOnError) {
+	sap.ui.component.load = function(oConfig, bFailOnError) {
 	
-		var sName = oComponent.name,
-			sUrl = oComponent.url,
-			sController = sName + ".Component",
-			sPreloadModule = sController + "-preload",
-			sPreloadMode = sap.ui.getCore().getConfiguration().getComponentPreload();
-			
+		var sName = oConfig.name,
+			sUrl = oConfig.url,
+			bComponentPreload = /^(sync|async)$/.test(sap.ui.getCore().getConfiguration().getComponentPreload());
+
 		// check for an existing name
 		if (!sName) {
 			throw new Error("The name of the component is undefined.");
 		}
-		
+
 		// check the type of the name
-		jQuery.sap.assert(typeof sName === "string", "sName must be a string");
-	
+		jQuery.sap.assert(typeof sName === 'string', "sName must be a string");
+
 		// if a URL is given we register this URL for the name of the component:
 		// the name is the package in which the component is located (dot separated)
 		if (sUrl) {
 			jQuery.sap.registerModulePath(sName, sUrl);
 		}
-	
-		if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
-			try {
-				// only load the Component-preload file if the Component module is not yet available
-				if ( !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
-					jQuery.sap.require(sPreloadModule);
+
+		function getControllerClass() {
+
+			var sController = sName + '.Component';
+
+			// require the component controller
+			jQuery.sap.require(sController);
+			var oClass = jQuery.sap.getObject(sController);
+
+			if (!oClass) {
+				var sMsg = "The specified component controller '" + sController + "' could not be found!";
+				if (bFailOnError) {
+					throw new Error(sMsg);
+				} else {
+					jQuery.sap.log.warning(sMsg);
 				}
-			} catch (e) {
-				jQuery.sap.log.warning("couldn't preload component from " + sPreloadModule + ": " + ((e && e.message) || e));
 			}
-	  }
-		
-		// require the component controller
-		jQuery.sap.require(sController);
-		var oClass = jQuery.sap.getObject(sController);
-	
-		if (!oClass) {
-			if (bFailOnError) {
-				throw new Error("The specified component controller\"" + sController + "\" could not be found!");
-			} else {
-				jQuery.sap.log.warning("The specified component controller \"" + sController + "\" could not be found!");
+
+			return oClass;
+		} 
+
+		function preload(sComponentName, bAsync) {
+			
+			var sController = sComponentName + '.Component',
+				sPreloadName;
+			
+			// only load the Component-preload file if the Component module is not yet available
+			if ( bComponentPreload && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
+				
+				if ( bAsync ) {
+					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
+					return jQuery.sap._loadJSResourceAsync(sPreloadName, true);
+				}
+
+				try {
+					sPreloadName = sController + '-preload'; // Module name
+					jQuery.sap.require(sPreloadName);
+				} catch (e) {
+					jQuery.sap.log.warning("couldn't preload component from " + sPreloadName + ": " + ((e && e.message) || e));
+				}
 			}
 		}
 
-		return oClass;
+		if ( oConfig.async ) {
+
+			// trigger loading of libraries and component preloads and collect the given promises
+			var hints = oConfig.asyncHints || {},
+				promises = [],
+				collect = function(oPromise) {
+					if ( oPromise ) {
+						promises.push(oPromise);
+					}
+				};
+
+			// preload required libraries 
+			if ( hints.libs ) {
+				collect(sap.ui.getCore().loadLibraries( hints.libs ));
+			}
+
+			if ( bComponentPreload ) {
+				collect(preload(sName, true));
+
+				// if a hint about "used" components is given, preload those components
+				if ( hints.components ) {
+					jQuery.each(hints.components, function(i, sCompName) {
+						collect(preload(sCompName, true));
+					});
+				}
+			}
+
+			// combine given promises
+			return Promise.all(promises).then(function(v) {
+				jQuery.sap.log.debug("Component.load: all promises fulfilled, then " + v);
+				return getControllerClass();
+			});
+
+		}
+
+		preload(sName);
+		return getControllerClass();
 	};
-	
+
 	return Component;
 
 }, /* bExport= */ true);
