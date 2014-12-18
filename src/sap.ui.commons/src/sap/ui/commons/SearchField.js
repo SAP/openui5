@@ -514,6 +514,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 		oNewControl.addEventDelegate({
 			onAfterRendering: function(){
 				_setClearTooltip(oThis);
+				var $Focus = jQuery(oNewControl.getFocusDomRef());
+				var sLabelledBy = $Focus.attr("aria-labelledby") || "";
+				if (sLabelledBy) {
+					sLabelledBy = " " + sLabelledBy;
+				}
+				$Focus.attr("aria-labelledby", oThis.getId() + "-label" + sLabelledBy);
 			}
 		});
 		if (oOldControl) {
