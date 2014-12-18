@@ -46,6 +46,18 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.string
 		},
 	
 		renderer : function(oRm, oControl) {
+			// The text is hidden through "display: none" in the shared CSS class 
+			// "sapUiInvisibleText", as an alternative in case screen readers have trouble with
+			// "display: none", the following class definition could be used:
+			//	.sapUiInvisibleText {
+			//		display: inline-block !important;
+			//		visibility: hidden !important;
+			//		width: 0 !important;
+			//		height: 0 !important;
+			//		overflow: hidden !important;
+			//		position: absolute !important;
+			//	}
+
 			oRm.write("<span");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapUiInvisibleText");
