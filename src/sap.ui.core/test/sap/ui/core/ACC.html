@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="../../../../resources/sap-ui-core.js"
+				type="text/javascript" id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.core"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		
+		<style>
+			html, body, #root {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+			
+			#title {
+				background-color: #f2f2f2;
+				text-align: center;
+				border-top: 0.25rem solid #009de0;
+				width: 100%;
+			}
+			
+			#bar {
+				border-bottom: 1px solid #cccccc;
+				background-color: #ffffff;
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+			}
+			
+			#title, #bar, th, td {
+				color: #666666;
+    			height: 3rem;
+    			font-size: 1rem;
+				font-weight: normal;
+				margin: 0;
+				line-height: 3rem;
+			}
+			
+			#bar > * {
+				margin-left: 0.25rem;
+				margin-right: 0.25rem;
+			}
+			
+			#bar > label {
+				margin-left: 1rem;
+			}
+			
+			#content {
+				position: absolute;
+				top: 6.3125rem;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				overflow: auto;
+			}
+			
+			th {
+				background-color: #f2f2f2;
+			}
+
+			td {
+				background-color: rgba(255, 255, 255, 0.8);
+			}
+			
+			th, td {
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+				font-size: 0.875rem;
+				text-align: left;
+				color: #333333;
+				border-bottom: 1px solid #cccccc;
+			}
+		</style>
+
+		<script type="text/javascript">
+		
+			function onChange() {
+				var sLib = jQuery("#lib").val();
+				var sTitle = "SAPUI5 Accessibility Testpages Overview" + (sLib ? (" - " + sLib) : "");
+				
+				jQuery("#title").html(sTitle);
+				document.title = sTitle;
+
+				if (!bLibsAvailable) {
+					return;
+				}
+
+				var sTheme = jQuery("#theme").val();
+				var bRTL = jQuery("#rtl").is(":checked");
+				var $Content = jQuery("#content");
+				var oLibInfo = oData[sLib];
+				var sParams = "?sap-ui-theme=" + sTheme + "&sap-ui-rtl=" + bRTL;
+				var aBuffer = [];
+				
+				if (oLibInfo.testinfo.tests && oLibInfo.testinfo.tests.length) {
+					aBuffer.push("<table cellspacing='0' style='width:100%'><tr><th>Idx</th><th>Control</th><th>Link</th><th>Application Component</th><th>Further Information</th></tr>");
+					for(var i=0; i<oLibInfo.testinfo.tests.length; i++) {
+						aBuffer.push("<tr><td>", i+1, "</td><td>", oLibInfo.testinfo.tests[i].control,"</td>");
+						aBuffer.push("<td><a href='", oLibInfo.root, oLibInfo.testinfo.tests[i].url, sParams, "' target='_blank'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
+						aBuffer.push("<td>", oLibInfo.testinfo.tests[i].appComponent || "", "</td>");
+						aBuffer.push("<td>", oLibInfo.testinfo.tests[i].desc || "", "</td></tr>");
+					}
+					aBuffer.push("</table>");
+				}
+				
+				$Content.html(aBuffer.join(""));
+			}
+			
+			var oData = {};
+			var bLibsAvailable = false;
+			var aThemes = ["sap_bluecrystal", "sap_hcb"];
+		
+			jQuery(function() {
+				var oInfo = sap.ui.getVersionInfo();
+				
+				for (var i=0; i<oInfo.libraries.length; i++) {
+					var sPath = jQuery.sap.getModulePath(oInfo.libraries[i].name);
+					sPath = sPath.replace("resources", "test-resources");
+					var oTestInfo = jQuery.sap.syncGetJSON(sPath + "/acc/index.json");
+					if (oTestInfo.success) {
+						oData[oInfo.libraries[i].name] = {
+							testinfo : oTestInfo.data,
+							name : oInfo.libraries[i].name,
+							root : sPath + "/acc/"
+						};
+					} else {
+						jQuery.sap.log.warning("Problem while loading acc test info for lib '" + oInfo.libraries[i].name + "': " + oTestInfo.status);
+					}
+				}
+				
+				for (var lib in oData) {
+					bLibsAvailable = true;
+					jQuery("#lib").append("<option value='" + lib + "'>" + lib + "</option>");
+				}
+				
+				for (var i=0; i<aThemes.length; i++) {
+					jQuery("#theme").append("<option value='" + aThemes[i] + "'>" + aThemes[i] + "</option>");
+				}
+				
+				jQuery("#lib").change(onChange);
+				jQuery("#theme").change(onChange);
+				jQuery("#rtl").change(onChange);
+				
+				onChange();
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+	<div id="root">
+	<h1 id="title"></h1>
+	<div id="bar" role="toolbar"><label for="lib">Libraries:</label><select id="lib"></select><label for="theme">Theme:</label><select id="theme"></select><label for="rtl">RTL Mode:</label><input type="checkbox" id="rtl"></input></div>
+	<div id="content"></div>
+	</div>
+	</body>
+</html>
