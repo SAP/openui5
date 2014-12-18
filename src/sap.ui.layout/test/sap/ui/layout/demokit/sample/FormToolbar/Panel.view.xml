@@ -3,7 +3,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.ui.layout.form"
 	xmlns="sap.m" >
-	<Panel>
+	<Panel 
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
 				<Label text="Address" />
