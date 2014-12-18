@@ -110,6 +110,25 @@ button.sapUiUx3ActionBarLiteMoreButton:focus>span.sapUiBtnTxt  {
 	background-color: @sapUiHighlight;
 	border: 1px solid @sapUiHighlight;
 }
+.sapUiUx3ActionBarUpdateAction:active {
+	background-image: url("img/update_hover.png");
+	background-color: @sapUiHighlight;
+}
+
+.sapUiUx3ActionBarUpdateAction.Selected {
+	background-image: url("img/update_hover.png");
+	background-color: @sapUiToggleButtonPressedBackground;
+}
+
+.sapUiUx3ActionBarUpdateAction.Selected:focus,
+.sapUiUx3ActionBarUpdateAction.Selected:hover {
+	background-color: darken(@sapUiToggleButtonPressedBackground, 6);
+	border: 1px solid transparent;
+}
+
+.sapUiUx3ActionBarUpdateAction.Selected:active {
+	background-color: @sapUiToggleButtonPressedBackground;
+}
 
 .sapUiUx3ActionBarUpdatePopup.sapUiUx3TP {
 	color: @sapUiBaseText;
