@@ -367,13 +367,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		this.oHeaderToolbar.addStyleClass("sapMUCListHeader");
 
-		// enable/disable FileUploader according to error state 
-		if (this.sErrorState !== "Error") {
-			if (this.getUploadEnabled() != this._oFileUploader.getEnabled()) {
-				this._oFileUploader.setEnabled(this.getUploadEnabled());
-			}
-		} else {
+		// FileUploader does not support parallel uploads in IE9
+		if ((sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) && this.aItems[0]._status === "Uploading") {
 			this._oFileUploader.setEnabled(false);
+		} else {
+			// enable/disable FileUploader according to error state
+			if (this.sErrorState !== "Error") {
+				if (this.getUploadEnabled() != this._oFileUploader.getEnabled()) {
+					this._oFileUploader.setEnabled(this.getUploadEnabled());
+				}
+			} else {
+			this._oFileUploader.setEnabled(false);
+			}
 		}
 
 		//prepare the list with list items
@@ -510,34 +515,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}).addStyleClass("sapMUCEditBtn");
 		}
 
-		if (sStatus == "Display" || sStatus == "Uploading") {
-			var sButtonId = sItemId + "-deleteButton";
-			if (sStatus == "Uploading") {
-				sButtonId = sItemId + "-terminateButton";
-			}
-			bEnabled = oItem.getEnableDelete();
-			if (this.sErrorState == "Error"){
-				bEnabled = false;
-			}
-			oDeleteButton = new sap.m.Button({
-				id : sButtonId,
-				icon : "sap-icon://sys-cancel",
-				type : sap.m.ButtonType.Transparent,
-				enabled : bEnabled,
-				visible : oItem.getVisibleDelete()
-//				press : function(oEvent) {
-//					sap.m.UploadCollection.prototype._handleAbort(oEvent, that);
-//				}
-			}).addStyleClass("sapMUCDeleteBtn");
-			if (sStatus == "Uploading") {
-				oDeleteButton.attachPress(function(oEvent) {
-					sap.m.UploadCollection.prototype._handleTerminate(oEvent, that);
-				});
-			} else {
-				oDeleteButton.attachPress(function(oEvent) {
-					sap.m.UploadCollection.prototype._handleDelete(oEvent, that);
-				});
-			}
+		if (sStatus == "Display") {
+			var sButton = "deleteButton";
+			var oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState);
+			oDeleteButton.attachPress(function(oEvent) {
+				sap.m.UploadCollection.prototype._handleDelete(oEvent, that);
+			});
+		}
+		
+		if (sStatus == "Uploading" && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+			var sButton = "terminateButton";
+			var oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState);
+			oDeleteButton.attachPress(function(oEvent) {
+				sap.m.UploadCollection.prototype._handleTerminate(oEvent, that);
+			});
 		}
 
 		oButtonsHL = new sap.ui.layout.HorizontalLayout(sItemId + "-ba_innerHL", {
@@ -564,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			});
 		}
 
-		if (sStatus == "Uploading") {
+		if (sStatus == "Uploading" && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
 			oProgressLabel = new sap.m.Label(sItemId + "-ta_progress", {
 				text : this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sProcentUploaded])
 			}).addStyleClass("sapMUCProgress");
@@ -671,6 +662,30 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		oListItem._status = sStatus;
 		oListItem.addStyleClass("sapMUCItem");
 		return oListItem;
+	};
+
+	/**
+	 * @description creates a delete button
+	 * @param {string} [sItemId] Id of the oItem
+	 * @param {string} [sButton]
+	 *  if sButton == "deleteButton" it is a delete button for the already uploaded file
+	 *  if sButton == "terminateButton" it is a button to terminate the upload of the file being uploaded
+	 * @param {Object} [oItem]
+	 * @param {string} [sErrorState]
+	 */
+	UploadCollection.prototype._createDeleteButton = function(sItemId, sButton, oItem, sErrorState) {
+		var bEnabled = oItem.getEnableDelete();
+		if (this.sErrorState == "Error"){
+			bEnabled = false;
+		}
+		var oDeleteButton = new sap.m.Button({
+			id : sItemId + "-" + sButton,
+			icon : "sap-icon://sys-cancel",
+			type : sap.m.ButtonType.Transparent,
+			enabled : bEnabled,
+			visible : oItem.getVisibleDelete()
+		}).addStyleClass("sapMUCDeleteBtn");
+		return oDeleteButton;
 	};
 
 	/**
@@ -982,14 +997,17 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			if (aUploadedFiles == "") {
 				return;
 			}
-			this._oFileUploader.removeAllHeaderParameters();
+			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+				this._oFileUploader.removeAllHeaderParameters();
+			}
 			this._oFileUploader.removeAllParameters();
 			
 			this.fireChange(oEvent);
 			
-			var aHeaderParametersAfter = this.getAggregation("headerParameters");
+			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+				var aHeaderParametersAfter = this.getAggregation("headerParameters");
+			}
 			var aParametersAfter = this.getAggregation("parameters");
-//			var aUploadedFiles = this._getUploadedFilesFromUploaderEvent(oEvent);
 			for (var i = 0; i < aUploadedFiles.length; i++) {
 				var oItem = new sap.m.UploadCollectionItem();
 				oItem.setProperty("contributor", null);
@@ -1037,14 +1055,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		// TODO not implemented
 	};
 
-	/**
-	 * @description Handling of the Event fileDeleted of the fileUploader
-	 * @param {object} oEvent Event of the fileUploader
-	 * @private
-	 */
-	UploadCollection.prototype._onFileDeleted = function(oEvent) {
-		// TODO not implemented
-	};
 
 	/**
 	 * @description Handling of the Event fileRenamed of the fileUploader
@@ -1140,6 +1150,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._getFileUploader = function() {
 	var that = this;
 		if (!this._oFileUploader) {
+			var bSendXHR = (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) ? false : true;
 			this._oFileUploader = new sap.ui.unified.FileUploader(this.getId() + "-uploader",{
 				buttonOnly : true,
 				buttonText : " ",
@@ -1156,15 +1167,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				uploadOnChange : true,
 				uploadUrl : this.getUploadUrl(),
 				useMultipart : false,
-				sendXHR : true, // TODO check browser version (set true for all browser except IE8, IE9)
+				sendXHR : bSendXHR, // false for IE8, IE9
 				change : function(oEvent) {
 					that._onChange(oEvent);
 				},
 				fileAllowed : function(oEvent) {
 					that._onFileAllowed(oEvent);
-				},
-				fileDeleted : function(oEvent) {
-					that._onFileDeleted(oEvent);
 				},
 				filenameLengthExceed : function(oEvent) {
 					that._onFilenameLengthExceed(oEvent);
