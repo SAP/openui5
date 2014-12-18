@@ -1171,10 +1171,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	
 		var $parent = jQuery(this._getOpenByDomRef()),
 			$this = this.$(),
-			iPopoverBorderLeft = window.parseInt($this.css("border-left-width"), 10),
-			iPopoverBorderRight = window.parseInt($this.css("border-right-width"), 10),
-			iPopoverBorderTop = window.parseInt($this.css("border-top-width"), 10),
-			iPopoverBorderBottom = window.parseInt($this.css("border-bottom-width"), 10),
+			oComputedStyle = window.getComputedStyle($this[0]),
+			fPopoverBorderLeft = window.parseFloat(oComputedStyle.borderLeftWidth, 10),
+			fPopoverBorderRight = window.parseFloat(oComputedStyle.borderRightWidth, 10),
+			fPopoverBorderTop = window.parseFloat(oComputedStyle.borderTopWidth, 10),
+			fPopoverBorderBottom = window.parseFloat(oComputedStyle.borderBottomWidth, 10),
 			sPlacement = this._oCalcedPos || this.getPlacement(),
 			$arrow = this.$("arrow"),
 			iArrowHeight = $arrow.outerHeight(true),
@@ -1186,8 +1187,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			$content = this.$("cont"),
 			$scrollArea = $content.children(".sapMPopoverScroll"),
 			bSAreaPosAbs = $scrollArea.css("position") === "absolute",
-			iContentMarginLeft = window.parseInt($content.css("margin-left"), 10),
-			iContentMarginRight = window.parseInt($content.css("margin-right"), 10),
+			oContentComputedStyle = window.getComputedStyle($content[0]),
+			fContentMarginLeft = window.parseFloat(oContentComputedStyle.marginLeft, 10),
+			fContentMarginRight = window.parseFloat(oContentComputedStyle.marginRight, 10),
+			fContentMarginTop = window.parseFloat(oContentComputedStyle.marginTop, 10),
+			fContentMarginBottom = window.parseFloat(oContentComputedStyle.marginBottom, 10),
 			$header = $this.children(".sapMPopoverHeader"),
 			$subHeader = $this.children(".sapMPopoverSubHeader"),
 			$footer = $this.children(".sapMPopoverFooter"),
@@ -1301,14 +1305,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		iWidth = oPopoverClass.outerWidth( $this[0]);
 		iHeight = $this.outerHeight();
 
-		iMaxContentWidth = iDocumentWidth - iMarginLeft - iMarginRight - iPopoverBorderLeft - iPopoverBorderRight;
+		iMaxContentWidth = iDocumentWidth - iMarginLeft - iMarginRight - fPopoverBorderLeft - fPopoverBorderRight;
 		
 		if (bSAreaPosAbs) {
-			iMaxContentWidth -= (iContentMarginLeft + iContentMarginRight);
+			iMaxContentWidth -= (fContentMarginLeft + fContentMarginRight);
 		}
 		
 		//adapt the height to screen
-		iMaxContentHeight = iDocumentHeight - iMarginTop - iMarginBottom - iHeaderHeight - iSubHeaderHeight - iFooterHeight - parseInt($content.css("margin-top"), 10) - parseInt($content.css("margin-bottom"), 10) - iPopoverBorderTop - iPopoverBorderBottom;
+		iMaxContentHeight = iDocumentHeight - iMarginTop - iMarginBottom - iHeaderHeight - iSubHeaderHeight - iFooterHeight - fContentMarginTop - fContentMarginBottom - fPopoverBorderTop - fPopoverBorderBottom;
 		//make sure iMaxContentHeight is NEVER less than 0
 		iMaxContentHeight = Math.max(iMaxContentHeight, 0);
 	
@@ -1324,25 +1328,25 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		}
 		$content.css(oCSS);
 	
-		//disable the horizontal scrolling when content inside can fit the container.
-		if (oPopoverClass.outerWidth($scrollArea[0] ,true) <= oPopoverClass.width($content[0])) {
+		// disable the horizontal scrolling when content inside can fit the container.
+		if ($scrollArea.outerWidth(true) <= $content.width()) {
 			$scrollArea.css("display", "block");
 		}
 		
 		//set arrow offset
 		if (sPlacement === sap.m.PlacementType.Left || sPlacement === sap.m.PlacementType.Right) {
-			iPosArrow = $parent.offset().top - $this.offset().top - iPopoverBorderTop + iOffsetY + 0.5 * ($parent.outerHeight(false) - $arrow.outerHeight(false));
+			iPosArrow = $parent.offset().top - $this.offset().top - fPopoverBorderTop + iOffsetY + 0.5 * ($parent.outerHeight(false) - $arrow.outerHeight(false));
 			iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
 			iPosArrow = Math.min(iPosArrow, iHeight - this._arrowOffsetThreshold - $arrow.outerHeight());
 			$arrow.css("top", iPosArrow);
 		} else if (sPlacement === sap.m.PlacementType.Top || sPlacement === sap.m.PlacementType.Bottom) {
 			if (bRtl) {
-				iPosArrow =  $this.offset().left + oPopoverClass.outerWidth($this[0], false) - ($parent.offset().left + oPopoverClass.outerWidth($parent[0], false)) + iPopoverBorderRight + iOffsetX + 0.5 * (oPopoverClass.outerWidth($parent[0], false) - oPopoverClass.outerWidth($arrow[0], false));
+				iPosArrow =  $this.offset().left + oPopoverClass.outerWidth($this[0], false) - ($parent.offset().left + oPopoverClass.outerWidth($parent[0], false)) + fPopoverBorderRight + iOffsetX + 0.5 * (oPopoverClass.outerWidth($parent[0], false) - oPopoverClass.outerWidth($arrow[0], false));
 				iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
 				iPosArrow = Math.min(iPosArrow, iWidth - this._arrowOffsetThreshold - oPopoverClass.outerWidth($arrow[0], false));
 				$arrow.css("right", iPosArrow);
 			} else {
-				iPosArrow = $parent.offset().left - $this.offset().left - iPopoverBorderLeft + iOffsetX + 0.5 * (oPopoverClass.outerWidth($parent[0], false) - oPopoverClass.outerWidth($arrow[0], false));
+				iPosArrow = $parent.offset().left - $this.offset().left - fPopoverBorderLeft + iOffsetX + 0.5 * (oPopoverClass.outerWidth($parent[0], false) - oPopoverClass.outerWidth($arrow[0], false));
 				iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
 				iPosArrow = Math.min(iPosArrow, iWidth - this._arrowOffsetThreshold - oPopoverClass.outerWidth($arrow[0], false));
 				$arrow.css("left", iPosArrow);
