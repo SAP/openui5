@@ -2832,7 +2832,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnMoveStart = function(oColumn) {
-
+		this.$().addClass("sapUiTableDragDrop");
+		
 		this._disableTextSelection();
 
 		var $col = oColumn.$();
@@ -3015,6 +3016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnMoved = function(oEvent) {
+		this.$().removeClass("sapUiTableDragDrop");
 
 		var iDnDColIndex = parseInt(this._$colGhost.attr("data-sap-ui-colindex"), 10);
 		var oDnDCol = this.getColumns()[iDnDColIndex];
@@ -3078,8 +3080,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				"opacity": ""
 			});
 		}
-		delete this._iNewColPos;
 
+		// Re-apply focus
+		setTimeout(function() {
+			var iOldFocusedIndex = this._oItemNavigation.getFocusedIndex();
+			this._oItemNavigation.focusItem(0, oEvent);
+			this._oItemNavigation.focusItem(iOldFocusedIndex, oEvent);
+		}.bind(this), 0);
+
+		delete this._iNewColPos;
 	};
 
 	/**
