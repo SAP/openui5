@@ -49,7 +49,6 @@
 			name : "sap.ui.model.odata.type.String",
 			constraints : {"maxLength" : 80}
 		},
-		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		oMetaModel = new sap.ui.model.json.JSONModel({
 			"dataServices" : {
 				"schema" : [{
@@ -133,50 +132,61 @@
 			}
 		}),
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
-		sPathPrefix = "/dataServices/schema/0/entityType/0/";
+		sPathPrefix = "/dataServices/schema/0/entityType/0/",
+		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
+		fnSimplePath = sap.ui.model.odata.AnnotationHelper.simplePath,
+		fnText = sap.ui.model.odata.AnnotationHelper.text;
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
 	/**
-	 * Formats the value using the AnnotationHelper and then parses the result via the complex parser.
-	 * Provides access to the given current binding.
+	 * Formats the value using the AnnotationHelper and then parses the result via the complex
+	 * parser. Provides access to the given current binding.
 	 *
 	 * @param {any} vValue
-	 * @param {sap.ui.model.Binding} oCurrentBinding
+	 * @param {sap.ui.model.Binding} [oCurrentBinding]
+	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the custom formatter function to call
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParse(vValue, oCurrentBinding) {
-		var sResult,
-			oThis = {
-				currentBinding : function () {
-					return oCurrentBinding;
-				}
-			};
+	function formatAndParse(vValue, oCurrentBinding, fnMethod) {
+		var sResult;
 
-		sResult = sap.ui.model.odata.AnnotationHelper.format.call(oThis, vValue);
+		if (typeof oCurrentBinding === "function") { // allow oCurrentBinding to be omitted
+			fnMethod = oCurrentBinding;
+			oCurrentBinding = null;
+		}
+		fnMethod = fnMethod || sap.ui.model.odata.AnnotationHelper.format;
+		sResult = fnMethod.call({
+			currentBinding : function () {
+				return oCurrentBinding;
+			}
+		}, vValue);
 
 		// @see applySettings: complex parser returns undefined if there is nothing to unescape
 		return sap.ui.base.BindingParser.complexParser(sResult, undefined, true) || sResult;
 	}
 
 	/**
-	 * Formats the value using the AnnotationHelper and then parses the result via the complex parser.
-	 * Makes sure no warning is raised. Provides access to the given current binding.
+	 * Formats the value using the AnnotationHelper and then parses the result via the complex
+	 * parser. Makes sure no warning is raised. Provides access to the given current binding.
 	 *
 	 * @param {any} vValue
-	 * @param {sap.ui.model.Binding} oCurrentBinding
+	 * @param {sap.ui.model.Binding} [oCurrentBinding]
+	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the custom formatter function to call
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParseNoWarning(vValue, oCurrentBinding) {
+	function formatAndParseNoWarning(vValue, oCurrentBinding, fnMethod) {
 		var oSandbox = sinon.sandbox.create(),
 			oLogMock = oSandbox.mock(jQuery.sap.log);
 
 		oLogMock.expects("warning").never();
 
 		try {
-			return formatAndParse(vValue, oCurrentBinding);
+			return formatAndParse(vValue, oCurrentBinding, fnMethod);
 		} finally {
 			oLogMock.verify();
 			oSandbox.restore();
@@ -185,6 +195,7 @@
 
 	/**
 	 * Tests proper console warnings on illegal values for a type.
+	 *
 	 * @param {any[]} aValues
 	 *   Array of illegal values
 	 * @param {string} sTitle
@@ -193,8 +204,10 @@
 	 *   The name of the Edm type
 	 * @param {boolean} bAsObject
 	 *   Determines if the value is passed in object format
+	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the custom formatter function to call
 	 */
-	function testIllegalValues(aValues, sTitle, sType, bAsObject) {
+	function testIllegalValues(aValues, sTitle, sType, bAsObject, fnMethod) {
 		jQuery.each(aValues, function (i, vValue) {
 			test(sTitle + " (invalid: " + vValue + ")", sinon.test(function () {
 				var oLogMock = this.mock(jQuery.sap.log),
@@ -208,46 +221,47 @@
 					"Illegal value for " + sType + ": " + vValue,
 					null, "sap.ui.model.odata.AnnotationHelper");
 
-				strictEqual(formatAndParse(vRawValue), String(vValue));
+				strictEqual(formatAndParse(vRawValue, fnMethod), String(vValue));
 			}));
 		});
 	}
 
-	//*********************************************************************************************
-	module("sap.ui.model.odata.AnnotationHelper", {
-		setup : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-		},
-		teardown : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-			sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("decimal");
-			sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group");
-			sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign");
-			sap.ui.getCore().getConfiguration().getFormatSettings().setDatePattern("medium");
-			sap.ui.getCore().getConfiguration().getFormatSettings().setTimePattern("medium");
-		}
-	});
+	/**
+	 * Test unsupported cases.
+	 *
+	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the custom formatter function to call
+	 */
+	function unsupported(fnMethod) {
+		jQuery.each([undefined, false, true, 0, 1, NaN, Function, oCIRCULAR],
+			function (i, vRawValue) {
+				test("Make sure that output is always a string: " + vRawValue,
+					function () {
+						strictEqual(formatAndParse(vRawValue, fnMethod), String(vRawValue));
+					}
+				);
+			}
+		);
+
+		jQuery.each([null, {}, {foo : "bar"}],
+			function (i, oRawValue) {
+				test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
+					function () {
+						strictEqual(formatAndParse(oRawValue, fnMethod),
+							"Unsupported type: " + JSON.stringify(oRawValue));
+					}
+				);
+			}
+		);
+	}
+
+
 
 	//*********************************************************************************************
-	jQuery.each([undefined, false, true, 0, 1, NaN, Function, oCIRCULAR],
-		function (i, vRawValue) {
-			test("Make sure that output is always a string: " + vRawValue, function () {
-				strictEqual(formatAndParse(vRawValue), String(vRawValue));
-			});
-		}
-	);
+	module("sap.ui.model.odata.AnnotationHelper.format");
 
 	//*********************************************************************************************
-	jQuery.each([null, {}, {foo : "bar"}],
-		function (i, oRawValue) {
-			test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
-				function () {
-					strictEqual(formatAndParse(oRawValue),
-						"Unsupported type: " + JSON.stringify(oRawValue));
-				}
-			);
-		}
-	);
+	unsupported();
 
 	//*********************************************************************************************
 	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
@@ -341,4 +355,43 @@
 		});
 	});
 	//TODO further Int-like types!
+
+
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.simplePath");
+
+	//*********************************************************************************************
+	unsupported(fnSimplePath);
+
+	//*********************************************************************************************
+	testIllegalValues(aNonStrings, "14.5.12 Expression edm:Path", "Path", true, fnSimplePath);
+
+	//*********************************************************************************************
+	jQuery.each(["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'
+		], function (i, sPath) {
+		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
+			var oMetaModel = new sap.ui.model.json.JSONModel({
+					"Value" : {
+						"Path" : sPath
+					}
+				}),
+				sMetaPath = "/Value",
+				oCurrentBinding = oMetaModel.bindProperty(sMetaPath),
+				oRawValue = oMetaModel.getProperty(sMetaPath),
+				oSingleBindingInfo
+					= formatAndParseNoWarning(oRawValue, oCurrentBinding, fnSimplePath);
+
+			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+			strictEqual(oSingleBindingInfo.path, sPath);
+			strictEqual(oSingleBindingInfo.type, undefined);
+			strictEqual(oSingleBindingInfo.constraints, undefined);
+
+			if (sPath.indexOf(":") < 0 && fnEscape(sPath) === sPath) {
+				// @see sap.ui.base.BindingParser: rObject, rBindingChars
+				strictEqual(fnSimplePath(oRawValue), "{" + sPath + "}",
+					"make sure that simple cases look simple");
+			}
+		});
+	});
 } ());
