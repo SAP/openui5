@@ -51,6 +51,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			 * Indicates whether “Favorite” is active
 			 */
 			favoriteState : {type : "boolean", group : "Misc", defaultValue : null},
+			
+			/**
+			 * Indicates whether “Update” is active
+			 */
+			updateState : {type : "boolean", group : "Misc", defaultValue : null},
 	
 			/**
 			 * The thing icon uri. Icon will be displayed in Feeder
@@ -329,29 +334,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 					};
 					//opens or closes the feeder popup
 					oResult.fnActionSelected = function (oEvent, oActionBar) {
+						oActionBar._setUpdateState(!oActionBar.getUpdateState());
 						if (oActionBar._oUpdatePopup.isOpen()) {
 							oActionBar._oUpdatePopup.close();
-							} else {
-								var oDomRef, iTIHeight, iContentHeight;
-								
-								oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-8 -13", "none");
-								oActionBar._oUpdatePopup.open();
-								oDomRef = jQuery(oActionBar._oUpdatePopup.getDomRef());
-								iTIHeight = jQuery(window).height();
-								iContentHeight = jQuery(oActionBar.getDomRef()).offset().top;
-								oDomRef.css("top", "auto").css("bottom",(iTIHeight - iContentHeight + 7) + "px");
-								jQuery.sap.delayedCall(1000, this, function() {
-									jQuery.sap.focus(oActionBar._feeder.getFocusDomRef());
-								});
-								
-							}
+						} else {
+							var oDomRef, iTIHeight, iContentHeight;
+							
+							oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-8 -13", "none");
+							oActionBar._oUpdatePopup.open();
+							oDomRef = jQuery(oActionBar._oUpdatePopup.getDomRef());
+							iTIHeight = jQuery(window).height();
+							iContentHeight = jQuery(oActionBar.getDomRef()).offset().top;
+							oDomRef.css("top", "auto").css("bottom",(iTIHeight - iContentHeight + 7) + "px");
+							jQuery.sap.delayedCall(1000, this, function() {
+								jQuery.sap.focus(oActionBar._feeder.getFocusDomRef());
+							});
+							
+						}
+						oActionBar._updateSocialActionDomRef(oResult);
 					};
-					
 					oResult.fnExit = function( oActionBar) {
 						if (oActionBar._oUpdatePopup) {
 							oActionBar._oUpdatePopup.destroy();
 							oActionBar._oUpdatePopup = null;
 						}
+					};
+					oResult.fnCalculateState = function ( oActionBar ) {
+						var result = null;
+						if (oActionBar.getUpdateState()) {
+							result = "Selected";
+						}
+						return result;
 					};
 				break;
 			case this.mActionKeys.Follow:
@@ -552,7 +565,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				content.addClass("sapUiUx3ActionBarAction");
 				content.addClass(oSocialAction.fnCalculateState(this));
 			}
-			if (oSocialAction.name == this.mActionKeys.Flag || oSocialAction.name == this.mActionKeys.Favorite) {
+			if (oSocialAction.name == this.mActionKeys.Update || oSocialAction.name == this.mActionKeys.Flag || oSocialAction.name == this.mActionKeys.Favorite) {
 				content.attr("aria-pressed", oSocialAction.fnCalculateState(this) == "Selected" ? "true" : "false");
 			}
 			if (oSocialAction.isMenu) {
@@ -730,6 +743,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 	};
 	
+	/**
+	 * Sets update state without triggering re-rendering
+	 *
+	 * @param oUpdateState new state
+	 * @private
+	 */
+	ActionBar.prototype._setUpdateState = function(oUpdateState) {
+		// supress rerendering
+		this.setProperty("updateState", oUpdateState, true);
+		return this;
+	};
 	/**
 	 * Sets favorite state without triggering re-rendering
 	 *
