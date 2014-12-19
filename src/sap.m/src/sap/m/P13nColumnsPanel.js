@@ -352,6 +352,8 @@ sap.ui.define([
 		var sValue = this._oSearchField.getValue();
 		var iLength = sValue.length || 0;
 
+		var oTableCB = sap.ui.getCore().byId(this._oTable.getId() + '-sa');
+
 		// change search filter status
 		if (iLength > 0) {
 			this._bSearchFilterActive = true;
@@ -359,10 +361,16 @@ sap.ui.define([
 			this._bSearchFilterActive = false;
 		}
 
+		// De-Activate table header checkBox
+		if (oTableCB) {
+			oTableCB.setEnabled(!this._bSearchFilterActive);
+		}
+
 		// filter table items based on user selections
 		this._filterItems();
 
-		// check, whether actual selected item is still visible after filterItems -> if not -> deactivate selected item
+		// check, whether actual selected item is still visible after filterItems -> if not -> deactivate selected
+		// item
 		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
 			this._deactivateSelectedItem();
 		}
@@ -465,11 +473,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Item press behavior is called as soon as a table item is selected
+	 * Change the selected item instance to the new given one
 	 * 
 	 * @private
 	 */
-	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
+	P13nColumnsPanel.prototype._changeSelectedItem = function(oItem) {
 		var oNewSelectedItem = null;
 
 		// Remove highlighting from previous item
@@ -478,7 +486,7 @@ sap.ui.define([
 		}
 
 		// Set highlighting to just selected item (only in case it is not already selected -> then do nothing)
-		oNewSelectedItem = oEvent.getParameter('listItem');
+		oNewSelectedItem = oItem;
 		if (oNewSelectedItem != this._oSelectedItem) {
 			this._oSelectedItem = oNewSelectedItem;
 			this._setHighLightingToItem(this._oSelectedItem);
@@ -488,6 +496,18 @@ sap.ui.define([
 
 		// Calculate move button appearance
 		this._calculateMoveButtonAppearance();
+	};
+
+	/**
+	 * Item press behavior is called as soon as a table item is selected
+	 * 
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
+		var oNewSelectedItem = null;
+		// Change selected items
+		oNewSelectedItem = oEvent.getParameter('listItem');
+		this._changeSelectedItem(oNewSelectedItem);
 	};
 
 	/**
@@ -691,6 +711,9 @@ sap.ui.define([
 			} else {
 				oColumnsItem.setIndex(iNewIndex);
 				this._updateTableItems(oColumnsItem);
+				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
+					this._reOrderExistingTableItems();
+				}
 			}
 		}
 	};
@@ -707,21 +730,35 @@ sap.ui.define([
 
 		if (oItem) {
 			sItemKey = oItem.data('P13nColumnKey');
+
+			// check, whether for actual item a columnsItems exist
 			aColumnsItems = this.getColumnsItems();
 			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
 			if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
 				oColumnsItem = aColumnsItems[iColumnsItemIndex];
 			}
 
+			// NO columnsItem exist -> create new one
 			if (oColumnsItem === null) {
 				oColumnsItem = this._createNewColumnsItem(sItemKey);
+
+				// set visibility and fire event to get a new columnsItems created
 				oColumnsItem.setVisible(oItem.getSelected());
 				this.fireAddColumnsItem({
 					newItem: oColumnsItem
 				});
-			} else {
+
+			} else {// columnsItem already exist -> change it's content
+				// change the visibility property and update|reOrder existing table items (that depends on the table
+				// sorting behavior)
 				oColumnsItem.setVisible(oItem.getSelected());
 				this._updateTableItems(oColumnsItem);
+				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
+					if (oColumnsItem.getVisible() === false) {
+						oColumnsItem.setIndex(undefined);
+					}
+					this._reOrderExistingTableItems();
+				}
 			}
 		}
 	};
@@ -800,6 +837,116 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method shall reorder all existing table items. First all selected, and then the unselected items in a alphabetical order
+	 * 
+	 * @private
+	 * @param {object} oColumnsItem is an item from columnsItems aggregation
+	 */
+	P13nColumnsPanel.prototype._reOrderExistingTableItems = function() {
+		var aExistingTableItems = null, aExistingSelectedTableItems = null;
+		var iExistingSelectedTableItemIndex = -1;
+		var that = this;
+
+		// get list of table items and list of selected items
+		aExistingTableItems = this._oTable.getItems();
+		aExistingSelectedTableItems = this._oTable.getSelectedItems();
+
+		// Calculate list of unselected table Items
+		if (aExistingSelectedTableItems && aExistingSelectedTableItems.length > 0) {
+			aExistingSelectedTableItems.forEach(function(oExistingSelectedTableItem) {
+				iExistingSelectedTableItemIndex = aExistingTableItems.indexOf(oExistingSelectedTableItem);
+				if (iExistingSelectedTableItemIndex > -1) {
+					aExistingTableItems.splice(iExistingSelectedTableItemIndex, 1);
+				}
+			});
+		}
+
+		// Sort array of unselected table items by it's column name
+		if (aExistingTableItems && aExistingTableItems.length > 0) {
+			aExistingTableItems.sort(function(a, b) {
+				var sTextA = a.getCells()[0].getText();
+				var sTextB = b.getCells()[0].getText();
+				return sTextA.localeCompare(sTextB, window.navigator.language, {
+					numeric: true
+				});
+			});
+		}
+
+		// remove all table items and refill items: 1. all selected, 2. all unselected, but sorted items
+		this._oTable.removeAllItems();
+		aExistingSelectedTableItems.forEach(function(oItem) {
+			that._oTable.addItem(oItem);
+		});
+		aExistingTableItems.forEach(function(oItem) {
+			that._oTable.addItem(oItem);
+		});
+
+	};
+
+	/**
+	 * calculates an index where the new table item has to be inserted (Dependencies: Selected versus Unselected & Unselected shall be sorted)
+	 * 
+	 * @private
+	 * @param {sap.m.P13nColumnsItem} oItem is used to create and added a new table item
+	 * @param {integer} (optional) iPredefIndex is an index value that will be considered if oNewTableItem is selected/visible. If iPredefIndex is
+	 *        undefined and oNewTableItem is selected -> oNewTableItem will be added at the end of all selected items. In case oNewTableItem is
+	 *        unselected -> iPredefIndex will not be considered!
+	 * @returns {integer} iResultIndex is the index where the new table item has to be inserted
+	 */
+	P13nColumnsPanel.prototype._calculateNewTableItemIndex = function(oNewTableItem, iPredefIndex) {
+		var aExistingSelectedTableItems = null, oLastExistingSelectedTableItem = null, aExistingTableItems = null;
+		var iResultIndex = -1, iExistingSelectedTableItemIndex = -1, iExistingSelectedTableItemsMaxLength = 0, iUnSelectedTableItemIndex = 0;
+
+		if (oNewTableItem) {
+			if (oNewTableItem.getSelected() === true) {
+				if (iPredefIndex !== null && iPredefIndex !== undefined && iPredefIndex > -1) {
+					iResultIndex = iPredefIndex;
+				} else {
+					iResultIndex = 0;
+					aExistingSelectedTableItems = this._oTable.getSelectedItems();
+					if (aExistingSelectedTableItems && aExistingSelectedTableItems.length > 0) {
+						oLastExistingSelectedTableItem = aExistingSelectedTableItems[aExistingSelectedTableItems.length - 1];
+						iResultIndex = this._oTable.indexOfItem(oLastExistingSelectedTableItem) + 1;
+					}
+				}
+			} else {
+				aExistingTableItems = this._oTable.getItems();
+				aExistingSelectedTableItems = this._oTable.getSelectedItems();
+
+				// Run over all selected table items to subtract those items from overall table item list
+				if (aExistingSelectedTableItems && aExistingSelectedTableItems.length > 0) {
+					iExistingSelectedTableItemsMaxLength = aExistingSelectedTableItems.length;
+					aExistingSelectedTableItems.forEach(function(oExistingSelectedTableItem) {
+						iExistingSelectedTableItemIndex = aExistingTableItems.indexOf(oExistingSelectedTableItem);
+						if (iExistingSelectedTableItemIndex > -1) {
+							aExistingTableItems.splice(iExistingSelectedTableItemIndex, 1);
+						}
+					});
+				}
+
+				// extend array of unselected table items by oNewTableItem
+				aExistingTableItems.push(oNewTableItem);
+
+				// Sort array of unselected table items by it's column name
+				if (aExistingTableItems && aExistingTableItems.length > 0) {
+
+					aExistingTableItems.sort(function(a, b) {
+						var sTextA = a.getCells()[0].getText();
+						var sTextB = b.getCells()[0].getText();
+						return sTextA.localeCompare(sTextB, window.navigator.language, {
+							numeric: true
+						});
+					});
+				}
+
+				iUnSelectedTableItemIndex = aExistingTableItems.indexOf(oNewTableItem);
+				iResultIndex = iExistingSelectedTableItemsMaxLength + iUnSelectedTableItemIndex;
+			}
+		}
+		return iResultIndex;
+	};
+
+	/**
 	 * Add a new table item based on the given P13nItem content
 	 * 
 	 * @private
@@ -816,7 +963,8 @@ sap.ui.define([
 
 			// columnsItem was found -> take over included data
 			if (oColumnsItem) {
-				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
+				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem
+				// information
 				if (oColumnsItem.getVisible() !== undefined) {
 					oNewTableItem.setSelected(oColumnsItem.getVisible());
 				}
@@ -827,12 +975,12 @@ sap.ui.define([
 				}
 			}
 
-			// Add/Insert new table item to table
+			// Calculate index where the new table item shall be placed
 			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
-				// columnsItems with valid index property found -> INSERT the new item at the index
+				// columnsItems with valid index property found -> take this index property
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
-				// No columnsItems exist Or found columnsItem does not contains index property -> ADD the new item at the end
+				// No columnsItems exist Or found columnsItem does not contains index property
 				this._oTable.addItem(oNewTableItem);
 			}
 		}
@@ -855,7 +1003,8 @@ sap.ui.define([
 
 			// columnsItem was found -> take over included data
 			if (oColumnsItem) {
-				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
+				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem
+				// information
 				if (oColumnsItem.getVisible() !== undefined) {
 					oNewTableItem.setSelected(oColumnsItem.getVisible());
 				}
@@ -923,12 +1072,12 @@ sap.ui.define([
 		if (oColumnsItem && oTableItem && aTableItems && aTableItems.length > 0) {
 			iMaxTableIndex = aTableItems.length;
 			iTableItemIndex = aTableItems.indexOf(oTableItem);
-
 			// apply index property
-			if (oColumnsItem.getIndex() !== undefined && iTableItemIndex !== oColumnsItem.getIndex() && oColumnsItem.getIndex() <= iMaxTableIndex) {
-
-				oRemovedItem = this._oTable.removeItem(oTableItem);
-				this._oTable.insertItem(oRemovedItem, oColumnsItem.getIndex());
+			if (oColumnsItem.getIndex() !== undefined) {
+				if (iTableItemIndex !== oColumnsItem.getIndex() && oColumnsItem.getIndex() <= iMaxTableIndex) {
+					oRemovedItem = this._oTable.removeItem(oTableItem);
+					this._oTable.insertItem(oRemovedItem, oColumnsItem.getIndex());
+				}
 			}
 
 			// apply visible property
@@ -944,66 +1093,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Restore table items (by index/visible/width property) based on existing items from items aggregation
-	 * 
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._restoreTableItems = function() {
-
-		// Restore table items based on items aggregation information
-		var sColumnsKey = null, iNewIndex = null;
-		var aPanelItems = this.getItems();
-		var aTableItems = null, iTableItemIndex = null, oTableItem = null, oRemovedTableItem = null;
-		var aColumnsItems = this.getColumnsItems(), iColumnsItemIndex = null, oColumnsItem = null;
-
-		aPanelItems.forEach(function(oPanelItem, iIndex) {
-			oTableItem = null;
-			oColumnsItem = null;
-			oRemovedTableItem = null;
-
-			sColumnsKey = oPanelItem.getColumnKey();
-			aTableItems = this._oTable.getItems();
-			iTableItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aTableItems);
-
-			if (iTableItemIndex !== null && iTableItemIndex !== undefined && iTableItemIndex > -1) {
-				oTableItem = aTableItems[iTableItemIndex];
-				// remove item from table
-				if (oTableItem) {
-					oRemovedTableItem = this._oTable.removeItem(oTableItem);
-				}
-
-				// check, whether still a columnsItems exist that can be applied
-				iColumnsItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aColumnsItems);
-				if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex > -1) {
-					oColumnsItem = aColumnsItems[iColumnsItemIndex];
-				}
-
-				// Restore Index/Visible/Width property
-				if (oRemovedTableItem) {
-					// As default take restore data from panel item
-					oRemovedTableItem.data('P13nColumnWidth', oPanelItem.getWidth());
-					oRemovedTableItem.setSelected(oPanelItem.getVisible());
-					iNewIndex = iIndex;
-
-					// In case a columnsItem still exist for this table item take over it's metadata
-					if (oColumnsItem) {
-						if (oColumnsItem.getVisible() !== undefined) {
-							oRemovedTableItem.setSelected(oColumnsItem.getVisible());
-						}
-						if (oColumnsItem.getIndex() !== undefined) {
-							iNewIndex = oColumnsItem.getIndex();
-						}
-						if (oColumnsItem.getWidth() !== undefined) {
-							oRemovedTableItem.data('P13nColumnWidth', oColumnsItem.getWidth);
-						}
-					}
-					this._oTable.insertItem(oRemovedTableItem, iNewIndex);
-				}
-			}
-		}, this);
-	};
-
 	/* =========================================================== */
 	/* Lifecycle methods */
 	/* =========================================================== */
@@ -1017,10 +1106,50 @@ sap.ui.define([
 		var iLiveChangeTimer = 0;
 		var that = this;
 		this._bOnAfterRenderingFirstTimeExecuted = false;
+
+		// ---------------------------------------------------------------
+		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
+		// - _bShallBeOrderedOnlyFirstTime = true means that the table items will ONLY be sorted during the very
+		// first OnAfterRendering execution
+		// - _bShallBeOrdered = true means that the table items will ALWAYS be resorted if a change will be done
+		// - _bAreOrdered = true means that the table items are already order and does not need to
+		// be reOrder during the next OnAfterRendering execution
+		// ---------------------------------------------------------------
+		this._oTableItemsOrdering = {
+			"_bShallBeOrdered": true,
+			"_bShallBeOrderedOnlyFirstTime": true,
+			"_bAreOrdered": false,
+			"fIsOrderingToBeDoneOnlyFirstTime": function() {
+				return this._bShallBeOrderedOnlyFirstTime;
+			},
+			"fOrderOnlyFirstTime": function() {
+				this._bShallBeOrdered = true;
+			},
+			"fIsOrderingToBeDone": function(bShallBeOrdered) {
+				if (bShallBeOrdered !== undefined && bShallBeOrdered !== null) {
+					this._bShallBeOrdered = bShallBeOrdered;
+				}
+				return this._bShallBeOrdered;
+			},
+			"fIsOrderingDone": function(bAreOrdered) {
+				if (bAreOrdered !== undefined && bAreOrdered !== null) {
+					this._bAreOrdered = bAreOrdered;
+				}
+				return this._bAreOrdered;
+			},
+			"fCheckReOrdering": function() {
+				if (this.fIsOrderingToBeDone()) {
+					this._bAreOrdered = false; // real ReOrdring will be dine in OnAfterRendering
+				}
+			}
+		};
+		// ---------------------------------------------------------------
+
 		this.setVerticalScrolling(false);
 
 		// Call-back for handling of resizing
-		// TODO: make sure we optimize calculation and respect margins and borders, use e.g. jQuery.outerHeight(true)
+		// TODO: make sure we optimize calculation and respect margins and borders, use e.g.
+		// jQuery.outerHeight(true)
 		this._fnHandleResize = function() {
 			if (that.getParent) {
 				var oParent = null, $dialogCont = null, iContentHeight, iHeaderHeight;
@@ -1110,8 +1239,6 @@ sap.ui.define([
 		});
 
 		this._oTable = new Table({
-			// growing: false,
-			// growingScrollToLoad: true,
 			mode: sap.m.ListMode.MultiSelect,
 			rememberSelections: false,
 			itemPress: function(oEvent) {
@@ -1120,12 +1247,22 @@ sap.ui.define([
 			selectionChange: function(oEvent) {
 				that._updateSelectAllDescription(oEvent);
 
+				// set all provided items to the new selection status
 				var bSelected = oEvent.getParameter('selected');
 				var aTableItems = oEvent.getParameter('listItems');
 				aTableItems.forEach(function(oTableItem) {
 					oTableItem.setSelected(bSelected);
 					that._handleItemVisibilityChanged(oTableItem);
 				});
+
+				// Special logic to change _oSelectedItem ALSO then if ONLY the "selection" status has been changed from
+				// false to true
+				if (aTableItems.length === 1 && bSelected === true) {
+					if (aTableItems[0] !== that._oSelectedItem) {
+						that._changeSelectedItem(aTableItems[0]);
+					}
+				}
+
 				that.fireSetData();
 			},
 			columns: [
@@ -1165,6 +1302,11 @@ sap.ui.define([
 
 			this._calculateMoveButtonAppearance();
 
+			// check, whether table items shall be order ONLY very first time
+			if (this._oTableItemsOrdering.fIsOrderingToBeDoneOnlyFirstTime()) {
+				this._oTableItemsOrdering.fOrderOnlyFirstTime();
+			}
+
 			// Register call-back function for re-sizing
 			sap.ui.Device.resize.attachHandler(this._fnHandleResize);
 		}
@@ -1175,13 +1317,51 @@ sap.ui.define([
 			that._fnHandleResize();
 		}, 0);
 
+		// If table items are NOT ordered, but shall be ordered -> do it now
+		if (!this._oTableItemsOrdering.fIsOrderingDone() && this._oTableItemsOrdering.fIsOrderingToBeDone()) {
+			this._updateTableItems();
+			this._reOrderExistingTableItems();
+			this._oTableItemsOrdering.fIsOrderingDone(true);
+
+			// if the reOrder was only done during the very first time -> switch reOrdering now to OFF
+			if (this._oTableItemsOrdering.fIsOrderingToBeDoneOnlyFirstTime()) {
+				this._oTableItemsOrdering.fIsOrderingToBeDone(false);
+			}
+		}
+
 		this._updateSelectAllDescription();
+	};
+
+	/**
+	 * Creates and returns a payload that can be used at the consumer of this panel
+	 * 
+	 * @public
+	 * @returns {object} oPayload, which contains useful information
+	 */
+	P13nColumnsPanel.prototype.getOkPayload = function() {
+		var oPayload = null, aSelectedItems = [], oSelectedItem = null;
+		var aSelectedTableItems = this._oTable.getSelectedItems();
+
+		if (aSelectedTableItems && aSelectedTableItems.length > 0) {
+			oPayload = {
+				"selectedItems": aSelectedItems
+			};
+
+			aSelectedTableItems.forEach(function(oSelectedTableItem) {
+				oSelectedItem = {
+					"columnKey": oSelectedTableItem.data('P13nColumnKey')
+				};
+				aSelectedItems.push(oSelectedItem);
+			});
+		}
+
+		return oPayload;
 	};
 
 	/**
 	 * Cleans up before destruction.
 	 * 
-	 * @private
+	 * @public
 	 */
 	P13nColumnsPanel.prototype.exit = function() {
 
@@ -1308,6 +1488,7 @@ sap.ui.define([
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
 		this.addAggregation("columnsItems", oColumnsItem);
 		this._updateTableItems(oColumnsItem);
+		this._oTableItemsOrdering.fCheckReOrdering();
 		return this;
 	};
 
@@ -1322,6 +1503,7 @@ sap.ui.define([
 	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
 		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
 		this._updateTableItems(oColumnsItem);
+		this._oTableItemsOrdering.fCheckReOrdering();
 		return this;
 	};
 
@@ -1334,7 +1516,8 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
 		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
-		this._restoreTableItems();
+
+		this._oTableItemsOrdering.fCheckReOrdering();
 
 		// return the removed item or null
 		return oColumnsItem;
@@ -1348,7 +1531,8 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
 		var aColumnsItems = this.removeAllAggregation("columnsItems");
-		this._restoreTableItems();
+
+		this._oTableItemsOrdering.fCheckReOrdering();
 
 		return aColumnsItems;
 	};
@@ -1361,14 +1545,10 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
 		this.destroyAggregation("columnsItems");
-		this._restoreTableItems();
+
+		this._oTableItemsOrdering.fCheckReOrdering();
 
 		return this;
-	};
-	
-	P13nColumnsPanel.prototype.getOkPayload = function() {
-		// TODO: return something meaningful !!
-		return {visibleColumns: ["a", "c"]};
 	};
 
 	return P13nColumnsPanel;

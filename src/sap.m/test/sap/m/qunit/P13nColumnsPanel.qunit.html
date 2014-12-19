@@ -1068,22 +1068,25 @@
 			ok(oP13nColumnsPanel._handleItemVisibilityChanged, "Method does not exist");
 
 			var oItem = new sap.m.ColumnListItem();
-			oItem.getSelected = sinon.stub();
+			oItem.getSelected = sinon.stub().returns(true);
 
 			oP13nColumnsPanel._createNewColumnsItem = sinon.stub();
 			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
 			oP13nColumnsPanel._updateTableItems = sinon.stub();
 			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
+			oP13nColumnsPanel._reOrderExistingTableItems = sinon.stub();
 
 			oP13nColumnsPanel.getColumnsItems = sinon.stub();
 			oP13nColumnsPanel.getColumnsItems.returns([{
 				"getColumnKey" : sinon.stub().returns("4711"),
 				"getVisible" : sinon.stub().returns(true),
-				"setVisible" : sinon.stub()
+				"setVisible" : sinon.stub(),
+				"setIndex"   : sinon.stub()
 			}, {
 				"getColumnKey" : sinon.stub().returns("4712"),
 				"getVisible" : sinon.stub().returns(false),
-				"setVisible" : sinon.stub()
+				"setVisible" : sinon.stub(),
+				"setIndex"   : sinon.stub()				
 			}]);
 
 			//CUT -> check that the method is NOT executed, as needed input parameter is missing
@@ -1111,16 +1114,19 @@
 			strictEqual(oNewColumnsItem.setVisible.called, true, "Method shall be executed");
 			strictEqual(oItem.getSelected.called, true, "Method shall be executed");
 
-			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just change the visible property
+			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just 
+			//change the visible property and reorder the existing table items
 			oP13nColumnsPanel.getColumnsItems.reset();
 			oP13nColumnsPanel._getArrayIndexByItemKey.reset();
 			oP13nColumnsPanel._updateTableItems.reset();
 			oP13nColumnsPanel._createNewColumnsItem.reset();
 			oP13nColumnsPanel.fireAddColumnsItem.reset();
+			oP13nColumnsPanel._reOrderExistingTableItems.reset();
 
 			oItem.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
 
+			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
+			oP13nColumnsPanel._oTableItemsOrdering._bShallBeOrdered = true;			
 			oP13nColumnsPanel._handleItemVisibilityChanged(oItem);
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
@@ -1129,6 +1135,10 @@
 			strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, false, "Method shall not be executed");
 			strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.called, true, "Method shall be executed");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.args[0][0], true, "Method setVisible called with the wrong input ");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.called, true, "Method shall be executed");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.args[0][0], undefined, "Method setIndex called with the wrong input ");
+			strictEqual(oP13nColumnsPanel._reOrderExistingTableItems.called, true,"Method shall not be executed");
 		});
 
 		test("Shall check _createNewColumnsItem", function() {
@@ -1441,7 +1451,6 @@
 					strictEqual(oTableItem.data('P13nColumnWidth'), "100px",
 							"Table item shall contain the defined width information");
 				});
-
 	}());
 </script>
 
@@ -1456,3 +1465,4 @@
 	<div id="content"></div>
 </body>
 </html>
+
