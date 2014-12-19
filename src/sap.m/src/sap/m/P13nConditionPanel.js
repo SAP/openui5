@@ -797,11 +797,12 @@ sap.ui.define([
 
 				case "ComboBox":
 					if (field["ID"] === "keyField") {
-						//oControl = new sap.m.ComboBox({
+						oControl = new sap.m.ComboBox({
 						//oControl.setForceSelection(true); 
-						oControl = new sap.m.Select({
+						//oControl = new sap.m.Select({
 							selectedKey: field["SelectedKey"],
 							// autoAdjustWidth: true,
+							forceSelection : true,
 							width: "100%",
 							layoutData: new sap.ui.layout.GridData({
 								span: field["Span"]
@@ -817,7 +818,7 @@ sap.ui.define([
 
 //						oControl.attachSelectionChange(function() {
 //							that._triggerChangeKeyfield(oTargetGrid, oConditionGrid);
-//							sap.m.MessageToast.show("SelectionChange");
+//							//sap.m.MessageToast.show("SelectionChange");
 //						});
 
 						if (typeof oConditionGridData !== "undefined") {
@@ -1454,7 +1455,8 @@ sap.ui.define([
 				oValue1.setVisible(false);
 				oValue2.setVisible(false);
 				oOperation.setVisible(false);
-				oShowIfGrouedvalue.setVisible(true);
+				var iMaxConditions = this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
+				oShowIfGrouedvalue.setVisible(iMaxConditions != 1);
 
 				// correct field span
 				// oKeyfield.getLayoutData().setSpan("L4 M4 S4");
@@ -1689,10 +1691,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nConditionPanel.prototype._updateConditionButtons = function(oTargetGrid) {
-		var iMax = parseInt(this.getMaxConditions(), 10);
-		if (iMax === -1) {
-			iMax = 1000;
-		}
+		var iMaxConditions = this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
 
 		var n = oTargetGrid.getContent().length;
 
@@ -1704,7 +1703,7 @@ sap.ui.define([
 
 		for (var i = 0; i < n; i++) {
 			var oAddBtn = oTargetGrid.getContent()[i].add;
-			if ((this.getAlwaysShowAddIcon() && (n < iMax)) || (i === n - 1 && i < iMax - 1)) {
+			if ((this.getAlwaysShowAddIcon() && (n < iMaxConditions)) || (i === n - 1 && i < iMaxConditions - 1)) {
 				// show the Add only for the last condition row and if the Max value is not reached
 				oAddBtn.removeStyleClass("displayNone");
 			} else {
@@ -1712,7 +1711,7 @@ sap.ui.define([
 			}
 
 			var oRemoveBtn = oTargetGrid.getContent()[i].remove;
-			if (iMax === 1 || (i === 0 && n === 1 && this.getDisableFirstRemoveIcon())) {
+			if (iMaxConditions === 1 || (i === 0 && n === 1 && this.getDisableFirstRemoveIcon())) {
 				oRemoveBtn.addStyleClass("displayNone");
 			} else {
 				oRemoveBtn.removeStyleClass("displayNone");
