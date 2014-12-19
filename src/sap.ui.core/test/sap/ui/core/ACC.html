@@ -39,12 +39,12 @@
 				line-height: 3rem;
 			}
 			
-			#bar > * {
+			#bar * {
 				margin-left: 0.25rem;
 				margin-right: 0.25rem;
 			}
 			
-			#bar > label {
+			#bar label {
 				margin-left: 1rem;
 			}
 			
@@ -57,15 +57,15 @@
 				overflow: auto;
 			}
 			
-			th {
+			#tests th {
 				background-color: #f2f2f2;
 			}
 
-			td {
+			#tests td {
 				background-color: rgba(255, 255, 255, 0.8);
 			}
 			
-			th, td {
+			#tests th, td {
 				padding-left: 0.5rem;
 				padding-right: 0.5rem;
 				font-size: 0.875rem;
@@ -73,38 +73,82 @@
 				color: #333333;
 				border-bottom: 1px solid #cccccc;
 			}
+			
+			#message {
+				margin-top: 6rem;
+				text-align: center;
+				color: #666666;
+			}
+			
+			#message.Error {
+				color: #e52929;
+			}
 		</style>
 
 		<script type="text/javascript">
 		
+			function checkFilter(sFilterValue, sLib, sControl, sComp) {
+				sFilterValue = sFilterValue.trim().toLowerCase();
+				if (!sFilterValue) {
+					return true;
+				}
+				
+				if (sLib && sLib.toLowerCase().indexOf(sFilterValue) >= 0
+					|| sControl && sControl.toLowerCase().indexOf(sFilterValue) >= 0
+					|| sComp && sComp.toLowerCase().indexOf(sFilterValue) >= 0) {
+					return true;
+				}
+				
+				return false;
+			}
+		
+			function renderTests(aBuffer, oLibInfo, sParams, bAllLibs, sFilterValue) {
+				if (oLibInfo.testinfo.tests && oLibInfo.testinfo.tests.length) {
+					for(var i=0; i<oLibInfo.testinfo.tests.length; i++) {
+						if (checkFilter(sFilterValue, oLibInfo.name, oLibInfo.testinfo.tests[i].control, oLibInfo.testinfo.tests[i].appComponent)) {
+							aBuffer.push("<tr>");
+							if (bAllLibs) {
+								aBuffer.push("<td>", oLibInfo.name,"</td>");
+							} 
+							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].control,"</td>");
+							aBuffer.push("<td><a href='", oLibInfo.root, oLibInfo.testinfo.tests[i].url, sParams, "' target='_blank'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
+							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].appComponent || "", "</td>");
+							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].desc || "", "</td></tr>");
+						}
+					}
+				}
+			}
+		
 			function onChange() {
 				var sLib = jQuery("#lib").val();
-				var sTitle = "SAPUI5 Accessibility Testpages Overview" + (sLib ? (" - " + sLib) : "");
+				var bAllLibs = sLib == "ALL";
+				var _sTitle = sTitle + (sLib ? (" - " + (bAllLibs ? "All Libraries" : sLib)) : "");
 				
-				jQuery("#title").html(sTitle);
-				document.title = sTitle;
+				jQuery("#title").html(_sTitle);
+				document.title = _sTitle;
 
-				if (!bLibsAvailable) {
-					return;
-				}
-
+				var sFilter = jQuery("#filter").val() || "";
 				var sTheme = jQuery("#theme").val();
 				var bRTL = jQuery("#rtl").is(":checked");
 				var $Content = jQuery("#content");
-				var oLibInfo = oData[sLib];
 				var sParams = "?sap-ui-theme=" + sTheme + "&sap-ui-rtl=" + bRTL;
 				var aBuffer = [];
 				
-				if (oLibInfo.testinfo.tests && oLibInfo.testinfo.tests.length) {
-					aBuffer.push("<table cellspacing='0' style='width:100%'><tr><th>Idx</th><th>Control</th><th>Link</th><th>Application Component</th><th>Further Information</th></tr>");
-					for(var i=0; i<oLibInfo.testinfo.tests.length; i++) {
-						aBuffer.push("<tr><td>", i+1, "</td><td>", oLibInfo.testinfo.tests[i].control,"</td>");
-						aBuffer.push("<td><a href='", oLibInfo.root, oLibInfo.testinfo.tests[i].url, sParams, "' target='_blank'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
-						aBuffer.push("<td>", oLibInfo.testinfo.tests[i].appComponent || "", "</td>");
-						aBuffer.push("<td>", oLibInfo.testinfo.tests[i].desc || "", "</td></tr>");
+				aBuffer.push("<table id='tests' cellspacing='0' style='width:100%'><thead><tr>");
+				if (bAllLibs) {
+					aBuffer.push("<th>Library</th>");
+				} 
+				aBuffer.push("<th>Control</th><th>Link</th><th>Application Component</th><th>Further Information</th></tr></thead><tbody>");
+				
+				if (bAllLibs) {
+					for (var lib in oData) {
+						renderTests(aBuffer, oData[lib], sParams, true, sFilter);
 					}
-					aBuffer.push("</table>");
+				} else {
+					renderTests(aBuffer, oData[sLib], sParams, false, sFilter);
 				}
+				
+				aBuffer.push("</tbody></table>");
 				
 				$Content.html(aBuffer.join(""));
 			}
@@ -112,8 +156,12 @@
 			var oData = {};
 			var bLibsAvailable = false;
 			var aThemes = ["sap_bluecrystal", "sap_hcb"];
+			var sTitle = "";
 		
 			jQuery(function() {
+				sTitle = jQuery("#title").html();
+				document.title = sTitle;
+				
 				var oInfo = sap.ui.getVersionInfo();
 				
 				for (var i=0; i<oInfo.libraries.length; i++) {
@@ -126,33 +174,43 @@
 							name : oInfo.libraries[i].name,
 							root : sPath + "/acc/"
 						};
+						bLibsAvailable = true;
 					} else {
-						jQuery.sap.log.warning("Problem while loading acc test info for lib '" + oInfo.libraries[i].name + "': " + oTestInfo.status);
+						jQuery.sap.log.warning("Problem while loading acc test info for lib '" + oInfo.libraries[i].name + "': " + oTestInfo.status + " - " + oTestInfo.error);
 					}
 				}
-				
-				for (var lib in oData) {
-					bLibsAvailable = true;
-					jQuery("#lib").append("<option value='" + lib + "'>" + lib + "</option>");
+
+				if (bLibsAvailable) {
+					jQuery("#lib").append("<option value='ALL'>ALL</option>");
+					for (var lib in oData) {
+						jQuery("#lib").append("<option value='" + lib + "'>" + lib + "</option>");
+					}
+					
+					for (var i=0; i<aThemes.length; i++) {
+						jQuery("#theme").append("<option value='" + aThemes[i] + "'>" + aThemes[i] + "</option>");
+					}
+					
+					jQuery("#lib").change(onChange);
+					jQuery("#theme").change(onChange);
+					jQuery("#rtl").change(onChange);
+					jQuery("#filter").change(onChange);
+					
+					onChange();
+					jQuery("#message").css("display", "none");
+					jQuery("#bar").removeAttr("style");
+					jQuery("#content").removeAttr("style");
+				} else {
+					jQuery("#message").html("No libraries found!").toggleClass("Error", true);
 				}
-				
-				for (var i=0; i<aThemes.length; i++) {
-					jQuery("#theme").append("<option value='" + aThemes[i] + "'>" + aThemes[i] + "</option>");
-				}
-				
-				jQuery("#lib").change(onChange);
-				jQuery("#theme").change(onChange);
-				jQuery("#rtl").change(onChange);
-				
-				onChange();
 			});
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
 	<div id="root">
-	<h1 id="title"></h1>
-	<div id="bar" role="toolbar"><label for="lib">Libraries:</label><select id="lib"></select><label for="theme">Theme:</label><select id="theme"></select><label for="rtl">RTL Mode:</label><input type="checkbox" id="rtl"></input></div>
-	<div id="content"></div>
+	<h1 id="title">SAPUI5 Accessibility Testpages Overview</h1>
+	<div id="bar" style="display:none;" role="toolbar"><label for="lib">Libraries:</label><select id="lib"></select><label for="theme">Theme:</label><select id="theme"></select><label for="rtl">RTL Mode:</label><input type="checkbox" id="rtl"></input><span style="float:right;"><label for="filter">Filter:</label><input id="filter"></input></span></div>
+	<div id="content" style="display:none;"></div>
+	<div id="message">Loading ...</div>
 	</div>
 	</body>
 </html>
