@@ -4312,6 +4312,7 @@
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);	// close the picker pop-up
+				this.clock.tick(1000);	//	wait 1s after the close animation is completed
 
 				// assert
 				strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
@@ -4572,12 +4573,12 @@
 				this.clock.tick(1000);
 				oComboBox.getFocusDomRef().value = "A";
 				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-
 				var fnEscapeSpy = this.spy(oComboBox, "onsapescape");
 				var fnCloseSpy = this.spy(oComboBox, "close");
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				this.clock.tick(1000);	//  wait 1s after the close animation is completed
 
 				// assert
 				strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
@@ -4694,6 +4695,7 @@
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+				this.clock.tick(1000);	//	wait 1s after the close animation is completed
 
 				// assert
 				strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
