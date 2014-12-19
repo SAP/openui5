@@ -157,6 +157,39 @@
 						}, {
 							"Value" : {"Path" : "_Time"}
 						}]
+					}, {
+//						"name" : "Contact",
+						"property" : [{
+							"name" : "FirstName",
+							"type" : "Edm.String",
+							"maxLength" : "30"
+						}, {
+							"name" : "LastName",
+							"type" : "Edm.String",
+							"maxLength" : "40"
+						}],
+						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+							"Title" : {
+								"Label" : {
+									"String" : "Name"
+								},
+								"Value" : {
+									"Apply" : {
+										"Name" : "odata.concat",
+										"Parameters" : [{
+											"Type" : "Path",
+											"Value" : "FirstName"
+										}, {
+											"Type" : "String",
+											"Value" : " {foo} "
+										}, {
+											"Type" : "Path",
+											"Value" : "LastName"
+										}]
+									}
+								},
+							},
+						}
 					}]
 				}]
 			}
@@ -165,7 +198,14 @@
 		sPathPrefix = "/dataServices/schema/0/entityType/0/",
 		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
 		fnSimplePath = sap.ui.model.odata.AnnotationHelper.simplePath,
-		fnText = sap.ui.model.odata.AnnotationHelper.text;
+		fnText = sap.ui.model.odata.AnnotationHelper.text,
+		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
+			metadata: {
+				properties: {
+					text: "string"
+				}
+			}
+		});
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
@@ -239,7 +279,7 @@
 	 */
 	function testIllegalValues(aValues, sTitle, sType, bAsObject, fnMethod) {
 		jQuery.each(aValues, function (i, vValue) {
-			test(sTitle + " (invalid: " + vValue + ")", sinon.test(function () {
+			test(sTitle + " (invalid: " + JSON.stringify(vValue) + ")", sinon.test(function () {
 				var oLogMock = this.mock(jQuery.sap.log),
 					vRawValue = vValue;
 
@@ -278,7 +318,7 @@
 				test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
 					function () {
 						strictEqual(formatAndParse(oRawValue, fnMethod),
-							"Unsupported type: " + JSON.stringify(oRawValue));
+							"Unsupported: " + JSON.stringify(oRawValue));
 					}
 				);
 			}
@@ -393,9 +433,72 @@
 			deepEqual(oSingleBindingInfo.type.oConstraints, oFixture.type.constraints);
 		});
 	});
-	//TODO further Int-like types!
 
+	//*********************************************************************************************
+	jQuery.each([
+		{Apply : null},
+		{Apply : "unsupported"},
+		{Apply : {Name : "unsupported"}},
+		{Apply : {Name : "odata.concat"}},
+		{Apply : {Name : "odata.concat", Parameters : {}}}
+	], function (i, oApply) {
+		var sError = "Unsupported: " + JSON.stringify(oApply);
 
+		test("14.5.3 Expression edm:Apply: " + sError, function () {
+			strictEqual(formatAndParseNoWarning(oApply), sError);
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3.1.1 Function odata.concat", function () {
+		var oCurrentBinding = oMetaModel.bindProperty(
+				"/dataServices/schema/0/entityType/1/com.sap.vocabularies.UI.v1.HeaderInfo/" +
+				"Title/Value"),
+			oRawValue = oCurrentBinding.getValue(),
+			oSingleBindingInfo,
+			oModel = new sap.ui.model.json.JSONModel({FirstName: "John", LastName: "Doe"}),
+			oControl = new TestControl({
+				models: oModel,
+				bindingContexts: oModel.createBindingContext("/")
+			});
+
+		oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+		strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+		ok(oSingleBindingInfo.parts, "binding info has parts");
+		ok(oSingleBindingInfo.formatter, "binding info has formatter");
+		strictEqual(oSingleBindingInfo.parts.length, 2, "binding info has two parts");
+		strictEqual(oSingleBindingInfo.parts[0].path, "FirstName");
+		strictEqual(oSingleBindingInfo.parts[0].type.getName(), "sap.ui.model.odata.type.String");
+		strictEqual(oSingleBindingInfo.parts[0].type.oConstraints.maxLength, 30);
+		strictEqual(oSingleBindingInfo.parts[1].path, "LastName");
+		strictEqual(oSingleBindingInfo.parts[1].type.getName(), "sap.ui.model.odata.type.String");
+		strictEqual(oSingleBindingInfo.parts[1].type.oConstraints.maxLength, 40);
+
+		oControl.bindProperty("text", oSingleBindingInfo);
+		strictEqual(oControl.getText(), "John {foo} Doe");
+	});
+
+	//*********************************************************************************************
+	test("14.5.3.1.1 Function odata.concat: unsupported type", sinon.test(function () {
+		var oParameter = {Type: "Int16", Value: 42};
+
+		strictEqual(formatAndParseNoWarning({
+			Apply: {
+				Name: "odata.concat",
+				Parameters: [{Type: "String", Value : "*foo*"}, oParameter]
+			}
+		}), "*foo*<Unsupported: " + JSON.stringify(oParameter) + ">");
+	}));
+
+	//*********************************************************************************************
+	test("14.5.3.1.1 Function odata.concat: null parameter", sinon.test(function () {
+		strictEqual(formatAndParseNoWarning({
+			Apply: {
+				Name: "odata.concat",
+				Parameters: [{Type: "String", Value : "*foo*"}, null]
+			}
+		}), "*foo*<Unsupported: null>");
+	}));
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.simplePath");

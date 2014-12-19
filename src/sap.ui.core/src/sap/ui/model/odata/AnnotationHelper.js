@@ -11,6 +11,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			fnEscape = BindingParser.complexParser.escape;
 
 		/**
+		 * Handling of <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268262">
+		 * 14.5.3.1.1 Function odata.concat</a>.
+		 *
+		 * @param {object[]} aParameters
+		 *    the parameters
+		 * @param {sap.ui.model.Binding} oBinding
+		 *    the binding related to the current formatter call
+		 * @returns {string}
+		 *    the resulting string value to write into the processed XML
+		 */
+		function concat(aParameters, oBinding) {
+			var aParts = [],
+				i, oParameter;
+
+			for (i = 0; i < aParameters.length; i += 1) {
+				oParameter = aParameters[i];
+				if (oParameter) {
+					switch (oParameter.Type) {
+					case "Path":
+						aParts.push(formatPath(oParameter.Value, oBinding));
+						break;
+					case "String":
+						aParts.push(escapedString(oParameter.Value));
+						break;
+					//TODO support non-string constants
+					default:
+						aParts.push("<" + unsupported(oParameter) + ">");
+					}
+				} else {
+					aParts.push("<" + unsupported(oParameter) + ">");
+				}
+			}
+			return aParts.join("");
+		}
+
+		/**
 		 * Returns the given value properly turned into a string and escaped.
 		 *
 		 * @param {any} vValue
@@ -140,7 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			if (typeof vRawValue === "object") {
 				// anything else: convert to string, prefer JSON
 				try {
-					return fnEscape("Unsupported type: " + JSON.stringify(vRawValue));
+					return fnEscape("Unsupported: " + JSON.stringify(vRawValue));
 				} catch (ex) {
 					// "Converting circular structure to JSON"
 				}
@@ -178,6 +214,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 						return formatPath(vRawValue.Path, this.currentBinding());
 					}
 					return illegalValue(vRawValue, "Path");
+				}
+
+				// 14.5.3 Expression edm:Apply
+				if (vRawValue && vRawValue.Apply && typeof vRawValue.Apply === "object") {
+					switch (vRawValue.Apply.Name) {
+					case "odata.concat": // 14.5.3.1.1 Function odata.concat
+						if (jQuery.isArray(vRawValue.Apply.Parameters)) {
+							return concat(vRawValue.Apply.Parameters, this.currentBinding());
+						}
+						break;
+					// fall through to the global "unsupported"
+					// no default
+					}
 				}
 
 				return unsupported(vRawValue);
