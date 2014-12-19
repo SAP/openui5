@@ -888,7 +888,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					var scrollLeft = container.scrollLeft,
 					scrollTop = container.scrollTop;
 					if (this._bHorizontal) {
-						container.scrollLeft = scrollLeft + this._iX - point.pageX;
+						if (this._bFlipX) {
+							container.scrollLeft = scrollLeft - this._iX + point.pageX;
+						} else {
+							container.scrollLeft = scrollLeft + this._iX - point.pageX;
+						}
 					}
 					if (this._bVertical) {
 						container.scrollTop = scrollTop + this._iY - point.pageY;
@@ -949,8 +953,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					var button = e.buttons || e.which;
 					if (button == 1) {
 						var container = this._$Container[0];
-						container.scrollLeft = container.scrollLeft + this._iX - oEvent.pageX;
-						container.scrollTop = container.scrollTop + this._iY - oEvent.pageY;
+						if (this._bHorizontal) {
+							if ( this._bFlipX ) {
+								container.scrollLeft = container.scrollLeft - this._iX + oEvent.pageX;
+							} else {
+								container.scrollLeft = container.scrollLeft + this._iX - oEvent.pageX;
+							}
+						}
+						if (this._bVertical) {
+							container.scrollTop = container.scrollTop + this._iY - oEvent.pageY;
+						}
 						this._iX = oEvent.pageX;
 						this._iY = oEvent.pageY;
 					}
@@ -1122,6 +1134,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 							}
 							if (sap.ui.getCore().getConfiguration().getRTL()) {
 								this._scrollX = 9999; // in RTL case initially scroll to the very right
+								if (sap.ui.Device.browser.internet_explorer) {
+									this._bFlipX = true; // in IE RTL, scrollLeft goes opposite direction
+								}
 							}
 							if (sap.ui.Device.os.ios) {
 								this._oIOSScroll = {
