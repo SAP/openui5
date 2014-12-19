@@ -404,9 +404,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				var $oEditBox = jQuery.sap.byId(this.editModeItem + "-ta_editFileName-inner");
 				if ($oEditBox) {
 					var sId = this.editModeItem;
-					$oEditBox.focus(function() {
-						$oEditBox.selectText(0, $oEditBox.val().length);
-					});
+					if (!(sap.ui.Device.os.ios && (sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari))) {
+						$oEditBox.focus(function() {
+							$oEditBox.selectText(0, $oEditBox.val().length);
+						});
+					}
 					$oEditBox.focus();
 					this._oList.addDelegate({
 						onclick: function(oEvent) {
@@ -695,7 +697,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._fillList = function(aItems) {
 		var that = this;
-		var	iMaxIndex = aItems.length - 1;
+		var iMaxIndex = aItems.length - 1;
+
 		jQuery.each(aItems, function (iIndex, oItem) {
 			if (!oItem._status) {
 				//set default status value -> "Display"
@@ -1524,7 +1527,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		oResult.name = aNameSplit.join(".");
 		return oResult;
 	};
-
 
 	return UploadCollection;
 

@@ -161,6 +161,27 @@
 	width:				2.5rem;
 }
 
+/* In iOS/mac the line content is shown at the bottom of the line.
+the following lines remove the responsible top margin/padding  */
+html[data-sap-ui-os^="mac"],
+html[data-sap-ui-os^="iOS"] {
+	.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+	.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+		margin-top:		0rem;
+	}
+
+	.sapMUCBtnHL {
+		margin-top:		0rem;
+	}
+
+	.sapMBusyIndicator.sapMUCloadingIcon {
+		padding-top:	0rem;
+	}
+
+	.sapMUC .sapUiVlt {
+		margin-top:		0rem;
+	}
+}
 
 /* ************************************************************************************* */
 /* Borderless Design (Cozy Form Factor)                                                  */
@@ -322,6 +343,15 @@
 /* ************************************************************************************* */
 /* Compact Form Factor                                                                   */
 /* ************************************************************************************* */
+/* In iOS/mac the content of the line is shown at the bottom of the line.
+the following lines remove the responsible top margin */
+html[data-sap-ui-os^="mac"].sapUiSizeCompact .sapMUC,
+html[data-sap-ui-os^="iOS"].sapUiSizeCompact .sapMUC {
+		.sapMUCBtnHL {
+			margin-top:				1rem;
+		}
+	}
+
 .sapUiSizeCompact .sapMUC {
 	.sapMUC .sapMUCFileName.sapMLnk {
 	margin-top:			0.125rem;
@@ -351,7 +381,6 @@
 	.sapMUCEditMode .sapMUCBtnHL {
 		margin	:			1.5rem 1rem 1.5rem 0rem;
 	}
-
 
 	/* ********************************************************************************* */
 	/* Borderless Design (Compact Form Factor)                                           */
@@ -439,9 +468,6 @@
 		}
 	}
 }
-
-
-
 
 /* ************************************************************************************* */
 /* local fixes: should be done by used simple controls                                   */
