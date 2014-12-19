@@ -2861,12 +2861,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		if (aKeys) {
 			jQuery.each(aKeys, function(iIndex, sKey) {
-				if (sKey in this.mChangedEntities) {
+				if (sKey in that.mChangedEntities) {
 					that.mChangeHandles[sKey].abort();
 					delete that.mChangeHandles[sKey];
 					delete that.mChangedEntities[sKey];
 				} else {
-					jQuery.log.warning(this + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
+					jQuery.log.warning(that + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
 				}
 			});
 		} else {
