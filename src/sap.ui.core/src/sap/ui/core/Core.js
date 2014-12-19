@@ -699,6 +699,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		log.info("Initializing",null,METHOD);
 	
 		this.oFocusHandler = new FocusHandler(document.body, this);
+		this.oRenderManager._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		this.oResizeHandler = new ResizeHandler(this);
 		this.oThemeCheck = new ThemeCheck(this);
 	
@@ -932,7 +933,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 */
 	Core.prototype.createRenderManager = function() {
-		return (new RenderManager()).getInterface();
+		var oRm = new RenderManager();
+		oRm._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
+		return oRm.getInterface();
 	};
 	
 	/**
