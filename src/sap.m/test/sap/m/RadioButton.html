@@ -6,7 +6,7 @@
 		<title>RadioButton - sap.m</title>
 
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.core"
 			data-sap-ui-theme="sap_bluecrystal">
@@ -20,11 +20,11 @@
             #vboxStates .sapMVBox {
                 padding-right: 2rem;
             }
-            
+
             #hBoxStatesSecondLine {
                 padding-top: 2rem;
             }
-            
+
             #flexbox2 {
                 padding: 0 2rem;
             }
@@ -56,7 +56,7 @@
 
 			var randomControl = new sap.m.Label({ text : "A label to rerender the whole page"});
 			var anotherRandomControl = new sap.m.Label({ text : "A second label to rerender the whole page"});
-			
+
 			oRadioButton11.attachSelect(function(oEvent) {
 				var oControlToAdd = oEvent.getParameter("selected") ? anotherRandomControl : randomControl;
 				var oControlToRemove = oEvent.getParameter("selected") ? randomControl : anotherRandomControl;
@@ -238,7 +238,7 @@
 				headerText : "List with Radio Buttons",
 				footerText : "Example"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -283,6 +283,6 @@
 
 	</head>
 
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>
