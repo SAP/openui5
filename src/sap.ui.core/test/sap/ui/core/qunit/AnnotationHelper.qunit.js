@@ -19,7 +19,11 @@
 		},
 		oDateTime = {
 			name : "sap.ui.model.odata.type.DateTime",
-			constraints : {"nullable": false, "displayFormat": "Date"}
+			constraints : {"nullable": false, "isDateOnly": true}
+		},
+		oDateTimeOffset = {
+			name : "sap.ui.model.odata.type.DateTimeOffset",
+			constraints : {"nullable": false}
 		},
 		oDecimal = {
 			name : "sap.ui.model.odata.type.Decimal",
@@ -102,6 +106,10 @@
 							"type" : "Edm.DateTime",
 							"nullable" : "false",
 							"sap:display-format" : "Date"
+						}, {
+							"name" : "_DateTimeOffset",
+							"type" : "Edm.DateTimeOffset",
+							"nullable" : "false"
 						}],
 						"com.sap.vocabularies.UI.v1.DataPoint" : {
 							"Value" : {
@@ -127,6 +135,8 @@
 							"Value" : {"Path" : "_Int32"}
 						}, {
 							"Value" : {"Path" : "_SByte"}
+						}, {
+							"Value" : {"Path" : "_DateTimeOffset"}
 						}]
 					}]
 				}]
@@ -320,6 +330,9 @@
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/8/Value",
 		type : oSByte
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/9/Value",
+		type : oDateTimeOffset
 	}, {
 		path : "Value",
 		context : oMetaModel.createBindingContext(
