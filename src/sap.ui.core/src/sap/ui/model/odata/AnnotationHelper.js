@@ -7,7 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 	function(jQuery, BindingParser) {
 		'use strict';
 
-		var fnEscape = BindingParser.complexParser.escape;
+		var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
+			fnEscape = BindingParser.complexParser.escape;
 
 		/**
 		 * Returns the given value properly turned into a string and escaped.
@@ -90,7 +91,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							oConstraints.maxLength = oProperty.maxLength;
 							break;
 
-						//TODO default: what?
+						default:
+							// type remains undefined, no mapping is known
 						}
 						oConstraints.nullable = oProperty.nullable;
 					}
@@ -116,6 +118,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			jQuery.sap.log.warning("Illegal value for " + sName + ": "
 					+ vRawValue[sName], null, "sap.ui.model.odata.AnnotationHelper");
 			return escapedString(vRawValue[sName]);
+		}
+
+		/**
+		 * Handles unsupported cases.
+		 *
+		 * @param {any} vRawValue
+		 *    the raw value from the meta model
+		 * @returns {string}
+		 *    the resulting string value to write into the processed XML
+		 */
+		function unsupported(vRawValue) {
+			if (typeof vRawValue === "object") {
+				// anything else: convert to string, prefer JSON
+				try {
+					return fnEscape("Unsupported type: " + JSON.stringify(vRawValue));
+				} catch (ex) {
+					// "Converting circular structure to JSON"
+				}
+			}
+			return escapedString(vRawValue);
 		}
 
 		/**
@@ -150,15 +172,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 					return illegalValue(vRawValue, "Path");
 				}
 
-				if (typeof vRawValue === "object") {
-					// anything else: convert to string, prefer JSON
-					try {
-						return fnEscape("Unsupported type: " + JSON.stringify(vRawValue));
-					} catch (ex) {
-						// "Converting circular structure to JSON"
+				return unsupported(vRawValue);
+			},
+
+			/**
+			 * A formatter helping to interpret OData v4 annotations during template processing.
+			 * Returns only a simple path for bindings, without type or constraint information
+			 * (at least for those simple cases where this is possible).
+			 *
+			 * @param {any} vRawValue
+			 *    the raw value from the meta model
+			 * @returns {string}
+			 *    the resulting string value to write into the processed XML
+			 */
+			simplePath : function (vRawValue) {
+				// 14.5.12 Expression edm:Path
+				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
+					if (typeof vRawValue.Path === "string") {
+						return rBadChars.test(vRawValue.Path)
+							? formatPath(vRawValue.Path, this.currentBinding())
+							: "{" + vRawValue.Path + "}";
 					}
+					return illegalValue(vRawValue, "Path");
 				}
-				return escapedString(vRawValue);
+
+				return unsupported(vRawValue);
 			}
 		};
 	}, /* bExport= */ true);
