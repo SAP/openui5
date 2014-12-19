@@ -43,4 +43,9 @@
 		post="onPostFeedItem"
 		enabled="false" />
 
+	<Label class="caption" text="Disabled+Busy (Frankenstein)" />
+	<FeedInput
+		post="onPostFeedItem"
+		enabled="false"
+		busy="true" />
 </mvc:View>
