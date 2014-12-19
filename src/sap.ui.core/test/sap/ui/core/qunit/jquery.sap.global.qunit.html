@@ -26,6 +26,7 @@
 			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */ 
 			jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript");
 			jQuery.sap.includeStyleSheet("testdata/testA.css", "jsunitIncludeStyleSheetTest");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
 
 			module("Basic", {
 				setup : function() {
@@ -145,6 +146,37 @@
 				equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
 				equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 			});
+
+			//****************************************************
+			// module loading (require/declare/define)
+			//****************************************************
+
+			module("sap.ui.require");
+
+			test("basic functionality", 3, function () {
+
+				var server = sinon.fakeServer.create();
+				server.respondWith(/first/, 'sap.ui.define([], function () {' +
+						'return {my : "firstmodule"}' +
+						'}, /* bExport= */ true);');
+				server.respondWith(/second/, 'sap.ui.define([], function () {' +
+						'return {my : "secondmodule"}' +
+						'}, /* bExport= */ true);');
+				server.autoRespond = true;
+
+				stop();
+				var calledBack = false;
+				sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
+					strictEqual(firstModule.my, "firstmodule");
+					strictEqual(secondModule.my, "secondmodule");
+					calledBack = true;
+					start();
+				});
+				equal(calledBack, false, "callback must not have been called synchronously");
+				
+				server.restore();
+			});
+
 			
 			//****************************************************
 			// loadResource tests
