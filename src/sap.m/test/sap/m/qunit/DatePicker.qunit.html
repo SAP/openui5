@@ -174,7 +174,7 @@
 				ok(jQuery("#DP3-cal")[0], "calendar rendered");
 				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 
-				var aDays = jQuery("#DP3-cal-days").children();
+				var aDays = jQuery("#DP3-cal--Month-days").children();
 				var oDay;
 				for ( var i = 0; i < aDays.length; i++) {
 					oDay = aDays[i];
@@ -186,7 +186,7 @@
 
 				// use ENTER to not run into itemNavigation
 				qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
-				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is now invisible");
+				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 				equal(sId, "DP3", "Change event fired");
 				equal(sValue, "4/10/14", "Value in internal format priovided");
 				equal(oDP3.getValue(), "4/10/14", "Value in internal format set");
