@@ -110,9 +110,10 @@
 	test("ListBinding refresh", 3, function() {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");
+		oBinding.initialize();
 		equal(oBinding.getLength(), 7, "ListBinding returns correct length");
 		oBinding.attachChange(function() {
-			ok("ListBinding fires change event when changed");
+			ok(true, "ListBinding fires change event when changed");
 		});
 		var oDoc = oModel.getData();
 		oDoc.firstChild.childNodes[1].appendChild(oDoc.createElement("member"));
@@ -120,6 +121,34 @@
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
 
+	test("ListBinding refresh with getContexts", 1, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers/member");
+		oBinding.initialize();
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(false, "ListBinding fires no change event, as changed data is outside visible range");
+		});
+		var oDoc = oModel.getData();
+		oDoc.firstChild.childNodes[1].childNodes[6].setAttribute("firstName", "Jonas");
+		oBinding.refresh();
+	});
+
+	test("ListBinding refresh with getContexts und length change", 3, function() {
+		setup();
+		var oBinding = oModel.bindList("/teamMembers/member");
+		var aContexts = oBinding.getContexts(0,5);
+		equal(aContexts.length, 5, "ListBinding returns correct amount of contexts");
+		oBinding.attachChange(function() {
+			ok(true, "ListBinding fires change event, as length has changed");
+		});
+		var oDoc = oModel.getData();
+		oDoc.firstChild.childNodes[1].appendChild(oDoc.createElement("member"));
+		oBinding.refresh();
+		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
+	});
+	
 	test("ListBinding getContexts with wrong path", function(){
 		setup();
 		createListBinding("xyz");

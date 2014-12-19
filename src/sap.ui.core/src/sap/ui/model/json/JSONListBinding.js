@@ -144,6 +144,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			
 			//If the list has changed we need to update the indices first
 			var oList = this.oModel._getObject(this.sPath, this.oContext);
+			if (this.oList.length != oList.length) {
+				bChangeDetected = true;
+			}
 			if (!jQuery.sap.equal(this.oList, oList)) {
 				this.update();
 			}
