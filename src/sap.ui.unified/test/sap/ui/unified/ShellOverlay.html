@@ -47,7 +47,7 @@
 		
 		var oOverlay = new sap.ui.unified.ShellOverlay({
 			search: createTestSearchField("sf2"),
-			content: [new sap.ui.commons.TextView({text: window.sLorem})],
+			content: [new sap.ui.commons.Button({text: "Some Button"}), new sap.ui.commons.TextView({text: window.sLorem})],
 			closed: function(){
 				jQuery.sap.log.warning("ShellOverlay was closed - some cleanup can be done ...");
 			},

@@ -219,13 +219,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	ShellOverlay.prototype.onclick = function(oEvent){
 		if (jQuery(oEvent.target).attr("id") === this.getId() + "-close") {
 			this.close();
+			// IE always interprets a click on an anker as navigation and thus triggers the 
+			// beforeunload-event on the window. Since a ShellHeadItem never has a valid href-attribute,
+			// the default behavior should never be triggered
+			oEvent.preventDefault();
 		}
 	};
+	
+	ShellOverlay.prototype.onsapspace = ShellOverlay.prototype.onclick;
 	
 	ShellOverlay.prototype.onThemeChanged = function(){
 		this._animOpenDuration = -1;
 		this._animCloseDuration = -1;
 		this._animBlockLayerDuration = -1;
+	};
+	
+	ShellOverlay.prototype.onfocusin = function(oEvent){
+		var $FocusableContent, oDomRef;
+		
+		if (oEvent.target.id == this.getId() + "-focfirst") {
+			// Focus on first dummy element -> Move focus to last element in content
+			$FocusableContent = jQuery(":sapTabbable", this.$("inner")); //Contains at least the close button
+			oDomRef = $FocusableContent.get($FocusableContent.length - 1);
+		} else if (oEvent.target.id == this.getId() + "-foclast") {
+			// Focus on last dummy element -> Move focus to first element in content
+			$FocusableContent = jQuery(":sapTabbable", this.$("inner")); //Contains at least the close button
+			oDomRef = $FocusableContent.get(0);
+		}
+		
+		if (oDomRef) {
+			jQuery.sap.focus(oDomRef);
+		}
 	};
 	
 	
