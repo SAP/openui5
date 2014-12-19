@@ -451,9 +451,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (this.isOpen()) {
 				this.close();
-
-				// clear the filter to make all items visible
-				this.clearFilter();
+				this.bClearFilter = true;
 			}
 		};
 
@@ -989,6 +987,15 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// if the focus is back to the input after close the picker, the message should be open
 			if (document.activeElement === oDomRef) {
 				this.openValueStateMessage();
+			}
+
+			if (this.bClearFilter) {
+
+				// clear the filter to make all items visible
+				// note: to prevent flickering, the filter is cleared
+				// after the close animation is completed
+				this.clearFilter();
+				this.bClearFilter = false;
 			}
 		};
 
