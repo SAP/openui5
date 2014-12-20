@@ -211,6 +211,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				parameters : {
 
 					/**
+					 * The name of a file to be uploaded.
+					 */
+					fileName : {type : "string"},
+
+					/**
 					 * Response message which comes from the server. On the server side this response has to be put within the &quot;body&quot; tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
 					 */
 					response : {type : "string"},
@@ -233,7 +238,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					/**
 					 * Http-Response-Headers which come from the server. provided as a JSON-map, i.e. each header-field is reflected by a property in the header-object, with the property value reflecting the header-field's content. Required for receiving "header" is to set the property "sendXHR" to true. This property is not supported by Internet Explorer 8 and 9.
 					 */
-					headers : {type : "object"}
+					headers : {type : "object"},
+
+					/**
+					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true. This property is not supported by Internet Explorer 8 and 9.
+					 */
+					requestHeaders : {type : "object[]"}
 				}
 			},
 
@@ -304,7 +314,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					/**
 					 * The total size of the file to be uploaded in byte.
 					 */
-					total : {type : "float"}
+					total : {type : "float"},
+
+					/**
+					 * The name of a file to be uploaded.
+					 */
+					fileName : {type : "string"},
+
+					/**
+					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true. This property is not supported by Internet Explorer 8 and 9.
+					 */
+					requestHeaders : {type : "object[]"}
 				}
 			},
 
@@ -313,7 +333,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			 * This is event is only supported with property sendXHR set to true, i.e. the event is not supported in Internet Explorer 8 or 9.
 			 * @since 1.24.0
 			 */
-			uploadAborted : {},
+			uploadAborted : {
+				parameters : {
+
+					/**
+					 * The name of a file to be uploaded.
+					 */
+					fileName : {type : "string"},
+
+					/**
+					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true. This property is not supported by Internet Explorer 8 and 9.
+					 */
+					requestHeaders : {type : "object[]"}
+				}
+			},
 
 			/**
 			 * Event is fired, if the filename of a chosen file is longer than the value specified with the maximumFilenameLength property.
@@ -757,7 +790,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var that = this;
 		var oXhr = aXhr[iIndex];
 		var sFilename = aFiles[iIndex].name;
-		oXhr.onreadystatechange = function() {
+		var oRequestHeaders = oXhr.requestHeaders;
+
+		var fnProgressListener = function(oProgressEvent) {
+			var oProgressData = {
+				lengthComputable: !!oProgressEvent.lengthComputable,
+				loaded: oProgressEvent.loaded,
+				total: oProgressEvent.total
+			};
+			that.fireUploadProgress({
+				"lengthComputable": oProgressData.lengthComputable,
+				"loaded": oProgressData.loaded,
+				"total": oProgressData.total,
+				"fileName": sFilename,
+				"requestHeaders": oRequestHeaders
+			});
+		};
+
+		var fnAbordListerner = function(oAbortEvent) {
+			that.fireUploadAborted({
+				"fileName": sFilename,
+				"requestHeaders": oRequestHeaders
+			});
+		};
+
+		oXhr.xhr.upload.addEventListener("progress", fnProgressListener);
+
+		//relay the abort event, if the xhr was aborted manually
+		oXhr.xhr.upload.addEventListener("abort", fnAbordListerner);
+
+		oXhr.xhr.onreadystatechange = function() {
 
 			var sResponse;
 			var sResponseRaw;
@@ -766,18 +828,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			var aHeaderLines;
 			var iHeaderIdx;
 			var sReadyState;
-			sReadyState = oXhr.readyState;
-			var sStatus = oXhr.status;
-			if (oXhr.readyState == 4) {
+			sReadyState = oXhr.xhr.readyState;
+			var sStatus = oXhr.xhr.status;
+
+			if (oXhr.xhr.readyState == 4) {
 				//this check is needed, because (according to the xhr spec) the readyState is set to OPEN (4)
 				//as soon as the xhr is aborted. Only after the progress events are fired, the state is set to UNSENT (0)
-				if (oXhr.responseXML) {
-					sResponse = oXhr.responseXML.documentElement.textContent;
+				if (oXhr.xhr.responseXML) {
+					sResponse = oXhr.xhr.responseXML.documentElement.textContent;
 				}
-				sResponseRaw = oXhr.response;
+				sResponseRaw = oXhr.xhr.response;
 
 				//Parse the http-header into a map
-				sPlainHeader = oXhr.getAllResponseHeaders();
+				sPlainHeader = oXhr.xhr.getAllResponseHeaders();
 				if (sPlainHeader) {
 					aHeaderLines = sPlainHeader.split("\u000d\u000a");
 					for (var i = 0; i < aHeaderLines.length; i++) {
@@ -788,19 +851,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					}
 				}
 				that.fireUploadComplete({
-					"filename": sFilename,
+					"fileName": sFilename,
 					"headers": mHeaders,
 					"response": sResponse,
 					"responseRaw": sResponseRaw,
 					"readyStateXHR": sReadyState,
-					"status": sStatus
+					"status": sStatus,
+					"requestHeaders": oRequestHeaders
 				});
 				iIndex++;
 				that.sendFiles(aXhr, aFiles, iIndex);
 			}
 			that._bUploading = false;
 		};
-		oXhr.send(aFiles[iIndex]);
+		oXhr.xhr.send(aFiles[iIndex]);
 	};
 
 
@@ -817,7 +881,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			return;
 		}
 		var uploadForm = this.getDomRef("fu_form");
-		var that = this;
 
 		try {
 			if (uploadForm) {
@@ -833,30 +896,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 							var iFiles = aFiles.length;
 						}
 						var aXhr = [];
-						var fnProgressListener = function(oProgressEvent) {
-							var oProgressData = {
-								lengthComputable: !!oProgressEvent.lengthComputable,
-								loaded: oProgressEvent.loaded,
-								total: oProgressEvent.total
-							};
-							that.fireUploadProgress(oProgressData);
-						};
-						var fnAbordListerner = function(oAbortEvent) {
-							that.fireUploadAborted();
-						};
 						for (var j = 0; j < iFiles; j++) {
 							//keep a reference on the current upload xhr
-							aXhr[j] = this._uploadXHR = new window.XMLHttpRequest();
-							aXhr[j].upload.addEventListener("progress", fnProgressListener);
-							//relay the abort event, if the xhr was aborted manually
-							aXhr[j].upload.addEventListener("abort", fnAbordListerner);
-							aXhr[j].open("POST", this.getUploadUrl(), true);
+							this._uploadXHR = new window.XMLHttpRequest();
+							aXhr[j] = {
+								xhr: this._uploadXHR,
+								requestHeaders: []
+							};
+							aXhr[j].xhr.open("POST", this.getUploadUrl(), true);
 							if (this.getHeaderParameters()) {
 								var oHeaderParams = this.getHeaderParameters();
 								for (var i = 0; i < oHeaderParams.length; i++) {
 									var sHeader = oHeaderParams[i].getName();
 									var sValue = oHeaderParams[i].getValue();
-									aXhr[j].setRequestHeader(sHeader, sValue);
+									aXhr[j].xhr.setRequestHeader(sHeader, sValue);
+									aXhr[j].requestHeaders.push({name: sHeader, value: sValue});
 								}
 							}
 						}
