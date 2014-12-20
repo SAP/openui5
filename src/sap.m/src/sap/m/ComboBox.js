@@ -329,11 +329,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				}
 			}
 
-			// open the picker while typing
+			// open the picker on input
 			if (bVisibleItems) {
 				this.open();
 			} else {
-				this.close();
+				this.isOpen() ? this.close() : this.clearFilter();
 			}
 		};
 
@@ -451,7 +451,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (this.isOpen()) {
 				this.close();
-				this.bClearFilter = true;
 			}
 		};
 
@@ -989,14 +988,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.openValueStateMessage();
 			}
 
-			if (this.bClearFilter) {
-
-				// clear the filter to make all items visible
-				// note: to prevent flickering, the filter is cleared
-				// after the close animation is completed
-				this.clearFilter();
-				this.bClearFilter = false;
-			}
+			// clear the filter to make all items visible
+			// note: to prevent flickering, the filter is cleared
+			// after the close animation is completed
+			this.clearFilter();
 		};
 
 		/*

@@ -4312,7 +4312,7 @@
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);	// close the picker pop-up
-				this.clock.tick(1000);	//	wait 1s after the close animation is completed
+				this.clock.tick(1000);	// wait 1s after the close animation is completed
 
 				// assert
 				strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
@@ -4578,7 +4578,7 @@
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-				this.clock.tick(1000);	//  wait 1s after the close animation is completed
+				this.clock.tick(1000);	// wait 1s after the close animation is completed
 
 				// assert
 				strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
@@ -4695,7 +4695,7 @@
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
-				this.clock.tick(1000);	//	wait 1s after the close animation is completed
+				this.clock.tick(1000);	// wait 1s after the close animation is completed
 
 				// assert
 				strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
@@ -6816,7 +6816,7 @@
 				oComboBox.destroy();
 			});
 
-			test("oninput clear the selection if not match is found", function() {
+			test("oninput clear the selection and the filter if not match is found", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
@@ -6843,6 +6843,7 @@
 				strictEqual(oComboBox.getSelectedItemId(), "");
 				strictEqual(oComboBox.getSelectedKey(), "");
 				ok(oComboBox.getList().getSelectedItem() === null);
+				strictEqual(oComboBox.isFiltered(), false);
 
 				// cleanup
 				oComboBox.destroy();
