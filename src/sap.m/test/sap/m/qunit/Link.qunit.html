@@ -18,7 +18,7 @@
 		<script type="text/javascript">
 
 		var sText = "Hello World";
-		
+
 		var oLink1 = new sap.m.Link("l1", {
 			text : sText,
 			href: "x.html",
@@ -28,8 +28,8 @@
 				ok(true, "This should be executed when the link is triggered");
 			}
 		}).placeAt("uiArea1");
-		
-		// test property accessor methods 
+
+		// test property accessor methods
 
 		test("Text in HTML", function() {
 			equal(oLink1.$().text(), sText, "oLink1 text should be correct");
@@ -38,32 +38,32 @@
 		test("Width", function() {
 			strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
 		});
-		
+
 		test("href", function() {
 			var href = oLink1.getDomRef().href;
 			strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
 		});
-		
+
 		test("Target", function() {
 			strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
 		});
-		
+
 		test("Press event", function(){
 			expect(1); // verifies the event handler was executed
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
-		
+
 		test("Disabled", function(){
 			expect(0); // verifies the event handler was NOT executed
 			oLink1.setEnabled(false);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
-		
+
 		test("When width is not set max-width should apply to control", function() {
 			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
-			
+
 			sut.setWidth("100px");
 			sap.ui.getCore().applyChanges();
 			ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
@@ -74,20 +74,20 @@
 			sap.ui.getCore().applyChanges();
 			ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
 		});
-		
+
 		test("Emphasized", function() {
 			oLink1.setEmphasized(true);
 			sap.ui.getCore().applyChanges();
 			ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
 		});
-		
+
 		test("Link should be shrinkable", function() {
 			var oLink = new sap.m.Link;
 			ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
 			oLink.destroy();
 			oLink1.destroy();
 		});
-		
+
 		// ARIA specific tests
 		test("ARIA specific test", function() {
 			var oLink1 = new sap.m.Link("l1", {
@@ -100,7 +100,7 @@
 				}
 			}).placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
-			
+
 			// ARIA role
 			strictEqual(oLink1.$().attr("role"), "link", "Property 'role' should be 'link'");
 			// ARIA disabled
@@ -122,10 +122,69 @@
 			oLink1.setEmphasized(false);
 			strictEqual(oLink1.$().attr("aria-describedby").indexOf(oLink1.getId() + "-linkEmphasized"), -1, "Property 'aria-describedby' should not contain '" + oLink1.getId() + "-linkEmphasized'");
 			strictEqual(jQuery.sap.domById(oLink1.getId() + "-linkEmphasized"), null, "Element with ID '" + oLink1.getId() + "-linkEmphasized' should not exist");
-			
+
 			oLink1.destroy();
 		});
-		
+
+		test("textAlign set to END", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333",
+				textAlign: sap.ui.core.TextAlign.End
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+
+			oLink.destroy();
+		});
+
+		test("textDirection set to RTL and textAlign set to Begin", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333",
+				textAlign: sap.ui.core.TextAlign.Begin,
+				textDirection: sap.ui.core.TextDirection.RTL
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
+			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+
+			oLink.destroy();
+		});
+
+		test("textDirection set to LTR and textAlign set to END", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333",
+				textAlign: sap.ui.core.TextAlign.End,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
+			strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
+
+			oLink.destroy();
+		});
+
+		test("textDirection not set", function() {
+			var oLink = new sap.m.Link({
+				text: "(+359) 111 222 333"
+			});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
+
+			oLink.destroy();
+		});
+
 		</script>
 
 	</head>
@@ -136,7 +195,7 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<div id="qunit-fixture">test markup, will be hidden</div>
 		<ol id="qunit-tests"></ol>
-		
+
 		<div id="uiArea1"></div>
 	</body>
 </html>
