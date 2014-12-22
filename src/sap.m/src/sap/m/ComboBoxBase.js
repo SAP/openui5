@@ -171,13 +171,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		ComboBoxBase.prototype.init = function() {
 			InputBase.prototype.init.apply(this, arguments);
 
-			/**
-			 * Whether the filter needs to be cleared.
-			 *
-			 * @protected
-			 */
-			this.bClearFilter = false;
-
 			// set the picker pop-up type
 			this.setPickerType("Popover");
 
@@ -273,7 +266,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				}
 
 				if (this.hasContent()) {
-					this.bClearFilter = true;
 					this.open();
 				}
 			}
@@ -309,8 +301,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			if (oEvent.keyCode === jQuery.sap.KeyCodes.F4) {
 				oEvent.preventDefault();
 			}
-
-			this.bClearFilter = true;
 
 			if (this.isOpen()) {
 				this.close();
@@ -348,7 +338,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				oEvent.preventDefault();
 
 				this.close();
-				this.bClearFilter = true;
 			} else {	// the picker is closed
 
 				// cancel changes and revert to the value which the Input field had when it got the focus
