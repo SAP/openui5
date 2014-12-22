@@ -146,6 +146,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Link.prototype._handlePress = function(oEvent) {
 		if (this.getEnabled()) {
+			// mark the event for components that needs to know if the event was handled by the link
+			oEvent.setMarked();
+			
 			if (!this.firePress()) { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
@@ -162,8 +165,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	Link.prototype.ontouchstart = function(oEvent) {
-		// for controls which need to know whether they should handle events bubbling from here
-		oEvent.originalEvent._sapui_handledByControl = true;
+		if (this.getEnabled()) {
+			// for controls which need to know whether they should handle events bubbling from here
+			oEvent.setMarked();
+		}
 	};
 
 	Link.prototype.setText = function(sText){
@@ -182,14 +187,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Link.prototype.setSubtle = function(bSubtle){
 		this.setProperty("subtle", bSubtle, true);
-		this.$().toggleClass("sapMLnkSubtle", bSubtle);
+		var $this = this.$();
+		$this.toggleClass("sapMLnkSubtle", bSubtle);
 		if (bSubtle) {
 			if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
-				this.$().append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
-				this.$().attr("aria-describedby", this.$().attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
+				$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
+				$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
 			}
 		} else {
-			this.$().attr("aria-describedby", this.$().attr("aria-describedby").replace(this.getId() + "-linkSubtle", ""));
+			$this.attr("aria-describedby", $this.attr("aria-describedby").replace(this.getId() + "-linkSubtle", ""));			
 			jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
 		}
 		return this;
@@ -197,14 +203,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Link.prototype.setEmphasized = function(bEmphasized){
 		this.setProperty("emphasized", bEmphasized, true);
-		this.$().toggleClass("sapMLnkEmphasized", bEmphasized);
+		var $this = this.$();
+		$this.toggleClass("sapMLnkEmphasized", bEmphasized);
 		if (bEmphasized) {
 			if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
-				this.$().append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
-				this.$().attr("aria-describedby", this.$().attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
+				$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+				$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
 			}
 		} else {
-			this.$().attr("aria-describedby", this.$().attr("aria-describedby").replace(" " + this.getId() + "-linkEmphasized", ""));
+			$this.attr("aria-describedby", $this.attr("aria-describedby").replace(" " + this.getId() + "-linkEmphasized", ""));
 			jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
 		}
 		return this;
@@ -216,17 +223,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	Link.prototype.setEnabled = function(bEnbabled){
-		this.setProperty("enabled", bEnbabled, true);
-		this.$().toggleClass("sapMLnkDsbl", !bEnbabled);
-		if (bEnbabled) {
-			this.$().attr("disabled", false);
-			this.$().attr("tabindex", "0");
-			this.$().removeAttr("aria-disabled");
-		} else {
-			this.$().attr("disabled", true);
-			this.$().attr("tabindex", "-1");
-			this.$().attr("aria-disabled", true);
+	Link.prototype.setEnabled = function(bEnabled){
+		if (bEnabled !== this.getProperty("enabled")) { // do nothing when the same value is set again (virtual table scrolling!) - don't use this.getEnabled() because of EnabledPropagator
+			this.setProperty("enabled", bEnabled, true);
+			var $this = this.$();
+			$this.toggleClass("sapMLnkDsbl", !bEnabled);
+			if (bEnabled) {
+				$this.attr("disabled", false);
+				$this.attr("tabindex", "0");
+				$this.removeAttr("aria-disabled");
+			} else {
+				$this.attr("disabled", true);
+				$this.attr("tabindex", "-1");
+				$this.attr("aria-disabled", true);
+			}
 		}
 		return this;
 	};
