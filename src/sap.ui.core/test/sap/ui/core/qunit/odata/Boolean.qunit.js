@@ -25,8 +25,8 @@
 		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
-		deepEqual(oType.oFormatOptions, {}, "no format options");
-		deepEqual(oType.oConstraints, undefined, "no constraints");
+		strictEqual(oType.oFormatOptions, undefined, "no format options");
+		strictEqual(oType.oConstraints, undefined, "no constraints");
 	}));
 
 	//*********************************************************************************************

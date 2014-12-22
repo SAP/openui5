@@ -32,9 +32,6 @@
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
 		strictEqual(oType.oFormat, null, "no formatter preload");
-
-		oType.setConstraints();
-		strictEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************

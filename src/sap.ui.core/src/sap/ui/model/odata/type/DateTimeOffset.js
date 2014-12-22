@@ -20,9 +20,11 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeOffset
 	 * @param {object} [oFormatOptions]
-	 * 	 format options, see {@link sap.ui.model.odata.type.DateTimeBase#setFormatOptions}
+	 *   format options; this type does not support any format options
 	 * @param {object} [oConstraints]
-	 * 	 constraints, see {@link #setConstraints}
+	 *   constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -31,17 +33,16 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 			{
 				constructor : function () {
 					DateTimeBase.apply(this, arguments);
+				}
 			}
-		});
+		);
 
 	/**
 	 * Set the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 * 	 constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @public
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	DateTimeOffset.prototype.setConstraints = function(oConstraints) {
 		var oBaseConstraints = {};
@@ -56,6 +57,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *
 	 * @returns {string}
 	 *   the type's name
+	 * @public
 	 */
 	DateTimeOffset.prototype.getName = function () {
 		return "sap.ui.model.odata.type.DateTimeOffset";

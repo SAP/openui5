@@ -89,19 +89,31 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @alias sap.ui.model.odata.type.Decimal
 	 * @param {object} [oFormatOptions]
-	 * 	 format options, see {@link #setFormatOptions}
+	 *   format options; this type does not support any format options
 	 * @param {object} [oConstraints]
-	 * 	 constraints, see {@link #setConstraints}
+	 *   constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 * @param {int|string} [oConstraints.precision=Infinity]
+	 *   the maximum number of digits allowed in the property’s value
+	 * @param {int|string} [oConstraints.scale=0]
+	 *   the maximum number of digits allowed to the right of the decimal point; the number must be
+	 *   less than <code>precision</code> (if given). As a special case, "variable" is supported.
+	 *   <p>
+	 *   The number of digits to the right of the decimal point may vary from zero to
+	 *   <code>scale</code>, and the number of digits to the left of the decimal point may vary
+	 *   from one to <code>precision</code> minus <code>scale</code>.
 	 * @public
 	 * @since 1.27.0
 	 */
 	var Decimal = SimpleType.extend("sap.ui.model.odata.type.Decimal",
 			/** @lends sap.ui.model.odata.type.Decimal.prototype */
 			{
-				constructor : function () {
-					SimpleType.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				}
 			}
-		});
+		);
 
 	/**
 	 * Format the given value to the given target type. When formatting to <code>string</code>
@@ -236,33 +248,11 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Set format options.
-	 *
-	 * @param {object} oFormatOptions
-	 *   the format options (none so far)
-	 * @public
-	 */
-	Decimal.prototype.setFormatOptions = function(oFormatOptions) {
-		// no format options supported yet
-	};
-
-	/**
 	 * Set the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 * 	 constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @param {int|string} [oConstraints.precision=Infinity]
-	 *   the maximum number of digits allowed in the property’s value
-	 * @param {int|string} [oConstraints.scale=0]
-	 *   the maximum number of digits allowed to the right of the decimal point; the number must be
-	 *   less than <code>precision</code> (if given). As a special case, "variable" is supported.
-	 *   <p>
-	 *   The number of digits to the right of the decimal point may vary from zero to
-	 *   <code>scale</code>, and the number of digits to the left of the decimal point may vary
-	 *   from one to <code>precision</code> minus <code>scale</code>.
-	 * @public
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	Decimal.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable,
@@ -315,6 +305,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @returns {string}
 	 *   the type's name
+	 * @public
 	 */
 	Decimal.prototype.getName = function () {
 		return "sap.ui.model.odata.type.Decimal";

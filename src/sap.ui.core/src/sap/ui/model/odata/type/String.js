@@ -22,19 +22,24 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]
-	 * 	 format options, none so far
+	 *   format options; this type does not support any format options
 	 * @param {object} [oConstraints]
-	 * 	 constraints, see {@link #setConstraints}
+	 *   constraints
+	 * @param {int|string} [oConstraints.maxLength]
+	 *   the maximal allowed length of the string; unlimited if not defined
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
 	var EdmString = SimpleType.extend("sap.ui.model.odata.type.String",
 			/** @lends sap.ui.model.odata.type.String.prototype */
 			{
-				constructor : function () {
-					SimpleType.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				}
 			}
-		});
+		);
 
 	/**
 	 * Format the given value to the given target type. When formatting to <code>string</code>
@@ -99,27 +104,11 @@ sap.ui.define(['sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Set format options.
-	 *
-	 * @param {object} oFormatOptions
-	 *   the format options (none so far)
-	 * @public
-	 */
-	EdmString.prototype.setFormatOptions = function(oFormatOptions) {
-		// no format options supported yet
-	};
-
-	/**
 	 * Set the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 *   constraints
-	 * @param {int|string} [oConstraints.maxLength]
-	 *   the maximal allowed length of the string; unlimited if not defined
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted; note that
-	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
-	 * @public
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	EdmString.prototype.setConstraints = function(oConstraints) {
 		var vMaxLength, vNullable;
@@ -152,6 +141,7 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 *
 	 * @returns {string}
 	 *   the type's name
+	 * @public
 	 */
 	EdmString.prototype.getName = function () {
 		return "sap.ui.model.odata.type.String";

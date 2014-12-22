@@ -24,14 +24,11 @@
 		});
 
 		test("basics", function () {
-			var oDefaultConstraints = undefined;
-
 			ok(oType instanceof sap.ui.model.odata.type.Int, "is an Int");
 			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 			equal(oType.getName(), sName, "is the right name");
-
-			deepEqual(oType.oFormatOptions, undefined, "no formatting options");
-			deepEqual(oType.oConstraints, oDefaultConstraints, "are the right constraints");
+			strictEqual(oType.oFormatOptions, undefined, "no formatting options");
+			strictEqual(oType.oConstraints, undefined, "are the right constraints");
 			strictEqual(oType.oFormat, null, "no formatter preload");
 		});
 

@@ -26,10 +26,7 @@
 		ok(oType instanceof sap.ui.model.odata.type.Guid, "is a Guid");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Guid", "type name");
-		deepEqual(oType.oFormatOptions, {}, "no format options");
-		deepEqual(oType.oConstraints, undefined, "default constraints");
-
-		oType.setConstraints();
+		deepEqual(oType.oFormatOptions, undefined, "no format options");
 		deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 

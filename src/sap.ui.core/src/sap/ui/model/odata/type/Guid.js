@@ -34,19 +34,22 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	 *
 	 * @alias sap.ui.model.odata.type.Guid
 	 * @param {object} [oFormatOptions]
-	 *   format options; no format options supported
+	 *   format options; this type does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #setConstraints}
+	 *   constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
 	 * @since 1.27.0
 	 */
 	var EdmGuid = SimpleType.extend("sap.ui.model.odata.type.Guid",
 			/** @lends sap.ui.model.odata.type.Guid.prototype */
 			{
-				constructor : function () {
-					SimpleType.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				}
 			}
-		});
+		);
 
 	/**
 	 * Formats the given value to the given target type
@@ -121,11 +124,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	 * Sets the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 *   constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
-	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
-	 * @public
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	EdmGuid.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable;

@@ -33,8 +33,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 	/**
 	 * Constructor for a new <code>Int</code>.
-	 * Subtypes have to initialize <code>this.oConstraints</code> with <code>minimum<code> and
-	 * <code>maximum</code> value range before calling this constructor.
 	 *
 	 * @class This is an abstract base class for integer-based
 	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
@@ -48,23 +46,25 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
-	 *   format options, see {@link #setFormatOptions}
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #setConstraints}
+	 *   format options; this type does not support any format options
+	 * @param {object} oConstraints
+	 *   the constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
 	var Int = SimpleType.extend("sap.ui.model.odata.type.Int",
-		/** @lends sap.ui.model.odata.type.Int.prototype */
-		{
-			constructor : function () {
-				SimpleType.apply(this, arguments);
-				this.sName = "sap.ui.model.odata.type.Int";
-			},
-			metadata : {
-				"abstract" : true
+			/** @lends sap.ui.model.odata.type.Int.prototype */
+			{
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				},
+				metadata : {
+					"abstract" : true
+				}
 			}
-		});
+		);
 
 	/**
 	 * Returns the formatter. Creates it lazily.
@@ -161,11 +161,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	/**
 	 * Set constraints for Int. This is meta information used when validating the value.
 	 *
-	 * @param {object} oConstraints
-	 *   the constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @public
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	Int.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable;
@@ -183,16 +181,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
 				"sap.ui.model.odata.type.Int");
 		}
-	};
-
-	/**
-	 * Set format options for this type. For now no format options are supported. By default
-	 * grouping is activated.
-	 * @param {object} oFormatOptions
-	 *   the format options to set for this type, will be ignored
-	 * @public
-	 */
-	Int.prototype.setFormatOptions = function(oFormatOptions) {
 		this._handleLocalizationChange();
 	};
 

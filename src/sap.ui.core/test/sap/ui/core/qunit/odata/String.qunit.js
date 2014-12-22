@@ -20,9 +20,6 @@
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
-
-		oType.setConstraints();
-		strictEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
