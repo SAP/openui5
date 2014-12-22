@@ -45,6 +45,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.writeAttributeEscaped("tabindex","0");
 
+		// ARIA
+		rm.writeAccessibilityState(oCarousel, {
+			role: "list"
+		});
+
 		rm.write(">");
 
 		var aPages = oCarousel.getPages();
@@ -69,7 +74,13 @@ sap.ui.define(['jquery.sap.global'],
 			if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
 				rm.write(" sapMCrslBottomOffset");
 			}
-			rm.write("'>");
+			rm.write("' id='" + oCarousel.sId + "-" + oPage.sId + "-slide'");
+			// ARIA
+			rm.writeAccessibilityState(oPage, {
+				role:"listitem"
+			});
+
+			rm.write(">");
 				rm.renderControl(oCarousel._createScrollContainer(oPage, iIndex));
 			rm.write("</div>");
 		};
