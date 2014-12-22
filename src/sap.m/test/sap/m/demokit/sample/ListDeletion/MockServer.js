@@ -1,4 +1,4 @@
-jQuery.sap.declare("sap.m.sample.ListLoading.MockServer");
+jQuery.sap.declare("sap.m.sample.ListDeletion.MockServer");
 
 // load mock server
 jQuery.sap.require("sap.ui.core.util.MockServer");
@@ -7,7 +7,7 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 // It is just so we can simulate a delay from the fictional back end, giving
 // us some context to show delayed loading sequences.
 
-sap.m.sample.ListLoading.MockServer = {
+sap.m.sample.ListDeletion.MockServer = {
 
 	server : null,
 
@@ -19,7 +19,7 @@ sap.m.sample.ListLoading.MockServer = {
 		// configure respond to requests delay
 		sap.ui.core.util.MockServer.config(jQuery.extend({
 			autoRespond : true,
-			autoRespondAfter : 10
+			autoRespondAfter : 1000
 		}, oConfig));
 
 		// create mockserver
