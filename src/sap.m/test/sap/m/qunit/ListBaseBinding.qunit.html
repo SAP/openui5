@@ -487,6 +487,29 @@
 			start();
 		});
 	});
+	
+	
+	asyncTest("Last setGrowingThreshold should be respected before data fetching", function() {
+		var iInitThreshold = 5,
+			iLastThreshold = 10,
+			oMockServer = startMockServer(),
+			oList = createList({
+				growing : true,
+				growingThreshold : iInitThreshold,
+				updateFinished : function(oEvent) {
+					strictEqual(oEvent.getParameter("actual"), iLastThreshold, "Last growing threshold is respected");
+				}
+			});
+		
+		oList.setGrowingThreshold(iLastThreshold);
+	
+		// when initial binding is completed
+		oList.done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
 
 </script>
 
