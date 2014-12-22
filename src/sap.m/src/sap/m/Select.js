@@ -129,6 +129,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
 
+		function fnHandleKeyboardNavigation(oItem) {
+			var oSelectedItem = this.getSelectedItem();
+
+			if (oItem) {
+
+				this.setSelection(oItem);
+
+				if (oSelectedItem !== oItem) {
+					this.fireChange({ selectedItem: oItem });
+				}
+
+				oItem = this.getSelectedItem();	// note: update the selected item after the change event is fired (the selection may change)
+				this.setValue(oItem.getText());
+			}
+
+			this.scrollToItem(oItem);
+		}
+
 		Select.prototype._callMethodInControl = function(sFunctionName, aArgs) {
 			var oList = this.getList();
 
@@ -667,15 +685,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			var oItem = this.findNextItemByFirstCharacter(String.fromCharCode(oEvent.which));	// note: jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
-
-			if (oItem) {
-
-				this.setSelection(oItem);
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-				this.setValue(oItem.getText());
-			}
-
-			this.scrollToItem(this.getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oItem);
 		};
 
 		/**
@@ -772,15 +782,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				aSelectableItems = this.getSelectableItems();
 
 			oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
-
-			if (oNextSelectableItem) {
-
-				this.setSelection(oNextSelectableItem);
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-				this.setValue(oNextSelectableItem.getText());
-			}
-
-			this.scrollToItem(this.getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oNextSelectableItem);
 		};
 
 		/**
@@ -801,15 +803,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				aSelectableItems = this.getSelectableItems();
 
 			oPrevSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) - 1];
-
-			if (oPrevSelectableItem) {
-
-				this.setSelection(oPrevSelectableItem);
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-				this.setValue(oPrevSelectableItem.getText());
-			}
-
-			this.scrollToItem(this.getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oPrevSelectableItem);
 		};
 
 		/**
@@ -827,15 +821,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			oEvent.preventDefault();
 
 			var oFirstSelectableItem = this.getSelectableItems()[0];
-
-			if (oFirstSelectableItem && (oFirstSelectableItem !== this.getSelectedItem())) {
-
-				this.setSelection(oFirstSelectableItem);
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-				this.setValue(oFirstSelectableItem.getText());
-			}
-
-			this.scrollToItem(this.getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oFirstSelectableItem);
 		};
 
 		/**
@@ -853,15 +839,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			oEvent.preventDefault();
 
 			var oLastSelectableItem = this.findLastEnabledItem(this.getSelectableItems());
-
-			if (oLastSelectableItem && (oLastSelectableItem !== this.getSelectedItem())) {
-
-				this.setSelection(oLastSelectableItem);
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-				this.setValue(oLastSelectableItem.getText());
-			}
-
-			this.scrollToItem(this.getSelectedItem());
+			fnHandleKeyboardNavigation.call(this, oLastSelectableItem);
 		};
 
 		/**
