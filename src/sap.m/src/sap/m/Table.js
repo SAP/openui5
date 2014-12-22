@@ -380,7 +380,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {
-				this.removeSelections(false, true);
+				this.removeSelections(true, true);
 			}
 		}, this).setTabIndex(-1));
 	};
