@@ -24,19 +24,17 @@
 
 	//*********************************************************************************************
 	test("basics", function () {
-		// TODO avoid storing Infinity to save memory
-		var oDefaultConstraints = {precision: Infinity, scale: 0},
-			oType = new sap.ui.model.odata.type.Decimal();
+		var oType = new sap.ui.model.odata.type.Decimal();
 
 		ok(oType instanceof sap.ui.model.odata.type.Decimal, "is a Decimal");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		ok(!(oType instanceof sap.ui.model.type.Float), "is not a Float");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
-		deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
+		strictEqual(oType.oConstraints, undefined, "default constraints");
 		strictEqual(oType.oFormat, null, "no formatter preload");
 
 		oType.setConstraints();
-		deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
+		strictEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -63,18 +61,18 @@
 	//*********************************************************************************************
 	jQuery.each([
 		{i: {precision: 8, scale: 3}, o: {precision: 8, scale: 3}},
-		{i: {nullable: false, scale: 3}, o: {nullable: false, precision: Infinity, scale: 3}},
-		{i: {nullable: "foo"}, o: {precision: Infinity, scale: 0},
+		{i: {nullable: false, scale: 3}, o: {nullable: false, scale: 3}},
+		{i: {nullable: "foo"}, o: undefined,
 			warning: "Illegal nullable: foo"},
-		{i: {precision: 8, scale: "foo"}, o: {precision: 8, scale: 0},
+		{i: {precision: 8, scale: "foo"}, o: {precision: 8},
 			warning: "Illegal scale: foo"},
-		{i: {precision: 8, scale: -1}, o: {precision: 8, scale: 0},
+		{i: {precision: 8, scale: -1}, o: {precision: 8},
 			warning: "Illegal scale: -1"},
-		{i: {precision: "foo", scale: 3}, o: {precision: Infinity, scale: 3},
+		{i: {precision: "foo", scale: 3}, o: {scale: 3},
 			warning: "Illegal precision: foo"},
-		{i: {precision: -1, scale: 3}, o: {precision: Infinity, scale: 3},
+		{i: {precision: -1, scale: 3}, o: {scale: 3},
 			warning: "Illegal precision: -1"},
-		{i: {precision: 0, scale: 3}, o: {precision: Infinity, scale: 3},
+		{i: {precision: 0, scale: 3}, o: {scale: 3},
 			warning: "Illegal precision: 0"},
 		{i: {precision: 2, scale: 3}, o: {precision: 2, scale: Infinity},
 			warning: "Illegal scale: must be less than precision (precision=2, scale=3)"}
@@ -272,6 +270,6 @@
 		deepEqual(oType.oConstraints, {nullable: false, precision: 10, scale: 3});
 
 		oType.setConstraints({nullable: "true"});
-		deepEqual(oType.oConstraints, {precision: Infinity, scale: 0});
+		strictEqual(oType.oConstraints, undefined);
 	}));
 } ());

@@ -18,11 +18,11 @@
 		ok(oType instanceof sap.ui.model.odata.type.String, "is a String");
 		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
-		deepEqual(oType.oFormatOptions, {}, "no format options");
-		deepEqual(oType.oConstraints, {}, "default constraints");
+		strictEqual(oType.oFormatOptions, undefined, "no format options");
+		strictEqual(oType.oConstraints, undefined, "default constraints");
 
 		oType.setConstraints();
-		deepEqual(oType.oConstraints, {}, "default constraints");
+		strictEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -55,7 +55,7 @@
 				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
 
 			oType.setConstraints({maxLength: oFixture.maxLength});
-			deepEqual(oType.oConstraints, {});
+			strictEqual(oType.oConstraints, undefined);
 		}));
 	});
 
@@ -150,13 +150,13 @@
 
 		oType.setConstraints({nullable: true});
 		oType.validateValue(null); // does not throw
-		deepEqual(oType.oConstraints, {}, "nullable: true");
+		strictEqual(oType.oConstraints, undefined, "nullable: true");
 
 		this.mock(jQuery.sap.log).expects("warning").once()
 			.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
 
 		oType = new sap.ui.model.odata.type.String(null, {nullable: ""});
-		deepEqual(oType.oConstraints, {}, "illegal nullable -> default to true");
+		strictEqual(oType.oConstraints, undefined, "illegal nullable -> default");
 	}));
 
 	//*********************************************************************************************

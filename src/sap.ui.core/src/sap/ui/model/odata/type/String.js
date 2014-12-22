@@ -33,7 +33,6 @@ sap.ui.define(['sap/ui/model/FormatException',
 			{
 				constructor : function () {
 					SimpleType.apply(this, arguments);
-					this.sName = "sap.ui.model.odata.type.String";
 			}
 		});
 
@@ -83,7 +82,7 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 * @public
 	 */
 	EdmString.prototype.validateValue = function (sValue) {
-		var oConstraints = this.oConstraints,
+		var oConstraints = this.oConstraints || {},
 			iMaxLength = oConstraints.maxLength;
 
 		if (sValue === null) {
@@ -91,7 +90,7 @@ sap.ui.define(['sap/ui/model/FormatException',
 				return;
 			}
 		} else if (typeof sValue !== "string") {
-			throw new ValidateException("Illegal " + this.sName + " value: " + sValue);
+			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
 		} else if (!iMaxLength || sValue.length <= iMaxLength) {
 			return;
 		}
@@ -100,10 +99,21 @@ sap.ui.define(['sap/ui/model/FormatException',
 	};
 
 	/**
+	 * Set format options.
+	 *
+	 * @param {object} oFormatOptions
+	 *   the format options (none so far)
+	 * @public
+	 */
+	EdmString.prototype.setFormatOptions = function(oFormatOptions) {
+		// no format options supported yet
+	};
+
+	/**
 	 * Set the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 * 	 constraints
+	 *   constraints
 	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
 	 * @param {boolean|string} [oConstraints.nullable=true]
@@ -114,28 +124,37 @@ sap.ui.define(['sap/ui/model/FormatException',
 	EdmString.prototype.setConstraints = function(oConstraints) {
 		var vMaxLength, vNullable;
 
-		this.oConstraints = {};
+		this.oConstraints = undefined;
 		if (oConstraints) {
 			vMaxLength = oConstraints.maxLength;
 			if (typeof vMaxLength === "string") {
 				vMaxLength = parseInt(vMaxLength, 10);
 			}
 			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
-				this.oConstraints.maxLength = vMaxLength;
+				this.oConstraints = {maxLength: vMaxLength};
 			} else if (vMaxLength !== undefined) {
 				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
-					null, "sap.ui.model.odata.type.String");
+					null, this.getName());
 			}
 
 			vNullable = oConstraints.nullable;
 			if (vNullable === false || vNullable === "false") {
+				this.oConstraints = this.oConstraints || {};
 				this.oConstraints.nullable = false;
 			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				// Note: setConstraints is called by the super constructor w/ wrong this.sName
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
-					"sap.ui.model.odata.type.String");
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
 			}
 		}
+	};
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {string}
+	 *   the type's name
+	 */
+	EdmString.prototype.getName = function () {
+		return "sap.ui.model.odata.type.String";
 	};
 
 	return EdmString;
