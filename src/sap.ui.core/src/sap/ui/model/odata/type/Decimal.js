@@ -19,12 +19,10 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the key
 	 */
 	function getErrorKey(oType) {
-		var oConstraints = oType.oConstraints;
-
-		if (oConstraints.scale === Infinity) {
-			return oConstraints.precision === Infinity ? "EnterNumber" : "EnterNumberPrecision";
+		if (getScale(oType) === Infinity) {
+			return getPrecision(oType) === Infinity ? "EnterNumber" : "EnterNumberPrecision";
 		}
-		return oConstraints.precision === Infinity ?
+		return getPrecision(oType) === Infinity ?
 			"EnterNumberScale" : "EnterNumberPrecisionScale";
 	}
 
@@ -38,7 +36,43 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 */
 	function getErrorMessage(oType) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText(getErrorKey(oType),
-			[oType.oConstraints.precision, oType.oConstraints.scale]);
+			[getPrecision(oType), getScale(oType)]);
+	}
+
+	/**
+	 * Returns the type's precision constraint.
+	 *
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type
+	 * @returns {number}
+	 *   the precision constraint or <code>Infinity</code> if not defined
+	 */
+	function getPrecision(oType) {
+		return (oType.oConstraints && oType.oConstraints.precision) || Infinity;
+	}
+
+	/**
+	 * Returns the type's scale constraint.
+	 *
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type
+	 * @returns {number}
+	 *   the scale constraint or <code>0</code> if not defined
+	 */
+	function getScale(oType) {
+		return (oType.oConstraints && oType.oConstraints.scale) || 0;
+	}
+
+	/**
+	 * Returns the type's nullable constraint.
+	 *
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type
+	 * @returns {boolean}
+	 *   the nullable constraint or <code>true</code> if not defined
+	 */
+	function isNullable(oType) {
+		return !oType.oConstraints || oType.oConstraints.nullable !== false;
 	}
 
 	/**
@@ -66,7 +100,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			{
 				constructor : function () {
 					SimpleType.apply(this, arguments);
-					this.sName = "sap.ui.model.odata.type.Decimal";
 			}
 		});
 
@@ -99,7 +132,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		case "string":
 			return this._getFormatter().format(sValue);
 		default:
-			throw new FormatException("Don't know how to format " + this.sName + " to "
+			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
 		}
 	};
@@ -138,7 +171,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			fResult = vValue;
 			break;
 		default:
-			throw new ParseException("Don't know how to parse " + this.sName + " from "
+			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}
 		return String(fResult);
@@ -163,7 +196,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		if (!this.oFormat) {
 			oFormatOptions = {groupingEnabled: true};
-			iScale = this.oConstraints.scale;
+			iScale = getScale(this);
 
 			if (iScale !== Infinity) {
 				oFormatOptions.maxFractionDigits = oFormatOptions.minFractionDigits = iScale;
@@ -185,7 +218,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	Decimal.prototype.validateValue = function (sValue) {
 		var iFractionDigits, iIntegerDigits, aMatches;
 
-		if (sValue === null && this.oConstraints.nullable !== false) {
+		if (sValue === null && isNullable(this)) {
 			return;
 		}
 		if (typeof sValue === "string") {
@@ -193,8 +226,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			if (aMatches) {
 				iIntegerDigits = aMatches[1].length;
 				iFractionDigits = (aMatches[2] || "").length;
-				if (iFractionDigits <= this.oConstraints.scale
-					&& iIntegerDigits + iFractionDigits <= this.oConstraints.precision) {
+				if (iFractionDigits <= getScale(this)
+					&& iIntegerDigits + iFractionDigits <= getPrecision(this)) {
 					return;
 				}
 			}
@@ -235,7 +268,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		var vNullable = oConstraints && oConstraints.nullable,
 			vPrecision = oConstraints && oConstraints.precision,
 			vScale = oConstraints && oConstraints.scale,
-			iPrecision, iScale;
+			iPrecision, iScale,
+			that = this;
 
 		function validate(vValue, iDefault, iMinimum, sName) {
 			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
@@ -244,32 +278,46 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 				return iDefault;
 			}
 			if (typeof iValue !== "number" || isNaN(iValue) || iValue < iMinimum) {
-				jQuery.sap.log.warning("Illegal " + sName + ": " + vValue,
-					null, "sap.ui.model.odata.type.Decimal");
+				jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, that.getName());
 				return iDefault;
 			}
 			return iValue;
+		}
+
+		function setConstraint(sName, vValue, vDefault) {
+			if (vValue != vDefault) {
+				that.oConstraints = that.oConstraints || {};
+				that.oConstraints[sName] = vValue;
+			}
 		}
 
 		iScale = vScale === "variable" ? Infinity : validate(vScale, 0, 0, "scale");
 		iPrecision = validate(vPrecision, Infinity, 1, "precision");
 		if (iScale !== Infinity && iPrecision <= iScale) {
 			jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
-				+ vPrecision + ", scale=" + vScale + ")", null, "sap.ui.model.odata.type.Decimal");
+				+ vPrecision + ", scale=" + vScale + ")", null, this.getName());
 			iScale = Infinity; // "variable"
 		}
-		this.oConstraints = {
-			precision: iPrecision,
-			scale: iScale
-		};
+		this.oConstraints = undefined;
+		setConstraint("precision", iPrecision, Infinity);
+		setConstraint("scale", iScale, 0);
 		if (vNullable === false || vNullable === "false") {
-			this.oConstraints.nullable = false;
+			setConstraint("nullable", false);
 		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
-				"sap.ui.model.odata.type.Decimal");
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
 		}
 
 		this._handleLocalizationChange();
+	};
+
+	/**
+	 * Returns the type's name.
+	 *
+	 * @returns {string}
+	 *   the type's name
+	 */
+	Decimal.prototype.getName = function () {
+		return "sap.ui.model.odata.type.Decimal";
 	};
 
 	return Decimal;
