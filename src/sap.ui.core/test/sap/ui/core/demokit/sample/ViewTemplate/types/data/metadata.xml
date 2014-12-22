@@ -192,6 +192,10 @@
 					Precision="7" sap:label="Time Stamp" />
 				<Property Name="Byte" Type="Edm.Byte" />
 				<Property Name="SByte" Type="Edm.SByte" />
+				<Property Name="DateOnly" Type="Edm.DateTime" Precision="7"
+					sap:display-format="Date" sap:label="Time Stamp" />
+				<Property Name="RealDateTime" Type="Edm.DateTime"
+					Precision="7" sap:label="Time Stamp" />
 			</EntityType>
 			<EntityType Name="Manager" BaseType="com.sap.TEA.TestApplication.Worker"
 				sap:content-version="1">
@@ -445,6 +449,9 @@
 					<Parameter Name="PayoutDate" Type="Edm.DateTime" Mode="In"
 						Precision="0" />
 				</FunctionImport>
+				<FunctionImport Name="ResetEdmTypes"
+					ReturnType="com.sap.TEA.TestApplication.EdmTypes" EntitySet="EdmTypesCollection"
+					m:HttpMethod="POST" sap:action-for="com.sap.TEA.TestApplication.EdmTypes" />
 			</EntityContainer>
 			<Annotations Target="Products"
 				xmlns="http://docs.oasis-open.org/odata/ns/edm">
