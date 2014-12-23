@@ -282,8 +282,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	
 			// When runs on mobile device, Popover always follows the open by control.
 			// When runs on the other platforms, Popover is repositioned if the position change of openBy is smaller than the tolerance, otherwise popover is closed.
-			if (!sap.ui.Device.system.desktop || (Math.abs(oLastRect.top - oRect.top) <= this._followOfTolerance && Math.abs(oLastRect.left - oRect.left) <= this._followOfTolerance)) {
-				this.oPopup._applyPosition(this.oPopup._oLastPosition);
+			if (!sap.ui.Device.system.desktop
+				|| (Math.abs(oLastRect.top - oRect.top) <= this._followOfTolerance && Math.abs(oLastRect.left - oRect.left) <= this._followOfTolerance)
+				|| (Math.abs(oLastRect.top + oLastRect.height - oRect.top - oRect.height) <= this._followOfTolerance && Math.abs(oLastRect.left + oLastRect.width - oRect.left - oRect.width) <= this._followOfTolerance)) {
+					this.oPopup._applyPosition(this.oPopup._oLastPosition);
 			} else {
 				this.close();
 			}
