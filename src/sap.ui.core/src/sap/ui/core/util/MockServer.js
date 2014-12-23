@@ -1828,19 +1828,18 @@ sap.ui
 															} else if (rPut.test(sChangesetRequest)) {
 																// PUT
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-																		sChangesetRequest.lastIndexOf("}") + 1).replace(/\\/g, '');
+																		sChangesetRequest.lastIndexOf("}") + 1);
 																fnCUDRequest(rPut, sData, 'PUT');
 															} else if (rMerge.test(sChangesetRequest)) {
 																// MERGE
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-																		sChangesetRequest.lastIndexOf("}") + 1).replace(/\\/g, '');
+																		sChangesetRequest.lastIndexOf("}") + 1);
 																fnCUDRequest(rMerge, sData, 'MERGE');
 															} else if (rPost.test(sChangesetRequest)) {
 																// POST
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
-																		sChangesetRequest.lastIndexOf("}") + 1).replace(/\\/g, '');
+																		sChangesetRequest.lastIndexOf("}") + 1);											
 																fnCUDRequest(rPost, sData, 'POST');
-
 															} else if (rDelete.test(sChangesetRequest)) {
 																// DELETE
 																fnCUDRequest(rDelete, null, 'DELETE');

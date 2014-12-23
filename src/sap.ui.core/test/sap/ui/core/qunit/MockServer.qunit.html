@@ -2474,14 +2474,14 @@
 				var aBatchChangeOperations = [];
 				var oPutOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchChangeOperations.push(oPutOp);
 
 				var oPutOp2 = oModel
 						.createBatchOperation(
 								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
 								"PUT",
-								"{\"type\":\"Vacation\",\"employeeid\":\"David Freidlin\", \"entitlement\":\"53 days\", \"availablebalance\": \"41 days\", \"pendingitems\": \"1 pending items\"}");
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchChangeOperations.push(oPutOp2);
 
 				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
@@ -2490,7 +2490,7 @@
 
 				var oPostOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchChangeOperations.push(oPostOp);
 
 				var fnSuccess = function(oData, oResponse) {
@@ -2538,7 +2538,7 @@
 				var aBatchFirstChangeOperations = [];
 				var oPutOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPutOp);
 
 				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')", "DELETE",
@@ -2547,18 +2547,18 @@
 
 				var oPostOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"LIDOR1", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPostOp);
 
 				var aBatchSecondChangeOperations = [];
 				var oPutOp_2 = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPutOp_2);
 
 				var oPostOp_2 = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPostOp_2);
 
 				var fnSuccess = function(oData, oResponse) {
@@ -2609,14 +2609,14 @@
 				var aBatchFirstChangeOperations = [];
 				var oPutOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPutOp);
 
 				var oPutOp2 = oModel
 						.createBatchOperation(
 								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
 								"PUT",
-								'{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPutOp2);
 
 				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
@@ -2624,18 +2624,18 @@
 
 				var oPostOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPostOp);
 
 				var aBatchSecondChangeOperations = [];
 				var oPutOp_2 = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPutOp_2);
 
 				var oPostOp_2 = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPostOp_2);
 
 				var fnSuccess = function(oData, oResponse) {
@@ -2690,25 +2690,25 @@
 				var aBatchFirstChangeOperations = [];
 				var oPutOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPutOp);
 
 				var oPostOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPostOp);
 
 				var aBatchSecondChangeOperations = [];
 				var oPutOp1 = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPutOp1);
 
 				var oPutOp2 = oModel
 						.createBatchOperation(
 								"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
 								"PUT",
-								'{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"David Freidlin", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPutOp2);
 
 				var oDeleteOp = oModel.createBatchOperation("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')", "DELETE", null);
@@ -2716,7 +2716,7 @@
 
 				var oPostOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"TRIEVISH", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchSecondChangeOperations.push(oPostOp);
 
 				var fnSuccess = function(oData, oResponse) {
@@ -2769,7 +2769,7 @@
 				var aBatchFirstChangeOperations = [];
 				var oPutOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", "PUT",
-								'{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Vacation","employeeid":"Gal Roter2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPutOp);
 
 				var oFakeGetOp = oModel.createBatchOperation("/LeaveHeaderCollection?$top=1", "GET");
@@ -2777,7 +2777,7 @@
 
 				var oPostOp = oModel
 						.createBatchOperation("/LeaveHeaderCollection", "POST",
-								'{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"}');
+								{"type":"Sick Leave","employeeid":"LIDOR2", "entitlement":"53 days", "availablebalance": "41 days", "pendingitems": "1 pending items"});
 				aBatchFirstChangeOperations.push(oPostOp);
 
 				var fnSuccess = function(oData, oResponse) {
@@ -3067,6 +3067,7 @@
 		oMockServer.destroy();
 		
 });
+
 
 	
 	function countProperties(obj) {
