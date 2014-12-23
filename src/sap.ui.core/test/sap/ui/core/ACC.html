@@ -194,6 +194,13 @@
 					jQuery("#theme").change(onChange);
 					jQuery("#rtl").change(onChange);
 					jQuery("#filter").change(onChange);
+					if (sap.ui.Device.browser.msie) {
+						jQuery("#filter").keyup(function(oEvent){
+							if (oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
+								onChange();
+							}
+						});
+					}
 					
 					onChange();
 					jQuery("#message").css("display", "none");
