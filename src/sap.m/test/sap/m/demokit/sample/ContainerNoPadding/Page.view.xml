@@ -1,0 +1,38 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ContainerNoPadding.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Text text="The IconTabBar and other container controls have a content padding by default. You can override default container content paddings by setting the CSS class 'sapUiNoContentPadding' to the container control" class="sapUiExploredNoMarginInfo"/>
+	<IconTabBar
+		id="idIconTabBar"
+		class="sapUiNoContentPadding">
+		<content><Text text="IconTabBar content without padding"></Text></content>
+		<items>
+			<IconTabFilter
+				showAll="true"
+				count="{/ProductCollectionStats/Counts/Total}"
+				text="Products"
+				keys="All" />
+			<IconTabSeparator />
+			<IconTabFilter
+				icon="sap-icon://begin"
+				iconColor="Positive"
+				count="{/ProductCollectionStats/Counts/Weight/Ok}"
+				text="Ok"
+				key="Ok" />
+			<IconTabFilter
+				icon="sap-icon://compare"
+				iconColor="Critical"
+				count="{/ProductCollectionStats/Counts/Weight/Heavy}"
+				text="Heavy"
+				key="Heavy" />
+			<IconTabFilter
+				icon="sap-icon://inventory"
+				iconColor="Negative"
+				count="{/ProductCollectionStats/Counts/Weight/Overweight}"
+				text="Overweight"
+				key="Overweight" />
+		</items>
+	</IconTabBar>
+</mvc:View>
