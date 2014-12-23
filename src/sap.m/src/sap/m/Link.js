@@ -108,6 +108,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Link.prototype._handlePress = function(oEvent) {
 		if (this.getEnabled()) {
+			// mark the event for components that needs to know if the event was handled by the link
+			oEvent.setMarked();
+			
 			if (!this.firePress()) { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
@@ -124,8 +127,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	Link.prototype.ontouchstart = function(oEvent) {
-		// for controls which need to know whether they should handle events bubbling from here
-		oEvent.originalEvent._sapui_handledByControl = true;
+		if (this.getEnabled()) {
+			// for controls which need to know whether they should handle events bubbling from here
+			oEvent.setMarked();
+		}
 	};
 	
 	Link.prototype.setText = function(sText){
