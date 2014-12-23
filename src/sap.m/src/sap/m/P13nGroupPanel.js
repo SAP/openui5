@@ -162,11 +162,11 @@ sap.ui.define([
 		this._oGroupPanel.removeValidationErrors();
 	};
 
-	P13nGroupPanel.prototype.onBeforeNavigation = function() {
+	P13nGroupPanel.prototype.onBeforeNavigationFrom = function() {
 		return this.validateConditions();
 	};
 
-	P13nGroupPanel.prototype.onAfterNavigation = function() {
+	P13nGroupPanel.prototype.onAfterNavigationFrom = function() {
 		return this.removeInvalidConditions();
 	};
 

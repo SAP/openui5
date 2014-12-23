@@ -143,11 +143,11 @@ sap.ui.define([
 		this._oSortPanel.removeValidationErrors();
 	};
 
-	P13nSortPanel.prototype.onBeforeNavigation = function() {
+	P13nSortPanel.prototype.onBeforeNavigationFrom = function() {
 		return this.validateConditions();
 	};
 
-	P13nSortPanel.prototype.onAfterNavigation = function() {
+	P13nSortPanel.prototype.onAfterNavigationFrom = function() {
 		return this.removeInvalidConditions();
 	};
 
