@@ -192,6 +192,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 			oMessageToastDomRef.style.width = mSettings.width;
 			oMessageToastDomRef.className = CSSCLASS + " " + ENABLESELECTIONCLASS;
+			oMessageToastDomRef.setAttribute("role", "alert");
 			oMessageToastDomRef.appendChild(document.createTextNode(mSettings.message));
 
 			return oMessageToastDomRef;
