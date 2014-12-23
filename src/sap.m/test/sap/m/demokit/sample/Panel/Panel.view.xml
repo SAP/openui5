@@ -6,7 +6,7 @@
 	<Panel>
 		<headerToolbar>
 			<Toolbar height="3rem">
-				<Text text="Header" class="sapMH4FontSize"/>
+				<Title text="Header"/>
 				<ToolbarSpacer />
 				<Button icon="sap-icon://settings" />
 				<Button icon="sap-icon://drop-down-list" />

@@ -1472,7 +1472,7 @@
 			{
 				"id": "sap.m.sample.TitleToolBar",
 				"name": "Title Toolbar",
-				"description": "A TitleToolBar is always 3 rem in height. The Text inside of it should always have the header font-size of 4. This results in 16px. For achieving this you can add the style-class sapMH4FontSize"
+				"description": "A TitleToolBar is always 3 rem in height. For the title text inside the sap.m.Title control should be used."
 			},
 			{
 				"id": "sap.m.sample.UploadCollection",
