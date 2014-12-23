@@ -1663,7 +1663,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 		
 		if (this.isAllSelectableSelected()) {
-			this.removeSelections(false, true);
+			this.removeSelections(true, true);
 		} else {
 			this.selectAll(true);
 		}
