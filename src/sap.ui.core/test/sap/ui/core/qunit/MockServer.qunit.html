@@ -1836,7 +1836,7 @@
 				});
 				equal(oResponse.success, false, "Mock server responded");
 				equal(oResponse.statusCode, 404, "expand with false navigation property path");
-
+				oMockServer.destroy();
 				oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
@@ -1966,259 +1966,6 @@
 		oMockServer.destroy();
 	});
 
-	asyncTest("test $metadata xml", 10, function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/DataModel.xml";
-		var sMockdataBaseUrl = "testdata/";
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/$metadata",
-			dataType : "xml"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
-
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveHeaderCollection");
-		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
-			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
-			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
-			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
-			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
-
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		};
-		oBinding.attachChange(handler);
-		oBinding.getContexts();
-
-		//	oMockServer.destroy();
-	});
-
-	test("test filter on complex type properties", function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection?$filter=flightDetails/cityFrom eq 'cityFrom 1'",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
-
-		oMockServer.destroy();
-	});
-
-	test("test GW JSON format", function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
-		var sMockdataBaseUrl = "testdata/rmtsampleflight/";// base url which contains the mockdata
-		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/CarrierCollection",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 18, "successfuly parsed the GW response for collection");
-
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/TravelagencyCollection",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(oResponse.data.d.results.length, 0, "invalid GW response for collection");
-
-		oMockServer.destroy();
-	});
-
-	asyncTest("test oDataModel _loadData JSON", function() {
-		var oModel = initModel(sURI, true);
-		oModel._loadData("LeaveHeaderCollection", null, function() {
-			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
-					"absolute path without context");
-			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/employeeid"), "JSMITH",
-					"absolute path without context");
-			oModel.createBindingContext("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", null, function(newContext) {
-				equal(newContext.getProperty("employeeid"), "JSMITH", "relative path with context");
-				var iLength = 0;
-				var employee = oModel.getProperty("/");
-				var iKeys = 0;
-				jQuery.each(employee, function(iIndex, sKey) {
-					iKeys++;
-				});
-				equal(iKeys, 3);
-				start(); // resume normal testing			
-			});
-		});
-	});
-
-	var oLabel = new sap.ui.commons.Label("myLabel");
-	oLabel.placeAt("target1");
-
-	asyncTest("test getProperty on label", function() {
-		oLabel.setText("testText");
-		var oModel = initModel(sURI, true);
-		sap.ui.getCore().setModel(oModel);
-		oModel._loadData("LeaveItemCollection", null, function() {
-			equal(oLabel.getText(), "testText", "old text value");
-			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
-			equal(oLabel.getText(), "2012-12-27", "text value from model");
-			oLabel.unbindProperty("text");
-			start();
-		});
-	});
-
-	asyncTest("test double load update", function() {
-		oLabel.setText("testText");
-		var oModel = initModel(sURI, true);
-		sap.ui.getCore().setModel(oModel);
-		oModel._loadData("LeaveItemCollection", null, function() {
-			equal(oLabel.getText(), "testText", "old text value");
-			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
-			equal(oLabel.getText(), "2012-12-27", "new text value from model");
-			oLabel.unbindProperty("text");
-			oModel._loadData("LeaveHeaderCollection", null, function() {
-				equal(oLabel.getText(), "", "default value");
-				oLabel.bindProperty("text", "/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type");
-				equal(oLabel.getText(), "Vacation", "2nd new text value from model");
-				oLabel.unbindProperty("text");
-				start();
-			});
-		});
-	});
-
-	var oList = new MyList("myList");
-	var oListItem = new MyListItem();
-	oList.placeAt("target2");
-
-	asyncTest("test model bindAggregation on List", function() {
-		var oModel = initModel(sURI, true);
-		sap.ui.getCore().setModel(oModel);
-		oListItem.bindProperty("text", "type");
-		var oBinding = oList.bindAggregation("items", "/LeaveHeaderCollection", oListItem).getBinding('items');
-
-		var handler = function() {
-			var listItems = oList.getItems();
-			equal(listItems.length, 3, "length of items");
-			equal(listItems[0].getText(), "Vacation", "LeaveHeader 1 name");
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		}
-		oBinding.attachChange(handler);
-	});
-
-	asyncTest("ListBinding getLength, getContexts", function() {
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveItemCollection");
-
-		var handler = function() {
-			equal(oBinding.getPath(), "/LeaveItemCollection", "ListBinding path");
-			ok(oBinding.getModel() == oModel, "ListBinding model");
-			equal(oBinding.getLength(), 7, "length of items");
-			jQuery(oBinding.getContexts()).each(function(i, context) {
-				equal(context.getObject().itemid, (i + 1) + "", "ListBinding context");
-			});
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		}
-		oBinding.attachChange(handler);
-		oBinding.getContexts();
-	});
-
-	asyncTest("test mock data in one file", 10, function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/DataModel.xml";
-		var sMockdataUrl = "testdata/MockData.json"// JSON file which contains the mockdata
-		oMockServer.simulate(sMetadataUrl, sMockdataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/$metadata",
-			dataType : "xml"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
-
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveHeaderCollection");
-		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
-			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
-			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
-			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
-			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
-
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		};
-		oBinding.attachChange(handler);
-		oBinding.getContexts();
-		oMockServer.destroy();
-	});
-
-	asyncTest("test mock data generation", 10, function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/DataModel.xml";
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
-
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/$metadata",
-			dataType : "xml"
-		});
-		ok(oResponse.success, "Mock server responded");
-		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
-
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveHeaderCollection");
-		var handler = function() { // delay the following test
-			ok(oBinding.oEntityType, "entity type binding check");
-			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
-			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
-			ok(oEntityType, "get entity type check");
-			equal(oEntityType.name, "LeaveHeader", "entity type name check");
-			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
-			ok(oPropMeta, "property type check");
-			equal(oPropMeta.name, "type", "entity type property check");
-			equal(oPropMeta.type, "Edm.String", "entity type property check");
-
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		};
-		oBinding.attachChange(handler);
-		oBinding.getContexts();
-		oMockServer.destroy();
-	});
 
 	test("test CRUD simple data model", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -2839,38 +2586,168 @@
 
 		oMockServer.destroy();
 	});
-	
-	asyncTest("test ODataModel update", function() {
-		sURI = "/myservice/";
+		
+	asyncTest("test mock data in one file", 10, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : sURI
+			rootUri : "/myservice/"
 		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataUrl = "testdata/MockData.json"// JSON file which contains the mockdata
+		oMockServer.simulate(sMetadataUrl, sMockdataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/$metadata",
+			dataType : "xml"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
+
+		var oModel = initModel(sURI, true);
+		var oBinding = oModel.bindList("/LeaveHeaderCollection");
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "type", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		oBinding.getContexts();
+		oMockServer.destroy();
+	});
+
+	asyncTest("test mock data generation", 10, function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
-		var oModel = initModel(sURI, true);
-		oModel.read('CarrierCollection', null, null, true, function(oData, oResponse) {
-			var oEntry = {};
-			oEntry.CARRNAME = "USD";
-			oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function() {
-				var oResponse = jQuery.sap.sjax({
-					url : "/myservice/CarrierCollection('carrid 1')",
-					dataType : "json"
-				});
-				equal(oResponse.data.d.CARRNAME, "USD");
-				equal(oResponse.data.d.mimeType, "mimeType 1");
-				start();
-			}, function() {
-				start();
-				oMockServer.destroy();
-			}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
+		ok(oMockServer.isStarted(), "Mock server is started");
 
-		}, function() {
-			ok(false, "Read failed");
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/$metadata",
+			dataType : "xml"
 		});
+		ok(oResponse.success, "Mock server responded");
+		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right")
 
+		var oModel = initModel(sURI, true);
+		var oBinding = oModel.bindList("/LeaveHeaderCollection");
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "type", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		oBinding.getContexts();
+		oMockServer.destroy();
 	});
+
 	
+	asyncTest("test $metadata xml", 10, function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/$metadata",
+			dataType : "xml"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
+
+		var oModel = initModel(sURI, true);
+		var oBinding = oModel.bindList("/LeaveHeaderCollection");
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "LeaveHeader", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/LeaveHeaderCollection");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "LeaveHeader", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "type");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "type", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		oBinding.getContexts();
+
+		oMockServer.destroy();
+	});
+
+	test("test filter on complex type properties", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?$filter=flightDetails/cityFrom eq 'cityFrom 1'",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
+
+		oMockServer.destroy();
+	});
+
+	test("test GW JSON format", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";// url to the service metadata document
+		var sMockdataBaseUrl = "testdata/rmtsampleflight/";// base url which contains the mockdata
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(oResponse.data.d.results.length, 18, "successfuly parsed the GW response for collection");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/TravelagencyCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(oResponse.data.d.results.length, 0, "invalid GW response for collection");
+
+		oMockServer.destroy();
+	});
+
 	test("test error messages on invalid operations", function() {
 		sURI = "/myservice/";
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -3064,11 +2941,144 @@
 			equal(oResult.response.statusCode, 404, "status code = 404");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'flightbooking1'", "Resource not found for the segment 'flightbooking1'");
 		});	
-		oMockServer.destroy();
-		
+		oMockServer.destroy();		
 });
+	
+asyncTest("test ODataModel update", function() {
+	sURI = "/myservice/";
+	var oMockServer = new sap.ui.core.util.MockServer({
+		rootUri : sURI
+	});
+	var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+	oMockServer.simulate(sMetadataUrl);
+	oMockServer.start();
+	var oModel = initModel(sURI, true);
+	oModel.read('CarrierCollection', null, null, true, function(oData, oResponse) {
+		var oEntry = {};
+		oEntry.CARRNAME = "USD";
+		oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function() {
+			var oResponse = jQuery.sap.sjax({
+				url : "/myservice/CarrierCollection('carrid 1')",
+				dataType : "json"
+			});
+			equal(oResponse.data.d.CARRNAME, "USD");
+			equal(oResponse.data.d.mimeType, "mimeType 1");
+			start();
+		}, function() {
+			start();
+			oMockServer.destroy();
+		}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
 
+	}, function() {
+		ok(false, "Read failed");
+	});
 
+});		
+			
+	asyncTest("test oDataModel _loadData JSON", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+		
+		var oModel = initModel(sURI, true);
+		oModel._loadData("LeaveHeaderCollection", null, function() {
+			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
+					"absolute path without context");
+			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/employeeid"), "JSMITH",
+					"absolute path without context");
+			oModel.createBindingContext("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')", null, function(newContext) {
+				equal(newContext.getProperty("employeeid"), "JSMITH", "relative path with context");
+				var iLength = 0;
+				var employee = oModel.getProperty("/");
+				var iKeys = 0;
+				jQuery.each(employee, function(iIndex, sKey) {
+					iKeys++;
+				});
+				equal(iKeys, 3);
+				start(); // resume normal testing			
+			});
+		});
+	});
+
+	var oLabel = new sap.ui.commons.Label("myLabel");
+	oLabel.placeAt("target1");
+
+	asyncTest("test getProperty on label", function() {
+		oLabel.setText("testText");
+		var oModel = initModel(sURI, true);
+		sap.ui.getCore().setModel(oModel);
+		oModel._loadData("LeaveItemCollection", null, function() {
+			equal(oLabel.getText(), "testText", "old text value");
+			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
+			equal(oLabel.getText(), "2012-12-27", "text value from model");
+			oLabel.unbindProperty("text");
+			start();
+		});
+	});
+
+	asyncTest("test double load update", function() {
+		oLabel.setText("testText");
+		var oModel = initModel(sURI, true);
+		sap.ui.getCore().setModel(oModel);
+		oModel._loadData("LeaveItemCollection", null, function() {
+			equal(oLabel.getText(), "testText", "old text value");
+			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
+			equal(oLabel.getText(), "2012-12-27", "new text value from model");
+			oLabel.unbindProperty("text");
+			oModel._loadData("LeaveHeaderCollection", null, function() {
+				equal(oLabel.getText(), "", "default value");
+				oLabel.bindProperty("text", "/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type");
+				equal(oLabel.getText(), "Vacation", "2nd new text value from model");
+				oLabel.unbindProperty("text");
+				start();
+			});
+		});
+	});
+
+	var oList = new MyList("myList");
+	var oListItem = new MyListItem();
+	oList.placeAt("target2");
+
+	asyncTest("test model bindAggregation on List", function() {
+		var oModel = initModel(sURI, true);
+		sap.ui.getCore().setModel(oModel);
+		oListItem.bindProperty("text", "type");
+		var oBinding = oList.bindAggregation("items", "/LeaveHeaderCollection", oListItem).getBinding('items');
+
+		var handler = function() {
+			var listItems = oList.getItems();
+			equal(listItems.length, 3, "length of items");
+			equal(listItems[0].getText(), "Vacation", "LeaveHeader 1 name");
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		}
+		oBinding.attachChange(handler);
+	});
+
+	asyncTest("ListBinding getLength, getContexts", function() {
+		var oModel = initModel(sURI, true);
+		var oBinding = oModel.bindList("/LeaveItemCollection");
+
+		var handler = function() {
+			equal(oBinding.getPath(), "/LeaveItemCollection", "ListBinding path");
+			ok(oBinding.getModel() == oModel, "ListBinding model");
+			equal(oBinding.getLength(), 7, "length of items");
+			jQuery(oBinding.getContexts()).each(function(i, context) {
+				equal(context.getObject().itemid, (i + 1) + "", "ListBinding context");
+			});
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		}
+		oBinding.attachChange(handler);
+		oBinding.getContexts();
+	});
+
+	
 	
 	function countProperties(obj) {
 		return jQuery.map(obj, function(i, o) {
