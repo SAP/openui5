@@ -707,6 +707,15 @@
 				"since" : "1.28",
 				"formFactors" : "-",
 				"samples" : [ "sap.m.sample.StandardMarginsAll", "sap.m.sample.StandardMarginsSingleSided", "sap.m.sample.StandardMarginsTwoSided", "sap.m.sample.StandardMarginsEnforceWidthAuto", "sap.m.sample.StandardMarginsResponsive", "sap.m.sample.StandardMarginsCollapse", "sap.m.sample.StandardNoMargins" ]
+			},
+			{
+				"id" : "sap.ui.core.ContainerPadding",
+				"name" : "Standard Paddings",
+				"appComponent" : "CA-UI5-COR",
+				"category" : "Layout",
+				"since" : "1.28",
+				"formFactors" : "-",
+				"samples" : [ "sap.m.sample.ContainerNoPadding", "sap.m.sample.ContainerPadding", "sap.m.sample.ContainerResponsivePadding", "sap.m.sample.ContainerPaddingAndMargin"]
 			}
 		],
 		"samples" : [
@@ -1509,6 +1518,26 @@
 				"id": "sap.m.sample.StandardNoMargins",
 				"name": "Remove Margins",
 				"description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
+			},
+			{
+				"id": "sap.m.sample.ContainerNoPadding",
+				"name": "No Container Content Padding",
+				"description": "Many UI5 containers support the standard container content padding CSS classes. Apply the CSS class 'sapUiNoContentPadding' on a UI5 container control (e.g. Panel, IconTabBar, ...) to remove the default padding around the container content area."
+			},
+			{
+				"id": "sap.m.sample.ContainerPadding",
+				"name": "Container Content Padding",
+				"description": "Apply the CSS class 'sapUiContentPadding' on a UI5 container control (e.g. Page, List, Dialog, Popover, ...) to add a default padding of 1rem (16px) around the container content area."
+			},
+			{
+				"id": "sap.m.sample.ContainerResponsivePadding",
+				"name": "Responsive Container Content Padding",
+				"description": "Apply the CSS class 'sapUiResponsiveContentPadding' on a UI5 container control (e.g. Page, List, Dialog, Popover, ...) to add a responsive padding based on the screen size around the container content area."
+			},
+			{
+				"id": "sap.m.sample.ContainerPaddingAndMargin",
+				"name": "Container Content Padding and Margins",
+				"description": "By combining the margin and padding concepts you can flexibly design your application layout without having to write any custom CSS. This example shows a HorizontalLayout that is layouted with the standard margin and padding classes provided by UI5."
 			}
 		]
 	}
