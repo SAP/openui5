@@ -1320,7 +1320,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oControl.getId();
 
 			var sPlaceholderHtml = 
-				'<span id="' + sPlaceholderId + '" ' + 
+				'<span ' + 
+					'id="' + sPlaceholderId + '" ' +
+					'class="sapUiHiddenPlaceholder" ' + 
 					'data-sap-ui="' + sPlaceholderId + '" ' + 
 					'style="display: none;"' + 
 					'aria-hidden="true">' + 
