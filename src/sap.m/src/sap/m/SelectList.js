@@ -194,28 +194,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.onAfterRendering = function() {
-			var oDomRef = this.getDomRef();
-
-			// initialize the item navigation and add apply it to the control (only once)
-			if (!this._oItemNavigation) {
-				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
-				this.addDelegate(this._oItemNavigation);
-			}
-
-			// set the root dom node that surrounds the items
-			this._oItemNavigation.setRootDomRef(oDomRef);
-
-			// set the array of DOM elements representing the items
-			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
-
-			// turn of the cycling
-			this._oItemNavigation.setCycling(false);
-
-			// set the selected index
-			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
-
-			// set the page size
-			this._oItemNavigation.setPageSize(10);
+			this.createItemNavigation();
 		};
 
 		/**
@@ -566,6 +545,37 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 */
 		SelectList.prototype.clearSelection = function() {
 			this.setSelection(null);
+		};
+
+		/*
+		 * Creates the item navigation.
+		 *
+		 */
+		SelectList.prototype.createItemNavigation = function() {
+			var oDomRef;
+
+			// initialize the item navigation and add apply it to the control (only once)
+			if (!this._oItemNavigation) {
+				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
+				this.addDelegate(this._oItemNavigation);
+			}
+
+			oDomRef = this.getDomRef();
+
+			// set the root dom node that surrounds the items
+			this._oItemNavigation.setRootDomRef(oDomRef);
+
+			// set the array of DOM elements representing the items
+			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
+
+			// turn of the cycling
+			this._oItemNavigation.setCycling(false);
+
+			// set the selected index
+			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
+
+			// set the page size
+			this._oItemNavigation.setPageSize(10);
 		};
 
 		/* ----------------------------------------------------------- */
