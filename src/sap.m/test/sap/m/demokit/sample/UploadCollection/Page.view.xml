@@ -6,9 +6,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
-	<l:VerticalLayout
-		width="100%">
-		<l:content>
+	 <Page>
+		<content>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Label
@@ -44,6 +43,6 @@
 					enableEdit="{enableEdit}"
 					enableDelete="{enableDelete}" />
 			</UploadCollection>
-		</l:content>
-	</l:VerticalLayout>	
+		</content>
+	</Page>
 </mvc:View>
