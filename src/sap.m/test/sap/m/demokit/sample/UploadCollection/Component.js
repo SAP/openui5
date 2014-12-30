@@ -6,7 +6,8 @@ sap.ui.core.UIComponent.extend("sap.m.sample.UploadCollection.Component", {
 		rootView : "sap.m.sample.UploadCollection.Page",
 		dependencies : {
 			libs : [
-				"sap.m"
+				"sap.m",
+				"sap.ui.layout"
 			]
 		},
 		config : {
