@@ -65,9 +65,11 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		if (!bHorizontalScrolling) {
 			oRm.addClass("sapMDialogHorScrollDisabled");
 		}
-	
-		oRm.addClass("sapMDialogPhone");
-	
+
+		if (sap.ui.Device.system.phone) {
+			oRm.addClass("sapMDialogPhone");
+		}
+
 		// test dialog with sap-ui-xx-formfactor=compact
 		if (sap.m._bSizeCompact) {
 			oRm.addClass("sapUiSizeCompact");
