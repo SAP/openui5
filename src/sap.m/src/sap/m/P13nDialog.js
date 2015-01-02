@@ -103,11 +103,11 @@ sap.ui.define([
 				// error messages together
 				var oPanel = null;
 				var fCallbackOK = function() {
-					oPanel.onAfterNavigation();
+					oPanel.onAfterNavigationFrom();
 					that.fireOk();
 				};
 				that.getPanels().some(function(_oPanel) {
-					if (!_oPanel.onBeforeNavigation()) {
+					if (!_oPanel.onBeforeNavigationFrom()) {
 						oPanel = _oPanel;
 						return true;
 					}
@@ -155,6 +155,7 @@ sap.ui.define([
 		this._setDialogTitleFor(oPanel);
 		// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
 		this._setVisibilityOfPanel(oPanel);
+		this.setVerticalScrolling(oPanel.getVerticalScrolling());
 
 		return this;
 	};
@@ -176,6 +177,7 @@ sap.ui.define([
 		this._setDialogTitleFor(oPanel);
 		// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
 		this._setVisibilityOfPanel(oPanel);
+		this.setVerticalScrolling(oPanel.getVerticalScrolling());
 
 		return this;
 	};
@@ -287,11 +289,11 @@ sap.ui.define([
 				var oButtonClicked = oEvent.srcControl;
 				var oPanelVisible = this.getVisiblePanel();
 
-				if (oPanelVisible && oPanelVisible.onBeforeNavigation && !oPanelVisible.onBeforeNavigation()) {
+				if (oPanelVisible && oPanelVisible.onBeforeNavigationFrom && !oPanelVisible.onBeforeNavigationFrom()) {
 					oEvent.stopImmediatePropagation(true);
 					var that = this;
 					var fCallbackOK = function() {
-						oPanelVisible.onAfterNavigation();
+						oPanelVisible.onAfterNavigationFrom();
 						if (that._getSegmentedButton()) {
 							that._getSegmentedButton().setSelectedButton(oButtonClicked);
 						}
@@ -316,7 +318,9 @@ sap.ui.define([
 		this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		this.getPanels().forEach(function(oPanel_) {
 			if (oPanel_ === oPanel) {
+				oPanel_.beforeNavigationTo();
 				oPanel_.setVisible(true);
+// TGHL oPanel.fireLoadData();
 			} else {
 				oPanel_.setVisible(false);
 			}
@@ -390,14 +394,19 @@ sap.ui.define([
 	 */
 	P13nDialog.prototype._setVisibilityOfPanel = function(oPanel) {
 		var bVisible = this.getInitialVisiblePanelType() === oPanel.getType() || this.getPanels().length === 1;
-		oPanel.setVisible(bVisible);
 		if (bVisible) {
+			oPanel.beforeNavigationTo();
+		}
+		
+		oPanel.setVisible(bVisible);
+		
+		if (bVisible) {
+			// TGHL oPanel.fireLoadData();
 			this._setVisibilityOfOtherPanels(oPanel, false);
 			var oButton = this._getButtonByPanel(oPanel);
 			if (this._getSegmentedButton()) {
 				this._getSegmentedButton().setSelectedButton(oButton);
 			}
-			this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		}
 	};
 
