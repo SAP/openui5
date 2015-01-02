@@ -54,7 +54,8 @@
 						new sap.ui.core.Item({
 							key: "2",
 							text: "item 2"
-						})
+						}),
+						new sap.ui.core.SeparatorItem()
 					]
 				});
 
@@ -67,10 +68,14 @@
 				strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
 				strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
 				strictEqual(oSelectList.getMaxWidth(), "100%", 'By default the "max-width" of the SelectList control is "100%"');
-				ok(oSelectList.getSelectedItem() === null, "By default the selected items of the SelectList control is the first item");
+				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "", "By default the selected items id of the SelectList control is the id of the first item");
 				strictEqual(oSelectList.getSelectedKey(), "", "By default the selected key of the SelectList control is the key property of the first item");
 				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("title"), "first item", "The tooltip is shown");
+				strictEqual(oSelectList.getDomRef().getAttribute("role"), "listbox");
+				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("role"), "option");
+				strictEqual(oSelectList.getLastItem().getDomRef().getAttribute("role"), "separator");
+				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("aria-selected"), "false");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1532,6 +1537,7 @@
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1573,6 +1579,7 @@
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1692,6 +1699,7 @@
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1699,7 +1707,8 @@
 
 			test("setSelectedItemId()", function() {
 
-				//system under test
+				// system under test
+				var oExpectedItem;
 				var oSelectList = new sap.m.SelectList({
 					items: [
 						new sap.ui.core.Item({
@@ -1713,7 +1722,7 @@
 							text: "item 1"
 						}),
 
-						new sap.ui.core.Item({
+						oExpectedItem = new sap.ui.core.Item({
 							key: "2",
 							text: "item 2"
 						})
@@ -1733,6 +1742,7 @@
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1775,6 +1785,7 @@
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1862,6 +1873,7 @@
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "1");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
 
 				// cleanup
 				oSelectList.destroy();
@@ -1903,6 +1915,7 @@
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
+				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
 
 				// cleanup
 				oSelectList.destroy();
