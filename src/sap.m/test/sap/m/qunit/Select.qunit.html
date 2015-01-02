@@ -5052,6 +5052,10 @@
 						ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 					}
 
+					strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
+					strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
+
 					// cleanup
 					oSelect.destroy();
 				});
@@ -6467,6 +6471,72 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "4");
 				strictEqual(oSelect.$("label").text(), "item 4");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onAfterOpen                    */
+			/* ------------------------------ */
+
+			test("onAfterOpen test case 1", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+
+				// act
+				oSelect.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+				// assert
+				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onAfterClose                   */
+			/* ------------------------------ */
+
+			test("onAfterClose", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+
+				// act
+				oSelect.close();
+				this.clock.tick(1000);
+
+				// assert
+				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
+				strictEqual(oSelect.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oSelect.destroy();
