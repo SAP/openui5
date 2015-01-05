@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -21,6 +22,7 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+
 	// global service URL keep the path relative not to have cross domain issue.
 	var sServiceURI = "/service/" 
 
@@ -43,6 +45,19 @@
 		return oModel;
 	}
 	
+	function createJSONModel(oData) {
+		oData = oData || {
+			Products : jQuery.sap.sjax({
+				url : "data/Product.json", 
+				dataType:"json"
+			}).data
+		};
+		
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oData);
+		return oModel;
+	}
+
 	function startMockServer(iRespondAfter) {
 		// configure respond to requests delay
 		sap.ui.core.util.MockServer.config({
@@ -405,7 +420,8 @@
 			start();
 		});
 	});
-	
+
+	module("NonAbsoluteAndUnresolveable Binding Path")
 	test("Should not fire update started if a binding cannot be resolved", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -423,6 +439,78 @@
 		oList.destroy();
 	});
 	
+	module("FocusAfterBindingUpdate");
+	asyncTest("Focus should be retained after binding update", function() {
+		var sFocusedControlId,
+			oMockServer = startMockServer(),
+			oDeferred = jQuery.Deferred(),
+			oList = createList({
+				growing : false,
+			}, {
+				template : new sap.m.InputListItem({
+					label: "Product Name",
+					content : new sap.m.Input({
+						value: "{Name}"
+					})
+				})
+			});
+		
+		// when initial binding is completed
+		oList.done(function () {
+			
+			// focus to the input field
+			sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
+			
+			// rerender list
+			oList.rerender();
+			
+			setTimeout(function() {
+				// check focus after rerender
+				strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
+				
+				// recheck focus after binding update
+				oList.attachUpdateFinished(function(oEvent) {
+					//strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
+					strictEqual(document.activeElement.id, "body", "Heey why the focus went to the body and not retained!");
+					oDeferred.resolve();
+				});
+				
+				// update the list binding
+				oList.updateItems();
+			}, 0);
+			
+		});
+	
+		// when test is completed
+		jQuery.when(oDeferred).done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+	
+	asyncTest("Last setGrowingThreshold should be respected before data fetching", function() {
+		var iInitThreshold = 5,
+			iLastThreshold = 10,
+			oMockServer = startMockServer(),
+			oList = createList({
+				growing : true,
+				growingThreshold : iInitThreshold,
+				updateFinished : function(oEvent) {
+					strictEqual(oEvent.getParameter("actual"), iLastThreshold, "Last growing threshold is respected");
+				}
+			});
+		
+		oList.setGrowingThreshold(iLastThreshold);
+	
+		// when initial binding is completed
+		oList.done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+
 </script>
 
 </head>
