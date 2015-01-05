@@ -376,7 +376,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		this.oPopup.close = function(bBeforeCloseFired){
 			var bBooleanParam = typeof bBeforeCloseFired === "boolean";
 
-			if (bBooleanParam && !bBeforeCloseFired) {
+			// Only when the given parameter is "true", the beforeClose event isn't fired here.
+			// Because it's already fired in the sap.m.Popover.prototype.close function.
+			if (bBeforeCloseFired !== true) {
 				that.fireBeforeClose({openBy: that._oOpenBy});
 			}
 

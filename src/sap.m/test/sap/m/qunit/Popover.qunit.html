@@ -610,11 +610,15 @@
 				sap.ui.getCore().applyChanges();
 
 				var oSpy = this.spy(jQuery.sap, "assert");
+				var oBeforeCloseSpy = this.spy();
+
+				oPopover.attachBeforeClose(oBeforeCloseSpy);
 
 				oButton2.focus();
 				this.clock.tick(500);
 				ok(!oPopover.isOpen(), "Popover should be closed by autoclose");
 				ok(!oSpy.calledWith(false), "All asserts should be passed");
+				equal(oBeforeCloseSpy.callCount, 1, "beforeClose event is fired");
 				oPopover.destroy();
 				oButton.destroy();
 				oButton2.destroy();
