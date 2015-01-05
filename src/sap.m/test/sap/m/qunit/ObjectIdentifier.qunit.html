@@ -369,6 +369,47 @@
 		// cleanup
 		oObjectIdentifier.destroy();
 	});
+
+	test("Setting textDirection set to RTL", function() {
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: 'Test title',
+			titleActive: true,
+			textDirection: sap.ui.core.TextDirection.RTL
+
+		});
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $oi = jQuery(oObjectIdentifier.getDomRef());
+		equal($oi.attr("dir"), "rtl", "Control has 'dir' property set to right-to-left");
+		equal($oi.find(".sapMObjectIdentifierIcons").css('float'), "left", "icons wrapper has float inline style property set to left");
+
+		// Clean up
+		oObjectIdentifier.destroy();
+	});
+
+	test("Setting textDirection set to LTR", function() {
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: 'Test title',
+			titleActive: true,
+			textDirection: sap.ui.core.TextDirection.LTR
+
+		});
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $oi = jQuery(oObjectIdentifier.getDomRef());
+		equal($oi.attr("dir"), "ltr", "Control has 'dir' property set to left-to-right");
+		equal($oi.find(".sapMObjectIdentifierIcons").css('float'), "right", "icons wrapper has float inline style property set to right");
+
+		// Clean up
+		oObjectIdentifier.destroy();
+	});
+
 	
 	module("Keyboard handling");
 	

@@ -24,37 +24,50 @@ sap.ui.define(['jquery.sap.global'],
 	 *            rendered
 	 */
 	ObjectIdentifierRenderer.render = function(oRm, oOI) {
-		
-		var sTooltip;
-		
+
+		var sTooltip,
+			sTextDir = oOI.getTextDirection();
+
 		// Return immediately if control is invisible
 		if (!oOI.getVisible()) {
 			return;
 		}
-	
+
 		// write the HTML into the render manager
 		oRm.write("<div"); // Identifier begins
 		oRm.writeControlData(oOI);
 		oRm.addClass("sapMObjectIdentifier");
 		oRm.writeClasses();
-		
+
 		sTooltip = oOI.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-		
+
+		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+
 		oRm.write(">");
-	
+
 		oRm.write("<div"); // Top row begins
 		oRm.addClass("sapMObjectIdentifierTopRow");
 		oRm.writeClasses();
 		oRm.write(">");
-	
+
 		oRm.write("<div"); // Icons begin
 		oRm.addClass("sapMObjectIdentifierIcons");
 		oRm.writeClasses();
+
+		// When textDirection property is set this style property must be overridden in order to align icons properly.
+		// This is accomplished with inline style not with class because when rtl mode is set globally class properties will be changed with wrong floating values.
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			oRm.addStyle("float", sTextDir.toLowerCase() === "rtl" ? "left" : "right");
+			oRm.writeStyles();
+		}
 		oRm.write(">");
-	
+
 		if (oOI.getBadgeAttachments()) {
 			oRm.write("<span"); // Icon span begins
 			oRm.addClass("sapMObjectIdentifierIconSpan");

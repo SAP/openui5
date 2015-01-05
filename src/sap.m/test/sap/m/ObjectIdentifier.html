@@ -151,6 +151,16 @@
 		title : "Model sets empty text",
 		text : "{/description4}",
 	});
+
+	var oi8 = new sap.m.ObjectIdentifier("oi8", {
+		title : "OI with RTL text direction",
+		text : "right-to-left",
+		badgeNotes : true,
+		badgePeople : true,
+		badgeAttachments : true,
+		textDirection: sap.ui.core.TextDirection.RTL
+	});
+
 	
 	var oTableHeader = new sap.m.Toolbar({
 		content : [
@@ -220,6 +230,7 @@
 	page.addContent(oi5);
 	page.addContent(oi6);
 	page.addContent(oi7);
+	page.addContent(oi8);
 	page.addContent(oTable);
 	app.placeAt('body');
 </script>
