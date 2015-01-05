@@ -408,6 +408,7 @@
 
 				change: function(oControlEvent) {
 					jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("selectedItem") + " on " + this);
+					sap.m.MessageToast.show(oControlEvent.getParameter("selectedItem").getText());
 				}
 			});
 
