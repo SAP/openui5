@@ -453,9 +453,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	};
 	
-	ListBase.prototype.bindAggregation = function(sName) {
-		sName == "items" && this._resetItemsBinding();
-		return this._applyAggregation("bind", arguments);
+	ListBase.prototype.setBindingContext = function() {
+		this._resetItemsBinding();
+		return Control.prototype.setBindingContext.apply(this, arguments);
 	};
 	
 	ListBase.prototype._bindAggregation = function(sName) {
@@ -940,6 +940,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeSelections(true);
 			this._hideBusyIndicator();
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
+			this._oItemNavigation && this._oItemNavigation.setFocusedIndex(-1);
 		}
 	};
 	
@@ -1480,9 +1481,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @since 1.26
 	 */
 	ListBase.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
-		if (oNavigationRoot) {
-			var aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
-			oItemNavigation.setItemDomRefs(aNavigationItems);
+		var aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
+		oItemNavigation.setItemDomRefs(aNavigationItems);
+		if (oItemNavigation.getFocusedIndex() == -1) {
 			oItemNavigation.setFocusedIndex(0);
 		}
 	};
