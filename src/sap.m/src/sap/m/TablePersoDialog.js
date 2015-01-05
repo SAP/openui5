@@ -496,7 +496,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 		// Abort if nothing selected
 		var oSelectedItem = this._oList.getSelectedItem();
-		if (! oSelectedItem) {
+		if (!oSelectedItem) {
 			return;
 		}
 

@@ -33,22 +33,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	 * @alias sap.ui.model.xml.XMLModel
 	 */
 	var XMLModel = ClientModel.extend("sap.ui.model.xml.XMLModel", /** @lends sap.ui.model.xml.XMLModel.prototype */ {
-		
+
 		constructor : function (oData) {
 			ClientModel.apply(this, arguments);
 			this.oNameSpaces = null;
-			
+
 			if (oData && oData.documentElement) {
 				this.setData(oData);
 			}
 		},
-		
+
 		metadata : {
 			publicMethods : ["setXML", "getXML", "setNameSpace"]
 		}
-	
+
 	});
-	
+
 	/**
 	 * Sets the specified XML formatted string text to the model
 	 *
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	 */
 	XMLModel.prototype.setXML = function(sXMLText){
 		var oXMLDocument = jQuery.sap.parseXML(sXMLText);
-	
+
 		if (oXMLDocument.parseError.errorCode != 0) {
 			var oParseError = oXMLDocument.parseError;
 			jQuery.sap.log.fatal("The following problem occurred: XML parse Error for " + oParseError.url + " code: " + oParseError.errorCode + " reason: " +
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		this.setData(oXMLDocument);
 	};
-	
+
 	/**
 	 * Serializes the current XML data of the model into a string.
 	 *
@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	XMLModel.prototype.getXML = function(){
 		return jQuery.sap.serializeXML(this.oData);
 	};
-	
+
 	/**
 	 * Sets the provided XML encoded data object to the model
 	 *
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		this.oData = oData;
 		this.checkUpdate();
 	};
-	
+
 	/**
 	 * Load XML-encoded data from the server using a GET HTTP request and store the resulting XML data in the model.
 	 * Note: Due to browser security restrictions, most "Ajax" requests are subject to the same origin policy,
@@ -106,11 +106,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	 */
 	XMLModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bCache, mHeaders){
 		var that = this;
-	
+
 		bAsync = (bAsync !== false);
 		sType = sType || "GET";
 		bCache = bCache === undefined ? this.bCache : bCache;
-	
+
 		this.fireRequestSent({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 			info : "cache=" + bCache, infoObject: {cache: bCache}});
 		this._ajax({
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		  }
 		});
 	};
-	
+
 	/**
 	 * Sets an XML namespace to use in the binding path
 	 *
@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		this.oNameSpaces[sPrefix] = sNameSpace;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 */
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		var oBinding = new XMLPropertyBinding(this, sPath, oContext, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindList
 	 */
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		var oBinding = new XMLListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindTree
 	 */
@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		var oBinding = new XMLTreeBinding(this, sPath, oContext, aFilters, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
 	 * If the model value changed all interested parties are informed.
@@ -195,12 +195,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	XMLModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/") + 1),
 			sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
-		
+
 		// check if path / context is valid
 		if (!this.resolve(sPath, oContext)) {
 			return false;
 		}
-		
+
 		if (!this.oData.documentElement) {
 			jQuery.sap.log.warning("Trying to set property " + sPath + ", but no document exists.");
 			return false;
@@ -222,9 +222,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 			}
 		}
 		return false;
-		
+
 	};
-	
+
 	/**
 	* Returns the value for the property with the given <code>sPropertyName</code>
 	*
@@ -241,7 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		return oResult;
 	};
-	
+
 	/**
 	* Returns the object for the given <code>path</code>
 	*
@@ -258,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		return oObject;
 	};
-	
+
 	/**
 	 * @param {string} sPath
 	 * @param {object} oContext
@@ -286,10 +286,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 			oNode = oRootNode;
 			iIndex++;
 		}
-		
+
 		oNode = oNode.length == undefined ? [oNode] : oNode;
 		oNode = oNode[0] ? oNode : null;
-				
+
 		while (oNode && oNode.length > 0 && aParts[iIndex]) {
 			sPart = aParts[iIndex];
 			if (sPart.indexOf("@") == 0) {
@@ -305,7 +305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		return oNode;
 	};
-	
+
 	/**
 	 * @param {string} sPath
 	 * @param {object} oContext
@@ -328,7 +328,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 			return oNode.getAttribute(sName);
 		}
 	};
-	
+
 	/**
 	 * @param {object} oNode
 	 * @param {string} sName
@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 	XMLModel.prototype._getChildElementsByTagName = function (oNode, sName) {
 		var aChildNodes = oNode.childNodes,
 			aResult = [];
-	
+
 		if (this.oNameSpaces) {
 			var sNameSpace = this._getNameSpace(sName),
 				sLocalName = this._getLocalName(sName),
@@ -355,10 +355,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 				}
 			});
 		}
-	
+
 		return aResult;
 	};
-	
+
 	/**
 	 * @param {string} sName
 	 * @returns {string}
@@ -371,7 +371,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		return this.oNameSpaces[sPrefix];
 	};
-	
+
 	/**
 	 * @param {string} sName
 	 * @returns {string}
@@ -384,10 +384,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		return sLocalName;
 	};
-	
-	
+
+
 	/**
-	 * @returns {object} 
+	 * @returns {object}
 	 */
 	XMLModel.prototype._getDocNSPrefixes = function () {
 		var oPrefixes = {},
@@ -401,14 +401,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 				value = oAttribute.value;
 			if (name == "xmlns") {
 				oPrefixes[value] = "";
-			}
-			else if (name.indexOf("xmlns") == 0) {
+			} else if (name.indexOf("xmlns") == 0) {
 				oPrefixes[value] = name.substr(6);
 			}
 		});
 		return oPrefixes;
 	};
-	
+
 	/**
 	 * Resolve the path relative to the given context
 	 */
@@ -424,7 +423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './XMLListBindin
 		}
 		return sResolvedPath;
 	};
-	
+
 	XMLModel.prototype.isList = function(sPath, oContext) {
 		return false;
 	};

@@ -9,25 +9,25 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Static initializer. Creates and empty ActionBarRenderer instance.
-	 * 
-	 * @class ActionBar renderer. 
+	 *
+	 * @class ActionBar renderer.
 	 * @static
 	 */
 	var ActionBarRenderer = {
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ActionBarRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-		
+
 		// render ActionBar
 		// result: <div id=​"<id>" data-sap-ui=​"<id>" class=​"sapUiUx3ActionBar" role=​"toolbar">​
 		rm.write("<div");
@@ -38,30 +38,30 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttribute('role', 'toolbar');
 		}
 		rm.write(">");
-		
+
 		// render list for social actions
 		rm.write("<ul");
 		rm.writeAttribute('id', oControl.getId() + "-socialActions");
 		rm.addClass("sapUiUx3ActionBarSocialActions");
 		rm.writeClasses();
-		
+
 		rm.addStyle("min-width", oControl._getSocialActionListMinWidth() + "px");
 		rm.writeStyles();
-		
+
 		rm.write(">");
 		this.renderSocialActions(rm, oControl);
 		rm.write("</ul>");
-		
+
 		// render list for business actions
 		rm.write("<ul  id='" + oControl.getId() + "-businessActions' class='sapUiUx3ActionBarBusinessActions'>");
 		this.renderBusinessActionButtons(rm, oControl);
 		rm.write("</ul>");
-		
+
 		// closing tag for toolbar
 		rm.write("</div>");
-		
+
 	};
-	
+
 	/**
 	 * Renders the HTML for toolbar buttons of business actions
 	 *
@@ -73,10 +73,10 @@ sap.ui.define(['jquery.sap.global'],
 	 *			rendered
 	 */
 	ActionBarRenderer.renderBusinessActionButtons = function(rm, oControl) {
-	
+
 		var actionButtons = oControl._getBusinessActionButtons();
 		var oMoreMenuButton = oControl._getMoreMenuButton();
-		
+
 		if (actionButtons && actionButtons.length > 0) {
 			//Render list for business action buttons
 			//Do not write attribue tabindex in list element because this is
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global'],
 			this._renderMoreMenuButton(rm, oMoreMenuButton);
 		}
 	}
-	
+
 	/**
 	 * Renders "More" menu button if present
 	 *
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */;
 	ActionBarRenderer._renderMoreMenuButton = function (rm, oMoreMenuButton) {
-		
+
 		if (oMoreMenuButton) {
 			rm.write("<li");
 			rm.addClass("sapUiUx3ActionBarItemRight");
@@ -120,9 +120,9 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</li>");
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Renders the HTML for sap.ui.ux3.Actionbar: social actions in a specified order:
 	 * 1. Update (Feed)
@@ -141,11 +141,11 @@ sap.ui.define(['jquery.sap.global'],
 	 *			rendered
 	 */
 	 ActionBarRenderer.renderSocialActions = function(rm, oControl) {
-	
+
 		var mMap = oControl.mActionMap;
 		var mKeys = oControl.mActionKeys;
-		
-		
+
+
 		if (mMap[mKeys.Update]) {
 			this._renderSocialActionListItem(rm, oControl, mMap[mKeys.Update]);
 		}
@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 	 };
-	 
+
 	 /**
 	  * Renders the HTML for sap.ui.ux3.Actionbar: single social action list item
 	  *
@@ -186,7 +186,7 @@ sap.ui.define(['jquery.sap.global'],
 	  *  @private
 	  */
 	  ActionBarRenderer._renderSocialActionListItem = function(rm, oControl, action) {
-		if (action && ! action.hide) {
+		if (action && !action.hide) {
 			rm.write("<li");
 			rm.addClass("sapUiUx3ActionBarItem");
 			rm.writeClasses();
@@ -195,8 +195,8 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</li>");
 		}
 	  };
-	 
-	 
+
+
 	 /**
 	 * Renders the HTML for sap.ui.ux3.Actionbar: single social action
 	 *
@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.addClass("sapUiUx3ActionBarAction");
 		rm.writeClasses();
-		
+
 		if (action.getTooltip()) {
 			rm.writeAttributeEscaped("title", action.getTooltip());
 		}
@@ -237,11 +237,11 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("></a>");
 	 };
-	 
-	
-	 
-	 
-	
+
+
+
+
+
 
 	return ActionBarRenderer;
 

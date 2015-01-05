@@ -747,9 +747,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
 							this.setSelectedItem(oControl);
 						}
-					}
-					// select item if it is an iconTab but not a separator
-					else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
+					} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
+						// select item if it is an iconTab but not a separator
+
 						this.setSelectedItem(oControl);
 					}
 				}

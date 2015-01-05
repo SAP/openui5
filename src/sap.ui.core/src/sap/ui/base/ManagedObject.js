@@ -292,11 +292,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/*
 	 * Returns the Id of the Component in whose context the given ManagedObject has been created.
-	 * 
+	 *
 	 * Might return <code>undefined</code> or <code>null</code> when no owner
-	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor} 
+	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor}
 	 * for detailed constraints.
-	 * 
+	 *
 	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.getOwnerIdFor or sap.ui.core.Component.getOwnerComponentFor instead.
 	 */
 	ManagedObject.getOwnerIdFor = function(oObject) {
@@ -1718,7 +1718,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			//clear elementContext
 			delete this.mElementBindingContexts[sModelName];
 		}
-		
+
 		this.mBoundObjects[sModelName] = boundObject;
 
 		// if the models are already available, create the binding
@@ -1814,7 +1814,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * model. A managed object may flag properties in the metamodel with
 	 * bindable="bindable" to get typed bind methods for a property.
 	 * A composite property binding which may have multiple paths (also known as Calculated Fields) can be declared using the parts parameter.
-	 * Note a composite binding is read only (One Way). 
+	 * Note a composite binding is read only (One Way).
 	 *
 	 * @param {string} sName the name of the property
 	 * @param {object} oBindingInfo the binding information
@@ -1867,8 +1867,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			// find out whether formatter or type has been provided
 			if (typeof oFormat == "function") {
 				fnFormatter = oFormat;
-			}
-			else if (oFormat instanceof Type) {
+			} else if (oFormat instanceof Type) {
 				oType = oFormat;
 			}
 			oBindingInfo = {formatter: fnFormatter, parts : [ {path: sPath, type: oType, mode: sMode} ]};
@@ -2581,7 +2580,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		}
 		return this;
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -2596,7 +2595,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Update the binding context in this object and all aggregated children
 	 * @private
@@ -2625,6 +2624,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oModelNames[sModelName] = sModelName;
 		}
 
+		/*eslint-disable no-loop-func */
 		for (sModelName in oModelNames ) {
 			if ( oModelNames.hasOwnProperty(sModelName) ) {
 				sModelName = sModelName === "undefined" ? undefined : sModelName;
@@ -2687,6 +2687,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				}
 			}
 		}
+		/*eslint-enable no-loop-func */
 	};
 
 
@@ -2708,10 +2709,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	ManagedObject.prototype.getBindingContext = function(sModelName){
 		if (this.mElementBindingContexts[sModelName]) {
 			return this.mElementBindingContexts[sModelName];
-		} 
+		}
 		return this._getBindingContext(sModelName);
 	};
-	
+
 	/**
 	 * Get the binding context of this object for the given model name. The elementBindingContext will not be considered
 	 * @private

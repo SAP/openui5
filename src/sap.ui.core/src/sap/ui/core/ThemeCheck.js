@@ -10,11 +10,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 	"use strict";
 
 
-	
-	
-	
+
+
+
 	sap.ui._maxThemeCheckCycles = 100;
-	
+
 	/**
 	 * Creates a new ThemeCheck object.
 	 *
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 	 * @alias sap.ui.core.ThemeCheck
 	 */
 	var ThemeCheck = BaseObject.extend("sap.ui.core.ThemeCheck", /** @lends sap.ui.core.ThemeCheck.prototype */ {
-	
+
 		constructor : function(oCore) {
 			this._oCore = oCore;
 			this._iCount = 0; // Prevent endless loop
@@ -41,37 +41,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 			this._themeCheckedForCustom = null;
 			this._mAdditionalLibCss = {};
 		},
-	
+
 		getInterface : function() {
 			return this;
 		},
-	
+
 		fireThemeChangedEvent : function(bOnlyOnInitFail, bForceCheck) {
 			clear(this);
 			var bUseThemeCheck = sap.ui._maxThemeCheckCycles > 0; //Possibility to switch off theme check (except of force mode (for Core.applyTheme))
-	
+
 			if (bUseThemeCheck || bForceCheck) {
 				delayedCheckTheme.apply(this, [true]);
 			} else {
 				ThemeCheck.themeLoaded = true;
 			}
-	
+
 			if (!bOnlyOnInitFail && !this._sThemeCheckId) {
 				this._oCore.fireThemeChanged({theme: this._oCore.getConfiguration().getTheme()});
 			}
-	
+
 		}
-	
+
 	});
-	
+
 	ThemeCheck.themeLoaded = false;
-	
+
 	ThemeCheck.checkStyle = function(oStyle, bLog){
 		if (typeof (oStyle) === "string") {
 			oStyle = jQuery.sap.domById(oStyle);
 		}
 		var $Style = jQuery(oStyle);
-	
+
 		try {
 			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.cssRules.length > 0) ||
 							!!(oStyle.styleSheet && oStyle.styleSheet.cssText.length > 0) ||
@@ -83,13 +83,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 			}
 			return res || res2;
 		} catch (e) {}
-	
+
 		if (bLog) {
 			jQuery.sap.log.debug("ThemeCheck: Error during check styles '" + $Style.attr("id") + "': false/false/" + !!oStyle);
 		}
 		return false;
 	};
-	
+
 	function clear(oThemeCheck){
 		ThemeCheck.themeLoaded = false;
 		if (oThemeCheck._sThemeCheckId) {
@@ -99,13 +99,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 			oThemeCheck._mAdditionalLibCss = {};
 		}
 	}
-	
+
 	function checkTheme(oThemeCheck) {
 		var mLibs = oThemeCheck._oCore.getLoadedLibraries();
 		var sThemeName = oThemeCheck._oCore.getConfiguration().getTheme();
 		var sPath = oThemeCheck._oCore._getThemePath("sap.ui.core", sThemeName) + "custom.css";
 		var res = true;
-	
+
 		if (!!oThemeCheck._customCSSAdded && oThemeCheck._themeCheckedForCustom === sThemeName) {
 			// include custom style sheet here because it has already been added using jQuery.sap.includeStyleSheet
 			// hence, needs to be checked for successful inclusion, too
@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 							var sFileName = oHref.filename();
 							if (sSuffix.length > 0) {
 								sSuffix = "." + sSuffix;
-								sFileName = sFileName.slice(0, - sSuffix.length);
+								sFileName = sFileName.slice(0, -sSuffix.length);
 							}
 							// change filename only (to keep URI parameters)
 							oHref.filename(sFileName + "_" + sAdditionalLibSuffix + sSuffix);
@@ -214,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 		}
 		return res;
 	}
-	
+
 	/* checks if a particular class is available at the beginning of the core styles
 	 */
 	function checkCustom (oThemeCheck, lib){
@@ -242,12 +242,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 		}
 		return bSuccess;
 	}
-	
+
 	function delayedCheckTheme(bFirst) {
 		this._iCount++;
-	
+
 		var bEmergencyExit = this._iCount > sap.ui._maxThemeCheckCycles;
-	
+
 		if (!checkTheme(this) && !bEmergencyExit) {
 			this._sThemeCheckId = jQuery.sap.delayedCall(2, this, delayedCheckTheme);
 		} else if (!bFirst) {
@@ -261,9 +261,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 			ThemeCheck.themeLoaded = true;
 		}
 	}
-	
-	
-	
+
+
+
 
 	return ThemeCheck;
 

@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					if (oPart.iDigits == 2 && sYear.length > 2) {
 						sYear = sYear.substr(sYear.length - 2);
 					}
-					// When parsing we assume dates less than 100 to be in the current/last century, 
+					// When parsing we assume dates less than 100 to be in the current/last century,
 					// so when formatting we have to make sure they are differentiable by prefixing with zeros
 					if (oPart.iDigits == 1 && iYear < 100) {
 						sYear = jQuery.sap.padLeft(sYear, "0", 4);
@@ -412,8 +412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 				case "hour1_12":
 					if (iHours > 12) {
 						sHours = String(iHours - 12);
-					}
-					else if (iHours == 0) {
+					} else if (iHours == 0) {
 						sHours = "12";
 					} else {
 						sHours = String(iHours);
@@ -439,8 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					if (oPart.iDigits > 3 && oDate.getTimezoneLong) {
 						aBuffer.push(oDate.getTimezoneLong());
 						break;
-					}
-					else if (oDate.getTimezoneShort) {
+					} else if (oDate.getTimezoneShort) {
 						aBuffer.push(oDate.getTimezoneShort());
 						break;
 					}
@@ -699,8 +697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 				case "weekYear":
 					if (oPart.iDigits == 1) {
 						sPart = findNumbers(4);
-					}
-					else if (oPart.iDigits == 2) {
+					} else if (oPart.iDigits == 2) {
 						sPart = findNumbers(2);
 					} else {
 						sPart = findNumbers(oPart.iDigits);
@@ -799,8 +796,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					if (oValue.indexOf(sAM, iIndex) == iIndex) {
 						bPM = false;
 						iIndex += 2;
-					}
-					else if (oValue.indexOf(sPM, iIndex) == iIndex) {
+					} else if (oValue.indexOf(sPM, iIndex) == iIndex) {
 						bPM = true;
 						iIndex += 2;
 					}
@@ -926,9 +922,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					// handle abc''def correctly
 					if (sPrevChar == "'" && sPrevPrevChar != "'") {
 						bQuoted = false;
-					}
-					// handle 'abc''def' correctly
-					else if (sNextChar == "'") {
+					} else if (sNextChar == "'") {
+						// handle 'abc''def' correctly
+
 						i += 1;
 					} else {
 						//  normal quote 'abcdef'
@@ -950,8 +946,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			} else {
 				if (sCurChar == "'") {
 					bQuoted = true;
-				}
-				else if (this.oStates[sCurChar]) {
+				} else if (this.oStates[sCurChar]) {
 					sNewState = this.oStates[sCurChar];
 					if (sState == sNewState) {
 						oCurrentObject.iDigits++;

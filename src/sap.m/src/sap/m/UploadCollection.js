@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/**
 	 * Constructor for a new UploadCollection.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -231,7 +231,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					status : {type : "string"}
 				}
 			},
-			
+
 			/**
 			 * The event is triggered as soon as the upload request was terminated by the user.
 			 * @since 1.26.2
@@ -341,7 +341,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		return this;
 	};
-	
+
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
@@ -391,7 +391,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		} else {
 			this.aItems = this.getItems();
 		}
-		
+
 
 		oNumberOfAttachmentsLabel = this._getNumberOfAttachmentsLabel(this.aItems.length);
 		if (!this.oHeaderToolbar) {
@@ -562,7 +562,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				sap.m.UploadCollection.prototype._handleDelete(oEvent, that);
 			});
 		}
-		
+
 		if (sStatus === UploadCollection._uploadingStatus && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
 			var sButton = "terminateButton";
 			var oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState);
@@ -923,7 +923,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId, false);
 		} else if (oEvent.target.id.lastIndexOf("cancelButton") > 0) {
 			sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, sSourceId);
-		} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 
+		} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0
 						&& oEvent.target.id.lastIndexOf("ia_iconHL") < 0
 						&& oEvent.target.id.lastIndexOf("deleteButton") < 0
 						&& oEvent.target.id.lastIndexOf("ta_editFileName") < 0)	{
@@ -1043,11 +1043,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}
 			this._oFileUploader.removeAllParameters();
 			this.removeAllParameters();
-			
+
 			this.fireChange(oEvent);
 			this._requestIdValue = this._requestIdValue + 1;
 			sRequestValue = this._requestIdValue.toString();
-			
+
 			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
 				var aHeaderParametersAfter = this.getAggregation("headerParameters");
 			}
@@ -1214,8 +1214,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 						$ProcentUploaded.text(sProcentUploaded);
 						this.aItems[j]._percentUploaded = nPercentUploaded;
 						break;
-					}
-					else if (this.aItems[j]._status === UploadCollection._displayStatus) {
+					} else if (this.aItems[j]._status === UploadCollection._displayStatus) {
 						break;
 					}
 				}
@@ -1335,7 +1334,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/**
 	 * @description Determines the thumbnail of an item.
 	 * @param {string} sThumbnailUrl Url of the thumbnail-image of the UC list item
-	 * @param {string} sFilename Name of the file to determine if there could be a thumbnail 
+	 * @param {string} sFilename Name of the file to determine if there could be a thumbnail
 	 * @returns {string} ThumbnailUrl or icon
 	 * @private
 	 */
@@ -1514,7 +1513,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handle of keyboard activity ESC.
-	 * @param {Object} oEvent ListItem of the keyboard activity ESC 
+	 * @param {Object} oEvent ListItem of the keyboard activity ESC
 	 * @param {Object} oContext Context of the keyboard activity ESC
 	 * @private
 	 */
@@ -1585,7 +1584,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		return sStringOfFilenames.split(/\" "/);
 	};
-	
+
 	/**
 	 * @description Determines if the filename is already in usage.
 	 * @param {string} sFilename inclusive file extension
