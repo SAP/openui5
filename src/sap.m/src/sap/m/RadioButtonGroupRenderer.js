@@ -26,6 +26,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		var iColumns = oRBGroup.getColumns();
 		var bEnabled = oRBGroup.getEnabled();
+		var sControlTextDir = oRBGroup.getTextDirection();
+		var bGlobalTextDir = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (bEnabled) {
 			// check if at least one button is enabled
@@ -61,6 +63,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oRBGroup.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oRBGroup.getTooltip_AsString());
+		}
+
+		// check global rtl config and textDirection property and add "dir" attribute
+		if (!bGlobalTextDir && sControlTextDir != sap.ui.core.TextDirection.Inherit) {
+			rm.writeAttribute("dir", sControlTextDir.toLowerCase());
 		}
 
 		if (bEnabled) {
