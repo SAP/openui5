@@ -66,6 +66,9 @@
 		var oButton2 = new sap.m.Button();
 		var oButton3 = new sap.m.Button();
 
+		// Prerequisite for custom style class support
+		oButton3.addStyleClass("custom-style-class");
+
 		// System under Test
 		var oSegmentedButton = new sap.m.SegmentedButton({
 			buttons : [oButton1, oButton2, oButton3]
@@ -79,6 +82,9 @@
 		ok(oButton1.$().hasClass("sapMSegBBtn"), "Button should be rendered");
 		ok(oButton2.$().hasClass("sapMSegBBtn"), "Button should be rendered");
 		ok(oButton3.$().hasClass("sapMSegBBtn"), "Button should be rendered");
+
+		// Check for CustomStyleClass support
+		ok(oSegmentedButton.getButtons()[2].$().hasClass("custom-style-class"), "Button should have custom style class");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1120,11 +1126,11 @@
 	test('Page up when the last button has the focus', function() {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
 	});
-	
+
 	/* Module ARIA*/
-	
+
 	module('ARIA');
-	
+
 	test("Check aria atributes", function() {
 		// Arrange
 		var oButton1 = new sap.m.Button();
@@ -1144,9 +1150,9 @@
 		strictEqual(oButton1.$().attr("aria-checked"), "true", "Property 'aria-checked' of Button1 should be 'true'");
 		strictEqual(oButton2.$().attr("aria-checked"), "false", "Property 'aria-checked'  of Button2 should be 'false'");
 		strictEqual(oButton3.$().attr("aria-disabled"), "true", "Property 'aria-disabled' of Button3 should be 'true'");
-		
+
 		oButton2.$().trigger("tap");
-		
+
 		strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
 		strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
 
