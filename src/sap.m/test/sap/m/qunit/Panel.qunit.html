@@ -45,6 +45,44 @@
 		oPanel.destroy();
 	});
 
+	QUnit.test("Check that css classes for header and info toolbar are set", function(assert) {
+		var oPanel = new sap.m.Panel({
+			headerToolbar: new sap.m.Toolbar({
+				design: sap.m.ToolbarDesign.Transparent,
+				content: [new sap.m.Label({
+					text: "Panel header"
+				})],
+				height: "50px"
+			}),
+			infoToolbar: new sap.m.Toolbar({
+				design: sap.m.ToolbarDesign.Info,
+				active: true,
+				content: [new sap.m.Label({
+					text: "The quick brown fox jumps over the lazy dog."
+				})],
+				height: "50px"
+			}),
+			content: [new sap.m.Text({
+				text: "This is a Text control"
+			})],
+			expandable: true,
+			expanded: true,
+			expandAnimation: false,
+			width: "200px",
+			height: "300px"
+		});
+
+		oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $panel = oPanel.$();
+		assert.strictEqual($panel.find(".sapMPanelWrappingDivTb").length, 1, "Wrapping div with sapMPanelWrappingDivTb class should be present.");
+		assert.strictEqual($panel.find(".sapMPanelHdrExpandable").length, 1, "Header toolbar should have sapMPanelHdrExpandable class.");
+		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 2, "Info toolbar and content area should have sapMPanelExpandablePart class.");
+
+		oPanel.destroy();
+	});
+
 	QUnit.test("Sizes should be equal to the ones set in the constructor", function(assert) {
 		var oPanel = new sap.m.Panel({
 			headerText: "This is the Panel header",
