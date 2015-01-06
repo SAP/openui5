@@ -1,19 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-<comment>Last Version-Tool Changes</comment>
-<entry key="src/sap.ui.suite/pom.xml">1</entry>
-<entry key="package.json">1</entry>
-<entry key="src/sap.ui.unified/pom.xml">1</entry>
-<entry key="src/sap.ui.demokit/pom.xml">1</entry>
-<entry key="src/sap.ui.layout/pom.xml">1</entry>
-<entry key="src/testsuite/pom.xml">1</entry>
-<entry key="src/themelib_sap_goldreflection/pom.xml">1</entry>
-<entry key="src/sap.ui.core/pom.xml">1</entry>
-<entry key="src/sap.ui.table/pom.xml">1</entry>
-<entry key="pom.xml">2</entry>
-<entry key="src/themelib_sap_bluecrystal/pom.xml">1</entry>
-<entry key="src/sap.m/pom.xml">1</entry>
-<entry key="src/sap.ui.ux3/pom.xml">1</entry>
-<entry key="src/sap.ui.commons/pom.xml">1</entry>
-</properties>
+{
+  "changes": {
+    "default": {
+      "src/sap.ui.suite/pom.xml": "1",
+      "package.json": "1",
+      "src/sap.ui.unified/pom.xml": "1",
+      "src/sap.ui.demokit/pom.xml": "1",
+      "src/sap.ui.layout/pom.xml": "1",
+      "src/testsuite/pom.xml": "1",
+      "src/themelib_sap_goldreflection/pom.xml": "1",
+      "src/sap.ui.core/pom.xml": "1",
+      "src/sap.ui.table/pom.xml": "1",
+      "pom.xml": "2",
+      "src/themelib_sap_bluecrystal/pom.xml": "1",
+      "src/sap.m/pom.xml": "1",
+      "src/sap.ui.ux3/pom.xml": "1",
+      "src/sap.ui.commons/pom.xml": "1"
+    }
+  }
+}
