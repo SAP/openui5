@@ -91,6 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							oConstraints.maxLength = oProperty.maxLength;
 							break;
 
+						case "Edm.Time":
+							sType = 'sap.ui.model.odata.type.Time';
+							break;
+
 						default:
 							// type remains undefined, no mapping is known
 						}

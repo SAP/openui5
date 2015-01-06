@@ -53,6 +53,10 @@
 			name : "sap.ui.model.odata.type.String",
 			constraints : {"maxLength" : 80}
 		},
+		oTime = {
+			name : "sap.ui.model.odata.type.Time",
+			constraints : {"nullable" : false}
+		},
 		oMetaModel = new sap.ui.model.json.JSONModel({
 			"dataServices" : {
 				"schema" : [{
@@ -109,6 +113,10 @@
 							"name" : "_DateTimeOffset",
 							"type" : "Edm.DateTimeOffset",
 							"nullable" : "false"
+						}, {
+							"name" : "_Time",
+							"type" : "Edm.Time",
+							"nullable" : "false"
 						}],
 						"com.sap.vocabularies.UI.v1.DataPoint" : {
 							"Value" : {
@@ -136,6 +144,8 @@
 							"Value" : {"Path" : "_SByte"}
 						}, {
 							"Value" : {"Path" : "_DateTimeOffset"}
+						}, {
+							"Value" : {"Path" : "_Time"}
 						}]
 					}]
 				}]
@@ -347,6 +357,9 @@
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/9/Value",
 		type : oDateTimeOffset
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/10/Value",
+		type : oTime
 	}, {
 		path : "Value",
 		context : oMetaModel.createBindingContext(
