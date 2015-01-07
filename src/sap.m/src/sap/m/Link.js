@@ -187,32 +187,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Link.prototype.setSubtle = function(bSubtle){
 		this.setProperty("subtle", bSubtle, true);
+		
 		var $this = this.$();
-		$this.toggleClass("sapMLnkSubtle", bSubtle);
-		if (bSubtle) {
-			if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
-				$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
-				$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
+		if ($this.length) { // only when actually rendered
+			$this.toggleClass("sapMLnkSubtle", bSubtle);
+			if (bSubtle) {
+				if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
+					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
+					$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
+				}
+			} else {
+				var sDescribedBy = $this.attr("aria-describedby");
+				if (sDescribedBy) {
+					$this.attr("aria-describedby", sDescribedBy.replace(this.getId() + "-linkSubtle", ""));
+				}
+				jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
 			}
-		} else {
-			$this.attr("aria-describedby", $this.attr("aria-describedby").replace(this.getId() + "-linkSubtle", ""));			
-			jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
 		}
 		return this;
 	};
 
 	Link.prototype.setEmphasized = function(bEmphasized){
 		this.setProperty("emphasized", bEmphasized, true);
+		
 		var $this = this.$();
-		$this.toggleClass("sapMLnkEmphasized", bEmphasized);
-		if (bEmphasized) {
-			if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
-				$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
-				$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
+		if ($this.length) { // only when actually rendered
+			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
+			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
+				if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
+					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+					$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
+				}
+			} else {
+				var sDescribedBy = $this.attr("aria-describedby");
+				if (sDescribedBy) {
+					$this.attr("aria-describedby", sDescribedBy.replace(" " + this.getId() + "-linkEmphasized", ""));
+				}
+				jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
 			}
-		} else {
-			$this.attr("aria-describedby", $this.attr("aria-describedby").replace(" " + this.getId() + "-linkEmphasized", ""));
-			jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
 		}
 		return this;
 	};
