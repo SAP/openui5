@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	 * @public
 	 */
 	EdmGuid.prototype.formatValue = function(sValue, sTargetType) {
-		if (sValue == undefined || sValue == null) {
+		if (sValue === undefined || sValue === null) {
 			return null;
 		}
 		if (sTargetType === "string" || sTargetType === "any") {
@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	/**
 	 * Returns the type's name.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 *   the type's name
 	 * @public
 	 */
