@@ -39,8 +39,6 @@ import com.sap.ui5.tools.infra.git2p4.GitClient.Commit;
 import com.sap.ui5.tools.infra.git2p4.Log;
 import com.sap.ui5.tools.infra.git2p4.Version;
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.CommitMsgAnalyzer.CSS;
-import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes.UILibNotes.LibVersion;
-import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes.UILibNotes.LibVersion.ReleaseNote;
 
 /**
  * Command object that implements the "prepare release notes" command.
@@ -193,12 +191,12 @@ public class ReleaseNotes {
   private void processCommit(LibVersion uiLibVersion, GitClient.Commit commit) {
     Log.println("Process commit:" + commit.getId());
     CommitMsgAnalyzer msg = new CommitMsgAnalyzer(commit.getOriginalCommit());
-    ReleaseNote releaseNote = uiLibVersion.new ReleaseNote();
+    ReleaseNote releaseNote = new ReleaseNote();
     releaseNote.type = msg.getType();
     releaseNote.text = msg.getText();
     releaseNote.author = commit.getOriginalCommit().getAuthor();
     releaseNote.id = commit.getOriginalCommit().getId();
-    releaseNote.csses = msg.getCSSes(); 
+    releaseNote.references = msg.getReferences(); 
     uiLibVersion.notes.add(releaseNote);
   }
 
@@ -476,20 +474,28 @@ public class ReleaseNotes {
   private Version version;
   private File notesFile;
   
-  class UILibNotes {
-    class LibVersion {
-        class ReleaseNote {
-          String id;
-          String author;
-          String type;
-          String text;
-          List<CSS> csses;
-        }
-        String version;
-        String date;
-        List<ReleaseNote> notes = new ArrayList<ReleaseNotes.UILibNotes.LibVersion.ReleaseNote>();
-      }
-    Map<String, LibVersion> versions = new HashMap<String, ReleaseNotes.UILibNotes.LibVersion>();
+  static class NoteRef{
+    String type;
+    String reference;
+    public NoteRef(String type, String reference) {
+      this.type = type;
+      this.reference = reference;
+    }
+  }
+  static class ReleaseNote {
+    String id;
+    String author;
+    String type;
+    String text;
+    List<NoteRef> references;
+  }
+  static class LibVersion {
+    String version;
+    String date;
+    List<ReleaseNote> notes = new ArrayList<ReleaseNote>();
+  }
+  static class UILibNotes {
+    Map<String, LibVersion> versions = new HashMap<String, LibVersion>();
     public LibVersion getLibVersion(Version version) {
       LibVersion libVersion = versions.get(version.toString());
       if (libVersion == null) {

@@ -10,15 +10,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.sap.ui5.tools.infra.git2p4.GitClient.Commit;
+import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes.NoteRef;
 
 class CommitMsgAnalyzer {
   
+  private static final String BCP_REFTYPE = "BCP";
+  private static final String GITHUB_REFTYPE = "GitHub";
   private static final Pattern FOOTER = Pattern.compile("^([a-zA-Z][a-zA-Z0-9_-]*)\\s*:\\s*(.*)$");
   private static final Pattern CSN_PREFIX = Pattern.compile("(?:CSN|CSS|OSS)[:\\s]+([- 0-9]+[0-9])(?:[-:\\s(]+|$)");
   private static final Pattern CSS_ID_MONOLITHIC = Pattern.compile("([0-9]{10})([0-9]{10})([0-9]{4})");
   private static final Pattern CSS_ID_SEPARATED = Pattern.compile("(?:([0-9]{1,10})\\s+)?([0-9]{1,10})(?:\\s+([0-9]{4}))?");
   private static final Pattern INTERNAL = Pattern.compile("\\[\\s*INTERNAL\\s*\\]", Pattern.CASE_INSENSITIVE);
   private static final Pattern TYPE_TEXT = Pattern.compile(".*\\[(.+)\\][ ]*(.+)[\"]*");
+  private static final Pattern GITHUB_REF = Pattern.compile("github.com/SAP/openui5/issues/([0-9]+)");
+  
   public static class CSS {
     
     public final String csinsta;
@@ -71,6 +76,7 @@ class CommitMsgAnalyzer {
   private List<CSS> csses = new ArrayList<CSS>();
   private String type;
   private String text;
+  private List<NoteRef> noteRefs = new ArrayList<NoteRef>();
   
   CommitMsgAnalyzer(Commit commit) {
     _analyzeMessage(commit.getMessageLines());
@@ -100,6 +106,15 @@ class CommitMsgAnalyzer {
       addFooter("CSS", m.group(1));
     }
     summary = m.reset().replaceAll("");
+    
+    for (CSS css: csses){
+      noteRefs.add(new NoteRef(BCP_REFTYPE, css.mnumm));
+    }
+    
+    m = GITHUB_REF.matcher(summary);
+    while ( m.find() ) {
+      noteRefs.add(new NoteRef(GITHUB_REFTYPE, m.group(1)));
+    }
 
     m = TYPE_TEXT.matcher(summary);
     if(m.find()){
@@ -184,6 +199,11 @@ class CommitMsgAnalyzer {
 
   public List<CSS> getCSSes() {
     return csses; 
+  }
+  
+  public List<NoteRef> getReferences(){
+    return noteRefs;
+    
   }
 
 }
