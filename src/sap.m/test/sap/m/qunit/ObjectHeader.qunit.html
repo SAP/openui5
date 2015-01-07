@@ -217,11 +217,7 @@
 	test("NumberRendered", function() {
 
 		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
-	});
-
-	test("NumberUnitRendered", function() {
-
-		notEqual(jQuery.sap.domById(ohBasicId + "-numberUnit"), null, "Number Unit should be rendered.");
+		ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	test("AttributesRendered", function() {
@@ -280,7 +276,7 @@
 	test("NumberStateColorRendered", function() {
 
 		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
-		ok(jQuery("#ohBasic .sapMOHNumberStateSuccess").length, "Number color uses value state success color.");
+		ok(jQuery("#" + ohBasicId + "-number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
 	asyncTest("Placeholders for invisible attributes", function() {
@@ -426,11 +422,7 @@
 	test("NumberRendered", function() {
 
 		notEqual(jQuery.sap.domById(ohCondensedId + "-number"), null, "Number should be rendered.");
-	});
-
-	test("NumberUnitRendered", function() {
-
-		notEqual(jQuery.sap.domById(ohCondensedId + "-numberUnit"), null, "Number Unit should be rendered.");
+		ok(jQuery("#" + ohCondensedId + "-number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
 	test("Background is transparent", function() {
@@ -454,7 +446,8 @@
 		equal(jQuery("#" + ohBasicId + ".sapMOHBgSolid").length, 0, "Solid background style should not be set.");
 		equal(jQuery.sap.byId(ohBasicId).css("background-color"), transparentCssString, "Background color is transparent");
 	});
-
+	
+	
 	/******************************************************************/
 
 	module("Internal API");
@@ -768,6 +761,41 @@
 		}, 100);
 
 	});
+	
+	/******************************************************************/
+	module("OH Screen Reader support");
+	
+	test("OH has aria-labelledby", function(){
+		ok(jQuery("#" + ohBasicId).attr("aria-labelledby"), "OH has attribute aria-labelledby");
+	});
+	
+	test("OH has attribute role=region", function(){
+		ok(jQuery("#" + ohBasicId).attr("role"), "OH has attribute role");
+		equal(jQuery("#" + ohBasicId).attr("role"), "region", "role is region");
+	});
+	
+	test("OH Condensed has aria-labelledby", function(){
+		ok(jQuery("#" + ohCondensedId).attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
+	});
+	
+	test("OH Condensed has attribute role=region", function(){
+		ok(jQuery("#" + ohCondensedId).attr("role"), "OH condensed has attribute role");
+		equal(jQuery("#" + ohCondensedId).attr("role"), "region", "role is region");
+	});
+	
+	test("Active title has aria attributes", function(){
+		ok(jQuery("#" + oheId+"-title").attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
+		equal(jQuery("#" + oheId+"-title").attr("role"), "link", "ActiveTitle has role=link");
+	});
+	
+	test("Title arrow has aria-haspopup", function(){ 
+		ok(jQuery(".sapMOHTitleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
+	});
+	
+	test("Active icon has aria attributes", function(){ 
+		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
+		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
+	});
 
 	/******************************************************************/
 
@@ -843,6 +871,9 @@
 		// cleanup
 		oObjectHeader.destroy();
 	});
+	
+	
+	
 </script>
 </head>
 
