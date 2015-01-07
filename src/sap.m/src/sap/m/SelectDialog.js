@@ -328,7 +328,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		// selections
 		this._oSelectedItem = null;
 		this._aSelectedItems = null;
-		this._aInitiallySelectedItems = null;
 
 		// compatibility
 		this._list = null;
@@ -408,7 +407,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._updateSelectionIndicator();
 
 		// store the current selection for the cancel event
-		this._aInitiallySelectedItems = this._oList.getSelectedItems();
+		this._aInitiallySelectedContextPaths = this._oList.getSelectedContextPaths();
 
 		// return Dialog for chaining purposes
 		return this;
@@ -998,23 +997,18 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @private
 	 */
 	SelectDialog.prototype._resetSelection = function () {
-		var i = 0;
-
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.bIsDestroyed) {
-			this._oList.removeSelections();
-			for (; i < this._aInitiallySelectedItems.length; i++) {
-				this._oList.setSelectedItem(this._aInitiallySelectedItems[i]);
-			}
+			// force-remove the current selection from the list
+			this._oList.removeSelections(true);
+			// reset the selection to the selected context paths stored in the open method
+			this._oList.setSelectedContextPaths(this._aInitiallySelectedContextPaths);
 		}
 	};
-
-
 
 	/* =========================================================== */
 	/*           end: internal methods                             */
 	/* =========================================================== */
-
 
 	return SelectDialog;
 

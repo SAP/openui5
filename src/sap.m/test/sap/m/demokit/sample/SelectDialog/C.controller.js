@@ -15,6 +15,7 @@ sap.ui.controller("sap.m.sample.SelectDialog.C", {
 	handleSelectDialogPress: function (oEvent) {
 		if (! this._oDialog) {
 			this._oDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.Dialog", this);
+			this._oDialog.setModel(this.getView().getModel());
 		}
 
 		// Multi-select if required
@@ -25,7 +26,9 @@ sap.ui.controller("sap.m.sample.SelectDialog.C", {
 		var bRemember = !!oEvent.getSource().data("remember");
 		this._oDialog.setRememberSelections(bRemember);
 
-		this._oDialog.setModel(this.getView().getModel());
+		// clear the old search filter
+		this._oDialog.getBinding("items").filter([]);
+
 		// toggle compact style
 		jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
 		this._oDialog.open();
