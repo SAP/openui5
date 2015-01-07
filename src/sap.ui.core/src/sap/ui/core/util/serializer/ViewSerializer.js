@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HTMLViewSeri
 	
 				// double check that the function is on the controller
 				var oController = oView.getController();
-				if (oController[sHandlerName]) {
+				if (oController[sHandlerName] || sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
 					return sHandlerName;
 				}
 			}

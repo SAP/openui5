@@ -1,0 +1,15 @@
+<core:View
+	controllerName="example.designmode.test01"
+	xmlns="sap.ui.commons"
+	xmlns:core="sap.ui.core"
+	xmlns:commons="sap.ui.commons"
+	xmlns:layout="sap.ui.commons.layout"
+	xmlns:mvc="sap.ui.core.mvc" >
+
+	<Button
+		id="button"
+		text="Save"
+		press="onPress">
+	</Button>
+
+</core:View>
