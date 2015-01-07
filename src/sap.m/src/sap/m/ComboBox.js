@@ -73,17 +73,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
 
-		/**
-		 * Get the selected item in the List.
-		 *
-		 * @returns {sap.m.StandardListItem | null}
-		 * @private
-		 */
-		ComboBox.prototype._getSelectedListItem = function() {
-			var oItem = this.getSelectedItem();
-			return (oItem && oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem")) || null;
-		};
-
 		function fnHandleKeyboardNavigation(oItem) {
 			var oDomRef = this.getFocusDomRef(),
 				iSelectionStart = oDomRef.selectionStart,
@@ -102,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// the attribute aria-activedescendant is set when the List is rendered,
 				// allowing screen readers to read the content within the edit input field as intended
 				if (oDomRef && oListDomRef && oItem && this.isOpen()) {
-					oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+					oDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
 				}
 
 				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
@@ -258,8 +247,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.oninput = function(oEvent) {
 			ComboBoxBase.prototype.oninput.apply(this, arguments);
 
-			var CSS_CLASS = sap.m.ComboBoxBaseRenderer.CSS_CLASS,
-				oSelectedItem = this.getSelectedItem(),
+			var oSelectedItem = this.getSelectedItem(),
 				aItems = this.getItems(),
 				oInputDomRef = oEvent.target,
 				sValue = oInputDomRef.value,
@@ -275,7 +263,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// the item match with the value
 				oItem = aItems[i];
 				bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
-				oListItem = oItem.data(CSS_CLASS + "ListItem");
+				oListItem = this.getListItem(oItem);
 
 				if (sValue === "") {
 					bMatch = true;
@@ -306,7 +294,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 						// the attribute aria-activedescendant is set when the List is rendered,
 						// allowing screen readers to read the content within the edit input field as intended
 						if (this.getList().isActive() && oItem) {
-							oInputDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+							oInputDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
 						}
 					}
 
@@ -748,7 +736,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// update the selection in the List
 			if (!mOptions.listItemUpdated) {
 
-				oListItem = this._getSelectedListItem();
+				oListItem = this.getListItem(this.getSelectedItem());
 
 				if (oListItem) {
 
@@ -757,7 +745,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				} else if (this.getList()) {
 
 					if (this.getDefaultSelectedItem()) {
-						this.getList().setSelectedItem(this.getDefaultSelectedItem().data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"), true);
+						this.getList().setSelectedItem(this.getListItem(this.getDefaultSelectedItem()), true);
 					} else if (this.getList().getSelectedItem()) {
 
 						this.getList().setSelectedItem(this.getList().getSelectedItem(), false);
@@ -946,7 +934,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				oDomRef.setAttribute("aria-expanded", "true");
 
 				// note: the "aria-activedescendant" attribute is set when the currently active descendant is visible and in view
-				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+				oItem && oDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
 			}
 		};
 
