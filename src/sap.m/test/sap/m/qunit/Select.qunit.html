@@ -100,6 +100,8 @@
 				ok(oSelect.getSelectedItem() === oSelect.getFirstItem(), "By default the selected items of the Select control is the first item");
 				strictEqual(oSelect.getSelectedItemId(), "item-id", "By default the selected items id of the Select control is the id of the first item");
 				strictEqual(oSelect.getSelectedKey(), "0", "By default the selected key of the Select control is the key property of the first item");
+				strictEqual(oSelect.getTextAlign(), sap.ui.core.TextAlign.Initial, "By default textAlign is set to Initial");
+				strictEqual(oSelect.getTextDirection(), sap.ui.core.TextDirection.Inherit, "By default textDirection is set to Inherit");
 
 				// cleanup
 				oSelect.destroy();
@@ -328,6 +330,50 @@
 			});
 
 			/* ------------------------------ */
+			/* getTextDirection()             */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.Select({
+					textDirection: sap.ui.core.TextDirection.RTL
+				}),
+				property: "textDirection",
+				output: "RTL",
+				description: "Text direction is RTL"
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.Select({
+					textDirection: sap.ui.core.TextDirection.LTR
+				}),
+				property: "textDirection",
+				output: "LTR",
+				description: "Text direction is LTR"
+			});
+
+			/* ------------------------------ */
+			/* getTextAlign()                 */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.Select({
+					textAlign: sap.ui.core.TextAlign.Left
+				}),
+				property: "textAlign",
+				output: "Left",
+				description: "Text align is left"
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.Select({
+					textAlign: sap.ui.core.TextAlign.Right
+				}),
+				property: "textAlign",
+				output: "Right",
+				description: "Text align is right"
+			});
+
+			/* ------------------------------ */
 			/* getSelectedItem()              */
 			/* ------------------------------ */
 
@@ -343,7 +389,7 @@
 							text: "item 0"
 						})
 					],
-	
+
 					selectedItem: oExpectedItem
 				});
 
@@ -783,7 +829,7 @@
 			});
 
 			test("getSelectedItemId()", function() {
-	
+
 				// system under test
 				var oExpectedItem;
 				var oSelect = new sap.m.Select({
@@ -1784,7 +1830,7 @@
 			/* ------------------------------ */
 
 			test("insertItem()", function() {
-	
+
 				// system under test
 				var oSelect = new sap.m.Select();
 
@@ -1813,7 +1859,7 @@
 			/* ------------------------------ */
 			/* setSelectedItem()              */
 			/* ------------------------------ */
-	
+
 			test("setSelectedItem() should give a warning when called with faulty parameter", function() {
 
 				// system under test
@@ -2582,7 +2628,7 @@
 			/* ------------------------------ */
 
 			test("removeItem() called with faulty parameter", function() {
-	
+
 				// system under test
 				var oSelect = new sap.m.Select();
 
@@ -3978,7 +4024,7 @@
 			/* ------------------------------------ */
 
 			test("addAggregation() + getAggregation()", function() {
-	
+
 				// system under test
 				var oSelect = new sap.m.Select();
 				var oItem = new sap.ui.core.Item({
@@ -4343,7 +4389,7 @@
 			/* ------------------------------------ */
 
 			test("insertAggregation()", function() {
-	
+
 				// system under test
 				var oSelect = new sap.m.Select();
 				var oItem = new sap.ui.core.Item({
@@ -4881,12 +4927,12 @@
 							key: "34",
 							text: "item 34"
 						}),
-	
+
 						new sap.ui.core.Item({
 							key: "35",
 							text: "item 35"
 						}),
-	
+
 						new sap.ui.core.Item({
 							key: "36",
 							text: "item 36"
@@ -5288,7 +5334,7 @@
 			/* ------------------------------ */
 			/* onkeypress                     */
 			/* ------------------------------ */
-	
+
 			var fnKeypressTestCase = function(mOptions) {
 				test("onkeypress", function() {
 
@@ -6649,6 +6695,129 @@
 				// cleanup
 				oSelect.destroy();
 			});
+
+			/* =========================================================== */
+			/* Text direction module                                       */
+			/* =========================================================== */
+
+			module("Text direction");
+
+			test("textDirection set to RTL", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							text: "(+359) 111 222 333"
+						}),
+						new sap.ui.core.Item({
+							text: "20/06/1983 11:30"
+						})
+					],
+					textDirection: sap.ui.core.TextDirection.RTL
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSelect.$("label").attr("dir"), "rtl", "Dir attribute is rendered and is set to 'rtl'");
+
+				// cleanup
+				oSelect.destroy();
+
+			});
+
+			test("textDirection set to LTR", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							text: "(+359) 111 222 333"
+						}),
+						new sap.ui.core.Item({
+							text: "20/06/1983 11:30"
+						})
+					],
+					textDirection: sap.ui.core.TextDirection.LTR
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSelect.$("label").attr("dir"), "ltr", "Dir attribute is rendered and is set to 'ltr'");
+
+				// cleanup
+				oSelect.destroy();
+
+			});
+
+			test("textDirection set to RTL and textAlign set to BEGIN", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							text: "(+359) 111 222 333"
+						}),
+						new sap.ui.core.Item({
+							text: "20/06/1983 11:30"
+						})
+					],
+					textDirection: sap.ui.core.TextDirection.RTL,
+					textAlign: sap.ui.core.TextAlign.Begin
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				var $SelectLabel = oSelect.$("label");
+
+				strictEqual($SelectLabel.attr("dir"), "rtl", "Dir attribute is rendered and is set to 'rtl'");
+				strictEqual($SelectLabel.css("text-align"), "right", "Text align style is shifted to right");
+
+				// cleanup
+				oSelect.destroy();
+
+			});
+
+			test("textDirection set to LTR and textAlign set to END", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							text: "(+359) 111 222 333"
+						}),
+						new sap.ui.core.Item({
+							text: "20/06/1983 11:30"
+						})
+					],
+					textDirection: sap.ui.core.TextDirection.LTR,
+					textAlign: sap.ui.core.TextAlign.End
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				var $SelectLabel = oSelect.$("label");
+
+				strictEqual($SelectLabel.attr("dir"), "ltr", "Dir attribute is rendered and is set to 'ltr'");
+				strictEqual($SelectLabel.css("text-align"), "right", "Text align style is shifted to right");
+
+				// cleanup
+				oSelect.destroy();
+
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

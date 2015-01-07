@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, Renderer, ValueStateSupport) {
 		"use strict";
 
 		/**
@@ -100,11 +100,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		 * @private
 		 */
 		SelectRenderer.renderLabel = function(oRm, oSelect) {
-			var oSelectedItem = oSelect.getSelectedItem();
+			var oSelectedItem = oSelect.getSelectedItem(),
+				sTextDir = oSelect.getTextDirection(),
+				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir);
 
 			oRm.write('<label class="' + SelectRenderer.CSS_CLASS + 'Label"');
 			oRm.writeAttribute("id", oSelect.getId() + "-label");
 			oRm.writeAttribute("for", oSelect.getId());
+
+			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+			}
+
+			if (sTextAlign) {
+				oRm.addStyle("text-align", sTextAlign);
+			}
+
+			oRm.writeStyles();
+
 			oRm.write(">");
 			oRm.writeEscaped(oSelectedItem ? oSelectedItem.getText() : "");
 			oRm.write('</label>');

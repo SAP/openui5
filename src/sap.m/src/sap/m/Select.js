@@ -79,7 +79,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				 * If set to true, the width of the select input is determined by the selected item’s content.
 				 * @since 1.16
 				 */
-				autoAdjustWidth: { type: "boolean", group: "Appearance", defaultValue: false }
+				autoAdjustWidth: { type: "boolean", group: "Appearance", defaultValue: false },
+
+				/**
+				 * Sets the horizontal alignment of the text within the input field.
+				 * @since 1.28
+				 */
+				textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: sap.ui.core.TextAlign.Initial },
+
+				/**
+				 * Specifies the direction of the text within the input field with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28
+				 */
+				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit }
 			},
 			defaultAggregation : "items",
 			aggregations: {
@@ -551,6 +563,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._onBeforeOpenDialog = function() {
 			var oHeader = this.getPicker().getCustomHeader();
 			oHeader.getContentLeft()[0].setValue(this.getSelectedItem().getText());
+			oHeader.getContentLeft()[0].setTextDirection(this.getTextDirection());
+			oHeader.getContentLeft()[0].setTextAlign(this.getTextAlign());
 		};
 
 		/* =========================================================== */
@@ -1605,6 +1619,32 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// and "selectedItemId" property need to be updated in onBeforeRendering()
 			return this.setProperty("selectedKey", sKey);	// update "selectedKey" property, re-rendering is needed
 		};
+
+		/**
+		 * Setter for property <code>textAlign</code>.
+		 *
+		 * Default value is an sap.ui.core.TextAlign.Initial <code>"Initial"</code>.
+		 * If the provided <code>sValue</code> has a default value,
+		 * the browser default is used.
+		 *
+		 * @param {sap.ui.core.TextAlign} sValue New value for property <code>textAlign</code>.
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @public
+		 * @since 1.28
+		 */
+
+		/**
+		 * Setter for property <code>textDirection</code>.
+		 *
+		 * Default value is an sap.ui.core.TextDirection.Inherit <code>"Inherit"</code>.
+		 * If the provided <code>sValue</code> has a default value,
+		 * the inherited direction from the DOM is used.
+		 *
+		 * @param {sap.ui.core.TextDirection} sValue New value for property <code>textDirection</code>.
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @public
+		 * @since 1.28
+		 */
 
 		/**
 		 * Retrieves the item from the aggregation named <code>items</code> at the given 0-based index.
