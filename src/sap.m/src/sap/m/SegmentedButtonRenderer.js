@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * Segmented renderer. 
+	 * Segmented renderer.
 	 * @namespace
 	 */
 	var SegmentedButtonRenderer = {
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
@@ -42,22 +42,27 @@ sap.ui.define(['jquery.sap.global'],
 		if (sTooltip) {
 			oRM.writeAttributeEscaped("title", sTooltip);
 		}
-		
+
 		// ARIA
 		oRM.writeAccessibilityState(oControl, {
 			role : "radiogroup"
 		});
-		
+
 		oRM.write(">");
 
 		for (; i < aButtons.length; i++) {
 			oButton = aButtons[i];
 
 			// instead of the button API we render a li element but with the id of the button
-			// only the button properties enabled, width, icon, text, and tooltip are evaluated here 
+			// only the button properties enabled, width, icon, text, and tooltip are evaluated here
 			oRM.write("<li");
 			oRM.writeControlData(oButton);
 			oRM.addClass("sapMSegBBtn");
+			if (oButton.aCustomStyleClasses !== undefined && oButton.aCustomStyleClasses instanceof Array) {
+				for (var j = 0; j < oButton.aCustomStyleClasses.length; j++) {
+					oRM.addClass(oButton.aCustomStyleClasses[j]);
+				}
+			}
 			if (oButton.getEnabled()) {
 				oRM.addClass("sapMSegBBtnFocusable");
 			} else {
@@ -86,7 +91,7 @@ sap.ui.define(['jquery.sap.global'],
 				role : "radio",
 				checked : sSelectedButton === oButton.getId()
 			});
-			
+
 			oRM.write('>');
 
 			// render icon
