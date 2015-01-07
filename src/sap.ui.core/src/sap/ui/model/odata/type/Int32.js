@@ -40,7 +40,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	/**
 	 * Returns the type's name.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 *   the type's name
 	 * @public
 	 */
