@@ -9,7 +9,7 @@
 				<core:Icon src="sap-icon://email" />
 			</template:if>
 		</template:with>
-		<template:if test="{path: 'meta>Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isSemanticsTel'}" >
+		<template:if test="{=sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.getAnnotation({meta>Value}, 'sap:semantics') === 'tel'}" >
 			<core:Icon src="sap-icon://phone" />
 		</template:if>
 		<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />

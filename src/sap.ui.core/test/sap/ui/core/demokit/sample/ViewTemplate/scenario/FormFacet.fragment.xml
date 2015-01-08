@@ -31,7 +31,7 @@
 								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
 							</template:repeat>
 						</template:else>
-			</template:if>
+					</template:if>
 				</template:else>
 			</template:if>
 		</template:with>

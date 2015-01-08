@@ -22,6 +22,8 @@
 <script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
 
 	jQuery.sap.require("sap.ui.model.odata.Filter");
@@ -175,6 +177,7 @@
 		o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
 		ok(o.bindingString, "binding String should exist in binding info object");
 		equal(o.bindingString, "Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix", "bindingString stored correctly");	
+		sap.ui.base.BindingParser._keepBindingStrings = false;
 	});
 	
 	test("Escaping", function(){
@@ -207,7 +210,84 @@
 		var o = parse("{path:'something', type: '.myInstancedType'}", oController);
 		ok(o.type instanceof sap.ui.model.type.Date, "parse should return the controller type");
 	});
-	
+
+
+	jQuery.each([{
+			expression: "{={birthday/day} > 10 && {birthday/month} > 0 && {birthday/month} < 4}",
+			parts: [{path: 'birthday/day'}, {path: 'birthday/month'}, {path: 'birthday/month'}]
+		}, {
+			expression: "{={path:'birthday/day',model:'special}Name'} > 10}",
+			parts: [{path: 'birthday/day', model:'special}Name'}]
+		}], function(iIndex, oFixture) {
+
+		test("Expression binding: " + oFixture.expression , sinon.test(function () {
+			var oBindingInfo,
+				oParseResult = {
+					result: {
+						formatter: function () {/*empty*/},
+						parts: oFixture.parts
+					},
+					at: oFixture.expression.length - 1
+				};
+
+			this.stub(sap.ui.base.ExpressionParser, "parse", function () {
+				return oParseResult;
+			});
+
+			oBindingInfo = parse(oFixture.expression);
+
+			strictEqual(typeof sap.ui.base.ExpressionParser.parse.args[0][0], "function");
+			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][1], oFixture.expression);
+			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][2], 2);
+			deepEqual(oBindingInfo, {formatter: oParseResult.result.formatter,
+					parts: oFixture.parts
+				},
+				"binding info in success case");
+		}));
+	});
+
+	test("} in complex binding property value", function() {
+		var o = parse("{path:'birthday/day',model:'special}Name'}");
+		strictEqual(typeof o, "object", "parse returns an object");
+		strictEqual(o.path, "birthday/day");
+		strictEqual(o.model, "special}Name");
+	});
+
+	test("Expression binding: error handling", sinon.test(function () {
+		var sInvalidCompositeBinding = "prefix{={birthday/day} > 10}",
+			sMsg;
+
+		this.stub(sap.ui.base.ExpressionParser, "parse", function (fnResolveBinding, sInput) {
+			if (sInput === "{=invalid}") {
+				throw new Error("error message");
+			}
+			else if (sInput === "{='foo',}") {
+				return {at: sInput.length - 2};
+			}
+			return {at: sInput.length - 1};
+		});
+
+		throws(function() {
+			parse("{=invalid}");
+		}, /error message/, "propagate ExpressionParser exception");
+
+		sMsg = "Expression not allowed in composite binding: " + sInvalidCompositeBinding;
+		throws(function() {
+			parse(sInvalidCompositeBinding);
+		}, new RegExp(jQuery.sap.escapeRegExp(sMsg)), "composite binding not supported: " + sMsg);
+
+		sMsg = "Expected '}' and instead saw ',' in expression binding {='foo',} at position 7";
+		throws(function() {
+			parse("{='foo',}");
+		}, new RegExp(jQuery.sap.escapeRegExp(sMsg)), "expression binding must end with }");
+
+		//TODO support enhanced notation / complex binding {expression:'bla', formatter: ...}
+		//TODO check existing parts overwrite including console error {parts:[], expression:...}
+		//TODO check chaining of existing formatter function {expression:..., formatter: ...}
+
+		//TODO Add expression binding integration test to \git\sapui5.runtime\src\test\_databinding
+
+	}));
 	</script>
 
 </head>
