@@ -168,7 +168,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			 * Focus is set to the popover in the sequence of leftButton and rightButton when available. But if some other control neends to get the focus other than one of those two buttons, set the initialFocus with the control which should be focused on.
 			 * @since 1.15.0
 			 */
-			initialFocus : {type : "sap.ui.core.Control", multiple : false}
+			initialFocus : {type : "sap.ui.core.Control", multiple : false},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 		},
 		events : {
 	
