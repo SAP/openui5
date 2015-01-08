@@ -79,14 +79,51 @@
 			oLink1.setEmphasized(true);
 			sap.ui.getCore().applyChanges();
 			ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
+			oLink1.destroy();
+		});
+
+		test("Non-rendered Subtle values", function() {
+			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
+			expect(0);
+			var oLinkNRS = new sap.m.Link({subtle: false});
+			oLinkNRS.setSubtle(true);
+			oLinkNRS.setSubtle(false);
+			oLinkNRS.destroy();
+		});
+		
+		test("Non-rendered Emphasized values", function() {
+			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
+			expect(0);
+			var oLinkNRE = new sap.m.Link({emphasized: false});
+			oLinkNRE.setEmphasized(true);
+			oLinkNRE.setEmphasized(false);
+			oLinkNRE.destroy();
+		});
+		
+		test("Rendered initial Subtle values", function() {
+			expect(1);
+			var oLinkRIS = new sap.m.Link({subtle: true});
+			oLinkRIS.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+			ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
+			oLinkRIS.destroy();
+		});
+		
+		test("Rendered initial Emphasized values", function() {
+			expect(1);
+			var oLinkRIE = new sap.m.Link({emphasized: true});
+			oLinkRIE.placeAt("uiArea1");
+			sap.ui.getCore().applyChanges();
+			ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
+			oLinkRIE.destroy();
 		});
 
 		test("Link should be shrinkable", function() {
-			var oLink = new sap.m.Link;
+			var oLink = new sap.m.Link();
 			ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
 			oLink.destroy();
-			oLink1.destroy();
 		});
+
 
 		// ARIA specific tests
 		test("ARIA specific test", function() {
