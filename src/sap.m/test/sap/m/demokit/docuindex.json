@@ -310,7 +310,7 @@
 				"name" : "Label",
 				"category" : "Display",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.Label" ]
+				"samples" : [ "sap.m.sample.Label", "sap.ui.layout.sample.Form354", "sap.ui.layout.sample.SimpleForm354" ]
 			},
 			{
 				"id" : "sap.m.Link",
