@@ -78,21 +78,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
 				bIsTextSelected = iSelectionStart !== iSelectionEnd,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
-				oListDomRef;
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
 
 			if (oItem) {
-				oListDomRef = this.getList().getDomRef();
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: oItem });
 				oItem = this.getSelectedItem();
-
-				// the attribute aria-activedescendant is set when the List is rendered,
-				// allowing screen readers to read the content within the edit input field as intended
-				if (oDomRef && oListDomRef && oItem && this.isOpen()) {
-					oDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
-				}
 
 				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
 					iSelectionStart = 0;
@@ -288,14 +280,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 					if (oSelectedItem !== this.getSelectedItem()) {
 						this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-
-						oItem = this.getSelectedItem();
-
-						// the attribute aria-activedescendant is set when the List is rendered,
-						// allowing screen readers to read the content within the edit input field as intended
-						if (this.getList().isActive() && oItem) {
-							oInputDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
-						}
 					}
 
 					if (this._bDoTypeAhead) {
@@ -311,9 +295,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 				if (oSelectedItem !== this.getSelectedItem()) {
 					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-
-					// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
-					oInputDomRef.removeAttribute("aria-activedescendant");
 				}
 			}
 
@@ -724,7 +705,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.setSelection = function(vItem, mOptions) {
-			var oListItem;
+			var oListItem,
+				oDomRef,
+				sActivedescendant = "aria-activedescendant";
+
 			mOptions = mOptions || {};
 
 			// update and synchronize "selectedItem" association,
@@ -733,10 +717,21 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", mOptions.suppressInvalidate);
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", mOptions.suppressInvalidate);
 
+			oListItem = this.getListItem(vItem);
+			oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+
+				// the aria-activedescendant attribute is set when the list is rendered
+				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen()) {
+					oDomRef.setAttribute(sActivedescendant, oListItem.getId());
+				} else {
+					oDomRef.removeAttribute(sActivedescendant);
+				}
+			}
+
 			// update the selection in the List
 			if (!mOptions.listItemUpdated) {
-
-				oListItem = this.getListItem(this.getSelectedItem());
 
 				if (oListItem) {
 
