@@ -818,7 +818,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				if (!this.touchEnabled && !this._sTimeoutId) {
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
-					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, "close", [iDuration, "autocloseBlur"]);
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
+						this.close(iDuration, "autocloseBlur");
+						var oOf = this._oLastPosition && this._oLastPosition.of;
+						if (oOf) {
+							var sParentPopupId = this.getParentPopupId(oOf);
+							if (sParentPopupId) {
+								// Also inform the parent popup that the focus is lost from the child popup
+								// Parent popup can check whether the current focused element is inside the parent popup. If it's still inside the
+								// parent popup, it keeps open, otherwise parent popup is also closed.
+								var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
+								sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
+							}
+						}
+					});
 				}
 			}
 		}
@@ -1910,22 +1923,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @private
 	 */
 	Popup.prototype._addFocusableArea = function(sChannel, sEvent, oEventData) {
-		var sParentPopupId = this._popupUID; // save for call below
 		if (jQuery.inArray(oEventData.id, this.getChildPopups()) === -1) {
 			this.addChildPopup(oEventData.id);
-		}
-
-		// Forward the blur event of the child to the parent Popup
-		var $ChildDomRef = jQuery('[data-sap-ui-popup="' + oEventData.id + '"]');
-		if ($ChildDomRef.length > 0) {
-			var fnOnBlur = function(oEvent) {
-				$ChildDomRef.off("blur", fnOnBlur);
-
-				var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
-				sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
-			};
-
-			$ChildDomRef.on("blur", fnOnBlur);
 		}
 	};
 

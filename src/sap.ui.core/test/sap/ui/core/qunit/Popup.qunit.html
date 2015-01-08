@@ -361,8 +361,37 @@
   			}, 100);
 		}, 50);
   	});
-  	
-  	
+
+		asyncTest("Autoclose popup opened from another autoclose popup", function() {
+			var oPopup1DomRef = jQuery.sap.domById("popup1"),
+					oPopup2DomRef = jQuery.sap.domById("popup2"),
+					oPopup1 = new sap.ui.core.Popup(oPopup1DomRef),
+					oPopup2 = new sap.ui.core.Popup(oPopup2DomRef);
+
+			oPopup1.setAutoClose(true);
+			oPopup1.setPosition(sap.ui.core.Popup.Dock.CenterCenter, sap.ui.core.Popup.Dock.CenterCenter, window, "0 0", "fit");
+			oPopup1.setDurations(0, 0);
+			oPopup1.open();
+			ok(oPopup1.isOpen(), "Popup1 is open");
+
+			var oButtonRef = jQuery.sap.domById("popup1-btn");
+
+			oPopup2.setAutoClose(true);
+			oPopup2.setPosition(sap.ui.core.Popup.Dock.RightCenter, sap.ui.core.Popup.Dock.LeftCenter, oButtonRef, "0 0", "fit");
+			oPopup2.setDurations(0, 0);
+			oPopup2.open();
+			ok(oPopup2.isOpen(), "Popup2 is open");
+
+			jQuery.sap.domById("focusableElement").focus();
+			setTimeout(function() {
+				ok(!oPopup1.isOpen(), "Popup1 is closed");
+				ok(!oPopup2.isOpen(), "Popup2 is closed");
+				oPopup1.destroy();
+				oPopup2.destroy();
+				start();
+			}, 50);
+		});
+
   	/* Utilities */
   	
   	var lastEvent = null;
@@ -413,6 +442,14 @@
 		  This is a plain-HTML popup with two focusable child elements
 		  <div id="popupcontent" tabindex="0">Child 1</div>
 		  <div id="secondpopupcontent" tabindex="0">Child 2</div>
+		</div>
+		
+		<div id="popup1" tabindex="0">
+			<button id="popup1-btn">Open Popup</button>
+		</div>
+		
+		<div id="popup2" tabindex="0">
+			<button id="popup2-btn">Button</button>
 		</div>
 		
 	</body>
