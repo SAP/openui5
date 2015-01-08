@@ -1,5 +1,5 @@
+/* global sinon */
 var xhr = sinon.useFakeXMLHttpRequest(),
-	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 	responseDelay = 50,
 	_setTimeout = window.setTimeout;
 
@@ -55,6 +55,30 @@ xhr.onCreate = function(request) {
 				sAnswer = sEPMAnnotationsComplex;
 				break;
 
+			case "fakeService://testdata/odata/2014-12-08-test.xml":
+				sAnswer = sTest20141208Annotations;
+				break;
+
+			case "fakeService://testdata/odata/multiple-property-annotations.xml":
+				sAnswer = sMultiplePropertyAnnotations;
+				break;
+
+			case "fakeService://testdata/odata/property-annotation-qualifiers.xml":
+				sAnswer = sPropertyAnnotationQualifiers;
+				break;
+
+			case "fakeService://testdata/odata/other-property-values.xml":
+				sAnswer = sOtherPropertyValues;
+				break;
+
+			case "fakeService://testdata/odata/namespaces-aliases.xml":
+				sAnswer = sNamespaceAliases;
+				break;
+
+			case "fakeService://testdata/odata/other-property-value-aliases.xml":
+				sAnswer = sOtherPropertyValueAliases;
+				break;
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -69,7 +93,7 @@ xhr.onCreate = function(request) {
 			request.respond(iStatus, mHeaders, sAnswer);
 		}
 
-	}
+	};
 };
 
 
@@ -83,14 +107,14 @@ var mXMLHeaders = 	{
 	"Content-Type": "application/atom+xml;charset=utf-8",
 	"DataServiceVersion": "2.0;"
 };
-var mJSONHeaders = 	{
-	"Content-Type": "application/json;charset=utf-8",
-	"DataServiceVersion": "2.0;"
-};
-var mCountHeaders = 	{
-	"Content-Type": "text/plain;charset=utf-8",
-	"DataServiceVersion": "2.0;"
-};
+//var mJSONHeaders = 	{
+//	"Content-Type": "application/json;charset=utf-8",
+//	"DataServiceVersion": "2.0;"
+//};
+//var mCountHeaders = 	{
+//	"Content-Type": "text/plain;charset=utf-8",
+//	"DataServiceVersion": "2.0;"
+//};
 
 
 
@@ -99,16 +123,16 @@ var sNorthwindAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
-		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" /> \
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
 	</edmx:Reference>\
 	<edmx:Reference Uri="/coco/vocabularies/Communication.xml">\
-		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml" >\
-		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
-		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" /> \
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
 	</edmx:Reference>	\
 	<edmx:DataServices>\
 		<!-- Entity Data Model Conceptual Schemas, as specified in [MC-CSDL]	and annotated as specified in [MS-ODATA] -->\
@@ -201,7 +225,7 @@ var sNorthwindAnnotations = '\
 										<Annotation Term="UI.Map"/>\
 										<PropertyValue Property="Label" String="Supplier Address on Map" />\
 										<PropertyValue Property="Target" AnnotationPath="Supplier/@vCard.Address" />\
-									</Record> \
+									</Record>\
 								</Collection>\
 							</PropertyValue>\
 						</Record>\
@@ -266,7 +290,7 @@ var sNorthwindAnnotations = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Supplier">		 \
+			<Annotations Target="NorthwindModel.Supplier">		\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Supplier" />\
@@ -313,7 +337,7 @@ var sNorthwindAnnotations = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/supplier_48.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>					 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							<PropertyValue Property="Label" String="Supplier ID" />\
 							<PropertyValue Property="Value" Path="SupplierID" />\
@@ -485,7 +509,7 @@ var sNorthwindAnnotations = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Customer">		 \
+			<Annotations Target="NorthwindModel.Customer">\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Customer" />\
@@ -578,7 +602,7 @@ var sNorthwindAnnotations = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/product32.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>										 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							 <PropertyValue Property="Label" String="Product Name" />\
 							 <PropertyValue Property="Value" Path="Product/ProductName" />\
@@ -645,15 +669,15 @@ var sNorthwindAnnotationsMalformed = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
-		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" /> \
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
 	</edmx:Reference>\
-		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml" >\
-		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
-		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" /> \
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
 \
 	<edmx:DataServices>\
 		<!-- Entity Data Model Conceptual Schemas, as specified in [MC-CSDL]	and annotated as specified in [MS-ODATA] -->\
@@ -744,7 +768,7 @@ var sNorthwindAnnotationsMalformed = '\
 										<Annotation Term="UI.Map"/>\
 										<PropertyValue Property="Label" String="Supplier Address on Map" />\
 										<PropertyValue Property="Target" AnnotationPath="Supplier/@vCard.Address" />\
-									</Record> \
+									</Record>\
 								</Collection>\
 							</PropertyValue>\
 						</Record>\
@@ -809,7 +833,7 @@ var sNorthwindAnnotationsMalformed = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Supplier">		 \
+			<Annotations Target="NorthwindModel.Supplier">\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Supplier" />\
@@ -856,7 +880,7 @@ var sNorthwindAnnotationsMalformed = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/supplier_48.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>					 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							<PropertyValue Property="Label" String="Supplier ID" />\
 							<PropertyValue Property="Value" Path="SupplierID" />\
@@ -1012,7 +1036,7 @@ var sNorthwindAnnotationsMalformed = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/cart_48.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>										\
+						</Record>\
 					</Collection>\
 				</Annotation>\
 				<Annotation Term="UI.Facets">\
@@ -1028,7 +1052,7 @@ var sNorthwindAnnotationsMalformed = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Customer">		 \
+			<Annotations Target="NorthwindModel.Customer">\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Customer" />\
@@ -1121,7 +1145,7 @@ var sNorthwindAnnotationsMalformed = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/product32.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>										 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							 <PropertyValue Property="Label" String="Product Name" />\
 							 <PropertyValue Property="Value" Path="Product/ProductName" />\
@@ -3183,3 +3207,145 @@ var sEPMAnnotationsComplex = '\
 			</Schema>\
 		</edmx:DataServices>\
 	</edmx:Edmx>';
+
+var sTest20141208Annotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Communication.xml">\
+		<edmx:Include Alias="vCard" Namespace="com.sap.vocabularies.Communication.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml">\
+		<edmx:Include Alias="CQP" Namespace="Org.OData.Measures.V1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">\
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/opu/odata/sap/FTGEN_HB_TE/$metadata">\
+		<edmx:Include Alias="FTGEN_HB_TE" Namespace="FTGEN_HB_TE"/>\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+	<Annotations Target="Test.2014-12-08">\
+		<Annotation Term="UI.Identification">\
+			<Collection>\
+				<Record Type=\'UI.DataField\'>\
+					<Annotation Term=\'UI.Importance\' EnumMember=\'UI.Priority/High\'/>\
+					<PropertyValue Property=\'Value\'>\
+						<Apply Function=\'odata.concat\'>\
+							<Path>CompanyCodeTESet/ContactPerson</Path>\
+							<String> (</String>\
+							<Path>CompanyCode</Path>\
+							<String>)</String>\
+						</Apply>\
+					</PropertyValue>\
+				</Record>\
+			</Collection>\
+		</Annotation>\
+	 </Annotations>\
+	</Schema>\
+ </edmx:DataServices>\
+</edmx:Edmx>';
+
+var sMultiplePropertyAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="MultiplePropertyAnnotations.Product/Price/Amount">\
+				<Annotation Term="CQP.ISOCurrency" Path="Price/CurrencyCode"/>\
+			</Annotations>\
+			<Annotations Target="MultiplePropertyAnnotations.Product/Price/Amount">\
+				<Annotation Term="Common.Label" String="Price"/>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+var sPropertyAnnotationQualifiers = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="PropertyAnnotationQualifiers.Product/Price/Amount">\
+				<Annotation Term="CQP.ISOCurrency" Path="Price/CurrencyCode" Qualifier="Amount1"/>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+var sOtherPropertyValues = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="OtherPropertyValues.Product/Price/Amount">\
+				<Annotation Term="CQP.ISOCurrency" Qualifier="Amount2">\
+					<String>EUR</String>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+
+var sNamespaceAliases = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/Common.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common" />\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NamespaceAliases.PurchaseOrder/GrossAmount">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Gross Amount" />\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+var sOtherPropertyValueAliases = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Communication.xml">\
+		<edmx:Include Alias="vCard" Namespace="com.sap.vocabularies.Communication.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml">\
+		<edmx:Include Alias="CQP" Namespace="Org.OData.Measures.V1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">\
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/opu/odata/sap/FTGEN_HB_TE/$metadata">\
+		<edmx:Include Alias="FTGEN_HB_TE" Namespace="FTGEN_HB_TE"/>\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="OtherPropertyValueAliases.Test/Value">\
+				<Annotation Term="UI.Name">\
+					<EnumMember>UI.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="vCard.Name">\
+					<EnumMember>vCard.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="CQP.Name">\
+					<EnumMember>CQP.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="Common.Name">\
+					<EnumMember>Common.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="FTGEN_HB_TE.Name">\
+					<EnumMember>FTGEN_HB_TE.Value</EnumMember>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
