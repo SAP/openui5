@@ -710,8 +710,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		 * Return whether the controller code is deactivated. During design mode the 
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
-		 * @since 1.27.0
-		 * @experimental Since 1.27.0
+		 * @since 1.26.4
+		 * @experimental Since 1.26.4
 		 * @public
 		 */
 		getControllerCodeDeactivated : function() {
