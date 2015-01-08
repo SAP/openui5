@@ -60,6 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			oRm.writeControlData(oSelect);
 			oRm.writeStyles();
 			oRm.writeClasses();
+			this.writeAccessibilityState(oRm, oSelect);
 
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
@@ -190,6 +191,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		 * @protected
 		 */
 		SelectRenderer.addStyleClass = function(oRm, oSelect) {};
+
+		/**
+		 * Writes the accessibility state.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 */
+		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
+			oRm.writeAccessibilityState(oSelect, {
+				role: "combobox",
+				expanded: oSelect.isOpen(),
+				live: "polite"
+			});
+		};
 
 		return SelectRenderer;
 
