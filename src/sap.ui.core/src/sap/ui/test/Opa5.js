@@ -18,8 +18,7 @@ sap.ui.define(['jquery.sap.global',
 			'./everyPolyfill',
 			'sap/ui/thirdparty/URI'],
 	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
-		var fnOpa5,
-			oPlugin = new OpaPlugin(),
+		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,
 			oFramePlugin = null,
@@ -41,22 +40,18 @@ sap.ui.define(['jquery.sap.global',
 		 * @author SAP SE
 		 * @since 1.22
 		 */
-		fnOpa5 = Ui5Object.extend("sap.ui.test.Opa5",
-			jQuery.extend({}, Opa.prototype, {
-				constructor : function() {
-					Opa.apply(this, arguments);
+		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5",
+			jQuery.extend({},
+				Opa.prototype,
+				{
+					constructor : function() {
+						Opa.apply(this, arguments);
+					}
 				}
-			})
+			)
 		);
 
-		/**
-		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @param {string} sSource the source of the iframe
-		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @public
-		 */
-		fnOpa5.iStartMyAppInAFrame = function (sSource, iTimeout) {
+		function iStartMyAppInAFrame (sSource, iTimeout) {
 			//invalidate the cache
 			$Frame = $("#OpaFrame");
 
@@ -86,7 +81,17 @@ sap.ui.define(['jquery.sap.global',
 				timeout : iTimeout || 90,
 				errorMessage : "unable to load the iframe with the url: " + sSource
 			});
-		};
+		}
+
+		/**
+		 * Starts an app in an iframe. Only works reliably if running on the same server.
+		 * @param {string} sSource the source of the iframe
+		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @public
+		 * @function
+		 */
+		Opa5.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
@@ -94,15 +99,11 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {integer} [iTimeout] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
+		 * @function
 		 */
-		fnOpa5.prototype.iStartMyAppInAFrame = fnOpa5.iStartMyAppInAFrame;
+		Opa5.prototype.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
-		/**
-		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * @public
-		 */
-		fnOpa5.iTeardownMyAppFrame = function () {
+		function iTeardownMyAppFrame () {
 
 			return this.waitFor({
 				success : function () {
@@ -114,14 +115,23 @@ sap.ui.define(['jquery.sap.global',
 				}
 			});
 
-		};
+		}
 
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
+		 * @function
 		 */
-		fnOpa5.prototype.iTeardownMyAppFrame = fnOpa5.iTeardownMyAppFrame;
+		Opa5.iTeardownMyAppFrame = iTeardownMyAppFrame;
+
+		/**
+		 * Removes the iframe from the dom and removes all the references on its objects
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.iTeardownMyAppFrame = iTeardownMyAppFrame;
 
 		/**
 		 * Same as the waitFor method of Opa. Also allows you to specify additional parameters:
@@ -130,7 +140,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
 		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
 		 * @param {string} [oOptions.viewNamespace] get appended before the viewName - should probably be set to the OPA config.
-		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers @link sap.ui.test.matchers. Matchers will be applied to an every control found by the waitFor function. The matchers are a pipeline, first matcher gets a control as an input parameter, each next matcher gets the same input, as the previous one, if the previous output is 'true'. If the previous output is a truthy value, the next matcher will receive this value as an input parameter. If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values. Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
+		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers {@link sap.ui.test.matchers}. Matchers will be applied to an every control found by the waitFor function. The matchers are a pipeline, first matcher gets a control as an input parameter, each next matcher gets the same input, as the previous one, if the previous output is 'true'. If the previous output is a truthy value, the next matcher will receive this value as an input parameter. If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values. Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
 		 * @param {string} [oOptions.controlType] eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored.
 		 * @param {boolean} [oOptions.searchOpenDialogs] if true, OPA will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [oOptions.visible] default: true - if set to false OPA will also look for not rendered and invisible controls.
@@ -143,7 +153,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 */
-		fnOpa5.prototype.waitFor = function (oOptions) {
+		Opa5.prototype.waitFor = function (oOptions) {
 			oOptions = $.extend({},
 					Opa.config,
 					oOptions);
@@ -169,7 +179,7 @@ sap.ui.define(['jquery.sap.global',
 					sOriginalControlType = vControlType.prototype.getMetadata()._sClassName;
 				}
 
-				vControl = fnOpa5.getPlugin().getMatchingControls(oOptions);
+				vControl = Opa5.getPlugin().getMatchingControls(oOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
@@ -269,7 +279,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {sap.ui.test.OpaPlugin} the plugin instance
 		 * @public
 		 */
-		fnOpa5.getPlugin = function () {
+		Opa5.getPlugin = function () {
 			return oFramePlugin || oPlugin;
 		};
 
@@ -278,7 +288,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {jQuery} the jQuery object
 		 * @public
 		 */
-		fnOpa5.getJQuery = function () {
+		Opa5.getJQuery = function () {
 			return oFrameJQuery;
 		};
 
@@ -287,7 +297,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {oWindow} the window of the iframe
 		 * @public
 		 */
-		fnOpa5.getWindow = function () {
+		Opa5.getWindow = function () {
 			return oFrameWindow;
 		};
 
@@ -296,7 +306,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @public
 		 * @returns {sap.ui.test.qunit} the qunit utils
 		 */
-		fnOpa5.getUtils = function () {
+		Opa5.getUtils = function () {
 			return oFrameUtils;
 		};
 
@@ -305,45 +315,58 @@ sap.ui.define(['jquery.sap.global',
 		 * @public
 		 * @returns {sap.ui.core.routing.HashChanger} the hashchange
 		 */
-		fnOpa5.getHashChanger = function () {
+		Opa5.getHashChanger = function () {
 			return oHashChanger;
 		};
 
 
 		/**
 		 * Extends the default config of Opa
+		 * see {@link sap.ui.test.Opa#extendConfig}
 		 * @public
+		 * @function
 		 */
-		fnOpa5.extendConfig = Opa.extendConfig;
+		Opa5.extendConfig = Opa.extendConfig;
 
 		/**
 		 * Reset Opa.config to its default values
+		 * see {@link sap.ui.test.Opa5#waitFor} for the description
+		 * Default values for OPA5 are:
+		 * <ul>
+		 * 	<li>viewNamespace: empty string</li>
+		 * 	<li>arrangements: instance of OPA5</li>
+		 * 	<li>actions: instance of OPA5</li>
+		 * 	<li>assertions: instance of OPA5</li>
+		 * 	<li>visible: true</li>
+		 * </ul>
 		 * @public
 		 * @since 1.25
 		 */
-		fnOpa5.resetConfig = function() {
+		Opa5.resetConfig = function() {
 			Opa.resetConfig();
 			Opa.extendConfig({
 				viewNamespace : "",
-				arrangements : new fnOpa5(),
-				actions : new fnOpa5(),
-				assertions : new fnOpa5(),
+				arrangements : new Opa5(),
+				actions : new Opa5(),
+				assertions : new Opa5(),
 				visible : true
 			});
 		};
 
 		/**
 		 * Waits until all waitFor calls are done
+		 * see {@link sap.ui.test.Opa5#waitFor} for the description
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
+		 * @function
 		 */
-		fnOpa5.emptyQueue = Opa.emptyQueue;
+		Opa5.emptyQueue = Opa.emptyQueue;
 
-		fnOpa5.matchers = {};
-
-		fnOpa5.matchers.Matcher = Matcher;
-		fnOpa5.matchers.AggregationFilled = AggregationFilled;
-		fnOpa5.matchers.PropertyStrictEquals = PropertyStrictEquals;
+		//Dont document these as public they are just for backwards compatibility
+		Opa5.matchers = {};
+		Opa5.matchers.Matcher = Matcher;
+		Opa5.matchers.AggregationFilled = AggregationFilled;
+		Opa5.matchers.PropertyStrictEquals = PropertyStrictEquals;
 
 		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
@@ -365,9 +388,9 @@ sap.ui.define(['jquery.sap.global',
 		 * @public
 		 * @since 1.25
 		 */
-		fnOpa5.createPageObjects = function(mPageObjects) {
+		Opa5.createPageObjects = function(mPageObjects) {
 			//prevent circular dependency
-			return PageObjectFactory.create(mPageObjects,fnOpa5);
+			return PageObjectFactory.create(mPageObjects,Opa5);
 		};
 
 		/*
@@ -378,7 +401,7 @@ sap.ui.define(['jquery.sap.global',
 		 * Checks if a value matches all the matchers and returns result of matching
 		 * @private
 		 */
-		fnOpa5.prototype._doesValueMatch = function (aMatchers, vValue) {
+		Opa5.prototype._doesValueMatch = function (aMatchers, vValue) {
 			var vOriginalValue = vValue;
 			var bIsMatching = true;
 			jQuery.each(aMatchers, function (i, oMatcher) {
@@ -403,7 +426,7 @@ sap.ui.define(['jquery.sap.global',
 		 * Validates the matchers and makes sure to return them in an array
 		 * @private
 		 */
-		fnOpa5.prototype._checkMatchers = function (vMatchers) {
+		Opa5.prototype._checkMatchers = function (vMatchers) {
 			var aMatchers = [];
 
 			if ($.isArray(vMatchers)) {
@@ -413,7 +436,7 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			aMatchers = aMatchers.map(function(vMatcher) {
-				if (vMatcher instanceof fnOpa5.matchers.Matcher) {
+				if (vMatcher instanceof Opa5.matchers.Matcher) {
 					return vMatcher;
 				} else if (typeof vMatcher == "function") {
 					return {isMatching : vMatcher};
@@ -432,7 +455,7 @@ sap.ui.define(['jquery.sap.global',
 		 * logs and executes the check function
 		 * @private
 		 */
-		fnOpa5.prototype._executeCheck = function (fnCheck, vControl) {
+		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
 			jQuery.sap.log.debug("Opa is executing the check: " + fnCheck);
 
 			var bResult = fnCheck.call(this, vControl);
@@ -444,7 +467,7 @@ sap.ui.define(['jquery.sap.global',
 		/*
 		 * Apply defaults
 		 */
-		fnOpa5.resetConfig();
+		Opa5.resetConfig();
 
 		/*
 		 * INTERNALS
@@ -576,5 +599,5 @@ sap.ui.define(['jquery.sap.global',
 			$("html").height("100%");
 		});
 
-		return fnOpa5;
+		return Opa5;
 }, /* bExport= */ true);

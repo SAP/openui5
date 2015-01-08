@@ -11,8 +11,7 @@
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
-	var Opa,
-		queue = [],
+	var queue = [],
 		context = {};
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
@@ -88,13 +87,13 @@
 	 * You can wait for certain conditions to be met.
 	 * 
 	 * @public
-	 * @name sap.ui.test.Opa
+	 * @alias sap.ui.test.Opa
 	 * @author SAP SE
 	 * @since 1.22
 	 * 
 	 * @param extensionObject An object containing properties and functions. The newly created Opa will be extended by these properties and functions - see jQuery.extend.
 	 */
-	Opa = function(extensionObject) {
+	var Opa = function(extensionObject) {
 
 		this.and = this;
 		$.extend(this, extensionObject);
@@ -105,9 +104,7 @@
 
 		/**
 		 * Gives access to a singleton object you can save values in.
-		 * 
-		 * @name sap.ui.test.Opa#getContext
-		 * @function
+		 *
 		 * @returns {object} the context object
 		 * @public
 		 */
@@ -118,10 +115,8 @@
 		/**
 		 * Waits for a check condition to return true. Then a success function will be called.
 		 * If check does not return true until timeout is reached, an error function will be called.
-		 * 
-		 * @name sap.ui.test.Opa#waitFor
+		 *
 		 * @public
-		 * @function
 		 * @param {object} options containing check, success and error function;
 		 * properties:
 		 * <ul>
@@ -176,9 +171,7 @@
 		
 		/**
 		 * Calls the static extendConfig function in the Opa namespace
-		 * @name sap.ui.test.Opa#extendConfig
 		 * @returns
-		 * @function
 		 * @public
 		 */
 		extendConfig : function() {
@@ -187,10 +180,8 @@
 
 		/**
 		 * Calls the static emptyQueue function in the Opa namespace
-		 * @name sap.ui.test.Opa#emptyQueue
 		 * @returns
 		 * @public
-		 * @function
 		 */
 		emptyQueue : function() {
 			return Opa.emptyQueue.apply(this, arguments);
@@ -199,22 +190,18 @@
 
 	/**
 	 * Extends and overwrites default values of the Opa.config
-	 * @name sap.ui.test.Opa#extendConfig
-	 * @static
+	 *
 	 * @param {object} options the values to be added to the existion config
 	 * @public
-	 * @function
 	 */
 	Opa.extendConfig = function (options) {
 		Opa.config = jQuery.extend(Opa.config, options);
 	};
 
 	/**
-	 * Reset Opa.config to its default values 
-	 * @name sap.ui.test.Opa#resetConfig
-	 * @static
+	 * Reset Opa.config to its default values
+	 *
 	 * @public
-	 * @function
 	 * @since 1.25
 	 */
 	Opa.resetConfig = function () {
@@ -228,9 +215,7 @@
 	};
 	/**
 	 * Waits until all waitFor calls are done
-	 * @name sap.ui.test.Opa#emptyQueue
-	 * @static
-	 * @function
+	 *
 	 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 	 * @public
 	 */
@@ -262,9 +247,6 @@
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingIntervall: 400 milliseconds</li>
 	 * </ul>
-	 * @name sap.ui.test.Opa#config
-	 * @function
-	 * @static
 	 * @public
 	 */
 	//create the default config
