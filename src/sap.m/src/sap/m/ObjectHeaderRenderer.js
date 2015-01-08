@@ -141,6 +141,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oOH._introText = new sap.m.Text(oOH.getId() + "-intro");
 			oOH._introText.setText(oOH.getIntro());
 		}
+		// set text direction of the intro
+		oOH._introText.setTextDirection(oOH.getIntroTextDirection());
 		oRM.write("<div");
 		oRM.addClass(sIntroClass);
 		if (oOH.getIntroActive()) {
@@ -393,6 +395,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		if (oOH.getTitle()) {
 			oOH._titleText.setText(oOH.getTitle());
+			// set text direction of the title
+			oOH._titleText.setTextDirection(oOH.getTitleTextDirection());
+			
 			if (oOH.getTitleActive()) {
 				oRM.write("<a"); // Start Title Text container
 				if (oOH.getTitleHref()) { // if title is link write it
@@ -1021,7 +1026,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveMarkers = function(oRM, oControl) {
-		var aIcons = [];
+		var aIcons = [],
+			sTextDir = oControl.getTitleTextDirection(),
+			bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		// load icons based on control state
 		if (oControl.getShowMarkers()) {
@@ -1030,9 +1037,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 			aIcons.push(oControl._oFavIcon);
 			aIcons.push(oControl._oFlagIcon);
-
+			
 			// render icons
-			oRM.write("<span class=\"sapMObjStatusMarker\"");
+			oRM.write("<span");
+			oRM.addClass("sapMObjStatusMarker");
+
+			if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) || (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
+				oRM.addClass("sapMObjStatusMarkerOpposite");
+			}
+			oRM.writeClasses();
 			oRM.writeAttribute("id", oControl.getId() + "-markers");
 			oRM.write(">");
 			for (var i = 0; i < aIcons.length; i++) {
@@ -1223,12 +1236,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
-		var sOHTitle, sEllipsis = '';
+		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
 		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
 
 		oRM.write("<span");
 		oRM.addClass("sapMOHRTitleTextContainer");
 		oRM.writeClasses();
+		// set title text direction, it will be inherit from the "flags" also
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			oRM.writeAttribute("dir", sTextDir.toLowerCase());
+		}
 		oRM.write(">");
 		if (oOH.getTitleActive()) {
 			oRM.write("<a");
@@ -1250,6 +1267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeAttribute("id", oOH.getId() + "-txt");
 		oRM.addClass("sapMOHRTitleText");
 		oRM.writeClasses();
+		
 		oRM.write(">");
 
 		oRM.write("<span");

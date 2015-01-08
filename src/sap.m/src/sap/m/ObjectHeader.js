@@ -156,7 +156,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
 			 * @since 1.28
 			 */
-			introTarget : {type : "string", group : "Behavior", defaultValue : null}
+			introTarget : {type : "string", group : "Behavior", defaultValue : null},
+			
+			/**
+			 * This property specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			
+			/**
+			 * This property specifies the intro text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			introTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			
+			/**
+			 * This property specifies the number and unit directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 
 		},
 		defaultAggregation : "attributes",
