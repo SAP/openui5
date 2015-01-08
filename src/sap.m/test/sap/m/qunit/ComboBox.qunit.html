@@ -1429,6 +1429,7 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 				ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
 
 				// cleanup
@@ -1478,6 +1479,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 				ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
@@ -1529,6 +1531,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 				ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
@@ -1574,6 +1577,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1617,6 +1621,7 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1663,6 +1668,7 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1697,6 +1703,7 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1747,6 +1754,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1790,6 +1798,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1833,6 +1842,7 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1879,6 +1889,7 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1926,6 +1937,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -1964,6 +1976,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -2018,6 +2031,7 @@
 				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -2061,12 +2075,13 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
 			});
 
-			test("setSelectedKey() set the selected item when the picker popup is open", function() {
+			test("setSelectedKey() set the selected item when the picker popup is open test case 1", function() {
 
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
@@ -2107,6 +2122,37 @@
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("setSelectedKey() set the selected item when the picker popup is open test case 2", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oExpectedItem = new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					],
+
+					selectedKey: "GER"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+
+				oComboBox.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+				// assert
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -4883,7 +4929,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -4920,7 +4966,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -4972,7 +5018,7 @@
 
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5024,7 +5070,7 @@
 					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5239,7 +5285,7 @@
 					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5284,7 +5330,7 @@
 					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5335,7 +5381,7 @@
 
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5389,7 +5435,7 @@
 
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5632,7 +5678,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5664,7 +5710,7 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5729,7 +5775,7 @@
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "item 1 is selected");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -5901,7 +5947,7 @@
 					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 				strictEqual(oComboBox.getFocusDomRef().value, "item 4 is selected");
 
 				// cleanup
@@ -6000,7 +6046,7 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -6310,7 +6356,7 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -6633,7 +6679,7 @@
 				ok(oComboBox.getSelectedItem() === null);
 				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -6771,7 +6817,7 @@
 				strictEqual(fnCloseSpy.callCount, 1, "close() method was called");
 				strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sOpenState);
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event is not fired');
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -7007,7 +7053,7 @@
 				// assert
 				strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true");
-				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
@@ -7074,7 +7120,7 @@
 				// assert
 				strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
-				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oComboBox.destroy();
