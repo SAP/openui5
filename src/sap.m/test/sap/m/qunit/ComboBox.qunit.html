@@ -178,7 +178,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "0");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 0");
 				strictEqual(oComboBox.getProperty("value"), "item 0");
 
@@ -266,7 +266,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -308,7 +308,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -610,7 +610,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -657,7 +657,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "3");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 3");
 				strictEqual(oComboBox.getProperty("value"), "item 3");
 
@@ -699,7 +699,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -884,7 +884,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "0");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 0");
 				strictEqual(oComboBox.getProperty("value"), "item 0");
 
@@ -963,7 +963,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -1010,7 +1010,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "3");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 3");
 				strictEqual(oComboBox.getProperty("value"), "item 3");
 
@@ -1052,7 +1052,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -1298,9 +1298,9 @@
 
 				// assert
 				ok(fnAddAggregationSpy.calledWith("items", oItem), "sap.m.ComboBox.addAggregation() method was called with the expected arguments");
-				ok(fnListAddAggregationSpy.calledWith("items", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem")), "sap.m.List.addAggregation() method was called with the expected arguments");
+				ok(fnListAddAggregationSpy.calledWith("items", oComboBox.getListItem(oItem)), "sap.m.List.addAggregation() method was called with the expected arguments");
 				ok(fnAddItemSpy.returned(oComboBox));
-				ok(oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getVisible(), "The item is visible");
+				ok(oComboBox.getListItem(oItem).getVisible(), "The item is visible");
 
 				// cleanup
 				oComboBox.destroy();
@@ -1358,9 +1358,9 @@
 
 				// assert
 				ok(fnInsertAggregation.calledWith("items", oItem, 0), "oComboBox.insertAggregation() method was called with the expected arguments");
-				ok(fnListInsertAggregation.calledWith("items", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"), 0), "oList.insertAggregation() method was called with the expected arguments");
+				ok(fnListInsertAggregation.calledWith("items", oComboBox.getListItem(oItem), 0), "oList.insertAggregation() method was called with the expected arguments");
 				ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
-				ok(oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getVisible(), "The item is visible");
+				ok(oComboBox.getListItem(oItem).getVisible(), "The item is visible");
 
 				// cleanup
 				oComboBox.destroy();
@@ -1390,7 +1390,7 @@
 				this.clock.tick(1000);
 
 				// act
-				sap.ui.test.qunit.triggerEvent("tap", oComboBox.getFirstItem().data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getDomRef());
+				sap.ui.test.qunit.triggerEvent("tap", oComboBox.getListItem(oComboBox.getFirstItem()).getDomRef());
 
 				// assert
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).cursorPos(), 7, "The text cursor is at the endmost position");
@@ -1475,7 +1475,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
@@ -1526,7 +1526,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
@@ -1571,7 +1571,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -1744,7 +1744,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -1787,7 +1787,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -1923,7 +1923,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -1961,7 +1961,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -2015,7 +2015,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -2399,7 +2399,7 @@
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
 				ok(oExpectedItem.getDomRef() === null);
-				ok(oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getDomRef() === null);
+				ok(oComboBox.getListItem(oExpectedItem).getDomRef() === null);
 
 				// cleanup
 				oComboBox.destroy();
@@ -4879,7 +4879,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
@@ -5021,7 +5021,7 @@
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0");
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
@@ -5175,7 +5175,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
@@ -5236,7 +5236,7 @@
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
@@ -5281,7 +5281,7 @@
 				strictEqual(oComboBox.getFocusDomRef().value, "item 1");
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
@@ -5384,7 +5384,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(oComboBox.getValue(), "item 2");
@@ -5556,7 +5556,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
@@ -5628,7 +5628,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
@@ -5725,7 +5725,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(oComboBox.getFocusDomRef().value, "item 1 is selected");
@@ -5830,7 +5830,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
@@ -5898,7 +5898,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
 				}
 
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
@@ -6035,7 +6035,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
@@ -6075,7 +6075,7 @@
 					ok(oComboBox.getSelectedItem() === mOptions.output);
 					strictEqual(oComboBox.getSelectedItemId(), mOptions.output.getId());
 					strictEqual(oComboBox.getSelectedKey(), mOptions.output.getKey());
-					ok(oComboBox.getList().getSelectedItem() === mOptions.output.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(mOptions.output));
 					strictEqual(oComboBox.getFocusDomRef().value, mOptions.output.getText());
 
 					// cleanup
@@ -6355,7 +6355,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
@@ -6395,7 +6395,7 @@
 					ok(oComboBox.getSelectedItem() === mOptions.output);
 					strictEqual(oComboBox.getSelectedItemId(), mOptions.output.getId());
 					strictEqual(oComboBox.getSelectedKey(), mOptions.output.getKey());
-					ok(oComboBox.getList().getSelectedItem() === mOptions.output.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
+					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(mOptions.output));
 					strictEqual(oComboBox.getFocusDomRef().value, mOptions.output.getText());
 
 					// cleanup
@@ -6679,7 +6679,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait 1s after the open animation is completed
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
@@ -6722,7 +6722,7 @@
 				oComboBox.focus();
 				var fnOpenSpy = this.spy(oComboBox, "open");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				oComboBox.getFocusDomRef().value = "G";
@@ -7031,7 +7031,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
-				var sExpectedActiveDescendantId = oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId();
+				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 				// act
 				oComboBox.open();
@@ -7609,12 +7609,12 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").setVisible(false);
+				oComboBox.getListItem(oItem).setVisible(false);
 				oComboBox.rerender();
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getVisible(), false);
+				strictEqual(oComboBox.getListItem(oItem).getVisible(), false);
 
 				// cleanup
 				oComboBox.destroy();
