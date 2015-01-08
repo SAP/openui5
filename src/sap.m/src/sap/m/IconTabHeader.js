@@ -565,8 +565,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns icon of the requested arrow
 	 */
 	IconTabHeader.prototype._getScrollingArrow = function(sName) {
+		var src;
+		
+		if (sap.ui.Device.system.desktop) {
+			// use navigation arrows on desktop and win8 combi devices
+			src = "sap-icon://navigation-" + sName + "-arrow";
+		} else {
+			// use slim arrows on mobile devices
+			src = "sap-icon://slim-arrow-" + sName;
+		}
+		
 		var mProperties = {
-			src : "sap-icon://navigation-" + sName + "-arrow"
+			src : src
 		};
 		
 		var sSuffix = this._bTextOnly ? "TextOnly" : "";
