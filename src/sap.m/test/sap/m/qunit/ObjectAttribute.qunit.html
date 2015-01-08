@@ -288,6 +288,25 @@
 		sap.m.ObjectAttribute.prototype.firePress.restore();
 		oObjectAttribute.destroy();
 	});
+
+    module("rtl support");
+    test("Render text with the opposite direction", function() {
+        // Arrange
+        var oObjectAttribute = new sap.m.ObjectAttribute({
+            title: "a",
+            text: "1 2",
+            textDirection: sap.ui.core.TextDirection.RTL
+        });
+
+        // System under Test
+        oObjectAttribute.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        equal(oObjectAttribute.$().find('.sapMText').text(), "a: \u200f1 2\u200f", "Numbers are read backwards.");
+
+        // Clean up
+        oObjectAttribute.destroy();
+    });
 	
 </script>
 </head>
