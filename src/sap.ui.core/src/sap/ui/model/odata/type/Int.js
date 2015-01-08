@@ -9,26 +9,17 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	"use strict";
 
 	/**
-	 * Returns the error message for the type.
+	 * Fetches a text from the message bundle and formats it using the parameters.
 	 *
-	 * @param {sap.ui.model.odata.type.Int} oType
-	 *   the type
-	 * @param {boolean} bShowRange
-	 *   if true, the range values are shown
+	 * @param {string} sKey
+	 *   the message key
+	 * @param {any[]} aParams
+	 *   the message parameters
 	 * @returns {string}
 	 *   the message
 	 */
-	function getErrorMessage(oType, bShowRange) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle(),
-			oRange = oType.getRange();
-
-		if (bShowRange) {
-			return oResourceBundle.getText("EnterIntRange", [
-				oType._getFormatter().format(oRange.minimum),
-				oType._getFormatter().format(oRange.maximum)
-			]);
-		}
-		return oResourceBundle.getText("EnterInt");
+	function getText(sKey, aParams) {
+		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
 	}
 
 	/**
@@ -145,7 +136,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			case "string":
 				iResult = this._getFormatter().parse(vValue);
 				if (isNaN(iResult)) {
-					throw new ParseException(getErrorMessage(this, false));
+					throw new ParseException(getText("EnterInt"));
 				}
 				return iResult;
 			case "float":
@@ -198,7 +189,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		if (iValue === null) {
 			if (this.oConstraints && this.oConstraints.nullable === false) {
-				throw new ValidateException(getErrorMessage(this, false));
+				throw new ValidateException(getText("EnterInt"));
 			}
 			return;
 		}
@@ -208,10 +199,15 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 				+ this.getName() + " value");
 		}
 		if (Math.floor(iValue) !== iValue) {
-			throw new ValidateException(getErrorMessage(this, false));
+			throw new ValidateException(getText("EnterInt"));
 		}
-		if (iValue < oRange.minimum || iValue > oRange.maximum) {
-			throw new ValidateException(getErrorMessage(this, true));
+		if (iValue < oRange.minimum) {
+			throw new ValidateException(
+				getText("EnterIntMin", [this.formatValue(oRange.minimum, "string")]));
+		}
+		if (iValue > oRange.maximum) {
+			throw new ValidateException(
+				getText("EnterIntMax", [this.formatValue(oRange.maximum, "string")]));
 		}
 	};
 
