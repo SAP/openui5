@@ -49,6 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	(function() {
 
+		MonthPicker.prototype.init = function(){
+
+			this._iColumns = 3;
+
+		};
+
 		MonthPicker.prototype.onAfterRendering = function(){
 
 			var that = this;
@@ -155,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _initItemNavigation(oThis){
 
 			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().children(".sapUiCalMonth");
+			var aDomRefs = oThis.$().find(".sapUiCalMonth");
 			var iIndex = oThis.getMonth();
 
 			if (!oThis._oItemNavigation) {
@@ -174,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
 			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
 			oThis._oItemNavigation.setCycling(true);
-			oThis._oItemNavigation.setColumns(3, false);
+			oThis._oItemNavigation.setColumns(oThis._iColumns, false);
 			oThis._oItemNavigation.setFocusedIndex(iIndex);
 			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
 
@@ -263,9 +269,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					var oLocaleData = oThis._getLocaleData();
 					// change month name on button but not change month picker, because it is hided again
 					var aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
+					var aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
 					for (i = 0; i < aMonths.length; i++) {
 						var $Month = jQuery(aMonths[i]);
 						$Month.text(aMonthNames[i]);
+						$Month.attr("aria-label", aMonthNamesWide[i]);
 					}
 				} else {
 					oThis._bLongMonth = true;

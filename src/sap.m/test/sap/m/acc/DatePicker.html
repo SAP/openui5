@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>DatePicker ACC Test - sap.m</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.m.DatePicker.gif">
+
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+		var app = new sap.m.App("myApp");
+
+		var iEvent = 0;
+
+		function handleChange(oEvent){
+			var oDP = oEvent.oSource;
+			var oInput = sap.ui.getCore().byId("I2");
+			var sValue = oEvent.getParameter("value");
+			var bValid = oEvent.getParameter("valid");
+			if (bValid) {
+				oDP.setValueState(sap.ui.core.ValueState.None);
+			} else {
+				oDP.setValueState(sap.ui.core.ValueState.Error);
+			}
+		};
+
+		var page1 = new sap.m.Page("page1", {
+			title:"Mobile DatePicker",
+			content : [
+				new sap.m.Label({text: "initial DatePicker", labelFor: "DP1"}),
+				new sap.m.DatePicker("DP1", { change: handleChange }),
+				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
+				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", change: handleChange }),
+			]
+		});
+
+		app.addPage(page1);
+
+		app.placeAt("body");
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

@@ -36,9 +36,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			textButton1 : {type : "string", group : "Misc"},
 
 			/**
+			 * aria-label of the first button (normally month)
+			 */
+			ariaLabelButton1 : {type : "string", group : "Misc"},
+
+			/**
 			 * Text of the second button (normally year)
 			 */
 			textButton2 : {type : "string", group : "Misc"},
+
+			/**
+			 * aria-label of the second button (normally year)
+			 */
+			ariaLabelButton2 : {type : "string", group : "Misc"},
 
 			/**
 			 * enables the previous button
@@ -94,12 +104,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		Header.prototype.setAriaLabelButton1 = function(sText){
+
+			this.setProperty("ariaLabelButton1", sText, true);
+
+			if (this.getDomRef()) {
+				if (sText) {
+					this.$("B1").attr("aria-label", sText);
+				} else {
+					this.$("B1").removeAttr("aria-label");
+				}
+			}
+
+		};
+
 		Header.prototype.setTextButton2 = function(sText){
 
 			this.setProperty("textButton2", sText, true);
 
 			if (this.getDomRef()) {
 				this.$("B2").text(sText);
+			}
+
+		};
+
+		Header.prototype.setAriaLabelButton2 = function(sText){
+
+			this.setProperty("ariaLabelButton2", sText, true);
+
+			if (this.getDomRef()) {
+				if (sText) {
+					this.$("B2").attr("aria-label", sText);
+				} else {
+					this.$("B2").removeAttr("aria-label");
+				}
 			}
 
 		};
