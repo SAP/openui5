@@ -48,22 +48,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
+			 * Options are the standard values for window.open() supported by browsers: _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered. This property is only used for href URLs.
 			 */
 			target : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Width of text link. When it is set (CSS-size such as % or px), this is the exact size. When left blank, the text defines the size.
+			 * Width of the link. When it is set (CSS-size such as % or px), this is the exact size. When left blank, the text defines the size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * The link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "press" event should be registered.
+			 * The link target URI. Supports standard hyperlink behavior. If a JavaScript action should be triggered, this should not be set, but instead an event handler for the "press" event should be registered.
 			 */
 			href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
-			 * Whether the link text is allowed to wrap when tehre is not sufficient space.
+			 * Whether the link text is allowed to wrap when there is not sufficient space.
 			 */
 			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -74,13 +74,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Initial},
 
 			/**
-			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the parent DOM.
 			 * @since 1.28.0
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Subtle link is only to be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other usecase
+			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other usecase.
 			 * @since 1.22
 			 */
 			subtle : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 
-	EnabledPropagator.call(Link.prototype);
+	EnabledPropagator.call(Link.prototype); // inherit "disabled" state from parent controls
 
 	/**
 	 * Also trigger link activation when space is pressed on the focused control
@@ -171,6 +171,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+
+	/* override standard setters with direct DOM manipulation */
+
 	Link.prototype.setText = function(sText){
 		this.setProperty("text", sText, true);
 		sText = this.getProperty("text");
@@ -193,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
 			if (bSubtle) {
 				if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
-					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
+					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
 					$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
 				}
 			} else {
@@ -215,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
 			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
 				if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
-					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 					$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
 				}
 			} else {

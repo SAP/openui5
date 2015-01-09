@@ -797,7 +797,7 @@
 			{
 				"id": "sap.m.sample.LinkSubtle",
 				"name": "Link - Subtle",
-				"description": "Subtle link should be used to indicate less important link in the table with large number of links."
+				"description": "Subtle links should be used to indicate less important links in tables with a large number of links. In this example all columns contain links, only the first column is non-subtle."
 			},
 			{
 				"id": "sap.m.sample.LinkEmphasized",

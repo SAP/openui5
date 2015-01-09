@@ -29,7 +29,7 @@
 		rm.write("<a");
 		rm.writeControlData(oControl);
 
-		//ARIA attributes
+		// ARIA attributes
 		rm.writeAccessibilityState(oControl, {
 			role: 'link',
 			haspopup: !oControl.getHref(),
@@ -51,7 +51,7 @@
 		if (!oControl.getEnabled()) {
 			rm.addClass("sapMLnkDsbl");
 			rm.writeAttribute("disabled", "true");
-			rm.writeAttribute("tabIndex", "-1");
+			rm.writeAttribute("tabIndex", "-1"); // still focusable by mouse click, but not in the tab chain
 		} else {
 			rm.writeAttribute("tabIndex", "0");
 		}
@@ -100,10 +100,10 @@
 
 		// ARIA write hidden element for emphasized or subtle link
 		if (oControl.getEmphasized()) {
-			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapUiHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 		}
 		if (oControl.getSubtle()) {
-			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
+			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapUiHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
 		}
 
 		rm.write("</a>");
