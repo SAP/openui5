@@ -3,6 +3,7 @@ jQuery.sap.require("sap.ui.demo.mdskeleton.util.Controller");
 sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Master", {
 
 	onInit : function() {
+		var oEventBus = this.getEventBus();
 		this.oInitialLoadFinishedDeferred = jQuery.Deferred();
 
 		this.getView().byId("list").attachEventOnce("updateFinished", function() {
@@ -18,7 +19,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 
 		this.getRouter().getRoute("main").attachPatternMatched(this.onRouteMatched, this);
 
-		var oEventBus = this.getEventBus();
 		oEventBus.subscribe("Detail", "Changed", this.onDetailChanged, this);
 		oEventBus.subscribe("Detail", "NotFound", this.onNotFound, this);
 	},

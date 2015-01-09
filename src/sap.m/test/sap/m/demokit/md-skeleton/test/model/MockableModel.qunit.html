@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mockable Model</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{"sap.ui.demo.mdskeleton": "../.././"}'>
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		sap.ui.require(
+			[
+				"sap/ui/demo/mdskeleton/model/MockableModel",
+				"sap/m/List",
+				"sap/ui/thirdparty/sinon",
+				"sap/ui/thirdparty/sinon-qunit"
+			],
+			function(MockableModel, List) {
+				"use strict";
+
+				module("mock server tests", {
+					setup: function () {
+						sinon.config.useFakeTimers = false;
+						this.oList =  new List();
+						this.oList.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					teardown: function () {
+						sinon.config.useFakeTimers = true;
+						this.oNorthwindModel.destroy();
+						this.oList.destroy();
+					}
+				});
+
+				asyncTest("Should start up the mock server", function () {
+					// Arrange
+					this.stub(jQuery.sap, "getUriParameters", function () {
+						return {
+							get: function (sURIParameter) {
+								// mock server test
+								if (sURIParameter === "responderOn") {
+									return "true";
+								}
+								return "1000";
+							}
+						}
+					});
+					this.oNorthwindModel = new MockableModel({
+						serviceUrl: "../../../../../foo/",
+						dataFolderName: "Northwind"
+					});
+
+					this.oList.attachUpdateFinished(function () {
+						// Assert
+						strictEqual(this.oList.getItems().length, 9, "The list shows the expected amount of products");
+
+						start();
+					}, this);
+
+					// Act
+					this.oList.setModel(this.oNorthwindModel);
+					this.oList.bindItems({
+						path : "/Products",
+						template :  new sap.m.StandardListItem({
+							title: "{Name}"
+						})
+					});
+
+				});
+			}
+		);
+	</script>
+
+</head>
+<body>
+<div id="qunit-fixture"></div>
+<h1 id="qunit-header">Test for Mockable Model</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>
