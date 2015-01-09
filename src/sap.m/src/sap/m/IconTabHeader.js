@@ -536,8 +536,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._bDoScroll) { //iScroll is used, therefore we need other calculation then in desktop mode
 			var domScrollCont = this.getDomRef("scrollContainer");
 			var domHead = this.getDomRef("head");
-			if (domHead.offsetWidth > domScrollCont.offsetWidth) {
-				bScrolling = true;
+			
+			if (domHead && domScrollCont) {
+				if (domHead.offsetWidth > domScrollCont.offsetWidth) {
+					bScrolling = true;
+				}
 			}
 		} else { //desktop mode
 			//check if there are more tabs as displayed
