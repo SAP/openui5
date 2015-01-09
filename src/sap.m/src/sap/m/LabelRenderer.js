@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 */
 	var LabelRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,11 +25,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	LabelRenderer.render = function(rm, oLabel){
 		// convenience variable
 		var r = LabelRenderer;
-	
+
 		// write the HTML into the render manager
 		rm.write("<label");
 		rm.writeControlData(oLabel);
-	
+
 		// Styles
 		rm.addClass("sapMLabel");
 		rm.addClass("sapUiSelectable");
@@ -37,11 +37,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		if (oLabel.getDesign() == sap.m.LabelDesign.Bold) {
 			rm.addStyle("font-weight", "bold");
 		}
-	
+
 		if (oLabel.getRequired()) {
 			rm.addClass("sapMLabelRequired");
 		}
-	
+
 		if (oLabel.getLabelForRendering()) {
 			var oFor = sap.ui.getCore().byId(oLabel.getLabelForRendering());
 			rm.write(" for=\"");
@@ -55,13 +55,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.addClass("sapMLabelTBHeader");
 		}
-	
+
 		// Text direction
 		var sTextDir = oLabel.getTextDirection();
-		if (sTextDir) {
-			rm.addStyle("direction", sTextDir.toLowerCase());
+		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
+			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
-	
+
 		// Style for width
 		var sWidth = oLabel.getWidth();
 		if (sWidth) {
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		} else {
 			rm.addClass("sapMLabelMaxWidth");
 		}
-	
+
 		// Style for text alignment
 		var sTextAlign = oLabel.getTextAlign();
 		if (sTextAlign) {
@@ -78,37 +78,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 				rm.addStyle("text-align", sTextAlign);
 			}
 		}
-	
+
 		var sLabelText = oLabel.getText();
 		if (sLabelText == "") {
 			rm.addClass("sapMLabelNoText");
 		}
-	
+
 		rm.writeStyles();
 		rm.writeClasses();
-	
+
 		var sTooltip = oLabel.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
-	
+
 		rm.write(">");
-	
+
 		// Write the label text
-	
+
 		if (sLabelText) {
 			rm.writeEscaped(sLabelText);
 		}
 		rm.write("</label>");
 	};
-	
+
 	/**
 	 * Dummy inheritance of static methods/functions.
 	 * @see sap.ui.core.Renderer.getTextAlign
 	 * @private
 	 */
 	LabelRenderer.getTextAlign = Renderer.getTextAlign;
-	
 
 	return LabelRenderer;
 
