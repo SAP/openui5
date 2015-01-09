@@ -52,8 +52,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.renderControl(oHeader);
 
 		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
-		var oMonth = oCal.getAggregation("month");
-		oRm.renderControl(oMonth);
+		var aMonths = oCal.getAggregation("month");
+		for (var i = 0; i < aMonths.length; i++) {
+			var oMonth = aMonths[i];
+			oRm.renderControl(oMonth);
+		}
 		oRm.write("</div>");
 
 		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");

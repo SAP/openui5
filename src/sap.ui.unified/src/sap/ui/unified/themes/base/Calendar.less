@@ -4,10 +4,10 @@
 
 .sapUiCal{
 	background: none repeat scroll 0 0 @sapUiFieldBackground;
-	width: 14em;
 	overflow: hidden;
 	position: relative;
 	outline: none;
+	display: inline-block;
 }
 
 /* calendar should have only a border if on popup */
@@ -29,6 +29,8 @@
 	border: none;
 	color: @sapUiButtonTextColor;
 	cursor: pointer;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .sapUiCalHeadPrev,
@@ -86,9 +88,14 @@
 }
 
 /*** days, months, years ***/
+.sapUiCalMonthView{
+	vertical-align: top;
+}
+
 .sapUiCalMonthView,
 .sapUiCalMonthPicker,
 .sapUiCalYearPicker{
+	width: 14em;
 	display: inline-block;
 }
 
