@@ -48,7 +48,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		// write style and attributes
 		sWidth ? oRm.addStyle("width", sWidth) : oRm.addClass("sapMTextMaxWidth");
-		sTextDir && oRm.addStyle("direction", sTextDir.toLowerCase());
+		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
 		sTooltip && oRm.writeAttributeEscaped("title", sTooltip);
 		if (sTextAlign) {
 			sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
