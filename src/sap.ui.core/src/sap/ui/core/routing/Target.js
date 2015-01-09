@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 		 * @class provides a convenient way for placing views into the correct containers of your application
 		 * @extends sap.ui.base.EventProvider
 		 * @param {object} oOptions
-		 * @param {sap.ui.core.routing.Views} oVie
+		 * @param {sap.ui.core.routing.Views} oViews
 		 * @param {sap.ui.core.routing.Target} [oParent]
 		 * @private
 		 * @alias sap.ui.core.routing.Target
@@ -94,8 +94,8 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 							}
 							oView = this._oViews.getView({
 								viewName : sViewName,
-								viewType : oOptions.viewType,
-								viewId : oOptions.viewId
+								type : oOptions.viewType,
+								id : oOptions.viewId
 							});
 							if (oOptions.clearTarget === true) {
 								oTargetControl[oAggregationInfo._sRemoveAllMutator]();
@@ -109,8 +109,6 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 						jQuery.sap.log.error("Control with ID " + oOptions.targetControl + " could not be found", "sap.ui.core.routing.Target");
 					}
 				}
-
-
 
 				return {
 					oTargetParent : oView,

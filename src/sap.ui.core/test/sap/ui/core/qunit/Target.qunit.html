@@ -41,6 +41,7 @@
 						view: "foo",
 						targetAggregation: "content",
 						viewType: "XML",
+						viewId: "baz",
 						targetControl: this.oShell.getId()
 					},
 					this.oViews
@@ -75,7 +76,8 @@
 			// Arrange
 			var oStub = this.stub(this.oViews, "getView", function (oOptions) {
 				strictEqual(oOptions.viewName, "bar.foo");
-				strictEqual(oOptions.viewType, "XML");
+				strictEqual(oOptions.type, "XML");
+				strictEqual(oOptions.id, "baz");
 			});
 
 			//Act

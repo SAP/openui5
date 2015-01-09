@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/signals', 'sap/ui/thirdparty/crossroads'],
-	function(jQuery, EventProvider, signals, crossroads) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/Target', 'sap/ui/thirdparty/signals', 'sap/ui/thirdparty/crossroads'],
+	function(jQuery, EventProvider, Target, signals, crossroads) {
 	"use strict";
 
 		/**
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				if (!jQuery.isArray(vRoute)) {
 					vRoute = [vRoute];
 				}
-	
+
 				if (jQuery.isArray(oConfig.subroutes)) {
 					//Convert subroutes
 					var aSubRoutes = oConfig.subroutes;
@@ -75,8 +75,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				this._aRoutes = [];
 				this._oParent = oParent;
 				this._oConfig = oConfig;
-				
-	
+
+				// create a new target for this route
+				this._oTarget = new Target(oConfig, oRouter._oViews, oParent && oParent._oTarget);
+
+				// recursively add the subroutes to this route
 				if (oConfig.subroutes) {
 					jQuery.each(oConfig.subroutes, function(sRouteName, oSubRouteConfig) {
 						if (oSubRouteConfig.name == undefined) {
@@ -214,61 +217,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			 */
 			_routeMatched : function(oRouter, oArguments, bInital) {
 				var oView,
-					oParentInfo,
-					oTargetParent,
-					oTargetControl;
+					oTargetControl,
+					oParentPlaceInfo,
+					oPlaceInfo;
 
+				// Recursively fire matched event and display views of this routes parents
 				if (this._oParent) {
-					oParentInfo = this._oParent._routeMatched(oRouter, oArguments);
-
-					oTargetParent = oParentInfo.oTargetParent;
-					oTargetControl = oParentInfo.oTargetControl;
-
+					oParentPlaceInfo = this._oParent._routeMatched(oRouter, oArguments);
 				}
 
 				var oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
 
-				if ((oTargetControl || oConfig.targetControl) && oConfig.targetAggregation) {
-					//no parent view - see if there is a targetParent in the config
-					if (!oTargetParent) {
-
-						if (oConfig.targetParent) {
-							oTargetControl = sap.ui.getCore().byId(oConfig.targetParent).byId(oConfig.targetControl);
-						}
-
-					} else {
-						//target control was specified - ask the parents view for it
-						if (oConfig.targetControl) {
-							oTargetControl = oTargetParent.byId(oConfig.targetControl);
-						}
-					}
-
-					if (!oTargetControl) {
-						//Test if control exists in core (without prefix)
-						oTargetControl =  sap.ui.getCore().byId(oConfig.targetControl);
-					}
-
-					if (oTargetControl) {
-						var oAggregationInfo = oTargetControl.getMetadata().getJSONKeys()[oConfig.targetAggregation];
-						if (oAggregationInfo) {
-							//Set view for content
-							var sViewName = oConfig.view;
-							if (oConfig.viewPath) {
-								sViewName = oConfig.viewPath + "." + sViewName;
-							}
-							oView = oRouter.getView(sViewName, oConfig.viewType, oConfig.viewId);
-							if (oConfig.clearTarget === true) {
-								oTargetControl[oAggregationInfo._sRemoveAllMutator]();
-							}
-
-							oTargetControl[oAggregationInfo._sMutator](oView);
-						} else {
-							jQuery.sap.log.error("Control " + oConfig.targetControl + " does not has an aggregation called " + oConfig.targetAggregation);
-						}
-					} else {
-						jQuery.sap.log.error("Control with ID " + oConfig.targetControl + " could not be found");
-					}
-				}
+				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
+				this._oTarget._oOptions = oConfig;
+				oPlaceInfo = this._oTarget._place(oParentPlaceInfo);
+				oView = oPlaceInfo.oTargetParent;
+				oTargetControl = oPlaceInfo.oTargetControl;
 
 				if (oConfig.callback) {
 					oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
@@ -285,12 +249,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				this.fireEvent("matched", oEventData);
 				oRouter.fireRouteMatched(oEventData);
 
+				// skip this event in the recursion
 				if (bInital) {
 					this.fireEvent("patternMatched", oEventData);
 					oRouter.fireRoutePatternMatched(oEventData);
 				}
 
-				return { oTargetParent : oView, oTargetControl : oTargetControl };
+				return oPlaceInfo;
 			}
 
 
