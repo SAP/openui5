@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				/**
 				 * Defines the maximum width of the text field. This value can be provided in %, em, px… and all CSS units.
 				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: '100%'}
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" }
 			},
 			defaultAggregation: "items",
 			aggregations: {
