@@ -38,11 +38,11 @@
 
 			// do we have a view to check or do we need to check for configuration for a fragment?
 			if (oContainer instanceof sap.ui.core.mvc.View){
-				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName);
+				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName, oContainer);
 				oView = oContainer;
 			}
 			else if (oContainer instanceof sap.ui.core.Fragment) {
-				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName);
+				extensionConfig = sap.ui.core.CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName, oContainer);
 				oView = oContainer._oContainingView;
 			}
 
