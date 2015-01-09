@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	Version="4.0">
+	<edmx:Reference
+		Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="com.sap.vocabularies.Common.v1" Alias="Common">
+			<Annotation Term="Core.Description">
+				<String>Common terms for all SAP vocabularies</String>
+			</Annotation>
+			<Annotation Term="Core.Description" Qualifier="Published">
+				<String>2014-03-05 © Copyright 2014 SAP AG. All rights reserved
+				</String>
+			</Annotation><!-- Section: Versioning -->
+			<Term Name="ServiceVersion" Type="Edm.Int32">
+				<Annotation Term="Core.Description"
+					String="1 for first version of a service, incremented when schema changes incompatibly and service is published with a different URI" />
+			</Term>
+			<Term Name="ServiceSchemaVersion" Type="Edm.Int32">
+				<Annotation Term="Core.Description"
+					String="0 for first schema version within a service version, incremented when schema changes compatibly" />
+			</Term><!-- Section: General Semantics -->
+			<Term Name="Label" Type="Edm.String">
+				<Annotation Term="Core.Description"
+					String="A short, human-readable text suitable for labels and captions in UIs" />
+			</Term>
+			<Term Name="Heading" Type="Edm.String">
+				<Annotation Term="Core.Description"
+					String="A short, human-readable text suitable for column headings in UIs" />
+			</Term>
+			<Term Name="QuickInfo" Type="Edm.String">
+				<Annotation Term="Core.Description"
+					String="A short, human-readable text suitable for tool tips in UIs" />
+			</Term>
+			<Term Name="Text" Type="Edm.String" AppliesTo="Property">
+				<Annotation Term="Core.Description"
+					String="A descriptive text for values of the annotated property. Value MUST be a dynamic expression when used as metadata annotation." />
+			</Term>
+			<Term Name="SecondaryKey" AppliesTo="EntityType"
+				Type="Collection(Edm.PropertyPath)">
+				<Annotation Term="Core.Description"
+					String="The listed properties form a secondary key. Multiple secondary keys are possible using different qualifiers." />
+			</Term>
+			<Term Name="MinOccurs"
+				AppliesTo="NavigationProperty Property EntitySet Term Parameter"
+				Type="Edm.Int64">
+				<Annotation Term="Core.Description"
+					String="The annotated set or collection contains at least this number of items" />
+			</Term>
+			<Term Name="MaxOccurs"
+				AppliesTo="NavigationProperty Property EntitySet Term Parameter"
+				Type="Edm.Int64">
+				<Annotation Term="Core.Description"
+					String="The annotated set or collection contains at most this number of items" />
+			</Term>
+			<Term Name="AssociationEntity" Type="Collection(Edm.NavigationPropertyPath)"
+				AppliesTo="EntityType">
+				<Annotation Term="Core.Description">
+					<String>Entity representing an n:m association with attributes
+					</String>
+				</Annotation>
+				<Annotation Term="Common.MinOccurs" Int="2" />
+			</Term>
+			<Term Name="DerivedNavigation" Type="Edm.NavigationPropertyPath"
+				AppliesTo="NavigationProperty">
+				<Annotation Term="Core.Description">
+					<String>Shortcut for a multi-segment navigation, contains the long
+						path with all its segments</String>
+				</Annotation>
+			</Term>
+			<Term Name="FieldControl" Type="Common.FieldControlType"
+				DefaultValue="Optional" AppliesTo="Property">
+				<Annotation Term="Core.Description" String="Control state of a property" />
+			</Term>
+			<EnumType Name="FieldControlType" UnderlyingType="Edm.Byte">
+				<Member Name="Mandatory" Value="7">
+					<Annotation Term="Core.Description" String="Property must have a non-null value" />
+				</Member>
+				<Member Name="Optional" Value="3">
+					<Annotation Term="Core.Description" String="Property may have a value or be null" />
+				</Member>
+				<Member Name="ReadOnly" Value="1">
+					<Annotation Term="Core.Description"
+						String="Property value cannot be changed by end user" />
+				</Member>
+				<Member Name="Inapplicable" Value="0">
+					<Annotation Term="Core.Description"
+						String="Property has no meaning in the current entity state and should be invisible for end users" />
+				</Member>
+			</EnumType>
+			<Term Name="Notification" Type="Common.NotificationType">
+				<Annotation Term="Core.Description"
+					String="Instance annotation for warning and info notifications" />
+			</Term>
+			<ComplexType Name="NotificationType">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="severity" Type="Common.NotificationSeverity"
+					Nullable="false" />
+				<Property Name="target" Type="Edm.String" />
+				<Property Name="details" Type="Collection(Common.NotificationDetailType)" />
+			</ComplexType>
+			<ComplexType Name="NotificationDetailType">
+				<Property Name="code" Type="Edm.String" Nullable="false" />
+				<Property Name="message" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="severity" Type="Common.NotificationSeverity"
+					Nullable="false" />
+				<Property Name="target" Type="Edm.String" />
+			</ComplexType>
+			<EnumType Name="NotificationSeverity">
+				<Member Name="info" />
+				<Member Name="warning" />
+				<Member Name="error">
+					<Annotation Term="Core.Description"
+						String="Only allowed within notification details" />
+				</Member>
+			</EnumType><!-- Section: Value Help -->
+			<Term Name="ValueList" Type="Common.ValueListType" AppliesTo="Property Parameter">
+				<Annotation Term="Core.Description"
+					String="Specifies how to get a list of acceptable values for a property or parameter" />
+				<Annotation Term="Core.LongDescription"
+					String="The value list can be based on user input that is passed in the value list request. The value list can be used for type-ahead and classical pick lists." />
+			</Term>
+			<ComplexType Name="ValueListType"><!-- Example: Value list for currency code
+					using entity set Currencies with properties Code, Text, Symbol and more that
+					are not needed in the value list - CollectionPath: Currencies - SearchSupported:
+					true - Parameters: - - InOut: LocalDataProperty = CurrencyCode, ValueListPropert
+					= Code Example: Region within Country using entity set Regions with properties
+					Code, Name, CountryCode - CollectionPath: Regions - SearchSupported: false
+					- Parameters: - - InOut: LocalDataProperty = CountryCode, ValueListProperty
+					= CountryCode - - InOut: LocalDataProperty = RegionCode, ValueListProperty
+					= Code Open: - formatted text with HTML(?) markup where search matches are
+					emphasized - layout for value list line type -->
+				<Property Name="CollectionPath" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.Description"
+						String="Resource path of an OData collection with possible values, relative to CollectionRoot" />
+				</Property>
+				<Property Name="CollectionRoot" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.Description"
+						String="Service root of the value list collection; null means local to this document" />
+					<Annotation Term="Core.LongDescription"
+						String="URL prefix of the CollectionPath. If null, nothing is prefixed. Relative URLs are relative to the xml:base attribute of the document containing the annotation." />
+				</Property>
+				<Property Name="SearchSupported" Type="Edm.Boolean">
+					<Annotation Term="Core.Description"
+						String="Value list supports the $search query option" />
+					<Annotation Term="Core.LongDescription"
+						String="The value of the target property is used as the search expression instead of in $filter" />
+				</Property>
+				<Property Name="Parameters" Type="Collection(Common.ValueListParameter)">
+					<Annotation Term="Core.Description"
+						String="Instructions on how to construct the value list request and consume response properties" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ValueListParameter" Abstract="true">
+				<Property Name="ValueListProperty" Type="Edm.String"
+					Nullable="false">
+					<Annotation Term="Core.Description"
+						String="Path to property in response structure. Format is identical to PropertyPath annotations." />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ValueListParameterIn" BaseType="Common.ValueListParameter">
+				<Property Name="LocalDataProperty" Type="Edm.PropertyPath"
+					Nullable="false">
+					<Annotation Term="Core.Description"
+						String="Path to property that is used to filter/search the value list" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ValueListParameterInOut" BaseType="Common.ValueListParameter">
+				<Property Name="LocalDataProperty" Type="Edm.PropertyPath"
+					Nullable="false">
+					<Annotation Term="Core.Description"
+						String="Path to property that is used to filter/search the value list or filled from response" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ValueListParameterOut" BaseType="Common.ValueListParameter">
+				<Property Name="LocalDataProperty" Type="Edm.PropertyPath"
+					Nullable="false">
+					<Annotation Term="Core.Description"
+						String="Path to property that is filled from response" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ValueListParameterDisplayOnly"
+				BaseType="Common.ValueListParameter">
+				<Annotation Term="Core.Description"
+					String="Value list property that is not used to fill the edited entity" />
+			</ComplexType>
+			<ComplexType Name="ValueListParameterFilterOnly"
+				BaseType="Common.ValueListParameter">
+				<Annotation Term="Core.Description"
+					String="Value list property that is used to filter the value list, not connected to the edited entity" />
+			</ComplexType><!-- Section: Calendar Points in Time -->
+			<Term Name="IsCalendarYear" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a year number as string following the
+						logical pattern (-?)YYYY(Y*) consisting of an optional
+						minus sign for years B.C. followed by at least four digits. The string
+						matches the regex pattern -?([1-9][0-9]{3,}|0[0-9]{3})
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarQuarter" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar quarter number as string
+						following the logical pattern Q consisting of a single digit.
+						The string matches the regex pattern [1-4]
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarMonth" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar month number as string
+						following the logical pattern MM consisting of two digits.
+						The string matches the regex pattern 0[1-9]|1[0-2]
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarWeek" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar week number as string following
+						the logical pattern WW consisting of two digits.
+						The string matches the regex pattern 0[1-9]|[1-4][0-9]|5[2-3]
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsDayOfCalendarMonth" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Day number relative to a calendar month. Valid values are
+						between 1 and 31.</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.SByte" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsDayOfCalendarYear" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Day number relative to a calendar year. Valid values are
+						between 1 and 366.</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.Int16" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarYearQuarter" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar year and quarter as string
+						following the logical pattern (-?)YYYY(Y*)Q consisting
+						of an optional minus sign for years B.C. followed by at least five
+						digits, where the last digit represents the quarter.
+						The string matches the regex pattern
+						-?([1-9][0-9]{3,}|0[0-9]{3})[1-4]
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarYearMonth" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar year and month as string
+						following the logical pattern (-?)YYYY(Y*)MM consisting
+						of an optional minus sign for years B.C. followed by at least six
+						digits, where the last two digits represent the months January to
+						December.
+						The string matches the regex pattern
+						-?([1-9][0-9]{3,}|0[0-9]{3})(0[1-9]|1[0-2])
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarYearWeek" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar year and week as string
+						following the logical pattern (-?)YYYY(Y*)WW consisting
+						of an optional minus sign for years B.C. followed by at least six
+						digits, where the last two digits represent week number in the
+						year.
+						The string matches the regex pattern
+						-?([1-9][0-9]{3,}|0[0-9]{3})(0[1-9]|[1-4][0-9]|5[2-3])
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsCalendarDate" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a calendar date: year, month and day as
+						string following the logical pattern (-?)YYYY(Y*)MMDD consisting
+						of an optional minus sign for years B.C. followed by at least
+						eight digits, where the last four digits represent
+						the months January to December (MM) and the day of the month (DD).
+						The string matches the regex pattern
+						-?([1-9][0-9]{3,}|0[0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])
+						The regex pattern does not reflect the additional constraint for
+						&quot;Day-of-month Values&quot;:
+						The day value must be no more than 30 if month is one of 04, 06, 09,
+						or 11, no more than 28 if month is 02 and year is not divisible by
+						4,
+						or is divisible by 100 but not by 400, and no more than 29 if month
+						is 02 and year is divisible by 400, or by 4 but not by 100.
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term><!-- Section: Fiscal Points in Time -->
+			<Term Name="IsFiscalYear" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a fiscal year number as string following
+						the logical pattern YYYY(Y*) consisting of at least four digits.
+						The string matches the regex pattern [1-9][0-9]{3,}
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsFiscalPeriod" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a fiscal period as string following the
+						logical pattern PPP consisting of three digits.
+						The string matches the regex pattern [0-9]{3}
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsFiscalYearPeriod" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description">
+					<String>Property encodes a fiscal year and period as string
+						following the logical pattern YYYY(Y*)PPP consisting
+						of at least seven digits, where the last three digits represent the
+						fiscal period in the year.
+						The string matches the regex pattern ([1-9][0-9]{3,})([0-9]{3})
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term>
+			<Term Name="IsFiscalYearVariant" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description" String="Property encodes a fiscal year variant" />
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+				<Annotation Term="Common.MutuallyExclusiveTerm"
+					Qualifier="DatePart" />
+			</Term><!-- Section: Term Constraints -->
+			<Term Name="MutuallyExclusiveTerm" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Term">
+				<Annotation Term="Core.Description"
+					String="Only one term of the group identified with the Qualifier attribute can be applied" />
+			</Term>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

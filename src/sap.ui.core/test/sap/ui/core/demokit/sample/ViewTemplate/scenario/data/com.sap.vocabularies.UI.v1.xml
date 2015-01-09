@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference
+		Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/coco/vocabularies/Communication.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1"
+			Alias="vCard" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Alias="UI"
+			Namespace="com.sap.vocabularies.UI.v1">
+			<Annotation Term="Core.Description">
+				<String>Terms for presenting data in user interfaces</String>
+			</Annotation>
+			<Annotation Term="Core.Description" Qualifier="Published">
+				<String>2013-10-16 © Copyright 2013 SAP AG. All rights reserved
+				</String>
+			</Annotation><!-- Semantic Views / Perspectives -->
+			<Term Name="HeaderInfo" Type="UI.HeaderInfoType" AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+				<Annotation Term="Core.Description">
+					<String>HeaderInfos are mandatory and must be exposed on every
+						thing of the model</String>
+				</Annotation>
+			</Term>
+			<ComplexType Name="HeaderInfoType">
+				<Property Name="TypeName" Type="Edm.String">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="TypeNamePlural" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="TypeImageUrl" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="Title" Type="UI.DataField" Nullable="false" />
+				<Property Name="Description" Type="UI.DataField" Nullable="true" />
+				<Property Name="ImageUrl" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+			</ComplexType>
+			<Term Name="Identification" Type="Collection(UI.DataFieldAbstract)"
+				AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+				<Annotation Term="Core.Description">
+					<String>HeaderInfo plus this set of attributes identifies the
+						object</String>
+				</Annotation>
+			</Term>
+			<Term Name="Badge" Type="UI.BadgeType" AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+				<Annotation Term="Core.Description">
+					<String>Badge is similar to a business card view</String>
+				</Annotation>
+			</Term>
+			<ComplexType Name="BadgeType">
+				<Property Name="HeadLine" Type="UI.DataField" Nullable="false" />
+				<Property Name="Title" Type="UI.DataField" Nullable="false" />
+				<Property Name="ImageUrl" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="TypeImageUrl" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="MainInfo" Type="UI.DataField" Nullable="true" />
+				<Property Name="SecondaryInfo" Type="UI.DataField"
+					Nullable="true" />
+			</ComplexType>
+			<Term Name="LineItem" Type="Collection(UI.DataFieldAbstract)"
+				AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<Term Name="StatusInfo" Type="Collection(UI.DataFieldAbstract)"
+				AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<Term Name="FieldGroup" Type="UI.FieldGroupType" AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<ComplexType Name="FieldGroupType">
+				<Property Name="Label" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="Data" Type="Collection(UI.DataFieldAbstract)" />
+			</ComplexType>
+			<Term Name="GeoLocations" Type="Collection(UI.GeoLocationType)"
+				AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<Term Name="GeoLocation" Type="UI.GeoLocationType" AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<ComplexType Name="GeoLocationType">
+				<Annotation Term="Core.Description">
+					<String>Set of Attributes which defines the Localization of the
+						object</String>
+				</Annotation>
+				<Property Name="Latitude" Type="Edm.Float" Nullable="true" />
+				<Property Name="Longitude" Type="Edm.Float" Nullable="true" />
+				<Property Name="Location" Type="Edm.GeographyPoint"
+					Nullable="true" />
+				<Property Name="Address" Type="vCard.AddressType" Nullable="true" />
+			</ComplexType>
+			<Term Name="Contacts" Type="Collection(Edm.AnnotationPath)"
+				AppliesTo="EntityType">
+				<Annotation Term="Core.Description"
+					String="Each collection element MUST reference a vCard.Contact annotation or a collection of vCard.Contact annotations" />
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<Term Name="DataPoint" Type="UI.DataPointType" AppliesTo="EntityType">
+				<Annotation Term="UI.ThingPerspective" />
+			</Term>
+			<ComplexType Name="DataPointType">
+				<Property Name="Title" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="Description" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="LongDescription" Type="Edm.String"
+					Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="Value" Type="Edm.PrimitiveType" Nullable="false">
+					<Annotation Term="Core.Description"
+						String="This property has to be annotated with either UoM.ISOCurrency or UoM.Unit" />
+					<Annotation Term="Core.LongDescription"
+						String="Percentages are annotated with UoM.Unit = &apos;%&apos;" />
+				</Property>
+				<Property Name="ValueFormat" Type="UI.NumberFormat"
+					Nullable="true" />
+				<Property Name="ReferencePeriod" Type="UI.ReferencePeriod"
+					Nullable="true" />
+				<Property Name="Criticality" Type="UI.CriticalityType"
+					Nullable="true" />
+				<Property Name="CriticalityCalculation" Type="UI.CriticalityCalculationType"
+					Nullable="true" />
+				<Property Name="Trend" Type="UI.TrendType" Nullable="true" />
+				<Property Name="TrendCalculation" Type="UI.TrendCalculationType"
+					Nullable="true" />
+				<Property Name="Responsible" Type="vCard.Contact" Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="NumberFormat">
+				<Property Name="ScaleFactor" Type="Edm.Decimal" Scale="variable"
+					Nullable="true" />
+				<Property Name="NumberOfFractionalDigits" Type="Edm.Byte"
+					Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="ReferencePeriod">
+				<Property Name="Description" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="Start" Type="Edm.DateTimeOffset" Nullable="true" />
+				<Property Name="End" Type="Edm.DateTimeOffset" Nullable="true" />
+			</ComplexType>
+			<EnumType Name="CriticalityType">
+				<Member Name="Negative" />
+				<Member Name="Critical" />
+				<Member Name="Positive" />
+			</EnumType>
+			<ComplexType Name="CriticalityCalculationType">
+				<Annotation Term="Core.Description">
+					<String>Direction: Target
+						- Positive: ge ToleranceRangeLowValue and le
+						ToleranceRangeHighValue
+						- Critical: ge DeviationRangeLowValue and lt ToleranceRangeLowValue
+						or
+						gt ToleranceRangeHighValue and le DeviationRangeHighValue
+						- Negative: lt DeviationRangeLowValue and gt
+						DeviationRangeHighValue
+						Direction: Minimize
+						- Positive: le ToleranceRangeHighValue
+						- Critical: gt ToleranceRangeHighValue and le
+						DeviationRangeHighValue
+						- Negative: gt DeviationRangeHighValue
+						Direction: Maximize
+						- Positive: ge ToleranceRangeLowValue
+						- Critical: lt ToleranceRangeLowValue and ge DeviationRangeLowValue
+						- Negative: lt DeviationRangeLowValue
+					</String>
+				</Annotation>
+				<Property Name="ImprovementDirection" Type="UI.ImprovementDirectionType"
+					Nullable="false">
+				</Property>
+				<Property Name="ToleranceRangeLowValue" Type="Edm.PrimitiveType"
+					Nullable="true" />
+				<Property Name="ToleranceRangeHighValue" Type="Edm.PrimitiveType"
+					Nullable="true" />
+				<Property Name="DeviationRangeLowValue" Type="Edm.PrimitiveType"
+					Nullable="true" />
+				<Property Name="DeviationRangeHighValue" Type="Edm.PrimitiveType"
+					Nullable="true" />
+			</ComplexType>
+			<EnumType Name="ImprovementDirectionType">
+				<Member Name="Minimize" />
+				<Member Name="Target" />
+				<Member Name="Maximize" />
+			</EnumType>
+			<EnumType Name="TrendType">
+				<Member Name="StrongUp" />
+				<Member Name="Up" />
+				<Member Name="Sideways" />
+				<Member Name="Down" />
+				<Member Name="StrongDown" />
+			</EnumType>
+			<ComplexType Name="TrendCalculationType">
+				<Annotation Term="Core.Description">
+					<String>Value sub ReferenceValue ( div ReferenceValue if
+						IsRelativeDifference ) must be
+						- StrongUp: ge StrongDownDifference
+						- Up: lt StrongDownDifference and ge UpDifference
+						- Sideways: lt UpDifference and gt DownDifference
+						- Down: gt StrongDownDifference and le DownDifference
+						- StrongDown: le StrongDownDifference
+					</String>
+				</Annotation>
+				<Property Name="ReferenceValue" Type="Edm.PrimitiveType"
+					Nullable="false" />
+				<Property Name="IsRelativeDifference" Type="Edm.Boolean"
+					DefaultValue="false" />
+				<Property Name="UpDifference" Type="Edm.Decimal" Nullable="false" />
+				<Property Name="StrongUpDifference" Type="Edm.Decimal"
+					Nullable="false" />
+				<Property Name="DownDifference" Type="Edm.Decimal"
+					Nullable="false" />
+				<Property Name="StrongDownDifference" Type="Edm.Decimal"
+					Nullable="false" />
+			</ComplexType>
+			<Term Name="Chart" Type="UI.ChartDefinitionType" AppliesTo="EntityType" />
+			<ComplexType Name="ChartDefinitionType">
+				<Property Name="Title" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="Description" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+				<Property Name="ChartType" Type="UI.ChartType" Nullable="false" />
+				<Property Name="Measures" Type="Collection(Edm.PropertyPath)" />
+				<Property Name="Dimensions" Type="Collection(Edm.PropertyPath)" />
+			</ComplexType>
+			<EnumType Name="ChartType">
+				<Member Name="Column" />
+				<Member Name="ColumnStacked" />
+				<Member Name="ColumnStacked100" />
+				<Member Name="Bar" />
+				<Member Name="BarStacked" />
+				<Member Name="BarStacked100" />
+				<Member Name="Area" />
+				<Member Name="AreaStacked" />
+				<Member Name="AreaStacked100" />
+				<Member Name="HorizontalArea" />
+				<Member Name="HorizontalAreaStacked" />
+				<Member Name="HorizontalAreaStacked100" />
+				<Member Name="Line" />
+				<Member Name="Pie" />
+				<Member Name="Donut" />
+				<Member Name="Scatter" />
+				<Member Name="Bubble" />
+				<Member Name="Radar" />
+				<Member Name="HeatMap" />
+				<Member Name="TreeMap" />
+				<Member Name="Waterfall" /><!-- Future: GeoPie, GeoBubble, ChoroplethMap -->
+			</EnumType><!-- Segmentation of content according to facets of the Object -->
+			<Term Name="Facets" Type="Collection(UI.Facet)" AppliesTo="EntityType">
+			</Term>
+			<ComplexType Name="Facet" Abstract="true">
+				<Annotation Term="Core.Description" String="Base type for facets" />
+				<Property Name="Label" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="CollectionFacet" BaseType="UI.Facet">
+				<Annotation Term="Core.Description" String="Collection of Facets" />
+				<Property Name="Facets" Type="Collection(UI.Facet)" />
+			</ComplexType>
+			<ComplexType Name="ReferenceFacet" BaseType="UI.Facet">
+				<Annotation Term="Core.Description"
+					String="Facet that refers to a thing perspective, e.g. LineItem" />
+				<Property Name="Target" Type="Edm.AnnotationPath" Nullable="false">
+					<Annotation Term="Core.Description">
+						<String>Path MUST end in vCard.Contact or vCard.Address or a term
+							that is tagged with UI.ThingPerspective, e.g. UI.StatusInfo,
+							UI.LineItem, UI.Identification, UI.FieldGroup, UI.Badge</String>
+					</Annotation>
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ReferenceURLFacet" BaseType="UI.Facet">
+				<Property Name="Url" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="UrlContentType" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsMimeType" />
+				</Property>
+			</ComplexType><!-- basic type definitions for reuse goes here -->
+			<Term Name="ThingPerspective" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Term">
+				<Annotation Term="Core.Description" String="This Term is a Thing Perspective" />
+			</Term>
+			<Term Name="IsSummary" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Record">
+				<Annotation Term="Core.Description"
+					String="This Facet and all included Facets are the summary of the thing. At most one Facet of a thing can be tagged with this term" />
+				<Annotation Term="Core.RequiresType" String="UI.Facet" />
+			</Term>
+			<Term Name="PartOfPreview" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Record">
+				<Annotation Term="Core.Description"
+					String="This Facet and all included Facets are part of the Thing preview" />
+				<Annotation Term="Core.RequiresType" String="UI.Facet" />
+			</Term>
+			<Term Name="Map" Type="Core.Tag" DefaultValue="true" AppliesTo="Record">
+				<Annotation Term="Core.Description"
+					String="Target MUST reference a UI.GeoLocation, vCard.Address or a collection of these" />
+				<Annotation Term="Core.RequiresType" String="UI.ReferenceFacet" />
+			</Term>
+			<Term Name="IsImageURL" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property Term">
+				<Annotation Term="Core.Description"
+					String="Properties and terms annotated with this term MUST contain a valid URL referencing an resource with a MIME type image" />
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+			</Term>
+			<Term Name="MultiLineText" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property">
+				<Annotation Term="Core.Description"
+					String="Properties annotated with this annotation should be rendered as multi-line text (e.g. text area)" />
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+			</Term>
+			<Term Name="Importance" Type="UI.ImportanceType" AppliesTo="Annotation Record">
+				<Annotation Term="Core.Description"
+					String="Expresses the importance, e.g. importance of a DataField or a the importance of a annotation" />
+			</Term>
+			<EnumType Name="ImportanceType">
+				<Member Name="High" />
+				<Member Name="Medium" />
+				<Member Name="Low" />
+			</EnumType>
+			<ComplexType Name="DataFieldAbstract" Abstract="true">
+				<Property Name="Label" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="DataFieldForAnnotation" BaseType="UI.DataFieldAbstract">
+				<Property Name="Target" Type="Edm.AnnotationPath">
+					<Annotation Term="Core.Description"
+						String="Annotation path MUST end in vCard.Address or UI.DataPoint" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="DataField" BaseType="UI.DataFieldAbstract">
+				<Property Name="Value" Type="Edm.PrimitiveType" Nullable="false">
+					<Annotation Term="Core.IsLanguageDependent" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="DataFieldWithNavigation" BaseType="UI.DataField">
+				<Property Name="Target" Type="Edm.EntityType" Nullable="false">
+					<Annotation Term="Core.Description"
+						String="Used with Path expression pointing to an entity related to the data field" />
+				</Property>
+			</ComplexType>
+			<ComplexType Name="DataFieldWithUrl" BaseType="UI.DataField">
+				<Property Name="Url" Type="Edm.String" Nullable="false">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="UrlContentType" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsMimeType" />
+				</Property>
+			</ComplexType>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
