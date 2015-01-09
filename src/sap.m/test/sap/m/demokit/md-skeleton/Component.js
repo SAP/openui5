@@ -1,4 +1,5 @@
 jQuery.sap.declare("sap.ui.demo.mdskeleton.Component");
+jQuery.sap.require("sap.ui.demo.mdskeleton.util.formatter");
 jQuery.sap.require("sap.ui.demo.mdskeleton.util.MyRouter");
 
 sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
@@ -111,7 +112,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 			autoRespondAfter : iDelay
 		});
 
-		oMockServer.simulate("model/metadata.xml", "model/");
+		oMockServer.simulate("model/data/Northwind/metadata.xml", "model/data/Northwind");
 		oMockServer.start();
 
 

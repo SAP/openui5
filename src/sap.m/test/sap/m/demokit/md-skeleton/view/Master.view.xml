@@ -9,11 +9,26 @@
 				id="list"
 				items="{/Products}"
 				noDataText="{i18n>masterListNoDataText}"
-				mode="SingleSelectMaster"
+				mode="{
+					path: 'device>isPhone',
+					formatter: 'sap.ui.demo.mdskeleton.util.formatter.listMode'
+				}"
 				select="onSelect">
+
 				<items>
-					<StandardListItem title="{Name}">
-					</StandardListItem>
+					<ObjectListItem
+						type="{
+							path: 'device>isPhone',
+							formatter: 'sap.ui.demo.mdskeleton.util.formatter.listItemType'
+						}"
+						press="onSelect"
+						title="{Name}"
+						number="{
+							path: 'Price',
+							formatter: 'sap.ui.demo.mdskeleton.util.formatter.currencyValue'
+						}"
+						numberUnit="USD">
+					</ObjectListItem>
 				</items>
 			</List>
 		</content>
