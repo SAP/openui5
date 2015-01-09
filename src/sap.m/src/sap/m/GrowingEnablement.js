@@ -211,7 +211,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 */
 		_getLoading : function(sId) {
 			var that = this;
-			return this._oLoading || (this._oLoading = new sap.m.CustomListItem({
+			
+			if (this._oLoading) {
+				return this._oLoading;
+			}
+			
+			this._oLoading = new sap.m.CustomListItem({
 				id : sId,
 				content : new sap.ui.core.HTML({
 					content :	"<div class='sapMSLIDiv sapMGrowingListLoading'>" +
@@ -224,7 +229,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 						rm.destroy();
 					}
 				})
-			}).setParent(this._oControl, null, true));
+			}).setParent(this._oControl, null, true);
+			
+			// growing loading indicator as a list item should not be affected from the List Mode
+			this._oLoading.getMode = function() {
+				return sap.m.ListMode.None;
+			};
+			
+			return this._oLoading;
 		},
 
 		/**
@@ -239,8 +251,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			}
 
 			this._oControl.addNavSection(sId);
+			
+			if (this._oTrigger) {
+				return this._oTrigger;
+			}
 
-			return this._oTrigger || (this._oTrigger = new sap.m.CustomListItem({
+			this._oTrigger = new sap.m.CustomListItem({
 				id : sId,
 				content : new sap.ui.core.HTML({
 					content :	"<div class='sapMGrowingListTrigger'>" +
@@ -272,7 +288,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				onAfterRendering : function(oEvent) {
 					this._oTrigger.$().prop("tabindex", 0);
 				}
-			}, this));
+			}, this);
+			
+			// growing button as a list item should not be affected from the List Mode
+			this._oTrigger.getMode = function() {
+				return sap.m.ListMode.None;
+			};
+			
+			return this._oTrigger;
 		},
 
 		/**

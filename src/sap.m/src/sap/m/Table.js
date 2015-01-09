@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
 		this._notifyColumns("ItemsRemoved");
-		this._navRenderedBy = "";
+		this._bItemTypeRendered = false;
 	};
 	
 	Table.prototype.onAfterRendering = function() {
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var $Table = jQuery(this.getTableDomRef());
 		
 		// if any item has navigation, add required class
-		this._navRenderedBy && $Table.addClass("sapMListTblHasNav");
+		this._bItemTypeRendered && $Table.addClass("sapMListTblHasNav");
 		
 		// notify columns after rendering
 		this._notifyColumns("ColumnRendered", $Table, !this.getFixedLayout());
@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 */
 	Table.prototype.onAfterPageLoaded = function() {
 		this.updateSelectAllCheckbox();
-		this._navRenderedBy && jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
+		this._bItemTypeRendered && jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
 		ListBase.prototype.onAfterPageLoaded.apply(this, arguments);
 	};
 	
@@ -187,12 +187,14 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		});
 	};
 	
-	/*
-	 * This function runs when setSelected is called from ListItemBase
-	 * @overwrite
-	 */
-	Table.prototype.onItemSetSelected = function(oItem, bSelect) {
-		ListBase.prototype.onItemSetSelected.apply(this, arguments);
+	// this gets called when item type is rendered
+	Table.prototype.onItemTypeRender = function() {
+		this._bItemTypeRendered = true;
+	};
+	
+	// this gets called when selected property of the item is changed
+	Table.prototype.onItemSelectedChange = function(oItem, bSelect) {
+		ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 		jQuery.sap.delayedCall(0, this, function() {
 			this.updateSelectAllCheckbox();
 		});
@@ -381,7 +383,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {
-				this.removeSelections(true, true);
+				this.removeSelections(false, true);
 			}
 		}, this).setTabIndex(-1));
 	};
