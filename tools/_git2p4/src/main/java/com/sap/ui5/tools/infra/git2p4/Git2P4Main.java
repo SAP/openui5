@@ -126,11 +126,13 @@ public class Git2P4Main {
       lastRunInfo.setLastCommitId(git.getLastCommits().keySet().iterator().next());
       lastRunInfo.save();
     }
-    List<GitClient.Commit> commits = new CommitHistoryOptimizer(git.getLastCommits()).run();
-    for(GitClient.Commit commit : commits) {
-      commit.data = repo;
+//    List<GitClient.Commit> commits = new CommitHistoryOptimizer(git.getLastCommits()).run();
+    for(GitClient.Commit commit : git.getLastCommits().values()) {
+      if (!commit.isMerge()) {
+        commit.data = repo;
+        allCommits.add(commit);
+      }
     }
-    allCommits.addAll(commits);
   }
 
   static final Pattern POM_VERSION = Pattern.compile("\\s*<version>([0-9]+(?:\\.[0-9]+(?:\\.[0-9]+)?)?(?:-SNAPSHOT)?)</version>\\s*");
