@@ -292,7 +292,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		setConstraint("precision", iPrecision, Infinity);
 		setConstraint("scale", iScale, 0);
 		if (vNullable === false || vNullable === "false") {
-			setConstraint("nullable", false);
+			setConstraint("nullable", false, true);
 		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
 		}

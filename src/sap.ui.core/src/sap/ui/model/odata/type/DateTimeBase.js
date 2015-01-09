@@ -63,6 +63,9 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 			{
 				constructor : function (oFormatOptions, oConstraints) {
 					this.setConstraints(oConstraints);
+				},
+				metadata : {
+					"abstract": true
 				}
 			}
 		);
