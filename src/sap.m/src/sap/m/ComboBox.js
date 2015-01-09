@@ -992,11 +992,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/**
 		 * Retrieves the default selected item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item | null}
+		 * @returns {null}
 		 * @protected
 		 */
 		ComboBox.prototype.getDefaultSelectedItem = function() {
-			return this.getForceSelection() ? this.findFirstEnabledItem() : null;
+			return null;
 		};
 
 		/*
@@ -1026,24 +1026,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
-
-		/**
-		 * Setter for property <code>value</code>.
-		 *
-		 * Default value is empty/<code>undefined</code>.
-		 *
-		 * @param {string} sValue New value for property <code>value</code>.
-		 * @return {sap.m.ComboBox} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBox.prototype.setValue = function(sValue, bSuppressForceSelection /* for internal usage */) {
-			if (!bSuppressForceSelection && this.getForceSelection() && !this.getItemByText(sValue)) {
-				return this;
-			}
-
-			ComboBoxBase.prototype.setValue.call(this, sValue);
-			return this;
-		};
 
 		/**
 		 * Setter for association <code>selectedItem</code>.
@@ -1221,29 +1203,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// return the removed item or null
 			return vItem;
 		};
-
-		/**
-		 * Removes all the controls in the aggregation named <code>items</code>.
-		 * Additionally unregisters them from the hosting UIArea and clears the selection.
-		 *
-		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
-		 * @public
-		 */
-		ComboBox.prototype.removeAllItems = function() {
-			var aItems = ComboBoxBase.prototype.removeAllItems.call(this);
-
-			if (this.getForceSelection()) {
-				this.setValue("", true);
-			}
-
-			return aItems;
-		};
-
-		ComboBox.prototype.getForceSelection = function() {
-			return false;
-		};
-
-		ComboBox.prototype.setForceSelection = function() {};
 
 		return ComboBox;
 
