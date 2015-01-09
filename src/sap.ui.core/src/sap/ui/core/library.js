@@ -1443,7 +1443,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","xml.XMLModel"]);
 	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize"]);
-	each("sap.ui.model.odata.type.", ["Boolean","DateTime","DateTimeOffset","Decimal","Guid","Int16","Int32","SByte","String"]);
+	each("sap.ui.model.odata.type.", ["Boolean","DateTime","DateTimeOffset","Decimal","Guid","Int16","Int32","SByte","String", "Time"]);
 	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
 	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
 	each("sap.ui.core.", ["Component"], "sap.ui");
