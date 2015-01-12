@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     OData Version 4.0
+     OASIS Standard
+     24 February 2014
+     Copyright (c) OASIS Open 2014. All Rights Reserved.
+     Source: http://docs.oasis-open.org/odata/odata/v4.0/os/vocabularies/
+
+     -->
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+  <edmx:DataServices>
+    <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Org.OData.Core.V1" Alias="Core">
+      <Annotation Term="Core.Description">
+        <String>Core terms needed to write vocabularies</String>
+      </Annotation>
+
+      <!--Documentation -->
+
+      <Term Name="Description" Type="Edm.String">
+        <Annotation Term="Core.Description" String="A brief description of a model element" />
+        <Annotation Term="Core.IsLanguageDependent" />
+      </Term>
+
+      <Term Name="LongDescription" Type="Edm.String">
+        <Annotation Term="Core.Description" String="A lengthy description of a model element" />
+        <Annotation Term="Core.IsLanguageDependent" />
+      </Term>
+
+      <!-- Localization -->
+
+      <Term Name="IsLanguageDependent" Type="Core.Tag" DefaultValue="true" AppliesTo="Property Term">
+        <Annotation Term="Core.Description" String="Properties and terms annotated with this term are language-dependent" />
+        <Annotation Term="Core.RequiresType" String="Edm.String" />
+      </Term>
+
+      <!-- Term Restrictions -->
+
+      <TypeDefinition Name="Tag" UnderlyingType="Edm.Boolean">
+        <Annotation Term="Core.Description" String="This is the type to use for all tagging terms" />
+      </TypeDefinition>
+
+      <Term Name="RequiresType" Type="Edm.String" AppliesTo="Term">
+        <Annotation Term="Core.Description"
+          String="Properties and terms annotated with this annotation MUST have a type that is identical to or derived from the given type name" />
+      </Term>
+
+      <!--Resource Paths -->
+
+      <Term Name="ResourcePath" Type="Edm.String" AppliesTo="EntitySet Singleton ActionImport FunctionImport">
+        <Annotation Term="Core.Description"
+          String="Resource path for entity container child, can be relative to xml:base and the request URL" />
+        <Annotation Term="Core.IsUrl" />
+      </Term>
+
+      <Term Name="DereferenceableIDs" Type="Core.Tag" DefaultValue="true" AppliesTo="EntityContainer">
+        <Annotation Term="Core.Description" String="Entity-ids are URLs that locate the identified entity" />
+      </Term>
+
+      <Term Name="ConventionalIDs" Type="Core.Tag" DefaultValue="true" AppliesTo="EntityContainer">
+        <Annotation Term="Core.Description" String="Entity-ids follow OData URL conventions" />
+      </Term>
+
+      <!-- Permissions -->
+
+      <Term Name="Permissions" Type="Core.Permission" AppliesTo="Property">
+        <Annotation Term="Core.Description" String="Permissions available for a property.The value of 2 is reserved for future use." />
+      </Term>
+      <EnumType Name="Permission" IsFlags="true">
+        <Member Name="None" Value="0" />
+        <Member Name="Read" Value="1" />
+        <Member Name="ReadWrite" Value="3" />
+      </EnumType>
+
+      <!-- Metadata Extensions -->
+
+      <Term Name="Immutable" Type="Core.Tag" DefaultValue="true" AppliesTo="Property">
+        <Annotation Term="Core.Description"
+          String="A value for this non-key property can be provided on insert and remains unchanged on update" />
+      </Term>
+
+      <Term Name="Computed" Type="Core.Tag" DefaultValue="true" AppliesTo="Property">
+        <Annotation Term="Core.Description" String="A value for this property is generated on both insert and update" />
+      </Term>
+
+      <Term Name="IsURL" Type="Core.Tag" DefaultValue="true" AppliesTo="Property Term">
+        <Annotation Term="Core.Description" String="Properties and terms annotated with this term MUST contain a valid URL" />
+        <Annotation Term="Core.RequiresType" String="Edm.String" />
+      </Term>
+
+      <Term Name="AcceptableMediaTypes" Type="Collection(Edm.String)" AppliesTo="EntityType Property">
+        <Annotation Term="Core.Description"
+          String="Lists the MIME types acceptable for the annotated entity type marked with HasStream=&quot;true&quot; or the annotated stream property" />
+        <Annotation Term="Core.IsMediaType" />
+      </Term>
+
+      <Term Name="MediaType" Type="Edm.String" AppliesTo="Property">
+        <Annotation Term="Core.IsMediaType" />
+        <Annotation Term="Core.RequiresType" String="Edm.Binary" />
+      </Term>
+
+      <Term Name="IsMediaType" Type="Core.Tag" DefaultValue="true" AppliesTo="Property Term">
+        <Annotation Term="Core.Description" String="Properties and terms annotated with this term MUST contain a valid MIME type" />
+        <Annotation Term="Core.RequiresType" String="Edm.String" />
+      </Term>
+
+      <Term Name="OptimisticConcurrency" Type="Collection(Edm.PropertyPath)" AppliesTo="EntitySet">
+        <Annotation Term="Core.Description"
+          String="Data modification requires the use of Etags. A non-empty collection contains the set of properties that are used to compute the ETag" />
+      </Term>
+
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
