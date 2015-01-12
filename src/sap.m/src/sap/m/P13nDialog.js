@@ -104,7 +104,14 @@ sap.ui.define([
 				var oPanel = null;
 				var fCallbackOK = function() {
 					oPanel.onAfterNavigationFrom();
-					that.fireOk();
+					var aPanels = that.getPanels();
+					var oPayload = {};
+					jQuery.each(aPanels, function(i, _oPanel) {
+						oPayload[_oPanel.getType()] = _oPanel.getOkPayload();
+					});
+					that.fireOk({
+						payload: oPayload
+					});
 				};
 				that.getPanels().some(function(_oPanel) {
 					if (!_oPanel.onBeforeNavigationFrom()) {
@@ -113,7 +120,14 @@ sap.ui.define([
 					}
 				});
 				if (!oPanel) {
-					that.fireOk();
+					var aPanels = that.getPanels();
+					var oPayload = {};
+					jQuery.each(aPanels, function(i, _oPanel) {
+						oPayload[_oPanel.getType()] = _oPanel.getOkPayload();
+					});
+					that.fireOk({
+						payload: oPayload
+					});
 					return;
 				}
 				that.showValidationDialog(fCallbackOK, null);
@@ -293,6 +307,7 @@ sap.ui.define([
 					oEvent.stopImmediatePropagation(true);
 					var that = this;
 					var fCallbackOK = function() {
+
 						oPanelVisible.onAfterNavigationFrom();
 						if (that._getSegmentedButton()) {
 							that._getSegmentedButton().setSelectedButton(oButtonClicked);
@@ -397,9 +412,9 @@ sap.ui.define([
 		if (bVisible) {
 			oPanel.beforeNavigationTo();
 		}
-		
+
 		oPanel.setVisible(bVisible);
-		
+
 		if (bVisible) {
 			// TGHL oPanel.fireLoadData();
 			this._setVisibilityOfOtherPanels(oPanel, false);

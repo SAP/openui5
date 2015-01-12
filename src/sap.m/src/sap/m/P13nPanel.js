@@ -76,11 +76,18 @@ sap.ui.define([
 	});
 
 	/**
+	 * This method can be overwritten by subclass in order to return a payload
+	 * 
+	 * @public
+	 */
+	P13nPanel.prototype.getOkPayload = function() {
+		return {};
+	};
+	
+	/**
 	 * @public
 	 */
 	P13nPanel.prototype.beforeNavigationTo = function() {
-		
-		//TGHL 
 		this.fireBeforeNavigationTo();
 	};
 
