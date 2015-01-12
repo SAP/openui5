@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 							throw new Error('Control "' + mSettings.id + '": The function "' + sValue + '" for the event "' + sName + '" is not defined');
 						}
 					} else {
-						jQuery.sap.assert((sName === "id"), fnClass.getMetadata().getName() + ": DeclarativeSupport encountered and ignored unknown attribute '" + sName + "' (value: '" + sValue + "')");
+						jQuery.sap.assert((sName === "id"), "DeclarativeSupport encountered unknown setting '" + sName + "' for class '" + fnClass.getMetadata().getName() + "' (value:'" + sValue + "')");
 					}
 				} else if (typeof oSpecialAttributes[sName] === "function") {
 					oSpecialAttributes[sName](sValue, mSettings, fnClass);

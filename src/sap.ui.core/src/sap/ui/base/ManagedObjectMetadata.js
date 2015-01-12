@@ -77,7 +77,15 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			}
 			return mInfoMap;
 		}
-	
+
+		function emptyMap(mInfoMap) {
+			mInfoMap = mInfoMap || {};
+			for (var sName in mInfoMap) {
+				mInfoMap[sName] = {};
+			}
+			return mInfoMap;
+		}
+
 		function filter(mInfoMap, bPublic) {
 			var mResult = {},sName;
 			for (sName in mInfoMap) {
@@ -104,6 +112,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
 		this._mAssociations = normalize(oStaticInfo.associations, "type", { type : "sap.ui.core.Control", multiple : false});
 		this._mEvents = normalize(oStaticInfo.events, /* no default setting */ null, { allowPreventDefault : false });
+		this._mSpecialSettings = emptyMap(oStaticInfo.specialSettings);
 	
 		this._bEnriched = false;
 	
@@ -124,27 +133,29 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		// PERFOPT: this could be done lazily
 		var oParent = this.getParent();
 		if ( oParent && oParent instanceof ManagedObjectMetadata ) {
-			this._mAllEvents = jQuery.extend({},oParent._mAllEvents, this._mEvents);
-			this._mAllProperties = jQuery.extend({},oParent._mAllProperties, this._mProperties);
-			this._mAllPrivateAggregations = jQuery.extend({},oParent._mAllPrivateAggregations, this._mPrivateAggregations);
-			this._mAllAggregations = jQuery.extend({},oParent._mAllAggregations, this._mAggregations);
-			this._mAllAssociations = jQuery.extend({},oParent._mAllAssociations, this._mAssociations);
+			this._mAllEvents = jQuery.extend({}, oParent._mAllEvents, this._mEvents);
+			this._mAllProperties = jQuery.extend({}, oParent._mAllProperties, this._mProperties);
+			this._mAllPrivateAggregations = jQuery.extend({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);
+			this._mAllAggregations = jQuery.extend({}, oParent._mAllAggregations, this._mAggregations);
+			this._mAllAssociations = jQuery.extend({}, oParent._mAllAssociations, this._mAssociations);
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
 			if ( oParent._mHiddenAggregations ) {
-			  this._mHiddenAggregations = jQuery.extend({},oParent._mHiddenAggregations);
+			  this._mHiddenAggregations = jQuery.extend({}, oParent._mHiddenAggregations);
 			}
+			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
 		} else {
 			this._mAllEvents = this._mEvents;
 			this._mAllProperties = this._mProperties;
 			this._mAllPrivateAggregations = this._mPrivateAggregations;
 			this._mAllAggregations = this._mAggregations;
 			this._mAllAssociations = this._mAssociations;
+			this._mAllSpecialSettings = this._mSpecialSettings;
 		}
 	
 	};
 	
 	ManagedObjectMetadata.Kind = {
-	  PROPERTY :0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
+		SPECIAL_SETTING : -1, PROPERTY : 0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
 	};
 	
 	
@@ -398,6 +409,21 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	};	
 
 	/**
+	 * Checks the existence of the given special setting.
+	 * Special settings are settings that are accepted in the mSettings 
+	 * object at construction time or in an {@link sap.ui.base.ManagedObject.applySettings} 
+	 * call but that are neither properties, aggregations, associations nor events.
+	 * 
+	 * @param {string} sName name of the settings
+	 * @return {boolean} true, if the special setting exists
+	 * @private
+	 * @experimental Since 1.27.0
+	 */
+	ManagedObjectMetadata.prototype.hasSpecialSetting = function (sName) {
+		return !!this._mAllSpecialSettings[sName];
+	};
+	
+	/**
 	 * Returns a map of default values for all properties declared by the
 	 * described class and its ancestors, keyed by the property name.
 	 *
@@ -464,10 +490,21 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		}
 	
 		var m,sName,oInfo;
+
 		function method(sPrefix, sName) {
 			return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
 		}
 	
+		// adapt special settings
+		m = this._mSpecialSettings;
+		for (sName in m) {
+			oInfo = m[sName];
+			oInfo._sName = sName;
+			oInfo._sUID = "special:" + sName;
+			oInfo._oParent = this;
+			oInfo._iKind = ManagedObjectMetadata.Kind.SPECIAL_SETTING;
+		}
+
 		// adapt properties
 		m = this._mProperties;
 		for (sName in m) {
@@ -527,7 +564,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			oInfo._iKind = ManagedObjectMetadata.Kind.EVENT;
 			oInfo._sMutator = method("attach", sName);
 		}
-	
+
 		this._bEnriched = true;
 	};
 	
@@ -558,6 +595,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			}
 		}
 	
+		addKeys(this._mAllSpecialSettings);
 		addKeys(this.getAllProperties());
 		addKeys(this.getAllAggregations());
 		addKeys(this.getAllAssociations());
@@ -567,6 +605,36 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return mJSONKeys;
 	};
 	
+	/**
+	 * Filter out settings from the given map that are not described in the metadata.
+	 * If null or undefined is given, null or undefined is returned.
+	 * 
+	 * @param {object} mSettings original filters or null
+	 * @returns {object} filtered settings or null
+	 * @private
+	 * @since 1.27.0
+	 */
+	ManagedObjectMetadata.prototype.removeUnknownSettings = function(mSettings) {
+
+		jQuery.sap.assert(mSettings == null || typeof mSettings === 'object', "mSettings must be null or an object");
+
+		if ( mSettings == null ) {
+			return mSettings;
+		}
+		
+		var mValidKeys = this.getJSONKeys(),
+			mResult = {},
+			sName;
+		
+		for ( sName in  mSettings ) {
+			if ( mValidKeys.hasOwnProperty(sName) ) {
+				mResult[sName] = mSettings[sName];
+			}
+		}
+		
+		return mResult;
+	};
+
 	ManagedObjectMetadata.prototype.generateAccessors = function() {
 	
 		var that = this;

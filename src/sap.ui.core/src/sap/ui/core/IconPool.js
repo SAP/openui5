@@ -66,6 +66,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 						setting.press = setting.tap;
 						delete setting.tap;
 					}
+					// remove unsupported settings (e.g. some for Image)
+					setting = fnConstructor.getMetadata().removeUnknownSettings(setting);
 				}
 				if (typeof fnConstructor === "function") {
 					return new fnConstructor(setting);
