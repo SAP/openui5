@@ -71,7 +71,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Indicates if the object identifier's title is clickable.
 			 * @since 1.26
 			 */
-			titleActive : {type : "boolean", group : "Misc", defaultValue : false}
+			titleActive : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		aggregations : {
 	
