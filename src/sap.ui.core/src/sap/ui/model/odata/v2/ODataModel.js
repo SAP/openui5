@@ -2832,7 +2832,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var bMerge = true, oRequest, mRequests, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
+		var bMerge = true, oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
 			that = this;
 
 		if (mParameters) {
@@ -2848,11 +2848,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
 				oRequest = that._processChange(sKey, oData, bMerge);
 				oRequest.key = sKey;
-				mRequests = that.mRequests;
 				if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
-					mRequests = that.mDeferredRequests;
+					that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 				}
-				that._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 			}
 		});
 
