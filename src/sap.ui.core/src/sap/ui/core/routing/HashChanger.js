@@ -1,4 +1,7 @@
-// Copyright (c) 2013 SAP SE, All Rights Reserved
+/*!
+ * ${copyright}
+ */
+
 /*global hasher */
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/signals', 'sap/ui/thirdparty/hasher'],
 	function(jQuery, EventProvider, signals, hasher1) {
