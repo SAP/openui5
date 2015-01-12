@@ -2597,7 +2597,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					if (!oBoundObject.binding) {
 						this._bindObject(sModelName, oBoundObject);
 					} else {
-						oContext = this.getBindingContext(sModelName);
+						oContext = this._getBindingContext(sModelName);
 						if (oContext !== oBoundObject.binding.getContext()) {
 							oBoundObject.binding.setContext(oContext);
 						}
@@ -2668,11 +2668,19 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
-		var oModel = this.getModel(sModelName);
-		
 		if (this.mElementBindingContexts[sModelName]) {
 			return this.mElementBindingContexts[sModelName];
-		} else if (this.oBindingContexts[sModelName]) {
+		} 
+		return this._getBindingContext(sModelName);
+	};
+	
+	/**
+	 * Get the binding context of this object for the given model name. The elementBindingContext will not be considered
+	 * @private
+	 */
+	ManagedObject.prototype._getBindingContext = function(sModelName){
+		var oModel = this.getModel(sModelName);
+		if (this.oBindingContexts[sModelName]) {
 			return this.oBindingContexts[sModelName];
 		} else if (oModel && this.oParent && this.oParent.getModel(sModelName) && oModel != this.oParent.getModel(sModelName)) {
 			return undefined;
