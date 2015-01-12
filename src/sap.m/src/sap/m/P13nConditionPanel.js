@@ -822,12 +822,12 @@ sap.ui.define([
 
 				case "ComboBox":
 					if (field["ID"] === "keyField") {
-						oControl = new sap.m.ComboBox({
+						//oControl = new sap.m.ComboBox({
 						//oControl.setForceSelection(true); 
-						//oControl = new sap.m.Select({
+						oControl = new sap.m.Select({
 							selectedKey: field["SelectedKey"],
 							// autoAdjustWidth: true,
-							forceSelection : true,
+							//forceSelection : true,
 							width: "100%",
 							layoutData: new sap.ui.layout.GridData({
 								span: field["Span"]
