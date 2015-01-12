@@ -54,7 +54,7 @@
 		var oType = new sap.ui.model.odata.type.Time();
 
 		ok(oType instanceof sap.ui.model.odata.type.Time, "is a Time");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Time", "type name");
 		deepEqual(oType.oFormatOptions, undefined, "no format options");
 		deepEqual(oType.oConstraints, undefined, "default constraints");

@@ -27,7 +27,7 @@
 		var oType = new sap.ui.model.odata.type.Decimal();
 
 		ok(oType instanceof sap.ui.model.odata.type.Decimal, "is a Decimal");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		ok(!(oType instanceof sap.ui.model.type.Float), "is not a Float");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
@@ -84,7 +84,7 @@
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
-			oType.setConstraints(oFixture.i);
+			oType= new sap.ui.model.odata.type.Decimal({}, oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
 		}));
 	});
@@ -148,9 +148,7 @@
 			error: "Enter a number."}
 	], function (i, oFixture) {
 		test("parse: user error: " + JSON.stringify(oFixture.constraints), function () {
-			var oType = new sap.ui.model.odata.type.Decimal();
-
-			oType.setConstraints(oFixture.constraints);
+			var oType = new sap.ui.model.odata.type.Decimal({}, oFixture.constraints);
 
 			try {
 				oType.parseValue("foo", "string");
@@ -221,7 +219,7 @@
 
 		this.mock(jQuery.sap.log).expects("warning").never();
 
-		oType.setConstraints({precision: 3, scale: "variable"});
+		oType= new sap.ui.model.odata.type.Decimal({}, {precision: 3, scale: "variable"});
 		jQuery.each(["123", "12.3", "-1.23"],
 			function (i, sValue) {
 				strictEqual(oType.formatValue(sValue, "string"), sValue);
@@ -247,7 +245,7 @@
 		// nullable=true
 		oType.validateValue(null);
 
-		oType.setConstraints({nullable: false, scale: "variable"});
+		oType= new sap.ui.model.odata.type.Decimal({}, {nullable: false, scale: "variable"});
 		try {
 			oType.validateValue(null);
 			ok(false);
@@ -263,10 +261,11 @@
 
 		this.mock(jQuery.sap.log).expects("warning").never();
 
-		oType.setConstraints({nullable: "false", precision: "10", scale: "3"});
+		oType= new sap.ui.model.odata.type.Decimal({},
+			{nullable: "false", precision: "10", scale: "3"});
 		deepEqual(oType.oConstraints, {nullable: false, precision: 10, scale: 3});
 
-		oType.setConstraints({nullable: "true"});
+		oType= new sap.ui.model.odata.type.Decimal({}, {nullable: "true"});
 		strictEqual(oType.oConstraints, undefined);
 	}));
 } ());

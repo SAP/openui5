@@ -23,7 +23,7 @@
 		var oType = new sap.ui.model.odata.type.Boolean();
 
 		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		strictEqual(oType.oConstraints, undefined, "no constraints");
@@ -104,7 +104,7 @@
 			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: foo");
 		}
 
-		oType.setConstraints({nullable: false});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
 		try {
 			oType.validateValue(null);
 			ok(false);
@@ -122,19 +122,19 @@
 			.once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
 
-		oType.setConstraints({nullable: false});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
 		deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
 
-		oType.setConstraints({nullable: "false"});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "false"});
 		deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
 
-		oType.setConstraints({nullable: true});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: true});
 		strictEqual(oType.oConstraints, undefined, "nullable true");
 
-		oType.setConstraints({nullable: "true"});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "true"});
 		strictEqual(oType.oConstraints, undefined, 'nullable "true"');
 
-		oType.setConstraints({nullable: "foo"});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "foo"});
 		strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
 	}));
 } ());

@@ -28,7 +28,7 @@
 		var oType = new sap.ui.model.odata.type.Double();
 
 		ok(oType instanceof sap.ui.model.odata.type.Double, "is a Double");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Double", "type name");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
 		strictEqual(oType.oFormat, null, "no formatter preload");

@@ -3,9 +3,9 @@
  */
 
 sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
 		'sap/ui/model/ValidateException'],
-	function(NumberFormat, FormatException, ParseException, SimpleType, ValidateException) {
+	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
@@ -37,6 +37,28 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	function getErrorMessage(oType) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText(getErrorKey(oType),
 			[getPrecision(oType), getScale(oType)]);
+	}
+
+	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type instance
+	 * @returns {sap.ui.core.format.NumberFormat}
+	 *   the formatter
+	 */
+	function getFormatter(oType) {
+		var oFormatOptions, iScale;
+
+		if (!oType.oFormat) {
+			oFormatOptions = {groupingEnabled: true};
+			iScale = getScale(oType);
+
+			if (iScale !== Infinity) {
+				oFormatOptions.maxFractionDigits = oFormatOptions.minFractionDigits = iScale;
+			}
+			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
+		}
+		return oType.oFormat;
 	}
 
 	/**
@@ -76,13 +98,66 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Decimal} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable,
+			vPrecision = oConstraints && oConstraints.precision,
+			vScale = oConstraints && oConstraints.scale,
+			iPrecision, iScale;
+
+		function validate(vValue, iDefault, iMinimum, sName) {
+			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
+
+			if (iValue === undefined) {
+				return iDefault;
+			}
+			if (typeof iValue !== "number" || isNaN(iValue) || iValue < iMinimum) {
+				jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, oType.getName());
+				return iDefault;
+			}
+			return iValue;
+		}
+
+		function setConstraint(sName, vValue, vDefault) {
+			if (vValue != vDefault) {
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints[sName] = vValue;
+			}
+		}
+
+		iScale = vScale === "variable" ? Infinity : validate(vScale, 0, 0, "scale");
+		iPrecision = validate(vPrecision, Infinity, 1, "precision");
+		if (iScale !== Infinity && iPrecision <= iScale) {
+			jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
+				+ vPrecision + ", scale=" + vScale + ")", null, oType.getName());
+			iScale = Infinity; // "variable"
+		}
+		oType.oConstraints = undefined;
+		setConstraint("precision", iPrecision, Infinity);
+		setConstraint("scale", iScale, 0);
+		if (vNullable === false || vNullable === "false") {
+			setConstraint("nullable", false, true);
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
+
+		oType._handleLocalizationChange();
+	}
+
+	/**
 	 * Constructor for a primitive type <code>Edm.Decimal</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Decimal</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -106,11 +181,12 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Decimal = SimpleType.extend("sap.ui.model.odata.type.Decimal",
+	var Decimal = ODataType.extend("sap.ui.model.odata.type.Decimal",
 			/** @lends sap.ui.model.odata.type.Decimal.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
@@ -142,7 +218,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		case "int":
 			return Math.floor(parseFloat(sValue));
 		case "string":
-			return this._getFormatter().format(sValue);
+			return getFormatter(this).format(sValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -173,7 +249,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		}
 		switch (sSourceType) {
 		case "string":
-			fResult = this._getFormatter().parse(vValue);
+			fResult = getFormatter(this).parse(vValue);
 			if (isNaN(fResult)) {
 				throw new ParseException(getErrorMessage(this));
 			}
@@ -195,27 +271,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 */
 	Decimal.prototype._handleLocalizationChange = function () {
 		this.oFormat = null;
-	};
-
-	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 * @private
-	 */
-	Decimal.prototype._getFormatter = function () {
-		var oFormatOptions, iScale;
-
-		if (!this.oFormat) {
-			oFormatOptions = {groupingEnabled: true};
-			iScale = getScale(this);
-
-			if (iScale !== Infinity) {
-				oFormatOptions.maxFractionDigits = oFormatOptions.minFractionDigits = iScale;
-			}
-			this.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
-		}
-		return this.oFormat;
 	};
 
 	/**
@@ -245,59 +300,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			}
 		}
 		throw new ValidateException(getErrorMessage(this));
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	Decimal.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable,
-			vPrecision = oConstraints && oConstraints.precision,
-			vScale = oConstraints && oConstraints.scale,
-			iPrecision, iScale,
-			that = this;
-
-		function validate(vValue, iDefault, iMinimum, sName) {
-			var iValue = typeof vValue === "string" ? parseInt(vValue, 10) : vValue;
-
-			if (iValue === undefined) {
-				return iDefault;
-			}
-			if (typeof iValue !== "number" || isNaN(iValue) || iValue < iMinimum) {
-				jQuery.sap.log.warning("Illegal " + sName + ": " + vValue, null, that.getName());
-				return iDefault;
-			}
-			return iValue;
-		}
-
-		function setConstraint(sName, vValue, vDefault) {
-			if (vValue != vDefault) {
-				that.oConstraints = that.oConstraints || {};
-				that.oConstraints[sName] = vValue;
-			}
-		}
-
-		iScale = vScale === "variable" ? Infinity : validate(vScale, 0, 0, "scale");
-		iPrecision = validate(vPrecision, Infinity, 1, "precision");
-		if (iScale !== Infinity && iPrecision <= iScale) {
-			jQuery.sap.log.warning("Illegal scale: must be less than precision (precision="
-				+ vPrecision + ", scale=" + vScale + ")", null, this.getName());
-			iScale = Infinity; // "variable"
-		}
-		this.oConstraints = undefined;
-		setConstraint("precision", iPrecision, Infinity);
-		setConstraint("scale", iScale, 0);
-		if (vNullable === false || vNullable === "false") {
-			setConstraint("nullable", false, true);
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
-		}
-
-		this._handleLocalizationChange();
 	};
 
 	/**

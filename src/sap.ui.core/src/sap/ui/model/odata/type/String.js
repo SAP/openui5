@@ -2,11 +2,45 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
-		'sap/ui/model/ValidateException', 'sap/ui/model/type/String'],
-	function(FormatException, ParseException, SimpleType, ValidateException, StringType) {
+sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
+		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException',
+		'sap/ui/model/type/String'],
+	function(FormatException, ODataType, ParseException, ValidateException, StringType) {
 	"use strict";
+
+	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.String} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vMaxLength, vNullable;
+
+		oType.oConstraints = undefined;
+		if (oConstraints) {
+			vMaxLength = oConstraints.maxLength;
+			if (typeof vMaxLength === "string") {
+				vMaxLength = parseInt(vMaxLength, 10);
+			}
+			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
+				oType.oConstraints = {maxLength: vMaxLength};
+			} else if (vMaxLength !== undefined) {
+				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
+					null, oType.getName());
+			}
+
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.nullable = false;
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
+		}
+	}
 
 	/**
 	 * Constructor for an OData primitive type <code>Edm.String</code>.
@@ -15,7 +49,7 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.String</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -32,11 +66,12 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmString = SimpleType.extend("sap.ui.model.odata.type.String",
+	var EdmString = ODataType.extend("sap.ui.model.odata.type.String",
 			/** @lends sap.ui.model.odata.type.String.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
@@ -101,39 +136,6 @@ sap.ui.define(['sap/ui/model/FormatException',
 		}
 		throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle().getText(
 			iMaxLength ? "EnterTextMaxLength" : "EnterText", [iMaxLength]));
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	EdmString.prototype.setConstraints = function(oConstraints) {
-		var vMaxLength, vNullable;
-
-		this.oConstraints = undefined;
-		if (oConstraints) {
-			vMaxLength = oConstraints.maxLength;
-			if (typeof vMaxLength === "string") {
-				vMaxLength = parseInt(vMaxLength, 10);
-			}
-			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
-				this.oConstraints = {maxLength: vMaxLength};
-			} else if (vMaxLength !== undefined) {
-				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
-					null, this.getName());
-			}
-
-			vNullable = oConstraints.nullable;
-			if (vNullable === false || vNullable === "false") {
-				this.oConstraints = this.oConstraints || {};
-				this.oConstraints.nullable = false;
-			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
-			}
-		}
 	};
 
 	/**

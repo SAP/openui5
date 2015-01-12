@@ -36,7 +36,7 @@
 
 		test("basics", function () {
 			ok(oType instanceof sap.ui.model.odata.type.Int, "is an Int");
-			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+			ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 			equal(oType.getName(), sName, "is the right name");
 			strictEqual(oType.oFormatOptions, undefined, "no formatting options");
 			strictEqual(oType.oConstraints, undefined, "are the right constraints");
@@ -132,16 +132,12 @@
 			});
 		});
 
-		test("setConstraints: empty", function () {
-			oType.setConstraints();
-			strictEqual(oType.oConstraints, undefined, "default constraints");
-		});
-
 		jQuery.each([undefined, false, true], function (i, bNullable) {
 			test("setConstraints: nullable=" + bNullable, function () {
 				var oExpectedConstraints = bNullable === false ? {nullable: false} : undefined;
 
-				oType.setConstraints({minimum: -100, maximum: 100, nullable: bNullable});
+				oType = new (jQuery.sap.getObject(sName))({},
+					{minimum: -100, maximum: 100, nullable: bNullable});
 				deepEqual(oType.oConstraints, oExpectedConstraints, "only nullable accepted");
 			});
 		});
@@ -184,25 +180,25 @@
 
 			this.mock(jQuery.sap.log).expects("warning").never();
 
-			oType.setConstraints({nullable: true});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: "true"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: false});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
 			strictEqual(oType.oConstraints.nullable, false);
 
-			oType.setConstraints({nullable: "false"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "false"});
 			strictEqual(oType.oConstraints.nullable, false);
 
-			oType.setConstraints({nullable: true});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: "true"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: false});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
 			try {
 				oType.validateValue(null);
 				ok(false);

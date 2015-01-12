@@ -16,7 +16,7 @@
 		var oType = new sap.ui.model.odata.type.String();
 
 		ok(oType instanceof sap.ui.model.odata.type.String, "is a String");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
@@ -51,7 +51,7 @@
 			this.mock(jQuery.sap.log).expects("warning")
 				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
 
-			oType.setConstraints({maxLength: oFixture.maxLength});
+			oType = new sap.ui.model.odata.type.String({}, {maxLength: oFixture.maxLength});
 			strictEqual(oType.oConstraints, undefined);
 		}));
 	});
@@ -136,7 +136,7 @@
 			strictEqual(e.message, "Enter a text.");
 		}
 
-		oType.setConstraints({nullable: false, maxLength: 3});
+		oType = new sap.ui.model.odata.type.String({}, {nullable: false, maxLength: 3});
 		try {
 			oType.validateValue(null);
 			ok(false);
@@ -145,7 +145,7 @@
 			strictEqual(e.message, "Enter a text with a maximum of 3 characters.");
 		}
 
-		oType.setConstraints({nullable: true});
+		oType = new sap.ui.model.odata.type.String({}, {nullable: true});
 		oType.validateValue(null); // does not throw
 		strictEqual(oType.oConstraints, undefined, "nullable: true");
 
@@ -162,10 +162,10 @@
 
 		this.mock(jQuery.sap.log).expects("warning").never();
 
-		oType.setConstraints({nullable: "true", maxLength: "10"});
+		oType = new sap.ui.model.odata.type.String({}, {nullable: "true", maxLength: "10"});
 		deepEqual(oType.oConstraints, {maxLength: 10});
 
-		oType.setConstraints({nullable: "false"});
+		oType = new sap.ui.model.odata.type.String({}, {nullable: "false"});
 		deepEqual(oType.oConstraints, {nullable: false});
 	}));
 } ());

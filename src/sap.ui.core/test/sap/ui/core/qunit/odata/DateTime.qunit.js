@@ -77,7 +77,7 @@
 		oType.validateValue(null);
 
 		oConstraints.nullable = false;
-		oType.setConstraints(oConstraints);
+		oType = createInstance(sTypeName, oConstraints);
 		validateError(oType, null, sExpectedErrorKey, "nullable");
 
 		try {
@@ -110,7 +110,7 @@
 			var oType = createInstance(sTypeName);
 
 			ok(oType instanceof sap.ui.model.odata.type.DateTimeBase, "is a DateTime");
-			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+			ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 			strictEqual(oType.getName(), sTypeName, "type name");
 			strictEqual(oType.oFormatOptions, undefined, "format options ignored");
 			strictEqual(oType.oConstraints, undefined, "default constraints");
@@ -208,7 +208,7 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
     ], function (i, oFixture) {
-		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
 			var oType = new sap.ui.model.odata.type.DateTime();
 
 			if (oFixture.warning) {
@@ -218,7 +218,7 @@
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
-			oType.setConstraints(oFixture.i);
+			oType = new sap.ui.model.odata.type.DateTime({}, oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
 		}));
 	});
@@ -232,10 +232,6 @@
 		deepEqual(oType.parseValue(sFormattedDateOnly, "string"), oDateOnly);
 
 		parseError(oType, "Feb 30, 2014", "EnterDate", "invalid date");
-
-		// back to DateTime, see that resetting the constraints works
-		oType.setConstraints();
-		strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime);
 	}));
 
 	//*********************************************************************************************
@@ -271,8 +267,8 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
     ], function (i, oFixture) {
-		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
-			var oType = new sap.ui.model.odata.type.DateTimeOffset();
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+			var oType;
 
 			if (oFixture.warning) {
 				this.mock(jQuery.sap.log).expects("warning")
@@ -282,7 +278,7 @@
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
-			oType.setConstraints(oFixture.i);
+			oType = new sap.ui.model.odata.type.DateTimeOffset({},  oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
 		}));
 	});

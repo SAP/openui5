@@ -24,7 +24,7 @@
 		var oType = new sap.ui.model.odata.type.Guid();
 
 		ok(oType instanceof sap.ui.model.odata.type.Guid, "is a Guid");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Guid", "type name");
 		deepEqual(oType.oFormatOptions, undefined, "no format options");
 		deepEqual(oType.oConstraints, undefined, "default constraints");
@@ -138,7 +138,7 @@
 			}
 		);
 
-		oType.setConstraints({nullable: false});
+		oType = new sap.ui.model.odata.type.Guid({}, {nullable: false});
 		try {
 			oType.validateValue(null);
 			ok(false);

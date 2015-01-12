@@ -3,10 +3,24 @@
  */
 
 sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
 		'sap/ui/model/ValidateException'],
-	function(NumberFormat, FormatException, ParseException, SimpleType, ValidateException) {
+	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
+
+	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @param {sap.ui.model.odata.type.Int} oType
+	 *   the type instance
+	 * @returns {sap.ui.core.format.NumberFormat}
+	 *   the formatter
+	 */
+	function getFormatter(oType) {
+		if (!oType.oFormat) {
+			oType.oFormat = NumberFormat.getIntegerInstance({groupingEnabled: true});
+		}
+		return oType.oFormat;
+	}
 
 	/**
 	 * Fetches a text from the message bundle and formats it using the parameters.
@@ -23,13 +37,39 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
+	 * Set constraints for Int. This is meta information used when validating the value.
+	 *
+	 * @param {sap.ui.model.odata.type.Int} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		oType.oConstraints = undefined;
+		switch (vNullable) {
+		case false:
+		case "false":
+			oType.oConstraints = {nullable: false};
+			break;
+		case true:
+		case "true":
+			break;
+		default:
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
+		oType._handleLocalizationChange();
+	}
+
+	/**
 	 * Constructor for a new <code>Int</code>.
 	 *
 	 * @class This is an abstract base class for integer-based
 	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * OData primitive types</a> like <code>Edm.Int16</code> or <code>Edm.Int32</code>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -45,30 +85,18 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Int = SimpleType.extend("sap.ui.model.odata.type.Int",
+	var Int = ODataType.extend("sap.ui.model.odata.type.Int",
 			/** @lends sap.ui.model.odata.type.Int.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				},
 				metadata : {
 					"abstract" : true
 				}
 			}
 		);
-
-	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 * @private
-	 */
-	Int.prototype._getFormatter = function () {
-		if (!this.oFormat) {
-			this.oFormat = NumberFormat.getIntegerInstance({groupingEnabled: true});
-		}
-		return this.oFormat;
-	};
 
 	/**
 	 * Called by the framework when any localization setting changed.
@@ -99,7 +127,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		}
 		switch (sTargetType) {
 			case "string":
-				return this._getFormatter().format(iValue);
+				return getFormatter(this).format(iValue);
 			case "int":
 				return Math.floor(iValue);
 			case "float":
@@ -134,7 +162,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		}
 		switch (sSourceType) {
 			case "string":
-				iResult = this._getFormatter().parse(vValue);
+				iResult = getFormatter(this).parse(vValue);
 				if (isNaN(iResult)) {
 					throw new ParseException(getText("EnterInt"));
 				}
@@ -147,32 +175,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 				throw new ParseException("Don't know how to parse " + this.getName()
 					+ " from " + sSourceType);
 		}
-	};
-
-	/**
-	 * Set constraints for Int. This is meta information used when validating the value.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	Int.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
-
-		this.oConstraints = undefined;
-		switch (vNullable) {
-		case false:
-		case "false":
-			this.oConstraints = {nullable: false};
-			break;
-		case true:
-		case "true":
-			break;
-		default:
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
-				"sap.ui.model.odata.type.Int");
-		}
-		this._handleLocalizationChange();
 	};
 
 	/**
