@@ -50,6 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 			/**
 			 * Whether this page shall show the subheader.
+			 * @since 1.28
 			 */
 			showSubHeader : {type : "boolean", group : "Appearance", defaultValue : true},
 	
