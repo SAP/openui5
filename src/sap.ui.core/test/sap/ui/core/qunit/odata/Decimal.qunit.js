@@ -163,7 +163,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, 1, "foo", "1.1", "1234"], function (i, sValue) {
+	jQuery.each([false, 1, "foo", "1.1", "1234", "1.234E-32"], function (i, sValue) {
 		test("validate errors: " + JSON.stringify(sValue), function () {
 			var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 3});
 

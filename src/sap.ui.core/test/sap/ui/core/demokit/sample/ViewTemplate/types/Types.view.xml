@@ -51,6 +51,12 @@
 				<Label text="scale: &quot;variable&quot;, nullable: false"/>
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}}"/>
 
+				<core:Title text="sap.ui.model.odata.type.Double" />
+				<Label text="no constraints"/>
+				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
+				<Label text="nullable: false"/>
+				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
+
 				<core:Title text="sap.ui.model.odata.type.Guid" />
 				<Label text="no constraints"/>
 				<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid'}"/>
