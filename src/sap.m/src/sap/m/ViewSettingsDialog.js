@@ -1084,6 +1084,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._sortContent) {
 			return;
 		}
+		this._iContentPage = -1;
+		
 		this._sortOrderList = new sap.m.List(this.getId() + "-sortorderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
@@ -1126,6 +1128,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._groupContent) {
 			return;
 		}
+		this._iContentPage = -1;
+		
 		this._groupOrderList = new sap.m.List(this.getId() + "-grouporderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
@@ -1167,6 +1171,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._filterContent) {
 			return;
 		}
+		this._iContentPage = -1;
+		
 		this._presetFilterList = new sap.m.List(
 				this.getId() + "-predefinedfilterlist",
 				{
