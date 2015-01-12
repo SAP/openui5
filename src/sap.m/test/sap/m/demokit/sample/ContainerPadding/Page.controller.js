@@ -11,7 +11,7 @@ sap.ui.controller("sap.m.sample.ContainerPadding.Page", {
 	onDialogOpen: function (oEvent) {
 		if (!this.dialog) {
 			this.dialog = sap.ui.xmlfragment(
-				"sap.m.sample.ContentPadding.Dialog",
+				"sap.m.sample.ContainerPadding.Dialog",
 				this // associate controller with the fragment
 			);
 			this.getView().addDependent(this.dialog);
