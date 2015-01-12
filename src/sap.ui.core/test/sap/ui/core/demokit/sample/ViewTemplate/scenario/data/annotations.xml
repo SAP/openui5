@@ -189,7 +189,7 @@
 								</Record>
 								<Record Type="com.sap.vocabularies.UI.v1.DataField">
 									<PropertyValue Property="Label" String="Height"/>
-									<PropertyValue Property="Value" Int="15"/>
+									<PropertyValue Property="Value" Path="Height"/>
 								</Record>
 							</Collection>
 						</PropertyValue>
@@ -237,6 +237,9 @@
 			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/DeliveryStatus">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="DeliveryStatusDescription"/>
 			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/CreatedAt">
+				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+			</Annotations>
 			<Annotations Target="GWSAMPLE_BASIC.SalesOrder">
 				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
 					<Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
@@ -281,7 +284,7 @@
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.DataPoint" Qualifier="Status">
 					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
-						<PropertyValue Property="Title" String="Status"/>
+						<PropertyValue Property="Title" String="Overall Status"/>
 						<PropertyValue Property="Value" Path="LifecycleStatusDescription"/>
 					</Record>
 				</Annotation>
@@ -289,6 +292,13 @@
 					<Record Type="com.sap.vocabularies.UI.v1.DataPointType">
 						<PropertyValue Property="Title" String="Gross Amount"/>
 						<PropertyValue Property="Value" Path="GrossAmount"/>
+						<PropertyValue Property="CriticalityCalculation">
+							<Record Type="com.sap.vocabularies.UI.v1.CriticalityCalculationType">
+								<PropertyValue Property="ImprovementDirection" EnumMember="com.sap.vocabularies.UI.v1.CriticalityCalculationType/Maximize"/>
+								<PropertyValue Property="ToleranceRangeLowValue" Int="5000"/>
+								<PropertyValue Property="DeviationRangeLowValue" Int="500"/>
+							</Record>
+						</PropertyValue>
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">
@@ -781,7 +791,7 @@
 							<Collection>
 								<Record Type="com.sap.vocabularies.Communication.v1.PhoneNumberType">
 									<PropertyValue Property="uri" Path="PhoneNumber"/>
-									<PropertyValue Property="type" EnumMember="com.sap.vocabularies.Communication.v1.ContactInformationType/voice"/>
+									<PropertyValue Property="type" EnumMember="com.sap.vocabularies.Communication.v1.ContactInformationType/work"/>
 								</Record>
 							</Collection>
 						</PropertyValue>
@@ -789,7 +799,7 @@
 							<Collection>
 								<Record Type="com.sap.vocabularies.Communication.v1.EmailAddressType">
 									<PropertyValue Property="address" Path="EmailAddress"/>
-									<PropertyValue Property="type" EnumMember="com.sap.vocabularies.Communication.v1.ContactInformationType/work"/>
+									<PropertyValue Property="type" EnumMember="com.sap.vocabularies.Communication.v1.ContactInformationType/work com.sap.vocabularies.Communication.v1.ContactInformationType/preferred"/>
 								</Record>
 							</Collection>
 						</PropertyValue>

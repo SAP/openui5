@@ -785,28 +785,45 @@
 	});
 
 	//*********************************************************************************************
-	test("template:with and 'named context'", function () {
-		check([
-			mvcView(),
-			'<template:with path="/some" var="some">',
-			'<template:with path="some>random/path" var="path">',
-			'<template:if test="{path>flag}">',
-			'<In id="flag"/>',
-			'<\/template:if>',
-			'<\/template:with>',
-			'<\/template:with>',
-			'<\/mvc:View>'
-		], {
-			models: new sap.ui.model.json.JSONModel({
-				some: {
-					random: {
-						path: {
-							flag: true
+	jQuery.each([false, true], function (i, bHasHelper) {
+		test("template:with and 'named context', has helper = " + bHasHelper, function () {
+			window.foo = {
+				Helper : {
+					help : function () {} // empty helper must not make any difference
+				}
+			};
+			check([
+				mvcView(),
+				'<template:with path="/some" var="some">',
+				'<template:with path="some>random/path" var="path"'
+					+ (bHasHelper ? ' helper="foo.Helper.help"' : '') + '>',
+				'<template:if test="{path>flag}">',
+				'<In id="flag"/>',
+				'<\/template:if>',
+				'<\/template:with>',
+				'<\/template:with>',
+				'<\/mvc:View>'
+			], {
+				models: new sap.ui.model.json.JSONModel({
+					some: {
+						random: {
+							path: {
+								flag: true
+							}
 						}
 					}
-				}
-			})
+				})
+			});
 		});
+	});
+
+	//*********************************************************************************************
+	test("template:with and 'named context', missing variable name", function () {
+		checkError([
+			mvcView(),
+			'<template:with path="/unused" var=""/>',
+			'<\/mvc:View>'
+		], "qux: Missing variable name for {0}");
 	});
 
 	//*********************************************************************************************
@@ -826,6 +843,108 @@
 			'<\/mvc:View>'
 		], "qux: Cannot resolve path for {0}", {
 			models: new sap.ui.model.json.JSONModel()
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([false, true], function (i, bWithVar) {
+		test("template:with and helper, with var = " + bWithVar, function () {
+			var oModel = new sap.ui.model.json.JSONModel({
+					target: {
+						flag: true
+					}
+				});
+
+			window.foo = {
+				Helper : {
+					help : function (oContext) {
+						ok(oContext instanceof sap.ui.model.Context);
+						strictEqual(oContext.getModel(), oModel);
+						strictEqual(oContext.getPath(), "/some/random/path");
+						return "/target";
+					}
+				}
+			};
+			check([
+				mvcView(),
+				'<template:with path="/some/random/path" helper="foo.Helper.help"'
+					+ (bWithVar ? ' var="target"' : '') + '>',
+				'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
+				'<In id="flag"/>',
+				'<\/template:if>',
+				'<\/template:with>',
+				'<\/mvc:View>'
+			], {
+				models: oModel
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([false, true], function (i, bWithVar) {
+		test("template:with and helper changing the model, with var = " + bWithVar, function () {
+			var oMetaModel = new sap.ui.model.json.JSONModel({
+					target: {
+						flag: true
+					}
+				}),
+				oModel = new sap.ui.model.json.JSONModel();
+
+			window.foo = {
+				Helper : {
+					help : function (oContext) {
+						ok(oContext instanceof sap.ui.model.Context);
+						strictEqual(oContext.getModel(), oModel);
+						strictEqual(oContext.getPath(), "/some/random/path");
+						return new sap.ui.model.Context(oMetaModel, "/target");
+					}
+				}
+			};
+			check([
+				mvcView(),
+				'<template:with path="/some/random/path" helper="foo.Helper.help"'
+					+ (bWithVar ? ' var="target"' : '') + '>',
+				'<template:if test="{' + (bWithVar ? 'target>' : '') + 'flag}">',
+				'<In id="flag"/>',
+				'<\/template:if>',
+				'<\/template:with>',
+				'<\/mvc:View>'
+			], {
+				models: {
+					meta: oMetaModel,
+					"undefined": oModel
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([undefined, {}], function (i, fnHelper) {
+		test("template:with and helper = " + fnHelper, function () {
+			window.foo = fnHelper;
+			checkError([
+				mvcView(),
+				'<template:with path="/unused" helper="foo" var="target"/>',
+				'<\/mvc:View>'
+			], "qux: Cannot resolve helper for {0}", {
+				models: new sap.ui.model.json.JSONModel()
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([true, ""], function (i, vResult) {
+		test("template:with and helper returning " + vResult, function () {
+			window.foo = function () {
+				return vResult;
+			};
+			checkError([
+				mvcView(),
+				'<template:with path="/unused" helper="foo" var="target"/>',
+				'<\/mvc:View>'
+			], "qux: Illegal helper result in {0}: " + vResult, {
+				models: new sap.ui.model.json.JSONModel()
+			});
 		});
 	});
 
@@ -1016,6 +1135,15 @@
 			'<In src="B"/>',
 			'<In src="C"/>'
 		]);
+	});
+
+	//*********************************************************************************************
+	test("template:repeat with missing loop variable", function () {
+		checkError([
+			mvcView(),
+			'<template:repeat list="{/unused}" var=""/>',
+			'<\/mvc:View>'
+		], "qux: Missing variable name for {0}");
 	});
 
 	//*********************************************************************************************

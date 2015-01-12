@@ -15,10 +15,10 @@ sap.ui.define(['jquery.sap.global'],
 			var oModel = oBinding.getModel(),
 				sResolvedPath // resolved binding path (not relative anymore!)
 					= oModel.resolve(oBinding.getPath(), oBinding.getContext()),
-					aParts = sResolvedPath.split("/"), // parts of binding path (between slashes)
-					aProperties,
-					oProperty = undefined,
-					sType;
+				aParts = sResolvedPath.split("/"), // parts of binding path (between slashes)
+				aProperties,
+				oProperty = undefined,
+				sType;
 
 			if (aParts[0] === "" && aParts[1] === "dataServices" && aParts[2] === "schema") {
 				// go up to "/dataServices/schema/<i>/entityType/<j>/"
@@ -56,11 +56,48 @@ sap.ui.define(['jquery.sap.global'],
 		 * @private
 		 */
 		return {
-			isSemanticsEmail: function (vRawValue) {
-				return isSemantics(this, vRawValue, "email");
+			/*
+			 * Returns the
+			 */
+			getTargetAsNavigationProperty: function (vRawValue) {
+				//TODO "productize"
+				var aParts = vRawValue.AnnotationPath.split("/");
+				// Note: if no / is contained, return binding to empty path!
+				return "{" + (aParts.length > 1 ? aParts[0] : "") + "}";
+			},
+			isEmail: function (vRawValue) {
+				return vRawValue === "email";
 			},
 			isSemanticsTel: function (vRawValue) {
 				return isSemantics(this, vRawValue, "tel");
+			},
+			/*
+			 * @param {sap.ui.model.Context} oContext
+			 */
+			resolveTargetPath: function (oContext) {
+				//TODO "productize"
+				var vRawValue = oContext.getObject(),
+					aParts = oContext.getPath().split("/");
+				if (vRawValue && vRawValue.AnnotationPath && vRawValue.AnnotationPath.charAt(0) === "@"
+					&& aParts[0] === "" && aParts[1] === "dataServices" && aParts[2] === "schema") {
+					// go to "/dataServices/schema/<i>/entityType/<j>/<annotation name>"
+					aParts.splice(6, aParts.length - 6);
+					aParts.push(vRawValue.AnnotationPath.slice(1));
+					return aParts.join("/");
+				}
+				if (vRawValue && vRawValue.Path
+					&& aParts[0] === "" && aParts[1] === "dataServices" && aParts[2] === "schema") {
+					// go to "/dataServices/schema/<i>/entityType/<j>/property/<k>"
+					aParts.splice(6, aParts.length - 6);
+					aParts.push("property");
+					jQuery.each(oContext.getProperty(aParts.join("/")), function (k, oProperty) {
+						if (oProperty.name === vRawValue.Path) {
+							aParts.push(k);
+							return false; //break
+						}
+					});
+					return aParts.join("/");
+				}
 			}
 		};
 	}, /* bExport= */ true);

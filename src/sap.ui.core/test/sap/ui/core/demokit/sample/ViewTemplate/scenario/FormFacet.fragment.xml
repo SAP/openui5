@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<form:SimpleForm binding="{path: 'facet>Target', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.getTargetAsNavigationProperty'}">
+		<form:title>
+			<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+		</form:title>
+
+		<template:with path="facet>Target" helper="sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.resolveTargetPath" var="target">
+			<template:if test="{target>AnnotationPath}"><!-- TODO resolveTargetPath has failed -->
+				<template:then>
+					<Label text="AnnotationPath"/>
+					<Text text="{facet>Target/AnnotationPath}"/>
+				</template:then>
+				<template:else>
+					<template:if test="{target>Data}"><!-- TODO isArray?! -->
+						<template:then><!-- "RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType" -->
+							<!-- ignore target>Label in favor of facet>Label -->
+							<template:repeat list="{target>Data}" var="meta"><!-- TODO var="field"? -->
+								<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+							</template:repeat>
+						</template:then>
+						<template:else><!-- e.g. com.sap.vocabularies.UI.v1.StatusInfo -->
+							<template:repeat list="{target>}" var="meta"><!-- TODO var="field"? -->
+								<template:if test="{meta>Label}">
+									<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+								</template:if>
+								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+							</template:repeat>
+						</template:else>
+			</template:if>
+				</template:else>
+			</template:if>
+		</template:with>
+	</form:SimpleForm>
+</core:FragmentDefinition>

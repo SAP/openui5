@@ -3,8 +3,9 @@
  */
 
 // Provides object sap.ui.core.util.XMLPreprocessor
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XMLTemplateProcessor'],
-	function(jQuery, ManagedObject, XMLTemplateProcessor) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/Context'],
+	function(jQuery, ManagedObject, XMLTemplateProcessor, Context) {
 		'use strict';
 
 		var oUNBOUND = {}, // @see getAny
@@ -356,6 +357,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 						oNewWithControl,
 						sVar = oElement.getAttribute("var");
 
+					if (sVar === "") {
+						throw new Error(sCaller + ": Missing variable name for "
+							+ serializeSingleElement(oElement));
+					}
 					if (!oBindingInfo) {
 						throw new Error(sCaller + ': Missing binding for '
 							+ serializeSingleElement(oElement));
@@ -407,15 +412,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 					var oBindingInfo,
 						oModel,
 						oNewWithControl,
+						fnHelper,
+						sHelper = oElement.getAttribute("helper"),
+						vHelperResult,
 						sPath = oElement.getAttribute("path"),
 						sResolvedPath,
 						sVar = oElement.getAttribute("var");
 
+					if (sVar === "") {
+						throw new Error(sCaller + ": Missing variable name for "
+							+ serializeSingleElement(oElement));
+					}
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
 					//TODO Simplify code once named contexts are supported by the core
-					if (sVar) { // create a "named context"
+					if (sHelper || sVar) { // create a "named context"
 						//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
 						oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
 						oModel = oWithControl.getModel(oBindingInfo.model);
@@ -430,6 +442,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 							throw new Error(sCaller + ': Cannot resolve path for '
 								+ serializeSingleElement(oElement));
 						}
+						if (sHelper) {
+							fnHelper = jQuery.sap.getObject(sHelper);
+							if (typeof fnHelper !== "function") {
+								throw new Error(sCaller + ": Cannot resolve helper for "
+									+ serializeSingleElement(oElement));
+							}
+							vHelperResult = fnHelper(new Context(oModel, sResolvedPath));
+							if (vHelperResult instanceof Context) {
+								oModel = vHelperResult.getModel();
+								sResolvedPath = vHelperResult.getPath();
+							} else if (vHelperResult !== undefined) {
+								if (typeof vHelperResult !== "string" || vHelperResult === "") {
+									throw new Error(sCaller + ": Illegal helper result in "
+										+ serializeSingleElement(oElement) + ": " + vHelperResult);
+								}
+								sResolvedPath = vHelperResult;
+							}
+						}
+						sVar = sVar || oBindingInfo.model; // default variable is same model name
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({
 							model: sVar,
