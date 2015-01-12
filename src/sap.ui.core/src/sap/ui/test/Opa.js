@@ -69,12 +69,32 @@
 		internalWait(queueElement.callback, queueElement.options, deferred);
 	}
 
-	function ensureNewlyAddedWaitForStatementsPrepended(iPreviousQueueLength){
+	function ensureNewlyAddedWaitForStatementsPrepended(iPreviousQueueLength, nestedInOptions){
 		var iNewWaitForsCount = queue.length - iPreviousQueueLength;
 		if (iNewWaitForsCount) {
 			var aNewWaitFors = queue.splice(iPreviousQueueLength, iNewWaitForsCount);
+			aNewWaitFors.forEach(function(queueElement) {
+				queueElement.options._nestedIn = nestedInOptions;
+			});
 			queue = aNewWaitFors.concat(queue);
 		}
+	}
+
+	function createStack(iDropCount) {
+		iDropCount = (iDropCount || 0) + 2;
+
+		var oError = new Error();
+		if (!oError.stack){
+			//In IE an error has to be thrown first to get a stack
+			try {
+				throw oError()
+			}catch(oError2){
+				//Nothing
+			}
+		}
+		var stack = oError.stack.split("\n");
+		stack.splice(0, iDropCount);
+		return stack.join("\n");
 	}
 	///////////////////////////////
 	/// Public
@@ -134,6 +154,9 @@
 				Opa.config,
 				options);
 
+			options._stack = createStack(1 + options._stackDropCount);
+			delete options._stackDropCount;
+
 			deferred.promise(this);
 
 			queue.push({
@@ -151,7 +174,7 @@
 								var iCurrentQueueLength = queue.length;
 								options.success.apply(this, arguments);
 							} finally {
-								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength);
+								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
 								deferred.resolve();
 							}
 						} else {
@@ -210,7 +233,8 @@
 				actions : new Opa(),
 				assertions : new Opa(),
 				timeout : 15,
-				pollingInterval : 400
+				pollingInterval : 400,
+				_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
 		};
 	};
 	/**
@@ -220,11 +244,30 @@
 	 * @public
 	 */
 	Opa.emptyQueue = function emptyQueue () {
+		function addStacks(oOptions) {
+			var sResult = "\nCallstack:\n";
+			if (oOptions._stack) {
+				sResult += oOptions._stack;
+				delete oOptions._stack;
+			} else {
+				sResult += "Unknown";
+			}
+			if (oOptions._nestedIn) {
+				sResult += addStacks(oOptions._nestedIn);
+				delete oOptions._nestedIn;
+			}
+			return sResult;
+		}
+		
 		var deferred = $.Deferred();
 
 		internalEmpty(deferred);
-
-		return deferred.promise();
+		
+		return deferred.promise().fail(function(oOptions){
+			oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
+			oOptions.errorMessage += addStacks(oOptions);
+			jQuery.sap.log.error(oOptions.errorMessage);
+		});
 	};
 
 	if (!sap) {

@@ -224,7 +224,8 @@
 				oWaitForDoneSpy = this.spy(),
 				oSuccessSpy = this.spy(),
 				oDoneSpy = this.spy();
-
+		jQuery.sap.log.error = this.spy();
+		
 		// System under Test
 		var oOpa = new Opa();
 
@@ -243,16 +244,18 @@
 			strictEqual(oDoneSpy.callCount, 0, "Done was not called");
 			strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
 			strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
-
+			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
+			
 			start();
 		}).done(oDoneSpy);
 
 	});
 
-	asyncTest("Should reject the promise if no error handler is defined", function() {
+	asyncTest("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction() {
 		// System under Test
 		var oOpa = new Opa();
-
+		jQuery.sap.log.error = this.spy();
+		
 		// Act
 		oOpa.waitFor({
 			check : function () {
@@ -261,11 +264,51 @@
 			timeout : 1
 		});
 
-		oOpa.emptyQueue().fail(function () {
+		oOpa.emptyQueue().fail(function (oOptions) {
 			ok(true, 0, "Promise got rejected");
+			ok(oOptions, "Options are passed");
+			ok(oOptions.errorMessage, "Error message is there");
+			ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
+			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
+			ok(jQuery.sap.log.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
 			start();
 		});
 
+	});
+	
+	asyncTest("Reject message stack for additional waitFor declared in the success handler contains original call", function thisIsTheMainTest() {
+		// System under Test
+		var oOpa = new Opa();
+		oOpa.extendConfig({
+			pollingInterval : 1
+		});
+		
+		function thisIsTheSuccessHandler(){
+			oOpa.waitFor({
+				check : function () {
+					return false;
+				},
+				timeout : 1
+			});
+
+		}
+			
+		oOpa.waitFor({
+			check : function () {
+				return true;
+			},
+			success : thisIsTheSuccessHandler
+		});
+
+		
+		oOpa.emptyQueue().fail(function (oOptions) {
+			ok(true, 0, "Promise got rejected");
+			ok(oOptions, "Options are passed");
+			ok(oOptions.errorMessage, "Error message is there");
+			ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
+			ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
+			start();
+		});
 	});
 })();
 

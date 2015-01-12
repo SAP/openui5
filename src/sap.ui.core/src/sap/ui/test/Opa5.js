@@ -349,7 +349,8 @@ sap.ui.define(['jquery.sap.global',
 				arrangements : new Opa5(),
 				actions : new Opa5(),
 				assertions : new Opa5(),
-				visible : true
+				visible : true,
+				_stackDropCount : 1
 			});
 		};
 
