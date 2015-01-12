@@ -17,7 +17,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapMTBSeparator");
-	
+
+		//ARIA
+		rm.writeAccessibilityState(oControl, {
+			role: "separator"
+		});
+
 		rm.writeClasses();
 		rm.write("></div>");
 	};

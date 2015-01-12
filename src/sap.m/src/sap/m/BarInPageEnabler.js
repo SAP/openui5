@@ -10,15 +10,18 @@ sap.ui.define(['sap/ui/base/Object'],
 	var mContexts = {
 		footer : {
 			contextClass : "sapMFooter-CTX",
-			tag : "Footer"
+			tag : "Footer",
+			ariaLabel: "BAR_ARIA_DESCRIPTION_FOOTER"
 		},
 		header : {
 			contextClass : "sapMHeader-CTX",
-			tag : "Header"
+			tag : "Header",
+			ariaLabel: "BAR_ARIA_DESCRIPTION_HEADER"
 		},
 		subheader : {
 			contextClass : "sapMSubHeader-CTX",
-			tag : "Header"
+			tag : "Header",
+			ariaLabel: "BAR_ARIA_DESCRIPTION_SUBHEADER"
 		}
 	};
 
@@ -88,6 +91,8 @@ sap.ui.define(['sap/ui/base/Object'],
 				return this;
 			}
 
+			this._sAriaLabel = oOptions.ariaLabel;
+
 			if (!this.isContextSensitive || !this.setHTMLTag) {
 				jQuery.sap.log.error("The bar control you are using does not implement all the members of the IBar interface", this);
 				return this;
@@ -116,10 +121,16 @@ sap.ui.define(['sap/ui/base/Object'],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
 		 */
 		render : function(oRM, oControl) {
-			var sTag = oControl.getHTMLTag().toLowerCase();
+			var sTag = oControl.getHTMLTag().toLowerCase(),
+				sLabelID = oControl.getId() + "-ariaLabel";
 
 			oRM.write("<" + sTag);
 			oRM.addClass(IBAR_CSS_CLASS);
+
+			//ARIA
+			if (oControl._sAriaLabel) {
+				oRM.writeAttribute("aria-labelledby", sLabelID);
+			}
 
 			if (this.shouldAddIBarContext(oControl)) {
 				oRM.addClass(IBAR_CSS_CLASS + "-CTX");
@@ -134,6 +145,12 @@ sap.ui.define(['sap/ui/base/Object'],
 			oRM.writeClasses();
 			oRM.writeStyles();
 			oRM.write(">");
+
+			//ARIA
+			if (oControl._sAriaLabel) {
+				var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				oRM.write("<label id='" + sLabelID + "' style='display:none;' aria-hidden='true'>" + oMessageBundle.getText(oControl._sAriaLabel) + "</label>");
+			}
 
 			this.renderBarContent(oRM, oControl);
 

@@ -158,6 +158,36 @@
 		oTB.destroy();
 	});
 
+    test("Check ARIA attributes", function() {
+        // Arrange + System under Test
+        var oBtn = new sap.m.Button({
+            text : "Button Text"
+        });
+        var oTB = new sap.m.Toolbar({
+            content : oBtn
+        }).applyTagAndContextClassFor("header");
+        oTB.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        //Assert
+        equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
+        equal(oTB.$().attr("aria-labelledby"), oTB.getId() + "-ariaLabel", "Toolbar has attribute aria-labelledby='"+oTB.getId() + "-ariaLabel'");
+        equal(oTB.$().find("#" + oTB.getId() + "-ariaLabel").length, 1, "Toolbar dom has a label describing it.");
+        equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
+
+        //Act
+        oTB.setEnabled(false);
+        sap.ui.getCore().applyChanges();
+
+        //Assert
+        equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
+        equal(oBtn.$().attr("aria-disabled"), "true", "Toolbar's children have attribute aria-disabled='true'");
+
+        //Cleanup
+        oBtn.destroy();
+        oTB.destroy();
+    });
+
 	module("Properties");
 
 	test("Should be able to add/remove undefined controls", function() {
@@ -215,41 +245,41 @@
 		// run test
 		testOverflow("101px content in 100px toolbar", true, {
 			Toolbar : {width: "100px"},
-			ToolbarSpacer : {width : "101px"},
+			ToolbarSpacer : {width : "101px"}
 		});
 		
 		testOverflow("101% unshrinkable content", true, {
 			Toolbar : {},
-			ToolbarSpacer : {width : "101%"},
+			ToolbarSpacer : {width : "101%"}
 		});
 		
 		testOverflow("Long button text", true, {
 			Toolbar : {},
-			Button : {text : sLongText},
+			Button : {text : sLongText}
 		});
 		
 		testOverflow("Should respect min width", true, {
 			Toolbar : {width: "100px"},
 			Label : {text : "t"},
-			ToolbarSpacer : {width : "80px"},
+			ToolbarSpacer : {width : "80px"}
 		});			
 		
 		testOverflow("Empty toolbar", false, {
-			Toolbar : {},
+			Toolbar : {}
 		});
 		
 		testOverflow("Invisible toolbar", false, {
-			Toolbar : {visible: false},
+			Toolbar : {visible: false}
 		});
 		
 		testOverflow("100% unshrinkable content", false, {
 			Toolbar : {},
-			ToolbarSpacer : {width : "100%"},
+			ToolbarSpacer : {width : "100%"}
 		});
 		
 		testOverflow("1px content in 100px toolbar", false, {
 			Toolbar : {},
-			ToolbarSpacer : {width : "100%"},
+			ToolbarSpacer : {width : "100%"}
 		});
 	});
 	
@@ -435,7 +465,7 @@
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "label"},
-			Button : {text: "button"},
+			Button : {text: "button"}
 		});
 		
 		var iInitEndPoint = oTB._getEndPoint();
@@ -547,7 +577,7 @@
 			Toolbar : {},
 			Label : {text : sLongText},
 			Text : {text : sLongText},
-			Link : {text : sLongText},
+			Link : {text : sLongText}
 		});
 		
 		shouldNotOverflow("By default, the controls have percent width are shrinkable", {
@@ -557,19 +587,19 @@
 			DateTimeInput: {},	/* default width is 100% */
 			Input : {},			/* default width is 100% */
 			Label : {text : sLongText, width: "25%"},
-			Button : {text : sLongText, width: "50%"},
+			Button : {text : sLongText, width: "50%"}
 		});
 		
 		shouldNotOverflow("More than 100% shrinkable content has to fit", false, {
 			Toolbar : {},
 			Button : {text : sLongText, width: "500%"},
-			Label : {text : sLongText},
+			Label : {text : sLongText}
 		});
 		
 		shouldNotOverflow("controls have shrinkable layout data has to fit", false, {
 			Toolbar : {},
 			Button : {text : sLongText, layoutData: new sap.m.ToolbarLayoutData({shrinkable : true})},
-			TextArea : {text : sLongText, layoutData: new sap.m.ToolbarLayoutData({shrinkable : true})},
+			TextArea : {text : sLongText, layoutData: new sap.m.ToolbarLayoutData({shrinkable : true})}
 		});
 		
 	});
@@ -713,7 +743,7 @@
 		// Cleanup
 		oTB.destroy();
 	});
-	
+
 </script>
 </head>
 <body id="body" class="sapUiBody">

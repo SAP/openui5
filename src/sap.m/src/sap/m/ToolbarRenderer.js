@@ -29,7 +29,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 */
 	ToolbarRenderer.decorateRootElement = function (rm, oToolbar) {
 		rm.addClass("sapMTB");
-	
+
+		//ARIA
+		var aContent = oToolbar.getContent();
+		if (oToolbar.getActive() && (!aContent || aContent.length === 0)) {
+			rm.writeAccessibilityState(oToolbar, {
+				role: "button"
+			});
+		} else {
+			rm.writeAccessibilityState(oToolbar, {
+				role: "toolbar"
+			});
+		}
+
 		if (!sap.m.Toolbar.hasFlexBoxSupport) {
 			rm.addClass("sapMTBNoFlex");
 		} else if (!sap.m.Toolbar.hasNewFlexBoxSupport) {
