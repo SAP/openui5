@@ -372,19 +372,19 @@ sap.ui.define(['jquery.sap.global',
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
 		 * @param {map} mPageObjects
-		 * @param {map} mPageObjects.<your page object name> Multiple page objects are possible, provide at least actions or assertions
-		 * @param {function} [mPageObjects.<your page object name>.baseClass] Base class for the page object's actions and assertions, default: Opa5
-		 * @param {function} [mPageObjects.<your page object name>.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
-		 * @param {map} [mPageObjects.<your page object name>.actions] can be used as arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
-		 * @param {function} mPageObjects.<your page object name>.actions.<your action 1>
-		 * @param {function} mPageObjects.<your page object name>.actions.<your action 2>
-		 * @param {map} [mPageObjects.<your page object name>.assertions]
-		 * @param {function} mPageObjects.<your page object name>.assertions.<your assertions 1>
-		 * @param {function} mPageObjects.<your page object name>.assertions.<your assertions 2>
+		 * @param {map} mPageObjects.&lt;your-page-object-name&gt; Multiple page objects are possible, provide at least actions or assertions
+		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
+		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
+		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.actions] can be used as arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt;
+		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions]
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 1&gt;
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions 2&gt;
 		 * @returns {map} mPageObject
-		 * @returns {map} mPageObject.<your page object name>
-		 * @returns {object} mPageObject.<your page object name>.actions an instance of baseClass or Opa5 with all the actions defined above
-		 * @returns {object} mPageObject.<your page object name>.assertions an instance of baseClass or Opa5 with all the assertions defined above
+		 * @returns {map} mPageObject.&lt;your-page-object-name&gt;
+		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.actions an instance of baseClass or Opa5 with all the actions defined above
+		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.assertions an instance of baseClass or Opa5 with all the assertions defined above
 		 * @public
 		 * @since 1.25
 		 */
