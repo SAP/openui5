@@ -124,16 +124,33 @@
 				equal($p3c.width(), jQuery(window).width(), "page 3 content width should cover the whole screen");
 			});
 			
+			
 			module("Properties Check");
+			
+			test("showSubHeader", function() {
+				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
+				ok(jQuery.sap.domById("mySubHeader"),"subHeader should be rendered");
+
+				page.setShowSubHeader(false);
+				sap.ui.getCore().applyChanges();
+				equal(jQuery.sap.domById("mySubHeader"), undefined, "subHeader should not be rendered when 'showSubHeader' is false");
+				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "48px", "top of page content with subHeader not shown should be 48px (3rem)");
+
+				page.setShowSubHeader(true);
+				sap.ui.getCore().applyChanges();
+				ok(jQuery.sap.domById("mySubHeader"),"subHeader should be rendered");
+				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of page content with subHeader shown should be 96px (6rem)");
+			});
+
+			test("showFooter", function() {
+				page.setShowFooter(false);
+				sap.ui.getCore().applyChanges();
+				equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
+			});
+
 			if (sap.ui.Device.browser.chrome){
-				asyncTest("footer", function() {
-					page.setShowFooter(false);
-					setTimeout(function(){
-						equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
-						start();
-					}, 10);
-				});
 				if(sap.ui.Device.os.ios){
+					
 					asyncTest("NavButton", function(){
 						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnBack"), "back button should be rendered");
 						equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
@@ -145,10 +162,13 @@
 							start();
 						}, 10);
 					});
+					
 					test("Title", function(){
 						ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 					});
+					
 				} else if(sap.ui.Device.os.android) {
+					
 					asyncTest("NavButton", function(){
 						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnUp"), "up button should be rendered");
 						equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
@@ -158,6 +178,7 @@
 							start();
 						}, 10);
 					});
+					
 					test("Title", function(){
 						jQuery.sap.require("sap.ui.core.theming.Parameters");
 						if (sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true"){
@@ -166,6 +187,7 @@
 							ok(jQuery.sap.byId("myFirstPage-title").parent().hasClass("sapMBarPH"), "title should be located in the middle");
 						}
 					});
+					
 					asyncTest("Icon", function(){
 						ok(jQuery.sap.byId("myFirstPage-navButton").children("myFirstPage-navButton-img"), "up button should be rendered with the icon");
 						equal(jQuery.sap.domById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
@@ -179,6 +201,7 @@
 							start();
 						}, 10);
 					});
+					
 				}
 			}
 
