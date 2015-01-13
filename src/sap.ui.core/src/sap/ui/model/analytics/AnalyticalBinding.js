@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		return this.oMeasureDetailsSet;
 	};
 		
-	AnalyticalBinding.prototype.hasGrandTotalDisplayed = function() {
+	AnalyticalBinding.prototype.providesGrandTotal = function() {
 		return this.bProvideGrandTotals;
 	};
 	
