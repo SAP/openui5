@@ -638,7 +638,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		});
 
 		$scrollArea.css({
-			"width": ""
+			"width": "",
+			"display": ""
 		});
 
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.desktop) {
