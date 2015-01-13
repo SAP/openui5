@@ -84,27 +84,14 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider) {
-			var bEnabled = oSlider.getEnabled(),
-				fValue = oSlider.getValue();
+			var bEnabled = oSlider.getEnabled();
 
 			oRm.write("<span");
 			oRm.writeAttribute("id", oSlider.getId() + "-handle");
-			oRm.writeAttribute("title", fValue);
+			oRm.writeAttribute("title", oSlider.getValue());
 			oRm.addClass(SliderRenderer.CSS_CLASS + "Handle");
 			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", oSlider._sProgressValue);
-
-			// WAI-ARIA
-			oRm.writeAccessibilityState(oSlider, {
-				role: "slider",
-				orientation: "horizontal",
-				valuemin: oSlider.getMin(),
-				valuemax: oSlider.getMax(),
-				valuenow: fValue,
-				valuetext: fValue,
-				live: "assertive",
-				disabled: !bEnabled
-			});
-
+			this.writeAccessibilityState(oRm, oSlider);
 			oRm.writeClasses();
 			oRm.writeStyles();
 
@@ -128,6 +115,25 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("name", oSlider.getName());
 			oRm.writeAttribute("value", oSlider.getValue());
 			oRm.write("/>");
+		};
+
+		/**
+		 * Writes the accessibility state to the control.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 */
+		SliderRenderer.writeAccessibilityState = function(oRm, oSlider) {
+			var fValue = oSlider.getValue();
+
+			oRm.writeAccessibilityState(oSlider, {
+				role: "slider",
+				orientation: "horizontal",
+				valuemin: oSlider.getMin(),
+				valuemax: oSlider.getMax(),
+				valuenow: fValue
+			});
 		};
 
 		return SliderRenderer;
