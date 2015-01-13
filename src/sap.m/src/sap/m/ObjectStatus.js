@@ -55,7 +55,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * 
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
+			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * Determines the direction of the text, not including the title.
+			 * Available options for the text direction are LTR (left-to-right) and RTL (right-to-left). By default the control inherits the text direction from its parent control.
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
 	

@@ -23,6 +23,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
 		if (!oObjStatus._isEmpty()) {
+			var sTextDir = oObjStatus.getTextDirection();
+
 			oRm.write("<div");
 			oRm.writeControlData(oObjStatus);
 			
@@ -57,6 +59,11 @@ sap.ui.define(['jquery.sap.global'],
 			if (oObjStatus.getText()) {
 				oRm.write("<span");
 				oRm.addClass("sapMObjStatusText");
+
+				if (sTextDir && sTextDir !== sap.ui.core.TextDirection.Inherit) {
+					oRm.writeAttribute("dir", sTextDir.toLowerCase());
+				}
+
 				oRm.writeClasses();
 				oRm.write(">");
 				oRm.writeEscaped(oObjStatus.getText());
