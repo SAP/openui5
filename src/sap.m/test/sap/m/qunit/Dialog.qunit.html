@@ -865,6 +865,24 @@
 				// Cleanup
 				oContainer.destroy();
 			});
+
+			test("Clear CSS property 'display' from scrolling area before size calculation", function(){
+				expect(2);
+				var oDialog = new sap.m.Dialog({
+					contentWidth: "450px",
+					contentHeight: "400px"
+				});
+
+				oDialog.open();
+				this.clock.tick(500);
+
+				ok(oDialog.isOpen(), "Dialog is opened");
+				this.stub(oDialog, "_adjustScrollingPane", function(){
+					equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
+				});
+				oDialog._reapplyPosition();
+				oDialog.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
