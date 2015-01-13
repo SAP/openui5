@@ -1365,6 +1365,11 @@ sap.ui.define([
 
 		return this;
 	};
+	
+	P13nColumnsPanel.prototype.getOkPayload = function() {
+		// TODO: return something meaningful !!
+		return {visibleColumns: ["a", "c"]};
+	};
 
 	return P13nColumnsPanel;
 
