@@ -2530,6 +2530,10 @@
                     if (statusCode >= 200 && statusCode <= 299) {
                         success(response);
                     } else {
+                    		// ##### BEGIN: MODIFIED BY SAP
+                    		// normalize response headers here which is also done in the success function call above
+                      	normalizeHeaders(response.headers);
+                      	// ##### END: MODIFIED BY SAP
                         error({ message: "HTTP request failed", request: request, response: response });
                     }
                 };
