@@ -84,15 +84,22 @@
 		iDropCount = (iDropCount || 0) + 2;
 
 		var oError = new Error();
-		if (!oError.stack){
+		var stack = oError.stack;
+		if (!stack){
 			//In IE an error has to be thrown first to get a stack
 			try {
 				throw oError()
 			}catch(oError2){
-				//Nothing
+				stack = oError2.stack;
 			}
 		}
-		var stack = oError.stack.split("\n");
+
+		// IE <= 9 this will not work
+		if (!stack) {
+			return "";
+		}
+
+		stack = stack.split("\n");
 		stack.splice(0, iDropCount);
 		return stack.join("\n");
 	}
