@@ -307,6 +307,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._bInitBusy = false;
 		this._bFirstRender = false;
 
+		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea, 
+		// but only if it added it there itself. As we did that, we have to remove it also on our own
+		if ( this._bAppendedToUIArea ) {
+			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic.removeContent(this, true);
+		}
+	
 		// controls not managed in aggregations
 		if (this._oDialog) {
 			this._oDialog.destroy();
