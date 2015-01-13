@@ -6,8 +6,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	width="100%">
-	<VBox width="100%">
-		<Button text="Save" press="onSave" />
+	<VBox binding="{/EdmTypesCollection(ID='1')}" width="100%">
+		<HBox>
+			<Button text="Save" press="onSave" visible="{ui>/realOData}"/>
+			<Button text="Reset" press="onReset" visible="{ui>/realOData}" />
+		</HBox>
 		<HBox width="100%">
 			<form:SimpleForm>
 				<!--TODO: sap.ui.model.odata.type.Binary not yet available
@@ -24,13 +27,13 @@
 
 				<core:Title text="DateTime variants" />
 				<Label text="DateTime"/>
-				<Input value="{path: 'RealDateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
+				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
 				<Label text="DateTime, nullable: false"/>
-				<Input value="{path: 'RealDateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
+				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
 				<Label text="DateTime, displayFormat: &quot;Date&quot;"/>
-				<Input value="{path: 'DateOnly', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
+				<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
 				<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false"/>
-				<Input value="{path: 'DateOnly', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
+				<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
 				<Label text="DateTimeOffset"/>
 				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
 				<Label text="DateTimeOffset, nullable: false"/>
