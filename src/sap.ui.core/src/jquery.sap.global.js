@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, alert, console */
+/*global URI, alert, console, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -2839,7 +2839,7 @@
 	 *          [fnErrorCallback] callback function to get notified once the link loading failed.
 	 *          In case of usage in IE the error callback will also be executed if an empty stylesheet
 	 *          is loaded. This is the only option how to determine in IE if the load was successful
-	 *          or not since the native onerror callback for link elements doesn't work in IE. The IE 
+	 *          or not since the native onerror callback for link elements doesn't work in IE. The IE
 	 *          always calls the onload callback of the link element.
 	 *
 	 * @public
@@ -2858,7 +2858,7 @@
 			if (sId) {
 				oLink.id = sId;
 			}
-			
+
 			var fnError = function() {
 				jQuery(oLink).attr("sap-ui-ready", "false");
 				if (fnErrorCallback) {
@@ -2872,7 +2872,7 @@
 					fnLoadCallback();
 				}
 			};
-			
+
 			// for IE we will check if the stylesheet contains any rule and then
 			// either trigger the load callback or the error callback
 			if (!!sap.ui.Device.browser.internet_explorer) {
@@ -2885,7 +2885,7 @@
 						aRules = oEvent.target && oEvent.target.sheet && oEvent.target.sheet.rules;
 						// in cross-origin scenarios now the catch block will be executed because we
 						// cannot access the rules of the stylesheet but for non cross-origin stylesheets
-						// we will get an empty rules array and finally we cannot differ between 
+						// we will get an empty rules array and finally we cannot differ between
 						// empty stylesheet or loading issue correctly => documented in JSDoc!
 					} catch (ex) {
 						// exception happens when the stylesheet could not be loaded from the server
@@ -2899,7 +2899,7 @@
 					}
 				};
 			}
-			
+
 			jQuery(oLink).load(fnLoad);
 			jQuery(oLink).error(fnError);
 			return oLink;
@@ -3513,6 +3513,227 @@
 	 * @static
 	 */
 	jQuery.sap.measure = new PerfMeasurement();
+
+	/**
+	 * FrameOptions class
+	 */
+	var FrameOptions = function(mSettings, fnCallback) {
+		/* mSettings: mode, whitelist, whitelistService */
+		this.mSettings = mSettings || {};
+		this.mSettings.mode = this.mSettings.mode || FrameOptions.Mode.ALLOW;
+		this.fnCallback = fnCallback;
+		this.sParentOrigin = '';
+		this.bUnlocked = false;
+		this.bRunnable = false;
+		this.bParentUnlocked = false;
+		this.aFPChilds = [];
+
+		var that = this;
+
+		this.iTimeout = setTimeout(function() {
+			that._callback(false);
+		}, 5000);
+
+		var fnHandlePostMessage = function() {
+			that._handlePostMessage.apply(that, arguments);
+		};
+
+		if (FrameOptions.__window.addEventListener) {
+			FrameOptions.__window.addEventListener('message', fnHandlePostMessage);
+		} else {
+			FrameOptions.__window.attachEvent('onmessage', fnHandlePostMessage);
+		}
+
+		if (FrameOptions.__parent === FrameOptions.__self || FrameOptions.__parent == null || this.mSettings.mode === FrameOptions.Mode.ALLOW) {
+			// unframed page or "allow all" mode
+			this._applyState(true, true);
+		} else {
+			// framed page
+
+			// "deny" mode blocks embedding page from all origins
+			if (this.mSettings.mode === FrameOptions.Mode.DENY) {
+				this._callback(false);
+				return;
+			}
+
+			try {
+				var oParentWindow = FrameOptions.__parent.window; // TODO: parent instead of parent.window
+				var bOk = false;
+				var bTrue = true;
+				do {
+					var test = oParentWindow.document.domain;
+					if (oParentWindow == FrameOptions.__top) {
+						if (test != undefined) {
+							bOk = true;
+						}
+						break;
+					}
+					oParentWindow = oParentWindow.parent.window;
+				} while (bTrue);
+				if (bOk) {
+					this._applyState(true, true);
+				}
+			} catch(e) {
+				// access to the top window is not possible
+				FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
+			}
+		}
+
+	};
+
+	FrameOptions.Mode = {
+		// only allow with same origin parent
+		TRUSTED: 'trusted',
+
+		// allow all kind of embedding (default)
+		ALLOW: 'allow',
+
+		// deny all kinds of embedding
+		DENY: 'deny'
+	};
+
+	// Allow globals to be mocked in unit test
+	FrameOptions.__window = window;
+	FrameOptions.__parent = parent;
+	FrameOptions.__self = self;
+	FrameOptions.__top = top;
+
+	// check if string matches pattern
+	FrameOptions.prototype.match = function(sProbe, sPattern) {
+		if (!(/\*/i.test(sPattern))) {
+			return sProbe == sPattern;
+		} else {
+			sPattern = sPattern.replace(/\//gi, "\\/"); // replace /   with \/
+			sPattern = sPattern.replace(/\./gi, "\\."); // replace .   with \.
+			sPattern = sPattern.replace(/\*/gi, ".*");  // replace *   with .*
+			sPattern = sPattern.replace(/:\.\*$/gi, ":\\d*"); // replace :.* with :\d* (only at the end)
+
+			if (sPattern.substr(sPattern.length - 1, 1) !== '$') {
+				sPattern = sPattern + '$'; // if not already there add $ at the end
+			}
+			if (sPattern.substr(0, 1) !== '^') {
+				sPattern = '^' + sPattern; // if not already there add ^ at the beginning
+			}
+
+			// sPattern looks like: ^.*:\/\/.*\.company\.corp:\d*$ or ^.*\.company\.corp$
+			var r = new RegExp(sPattern, 'i');
+			return r.test(sProbe);
+		}
+	};
+
+	FrameOptions.prototype._callback = function(bSuccess) {
+		clearTimeout(this.iTimeout);
+		if (typeof this.fnCallback === 'function') {
+			this.fnCallback.call(null, bSuccess);
+		}
+	};
+
+	FrameOptions.prototype._applyState = function(bIsRunnable, bIsParentUnlocked) {
+		if (bIsRunnable) {
+			this.bRunnable = true;
+		}
+		if (bIsParentUnlocked) {
+			this.bParentUnlocked = true;
+		}
+		if (!this.bRunnable || !this.bParentUnlocked) {
+			return;
+		}
+		this._callback(true);
+		this._notifyChildFrames();
+		this.bUnlocked = true;
+	};
+
+	FrameOptions.prototype._applyTrusted = function(bTrusted) {
+		if (bTrusted) {
+			this._applyState(true, false);
+		} else {
+			this._callback(false);
+		}
+	};
+
+	FrameOptions.prototype._check = function() {
+		if (this.bRunnable) {
+			return;
+		}
+		var bTrusted = false;
+		if (FrameOptions.__parent === FrameOptions.__self || FrameOptions.__parent == null) {
+			bTrusted = true; // page is NOT framed
+		} else if (FrameOptions.__window.document.URL.indexOf(this.sParentOrigin) == 0) {
+			bTrusted = true;
+		} else if (this.mSettings.whitelist && this.mSettings.whitelist.length != 0) {
+			var sHostName = this.sParentOrigin.split('//')[1];
+			sHostName = sHostName.split(':')[0];
+			for (var i = 0; i < this.mSettings.whitelist.length; i++) {
+				var match = sHostName.indexOf(this.mSettings.whitelist[i]);
+				if (match != -1 && sHostName.substring(match) == this.mSettings.whitelist[i]) {
+					bTrusted = true;
+					break;
+				}
+			}
+		}
+		if (bTrusted) {
+			this._applyTrusted(bTrusted);
+		} else if (this.mSettings.whitelistService) {
+			var that = this;
+			var xmlhttp = new XMLHttpRequest();
+			var url = this.mSettings.whitelistService + '?parentOrigin=' + encodeURIComponent(this.sParentOrigin)
+			+ '&appl=' + encodeURIComponent(location.pathname);
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == 4) {
+					that._handleXmlHttpResponse(xmlhttp);
+				}
+			};
+			xmlhttp.open('GET', url, true);
+			xmlhttp.setRequestHeader('Accept', 'application/json');
+			xmlhttp.send();
+		} else {
+			this._callback(false);
+		}
+	};
+
+	FrameOptions.prototype._handleXmlHttpResponse = function(xmlhttp) {
+		if (xmlhttp.status === 200) {
+			var bTrusted = false;
+			var sResponseText = xmlhttp.responseText;
+			var oRuleSet = JSON.parse(sResponseText);
+			if (oRuleSet.active == false) {
+				bTrusted = true;
+			} else if (this.match(this.sParentOrigin, oRuleSet.origin)) {
+				bTrusted = oRuleSet.framing;
+			}
+			this._applyTrusted(bTrusted);
+		} else {
+			this._callback(false);
+		}
+	};
+
+	FrameOptions.prototype._notifyChildFrames = function() {
+		for (var i = 0; i < this.aFPChilds.length; i++) {
+			this.aFPChilds[i].postMessage('SAPFrameProtection*parent-unlocked','*');
+		}
+	};
+
+	FrameOptions.prototype._handlePostMessage = function(oEvent) {
+		if (oEvent.source === FrameOptions.__self || oEvent.source == null) {
+			return;
+		}
+		if (oEvent.source === FrameOptions.__parent) {
+			if (!this.sParentOrigin) {
+				this.sParentOrigin = oEvent.origin;
+				this._check();
+			}
+			if (oEvent.data == 'SAPFrameProtection*parent-unlocked') {
+				this._applyState(false, true);
+			}
+		} else if (oEvent.source.parent === FrameOptions.__self && oEvent.data == 'SAPFrameProtection*require-origin' && this.bUnlocked) {
+			oEvent.source.postMessage('SAPFrameProtection*parent-unlocked', '*');
+		} else {
+			oEvent.source.postMessage('SAPFrameProtection*parent-origin', '*');
+			this.aFPChilds.push(oEvent.source);
+		}
+	};
+
+	jQuery.sap.FrameOptions = FrameOptions;
 
 }());
 
