@@ -141,7 +141,8 @@
 		{constraints: {scale: 1},
 			error: "Enter a number with a maximum of 1 decimal places."},
 		{constraints: {precision: 10, scale: 3},
-			error: "Enter a number with a maximum of 10 digits and 3 decimal places."},
+			error: "Enter a number with a maximum of 10 digits including a maximum of 3 decimal" +
+					" places."},
 		{constraints: {precision: 1, scale: "variable"},
 			error: "Enter a number with a maximum of 1 digits."},
 		{constraints: {scale: "variable"},
@@ -171,7 +172,8 @@
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException);
 				strictEqual(e.message,
-					"Enter a number with a maximum of 3 digits and 0 decimal places.");
+					"Enter a number with a maximum of 3 digits including a maximum of 0 decimal " +
+					"places.");
 			}
 		});
 	});
@@ -199,7 +201,8 @@
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
 			strictEqual(e.message,
-				"Enter a number with a maximum of 6 digits and 3 decimal places.");
+				"Enter a number with a maximum of 6 digits including a maximum of 3 decimal " +
+				"places.");
 		}
 	});
 

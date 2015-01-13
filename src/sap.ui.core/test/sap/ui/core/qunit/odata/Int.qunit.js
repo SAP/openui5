@@ -112,7 +112,7 @@
 					}
 					catch (e) {
 						ok(e instanceof sap.ui.model.ParseException)
-						equal(e.message, "Enter an integer.");
+						equal(e.message, "Enter a number with no decimals.");
 					}
 				});
 		});
@@ -155,7 +155,7 @@
 			}
 			catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "Enter an integer.");
+				equal(e.message, "Enter a number with no decimals.");
 			}
 		});
 
@@ -164,12 +164,12 @@
 				oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 					groupingEnabled:true}),
 
-			sExpectedMessage = "Enter an integer with a minimum value of "
+			sExpectedMessage = "Enter a number with a minimum value of "
 					+ oNumberFormat.format(iMin) + ".";
 			testRange(-Infinity, sExpectedMessage);
 			testRange(iMin - 1, sExpectedMessage);
 
-			sExpectedMessage = "Enter an integer with a maximum value of "
+			sExpectedMessage = "Enter a number with a maximum value of "
 				+ oNumberFormat.format(iMax) + ".";
 			testRange(iMax + 1, sExpectedMessage);
 			testRange(Infinity, sExpectedMessage);
@@ -204,7 +204,7 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "Enter an integer.");
+				equal(e.message, "Enter a number with no decimals.");
 			}
 		}));
 	}

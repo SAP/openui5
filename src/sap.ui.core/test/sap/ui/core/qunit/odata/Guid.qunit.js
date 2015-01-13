@@ -144,7 +144,8 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			ok(e.message === "Enter a GUID (like 12345678-90AB-CDEF-1234-567890ABCDEF).");
+			ok(e.message ===
+				"Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF.");
 			ok(oSpy.calledOnce);
 			ok(oSpy.calledWith("EnterGuid"), "get text for 'EnterGuid'");
 		}
@@ -153,11 +154,12 @@
 	//*********************************************************************************************
 	jQuery.each([
 		{value: 1234, message: "Illegal sap.ui.model.odata.type.Guid value: 1234"},
-		{value: "123", message: "Enter a GUID (like 12345678-90AB-CDEF-1234-567890ABCDEF)."},
+		{value: "123",
+			message: "Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF."},
 		{value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23-2",
-			message: "Enter a GUID (like 12345678-90AB-CDEF-1234-567890ABCDEF)."},
+			message: "Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF."},
 		{value: "G050568D-393C-1ED4-9D97-E65F0F3FCC23",
-			message: "Enter a GUID (like 12345678-90AB-CDEF-1234-567890ABCDEF)."}
+			message: "Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF."}
 	], function (i, oFixture) {
 		test("validate exception for value " + oFixture.value, function () {
 			var oType = new sap.ui.model.odata.type.Guid();

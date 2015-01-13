@@ -30,8 +30,8 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
-				strictEqual(e.message, "Enter a time (like "
-					+ oType.formatValue(createTime(13, 47, 26, 0), "string") + ").",
+				strictEqual(e.message, "Enter a time in the following format: "
+					+ oType.formatValue(createTime(13, 47, 26, 0), "string") + ".",
 					sReason + ": message");
 			}
 			sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText,
@@ -193,7 +193,8 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException, "ValidateException: exception");
-			strictEqual(e.message, "Enter a time (like 1:47:26 PM).", "ValidateException: message");
+			strictEqual(e.message, "Enter a time in the following format: 1:47:26 PM.",
+				"ValidateException: message");
 		}
 		sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText, "EnterTime");
 	}));

@@ -16,8 +16,9 @@
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
 		oMessages = {
-			"EnterDateTime": "Enter a date and a time (like Nov 27, 2014, 1:47:26 PM).",
-			"EnterDate": "Enter a date (like Nov 27, 2014)."
+			"EnterDateTime": "Enter a date and a time in the following format: " +
+				"Nov 27, 2014, 1:47:26 PM.",
+			"EnterDate": "Enter a date in the following format: Nov 27, 2014."
 		};
 
 	oDateOnly.setUTCFullYear(2014);
