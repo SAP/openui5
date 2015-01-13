@@ -201,6 +201,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+		},
 		events : {
 
 			/**
@@ -661,8 +673,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._adjustIntroDiv();
 			
 			if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && this.getFullScreenOptimized() && this._iCountVisAttrStat >= 1 && this._iCountVisAttrStat <= 3) {
-				// Adjust ObjectNumber alignment depending of the page RTL settings
-				this._setNumberTextAlignment(sap.ui.core.TextAlign.Right, sap.ui.core.TextAlign.Left);
+				// Adjust ObjectNumber alignment
+				this.getAggregation("_objectNumber").setTextAlign(sap.ui.core.TextAlign.Begin);
 			}
 			
 			// watch for orientation change only on tablet and phone
@@ -701,8 +713,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			
 			if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
-					// change alignment to fit the design depending if the RTL of the page is set to true or false
-					this._setNumberTextAlignment(sap.ui.core.TextAlign.Left, sap.ui.core.TextAlign.Right);
+					// change alignment to fit the design depending
+					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End);
 					$numberDiv.removeClass("sapMObjectNumberBelowTitle");
 					$titleDiv.removeClass("sapMOHRTitleDivFull");
 				}
@@ -710,8 +722,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var nParentWidth40 = $numberDiv.parent().width() * 0.4; //calculate 40% number div in pixels
 				
 				if ($numberDiv.outerWidth() > nParentWidth40) {
-					// change alignment to fit the design depending if the RTL of the page is set to true or false
-					this._setNumberTextAlignment(sap.ui.core.TextAlign.Right, sap.ui.core.TextAlign.Left);
+					// change alignment to fit the design
+					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Begin);
 					$numberDiv.addClass("sapMObjectNumberBelowTitle");
 					$titleDiv.addClass("sapMOHRTitleDivFull");
 				}
@@ -739,23 +751,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
-	/**
-	 * Adjust ObjectNumber alignment depending of the page RTL settings
-	 *            sAlignRTL align position if the page is in RTL
-	 *            sAlignLTR align position if the page is in LTR
-	 * @private
-	 */
-	ObjectHeader.prototype._setNumberTextAlignment = function(sAlignRTL, sAlignLTR) {
-		var oObjectNumber = this.getAggregation("_objectNumber");
-		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-		
-		if (bPageRTL) {
-			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Right);
-		} else {
-			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Left);
-		}
-	};
-	
+
 	/**
 	 * @param [string]
 	 *            sId control id to be escaped

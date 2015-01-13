@@ -360,28 +360,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOHNumberDiv");
 		oRM.writeClasses();
 		oRM.write(">");
+		
+		var oObjectNumber = oOH.getAggregation("_objectNumber");
 
-		oRM.write("<span");
-		oRM.writeAttribute("id", oOH.getId() + "-number");
-		oRM.addClass("sapMOHNumber");
-		oRM.addClass("sapMOHNumberState" + oOH.getNumberState());
-
-		oRM.writeClasses();
-		oRM.write(">");
-		oRM.writeEscaped(oOH.getNumber());
-
-		oRM.write("</span>");
-
-		if (oOH.getNumberUnit()) {
-			oRM.write("<span");
-			oRM.writeAttribute("id", oOH.getId() + "-numberUnit");
-			oRM.addClass("sapMOHNumberUnit");
-			oRM.addClass("sapMOHNumberState" + oOH.getNumberState());
-
-			oRM.writeClasses();
-			oRM.write(">");
-			oRM.writeEscaped(oOH.getNumberUnit());
-			oRM.write("</span>");
+		if (oObjectNumber && oObjectNumber.getNumber()) {
+			// adjust alignment according the design specification
+			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End);
+			this._renderChildControl(oRM, oOH, oObjectNumber);
 		}
 
 		oRM.write("</div>"); // End Number/units container
@@ -416,6 +401,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 					}
 				}
+				
+				//ARIA attributes
+				oRM.writeAccessibilityState({
+					role: "link",
+					haspopup: !oOH.getTitleHref()
+				});
 			} else {
 				oRM.write("<span"); // Start Title Text container
 			}
@@ -444,6 +435,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write("<span"); // Start title arrow container
 			oRM.addClass("sapMOHTitleArrow");
 			oRM.writeClasses();
+			
+			//ARIA attributes
+			oRM.writeAccessibilityState({
+				haspopup: true
+			});
 			oRM.write(">");
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
@@ -510,6 +506,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (oOH.getIconActive()) {
 				oRM.writeAttribute("tabindex", "0");
 				oRM.addClass("sapMPointer");
+				//ARIA attributes
+				oRM.writeAccessibilityState({
+					role: "link",
+					haspopup: true
+				});
 			}
 			oRM.writeClasses();
 			oRM.write(">");
@@ -607,7 +608,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		if (sTooltip) {
 			oRM.writeAttributeEscaped("title", sTooltip);
 		}
-
+		// ARIA attributes
+		oRM.writeAccessibilityState({
+			role : "region",
+			labelledby: {
+				value: oOH.getId() + "-titleText-inner",
+				append: true
+			}
+		});
+		
 		oRM.write(">");
 
 		if (bCondensed) {
@@ -703,12 +712,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div");
 		oRM.addClass("sapMOHROuter");
 		oRM.writeClasses();
+		
+		//ARIA attributes
+		oRM.writeAccessibilityState({
+			role : "region",
+			labelledby: {
+				value: oOH.getId() + "-txt",
+				append: true
+			}
+		});
 		oRM.writeControlData(oOH);
 		oRM.write(">");
 
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
-		oRM.writeClasses();
+		oRM.writeClasses();		
 		oRM.write(">");
 		oRM.write("<div");
 
@@ -804,6 +822,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (oControl.getIconActive()) {
 				oRM.addClass("sapMPointer");
 				oRM.writeAttribute("tabindex", "0");
+				//ARIA attributes
+				oRM.writeAccessibilityState({
+					role: "link",
+					haspopup: true
+				});
 			}
 			oRM.writeClasses();
 			oRM.write(">");
@@ -1032,13 +1055,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var oObjectNumber = oControl.getAggregation("_objectNumber");
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
-			var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-			
-			if (bPageRTL) {
-				oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Left);
-			} else {
-				oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Right);
-			}
+			// adjust alignment according the design specification
+			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End);
 			this._renderChildControl(oRM, oControl, oObjectNumber);
 		}
 	};
@@ -1221,6 +1239,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				}
 			}		
 			oRM.writeAttribute("tabindex", "0");
+			//ARIA attributes
+			oRM.writeAccessibilityState({
+				role: "link",
+				haspopup: !oOH.getTitleHref()
+			});
 		} else {
 			oRM.write("<span");
 		}
@@ -1279,6 +1302,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.write("<span"); // Start title arrow container
 			oRM.addClass("sapMOHRTitleArrow");
 			oRM.writeClasses();
+			
+			//ARIA attributes
+			oRM.writeAccessibilityState({
+				haspopup: true
+			});
 			oRM.write(">");
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
