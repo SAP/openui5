@@ -434,6 +434,38 @@
 
 	});
 
+	test("Button textDirecton attribute", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({text: "(+359) 111 222 333", textDirection: sap.ui.core.TextDirection.RTL}),
+				new sap.m.Button({text: "(+359) 111 222 333", textDirection: sap.ui.core.TextDirection.LTR}),
+				new sap.m.Button({text: "20/06/1983 11:54"})
+			]
+		});
+
+		oSegmentedButton.createButton("(+359) 111 222 333", null, null, sap.ui.core.TextDirection.RTL);
+		oSegmentedButton.createButton("20/06/1983 11:54", null, null, sap.ui.core.TextDirection.LTR);
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oButtons = oSegmentedButton.getButtons();
+
+		// Assert
+		strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute shoud be set to 'rtl'.");
+		strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute shoud be set to 'ltr'.");
+		strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute shoud not be rendered.");
+		strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute shoud be set to 'rtl' button created using the createButton method.");
+		strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute shoud be set to 'ltr' button created using the createButton method.");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */

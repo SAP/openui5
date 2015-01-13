@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 			sTooltip,
 			sButtonWidth,
 			sTooltip,
+			sButtonTextDirection,
 			i = 0;
 
 		// write the HTML into the render manager
@@ -85,6 +86,11 @@ sap.ui.define(['jquery.sap.global'],
 				oRM.writeAttributeEscaped("title", sTooltip);
 			}
 			oRM.writeAttribute("tabindex", oButton.getEnabled() ? "0" : "-1");
+
+			sButtonTextDirection = oButton.getTextDirection();
+			if (sButtonTextDirection !== sap.ui.core.TextDirection.Inherit) {
+				oRM.writeAttribute("dir", sButtonTextDirection.toLowerCase());
+			}
 
 			// ARIA
 			oRM.writeAccessibilityState(oButton, {
