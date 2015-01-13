@@ -1,4 +1,4 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -21,7 +21,7 @@
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
 
 			var aSpecialDays = [["20140101",undefined,"Neujahr",1],
-			                    ["20140106",undefined,"Heilige Drei KÃ¶nige",1],
+			                    ["20140106",undefined,"Heilige Drei Könige",1],
 			                    ["20140214",undefined,"Valentinstag",2],
 			                    ["20140303",undefined,"Rosenmontag",2],
 			                    ["20140304",undefined,"Fastnacht",2],
@@ -35,13 +35,13 @@
 			                    ["20140608",undefined,"Pfingstsonntag",1],
 			                    ["20140609",undefined,"Pfingstmontag",1],
 			                    ["20140619",undefined,"Fronleichnam",1],
-			                    ["20140815",undefined,"MariÃ¤ Himmelfahrt",2],
+			                    ["20140815",undefined,"Mariä Himmelfahrt",2],
 			                    ["20141003",undefined,"Tag der Deutschen Einheit",1],
 			                    ["20141005",undefined,"Erntedankfest",2],
 			                    ["20141031",undefined,"Reformationstag",2],
 			                    ["20141101",undefined,"Allerheiligen",1],
 			                    ["20141116",undefined,"Volkstrauertag",2],
-			                    ["20141119",undefined,"BuÃŸ- und Bettag",2],
+			                    ["20141119",undefined,"Buß- und Bettag",2],
 			                    ["20141123",undefined,"Totensonntag",2],
 			                    ["20141130",undefined,"1. Advent",2],
 			                    ["20141206",undefined,"Nikolaus",2],
@@ -52,7 +52,7 @@
 			                    ["20141225","20141226","Weihnachten",1],
 			                    ["20141231",undefined,"Silvester",2],
 			                    ["20150101",undefined,"Neujahr",1],
-			                    ["20150106",undefined,"Heilige Drei KÃ¶nige",1],
+			                    ["20150106",undefined,"Heilige Drei Könige",1],
 			                    ["20140804","20140810","Urlaub",3],
 			                    ["20140701",undefined,"Type01",1],
 			                    ["20140702",undefined,"Type02",2],
@@ -223,6 +223,56 @@
 				width: "8em"
 			}).placeAt("event3");
 
+			oCal = new sap.ui.unified.Calendar("Cal4",{
+				months: 2,
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF4");
+					var oCalendar = oEvent.oSource;
+					var aSelectedDates = oCalendar.getSelectedDates();
+					var oDate;
+					if (aSelectedDates.length > 0 ) {
+						oDate = aSelectedDates[0].getStartDate();
+						oTF.setValue(oFormatYyyymmdd.format(oDate));
+					} else {
+						oTF.setValue("");
+					}
+				},
+				cancel: function(oEvent){
+					alert("Cancel");
+				}
+			}).placeAt("sample4");
+
+			oLabel = new sap.ui.commons.Label({text: "selected date", labelFor: "TF4"}).placeAt("event4");
+			oInput = new sap.ui.commons.TextField("TF4",{
+				editable: true,
+				placeholder: "yyyyMMdd",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oCalendar = sap.ui.getCore().byId("Cal4");
+					if(sValue.length == 8 && !isNaN(sValue)){
+						var oDate = oFormatYyyymmdd.parse(sValue);
+						var aSelectedDates = oCalendar.getSelectedDates();
+						var oDateRange;
+						if (aSelectedDates.length == 0 ) {
+							oDateRange = new sap.ui.unified.DateRange({startDate: oDate});
+							oCalendar.addSelectedDate(oDateRange);
+						} else {
+							oDateRange = aSelectedDates[0];
+							oDateRange.setStartDate(oDate);
+						}
+					}else if(!sValue){
+						oCalendar.destroySelectedDates();
+					}
+				}
+			}).placeAt("event4");
+
+			oButton = new sap.ui.commons.Button({
+				text: "focus today",
+				press: function(oEvent){
+					sap.ui.getCore().byId("Cal4").focusDate(new Date());
+				}
+			}).placeAt("event4");
 		</script>
 
 	</head>
@@ -232,22 +282,29 @@
 		<div>Single day Selection Calendar</div>
 		<br>
 		<div>
-		<div id="sample1" style="display:inline-block;"></div>
-		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+			<div id="sample1" style="display:inline-block;"></div>
+			<div id="event1" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
 		<div>Single interval Selection Calendar</div>
 		<br>
 		<div>
-		<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
-		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
+			<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
+			<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
 		<div>multiple day Selection Calendar</div>
 		<br>
 		<div>
-		<div id="sample3" style="display:inline-block;"></div>
-		<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+			<div id="sample3" style="display:inline-block;"></div>
+			<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>Calendar with multiple months</div>
+		<br>
+		<div>
+			<div id="sample4" style="display:inline-block;"></div>
+			<div id="event4" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 
 	</body>

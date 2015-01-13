@@ -136,28 +136,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Month.prototype.setDate = function(oDate){
 
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			var that = this;
+			_changeDate(that, oDate, false);
 
-			var iYear = oDate.getFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
-
-			var oOldDate = this._getDate();
-			this.setProperty("date", oDate, true);
-			this._oUTCDate = CalendarUtils._createUTCDate(oDate);
-
-			if (this.getDomRef()) {
-				oDate = CalendarUtils._createUTCDate(oDate);
-				var that = this;
-				if (this._oUTCDate.getUTCFullYear() == oOldDate.getUTCFullYear() && this._oUTCDate.getUTCMonth() == oOldDate.getUTCMonth()) {
-					_focusDate(that, this._oUTCDate, true);
-				} else {
-					_renderMonth(that);
-				}
-			}
+			return this;
 
 		};
 
@@ -176,6 +158,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			return this._oUTCDate;
+
+		};
+
+		/**
+		 * displays the month of a given date without setting the focus
+		 *
+		 * @param {object} oDate JavaScript date object for focused date.
+		 * @returns {sap.ui.unified.calendar.Month} <code>this</code> to allow method chaining
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		Month.prototype.displayDate = function(oDate){
+
+			var that = this;
+			_changeDate(that, oDate, true);
+
+			return this;
 
 		};
 
@@ -733,6 +732,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
+		function _changeDate (oThis, oDate, bNoFocus){
+
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + oThis);
+			}
+
+			var iYear = oDate.getFullYear();
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + oThis);
+			}
+
+			var oOldDate = oThis._getDate();
+			oThis.setProperty("date", oDate, true);
+			oThis._oUTCDate = CalendarUtils._createUTCDate(oDate);
+
+			if (oThis.getDomRef()) {
+				oDate = CalendarUtils._createUTCDate(oDate);
+				if (oThis._oUTCDate.getUTCFullYear() == oOldDate.getUTCFullYear() && oThis._oUTCDate.getUTCMonth() == oOldDate.getUTCMonth()) {
+					if (!bNoFocus) {
+					_focusDate(oThis, oThis._oUTCDate, true);
+					}
+				} else {
+					_renderMonth(oThis, bNoFocus);
+				}
+			}
+
+		}
+
 		function _focusDate (oThis, oDate, bNoSetDate){
 
 			if (!bNoSetDate) {
@@ -752,7 +779,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _renderMonth(oThis){
+		function _renderMonth(oThis, bNoFocus){
 
 			oThis._sRenderMonth = undefined; // initialize delayed call
 
@@ -770,7 +797,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oThis.fireEvent("_renderMonth", {days: $Container.children(".sapUiCalDay").length});
 
 			_initItemNavigation(oThis);
-			oThis._oItemNavigation.focusItem(oThis._oItemNavigation.getFocusedIndex());
+			if (!bNoFocus) {
+				oThis._oItemNavigation.focusItem(oThis._oItemNavigation.getFocusedIndex());
+			}
 
 		}
 
