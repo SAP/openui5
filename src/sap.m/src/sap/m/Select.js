@@ -99,7 +99,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem: { type: "sap.ui.core.Item", multiple: false }
+				selectedItem: { type: "sap.ui.core.Item", multiple: false },
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
 			events: {
 
@@ -130,22 +136,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 
 		function fnHandleKeyboardNavigation(oItem) {
-			var oSelectedItem = this.getSelectedItem();
 
 			if (oItem) {
 
 				this.setSelection(oItem);
-
-				if (oSelectedItem !== oItem) {
-					this.fireChange({ selectedItem: oItem });
-				}
-
-				oItem = this.getSelectedItem();	// note: update the selected item after the change event is fired (the selection may change)
 				this.setValue(oItem.getText());
 			}
 
 			this.scrollToItem(oItem);
 		}
+
+		Select.prototype._checkSelectionChange = function() {
+			var oItem = this.getSelectedItem();
+
+			if (this._oSelectionOnFocus !== oItem) {
+				this.fireChange({ selectedItem: oItem });
+			}
+		};
 
 		Select.prototype._callMethodInControl = function(sFunctionName, aArgs) {
 			var oList = this.getList();
@@ -332,7 +339,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @private
 		 */
-		Select.prototype.onAfterOpen = function() {};
+		Select.prototype.onAfterOpen = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "true");
+			}
+		};
 
 		/**
 		 * This event handler will be called before the picker pop-up is closed.
@@ -350,7 +363,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @private
 		 */
-		Select.prototype.onAfterClose = function() {};
+		Select.prototype.onAfterClose = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "false");
+			}
+		};
 
 		/**
 		 * Getter for the control's picker pop-up.
@@ -550,6 +569,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// initialize composites
 			this.createPicker(this.getPickerType());
+
+			// selected item on focus
+			this._oSelectionOnFocus = null;
 		};
 
 		/**
@@ -559,6 +581,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.onBeforeRendering = function() {
 			this.synchronizeSelection();
+		};
+
+		/**
+		 * Cleans up before destruction.
+		 *
+		 * @private
+		 */
+		Select.prototype.exit = function() {
+			this._oSelectionOnFocus = null;
 		};
 
 		/* =========================================================== */
@@ -730,6 +761,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				oEvent.setMarked();
 
 				this.close();
+				this._checkSelectionChange();
 			}
 		};
 
@@ -745,6 +777,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			oEvent.setMarked();
 
 			this.close();
+			this._checkSelectionChange();
 		};
 
 		/**
@@ -760,6 +793,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// note: prevent document scrolling when the spacebar key is pressed
 			oEvent.preventDefault();
+
+			if (this.isOpen()) {
+				this._checkSelectionChange();
+			}
 
 			this.toggleOpenState();
 		};
@@ -860,11 +897,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				oSelectedItem = this.getSelectedItem();
 
 			this.setSelectedIndex(aSelectableItems.indexOf(oSelectedItem) + 10, aSelectableItems);
-
-			if (oSelectedItem !== this.getSelectedItem()) {
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-			}
-
 			oSelectedItem = this.getSelectedItem();
 
 			if (oSelectedItem) {
@@ -892,11 +924,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				oSelectedItem = this.getSelectedItem();
 
 			this.setSelectedIndex(aSelectableItems.indexOf(oSelectedItem) - 10, aSelectableItems);
-
-			if (oSelectedItem !== this.getSelectedItem()) {
-				this.fireChange({ selectedItem: this.getSelectedItem() });
-			}
-
 			oSelectedItem = this.getSelectedItem();
 
 			if (oSelectedItem) {
@@ -916,12 +943,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.onfocusin = function(oEvent) {
 
+			this._oSelectionOnFocus = this.getSelectedItem();
+
 			// note: in some circumstances IE browsers focus non-focusable elements
 			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
 
 				// force the focus to leave the inner element and set it back to the control's root element
 				this.focus();
 			}
+		};
+
+		/**
+		 * Handle the focusout event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @name sap.m.Select#onfocusout
+		 * @function
+		 */
+		Select.prototype.onfocusout = function(oEvent) {
+			this._checkSelectionChange();
 		};
 
 		/**
@@ -1301,6 +1342,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.clearSelection = function() {
 			this.setSelection(null);
+		};
+
+		Select.prototype.fireChange = function(mParameters) {
+			this._oSelectionOnFocus = mParameters.selectedItem;
+			return this.fireEvent("change", mParameters);
 		};
 
 		Select.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {

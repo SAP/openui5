@@ -73,37 +73,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
 
-		/**
-		 * Get the selected item in the List.
-		 *
-		 * @returns {sap.m.StandardListItem | null}
-		 * @private
-		 */
-		ComboBox.prototype._getSelectedListItem = function() {
-			var oItem = this.getSelectedItem();
-			return (oItem && oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem")) || null;
-		};
-
 		function fnHandleKeyboardNavigation(oItem) {
 			var oDomRef = this.getFocusDomRef(),
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
 				bIsTextSelected = iSelectionStart !== iSelectionEnd,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
-				oListDomRef;
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
 
 			if (oItem) {
-				oListDomRef = this.getList().getDomRef();
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: oItem });
 				oItem = this.getSelectedItem();
-
-				// the attribute aria-activedescendant is set when the List is rendered,
-				// allowing screen readers to read the content within the edit input field as intended
-				if (oDomRef && oListDomRef && oItem && this.isOpen()) {
-					oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
-				}
 
 				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
 					iSelectionStart = 0;
@@ -258,8 +239,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.oninput = function(oEvent) {
 			ComboBoxBase.prototype.oninput.apply(this, arguments);
 
-			var CSS_CLASS = sap.m.ComboBoxBaseRenderer.CSS_CLASS,
-				oSelectedItem = this.getSelectedItem(),
+			var oSelectedItem = this.getSelectedItem(),
 				aItems = this.getItems(),
 				oInputDomRef = oEvent.target,
 				sValue = oInputDomRef.value,
@@ -275,7 +255,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// the item match with the value
 				oItem = aItems[i];
 				bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
-				oListItem = oItem.data(CSS_CLASS + "ListItem");
+				oListItem = this.getListItem(oItem);
 
 				if (sValue === "") {
 					bMatch = true;
@@ -300,14 +280,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 					if (oSelectedItem !== this.getSelectedItem()) {
 						this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-
-						oItem = this.getSelectedItem();
-
-						// the attribute aria-activedescendant is set when the List is rendered,
-						// allowing screen readers to read the content within the edit input field as intended
-						if (this.getList().isActive() && oItem) {
-							oInputDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
-						}
 					}
 
 					if (this._bDoTypeAhead) {
@@ -323,9 +295,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 				if (oSelectedItem !== this.getSelectedItem()) {
 					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-
-					// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
-					oInputDomRef.removeAttribute("aria-activedescendant");
 				}
 			}
 
@@ -736,7 +705,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.setSelection = function(vItem, mOptions) {
-			var oListItem;
+			var oListItem,
+				oDomRef,
+				sActivedescendant = "aria-activedescendant";
+
 			mOptions = mOptions || {};
 
 			// update and synchronize "selectedItem" association,
@@ -745,10 +717,21 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", mOptions.suppressInvalidate);
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", mOptions.suppressInvalidate);
 
+			oListItem = this.getListItem(vItem);
+			oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+
+				// the aria-activedescendant attribute is set when the list is rendered
+				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen()) {
+					oDomRef.setAttribute(sActivedescendant, oListItem.getId());
+				} else {
+					oDomRef.removeAttribute(sActivedescendant);
+				}
+			}
+
 			// update the selection in the List
 			if (!mOptions.listItemUpdated) {
-
-				oListItem = this._getSelectedListItem();
 
 				if (oListItem) {
 
@@ -757,7 +740,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				} else if (this.getList()) {
 
 					if (this.getDefaultSelectedItem()) {
-						this.getList().setSelectedItem(this.getDefaultSelectedItem().data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"), true);
+						this.getList().setSelectedItem(this.getListItem(this.getDefaultSelectedItem()), true);
 					} else if (this.getList().getSelectedItem()) {
 
 						this.getList().setSelectedItem(this.getList().getSelectedItem(), false);
@@ -946,7 +929,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				oDomRef.setAttribute("aria-expanded", "true");
 
 				// note: the "aria-activedescendant" attribute is set when the currently active descendant is visible and in view
-				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem").getId());
+				oItem && oDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
 			}
 		};
 
@@ -1009,11 +992,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/**
 		 * Retrieves the default selected item from the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.ui.core.Item | null}
+		 * @returns {null}
 		 * @protected
 		 */
 		ComboBox.prototype.getDefaultSelectedItem = function() {
-			return this.getForceSelection() ? this.findFirstEnabledItem() : null;
+			return null;
 		};
 
 		/*
@@ -1043,24 +1026,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
-
-		/**
-		 * Setter for property <code>value</code>.
-		 *
-		 * Default value is empty/<code>undefined</code>.
-		 *
-		 * @param {string} sValue New value for property <code>value</code>.
-		 * @return {sap.m.ComboBox} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBox.prototype.setValue = function(sValue, bSuppressForceSelection /* for internal usage */) {
-			if (!bSuppressForceSelection && this.getForceSelection() && !this.getItemByText(sValue)) {
-				return this;
-			}
-
-			ComboBoxBase.prototype.setValue.call(this, sValue);
-			return this;
-		};
 
 		/**
 		 * Setter for association <code>selectedItem</code>.
@@ -1238,29 +1203,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// return the removed item or null
 			return vItem;
 		};
-
-		/**
-		 * Removes all the controls in the aggregation named <code>items</code>.
-		 * Additionally unregisters them from the hosting UIArea and clears the selection.
-		 *
-		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
-		 * @public
-		 */
-		ComboBox.prototype.removeAllItems = function() {
-			var aItems = ComboBoxBase.prototype.removeAllItems.call(this);
-
-			if (this.getForceSelection()) {
-				this.setValue("", true);
-			}
-
-			return aItems;
-		};
-
-		ComboBox.prototype.getForceSelection = function() {
-			return false;
-		};
-
-		ComboBox.prototype.setForceSelection = function() {};
 
 		return ComboBox;
 

@@ -59,19 +59,22 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 *
 	 * @alias sap.ui.model.odata.type.Boolean
 	 * @param {object} [oFormatOptions]
-	 * 	 possible format options, the type however does not support any
+	 *   format options; this type does not support any format options
 	 * @param {object} [oConstraints]
-	 * 	 constraints, see {@link #setConstraints}
+	 *   constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
 	var EdmBoolean = SimpleType.extend("sap.ui.model.odata.type.Boolean",
 			/** @lends sap.ui.model.odata.type.Boolean.prototype */
 			{
-				constructor : function () {
-					SimpleType.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				}
 			}
-		});
+		);
 
 	/**
 	 * Format the given boolean value to the given target type.
@@ -169,10 +172,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * Set the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 * 	 constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @public
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	EdmBoolean.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable;
@@ -190,6 +191,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 *
 	 * @returns {string}
 	 *   the type's name
+	 * @public
 	 */
 	EdmBoolean.prototype.getName = function () {
 		return "sap.ui.model.odata.type.Boolean";

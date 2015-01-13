@@ -139,7 +139,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			InputBase.prototype.onfocusin.apply(this, arguments);
 
-			if (sap.ui.Device.browser.mobile && !jQuery(oEvent.target).hasClass("sapUiIcon") && !this._bFocusNoPopup) {
+			if (sap.ui.Device.browser.mobile && !jQuery(oEvent.target).hasClass("sapUiIcon") && !this._bFocusNoPopup &&
+					this.getEditable() && this.getEnabled()) {
 				// on mobile devices open calendar
 				var that = this;
 
@@ -234,7 +235,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			var that = this;
 			if (jQuery(oEvent.target).hasClass("sapUiIcon")) {
 				_toggleOpen(that);
-			} else	if (sap.ui.Device.browser.mobile && (!this._oPopup || !this._oPopup.isOpen())) {
+			} else if (sap.ui.Device.browser.mobile && (!this._oPopup || !this._oPopup.isOpen()) &&
+					this.getEditable() && this.getEnabled()) {
 				_open(that);
 			}
 

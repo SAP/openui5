@@ -11,11 +11,11 @@
  			body{
  				overflow: hidden;
  			}
- 			
+
  			.padding{
  				padding: 16px;
  			}
- 			
+
  			#p1{
  				width: 500px;
  			}
@@ -32,11 +32,11 @@
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
 			var sDateFormat = sap.m.getLocaleData().getDatePattern("medium");
-
 			var oDialog1 = new sap.m.Dialog("dialog1", {
 				title: "World Domination",
 				icon: "sap-icon://employee",
-				state: sap.ui.core.ValueState.Success,
+				ariaDescribedBy: 'p1',
+				state: sap.ui.core.ValueState.Warning,
 				content: [
 					new sap.ui.core.HTML({content:"<p id='p1' style='margin:0;padding: 16px;'>Do you want to start a new world domination campaign?</p>"}),
 				],
@@ -57,13 +57,13 @@
 				]
 			});
 
-			var oCustomHeader = new sap.m.Bar("customHeader", { 
+			var oCustomHeader = new sap.m.Bar("customHeader", {
 				contentLeft: [new sap.ui.core.Icon('myAppIcon', {src: "manager"}),
-				              new sap.m.Label("IconHeader", {text: "Icon Header"})],	
+				              new sap.m.Label("IconHeader", {text: "Icon Header"})],
 				contentMiddle: [],
 				contentRight: []
 			});
-			
+
 			var oDialog2 = new sap.m.Dialog("dialog2", {
 				title: "Vacation Form",
 				showHeader: true,
@@ -112,7 +112,7 @@
 					new sap.m.Label({text: "E-mail address for confirmation"}),
 					new sap.m.Input({type: sap.m.InputType.Email, placeholder: "E-mail"})
 				],
-				beginButton: 
+				beginButton:
 					new sap.m.Button({
 						text: "Submit",
 						type: sap.m.ButtonType.Accept,
@@ -130,7 +130,7 @@
 					}),
 				initialFocus: "startDate"
 			});
-			
+
 			var oMessageDialog1 = new sap.m.Dialog("messageDialog1", {
 				title: "Important Message",
 				content: [
@@ -158,16 +158,16 @@
 				type: sap.m.DialogType.Message
 			});
 			var oButton = new sap.m.Button("button1",{
-			                text: "Open Dialog with responsive Form", 
+			                text: "Open Dialog with responsive Form",
 			                press:function(){
 			                        openDialog();
 			                }
 			});
-			
+
 			var oList2 = new sap.m.List({
 				inset : false
 			});
-			
+
 			var data = {
 				navigation : [ {
 					title : "Travel Expend",
@@ -206,7 +206,7 @@
 					press : 'detailPage'
 				} ]
 			};
-			
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -214,7 +214,7 @@
 				iconInset : "{iconInset}",
 				type : "{type}"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -226,9 +226,9 @@
 				// bind Aggregation
 				list.bindAggregation("items", "/navigation", itemTemplate);
 			}
-			
+
 			bindListData(data, oItemTemplate1, oList2)
-			
+
 			var oListDialog = new sap.m.Dialog({
 				title: "Important Message",
 // 				contentWidth: "200px",
@@ -252,14 +252,14 @@
 						}
 					})
 			});
-			
+
 			var oButton2 = new sap.m.Button("button2", {
 				text: "Open List Dialog",
 				press: function(){
 					oListDialog.open();
 				}
 			});
-			
+
 			var oTextAreaDialog = new sap.m.Dialog({
 				title: "Dialog with TextArea",
 				content: new sap.m.TextArea({cols: 60}),
@@ -270,21 +270,21 @@
 					}
 				})
 			});
-			
+
 			var oButton3 = new sap.m.Button("button3", {
 				text: "Open dialog with Textarea",
 				press: function(){
 					oTextAreaDialog.open();
 				}
 			});
-			
+
 			var oButton4 = new sap.m.Button({
 				text: "Dialog with SearchField",
 				press: function(){
 					oDialogWithSF.open();
 				}
 			});
-			
+
 			var oDialogWithSF = new sap.m.Dialog({
 				title: "Dialog with SF",
 				subHeader: new sap.m.Bar({
@@ -302,7 +302,7 @@
 					}
 				})
 			});
-			
+
 			var oDialogWithSelect = new sap.m.Dialog({
 				title: "Dialog with Select",
 				content: new sap.m.Select({
@@ -334,7 +334,7 @@
 					text: "Close"
 				})
 			});
-			
+
 			var oButton5 = new sap.m.Button({
 				text: "Dialog with Select",
 				press: function(){
@@ -345,17 +345,17 @@
 			function openDialog() {
 				var oDialog1 = new sap.m.Dialog({contentWidth: "500px"});
 				oDialog1.setTitle("Dialog with a responsive Form inside");
-				
+
 				var oTitle = new sap.ui.core.Title({text: "Title"});
 				var oLabel = new sap.m.Label({text: "label 1"});
 				var oText = new sap.m.Text({text: " text1"});
-				
+
 				var oLabel2 = new sap.m.Label({text: "label 2"});
 				var oText2 = new sap.m.Text({text: " text2"});
-				
+
 				var oSimpleForm = new sap.ui.commons.form.SimpleForm({
-					maxContainerCols:3, 
-					editable:false, 
+					maxContainerCols:3,
+					editable:false,
 					labelMinWidth:30,
 					content : [oTitle,
 					           oLabel,
@@ -363,22 +363,22 @@
 					           oLabel2,
 					           oText2]
 					});
-				
+
 				var oButton = new sap.m.Button({text: "Close",
 					press: function() {
 						oDialog1.destroy();
 					}});
 				oDialog1.setBeginButton(oButton);
-				
+
 				var oButton2 = new sap.m.Button({text: "Does nothing"});
 				oDialog1.setEndButton(oButton2);
-												
-												
+
+
 				oDialog1.addContent(oSimpleForm);
 				oDialog1.open();
 			};
-		
-			
+
+
 			var page1 = new sap.m.Page("page1", {
 				title:"Mobile Dialog Control",
 				content:[
@@ -410,7 +410,7 @@
 // 							sap.m.MessageBox.confirm("Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened?", function(bConfirmed){
 // 								jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
 // 							}, "Confirmation");
-							
+
 							sap.m.MessageBox.show("Do you really want to order this?", null, "Message", ["Order this", sap.m.MessageBox.Action.CANCEL]);
 						}
 					}),
@@ -444,7 +444,7 @@
 		</script>
 
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 		<div id="content"></div>
 	</body>
 </html>

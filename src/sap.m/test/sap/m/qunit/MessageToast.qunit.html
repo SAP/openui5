@@ -60,6 +60,7 @@
 				strictEqual(typeof $MessageToast.css("box-shadow"), "string", "Is using box shadow");
 				strictEqual($MessageToast.css("text-align"), "center", "The text is centered");
 				strictEqual($MessageToast.css("text-overflow"), "ellipsis", "ellipsis");
+				strictEqual($MessageToast.attr("role"), "alert", "The role is set");
 			});
 
 			/* =========================================================== */

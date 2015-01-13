@@ -12,6 +12,17 @@
 	function anyInt(sName, iMin, iMax) {
 		var oType;
 
+		function testRange(iValue, sExpectedMessage) {
+			try {
+				oType.validateValue(iValue);
+				ok(false, "Expected ValidateException not thrown");
+			}
+			catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException)
+				equal(e.message, sExpectedMessage);
+			}
+		}
+
 		//*********************************************************************************************
 		module(sName, {
 			setup: function () {
@@ -24,25 +35,22 @@
 		});
 
 		test("basics", function () {
-			var oDefaultConstraints = undefined;
-
 			ok(oType instanceof sap.ui.model.odata.type.Int, "is an Int");
 			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 			equal(oType.getName(), sName, "is the right name");
-
-			deepEqual(oType.oFormatOptions, undefined, "no formatting options");
-			deepEqual(oType.oConstraints, oDefaultConstraints, "are the right constraints");
+			strictEqual(oType.oFormatOptions, undefined, "no formatting options");
+			strictEqual(oType.oConstraints, undefined, "are the right constraints");
 			strictEqual(oType.oFormat, null, "no formatter preload");
 		});
 
 		test("localization change", function () {
 			var oControl = new sap.ui.core.Control();
 
+			oType.formatValue(1234, "string"); // ensure that there is a formatter to remove
 			oControl.bindProperty("tooltip", {path: "/unused", type: oType});
 			sap.ui.getCore().getConfiguration().setLanguage("de-CH");
 			strictEqual(oType.oFormat, null, "localization change resets formatter");
-			strictEqual(oType.formatValue(1234, "int"), 1234,
-				"formatter will be creates only for string");
+			oType.formatValue(1234, "int");
 			strictEqual(oType.oFormat, null, "no formatter for int");
 			strictEqual(oType.formatValue(1234, "string"), "1'234", "adjusted to changed language");
 			ok(oType.oFormat, "Formatter has been created on demand");
@@ -155,23 +163,20 @@
 			}
 		});
 
-		jQuery.each([-Infinity, iMin - 1, iMax + 1, Infinity], function (i, iValue) {
-			test("not in value range: " + iValue,
-				function () {
-					var oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
-							groupingEnabled:true});
+		test("range tests", function () {
+			var sExpectedMessage,
+				oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+					groupingEnabled:true}),
 
-					try {
-						oType.validateValue(iValue);
-						ok(false, "Expected ValidateException not thrown");
-					}
-					catch (e) {
-						ok(e instanceof sap.ui.model.ValidateException)
-						equal(e.message, "Enter an integer within the "
-							+ oNumberFormat.format(iMin) + " to "
-							+ oNumberFormat.format(iMax) + " range.");
-					}
-				});
+			sExpectedMessage = "Enter an integer with a minimum value of "
+					+ oNumberFormat.format(iMin) + ".";
+			testRange(-Infinity, sExpectedMessage);
+			testRange(iMin - 1, sExpectedMessage);
+
+			sExpectedMessage = "Enter an integer with a maximum value of "
+				+ oNumberFormat.format(iMax) + ".";
+			testRange(iMax + 1, sExpectedMessage);
+			testRange(Infinity, sExpectedMessage);
 		});
 
 		test("nullable", sinon.test(function () {

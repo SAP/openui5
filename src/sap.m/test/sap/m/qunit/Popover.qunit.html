@@ -609,9 +609,16 @@
 				oPopover.invalidate();
 				sap.ui.getCore().applyChanges();
 
+				var oSpy = this.spy(jQuery.sap, "assert");
+				var oBeforeCloseSpy = this.spy();
+
+				oPopover.attachBeforeClose(oBeforeCloseSpy);
+
 				oButton2.focus();
 				this.clock.tick(500);
 				ok(!oPopover.isOpen(), "Popover should be closed by autoclose");
+				ok(!oSpy.calledWith(false), "All asserts should be passed");
+				equal(oBeforeCloseSpy.callCount, 1, "beforeClose event is fired");
 				oPopover.destroy();
 				oButton.destroy();
 				oButton2.destroy();
@@ -1068,6 +1075,63 @@
 
 				// Cleanup
 				oContainer.destroy();
+			});
+
+			test("Popover should stay when right border of openby control stays while size changes", function(){
+				var oButton = new sap.m.Button({
+					text: "Right Border Stays"
+				}).addStyleClass("positioned2");
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover({
+					contentWidth: "200px",
+					contentHeight: "200px"
+				});
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+				ok(oPopover.isOpen(), "Popover should be opened");
+				oButton.setText("Short");
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(400);
+				ok(oPopover.isOpen(), "Popover should still be open");
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
+
+			test("ARIA role", function() {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover();
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+
+				equal(oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
+
+			test("ARIA labeledby attribute", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover();
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+
+				equal(oPopover.$().attr('aria-labelledby'), oPopover._getAnyHeader().getId(), 'Popover aria labeledby attribute is equal to the header id');
+
+				oPopover.destroy();
+				oButton.destroy();
 			});
 		</script>
 	</head>

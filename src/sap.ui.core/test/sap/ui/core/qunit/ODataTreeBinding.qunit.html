@@ -78,15 +78,12 @@
 		});
 
 		var oContext;
-		var iHandleCounter = 0;
-
+		
 		var handler1 = function(oEvent) {
-			iHandleCounter++;
+			
 			// contexts should be now loaded
 			var aContexts = oBinding.getRootContexts();
 
-			if (iHandleCounter < 2) return;
-			
 			equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
 			oContext = aContexts[0];
@@ -164,15 +161,7 @@
 			equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Fuller", "TreeBinding root content");
 
-			oBinding.detachChange(handler1);
-
-			oBinding.attachChange(handler2);
-			oBinding.getNodeContexts(oContext);
-		};
-
-		var handler2 = function(oEvent) {
-			// contexts should be now loaded
-			var aContexts = oBinding.getNodeContexts(oContext);
+			aContexts = oBinding.getNodeContexts(oContext);
 
 			equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
@@ -196,7 +185,7 @@
 			equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
-			oBinding.detachChange(handler2);
+			oBinding.detachChange(handler1);
 			start();
 		}
 
@@ -304,8 +293,7 @@
 			navigation: {
 				Employees: "Employees1",
 				Employees1: "Employees1"
-			},
-			displayRootNode: true
+			}
 		});
 
 		var oContext;
@@ -352,16 +340,9 @@
 			equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding root content");
 
-			oBinding.detachChange(handler1);
-
 			oContext = aContexts[1];
-			oBinding.attachChange(handler2);
-			oBinding.getNodeContexts(oContext);
-		};
-
-		var handler2 = function(oEvent) {
-			// contexts should be now loaded
-			var aContexts = oBinding.getNodeContexts(oContext);
+			
+			aContexts = oBinding.getNodeContexts(oContext);
 
 			equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
@@ -385,7 +366,7 @@
 			equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
-			oBinding.detachChange(handler2);
+			oBinding.detachChange(handler1);
 			start();
 		}
 
@@ -402,14 +383,10 @@
 		});
 
 		var oContext;
-		var iHandleCounter = 0;
 
 		var handler1 = function(oEvent) {
-			iHandleCounter++;
 			// contexts should be now loaded
 			var aContexts = oBinding.getRootContexts();
-
-			if (iHandleCounter < 2) return;
 			
 			equal(aContexts.length, 5, "TreeBinding rootContexts length");
 
@@ -434,8 +411,6 @@
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
 			deepEqual(oBinding.oKeys, {
-				"/Employees(1)": [],
-				"/Employees(2)": [],
 				"/Employees(2)/Employees1": [
 					"Employees(1)",
 					"Employees(3)",
@@ -443,28 +418,12 @@
 					"Employees(5)",
 					"Employees(8)"
 				],
-				"/Employees(3)": [],
-				"/Employees(4)": [],
-				"/Employees(5)": [],
-				"/Employees(8)": []
 			}, "Keys object has value for root");
 			deepEqual(oBinding.oLengths, {
-				"/Employees(1)": 0,
-				"/Employees(2)": 0,
 				"/Employees(2)/Employees1": 5,
-				"/Employees(3)": 0,
-				"/Employees(4)": 0,
-				"/Employees(5)": 0,
-				"/Employees(8)": 0
 			}, "Lengths object has value for root");
 			deepEqual(oBinding.oFinalLengths, {
-				"/Employees(1)": true,
-				"/Employees(2)": true,
 				"/Employees(2)/Employees1": true,
-				"/Employees(3)": true,
-				"/Employees(4)": true,
-				"/Employees(5)": true,
-				"/Employees(8)": true
 			}, "FinalLengths object has value for root");
 
 			oBinding.detachChange(handler1);
@@ -514,7 +473,6 @@
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
 			deepEqual(oBinding.oKeys, {
-				"/Employees(1)": [],
 				"/Employees(2)/Employees1": [
 					"Employees(1)",
 					"Employees(3)",
@@ -522,26 +480,12 @@
 					"Employees(5)",
 					"Employees(8)"
 				],
-				"/Employees(3)": [],
-				"/Employees(4)": [],
-				"/Employees(5)": [],
-				"/Employees(8)": []
 			}, "Keys object has value for root");
 			deepEqual(oBinding.oLengths, {
-				"/Employees(1)": 0,
 				"/Employees(2)/Employees1": 5,
-				"/Employees(3)": 0,
-				"/Employees(4)": 0,
-				"/Employees(5)": 0,
-				"/Employees(8)": 0
 			}, "Lengths object has value for root");
 			deepEqual(oBinding.oFinalLengths, {
-				"/Employees(1)": true,
 				"/Employees(2)/Employees1": true,
-				"/Employees(3)": true,
-				"/Employees(4)": true,
-				"/Employees(5)": true,
-				"/Employees(8)": true
 			}, "FinalLengths object has value for root");
 
 			oBinding.detachChange(handler3);
@@ -623,16 +567,9 @@
 			equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
 
-			oBinding.detachChange(handler1);
 
 			oContext = aContexts[0];
-			oBinding.attachChange(handler2);
-			oBinding.getNodeContexts(oContext, 2, 3);
-		};
-
-		var handler2 = function(oEvent) {
-			// contexts should be now loaded
-			var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
+			aContexts = oBinding.getNodeContexts(oContext, 2, 3);
 
 			equal(aContexts.length, 3, "TreeBinding rootContexts length");
 			//Wait for fix of Mock Server
@@ -650,7 +587,7 @@
 			equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
 			equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
 
-			oBinding.detachChange(handler2);
+			oBinding.detachChange(handler1);
 			start();
 		}
 

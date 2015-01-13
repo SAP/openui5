@@ -107,20 +107,14 @@
 
 		//*****************************************************************************************
 		test("basics", function () {
-			var oDefaultConstraints = undefined,
-				oType = createInstance(sTypeName);
+			var oType = createInstance(sTypeName);
 
 			ok(oType instanceof sap.ui.model.odata.type.DateTimeBase, "is a DateTime");
 			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
 			strictEqual(oType.getName(), sTypeName, "type name");
-			deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
-			strictEqual(oType.oFormat, null, "no formatter preload");
-
-			oType.setFormatOptions({foo: "bar"});
 			strictEqual(oType.oFormatOptions, undefined, "format options ignored");
-
-			oType.setConstraints();
-			deepEqual(oType.oConstraints, oDefaultConstraints, "default constraints");
+			strictEqual(oType.oConstraints, undefined, "default constraints");
+			strictEqual(oType.oFormat, null, "no formatter preload");
 		});
 
 		//*****************************************************************************************

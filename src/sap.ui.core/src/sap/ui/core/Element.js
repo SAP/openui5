@@ -695,17 +695,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @public
 	 */
 	Element.prototype.focus = function () {
-		var oFocusDomRef = this.getFocusDomRef();
-	
-		if (oFocusDomRef) {
-			try {
-				oFocusDomRef.focus();
-			} catch (ex) { // IE8 fails on focusing certain elements; IE9+10 and all other current browsers don't fail
-				// the element does not exist or is not focusable; there is no information what to focus instead
-				var id = oFocusDomRef.id ? " (id: " + oFocusDomRef.id + ")" : " ";
-				jQuery.sap.log.warning("DOM element" + id + " in " + this.toString() + " which should be focused cannot be focused: " + ex.message);
-			}
-		}
+		jQuery.sap.focus(this.getFocusDomRef());
 	};
 	
 	/**

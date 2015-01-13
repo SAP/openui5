@@ -168,7 +168,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			 * Focus is set to the popover in the sequence of leftButton and rightButton when available. But if some other control neends to get the focus other than one of those two buttons, set the initialFocus with the control which should be focused on.
 			 * @since 1.15.0
 			 */
-			initialFocus : {type : "sap.ui.core.Control", multiple : false}
+			initialFocus : {type : "sap.ui.core.Control", multiple : false},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 		},
 		events : {
 	
@@ -282,8 +287,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	
 			// When runs on mobile device, Popover always follows the open by control.
 			// When runs on the other platforms, Popover is repositioned if the position change of openBy is smaller than the tolerance, otherwise popover is closed.
-			if (!sap.ui.Device.system.desktop || (Math.abs(oLastRect.top - oRect.top) <= this._followOfTolerance && Math.abs(oLastRect.left - oRect.left) <= this._followOfTolerance)) {
-				this.oPopup._applyPosition(this.oPopup._oLastPosition);
+			if (!sap.ui.Device.system.desktop
+				|| (Math.abs(oLastRect.top - oRect.top) <= this._followOfTolerance && Math.abs(oLastRect.left - oRect.left) <= this._followOfTolerance)
+				|| (Math.abs(oLastRect.top + oLastRect.height - oRect.top - oRect.height) <= this._followOfTolerance && Math.abs(oLastRect.left + oLastRect.width - oRect.left - oRect.width) <= this._followOfTolerance)) {
+					this.oPopup._applyPosition(this.oPopup._oLastPosition);
 			} else {
 				this.close();
 			}
@@ -372,12 +379,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		// popup's close method has been inherited here in order to fire the beforeClose event for calling close on
 		// autoclose.
 		this.oPopup.close = function(bBeforeCloseFired){
-			if (!bBeforeCloseFired) {
+			var bBooleanParam = typeof bBeforeCloseFired === "boolean";
+
+			// Only when the given parameter is "true", the beforeClose event isn't fired here.
+			// Because it's already fired in the sap.m.Popover.prototype.close function.
+			if (bBeforeCloseFired !== true) {
 				that.fireBeforeClose({openBy: that._oOpenBy});
 			}
-	
+
 			that._deregisterContentResizeHandler();
-			Popup.prototype.close.apply(this, Array.prototype.slice.call(arguments, 1));
+			Popup.prototype.close.apply(this, bBooleanParam ? [] : arguments);
 			that.removeDelegate(that._oRestoreFocusDelegate);
 		};
 	};

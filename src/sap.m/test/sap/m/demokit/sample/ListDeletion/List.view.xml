@@ -7,15 +7,15 @@
 		id="list"
 		mode="Delete"
 		delete="handleDelete"
+		enableBusyIndicator="true"
 		headerText="Products"
+		growing="true"
 		items="{
-			path: '/ProductCollection'
+			path: '/Products'
 		}" >
 		<StandardListItem
 			title="{Name}"
-			description="{ProductId}"
-			icon="{ProductPicUrl}"
-			iconDensityAware="false"
-			iconInset="false" />
+			info="{Price} EUR"
+			description="{ShortDescription}" />
 	</List>
 </mvc:View>

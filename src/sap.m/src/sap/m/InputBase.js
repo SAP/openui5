@@ -26,70 +26,70 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @alias sap.m.InputBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ { metadata : {
+	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ { metadata: {
 
-		library : "sap.m",
-		properties : {
+		library: "sap.m",
+		properties: {
 
 			/**
 			 * Defines the value of the input.
 			 */
-			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
+			value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
 
 			/**
 			 * Defines the width of the input.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+			width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
 
 			/**
 			 * Determines whether the user can change the input value (default is true).
 			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+			enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
 			 * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success.
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: sap.ui.core.ValueState.None },
 
 			/**
 			 * The "name" property to be used in the HTML code (e.g. for HTML forms that send data to the server via 'submit').
 			 */
-			name : {type : "string", group : "Misc", defaultValue : null},
+			name: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
 			 * Text shown when no value available.
 			 */
-			placeholder : {type : "string", group : "Misc", defaultValue : null},
+			placeholder: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
 			 * Controls if a user can change the value.
 			 * @since 1.12.0
 			 */
-			editable : {type : "boolean", group : "Behavior", defaultValue : true},
+			editable: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
 			 * The text which is shown in the value state message popup. If not specfied a default text is shown. This property is already available for sap.m.Input since 1.16.0.
 			 * @since 1.26.0
 			 */
-			valueStateText : {type : "string", group : "Misc", defaultValue : null},
+			valueStateText: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
 			 * Whether the value state message should be shown. This property is already available for sap.m.Input since 1.16.0.
 			 * @since 1.26.0
 			 */
-			showValueStateMessage : {type : "boolean", group : "Misc", defaultValue : true},
+			showValueStateMessage: { type: "boolean", group: "Misc", defaultValue: true },
 
 			/**
 			 * Sets the horizontal alignment of the text.
 			 * @since 1.26.0
 			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Initial},
+			textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: sap.ui.core.TextAlign.Initial },
 
 			/**
 			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit }
 		},
 		associations: {
 
@@ -99,18 +99,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
-		events : {
+		events: {
 
 			/**
 			 * This event gets fired when the text in the input field has changed and the focus leaves the input field or the enter key is pressed.
 			 */
-			change : {
-				parameters : {
+			change: {
+				parameters: {
 
 					/**
 					 * The new value of the input.
 					 */
-					value : {type : "string"}
+					value: { type: "string" }
 				}
 			}
 		}

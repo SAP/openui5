@@ -24,6 +24,10 @@ sap.ui.controller("example.designmode.test01", {
 	
 	method2: function() {
 		return "aString";
+	},
+
+	onPress : function() {
+		
 	}
 
 });

@@ -70,6 +70,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							oConstraints.scale = oProperty.scale;
 							break;
 
+						case "Edm.Double":
+							sType = 'sap.ui.model.odata.type.Double';
+							break;
+
 						case "Edm.Guid":
 							sType = 'sap.ui.model.odata.type.Guid';
 							break;
@@ -89,6 +93,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 						case "Edm.String":
 							sType = 'sap.ui.model.odata.type.String';
 							oConstraints.maxLength = oProperty.maxLength;
+							break;
+
+						case "Edm.Time":
+							sType = 'sap.ui.model.odata.type.Time';
 							break;
 
 						default:

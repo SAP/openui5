@@ -26,9 +26,13 @@ sap.ui.define(['jquery.sap.global'],
 			return;
 		}
 	
-		var sPlaceholder = oSF.getPlaceholder();
-		var sValue = oSF.getValue();
-		var sWidth = oSF.getProperty("width");
+		var sPlaceholder = oSF.getPlaceholder(),
+			sValue = oSF.getValue(),
+			sWidth = oSF.getProperty("width"),
+			sId = oSF.getId(),
+			bShowRefreshButton = oSF.getShowRefreshButton(),
+			bShowSearchBtn = oSF.getShowSearchButton(),
+			oAccAttributes = {}; // additional accessibility attributes
 	
 		// container
 		rm.write("<div");
@@ -51,9 +55,6 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write(">");
 	
-		var sId = oSF.getId();
-		var bShowSearchBtn = oSF.getShowSearchButton();
-	
 			// 1. Input type="search".
 			//    Enclose input into a <form> to show a correct keyboard
 			//    method="post" to prevent unneeded "?" at the end of URL
@@ -61,7 +62,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass('sapMSFF');
 			if (!bShowSearchBtn) {
 				rm.addClass("sapMSFNS"); //no search button
-			} else if (oSF.getShowRefreshButton()) {
+			} else if (bShowRefreshButton) {
 				rm.addClass('sapMSFReload');
 			}
 			rm.writeClasses();
@@ -95,7 +96,16 @@ sap.ui.define(['jquery.sap.global'],
 			if (sPlaceholder) { rm.writeAttributeEscaped("placeholder", sPlaceholder); }
 			if (oSF.getMaxLength()) { rm.writeAttribute("maxLength", oSF.getMaxLength()); }
 			if (sValue) { rm.writeAttributeEscaped("value", sValue); }
-		
+
+			//ARIA attributes
+			if (bShowRefreshButton) {
+				oAccAttributes.describedby = {
+					value: sId + "-ACCF5",
+					append: true
+				};
+			}
+			rm.writeAccessibilityState(oSF, oAccAttributes);
+
 			rm.write(">");
 		
 			if (oSF.getEnabled()) {
@@ -121,6 +131,11 @@ sap.ui.define(['jquery.sap.global'],
 						rm.writeAttributeEscaped("title", oSF.getRefreshButtonTooltip());
 					}
 					rm.write( "></div>");
+				}
+
+				// ARIA write hidden element for the "press F5" description
+				if (bShowRefreshButton) {
+					rm.write("<label id='" + sId + "-ACCF5' class='sapUiInvisibleText' aria-hidden='true'>" + oSF._oRb.getText("SEARCHFIELD_ARIA_F5") + "</label>");
 				}
 			}
 		

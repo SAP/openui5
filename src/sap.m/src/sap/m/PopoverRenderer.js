@@ -39,6 +39,16 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeAttribute("tabindex", "-1");
 	
+		rm.writeAccessibilityState(oControl, {
+			role: "dialog"
+		});
+
+		if (oControl.getShowHeader() && oControl._getAnyHeader()) {
+			rm.writeAccessibilityState(oControl, {
+				labelledby: oControl._getAnyHeader().getId()
+			});
+		}
+
 		rm.write(">");
 	
 		this.renderContent(rm, oControl);

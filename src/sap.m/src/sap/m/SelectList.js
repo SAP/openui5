@@ -39,12 +39,12 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				/**
 				 * Defines the width of the control. This value can be provided in all CSS units.
 				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto"},
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
 
 				/**
 				 * Defines the maximum width of the control. This value can be provided in all CSS units.
 				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
 				/**
 				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
@@ -69,7 +69,13 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem: { type: "sap.ui.core.Item", multiple: false }
+				selectedItem: { type: "sap.ui.core.Item", multiple: false },
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
 			events: {
 
@@ -175,6 +181,15 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			return oDomRef ? Array.prototype.slice.call(oDomRef.querySelectorAll(CSS_CLASS + ":not(" + CSS_CLASS + "Disabled)")) : [];
 		};
 
+		SelectList.prototype._handleARIAActivedescendant = function() {
+			var oActiveDescendant = jQuery(document.activeElement).control(0),
+				oDomRef = this.getDomRef();
+
+			if (oActiveDescendant && oDomRef) {
+				oDomRef.setAttribute("aria-activedescendant", oActiveDescendant.getId());
+			}
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -194,28 +209,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.onAfterRendering = function() {
-			var oDomRef = this.getDomRef();
-
-			// initialize the item navigation and add apply it to the control (only once)
-			if (!this._oItemNavigation) {
-				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
-				this.addDelegate(this._oItemNavigation);
-			}
-
-			// set the root dom node that surrounds the items
-			this._oItemNavigation.setRootDomRef(oDomRef);
-
-			// set the array of DOM elements representing the items
-			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
-
-			// turn of the cycling
-			this._oItemNavigation.setCycling(false);
-
-			// set the selected index
-			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
-
-			// set the page size
-			this._oItemNavigation.setPageSize(10);
+			this.createItemNavigation();
 		};
 
 		/**
@@ -323,6 +317,16 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			}
 		};
 
+		/**
+		 * Handle after an item is focused.
+		 *
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @private
+		 */
+		SelectList.prototype.onAfterFocus = function(oControlEvent) {
+			this._handleARIAActivedescendant();
+		};
+
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
@@ -380,13 +384,15 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
 
 			if (oSelectedItem) {
-				oSelectedItem.$().removeClass(CSS_CLASS + "ItemSelected");
+				oSelectedItem.$().removeClass(CSS_CLASS + "ItemSelected")
+								.attr("aria-selected", "false");
 			}
 
 			oSelectedItem = this.getSelectedItem();
 
 			if (oSelectedItem) {
-				oSelectedItem.$().addClass(CSS_CLASS + "ItemSelected");
+				oSelectedItem.$().addClass(CSS_CLASS + "ItemSelected")
+								.attr("aria-selected", "true");
 			}
 		};
 
@@ -566,6 +572,38 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 */
 		SelectList.prototype.clearSelection = function() {
 			this.setSelection(null);
+		};
+
+		/*
+		 * Creates the item navigation.
+		 *
+		 */
+		SelectList.prototype.createItemNavigation = function() {
+			var oDomRef;
+
+			// initialize the item navigation and add apply it to the control (only once)
+			if (!this._oItemNavigation) {
+				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
+				this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this.onAfterFocus, this);
+				this.addEventDelegate(this._oItemNavigation);
+			}
+
+			oDomRef = this.getDomRef();
+
+			// set the root dom node that surrounds the items
+			this._oItemNavigation.setRootDomRef(oDomRef);
+
+			// set the array of DOM elements representing the items
+			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
+
+			// turn of the cycling
+			this._oItemNavigation.setCycling(false);
+
+			// set the selected index
+			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
+
+			// set the page size
+			this._oItemNavigation.setPageSize(10);
 		};
 
 		/* ----------------------------------------------------------- */

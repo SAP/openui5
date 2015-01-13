@@ -1,7 +1,7 @@
 jQuery.sap.declare("sap.m.sample.ListLoading.MockServer");
 
 // load mock server
-jQuery.sap.require("sap.ui.app.MockServer");
+jQuery.sap.require("sap.ui.core.util.MockServer");
 
 // NOTE TO DEVELOPERS: You do not need to reproduce this following section
 // It is just so we can simulate a delay from the fictional back end, giving
@@ -17,13 +17,13 @@ sap.m.sample.ListLoading.MockServer = {
 
 	start : function (oConfig) {
 		// configure respond to requests delay
-		sap.ui.app.MockServer.config(jQuery.extend({
+		sap.ui.core.util.MockServer.config(jQuery.extend({
 			autoRespond : true,
 			autoRespondAfter : 10
 		}, oConfig));
 
 		// create mockserver
-		this.server = new sap.ui.app.MockServer({
+		this.server = new sap.ui.core.util.MockServer({
 			rootUri : this.rootUri
 		});
 

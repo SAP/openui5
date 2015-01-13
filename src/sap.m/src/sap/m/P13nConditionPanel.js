@@ -185,7 +185,7 @@ sap.ui.define([
 		this._oConditionsMap = {};
 		this._iConditions = 0;
 		for (var i = 0; i < aConditions.length; i++) {
-			this.__addCondition(aConditions[i]);
+			this._addCondition2Map(aConditions[i]);
 		}
 
 		this._clearConditions();
@@ -212,11 +212,13 @@ sap.ui.define([
 	 *            sap.m.P13nConditionOperation.Ascending, "keyField": "keyFieldKey", "value1": "", "value2": ""};
 	 */
 	P13nConditionPanel.prototype.addCondition = function(oCondition) {
+		if (this._bIgnoreSetConditions) {
+			return;
+		}
 		oCondition.index = this._iConditions;
 
-		this.__addCondition(oCondition);
-
-		this._fillConditions();
+		this._addCondition2Map(oCondition);
+		this._addCondition(oCondition); 
 	};
 
 	/**
@@ -229,11 +231,14 @@ sap.ui.define([
 	 *            index of the new condition
 	 */
 	P13nConditionPanel.prototype.insertCondition = function(oCondition, index) {
-		if (index) {
+		if (this._bIgnoreSetConditions) {
+			return;
+		}
+		if (index !== undefined) {
 			oCondition.index = index;
 		}
-		this.__addCondition(oCondition);
-		this._fillConditions();
+		this._addCondition2Map(oCondition);
+		this._addCondition(oCondition); 
 	};
 
 	/**
@@ -265,7 +270,7 @@ sap.ui.define([
 	 *            oCondition the new condition of type { "key": "007", "operation":
 	 *            sap.m.P13nConditionOperation.Ascending, "keyField": "keyFieldKey", "value1": "", "value2": ""};
 	 */
-	P13nConditionPanel.prototype.__addCondition = function(oCondition) {
+	P13nConditionPanel.prototype._addCondition2Map = function(oCondition) {
 		if (!oCondition.key) {
 			oCondition.key = "condition_" + this._iConditions;
 		}
@@ -617,29 +622,22 @@ sap.ui.define([
 
 		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 
-		var destroyHelper = function(obj) {
-			if (obj && obj.destroy) {
-				obj.destroy();
-			}
-			return null;
-		};
+		this._aConditionsFields = null;
 
-		this._aConditionsFields = destroyHelper(this._aConditionsFields);
+		this._aKeys = null;
+		this._aKeyFields = null;
+		this._oTypeOperations = null;
 
-		this._aKeys = destroyHelper(this._aKeys);
-		this._aKeyFields = destroyHelper(this._aKeyFields);
-		this._oTypeOperations = destroyHelper(this._oTypeOperations);
+		this._oRb = null;
 
-		this._oRb = destroyHelper(this._oRb);
+		this._sBetweenOperation = null;
+		this._sInitialOperation = null;
+		this._sFromLabelText = null;
+		this._sToLabelText = null;
+		this._sValueLabelText = null;
+		this._sValidationDialogFieldMessage = null;
 
-		this._sBetweenOperation = destroyHelper(this._sBetweenOperation);
-		this._sInitialOperation = destroyHelper(this._sInitialOperation);
-		this._sFromLabelText = destroyHelper(this._sFromLabelText);
-		this._sToLabelText = destroyHelper(this._sToLabelText);
-		this._sValueLabelText = destroyHelper(this._sValueLabelText);
-		this._sValidationDialogFieldMessage = destroyHelper(this._sValidationDialogFieldMessage);
-
-		this._oConditionsMap = destroyHelper(this._oConditionsMap);
+		this._oConditionsMap = null;
 	};
 
 	/*
@@ -659,15 +657,17 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._fillConditions = function() {
 		var i = 0;
-		var conditionData;
-		var iMaxConditions = this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
+		var oCondition;
+		var iMaxConditions = this._getMaxConditionsAsNumber();
 
 		// init existing conditions
 		if (this._oConditionsMap) {
 			for ( var conditionId in this._oConditionsMap) {
-				conditionData = this._oConditionsMap[conditionId];
+				oCondition = this._oConditionsMap[conditionId];
 				if (i < iMaxConditions) {
-					this._addCondition(this._oConditionsGrid, conditionData, conditionId);
+					this._createConditionRow(this._oConditionsGrid, oCondition, conditionId);
+				} else { 
+					break; 
 				}
 				i++;
 			}
@@ -675,9 +675,34 @@ sap.ui.define([
 
 		// create empty Conditions row/fields
 		if ((this.getAutoAddNewRow() || this._oConditionsGrid.getContent().length === 0) && this._oConditionsGrid.getContent().length < iMaxConditions) {
-			this._addCondition(this._oConditionsGrid);
+			this._createConditionRow(this._oConditionsGrid);
 		}
 	};
+
+	/*
+	 * add one condition 
+	 * 
+	 * @private
+	 */
+	P13nConditionPanel.prototype._addCondition = function(oCondition) {
+		var i = 0;
+		var iMaxConditions = this._getMaxConditionsAsNumber();
+
+		if (this._oConditionsMap) {
+			for ( var conditionId in this._oConditionsMap) {
+				if (i < iMaxConditions && oCondition === this._oConditionsMap[conditionId]) {
+					this._createConditionRow(this._oConditionsGrid, oCondition, conditionId, i);
+				}
+				i++;
+			}
+		}
+	};
+	
+	
+	P13nConditionPanel.prototype._getMaxConditionsAsNumber = function() {
+		return this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
+	};
+
 
 	P13nConditionPanel.prototype.onAfterRendering = function() {
 		if (this.getLayoutMode()) {
@@ -697,7 +722,7 @@ sap.ui.define([
 		this._cleanup();
 	};
 
-	P13nConditionPanel.prototype._handleMediaChange = function(p) {
+	P13nConditionPanel.prototype._handeMediaChange = function(p) {
 		this._sLayoutMode = p.name;
 
 		// if (window.console) {
@@ -728,12 +753,12 @@ sap.ui.define([
 	 * @param {integer}
 	 *            iPos the index of the new condition in the targetGrid
 	 */
-	P13nConditionPanel.prototype._addCondition = function(oTargetGrid, oConditionGridData, sKey, iPos) {
+	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos) {
 		var oButtonContainer = null;
 		var oGrid;
 		var that = this;
 
-		if (!iPos) {
+		if (iPos === undefined) {
 			iPos = oTargetGrid.getContent().length;
 		}
 
@@ -822,6 +847,7 @@ sap.ui.define([
 //						});
 
 						if (typeof oConditionGridData !== "undefined") {
+							oControl.setSelectedKey(oConditionGridData.keyField);
 							this._aKeyFields.forEach(function(oKeyField, index) {
 								var key = oKeyField.key;
 								if (key === undefined) {
@@ -1074,7 +1100,7 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._triggerAddCondition = function(oTargetGrid, oSourceConditionGrid) {
 		var iPos = oTargetGrid.getContent().indexOf(oSourceConditionGrid);
-		var oConditionGrid = this._addCondition(oTargetGrid, undefined, null, iPos + 1);
+		var oConditionGrid = this._createConditionRow(oTargetGrid, undefined, null, iPos + 1);
 		this._changeField(oConditionGrid);
 
 		// set the focus in a fields of the newly added condition
@@ -1455,8 +1481,7 @@ sap.ui.define([
 				oValue1.setVisible(false);
 				oValue2.setVisible(false);
 				oOperation.setVisible(false);
-				var iMaxConditions = this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
-				oShowIfGrouedvalue.setVisible(iMaxConditions != 1);
+				oShowIfGrouedvalue.setVisible(this._getMaxConditionsAsNumber() != 1);
 
 				// correct field span
 				// oKeyfield.getLayoutData().setSpan("L4 M4 S4");
@@ -1670,7 +1695,7 @@ sap.ui.define([
 			oConditionGrid.destroy();
 
 			if (oTargetGrid.getContent().length < 1) {
-				this._addCondition(oTargetGrid);
+				this._createConditionRow(oTargetGrid);
 			} else {
 				this._updateConditionButtons(oTargetGrid);
 			}
@@ -1691,8 +1716,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nConditionPanel.prototype._updateConditionButtons = function(oTargetGrid) {
-		var iMaxConditions = this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
-
+		var iMaxConditions = this._getMaxConditionsAsNumber();
 		var n = oTargetGrid.getContent().length;
 
 		// if (n >= this._aKeyFields.length-1 && this.getAutoReduceKeyFieldItems()) {

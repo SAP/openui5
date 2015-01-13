@@ -21,7 +21,17 @@
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
 
 				// Applications
+
+				// Md - skeleton
+
+				// Unit tests
+				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-skeleton/test/util/formatter.qunit.html?noglobals=true");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-skeleton/test/model/Device.qunit.html?noglobals=true");
+
+				// OPA tests
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-skeleton/test/NavigationJourney.qunit.html");
+
+
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Navigation.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Filter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/test/BuyProductJourney.qunit.html");

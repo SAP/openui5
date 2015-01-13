@@ -305,10 +305,6 @@
         indexUrl="../../../../test-resources/sap/ui/core/demokit/docuindex.json"
         resolve="lib" />
     
-    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
-        url="../../../../test-resources/sap/ui/core/relnotes/changes-{major}.{minor}.json"
-        resolve="lib" />
-    
   </appData>
     
 </library>

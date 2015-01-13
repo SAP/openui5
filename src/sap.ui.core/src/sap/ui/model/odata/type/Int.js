@@ -9,32 +9,21 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	"use strict";
 
 	/**
-	 * Returns the error message for the type.
+	 * Fetches a text from the message bundle and formats it using the parameters.
 	 *
-	 * @param {sap.ui.model.odata.type.Int} oType
-	 *   the type
-	 * @param {boolean} bShowRange
-	 *   if true, the range values are shown
+	 * @param {string} sKey
+	 *   the message key
+	 * @param {any[]} aParams
+	 *   the message parameters
 	 * @returns {string}
 	 *   the message
 	 */
-	function getErrorMessage(oType, bShowRange) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle(),
-			oRange = oType.getRange();
-
-		if (bShowRange) {
-			return oResourceBundle.getText("EnterIntRange", [
-				oType._getFormatter().format(oRange.minimum),
-				oType._getFormatter().format(oRange.maximum)
-			]);
-		}
-		return oResourceBundle.getText("EnterInt");
+	function getText(sKey, aParams) {
+		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
 	}
 
 	/**
 	 * Constructor for a new <code>Int</code>.
-	 * Subtypes have to initialize <code>this.oConstraints</code> with <code>minimum<code> and
-	 * <code>maximum</code> value range before calling this constructor.
 	 *
 	 * @class This is an abstract base class for integer-based
 	 * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
@@ -48,23 +37,25 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
-	 *   format options, see {@link #setFormatOptions}
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #setConstraints}
+	 *   format options; this type does not support any format options
+	 * @param {object} oConstraints
+	 *   the constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
 	var Int = SimpleType.extend("sap.ui.model.odata.type.Int",
-		/** @lends sap.ui.model.odata.type.Int.prototype */
-		{
-			constructor : function () {
-				SimpleType.apply(this, arguments);
-				this.sName = "sap.ui.model.odata.type.Int";
-			},
-			metadata : {
-				"abstract" : true
+			/** @lends sap.ui.model.odata.type.Int.prototype */
+			{
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				},
+				metadata : {
+					"abstract" : true
+				}
 			}
-		});
+		);
 
 	/**
 	 * Returns the formatter. Creates it lazily.
@@ -145,7 +136,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			case "string":
 				iResult = this._getFormatter().parse(vValue);
 				if (isNaN(iResult)) {
-					throw new ParseException(getErrorMessage(this, false));
+					throw new ParseException(getText("EnterInt"));
 				}
 				return iResult;
 			case "float":
@@ -161,11 +152,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	/**
 	 * Set constraints for Int. This is meta information used when validating the value.
 	 *
-	 * @param {object} oConstraints
-	 *   the constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @public
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	Int.prototype.setConstraints = function(oConstraints) {
 		var vNullable = oConstraints && oConstraints.nullable;
@@ -183,16 +172,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null,
 				"sap.ui.model.odata.type.Int");
 		}
-	};
-
-	/**
-	 * Set format options for this type. For now no format options are supported. By default
-	 * grouping is activated.
-	 * @param {object} oFormatOptions
-	 *   the format options to set for this type, will be ignored
-	 * @public
-	 */
-	Int.prototype.setFormatOptions = function(oFormatOptions) {
 		this._handleLocalizationChange();
 	};
 
@@ -210,7 +189,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		if (iValue === null) {
 			if (this.oConstraints && this.oConstraints.nullable === false) {
-				throw new ValidateException(getErrorMessage(this, false));
+				throw new ValidateException(getText("EnterInt"));
 			}
 			return;
 		}
@@ -220,10 +199,15 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 				+ this.getName() + " value");
 		}
 		if (Math.floor(iValue) !== iValue) {
-			throw new ValidateException(getErrorMessage(this, false));
+			throw new ValidateException(getText("EnterInt"));
 		}
-		if (iValue < oRange.minimum || iValue > oRange.maximum) {
-			throw new ValidateException(getErrorMessage(this, true));
+		if (iValue < oRange.minimum) {
+			throw new ValidateException(
+				getText("EnterIntMin", [this.formatValue(oRange.minimum, "string")]));
+		}
+		if (iValue > oRange.maximum) {
+			throw new ValidateException(
+				getText("EnterIntMax", [this.formatValue(oRange.maximum, "string")]));
 		}
 	};
 

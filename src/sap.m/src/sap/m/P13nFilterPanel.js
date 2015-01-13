@@ -145,6 +145,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * add a new condition object 
+	 * 
+	 * @private
+	 * @param {object}
+	 *            oCondition the new condition
+	 */
+	P13nFilterPanel.prototype._addCondition = function(oCondition) {
+		if (!oCondition.exclude) {
+			this._oIncludeFilterPanel.addCondition(oCondition);
+		} else {
+			this._oExcludeFilterPanel.addCondition(oCondition);
+		}
+
+		if (this._oExcludeFilterPanel.getConditions().length > 0) {
+			this._oExcludePanel.setExpanded(true);
+		}
+	};
+
+	/**
 	 * returns the array of conditions.
 	 * 
 	 * @public
@@ -155,18 +174,6 @@ sap.ui.define([
 
 		return aIConditions.concat(aEConditions);
 	};
-
-	/**
-	 * remove the condition from the panel with the given key
-	 * 
-	 * @private
-	 * @param {string}
-	 *            sKey the key of the condition
-	 */
-//	P13nFilterPanel.prototype.removeCondition = function(sKey) {
-//		this._oIncludeFilterPanel.removeCondition(sKey);
-//		this._oExcludeFilterPanel.removeCondition(sKey);
-//	};
 
 	P13nFilterPanel.prototype.setContainerQuery = function(bContainerQuery) {
 		this.setProperty("containerQuery", bContainerQuery);
@@ -213,11 +220,11 @@ sap.ui.define([
 		this._oExcludeFilterPanel.removeValidationErrors();
 	};
 
-	P13nFilterPanel.prototype.onBeforeNavigation = function() {
+	P13nFilterPanel.prototype.onBeforeNavigationFrom = function() {
 		return this.validateConditions();
 	};
 
-	P13nFilterPanel.prototype.onAfterNavigation = function() {
+	P13nFilterPanel.prototype.onAfterNavigationFrom = function() {
 		return this.removeInvalidConditions();
 	};
 
@@ -473,19 +480,16 @@ sap.ui.define([
 		this.addAggregation("filterItems", oFilterItem);
 
 		if (!this._bIgnoreBindCalls) {
-			var aConditions = [];
-			this.getFilterItems().forEach(function(oFilterItem_) {
-				aConditions.push({
-					exclude: oFilterItem_.getExclude(),
-					key: oFilterItem_.getKey(),
-					keyField: oFilterItem_.getColumnKey(),
-					operation: oFilterItem_.getOperation(),
-					value1: oFilterItem_.getValue1(),
-					value2: oFilterItem_.getValue2()
-				});
-			});
+			var oCondition = {
+				exclude: oFilterItem.getExclude(),
+				key: oFilterItem.getKey(),
+				keyField: oFilterItem.getColumnKey(),
+				operation: oFilterItem.getOperation(),
+				value1: oFilterItem.getValue1(),
+				value2: oFilterItem.getValue2()
+			}; 
 
-			this.setConditions(aConditions);
+			this._addCondition(oCondition);
 		}
 	};
 

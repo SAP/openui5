@@ -7,9 +7,9 @@
 				"Field.fragment.xml",
 				"FieldHelper.js",
 				"ODataMetaModel.json",
-				"../data2/annotations.xml",
-				"../data2/metadata.xml",
-				"../data2/Product.json",
+				"data/annotations.xml",
+				"data/metadata.xml",
+				"data/ProductSet.json",
 				"Main.controller.js",
 				"Main.view.xml"
 			]

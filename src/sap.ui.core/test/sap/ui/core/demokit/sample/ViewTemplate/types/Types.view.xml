@@ -36,6 +36,10 @@
 				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
 				<Label text="DateTimeOffset, nullable: false"/>
 				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
+				<Label text="Time"/>
+				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time'}"/>
+				<Label text="Time, nullable: false"/>
+				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Decimal" />
 				<Label text="scale: 3"/>
@@ -46,6 +50,12 @@
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
 				<Label text="scale: &quot;variable&quot;, nullable: false"/>
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}}"/>
+
+				<core:Title text="sap.ui.model.odata.type.Double" />
+				<Label text="no constraints"/>
+				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
+				<Label text="nullable: false"/>
+				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Guid" />
 				<Label text="no constraints"/>

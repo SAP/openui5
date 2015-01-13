@@ -45,8 +45,10 @@
 	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 
 	var oLabel = new sap.ui.commons.Label("myLabel");
-	oLabel.placeAt("target1");
-
+	var oPanel = new sap.ui.commons.Panel();
+	oPanel.addContent(oLabel);
+	oPanel.placeAt("target1");
+	
 	// create a dummy AMD fdefine to check if shim works for datajs
 	window.define = function() {
 		throw Error("define should not be called");
@@ -477,9 +479,9 @@
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.setBindingContext(null);
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
 			start();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -494,13 +496,37 @@
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.setBindingContext(null);
 			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement - set ParentContext null", 5, function(){
+		var oModel = initModel(sURI, false, "Categories");
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oLabel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oLabel.setBindingContext(null);
+		}
+		var fnHandler2 = function() {
+			ok(!oLabel.getBindingContext(), "no bindingContext");
+			ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
+			ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.setBindingContext(null);
 			oLabel.unbindElement();
 			start();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
-		
 	});
 	
 	asyncTest("test bindElement 3", 2, function(){
@@ -512,8 +538,8 @@
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.setBindingContext(null);
 			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.setBindingContext(null);
 			oLabel.unbindElement();
 			start();
 		}
@@ -532,6 +558,57 @@
 			oLabel.setBindingContext(null);
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	asyncTest("test bindElement 5 - change parentContext", 3, function(){
+		var oModel = initModel(sURI, false, "Categories");
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oLabel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oModel.attachRequestSent(fnHandler2);
+			oTestContext = oModel.getContext("/Products(1)");
+			oLabel.setBindingContext(oTestContext);
+		}
+		var fnHandler2 = function(oEvent) {
+			var sUrl =  oEvent.getParameter("url");
+			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+	});
+	
+	asyncTest("test bindElement 6 - change parentContext with propagation", 3, function(){
+		var oModel = initModel(sURI, false, "Categories");
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Products(2)");
+		oPanel.setBindingContext(oTestContext);
+		oLabel.bindElement("Category");
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.getElementBinding().attachChange(fnHandler2);
+			oModel.attachRequestSent(fnHandler2);
+			oTestContext = oModel.getContext("/Products(1)");
+			oPanel.setBindingContext(oTestContext);
+		}
+		var fnHandler2 = function(oEvent) {
+			var sUrl =  oEvent.getParameter("url");
+			ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
+			oLabel.getElementBinding().detachChange(fnHandler2);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
 			start();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);

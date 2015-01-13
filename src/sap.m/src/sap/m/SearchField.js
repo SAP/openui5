@@ -94,6 +94,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			selectOnFocus : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -140,9 +152,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
 		this._inputEvent = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10 ? "keyup" : "input";
-	
+
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		// Default placeholder: "Search"
-		this.setProperty("placeholder", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH"),true);
+		this.setProperty("placeholder", this._oRb.getText("FACETFILTER_SEARCH"),true);
 		// TODO: suggestions and search provider
 	};
 	

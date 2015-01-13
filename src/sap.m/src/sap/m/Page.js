@@ -49,6 +49,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			showHeader : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
+			 * Whether this page shall show the subheader.
+			 * @since 1.28
+			 */
+			showSubHeader : {type : "boolean", group : "Appearance", defaultValue : true},
+	
+			/**
 			 * The text of the nav button when running in iOS (if shown) in case it deviates from the default, which is "Back". This property is mvi-theme-dependent and will not have any effect in other themes.
 			 * @deprecated Since version 1.20. 
 			 * Deprecated since the MVI theme is removed now. This property only affected the NavButton in that theme.

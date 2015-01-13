@@ -61,7 +61,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Switches the enabled state of the control. All Radio Buttons inside a disabled group are disabled. Default value is “true”.
 			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true}
+			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		defaultAggregation : "buttons",
 		aggregations : {

@@ -414,7 +414,7 @@
 		asyncTest("Search event", function () {
 			// Arrange
 			var fnFireSelectSpy = sinon.spy();
-			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+			var oSelectDialog = new sap.m.SelectDialog({
 				title: "SelectDialog",
 				search: fnFireSelectSpy
 			});
@@ -444,7 +444,7 @@
 				start();
 			});
 			
-			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+			var oSelectDialog = new sap.m.SelectDialog({
 				liveChange: fnFireLiveChangeSpy
 			});
 
@@ -458,7 +458,7 @@
 
 		asyncTest("Confirm Event", function () {
 			expect(11);
-			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+			var oSelectDialog = new sap.m.SelectDialog({
 				multiSelect: true
 			});
 
@@ -502,7 +502,7 @@
 
 		asyncTest("Cancel Event with unfiltered selection", function () {
 			expect(3);
-			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+			var oSelectDialog = new sap.m.SelectDialog({
 				multiSelect: true
 			});
 

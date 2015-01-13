@@ -46,9 +46,14 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeBase
 	 * @param {object} [oFormatOptions]
-	 * 	 format options, see {@link #setFormatOptions}
+	 *   format options; this type does not support any format options
 	 * @param {object} [oConstraints]
-	 * 	 constraints, see {@link #setConstraints}
+	 *   constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 * @param {boolean} [oConstraints.isDateOnly=false]
+	 *   if <code>true</code>, only the date part will be used, the time part will always be
+	 *   00:00:00, the timezone will be UTC to avoid timezone-related problems
 	 * @public
 	 * @abstract
 	 * @since 1.27.0
@@ -56,10 +61,14 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	var DateTimeBase = SimpleType.extend("sap.ui.model.odata.type.DateTimeBase",
 			/** @lends sap.ui.model.odata.type.DateTimeBase.prototype */
 			{
-				constructor : function () {
-					SimpleType.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					this.setConstraints(oConstraints);
+				},
+				metadata : {
+					"abstract": true
+				}
 			}
-		});
+		);
 
 	/**
 	 * Format the given value to the given target type.
@@ -171,27 +180,11 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Set the format options.
-	 *
-	 * @param {object} oFormatOptions
-	 *   the format options (none so far)
-	 * @public
-	 */
-	DateTimeBase.prototype.setFormatOptions = function(oFormatOptions) {
-		// no format options supported yet
-	};
-
-	/**
 	 * Set the constraints.
 	 *
 	 * @param {object} [oConstraints]
-	 * 	 constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
-	 * @param {boolean} [oConstraints.isDateOnly=false]
-	 *   if <code>true</code>, only the date part will be used, the time part will always be
-	 *   00:00:00, the timezone will be UTC to avoid timezone-related problems
-	 * @public
+	 *   constraints, see {@link #constructor}
+	 * @private
 	 */
 	DateTimeBase.prototype.setConstraints = function(oConstraints) {
 		this.oConstraints = undefined;

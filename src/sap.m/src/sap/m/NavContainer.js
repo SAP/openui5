@@ -126,13 +126,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					isBackToTop : {type : "boolean"}, 
 	
 					/**
-					 * Whether this was a navigation to the root page, triggered by "backToTop()".
+					 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 					 * @since 1.7.2
 					 */
 					isBackToPage : {type : "boolean"}, 
 	
 					/**
-					 * How the navigation was triggered, possible values are "to", "back", and "backToTop".
+					 * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
 					 */
 					direction : {type : "string"}
 				}
@@ -186,13 +186,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					isBackToTop : {type : "boolean"}, 
 	
 					/**
-					 * Whether this was a navigation to the root page, triggered by "backToTop()".
+					 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 					 * @since 1.7.2
 					 */
 					isBackToPage : {type : "boolean"}, 
 	
 					/**
-					 * How the navigation was triggered, possible values are "to", "back", and "backToTop".
+					 * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
 					 */
 					direction : {type : "string"}
 				}

@@ -5052,6 +5052,10 @@
 						ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 					}
 
+					strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
+					strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
+
 					// cleanup
 					oSelect.destroy();
 				});
@@ -5370,7 +5374,7 @@
 				});
 			}());
 
-			test("onkeypress if the selected item changes when a key is pressed, the change event has to be fired", function() {
+			test("onkeypress if the selected item changes when a key is pressed", function() {
 
 				// system under test
 				var oExpectedItem;
@@ -5400,7 +5404,7 @@
 				sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "B");
 
 				// assert
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "BE");
@@ -5642,7 +5646,7 @@
 			/* onsapspace                     */
 			/* ------------------------------ */
 
-			test("onsapspace the spacebar key is pressed the and the picker pop-up is close", function() {
+			test("onsapspace the spacebar key is pressed and the picker pop-up is close", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select({
@@ -5663,19 +5667,21 @@
 				oSelect.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-				this.clock.tick(1000);
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 				// assert
 				ok(oSelect.isOpen(), "Control's picker pop-up is open");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
 
 				// cleanup
 				oSelect.destroy();
 			});
 
-			test("onsapspace the spacebar key is pressed the and the picker pop-up is open", function() {
+			test("onsapspace the spacebar key is pressed and the picker pop-up is open", function() {
 
 				// system under test
 				var oSelect = new sap.m.Select({
@@ -5705,6 +5711,42 @@
 
 				// assert
 				strictEqual(oSelect.isOpen(), false, "Control's picker pop-up is close");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("onsapspace when spacebar key is pressed and the selection has changed", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);	// change the selection
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
 
 				// cleanup
 				oSelect.destroy();
@@ -5787,6 +5829,42 @@
 				oSelect.destroy();
 			});
 
+			test("onsapescape when escape key is pressed and the selection has changed", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);	// change the selection
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onsapenter                     */
 			/* ------------------------------ */
@@ -5821,6 +5899,40 @@
 				// assert
 				strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
 				strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("onsapenter when enter key is pressed and the selection has changed", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);	// change the selection
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
 
 				// cleanup
 				oSelect.destroy();
@@ -5867,7 +5979,7 @@
 
 				// assert
 				strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "2");
@@ -6028,7 +6140,7 @@
 
 				// assert
 				strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "0");
@@ -6202,7 +6314,7 @@
 
 				// assert
 				strictEqual(fnKeyHomeSpy.callCount, 1, "onsaphome() method was called exactly once");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "0");
@@ -6266,7 +6378,7 @@
 
 				// assert
 				strictEqual(fnKeyHomeSpy.callCount, 1, "onsaphome() method was called exactly once");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "1");
@@ -6280,7 +6392,7 @@
 				oSelect.destroy();
 			});
 
-			test("onsaphome when the Home key is pressed, the change event should not be fired twice", function() {
+			test("onsaphome when the Home key is pressed", function() {
 
 				// system under test
 				var oExpectedItem;
@@ -6331,7 +6443,7 @@
 
 				// assert
 				strictEqual(fnKeyHomeSpy.callCount, 2, "onsaphome() method was called exactly twice");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired once");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "1");
@@ -6396,7 +6508,7 @@
 
 				// assert
 				strictEqual(fnKeyEndSpy.callCount, 1, "onsapend() method was called exactly once");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "4");
@@ -6410,7 +6522,7 @@
 				oSelect.destroy();
 			});
 
-			test("onsapend when the End key is pressed, the change event should not be fired twice", function() {
+			test("onsapend when the End key is pressed", function() {
 
 				// system under test
 				var oExpectedItem;
@@ -6458,7 +6570,7 @@
 
 				// assert
 				strictEqual(fnKeyEndSpy.callCount, 2, "onsapend() method was called exactly twice");
-				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired once");
+				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getSelectedKey(), "4");
@@ -6467,6 +6579,72 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "4");
 				strictEqual(oSelect.$("label").text(), "item 4");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onAfterOpen                    */
+			/* ------------------------------ */
+
+			test("onAfterOpen test case 1", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+
+				// act
+				oSelect.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+				// assert
+				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* onAfterClose                   */
+			/* ------------------------------ */
+
+			test("onAfterClose", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+
+				// act
+				oSelect.close();
+				this.clock.tick(1000);
+
+				// assert
+				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
+				strictEqual(oSelect.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
 
 				// cleanup
 				oSelect.destroy();

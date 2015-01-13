@@ -29,6 +29,10 @@
 			name : "sap.ui.model.odata.type.Decimal",
 			constraints : {"precision" : 13, "scale" : 3}
 		},
+		oDouble = {
+			name : "sap.ui.model.odata.type.Double",
+			constraints : {"nullable": false}
+		},
 		oGuid = {
 			name : "sap.ui.model.odata.type.Guid",
 			constraints : {"nullable": false}
@@ -52,6 +56,10 @@
 		oString80 = {
 			name : "sap.ui.model.odata.type.String",
 			constraints : {"maxLength" : 80}
+		},
+		oTime = {
+			name : "sap.ui.model.odata.type.Time",
+			constraints : {"nullable" : false}
 		},
 		oMetaModel = new sap.ui.model.json.JSONModel({
 			"dataServices" : {
@@ -109,6 +117,14 @@
 							"name" : "_DateTimeOffset",
 							"type" : "Edm.DateTimeOffset",
 							"nullable" : "false"
+						}, {
+							"name" : "_Time",
+							"type" : "Edm.Time",
+							"nullable" : "false"
+						}, {
+							"name" : "_Double",
+							"type" : "Edm.Double",
+							"nullable" : "false"
 						}],
 						"com.sap.vocabularies.UI.v1.DataPoint" : {
 							"Value" : {
@@ -127,6 +143,10 @@
 						}, {
 							"Value" : {"Path" : "_DateTime"}
 						}, {
+							"Value" : {"Path" : "_DateTimeOffset"}
+						}, {
+							"Value" : {"Path" : "_Double"}
+						}, {
 							"Value" : {"Path" : "_Guid"}
 						}, {
 							"Value" : {"Path" : "_Int16"}
@@ -135,7 +155,7 @@
 						}, {
 							"Value" : {"Path" : "_SByte"}
 						}, {
-							"Value" : {"Path" : "_DateTimeOffset"}
+							"Value" : {"Path" : "_Time"}
 						}]
 					}]
 				}]
@@ -334,19 +354,25 @@
 		type : oDateTime
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/5/Value",
-		type : oGuid
+		type : oDateTimeOffset
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/6/Value",
-		type : oInt16
+		type : oDouble
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/7/Value",
-		type : oInt32
+		type : oGuid
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/8/Value",
-		type : oSByte
+		type : oInt16
 	}, {
 		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/9/Value",
-		type : oDateTimeOffset
+		type : oInt32
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/10/Value",
+		type : oSByte
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/11/Value",
+		type : oTime
 	}, {
 		path : "Value",
 		context : oMetaModel.createBindingContext(
