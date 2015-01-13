@@ -4,25 +4,29 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<Button
 				text="Show Confirmation"
+				class="sapUiSmallMarginBottom"
 				press="handleConfirmationMessageBoxPress"
 				width="250px"/>
 			<Button
 				text="Show Alert"
+				class="sapUiSmallMarginBottom"
 				press="handleAlertMessageBoxPress"
 				width="250px"/>
 			<Text
 					text="Set initial button focus by:"/>
 			<Button
 					text="Action"
+					class="sapUiSmallMarginBottom"
 					press="handleConfirmMessageBoxPress_InitialFocus"
 					width="250px"/>
 			<Button
 					text="Button text"
+					class="sapUiSmallMarginBottom"
 					press="handleShowMessageBoxPress_InitialFocus"
 					width="250px"/>
 		</l:content>

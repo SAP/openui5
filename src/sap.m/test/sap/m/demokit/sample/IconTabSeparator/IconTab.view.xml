@@ -4,14 +4,14 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<Label text="No icon(='') used as separator, the separator will be a vertical line."></Label>
 		</l:content>
 	</l:VerticalLayout>
 	<IconTabBar
-		class="iconTabBarPaddingTop"
+		class="sapUiContentPadding"
 		id="idIconTabBarSeparatorNoIcon"
 		expanded="false">
 		<items>
@@ -41,14 +41,14 @@
 		</items>
 	</IconTabBar>
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<Label text="Icon used as separator, you are free to choose an icon you want."></Label>
 		</l:content>
 	</l:VerticalLayout>
 	<IconTabBar
-		class="iconTabBarPaddingTop"
+		class="sapUiContentPadding"
 		id="idIconTabBarSeparatorIcon"
 		expanded="false">
 		<items>
@@ -79,14 +79,14 @@
 		</items>
 	</IconTabBar>
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<Label text="Different separators used."></Label>
 		</l:content>
 	</l:VerticalLayout>
 	<IconTabBar
-		class="iconTabBarPaddingTop"
+		class="sapUiContentPadding"
 		id="idIconTabBarSeparatorMixed"
 		expanded="false">
 		<items>

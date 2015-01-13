@@ -13,7 +13,7 @@
 
 	<Page
 		title="Page"
-		class="marginBoxContent" >
+		class="sapUiContentPadding" >
 		<customHeader>
 			<Toolbar>
 				<Button type="Back" press="onPress" />

@@ -3,28 +3,28 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<ProgressIndicator
-				width="90%"
+				class="sapUiSmallMarginBottom" 
 				percentValue="30"
 				displayValue="30%"
 				showValue="true"
 				state="None" />
 			<ProgressIndicator
-				width="90%"
+				class="sapUiSmallMarginBottom" 
 				percentValue="50"
 				showValue="false"
 				state="Error" />
 			<ProgressIndicator
-				width="90%"
+				class="sapUiSmallMarginBottom" 
 				percentValue="99"
 				displayValue="0.99GB of 1GB"
 				showValue="true"
 				state="Success" />
 			<ProgressIndicator
-				width="90%"
+				class="sapUiSmallMarginBottom" 
 				percentValue="25"
 				displayValue="25%"
 				showValue="true"

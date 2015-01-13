@@ -7,7 +7,7 @@
 	xmlns="sap.m">
 	<Page
 		showHeader="false"
-		class="marginBoxContent">
+		class="sapUiContentPadding">
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>

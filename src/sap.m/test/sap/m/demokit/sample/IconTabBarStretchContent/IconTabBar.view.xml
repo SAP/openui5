@@ -3,7 +3,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<IconTabBar
-		class="iconTabBarPaddingTop"
+		class="sapUiContentPadding"
 		id="idIconTabBarStretchContent"
 		stretchContentHeight="true"
 		backgroundDesign="Transparent"

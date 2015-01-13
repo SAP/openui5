@@ -1,6 +1,6 @@
 <mvc:View height="100%" controllerName="sap.m.sample.Carousel.Carousel"
 	xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
-	<Carousel>
+	<Carousel class="sapUiContentPadding">
 		<pages>
 
 			<l:VerticalLayout>

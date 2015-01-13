@@ -2,13 +2,14 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 			<Label text="Password" />
 			<Input
 				type="Password"
 				placeholder="Enter password ..." />
-		</items>
-	</VBox>
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

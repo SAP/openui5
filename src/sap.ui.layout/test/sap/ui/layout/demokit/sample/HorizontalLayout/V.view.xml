@@ -3,19 +3,19 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:HorizontalLayout>
+	<l:HorizontalLayout class="sapUiSmallMargin" >
 		<Image
-			class="marginRight"
+			class="sapUiSmallMarginEnd"
 			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
 			width="{/widthS}">
 		</Image>
 		<Image
-			class="marginRight"
+			class="sapUiSmallMarginEnd"
 			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
 			width="{/widthM}">
 		</Image>
 		<Image
-			class="marginRight"
+			class="sapUiSmallMarginEnd"
 			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
 			width="{/widthL}">
 		</Image>

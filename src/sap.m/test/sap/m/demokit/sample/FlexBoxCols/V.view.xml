@@ -4,7 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent equalColumns"
+		class="sapUiContentPadding equalColumns"
 		width="100%" >
 		<l:content>
 

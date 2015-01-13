@@ -5,7 +5,7 @@
 	<FeedInput 
 		post="onPost"
 		icon="test-resources/sap/ui/demokit/explored/img/Woman_10.png"
-		class="sapUiExploredFeedMargin" />
+		class="sapUiSmallMarginTopBottom" />
 	<List
 		showSeparators="Inner"
 		items="{/EntryCollection}" >

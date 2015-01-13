@@ -4,15 +4,17 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
 			<Button
 				text="Show Dialog"
-				press="onStdDialogPress" />
+				press="onStdDialogPress"
+				class="sapUiSmallMarginBottom" />
 			<Button
 				text="Show Message Dialog"
-				press="onMsgDialogPress" />
+				press="onMsgDialogPress"
+				class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

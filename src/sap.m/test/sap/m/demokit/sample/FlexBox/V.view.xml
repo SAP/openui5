@@ -4,16 +4,18 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%" >
 		<l:content>
 
-			<Text text="These items are laid out horizontally" />
+			<Text text="These items are laid out horizontally"
+				class="sapUiSmallMarginBottom" />
 			<HBox>
 				<Image
 					densityAware="false"
 					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-					width="{/widthS}" >
+					width="{/widthS}"
+					class="sapUiSmallMarginBottom" >
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
@@ -21,7 +23,8 @@
 				<Image
 					densityAware="false"
 					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-					width="{/widthM}" >
+					width="{/widthM}"
+					class="sapUiSmallMarginBottom" >
 					<layoutData>
 						<FlexItemData growFactor="2" />
 					</layoutData>
@@ -29,19 +32,22 @@
 				<Image
 					densityAware="false"
 					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-					width="{/widthL}" >
+					width="{/widthL}"
+					class="sapUiSmallMarginBottom" >
 					<layoutData>
 						<FlexItemData growFactor="3" />
 					</layoutData>
 				</Image>
 			</HBox>
 
-			<Text text="These items are laid out vertically" />
+			<Text text="These items are laid out vertically"
+				class="sapUiSmallMarginBottom" />
 			<VBox>
 				<Image
 					densityAware="false"
 					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-					width="{/widthS}" >
+					width="{/widthS}"
+					class="sapUiSmallMarginBottom" >
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
@@ -49,7 +55,8 @@
 				<Image
 					densityAware="false"
 					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-					width="{/widthM}" >
+					width="{/widthM}"
+					class="sapUiSmallMarginBottom" >
 					<layoutData>
 						<FlexItemData growFactor="2" />
 					</layoutData>
@@ -57,7 +64,8 @@
 				<Image
 					densityAware="false"
 					src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
-					width="{/widthL}" >
+					width="{/widthL}"
+					class="sapUiSmallMarginBottom" >
 					<layoutData>
 						<FlexItemData growFactor="3" />
 					</layoutData>
