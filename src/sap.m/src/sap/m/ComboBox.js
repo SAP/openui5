@@ -908,11 +908,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeOpenPopover = function() {
-			var oDomRef = this.getDomRef(),
-				oComputedStyle = window.getComputedStyle(oDomRef);
+			var oDomRef = this.getDomRef();
 
-			if (oComputedStyle) {
-				this.getPicker().setContentWidth((parseFloat(oComputedStyle.width) / parseFloat(sap.m.BaseFontSize)) + "rem");
+			if (oDomRef) {
+				this.getPicker().setContentWidth((oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem");
 			}
 		};
 
