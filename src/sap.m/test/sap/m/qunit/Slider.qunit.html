@@ -243,6 +243,11 @@
 						if (oSlider.getName()) {
 							ok(oSlider.$("input").hasClass(CSS_CLASS + "Input"), 'The slider HTML Input element "must have" the CSS class "' + CSS_CLASS + 'Input"');
 						}
+
+						strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is not set');
+					} else {
+						strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), "true", 'The "aria-disabled" attribute is set');
+						ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
 					}
 
 					strictEqual(jQuery.trim(oSlider.getDomRef().style.width), oSlider.getWidth(), 'Check if the style attribute has the correct value');
@@ -252,10 +257,6 @@
 					if (oSlider.getName()) {
 						strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'The "value" attribute of the INPUT is 0');
 						strictEqual(oSlider.getValue(), +oSlider.$("input").prop("value"), 'The "value" property of the INPUT is 0');
-					}
-
-					if (!oSlider.getEnabled()) {
-						ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
 					}
 
 					// cleanup
@@ -292,6 +293,12 @@
 				strictEqual(oSlider.getStep(), 1, "By default the slider step is 1");
 				strictEqual(oSlider.getProgress(), true, "By default the slider progress is true");
 				strictEqual(oSlider.getValue(), 0, "By default the slider value is 0");
+				strictEqual(oSlider.getFocusDomRef().getAttribute("role"), "slider", "The role slider is set");
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-orientation"), "horizontal", 'The "aria-orientation" attribute is set to "horizontal"');
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "0", 'The "aria-valuemin" attribute is set to its default value');
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "100", 'The "aria-valuemax" attribute is set to its default value');
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
+				strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 
 				// cleanup
 				oSlider.destroy();
@@ -605,6 +612,43 @@
 				oSlider.destroy();
 			});
 
+			test('method: setValue() the attribute "aria-valuenow" is updated accordingly (initial rendering)', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					value: 50,
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test('method: setValue() the attribute "aria-valuenow" is updated accordingly', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider();
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(50);
+
+				// assertions
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* ------------------------------ */
 			/* setMin()                       */
 			/* ------------------------------ */
@@ -625,6 +669,46 @@
 
 				// assertions
 				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test('method: setMin() the attribute "aria-valuemin" is updated accordingly (initial rendering)', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					min: 5
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "5");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			/* ------------------------------ */
+			/* setMax()                       */
+			/* ------------------------------ */
+
+			test('method: setMax() the attribute "aria-valuemax" is updated accordingly (initial rendering)', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					max: 200
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
 
 				// cleanup
 				oSlider.destroy();

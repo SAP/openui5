@@ -346,7 +346,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 
 				// update the WAI-ARIA attribute values
 				oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
-				oHandleDomRef.setAttribute("aria-valuetext", fNewValue);
 			}
 
 			return this;
