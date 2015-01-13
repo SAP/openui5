@@ -7,6 +7,35 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	"use strict";
 
 	/**
+	 * Adjusts the constraints for DateTimeBase.
+	 *
+	 * @param {sap.ui.model.odata.type.DateTime} oType
+	 *   the type
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 * @returns {object}
+	 *   the constraints adjusted for DateTimeBase
+	 */
+	function adjustConstraints(oType, oConstraints) {
+		var oAdjustedConstraints = {};
+
+		if (oConstraints) {
+			switch (oConstraints.displayFormat) {
+			case "Date":
+				oAdjustedConstraints.isDateOnly = true;
+				break;
+			case undefined:
+				break;
+			default:
+				jQuery.sap.log.warning("Illegal displayFormat: " + oConstraints.displayFormat,
+					null, oType.getName());
+			}
+			oAdjustedConstraints.nullable = oConstraints.nullable;
+		}
+		return oAdjustedConstraints;
+	}
+
+	/**
 	 * Constructor for a primitive type <code>Edm.DateTime</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
@@ -40,37 +69,11 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	var DateTime = DateTimeBase.extend("sap.ui.model.odata.type.DateTime",
 			/** @lends sap.ui.model.odata.type.DateTime.prototype */
 			{
-				constructor : function () {
-					DateTimeBase.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					DateTimeBase.call(this, oFormatOptions, adjustConstraints(this, oConstraints));
 				}
 			}
 		);
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	DateTime.prototype.setConstraints = function(oConstraints) {
-		var oBaseConstraints = {};
-
-		if (oConstraints) {
-			switch (oConstraints.displayFormat) {
-			case "Date":
-				oBaseConstraints.isDateOnly = true;
-				break;
-			case undefined:
-				break;
-			default:
-				jQuery.sap.log.warning("Illegal displayFormat: " + oConstraints.displayFormat,
-					null, this.getName());
-			}
-			oBaseConstraints.nullable = oConstraints.nullable;
-		}
-		DateTimeBase.prototype.setConstraints.call(this, oBaseConstraints);
-	};
 
 	/**
 	 * Returns the type's name.

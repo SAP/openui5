@@ -3,9 +3,9 @@
  */
 
 sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
 		'sap/ui/model/ValidateException'],
-	function(DateFormat, FormatException, ParseException, SimpleType, ValidateException) {
+	function(DateFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var oDemoDate = new Date(2014, 10, 27, 13, 47, 26);
@@ -32,6 +32,59 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	}
 
 	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
+	 *   the type instance
+	 * @return {sap.ui.core.format.DateFormat}
+	 *   the formatter
+	 */
+	function getFormatter(oType) {
+		if (!oType.oFormat){
+			if (isDateOnly(oType)) {
+				oType.oFormat = DateFormat.getDateInstance({strictParsing: true, UTC: true});
+			} else {
+				oType.oFormat = DateFormat.getDateTimeInstance({strictParsing: true});
+			}
+		}
+		return oType.oFormat;
+	}
+
+	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 * @private
+	 */
+	function setConstraints(oType, oConstraints) {
+		oType.oConstraints = undefined;
+		if (oConstraints) {
+			switch (oConstraints.nullable) {
+			case undefined:
+			case true:
+			case "true":
+				break;
+			case false:
+			case "false":
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.nullable = false;
+				break;
+			default:
+				jQuery.sap.log.warning("Illegal nullable: " + oConstraints.nullable, null,
+					oType.getName());
+			}
+
+			if (oConstraints.isDateOnly === true) {
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.isDateOnly = true;
+			}
+		}
+		oType._handleLocalizationChange();
+	}
+
+	/**
 	 * Base constructor for the primitive types <code>Edm.DateTime</code> and
 	 * <code>Edm.DateTimeOffset</code>.
 	 *
@@ -39,7 +92,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * OData primitive types</a> <code>Edm.DateTime</code> and <code>Edm.DateTimeOffset</code>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -58,11 +111,12 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @abstract
 	 * @since 1.27.0
 	 */
-	var DateTimeBase = SimpleType.extend("sap.ui.model.odata.type.DateTimeBase",
+	var DateTimeBase = ODataType.extend("sap.ui.model.odata.type.DateTimeBase",
 			/** @lends sap.ui.model.odata.type.DateTimeBase.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				},
 				metadata : {
 					"abstract": true
@@ -92,7 +146,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		case "any":
 			return oValue;
 		case "string":
-			return this._getFormatter().format(oValue);
+			return getFormatter(this).format(oValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -122,7 +176,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		}
 		switch (sSourceType) {
 		case "string":
-			oResult = this._getFormatter().parse(sValue);
+			oResult = getFormatter(this).parse(sValue);
 			if (!oResult) {
 				throw new ParseException(getErrorMessage(this));
 			}
@@ -139,23 +193,6 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 */
 	DateTimeBase.prototype._handleLocalizationChange = function () {
 		this.oFormat = null;
-	};
-
-	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @return {sap.ui.core.format.DateFormat}
-	 *   the formatter
-	 * @private
-	 */
-	DateTimeBase.prototype._getFormatter = function () {
-		if (!this.oFormat){
-			if (isDateOnly(this)) {
-				this.oFormat = DateFormat.getDateInstance({strictParsing: true, UTC: true});
-			} else {
-				this.oFormat = DateFormat.getDateTimeInstance({strictParsing: true});
-			}
-		}
-		return this.oFormat;
 	};
 
 	/**
@@ -177,39 +214,6 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 			return;
 		}
 		throw new ValidateException("Illegal " + this.getName() + " value: " + oValue);
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	DateTimeBase.prototype.setConstraints = function(oConstraints) {
-		this.oConstraints = undefined;
-		if (oConstraints) {
-			switch (oConstraints.nullable) {
-			case undefined:
-			case true:
-			case "true":
-				break;
-			case false:
-			case "false":
-				this.oConstraints = this.oConstraints || {};
-				this.oConstraints.nullable = false;
-				break;
-			default:
-				jQuery.sap.log.warning("Illegal nullable: " + oConstraints.nullable, null,
-					this.getName());
-			}
-
-			if (oConstraints.isDateOnly === true) {
-				this.oConstraints = this.oConstraints || {};
-				this.oConstraints.isDateOnly = true;
-			}
-		}
-		this._handleLocalizationChange();
 	};
 
 	/**

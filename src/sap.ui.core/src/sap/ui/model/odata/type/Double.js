@@ -3,9 +3,9 @@
  */
 
 sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
 		'sap/ui/model/ValidateException'],
-	function(NumberFormat, FormatException, ParseException, SimpleType, ValidateException) {
+	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var rDouble = /^[-+]?\d(\.\d+)?E[-+]?\d+$/i;
@@ -21,6 +21,20 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @param {sap.ui.model.odata.type.Double} oType
+	 *   the type instance
+	 * @returns {sap.ui.core.format.NumberFormat}
+	 *   the formatter
+	 */
+	function getFormatter(oType) {
+		if (!oType.oFormat) {
+			oType.oFormat = NumberFormat.getFloatInstance({groupingEnabled: true});
+		}
+		return oType.oFormat;
+	}
+
+	/**
 	 * Returns the type's nullable constraint.
 	 *
 	 * @param {sap.ui.model.odata.type.Double} oType
@@ -33,13 +47,34 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Double} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		oType.oConstraints = undefined;
+		if (vNullable === false || vNullable === "false") {
+			oType.oConstraints = {nullable: false};
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
+
+		oType._handleLocalizationChange();
+	}
+
+	/**
 	 * Constructor for a primitive type <code>Edm.Double</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Double</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -63,11 +98,12 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Double = SimpleType.extend("sap.ui.model.odata.type.Double",
+	var Double = ODataType.extend("sap.ui.model.odata.type.Double",
 			/** @lends sap.ui.model.odata.type.Double.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
@@ -104,14 +140,14 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		case "string":
 			fValue = parseFloat(sValue);
 			if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
-				oFormatOptions = this._getFormatter().oFormatOptions;
+				oFormatOptions = getFormatter(this).oFormatOptions;
 				return fValue.toExponential()
 					.replace("e", " E")
 					.replace(".", oFormatOptions.decimalSeparator)
 					.replace("+", oFormatOptions.plusSign)
 					.replace("-", oFormatOptions.minusSign);
 			}
-			return this._getFormatter().format(sValue);
+			return getFormatter(this).format(sValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -142,7 +178,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		}
 		switch (sSourceType) {
 		case "string":
-			fResult = this._getFormatter().parse(vValue);
+			fResult = getFormatter(this).parse(vValue);
 			if (isNaN(fResult)) {
 				throw new ParseException(getErrorMessage());
 			}
@@ -167,19 +203,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @returns {sap.ui.core.format.NumberFormat}
-	 *   the formatter
-	 * @private
-	 */
-	Double.prototype._getFormatter = function () {
-		if (!this.oFormat) {
-			this.oFormat = NumberFormat.getFloatInstance({groupingEnabled: true});
-		}
-		return this.oFormat;
-	};
-
-	/**
 	 * Validate whether the given value in model representation is valid and meets the
 	 * defined constraints (if any).
 	 *
@@ -196,26 +219,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			return;
 		}
 		throw new ValidateException(getErrorMessage());
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	Double.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
-
-		this.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			this.oConstraints = {nullable: false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
-		}
-
-		this._handleLocalizationChange();
 	};
 
 	/**

@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException',
-		'sap/ui/model/SimpleType', 'sap/ui/model/ValidateException'],
-	function(Core, FormatException, ParseException, SimpleType, ValidateException) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+		'sap/ui/model/ValidateException'],
+	function(Core, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	/**
@@ -46,13 +47,32 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	}
 
 	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Boolean} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		oType.oConstraints = undefined;
+		if (vNullable === false || vNullable === "false") {
+			oType.oConstraints = {nullable : false};
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
+	}
+
+	/**
 	 * Constructor for an OData primitive type <code>Edm.Boolean</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Boolean</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -67,11 +87,12 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmBoolean = SimpleType.extend("sap.ui.model.odata.type.Boolean",
+	var EdmBoolean = ODataType.extend("sap.ui.model.odata.type.Boolean",
 			/** @lends sap.ui.model.odata.type.Boolean.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
@@ -165,24 +186,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 		if (typeof bValue !== "boolean") {
 			// This is a "technical" error by calling validate w/o parse
 			throw new ValidateException("Illegal " + this.getName() + " value: " + bValue);
-		}
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	EdmBoolean.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
-
-		this.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			this.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
 		}
 	};
 

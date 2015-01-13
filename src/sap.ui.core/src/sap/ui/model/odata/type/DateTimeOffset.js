@@ -7,6 +7,22 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	"use strict";
 
 	/**
+	 * Adjusts the constraints for DateTimeBase.
+	 *
+	 * @param {sap.ui.model.odata.type.DateTimeOffset} oType
+	 *   the type
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 * @returns {object}
+	 *   the constraints adjusted for DateTimeBase
+	 */
+	function adjustConstraints(oType, oConstraints) {
+		return {
+			nullable: oConstraints && oConstraints.nullable
+		};
+	}
+
+	/**
 	 * Constructor for a primitive type <code>Edm.DateTimeOffset</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
@@ -31,26 +47,11 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	var DateTimeOffset = DateTimeBase.extend("sap.ui.model.odata.type.DateTimeOffset",
 			/** @lends sap.ui.model.odata.type.DateTimeOffset.prototype */
 			{
-				constructor : function () {
-					DateTimeBase.apply(this, arguments);
+				constructor : function (oFormatOptions, oConstraints) {
+					DateTimeBase.call(this, oFormatOptions, adjustConstraints(this, oConstraints));
 				}
 			}
 		);
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	DateTimeOffset.prototype.setConstraints = function(oConstraints) {
-		var oBaseConstraints = {};
-		if (oConstraints) {
-			oBaseConstraints.nullable = oConstraints.nullable;
-		}
-		DateTimeBase.prototype.setConstraints.call(this, oBaseConstraints);
-	};
 
 	/**
 	 * Returns the type's name.

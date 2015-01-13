@@ -3,9 +3,9 @@
  */
 
 sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
-        'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
-        'sap/ui/model/ValidateException'],
-	function(DateFormat, FormatException, ParseException, SimpleType, ValidateException) {
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+		'sap/ui/model/ValidateException'],
+	function(DateFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var oDemoTime = {
@@ -28,6 +28,20 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	}
 
 	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @param {sap.ui.model.odata.type.Time} oType
+	 *   the type instance
+	 * @return {sap.ui.core.format.DateFormat}
+	 *   the formatter
+	 */
+	function getFormatter(oType) {
+		if (!oType.oFormat) {
+			oType.oFormat = DateFormat.getTimeInstance({strictParsing: true, UTC: true});
+		}
+		return oType.oFormat;
+	}
+
+	/**
 	 * Verifies that the given object is really a time object in the model format.
 	 * @param {any} o
 	 *   the object to test
@@ -36,6 +50,28 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 */
 	function isTime(o) {
 		return typeof o === "object" && o.__edmType === "Edm.Time" && typeof o.ms === "number";
+	}
+
+	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Time} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
+	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		oType.oConstraints = undefined;
+		if (vNullable === false || vNullable === "false") {
+			oType.oConstraints = {nullable: false};
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
 	}
 
 	/**
@@ -91,7 +127,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Time</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -106,11 +142,12 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Time = SimpleType.extend("sap.ui.model.odata.type.Time",
+	var Time = ODataType.extend("sap.ui.model.odata.type.Time",
 			/** @lends sap.ui.model.odata.type.Time.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 			}
 		});
 
@@ -140,7 +177,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		case "any":
 			return oValue;
 		case "string":
-			return this._getFormatter().format(toDate(oValue));
+			return getFormatter(this).format(toDate(oValue));
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -181,32 +218,11 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}
-		oDate = this._getFormatter().parse(sValue);
+		oDate = getFormatter(this).parse(sValue);
 		if (!oDate) {
 			throw new ParseException(getErrorMessage(this));
 		}
 		return toModel(oDate);
-	};
-
-	/**
-	 * Sets the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
-	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
-	 * @private
-	 */
-	Time.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
-
-		this.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			this.oConstraints = {nullable: false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
-		}
 	};
 
 	/**
@@ -229,19 +245,6 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 			throw new ValidateException("Illegal " + this.getName() + " value: "
 				+ toString(oValue));
 		}
-	};
-
-	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @return {sap.ui.core.format.DateFormat}
-	 *   the formatter
-	 * @private
-	 */
-	Time.prototype._getFormatter = function () {
-		if (!this.oFormat) {
-			this.oFormat = DateFormat.getTimeInstance({strictParsing: true, UTC: true});
-		}
-		return this.oFormat;
 	};
 
 	/**
