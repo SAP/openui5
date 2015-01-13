@@ -322,7 +322,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			var oCurrencySymbols = this._get("currencySymbols");
 			return (oCurrencySymbols && oCurrencySymbols[sCurrency]) || sCurrency;
 		},
-		
+
+		/**
+		 * Returns the currency code which is corresponded with the given currency symbol.
+		 *
+		 * @param {string} sCurrencySymbol The currency symbol which needs to be converted to currency code
+		 * @return {string} The corresponded currency code defined for the given currency symbol. Null is returned if no currency code can be found by using the given currency symbol.
+		 * @public
+		 * @since 1.27.0
+		 */
+		getCurrencyCodeBySymbol : function(sCurrencySymbol) {
+			var oCurrencySymbols = this._get("currencySymbols"), sCurrencyCode;
+			for (sCurrencyCode in oCurrencySymbols) {
+				if (oCurrencySymbols[sCurrencyCode] === sCurrencySymbol) {
+					return sCurrencyCode;
+				}
+			}
+			return null;
+		},
+
 		_getRelative : function(sType, iDiff) {
 			if (Math.abs(iDiff) <= 1) {
 				return this._get("dateField-" + sType + "-relative-" + iDiff);
