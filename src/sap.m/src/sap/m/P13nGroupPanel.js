@@ -236,16 +236,8 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.exit = function() {
-
-		var destroyHelper = function(o) {
-			if (o && o.destroy) {
-				o.destroy();
-			}
-			return null;
-		};
-
-		this._aKeyFields = destroyHelper(this._aKeyFields);
-		this._aOperations = destroyHelper(this._aOperations);
+		this._aKeyFields = null;
+		this._aOperations = null;
 	};
 
 	P13nGroupPanel.prototype.addItem = function(oItem) {
