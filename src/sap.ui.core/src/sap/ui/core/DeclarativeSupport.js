@@ -32,6 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 */
 	DeclarativeSupport.attributes = {
 		"data-sap-ui-type" : true,
+		"data-sap-ui-id" : true,
 		"data-sap-ui-aggregation" : true,
 		"data-sap-ui-default-aggregation" : true,
 		"data-sap-ui-binding" : function(sValue, mSettings) {
@@ -284,6 +285,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						} else {
 							throw new Error('Control "' + mSettings.id + '": The function "' + sValue + '" for the event "' + sName + '" is not defined');
 						}
+					} else {
+						jQuery.sap.assert((sName === "id"), fnClass.getMetadata().getName() + ": DeclarativeSupport encountered and ignored unknown attribute '" + sName + "' (value: '" + sValue + "')");
 					}
 				} else if (typeof oSpecialAttributes[sName] === "function") {
 					oSpecialAttributes[sName](sValue, mSettings, fnClass);
