@@ -195,38 +195,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @private
 	 */
 	 function createAndConnectController(oThis, mSettings) {
+		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+			// only set when used internally
+			var oController = mSettings.controller;
 
-		// only set when used internally
-		var oController = mSettings.controller;
-
-		// check for default controller
-		if (!oController && oThis.getControllerName) {
-			// get optional default controller name
-			var defaultController = oThis.getControllerName();
-			if (defaultController) {
-				// create controller
-				oController = sap.ui.controller(defaultController);
-			}
-		}
-
-		if (sap.ui.getCore().getConfiguration().getDesignMode() &&
-			!sap.ui.getCore().getConfiguration().getSuppressDeactivationOfControllerCode()) {
-			// Stub all controller methods in design mode
-			for (var sMethod in oController) {
-				if (typeof oController[sMethod] === "function"
-					// Do not stub abstract controller class methods as they are used internally.
-					// Do not use oController.hasOwnProperty(sMethod),
-					// as there could be a base class of the controller and we want only skip the methods of abstract controller
-					&& !sap.ui.core.mvc.Controller.prototype[sMethod]) {
-					oController[sMethod] = function() {};
+			if (!oController && oThis.getControllerName) {
+				// get optional default controller name
+				var defaultController = oThis.getControllerName();
+				if (defaultController) {
+					// create controller
+					oController = sap.ui.controller(defaultController);
 				}
 			}
-		}
 
-		if ( oController ) {
-			oThis.oController = oController;
-			// connect controller
-			oController.connectToView(oThis);
+			if ( oController ) {
+				oThis.oController = oController;
+				// connect controller
+				oController.connectToView(oThis);
+			}
+		} else {
+			oThis.oController = {};
 		}
 	}
 
@@ -422,22 +410,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	View._resolveEventHandler = function(sName, oController) {
 
 		var fnHandler;
-		
-		switch (sName.indexOf('.')) {
-			case 0:
-				// starts with a dot, must be a controller local handler
-				fnHandler = oController && oController[sName.slice(1)];
-				break;
-			case -1:
-				// no dot at all: first check for a controller local, then for a global handler
-				fnHandler = oController && oController[sName];
-				if ( fnHandler != null ) {
-					// if the name can be resolved, don't try to find a global handler (even if it is not a function) 
+
+		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+			switch (sName.indexOf('.')) {
+				case 0:
+					// starts with a dot, must be a controller local handler
+					fnHandler = oController && oController[sName.slice(1)];
 					break;
-				}
-				// falls through 
-			default:
-				fnHandler = jQuery.sap.getObject(sName);
+				case -1:
+					// no dot at all: first check for a controller local, then for a global handler
+					fnHandler = oController && oController[sName];
+					if ( fnHandler != null ) {
+						// if the name can be resolved, don't try to find a global handler (even if it is not a function) 
+						break;
+					}
+					// falls through 
+				default:
+					fnHandler = jQuery.sap.getObject(sName);
+			}
+		} else {
+			// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
+			fnHandler = function() {};
 		}
 
 		if ( typeof fnHandler === "function" ) {
