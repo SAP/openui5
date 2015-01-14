@@ -1808,6 +1808,124 @@
 				oIconTabBar.destroy();
 			});
 			
+			test("keep the current content when change IconTabFilter count property", function() {
+				
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Test 1",
+							count: "1",
+							content: [
+								new sap.m.Label({
+									text: "Content"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Test 2",
+							count: "2",
+							content: [
+								new sap.m.Label({
+									text: "Content"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Test 3",
+							count: "3",
+							content: [
+								new sap.m.Label({
+									text: "Content"
+								})
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oContent = oIconTabBar._getIconTabHeader().oSelectedItem.getContent()[0];
+				var domContent = oContent.$()[0];
+
+				// change the IconTabFilter count property
+				var aItems = oIconTabBar.getItems();
+				aItems[0].setCount('New');
+				
+				// wait 500ms
+				this.clock.tick(500);
+				
+				oContent = oIconTabBar._getIconTabHeader().oSelectedItem.getContent()[0];
+				var domContentNew = oContent.$()[0];
+
+				// Assert
+				ok(domContent == domContentNew, "the contents are the same");
+		
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("change the current content when change IconTabFilter content aggregation", function() {
+				
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Lorem",
+							count: "3",
+							content: [
+								new sap.m.Button({ text: "Text 1" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Ipsum",
+							count: "1",
+							content: [
+								new sap.m.Button({ text: "Text 2" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Lorem",
+							count: "Count",
+							content: [
+								new sap.m.Button({ text: "Text 3" })
+							]
+						})
+					],
+					content: [
+						new sap.m.Button({ text: "Main Text" })
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+				
+				// Assert
+				ok(oButton.innerText.indexOf("Text 1") > -1, "the tab content is displayed");
+			
+				// remove the IconTabFilter contents
+				var aItems = oIconTabBar.getItems();
+				aItems[0].removeAllContent();
+				
+				// wait 500ms
+				this.clock.tick(500);
+				
+				oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+				
+				// Assert
+				ok(oButton.innerText.indexOf("Main Text") > -1, "the default content is displayed");
+		
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			module("padding");
+			
 			test("Container Padding Classes", function () {
 				// System under Test + Act
 				var oContainer = new sap.m.IconTabBar(),
