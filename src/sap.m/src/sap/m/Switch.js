@@ -66,6 +66,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 */
 				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: sap.m.SwitchType.Default }
 			},
+			associations: {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
 			events: {
 
 				/**
@@ -124,9 +132,10 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 		Switch.prototype._setDomState = function(bState) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				sState = bState ? this._sOn : this._sOff;
+				sState = bState ? this._sOn : this._sOff,
+				oDomRef = this.getDomRef();
 
-			if (!this._$Switch) {
+			if (!oDomRef) {
 				return this;
 			}
 
@@ -137,8 +146,13 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				this._$Checkbox[0].setAttribute("value", sState);
 			}
 
-			bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
-					: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+			if (bState) {
+				this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
+				oDomRef.setAttribute("aria-checked", "true");
+			} else {
+				this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+				oDomRef.setAttribute("aria-checked", "false");
+			}
 
 			this._$Switch.addClass(CSS_CLASS + "Trans");
 

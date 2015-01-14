@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global'],
 				sName = oSwitch.getName(),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
-			oRm.write('<div');
+			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Cont");
 
 			if (!bEnabled) {
@@ -51,6 +51,8 @@ sap.ui.define(['jquery.sap.global'],
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
+
+			this.writeAccessibilityState(oRm, oSwitch);
 
 			oRm.write("><div");
 			oRm.writeAttribute("id", oSwitch.getId() + "-switch");
@@ -162,6 +164,20 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write(">");
+		};
+
+		/**
+		 * Writes the accessibility state.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 */
+		SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
+			oRm.writeAccessibilityState(oSwitch, {
+				role: "checkbox",
+				checked: oSwitch.getState()
+			});
 		};
 
 		return SwitchRenderer;
