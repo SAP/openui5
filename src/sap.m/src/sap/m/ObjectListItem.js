@@ -90,7 +90,28 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			 * Object list item number and numberUnit value state.
 			 * @since 1.16.0
 			 */
-			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None}
+			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Determines the text direction of the item title.
+			 * Available options for the title direction are LTR (left-to-right) and RTL (right-to-left).
+			 * By default the item title inherits the text direction from its parent.
+			 */
+			titleTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Determines the text direction of the item intro.
+			 * Available options for the intro direction are LTR (left-to-right) and RTL (right-to-left).
+			 * By default the item intro inherits the text direction from its parent.
+			 */
+			introTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Determines the text direction of the item number.
+			 * Available options for the number direction are LTR (left-to-right) and RTL (right-to-left).
+			 * By default the item number inherits the text direction from its parent.
+			 */
+			numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		defaultAggregation : "attributes",
 		aggregations : {

@@ -103,7 +103,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 	
 	ObjectListItemRenderer.renderLIContent = function(rm, oLI) {
-		
+		var sTitleDir = oLI.getTitleTextDirection(),
+			sIntroDir = oLI.getIntroTextDirection(),
+			sNumberDir = oLI.getNumberTextDirection();
+
 		rm.write("<div"); // Start Main container
 		rm.writeControlData(oLI);
 		rm.write(">");
@@ -115,7 +118,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.writeClasses();
 			rm.writeAttribute("id", oLI.getId() + "-intro");
 			rm.write(">");
-			rm.write("<span>");
+			rm.write("<span");
+			//sets the dir attribute to "rtl" or "ltr" if a direction
+			//for the intro text is provided explicitly
+			if (sIntroDir !== sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sIntroDir.toLowerCase());
+			}
+			rm.write(">");
 			rm.writeEscaped(oLI.getIntro());
 			rm.write("</span>");
 			rm.write("</div>");
@@ -150,7 +159,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.addClass("sapMObjLNumber");
 			rm.addClass("sapMObjLNumberState" + oLI.getNumberState());
 			rm.writeClasses();
-			
+			//sets the dir attribute to "rtl" or "ltr" if a direction
+			//for the number text is provided explicitly
+			if (sNumberDir !== sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sNumberDir.toLowerCase());
+			}
 			rm.write(">");
 			rm.writeEscaped(oLI.getNumber());
 			rm.write("</div>");
@@ -177,6 +190,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		rm.write(">");
 		var oTitleText = oLI._getTitleText();
 		if (oTitleText) {
+			//sets the text direction of the title,
+			//by delegating the RTL support to sap.m.Text
+			oTitleText.setTextDirection(sTitleDir);
 			oTitleText.setText(oLI.getTitle());
 			oTitleText.addStyleClass("sapMObjLTitle");
 			rm.renderControl(oTitleText);

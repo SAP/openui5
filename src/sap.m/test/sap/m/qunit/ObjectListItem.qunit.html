@@ -61,7 +61,7 @@
 			title: "Test empty marker row",
 			showMarkers: true,
 			firstStatus: new sap.m.ObjectStatus({text: "First status info"}),
-			secondStatus: new sap.m.ObjectStatus({text: "Second status info"}),
+			secondStatus: new sap.m.ObjectStatus({text: "Second status info"})
 		});
 		list.addItem(showMarkers);		
 		
@@ -136,7 +136,35 @@
 			ok($markersStatus, "The markers status should be rendered");
 			ok($markersStatus.val().length === 0, "The markers status should be empty");
 		});
-		
+
+        var showTextDir = new sap.m.ObjectListItem({
+            id: "showTextDir",
+            intro: "rtl chars intro",
+            introTextDirection: sap.ui.core.TextDirection.Inherit,
+            title: "Title is rtl",
+            titleTextDirection: sap.ui.core.TextDirection.RTL,
+            showMarkers: true,
+            number: "10 000",
+            numberTextDirection: sap.ui.core.TextDirection.LTR,
+            numberUnit: "U"
+        });
+        list.addItem(showTextDir);
+
+        test("TitleNumberIntroTextDirection RTL rendering", function() {
+            equal($('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
+            equal($('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
+            equal($('#showTextDir-number').attr("dir"), "ltr", "number has attribute dir=ltr");
+
+            showTextDir.setIntroTextDirection(sap.ui.core.TextDirection.RTL);
+            showTextDir.setTitleTextDirection(sap.ui.core.TextDirection.Inherit);
+            showTextDir.setNumberTextDirection(sap.ui.core.TextDirection.Inherit);
+            sap.ui.getCore().applyChanges();
+
+            equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
+            equal($('#showTextDir-titleText').attr("dir"), undefined, "title has no dir attribute");
+            equal($('#showTextDir-number').attr("dir"), undefined, "number has no dir attribute");
+        });
+
 		/******************************************************************/
 		
 		var imageOLI1 = new sap.m.ObjectListItem("imageOLI1", {
@@ -186,39 +214,39 @@
 			title: "Empty first status",	
 			firstStatus: new sap.m.ObjectStatus("ose1", {
 		    	text: "\n  \n  \t",
-		    	state: sap.ui.core.ValueState.Success,}),
+		    	state: sap.ui.core.ValueState.Success})
 		});
 		var liEmptyStatus2 = new sap.m.ObjectListItem({
 			title: "Empty second status",	
 			secondStatus: new sap.m.ObjectStatus("ose2", {
 		    	text: "\n  \n  \t",
-		    	state: sap.ui.core.ValueState.Success,}),
+		    	state: sap.ui.core.ValueState.Success})
 		});
 		var liEmptyStatuses = new sap.m.ObjectListItem({
 			title: "Empty statuses",
 			firstStatus: new sap.m.ObjectStatus("ose3", {
 		    	text: "\n  \n  \t",
-		    	state: sap.ui.core.ValueState.Success,}),
+		    	state: sap.ui.core.ValueState.Success}),
 			secondStatus: new sap.m.ObjectStatus("ose4", {
 		    	text: "\n  \n  \t",
-		    	state: sap.ui.core.ValueState.Success,}),
+		    	state: sap.ui.core.ValueState.Success})
 		});
 		
 		var liEmptyAttr = new sap.m.ObjectListItem({
 			title: "Empty attributes",
-			attributes: [new sap.m.ObjectAttribute({text: "\n  \n  \t",}),
-						new sap.m.ObjectAttribute({text: "\n  \n  \t",})],
+			attributes: [new sap.m.ObjectAttribute({text: "\n  \n  \t"}),
+						new sap.m.ObjectAttribute({text: "\n  \n  \t"})]
 		});
 		var liEmptyAll = new sap.m.ObjectListItem({
 			title: "Empty attributes and statuses",
-			attributes: [new sap.m.ObjectAttribute({text: "\n  \n  \t",}),
-						new sap.m.ObjectAttribute({text: "\n  \n  \t",})],
+			attributes: [new sap.m.ObjectAttribute({text: "\n  \n  \t"}),
+						new sap.m.ObjectAttribute({text: "\n  \n  \t"})],
 			firstStatus: new sap.m.ObjectStatus("ose5", {
 		    	text: "\n  \n  \t",
-		    	state: sap.ui.core.ValueState.Success,}),
+		    	state: sap.ui.core.ValueState.Success}),
 			secondStatus: new sap.m.ObjectStatus("ose6", {
 		    	text: "\n  \n  \t",
-		    	state: sap.ui.core.ValueState.Success,}),
+		    	state: sap.ui.core.ValueState.Success})
 		});
 		
 		test("TestEmptyOLI", function (){
@@ -302,11 +330,11 @@
 			intro : "On behalf of John Smith",
 			title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 			number : "3.624",
-			numberUnit : "EUR",
+			numberUnit : "EUR"
 		});
 		
 		var titleOLI = new sap.m.ObjectListItem("titleOLI", {
-			title : "Test that title text control is destroyed",
+			title : "Test that title text control is destroyed"
 		});
 
 		iconOLI.placeAt("destroy-list");
