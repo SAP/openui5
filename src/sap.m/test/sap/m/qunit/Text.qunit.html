@@ -121,6 +121,8 @@
 			oDom = jQuery.sap.domById('Text1');
 			equals(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
 			equals(jQuery(oDom).css("direction"),"rtl","Text Direction is RTL");
+			equals(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
+
 			// RTL left
 			t1.setTextAlign(sap.ui.core.TextAlign.Left);
 			oCore.applyChanges();
