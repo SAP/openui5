@@ -240,9 +240,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 	}});
 
-	/*!
-	 * (c) Copyright 2009-2014 SAP SE. All rights reserved
-	 */
+
 	/**
 	 * @description This file defines behavior for the control
 	 * @private
