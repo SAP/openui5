@@ -1,6 +1,8 @@
 jQuery.sap.declare("sap.ui.demo.mdskeleton.Component");
 jQuery.sap.require("sap.ui.demo.mdskeleton.util.formatter");
 jQuery.sap.require("sap.ui.demo.mdskeleton.util.MyRouter");
+jQuery.sap.require("sap.ui.demo.mdskeleton.model.Device");
+jQuery.sap.require("sap.ui.demo.mdskeleton.model.MockableModel");
 
 sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 	metadata : {
@@ -13,9 +15,17 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 
 		config : {
 			resourceBundle : "i18n/messageBundle.properties",
+			// always use absolute paths relative to our own component
+			// (relative paths will fail if running in the Fiori Launchpad)
+			rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdskeleton"),
 			serviceConfig : {
-				name : "Northwind",
-				serviceUrl : "../../../../../proxy/http/services.odata.org/V2/(S(sapuidemotdg))/OData/OData.svc/"
+				northwind : {
+					// If responderOn=true is provided as an url parameter, the model will serve the data in the model/data/<dataFolderName> data.
+					// See model/MockableModel.js for the implementation.
+					dataFolderName: "Northwind",
+					// If responderOn is not provided in the URL the model will hit the actual OData server.
+					serviceUrl: "../../../../../proxy/http/services.odata.org/V2/(S(sapuidemomd))/OData/OData.svc/"
+				}
 			}
 		},
 
@@ -66,59 +76,17 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 
 		var mConfig = this.getMetadata().getConfig();
 
-		// always use absolute paths relative to our own component
-		// (relative paths will fail if running in the Fiori Launchpad)
-		var sRootPath = jQuery.sap.getModulePath("sap.ui.demo.mdskeleton");
+		// set the models
+		this.setModel(new sap.ui.model.resource.ResourceModel({
+			bundleUrl : [mConfig.rootPath, mConfig.resourceBundle].join("/")
+		}), "i18n");
 
-		// set i18n model
-		var i18nModel = new sap.ui.model.resource.ResourceModel({
-			bundleUrl : [sRootPath, mConfig.resourceBundle].join("/")
-		});
-		this.setModel(i18nModel, "i18n");
+		this.setModel(new sap.ui.demo.mdskeleton.model.MockableModel(mConfig.serviceConfig.northwind));
 
-		var sServiceUrl = mConfig.serviceConfig.serviceUrl;
+		this.setModel(new sap.ui.demo.mdskeleton.model.Device(), "device");
 
-		var bIsMocked = jQuery.sap.getUriParameters().get("responderOn") === "true";
-		// start the mock server for the domain model
-		if (bIsMocked) {
-			this._startMockServer(sServiceUrl);
-		}
-
-		// Create and set domain model to the component
-		this.setModel(new sap.ui.model.odata.ODataModel(sServiceUrl, true));
-
-		// set device model
-		var oDeviceModel = new sap.ui.model.json.JSONModel({
-			isTouch : sap.ui.Device.support.touch,
-			isNoTouch : !sap.ui.Device.support.touch,
-			isPhone : sap.ui.Device.system.phone,
-			isNoPhone : !sap.ui.Device.system.phone
-		});
-		oDeviceModel.setDefaultBindingMode("OneWay");
-		this.setModel(oDeviceModel, "device");
-
+		// Creates views based on the url/hash
 		this.getRouter().initialize();
-
-	},
-
-	_startMockServer : function (sServiceUrl) {
-		jQuery.sap.require("sap.ui.core.util.MockServer");
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri: sServiceUrl
-		});
-
-		var iDelay = +(jQuery.sap.getUriParameters().get("responderDelay") || 0);
-		sap.ui.core.util.MockServer.config({
-			autoRespondAfter : iDelay
-		});
-
-		oMockServer.simulate("model/data/Northwind/metadata.xml", "model/data/Northwind");
-		oMockServer.start();
-
-
-		sap.m.MessageToast.show("Running in demo mode with mock data.", {
-			duration: 2000
-		});
 	}
 
 });
