@@ -4,21 +4,21 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:repeat list="{facets>}" var="facet">
-			<template:if test="{facet>Facets}"><!-- TODO isArray?! -->
-				<template:then><!-- "RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet" -->
-					<form:SimpleForm>
-						<form:title>
-							<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						</form:title>
-						<template:with path="facet>Facets" var="facets">
-							<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
-						</template:with>
-					</form:SimpleForm>
-				</template:then>
-				<template:else><!-- "RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet" -->
-					<!-- TODO check multiplicity, choose table vs. form -->
-					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.FormFacet" type="XML"/>
-				</template:else>
-			</template:if>
+		<template:if test="{facet>Facets}"><!-- TODO isArray?! -->
+			<template:then><!-- "RecordType" : "com.sap.vocabularies.UI.v1.CollectionFacet" -->
+				<form:SimpleForm>
+					<form:title>
+						<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					</form:title>
+					<template:with path="facet>Facets" var="facets">
+						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
+					</template:with>
+				</form:SimpleForm>
+			</template:then>
+			<template:else><!-- "RecordType" : "com.sap.vocabularies.UI.v1.ReferenceFacet" -->
+				<!-- TODO check multiplicity, choose table vs. form -->
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.FormFacet" type="XML"/>
+			</template:else>
+		</template:if>
 	</template:repeat>
 </core:FragmentDefinition>

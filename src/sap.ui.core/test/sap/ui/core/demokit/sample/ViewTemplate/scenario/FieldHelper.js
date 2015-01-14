@@ -71,6 +71,13 @@ sap.ui.define(['jquery.sap.global'],
 			isSemanticsTel: function (vRawValue) {
 				return isSemantics(this, vRawValue, "tel");
 			},
+			getAnnotation: function (vRawValue, sAnnotationName) {
+				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
+					return getPropertyAnnotation(vRawValue.Path,
+						this.currentBinding(), sAnnotationName);
+				}
+				throw new Error("Path expected");
+			},
 			/*
 			 * @param {sap.ui.model.Context} oContext
 			 */
