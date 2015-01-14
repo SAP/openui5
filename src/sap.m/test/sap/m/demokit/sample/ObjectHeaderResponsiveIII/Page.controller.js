@@ -14,6 +14,7 @@ sap.ui.controller("sap.m.sample.ObjectHeaderResponsiveIII.Page", {
 	_getPopover : function () {
 		if (!this._oPopover) {
 			this._oPopover = sap.ui.xmlfragment("sap.m.sample.ObjectHeaderResponsiveIII.Popover", this);
+			this.getView().addDependent(this._oPopover);
 		}
 		return this._oPopover;
 	},

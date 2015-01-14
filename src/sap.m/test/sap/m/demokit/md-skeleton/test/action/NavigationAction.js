@@ -3,16 +3,16 @@ jQuery.sap.require("sap.ui.test.Opa5");
 var Opa5 = sap.ui.test.Opa5;
 
 sap.ui.demo.mdskeleton.test.action.NavigationAction = Opa5.extend("sap.ui.demo.mdskeleton.test.action.NavigationAction", {
-	iPressOnTheMilkProduct : function (sCategoryName) {
-		var oMilkItem = null;
+	iPressOnTheChaiProduct : function (sCategoryName) {
+		var oChaiItem = null;
 
 		return this.waitFor({
 			id : "list",
 			viewName : "Master",
 			check : function (oList) {
 				return oList.getItems().some(function (oItem) {
-					if(oItem.getTitle() === "Milk") {
-						oMilkItem = oItem;
+					if(oItem.getTitle() === "Chai") {
+						oChaiItem = oItem;
 						return true;
 					}
 
@@ -20,17 +20,17 @@ sap.ui.demo.mdskeleton.test.action.NavigationAction = Opa5.extend("sap.ui.demo.m
 				});
 			},
 			success : function (oList) {
-				oMilkItem.$().trigger("tap");
-				ok(oList, "Pressed the milk item");
+				oChaiItem.$().trigger("tap");
+				ok(oList, "Pressed the Chai item");
 			},
-			errorMessage : "the list did not contain the Milk Product"
+			errorMessage : "the list did not contain the Chai Product"
 		});
 	},
 
 	iChangeTheHashToTheThirdProduct : function () {
 		return this.waitFor({
 			success : function () {
-				sap.ui.test.Opa5.getWindow().location.hash = "#/Products(2)";
+				sap.ui.test.Opa5.getWindow().location.hash = "#/Products(3)";
 			}
 		});
 	},

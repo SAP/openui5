@@ -1,40 +1,18 @@
 [
 {
-"__metadata":{
-"uri":"http://services.odata.org/V2/OData/OData.svc/Categories(0)",
-"type":"ODataDemo.Category"
-},
-"ID":0,
-"Name":"Food",
-"Products":{
-"__deferred":{
-"uri":"http://services.odata.org/V2/OData/OData.svc/Categories(0)/Products"
+"__metadata": {
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)", "type": "NorthwindModel.Category"
+}, "CategoryID": 1, "CategoryName": "Beverages", "Description": "Soft drinks, coffees, teas, beers, and ales", "Products": {
+"__deferred": {
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)/Products"
 }
 }
-},
-{
-"__metadata":{
-"uri":"http://services.odata.org/V2/OData/OData.svc/Categories(1)",
-"type":"ODataDemo.Category"
-},
-"ID":1,
-"Name":"Beverages",
-"Products":{
-"__deferred":{
-"uri":"http://services.odata.org/V2/OData/OData.svc/Categories(1)/Products"
-}
-}
-},
-{
-"__metadata":{
-"uri":"http://services.odata.org/V2/OData/OData.svc/Categories(2)",
-"type":"ODataDemo.Category"
-},
-"ID":2,
-"Name":"Electronics",
-"Products":{
-"__deferred":{
-"uri":"http://services.odata.org/V2/OData/OData.svc/Categories(2)/Products"
+}, {
+"__metadata": {
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)", "type": "NorthwindModel.Category"
+}, "CategoryID": 2, "CategoryName": "Condiments", "Description": "Sweet and savory sauces, relishes, spreads, and seasonings", "Products": {
+"__deferred": {
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)/Products"
 }
 }
 }

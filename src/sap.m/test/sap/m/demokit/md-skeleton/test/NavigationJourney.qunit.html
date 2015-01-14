@@ -47,10 +47,10 @@
 
 		opaTest("Should navigate on press", function (Given, When, Then) {
 			// Actions
-			When.iPressOnTheMilkProduct();
+			When.iPressOnTheChaiProduct();
 
 			// Assertions
-			Then.iShouldBeOnTheMilkDetailPage();
+			Then.iShouldBeOnTheChaiDetailPage();
 		});
 
 		opaTest("Should react on hashchange", function (Given, When, Then) {
@@ -58,7 +58,18 @@
 			When.iChangeTheHashToTheThirdProduct();
 
 			// Assertions
-			Then.iShouldBeOnTheVintSodaDetailPage();
+			Then.iShouldBeOnTheAniseedSyrupDetailPage();
+		});
+		
+		opaTest("Detail Page Shows Order Details", function (Given, When, Then) {
+			// Actions
+			When.iPressOnTheChaiProduct();
+
+			// Assertions
+			Then.iShouldSeeTheOrderDetailsList().
+				and.theOrderDetailsListShouldHave3Entries().
+				and.theFirstOrderDetailHasId10285();
+			
 		});
 	</script>
 
