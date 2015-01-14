@@ -94,6 +94,13 @@ h2 {
 			if (this.getChecked()) {
 				oNotiBar3.setVisibleStatus("Default");
 			} else {
+				// after hiding the notification bar, destroy the last message
+				var oMessNoti = oNotiBar3.getMessageNotifier();
+				var oLastMessage = oMessNoti.getMessages().pop();
+				if (oLastMessage) {
+					oLastMessage.destroy(); // also removes it from the notifier
+				}
+
 				oNotiBar3.setVisibleStatus("None");
 			}
 		}
@@ -178,7 +185,7 @@ h2 {
 	var oNotifier = new sap.ui.ux3.Notifier({
 		title : "The first Notifier"
 	});
-	for ( var i = 0; i < 5; i++) {
+	for (var i = 0; i < 5; i++) {
 		var now = (new Date()).toUTCString();
 		var oMessage = new sap.ui.core.Message({
 			text : sText,
@@ -196,7 +203,7 @@ h2 {
 		title : "The second Notifier",
 		icon : "images/feed_white_24.png"
 	});
-	for ( var i = 0; i < 5; i++) {
+	for (var i = 0; i < 5; i++) {
 		var now = (new Date()).toUTCString();
 		var oMessage = new sap.ui.core.Message({
 			text : sText,
@@ -249,7 +256,7 @@ h2 {
 	var oNotifier = new sap.ui.ux3.Notifier({
 		title : "The first Notifier"
 	});
-	for ( var i = 0; i < 5; i++) {
+	for (var i = 0; i < 5; i++) {
 		var now = (new Date()).toUTCString();
 		var oMessage = new sap.ui.core.Message({
 			text : i + ". " + sText,
@@ -271,7 +278,7 @@ h2 {
 		title : "The second Notifier",
 		icon : "images/feed_white_24.png"
 	});
-	for ( var i = 0; i < 5; i++) {
+	for (var i = 0; i < 5; i++) {
 		var now = (new Date()).toUTCString();
 		var oMessage = new sap.ui.core.Message({
 			text : i + ". " + sText,
@@ -287,12 +294,12 @@ h2 {
 	oNotifier2.attachMessageSelected(clickListener);
 
 	/*
-	 * Creating the message notifier with 10 messages
+	 * Creating the message notifier with some messages
 	 */
 	var oMessageNotifier = new sap.ui.ux3.Notifier({
 		title : "This is the MessageNotifier"
 	});
-	for ( var i = 0; i < 6; i++) {
+	for (var i = 0; i < 6; i++) {
 		var now = (new Date()).toUTCString();
 		var oMessage = new sap.ui.core.Message({
 			text : i + ". " + sText,
@@ -301,10 +308,10 @@ h2 {
 
 		switch (i) {
 		case 0:
-			oMessage.setLevel(sap.ui.core.MessageType.Success);
+			oMessage.setLevel(sap.ui.core.MessageType.Information);
 			break;
 		case 1:
-			oMessage.setLevel(sap.ui.core.MessageType.Information);
+			oMessage.setLevel(sap.ui.core.MessageType.Success);
 			break;
 		case 2:
 			oMessage.setLevel(sap.ui.core.MessageType.Warning);
@@ -516,6 +523,10 @@ h2 {
 		corresponding default icon. One Notifier uses another icon. Resizing
 		of the NotificationBar is enabled. There is a listener that is
 		attached to any clicks on a message.</p>
+	<p>The sample code removes one message (the last one) each time the
+		bar is hidden. When it is displayed again, the message counter is
+		adapted to the current number of messages and its color is chosen
+		according to the highest priority of all messages.</p>
 	<div id="sample3check"></div>
 	<div code-sample="sample3" script="samplescript3"
 		style="left: 30px; right: 50px;"></div>
