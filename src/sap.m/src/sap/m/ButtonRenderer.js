@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		var bEnabled = oButton.getEnabled();
 		var sWidth = oButton.getWidth();
 		var sTooltip = oButton.getTooltip_AsString();
+		var sTextDir = oButton.getTextDirection();
 
 		// get icon from icon pool
 		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
@@ -110,7 +111,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMFocusable");
 		}
 
-		//get render attributes of depended buttons (e.g. ToggleButton) 
+		//get render attributes of depended buttons (e.g. ToggleButton)
 		if (this.renderButtonAttributes) {
 			this.renderButtonAttributes(oRm, oButton);
 		}
@@ -162,6 +163,10 @@ sap.ui.define(['jquery.sap.global'],
 		if (oButton.getText()) {
 			oRm.write("<span");
 			oRm.addClass("sapMBtnContent");
+			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
+			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+			}
 			// Check and add padding between icon and text
 			if (oButton.getIcon()) {
 				if (oButton.getIconFirst()) {
