@@ -288,11 +288,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				fMax = this.getMax(),
 				fStep = this.getStep(),
 				fValue = this.getValue(),
-				sIdSelector,
-				fModStepVal,
-				sPerValue,
-				oDomRef,
-				oHandleDomRef;
+				fModStepVal;
 
 			// validate the new value before arithmetic calculations
 			if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
@@ -319,36 +315,47 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			// update the value and suppress re-rendering
 			this.setProperty("value", fNewValue, true);
 
-			// whether the value has changed and the control is in the DOM
-			if ((fValue !== this.getValue()) && (oDomRef = this.getDomRef())) {
-
-				sIdSelector = "#" + this.getId();
-				sPerValue = this._getPercentOfValue(fNewValue) + "%";
-				oHandleDomRef = oDomRef.querySelector(sIdSelector + "-handle");
-
-				if (!!this.getName()) {
-
-					// update the input
-					oDomRef.querySelector(sIdSelector + "-input").setAttribute("value", fNewValue);
-				}
-
-				if (this.getProgress()) {
-
-					// update the progress indicator
-					oDomRef.querySelector(sIdSelector + "-progress").style.width = sPerValue;
-				}
-
-				// update the position of the handle
-				oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
-
-				// update the tooltip
-				oHandleDomRef.title = fNewValue;
-
-				// update the WAI-ARIA attribute values
-				oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
+			// update the value in DOM only when it has changed
+			if (fValue !== this.getValue()) {
+				this._setDomValue(fNewValue);
 			}
 
 			return this;
+		};
+
+		Slider.prototype._setDomValue = function(fNewValue) {
+			var sIdSelector,
+				sPerValue,
+				oHandleDomRef,
+				oDomRef = this.getDomRef();
+
+			// the control is in the DOM
+			if (!oDomRef) {
+				return;
+			}
+
+			sIdSelector = "#" + this.getId();
+			sPerValue = this._getPercentOfValue(fNewValue) + "%";
+			oHandleDomRef = oDomRef.querySelector(sIdSelector + "-handle");
+
+			if (!!this.getName()) {
+				oDomRef.querySelector(sIdSelector + "-input").setAttribute("value", fNewValue);
+			}
+
+			if (this.getProgress()) {
+
+				// update the progress indicator
+				oDomRef.querySelector(sIdSelector + "-progress").style.width = sPerValue;
+			}
+
+			// update the position of the handle
+			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
+
+			// update the tooltip
+			oHandleDomRef.title = fNewValue;
+
+			// update the ARIA attribute value
+			oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
 		};
 
 		/**
