@@ -241,6 +241,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._groupContent = null;
 		this._filterContent = null;
 
+		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
+		// but only if it added it there itself. As we did that, we have to remove it also on our own
+		if ( this._bAppendedToUIArea ) {
+			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic.removeContent(this, true);
+		}
+
 		// controls that are internally managed and may or may not be assigned to an
 		// aggregation (have to be destroyed manually to be sure)
 
@@ -1085,7 +1093,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 		this._iContentPage = -1;
-		
+
 		this._sortOrderList = new sap.m.List(this.getId() + "-sortorderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
@@ -1129,7 +1137,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 		this._iContentPage = -1;
-		
+
 		this._groupOrderList = new sap.m.List(this.getId() + "-grouporderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
@@ -1172,7 +1180,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 		this._iContentPage = -1;
-		
+
 		this._presetFilterList = new sap.m.List(
 				this.getId() + "-predefinedfilterlist",
 				{
