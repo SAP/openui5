@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 			/**
 			 * 
-			 * Event is fired when the user closes the dialog window. Event parameters provide information about last position and last size.
+			 * Event is fired when the dialog has been closed (after closing-animation etc.). Event parameters provide information about last position and last size.
 			 */
 			closed : {
 				parameters : {
