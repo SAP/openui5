@@ -1209,6 +1209,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var bSort = !!this.getSortItems().length, bGroup = !!this.getGroupItems().length, bPredefinedFilter = !!this
 				.getPresetFilterItems().length, bFilter = !!this.getFilterItems().length, that = this, oListItem, aSortItems = [], aGroupItems = [], aPresetFilterItems = [], aFilterItems = [];
 
+
 		// sort
 		if (bSort) {
 			this._initSortContent();
@@ -1292,6 +1293,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 												.getId() !== that.getId()
 												+ '-page2') {
 											that._switchToPage(3, oItem);
+											that._prevSelectedFilterItem = this;
 											jQuery.sap.delayedCall(0,
 													that._navContainer, "to",
 													[ that.getId() + '-page2',
@@ -1392,11 +1394,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	sap.m.ViewSettingsDialog.prototype._pressBackButton = function() {
+		var that = this;
+
 		if (this._iContentPage === 3) {
 			this._updateFilterCounters();
 			jQuery.sap.delayedCall(0, this._navContainer, "back");
 			this._switchToPage(2);
 			this._segmentedButton.setSelectedButton(this._filterButton);
+			this._navContainer.attachEventOnce("afterNavigate", function(){
+				if (that._prevSelectedFilterItem) {
+					that._prevSelectedFilterItem.focus();
+				}
+			});
 		}
 	};
 
