@@ -6,7 +6,7 @@
 				"Types.controller.js",
 				"Types.view.xml",
 				"data/annotations.xml",
-				"data/EdmTypes.json",
+				"data/EdmTypesCollection.json",
 				"data/metadata.xml"
 			]
 		}
