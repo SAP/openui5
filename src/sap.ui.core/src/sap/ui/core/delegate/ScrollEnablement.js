@@ -731,7 +731,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 	
 				// Let container scroll into the configured directions
-				$Container.css("z-index", "0"); // performance hack for webkit
 				if (sap.ui.Device.os.ios) {
 					$Container
 						.css("overflow-x", this._bHorizontal ? "scroll" : "hidden")
