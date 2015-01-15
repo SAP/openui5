@@ -142,7 +142,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
 				oFormatOptions = getFormatter(this).oFormatOptions;
 				return fValue.toExponential()
-					.replace("e", " E")
+					.replace("e", "\u00a0E") // non-breaking space
 					.replace(".", oFormatOptions.decimalSeparator)
 					.replace("+", oFormatOptions.plusSign)
 					.replace("-", oFormatOptions.minusSign);

@@ -92,13 +92,13 @@
 		strictEqual(oType.formatValue("0", "string"), "0", "0");
 		strictEqual(oType.formatValue("9.99999999999999e+14", "string"), "999,999,999,999,999",
 			"9.99999999999999e+14");
-		strictEqual(oType.formatValue("1e+15", "string"), "1 E+15", "1e+15");
+		strictEqual(oType.formatValue("1e+15", "string"), "1\u00a0E+15", "1e+15");
 		strictEqual(oType.formatValue("-9.99999999999999e+14", "string"), "-999,999,999,999,999",
 			"-9.99999999999999e+14");
-		strictEqual(oType.formatValue("-1e+15", "string"), "-1 E+15", "-1e+15");
+		strictEqual(oType.formatValue("-1e+15", "string"), "-1\u00a0E+15", "-1e+15");
 		strictEqual(oType.formatValue("1e-4", "string"), "0.0001", "1e-4");
-		strictEqual(oType.formatValue("9.99999999999999e-5", "string"), "9.99999999999999 E-5",
-			"9.99999999999999e-5");
+		strictEqual(oType.formatValue("9.99999999999999e-5", "string"),
+			"9.99999999999999\u00a0E-5", "9.99999999999999e-5");
 		try {
 			oType.formatValue(12.34, "boolean");
 			ok(false);
@@ -130,7 +130,8 @@
 		oType = new sap.ui.model.odata.type.Double();
 
 		strictEqual(oType.formatValue("-1.234e+3", "string"), "<1\u00a0234", "check modification");
-		strictEqual(oType.formatValue("-1.234e+15", "string"), "<1,234 E>15", "check replacement");
+		strictEqual(oType.formatValue("-1.234e+15", "string"), "<1,234\u00a0E>15",
+			"check replacement");
 	}));
 
 	//*********************************************************************************************
@@ -145,6 +146,8 @@
 		strictEqual(oType.parseValue("12.345E-3", "string"), "1.2345e-2", "type string w/ exp");
 		strictEqual(oType.parseValue("12.345 E-3", "string"), "1.2345e-2",
 			"type string w/ exp and space");
+		strictEqual(oType.parseValue("12.345\u00a0E-3", "string"), "1.2345e-2",
+			"type string w/ exp and non-breaking space");
 		strictEqual(oType.parseValue(1234, "int"), "1.234e+3", "type int");
 		strictEqual(oType.parseValue(1234.567, "float"), "1.234567e+3", "type float");
 
