@@ -311,6 +311,20 @@
 		equal(oDate.getFullYear(), 1, "Fullyear is still 1");
 	});
 	
+	test("parse and format quarters", function(){
+		var oDate = new Date("Wed Jul 4 2001"),
+			oQuarter1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qq"}),
+			oQuarter2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqq"}),
+			oQuarter3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqqq"}),
+			oQuarterCombined = sap.ui.core.format.DateFormat.getDateInstance({pattern: "EEE, MMM d yyyy, QQQ"});
+		
+		equal(oQuarter1.format(oDate), "03", "03");
+		equal(oQuarter2.format(oDate), "Q3", "Q3");
+		equal(oQuarter3.format(oDate), "3rd quarter", "3rd quarter");
+		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
+		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
+	});
+	
 	test("origin info", function() {
 		var oOriginDate = sap.ui.core.format.DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
