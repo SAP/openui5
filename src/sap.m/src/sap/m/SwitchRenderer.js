@@ -96,13 +96,19 @@ sap.ui.define(['jquery.sap.global'],
 
 		SwitchRenderer.renderText = function(oRm, oSwitch) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				bDefaultType = oSwitch.getType() === "Default";
+				bDefaultType = oSwitch.getType() === "Default",
+				bState = oSwitch.getState();
 
 			// on
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Text");
 			oRm.addClass(CSS_CLASS + "TextOn");
 			oRm.writeAttribute("id", oSwitch.getId() + "-on");
+
+			if (!bState) {
+				oRm.writeAttribute("aria-hidden", "true");
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -120,6 +126,11 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass(CSS_CLASS + "Text");
 			oRm.addClass(CSS_CLASS + "TextOff");
 			oRm.writeAttribute("id", oSwitch.getId() + "-off");
+
+			if (bState) {
+				oRm.writeAttribute("aria-hidden", "true");
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 

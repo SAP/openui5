@@ -136,8 +136,12 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				oDomRef = this.getDomRef();
 
 			if (!oDomRef) {
-				return this;
+				return;
 			}
+
+			var sId = this.getId(),
+				oOnDomRef = oDomRef.querySelector("#" + sId + "-on"),
+				oOffDomRef = oDomRef.querySelector("#" + sId + "-off");
 
 			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
 
@@ -149,9 +153,13 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			if (bState) {
 				this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
 				oDomRef.setAttribute("aria-checked", "true");
+				oOnDomRef.removeAttribute("aria-hidden");
+				oOffDomRef.setAttribute("aria-hidden", "true");
 			} else {
 				this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
 				oDomRef.setAttribute("aria-checked", "false");
+				oOnDomRef.setAttribute("aria-hidden", "true");
+				oOffDomRef.removeAttribute("aria-hidden");
 			}
 
 			this._$Switch.addClass(CSS_CLASS + "Trans");
