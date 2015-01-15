@@ -133,6 +133,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Get stand alone quarter names in width "narrow", "abbreviated" or "wide"
+		 *
+		 * @param {string} sWidth the required width for the quarter names
+		 * @returns {array} array of quarters
+		 * @public
+		 */
+		getQuartersStandAlone : function(sWidth) {
+			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			return this._get("quarters-standAlone-" + sWidth);
+		},
+
+		/**
 		 * Get day periods in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day period names
@@ -468,6 +480,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"quarters-format-abbreviated":["Q1","Q2","Q3","Q4"],
 			"quarters-format-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 			"quarters-standAlone-narrow":["1","2","3","4"],
+			"quarters-standAlone-abbreviated":["Q1","Q2","Q3","Q4"],
+			"quarters-standAlone-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
 			"symbols-latn-plusSign":"+",
