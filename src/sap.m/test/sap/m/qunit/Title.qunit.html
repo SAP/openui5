@@ -125,10 +125,21 @@
 		});
 		
 		test("Semantic level correct", function() {
+			var sExpectedTag;
+			
 			for (var level in sap.ui.core.TitleLevel) {
 				this.title.setLevel(level);
 				sap.ui.getCore().applyChanges();
-				strictEqual(this.title.getDomRef().tagName.toUpperCase(), level === sap.ui.core.TitleLevel.Auto ? "HEADER" : level.toUpperCase(), "Title has correct level " + level);
+				
+				if (level === sap.ui.core.TitleLevel.Auto) {
+					sExpectedTag = "DIV";
+					strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
+				} else {
+					sExpectedTag = level.toUpperCase();
+					ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
+				}
+				
+				strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
 			}
 		});
 

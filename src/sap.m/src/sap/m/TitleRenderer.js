@@ -21,7 +21,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	TitleRenderer.render = function(oRm, oTitle){
 		var sLevel = oTitle.getLevel() || sap.ui.core.TitleLevel.Auto,
-			sTag = sLevel == sap.ui.core.TitleLevel.Auto ? "header" : sLevel;
+			bAutoLevel = sLevel == sap.ui.core.TitleLevel.Auto,
+			sTag = bAutoLevel ? "div" : sLevel;
 		
 		oRm.write("<", sTag);
 		oRm.writeControlData(oTitle);
@@ -51,8 +52,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 		
+		if (bAutoLevel) {
+			oRm.writeAttribute("role", "heading");
+		}
+		
 		oRm.writeClasses();
 		oRm.writeStyles();
+
 		oRm.write("><span>");
 		oRm.writeEscaped(oTitle.getText());
 		oRm.write("</span></", sTag, ">");
