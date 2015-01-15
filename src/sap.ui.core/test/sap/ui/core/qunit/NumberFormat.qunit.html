@@ -383,8 +383,12 @@
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
 		equal(oFormat.format(123456.789, "EUR"), "EUR123,456.79", "123456.789 EUR");
 		equal(oFormat.format([123456.789, "EUR"]), "EUR123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "EUR-123,456.79", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "EUR-123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "EUR-123,456.79", "-123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "EUR-123,456.79", "-123456.789 EUR");
+		equal(oFormat.format(123456.789, "JPY"), "JPY123,457", "123456.789 JPY");
+		equal(oFormat.format([123456.789, "JPY"]), "JPY123,457", "123456.789 JPY");
+		equal(oFormat.format(-123456.789, "JPY"), "JPY-123,457", "-123456.789 JPY");
+		equal(oFormat.format([-123456.789, "JPY"]), "JPY-123,457", "-123456.789 JPY");
 	});
 
 	test("Currency format with sMeasure and showMeasure as symbol", function(){

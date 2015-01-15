@@ -380,19 +380,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	NumberFormat.getLocaleFormatOptions = function(oLocaleData, iType) {
 		var oLocaleFormatOptions = {},
 			sNumberPattern;
-		
+
 		if (iType == NumberFormat.CURRENCY) {
 			sNumberPattern = oLocaleData.getCurrencyPattern();
 			oLocaleFormatOptions = this.parseNumberPattern(sNumberPattern);
+			// reset the iMin/MaxFractionDigits because the extracted info from the pattern doesn't contain the currency specific info.
+			oLocaleFormatOptions.minFractionDigits = undefined;
+			oLocaleFormatOptions.maxFractionDigits = undefined;
 		}
-		
+
 		oLocaleFormatOptions.plusSign = oLocaleData.getNumberSymbol("plusSign");
 		oLocaleFormatOptions.minusSign = oLocaleData.getNumberSymbol("minusSign");
 		oLocaleFormatOptions.decimalSeparator = oLocaleData.getNumberSymbol("decimal");
 		oLocaleFormatOptions.groupingSeparator = oLocaleData.getNumberSymbol("group");
 		oLocaleFormatOptions.percentSign = oLocaleData.getNumberSymbol("percentSign");
 		oLocaleFormatOptions.pattern = sNumberPattern;
-		
+
 		return oLocaleFormatOptions;
 	};
 	
