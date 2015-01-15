@@ -187,8 +187,8 @@
 					Scale="3" sap:unit="CurrencyCode" sap:label="Tax Amt."
 					sap:creatable="false" sap:updatable="false" />
 				<Property Name="DeliveryDate" Type="Edm.DateTime"
-					Precision="7" sap:label="Time Stamp" sap:sortable="false"
-					sap:filterable="false" />
+					Precision="7" sap:display-format="Date" sap:label="Time Stamp"
+					sap:sortable="false" sap:filterable="false" />
 				<Property Name="Quantity" Type="Edm.Decimal" Precision="13"
 					Scale="3" sap:unit="QuantityUnit" sap:label="Quantity"
 					sap:sortable="false" sap:filterable="false" />

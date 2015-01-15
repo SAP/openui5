@@ -593,6 +593,27 @@
 							<PropertyValue Property="Label" String="Address"/>
 							<PropertyValue Property="Target" AnnotationPath="@com.sap.vocabularies.Communication.v1.Address"/>
 						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">
+							<PropertyValue Property="Label" String="Link to"/>
+							<PropertyValue Property="Value" String="Google Maps"/>
+							<PropertyValue Property="Url">
+								<UrlRef>
+									<Apply Function="odata.fillUriTemplate">
+										<String>https://www.google.de/maps/place/{street},{city}</String>
+										<LabeledElement Name="street">
+											<Apply Function="odata.uriEncode">
+												<Path>Address.Street</Path>
+											</Apply>
+										</LabeledElement>
+										<LabeledElement Name="city">
+											<Apply Function="odata.uriEncode">
+												<Path>Address.City</Path>
+											</Apply>
+										</LabeledElement>
+									</Apply>
+								</UrlRef>
+							</PropertyValue>
+						</Record>
 					</Collection>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
