@@ -60,7 +60,7 @@
 				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 					<t:toolbar>
 						<Toolbar design="Transparent">
-							<Label text="Title Bar Here" class="sapMH4Style" />
+							<Title text="Title Bar Here"/>
 							<ToolbarSeparator />
 							<var:VariantManagement>
 							  <var:items>
