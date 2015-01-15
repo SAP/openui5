@@ -15,9 +15,11 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ColumnsPanel can be used for personalization of the table to define column specific settings
 	 * @extends sap.m.P13nPanel
+	 * @author SAP SE 
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @alias sap.m.P13nColumnsPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -28,6 +30,8 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * list of columns that has been changed
+				 * 
+				 * @since 1.26.0
 				 */
 				columnsItems: {
 					type: "sap.m.P13nColumnsItem",
@@ -40,6 +44,8 @@ sap.ui.define([
 
 				/**
 				 * event raised when a columnsItem was added
+				 * 
+				 * @since 1.26.0
 				 */
 				addColumnsItem: {
 					parameters: {
@@ -53,7 +59,9 @@ sap.ui.define([
 				},
 				/**
 				 * event raised when setData on model should be called; this event serves the purpose of minimizing such calls since these can be very
-				 * expensive
+				 * performance expensive
+				 * 
+				 * @since 1.28.0
 				 */
 				setData: {}
 			}
@@ -1333,9 +1341,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and returns a payload that can be used at the consumer of this panel
+	 * Delivers a payload for columnsPanel that can be used at consumer side
 	 * 
 	 * @public
+	 * @since 1.28.0
 	 * @returns {object} oPayload, which contains useful information
 	 */
 	P13nColumnsPanel.prototype.getOkPayload = function() {
@@ -1393,6 +1402,7 @@ sap.ui.define([
 	 * Add item to items aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 * @param {sap.m.P13nItem} oItem is the new item that shall be added
 	 */
@@ -1407,6 +1417,7 @@ sap.ui.define([
 	 * Add item to items aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 * @param {int} iIndex is the index where the new item shall be inserted
 	 * @param {sap.m.P13nItem} oItem is the new item that shall be added
@@ -1422,6 +1433,7 @@ sap.ui.define([
 	 * Remove item from items aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nItem} The removed item or null.
 	 * @param {sap.m.P13nItem} oItem is the item that shall be removed
 	 */
@@ -1453,6 +1465,7 @@ sap.ui.define([
 	 * Remove all item from items aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nItem[]} An array of the removed items (might be empty).
 	 */
 	P13nColumnsPanel.prototype.removeAllItems = function() {
@@ -1467,6 +1480,7 @@ sap.ui.define([
 	 * Destroy all items from items aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 */
 	P13nColumnsPanel.prototype.destroyItems = function() {
@@ -1482,6 +1496,7 @@ sap.ui.define([
 	 * Add ColumnsItem to columnsItems aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the new ColumnsItem that shall be added
 	 */
@@ -1496,6 +1511,7 @@ sap.ui.define([
 	 * Insert ColumnsItem to columnsItems aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 * @param {int} iIndex is the index where the columnsItem item shall be inserted
 	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the new columnsItem that shall be inserted
@@ -1511,6 +1527,7 @@ sap.ui.define([
 	 * Remove ColumnsItem from columnsItems aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsItem} The removed item or null.
 	 * @param {sap.m.P13nColumnsItem} oColumnsItem is the ColumnsItem that shall be removed
 	 */
@@ -1527,6 +1544,7 @@ sap.ui.define([
 	 * Remove all ColumnsItems from columnsItems aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsItem[]} An array of the removed items (might be empty).
 	 */
 	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
@@ -1541,6 +1559,7 @@ sap.ui.define([
 	 * Destroy all instances from columnsItems aggregation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 */
 	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
