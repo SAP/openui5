@@ -260,7 +260,7 @@
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.0-SNAPSHOT</version>
+						<version>0.1.0</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
