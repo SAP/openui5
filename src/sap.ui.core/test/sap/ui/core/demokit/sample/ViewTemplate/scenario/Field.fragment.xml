@@ -3,15 +3,17 @@
 	xmlns:core="sap.ui.core"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<HBox>
-		<template:with path="meta>Value" helper="sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.resolveTargetPath" var="target">
-			<!-- TODO <template:if test="{= {target>sap:semantics} === 'email'}"> -->
-			<template:if test="{path: 'target>sap:semantics', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isEmail'}" >
-				<core:Icon src="sap-icon://email" />
+		<template:if test="{meta>Value}"><!-- "RecordType" : "com.sap.vocabularies.UI.v1.DataField" -->
+			<template:with path="meta>Value" helper="sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.resolveTargetPath" var="target">
+				<!-- TODO <template:if test="{= {target>sap:semantics} === 'email'}"> -->
+				<template:if test="{path: 'target>sap:semantics', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isEmail'}" >
+					<core:Icon src="sap-icon://email" />
+				</template:if>
+			</template:with>
+			<template:if test="{=sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.getAnnotation({meta>Value}, 'sap:semantics') === 'tel'}" >
+				<core:Icon src="sap-icon://phone" />
 			</template:if>
-		</template:with>
-		<template:if test="{=sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.getAnnotation({meta>Value}, 'sap:semantics') === 'tel'}" >
-			<core:Icon src="sap-icon://phone" />
+			<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 		</template:if>
-		<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 	</HBox>
 </core:FragmentDefinition>

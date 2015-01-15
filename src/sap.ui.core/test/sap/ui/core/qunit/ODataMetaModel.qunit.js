@@ -2,10 +2,9 @@
  * ${copyright}
  */
 (function() {
-	/*
-	 * global asyncTest, deepEqual, equal, expect, module, notDeepEqual, notEqual, notStrictEqual, ok, raises, sinon,
-	 * start, strictEqual, stop, test,
-	 */
+	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
+	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	*/
 	"use strict";
 
 	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
@@ -29,7 +28,8 @@
 		ok(false, "Failed to load: " + JSON.stringify(oParameters));
 	}
 
-	var sMetadata = '\
+	var oDataMetaModel, // single cached instance, see withMetaModel()
+		sMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
@@ -151,7 +151,10 @@
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
-		', mHeaders = {"Content-Type" : "application/xml"},
+		',
+		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
+		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
+		mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
 			"/fake/emptyDataServices/$metadata" : [200, mHeaders, sEmptyDataServices],
 			"/fake/emptyEntityType/$metadata" : [200, mHeaders, sEmptyEntityType],
@@ -162,7 +165,9 @@
 			"/fake/annotations" : [200, mHeaders, sAnnotations],
 			//TODO cleanup GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID (artificial example)
 			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
-			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations]
+			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations],
+			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
+			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
 		};
 
 	/**
@@ -173,7 +178,7 @@
 	 *   <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
 	 */
 	function setupSandbox(oSandbox) {
-		var oServer = oSandbox.sandbox.useFakeServer();
+		var oServer = oSandbox.useFakeServer();
 
 		//TODO how to properly tear down this stuff?
 		sinon.FakeXMLHttpRequest.useFilters = true;
@@ -185,6 +190,46 @@
 			oServer.respondWith(sUrl, vResponse);
 		});
 		oServer.autoRespond = true;
+	}
+
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code>.
+	 *
+	 * @param {function} fnCodeUnderTest
+	 */
+	function withMetaModel(fnCodeUnderTest) {
+		var oMetaModel,
+			oModel,
+			oSandbox; // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
+
+		if (oDataMetaModel) {
+			fnCodeUnderTest(oDataMetaModel);
+			return;
+		}
+
+		try {
+			oSandbox = sinon.sandbox.create();
+			setupSandbox(oSandbox);
+
+			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
+			oModel = new sap.ui.model.odata.v2.ODataModel("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			});
+			oModel.attachMetadataFailed(onFailed);
+			oModel.attachAnnotationsFailed(onFailed);
+			oDataMetaModel = oModel.getMetaModel();
+
+			// calls the code under test once the meta model has loaded
+			stop();
+			oDataMetaModel.loaded().then(function() {
+				fnCodeUnderTest(oDataMetaModel);
+				start();
+			}, onError)["catch"](onError);
+		} finally {
+			oSandbox.restore();
+		}
 	}
 
 	//*********************************************************************************************
@@ -204,8 +249,7 @@
 			oResult = {};
 
 		// generic dispatching
-		jQuery.each(["bindContext", "bindList", "bindProperty", "bindTree",
-			"getObject", "getProperty", "isList", "setSizeLimit"], function (i, sName) {
+		jQuery.each(["_getObject", "getProperty", "isList"], function (i, sName) {
 			oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
 
 			strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
@@ -232,6 +276,50 @@
 	}));
 
 	//*********************************************************************************************
+	test("bindings", function() {
+		withMetaModel(function (oMetaModel) {
+			var oBinding,
+				oContext = oMetaModel.createBindingContext("/foo"),
+				aFilters = [],
+				mParameters = {},
+				sPath = "some/relative/path",
+				aSorters = [];
+
+			// Note: support for events not needed
+			oBinding = oMetaModel.bindContext(sPath, oContext, mParameters);
+			ok(oBinding instanceof sap.ui.model.ClientContextBinding);
+			strictEqual(oBinding.getModel(), oMetaModel);
+			strictEqual(oBinding.getPath(), sPath);
+			strictEqual(oBinding.getContext(), oContext);
+			strictEqual(oBinding.mParameters, mParameters);
+
+			oBinding = oMetaModel.bindProperty(sPath, oContext, mParameters);
+			ok(oBinding instanceof sap.ui.model.ClientPropertyBinding);
+			strictEqual(oBinding.getModel(), oMetaModel);
+			strictEqual(oBinding.getPath(), sPath);
+			strictEqual(oBinding.getContext(), oContext);
+			strictEqual(oBinding.mParameters, mParameters);
+
+			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
+			ok(oBinding instanceof sap.ui.model.json.JSONListBinding);
+			strictEqual(oBinding.getModel(), oMetaModel, "inner model not leaked");
+			strictEqual(oBinding.getPath(), sPath);
+			strictEqual(oBinding.getContext(), oContext);
+			strictEqual(oBinding.aSorters, aSorters);
+			strictEqual(oBinding.aApplicationFilters, aFilters); //TODO spy on ListBinding instead?
+			strictEqual(oBinding.mParameters, mParameters);
+
+			oBinding = oMetaModel.bindTree(sPath, oContext, aFilters, mParameters);
+			ok(oBinding instanceof sap.ui.model.json.JSONTreeBinding);
+			strictEqual(oBinding.getModel(), oMetaModel);
+			strictEqual(oBinding.getPath(), sPath);
+			strictEqual(oBinding.getContext(), oContext);
+			strictEqual(oBinding.aFilters, aFilters);
+			strictEqual(oBinding.mParameters, mParameters);
+		});
+	});
+
+	//*********************************************************************************************
 	jQuery.each([{
 		annotationURI : null,
 		title : "no annotations"
@@ -245,7 +333,7 @@
 		asyncTest("ODataMetaModel loaded: " + oFixture.title, sinon.test(function() {
 			var oMetaModel, oModel;
 
-			setupSandbox(this);
+			setupSandbox(this.sandbox);
 			oModel = new sap.ui.model.odata.v2.ODataModel("/fake/service", {
 				annotationURI : oFixture.annotationURI,
 				json : true,
@@ -353,7 +441,7 @@
 					? sap.ui.model.odata.v2.ODataModel
 					: sap.ui.model.odata.ODataModel;
 
-			setupSandbox(this);
+			setupSandbox(this.sandbox);
 			oModel = new fnConstructor(sMetadataURL, {
 				annotationURI : sAnnotationsURL,
 				json : true
@@ -377,9 +465,9 @@
 		jQuery.each(["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"],
 			function (j, sPath) {
 				asyncTest(sAnnotation + ", " + sPath, sinon.test(function() {
-					var oModel;
+					var oMetaModel, oModel;
 
-					setupSandbox(this);
+					setupSandbox(this.sandbox);
 					oModel = new sap.ui.model.odata.v2.ODataModel("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
@@ -387,13 +475,104 @@
 					});
 
 					// code under test
-					oModel.getMetaModel().loaded().then(function () {
+					oMetaModel = oModel.getMetaModel();
+					oMetaModel.loaded().then(function () {
 						start();
 						ok(true, "expected");
+
+						// check that no errors happen for empty/missing structures
+						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+							null, "getODataEntityType");
+						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
+							undefined, "getODataEntityType as path");
+						strictEqual(oMetaModel.getODataAssociation(
+							"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"), null);
+						strictEqual(oMetaModel.getODataAssociation(
+							"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products", true),
+							undefined);
 					}, onError)["catch"](onError);
 				}));
 			}
 		);
 	});
-	//TODO test liftSAPData() in case no extensions available!
+
+	//*********************************************************************************************
+	test("getODataEntityType", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+				oMetaModel.getObject("/dataServices/schema/0/entityType/1"));
+			strictEqual(oMetaModel.getODataEntityType("FOO.Product"), null);
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo"), null);
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC"), null);
+			strictEqual(oMetaModel.getODataEntityType(), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataEntityType as path", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
+				"/dataServices/schema/0/entityType/1");
+			strictEqual(oMetaModel.getODataEntityType("FOO.Product", true), undefined);
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo", true), undefined);
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC", true), undefined);
+			strictEqual(oMetaModel.getODataEntityType(undefined, true), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataAssociation", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(
+				oMetaModel.getODataAssociation("GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"),
+				oMetaModel.getObject("/dataServices/schema/0/association/5"));
+			strictEqual(oMetaModel.getODataAssociation("FOO.Assoc_BusinessPartner_Products"),
+				null);
+			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC.Foo"), null);
+			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC"), null);
+			strictEqual(oMetaModel.getODataAssociation(), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataAssociation as path", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataAssociation(
+					"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products", true),
+				"/dataServices/schema/0/association/5");
+			strictEqual(oMetaModel.getODataAssociation("FOO.Assoc_BusinessPartner_Products", true),
+				undefined);
+			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC.Foo", true), undefined);
+			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC", true), undefined);
+			strictEqual(oMetaModel.getODataAssociation(undefined, true), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataNavigationProperty", function() {
+		withMetaModel(function (oMetaModel) {
+			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
+
+			strictEqual(oMetaModel.getODataNavigationProperty(oEntityType, "ToSupplier"),
+				oMetaModel.getObject("/dataServices/schema/0/entityType/1/navigationProperty/1"));
+			strictEqual(oMetaModel.getODataNavigationProperty(oEntityType, "Foo"), null);
+			strictEqual(oMetaModel.getODataNavigationProperty(null, "ToSupplier"), null);
+			strictEqual(oMetaModel.getODataNavigationProperty({}, "ToSupplier"), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataAssociationEnd", function() {
+		withMetaModel(function (oMetaModel) {
+			var oAssociation = oMetaModel.getODataAssociation(
+					"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"),
+				sRoleName = "FromRole_Assoc_BusinessPartner_Products";
+
+			strictEqual(oMetaModel.getODataAssociationEnd(oAssociation, sRoleName),
+				oMetaModel.getObject("/dataServices/schema/0/association/5/end/0"));
+			strictEqual(oMetaModel.getODataAssociationEnd(oAssociation, "Foo"), null);
+			strictEqual(oMetaModel.getODataAssociationEnd(null, sRoleName), null);
+			strictEqual(oMetaModel.getODataAssociationEnd({}, sRoleName), null);
+		});
+	});
 }());

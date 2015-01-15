@@ -8,7 +8,7 @@
 			<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 		</form:title>
 
-		<template:with path="facet>Target" helper="sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.resolveTargetPath" var="target">
+		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
 			<template:if test="{target>AnnotationPath}"><!-- TODO resolveTargetPath has failed -->
 				<template:then>
 					<Label text="AnnotationPath"/>

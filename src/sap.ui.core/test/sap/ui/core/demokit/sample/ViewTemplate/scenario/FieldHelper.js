@@ -85,13 +85,6 @@ sap.ui.define(['jquery.sap.global'],
 				//TODO "productize"
 				var vRawValue = oContext.getObject(),
 					aParts = oContext.getPath().split("/");
-				if (vRawValue && vRawValue.AnnotationPath && vRawValue.AnnotationPath.charAt(0) === "@"
-					&& aParts[0] === "" && aParts[1] === "dataServices" && aParts[2] === "schema") {
-					// go to "/dataServices/schema/<i>/entityType/<j>/<annotation name>"
-					aParts.splice(6, aParts.length - 6);
-					aParts.push(vRawValue.AnnotationPath.slice(1));
-					return aParts.join("/");
-				}
 				if (vRawValue && vRawValue.Path
 					&& aParts[0] === "" && aParts[1] === "dataServices" && aParts[2] === "schema") {
 					// go to "/dataServices/schema/<i>/entityType/<j>/property/<k>"

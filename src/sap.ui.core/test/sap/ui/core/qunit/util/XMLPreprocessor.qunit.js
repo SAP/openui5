@@ -945,7 +945,7 @@
 						ok(oContext instanceof sap.ui.model.Context);
 						strictEqual(oContext.getModel(), oModel);
 						strictEqual(oContext.getPath(), "/some/random/path");
-						return new sap.ui.model.Context(oMetaModel, "/target");
+						return oMetaModel.createBindingContext("/target");
 					}
 				}
 			};

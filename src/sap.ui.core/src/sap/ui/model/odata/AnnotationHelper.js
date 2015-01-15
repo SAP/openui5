@@ -233,6 +233,68 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			},
 
 			/**
+			 * Resolves an <code>edm:AnnotationPath</code> expression according to
+			 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268259"
+			 * 14.5.2 Expression edm:AnnotationPath</a>. Currently supports navigation properties
+			 * and term casts.
+			 *
+			 * @param {sap.ui.model.Context} oContext
+			 *   a context which must point to an annotation or annotation property of type
+			 *   <code>Edm.AnnotationPath</code>, embedded within an entity type;
+			 *   the context's model must be an <code>sap.ui.model.odata.ODataMetaModel</code>
+			 * @returns {string}
+			 *   the path to the target
+			 * @public
+			 */
+			resolvePath : function (oContext) {
+				var aMatches,
+					sPath,
+					vRawValue = oContext.getObject();
+
+				aMatches = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/.exec(
+					oContext.getPath());
+				if (aMatches) {
+					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
+					sPath = aMatches[1];
+
+					if (vRawValue.AnnotationPath === "") { // empty path
+						return sPath;
+					}
+
+					jQuery.each(vRawValue.AnnotationPath.split("/"), function (iUnused, sSegment) {
+						var oAssociation,
+							oAssociationEnd,
+							oEntity,
+							oModel = oContext.getModel(),
+							oNavigationProperty;
+
+						// term cast
+						if (sSegment.charAt(0) === "@") {
+							sPath = sPath + "/" + sSegment.slice(1);
+							return true; // continue
+						}
+
+						// navigation property
+						oEntity = oContext.getObject(sPath);
+						oNavigationProperty = oModel.getODataNavigationProperty(oEntity, sSegment);
+						if (oNavigationProperty) {
+							oAssociation
+								= oModel.getODataAssociation(oNavigationProperty.relationship);
+							oAssociationEnd = oModel.getODataAssociationEnd(oAssociation,
+								oNavigationProperty.toRole);
+							sPath = oModel.getODataEntityType(oAssociationEnd.type, true);
+							return true; // continue
+						}
+
+						sPath = undefined; // some unsupported case
+						return false; // break
+					});
+
+					return sPath;
+				}
+			},
+
+			/**
 			 * A formatter helping to interpret OData v4 annotations during template processing.
 			 * Returns only a simple path for bindings, without type or constraint information
 			 * (at least for those simple cases where this is possible).

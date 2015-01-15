@@ -462,7 +462,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 							if (typeof fnHelper !== "function") {
 								error("Cannot resolve helper for ", oElement);
 							}
-							vHelperResult = fnHelper(new Context(oModel, sResolvedPath));
+							vHelperResult = fnHelper(oModel.createBindingContext(sResolvedPath));
 							if (vHelperResult instanceof Context) {
 								oModel = vHelperResult.getModel();
 								sResolvedPath = vHelperResult.getPath();
@@ -476,7 +476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						}
 						sVar = sVar || oBindingInfo.model; // default variable is same model name
 						oNewWithControl.setModel(oModel, sVar);
-						oNewWithControl.bindObject({
+						oNewWithControl.bindObject({ //TODO setBindingContext?!
 							model: sVar,
 							path: sResolvedPath
 						});

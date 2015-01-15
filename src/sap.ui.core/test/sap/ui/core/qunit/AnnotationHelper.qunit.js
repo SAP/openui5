@@ -7,7 +7,7 @@
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
+	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper"); //TODO get rid of this?!
 
 	// WARNING! These are on by default and break the Promise polyfill...
 	sinon.config.useFakeTimers = false;
@@ -27,7 +27,7 @@
 		},
 		oDecimal = {
 			name : "sap.ui.model.odata.type.Decimal",
-			constraints : {"precision" : 13, "scale" : 3}
+			constraints : {"nullable": false, "precision" : 13, "scale" : 3}
 		},
 		oDouble = {
 			name : "sap.ui.model.odata.type.Double",
@@ -61,36 +61,34 @@
 			name : "sap.ui.model.odata.type.Time",
 			constraints : {"nullable" : false}
 		},
-		oMetaModel = new sap.ui.model.json.JSONModel({
+		oTestData = {
 			"dataServices" : {
 				"schema" : [{
-//					"namespace" : "GWSAMPLE_BASIC",
 					"entityType" : [{
-//						"name" : "Product",
+						// skip BusinessPartner
+					}, {
 						"property" : [{
-							"name" : "ProductID",
-							"type" : "Edm.String",
-							"nullable" : "false",
-							"maxLength" : "10"
-						}, {
-							"name" : "SupplierName",
-							"type" : "Edm.String",
-							"maxLength" : "80"
-						}, {
-							"name" : "WeightMeasure",
-							"type" : "Edm.Decimal",
-							"precision" : "13",
-							"scale" : "3",
-//							"Org.OData.Measures.V1.Unit" : {
-//								"Path" : "WeightUnit"
-//							}
-						}, {
-							"name" : "WeightUnit",
-							"type" : "Edm.String",
-							"maxLength" : "3"
-						}, {
 							"name" : "_Boolean",
 							"type" : "Edm.Boolean",
+							"nullable" : "false"
+						}, {
+							"name" : "_DateTime",
+							"type" : "Edm.DateTime",
+							"nullable" : "false",
+							"sap:display-format" : "Date"
+						}, {
+							"name" : "_DateTimeOffset",
+							"type" : "Edm.DateTimeOffset",
+							"nullable" : "false"
+						}, {
+							"name" : "_Decimal",
+							"type" : "Edm.Decimal",
+							"nullable" : "false",
+							"precision" : "13",
+							"scale" : "3"
+						}, {
+							"name" : "_Double",
+							"type" : "Edm.Double",
 							"nullable" : "false"
 						}, {
 							"name" : "_Guid",
@@ -109,41 +107,27 @@
 							"type" : "Edm.SByte",
 							"nullable" : "false"
 						}, {
-							"name" : "_DateTime",
-							"type" : "Edm.DateTime",
-							"nullable" : "false",
-							"sap:display-format" : "Date"
-						}, {
-							"name" : "_DateTimeOffset",
-							"type" : "Edm.DateTimeOffset",
+							"name" : "_String10",
+							"type" : "Edm.String",
+							"maxLength" : "10",
 							"nullable" : "false"
+						}, {
+							"name" : "_String80",
+							"type" : "Edm.String",
+							"maxLength" : "80"
 						}, {
 							"name" : "_Time",
 							"type" : "Edm.Time",
 							"nullable" : "false"
-						}, {
-							"name" : "_Double",
-							"type" : "Edm.Double",
-							"nullable" : "false"
 						}],
-						"com.sap.vocabularies.UI.v1.DataPoint" : {
-							"Value" : {
-								"Path" : "WeightMeasure",
-								"EdmType" : "Edm.Decimal"
-							}
-						},
 						"com.sap.vocabularies.UI.v1.Identification" : [{
-							"Value" : {"Path" : "ProductID"}
-						}, {
-							"Value" : {"Path" : "SupplierName"}
-						}, {
-							"Value" : {"Path" : "WeightMeasure"}
-						}, {
 							"Value" : {"Path" : "_Boolean"}
 						}, {
 							"Value" : {"Path" : "_DateTime"}
 						}, {
 							"Value" : {"Path" : "_DateTimeOffset"}
+						}, {
+							"Value" : {"Path" : "_Decimal"}
 						}, {
 							"Value" : {"Path" : "_Double"}
 						}, {
@@ -155,47 +139,20 @@
 						}, {
 							"Value" : {"Path" : "_SByte"}
 						}, {
+							"Value" : {"Path" : "_String10"}
+						}, {
+							"Value" : {"Path" : "_String80"}
+						}, {
 							"Value" : {"Path" : "_Time"}
 						}]
-					}, {
-//						"name" : "Contact",
-						"property" : [{
-							"name" : "FirstName",
-							"type" : "Edm.String",
-							"maxLength" : "30"
-						}, {
-							"name" : "LastName",
-							"type" : "Edm.String",
-							"maxLength" : "40"
-						}],
-						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
-							"Title" : {
-								"Label" : {
-									"String" : "Name"
-								},
-								"Value" : {
-									"Apply" : {
-										"Name" : "odata.concat",
-										"Parameters" : [{
-											"Type" : "Path",
-											"Value" : "FirstName"
-										}, {
-											"Type" : "String",
-											"Value" : " {foo} "
-										}, {
-											"Type" : "Path",
-											"Value" : "LastName"
-										}]
-									}
-								},
-							},
-						}
 					}]
 				}]
 			}
-		}),
+		},
+		oDataMetaModel, // single cached instance, see withMetaModel()
+		oTestModel = new sap.ui.model.json.JSONModel(oTestData),
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
-		sPathPrefix = "/dataServices/schema/0/entityType/0/",
+		sPathPrefix = "/dataServices/schema/0/entityType/1", // GWSAMPLE_BASIC.Product
 		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
 		fnSimplePath = sap.ui.model.odata.AnnotationHelper.simplePath,
 		fnText = sap.ui.model.odata.AnnotationHelper.text,
@@ -205,7 +162,14 @@
 					text: "string"
 				}
 			}
-		});
+		}),
+		sAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
+		sMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
+		mHeaders = {"Content-Type" : "application/xml"},
+		mFixture = {
+			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sMetadata],
+			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sAnnotations]
+		};
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
@@ -325,7 +289,75 @@
 		);
 	}
 
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code>.
+	 *
+	 * @param {function} fnCodeUnderTest
+	 */
+	function withMetaModel(fnCodeUnderTest) {
+		var oMetaModel,
+			oModel,
+			oSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
+			oServer;
 
+		function onError(oError) {
+			start();
+			ok(false, oError.message + ", stack: " + oError.stack);
+		}
+
+		function onFailed(oEvent) {
+			var oParameters = oEvent.getParameters();
+			start();
+			while (oParameters.getParameters) { // drill down to avoid circular structure
+				oParameters = oParameters.getParameters();
+			}
+			ok(false, "Failed to load: " + JSON.stringify(oParameters));
+		}
+
+		if (oDataMetaModel) {
+			fnCodeUnderTest(oDataMetaModel);
+			return;
+		}
+
+		try {
+			// sets up a sandbox in order to use the URLs and responses defined in mFixture;
+			// leaves unknown URLs alone
+			sinon.config.useFakeServer = true;
+			oSandbox = sinon.sandbox.create();
+			oServer = oSandbox.useFakeServer();
+
+			//TODO how to properly tear down this stuff?
+			sinon.FakeXMLHttpRequest.useFilters = true;
+			sinon.FakeXMLHttpRequest.addFilter(function(sMethod, sUrl, bAsync) {
+				return mFixture[sUrl] === undefined; // do not fake if URL is unknown
+			});
+
+			jQuery.each(mFixture, function(sUrl, vResponse) {
+				oServer.respondWith(sUrl, vResponse);
+			});
+			oServer.autoRespond = true;
+
+			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
+			oModel = new sap.ui.model.odata.v2.ODataModel("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			});
+			oModel.attachMetadataFailed(onFailed);
+			oModel.attachAnnotationsFailed(onFailed);
+			oDataMetaModel = oModel.getMetaModel();
+
+			// calls the code under test once the meta model has loaded
+			stop();
+			oDataMetaModel.loaded().then(function() {
+				fnCodeUnderTest(oDataMetaModel);
+				start();
+			}, onError)["catch"](onError);
+		} finally {
+			oSandbox.restore();
+			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
+		}
+	}
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.format");
@@ -370,58 +402,50 @@
 
 	//*********************************************************************************************
 	jQuery.each([{
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.DataPoint/Value",
-		type : oDecimal
-	}, {
-		path : "Value",
-		context : oMetaModel.createBindingContext(
-			sPathPrefix + "com.sap.vocabularies.UI.v1.DataPoint/"),
-		type : oDecimal
-	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/0/Value",
-		type : oString10
-	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/1/Value",
-		type : oString80
-	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/2/Value",
-		type : oDecimal
-	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/3/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/0/Value",
 		type : oBoolean
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/4/Value",
+		path : "Value",
+		context : oTestModel.createBindingContext(
+			sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/0/"),
+		type : oBoolean
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/1/Value",
 		type : oDateTime
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/5/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/2/Value",
 		type : oDateTimeOffset
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/6/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/3/Value",
+		type : oDecimal
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/4/Value",
 		type : oDouble
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/7/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/5/Value",
 		type : oGuid
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/8/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/6/Value",
 		type : oInt16
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/9/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/7/Value",
 		type : oInt32
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/10/Value",
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/8/Value",
 		type : oSByte
 	}, {
-		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/11/Value",
-		type : oTime
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/9/Value",
+		type : oString10
 	}, {
-		path : "Value",
-		context : oMetaModel.createBindingContext(
-			sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/2/"),
-		type : oDecimal
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/10/Value",
+		type : oString80
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/11/Value",
+		type : oTime
 	}], function (i, oFixture) {
 		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
 				+ ", type = " + oFixture.type.name, function () {
-			var oCurrentBinding = oMetaModel.bindProperty(oFixture.path, oFixture.context),
+			var oCurrentBinding = oTestModel.bindProperty(oFixture.path, oFixture.context),
 				oRawValue = oCurrentBinding.getValue(),
 				oSingleBindingInfo;
 
@@ -451,43 +475,51 @@
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat", function () {
-		var oCurrentBinding = oMetaModel.bindProperty(
-				"/dataServices/schema/0/entityType/1/com.sap.vocabularies.UI.v1.HeaderInfo/" +
-				"Title/Value"),
-			oRawValue = oCurrentBinding.getValue(),
-			oSingleBindingInfo,
-			oModel = new sap.ui.model.json.JSONModel({FirstName: "John", LastName: "Doe"}),
-			oControl = new TestControl({
-				models: oModel,
-				bindingContexts: oModel.createBindingContext("/")
-			});
+		withMetaModel(function (oMetaModel) {
+			var oCurrentBinding = oMetaModel.bindProperty(
+					"/dataServices/schema/0/entityType/4/com.sap.vocabularies.UI.v1.HeaderInfo/" +
+					"Title/Value"),
+				oRawValue = oCurrentBinding.getValue(),
+				oSingleBindingInfo,
+				oModel = new sap.ui.model.json.JSONModel({FirstName: "John", LastName: "Doe"}),
+				oControl = new TestControl({
+					models: oModel,
+					bindingContexts: oModel.createBindingContext("/")
+				});
 
-		oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
-		strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
-		ok(oSingleBindingInfo.parts, "binding info has parts");
-		ok(oSingleBindingInfo.formatter, "binding info has formatter");
-		strictEqual(oSingleBindingInfo.parts.length, 2, "binding info has two parts");
-		strictEqual(oSingleBindingInfo.parts[0].path, "FirstName");
-		strictEqual(oSingleBindingInfo.parts[0].type.getName(), "sap.ui.model.odata.type.String");
-		strictEqual(oSingleBindingInfo.parts[0].type.oConstraints.maxLength, 30);
-		strictEqual(oSingleBindingInfo.parts[1].path, "LastName");
-		strictEqual(oSingleBindingInfo.parts[1].type.getName(), "sap.ui.model.odata.type.String");
-		strictEqual(oSingleBindingInfo.parts[1].type.oConstraints.maxLength, 40);
+			//TODO remove this workaround to fix whitespace issue
+			oRawValue.Apply.Parameters[1].Value = " ";
 
-		oControl.bindProperty("text", oSingleBindingInfo);
-		strictEqual(oControl.getText(), "John {foo} Doe");
+			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+			ok(oSingleBindingInfo.parts, "binding info has parts");
+			ok(oSingleBindingInfo.formatter, "binding info has formatter");
+			strictEqual(oSingleBindingInfo.parts.length, 2, "binding info has two parts");
+			strictEqual(oSingleBindingInfo.parts[0].path, "FirstName");
+			strictEqual(oSingleBindingInfo.parts[0].type.getName(),
+				"sap.ui.model.odata.type.String");
+			strictEqual(oSingleBindingInfo.parts[0].type.oConstraints.maxLength, 40);
+			strictEqual(oSingleBindingInfo.parts[1].path, "LastName");
+			strictEqual(oSingleBindingInfo.parts[1].type.getName(),
+				"sap.ui.model.odata.type.String");
+			strictEqual(oSingleBindingInfo.parts[1].type.oConstraints.maxLength, 40);
+
+			oControl.bindProperty("text", oSingleBindingInfo);
+			strictEqual(oControl.getText(), "John Doe");
+		});
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat: unsupported type", sinon.test(function () {
+	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", sinon.test(function () {
 		var oParameter = {Type: "Int16", Value: 42};
 
 		strictEqual(formatAndParseNoWarning({
 			Apply: {
 				Name: "odata.concat",
-				Parameters: [{Type: "String", Value : "*foo*"}, oParameter]
+				// Note: 1st value needs proper escaping!
+				Parameters: [{Type: "String", Value : "{foo}"}, oParameter]
 			}
-		}), "*foo*<Unsupported: " + JSON.stringify(oParameter) + ">");
+		}), "{foo}<Unsupported: " + JSON.stringify(oParameter) + ">");
 	}));
 
 	//*********************************************************************************************
@@ -536,4 +568,118 @@
 			}
 		});
 	});
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.resolvePath");
+
+	//*********************************************************************************************
+	jQuery.each(["", "@com.sap.vocabularies.UI.v1.Identification",
+		"@invalid.term" // decision: invalid path is usually OK for data binding
+	], function (i, sPath) {
+		test("14.5.2 Expression edm:AnnotationPath: " + sPath, function () {
+			withMetaModel(function (oMetaModel) {
+				// path to some ReferenceFacet
+				var sMetaPath = sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/1/Target",
+					oContext = oMetaModel.createBindingContext(sMetaPath),
+					sResult;
+
+				// evil, test code only: write into ODataMetaModel
+				oMetaModel.getProperty(sMetaPath).AnnotationPath = sPath;
+
+				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+
+				strictEqual(sResult, sPathPrefix + sPath.replace('@', '/'));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	//TODO support type cast
+	//TODO support term casts to odata.mediaEditLink, odata.mediaReadLink, odata.mediaContentType?
+	//TODO support structural property
+	//TODO support $count
+	//TODO support "navigationProperty@Annotation"
+	jQuery.each(["unsupprted.type.cast",
+		"unsupported_property",
+		"unsupported_property/@some.Annotation",
+		"navigationProperty@unsupported.Annotation" // annotation at nav.property itself!
+	], function (i, sPath) {
+		test("14.5.2 Expression edm:AnnotationPath: " + sPath, function () {
+			withMetaModel(function (oMetaModel) {
+				// path to some ReferenceFacet
+				var sMetaPath = sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/1/Target",
+					oContext = oMetaModel.createBindingContext(sMetaPath),
+					sResult;
+
+				// evil, test code only: write into ODataMetaModel
+				oMetaModel.getProperty(sMetaPath).AnnotationPath = sPath;
+
+				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+
+				strictEqual(sResult, undefined, "unsupported path");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each(["",
+		"foo/dataServices/schema/0/entityType/0",
+		"/foo/schema/0/entityType/0",
+		"/dataServices/foo/0/entityType/0",
+		"/dataServices/schema/foo/entityType/0",
+		"/dataServices/schema/0/foo/0",
+		"/dataServices/schema/0/entityType/foo"
+	], function (i, sMetaPath) {
+		test("14.5.2 Expression edm:AnnotationPath: unsupported origin " + sMetaPath, function () {
+			withMetaModel(function (oMetaModel) {
+				var oContext = oMetaModel.createBindingContext(sMetaPath)
+					// needed if initial "/" is missing:
+					|| new sap.ui.model.Context(oMetaModel, sMetaPath),
+					sResult;
+
+				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+
+				strictEqual(sResult, undefined, "unsupported origin");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier",
+		expectedTarget : "/dataServices/schema/0/entityType/0"
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
+		expectedTarget : "/dataServices/schema/0/entityType/0/com.sap.vocabularies.Communication.v1.Address"
+	}, {
+		metaPath : "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		annotationPath : "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
+		expectedTarget : "/dataServices/schema/0/entityType/4/com.sap.vocabularies.UI.v1.HeaderInfo"
+	}], function (i, oFixture) {
+		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
+			withMetaModel(function (oMetaModel) {
+				var sMetaPath = oFixture.metaPath,
+					oContext = oMetaModel.createBindingContext(sMetaPath),
+					oRawValue = oMetaModel.getProperty(sMetaPath),
+					sOriginalAnnotationPath = oRawValue.AnnotationPath,
+					sResult;
+
+				try {
+					// evil, test code only: write into ODataMetaModel
+					oRawValue.AnnotationPath = oFixture.annotationPath;
+
+					sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+
+					strictEqual(sResult, oFixture.expectedTarget);
+				} finally {
+					oRawValue.AnnotationPath = sOriginalAnnotationPath;
+				}
+			});
+		});
+	});
+
+	//TODO support annotations embedded within entity container, entity set (or singleton?),
+	// complex type, property of entity or complex type
 } ());
