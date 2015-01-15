@@ -181,7 +181,9 @@
 			test("setState() test case 1 (initial rendering)", function() {
 
 				// system under test
-				var oSwitch = new sap.m.Switch();
+				var oSwitch = new sap.m.Switch({
+					state: false
+				});
 
 				// arrange
 				oSwitch.placeAt("content");
@@ -189,6 +191,7 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
+				strictEqual(oSwitch.getDomRef("on").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSwitch.destroy();
@@ -207,6 +210,7 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
+				strictEqual(oSwitch.getDomRef("off").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSwitch.destroy();
@@ -226,6 +230,7 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
+				strictEqual(oSwitch.getDomRef("off").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSwitch.destroy();
@@ -234,9 +239,7 @@
 			test("setState() test case 4", function() {
 
 				// system under test
-				var oSwitch = new sap.m.Switch({
-					state: true
-				});
+				var oSwitch = new sap.m.Switch();
 
 				// arrange
 				oSwitch.placeAt("content");
@@ -247,6 +250,7 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
+				strictEqual(oSwitch.getDomRef("on").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSwitch.destroy();
