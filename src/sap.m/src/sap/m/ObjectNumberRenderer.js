@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
@@ -25,18 +25,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		var sTooltip,
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign(),
-			bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sARIAStateText = "";
 
 		// write the HTML into the render manager
 		oRm.write("<div"); // Number begins
 		oRm.writeControlData(oON);
-		
+
 		// write the tooltip
 		sTooltip = oON.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-		
+
 		oRm.addClass("sapMObjectNumber");
 		if (oON.getEmphasized()) {
 			oRm.addClass("sapMObjectNumberEmph");
@@ -53,15 +55,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		oRm.writeClasses();
 		oRm.writeStyles();
+
+		// ARIA
+		oRm.writeAccessibilityState({
+			labelledby: oON.getId() + "-state"
+		});
+
 		oRm.write(">");
-	
+
 		oRm.write("<span"); // Number text begins
 		oRm.addClass("sapMObjectNumberText");
 		oRm.writeClasses();
+
 		oRm.write(">");
 		oRm.writeEscaped(oON.getNumber());
 		oRm.write("</span>"); // Number text ends
-	
+
 		oRm.write("<span"); // Number unit begins
 		oRm.addClass("sapMObjectNumberUnit");
 
@@ -74,14 +83,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		oRm.writeClasses();
 		oRm.write(">");
-		
+
 		var unit = oON.getUnit();
 		if (!unit) {
 			unit = oON.getNumberUnit();
 		}
 		oRm.writeEscaped(unit);
 		oRm.write("</span>"); // Number unit ends
-	
+
+		if (oON.getState() != sap.ui.core.ValueState.None) {
+
+			// Hidden state element for ARIA
+			oRm.write("<span id='" + oON.getId() + "-state' class='sapUiInvisibleText' aria-hidden='true'>");
+
+			switch (oON.getState()) {
+				case sap.ui.core.ValueState.Error:
+					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
+					break;
+				case sap.ui.core.ValueState.Warning:
+					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING");
+					break;
+				case sap.ui.core.ValueState.Success:
+					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS");
+					break;
+			}
+			
+			oRm.write(sARIAStateText);
+			oRm.write("</span>"); // Hidden state ends
+		}
+
 		oRm.write("</div>"); // Number ends
 	};
 	
