@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+		
 
 		<title>sap.m.ObjectHeader - Responsive</title>
 		<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
@@ -112,7 +113,8 @@
 				intro: "Type XS",
 				introActive: true,
 				introPress: function(){ alert('you click the title');},
-				title: "Example 1 Large container",
+				title: "1234 Example 1 Large container",
+				titleTextDirection: sap.ui.core.TextDirection.RTL,
 				titleActive: true,
 				titlePress: function(){ alert('you click the title');},
 				titleHref:'http://google.com',
@@ -255,11 +257,13 @@
 
 			var oh2 = new sap.m.ObjectHeader("oh2", {
 				responsive: true,
-				title: "Ex3 very long title truncated to 50 characters on phone portrait and to 80 on other devices",
+				title: "עִבְרִית היא שפה שמית, ממשפחת השפות האפרו-אסיאתיות, הידועה כשפתם של היהודים ושל השומרונים, אשר ניב מודרני שלה משמש כשפה הרשמית והעיקרית של מדינת ישראל",
+				titleTextDirection: sap.ui.core.TextDirection.RTL,
+				intro: "אשר ניב מודרני שלה משמש",
 				icon: "sap-icon://nutrition-activity",
 				iconActive: true,
 				number: "33233333.624,00",
-				numberUnit: "Euro long currency",
+				numberUnit: "שֶׁקֶל חָדָשׁ",
 				showMarkers: true,
 				markFlagged: true,
 				markFavorite: true,
@@ -481,6 +485,7 @@
 			var oh3 = new sap.m.ObjectHeader("oh3", {
 				responsive: true,
 				title: "An apple a day keeps the doctor away An apple a day keeps the doctor away",
+				titleTextDirection: sap.ui.core.TextDirection.LTR,
 				icon: "sap-icon://nutrition-activity",
 				number: "3.624.123.456.789.111.222.333,00",
 				numberUnit: "here we have a long currency Euro",
@@ -531,7 +536,8 @@
 				numberUnit: "here we have a long currency Euro",
 				showTitleSelector : true,
 				titleSelectorPress : titleSelectorEventHandler,
-				numberState: sap.ui.core.ValueState.Success
+				numberState: sap.ui.core.ValueState.Success,
+				titleTextDirection: sap.ui.core.TextDirection.LTR
 			});
 
 			var itb3a = new sap.m.IconTabBar("itb3a", {
@@ -569,6 +575,7 @@
 				responsive: true,
 				intro: "On behalf of John Smith Ñagçyfox",
 				title: "An apple a day keeps the doctor away",
+				titleTextDirection: sap.ui.core.TextDirection.LTR,
 				icon: "sap-icon://nutrition-activity",
 				number: "3.624,00",
 				numberUnit: "Euro",

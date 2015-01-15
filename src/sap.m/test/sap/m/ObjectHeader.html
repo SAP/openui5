@@ -49,8 +49,14 @@
 				intro : "On behalf of John Smith Ñagçyfox",
 				title : "some normal title",
 				number : "3.624,00",
+				intro : "1234 On behalf of John Smith Ñagçyfox RTL",
+				introTextDirection: sap.ui.core.TextDirection.RTL,
+				title : "5678 some normal title RTL",
+				titleTextDirection: sap.ui.core.TextDirection.RTL,
+				number : "3.624,00 RTL",
 				numberUnit : "Euro",
 				numberState : sap.ui.core.ValueState.Success,
+				numberTextDirection: sap.ui.core.TextDirection.RTL,
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Lorem ipsum dolor sit amet",
 					icon : sap.ui.core.IconPool.getIconURI("inbox"),
@@ -62,12 +68,14 @@
 			});
 	
 	var oh1Icon = new sap.m.ObjectHeader("oh1-with-icon",{
-				icon : sap.ui.core.IconPool.getIconURI("attachment"),
-				intro : "On behalf of John Smith Ñagçyfox",
-				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
-				number : "3.624,00",
+				intro : "1234 On behalf of John Smith Ñagçyfox LTR",
+				introTextDirection: sap.ui.core.TextDirection.LTR,
+				title : "5678 some normal title LTR",
+				titleTextDirection: sap.ui.core.TextDirection.LTR,
+				number : "3.624,00 LTR",
 				numberUnit : "Euro",
 				numberState : sap.ui.core.ValueState.Success,
+				numberTextDirection: sap.ui.core.TextDirection.LTR,
 				statuses : [ new sap.m.ObjectStatus({
 					text : "Lorem ipsum dolor sit amet",
 					icon : sap.ui.core.IconPool.getIconURI("inbox"),
