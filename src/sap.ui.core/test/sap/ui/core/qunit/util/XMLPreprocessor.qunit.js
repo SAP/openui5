@@ -229,6 +229,34 @@
 	});
 
 	//*********************************************************************************************
+	jQuery.each([false, true], function (i, bIsLoggable) {
+		test("template:if test='false', warn = " + bIsLoggable,
+			sinon.test(function () {
+				var aViewContent = [
+						mvcView(),
+						'<template:if test="false">',
+						'<Out/>',
+						'<\/template:if>',
+						'<!-- prevent empty tag -->',
+						'<\/mvc:View>'
+					],
+					oLogMock = this.mock(jQuery.sap.log);
+
+				oLogMock.expects("isLoggable").once()
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+					.withExactArgs(
+						'qux: Constant test condition in ' + aViewContent[1],
+						null, "sap.ui.core.util.XMLPreprocessor");
+
+				check(aViewContent);
+			})
+		);
+	});
+
+	//*********************************************************************************************
 	test("XML with template:if test='true'", function () {
 		check([
 			mvcView(),

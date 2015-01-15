@@ -332,6 +332,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 							warn(': Error in formatter of ', ex);
 							vTest = false;
 						}
+					} else {
+						// constant test conditions are suspicious, but useful during development
+						warn(': Constant test condition in ', null);
 					}
 					oChild = getThenOrElse(oElement, vTest && vTest !== "false");
 					if (oChild) {
