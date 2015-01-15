@@ -395,7 +395,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						}
 					} else if (oInfo && oInfo._iKind === 6 /* SPECIAL SETTING */ ) /*eslint-disable no-empty */ {
 						// No assert
-					} /*eslint-disable no-empty */ else {
+					} /*eslint-enable no-empty */ else {
 						jQuery.sap.assert(( sName === "xmlns" ), oMetadata.getName() + ": XMLTemplateProcessor encountered and ignored unknown attribute '" + sName + "' (value: '" + sValue + "')");
 					}
 				}
