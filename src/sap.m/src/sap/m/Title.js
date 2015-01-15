@@ -20,6 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.27.0
 	 *
 	 * @constructor
 	 * @public

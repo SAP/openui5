@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Title ACC Test - sap.m</title>
+		<script src="../../../../resources/sap-ui-core.js"
+				type="text/javascript" id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">	
+
+		jQuery(function(){
+			for (var level in sap.ui.core.TitleLevel) {
+				var sContentId = "content_" + level;
+				jQuery("body").append("<div style='padding:1rem' id='" + sContentId + "'></div>");
+				
+				(new sap.m.Title({
+					text: "Title with " + (level == sap.ui.core.TitleLevel.Auto ? "unspecified semantic level" : "semantic level " + level),
+					level: level
+				})).placeAt(sContentId);
+			}
+		});
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 style="margin:5px">Accessibility Testpage sap.m.Title</h1>
+	</body>
+</html>
