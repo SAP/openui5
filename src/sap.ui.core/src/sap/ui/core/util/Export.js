@@ -123,8 +123,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 
 	/**
 	 * Constructor for a new Export.
-	 * 
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 					type: 'sap.ui.core.util.ExportType',
 					multiple: false
 				},
-				
+
 				/**
 				 * Columns for the Export.
 				 */
@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 					multiple: true,
 					bindable : 'bindable'
 				},
-				
+
 				/**
 				 * Rows of the Export.
 				 */
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 					multiple: true,
 					bindable: 'bindable'
 				},
-				
+
 				/**
 				 * Template row used for the export
 				 */
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	Export.prototype.init = function() {
 		this._oPromise = null;
 		this._fnResolvePromise = null;
-		this._oRowBindingInfo = null;
+		this._oRowBindingArgs = null;
 	};
 
 	/**
@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	Export.prototype.exit = function() {
 		delete this._oPromise;
 		delete this._fnResolvePromise;
-		delete this._oRowBindingInfo;
+		delete this._oRowBindingArgs;
 	};
 
 	/**
@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 		if (sName === 'rows') {
 			// skip binding the aggregation for now.
 			// will be bound when generating and unbound afterwards
-			this._oRowBindingInfo = oBindingInfo;
+			this._oRowBindingArgs = arguments;
 			return this;
 		}
 		return Control.prototype.bindAggregation.apply(this, arguments);
@@ -272,9 +272,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	 * with the instance as context (this).<br>
 	 * The promise will be resolved with the generated content
 	 * as a string.
-	 * 
+	 *
 	 * <p><b>Please note: The return value was changed from jQuery Promises to standard ES6 Promises.
-	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used. 
+	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used.
 	 * Please use only the standard methods 'then' and 'catch'!</b></p>
 	 *
 	 * @return {Promise} Promise object
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 					that.setAggregation('_template', oTemplate, true);
 
 					// bind row aggregation (this.bindAggregation would do nothing)
-					Control.prototype.bindAggregation.call(that, 'rows', that._oRowBindingInfo);
+					Control.prototype.bindAggregation.apply(that, that._oRowBindingArgs);
 
 					// triggers data loading for OData.
 					// TODO: find a cleaner solution (when $count is not supported)
@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	 * <p><b>For information about browser support, see <code>sap.ui.core.util.File.save</code></b></p>
 	 *
 	 * <p><b>Please note: The return value was changed from jQuery Promises to standard ES6 Promises.
-	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used. 
+	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used.
 	 * Please use only the standard methods 'then' and 'catch'!</b></p>
 	 *
 	 * @param {string} [sFileName] file name, defaults to 'data'
