@@ -99,7 +99,7 @@
 		test("TextDirectionOk", function() {
 			strictEqual(l1.getTextDirection(), oTextDirectionDefault, "l1.getTextDirection() returns result: " + l1.getTextDirection());
 			strictEqual(l2.getTextDirection(), oTextDirectionRTL, "l2.getTextDirection() returns result: " + l2.getTextDirection());
-			strictEqual(l2.$().css("direction"), "rtl", "l2 has correct direction settings for RTL mode");
+			strictEqual(l2.$().attr("dir"), "rtl", "l2 has correct attribute 'dir' for RTL mode");
 		});
 
 		test("DesignOk", function() {
