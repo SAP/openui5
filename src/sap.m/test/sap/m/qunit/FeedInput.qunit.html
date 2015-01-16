@@ -15,127 +15,212 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
-	
-			var oInput = new sap.m.FeedInput("input", {
-				post : function (oEvt) {
-					strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
+
+
+			module("Properties", {
+				setup : function() {
+					this.oFeedInput = new sap.m.FeedInput("input");
+					this.oFeedInput.placeAt("uiArea");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oFeedInput.destroy();
 				}
-			}).placeAt("uiArea");
-	
-			test("Defaults", function() {
-				strictEqual(oInput.getValue(), "", "value is ''");
-				strictEqual(oInput.getEnabled(), true, "enabled is true");
-				strictEqual(oInput.getMaxLength(), 0, "maxLength is 0");
-				strictEqual(oInput.getVisible(), true, "visible is true");
-			});
-	
-			test("Value property", function() {
-				oInput.setValue("asdf");
-				strictEqual(oInput.getValue(), "asdf", "getValue() should return 'asdf'");
-				strictEqual(oInput._getTextArea().getValue(), "asdf", "getValue() should return 'asdf'");
-			});
-	
-			test("Placeholder property", function() {
-				oInput.setPlaceholder("asdf");
-				strictEqual(oInput.getPlaceholder(), "asdf", "getPlaceholder() should return 'asdf'");
-				strictEqual(oInput._getTextArea().getPlaceholder(), "asdf", "_getTextArea().getPlaceholder() should return 'asdf'");
-			});
-	
-			test("MaxLength property", function() {
-				oInput.setMaxLength(1001);
-				strictEqual(oInput.getMaxLength(), 1001, "getMaxLength() should return '1001'");
-				strictEqual(oInput._getTextArea().getMaxLength(), 1001, "_getTextArea().getMaxLength() should return '1001'");
 			});
 
-			test("Enabled property", function() {
-				oInput.setEnabled(true);
-				strictEqual(oInput.getEnabled(), true, "getEnabled() should return true");
-				oInput.setEnabled(false);
-				strictEqual(oInput.getEnabled(), false, "getEnabled() should return false");
-				oInput.setEnabled(true);
-				oInput.setValue(" ");
-				strictEqual(oInput.getEnabled(), true, "still enabled even though only whitespace chars");
-				oInput.setEnabled(false);
-				strictEqual(oInput._getPostButton().getEnabled(), false, "_getPostButton().getEnabled() should return 'false'");
-				strictEqual(oInput._getTextArea().getEnabled(), false, "_getTextArea().getEnabled() should return 'false'");
+			test("Defaults", function() {
+				strictEqual(this.oFeedInput.getButtonTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
+				strictEqual(this.oFeedInput.getEnabled(), true, "enabled is 'true'");
+				strictEqual(this.oFeedInput.getIcon(), "", "icon is ''");
+				strictEqual(this.oFeedInput.getIconDensityAware(), true, "iconDensityAware is 'true'");
+				strictEqual(this.oFeedInput.getMaxLength(), 0, "maxLength is '0'");
+				strictEqual(this.oFeedInput.getPlaceholder(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
+				strictEqual(this.oFeedInput.getShowIcon(), true, "showIcon is 'true'");
+				strictEqual(this.oFeedInput.getValue(), "", "value is ''");
+				strictEqual(this.oFeedInput.getVisible(), true, "visible is 'true'");
 			});
-	
-			test("Visible property", function(){
-				oInput.setVisible(true);
-				ok(jQuery.sap.domById("input"), "input should be rendered");
-				oInput.setVisible(false);
-				ok(jQuery.sap.domById("input"), "input should not be rendered");
-				oInput.setVisible(true);
-				ok(jQuery.sap.domById("input"), "input should be rendered");
+
+			test("ButtonTooltip", function() {
+				this.oFeedInput.setButtonTooltip("My Submit");
+				strictEqual(this.oFeedInput.getButtonTooltip(), "My Submit", "Getter should return correct non-default value");
+				strictEqual(this.oFeedInput._getPostButton().getTooltip(), this.oFeedInput.getButtonTooltip(), "Property should be passed to button control");
 			});
-	
-			test("CSS", function(){
-				ok(jQuery.sap.byId("input").hasClass("sapMFeedIn"), "input should have class sapMFeedIn");
+
+			test("Enabled", function() {
+				this.oFeedInput.setEnabled(false);
+				strictEqual(this.oFeedInput.getEnabled(), false, "Getter should return correct non-default value");
+				strictEqual(this.oFeedInput._getTextArea().getEnabled(), false, "enabled=false: TextArea should be disabled");
+				strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=false: Button should be disabled");
+
+				this.oFeedInput.setEnabled(true);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.oFeedInput._getTextArea().getEnabled(), true, "enabled=true: TextArea should be enabled");
+				strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=true, Value = '': Button should be disabled");
+
+				this.oFeedInput.setValue(" ");
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=true, Value = ' ': Button should be disabled when TextArea contains only whitespace chars");
+
+				this.oFeedInput.setValue("some string");
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "enabled=true, Value = 'some string': Button should be enabled when TextArea contains any non-whitespace chars");
 			});
-	
-			test("Post event: fired with correct param", function() {
+
+			test("Icon", function() {
+				this.oFeedInput.setIcon("myIcon");
+				strictEqual(this.oFeedInput.getIcon(), "myIcon", "Getter should return correct non-default value");
+				strictEqual(this.oFeedInput._getImageControl().getSrc(), this.oFeedInput.getIcon(), "Property should be passed to image control");
+			});
+
+			test("IconDensityAware", function() {
+				this.oFeedInput.setIconDensityAware(false);
+				strictEqual(this.oFeedInput.getIconDensityAware(), false, "Getter should return correct non-default value");
+
+				this.oFeedInput.destroy();
+
+				// iconDensityAware is only supported by image, not by icon. So we need an image instance for the next test
+				var oFeedInput = new sap.m.FeedInput({
+					icon : "../images/SAPUI5.jpg"
+				});
+				oFeedInput.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+
+				oFeedInput.setIconDensityAware(false);
+				strictEqual(oFeedInput._getImageControl().getDensityAware(), false, "Property should be passed to image control");
+				oFeedInput.destroy();
+			});
+
+			test("MaxLength", function() {
+				this.oFeedInput.setMaxLength(1001);
+				strictEqual(this.oFeedInput.getMaxLength(), 1001, "Getter should return correct non-default value");
+				strictEqual(this.oFeedInput._getTextArea().getMaxLength(), this.oFeedInput.getMaxLength(), "Property should be passed to TextArea control");
+			});
+
+			test("Placeholder", function() {
+				this.oFeedInput.setPlaceholder("asdf");
+				strictEqual(this.oFeedInput.getPlaceholder(), "asdf", "Getter should return correct non-default value");
+				strictEqual(this.oFeedInput._getTextArea().getPlaceholder(), this.oFeedInput.getPlaceholder(), "Property should be passed to TextArea");
+			});
+
+			test("ShowIcon", function() {
+				this.oFeedInput.setShowIcon(false);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.oFeedInput.getShowIcon(), false, "Getter should return correct non-default value");
+				ok(this.oFeedInput.$().hasClass("sapMFeedInNoIcon"), "ShowIcon=false: div input should have class 'sapMFeedInNoIcon'");
+
+				this.oFeedInput.setShowIcon(true);
+				sap.ui.getCore().applyChanges();
+				ok(!this.oFeedInput.$().hasClass("sapMFeedInNoIcon"), "ShowIcon=true: div input should not have class 'sapMFeedInNoIcon'");
+				ok(jQuery.sap.byId("input-figure").hasClass("sapMFeedInFigure"), "ShowIcon=true: div figure should have class 'sapMFeedInFigure'");
+			});
+
+			test("Value", function() {
+				this.oFeedInput.setValue("asdf");
+				strictEqual(this.oFeedInput.getValue(), "asdf", "Getter should return correct non-default value");
+				strictEqual(this.oFeedInput._getTextArea().getValue(), this.oFeedInput.getValue(), "Property should be passed to TextArea");
+			});
+
+			test("Visible", function(){
+				this.oFeedInput.setVisible(true);
+				ok(jQuery.sap.domById("input"), "visible=true: FeedInput control should be rendered");
+				this.oFeedInput.setVisible(false);
+				ok(jQuery.sap.domById("input"), "visible=false: FeedInput control should not be rendered");
+			});
+
+
+			module("CSS", {
+				setup : function() {
+					this.oFeedInput = new sap.m.FeedInput("input");
+					this.oFeedInput.placeAt("uiArea");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oFeedInput.destroy();
+				}
+			});
+
+			test("General Stuff", function(){
+				ok(jQuery.sap.byId("input").hasClass("sapMFeedIn"), "FeedInput control should have class 'sapMFeedIn'");
+				ok(jQuery.sap.byId("input-container").hasClass("sapMFeedInContainer"), "input container should have class 'sapMFeedInContainer'");
+			});
+
+
+			module("Events", {
+				setup : function() {
+					this.oFeedInput = new sap.m.FeedInput("input", {
+						post : function (oEvt) {
+							strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
+						}
+					});
+					this.oFeedInput.placeAt("uiArea");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oFeedInput.destroy();
+				}
+			});
+
+			test("Post - fired with correct param", function() {
 				expect(1); // verifies the event handler was executed
-				oInput.setValue("firedValue");
-				oInput.setEnabled(true);
+				this.oFeedInput.setValue("firedValue");
+				this.oFeedInput.setEnabled(true);
 				qutils.triggerEvent("tap", "input-button");
 			});
-	
-			test("Post event : not fired if disabled", function() {
+
+			test("Post - not fired if disabled", function() {
 				expect(0); // verifies the event handler was NOT executed
-				oInput.setEnabled(false);
+				this.oFeedInput.setEnabled(false);
 				qutils.triggerEvent("tap", "input-button");
 			});
-			
-			test("Post event : not fired if value contains only whitespaces", function() {
+
+			test("Post - not fired if value contains only whitespaces", function() {
 				expect(0); // verifies the event handler was NOT executed
-				oInput.setEnabled(true);
-				oInput.setValue(" ");
+				this.oFeedInput.setEnabled(true);
+				this.oFeedInput.setValue(" ");
 				qutils.triggerEvent("tap", "input-button");
 			});
-	
-			test("Post event : not fired if enabled BUT value contains only whitespaces", function() {
+
+			test("Post - not fired if enabled BUT value contains only whitespaces", function() {
 				expect(0); // verifies the event handler was NOT executed
-				oInput.setValue(" ");
-				oInput.setEnabled(true);
+				this.oFeedInput.setValue(" ");
+				this.oFeedInput.setEnabled(true);
 				qutils.triggerEvent("tap", "input-button");
 			});
-	
-			test("Post event : value is empty afterwards", function() {
+
+			test("Post - value is empty afterwards", function() {
 				expect(2); // verifies the event handler was executed
-				oInput.setValue("firedValue");
-				oInput.setEnabled(true);
+				this.oFeedInput.setValue("firedValue");
+				this.oFeedInput.setEnabled(true);
 				qutils.triggerEvent("tap", "input-button");
-				strictEqual(oInput.getValue(), "", "value should be empty");
+				strictEqual(this.oFeedInput.getValue(), "", "value should be empty");
 			});
-			
-			test("Post event : fired when pressing ENTER", function() {
+
+			test("Post - fired when pressing ENTER", function() {
 				expect(1); //verifies the event handler was executed
-				oInput.setValue("firedValue");
-				oInput.setEnabled(true);
+				this.oFeedInput.setValue("firedValue");
+				this.oFeedInput.setEnabled(true);
 				qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.ENTER);
 				qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.ENTER);
 				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.ENTER);
 			});
-			
-			test("Post event : fired when pressing SPACE", function() {
+
+			test("Post - fired when pressing SPACE", function() {
 				expect(1); //verifies the event handler was executed
-				oInput.setValue("firedValue");
-				oInput.setEnabled(true);
+				this.oFeedInput.setValue("firedValue");
+				this.oFeedInput.setEnabled(true);
 				qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.SPACE);
 				qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.SPACE);
 				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.SPACE);
 			});
-			
-			test("Post event : not fired when pressing a", function() {
+
+			test("Post - not fired when pressing 'A'", function() {
 				expect(0); //verifies the event handler was NOT executed
-				oInput.setValue("firedValue");
-				oInput.setEnabled(true);
+				this.oFeedInput.setValue("firedValue");
+				this.oFeedInput.setEnabled(true);
 				qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.A);
 				qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.A);
 				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.A);
 			});
-
-
 		</script>
 	</head>
 	<body class="sapUiBody">
