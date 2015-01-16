@@ -209,19 +209,29 @@ SAPUI5 includes the following subcomponents that are subject to separate license
 Your use of these subcomponents is subject to the seperate license terms applicable to
 each subcomponent.
 
-Component: Array Reduce Method
+Component: Array every Method
 Licensor: Mozilla Developer Network
-Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every#Polyfill
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
-Component: Array.prototype.reduceright
+Component: Array indexOf Method
 Licensor: Mozilla Developer Network
-Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+Component: Array map Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
+Component: Array reduce Method
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Polyfill
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
 Component: Array reduceRight Method
 Licensor: Mozilla Developer Network
-Website: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/ReduceRight
+Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/ReduceRight#Polyfill
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
 Component: blanket.js 1.1.5
