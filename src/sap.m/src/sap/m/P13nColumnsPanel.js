@@ -892,69 +892,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * calculates an index where the new table item has to be inserted (Dependencies: Selected versus Unselected & Unselected shall be sorted)
-	 * 
-	 * @private
-	 * @param {sap.m.P13nColumnsItem} oItem is used to create and added a new table item
-	 * @param {integer} (optional) iPredefIndex is an index value that will be considered if oNewTableItem is selected/visible. If iPredefIndex is
-	 *        undefined and oNewTableItem is selected -> oNewTableItem will be added at the end of all selected items. In case oNewTableItem is
-	 *        unselected -> iPredefIndex will not be considered!
-	 * @returns {integer} iResultIndex is the index where the new table item has to be inserted
-	 */
-	P13nColumnsPanel.prototype._calculateNewTableItemIndex = function(oNewTableItem, iPredefIndex) {
-		var aExistingSelectedTableItems = null, oLastExistingSelectedTableItem = null, aExistingTableItems = null;
-		var iResultIndex = -1, iExistingSelectedTableItemIndex = -1, iExistingSelectedTableItemsMaxLength = 0, iUnSelectedTableItemIndex = 0;
-
-		if (oNewTableItem) {
-			if (oNewTableItem.getSelected() === true) {
-				if (iPredefIndex !== null && iPredefIndex !== undefined && iPredefIndex > -1) {
-					iResultIndex = iPredefIndex;
-				} else {
-					iResultIndex = 0;
-					aExistingSelectedTableItems = this._oTable.getSelectedItems();
-					if (aExistingSelectedTableItems && aExistingSelectedTableItems.length > 0) {
-						oLastExistingSelectedTableItem = aExistingSelectedTableItems[aExistingSelectedTableItems.length - 1];
-						iResultIndex = this._oTable.indexOfItem(oLastExistingSelectedTableItem) + 1;
-					}
-				}
-			} else {
-				aExistingTableItems = this._oTable.getItems();
-				aExistingSelectedTableItems = this._oTable.getSelectedItems();
-
-				// Run over all selected table items to subtract those items from overall table item list
-				if (aExistingSelectedTableItems && aExistingSelectedTableItems.length > 0) {
-					iExistingSelectedTableItemsMaxLength = aExistingSelectedTableItems.length;
-					aExistingSelectedTableItems.forEach(function(oExistingSelectedTableItem) {
-						iExistingSelectedTableItemIndex = aExistingTableItems.indexOf(oExistingSelectedTableItem);
-						if (iExistingSelectedTableItemIndex > -1) {
-							aExistingTableItems.splice(iExistingSelectedTableItemIndex, 1);
-						}
-					});
-				}
-
-				// extend array of unselected table items by oNewTableItem
-				aExistingTableItems.push(oNewTableItem);
-
-				// Sort array of unselected table items by it's column name
-				if (aExistingTableItems && aExistingTableItems.length > 0) {
-
-					aExistingTableItems.sort(function(a, b) {
-						var sTextA = a.getCells()[0].getText();
-						var sTextB = b.getCells()[0].getText();
-						return sTextA.localeCompare(sTextB, window.navigator.language, {
-							numeric: true
-						});
-					});
-				}
-
-				iUnSelectedTableItemIndex = aExistingTableItems.indexOf(oNewTableItem);
-				iResultIndex = iExistingSelectedTableItemsMaxLength + iUnSelectedTableItemIndex;
-			}
-		}
-		return iResultIndex;
-	};
-
-	/**
 	 * Add a new table item based on the given P13nItem content
 	 * 
 	 * @private
