@@ -19,6 +19,11 @@
 			"control": "sap.m.Slider",
 			"url": "../Slider.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Title",
+			"url": "Title.html",
+			"appComponent": "CA-UI5-CTR-WDF"
 		}
 	]
 }
