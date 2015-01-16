@@ -14,7 +14,6 @@
 		showMarkers="false"
 		markFlagged="true"
 		markFavorite="true"
-		numberState="Success"
 		backgroundDesign="Translucent">
 		<attributes>
 			<ObjectAttribute
