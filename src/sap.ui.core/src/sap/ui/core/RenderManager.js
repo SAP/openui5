@@ -327,12 +327,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	
 		//Does everything needed after the rendering (restore focus, calling "onAfterRendering", initialize event binding)
 		var finalizeRendering = function(oRM, aRenderedControls, oStoredFocusInfo){
-			// Notify the behavior object that the controls will be attached to DOM
-			for (var i = 0, size = aRenderedControls.length; i < size; i++) {
-				var oControl = aRenderedControls[i];
-				if (oControl.bOutput && oControl.bOutput !== "invisible") {
-					oRM._bLocked = true;
-					try {
+			
+			var i, size = aRenderedControls.length;
+			
+			for (i = 0; i < size; i++) {
+				aRenderedControls[i]._sapui_bInAfterRenderingPhase = true;
+			}
+			oRM._bLocked = true;
+			
+			try {
+				
+				// Notify the behavior object that the controls will be attached to DOM
+				for (i = 0; i < size; i++) {
+					var oControl = aRenderedControls[i];
+					if (oControl.bOutput && oControl.bOutput !== "invisible") {
 						var oEvent = jQuery.Event("AfterRendering");
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
@@ -341,10 +349,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 						oControl._handleEvent(oEvent);
 						// end performance measurement
 						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
-					} finally {
-						oRM._bLocked = false;
 					}
 				}
+			
+			} finally {
+				for (i = 0; i < size; i++) {
+					delete aRenderedControls[i]._sapui_bInAfterRenderingPhase;
+				}
+				oRM._bLocked = false;
 			}
 	
 			//finally restore focus
@@ -360,7 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			}
 	
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
-			for (var i = 0, size = aRenderedControls.length; i < size; i++) {
+			for (i = 0; i < size; i++) {
 				var oControl = aRenderedControls[i],
 					aBindings = oControl.aBindParameters;
 	
