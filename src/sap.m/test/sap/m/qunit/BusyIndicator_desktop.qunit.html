@@ -89,6 +89,12 @@
 			equal(spinner.width(), 10, "Spinner width should be 10px");
 			equal(spinner.height(), 10, "Spinner height should be 10px");	
 		});
+		test("Busy Indicator Aria support", function(){
+			equal(jQuery("#b1").attr("role"), "progressbar", "Busy Indicator has a progressbar role");
+			ok(jQuery("#b1").attr("aria-valuemin"), "Busy Indicator has an aria-valuemin attribute");
+			ok(jQuery("#b1").attr("aria-valuemax"), "Busy Indicator has an aria-valuemax attribute");
+			equal(jQuery("#b1").attr("aria-labelledby"), "b1-label", "Busy Indicator has an Aria label");
+		});
 		asyncTest("Busy Indicator Image live changes", function(){
 			busyImage.setCustomIconWidth("30px");
 			busyImage.setCustomIconHeight("30px");
