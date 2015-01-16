@@ -356,6 +356,22 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	padding: 2px;
 }
 
+.sapUiTableDragDrop {
+	cursor: move;
+
+	.sapUiTableCCnt, .sapUiTableColRsz {
+		pointer-events: none;
+	} 
+
+	.sapUiTableCol {
+		cursor: move;
+		
+		* {
+			cursor: move;
+		}
+	}
+}
+
 
 /*******************************************************************************
  * DND & RESIZE ELEMENTS
