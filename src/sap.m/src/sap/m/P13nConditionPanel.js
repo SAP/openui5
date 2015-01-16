@@ -23,7 +23,7 @@ sap.ui.define([
 	 * 
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.25. !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
+	 * @experimental since version 1.26 !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
 	 * @alias sap.m.P13nConditionPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -171,7 +171,7 @@ sap.ui.define([
 	 *            aConditions array of Conditions.
 	 * 
 	 * @public
-	 * @since 1.25.0
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.setConditions = function(aConditions) {
 		if (!aConditions) {
@@ -195,6 +195,8 @@ sap.ui.define([
 	/**
 	 * remove all conditions.
 	 * 
+	 * @public
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.removeAllConditions = function() {
 		this._oConditionsMap = {};
@@ -210,6 +212,8 @@ sap.ui.define([
 	 * @param {object}
 	 *            oCondition the new condition of type { "key": "007", "operation":
 	 *            sap.m.P13nConditionOperation.Ascending, "keyField": "keyFieldKey", "value1": "", "value2": ""};
+	 * @public
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.addCondition = function(oCondition) {
 		if (this._bIgnoreSetConditions) {
@@ -229,6 +233,8 @@ sap.ui.define([
 	 *            sap.m.P13nConditionOperation.Ascending, "keyField": "keyFieldKey", "value1": "", "value2": ""};
 	 * @param {integer}
 	 *            index of the new condition
+	 * @public
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.insertCondition = function(oCondition, index) {
 		if (this._bIgnoreSetConditions) {
@@ -247,6 +253,8 @@ sap.ui.define([
 	 * @param {object}
 	 *            vCondition is the condition which should be removed. can be either a string with the
 	 *            key of the condition of the condition object itself.
+	 * @public
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.removeCondition = function(vCondition) {
 		this._clearConditions();
@@ -283,6 +291,7 @@ sap.ui.define([
 	 * 
 	 * @public
 	 * @returns {object[]} array of Conditions
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.getConditions = function() {
 		var oCondition;
@@ -321,6 +330,7 @@ sap.ui.define([
 	 * and a keyfield is of not of type date or numeric.
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {sap.m.P13nConditionOperation[]}
 	 *            aOperations array of operations [sap.m.P13nConditionOperation.BT,
 	 *            sap.m.P13nConditionOperation.EQ]
@@ -339,6 +349,7 @@ sap.ui.define([
 	 * add a single operation
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {sap.m.P13nConditionOperation}
 	 *            oOperation
 	 * @param {string}
@@ -355,6 +366,7 @@ sap.ui.define([
 	 * remove all operations
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {string}
 	 *            sType defines the type for which all operations should be removed
 	 */
@@ -369,6 +381,7 @@ sap.ui.define([
 	 * returns the default array of operations
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {string}
 	 *            sType defines the type for which the operations should be returned.
 	 * @returns {sap.m.P13nConditionOperation[]} array of operations
@@ -383,6 +396,7 @@ sap.ui.define([
 	 * object with Key and Text properties to define the keyfields.
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {array}
 	 *            aKeyFields array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
@@ -397,6 +411,7 @@ sap.ui.define([
 	 * add a single KeyField
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {object}
 	 *            oKeyField {key: "CompanyCode", text: "ID"}
 	 */
@@ -413,6 +428,7 @@ sap.ui.define([
 	 * removes all KeyFields
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 */
 	P13nConditionPanel.prototype.removeAllKeyFields = function() {
 		this._aKeyFields = [];
@@ -424,6 +440,7 @@ sap.ui.define([
 	 * getter for KeyFields array
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @returns {object[]} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName",
 	 *          text : "Name"}]
 	 */
@@ -435,6 +452,7 @@ sap.ui.define([
 	 * sets the AlwaysShowAddIcon.
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {boolean}
 	 *            bEnabled makes the Add icon visible for each condition row.
 	 */
@@ -453,6 +471,7 @@ sap.ui.define([
 	 * see ContainerQuery
 	 * 
 	 * @public
+	 * @since 1.26.0
 	 * @param {string}
 	 *            sLayoutMode define the layout mode for the condition row. The value can be Desktop,
 	 *            Tablet or Phone.
@@ -1774,6 +1793,7 @@ sap.ui.define([
 	 * removes all errors/warning states from the value1/2 fields of all conditions.
 	 * 
 	 * @public
+	 * @since 1.28.0
 	 */
 	P13nConditionPanel.prototype.removeValidationErrors = function() {
 		this._oConditionsGrid.getContent().forEach(function(oConditionGrid) {
@@ -1788,6 +1808,7 @@ sap.ui.define([
 	 * removes all invalid conditions.
 	 * 
 	 * @public
+	 * @since 1.28.0
 	 */
 	P13nConditionPanel.prototype.removeInvalidConditions = function() {
 		var aInvalidConditionGrids = [];
