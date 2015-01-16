@@ -299,6 +299,7 @@
 				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "100", 'The "aria-valuemax" attribute is set to its default value');
 				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
 				strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
+				strictEqual(oSlider.getDomRef("progress").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSlider.destroy();

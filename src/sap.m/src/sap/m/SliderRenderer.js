@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("width", oSlider._sProgressValue);
 			oRm.writeClasses();
 			oRm.writeStyles();
-			oRm.write("></div>");
+			oRm.write(' aria-hidden="true"></div>');
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider) {
