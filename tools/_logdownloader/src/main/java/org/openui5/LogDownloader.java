@@ -31,9 +31,22 @@ import org.json.JSONObject;
 
 public class LogDownloader {
 
-	// SETTINGS
-	private static final String[] ACCOUNTS = {"openui5", "openui5beta"};
+	// preparation of application data
+	private static final String[] all_servers = {"hana.ondemand.com", "us1.hana.ondemand.com", "ap1.hana.ondemand.com"};
+	private static final String[] eu_server = {"hana.ondemand.com"};
 	
+	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "openui5", all_servers);
+	private static final ApplicationConfig openui5beta_config = new ApplicationConfig("openui5beta", "appdesigner", eu_server);
+	private static final ApplicationConfig openui5test_config = new ApplicationConfig("openui5test", "appdesigner", eu_server);
+	
+	
+	// SETTINGS
+	private static final ApplicationConfig[] APPLICATION_CONFIGS = {
+		openui5_config,
+		openui5beta_config,
+		openui5test_config
+	};
+
 	private static String USER = null;
 	private static final String DEFAULT_USER = null;
 	private static String PASSWORD = null;
@@ -47,7 +60,7 @@ public class LogDownloader {
 	private static final boolean DEV_MODE = false;
 
 	// global consts
-	private static final String PROXY = "setProxy.bat & ";
+	private static final String PROXY = "C:\\git\\sapui5.misc\\tools\\_logdownloader\\target\\setProxy.bat & ";
 	private static final String BACKUP_FOLDER_NAME = "logBackup";
 
 	// member variables
@@ -55,7 +68,7 @@ public class LogDownloader {
 	private final File exportDir;
 
 
-	
+
 	public static void main(String[] args) {
 
 		String folderToScan = System.getProperty("user.dir");
@@ -147,9 +160,9 @@ public class LogDownloader {
 		// start the download and parsing process...
 		LogDownloader ld = new LogDownloader(logDir, exportDir);
 
-		// ...for all required accounts
-		for (int i = 0; i < ACCOUNTS.length; i++) {
-			ld.handleLogFiles(ACCOUNTS[i]);
+		// ...for all required applications
+		for (int i = 0; i < APPLICATION_CONFIGS.length; i++) {
+			ld.handleLogFiles(APPLICATION_CONFIGS[i]);
 		}
 	}
 
@@ -166,71 +179,84 @@ public class LogDownloader {
 
 
 	/**
-	 * Downloads and processes the HTTP log files for the given account
+	 * Downloads and processes the HTTP log files for the given application
 	 * 
-	 * @param account
+	 * @param applicationConfig
 	 */
-	public void handleLogFiles(String account) {
+	public void handleLogFiles(ApplicationConfig applicationConfig) {
 		
-		log("\nStarting log download process for account '" + account + "'...\n\n");
+		log("\nStarting log download process for application '" + applicationConfig + "'...\n\n");
 
-		
-		// Step 1: get the list of log files from the cloud server
-		JSONObject json = this.getLogList(account);
-		log("...log list downloaded.\n");
+		List<LogFileData> listOfDataSetsFromAllServers = new ArrayList<LogFileData>();
 
+		// log file downloading and parsing needs to be done for all servers where this application is deployed
+		for (int i = 0; i < applicationConfig.getServers().length; i++) {
+			String server = applicationConfig.getServers()[i];
+			
+			// Step 1: get the list of log files from the cloud server
+			JSONObject json = this.getLogList(applicationConfig.getAccount(), applicationConfig.getApplication(), server);
+			log("...log list downloaded (server: " + server + ").\n");
+	
+	
+			// Step 2: extract the actual HTTP log file names by parsing the log list
+			List<String> logFileNames = this.parseCommandOutput(json.getString("commandOutput"));
+	
+			if (logFileNames.size() < 1) { // no logs?
+				error("no log files could be extracted from JSON");
+			} else {
+				log("..." + logFileNames.size() + " log file names found (server: " + server + ").\n");
+			}
+	
+	
+			// Step 3: download the HTTP log files
+			List<File> rawLogFiles = this.downloadLogFiles(logFileNames, applicationConfig.getAccount(), applicationConfig.getApplication(), server);
+			if (rawLogFiles.size() != logFileNames.size()) {
+				error(logFileNames.size() + " log file names known, but " + rawLogFiles.size() + " files downloaded.");
+			} else {
+				log("..." + rawLogFiles.size() + " log files downloaded (server: " + server + ").\n");
+			}
+	
+	
+			// Step 4: anonymize the log files
+			List<FileWithDate> anonymizedLogFiles = this.anonymizeLogFiles(rawLogFiles);
+			if (anonymizedLogFiles.size() != logFileNames.size()) {
+				error(logFileNames.size() + " log file names known, but " + anonymizedLogFiles.size() + "files anonymized.");
+			} else {
+				log("..." + anonymizedLogFiles.size() + " log files anonymized (server: " + server + ").\n");
+			}
+	
+	
+			// Step 5: extract data from log files and backup the completed log files
+			listOfDataSetsFromAllServers.addAll(this.parseLogs(anonymizedLogFiles, applicationConfig.getAccount(), applicationConfig.getApplication(), server));
+			log("...log files parsed (server: " + server + ").\n");
 
-		// Step 2: extract the actual HTTP log file names by parsing the log list
-		List<String> logFileNames = this.parseCommandOutput(json.getString("commandOutput"));
-
-		if (logFileNames.size() < 1) { // no logs?
-			error("no log files could be extracted from JSON");
-		} else {
-			log("..." + logFileNames.size() + " log file names found.\n");
 		}
 
 
-		// Step 3: download the HTTP log files
-		List<File> rawLogFiles = this.downloadLogFiles(logFileNames, account);
-		if (rawLogFiles.size() != logFileNames.size()) {
-			error(logFileNames.size() + " log file names known, but " + rawLogFiles.size() + " files downloaded.");
-		} else {
-			log("..." + rawLogFiles.size() + " log files downloaded.\n");
-		}
-
-
-		// Step 4: anonymize the log files
-		List<FileWithDate> anonymizedLogFiles = this.anonymizeLogFiles(rawLogFiles);
-		if (anonymizedLogFiles.size() != logFileNames.size()) {
-			error(logFileNames.size() + " log file names known, but " + anonymizedLogFiles.size() + "files anonymized.");
-		} else {
-			log("..." + anonymizedLogFiles.size() + " log files anonymized.\n");
-		}
-
-
-		// Step 5: extract data from log files and backup the completed log files
-		List<LogFileData> dataSets = this.parseLogs(anonymizedLogFiles, account);
-		log("...log files parsed.\n");
+		// Step 5b: merge the data sets coming from different servers into one aggregated list with one entry per day
+		log("Aggregating " + listOfDataSetsFromAllServers.size() + " datasets from all servers...");
+		List<LogFileData> mergedDataSetsFromAllServers = mergeDataSets(listOfDataSetsFromAllServers);
+		log("...aggregated into " + mergedDataSetsFromAllServers.size() + " datasets.\n");
 
 
 		// Step 6: load previous data from file
-		JSONObject allData = this.loadDataFile(new File(directory + File.separator + DATA_FILE_NAME + "_" + account + ".json"));
+		JSONObject allData = this.loadDataFile(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig + ".json"));
 		log("...data file loaded.\n");
 
 
 		// Step 7: merge new data
-		allData = this.addToJson(allData, dataSets);
+		allData = this.addToJson(allData, mergedDataSetsFromAllServers);
 		log("...new data added.\n");
 
 
 		// Step 8: save data file
-		File jsonDataFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + account + ".json");
+		File jsonDataFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig + ".json");
 		this.saveDataFile(jsonDataFile, allData);
 		log("...data file saved.\n");
 
 
 		// Step 9: store Excel/CSV data
-		this.exportAsCSV(new File(directory + File.separator + DATA_FILE_NAME + "_" + account + ".csv"), allData);
+		this.exportAsCSV(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig + ".csv"), allData);
 		log("...CSV file exported.\n");
 		
 		// Step 10:
@@ -244,13 +270,16 @@ public class LogDownloader {
 	/**
 	 * Returns a JSONObject containing the result of the list-logs API call
 	 * 
-	 * @param account like openui5 or openui5beta
+	 * @param account like openui5 or appdesigner
+	 * @param application like openui5 or openui5beta
+	 * @param server like hana.ondemand.com
 	 * @return
 	 */
-	private JSONObject getLogList(String account) {
+	private JSONObject getLogList(String account, String application, String server) {
 		JSONObject result = null;
 
-		final String listLogsCommand = " list-logs --user " + USER + " -p " + PASSWORD + " --output json --account appdesigner --application " + account + " --host https://hana.ondemand.com/ ";
+		final String listLogsCommand = " list-logs --user " + USER + " -p " + PASSWORD + " --output json --account " + account 
+				+ " --application " + application + " --host https://" + application + "." + server + "/ ";
 
 		String commandline = "cmd /c " + PROXY + NEO_PATH + listLogsCommand;
 		log("Retrieving list of log files...");
@@ -328,10 +357,15 @@ public class LogDownloader {
 	 * Takes a list of log file names and downloads them from the server
 	 * 
 	 * @param logFileNames
+	 * @param account like openui5 or appdesigner
+	 * @param application like openui5 or openui5beta
+	 * @param server like hana.ondemand.com
+	 * 
 	 * @return locally downloaded log files
 	 */
-	private List<File> downloadLogFiles(List<String> logFileNames, String account) {
-		final String getLogCommand = " get-log  --user " + USER + "  -p " + PASSWORD + "  --account appdesigner  --application " + account + "  --host https://hana.ondemand.com/  --output json  --directory \"" + directory.getAbsolutePath() + "\"";
+	private List<File> downloadLogFiles(List<String> logFileNames, String account, String application, String server) {
+		final String getLogCommand = " get-log  --user " + USER + "  -p " + PASSWORD + "  --account " + account + "  --application " + application 
+				+ "  --host https://" + application + "." + server + "/  --output json  --directory \"" + directory.getAbsolutePath() + "\"";
 		String commandline = "cmd /c " + PROXY + NEO_PATH + getLogCommand;
 		Runtime rt = Runtime.getRuntime();
 		JSONObject json;
@@ -521,9 +555,13 @@ public class LogDownloader {
 	 * Multiple log files containing data for the same day are handled properly, the result list data is aggregated, so each day is only once in the result.
 	 * 
 	 * @param anonymizedLogFiles
+	 * @param account like openui5 or appdesigner
+	 * @param application like openui5 or openui5beta
+	 * @param server like hana.ondemand.com
+	 * 
 	 * @return a sorted list of data sets where each day is only present once
 	 */
-	private List<LogFileData> parseLogs(List<FileWithDate> anonymizedLogFiles, String account) {
+	private List<LogFileData> parseLogs(List<FileWithDate> anonymizedLogFiles, String account, String application, String server) {
 		List<LogFileData> dataSets = new ArrayList<LogFileData>();
 		List<File> completeLogFiles = new ArrayList<File>(); // those we want to back up
 		
@@ -557,6 +595,32 @@ public class LogDownloader {
 
 
 		// there can be multiple log files per day (one per process), aggregate numbers per day now...
+		List<LogFileData> aggregatedDataSets = mergeDataSets(dataSets);
+
+		// sort the data sets ascending by day
+		Collections.sort(aggregatedDataSets, new Comparator<LogFileData>() { // sort lines by date
+			@Override
+			public int compare(LogFileData d1, LogFileData d2)
+			{
+				return d1.getYYYYMMDD_WithDashes().compareTo(d2.getYYYYMMDD_WithDashes());
+			}
+		});
+		
+		// backup the anonymized log files
+		this.backupAnonymizedFiles(completeLogFiles, account, application, server);
+
+		return aggregatedDataSets;
+	}
+
+
+	/**
+	 * Takes a list of datasets that may contain the same day several times, and returns an aggregated list that contains each day only once,
+	 * with the numbers added up. 
+	 * 
+	 * @param dataSets
+	 * @return
+	 */
+	private List<LogFileData> mergeDataSets(List<LogFileData> dataSets) {
 		List<LogFileData> aggregatedDataSets = new ArrayList<LogFileData>();
 		Set<Integer> handledIndices = new HashSet<Integer>();
 
@@ -580,19 +644,6 @@ public class LogDownloader {
 				aggregatedDataSets.add(currentDataSet);
 			}
 		}
-
-		// sort the data sets ascending by day
-		Collections.sort(aggregatedDataSets, new Comparator<LogFileData>() { // sort lines by date
-			@Override
-			public int compare(LogFileData d1, LogFileData d2)
-			{
-				return d1.getYYYYMMDD_WithDashes().compareTo(d2.getYYYYMMDD_WithDashes());
-			}
-		});
-		
-		// backup the anonymized log files
-		this.backupAnonymizedFiles(completeLogFiles, account);
-
 		return aggregatedDataSets;
 	}
 
@@ -720,9 +771,12 @@ public class LogDownloader {
 	 * Moves the given files to a backup directory below the working directoy
 	 * 
 	 * @param anonymizedLogFiles
+	 * @param account like openui5 or appdesigner
+	 * @param application like openui5 or openui5beta
+	 * @param server like hana.ondemand.com
 	 */
-	private void backupAnonymizedFiles(List<File> anonymizedLogFiles, String account) {
-		File backupDir = new File(directory + File.separator + BACKUP_FOLDER_NAME + "_" + account);
+	private void backupAnonymizedFiles(List<File> anonymizedLogFiles, String account, String application, String server) {
+		File backupDir = new File(directory + File.separator + BACKUP_FOLDER_NAME + "_" + application + "_" + server);
 		if (!backupDir.exists()) {
 			backupDir.mkdir();
 		}
