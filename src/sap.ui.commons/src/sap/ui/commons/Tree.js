@@ -130,7 +130,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oSelectedNodeMap = {};
 		this.oSelectedContextMap = {};
 		this.aLeadSelection = null;
-		this.bDelFlag = null;
 	
 		//Create Buttons for Header
 	
@@ -741,14 +740,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var aSelectableNodes,
 			aSelectedNodes = [], 
 			aSelectedNodeContexts = [],
-			iStartIndex, iEndIndex, iFrom, iTo,
-			that = this;
-	
-		if (this.bDelFlag == true) {
-			jQuery.each(this.oSelectedNodeMap, function(sId, oNode){
-				that._delMultiSelection(oNode, bSuppressEvent);
-			});
-		}
+			iStartIndex, iEndIndex, iFrom, iTo;
 	
 		if (this.oSelectedNodeMap[oNode.getId()] == oNode) {
 			return; //Nothing to do!
@@ -789,16 +781,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	Tree.prototype._setNodeSelection = function(oNode, bIsSelected, bSuppressEvent) {
-		var aSelectedNodes = [], 
+		var aSelectedNodes = [],
 			aSelectedNodeContexts = [];
+		var oVisibleDomNode;
 		
-		if (bIsSelected && this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
-			this._setSelectedNode(oNode, bSuppressEvent);
-			return;
+		if (this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
+			if (bIsSelected) {
+				var oSelectedNode = this.getSelection();
+				this._setSelectedNode(oNode, bSuppressEvent);
+				if (!oNode.isVisible()) {
+					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
+					this.adjustSelectionOnCollapsing(oVisibleDomNode);
+				}
+				if (oSelectedNode && !oSelectedNode.isVisible()) {
+					oVisibleDomNode = this._getVisibleNode(oSelectedNode).getDomRef();
+					this.adjustSelectionOnExpanding(oVisibleDomNode);
+				}
+				return;
+			} else {
+				this._delMultiSelection(oNode, bSuppressEvent);
+				if (!oNode.isVisible()) {
+					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
+					this.adjustSelectionOnExpanding(oVisibleDomNode);
+				}
+			}
 		}
 		
-		this.bDelFlag = true;
-	
 		if (bIsSelected) {
 			this._setMultiSelection(oNode, bSuppressEvent);
 			this.oLeadSelection = oNode;
@@ -845,6 +853,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	Tree.prototype._getNodes = function() {
 		return this.mAggregations.nodes || [];
+	};
+	
+	Tree.prototype._getVisibleNode = function(oNode) {
+		var oParentNode = oNode.getParent();
+		if (oParentNode.isVisible()) {
+			var oVisibleNode = oParentNode;
+		} else {
+			oVisibleNode = this._getVisibleNode(oParentNode);
+		}
+		return oVisibleNode;
 	};
 
 	return Tree;
