@@ -67,6 +67,7 @@ module.exports = function(grunt) {
 
 							'sap/ui/base/**',
 							'sap/ui/model/**',
+							'sap/ui/Global.js'
 						]
 					}
 			},
