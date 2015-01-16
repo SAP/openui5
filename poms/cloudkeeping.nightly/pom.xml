@@ -77,7 +77,7 @@
 					<properties>
 						<application>sapui5nightly</application>
 						<account>sapui5</account>
-						<applicationURL>ui5</applicationURL>
+						<applicationURL>sapui5nightly</applicationURL>
 						<severity>info</severity>
 						<landscape>https://neo.ondemand.com/</landscape>
 						<user>${user}</user>

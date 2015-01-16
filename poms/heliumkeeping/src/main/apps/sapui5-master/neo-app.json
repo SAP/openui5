@@ -7,9 +7,10 @@
             "target": {
                 "type": "destination",
                 "name": "ui5sdk-snapshot",
+                "resolutionType": "localAccount",
                 "preferLocal": true
             },
-            "description": "SAPUI5 SDK (incl. CDN) - Version Alias: ${versionAlias}"
+            "description": "SAPUI5 SDK (incl. CDN) - Version Alias: snapshot"
         }
     ]
 }
