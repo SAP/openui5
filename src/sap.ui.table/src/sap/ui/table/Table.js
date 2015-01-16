@@ -185,7 +185,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 * Set this parameter to true to implement your own filter behaviour. Instead of the filter input box a button will be rendered for which' press event (customFilter) you can register an event handler.
 			 * @since 1.23.0
 			 */
-			enableCustomFilter : {type : "boolean", group : "Behavior", defaultValue : false}
+			enableCustomFilter : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Set this parameter to true to make the table handle the busy indicator by its own. The table will switch to busy as soon as it scrolls into an unpaged area.
+			 * @since 1.27.0
+			 */
+			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "columns",
 		aggregations : {
@@ -1104,6 +1110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.updateRows = function(sReason) {
+		this._setBusy(false);
 
 		// by default the start index is the first visible row
 		var iStartIndex = this.getFirstVisibleRow();
@@ -1400,8 +1407,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var iThreshold = this.getThreshold() ? Math.max(this.getVisibleRowCount(), this.getThreshold()) : 0;
 			var iFixedBottomRowCount = this.getFixedBottomRowCount();
 			aContexts = oBinding.getContexts(iStartIndex, iVisibleRowCount - iFixedBottomRowCount, iThreshold);
+			this._setBusy({
+				requestedLength: iVisibleRowCount - iFixedBottomRowCount,
+				receivedLength: aContexts.length });
+
 			if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
 				aContexts = aContexts.concat(oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1));
+				this._setBusy({
+					requestedLength: iFixedBottomRowCount,
+					receivedLength: aContexts.length });
 			}
 		}
 		for (var i = 0; i < iVisibleRowCount; i++) {
@@ -1597,21 +1611,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				var iTotalFixedRows = iFixedRows + iFixedBottomRows;
 				iThreshold = this.getThreshold() ? Math.max((this.getVisibleRowCount() - iTotalFixedRows), this.getThreshold()) : 0;
 				aContexts = oBinding.getContexts(this.getFirstVisibleRow() + iFixedRows, aRows.length - iTotalFixedRows, iThreshold);
+				this._setBusy({
+					requestedLength: aRows.length - iTotalFixedRows,
+					receivedLength: aContexts.length});
 				// static rows: we fetch the contexts without threshold to avoid loading
 				// of unnecessary data. Make sure to fetch after the normal rows to avoid
 				// outgoing double requests for the contexts.
 				if (iFixedRows > 0) {
 					aFixedContexts = oBinding.getContexts(0, iFixedRows);
+					this._setBusy({
+						requestedLength: iFixedRows,
+						receivedLength: aFixedContexts.length});
+
 					aContexts = aFixedContexts.concat(aContexts);
 				}
 				if (iFixedBottomRows > 0 && (iVisibleRowCount - iFixedBottomRows) < oBinding.getLength()) {
 					aFixedBottomContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRows, iFixedBottomRows);
+					this._setBusy({
+						requestedLength: iFixedBottomRows,
+						receivedLength: aFixedBottomContexts.length});
+
 					aContexts = aContexts.concat(aFixedBottomContexts);
 				}
 			} else if (aRows.length > 0) {
 				// thresholding is deactivated when value is 0
 				iThreshold = this.getThreshold() ? Math.max(this.getVisibleRowCount(), this.getThreshold()) : 0;
 				aContexts = oBinding.getContexts(this.getFirstVisibleRow(), aRows.length, iThreshold);
+				this._setBusy({
+					requestedLength: aRows.length,
+					receivedLength: aContexts.length});
 			}
 		}
 
@@ -5344,6 +5372,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		jQuery.each(aColumns, function(iIndex, oColumn){
 			oColumn._restoreAppDefaults();
 		});
+	};
+
+	Table.prototype._setBusy = function (mParameters) {
+		if (!this.getEnableBusyIndicator()) {
+			return;
+		}
+
+		var oBinding = this.getBinding("rows");
+		if (!oBinding) {
+			return;
+		}
+
+		if (mParameters) {
+			if (mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0) {
+				this.setBusy(true);
+			}
+		} else {
+			this.setBusy(false);
+		}
+
 	};
 
 	return Table;
