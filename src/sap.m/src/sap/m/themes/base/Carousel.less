@@ -33,7 +33,7 @@
 	height: 100%;
 	position: relative;
 	white-space: nowrap;
-	text-align: left;
+	text-align: begin;
 	/*  Removes  inline-block  gaps  due  to  whitespace  */
 	font-size: 0;
 	/*  Configure  animations  */
@@ -51,6 +51,15 @@
 	-ms-transition-duration: 0.5s;
 	transition-duration: 0.5s;
 }
+
+/* special handling for IE, as it does not support text-align: end */ 
+html[data-sap-ui-browser^="ie"] .sapMCrslInner { 
+ 	text-align: left;
+} 
+
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner { 
+	text-align: right; 
+} 
 
 .sapMCrslItemTable {
 	display: table;
