@@ -72,7 +72,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		);
 
 	/**
-	 * Formats the given value to the given target type
+	 * Formats the given value to the given target type.
 	 *
 	 * @param {string} sValue
 	 *   the value to be formatted
@@ -142,7 +142,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 
 	/**
 	 * Validates whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * defined constraints.
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated

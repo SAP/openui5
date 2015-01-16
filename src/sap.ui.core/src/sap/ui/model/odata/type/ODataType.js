@@ -2,10 +2,19 @@
  * ${copyright}
  */
 
+/**
+ * Namespace for
+ * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
+ * OData primitive types</a>.
+ *
+ * @namespace
+ * @name sap.ui.model.odata.type
+ * @public
+ */
+
 sap.ui.define(['sap/ui/model/SimpleType'],
 	function(SimpleType) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new <code>ODataType</code>.
@@ -13,10 +22,13 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 * @class This class is an abstract base class for all OData primitive types (see <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * Edm Types</a>). All sub-types implement the interface of
-	 * <code>sap.ui.model.SimpleType</code>. That means they implement next to the constructor:
-	 * <code>getName</code>, <code>formatValue</code>, <code>parseValue</code> and
-	 * <code>validateValue</code>.
-	 *
+	 * {@link sap.ui.model.SimpleType}. That means they implement next to the constructor:
+	 * <ul>
+	 * <li>{@link sap.ui.model.SimpleType#getName getName}</li>
+	 * <li>{@link sap.ui.model.SimpleType#formatValue formatValue}</li>
+	 * <li>{@link sap.ui.model.SimpleType#parseValue parseValue}</li>
+	 * <li>{@link sap.ui.model.SimpleType#validateValue validateValue}</li>
+	 * </ul>
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE

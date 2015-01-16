@@ -98,7 +98,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 		);
 
 	/**
-	 * Format the given boolean value to the given target type.
+	 * Formats the given boolean value to the given target type.
 	 *
 	 * @param {boolean} bValue
 	 *   the value to be formatted
@@ -128,7 +128,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Parse the given value from the given type to a boolean.
+	 * Parses the given value from the given type to a boolean.
 	 *
 	 * @param {boolean|string} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
@@ -168,8 +168,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the
+	 * defined constraints.
 	 *
 	 * @param {boolean} bValue
 	 *   the value to be validated

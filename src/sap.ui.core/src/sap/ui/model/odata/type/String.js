@@ -77,10 +77,9 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		);
 
 	/**
-	 * Format the given value to the given target type. When formatting to <code>string</code>
+	 * Formats the given value to the given target type. When formatting to <code>string</code>
 	 * the formatting options will be taken into account.
 	 *
-	 * @function
 	 * @param {string} sValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
@@ -96,12 +95,12 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	EdmString.prototype.formatValue = StringType.prototype.formatValue;
 
 	/**
-	 * Parse the given value which is expected to be of the given type to a string.
+	 * Parses the given value which is expected to be of the given type to a string.
 	 *
 	 * @param {string|number|boolean} vValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>)
+	 *   the source type (the expected type of <code>vValue</code>)
 	 * @returns {string}
 	 *   the parsed value
 	 * @throws sap.ui.model.ParseException
@@ -113,8 +112,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the
+	 * defined constraints.
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
