@@ -22,9 +22,9 @@
 							formatter: 'sap.ui.demo.mdskeleton.util.formatter.listItemType'
 						}"
 						press="onSelect"
-						title="{Name}"
+						title="{ProductName}"
 						number="{
-							path: 'Price',
+							path: 'UnitPrice',
 							formatter: 'sap.ui.demo.mdskeleton.util.formatter.currencyValue'
 						}"
 						numberUnit="USD">

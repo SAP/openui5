@@ -1,69 +1,120 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
-  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
-    <Schema Namespace="ODataDemo" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2007/05/edm">
-      <EntityType Name="Product">
-        <Key>
-          <PropertyRef Name="ID" />
-        </Key>
-        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Name" Type="Edm.String" Nullable="true" m:FC_TargetPath="SyndicationTitle" m:FC_ContentKind="text" m:FC_KeepInContent="false" />
-        <Property Name="Description" Type="Edm.String" Nullable="true" m:FC_TargetPath="SyndicationSummary" m:FC_ContentKind="text" m:FC_KeepInContent="false" />
-        <Property Name="ReleaseDate" Type="Edm.DateTime" Nullable="false" />
-        <Property Name="DiscontinuedDate" Type="Edm.DateTime" Nullable="true" />
-        <Property Name="Rating" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Price" Type="Edm.Decimal" Nullable="false" />
-        <NavigationProperty Name="Category" Relationship="ODataDemo.Product_Category_Category_Products" FromRole="Product_Category" ToRole="Category_Products" />
-        <NavigationProperty Name="Supplier" Relationship="ODataDemo.Product_Supplier_Supplier_Products" FromRole="Product_Supplier" ToRole="Supplier_Products" />
-      </EntityType>
+  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">
+    <Schema Namespace="NorthwindModel" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
       <EntityType Name="Category">
         <Key>
-          <PropertyRef Name="ID" />
+          <PropertyRef Name="CategoryID" />
         </Key>
-        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Name" Type="Edm.String" Nullable="true" m:FC_TargetPath="SyndicationTitle" m:FC_ContentKind="text" m:FC_KeepInContent="true" />
-        <NavigationProperty Name="Products" Relationship="ODataDemo.Product_Category_Category_Products" FromRole="Category_Products" ToRole="Product_Category" />
+        <Property Name="CategoryID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
+        <Property Name="Description" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
+        <Property Name="Picture" Type="Edm.Binary" Nullable="true" MaxLength="Max" FixedLength="false" />
+        <NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Products_Categories" FromRole="Categories" ToRole="Products" />
+      </EntityType>
+      <EntityType Name="Order_Detail">
+        <Key>
+          <PropertyRef Name="OrderID" />
+          <PropertyRef Name="ProductID" />
+        </Key>
+        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />
+        <Property Name="Quantity" Type="Edm.Int16" Nullable="false" />
+        <Property Name="Discount" Type="Edm.Single" Nullable="false" />
+        <NavigationProperty Name="Product" Relationship="NorthwindModel.FK_Order_Details_Products" FromRole="Order_Details" ToRole="Products" />
+      </EntityType>
+      <EntityType Name="Product">
+        <Key>
+          <PropertyRef Name="ProductID" />
+        </Key>
+        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+        <Property Name="SupplierID" Type="Edm.Int32" Nullable="true" />
+        <Property Name="CategoryID" Type="Edm.Int32" Nullable="true" />
+        <Property Name="QuantityPerUnit" Type="Edm.String" Nullable="true" MaxLength="20" Unicode="true" FixedLength="false" />
+        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="true" Precision="19" Scale="4" />
+        <Property Name="UnitsInStock" Type="Edm.Int16" Nullable="true" />
+        <Property Name="UnitsOnOrder" Type="Edm.Int16" Nullable="true" />
+        <Property Name="ReorderLevel" Type="Edm.Int16" Nullable="true" />
+        <Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />
+        <NavigationProperty Name="Category" Relationship="NorthwindModel.FK_Products_Categories" FromRole="Products" ToRole="Categories" />
+        <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.FK_Order_Details_Products" FromRole="Products" ToRole="Order_Details" />
+        <NavigationProperty Name="Supplier" Relationship="NorthwindModel.FK_Products_Suppliers" FromRole="Products" ToRole="Suppliers" />
       </EntityType>
       <EntityType Name="Supplier">
         <Key>
-          <PropertyRef Name="ID" />
+          <PropertyRef Name="SupplierID" />
         </Key>
-        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Name" Type="Edm.String" Nullable="true" m:FC_TargetPath="SyndicationTitle" m:FC_ContentKind="text" m:FC_KeepInContent="true" />
-        <Property Name="Address" Type="ODataDemo.Address" Nullable="false" />
-        <Property Name="Concurrency" Type="Edm.Int32" Nullable="false" ConcurrencyMode="Fixed" />
-        <NavigationProperty Name="Products" Relationship="ODataDemo.Product_Supplier_Supplier_Products" FromRole="Supplier_Products" ToRole="Product_Supplier" />
+        <Property Name="SupplierID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+        <Property Name="ContactName" Type="Edm.String" Nullable="true" MaxLength="30" Unicode="true" FixedLength="false" />
+        <Property Name="ContactTitle" Type="Edm.String" Nullable="true" MaxLength="30" Unicode="true" FixedLength="false" />
+        <Property Name="Address" Type="Edm.String" Nullable="true" MaxLength="60" Unicode="true" FixedLength="false" />
+        <Property Name="City" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
+        <Property Name="Region" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
+        <Property Name="PostalCode" Type="Edm.String" Nullable="true" MaxLength="10" Unicode="true" FixedLength="false" />
+        <Property Name="Country" Type="Edm.String" Nullable="true" MaxLength="15" Unicode="true" FixedLength="false" />
+        <Property Name="Phone" Type="Edm.String" Nullable="true" MaxLength="24" Unicode="true" FixedLength="false" />
+        <Property Name="Fax" Type="Edm.String" Nullable="true" MaxLength="24" Unicode="true" FixedLength="false" />
+        <Property Name="HomePage" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
+        <NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Products_Suppliers" FromRole="Suppliers" ToRole="Products" />
       </EntityType>
-      <ComplexType Name="Address">
-        <Property Name="Street" Type="Edm.String" Nullable="true" />
-        <Property Name="City" Type="Edm.String" Nullable="true" />
-        <Property Name="State" Type="Edm.String" Nullable="true" />
-        <Property Name="ZipCode" Type="Edm.String" Nullable="true" />
-        <Property Name="Country" Type="Edm.String" Nullable="true" />
-      </ComplexType>
-      <Association Name="Product_Category_Category_Products">
-        <End Role="Product_Category" Type="ODataDemo.Product" Multiplicity="*" />
-        <End Role="Category_Products" Type="ODataDemo.Category" Multiplicity="0..1" />
+       <Association Name="FK_Products_Categories">
+        <End Role="Categories" Type="NorthwindModel.Category" Multiplicity="0..1" />
+        <End Role="Products" Type="NorthwindModel.Product" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Categories">
+            <PropertyRef Name="CategoryID" />
+          </Principal>
+          <Dependent Role="Products">
+            <PropertyRef Name="CategoryID" />
+          </Dependent>
+        </ReferentialConstraint>
       </Association>
-      <Association Name="Product_Supplier_Supplier_Products">
-        <End Role="Product_Supplier" Type="ODataDemo.Product" Multiplicity="*" />
-        <End Role="Supplier_Products" Type="ODataDemo.Supplier" Multiplicity="0..1" />
+      <Association Name="FK_Order_Details_Products">
+        <End Role="Products" Type="NorthwindModel.Product" Multiplicity="1" />
+        <End Role="Order_Details" Type="NorthwindModel.Order_Detail" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Products">
+            <PropertyRef Name="ProductID" />
+          </Principal>
+          <Dependent Role="Order_Details">
+            <PropertyRef Name="ProductID" />
+          </Dependent>
+        </ReferentialConstraint>
       </Association>
-      <EntityContainer Name="DemoService" m:IsDefaultEntityContainer="true">
-        <EntitySet Name="Products" EntityType="ODataDemo.Product" />
-        <EntitySet Name="Categories" EntityType="ODataDemo.Category" />
-        <EntitySet Name="Suppliers" EntityType="ODataDemo.Supplier" />
-        <AssociationSet Name="Products_Category_Categories" Association="ODataDemo.Product_Category_Category_Products">
-          <End Role="Product_Category" EntitySet="Products" />
-          <End Role="Category_Products" EntitySet="Categories" />
+      <Association Name="FK_Products_Suppliers">
+        <End Role="Suppliers" Type="NorthwindModel.Supplier" Multiplicity="0..1" />
+        <End Role="Products" Type="NorthwindModel.Product" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Suppliers">
+            <PropertyRef Name="SupplierID" />
+          </Principal>
+          <Dependent Role="Products">
+            <PropertyRef Name="SupplierID" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+    </Schema>
+    <Schema Namespace="ODataWeb.Northwind.Model" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+      <EntityContainer Name="NorthwindEntities" p7:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true" xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntitySet Name="Categories" EntityType="NorthwindModel.Category" />
+        <EntitySet Name="Order_Details" EntityType="NorthwindModel.Order_Detail" />
+        <EntitySet Name="Products" EntityType="NorthwindModel.Product" />
+        <EntitySet Name="Suppliers" EntityType="NorthwindModel.Supplier" />
+        <AssociationSet Name="FK_Products_Categories" Association="NorthwindModel.FK_Products_Categories">
+          <End Role="Categories" EntitySet="Categories" />
+          <End Role="Products" EntitySet="Products" />
         </AssociationSet>
-        <AssociationSet Name="Products_Supplier_Suppliers" Association="ODataDemo.Product_Supplier_Supplier_Products">
-          <End Role="Product_Supplier" EntitySet="Products" />
-          <End Role="Supplier_Products" EntitySet="Suppliers" />
+        <AssociationSet Name="FK_Order_Details_Products" Association="NorthwindModel.FK_Order_Details_Products">
+          <End Role="Products" EntitySet="Products" />
+          <End Role="Order_Details" EntitySet="Order_Details" />
         </AssociationSet>
-        <FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(ODataDemo.Product)" m:HttpMethod="GET">
-          <Parameter Name="rating" Type="Edm.Int32" Mode="In" />
-        </FunctionImport>
+        <AssociationSet Name="FK_Products_Suppliers" Association="NorthwindModel.FK_Products_Suppliers">
+          <End Role="Suppliers" EntitySet="Suppliers" />
+          <End Role="Products" EntitySet="Products" />
+        </AssociationSet>
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

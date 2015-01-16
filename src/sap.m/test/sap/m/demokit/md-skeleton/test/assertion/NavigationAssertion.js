@@ -17,7 +17,7 @@ sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion = Opa5.extend("sap.ui.
 		return this.waitFor({
 			controlType : "sap.m.ObjectHeader",
 			viewName : "Detail",
-			matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : "Bread"}) ],
+			matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : "Chai"}) ],
 			success : function () {
 				ok(true, "was on the first detail page");
 			}
@@ -57,11 +57,57 @@ sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion = Opa5.extend("sap.ui.
 		});
 	},
 
-	iShouldBeOnTheVintSodaDetailPage : function () {
-		return this.iShouldBeOnTheDetailPage("Vint soda");
+	iShouldBeOnTheAniseedSyrupDetailPage : function () {
+		return this.iShouldBeOnTheDetailPage("Aniseed Syrup");
 	},
 
-	iShouldBeOnTheMilkDetailPage : function () {
-		return this.iShouldBeOnTheDetailPage("Milk");
+	iShouldBeOnTheChaiDetailPage : function () {
+		return this.iShouldBeOnTheDetailPage("Chai");
+	},
+	
+	iShouldSeeTheOrderDetailsList : function () {
+		return this.waitFor({
+			id : "orderDetailsList",
+			viewName : "Detail",
+			success : function (oList) {
+				ok(oList, "Found the order details list");
+			}
+		});
+	},
+	
+	//TODO use matchers instead or ask Tobias to implement aggregation count 
+	//if we are in a good mood we will do this
+	//afterwards, let's also apply the new matcher to function 'theProductListShouldHave9Entries'
+	theOrderDetailsListShouldHave3Entries : function () {
+		return this.waitFor({
+			id : "orderDetailsList",
+			viewName : "Detail",
+			matchers : [ new Opa5.matchers.AggregationFilled({name : "items"}) ],
+			check : function (oList) {
+				return oList.getItems().length === 3;
+			},
+			success : function (oList) {
+				ok(true, "The list has 3 items");
+			},
+			errorMessage : "The list does not have 3 entries"
+		});
+	},
+	
+	theFirstOrderDetailHasId10285 : function () {
+		return this.waitFor({
+			id : "orderDetailsList",
+			viewName : "Detail",
+			matchers : [ new Opa5.matchers.AggregationFilled({name : "items"}) ],
+			check : function (oList) {
+				return oList && oList.getItems().length === 3;
+			},
+			success : function (oList) {
+				var oFirstItem = oList.getItems()[0];
+				strictEqual(oFirstItem.getBindingContext().getProperty('OrderID'), 10285, "The first OrderDetail has Id 10285");
+			},
+			errorMessage : "The first OrderDetail does not have Id 10285"
+		});
 	}
+	
+	
 });
