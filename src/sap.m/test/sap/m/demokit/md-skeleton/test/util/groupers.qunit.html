@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>groupers</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{"sap.ui.demo.mdskeleton": "../.././"}'>
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		sap.ui.require(
+			[
+				"sap/ui/demo/mdskeleton/util/groupers",
+				"sap/ui/thirdparty/sinon",
+				"sap/ui/thirdparty/sinon-qunit"
+			],
+			function (Groupers) {
+			"use strict";
+
+				module("Grouping functions", {
+					setup: function () {
+						this._oResourceModel = new sap.ui.model.resource.ResourceModel({
+							bundleUrl : [jQuery.sap.getModulePath("sap.ui.demo.mdskeleton"), "i18n/messageBundle.properties"].join("/")
+						});
+					},
+					teardown: function () {
+						this._oResourceModel.destroy();
+					}
+				});
+	
+				function createContextObject(vValue) {
+					return {
+						getProperty: function () {
+							return vValue;
+						}
+					}
+				};
+
+				test("Should Group the Rating", function () {
+					// Arrange
+					var iRating2 = 2,
+						oContextObject2 = createContextObject(iRating2),
+						iRating5 = 5,
+						oContextObject5 = createContextObject(iRating5),
+						oContextObjectHigher = createContextObject(5),
+						oGetModelStub = this.stub(),
+						oControlStub = {
+							getModel: oGetModelStub
+						},
+						oGrouperReturn;
+
+					// System under test
+					oGetModelStub.withArgs("i18n").returns(this._oResourceModel);
+
+					// Assert
+					oGrouperReturn = jQuery.proxy(Groupers.Group1, oControlStub)(oContextObject2);
+					strictEqual(oGrouperReturn.key, iRating2,"The key was as expected for rating 2");
+					strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating2]),"The group header is correct for rating 2");
+
+					oGrouperReturn = jQuery.proxy(Groupers.Group1, oControlStub)(oContextObject5);
+					strictEqual(oGrouperReturn.key, iRating5,"The key was as expected for rating 5");
+					strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating5]),"The group header is correct for rating 5");
+				});
+
+				test("Should group the price", function () {
+					// Arrange
+					var oContextObjectLower = createContextObject(17.2),
+						oContextObjectHigher = createContextObject(55.5),
+						oGetModelStub = this.stub(),
+						oControlStub = {
+							getModel: oGetModelStub
+						},
+						oGrouperReturn;
+
+					// System under test
+					oGetModelStub.withArgs("i18n").returns(this._oResourceModel);
+
+					// Assert
+					oGrouperReturn = jQuery.proxy(Groupers.Group2, oControlStub)(oContextObjectLower);
+					strictEqual(oGrouperReturn.key,"LE20", "The key is as expected for a low value");
+					strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup2Header1"), "The group header is as expected for a low value");
+
+					oGrouperReturn = jQuery.proxy(Groupers.Group2, oControlStub)(oContextObjectHigher);
+					strictEqual(oGrouperReturn.key,"GT20", "The key is as expected for a high value");
+					strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup2Header2"), "The group header is as expected for a high value");
+				});
+				
+				
+			});
+
+	</script>
+
+</head>
+<body>
+<div id="content"></div>
+<h1 id="qunit-header">Test for Grouping Functions</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

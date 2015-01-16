@@ -30,7 +30,7 @@ sap.ui.demo.mdskeleton.test.action.NavigationAction = Opa5.extend("sap.ui.demo.m
 	iChangeTheHashToObject3 : function () {
 		return this.waitFor({
 			success : function () {
-				sap.ui.test.Opa5.getWindow().location.hash = "#/Objects('ObjectID_3')";
+				sap.ui.test.Opa5.getWindow().location.hash = "#/Objects/ObjectID_3";
 			}
 		});
 	},

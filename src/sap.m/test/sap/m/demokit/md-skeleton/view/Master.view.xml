@@ -1,31 +1,66 @@
 <mvc:View
 	controllerName="sap.ui.demo.mdskeleton.view.Master"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<Page
+		id="page"
 		title="{i18n>masterTitle}">
+		<headerContent>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button
+					icon="sap-icon://drop-down-list"
+					press="onOpenViewSettings"/>
+			</Toolbar>
+		</headerContent>
+		<subHeader>
+			<Bar>
+				<contentMiddle>
+					<SearchField
+						id="searchField"
+						showRefreshButton="{device>/isNoTouch}"
+						tooltip="{i18n>masterSearchTooltip}"
+						width="100%"
+						search="onSearch">
+					</SearchField>
+				</contentMiddle>
+				
+			</Bar>
+			
+		</subHeader>
 		<content>
+			<PullToRefresh
+				id="pullToRefresh"
+				visible="{device>/isTouch}"
+				refresh="onRefresh" />
 			<List
 				id="list"
 				items="{/Objects}"
 				noDataText="{i18n>masterListNoDataText}"
 				mode="{
 					path: 'device>isPhone',
-					formatter: 'sap.ui.demo.mdskeleton.util.formatter.listMode'
+					formatter: 'sap.ui.demo.mdskeleton.util.formatters.listMode'
 				}"
 				select="onSelect">
-
+				<infoToolbar>
+					<Toolbar
+						id="filterBar"
+						visible="false">
+						<Label id="filterBarLabel" />
+					</Toolbar>
+				</infoToolbar>
 				<items>
 					<ObjectListItem
 						type="{
 							path: 'device>isPhone',
-							formatter: 'sap.ui.demo.mdskeleton.util.formatter.listItemType'
+							formatter: 'sap.ui.demo.mdskeleton.util.formatters.listItemType'
 						}"
 						press="onSelect"
 						title="{Name}"
 						number="{
 							path: 'UnitNumber',
-							formatter: 'sap.ui.demo.mdskeleton.util.formatter.currencyValue'
+							formatter: 'sap.ui.demo.mdskeleton.util.formatters.currencyValue'
 						}"
 						numberUnit="{UnitOfMeasure}">
 					</ObjectListItem>
@@ -34,7 +69,48 @@
 		</content>
 		<!-- just to show a black empty line -->
 		<footer>
-			<Toolbar/>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Select
+					type="IconOnly"
+					icon="sap-icon://sort"
+					autoAdjustWidth="true"
+					change="onSort">
+					<core:Item
+						key="UnitNumber"
+						text="{i18n>masterSort1}"/>
+				</Select>
+				<Select
+					type="IconOnly"
+					icon="sap-icon://filter"
+					autoAdjustWidth="true"
+					change="onFilter">
+					<core:Item
+						key="None"
+						text="{i18n>masterFilterNone}"/>
+					<core:Item
+						key="Filter1"
+						text="{i18n>masterFilter1}"/>
+					<core:Item
+						key="Filter2"
+						text="{i18n>masterFilter2}"/>
+				</Select>
+				<Select
+					type="IconOnly"
+					icon="sap-icon://group-2"
+					autoAdjustWidth="true"
+					change="onGroup">
+					<core:Item
+						key="none"
+						text="{i18n>masterGroupNone}"/>
+					<core:Item
+						key="Group1"
+						text="{i18n>masterGroup1}"/>
+					<core:Item
+						key="Group2"
+						text="{i18n>masterGroup2}"/>
+				</Select>
+			</Toolbar>
 		</footer>
 	</Page>
 </mvc:View>

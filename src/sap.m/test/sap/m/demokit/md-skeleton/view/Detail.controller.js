@@ -1,6 +1,7 @@
-jQuery.sap.require("sap.ui.demo.mdskeleton.util.Controller");
+sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseController) {
+	"use strict";
 
-sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detail", {
+	return BaseController.extend("sap.ui.demo.mdskeleton.view.Detail", {
 
 	onInit : function() {
 		this.oInitialLoadFinishedDeferred = jQuery.Deferred();
@@ -18,7 +19,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 	},
 
 	onMasterLoaded :  function (sChannel, sEvent, oData) {
-		this.bindView(oData.oListItem.getBindingContext().getPath());
+		this.bindView(oData.bindingContext.getPath());
 		this.getView().setBusy(false);
 		this.oInitialLoadFinishedDeferred.resolve();
 	},
@@ -28,7 +29,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 
 		jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
 			// when detail navigation occurs, update the binding context
-			var sObjectPath = "/" + oParameters.arguments.object;
+			var sObjectPath = "/Objects('" + oParameters.arguments.objectId + "')";
 			this.bindView(sObjectPath);
 		}, this));
 
@@ -69,7 +70,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 
 	//this is not needed anymore or?
 	fireDetailChanged : function (sObjectPath) {
-		this.getEventBus().publish("Detail", "Changed", { sObjectPath : sObjectPath });
+		this.getEventBus().publish("Detail", "Changed", { objectPath : sObjectPath });
 	},
 
 	//this is not needed anymore or?
@@ -113,3 +114,5 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 	}
 
 });
+
+}, /* bExport= */ true);
