@@ -82,7 +82,7 @@ public class ReleaseNotes {
     });
 
     version = context.version;
-    version = new Version(version.major, version.minor, version.patch, null);
+    version = new Version(version.major, (version.minor % 2) == 0 ? version.minor : version.minor + 1, version.patch, null);  
     
     relNotesPerLibrary();
     
