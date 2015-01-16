@@ -281,30 +281,10 @@
 					oObjectHeader.destroy();
 				});
 				
-				test("Intro is active and is rendered as a link", function () {
+				test("Intro is sap.mLink when it is active", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
 						intro: "OH intro text",
-						introActive: true,
-						introHref: "http://www.sap.com"
-					});
-
-					// System under test
-					oObjectHeader.placeAt("qunit-fixture");
-					oCore.applyChanges();
-					
-					// Assert
-					var $sIntro = oObjectHeader.$("intro");
-					ok($sIntro.attr("href"), "Intro has attribute href and is a link.");
-					
-					// Clean up
-					oObjectHeader.destroy();
-				});
-				
-				test("Title is active but it's not a link", function () {
-					// Arrange
-					var oObjectHeader = createObjectHeader({
-						intro: "OH title",
 						introActive: true
 					});
 
@@ -314,11 +294,43 @@
 					
 					// Assert
 					var $sIntro = oObjectHeader.$("intro");
-					ok($sIntro.attr("href") === "javascript:void(0);", "Intro does not have a valid href and it's not a link.");
+					ok($sIntro.hasClass("sapMLnk"), "Intro is sap.m.Link");
 					
 					// Clean up
 					oObjectHeader.destroy();
 				});
+				
+				test("Active title tap", function() {
+					var domRef = null;
+					var eventHandler = function(oEvent) {
+						domRef = oEvent.getParameters().domRef;
+					}
+					
+					var oObjectHeader = createObjectHeader({
+						title: "OH title - last word will be cut from the rest of the title",
+						titleActive: true,
+						titlePress: eventHandler,
+						showMarkers: true,
+						markFlagged: true,
+						markFavorite: true
+					});
+			
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					sap.ui.test.qunit.triggerEvent("tap", oObjectHeader.$("txt"));
+					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "Title should be clickable when clicking on \"a\" element");
+					domRef = null;
+					
+					qutils.triggerEvent("tap", oObjectHeader.$("txt").children(0));
+					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
+					domRef = null;
+				
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				
 			module("Basic aggregations rendering", {
 				teardown: function () {
