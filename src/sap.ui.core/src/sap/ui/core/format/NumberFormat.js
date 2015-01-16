@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * <li>minusSign: the used minus symbol</li>
 	 * <li>showMeasure: show the measure according to the format in the formatted string</li>
 	 * <li>currencyCode: whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there's symbol defined for the given currency code.
+	 * <li>currencyContext: either 'standard' (the default format) or 'accounting' for an accounting specific currency display
 	 * <li>style: either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
 	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by maxFractionDigits.
 	 *  Rounding will only be applied, if the passed value if of type number. This can be assigned by value in 
@@ -57,11 +58,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		}
 	});
 
-	NumberFormat.INTEGER = 0;
-	NumberFormat.FLOAT = 1;
-	NumberFormat.CURRENCY = 2;
-	NumberFormat.PERCENT = 3;
-
+	/**
+	 * Internal enumeration to differentiate number types
+	 */
+	var mNumberType = {
+		INTEGER: "integer",
+		FLOAT: "float",
+		CURRENCY: "currency",
+		PERCENT: "percent"
+	};
+	
+	/**
+	 * Internal enumeration for type of number grouping
+	 */
+	var mGroupingType = {
+		ARABIC: "arabic",
+		INDIAN: "indian"
+	};
+	
 	/**
 	 * Specifies a rounding behavior for numerical operations capable of discarding precision. Each rounding mode in this object indicates how the least
 	 * significant returned digits of rounded result is to be calculated.
@@ -145,12 +159,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		minFractionDigits: 0,
 		maxFractionDigits: 0,
 		groupingEnabled: false,
+		groupingType: mGroupingType.ARABIC,
 		groupingSeparator: ",",
 		decimalSeparator: ".",
 		plusSign: "+",
 		minusSign: "-",
 		isInteger: true,
-		type: NumberFormat.INTEGER,
+		type: mNumberType.INTEGER,
 		showMeasure: false,
 		style: "standard",
 		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO
@@ -166,12 +181,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		minFractionDigits: 0,
 		maxFractionDigits: 99,
 		groupingEnabled: true,
+		groupingType: mGroupingType.ARABIC,
 		groupingSeparator: ",",
 		decimalSeparator: ".",
 		plusSign: "+",
 		minusSign: "-",
 		isInteger: false,
-		type: NumberFormat.FLOAT,
+		type: mNumberType.FLOAT,
 		showMeasure: false,
 		style: "standard",
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
@@ -187,13 +203,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		minFractionDigits: 0,
 		maxFractionDigits: 99,
 		groupingEnabled: true,
+		groupingType: mGroupingType.ARABIC,
 		groupingSeparator: ",",
 		decimalSeparator: ".",
 		plusSign: "+",
 		minusSign: "-",
 		percentSign: "%",
 		isInteger: false,
-		type: NumberFormat.PERCENT,
+		type: mNumberType.PERCENT,
 		showMeasure: false,
 		style: "standard",
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
@@ -209,14 +226,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// the default value for min/maxFractionDigits is defined in oLocaleData.getCurrencyDigits
 		// they need to be left undefined here in order to detect whether they are set from outside
 		groupingEnabled: true,
+		groupingType: mGroupingType.ARABIC,
 		groupingSeparator: ",",
 		decimalSeparator: ".",
 		plusSign: "+",
 		minusSign: "-",
 		isInteger: false,
-		type: NumberFormat.CURRENCY,
+		type: mNumberType.CURRENCY,
 		showMeasure: true,
 		currencyCode: true,
+		currencyContext: 'standard',
 		style: "standard",
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
 	};
@@ -253,12 +272,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 */
 	NumberFormat.getFloatInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, NumberFormat.FLOAT);
+			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.FLOAT);
 		
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultFloatFormat, oLocaleFormatOptions, oFormatOptions);
-		if (oFormatOptions && oFormatOptions.pattern) {
-			oFormat.oFormatOptions = jQuery.extend(false, oFormat.oFormatOptions, this.parseNumberPattern(oFormatOptions.pattern));
-		}
 		return oFormat;
 	};
 	
@@ -282,12 +298,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 */
 	NumberFormat.getIntegerInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, NumberFormat.INTEGER);
+			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.INTEGER);
 		
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultIntegerFormat, oLocaleFormatOptions, oFormatOptions);
-		if (oFormatOptions && oFormatOptions.pattern) {
-			oFormat.oFormatOptions = jQuery.extend(false, oFormat.oFormatOptions, this.parseNumberPattern(oFormatOptions.pattern));
-		}
 		return oFormat;
 	};
 	
@@ -311,12 +324,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 */
 	NumberFormat.getCurrencyInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, NumberFormat.CURRENCY);
+			sContext = oFormatOptions && oFormatOptions.currencyContext,
+			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.CURRENCY, sContext);
 
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormatOptions);
-		if (oFormatOptions && oFormatOptions.pattern) {
-			oFormat.oFormatOptions = jQuery.extend(false, oFormat.oFormatOptions, this.parseNumberPattern(oFormatOptions.pattern));
-		}
 		return oFormat;
 	};
 	
@@ -340,12 +351,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	*/
 	NumberFormat.getPercentInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, NumberFormat.PERCENT);
+			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
 
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormatOptions);
-		if (oFormatOptions && oFormatOptions.pattern) {
-			oFormat.oFormatOptions = jQuery.extend(false, oFormat.oFormatOptions, this.parseNumberPattern(oFormatOptions.pattern));
-		}
 		return oFormat;
 	};
 	
@@ -358,7 +366,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * @private
 	 */
 	NumberFormat.createInstance = function(oFormatOptions, oLocale) {
-		var oFormat = jQuery.sap.newObject(this.prototype);
+		var oFormat = jQuery.sap.newObject(this.prototype),
+			oPatternOptions;
 		if ( oFormatOptions instanceof sap.ui.core.Locale ) {
 			oLocale = oFormatOptions;
 			oFormatOptions = undefined;
@@ -368,6 +377,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
+		
+		// If a pattern is defined in the format option, parse it and add options
+		if (oFormatOptions && oFormatOptions.pattern) {
+			oPatternOptions = this.parseNumberPattern(oFormatOptions.pattern);
+			jQuery.each(oPatternOptions, function(sName, vOption) {
+				oFormatOptions[sName] = vOption;
+			});
+		}
 		return oFormat;
 	};
 	
@@ -377,17 +394,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 *
 	 * @static
 	 */
-	NumberFormat.getLocaleFormatOptions = function(oLocaleData, iType) {
+	NumberFormat.getLocaleFormatOptions = function(oLocaleData, iType, sContext) {
 		var oLocaleFormatOptions = {},
 			sNumberPattern;
 
-		if (iType == NumberFormat.CURRENCY) {
-			sNumberPattern = oLocaleData.getCurrencyPattern();
-			oLocaleFormatOptions = this.parseNumberPattern(sNumberPattern);
-			// reset the iMin/MaxFractionDigits because the extracted info from the pattern doesn't contain the currency specific info.
-			oLocaleFormatOptions.minFractionDigits = undefined;
-			oLocaleFormatOptions.maxFractionDigits = undefined;
+		switch (iType) {
+			case mNumberType.PERCENT:
+				sNumberPattern = oLocaleData.getPercentPattern();
+				break;
+			case mNumberType.CURRENCY:
+				sNumberPattern = oLocaleData.getCurrencyPattern(sContext);
+				break;
+			default:
+				sNumberPattern = oLocaleData.getDecimalPattern();
 		}
+		
+		oLocaleFormatOptions = this.parseNumberPattern(sNumberPattern);
 
 		oLocaleFormatOptions.plusSign = oLocaleData.getNumberSymbol("plusSign");
 		oLocaleFormatOptions.minusSign = oLocaleData.getNumberSymbol("minusSign");
@@ -396,6 +418,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		oLocaleFormatOptions.percentSign = oLocaleData.getNumberSymbol("percentSign");
 		oLocaleFormatOptions.pattern = sNumberPattern;
 
+		// Some options need to be overridden to stay compatible with the formatting defaults
+		// before pattern parsing was added to the NumberFormat
+		switch (iType) {
+			case mNumberType.FLOAT:
+			case mNumberType.PERCENT:
+				// Unlimited fraction digits for float and percent values
+				oLocaleFormatOptions.minFractionDigits = 0;
+				oLocaleFormatOptions.maxFractionDigits = 99;
+				break;
+			case mNumberType.INTEGER:
+				// No fraction digits and no grouping for integer values
+				oLocaleFormatOptions.minFractionDigits = 0;
+				oLocaleFormatOptions.maxFractionDigits = 0;
+				oLocaleFormatOptions.groupingEnabled = false;
+				break;
+			case mNumberType.CURRENCY:
+				// reset the iMin/MaxFractionDigits because the extracted info from the pattern doesn't contain the currency specific info.
+				oLocaleFormatOptions.minFractionDigits = undefined;
+				oLocaleFormatOptions.maxFractionDigits = undefined;
+				break;
+		}
+		
 		return oLocaleFormatOptions;
 	};
 	
@@ -409,6 +453,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		var iMinFractionDigits = 0;
 		var iMaxFractionDigits = 0;
 		var bGroupingEnabled = false;
+		var sGroupingType = mGroupingType.ARABIC;
 		var iSeparatorPos = sFormatString.indexOf(";");
 
 		// The sFormatString can be ¤#,##0.00;(¤#,##0.00). If the whole string is parsed, the wrong
@@ -424,6 +469,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			var sCharacter = sFormatString[i];
 			
 			if (sCharacter === ",") {
+				// If there are multiple grouping separators, enable indian grouping
+				if (bGroupingEnabled) {
+					sGroupingType = mGroupingType.INDIAN;
+				}
 				bGroupingEnabled = true;
 				continue;
 			} else if (sCharacter === ".") {
@@ -446,7 +495,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			minIntegerDigits: iMinIntegerDigits,
 			minFractionDigits: iMinFractionDigits,
 			maxFractionDigits: iMaxFractionDigits,
-			groupingEnabled: bGroupingEnabled
+			groupingEnabled: bGroupingEnabled,
+			groupingType: sGroupingType
 		};
 	};
 	
@@ -472,6 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sPattern = "",
 			iPosition = 0,
 			iLength = 0,
+			iGroupSize = 0,
 			bNegative = oValue < 0,
 			iDotPos = -1,
 			oOptions = jQuery.extend({}, this.oFormatOptions), aPatternParts;
@@ -490,12 +541,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			oValue =  oValue / oShortFormat.magnitude;
 		}
 
-		if (oOptions.type == NumberFormat.PERCENT) {
+		if (oOptions.type == mNumberType.PERCENT) {
 			oValue = shiftDecimalPoint(+oValue, 2);
 		}
 
 		//handle measure
-		if (oOptions.type == NumberFormat.CURRENCY) {
+		if (oOptions.type == mNumberType.CURRENCY) {
 			var iDigits = this.oLocaleData.getCurrencyDigits(sMeasure);
 			if (oOptions.maxFractionDigits === undefined) {
 				oOptions.maxFractionDigits = iDigits;
@@ -553,13 +604,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// grouping
 		iLength = sIntegerPart.length;
 		if (oOptions.groupingEnabled && iLength > 3) {
-			iPosition = iLength % 3 || 3;
-			sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
-			while (iPosition < sIntegerPart.length) {
-				sGroupedIntegerPart += oOptions.groupingSeparator;
-				sGroupedIntegerPart += sIntegerPart.substr(iPosition, 3);
-				iPosition += 3;
+			if (oOptions.groupingType == mGroupingType.ARABIC) {
+				iPosition = iLength % 3 || 3;
+				iGroupSize = 3;
+			} else {
+				iPosition = iLength % 2 + 1 || 3;
+				iGroupSize = 2;
 			}
+			sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
+			while (iPosition < sIntegerPart.length - 1) {
+				sGroupedIntegerPart += oOptions.groupingSeparator;
+				sGroupedIntegerPart += sIntegerPart.substr(iPosition, iGroupSize);
+				iPosition += iGroupSize;
+			}
+			sGroupedIntegerPart += sIntegerPart.substr(iPosition);
 			sIntegerPart = sGroupedIntegerPart;
 		}
 
@@ -580,40 +638,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sResult = sResult.replace(/'.'/g, ".");
 		}
 
-		if (sMeasure && oOptions.showMeasure) {
-			if (oOptions.type == NumberFormat.CURRENCY) {
-				sPattern = oOptions.pattern;
+		if (oOptions.type == mNumberType.CURRENCY) {
+			sPattern = oOptions.pattern;
 
-				// The currency pattern is definde in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
-				// where the pattern after ';' should be used for negative numbers.
-				// Therefore it's needed to check whether the pattern contains ';' and use the later part for
-				// negative values
-				aPatternParts = sPattern.split(";");
-				if (aPatternParts.length === 2) {
-					sPattern = bNegative ? aPatternParts[1] : aPatternParts[0];
-					if (bNegative) {
-						sResult = sResult.substring(1);
-					}
-				}
-
-				if (!oOptions.currencyCode) {
-					sMeasure = this.oLocaleData.getCurrencySymbol(sMeasure);
-				}
-
-				sPattern = sPattern.replace(/\u00a4/, sMeasure);
+			// The currency pattern is definde in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
+			// where the pattern after ';' should be used for negative numbers.
+			// Therefore it's needed to check whether the pattern contains ';' and use the later part for
+			// negative values
+			aPatternParts = sPattern.split(";");
+			if (aPatternParts.length === 2) {
+				sPattern = bNegative ? aPatternParts[1] : aPatternParts[0];
 				if (bNegative) {
-					sPattern = sPattern.replace(/-/, oOptions.minusSign);
+					sResult = sResult.substring(1);
 				}
-				sPattern = sPattern.replace(/[0#.,]+/, sResult);
-
-				sResult = sPattern;
 			}
+
+			if (!oOptions.currencyCode) {
+				sMeasure = this.oLocaleData.getCurrencySymbol(sMeasure);
+			}
+			if (oOptions.showMeasure && sMeasure) {
+				sPattern = sPattern.replace(/\u00a4/, sMeasure);
+			} else {
+				// If measure is not shown, also remove whitespace next to the measure symbol
+				sPattern = sPattern.replace(/\w*\u00a4\w*/, "");
+			}
+			if (bNegative) {
+				sPattern = sPattern.replace(/-/, oOptions.minusSign);
+			}
+			sPattern = sPattern.replace(/[0#.,]+/, sResult);
+
+			sResult = sPattern;
 		}
 
-		if (oOptions.type == NumberFormat.PERCENT) {
-			sPattern = this.oLocaleData.getPercentPattern();
+		if (oOptions.type == mNumberType.PERCENT) {
+			sPattern = oOptions.pattern;
 			sResult = sPattern.replace(/[0#.,]+/, sResult);
-			sResult = sResult.replace(/%/, this.oFormatOptions.percentSign);
+			sResult = sResult.replace(/%/, oOptions.percentSign);
 		}
 
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
@@ -662,7 +722,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// Check for valid syntax
 		if (oOptions.isInteger) {
 			oRegExp = new RegExp(sRegExpInt);
-		} else if (oOptions.type === NumberFormat.CURRENCY) {
+		} else if (oOptions.type === mNumberType.CURRENCY) {
 			sRegExpCurrencyMeasure = "[^\\d\\s+-]*";
 			sRegExpCurrency = "(?:^(" + sRegExpCurrencyMeasure + ")" + sRegExpFloat.substring(1, sRegExpFloat.length - 1) + "$)|(?:^" + sRegExpFloat.substring(1, sRegExpFloat.length - 1) + "(" + sRegExpCurrencyMeasure + ")\\s*$)";
 			oRegExp = new RegExp(sRegExpCurrency);
@@ -673,7 +733,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			return NaN;
 		}
 
-		if (oOptions.type === NumberFormat.CURRENCY) {
+		if (oOptions.type === mNumberType.CURRENCY) {
 			aParsed = oRegExp.exec(sValue);
 			// checks whether the currency code (symbol) is at the beginnig or end of the string
 			if (aParsed[2]) {
@@ -713,7 +773,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			oResult = oResult * oShort.factor;
 		}
 
-		return oOptions.type === NumberFormat.CURRENCY ? [oResult, sCurrencyMeasure] : oResult;
+		return oOptions.type === mNumberType.CURRENCY ? [oResult, sCurrencyMeasure] : oResult;
 	};
 
 	/**
