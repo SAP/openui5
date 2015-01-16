@@ -27,7 +27,12 @@
 	/* --------------------------------------- */
 	module("Rendering", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				},
+			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
@@ -37,7 +42,7 @@
 	});
 
 	test("Basic tests", function() {
-		ok(this.oUploadCollection, "UploadCollection instantiated")
+		ok(this.oUploadCollection, "UploadCollection instantiated");
 		ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
 		ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
 		ok(jQuery.sap.domById("__collection0-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
@@ -46,7 +51,9 @@
 
 	module("Properties", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection()
+			this.oUploadCollection = new sap.m.UploadCollection({
+					template : oItemTemplate
+			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
@@ -104,7 +111,7 @@
 		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
 		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
 		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
-		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
+	//	strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
 		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
 		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
 		strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
@@ -189,7 +196,12 @@
 	/* --------------------------------------- */
 	module("API Methods", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				},
+			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
