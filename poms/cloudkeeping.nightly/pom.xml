@@ -48,9 +48,6 @@
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
 		
-		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.27.0-SNAPSHOT</sapui5.version>
-	
 	</properties>
 	
 
@@ -63,11 +60,6 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.4</version>
-				</plugin>
-				<plugin>
 					<groupId>com.sap.ui5.tools.maven</groupId>
 					<artifactId>nwcloud-maven-plugin</artifactId>
 					<version>1.0.0-SNAPSHOT</version>
@@ -77,41 +69,6 @@
 	
 		<plugins>
 		
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-				
-					<execution>
-						<id>deployables</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.sap.ui5.dist</groupId>
-									<artifactId>sapui5-sdk-dist</artifactId>
-									<version>${sapui5.version}</version>
-									<classifier>hanacloud</classifier>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<destFileName>sapui5-sdk-dist.war</destFileName>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
-							<includes>**</includes>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-					
-				</executions>
-				
-			</plugin>
-
 			<plugin>
 				<groupId>com.sap.ui5.tools.maven</groupId>
 				<artifactId>nwcloud-maven-plugin</artifactId>
@@ -126,7 +83,7 @@
 						<user>${user}</user>
 						<password>${password}</password>
 						<deployables>
-							<deployable>${project.build.directory}/deployables/sapui5-sdk-dist.war</deployable>
+							<deployable>${basedir}/overlay/target/sapui5-sdk-dist.war</deployable>
 						</deployables>
 					</properties>
 					<httpProxyHost>proxy</httpProxyHost>
