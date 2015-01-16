@@ -169,8 +169,7 @@ sap.ui.define([
 		this._setDialogTitleFor(oPanel);
 		// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
 		this._setVisibilityOfPanel(oPanel);
-		this.setVerticalScrolling(oPanel.getVerticalScrolling());
-
+		
 		return this;
 	};
 
@@ -190,8 +189,7 @@ sap.ui.define([
 		}
 		this._setDialogTitleFor(oPanel);
 		// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
-		this._setVisibilityOfPanel(oPanel);
-		this.setVerticalScrolling(oPanel.getVerticalScrolling());
+		this._setVisibilityOfPanel(oPanel);		
 
 		return this;
 	};
@@ -334,8 +332,7 @@ sap.ui.define([
 		this.getPanels().forEach(function(oPanel_) {
 			if (oPanel_ === oPanel) {
 				oPanel_.beforeNavigationTo();
-				oPanel_.setVisible(true);
-// TGHL oPanel.fireLoadData();
+				oPanel_.setVisible(true); 
 			} else {
 				oPanel_.setVisible(false);
 			}
@@ -416,8 +413,8 @@ sap.ui.define([
 		oPanel.setVisible(bVisible);
 
 		if (bVisible) {
-			// TGHL oPanel.fireLoadData();
 			this._setVisibilityOfOtherPanels(oPanel, false);
+			this.setVerticalScrolling(oPanel.getVerticalScrolling());
 			var oButton = this._getButtonByPanel(oPanel);
 			if (this._getSegmentedButton()) {
 				this._getSegmentedButton().setSelectedButton(oButton);
