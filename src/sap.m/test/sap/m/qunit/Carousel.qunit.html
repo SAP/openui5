@@ -85,9 +85,14 @@ var oPictureCarousel = new sap.m.Carousel("picture_carousel", {
        
 
 var fnTestMove = function(iIndex, iIndicator) {
-       var actIndicator = iIndicator ? iIndicator : iIndex;
-       ok(this.$().find("#myPage" + iIndex).parents('.sapMCrslActive').length == 1, "Page " + iIndex + " should be active");
-       ok(this.$().find(".sapMCrslBulleted :nth-child(" + actIndicator + ")").hasClass('sapMCrslActive'), "Page Indicator " + actIndicator + " should still be selected");
+	var actIndicator = iIndicator ? iIndicator : iIndex;
+	ok(this.$().find("#myPage" + iIndex).parents('.sapMCrslActive').length == 1, "Page " + iIndex + " should be active");
+	if(this.getPages().length > 1) {
+		ok(this.$().find(".sapMCrslBulleted :nth-child(" + actIndicator + ")").hasClass('sapMCrslActive'), "Page Indicator " + actIndicator + " should still be selected");
+	} else {
+		ok(this.$().find('.sapMCrslBulleted').length == 0, "Page Indicator should be hidden");
+	}
+       
 }
 
 oPageApp.addContent(oPictureCarousel);
@@ -265,7 +270,7 @@ test("Remove all pages from carousel and add pages which were used in other caro
        this.clock.tick(600);
        
        ok(oCarousel.$().find("#myPage11").parents('.sapMCrslActive').length == 1, "Page 11 should be active");
-       ok(oCarousel.$().find('.sapMCrslBulleted').length == 1, "Page Indicator should show one dot");
+       ok(oCarousel.$().find('.sapMCrslBulleted').length == 0, "Page Indicator should be hidden");
        ok(oCarousel.$().hasClass("TestClass"), "Carousel has custom style class");
        var whoAmI = oCarousel.destroyPages();
        ok(whoAmI === oCarousel, "'destroyPages' does not return carousel");

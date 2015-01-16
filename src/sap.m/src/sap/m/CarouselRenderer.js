@@ -108,6 +108,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Renders the page indicator, using the provided {@link sap.ui.core.RenderManager}.
+	 * Page indicator is only rendered if there is more than one carousel page
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param aPages array of controls to be rendered
@@ -115,14 +116,16 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	CarouselRenderer._renderPageIndicator = function(rm, iPageCount, bBottom){
 		//page indicator div
-		rm.write("<div class='sapMCrslControls sapMCrslBulleted" +
-				(bBottom ? " sapMCrslBottomOffset" : "") +
-				"'>");
-		for ( var i = 1; i <= iPageCount; i++) {
-			//item span
-			rm.write("<span data-slide=" + i + ">" + i + "</span>");
+		if (iPageCount > 1) {
+			rm.write("<div class='sapMCrslControls sapMCrslBulleted" +
+					(bBottom ? " sapMCrslBottomOffset" : "") +
+					"'>");
+			for ( var i = 1; i <= iPageCount; i++) {
+				//item span
+				rm.write("<span data-slide=" + i + ">" + i + "</span>");
+			}
+			rm.write("</div>");
 		}
-		rm.write("</div>");
 	};
 
 	return CarouselRenderer;
