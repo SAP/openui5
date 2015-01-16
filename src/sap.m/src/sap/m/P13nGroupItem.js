@@ -29,7 +29,8 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * tbd
+				 * sap.m.P13nConditionOperation
+				 * @since 1.28.0 
 				 */
 				operation: {
 					type: "string",
@@ -38,7 +39,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * key of the column
+				 * @since 1.28.0 
 				 */
 				columnKey: {
 					type: "string",
@@ -47,7 +49,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * make the grouped column as normalcolumn visible 
+				 * @since 1.28.0 
 				 */
 				showIfGrouped: {
 					type: "boolean",
