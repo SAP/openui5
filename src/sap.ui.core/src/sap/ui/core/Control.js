@@ -332,8 +332,10 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 					fnProxy : fnProxy
 				});
 	
-				// if control is rendered, directly call bind()
-				this.$().bind(sEventType, fnProxy);
+				if (!this._sapui_bInAfterRenderingPhase) {
+					// if control is rendered, directly call bind()
+					this.$().bind(sEventType, fnProxy);
+				}
 			}
 		}
 	
