@@ -109,6 +109,7 @@ module.exports = function(grunt, config) {
 
 			aTasks.push('replace');
 			aTasks.push('concat');
+			aTasks.push('uglify');
 
 			config.libraries.forEach(function(library) {
 

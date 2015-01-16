@@ -1,10 +1,10 @@
-// configure the connect server
+// configure concat
 module.exports = function(grunt, config) {
 	var bContainsCore = config.allLibraries.some(function (oLib) {
 		return oLib.name === "sap.ui.core";
 	});
 
-	if(!bContainsCore) {
+	if (!bContainsCore) {
 		return {
 			nothing : {
 			}
@@ -14,12 +14,9 @@ module.exports = function(grunt, config) {
 	var sSourcesFolder = 'target/openui5-sap.ui.core/resources/';
 
 	return {
-		options: {
-			sourceMap: true
-		},
 		coreNoJQueryJS: {
 			options: {
-				footer: 'jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();'
+				footer: 'if (!window["sap-ui-debug"]) { jQuery.sap.preloadModules("sap.ui.core.library-preload", false); } jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();'
 			},
 			src: [
 				sSourcesFolder + 'sap/ui/Device.js',
@@ -27,7 +24,7 @@ module.exports = function(grunt, config) {
 				sSourcesFolder + 'jquery.sap.promise.js',
 				sSourcesFolder + 'jquery.sap.global.js'
 			],
-			dest: sSourcesFolder + 'sap-ui-core-nojQuery.js'
+			dest: sSourcesFolder + 'sap-ui-core-nojQuery-dbg.js'
 		},
 		coreJs: {
 			options: {
@@ -38,17 +35,7 @@ module.exports = function(grunt, config) {
 				sSourcesFolder + 'sap/ui/thirdparty/jqueryui/jquery-ui-position.js',
 				'<%= concat.coreNoJQueryJS.src %>'
 			],
-			dest: sSourcesFolder + 'sap-ui-core.js'
-		},
-		debugJS : {
-			src: [
-					sSourcesFolder + 'sap/ui/debug/ControlTree.js',
-					sSourcesFolder + 'sap/ui/debug/Highlighter.js',
-					sSourcesFolder + 'sap/ui/debug/LogViewer.js',
-					sSourcesFolder + 'sap/ui/debug/PropertyList.js',
-					sSourcesFolder + 'sap/ui/debug/DebugEnv.js'
-			],
-			dest: sSourcesFolder + 'sap-ui-debug.js'
+			dest: sSourcesFolder + 'sap-ui-core-dbg.js'
 		}
 	};
 };
