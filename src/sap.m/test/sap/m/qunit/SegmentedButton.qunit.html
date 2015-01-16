@@ -958,7 +958,8 @@
 		//Arrange
 		var btn = SegmentedIcons.getButtons()[options.initialSelectedIndex];
 		SegmentedIcons.setSelectedButton(btn);
-		
+		btn.focus();
+
 		//Act
 		sap.ui.test.qunit.triggerKeydown(btn.getDomRef(), options.keycode);
 		sap.ui.test.qunit.triggerKeyup(btn.getDomRef(), options.keycode);

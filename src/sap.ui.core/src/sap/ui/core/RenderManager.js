@@ -100,6 +100,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		return RenderManager.getRenderer(oControl);
 	};
 	
+	/**
+	 * Sets the focus handler to be used by the RenderManager.
+	 * 
+	 * @param {sap.ui.core.FocusHandler} oFocusHandler the focus handler to be used.
+	 * @private
+	 */
+	RenderManager.prototype._setFocusHandler = function(oFocusHandler) {
+		jQuery.sap.assert(oFocusHandler && oFocusHandler instanceof sap.ui.core.FocusHandler, "oFocusHandler must be a sap.ui.core.FocusHandler");
+		this.oFocusHandler = oFocusHandler;
+	};
+	
 	//Triggers the BeforeRendering event on the given Control
 	var triggerBeforeRendering = function(oRM, oControl){
 		oRM._bLocked = true;
@@ -305,26 +316,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	
 	(function() {
 	
-		//Returns the information of the current focus
-		var storeCurrentFocus = function(){
-			var oCore = sap.ui.getCore();
-	
-			// Store current focus
-			var sFocusedControlId = oCore.getCurrentFocusedControlId(),
-				oFocusInfo = null,
-				oFocusedDomRef = null;
-	
-			if (sFocusedControlId) {
-				var oFocusedControl = oCore.getElementById(sFocusedControlId);
-				if (oFocusedControl) {
-					oFocusInfo = oFocusedControl.getFocusInfo();
-					oFocusedDomRef = oFocusedControl.getFocusDomRef();
-				}
-			}
-	
-			return {focusedControlId: sFocusedControlId, focusInfo: oFocusInfo, focusDomRef: oFocusedDomRef};
-		};
-	
 		//Does everything needed after the rendering (restore focus, calling "onAfterRendering", initialize event binding)
 		var finalizeRendering = function(oRM, aRenderedControls, oStoredFocusInfo){
 			
@@ -358,15 +349,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 				oRM._bLocked = false;
 			}
-	
+			
 			//finally restore focus
 			try {
-				if (oStoredFocusInfo && oStoredFocusInfo.focusedControlId) {
-					var oFocusedControl = sap.ui.getCore().getElementById(oStoredFocusInfo.focusedControlId);
-					if (oFocusedControl && oFocusedControl.getFocusDomRef() != oStoredFocusInfo.focusDomRef ) {
-						oFocusedControl.applyFocusInfo(oStoredFocusInfo.focusInfo);
-					}
-				}
+				oRM.oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
 				jQuery.sap.log.warning("Problems while restore focus after rendering: " + e, null, oRM);
 			}
@@ -424,8 +410,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
 				RenderManager.preserveContent(oTargetDomNode);
 			}
-	
-			var oStoredFocusInfo = storeCurrentFocus();
+			
+			var oStoredFocusInfo = this.oFocusHandler ? this.oFocusHandler.getControlFocusInfo() : null;
 	
 			var vHTML = RenderManager.prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
 	

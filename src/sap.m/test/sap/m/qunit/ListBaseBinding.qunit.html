@@ -470,8 +470,7 @@
 				
 				// recheck focus after binding update
 				oList.attachUpdateFinished(function(oEvent) {
-					//strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
-					strictEqual(document.activeElement.id, "body", "Heey why the focus went to the body and not retained!");
+					strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
 					oDeferred.resolve();
 				});
 				
