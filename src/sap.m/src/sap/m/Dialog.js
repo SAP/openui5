@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			initialFocus : {type : "sap.ui.core.Control", multiple : false},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 		},
