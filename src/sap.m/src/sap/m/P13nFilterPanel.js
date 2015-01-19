@@ -35,6 +35,7 @@ sap.ui.define([
 
 				/**
 				 * defines the max number of include filter.
+				 * @since 1.26
 				 */
 				maxIncludes: {
 					type: "string",
@@ -44,6 +45,7 @@ sap.ui.define([
 
 				/**
 				 * defines the max number of exclude filter
+				 * @since 1.26
 				 */
 				maxExcludes: {
 					type: "string",
@@ -54,6 +56,7 @@ sap.ui.define([
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When
 				 * the ConditionPanel is used on a dialog the property should be set to true!
+				 * @since 1.26
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -64,6 +67,7 @@ sap.ui.define([
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically
 				 * change the layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
+				 * @since 1.26
 				 */
 				layoutMode: {
 					type: "string",
@@ -84,7 +88,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * defined Filter Items
+				 * @since 1.26
 				 */
 				filterItems: {
 					type: "sap.m.P13nFilterItem",
@@ -97,16 +102,19 @@ sap.ui.define([
 
 				/**
 				 * event raised when a filterItem was added
+				 * @since 1.26
 				 */
 				addFilterItem: {},
 
 				/**
 				 * remove a filter item
+				 * @since 1.26
 				 */
 				removeFilterItem: {},
 
 				/**								 
 				 * update a filter item
+				 * @since 1.26
 				 */
 				updateFilterItem: {}
 			}
@@ -119,6 +127,7 @@ sap.ui.define([
 	 * sets the array of conditions.
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @param {object[]}
 	 *            aConditions the complete list of conditions
 	 */
@@ -167,6 +176,7 @@ sap.ui.define([
 	 * returns the array of conditions.
 	 * 
 	 * @public
+	 * @since 1.26
 	 */
 	P13nFilterPanel.prototype.getConditions = function() {
 		var aIConditions = this._oIncludeFilterPanel.getConditions();
@@ -193,6 +203,7 @@ sap.ui.define([
 	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state)
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @returns {boolean}
 	 * 			false, if there is an invalid condition 
 	 */
@@ -204,6 +215,7 @@ sap.ui.define([
 	 * removes all invalid conditions.					 
 	 *  
 	 * @public
+	 * @since 1.28
 	 */
 	P13nFilterPanel.prototype.removeInvalidConditions = function() {
 		this._oIncludeFilterPanel.removeInvalidConditions();
@@ -214,6 +226,7 @@ sap.ui.define([
 	 * removes all errors/warning states from of all filter conditions.
 	 * 
 	 * @public
+	 * @since 1.28
 	 */
 	P13nFilterPanel.prototype.removeValidationErrors = function() {
 		this._oIncludeFilterPanel.removeValidationErrors();
@@ -232,6 +245,7 @@ sap.ui.define([
 	 * setter for the supported Include operations array
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @param {array}
 	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
@@ -247,6 +261,7 @@ sap.ui.define([
 	 * getter for the Include operations 
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @returns {array}
 	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
@@ -260,6 +275,7 @@ sap.ui.define([
 	 * setter for the supported Exclude operations array
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @param {array}
 	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
@@ -275,6 +291,7 @@ sap.ui.define([
 	 * getter for the Exclude operations 
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @returns {array}
 	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
@@ -288,6 +305,7 @@ sap.ui.define([
 	 * setter for a KeyFields array
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @param {array}
 	 *            array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text :
 	 *            "Name"}]
@@ -332,7 +350,7 @@ sap.ui.define([
 
 		if (iMaxIncludes > 0) {
 			if (iMaxExcludes <= 0) {
-				// in case we do not shows the exclude panel remove the include panel header text and add an extra top margin
+				// in case we do not show the exclude panel remove the include panel header text and add an extra top margin
 				this._oIncludePanel.setHeaderText(null);
 				this._oIncludePanel.setExpandable(false);
 				this._oIncludePanel.addStyleClass("panelTopMargin");

@@ -35,6 +35,7 @@ sap.ui.define([
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the
 				 * ConditionPanel is used on a dialog the property should be set to true!
+				 * @since 1.26
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -45,6 +46,7 @@ sap.ui.define([
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically change the
 				 * layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
+				 * @since 1.26
 				 */
 				layoutMode: {
 					type: "string",
@@ -65,7 +67,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * defined Sort Items
+				 * @since 1.26
 				 */
 				sortItems: {
 					type: "sap.m.P13nSortItem",
@@ -77,17 +80,20 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a Item was added
+				 * event raised when a SortItem was added
+				 * @since 1.26
 				 */
 				addSortItem: {},
 
 				/**
 				 * remove a sort item
+				 * @since 1.26
 				 */
 				removeSortItem: {},
 
 				/**								 
 				 * update a sort item
+				 * @since 1.26
 				 */
 				updateSortItem: {}
 			}
@@ -120,6 +126,7 @@ sap.ui.define([
 	 * opens a popup message dialog to give the user the feedback that some values are wrong or missing.
 	 * 
 	 * @public
+	 * @since 1.26
 	 */
 	P13nSortPanel.prototype.validateConditions = function() {
 		return this._oSortPanel.validateConditions();
@@ -129,6 +136,7 @@ sap.ui.define([
 	 * removes all invalid sort conditions.					 
 	 *  
 	 * @public
+	 * @since 1.28
 	 */
 	P13nSortPanel.prototype.removeInvalidConditions = function() {
 		this._oSortPanel.removeInvalidConditions();
@@ -138,6 +146,7 @@ sap.ui.define([
 	 * removes all errors/warning states from of all sort conditions.
 	 * 
 	 * @public
+	 * @since 1.28
 	 */
 	P13nSortPanel.prototype.removeValidationErrors = function() {
 		this._oSortPanel.removeValidationErrors();
@@ -155,6 +164,7 @@ sap.ui.define([
 	 * setter for the supported operations array
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @param {array}
 	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
@@ -165,25 +175,6 @@ sap.ui.define([
 			this._oSortPanel.setOperations(this._aOperations);
 		}
 	};
-
-	/**
-	 * setter for a KeyFields array
-	 * 
-	 * @public
-	 * @param {array}
-	 *            array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
-	 */
-//	P13nSortPanel.prototype.setKeyFields = function(aKeyFields) {
-//		this._aKeyFields = aKeyFields;
-//
-//		if (this._oSortPanel) {
-//			this._oSortPanel.setKeyFields(this._aKeyFields);
-//		}
-//	};
-//
-//	P13nSortPanel.prototype.getKeyFields = function() {
-//		return this._aKeyFields;
-//	};
 
 	/**
 	 * Initialize the control
