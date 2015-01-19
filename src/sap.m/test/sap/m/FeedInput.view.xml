@@ -48,4 +48,11 @@
 		post="onPostFeedItem"
 		enabled="false"
 		busy="true" />
+
+	<Label class="caption" text="Screen Reader (buttonTooltip='My Submit')" />
+	<FeedInput
+		post="onPostFeedItem"
+		value="some text"
+		enabled="true"
+		buttonTooltip="My Submit" />
 </mvc:View>
