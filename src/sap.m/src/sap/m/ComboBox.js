@@ -693,10 +693,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			mOptions = mOptions || {};
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
 			this.setAssociation("selectedItem", vItem || null, mOptions.suppressInvalidate);
-			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", mOptions.suppressInvalidate);
+			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem,  mOptions.suppressInvalidate);
+
+			if (typeof vItem === "string") {
+				vItem = sap.ui.getCore().byId(vItem);
+			}
+
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", mOptions.suppressInvalidate);
 
 			oListItem = this.getListItem(vItem);
@@ -1065,28 +1068,23 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.setSelectedItemId = function(vItem) {
 			vItem = this.validateProperty("selectedItemId", vItem);
-			var oItem = sap.ui.getCore().byId(vItem);
 
-			if (!(oItem instanceof sap.ui.core.Item) && vItem !== "") {
-				jQuery.sap.log.warning('Warning: setSelectedItemId() "sItem" has to be a string id of an sap.ui.core.Item instance, an empty string or undefined on', this);
-				return this;
-			}
-
-			if (!oItem) {
-				oItem = this.getDefaultSelectedItem();
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
 			}
 
 			// update and synchronize "selectedItem" association,
 			// "selectedKey" and "selectedItemId" properties
-			this.setSelection(oItem, { suppressInvalidate: true	});
+			this.setSelection(vItem, { suppressInvalidate: true	});
+			vItem = this.getSelectedItem();
 
 			// set the input value
-			if (oItem) {
-				this.setValue(oItem.getText(), true);
+			if (vItem) {
+				this.setValue(vItem.getText(), true);
 				/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
+			} else if (vItem = this.getDefaultSelectedItem()) {
 				/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText(), true);
+				this.setValue(vItem.getText(), true);
 			} else {
 				this.setValue("", true);
 			}
