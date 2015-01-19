@@ -13,7 +13,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 			this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onMasterLoaded, this);
 		}
 
-		this.getRouter().getRoute("product").attachPatternMatched(this.onRouteMatched, this);
+		this.getRouter().getRoute("object").attachPatternMatched(this.onRouteMatched, this);
 
 	},
 
@@ -28,32 +28,32 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 
 		jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
 			// when detail navigation occurs, update the binding context
-			var sProductPath = "/" + oParameters.arguments.product;
-			this.bindView(sProductPath);
+			var sObjectPath = "/" + oParameters.arguments.object;
+			this.bindView(sObjectPath);
 		}, this));
 
 	},
 
-	bindView : function (sProductPath) {
+	bindView : function (sObjectPath) {
 		var oView = this.getView();
-		oView.bindElement(sProductPath);
+		oView.bindElement(sObjectPath);
 
 		//Check if the data is already on the client
-		if(!oView.getModel().getData(sProductPath)) {
+		if(!oView.getModel().getData(sObjectPath)) {
 
-			// Check that the product specified actually was found.
+			// Check that the object specified actually was found.
 			oView.getElementBinding().attachEventOnce("dataReceived", jQuery.proxy(function() {
-				var oData = oView.getModel().getData(sProductPath);
+				var oData = oView.getModel().getData(sObjectPath);
 				if (!oData) {
 					this.showEmptyView();
 					this.fireDetailNotFound();
 				} else {
-					this.fireDetailChanged(sProductPath);
+					this.fireDetailChanged(sObjectPath);
 				}
 			}, this));
 
 		} else {
-			this.fireDetailChanged(sProductPath);
+			this.fireDetailChanged(sObjectPath);
 		}
 
 	},
@@ -68,8 +68,8 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 	},
 
 	//this is not needed anymore or?
-	fireDetailChanged : function (sProductPath) {
-		this.getEventBus().publish("Detail", "Changed", { sProductPath : sProductPath });
+	fireDetailChanged : function (sObjectPath) {
+		this.getEventBus().publish("Detail", "Changed", { sObjectPath : sObjectPath });
 	},
 
 	//this is not needed anymore or?
@@ -98,9 +98,9 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 		//Dear Reviewer, is check for null necessary?
 		//navigation to line item has to happen here
 		if (oContext) {
-			var sMsg = "Detail Item '" + oContext.getProperty('OrderID') + '/';
+			var sMsg = "Detail Item '" + oContext.getProperty('LineItemID') + '/';
 			//TODO navigation to line item
-			sMsg += oContext.getProperty('ProductID') + "' was pressed" 
+			sMsg += oContext.getProperty('ObjectID') + "' was pressed" 
 			sap.m.MessageToast.show(sMsg, {
 				duration: 2000
 			});

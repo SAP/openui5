@@ -8,9 +8,9 @@
 		title="{i18n>detailTitle}">
 		<content>
 			<ObjectHeader
-				title="{ProductName}"
-				number="{UnitPrice}"
-				numberUnit="USD">
+				title="{Name}"
+				number="{UnitNumber}"
+				numberUnit="{UnitOfMeasure}">
 			</ObjectHeader>
 			<IconTabBar
 			    expanded="{device>/isNoPhone}">
@@ -23,36 +23,36 @@
 			        icon="sap-icon://attachment">
 			        <Text text="Attachments go here ..." />
 			      </IconTabFilter>
-			      <IconTabFilter
-			        icon="sap-icon://notes">
-			        <Text text="Notes go here ..." />
-			      </IconTabFilter>
-			      <IconTabFilter
-			        icon="sap-icon://group">
-			        <Text text="People content goes here ..." />
-			      </IconTabFilter>
 			    </items>
 		  	</IconTabBar>
-			<Table id="orderDetailsList" items="{Order_Details}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiSmallMarginTop">
+			<Table id="lineItemsList" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiSmallMarginTop">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Order Details"></Label>
+						<Label text="{i18n>detailLineItemTableHeading}"></Label>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
 					<Column>
-						<Label text="Order" />
+						<Label text="{i18n>detailLineItemTableIDColumn}" />
 					</Column>
 					<Column>
-						<Label text="Price" />
+						<Label text="{i18n>detailLineItemTableAttributeColumn}"/>
+					</Column>
+					<Column hAlign="Right">
+						<Label text="{i18n>detailLineItemTableUoMColumn}" />
 					</Column>
 				</columns>
 		
 				<items>
 					<ColumnListItem type="Navigation" press="onSelect">
 						<cells>
-							<Text text="{OrderID}" />
-							<Text text="{UnitPrice}" />
+							<ObjectIdentifier
+								title="{Name}"
+								text="{LineItemID}"/>
+							<Text text="{Attribute}"/>
+							<ObjectNumber 
+								number="{UnitNumber}"
+								unit="{UnitOfMeasure}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

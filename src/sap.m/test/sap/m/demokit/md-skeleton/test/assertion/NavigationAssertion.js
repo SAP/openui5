@@ -3,28 +3,28 @@ jQuery.sap.require("sap.ui.test.Opa5");
 var Opa5 = sap.ui.test.Opa5;
 
 sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion = Opa5.extend("sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion", {
-	iShouldSeeTheProductsList : function () {
+	iShouldSeeTheObjectList : function () {
 		return this.waitFor({
 			id : "list",
 			viewName : "Master",
 			success : function (oList) {
-				ok(oList, "Found the product List");
+				ok(oList, "Found the object List");
 			}
 		});
 	},
 
-	theDetailPageShowsTheFirstProduct : function () {
+	theDetailPageShowsTheFirstObject : function () {
 		return this.waitFor({
 			controlType : "sap.m.ObjectHeader",
 			viewName : "Detail",
-			matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : "Chai"}) ],
+			matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : "Object 1"}) ],
 			success : function () {
 				ok(true, "was on the first detail page");
 			}
 		});
 	},
 
-	theProductListShouldHave9Entries : function () {
+	theObjectListShouldHave9Entries : function () {
 		return this.waitFor({
 			id : "list",
 			viewName : "Master",
@@ -51,26 +51,26 @@ sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion = Opa5.extend("sap.ui.
 			viewName : "Detail",
 			matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : sTitleName}) ],
 			success : function (aControls) {
-				strictEqual(aControls.length, 1, "found only one Objectheader with the Product name");
+				strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
 				ok(true, "was on the "+ sTitleName +" detail page");
 			}
 		});
 	},
 
-	iShouldBeOnTheAniseedSyrupDetailPage : function () {
-		return this.iShouldBeOnTheDetailPage("Aniseed Syrup");
+	iShouldBeOnTheObject3Page : function () {
+		return this.iShouldBeOnTheDetailPage("Object 3");
 	},
 
-	iShouldBeOnTheChaiDetailPage : function () {
-		return this.iShouldBeOnTheDetailPage("Chai");
+	iShouldBeOnTheObject1Page : function () {
+		return this.iShouldBeOnTheDetailPage("Object 1");
 	},
 	
-	iShouldSeeTheOrderDetailsList : function () {
+	iShouldSeeTheObjectLineItemsList : function () {
 		return this.waitFor({
-			id : "orderDetailsList",
+			id : "lineItemsList",
 			viewName : "Detail",
 			success : function (oList) {
-				ok(oList, "Found the order details list");
+				ok(oList, "Found the line items list");
 			}
 		});
 	},
@@ -78,34 +78,55 @@ sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion = Opa5.extend("sap.ui.
 	//TODO use matchers instead or ask Tobias to implement aggregation count 
 	//if we are in a good mood we will do this
 	//afterwards, let's also apply the new matcher to function 'theProductListShouldHave9Entries'
-	theOrderDetailsListShouldHave3Entries : function () {
+	theLineItemsListShouldHave4Entries : function () {
 		return this.waitFor({
-			id : "orderDetailsList",
+			id : "lineItemsList",
 			viewName : "Detail",
 			matchers : [ new Opa5.matchers.AggregationFilled({name : "items"}) ],
 			check : function (oList) {
-				return oList.getItems().length === 3;
+				return oList.getItems().length === 4;
 			},
 			success : function (oList) {
-				ok(true, "The list has 3 items");
+				ok(true, "The list has 4 items");
 			},
-			errorMessage : "The list does not have 3 entries"
+			errorMessage : "The list does not have 4 items"
 		});
 	},
 	
-	theFirstOrderDetailHasId10285 : function () {
+	theFirstLineItemHasIDLineItemID_1 : function () {
 		return this.waitFor({
-			id : "orderDetailsList",
+			id : "lineItemsList",
 			viewName : "Detail",
 			matchers : [ new Opa5.matchers.AggregationFilled({name : "items"}) ],
 			check : function (oList) {
-				return oList && oList.getItems().length === 3;
+				return oList && oList.getItems().length === 4;
 			},
 			success : function (oList) {
 				var oFirstItem = oList.getItems()[0];
-				strictEqual(oFirstItem.getBindingContext().getProperty('OrderID'), 10285, "The first OrderDetail has Id 10285");
+				strictEqual(oFirstItem.getBindingContext().getProperty('LineItemID'), "LineItemID_1", "The first line item has Id 'LineItemID_1'");
 			},
-			errorMessage : "The first OrderDetail does not have Id 10285"
+			errorMessage : "The first line item does not have Id 'LineItemID_1'"
+		});
+	},
+	
+	theObject3ShouldBeSelectedInTheMasterList : function() {
+		return this.waitFor({
+			id : "list",
+			viewName : "Master",
+			matchers : [ new Opa5.matchers.AggregationFilled({name : "items"}) ],
+			check : function (oList) {
+				return oList && oList.getItems().length === 9 && oList.getSelectedItem().getTitle() == "Object 3";
+			},
+			success : function (oList) {
+				strictEqual(oList.getSelectedItem().getTitle(), "Object 3", "Object 3 is selected");
+			},
+			error : function (oList) {
+				if(!oList) {
+					ok(false, "did not find the list");
+				} else {
+					strictEqual(oList.getItems().length, 9, "The list has 9 items");
+				}
+			}
 		});
 	}
 	
