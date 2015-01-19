@@ -200,7 +200,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	 *
 	 * A control/element doesn't have to bind listeners for these events.
 	 * It instead can implement an <code>on<i>event</i>(oEvent)</code> method
-	 * for any of these events that it wants to be notified about.
+	 * for any of the following events that it wants to be notified about:
+	 * 
+	 * click, dblclick, contextmenu, focusin, focusout, keydown, keypress, keyup, mousedown, mouseout, mouseover, 
+	 * mouseup, select, selectstart, dragstart, dragenter, dragover, dragleave, dragend, drop, paste, cut, input
+	 * 
+	 * In case touch events are natively supported the following events are available in addition:
+	 * touchstart, touchend, touchmove, touchcancel
 	 *
 	 * @public
 	 */
