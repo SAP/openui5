@@ -78,13 +78,15 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
 				bIsTextSelected = iSelectionStart !== iSelectionEnd,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
+				oSelectedItem = this.getSelectedItem();
 
-			if (oItem) {
+			if (oItem && (oItem !== oSelectedItem)) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: oItem });
-				oItem = this.getSelectedItem();
+
+				oItem = this.getSelectedItem();	// note: update the selected item after the change event is fired (the selection may change)
 
 				if (!jQuery.sap.startsWithIgnoreCase(oItem.getText(), sTypedValue) || !bIsTextSelected) {
 					iSelectionStart = 0;
@@ -496,12 +498,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oFirstSelectableItem = this.getSelectableItems()[0];
-
-			if (oFirstSelectableItem && (oFirstSelectableItem !== this.getSelectedItem())) {
-				fnHandleKeyboardNavigation.call(this, oFirstSelectableItem);
-			} else {
-				this.scrollToItem(this.getList().getSelectedItem());
-			}
+			fnHandleKeyboardNavigation.call(this, oFirstSelectableItem);
 		};
 
 		/**
@@ -525,12 +522,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oLastSelectableItem = this.findLastEnabledItem(this.getSelectableItems());
-
-			if (oLastSelectableItem && (oLastSelectableItem !== this.getSelectedItem())) {
-				fnHandleKeyboardNavigation.call(this, oLastSelectableItem);
-			} else {
-				this.scrollToItem(this.getList().getSelectedItem());
-			}
+			fnHandleKeyboardNavigation.call(this, oLastSelectableItem);
 		};
 
 		/**
@@ -564,12 +556,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// constrain the index
 			iIndex = (iIndex > aSelectableItems.length - 1) ? aSelectableItems.length - 1 : Math.max(0, iIndex);
 			oItem = aSelectableItems[iIndex];
-
-			if (oItem && (oItem !== this.getSelectedItem())) {
-				fnHandleKeyboardNavigation.call(this, oItem);
-			} else {
-				this.scrollToItem(this.getList().getSelectedItem());
-			}
+			fnHandleKeyboardNavigation.call(this, oItem);
 		};
 
 		/**
@@ -603,12 +590,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// constrain the index
 			iIndex = (iIndex > aSelectableItems.length - 1) ? aSelectableItems.length - 1 : Math.max(0, iIndex);
 			oItem = aSelectableItems[iIndex];
-
-			if (oItem && (oItem !== this.getSelectedItem())) {
-				fnHandleKeyboardNavigation.call(this, oItem);
-			} else {
-				this.scrollToItem(this.getList().getSelectedItem());
-			}
+			fnHandleKeyboardNavigation.call(this, oItem);
 		};
 
 		/**
