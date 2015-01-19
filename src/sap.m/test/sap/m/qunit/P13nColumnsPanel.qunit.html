@@ -1058,7 +1058,9 @@
 			oNewColumnsItem.setVisible = sinon.stub();
 			oP13nColumnsPanel._createNewColumnsItem.returns(oNewColumnsItem);
 
-			oP13nColumnsPanel._handleItemVisibilityChanged(oItem);
+			oP13nColumnsPanel._handleItemVisibilityChanged([
+				oItem
+			]);
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
@@ -1081,7 +1083,9 @@
 
 			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
 			oP13nColumnsPanel._oTableItemsOrdering._bShallBeOrdered = true;
-			oP13nColumnsPanel._handleItemVisibilityChanged(oItem);
+			oP13nColumnsPanel._handleItemVisibilityChanged([
+				oItem
+			]);
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
@@ -1445,16 +1449,16 @@
 
 			// CUT -> method shall be executed and existing table items be reOrdered
 			oP13nColumnsPanel._reOrderExistingTableItems();
-			
+
 			var aTableItems = oP13nColumnsPanel._oTable.getItems();
 			//SortOrder -> at first all selected items in the same order as they exist in the table
 			// afterwards all unselected table items in a n alphanumerical sort order
-			ok(aTableItems, "Table shall exist"); 
-			strictEqual(aTableItems.length, 5, "Table shall contain 5 items in a special sorted order");	
+			ok(aTableItems, "Table shall exist");
+			strictEqual(aTableItems.length, 5, "Table shall contain 5 items in a special sorted order");
 			strictEqual(aTableItems[0].getCells()[0].getText(), "E", "Column E shall be first column");
-			strictEqual(aTableItems[0].getSelected(), true, "Column E shall be selected");			
+			strictEqual(aTableItems[0].getSelected(), true, "Column E shall be selected");
 			strictEqual(aTableItems[1].getCells()[0].getText(), "D", "Column D shall be first column");
-			strictEqual(aTableItems[1].getSelected(), true, "Column D shall be selected");			
+			strictEqual(aTableItems[1].getSelected(), true, "Column D shall be selected");
 			strictEqual(aTableItems[2].getCells()[0].getText(), "A", "Column A shall be first column");
 			strictEqual(aTableItems[2].getSelected(), true, "Column A shall be selected");
 			strictEqual(aTableItems[3].getCells()[0].getText(), "B", "Column B shall be first column");
