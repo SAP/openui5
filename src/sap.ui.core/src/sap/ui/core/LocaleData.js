@@ -205,11 +205,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Get currency format pattern
 		 *
+		 * @param {string} sContext the context of the currency pattern (standard or accounting)
 		 * @returns {string} The pattern
 		 * @public
 		 */
-		getCurrencyPattern : function() {
-			return this._get("currencyFormat").standard;
+		getCurrencyPattern : function(sContext) {
+			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
 		
 		/**
