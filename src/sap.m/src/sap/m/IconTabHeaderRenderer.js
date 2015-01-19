@@ -36,6 +36,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var aItems = oControl.getItems(),
 			bTextOnly = oControl._checkTextOnly(aItems),
 			bNoText = oControl._checkNoText(aItems);
+		
+		var oIconTabBar = oControl.getParent();
+		var bUpperCase = oIconTabBar && oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getUpperCase();
 	
 		// render wrapper div
 		oRM.write("<div ");
@@ -56,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.addClass("sapMITBNotScrollable");
 		}
 		// Check for upperCase property on IconTabBar
-		if (oControl.getParent().getUpperCase()) {
+		if (bUpperCase) {
 			oRM.addClass("sapMITBTextUpperCase");
 		}
 		oRM.writeControlData(oControl);
@@ -156,7 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.write("<div id='" + oItem.getId() + "-text' ");
 					oRM.addClass("sapMITBText");
 					// Check for upperCase property on IconTabBar
-					if (oItem.getParent().getParent().getUpperCase()) {
+					if (bUpperCase) {
 						oRM.addClass("sapMITBTextUpperCase");
 					}
 					oRM.writeClasses();
