@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			this._oFieldDelegate = undefined;
 	
 		};
+
 	
 	/*
 	 * sets the label for the FormElement. If it's only a string an internal label is created.
@@ -90,15 +91,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	
 			if (!this._oLabel) {
 				var oOldLabel = this.getLabel();
-				if (oOldLabel) {
-					if (oOldLabel.isRequired) {
+				if (oOldLabel && oOldLabel.isRequired) {
 						oOldLabel.isRequired = oOldLabel._sapui_isRequired;
 						oOldLabel._sapui_isRequired = undefined;
-					}
-					if (oOldLabel.getLabelForRendering) {
-						oOldLabel.getLabelForRendering = oOldLabel._sapui_getLabelForRendering;
-						oOldLabel._sapui_getLabelForRendering = undefined;
-					}
 				}
 			}
 	
@@ -111,7 +106,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 					if (oLabel.isRequired) {
 						this._oLabel.isRequired = _labelIsRequired;
 					}
-					this._oLabel.getLabelForRendering = _getLabelForRendering;
 				} else {
 					this._oLabel.setText(oLabel);
 				}
@@ -120,18 +114,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 					this._oLabel.destroy();
 					delete this._oLabel;
 				}
-				if (!oLabel) {
-					return this; //set label is called with null if label is removed by ManagedObject.removeChild
-				}
-				if (oLabel.isRequired) {
+				if (oLabel && oLabel.isRequired) {
 					oLabel._sapui_isRequired = oLabel.isRequired;
 					oLabel.isRequired = _labelIsRequired;
 				}
-				if (oLabel.getLabelForRendering) {
-					oLabel._sapui_getLabelForRendering = oLabel.getLabelForRendering;
-					oLabel.getLabelForRendering = _getLabelForRendering;
-				}
 			}
+			
+			_updateLabelFor(this); 
 	
 			return this;
 	
@@ -156,9 +145,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		};
 	
 		FormElement.prototype.addField = function(oField) {
-	
+			
 			this.addAggregation("fields", oField);
 			oField.addDelegate(this._oFieldDelegate);
+			_updateLabelFor(this);
 	
 			return this;
 	
@@ -168,6 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	
 			this.insertAggregation("fields", oField, iIndex);
 			oField.addDelegate(this._oFieldDelegate);
+			_updateLabelFor(this);
 	
 			return this;
 	
@@ -177,6 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	
 			var oRemovedField = this.removeAggregation("fields", oField);
 			oRemovedField.removeDelegate(this._oFieldDelegate);
+			_updateLabelFor(this);
 	
 			return oRemovedField;
 	
@@ -190,6 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 				var oRemovedField = aRemovedFields[i];
 				oRemovedField.removeDelegate(this._oFieldDelegate);
 			}
+			_updateLabelFor(this);
 	
 			return aRemovedFields;
 	
@@ -205,6 +198,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			}
 	
 			this.destroyAggregation("fields");
+			
+			_updateLabelFor(this);
 	
 			return this;
 	
@@ -227,6 +222,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 				var oField = aFields[i];
 				oField.addDelegate(this._oFieldDelegate);
 			}
+			
+			_updateLabelFor(this);
 	
 			return this;
 	
@@ -241,10 +238,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	
 			var oLabel = this.getLabelControl();
 			if (oLabel && oLabel != oElement) {
-				if (!mAriaProps["labelledby"]) {
-					mAriaProps["labelledby"] = oLabel.getId();
+				
+				var sLabelledBy = mAriaProps["labelledby"];
+				if (!sLabelledBy) {
+					sLabelledBy = oLabel.getId();
+				} else {
+					var aLabels = sLabelledBy.split(" ");
+					if (jQuery.inArray(oLabel.getId(), aLabels) < 0) {
+						aLabels.splice(0, 0, oLabel.getId());
+						sLabelledBy = aLabels.join(" ");
+					}
 				}
-	
+				mAriaProps["labelledby"] = sLabelledBy;
+
 				var oContainer = this.getParent();
 				var aElements = oContainer.getFormElements();
 				if (this == aElements[0]) {
@@ -310,23 +316,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			return false;
 	
 		};
-	
+		
 		/*
-		 * overwrite Labels getLabelForRendering function to point always to the first field.
-		 * But only if the application does not set a labelFor explicitly.
+		 * Update the for association of the related label
 		 */
-		var _getLabelForRendering = function(){
-	
-			if (this.getLabelFor()) {
-				return this.getLabelFor();
-			} else {
-				var oFormElement = this.getParent();
-				var aFields = oFormElement.getFields();
-				if (aFields[0]) {
-					return aFields[0].getId();
-				}
+		var _updateLabelFor = function(oFormElement){
+			var aFields = oFormElement.getFields();
+			var oField = aFields.length > 0 ? aFields[0] : 0;
+			
+			var oLabel = oFormElement._oLabel;
+			if (oLabel) {
+				oLabel.setAlternativeLabelFor(oField);
 			}
-	
+			oLabel = oFormElement.getLabel();
+			if (oLabel instanceof sap.ui.core.Control /*might also be a string*/) {
+				oLabel.setAlternativeLabelFor(oField);
+			}
 		};
 	
 		/*

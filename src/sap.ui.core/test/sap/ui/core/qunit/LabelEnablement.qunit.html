@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested class: sap.ui.core.LabelEnablement
+-->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Test Page for sap.ui.core.LabelEnablement</title>
+		
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="">
+		</script>
+		
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		
+		<script type="text/javascript">
+		
+		sap.ui.core.Control.extend("AnotherTestLabel", {
+			metadata : {
+				interfaces : [
+					"sap.ui.core.Label"
+				],
+				associations : {
+					labelFor : {type : "sap.ui.core.Control", multiple : false}
+				}
+			},
+			
+			renderer: function(oRm, oCtrl) {
+				oRm.write("<label");
+				oRm.writeControlData(oCtrl);
+				sap.ui.core.LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
+				oRm.write("></label>");
+			}
+		});
+		
+		sap.ui.core.Control.extend("TestLabel", {
+			metadata : {
+				interfaces : [
+					"sap.ui.core.Label"
+				],
+				associations : {
+					labelFor : {type : "sap.ui.core.Control", multiple : false}
+				}
+			},
+			
+			renderer: function(oRm, oCtrl) {
+				oRm.write("<label");
+				oRm.writeControlData(oCtrl);
+				sap.ui.core.LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
+				oRm.write("></label>");
+			}
+		});
+		
+		sap.ui.core.LabelEnablement.enrich(TestLabel.prototype);
+		
+		sap.ui.core.Control.extend("TestControl", {
+			metadata : {
+				associations : {
+					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+				}
+			},
+			
+			renderer: function(oRm, oCtrl) {
+				oRm.write("<div");
+				oRm.writeControlData(oCtrl);
+				oRm.writeAccessibilityState(oCtrl, {labelledby : {value: oCtrl.getId() + "-additionalLabel", append: true}});
+				oRm.write("><label id='", oCtrl.getId(), "-additionalLabel'></label></div>");
+			}
+		});
+		
+		
+		module("LabelEnablement", {
+			setup : function () {
+				this.oLabel = new TestLabel("testLabel");
+				this.oControl1 = new TestControl("testControl1", {ariaLabelledBy: "someLabelFromApplication"});
+				this.oControl2 = new TestControl("testControl2");
+				
+				this.oLabel.placeAt("content");
+				this.oControl1.placeAt("content");
+				this.oControl2.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oLabel.destroy();
+				this.oLabel = null;
+				this.oControl1.destroy();
+				this.oControl1 = null;
+				this.oControl2.destroy();
+				this.oControl2 = null;
+			}
+		});
+		
+		test("Initialization", function() {
+			throws(function(){
+				sap.ui.core.LabelEnablement.enrich(new TestControl());
+			}, "sap.ui.core.LabelEnablement cannot be applied on Controls which does not implement interface sap.ui.core.Label");
+			
+			try {
+				sap.ui.core.LabelEnablement.enrich(new AnotherTestLabel());
+			} catch(e) {
+				ok(false, "sap.ui.core.LabelEnablement can be applied on Controls which implement interface sap.ui.core.Label")
+			}
+		});
+		
+		test("No label assignment done", function() {
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+		});
+		
+		test("Label assignment done with LabelFor association", function() {
+			this.oLabel.setLabelFor(this.oControl1);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+		});
+		
+		test("Label assignment done with setAlternativeLabelFor", function() {
+			this.oLabel.setAlternativeLabelFor(this.oControl1);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+		});
+		
+		test("Label assignment done with LabelFor association and setAlternativeLabelFor - association wins", function() {
+			this.oLabel.setLabelFor(this.oControl1);
+			this.oLabel.setAlternativeLabelFor(this.oControl2);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+		});
+		
+		test("Label assignment change is reflected", function() {
+			this.oLabel.setLabelFor(this.oControl1);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+			
+			this.oLabel.setLabelFor(this.oControl2);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 1, "Label assigned to control 2");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2)[0], "testLabel", "Label assigned to control 2");
+			strictEqual(this.oLabel.$().attr("for"), "testControl2", "Labels for attribute points to correct control");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testLabel testControl2-additionalLabel", "aria-labelledby reference to label in control 2 available");
+			
+			this.oLabel.setLabelFor(null);
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl1).length, 0, "No label assigned to control 1");
+			strictEqual(sap.ui.core.LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+			ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
+			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
+			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit tests: sap.ui.core.LabelEnablement</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

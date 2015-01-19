@@ -43,15 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		if (oLabel.getLabelForRendering()) {
-			var oFor = sap.ui.getCore().byId(oLabel.getLabelForRendering());
-			rm.write(" for=\"");
-			// for some controls the label must point to a special HTML element, not the outer one.
-			if ( oFor && oFor.getIdForLabel) {
-				rm.write(oFor.getIdForLabel());
-			} else {
-				rm.write(oLabel.getLabelForRendering());
-			}
-			rm.write("\"");
+			sap.ui.core.LabelEnablement.writeLabelForAttribute(rm, oLabel);
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.addClass("sapMLabelTBHeader");
 		}

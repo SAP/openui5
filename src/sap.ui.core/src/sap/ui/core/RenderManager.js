@@ -3,8 +3,8 @@
  */
 
 // Provides the render manager sap.ui.core.RenderManager
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.encoder'],
-	function(jQuery, Interface, BaseObject /* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/core/LabelEnablement', 'jquery.sap.act', 'jquery.sap.encoder'],
+	function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
@@ -1162,6 +1162,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
 				if (oAssoc && oAssoc.multiple) {
 					var aIds = oElement[oAssoc._sGetter]();
+					if (sElemAssoc == "ariaLabelledBy") {
+						var aLabelIds = sap.ui.core.LabelEnablement.getReferencingLabels(oElement);
+						if (aLabelIds.length) {
+							aIds = aLabelIds.concat(aIds);
+						}
+					}
+					
 					if (aIds.length > 0) {
 						mAriaProps[sACCProp] = aIds.join(" ");
 					}
@@ -1301,7 +1308,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			this.write("</span>");
 		}
 	};
-
 
 	/**
 	 * Renders an invisible dummy element for controls that have set their visible-property to
