@@ -2912,16 +2912,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Sets a new value for the given property <code>sPropertyName</code> in the model without triggering a server request.
-	 *  This can be done by the submitChanges method.
-	 *
-	 *  Note: Only one entry of one collection can be updated at once. Otherwise a fireRejectChange event is fired.
-	 *
-	 *  Before updating a different entry the existing changes of the current entry have to be submitted or resetted by the
-	 *  corresponding methods: submitChanges, resetChanges.
-	 *
-	 *  IMPORTANT: All pending changes are resetted in the model if the application triggeres any kind of refresh
-	 *  on that entry. Make sure to submit the pending changes first. To determine if there are any pending changes call the hasPendingChanges method.
+	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
+	 * 
+	 * If the changeBatchGroup for the changed EntityType is set to deferred changes could be submitted 
+	 * with submitChanges. Otherwise the change will be submitted directly.
 	 *
 	 * @param {string}  sPath path of the property to set
 	 * @param {any}     oValue value to set the property to
