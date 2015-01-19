@@ -1402,39 +1402,6 @@
 			/* setSelectedItem()              */
 			/* ------------------------------ */
 
-			test("setSelectedItem() should give a warning when called with faulty parameter", function() {
-
-				// system under test
-				var oComboBox = new sap.m.ComboBox();
-
-				// arrange
-				var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-					fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-					fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
-					fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-					fnSetSelectedItemSpy = this.spy(oComboBox, "setSelectedItem");
-
-				// act
-				oComboBox.setSelectedItem({});
-
-				// assert
-				strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.ComboBox.prototype.setProperty() method was not called");
-				strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.ComboBox.prototype.setAssociation() method was not called");
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
-				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-				ok(oComboBox.getSelectedItem() === null);
-				strictEqual(oComboBox.getSelectedItemId(), "");
-				strictEqual(oComboBox.getSelectedKey(), "");
-				ok(oComboBox.getList().getSelectedItem() === null);
-				strictEqual(oComboBox.getValue(), "");
-				strictEqual(oComboBox.getProperty("value"), "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
-				ok(fnSetSelectedItemSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItem() method return the "this" reference');
-
-				// cleanup
-				oComboBox.destroy();
-			});
-
 			test("setSelectedItem()", function() {
 
 				// system under test
@@ -1677,37 +1644,6 @@
 			/* setSelectedItemId()            */
 			/* ------------------------------ */
 
-			test("setSelectedItemId() should give a warning when called with faulty parameter", function() {
-
-				// system under test
-				var oComboBox = new sap.m.ComboBox();
-
-				// arrange
-				var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-					fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-					fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
-					fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
-					fnSetSelectedItemIdSpy = this.spy(oComboBox, "setSelectedItemId");
-
-				// act
-				oComboBox.setSelectedItemId({});
-
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
-				ok(fnSetSelectedItemIdSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItemId() method return the "this" reference');
-				ok(oComboBox.getSelectedItem() === null);
-				strictEqual(oComboBox.getSelectedItemId(), "");
-				strictEqual(oComboBox.getSelectedKey(), "");
-				ok(oComboBox.getList().getSelectedItem() === null);
-				strictEqual(oComboBox.getValue(), "");
-				strictEqual(oComboBox.getProperty("value"), "");
-				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
-
-				// cleanup
-				oComboBox.destroy();
-			});
-
 			test("setSelectedItemId()", function() {
 
 				// system under test
@@ -1734,9 +1670,7 @@
 				});
 
 				// arrange
-				var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
-					fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
-					fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
+				var fnFireChangeSpy = this.spy(oComboBox, "fireChange"),
 					fnSetSelectedItemIdSpy = this.spy(oComboBox, "setSelectedItemId");
 
 				// act
@@ -1744,8 +1678,6 @@
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-				ok(fnSetAssociationSpy.calledWith("selectedItem", oComboBox.getItems()[1]));
 				ok(fnSetSelectedItemIdSpy.returned(oComboBox), 'sap.m.ComboBox.prototype.setSelectedItemId() method return the "this" reference');
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
@@ -1889,6 +1821,26 @@
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("setSelectedItemId() should set the value even if the corresponding item doesn't exist", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					selectedItemId: "item-id"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				ok(oComboBox.getSelectedItem() === null);
+				strictEqual(oComboBox.getSelectedItemId(), "item-id");
+				strictEqual(oComboBox.getSelectedKey(), "");
 
 				// cleanup
 				oComboBox.destroy();
