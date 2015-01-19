@@ -1026,10 +1026,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				oList.setSelection(vItem);
 			}
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setAssociation("selectedItem", vItem || null, true);
-			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", true);
+			this.setAssociation("selectedItem", vItem, true);
+			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
+
+			if (typeof vItem === "string") {
+				vItem = sap.ui.getCore().byId(vItem);
+			}
+
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
 		};
 
@@ -1540,28 +1543,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.setSelectedItemId = function(vItem) {
 			vItem = this.validateProperty("selectedItemId", vItem);
-			var oItem = sap.ui.getCore().byId(vItem);
 
-			if (!(oItem instanceof sap.ui.core.Item) && vItem !== "") {
-				jQuery.sap.log.warning('Warning: setSelectedItemId() "sItem" has to be a string id of an sap.ui.core.Item instance, an empty string or undefined on', this);
-				return this;
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
 			}
 
-			if (!oItem) {
-				oItem = this.getDefaultSelectedItem();
-			}
-
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setSelection(oItem);
+			this.setSelection(vItem);
+			vItem = this.getSelectedItem();
 
 			// update the label text
-			if (oItem) {
-				this.setValue(oItem.getText());
+			if (vItem) {
+				this.setValue(vItem.getText());
 			/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
+			} else if (vItem = this.getDefaultSelectedItem()) {
 			/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText());
+				this.setValue(vItem.getText());
 			} else {
 				this.setValue("");
 			}

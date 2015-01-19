@@ -2145,38 +2145,6 @@
 			/* setSelectedItemId()            */
 			/* ------------------------------ */
 
-			test("setSelectedItemId() should give a warning when called with faulty parameter", function() {
-
-				// system under test
-				var oSelect = new sap.m.Select();
-
-				// arrange
-				var fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
-					fnFireChangeSpy = this.spy(oSelect, "fireChange"),
-					fnSetSelectedItemIdSpy = this.spy(oSelect, "setSelectedItemId");
-
-				// act
-				oSelect.setSelectedItemId({});
-
-				// assert
-				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
-				ok(fnSetSelectedItemIdSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItemId() returns this to allow method chaining');
-				ok(oSelect.getSelectedItem() === null);
-				strictEqual(oSelect.getSelectedItemId(), "");
-				strictEqual(oSelect.getSelectedKey(), "");
-				strictEqual(oSelect.getSelectedIndex(), -1);
-				// strictEqual(oSelect.getValue(), "");	// not implemented
-				ok(oSelect.getList().getSelectedItem() === null);
-				strictEqual(oSelect.getList().getSelectedItemId(), "");
-				strictEqual(oSelect.getList().getSelectedKey(), "");
-				sap.ui.getCore().applyChanges();
-				strictEqual(oSelect.$("label").text(), "");
-
-				// cleanup
-				oSelect.destroy();
-			});
-
 			test("setSelectedItemId()", function() {
 
 				// system under test
@@ -2203,9 +2171,7 @@
 				});
 
 				// arrange
-				var fnSetPropertySpy = this.spy(sap.m.SelectList.prototype, "setProperty"),
-					fnSetAssociationSpy = this.spy(sap.m.SelectList.prototype, "setAssociation"),
-					fnFireChangeSpy = this.spy(oSelect, "fireChange"),
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange"),
 					fnSetSelectedItemIdSpy = this.spy(oSelect, "setSelectedItemId");
 
 				// act
@@ -2213,9 +2179,6 @@
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-				ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
 				ok(fnSetSelectedItemIdSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItemId() returns this to allow method chaining');
 				ok(oSelect.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelect.getSelectedItemId(), "item-id");
@@ -2371,6 +2334,29 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), oExpectedItem.getId());
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("setSelectedItemId() should set the value even if the corresponding item doesn't exist on the select", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					selectedItemId: "item-id"
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				ok(oSelect.getSelectedItem() === null);
+				strictEqual(oSelect.getSelectedItemId(), "item-id");
+				strictEqual(oSelect.getSelectedKey(), "");
+				ok(oSelect.getList().getSelectedItem() === null);
+				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
+				strictEqual(oSelect.getList().getSelectedKey(), "");
 
 				// cleanup
 				oSelect.destroy();
