@@ -24,12 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	
 		var sSize = oControl.getSize();
 		var iDesignClass = "";
-		var oAccAttributes = {
-			role : "progressbar",
-			valuemin: "0", // required by ARIA specification
-			valuemax: "100" // required by ARIA specification
-			
-		};
 
 		if (oControl.getDesign() == "auto") {
 			iDesignClass = "sapMBusyIndicator";
@@ -50,13 +44,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeStyles();
 		}
 
-		if (oControl._oLabel) {
-			oAccAttributes.labelledby = {
-				value: oControl._oLabel.getId(),
-				append: true
-			};
-		}
-		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		oRm.writeAccessibilityState(oControl, {
+			role : "progressbar",
+			valuemin: "0", // required by the ARIA specification
+			valuemax: "100" // required by the ARIA specification
+			
+		});
 		oRm.write(">");
 	
 		if (oControl.getCustomIcon()) {
