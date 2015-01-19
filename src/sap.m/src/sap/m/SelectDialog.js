@@ -288,6 +288,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	
 		// flags to control the busy indicator behaviour because the growing list will always show the no data text when updating
 		this._bFirstRequest = true; // to only show the busy indicator for the first request when the dialog has been openend
+		this._bLiveChange = false; // to check if the triggered event is LiveChange
 		this._iListUpdateRequested = 0; // to only show the busy indicator when we initiated the change
 	};
 	
@@ -306,6 +307,15 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._bFirstRequest = false;
 		this._bInitBusy = false;
 		this._bFirstRender = false;
+		this._bFirstRequest = false;
+
+		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea, 
+		// but only if it added it there itself. As we did that, we have to remove it also on our own
+		if ( this._bAppendedToUIArea ) {
+			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic.removeContent(this, true);
+		}
 	
 		// controls not managed in aggregations
 		if (this._oDialog) {
@@ -747,10 +757,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @returns {this} this pointer for chaining
 	 */
 	SelectDialog.prototype._executeSearch = function (sValue, sEventType) {
+
 		var oList = this._oList,
 			oBinding = (oList ? oList.getBinding("items") : undefined),
 			bSearchValueDifferent = (this._sSearchFieldValue !== sValue); // to prevent unwanted duplicate requests
-	
+
+		// BCP #1472004019/2015: focus after liveChange event is not changed
+		if (sEventType === "liveChange") {
+			this._bLiveChange = true;
+		}
+
 		// fire either the Search event or the liveChange event when dialog is opened.
 		// 1) when the clear icon is called then both liveChange and search events are fired but we only want to process the first one
 		// 2) when a livechange has been triggered by typing we don't want the next search event to be processed (typing + enter or typing + search button)
@@ -847,7 +863,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		}
 
 		// set initial focus manually after all items are visible
-		if (this._bFirstRequest) {
+		if (this._bFirstRequest && !this._bLiveChange) {
 			var oFocusControl = this._oList.getItems()[0];
 			if (!oFocusControl) {
 				oFocusControl = this._oSearchField;
