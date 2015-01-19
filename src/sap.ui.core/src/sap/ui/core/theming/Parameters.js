@@ -8,11 +8,11 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
-	function(jQuery, Core) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI'],
+	function(jQuery, Core, URI1) {
 	"use strict";
 
-
+		/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
 	
 	
 		/**
@@ -32,6 +32,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		
 		function resetParameters() {
 			mParameters = null;
+		}
+		
+		function checkAndResolveUrls(mParams, sResourceUrl){
+			//only resolve relative urls
+			var rRelativeUrl = /^url\(['|"]{1}(?!https?:\/\/|\/)(.*)['|"]{1}\)$/,
+				sAbsolutePath = sResourceUrl.replace(/library-parameters\.json.*/, "");
+
+			for (var sId in mParams){
+				if (rRelativeUrl.test(mParams[sId])){
+					mParams[sId] = mParams[sId].replace(rRelativeUrl, function($0, $1, $2){
+						var sNormalizedPath = new URI(sAbsolutePath + $1).normalize().path();
+						return "url('" + sNormalizedPath + "')";
+					});
+				}
+			}
+			return mParams;
 		}
 	
 		/*
@@ -77,14 +93,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 			// load and evaluate parameter file 
 			oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
 			if (oResponse.success) {
+				
 				oResult = (typeof oResponse.data == "string") ? jQuery.parseJSON(oResponse.data) : oResponse.data; // FIXME jQuery1.7.1 always parses JSON, so why is it checked here?
 				if ( jQuery.isArray(oResult) ) {
 					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array  
 					for (var j = 0; j < oResult.length; j++) {
-					  jQuery.extend(mParameters, oResult[j]);
+						oResult[j] = checkAndResolveUrls(oResult[j], sUrl);
+						jQuery.extend(mParameters, oResult[j]);
 					}
 				} else {
-				  jQuery.extend(mParameters, oResult);
+					oResult = checkAndResolveUrls(oResult, sUrl);
+					jQuery.extend(mParameters, oResult);
 				}
 			} else {
 				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
