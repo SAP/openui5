@@ -36,15 +36,15 @@ public class LogDownloader {
 	private static final String[] eu_server = {"hana.ondemand.com"};
 	
 	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "openui5", all_servers);
-	private static final ApplicationConfig openui5beta_config = new ApplicationConfig("openui5beta", "appdesigner", eu_server);
-	private static final ApplicationConfig openui5test_config = new ApplicationConfig("openui5test", "appdesigner", eu_server);
+	private static final ApplicationConfig openui5beta_config = new ApplicationConfig("openui5beta", "openui5", eu_server);
+	private static final ApplicationConfig openui5test_config = new ApplicationConfig("openui5test", "openui5", eu_server);
 	
 	
 	// SETTINGS
 	private static final ApplicationConfig[] APPLICATION_CONFIGS = {
 		openui5_config,
-		openui5beta_config,
-		openui5test_config
+		openui5beta_config
+		//openui5test_config
 	};
 
 	private static String USER = null;
@@ -185,7 +185,7 @@ public class LogDownloader {
 	 */
 	public void handleLogFiles(ApplicationConfig applicationConfig) {
 		
-		log("\nStarting log download process for application '" + applicationConfig + "'...\n\n");
+		log("\nStarting log download process for application '" + applicationConfig.getApplication() + "'...\n\n");
 
 		List<LogFileData> listOfDataSetsFromAllServers = new ArrayList<LogFileData>();
 
@@ -240,7 +240,7 @@ public class LogDownloader {
 
 
 		// Step 6: load previous data from file
-		JSONObject allData = this.loadDataFile(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig + ".json"));
+		JSONObject allData = this.loadDataFile(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".json"));
 		log("...data file loaded.\n");
 
 
@@ -250,13 +250,13 @@ public class LogDownloader {
 
 
 		// Step 8: save data file
-		File jsonDataFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig + ".json");
+		File jsonDataFile = new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".json");
 		this.saveDataFile(jsonDataFile, allData);
 		log("...data file saved.\n");
 
 
 		// Step 9: store Excel/CSV data
-		this.exportAsCSV(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig + ".csv"), allData);
+		this.exportAsCSV(new File(directory + File.separator + DATA_FILE_NAME + "_" + applicationConfig.getApplication() + ".csv"), allData);
 		log("...CSV file exported.\n");
 		
 		// Step 10:
@@ -279,7 +279,7 @@ public class LogDownloader {
 		JSONObject result = null;
 
 		final String listLogsCommand = " list-logs --user " + USER + " -p " + PASSWORD + " --output json --account " + account 
-				+ " --application " + application + " --host https://" + application + "." + server + "/ ";
+				+ " --application " + application + " --host https://" + server + "/ ";
 
 		String commandline = "cmd /c " + PROXY + NEO_PATH + listLogsCommand;
 		log("Retrieving list of log files...");
@@ -365,7 +365,7 @@ public class LogDownloader {
 	 */
 	private List<File> downloadLogFiles(List<String> logFileNames, String account, String application, String server) {
 		final String getLogCommand = " get-log  --user " + USER + "  -p " + PASSWORD + "  --account " + account + "  --application " + application 
-				+ "  --host https://" + application + "." + server + "/  --output json  --directory \"" + directory.getAbsolutePath() + "\"";
+				+ "  --host https://" + server + "/  --output json  --directory \"" + directory.getAbsolutePath() + "\"";
 		String commandline = "cmd /c " + PROXY + NEO_PATH + getLogCommand;
 		Runtime rt = Runtime.getRuntime();
 		JSONObject json;
@@ -409,7 +409,9 @@ public class LogDownloader {
 				if (!logFile.exists()) {
 					error("File " + logFile + " was not downloaded successfully");
 				} else if (logFile.length() < 1000) {
-					error("File " + logFile + " is too small to be good: " + logFile.length() + " bytes");
+					warn("File " + logFile + " is too small to be good: " + logFile.length() + " bytes");  // TODO: turn this into an error case again once AP1 and US1 also get traffic (don't add/delete the logfile then anymore)
+					logFiles.add(logFile);
+					logFile.deleteOnExit();
 				} else {
 					logFiles.add(logFile);
 					logFile.deleteOnExit();
