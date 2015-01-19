@@ -295,6 +295,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						initialFocus: initialFocusButton,
 						afterClose: onclose
 					});
+
+					oDialog.addEventDelegate({
+						onAfterRendering: function () {
+							oDialog.$().attr("role", "alertdialog");
+						}
+					});
+
 					if (typeof (vMessage) === "string") {
 						oDialog.addContent(new Text().setText(vMessage).addStyleClass("sapMMsgBoxText"));
 					} else if (vMessage instanceof sap.ui.core.Control) {
