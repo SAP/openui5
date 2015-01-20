@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ColumnsPanel can be used for personalization of the table to define column specific settings
 	 * @extends sap.m.P13nPanel
-	 * @author SAP SE 
+	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @public
@@ -43,17 +43,38 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a columnsItem was added
+				 * event raised when a columnsItem shall be added
 				 * 
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
 					parameters: {
 						/**
-						 * item added
+						 * columnsItem that needs to be added in the model 
 						 */
 						newItem: {
 							type: "sap.m.P13nColumnsItem"
+						}
+					}
+				},
+				/**
+				 * event raised when columnsItems shall be changed or new one needs to be created in model
+				 * 
+				 * @since 1.28.0
+				 */
+				changeColumnsItems: {
+					parameters: {
+						/**
+						 * contains columnsItems that needs to be created in the model
+						 */
+						newItems: {
+							type: "sap.m.P13nColumnsItem[]"
+						},
+						/**
+						 * contains columnsItems that needs to be changed in the model
+						 */						
+						existingItems: {
+							type: "sap.m.P13nColumnsItem[]"
 						}
 					}
 				},
@@ -699,7 +720,8 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype._handleItemIndexChanged = function(oItem, iNewIndex) {
 		var sItemKey = null, iColumnsItemIndex = null;
-		var aColumnsItems, oColumnsItem = null;
+		var aExistingColumnsItems = [], oColumnsItem = null;
+		var aNewColumnsItems = [], aColumnsItems = null;
 
 		if (oItem && iNewIndex !== null && iNewIndex !== undefined && iNewIndex > -1) {
 			sItemKey = oItem.data('P13nColumnKey');
@@ -709,15 +731,33 @@ sap.ui.define([
 				oColumnsItem = aColumnsItems[iColumnsItemIndex];
 			}
 
+			// check, whether a columnsItems does exist for actual table item
 			if (oColumnsItem === null) {
 				oColumnsItem = this._createNewColumnsItem(sItemKey);
 				oColumnsItem.setIndex(iNewIndex);
+				aNewColumnsItems.push(oColumnsItem);
+
 				this.fireAddColumnsItem({
 					newItem: oColumnsItem
 				});
-				this.fireSetData();
 			} else {
 				oColumnsItem.setIndex(iNewIndex);
+				aExistingColumnsItems.push(oColumnsItem);
+			}
+
+			// fire consolidated model change event for all collected model changes
+			if (aNewColumnsItems.length > 0 || aExistingColumnsItems.length > 0) {
+				this.fireChangeColumnsItems({
+					newItems: aNewColumnsItems,
+					existingItems: aExistingColumnsItems
+				});
+			}
+
+			// fire event for setting of changed data into model
+			this.fireSetData();
+
+			// react on model changes for columnsItems that that already did exist
+			if (aExistingColumnsItems && aExistingColumnsItems.length > 0) {
 				this._updateTableItems(oColumnsItem);
 				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
 					this._reOrderExistingTableItems();
@@ -730,41 +770,62 @@ sap.ui.define([
 	 * react on item visibility changes
 	 * 
 	 * @private
-	 * @param {sap.m.ColumnListItem} oItem is the table item for that the visibility was changed
+	 * @param {array} aItems is an array of table items (of type sap.m.ColumnListItem )for that the visibility was changed
 	 */
-	P13nColumnsPanel.prototype._handleItemVisibilityChanged = function(oItem) {
+	P13nColumnsPanel.prototype._handleItemVisibilityChanged = function(aItems) {
+		var that = this;
 		var sItemKey = null, iColumnsItemIndex = null;
-		var aColumnsItems, oColumnsItem = null;
+		var aExistingColumnsItems = [], oColumnsItem = null;
+		var aNewColumnsItems = [], aColumnsItems = null;
 
-		if (oItem) {
-			sItemKey = oItem.data('P13nColumnKey');
+		if (aItems && aItems.length > 0) {
 
-			// check, whether for actual item a columnsItems exist
 			aColumnsItems = this.getColumnsItems();
-			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
-			if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
-				oColumnsItem = aColumnsItems[iColumnsItemIndex];
-			}
+			aItems.forEach(function(oItem) {
+				oColumnsItem = iColumnsItemIndex = null;
 
-			// NO columnsItem exist -> create new one
-			if (oColumnsItem === null) {
-				oColumnsItem = this._createNewColumnsItem(sItemKey);
+				sItemKey = oItem.data('P13nColumnKey');
 
-				// set visibility and fire event to get a new columnsItems created
-				oColumnsItem.setVisible(oItem.getSelected());
-				this.fireAddColumnsItem({
-					newItem: oColumnsItem
-				});
+				// check, whether a columnsItems does exist for actual table item
+				iColumnsItemIndex = that._getArrayIndexByItemKey(sItemKey, aColumnsItems);
+				if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
+					oColumnsItem = aColumnsItems[iColumnsItemIndex];
+				}
 
-			} else {// columnsItem already exist -> change it's content
-				// change the visibility property and update|reOrder existing table items (that depends on the table
-				// sorting behavior)
-				oColumnsItem.setVisible(oItem.getSelected());
-				this._updateTableItems(oColumnsItem);
-				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
+				if (oColumnsItem === null) {
+					oColumnsItem = that._createNewColumnsItem(sItemKey);
+					oColumnsItem.setVisible(oItem.getSelected());
+					aNewColumnsItems.push(oColumnsItem);
+
+					that.fireAddColumnsItem({
+						newItem: oColumnsItem
+					});
+				} else {
+					oColumnsItem.setVisible(oItem.getSelected());
+					// in case a column will be made invisible -> remove the index property
 					if (oColumnsItem.getVisible() === false) {
 						oColumnsItem.setIndex(undefined);
 					}
+					aExistingColumnsItems.push(oColumnsItem);
+				}
+
+			});
+
+			// fire consolidated model change event for all collected model changes
+			if (aNewColumnsItems.length > 0 || aExistingColumnsItems.length > 0) {
+				this.fireChangeColumnsItems({
+					newItems: aNewColumnsItems,
+					existingItems: aExistingColumnsItems
+				});
+			}
+
+			// fire event for setting of changed data into model
+			this.fireSetData();
+
+			// react on model changes for columnsItems that that already did exist
+			if (aExistingColumnsItems && aExistingColumnsItems.length > 0) {
+				this._updateTableItems();
+				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
 					this._reOrderExistingTableItems();
 				}
 			}
@@ -1197,8 +1258,8 @@ sap.ui.define([
 				var aTableItems = oEvent.getParameter('listItems');
 				aTableItems.forEach(function(oTableItem) {
 					oTableItem.setSelected(bSelected);
-					that._handleItemVisibilityChanged(oTableItem);
 				});
+				that._handleItemVisibilityChanged(aTableItems);
 
 				// Special logic to change _oSelectedItem ALSO then if ONLY the "selection" status has been changed from
 				// false to true
@@ -1207,8 +1268,6 @@ sap.ui.define([
 						that._changeSelectedItem(aTableItems[0]);
 					}
 				}
-
-				that.fireSetData();
 			},
 			columns: [
 				new sap.m.Column({
