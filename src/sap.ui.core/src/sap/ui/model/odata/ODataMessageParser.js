@@ -1,0 +1,474 @@
+/*!
+ * ${copyright}
+ */
+
+sap.ui.define(["jquery.sap.global", "sap/ui/core/library", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, coreLibrary, MessageParser, Message) {
+	"use strict";
+
+/**
+ * This map is used to translate back-end response severity values to the values defined in the
+ * enumeration sap.ui.core.MessageType
+ * @see sap.ui.core.ValueState
+ */
+var mSeverityMap = {
+	"error":   sap.ui.core.MessageType.Error,
+	"warning": sap.ui.core.MessageType.Warning,
+	"success": sap.ui.core.MessageType.Success,
+	"info":    sap.ui.core.MessageType.Information
+};
+
+
+var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
+	metadata: {
+		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
+	},
+
+	constructor: function(sServiceUrl, oMetadata) {
+		MessageParser.apply(this);
+		this._serviceUrl = sServiceUrl;
+		this._metadata = oMetadata;
+		this._processor = null;
+		this._headerField = "sap-message"; // Default header field
+		this._lastMessages = [];
+	}
+});
+
+////////////////////////////////////////// Public Methods //////////////////////////////////////////
+
+/**
+ * Returns the name of the header field that is used to parse the server messages
+ *
+ * @return {string} The name of the header field
+ * @public
+ */
+ODataMessageParser.prototype.getHeaderField = function() {
+	return this._headerField;
+};
+
+/**
+ * Sets the header field name that should be used for parsing the JSON messages
+ * 
+ * @param {string} sFieldName - The name of the header field that should be used as source of the message object
+ * @return {sap.ui.model.odata.ODataMessageParser} Instance reference for method chaining
+ * @public
+ */
+ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
+	this._headerField = sFieldName;
+	return this;
+};
+
+
+/**
+ * Parses the given response for messages, calculates the delta and fires the messageChange-event
+ * on the MessageProcessor if messages are found.
+ * 
+ * @param {object} oResponse - The response from the server containing body and headers
+ * @param {object} oRequest - The original request that lead to this response
+ * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
+ * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
+ * @return {void}
+ */
+ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
+	var aMessages = [];
+	
+	// TODO: Implement filter function
+
+	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
+		// Status is 2XX - parse headers
+		this._parseHeader(/* ref: */ aMessages, oResponse);
+	} else if (oResponse.statusCode >= 400 && oResponse.statusCode < 600) {
+		// Status us 4XX or 5XX - parse body
+		this._parseBody(/* ref: */ aMessages, oResponse);
+	} else {
+		// Status neither ok nor error - I don't know what to do
+		// TODO: Maybe this is ok and should be silently ignored...?
+		jQuery.sap.log.warning(
+			"No rule to parse OData response with status " + oResponse.statusCode + " for messages"
+		);
+	}
+
+	if (aMessages.length > 0) {
+		if (!this._processor) {
+			// In case no message processor is attached, at least log to console.
+			// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
+			this._outputMesages(aMessages);
+		}
+
+		this._propagateMessages(aMessages, oResponse, oRequest, mGetEntities, mChangeEntities);
+	}
+};
+
+
+////////////////////////////////////////// onEvent Methods /////////////////////////////////////////
+
+
+////////////////////////////////////////// Private Methods /////////////////////////////////////////
+
+/**
+ * This method calculates the message delta and gives it to the MessageProcessor (fires the 
+ * messageChange-event) based on the entities belonging to this request.
+ * 
+ * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
+ * @param {object} oResponse - The response from the back-end
+ * @param {object} oRequest - The request that lead to this response
+ * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
+ * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
+ * @return {void}
+ */
+ODataMessageParser.prototype._propagateMessages = function(aMessages, oResponse, oRequest, mGetEntities, mChangeEntities) {
+	var i, sTarget;
+
+	var mAffectedTargets = jQuery.extend({
+		"": true // Allow global messages by default
+	}, mGetEntities, mChangeEntities);
+
+	// Add parent EntitySet to accepted targets
+	sTarget = aMessages[0].getTarget();
+	
+	if (sTarget) {
+		var mEntitySet = this._metadata._getEntitySetByPath(sTarget);
+		if (mEntitySet) {
+			mAffectedTargets[mEntitySet.name] = true;
+		}
+	}
+
+	// All messages with targets are part of the changed targets by definition. All Messages that
+	// come back from the server belong to affected entities/sets
+	// TODO: Check if this is necessary, since only messages for requested entities/sets should be returned from the service...
+	for (i = 0; i < aMessages.length; ++i) {
+		sTarget = aMessages[i].getTarget();
+		if (!mAffectedTargets[sTarget]) {
+			jQuery.sap.log.error(
+				"Service returned messages for entities that were not requested. " + 
+				"This might lead to wrong message processing and loss of messages"
+			);
+			mAffectedTargets[sTarget] = true;
+		}
+	}
+
+	var aRemovedMessages = [];
+	var aKeptMessages = [];
+	for (i = 0; i < this._lastMessages.length; ++i) {
+		sTarget = this._lastMessages[i].getTarget();
+		if (mAffectedTargets[sTarget]) {
+			// Message belongs to targets handled/requested by this request
+			aRemovedMessages.push(this._lastMessages[i]);
+		} else {
+			// Message is not affected, i.e. should stay
+			aKeptMessages.push(this._lastMessages[i]);
+		}
+	}
+
+	this.getProcessor().fireMessageChange({
+		oldMessages: aRemovedMessages,
+		newMessages: aMessages
+	});
+
+	this._lastMessages = aKeptMessages.concat(aMessages);
+};
+
+/**
+ * A plain error object as returned by the server. Either "@sap-severity"- or "severity"-property
+ * must be set.
+ * 
+ * @typedef {object} ODataMessageParser~ServerError
+ * @property {string} target - The target entity path for which the message is meant
+ * @property {string} message - The error message description
+ * @property {string} code - The error code (message)
+ * @property {string} [@sap-severity] - The level of the error (alternatively in v2: oMessageObject.severity) can be one of "success", "info", "warning", "error"
+ * @property {string} [severity] - The level of the error (alternatively in v4: oMessageObject.@sap-severity) can be one of "success", "info", "warning", "error"
+ */
+
+/**
+ * Creates a sap.ui.core.message.Message from the given JavaScript object
+ * 
+ * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
+ * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
+ * @return {sap.ui.core.message.Message} The message for the given error
+ */
+ODataMessageParser.prototype._createMessage = function(oMessageObject, bIsTechnical) {
+	var sType = oMessageObject["@sap.severity"] 
+		? oMessageObject["@sap.severity"] 
+		: oMessageObject["severity"];
+	// Map severity value to value defined in sap.ui.core.ValueState, use actual value if not found
+	sType = mSeverityMap[sType] ? mSeverityMap[sType] : sType;
+
+	var sCode = oMessageObject.code ? oMessageObject.code : "";
+
+	var sText = typeof oMessageObject["message"] === "object" && oMessageObject["message"]["value"]
+		? oMessageObject["message"]["value"]
+		: oMessageObject["message"];
+
+	var sTarget = oMessageObject.target ? oMessageObject.target : "";
+	sTarget = sTarget.substr(0, 1) === "/" ? sTarget.substr(1) : sTarget; // Remove leading "/"
+
+	return new Message({
+		type:      sType,
+		code:      sCode,
+		message:   sText,
+		target:    sTarget,
+		processor: this._processor,
+		technical: bIsTechnical
+	});
+};
+
+
+/**
+ * Parses the header with the set headerField and tries to extract the messages from it.
+ * 
+ * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
+ * @param {object} oResponse - The response object from which the headers property map will be used
+ * 
+ */
+ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse) {
+	var sField = this.getHeaderField();
+	if (!oResponse.headers || !oResponse.headers[sField]) {
+		// No header set, nothing to process
+		return;
+	}
+	
+	var sMessages = oResponse.headers[sField];
+	var oServerMessage = null;
+
+	try {
+		oServerMessage = JSON.parse(sMessages);
+
+		aMessages.push(this._createMessage(oServerMessage));
+
+		if (oServerMessage.details && jQuery.isArray(oServerMessage.details)) {
+			for (var i = 0; i < oServerMessage.details.length; ++i) {
+				aMessages.push(this._createMessage(oServerMessage.details[i]));
+			}
+		}
+
+	} catch (ex) {
+		jQuery.sap.log.error("The message string returned by the back-end could not be parsed");
+		return;
+	}
+};
+
+/**
+ * Parses the body of the request and tries to extract the messages from it.
+ * 
+ * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
+ * @param {object} oResponse - The response object from which the body property will be used
+ */
+ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse) {
+	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
+
+	var sContentType = getContentType(oResponse);
+	if (sContentType.indexOf("xml") > -1) {
+		// XML response
+		this._parseBodyXML(/* ref: */ aMessages, oResponse, sContentType);
+	} else {
+		// JSON response
+		this._parseBodyJSON(/* ref: */ aMessages, oResponse);
+	}
+};
+
+
+/**
+ * Parses the body of a JSON request and tries to extract the messages from it.
+ * 
+ * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
+ * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sContentType - The content type of the response (for the XML parser)
+ * @return {void}
+ */
+ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, sContentType) {
+	try {
+		var oDomParser = new DOMParser();
+		var oDoc = oDomParser.parseFromString(oResponse.body, sContentType);
+
+		var sPath = 
+			"//*[local-name()='error'] | " + // Main Error - v2 and v4
+			"//*[local-name()='errordetails']/*[local-name()='errordetail'] | " + // v2 further errors
+			"//*[local-name()='details']/*[local-name()='error']"; // v4 further errrors
+		// TODO: I do not have a v4 service to test this. Is the v4 further errors path really "//details/detail"?
+
+		var oXPath = getXPath();
+		var oNodes = oXPath.selectNodes(oDoc, sPath);
+
+		for (var i = 0; i < oNodes.length; ++i) {
+			var oNode = oXPath.nextNode(oNodes, i);
+
+			var oError = {};
+			// Manually set severity in case we get an error response
+			oError["severity"] = sap.ui.core.MessageType.Error;
+
+			for (var n = 0; n < oNode.childNodes.length; ++n) {
+				var oChildNode = oNode.childNodes[n];
+				var sChildName = oChildNode.nodeName;
+				
+				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror") {
+					// Ignore known children that contain other errors
+					continue;
+				}
+				
+				if (sChildName === "message" && oChildNode.hasChildNodes() && oChildNode.firstChild.nodeType !== window.Node.TEXT_NODE) {
+					// Special case for v2 error message - the message is in the child node "value"
+					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
+						if (oChildNode.childNodes[m].nodeName === "value") {
+							oError["message"] = oXPath.getNodeText(oChildNode.childNodes[m]);
+						}
+					}
+				} else {
+					oError[oChildNode.nodeName] = oXPath.getNodeText(oChildNode);
+				}
+			}
+
+			aMessages.push(this._createMessage(oError, true));
+		}
+	} catch (ex) {
+		jQuery.sap.log.error("Error message returned by server could not be parsed");
+	}
+};
+
+/**
+ * Parses the body of a JSON request and tries to extract the messages from it.
+ * 
+ * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
+ * @param {object} oResponse - The response object from which the body property will be used
+ * @return {void}
+ */
+ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse) {
+	try {
+		var oErrorResponse = JSON.parse(oResponse.body);
+
+		var oError;
+		if (oErrorResponse["error"]) {
+			// v4 response according to OData specification or v2 response according to MS specification and SAP message specification
+			oError = oErrorResponse["error"];
+		} else {
+			// Actual v2 response in all tested services
+			oError = oErrorResponse["odata.error"];
+		}
+
+		if (!oError) {
+			jQuery.sap.log.error("Error message returned by server did not contain error-field");
+			return;
+		}
+
+		// Manually set severity in case we get an error response
+		oError["severity"] = sap.ui.core.MessageType.Error;
+
+		aMessages.push(this._createMessage(oError, true));
+
+		// Check if more than one error has been returned from the back-end
+		var aFurtherErrors = null;
+		if (jQuery.isArray(oError.details)) {
+			// v4 errors
+			aFurtherErrors = oError.details;
+		} else if (oError.innererror && jQuery.isArray(oError.innererror.errordetails)) {
+			// v2 errors
+			aFurtherErrors = oError.innererror.errordetails;
+		} else {
+			// No further errors
+			aFurtherErrors = [];
+		}
+
+		for (var i = 0; i < aFurtherErrors.length; ++i) {
+			aMessages.push(this._createMessage(aFurtherErrors[i], true));
+		}
+	} catch (ex) {
+		jQuery.sap.log.error("Error message returned by server could not be parsed");
+	}
+};
+
+/**
+ * Outputs messages to the browser console. This is a fallback for when there is no MessageProcessor
+ * attached to this parser. This should not happen in standard cases, as the ODataModel registers
+ * itself as MessageProcessor. Only if used stand-alone, this can at least prevent the messages
+ * from being ignored completely.
+ * 
+ * @param {sap.ui.message.Message[]} aMessages - The messages to be displayed on the console
+ * @private
+ */
+ODataMessageParser.prototype._outputMesages = function(aMessages) {
+	for (var i = 0; i < aMessages.length; ++i) {
+		var sOutput = "[OData Message] " + aMessages.getMessage() + " - " + aMessages.getDexcription() + " (" + aMessages.getTarget() + ")"; 
+		switch (aMessages[i].getSeverity()) {
+			case "error":
+				jQuery.sap.log.error(sOutput);
+				break;
+
+			case "warning":
+				jQuery.sap.log.warning(sOutput);
+				break;
+
+			case "success":
+				jQuery.sap.log.debug(sOutput);
+				break;
+
+			case "info":
+			default:
+				jQuery.sap.log.info(sOutput);
+				break;
+		}
+	}
+};
+
+///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
+
+
+/**
+ * Returns the content-type header of the given response, it searches in a case-insentitive way for
+ * the header
+ * 
+ * @param {object} oResponse - The response object from which the body property will be used
+ * @return {string|false} Either the content-type header content or false if none is found
+ */
+function getContentType(oResponse) {
+	if (oResponse && oResponse.headers) {
+		for (var sHeader in oResponse.headers) {
+			if (sHeader.toLowerCase() === "content-type") {
+				return oResponse.headers[sHeader];
+			}
+		}
+	}
+	return false;
+}
+
+
+var xPath = null;
+function getXPath() {
+	if (xPath === null) {
+		xPath = {};
+		if (sap.ui.Device.browser.msie) {// IE
+			xPath = {
+				selectNodes : function(oSearchNode, sPath) {
+					return oSearchNode.selectNodes(sPath);
+				},
+				nextNode : function(oNode) {
+					return oNode.nextNode();
+				},
+				getNodeText : function(oNode) {
+					return oNode.text;
+				}
+			};
+		} else {// Chrome, Firefox, Opera, etc.
+			xPath = {
+				selectNodes : function(oSearchNode, sPath) {
+					var xmlNodes = oSearchNode.evaluate(sPath, oSearchNode, null, /* ORDERED_NODE_SNAPSHOT_TYPE: */ 7, null);
+					xmlNodes.length = xmlNodes.snapshotLength;
+					return xmlNodes;
+				},
+				nextNode : function(oNode, oItem) {
+					return oNode.snapshotItem(oItem);
+				},
+				getNodeText : function(oNode) {
+					return oNode.textContent;
+				}
+			};
+		}
+	}
+
+	return xPath;
+}
+
+//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
+
+return ODataMessageParser;
+
+});
