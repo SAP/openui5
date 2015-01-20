@@ -7,7 +7,7 @@
 		<content>
 			<List
 				id="list"
-				items="{/Products}"
+				items="{/Objects}"
 				noDataText="{i18n>masterListNoDataText}"
 				mode="{
 					path: 'device>isPhone',
@@ -22,12 +22,12 @@
 							formatter: 'sap.ui.demo.mdskeleton.util.formatter.listItemType'
 						}"
 						press="onSelect"
-						title="{ProductName}"
+						title="{Name}"
 						number="{
-							path: 'UnitPrice',
+							path: 'UnitNumber',
 							formatter: 'sap.ui.demo.mdskeleton.util.formatter.currencyValue'
 						}"
-						numberUnit="USD">
+						numberUnit="{UnitOfMeasure}">
 					</ObjectListItem>
 				</items>
 			</List>

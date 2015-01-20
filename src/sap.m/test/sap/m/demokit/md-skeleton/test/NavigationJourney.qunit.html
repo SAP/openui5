@@ -32,7 +32,7 @@
 			viewNamespace : "sap.ui.demo.mdskeleton.view."
 		});
 
-		opaTest("Should see the category list", function (Given, When, Then) {
+		opaTest("Should see the objects list", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartMyAppInAFrame("../index.html?responderOn=true");
 
@@ -40,35 +40,41 @@
 			When.iLookAtTheScreen();
 
 			// Assertions
-			Then.iShouldSeeTheProductsList().
-				and.theProductListShouldHave9Entries().
-				and.theDetailPageShowsTheFirstProduct();
+			Then.iShouldSeeTheObjectList().
+				and.theObjectListShouldHave9Entries().
+				and.theDetailPageShowsTheFirstObject();
 		});
 
-		opaTest("Should navigate on press", function (Given, When, Then) {
-			// Actions
-			When.iPressOnTheChaiProduct();
-
-			// Assertions
-			Then.iShouldBeOnTheChaiDetailPage();
-		});
+		
+		
 
 		opaTest("Should react on hashchange", function (Given, When, Then) {
 			// Actions
-			When.iChangeTheHashToTheThirdProduct();
+			When.iChangeTheHashToObject3();
 
 			// Assertions
-			Then.iShouldBeOnTheAniseedSyrupDetailPage();
+			Then.iShouldBeOnTheObject3Page().
+				and.theObject3ShouldBeSelectedInTheMasterList();
 		});
 		
-		opaTest("Detail Page Shows Order Details", function (Given, When, Then) {
+		
+		opaTest("Should navigate on press", function (Given, When, Then) {
 			// Actions
-			When.iPressOnTheChaiProduct();
+			When.iPressOnTheObject1();
 
 			// Assertions
-			Then.iShouldSeeTheOrderDetailsList().
-				and.theOrderDetailsListShouldHave3Entries().
-				and.theFirstOrderDetailHasId10285();
+			Then.iShouldBeOnTheObject1Page();
+		});
+		
+		opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
+			// Actions
+			When.iPressOnTheObject1();
+
+			// Assertions
+			Then.iShouldBeOnTheObject1Page().
+				and.iShouldSeeTheObjectLineItemsList().
+				and.theLineItemsListShouldHave4Entries().
+				and.theFirstLineItemHasIDLineItemID_1();
 			
 		});
 	</script>

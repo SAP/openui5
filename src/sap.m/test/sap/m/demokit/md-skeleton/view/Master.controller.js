@@ -42,21 +42,21 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 	},
 
 	onDetailChanged : function (sChanel, sEvent, oData) {
-		var sProductPath = oData.sProductPath;
+		var sObjectPath = oData.sObjectPath;
 		//Wait for the list to be loaded once
 		this.waitForInitialListLoading(function () {
 			var oList = this.getView().byId("list");
 
 			var oSelectedItem = oList.getSelectedItem();
 			// the correct item is already selected
-			if(oSelectedItem && oSelectedItem.getBindingContext().getPath() === sProductPath) {
+			if(oSelectedItem && oSelectedItem.getBindingContext().getPath() === sObjectPath) {
 				return;
 			}
 
 			var aItems = oList.getItems();
 
 			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].getBindingContext().getPath() === sProductPath) {
+				if (aItems[i].getBindingContext().getPath() === sObjectPath) {
 					oList.setSelectedItem(aItems[i], true);
 					break;
 				}
@@ -89,8 +89,8 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 	showDetail : function(oItem) {
 		// If we're on a phone, include nav in history; if not, don't.
 		var bReplace = jQuery.device.is.phone ? false : true;
-		this.getRouter().navTo("product", {
-			product: oItem.getBindingContext().getPath().substr(1)
+		this.getRouter().navTo("object", {
+			object: oItem.getBindingContext().getPath().substr(1)
 		}, bReplace);
 	}
 

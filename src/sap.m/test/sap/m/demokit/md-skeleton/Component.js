@@ -19,12 +19,12 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 			// (relative paths will fail if running in the Fiori Launchpad)
 			rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdskeleton"),
 			serviceConfig : {
-				northwind : {
+				md_skeleton : {
 					// If responderOn=true is provided as an url parameter, the model will serve the data in the model/data/<dataFolderName> data.
 					// See model/MockableModel.js for the implementation.
-					dataFolderName: "Northwind",
-					// If responderOn is not provided in the URL the model will hit the actual OData server.
-					serviceUrl: "../../../../../proxy/http/services.odata.org/V2/(S(sapuidemomd))/OData/OData.svc/"
+					dataFolderName: "md_skeleton",
+					// If responderOn is not provided in the URL the model would hit the actual OData server.
+					serviceUrl: "here/goes/your/serviceUrl/"
 				}
 			}
 		},
@@ -46,8 +46,8 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 					targetControl : "idAppControl",
 					subroutes : [
 						{
-							pattern : "{product}",
-							name : "product",
+							pattern : "{object}",
+							name : "object",
 							view : "Detail"
 						}
 					]
@@ -81,7 +81,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 			bundleUrl : [mConfig.rootPath, mConfig.resourceBundle].join("/")
 		}), "i18n");
 
-		this.setModel(new sap.ui.demo.mdskeleton.model.MockableModel(mConfig.serviceConfig.northwind));
+		this.setModel(new sap.ui.demo.mdskeleton.model.MockableModel(mConfig.serviceConfig.md_skeleton));
 
 		this.setModel(new sap.ui.demo.mdskeleton.model.Device(), "device");
 
