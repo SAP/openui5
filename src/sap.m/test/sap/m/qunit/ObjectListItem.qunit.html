@@ -137,6 +137,26 @@
 			ok($markersStatus.val().length === 0, "The markers status should be empty");
 		});
 
+        test("RenderLockedIcon", function() {
+            var lockedOlI = new sap.m.ObjectListItem({
+                icon : "../images/action.png",
+                intro : "On behalf of John Smith",
+                title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+                number : "3.624",
+                numberUnit : "EUR",
+                markLocked: true
+            });
+
+            lockedOlI.placeAt("qunit-fixture");
+            sap.ui.getCore().applyChanges();
+
+            ok(jQuery.sap.domById(lockedOlI.getId() + "-lock"), "Locked marker should be rendered.");
+            equal(jQuery.sap.byId(lockedOlI.getId() + "-lock").attr("data-sap-ui-icon-content").charCodeAt(0), 57683, "Locked font should be rendered.");
+
+            lockedOlI.destroy();
+        });
+
+
         var showTextDir = new sap.m.ObjectListItem({
             id: "showTextDir",
             intro: "rtl chars intro",
@@ -376,6 +396,7 @@
 
 <body class="sapUiBody">
 	<div id="qunit"></div>
+    <div id="qunit-fixture"></div>
 	<div id="list"></div>
 	<div id="destroy-list"></div>
 </body>

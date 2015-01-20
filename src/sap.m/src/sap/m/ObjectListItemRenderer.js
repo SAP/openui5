@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	
 		rm.write("</div>"); // Start attribute row container
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
@@ -214,23 +214,32 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			var aAttribs = oLI._getVisibleAttributes();
 			var statuses = [];
 			var markers = null;
-			
+
+			//lock icon
+			var placeholderIcon = oLI._getPlaceholderIcon();
+			var lockIcon = oLI._getLockIcon();
+			lockIcon.setVisible(oLI.getMarkLocked());
+
+			markers = [placeholderIcon, lockIcon];
+			markers._isEmpty = function() {
+				return false;
+			};
+
+			statuses.push(markers);
+
+			//end lock icon
+
 			if (oLI.getShowMarkers()) {
-				var placeholderIcon = oLI._getPlaceholderIcon();
 				var favIcon = oLI._getFavoriteIcon();
 				var flagIcon = oLI._getFlagIcon();
 				favIcon.setVisible(oLI.getMarkFavorite());
 				flagIcon.setVisible(oLI.getMarkFlagged());
 				
 				//Markers will be rendered LTR in the order they're added to the array
-				markers = [placeholderIcon, favIcon, flagIcon];
-				statuses.push(markers);
-				
-				markers._isEmpty = function() {
-					return false;
-				};
+				statuses[0].push(favIcon);
+				statuses[0].push(flagIcon);
 			}
-			
+
 			statuses.push(oLI.getFirstStatus());
 			statuses.push(oLI.getSecondStatus());
 			
@@ -241,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			while (statuses.length > 0) {
 				this.renderAttributeStatus(rm, oLI, null, statuses.shift());
 			}
-	
+
 			rm.write("</div>"); // End Bottom row container
 		}
 		rm.write("</div>"); // End Main container
