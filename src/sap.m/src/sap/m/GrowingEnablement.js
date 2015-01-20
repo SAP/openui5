@@ -452,7 +452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
 			}
-			this._oControl.getBinding("items").getContexts(0, this._iItemCount);
+			this._oControl.getBinding("items").getContexts(0, this._oControl.getGrowingThreshold());
 		},
 
 		/**
