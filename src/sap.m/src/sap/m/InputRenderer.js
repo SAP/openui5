@@ -56,9 +56,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	InputRenderer.writeInnerAttributes = function(oRm, oControl) {
 		oRm.writeAttribute("type", oControl.getType().toLowerCase());
 		if ((!oControl.getEnabled() && oControl.getType() == "Password")
-				|| (oControl.getShowSuggestion() && sap.ui.Device.system.phone)
+				|| (oControl.getShowSuggestion() && oControl._bUseDialog)
 				|| (oControl.getValueHelpOnly() && oControl.getEnabled() && oControl.getEditable() && oControl.getShowValueHelp())) {
-			// required for JAWS reader on password fields on desktop:
+			// required for JAWS reader on password fields on desktop and in other cases:
 			oRm.writeAttribute("readonly", "readonly");
 		}
 	};
