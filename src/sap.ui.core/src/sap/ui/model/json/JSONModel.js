@@ -203,19 +203,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @public
 	 */
 	JSONModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
-		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/")),
-			sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
+		var sResolvedPath = this.resolve(sPath, oContext),
+			iLastSlash, sObjectPath, sProperty;
 		
-		// check if path / context is valid
-		if (!this.resolve(sPath, oContext)) {
+		// return if path / context is invalid
+		if (!sResolvedPath) {
 			return false;
 		}
 		
-		if (!sObjectPath && !oContext) {
-			oContext = this.oData;
-		}
-	
-		var oObject = this._getObject(sObjectPath, oContext);
+		iLastSlash = sResolvedPath.lastIndexOf("/");
+		// In case there is only one slash at the beginning, sObjectPath must contain this slash
+		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
+		sProperty = sResolvedPath.substr(iLastSlash + 1);
+
+		var oObject = this._getObject(sObjectPath);
 		if (oObject) {
 			oObject[sProperty] = oValue;
 			this.checkUpdate(false, bAsyncUpdate);
@@ -223,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		}
 		return false;
 	};
-	
+		
 	/**
 	* Returns the value for the property with the given <code>sPropertyName</code>
 	*
