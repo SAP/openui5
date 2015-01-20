@@ -49,6 +49,16 @@
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
+	/**
+	 * Clean-Up Hierarchy Annotation Mockdata/Metadata
+	 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
+	 */
+	var aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+	for (var i = 0; i < aAnnotationsMockdata.length; i++) {
+		//convert string based level properties (NUMC fields) to real numbers
+		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
+	}
+	
 	var oModel, oBinding;
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters){
@@ -82,7 +92,8 @@
 				navigation: {
 					Employees: "Employees1",
 					Employees1: "Employees1"
-				}
+				},
+				displayRootNode: false
 			});
 	
 			var oContext;
@@ -400,9 +411,11 @@
 					]
 				}, "Keys object has value for root");
 				deepEqual(oBinding.oLengths, {
+					"/Employees(2)": 1,
 					"/Employees(2)/Employees1": 5
 				}, "Lengths object has value for root");
 				deepEqual(oBinding.oFinalLengths, {
+					"/Employees(2)": true,
 					"/Employees(2)/Employees1": true
 				}, "FinalLengths object has value for root");
 	
@@ -462,9 +475,11 @@
 					],
 				}, "Keys object has value for root");
 				deepEqual(oBinding.oLengths, {
+					"/Employees(2)": 1,
 					"/Employees(2)/Employees1": 5,
 				}, "Lengths object has value for root");
 				deepEqual(oBinding.oFinalLengths, {
+					"/Employees(2)": true,
 					"/Employees(2)/Employees1": true,
 				}, "FinalLengths object has value for root");
 	
@@ -490,7 +505,7 @@
 		
 		
 			equal(iErrorCount, 1, "TreeBinding one error should have occured");
-			equal(sErrorMessage, "A navigation paths parameter object has to be defined", "TreeBinding navigation error was thrown");
+			equal(sErrorMessage, "Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.", "TreeBinding navigation error was thrown");
 			jQuery.sap.log.error.restore();
 			start();
 		});
@@ -607,90 +622,23 @@
 	
 	asyncTest("TreeBinding getRootContexts getNodeContexts", function(){
 		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-	
-			var oContext;
-			var iHandleCounter = 0;
-	
-			var handler1 = function(oEvent) {
-				iHandleCounter++;
-	
-				// contexts should be now loaded
-				var aContexts = oBinding.getRootContexts();
-				
-				if (iHandleCounter == 2) {
-		
-					equal(aContexts.length, 9, "TreeBinding rootContexts length");
-		
-					oContext = aContexts[0];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
-		
-					oContext = aContexts[1];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
-					
-					oContext = aContexts[8];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
-					
-					oBinding.detachChange(handler1);
-		
-					start();
-				}
-			};
-		
-			oBinding.attachChange(handler1);
-			oBinding.getRootContexts();
-		});
-	});
-	
-	asyncTest("Display root node", function(){
-		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
-				displayRootNode: true
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				rootLevel: 2
 			});
-	
+			
 			var oContext;
-			var iHandleCounter = 0;
-	
+			
 			var handler1 = function(oEvent) {
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
-	
-				equal(aContexts.length, 1, "TreeBinding rootContexts length");
-	
-				oContext = aContexts[0];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				equal(aContexts.length, 9, "TreeBinding rootContexts length");
 				
-				oBinding.detachChange(handler1);
-	
-				oBinding.attachChange(handler2);
-				oContext = aContexts[0];
-				oBinding.getNodeContexts(oContext);
-			};
-	
-			var handler2 = function(oEvent) {
-				// contexts should be now loaded
-				var aContexts = oBinding.getNodeContexts(oContext);
-	
-				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
-				equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
-	
 				oContext = aContexts[0];
 				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
-	
+				
 				oContext = aContexts[1];
 				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
 				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
@@ -702,32 +650,96 @@
 				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
 				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
-	
-				oBinding.detachChange(handler2);
+				
+				oBinding.detachChange(handler1);
+				
 				start();
-			}
-	
+			};
+		
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
 		});
 	});
 	
-	asyncTest("Number of expanded levels", function(){
+	asyncTest("Display root node", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				rootLevel: 1
+			});
+			
+			var oContext;
+			
+			var handler1 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				
+				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				
+				oBinding.detachChange(handler1);
+				
+				oBinding.attachChange(handler2);
+				oContext = aContexts[0];
+				oBinding.getNodeContexts(oContext);
+			};
+			
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext);
+				
+				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
+				equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				
+				oContext = aContexts[8];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+				
+				oBinding.detachChange(handler2);
+				start();
+			}
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("Sequential expand over 3 levels", function(){
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 				displayRootNode: true,
-				numberOfExpandedLevels: 2
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
 			});
+			
+			var oContext;
 			
 			var handler1 = function(oEvent) {
 				oBinding.detachChange(handler1);
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts();
-				var aSubContexts;
-	
+				
 				equal(aContexts.length, 1, "TreeBinding rootContexts length");
-	
+				
 				//Level 0
 				oContext = aContexts[0];
 				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
@@ -735,7 +747,15 @@
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
 				
 				//Level 0.0
+				oBinding.attachChange(handler2);
 				aContexts = oBinding.getNodeContexts(oContext);
+			};
+			
+			var handler2 = function (oEvent) {
+				oBinding.detachChange(handler2);
+				
+				var aContexts = oBinding.getNodeContexts(oContext);
+				
 				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
 				
 				oContext = aContexts[0];
@@ -745,7 +765,15 @@
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
 				
 				//Level 0.0.0
-				aSubContexts = oBinding.getNodeContexts(oContext);
+				oBinding.attachChange(handler3);
+				aContexts = oBinding.getNodeContexts(oContext);
+			};
+			
+			var handler3 = function (oEvent) {
+				oBinding.detachChange(handler3);
+				
+				var aSubContexts = oBinding.getNodeContexts(oContext);
+				
 				equal(aSubContexts.length, 7, "TreeBinding nodeContexts length");
 				
 				oContext = aSubContexts[0];
@@ -772,48 +800,47 @@
 		oModel.attachMetadataLoaded(function() {
 			var oContext;
 			var iHandleCounter = 0;
-			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
+				rootLevel: 2
+			});
 	
 			var handler1 = function(oEvent) {
-				iHandleCounter++;
 				// contexts should be now loaded
 				var aContexts = oBinding.getRootContexts(1, 4);
 	
-				if (iHandleCounter == 2) {
-					equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
-					//Wait for fix of Mock Server
-					//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
-		
-					oContext = aContexts[0];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
-					
-					oContext = aContexts[1];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
-					
-					oContext = aContexts[2];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
-					
-					oContext = aContexts[3];
-					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-					equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
-					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-					equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
-		
-					oBinding.detachChange(handler1);
-		
-					oContext = aContexts[0];
-					oBinding.attachChange(handler2);
-					oBinding.getNodeContexts(oContext, 2, 3);
-				}
+				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
+	
+				oBinding.detachChange(handler1);
+	
+				oContext = aContexts[0];
+				oBinding.attachChange(handler2);
+				oBinding.getNodeContexts(oContext, 2, 3);
 			};
 	
 			var handler2 = function(oEvent) {
@@ -854,19 +881,37 @@
 	asyncTest("Tried filtering", function() {
 		var that = this;
 		oModel.attachMetadataLoaded(function() {
-			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+			//stub error
+			var iErrorCount = 0;
+			that.stub(jQuery.sap.log, "error", function(sMsg) {
+				iErrorCount++;
+			});
+			
+			//warning stub
 			var iWarningCount = 0,
 				sMessage = "";
-			
 			that.stub(jQuery.sap.log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});
 			
+			//should throw error
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
+				rootLevel: 1,
+				treeAnnotationProperties : {
+					hierarchyNodeFor: "Test"
+				}
+			});
+			
+			//should log warning
 			oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
-			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
+			
+			equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
+			equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
 			equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
+			
 			jQuery.sap.log.warning.restore();
+			jQuery.sap.log.error.restore();
 			start();
 		});
 	});

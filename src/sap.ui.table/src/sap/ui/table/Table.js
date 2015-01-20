@@ -753,16 +753,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var that = this;
 			var oBindingInfo = this.mBindingInfos["rows"];
 			jQuery.each(this.getRows(), function(iIndex, oRow) {
+				
+				var iAbsoluteRowIndex = that.getFirstVisibleRow() + iIndex; //get the aboslute row index
+				
 				jQuery.each(oRow.getCells(), function(iIndex, oCell) {
 					if (oCell._updateTableCell) {
 						oCell._updateTableCell(oCell /* cell control */,
 						                       oCell.getBindingContext(oBindingInfo && oBindingInfo.model) /* cell context */,
-						                       oCell.$().closest("td") /* jQuery object for td */);
+						                       oCell.$().closest("td") /* jQuery object for td */,
+						                       iAbsoluteRowIndex);
 					}
 					if (that._updateTableCell) {
 						that._updateTableCell(oCell /* cell control */,
 						                       oCell.getBindingContext(oBindingInfo && oBindingInfo.model) /* cell context */,
-						                       oCell.$().closest("td") /* jQuery object for td */);
+						                       oCell.$().closest("td") /* jQuery object for td */,
+						                       iAbsoluteRowIndex);
 					}
 				});
 			});
@@ -1652,7 +1657,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				var oContext = aContexts ? aContexts[iIndex] : undefined;
 				var oRow = aRows[iIndex];
 				if (oRow) {
-					this._updateRowBindingContext(oRow, oContext, oBindinginfo && oBindinginfo.model);
+					//calculate the absolute row index, used by the Tree/AnalyticalTable to find the rendering infos for this row
+					var iAbsoluteRowIndex = this.getFirstVisibleRow() + iIndex;
+					this._updateRowBindingContext(oRow, oContext, oBindinginfo && oBindinginfo.model, iAbsoluteRowIndex);
 				}
 			}
 		}
@@ -1665,17 +1672,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @param {sap.ui.model.Context} binding context of the row
 	 * @private
 	 */
-	Table.prototype._updateRowBindingContext = function(oRow, oContext, sModelName) {
+	Table.prototype._updateRowBindingContext = function(oRow, oContext, sModelName, iAbsoluteRowIndex) {
 		var aCells = oRow.getCells();
 		var $row = oRow.$();
 		var $fixedRow = oRow.$("fixed");
 		var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
 		// check for a context object (in case of grouping there could be custom context objects)
+		oRow.setBindingContext(oContext, sModelName);
 		if (oContext && oContext instanceof sap.ui.model.Context) {
 			for (var i = 0, l = this._aVisibleColumns.length; i < l; i++) {
 				var col = this._aIdxCols2Cells[this._aVisibleColumns[i]];
 				if (aCells[col]) {
-					this._updateCellBindingContext(aCells[col], oContext, sModelName);
+					this._updateCellBindingContext(aCells[col], oContext, sModelName, iAbsoluteRowIndex);
 				}
 			}
 			if ($row.hasClass("sapUiTableRowHidden")) {
@@ -1709,7 +1717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			for (var i = 0, l = this._aVisibleColumns.length; i < l; i++) {
 				var col = this._aIdxCols2Cells[this._aVisibleColumns[i]];
 				if (aCells[col]) {
-					this._updateCellBindingContext(aCells[col], oContext, sModelName);
+					this._updateCellBindingContext(aCells[col], oContext, sModelName, iAbsoluteRowIndex);
 				}
 			}
 		}
@@ -1721,13 +1729,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @param {sap.ui.model.Context} binding context of the cell
 	 * @private
 	 */
-	Table.prototype._updateCellBindingContext = function(oCell, oContext, sModelName) {
-			oCell.setBindingContext(oContext, sModelName);
+	Table.prototype._updateCellBindingContext = function(oCell, oContext, sModelName, iAbsoluteRowIndex) {
+			//oCell.setBindingContext(oContext, sModelName);
 			if (this._bCallUpdateTableCell && oCell._updateTableCell) {
-				oCell._updateTableCell(oCell /* cell control */, oContext /* cell context */, oCell.$().closest("td") /* jQuery object for td */);
+				oCell._updateTableCell(oCell /* cell control */, oContext /* cell context */, oCell.$().closest("td") /* jQuery object for td */, iAbsoluteRowIndex);
 			}
 			if (typeof this._updateTableCell === "function") {
-				this._updateTableCell(oCell /* cell control */, oContext /* cell context */, oCell.$().closest("td") /* jQuery object for td */);
+				this._updateTableCell(oCell /* cell control */, oContext /* cell context */, oCell.$().closest("td") /* jQuery object for td */, iAbsoluteRowIndex);
 			}
 	};
 
