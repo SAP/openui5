@@ -284,7 +284,7 @@
 /* 				"mimeType" : "image/jpg", */
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-07-30",
-				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
+				"url" : ""
 			},{
 				"contributor" : "John Smith",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
@@ -531,7 +531,9 @@
 
 		expect(8); // verifies the event handler was executed
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
-//		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		sap.ui.getCore().applyChanges();
+		// No Event should be triggered, because there is no url provided at aItems[0] --> no change at expect(8)!
+		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 
 	});
 
