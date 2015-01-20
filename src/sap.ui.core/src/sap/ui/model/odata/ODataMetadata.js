@@ -826,6 +826,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		return oRequest;
 	};
 
+	/**
+	 * Returns the entity set to which the given entity path belongs
+	 * 
+	 * @param {string} sEntityPath The path to the entity
+	 * @return {map|undefined} The EntitySet to which the path belongs or undefined if none
+	 */
+	ODataMetadata.prototype._getEntitySetByPath = function(sEntityPath) {
+		if (!this._entitySetMap) {
+			// Cache results of entity set lookup
+			this._entitySetMap = {};
+			this.oMetadata.dataServices.schema.forEach(function(mShema) {
+				if (mShema.entityContainer) {
+					mShema.entityContainer.forEach(function(mContainer) {
+						if (mContainer.entitySet) {
+							mContainer.entitySet.forEach(function(mEntitySet) {
+								this._entitySetMap[mEntitySet.entityType] = mEntitySet;
+							}, this);
+						}
+					}, this);
+				}
+			}, this);
+		}
+
+		var oEntityType = this._getEntityTypeByPath(sEntityPath);
+
+		if (oEntityType) {
+			return this._entitySetMap[oEntityType.entityType];
+		}
+
+		return;
+	};
 
 	return ODataMetadata;
 
