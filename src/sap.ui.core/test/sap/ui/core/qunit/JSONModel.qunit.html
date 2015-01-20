@@ -48,7 +48,8 @@
    					text:"level2"
    				}
    			}
-   		}
+   		},
+   		rootproperty: "test1"
 	};
 
 	var testdataChild = {
@@ -95,21 +96,38 @@
 		deepEqual(oModel.getData(), arrMerged, "setData array with merge");
 	});
 	
+	test("test model getProperty", function(){
+		var value = oModel.getProperty("/teamMembers/6/lastName");
+		equal(value, "Wallace", "model value");
+		value = oModel.getProperty("/rootproperty");
+		equal(value, "test1", "model value");
+	});
+
 	test("test model getProperty with context", function(){
 		var oContext = oModel.createBindingContext("/teamMembers");
 		var value = oModel.getProperty("6/lastName", oContext);
 		equal(value, "Wallace", "model value");
-	});
-
-	test("test model getProperty", function(){
-		var value = oModel.getProperty("/teamMembers/6/lastName");
-		equal(value, "Wallace", "model value");
+		value = oModel.getProperty("/rootproperty");
+		equal(value, "test1", "model value");
 	});
 
 	test("test model setProperty", function(){
 		oModel.setProperty("/teamMembers/4/lastName", "Jackson");
 		var value = oModel.getProperty("/teamMembers/4/lastName");
 		equal(value, "Jackson", "model value");
+		oModel.setProperty("/rootproperty", "test2");
+		var value = oModel.getProperty("/rootproperty");
+		equal(value, "test2", "model value");
+	});
+
+	test("test model setProperty with context", function(){
+		var oContext = oModel.createBindingContext("/teamMembers");
+		oModel.setProperty("4/lastName", "Smith", oContext);
+		var value = oModel.getProperty("/teamMembers/4/lastName");
+		equal(value, "Smith", "model value");
+		oModel.setProperty("/rootproperty", "test3", oContext);
+		var value = oModel.getProperty("/rootproperty");
+		equal(value, "test3", "model value");
 	});
 
 	test("test getProperty on label", function(){
