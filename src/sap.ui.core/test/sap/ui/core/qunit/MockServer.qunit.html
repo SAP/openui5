@@ -1607,7 +1607,10 @@
 					rootUri : "/myservice/"
 				});
 				var sMetadataUrl = "testdata/northwind/metadata.xml"
-				oMockServer.simulate(sMetadataUrl, "testdata/northwind/");
+				oMockServer.simulate(sMetadataUrl, {
+					'sMockdataBaseUrl' : "testdata/northwind/",
+					'bGenerateMissingMockData' : true
+				});
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -1646,6 +1649,13 @@
 					dataType : "json"
 				});
 				equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
+				
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
+					dataType : "json"
+				});
+				ok(oResponse);
+				
 
 				oMockServer.destroy();
 			});

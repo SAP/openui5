@@ -536,6 +536,11 @@ sap.ui
 							if (!bValue) { //e.g eq, ne, gt, lt, le, ge
 								aODataFilterValues = rExp.exec(sODataQueryValue);
 								sValue = that._trim(aODataFilterValues[iValueIndex + 1]);
+								// remove number suffixes from EDM types decimal, Int64, Single
+								var sTypecheck = sValue[sValue.length - 1];
+								if (sTypecheck === "M" || sTypecheck === "L" || sTypecheck === "f"){
+									sValue = sValue.substring(0, sValue.length - 1);
+								}
 								sPath = that._trim(aODataFilterValues[iPathIndex + 1]);
 							} else { //e.g.substringof, startswith, endswith
 								var rStringFilterExpr = new RegExp("(substringof|startswith|endswith)\\(([^,\\)]*),(.*)\\)");
