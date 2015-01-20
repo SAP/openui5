@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
-	function(JSONModel, MetaModel) {
+sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientPropertyBinding',
+		'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONModel',
+		'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel'],
+	function(ClientContextBinding, ClientPropertyBinding, JSONListBinding, JSONModel,
+			JSONTreeBinding, MetaModel) {
 	"use strict";
 
 	/*global Promise */
@@ -48,17 +51,71 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 			}
 		});
 
-	/**
-	 * Returns a promise which is fulfilled once the meta model data is loaded and can be used.
-	 * It is rejected with a corresponding <code>Error</code> object in case of errors, such as
-	 * failure to load meta data or annotations.
+	/*
+	 * Returns the object inside the given array, where the property with the given name has the
+	 * given expected value.
 	 *
-	 * @public
-	 * @return {Promise} a Promise
+	 * @param {object[]} aArray
+	 *   some array
+	 * @param {any} vExpectedPropertyValue
+	 *   expected value of the property with given name
+	 * @param {string} [sPropertyName="name"]
+	 *   some property name
+	 * @returns {object}
+	 *   the object found or <code>null</code> if no such object is found
 	 */
-	ODataMetaModel.prototype.loaded = function(){
-		return this.oLoadedPromise;
-	};
+	function findObject(aArray, vExpectedPropertyValue, sPropertyName) {
+		var oResult = null;
+
+		sPropertyName = sPropertyName || "name";
+		jQuery.each(aArray || [], function (i, oObject) {
+			if (oObject[sPropertyName] === vExpectedPropertyValue) {
+				oResult = oObject;
+				return false; // break
+			}
+		});
+
+		return oResult;
+	}
+
+	/*
+	 * Returns the thing with the given qualified name from the given model's array (within a
+	 * schema) of given name; either as a path or as an object, as indicated.
+	 *
+	 * @param {sap.ui.model.Model} oModel
+	 *   any model
+	 * @param {string} sArrayName
+	 *  name of array within schema which will be searched
+	 * @param {string} sQualifiedName
+	 *   a qualified name, e.g. "ACME.Foo"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the thing is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the thing with the given qualified name; <code>undefined</code> (for a path)
+	 *   or <code>null</code> (for an object) if no such thing is found
+	 */
+	function getPathOrObject(oModel, sArrayName, sQualifiedName, bAsPath) {
+		var vResult = bAsPath ? undefined : null,
+			aParts = (sQualifiedName || "").split("."),
+			sNamespace = aParts[0],
+			sName = aParts[1];
+
+		jQuery.each(oModel.getObject("/dataServices/schema") || [], function (i, oSchema) {
+			if (oSchema.namespace === sNamespace) {
+				jQuery.each(oSchema[sArrayName] || [], function (j, oThing) {
+					if (oThing.name === sName) {
+						vResult = bAsPath
+							? "/dataServices/schema/" + i + "/" + sArrayName + "/" + j
+							: oThing;
+						return false; // break
+					}
+				});
+				return false; // break
+			}
+		});
+
+		return vResult;
+	}
 
 	/*
 	 * @param {sap.ui.model.json.JSONModel} oModel
@@ -146,24 +203,95 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		});
 	}
 
-	ODataMetaModel.prototype.bindContext = function () {
-		return this.oModel.bindContext.apply(this.oModel, arguments);
+	ODataMetaModel.prototype._getObject = function () {
+		return this.oModel._getObject.apply(this.oModel, arguments);
 	};
 
-	ODataMetaModel.prototype.bindList = function () {
-		return this.oModel.bindList.apply(this.oModel, arguments);
+	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
+		return new ClientContextBinding(this, sPath, oContext, mParameters);
 	};
 
-	ODataMetaModel.prototype.bindProperty = function () {
-		return this.oModel.bindProperty.apply(this.oModel, arguments);
+	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
+			mParameters) {
+		return new JSONListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
-	ODataMetaModel.prototype.bindTree = function () {
-		return this.oModel.bindTree.apply(this.oModel, arguments);
+	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
+		// avoid JSONPropertyBinding#setValue
+		return new ClientPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
-	ODataMetaModel.prototype.getObject = function () {
-		return this.oModel.getObject.apply(this.oModel, arguments);
+	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
+		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
+	};
+
+	/**
+	 * Returns the OData association with the given qualified name, either as a path or as an
+	 * object, as indicated.
+	 *
+	 * @param {string} sQualifiedName
+	 *   a qualified name, e.g. "ACME.Assoc_BusinessPartner_Products"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the association is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the association with the given qualified name; <code>undefined</code> (for a
+	 *   path) or <code>null</code> (for an object) if no such association is found
+	 * @public
+	 * @static
+	 */
+	ODataMetaModel.prototype.getODataAssociation = function (sQualifiedName, bAsPath) {
+		return getPathOrObject(this.oModel, "association", sQualifiedName, bAsPath);
+	};
+
+	/**
+	 * Returns the given OData association's end with the given role name.
+	 *
+	 * @param {object} oAssociation
+	 *   an association as returned by {@link #getODataAssocation}
+	 * @param {string} sRoleName
+	 *   a role name within this association
+	 * @returns {object}
+	 *   the OData association's end or <code>null</code> if no such association end is found
+	 * @public
+	 * @static
+	 */
+	ODataMetaModel.prototype.getODataAssociationEnd = function (oAssociation, sRoleName) {
+		return oAssociation ? findObject(oAssociation.end, sRoleName, "role") : null;
+	};
+
+	/**
+	 * Returns the OData entity type with the given qualified name, either as a path or as an
+	 * object, as indicated.
+	 *
+	 * @param {string} sQualifiedName
+	 *   a qualified name, e.g. "ACME.Product"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the entity type is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the entity type with the given qualified name; <code>undefined</code> (for a
+	 *   path) or <code>null</code> (for an object) if no such type is found
+	 * @public
+	 * @static
+	 */
+	ODataMetaModel.prototype.getODataEntityType = function (sQualifiedName, bAsPath) {
+		return getPathOrObject(this.oModel, "entityType", sQualifiedName, bAsPath);
+	};
+
+	/**
+	 * Returns the given OData entity type's navigation property with the given name.
+	 *
+	 * @param {object} oEntityType
+	 *   an entity type as returned by {@link #getODataEntityType}
+	 * @param {string} sName
+	 *   a local name, e.g. "ToSupplier"
+	 * @returns {object}
+	 *   the OData entity type's navigation property or <code>null</code> if no such navigation
+	 *   property is found
+	 * @public
+	 * @static
+	 */
+	ODataMetaModel.prototype.getODataNavigationProperty = function (oEntityType, sName) {
+		return oEntityType ? findObject(oEntityType.navigationProperty, sName) : null;
 	};
 
 	ODataMetaModel.prototype.getProperty = function () {
@@ -172,6 +300,18 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 
 	ODataMetaModel.prototype.isList = function () {
 		return this.oModel.isList.apply(this.oModel, arguments);
+	};
+
+	/**
+	 * Returns a promise which is fulfilled once the meta model data is loaded and can be used.
+	 * It is rejected with a corresponding <code>Error</code> object in case of errors, such as
+	 * failure to load meta data or annotations.
+	 *
+	 * @public
+	 * @return {Promise} a Promise
+	 */
+	ODataMetaModel.prototype.loaded = function(){
+		return this.oLoadedPromise;
 	};
 
 	/**
@@ -196,10 +336,6 @@ sap.ui.define(['sap/ui/model/json/JSONModel', 'sap/ui/model/MetaModel'],
 		if (bLegacySyntax) {
 			throw new Error("Legacy syntax not supported by ODataMetaModel");
 		}
-	};
-
-	ODataMetaModel.prototype.setSizeLimit = function () {
-		return this.oModel.setSizeLimit.apply(this.oModel, arguments);
 	};
 
 	return ODataMetaModel;
