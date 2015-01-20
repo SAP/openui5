@@ -521,6 +521,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		if (sap.ui.Device.browser.internet_explorer) {
 			// TODO: Check when IE will support evaluate-method
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
+			oXMLDoc.preserveWhiteSpace = true;
 			oXMLDoc.loadXML(sXMLContent);
 			this.xmlCompatVersion = true;
 		} else if (oXMLDocument) {
@@ -943,9 +944,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							} else {
 								// hasChildNodes, but selectNodes found nothing - it should be a text node
 								if (documentNode.nodeName in mAliasNodeWhitelist) {
-									propertyValue = this.replaceWithAlias(documentNode.textContent, oAlias);
+									propertyValue = this.replaceWithAlias(this.xPath.getNodeText(documentNode), oAlias);
 								} else {
-									propertyValue = documentNode.textContent;
+									propertyValue = this.xPath.getNodeText(documentNode);
 								}
 							}
 						}
