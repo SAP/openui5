@@ -76,14 +76,26 @@
 		equal(iPercentAfter, 30, "we expect value to be the same as before");
 	});
 
-	test("setPercentValue wrong input (int out of range, too small)",
-			function() {
-				var iPercentTest = -20;
-				oProgInd.setPercentValue(iPercentTest);
-				var iPercentAfter = oProgInd.getPercentValue();
-				equal(iPercentAfter, 30,
-						"we expect value to be the same as before");
-			});
+	test("setPercentValue wrong input (int out of range, too small)", function() {
+		var iPercentTest = -20;
+		oProgInd.setPercentValue(iPercentTest);
+		var iPercentAfter = oProgInd.getPercentValue();
+		equal(iPercentAfter, 30, "we expect value to be the same as before");
+	});
+
+	test("text should not be rendered when displayValue is not set", function() {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(oProgIndicator.$().find(".sapMPITextLeft")[0].innerText, "", "no text is rendered");
+		strictEqual(oProgIndicator.$().find(".sapMPITextRight")[0].innerText, "", "no text is rendered");
+
+		oProgIndicator.destroy();
+	});
 </script>
 
 
