@@ -244,7 +244,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var div = document.createElement("div");
 			div.id = "sap-ui-commons-ListBox-sizeDummy";
 			div.innerHTML = '<div class="sapUiLbx sapUiLbxFlexWidth sapUiLbxStd"><ul><li class="sapUiLbxI"><span class="sapUiLbxITxt">&nbsp;</span></li></ul></div>';
-			oStaticArea.insertBefore(div, oStaticArea.firstChild);
+			if (sap.ui.Device.browser.safari) {
+				oStaticArea.insertBefore(div, oStaticArea.firstChild);
+			} else {
+				oStaticArea.appendChild(div);
+			}
 			var oItemDomRef = div.firstChild.firstChild.firstChild;
 			ListBox._fItemHeight = oItemDomRef.offsetHeight;
 
