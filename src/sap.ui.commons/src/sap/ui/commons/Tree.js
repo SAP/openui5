@@ -663,10 +663,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Tree.prototype.invalidate = function () {
+		var that = this;
 		Control.prototype.invalidate.apply(this, arguments);
-		this.oSelectedNodeMap = {};
-		this.oSelectedContextMap = {};
-		this.updateSelection(this, true);
+		if (this.iSelectionUpdateTimer) {
+			return;
+		}
+		this.iSelectionUpdateTimer = setTimeout(function() {
+			that.oSelectedNodeMap = {};
+			that.oSelectedContextMap = {};
+			that.updateSelection(that, true);
+			that.iSelectionUpdateTimer = null;
+		}, 0);
 	};
 	
 	/**
