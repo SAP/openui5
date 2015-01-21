@@ -302,8 +302,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oMobifyCarousel.setLoop(this.getLoop());
 		this._oMobifyCarousel.setRTL(sap.ui.getCore().getConfiguration().getRTL());
 
-
-
 		//Go to active page: this may be necessary after adding or
 		//removing pages
 		var sActivePage = this.getActivePage();
