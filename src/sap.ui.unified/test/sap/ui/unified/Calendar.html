@@ -273,6 +273,27 @@
 					sap.ui.getCore().byId("Cal4").focusDate(new Date());
 				}
 			}).placeAt("event4");
+
+			oLabel = new sap.ui.commons.Label({text: "displayed months", labelFor: "TF4-2"}).placeAt("event4");
+			oInput = new sap.ui.commons.TextField("TF4-2",{
+				editable: true,
+				value: "2",
+				width: "4em",
+				placeholder: "integer",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oCalendar = sap.ui.getCore().byId("Cal4");
+					var iMonths = parseInt(sValue);
+					if(iMonths > 0){
+						oCalendar.setMonths(iMonths);
+						oTF.setValueState(sap.ui.core.ValueState.None);
+					}else {
+						oTF.setValueState(sap.ui.core.ValueState.Error);
+					}
+				}
+			}).placeAt("event4");
+
 		</script>
 
 	</head>

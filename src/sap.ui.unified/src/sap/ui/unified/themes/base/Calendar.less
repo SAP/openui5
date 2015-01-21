@@ -99,6 +99,10 @@
 	display: inline-block;
 }
 
+.sapUiCalMonthHead{
+	text-align: center;
+}
+
 .sapUiCalDays{
 	display: inline-block;
 	width: 100%;
@@ -181,6 +185,23 @@
 .sapUiCalMonthSel,
 .sapUiCalYearSel{
 	background-color: @sapUiSelected;
+}
+
+.sapUiCalContent{
+	position: relative;
+	text-align: center;
+}
+
+.sapUiCalContentOver{
+	background-color: #CCCCCC;
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	position: absolute;
+	outline: 0 none;
 }
 
 .sapUiCalContent > .sapUiCalMonthPicker,

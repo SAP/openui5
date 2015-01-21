@@ -48,6 +48,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
 		var sId = oMonth.getId();
 
+		// header
+		if (oMonth.getShowHeader()) {
+			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			oRm.write("<div id=\"" + sId + "-Head\"class=\"sapUiCalMonthHead\" >");
+			oRm.write(aMonthNames[oDate.getUTCMonth()]);
+			oRm.write("</div>");
+		}
+
 		// week numbers
 		var aWeekDays = [];
 		if (oMonth._bLongWeekDays || !oMonth._bNamesLengthChecked) {

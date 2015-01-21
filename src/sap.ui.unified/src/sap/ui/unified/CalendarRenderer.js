@@ -26,10 +26,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
+		var aMonths = oCal.getAggregation("month");
 
 		oRm.write("<div");
 		oRm.writeControlData(oCal);
 		oRm.addClass("sapUiCal");
+		if (aMonths.length > 1) {
+			oRm.addClass("sapUiCalMulti");
+		}
 		oRm.writeClasses();
 		// This makes the calendar focusable and therefore
 		// the white empty areas can be clicked without closing the calendar
@@ -52,11 +56,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.renderControl(oHeader);
 
 		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
-		var aMonths = oCal.getAggregation("month");
 		for (var i = 0; i < aMonths.length; i++) {
 			var oMonth = aMonths[i];
 			oRm.renderControl(oMonth);
 		}
+		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
 		oRm.write("</div>");
 
 		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");

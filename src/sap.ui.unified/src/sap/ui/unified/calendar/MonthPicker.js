@@ -129,6 +129,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		MonthPicker.prototype.onThemeChanged = function(){
+
+			if (this._bNoThemeChange) {
+				// already called from Calendar
+				return;
+			}
+
+			this._bNamesLengthChecked = undefined;
+			var aMonths = this._oItemNavigation.getItemDomRefs();
+			this._bLongMonth = false;
+			var oLocaleData = this._getLocaleData();
+			// change month name on button but not change month picker, because it is hided again
+			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			for (var i = 0; i < aMonths.length; i++) {
+				var $Month = jQuery(aMonths[i]);
+				$Month.text(aMonthNames[i]);
+			}
+
+			var that = this;
+			_checkNamesLength(that);
+
+		};
 
 		function _initItemNavigation(oThis){
 
@@ -239,7 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (bTooLong) {
 					oThis._bLongMonth = false;
 					var oLocaleData = oThis._getLocaleData();
-					// change month name on button but not chnage month picker, becuase it is hided again
+					// change month name on button but not change month picker, because it is hided again
 					var aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
 					for (i = 0; i < aMonths.length; i++) {
 						var $Month = jQuery(aMonths[i]);
