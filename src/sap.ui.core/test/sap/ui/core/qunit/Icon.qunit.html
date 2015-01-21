@@ -91,7 +91,7 @@
 			test("Attach press handler", function(){
 				var fn1 = function(){}, fn2 = function(){};
 				var oIcon = new sap.ui.core.Icon({
-					src: sap.ui.core.IconPool.getIconURI("mananger"),
+					src: sap.ui.core.IconPool.getIconURI("manager"),
 					press: fn1
 				});
 
@@ -104,6 +104,42 @@
 				equal(oIcon.$().css("cursor"), "pointer", "Icon which still has press event handler should show pointer cursor");
 				oIcon.detachPress(fn2);
 				equal(oIcon.$().css("cursor"), "default", "Icon which has no press event handler should not show pointer cursor");
+
+				oIcon.destroy();
+			});
+
+			test("Set color with values in sap.ui.core.IconColor enum", function() {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("manager"),
+				});
+				
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+				oIcon.setColor(sap.ui.core.IconColor.Positive);
+				ok(oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is set");
+				oIcon.setColor(sap.ui.core.IconColor.Negative);
+				ok(!oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is removed");
+				ok(oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is set");
+				oIcon.setColor("red");
+				ok(!oIcon.$().hasClass("sapUiIconColorNegative"), "Negative class is removed");
+
+				oIcon.destroy();
+			});
+			
+			test("Set background-color with values in sap.ui.core.IconColor enum", function() {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("manager"),
+				});
+				
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+				oIcon.setBackgroundColor(sap.ui.core.IconColor.Positive);
+				ok(oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is set");
+				oIcon.setBackgroundColor(sap.ui.core.IconColor.Negative);
+				ok(!oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is removed");
+				ok(oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is set");
+				oIcon.setBackgroundColor("red");
+				ok(!oIcon.$().hasClass("sapUiIconBGColorNegative"), "Negative class is removed");
 
 				oIcon.destroy();
 			});
