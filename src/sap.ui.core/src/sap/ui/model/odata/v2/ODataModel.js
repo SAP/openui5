@@ -1075,6 +1075,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					fnCallBack(oNewContext);
 				};
 				var handleError = function(oError) {
+					if (oError.response.statusCode == '404' && oContext && bIsRelative) {
+						var sContextPath = oContext.getPath();
+						// remove starting slash
+						sContextPath = sContextPath.substr(1);
+						// when model is refreshed, parent entity might not be available yet
+						if (that.oData[sContextPath]) {
+							that.oData[sContextPath][sPath] = {__ref: null};
+						}
+					}
 					fnCallBack(null); // error - notify to recreate contexts
 				};
 				this.read(sFullPath, {urlParameters: aParams,success: handleSuccess, error: handleError});
