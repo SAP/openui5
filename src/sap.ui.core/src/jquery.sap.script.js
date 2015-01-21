@@ -554,23 +554,12 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Parse simple JS objects.
-	 * 
-	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
-	 * the JSON specification as a format description, but a subset of the JavaScript language.
-	 * The main difference is, that keys in objects do not need to be quoted and strings can also
-	 * be defined using apostrophes instead of quotation marks.
-	 * 
-	 * The parser does not support functions, but only boolean, number, string, object and array.
-	 * 
-	 * @param {string} The string containing the JS objects
-	 * @throws an error, if the string does not contain a valid JS object
-	 * @returns {object} the JS object
-	 * 
-	 * @since 1.11
+	 * A factory returning a tokenizer object for JS values.
+	 * Contains functions to consume tokens on an input string.
+	 * @private
+	 * @returns {object} - the tokenizer
 	 */
-	jQuery.sap.parseJS = (function() {
-
+	jQuery.sap._createJSTokenizer = function() {
 		var at, // The index of the current character
 			ch, // The current character
 			escapee = {
@@ -845,7 +834,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// Return the parse function. It will have access to all of the above
 		// functions and variables.
-		return function(source, start) {
+		function parseJS(source, start) {
 			var result;
 
 			text = source;
@@ -863,8 +852,68 @@ sap.ui.define(['jquery.sap.global'],
 				return { result : result, at : at - 1 };
 			}
 
+		}
+
+		return {
+			array: array,
+			error: error,
+			/**
+			 * Returns the index of the current character.
+			 * @returns {number} The current character's index.
+			 */
+			getIndex: function() {
+				return at - 1;
+			},
+			getCh: function() {
+				return ch;
+			},
+			init: function(source, iIndex) {
+				text = source;
+				at = iIndex || 0;
+				ch = ' ';
+			},
+			name: name,
+			next: next,
+			number: number,
+			parseJS: parseJS,
+			/**
+			 * Advances the index in the text to <code>iIndex</code>. Fails if the new index
+			 * is smaller than the previous index.
+			 *
+			 * @param {number} iIndex - the new index
+			 */
+			setIndex: function(iIndex) {
+				if (iIndex < at - 1) {
+					throw new Error("Must not set index " + iIndex
+						+ " before previous index " + (at - 1));
+				}
+				at = iIndex;
+				next();
+			},
+			string: string,
+			value: value,
+			white: white,
+			word: word
 		};
-	}());
+	};
+
+	/**
+	 * Parse simple JS objects.
+	 * 
+	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
+	 * the JSON specification as a format description, but a subset of the JavaScript language.
+	 * The main difference is, that keys in objects do not need to be quoted and strings can also
+	 * be defined using apostrophes instead of quotation marks.
+	 * 
+	 * The parser does not support functions, but only boolean, number, string, object and array.
+	 * 
+	 * @param {string} The string containing the JS objects
+	 * @throws an error, if the string does not contain a valid JS object
+	 * @returns {object} the JS object
+	 * 
+	 * @since 1.11
+	 */
+	jQuery.sap.parseJS = jQuery.sap._createJSTokenizer().parseJS;
 
 	return jQuery;
 

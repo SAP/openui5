@@ -10,33 +10,6 @@
 	module("sap.ui.base.ExpressionParser");
 
 	//*********************************************************************************************
-	test("Tokenizer enhancements: init, getIndex, getCh, setIndex", function () {
-		var oTokenizer = sap.ui.base.ExpressionParser.tokenizerFactory();
-
-		oTokenizer.init("{='foo'}");
-		strictEqual(oTokenizer.getIndex(), -1, "index after init without start index");
-		strictEqual(oTokenizer.getCh(), " ");
-
-		oTokenizer.init("{='foo'}", 2);
-		strictEqual(oTokenizer.getIndex(), 1, "index after init with start index");
-		strictEqual(oTokenizer.getCh(), " ");
-
-		oTokenizer.next();
-		strictEqual(oTokenizer.getIndex(), 2, "index after next");
-		strictEqual(oTokenizer.getCh(), "'");
-
-		oTokenizer.setIndex(7);
-		strictEqual(oTokenizer.getIndex(), 7, "index after setIndex");
-		strictEqual(oTokenizer.getCh(), "}");
-
-		throws(function() {
-			oTokenizer.setIndex(0);
-		}, /Must not set index 0 before previous index 7/, "setIndex must not go back in text");
-		oTokenizer.setIndex(42);
-		strictEqual(oTokenizer.getCh(), "", "move index beyond text end");
-	});
-
-	//*********************************************************************************************
 	jQuery.each([
 			{ binding: "{='foo'}", literal: 'foo' },
 			{ binding: '{="foo"}', literal: 'foo' },
