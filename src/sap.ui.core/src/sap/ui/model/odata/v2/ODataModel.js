@@ -2933,7 +2933,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		// check if path / context is valid
 		if (!sResolvedPath) {
-			jQuery.log.warning(this + " - TwoWay binding: path '" + sPath + "' not resolvable!");
+			jQuery.sap.log.warning(this + " - TwoWay binding: path '" + sPath + "' not resolvable!");
 			return false;
 		}
 
