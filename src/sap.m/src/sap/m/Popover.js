@@ -358,9 +358,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				return;
 			}
 
-			// some browser changes the scrollLeft of window after firing resize event
+			// some mobile browser changes the scrollLeft of window after firing resize event
 			// which caused the popover to be positioned at the wrong place.
-			jQuery(window).scrollLeft(0);
+			if (!sap.ui.Device.system.desktop) {
+				jQuery(window).scrollLeft(0);
+			}
+
 			//deregister the content resize handler before repositioning
 			that._deregisterContentResizeHandler();
 			Popup.prototype._applyPosition.call(this, oPosition);
