@@ -328,11 +328,11 @@
 				visible : true
 			}) ],
 			attributes : [ 
-			    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "First invisible attribute",
 					visible : false
 				}),
-			    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "First visible attribute",
 					visible : true
 				}),	]
@@ -352,7 +352,7 @@
 		var oH = new sap.m.ObjectHeader({
 			title : "Reserved space for invisible status issue",
 			statuses : [
-			    new sap.m.ProgressIndicator({
+				new sap.m.ProgressIndicator({
 				displayValue : '30%',
 				percentValue : 30,
 				state : sap.ui.core.ValueState.Error,
@@ -365,7 +365,7 @@
 					visible : true
 				})],
 			attributes : [ 
-			    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "Visible attribute",
 					visible : true
 				}),	]
@@ -789,7 +789,8 @@
 	});
 	
 	test("Title arrow has aria-haspopup", function(){ 
-		ok(jQuery(".sapMOHTitleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
+		// Assert
+		ok(jQuery("#" + ohBasicId+"-arrow-aria").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
 	});
 	
 	test("Active icon has aria attributes", function(){ 
