@@ -592,6 +592,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._oPreviousFocus = Popup.getCurrentFocusInfo();
 		}
 
+		// It is mandatroy to check if the new Popup runs within another Popup because
+		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
+		// the Datepicker runs in a Popup and the corresponding Calendar will also open
+		// in a Popup. Then the corresponding date will be focused immediatelly. If the
+		// Calendar-Popup wasn't added to the previous Popup as child it is impossible to
+		// check in 'onFocusEvent' properly if the focus is being set to a Calendar-Popup which is
+		// a child of a Popup.
+		if (this.isInPopup(of) || this.isInPopup(this._oPosition.of)) {
+			var sParentId = this.getParentPopupId(of) ||  this.getParentPopupId(this._oPosition.of);
+			var sChildId = "";
+
+			var oContent = this.getContent();
+			if (oContent instanceof sap.ui.core.Element) {
+				sChildId = oContent.getId();
+			} else if (typeof oContent === "object") {
+				sChildId = oContent.id;
+			}
+
+			this.addChildToPopup(sParentId, sChildId);
+			this.addChildToPopup(sParentId, this._popupUID);
+		}
+
 		var $Ref = this._$(true);
 
 		var iRealDuration = "fast";
@@ -716,21 +738,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		this.bOpen = true;
-
-		if (this.isInPopup(of) || this.isInPopup(this._oPosition.of)) {
-			var sParentId = this.getParentPopupId(of) ||  this.getParentPopupId(this._oPosition.of);
-			var sChildId = "";
-
-			var oContent = this.getContent();
-			if (oContent instanceof sap.ui.core.Element) {
-				sChildId = oContent.getId();
-			} else if (typeof oContent === "object") {
-				sChildId = oContent.id;
-			}
-
-			this.addChildToPopup(sParentId, sChildId);
-			this.addChildToPopup(sParentId, this._popupUID);
-		}
 
 		if (this._bModal || this._bAutoClose) { // initialize focus handling
 			this._addFocusEventListeners();
