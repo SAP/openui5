@@ -518,7 +518,7 @@
 
 				// the selection is reset immediately ater the cancel event so we do it with setTimeout
 				setTimeout(function () {
-					strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, 'After cancelling there should be 4 items selected again');
+					strictEqual(oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
 					// cleanup
 					setTimeout(function () {
 						oSelectDialog.destroy();
@@ -532,7 +532,7 @@
 				// make a change to the selection
 				oSelectDialog._oList.getItems()[1].setSelected(false);
 				oSelectDialog._oList.getItems()[3].setSelected(false);
-				strictEqual(oSelectDialog._oList.getSelectedItems().length, 2, 'Before cancelling there should be 2 items selected');
+				strictEqual(oSelectDialog._oList.getSelectedContextPaths().length, 2, 'Before cancelling there should be 2 items selected');
 				oSelectDialog._getCancelButton().firePress();
 			});
 			oSelectDialog.open();
@@ -556,7 +556,7 @@
 
 				// the selection is reset immediately ater the cancel event so we do it with setTimeout
 				setTimeout(function () {
-					strictEqual(oSelectDialog._oList.getSelectedItems().length, 1, 'After cancelling there should be 1 visible item selected again');
+					strictEqual(oSelectDialog._oList.getSelectedContextPaths().length, 1, 'After cancelling there should be 1 visible item selected again');
 					strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 1, 'After cancelling there should be 4 invisible item selected again (prefiltered items are not added to the contexts initially)');
 					// cleanup
 					setTimeout(function () {
@@ -570,7 +570,7 @@
 			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
 				// make a change to the selection (uncheck "Title4" item)
 				oSelectDialog._oList.getItems()[0].setSelected(false);
-				strictEqual(oSelectDialog._oList.getSelectedItems().length, 0, 'Before cancelling there should be 0 visible items selected');
+				strictEqual(oSelectDialog._oList.getSelectedContextPaths().length, 0, 'Before cancelling there should be 0 visible items selected');
 				strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 0, 'Before cancelling there should be 0 invisible contexts selected (prefiltered items are not added to the contexts initially)');
 				oSelectDialog._getCancelButton().firePress();
 			});
@@ -578,7 +578,7 @@
 		});
 
 		asyncTest("Cancel Event with user-filtered selection", function () {
-			expect(5);
+			expect(4);
 			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
 				multiSelect: true
 			});
@@ -595,8 +595,7 @@
 
 				// the selection is reset immediately ater the cancel event so we do it with setTimeout
 				setTimeout(function () {
-					strictEqual(oSelectDialog._oList.getSelectedItems().length, 1, 'After cancelling there should be 1 visible items selected again');
-					strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 4, 'After cancelling there should be 4 invisible items selected again');
+					strictEqual(oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 invisible items selected again');
 					// cleanup
 					setTimeout(function () {
 						oSelectDialog.destroy();
@@ -629,7 +628,7 @@
 					ok(true, "Event cancel was fired");
 					// the selection is reset immediately ater the cancel event so we do it with setTimeout
 					setTimeout(function () {
-						strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, 'After cancelling there should be 4 items selected again');
+						strictEqual(oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
 						oChecksDef.resolve();
 					}, 0);
 				},
@@ -669,7 +668,7 @@
 		/********************************************************************************/
 
 		asyncTest("Destroy SelectDialog", function () {
-			expect(24);
+			expect(23);
 			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
 				multiSelect: true
 			});
@@ -710,7 +709,6 @@
 				strictEqual(oSelectDialog._oOkButton, null, "internal property _oOkButton is null");
 				strictEqual(oSelectDialog._oSelectedItem, null, "internal property _oSelectedItem is null");
 				strictEqual(oSelectDialog._aSelectedItems, null, "internal property _aSelectedItems is null");
-				strictEqual(oSelectDialog._aInitiallySelectedItems, null, "internal property _aInitiallySelectedItems is null");
 
 				// simple types
 				strictEqual(oSelectDialog._iListUpdateRequested, 0, "internal parameter _iListUpdateRequested is reset correctly");
