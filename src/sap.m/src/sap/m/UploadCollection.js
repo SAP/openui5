@@ -645,33 +645,31 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 
 		oTextVL = new sap.ui.layout.VerticalLayout(sItemId + "-ta_textVL", {
-			content : [oFileNameLabel, oInputExtensionHL, oTextDescriptionHL],
-			allowWrapping : true
+			content : [oFileNameLabel, oInputExtensionHL, oTextDescriptionHL]
 		}).addStyleClass("sapMUCText");
 
 		// /////////////////// ListItem Icon
 		if (sStatus === UploadCollection._displayStatus || sStatus === "Edit") {
 			var bDecorative = false;
-			if (this.sErrorState === "Error") {
+			if (this.sErrorState === "Error" || oItem.getProperty("url") == false) {
 				bDecorative = true;
 			}
 			sThumbnailUrl = oItem.getThumbnailUrl();
 			if (sThumbnailUrl) {
 				oItemIcon = new sap.m.Image(sItemId + "-ia_imageHL", {
 					src : sap.m.UploadCollection.prototype._getThumbnail(sThumbnailUrl, sFileNameLong),
-					decorative : bDecorative,
-					press : function(oEvent) {
-						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
-					}
+					decorative : bDecorative
 				}).addStyleClass("sapMUCItemImage");
 			} else {
 				oItemIcon = new sap.ui.core.Icon(sItemId + "-ia_iconHL", {
 					src : sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong),
-					decorative : bDecorative,
-					press : function(oEvent) {
-						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
-					}
+					decorative : bDecorative
 				}).setSize('2.5rem').addStyleClass("sapMUCItemIcon");
+			}
+			if (bDecorative == false) {
+				oItemIcon.attachPress(function(oEvent) {
+					sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
+				});
 			}
 		}
 
