@@ -3714,7 +3714,7 @@
 	};
 
 	FrameOptions.prototype._handlePostMessage = function(oEvent) {
-		if (oEvent.source === FrameOptions.__self || oEvent.source == null) {
+		if (oEvent.source === FrameOptions.__self || oEvent.source == null || oEvent.data.indexOf("SAPFrameProtection*") === -1) {
 			return;
 		}
 		if (oEvent.source === FrameOptions.__parent) {
