@@ -268,7 +268,12 @@
 			ok(true, 0, "Promise got rejected");
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
-			ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
+
+			// for IE 9 stacktrace does not work yet
+			if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
+			}
+
 			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
 			ok(jQuery.sap.log.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
 			start();
@@ -305,8 +310,12 @@
 			ok(true, 0, "Promise got rejected");
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
-			ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
-			ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
+
+			// for IE 9 stacktrace does not work yet
+			if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+				ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
+				ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
+			}
 			start();
 		});
 	});

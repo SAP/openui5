@@ -7,7 +7,7 @@
 //// Currently this is distributed with UI5 but it does not have dependencies to it.
 //// The only dependency is jQuery. As i plan to get this into a separate repository, i did not use the UI5 naming conventions
 /////////////////////
-(function ($) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
@@ -83,13 +83,19 @@
 	function createStack(iDropCount) {
 		iDropCount = (iDropCount || 0) + 2;
 
-		var oError = new Error();
-		var stack = oError.stack;
+		if (Device.browser.mozilla) {
+			//firefox needs one less in the string
+			iDropCount = iDropCount - 1;
+		}
+
+		var oError = new Error(),
+			stack = oError.stack;
+
 		if (!stack){
 			//In IE an error has to be thrown first to get a stack
 			try {
-				throw oError()
-			}catch(oError2){
+				throw oError();
+			} catch(oError2){
 				stack = oError2.stack;
 			}
 		}
@@ -277,18 +283,6 @@
 		});
 	};
 
-	if (!sap) {
-		sap = {};
-	}
-	if (!sap.ui) {
-		sap.ui = {};
-	}
-	if (!sap.ui.test) {
-		sap.ui.test = {};
-	}
-
-	sap.ui.test.Opa = Opa;
-
 	/**
 	 * the global configuration of Opa.
 	 * All of the global values can be overwritten in an individual waitFor call.
@@ -300,5 +294,7 @@
 	 * @public
 	 */
 	//create the default config
-	Opa.resetConfig(); 
-})(jQuery);
+	Opa.resetConfig();
+
+	return Opa;
+},  /* export= */ true);
