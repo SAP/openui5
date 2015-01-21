@@ -660,7 +660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 				sPattern = sPattern.replace(/\u00a4/, sMeasure);
 			} else {
 				// If measure is not shown, also remove whitespace next to the measure symbol
-				sPattern = sPattern.replace(/\w*\u00a4\w*/, "");
+				sPattern = sPattern.replace(/\s*\u00a4\s*/, "");
 			}
 			if (bNegative) {
 				sPattern = sPattern.replace(/-/, oOptions.minusSign);
