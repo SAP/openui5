@@ -5,14 +5,13 @@
 	<HBox>
 		<template:if test="{meta>Value}"><!-- "RecordType" : "com.sap.vocabularies.UI.v1.DataField" -->
 			<template:with path="meta>Value" helper="sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.resolveTargetPath" var="target">
-				<!-- TODO <template:if test="{= {target>sap:semantics} === 'email'}"> -->
-				<template:if test="{path: 'target>sap:semantics', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isEmail'}" >
+				<template:if test="{= {target>sap:semantics} === 'email'}" >
 					<core:Icon src="sap-icon://email" />
 				</template:if>
+				<template:if test="{= {target>sap:semantics} === 'tel'}" >
+					<core:Icon src="sap-icon://phone" />
+				</template:if>
 			</template:with>
-			<template:if test="{=sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.getAnnotation({meta>Value}, 'sap:semantics') === 'tel'}" >
-				<core:Icon src="sap-icon://phone" />
-			</template:if>
 			<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 		</template:if>
 	</HBox>
