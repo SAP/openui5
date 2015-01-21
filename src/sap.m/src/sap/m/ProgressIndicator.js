@@ -76,6 +76,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 
+	ProgressIndicator.prototype.init = function () {
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+	};
+
 	ProgressIndicator.prototype.onAfterRendering = function() {
 		//if the user sets a height, this wins against everything else, therefore the styles have to be calculated and set here
 		if (!!this.getHeight()) {
@@ -97,7 +101,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this.getPercentValue() !== fPercentValue) {
 			// animation without rerendering
 			this.setProperty("percentValue", fPercentValue, true);
-			this.$().addClass("sapMPIAnimate");
+			this.$().addClass("sapMPIAnimate")
+					.attr("aria-valuenow", fPercentValue)
+					.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
+
 			var time = Math.abs(that.getPercentValue() - fPercentValue) * 20;
 			var $Bar = this.$("bar");
 			$Bar.animate({
@@ -126,8 +133,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var $textRight = this.$("textRight");
 		$textLeft.text(sDisplayValue);
 		$textRight.text(sDisplayValue);
+		this.$().attr("aria-valuetext", this._getAriaValueText({sText: sDisplayValue}));
 
 		return this;
+	};
+
+	ProgressIndicator.prototype._getAriaValueText = function (oParams) {
+		oParams.sText = oParams.sText || this.getDisplayValue();
+		oParams.fPercent = oParams.fPercent || this.getPercentValue();
+		oParams.sStateText = oParams.sStateText || this._getStateText();
+
+		var sAriaValueText = oParams.sText || oParams.fPercent + "%";
+		if (oParams.sStateText) {
+			sAriaValueText += " " + oParams.sStateText;
+		}
+
+		return sAriaValueText;
+	};
+
+	ProgressIndicator.prototype._getStateText = function () {
+		switch (this.getState()) {
+			case sap.ui.core.ValueState.Warning:
+				return this._oResourceBundle.getText("VALUE_STATE_WARNING");
+			case sap.ui.core.ValueState.Error:
+				return this._oResourceBundle.getText("VALUE_STATE_ERROR");
+			case sap.ui.core.ValueState.Success:
+				return this._oResourceBundle.getText("VALUE_STATE_SUCCESS");
+		}
 	};
 
 	return ProgressIndicator;
