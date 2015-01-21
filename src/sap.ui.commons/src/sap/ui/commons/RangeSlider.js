@@ -648,7 +648,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 		}
 
 		this.oGrip2.setAttribute('aria-valuenow', fValue);
-		this.oGrip2.setAttribute('aria-valuetext', 'Value ' + fValue); // to prevent JAWS from saying "percent"
+
 	};
 
 	return RangeSlider;
