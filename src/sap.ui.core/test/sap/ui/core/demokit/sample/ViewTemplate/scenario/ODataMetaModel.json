@@ -330,7 +330,7 @@
 											"Name" : "odata.uriEncode",
 											"Parameters" : [{
 												"Type" : "Path",
-												"Value" : "Address.Street"
+												"Value" : "Address/Street"
 											}]
 										}
 									}
@@ -341,7 +341,7 @@
 											"Name" : "odata.uriEncode",
 											"Parameters" : [{
 												"Type" : "Path",
-												"Value" : "Address.City"
+												"Value" : "Address/City"
 											}]
 										}
 									}

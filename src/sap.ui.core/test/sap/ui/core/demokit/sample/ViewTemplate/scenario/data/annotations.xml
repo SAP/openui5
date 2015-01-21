@@ -602,12 +602,12 @@
 										<String>https://www.google.de/maps/place/{street},{city}</String>
 										<LabeledElement Name="street">
 											<Apply Function="odata.uriEncode">
-												<Path>Address.Street</Path>
+												<Path>Address/Street</Path>
 											</Apply>
 										</LabeledElement>
 										<LabeledElement Name="city">
 											<Apply Function="odata.uriEncode">
-												<Path>Address.City</Path>
+												<Path>Address/City</Path>
 											</Apply>
 										</LabeledElement>
 									</Apply>
