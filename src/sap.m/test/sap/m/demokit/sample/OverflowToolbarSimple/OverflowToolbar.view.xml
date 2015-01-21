@@ -1,0 +1,84 @@
+<mvc:View
+	controllerName="sap.m.sample.OverflowToolbarSimple.OverflowToolbar"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+	<Label text="Use this slider to resize the toolbars and observe their behaviour."/>
+
+	<Slider value="100" liveChange="onSliderMoved"></Slider>
+
+	<Label text="When buttons have no special layout, they are all moved to the action sheet."/>
+
+	<OverflowToolbar id="otb1" design="Transparent">
+		<Label text="Buttons:"/>
+		<ToolbarSpacer/>
+		<Button text="New"></Button>
+		<Button text="Open"></Button>
+		<Button text="Save"></Button>
+		<Button text="Save as"></Button>
+		<Button text="Cut"></Button>
+		<Button text="Copy"></Button>
+		<Button text="Paste"></Button>
+		<Button text="Undo"></Button>
+		<Button text="Redo"></Button>
+	</OverflowToolbar>
+
+	<Label text="The buttons &quot;Cut, Copy and Paste&quot; have a special layout to never move to the action sheet."/>
+
+	<OverflowToolbar id="otb2" design="Transparent">
+		<Label text="Buttons:"/>
+		<ToolbarSpacer/>
+		<Button text="New"></Button>
+		<Button text="Open"></Button>
+		<Button text="Save"></Button>
+		<Button text="Save as"></Button>
+		<Button text="Cut">
+			<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
+		</Button>
+		<Button text="Copy">
+			<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
+		</Button>
+		<Button text="Paste">
+			<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
+		</Button>
+		<Button text="Undo"></Button>
+		<Button text="Redo"></Button>
+	</OverflowToolbar>
+
+	<Label text="The last two buttons have a special layout to always stay in the action sheet. Even if there is enough space for them, they will not be displayed."/>
+
+	<OverflowToolbar id="otb3" design="Transparent">
+		<Label text="Buttons:"/>
+		<ToolbarSpacer/>
+		<Button text="New"></Button>
+		<Button text="Open"></Button>
+		<Button text="Save"></Button>
+		<Button text="Save as"></Button>
+		<Button text="Cut"></Button>
+		<Button text="Copy"></Button>
+		<Button text="Paste"></Button>
+		<Button text="Undo">
+			<layoutData><OverflowToolbarLayoutData stayInOverflow="true" /></layoutData>
+		</Button>
+		<Button text="Redo">
+			<layoutData><OverflowToolbarLayoutData stayInOverflow="true" /></layoutData>
+		</Button>
+	</OverflowToolbar>
+
+	<Label text="Only regular buttons can go to the action sheet. Labels, toggle buttons, segmented buttons, input controls, etc... are always visible."/>
+
+	<OverflowToolbar id="otb4" design="Transparent">
+		<ToolbarSpacer/>
+		<Button text="Button 1"></Button>
+		<Button text="Button 2"></Button>
+		<ToggleButton text="Toggle Button"></ToggleButton>
+		<Button text="Button 3"></Button>
+		<SegmentedButton>
+			<Button text="Segmented"></Button>
+			<Button text="Button"></Button>
+		</SegmentedButton>
+		<Button text="Button 4"></Button>
+	</OverflowToolbar>
+
+</mvc:View>

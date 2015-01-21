@@ -34,11 +34,11 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	});
 
 	OverflowToolbarButton.prototype._getText = function() {
-		if (this._bInOverflow) {
-			return Button.prototype._getText.call(this);
-		}
+			if (this._bInOverflow) {
+				return Button.prototype._getText.call(this);
+			}
 
-		return "";
+			return "";
 	};
 		
 	return OverflowToolbarButton;
