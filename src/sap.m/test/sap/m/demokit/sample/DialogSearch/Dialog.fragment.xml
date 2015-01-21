@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core">
 	<Dialog
 		title="Dialog with Search"
-		class="sapUiPopupWithPadding" >
+		class="sapUiContentPadding" >
 		<subHeader>
 			<Toolbar>
 				<SearchField width="100%" />
