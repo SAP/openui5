@@ -629,6 +629,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				this._bPreviousScrollBack = bScrollBack;
 				this.$().toggleClass("sapUiUx3NavBarScrollBack", bScrollBack)
 						.toggleClass("sapUiUx3NavBarScrollForward", bScrollForward);
+				if (!NavigationBar._bMenuLoaded && (bScrollBack || bScrollForward)) {
+					NavigationBar._bMenuLoaded = true;
+					jQuery.sap.require("sap.ui.commons.Menu");
+				}
 			}
 			
 			// paint selection arrow in the right place
