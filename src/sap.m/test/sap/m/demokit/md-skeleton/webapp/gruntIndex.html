@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>MD Skeleton</title>
+
+		<script id="sap-ui-bootstrap"
+			src="/resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{"sap.ui.demo.mdskeleton": "./"}'>
+		</script>
+
+		<script>
+			// Phantom js does not have a function.bind implementation so we are using the ES5 polyfill
+			if (!Function.prototype.bind) {
+				Function.prototype.bind = function(oThis) {
+					if (typeof this !== 'function') {
+						// closest thing possible to the ECMAScript 5
+						// internal IsCallable function
+						throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+					}
+
+					var aArgs   = Array.prototype.slice.call(arguments, 1),
+							fToBind = this,
+							fNOP    = function() {},
+							fBound  = function() {
+								return fToBind.apply(this instanceof fNOP && oThis
+												? this
+												: oThis,
+										aArgs.concat(Array.prototype.slice.call(arguments)));
+							};
+
+					fNOP.prototype = this.prototype;
+					fBound.prototype = new fNOP();
+
+					return fBound;
+				};
+			}
+
+			new sap.m.Shell({
+				app: new sap.ui.core.ComponentContainer({
+					height : "100%",
+					name : "sap.ui.demo.mdskeleton"
+				})
+			}).placeAt("content");
+		</script>
+	</head>
+
+	<body class="sapUiBody" id="content"></body>
+
+</html>

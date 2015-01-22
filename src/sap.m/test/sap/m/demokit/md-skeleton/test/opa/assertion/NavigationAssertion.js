@@ -1,7 +1,8 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals'],
-	function(jQuery, Opa5, AggregationLengthEquals) {
+sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals'],
+	function(Opa5, AggregationLengthEquals) {
 	"use strict";
-	return Opa5.extend("sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion", {
+
+	return Opa5.extend("sap.ui.demo.mdskeleton.test.opa.assertion.NavigationAssertion", {
 		iShouldSeeTheObjectList : function () {
 			return this.waitFor({
 				id : "list",
@@ -12,13 +13,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/test/matchers/Ag
 			});
 		},
 
-		theDetailPageShowsTheFirstObject : function () {
+		theObjectPageShowsTheFirstObject : function () {
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
 				viewName : "Detail",
 				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : "Object 1"}) ],
 				success : function () {
-					ok(true, "was on the first detail page");
+					ok(true, "was on the first object page");
 				}
 			});
 		},
@@ -35,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/test/matchers/Ag
 			});
 		},
 
-		iShouldBeOnTheDetailPage : function (sTitleName) {
+		iShouldBeOnTheObjectPage : function (sTitleName) {
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
 				viewName : "Detail",
@@ -48,11 +49,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/test/matchers/Ag
 		},
 
 		iShouldBeOnTheObject3Page : function () {
-			return this.iShouldBeOnTheDetailPage("Object 3");
+			return this.iShouldBeOnTheObjectPage("Object 3");
 		},
 
 		iShouldBeOnTheObject1Page : function () {
-			return this.iShouldBeOnTheDetailPage("Object 1");
+			return this.iShouldBeOnTheObjectPage("Object 1");
 		},
 		
 		iShouldSeeTheObjectLineItemsList : function () {

@@ -56,7 +56,7 @@ sap.ui.core.routing.Router.extend("sap.ui.demo.mdskeleton.util.MyRouter", {
 	},
 
 	_findSplitApp : function(oControl) {
-		sAncestorControlName = "idAppControl";
+		var sAncestorControlName = "idAppControl";
 
 		if (oControl instanceof sap.ui.core.mvc.View && oControl.byId(sAncestorControlName)) {
 			return oControl.byId(sAncestorControlName);
