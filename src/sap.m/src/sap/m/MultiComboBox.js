@@ -648,11 +648,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @protected
 	 */
 	MultiComboBox.prototype._onBeforeOpenPopover = function() {
-		var oDomRef = this.getDomRef();
-		var oComputedStyle = window.getComputedStyle(oDomRef);
-	
-		if (oComputedStyle) {
-			this.getPicker().setContentWidth((parseFloat(oComputedStyle.width) / parseFloat(sap.m.BaseFontSize)) + "rem");
+		if (this.getWidth() != "auto") {
+			var oDomRef = this.getDomRef();
+			var oComputedStyle = window.getComputedStyle(oDomRef);
+
+			if (oComputedStyle) {
+				this.getPicker().setContentWidth((parseFloat(oComputedStyle.width) / parseFloat(sap.m.BaseFontSize)) + "rem");
+			}
 		}
 	};
 	
@@ -967,35 +969,27 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (!oDomRef) {
 			return;
 		}
-	
+
 		var $MultiComboBox = jQuery(oDomRef);
-		var $ShadowDiv = jQuery($MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv")[0]);
-		$ShadowDiv.text(this.getValue());
-		var $InputContainer = jQuery($MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer")[0]);
-	
-		var iTokenizerWidth = this._oTokenizer.getScrollWidth();
-		var iInputWidthMinimalNeeded = $ShadowDiv.outerWidth();
-	
-		// we go to the sapMMultiInputBorder child elements, this makes the computations easier
+
 		var iAvailableWidth = this.$().find(".sapMMultiComboBoxBorder").width();
-		if (iAvailableWidth > 0) {		
+		if (iAvailableWidth > 0) {
+			// Set Input width
 			var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
-	
-			var iTotalWidthNeeded = iTokenizerWidth + iInputWidthMinimalNeeded + iIconWidth;
-	
-			var iInputWidth;
-			if (iTotalWidthNeeded < iAvailableWidth) {
-				iInputWidth = iInputWidthMinimalNeeded + iAvailableWidth - iTotalWidthNeeded;
-			} else {
-				iInputWidth = iInputWidthMinimalNeeded;
-				iTokenizerWidth = iAvailableWidth - iInputWidth - iIconWidth;
+			var $ShadowDiv = $MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv");
+			$ShadowDiv.text(this.getValue());
+			
+			var iInputWidthMinimalNeeded = $ShadowDiv.outerWidth() + iIconWidth;
+			var sWidth = (iInputWidthMinimalNeeded / parseFloat(sap.m.BaseFontSize)) + "rem";
+			var $InputContainer = $MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer");
+			$InputContainer.find(".sapMInputBaseInner").css("width", sWidth);
+
+			// Set Tokenizer width
+			var iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded;
+
+			if (this._oTokenizer.getScrollWidth() > iAvailableInnerSpace) {
+				this._oTokenizer.setPixelWidth(iAvailableInnerSpace);
 			}
-	
-			var sWidth = (iInputWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
-	
-			jQuery($InputContainer.find(".sapMInputBaseInner")[0]).css("width", sWidth);
-	
-			this._oTokenizer.setPixelWidth(iTokenizerWidth);
 		}
 	};
 	
