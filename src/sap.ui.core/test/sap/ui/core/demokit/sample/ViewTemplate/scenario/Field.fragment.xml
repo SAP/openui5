@@ -12,7 +12,16 @@
 					<core:Icon src="sap-icon://phone" />
 				</template:if>
 			</template:with>
-			<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+			<!-- TODO wait until expression parser supports fillUriTemplate in Url/UrfRef -->
+			<template:if test="false"><!--template:if test="{meta>Url}"-->
+				<template:then>
+					<Link text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+						href="{path: 'meta>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				</template:then>
+				<template:else>
+					<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				</template:else>
+			</template:if>
 		</template:if>
 	</HBox>
 </core:FragmentDefinition>

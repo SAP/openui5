@@ -58,6 +58,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
+		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
+		 *
+		 * @param {object[]} aParameters
+		 *    the parameters
+		 * @param {sap.ui.model.Binding} oBinding
+		 *    the binding related to the current formatter call
+		 * @returns {string}
+		 *    an expression binding in the format "{= odata.fillUriTemplate('template',
+		 *    {'param1': ${path1}, 'param2': ${path2}, ...}" or <code>undefined</code>
+		 *    if the parameters could not be processed
+		 */
+		function fillUriTemplate(aParameters, oBinding) {
+			var i,
+				aParts = [],
+				sPrefix,
+				sValue;
+
+			if (!jQuery.isArray(aParameters) || !aParameters.length
+					|| aParameters[0].Type !== "String") {
+				return undefined;
+			}
+			aParts.push('{= odata.fillUriTemplate(');
+			aParts.push(stringify(aParameters[0].Value));
+			aParts.push(', {');
+			sPrefix = "";
+			for (i = 1; i < aParameters.length; i += 1) {
+				aParts.push(sPrefix);
+				aParts.push(stringify(aParameters[i].Name));
+				aParts.push(": ");
+				sValue = aParameters[i].Value.Value;
+				// TODO support expressions, not only paths
+				if (aParameters[i].Value.Type !== "Path" || rBadChars.test(sValue)) {
+					aParts.push("'<Unsupported: ");
+					aParts.push(stringify(aParameters[i].Value).replace(/'/g, "\\'"));
+					aParts.push(">'");
+				} else {
+					aParts.push("${");
+					aParts.push(sValue);
+					aParts.push("}");
+				}
+				sPrefix = ", ";
+			}
+			aParts.push("})}");
+			return aParts.join("");
+		}
+
+		/**
 		 * Handling of "14.5.12 Expression edm:Path".
 		 *
 		 * @param {string} sPath
@@ -141,8 +188,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				});
 			}
 
-			return "{path : " + JSON.stringify(sPath) + ", type : '" + sType
-				+ "', constraints : " + JSON.stringify(oConstraints) + "}";
+			return "{path : " + stringify(sPath) + ", type : '" + sType
+				+ "', constraints : " + stringify(oConstraints) + "}";
 		}
 
 		/**
@@ -163,6 +210,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
+		 * Stringifies the value for usage in a XML attribute value. Prefers the single quote over
+		 * the double quote.
+		 *
+		 * @param {any} vValue the value
+		 * @returns {string} the stringified value
+		 * @throws {Error} if the value cannot be stringified
+		 */
+		function stringify(vValue) {
+			var sStringified = JSON.stringify(vValue),
+				bEscaped = false,
+				sResult = "",
+				i, c;
+
+			for (i = 0; i < sStringified.length; i += 1) {
+				switch (c = sStringified.charAt(i)) {
+					case "'": // a single quote must be escaped (can only occur within a string)
+						sResult += "\\'";
+						break;
+					case '"':
+						if (bEscaped) { // a double quote needs no escaping (only within a string)
+							sResult += c;
+							bEscaped = false;
+						} else { // string begin or end with single quotes
+							sResult += "'";
+						}
+						break;
+					case "\\":
+						if (bEscaped) { // an escaped backslash
+							sResult += "\\\\";
+						}
+						bEscaped = !bEscaped;
+						break;
+					default:
+						if (bEscaped) {
+							sResult += "\\";
+							bEscaped = false;
+						}
+						sResult += c;
+				}
+			}
+			return sResult;
+		}
+
+		/**
 		 * Handles unsupported cases.
 		 *
 		 * @param {any} vRawValue
@@ -174,7 +265,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			if (typeof vRawValue === "object") {
 				// anything else: convert to string, prefer JSON
 				try {
-					return fnEscape("Unsupported: " + JSON.stringify(vRawValue));
+					return fnEscape("Unsupported: " + stringify(vRawValue));
 				} catch (ex) {
 					// "Converting circular structure to JSON"
 				}
@@ -209,9 +300,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * <ul>
 			 *   <li> the constant "14.4.11 Expression edm:String", which is turned into a fixed
 			 *   text;
-			 *   <li> the dynamic "14.5.3 Expression edm:Apply" (for "14.5.3.1.1 Function
-			 *   odata.concat" only), which is turned into a data binding expression relative to an
-			 *   entity;
+			 *   <li> the dynamic "14.5.3 Expression edm:Apply"
+			 *   <ul>
+			 *     <li> "14.5.3.1.1 Function odata.concat" is turned into a data binding
+			 *     expression relative to an entity;
+			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate" is turned into an expression
+			 *     binding to fill the template at run-time;
+			 *   </ul>
 			 *   <li> the dynamic "14.5.12 Expression edm:Path", which is turned into a data
 			 *   binding relative to an entity, including type information and constraints as
 			 *   available from meta data.
@@ -232,6 +327,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			format : function (vRawValue) {
+				var sResult;
+
 				// 14.4.11 Expression edm:String
 				if (vRawValue && vRawValue.hasOwnProperty("String")) {
 					if (typeof vRawValue.String === "string") {
@@ -254,6 +351,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 					case "odata.concat": // 14.5.3.1.1 Function odata.concat
 						if (jQuery.isArray(vRawValue.Apply.Parameters)) {
 							return concat(vRawValue.Apply.Parameters, this.currentBinding());
+						}
+						break;
+					case "odata.fillUriTemplate": // 14.5.3.1.2 Function odata.fillUriTemplate
+						sResult = fillUriTemplate(vRawValue.Apply.Parameters,
+							this.currentBinding());
+						if (sResult) {
+							return sResult;
 						}
 						break;
 					// fall through to the global "unsupported"
