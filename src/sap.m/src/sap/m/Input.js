@@ -33,7 +33,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		properties : {
 	
 			/**
-			 * Type of input (e.g. Text, Number, Email, Phone)
+			 * Type of input (e.g. Text, Number, Email, Phone). This is the HTML type for the "input" tag. It is supported
+			 * by browsers natively. Touch devices open various soft keyboard layouts depending on the given input type.
+			 * However, only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
+			 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
+			 * representations for numbers and dates.
 			 */
 			type : {type : "sap.m.InputType", group : "Data", defaultValue : sap.m.InputType.Text},
 	
@@ -607,6 +611,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return;
 		} else {
 			aListItems[iSelectedIndex].setSelected(true);
+			this._fireSuggestionItemSelectedEvent(aListItems[iSelectedIndex]);
 		}
 	
 		if (sap.ui.Device.system.desktop) {
