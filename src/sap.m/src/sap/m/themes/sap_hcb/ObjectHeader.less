@@ -468,7 +468,7 @@ div[class*='sapMOHRBg'] {
 			&:active,
 			&:focus {
 				outline: 0.125rem dotted @sapHCStandardFG;
-				outline-offset: 0.125rem;
+				outline-offset: -0.125rem;
 				text-decoration: none;
 			}
 			&:hover {
@@ -478,29 +478,6 @@ div[class*='sapMOHRBg'] {
 	}
 	.sapMOHRIntroActive {
 		padding-bottom: 0.125rem;
-		:hover {
-			cursor: pointer;
-		}
-		> span {
-			text-decoration: underline;
-			&:active,
-			&:focus {
-				outline: 0.125rem dotted @sapHCStandardFG;
-				outline-offset: -0.125rem;
-				text-decoration: none;
-				// Outline fix when text ellipsis present
-				&:after {
-					content: "";
-					border-right: 0.125rem dotted @sapHCStandardFG;
-					height: 1.125rem;
-					float: right;
-					margin-top: -1.25rem;
-				}
-			}
-			&:hover {
-				text-decoration: none;
-			}
-		}
 	}
 	.sapMOHRTitleArrow .sapUiIcon {
 		&:active,
@@ -883,19 +860,6 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 	margin: 0;
 }
 
-// Remove intro outline (ellipsis) fix for Firefox and IE - not working properly
-html[data-sap-ui-browser^="ff"],
-html[data-sap-ui-browser^="ie"] {
-	.sapMOHR .sapMOHRIntroActive > span {
-		&:active,
-		&:focus {
-			&:after {
-				display: none;
-			}
-		}
-	}
-}
-
 // Internet explorer fixes
 html[data-sap-ui-browser^="ie"] {
 	.sapMOHR {
@@ -909,11 +873,14 @@ html[data-sap-ui-browser^="ie"] {
 			padding-bottom: 0.125rem;
 		}
 		.sapMOHRTitleText {
-			padding-left: 0.125rem;
+			margin-left: 0.125rem;
 		}
 		.sapMOHRIntro {
 			padding-top: 0.125rem;
 			padding-left: 0.125rem;
+		}
+		.sapMLnk {
+			padding-right: 0.125rem;
 		}
 	}
 }
@@ -921,9 +888,8 @@ html[data-sap-ui-browser^="ie"] {
 // OSX fix
 html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"] {
 	.sapMOHR {
-		.sapMObjectAttributeText,
-		.sapMOHRTitleActive .sapMOHRTitleText {
-			outline-offset: 0;
+		.sapMOHRTitleTextContainer {
+			padding-left: 0.125rem;
 		}
 	}
 }
@@ -939,5 +905,31 @@ html[data-sap-ui-os^="bb"] {
 html[data-sap-ui-os^="winphone"][data-sap-ui-browser^="ie"] {
 	.sapMOHR .sapMOHRTitle {
 		padding-left: 0.125rem;
+	}
+}
+
+// Android fix
+html[data-sap-ui-os^="Android4"] {
+	.sapMOHRTitleTextContainer {
+		padding-bottom: 0.125rem;
+	}
+}
+
+// IOS fixes
+html[data-sap-ui-os^="iOS"] {
+	.sapMOHR {
+		.sapMOHRTitleDiv {
+			padding-bottom: 0.125rem;
+			padding-left: 0.125rem;
+		}
+		.sapMOHRTitleActive .sapMOHRTitleText {
+			&:focus,
+			&:active {
+				outline: none;
+				.sapMOHRTitleTextWrappable {
+					outline: 0.125rem dotted @sapHCStandardFG;
+				}
+			}
+		}
 	}
 }
