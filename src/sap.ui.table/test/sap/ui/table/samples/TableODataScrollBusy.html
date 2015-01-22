@@ -22,7 +22,7 @@
 	//the root URL of the OData service - prefixed with a local URL to a proxy which forwards the request, circumventing cross-domain restrictions
 	// IMPORTANT: this proxy must be available for the code example to run!
 	var url = "../../../../../proxy/http/services.odata.org/Northwind/Northwind.svc";
-	
+
 	// create an ODataModel from URL
 	var oTable = new sap.ui.table.Table({ // create Table UI
 		columns : [
@@ -31,22 +31,31 @@
 		],
 		threshold: 5
 	});
+
 	oTable.setBusyIndicatorDelay(0);
+	oTable.setEnableBusyIndicator(true);
 	
 	var oModel = new sap.ui.model.odata.ODataModel(url, true);
-	oModel.attachRequestSent(function (oEvent) {
-		oTable.setBusy(true);
-	});
-	oModel.attachRequestCompleted(function () {
-		oTable.setBusy(false);
-	});
-	oModel.attachRequestFailed(function () {
-		oTable.setBusy(false);
-	});
 	oTable.setModel(oModel); // set model to Table
 	
 	oTable.bindRows("/Product_Sales_for_1997"); // bind the rows against a certain root-level collection in the service
-	
+
+	var oButtonBreakBinding = new sap.ui.commons.Button({
+		text: "Break Binding",
+		press: function() {
+			oTable.bindRows("/Product_Sales_for_1997_broken");
+		}
+	});
+
+	var oButtonRestoreBinding = new sap.ui.commons.Button({
+		text: "Restore Binding",
+		press: function() {
+			oTable.bindRows("/Product_Sales_for_1997");
+		}
+	});
+
+	oButtonBreakBinding.placeAt("content");
+	oButtonRestoreBinding.placeAt("content");
 	oTable.placeAt("content"); // place model onto UI
 
 </script>
