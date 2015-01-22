@@ -523,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}).setSize("2.5rem").addStyleClass("sapMUCloadingIcon");
 		}
 
-		 /////////////////// ListItem Button Layout
+		/////////////////// ListItem Button Layout
 		if (sStatus === "Edit") {
 			oOkButton = new sap.m.Button({
 				id : sItemId + "-okButton",
@@ -691,7 +691,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			content : [oHL]
 		});
 
-		// /////////////////// Add properties to the ListItem
+		///////////////////// Add properties to the ListItem
 		for ( var sPropertyName in oItem.mProperties) {
 			if (oItem.mProperties.hasOwnProperty(sPropertyName)) {
 				oListItem.mProperties[sPropertyName] = oItem.mProperties[sPropertyName];
