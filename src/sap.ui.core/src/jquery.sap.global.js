@@ -3517,67 +3517,78 @@
 	/**
 	 * FrameOptions class
 	 */
-	var FrameOptions = function(mSettings, fnCallback) {
-		/* mSettings: mode, whitelist, whitelistService */
+	var FrameOptions = function(mSettings) {
+		/* mSettings: mode, callback, whitelist, whitelistService, timeout, blockEvents, showBlockLayer, allowSameOrigin */
 		this.mSettings = mSettings || {};
-		this.mSettings.mode = this.mSettings.mode || FrameOptions.Mode.ALLOW;
-		this.fnCallback = fnCallback;
+		this.sMode = this.mSettings.mode || FrameOptions.Mode.ALLOW;
+		this.fnCallback = this.mSettings.callback;
+		this.iTimeout = this.mSettings.timeout || 10000;
+		this.bBlockEvents = this.mSettings.blockEvents !== false;
+		this.bShowBlockLayer = this.mSettings.showBlockLayer !== false;
+		this.bAllowSameOrigin = this.mSettings.allowSameOrigin !== false;
 		this.sParentOrigin = '';
 		this.bUnlocked = false;
 		this.bRunnable = false;
 		this.bParentUnlocked = false;
+		this.sStatus = "pending";
 		this.aFPChilds = [];
 
 		var that = this;
 
-		this.iTimeout = setTimeout(function() {
+		this.iTimer = setTimeout(function() {
 			that._callback(false);
-		}, 5000);
+		}, this.iTimeout);
 
 		var fnHandlePostMessage = function() {
 			that._handlePostMessage.apply(that, arguments);
 		};
 
-		if (FrameOptions.__window.addEventListener) {
-			FrameOptions.__window.addEventListener('message', fnHandlePostMessage);
-		} else {
-			FrameOptions.__window.attachEvent('onmessage', fnHandlePostMessage);
-		}
+		FrameOptions.__window.addEventListener('message', fnHandlePostMessage);
 
-		if (FrameOptions.__parent === FrameOptions.__self || FrameOptions.__parent == null || this.mSettings.mode === FrameOptions.Mode.ALLOW) {
+		if (FrameOptions.__parent === FrameOptions.__self || FrameOptions.__parent == null || this.sMode === FrameOptions.Mode.ALLOW) {
 			// unframed page or "allow all" mode
 			this._applyState(true, true);
 		} else {
 			// framed page
+			
+			this._lock();
 
 			// "deny" mode blocks embedding page from all origins
-			if (this.mSettings.mode === FrameOptions.Mode.DENY) {
+			if (this.sMode === FrameOptions.Mode.DENY) {
 				this._callback(false);
 				return;
 			}
+			
+			if (this.bAllowSameOrigin) {
 
-			try {
-				var oParentWindow = FrameOptions.__parent.window; // TODO: parent instead of parent.window
-				var bOk = false;
-				var bTrue = true;
-				do {
-					var test = oParentWindow.document.domain;
-					if (oParentWindow == FrameOptions.__top) {
-						if (test != undefined) {
-							bOk = true;
+				try {
+					var oParentWindow = FrameOptions.__parent;
+					var bOk = false;
+					var bTrue = true;
+					do {
+						var test = oParentWindow.document.domain;
+						if (oParentWindow == FrameOptions.__top) {
+							if (test != undefined) {
+								bOk = true;
+							}
+							break;
 						}
-						break;
+						oParentWindow = oParentWindow.parent;
+					} while (bTrue);
+					if (bOk) {
+						this._applyState(true, true);
 					}
-					oParentWindow = oParentWindow.parent.window;
-				} while (bTrue);
-				if (bOk) {
-					this._applyState(true, true);
+				} catch(e) {
+					// access to the top window is not possible
+					FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
 				}
-			} catch(e) {
-				// access to the top window is not possible
+
+			} else {
+				// same origin not allowed 				
 				FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
 			}
-		}
+
+		} 
 
 	};
 
@@ -3597,6 +3608,13 @@
 	FrameOptions.__parent = parent;
 	FrameOptions.__self = self;
 	FrameOptions.__top = top;
+	
+	// List of events to block while framing is unconfirmed
+	FrameOptions._events = [
+		"mousedown", "mouseup", "click", "dblclick", "mouseover", "mouseout",
+		"touchstart", "touchend", "touchmove", "touchcancel", 
+		"keydown", "keypress", "keyup"
+	];
 
 	// check if string matches pattern
 	FrameOptions.prototype.match = function(sProbe, sPattern) {
@@ -3620,9 +3638,69 @@
 			return r.test(sProbe);
 		}
 	};
+	
+	FrameOptions._lockHandler = function(oEvent) {
+		oEvent.stopPropagation();
+		oEvent.preventDefault();
+	};
+	
+	FrameOptions.prototype._createBlockLayer = function() {
+		if (document.readyState == "complete") {
+			var lockDiv = document.createElement("div");
+			lockDiv.style.position = "absolute";
+			lockDiv.style.top = "0px";
+			lockDiv.style.bottom = "0px";
+			lockDiv.style.left = "0px";
+			lockDiv.style.right = "0px";
+			lockDiv.style.opacity = "0";
+			lockDiv.style.backgroundColor = "white";
+			lockDiv.style.zIndex = Number.MAX_VALUE;
+			document.body.appendChild(lockDiv);
+			this._lockDiv = lockDiv;
+		}
+	};
+	
+	FrameOptions.prototype._setCursor = function() {
+		if (this._lockDiv) {
+			this._lockDiv.style.cursor = this.sStatus == "denied" ? "not-allowed" : "wait";
+		}
+	};
+
+	FrameOptions.prototype._lock = function() {
+		var that = this;
+		if (this.bBlockEvents) {
+			for (var i = 0; i < FrameOptions._events.length; i++) {
+				document.addEventListener(FrameOptions._events[i], FrameOptions._lockHandler, true);
+			}
+		}
+		if (this.bShowBlockLayer) {
+			this._blockLayer = function() {
+				that._createBlockLayer();
+				that._setCursor();
+			};
+			document.addEventListener("readystatechange", this._blockLayer);
+		}
+	};
+
+	FrameOptions.prototype._unlock = function() {
+		if (this.bBlockEvents) {
+			for (var i = 0; i < FrameOptions._events.length; i++) {
+				document.removeEventListener(FrameOptions._events[i], FrameOptions._lockHandler, true);
+			}
+		}	
+		if (this.bShowBlockLayer) {
+			document.removeEventListener("readystatechange", this._blockLayer);
+			if (this._lockDiv) {
+				document.body.removeChild(this._lockDiv);
+				delete this._lockDiv;
+			}
+		}
+	};
 
 	FrameOptions.prototype._callback = function(bSuccess) {
-		clearTimeout(this.iTimeout);
+		this.sStatus = bSuccess ? "allowed" : "denied";
+		this._setCursor();
+		clearTimeout(this.iTimer);
 		if (typeof this.fnCallback === 'function') {
 			this.fnCallback.call(null, bSuccess);
 		}
@@ -3638,6 +3716,7 @@
 		if (!this.bRunnable || !this.bParentUnlocked) {
 			return;
 		}
+		this._unlock();
 		this._callback(true);
 		this._notifyChildFrames();
 		this.bUnlocked = true;
@@ -3656,9 +3735,7 @@
 			return;
 		}
 		var bTrusted = false;
-		if (FrameOptions.__parent === FrameOptions.__self || FrameOptions.__parent == null) {
-			bTrusted = true; // page is NOT framed
-		} else if (FrameOptions.__window.document.URL.indexOf(this.sParentOrigin) == 0) {
+		if (this.bAllowSameOrigin && FrameOptions.__window.document.URL.indexOf(this.sParentOrigin) == 0) {
 			bTrusted = true;
 		} else if (this.mSettings.whitelist && this.mSettings.whitelist.length != 0) {
 			var sHostName = this.sParentOrigin.split('//')[1];
@@ -3714,22 +3791,30 @@
 	};
 
 	FrameOptions.prototype._handlePostMessage = function(oEvent) {
-		if (oEvent.source === FrameOptions.__self || oEvent.source == null || oEvent.data.indexOf("SAPFrameProtection*") === -1) {
+		var oSource = oEvent.source,
+			sData = oEvent.data;
+		
+		// For compatibility with previous version empty message from parent means parent-unlocked
+		// if (oSource === FrameOptions.__parent && sData == "") {
+		//	sData = "SAPFrameProtection*parent-unlocked";
+		// }
+		
+		if (oSource === FrameOptions.__self || oSource == null || sData.indexOf("SAPFrameProtection*") === -1) {
 			return;
 		}
-		if (oEvent.source === FrameOptions.__parent) {
+		if (oSource === FrameOptions.__parent) {
 			if (!this.sParentOrigin) {
 				this.sParentOrigin = oEvent.origin;
 				this._check();
 			}
-			if (oEvent.data == 'SAPFrameProtection*parent-unlocked') {
+			if (sData == "SAPFrameProtection*parent-unlocked") {
 				this._applyState(false, true);
 			}
-		} else if (oEvent.source.parent === FrameOptions.__self && oEvent.data == 'SAPFrameProtection*require-origin' && this.bUnlocked) {
-			oEvent.source.postMessage('SAPFrameProtection*parent-unlocked', '*');
+		} else if (oSource.parent === FrameOptions.__self && sData == "SAPFrameProtection*require-origin" && this.bUnlocked) {
+			oSource.postMessage("SAPFrameProtection*parent-unlocked", "*");
 		} else {
-			oEvent.source.postMessage('SAPFrameProtection*parent-origin', '*');
-			this.aFPChilds.push(oEvent.source);
+			oSource.postMessage("SAPFrameProtection*parent-origin", "*");
+			this.aFPChilds.push(oSource);
 		}
 	};
 

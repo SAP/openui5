@@ -641,14 +641,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		}
 	};
 
-	// list of events which should be dispatched even when events are suppressed by the core
-	// (see _handleEvent method)
-	var mSuppressedEventWhitelist = {
-		'focusin': true,
-		'focusout': true,
-		'sapfocusleave': true
-	};
-
 	/**
 	 * Handles all incoming DOM events centrally and dispatches the event to the
 	 * registered event handlers.
@@ -656,11 +648,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * @private
 	 */
 	UIArea.prototype._handleEvent = function(/**event*/oEvent) {
-
-		// first, check if events are suppressed by the core and event isn't whitelisted
-		if (this.oCore.bSuppressBrowserEvents && !mSuppressedEventWhitelist[oEvent.type]) {
-			return;
-		}
 
 		// execute the registered event handlers
 		var oElement = null;

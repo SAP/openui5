@@ -76,12 +76,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			this.bDomReady = false;
 
 			/**
-			 * Whether browser events should be suppressed (see usage in UIArea)
-			 * @private
-			 */
-			this.bSuppressBrowserEvents = true;
-
-			/**
 			 * Available plugins in the order of registration.
 			 * @private
 			 */
@@ -174,25 +168,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			this.oConfiguration = new Configuration(this);
 
 			// initialize frameOptions script (anti-clickjacking, ect.)
-			this.oFrameOptions = new jQuery.sap.FrameOptions({
-				mode: this.oConfiguration["frameOptions"],
-				whitelist: this.oConfiguration["whitelist"],
-				whitelistService: this.oConfiguration["whitelistService"]
-			}, function(bSuccess) {
-				if (bSuccess) {
-					that.bSuppressBrowserEvents = false;
-				} else {
-					var vOnFrameDenied = that.oConfiguration.onFrameDenied;
-					if (vOnFrameDenied) {
-						if (typeof vOnFrameDenied === "function") {
-							vOnFrameDenied();
-						} else {
-							// DO NOT USE jQuery.globalEval as it executes async in FF!
-							jQuery.sap.globalEval(vOnFrameDenied);
-						}
-					}
-				}
-			});
+			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
+			oFrameOptionsConfig.mode = this.oConfiguration["frameOptions"];
+			oFrameOptionsConfig.whitelistService = this.oConfiguration["whitelistService"];
+			this.oFrameOptions = new jQuery.sap.FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured
 			if ( this.oConfiguration["bindingSyntax"] === "complex" ) {
