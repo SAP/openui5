@@ -88,7 +88,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
 			 */
 			beforeRendering : {}
-		}
+		},
+		specialSettings : { 
+			
+			/**
+			 * Controller instance to use for this view. 
+			 */
+			controller : true,
+			
+			/**
+			 * Name of the controller class to use for this view. 
+			 * If given, it overrides the same information in the view definition (XML, HTML).
+			 */
+			controllerName : true,
+			
+			/**
+			 * Preprocessors that the view can use before constructing the view. 
+			 */
+			preprocessors : true,
+			
+			/**
+			 * (module) Name of a resource bundle that should be loaded for this view  
+			 */
+			resourceBundleName : true,
+			
+			/**
+			 * URL of a resource bundle that should be loaded for this view 
+			 */
+			resourceBundleUrl : true,
+			
+			/**
+			 * Locale that should be used to load a resourcebundle for thisview 
+			 */
+			resourceBundleLocale : true,
+			
+			/**
+			 * Model name under which the resource bundle should be stored.
+			 */
+			resourceBundleAlias : true,
+			
+			/**
+			 * Type of the view
+			 */
+			type : true,
+			
+			/**
+			 * A view definition
+			 */ 
+			viewContent : true,
+
+			/**
+			 * Additional configuration data that should be given to the view at construction time 
+			 * and which will be available early, even before model data or other constructor settings are applied.  
+			 */ 
+			viewData : true
+
+		} 
 	}});
 	
 	
