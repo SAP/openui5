@@ -4,8 +4,9 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
-	overflow: hidden;
 	outline: none;
+	/* otherwise the dialog could me made too small by the user */
+	min-height: 140px;
 }
 
 /* header */
