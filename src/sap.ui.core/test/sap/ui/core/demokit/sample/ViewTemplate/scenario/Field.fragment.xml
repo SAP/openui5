@@ -5,10 +5,10 @@
 	<HBox>
 		<template:if test="{meta>Value}"><!-- "RecordType" : "com.sap.vocabularies.UI.v1.DataField" -->
 			<template:with path="meta>Value" helper="sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.resolveTargetPath" var="target">
-				<template:if test="{= {target>sap:semantics} === 'email'}" >
+				<template:if test="{= ${target>sap:semantics} === 'email'}" >
 					<core:Icon src="sap-icon://email" />
 				</template:if>
-				<template:if test="{= {target>sap:semantics} === 'tel'}" >
+				<template:if test="{= ${target>sap:semantics} === 'tel'}" >
 					<core:Icon src="sap-icon://phone" />
 				</template:if>
 			</template:with>
