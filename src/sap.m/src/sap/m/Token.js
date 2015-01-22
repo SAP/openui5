@@ -50,7 +50,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * if true, token displays delete icon and fires events accordingly
 			 */
-			editable : {type : "boolean", group : "Misc", defaultValue : true}
+			editable : {type : "boolean", group : "Misc", defaultValue : true},
+			
+			/**
+			 * This property specifies the text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		aggregations : {
 
