@@ -12,7 +12,7 @@
 		</script>
 		<script type="text/javascript">
 			jQuery.sap.initMobile();
-			
+
 			var checkBox = new sap.m.CheckBox({selected:true, visible: true, enabled: true});
 			var checkBox1 = new sap.m.CheckBox({selected:false, visible: true, enabled: true});
 			var checkBox2 = new sap.m.CheckBox({selected:true, visible: true, enabled: false});
@@ -21,8 +21,7 @@
 			var checkBox5 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, text: "text length test", width:"100px"});
 			var checkBox6 = new sap.m.CheckBox({activeHandling:false , selected:true, visible:true, enabled: true, text: "RTL", width:"100px", textDirection:"RTL"});
 			var checkBox7 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, editable: false, text: "Not editable"});
-			
-			
+
 			var bToolbarAEnabled = true;
 
 			var toolbar = new sap.m.Toolbar("toolbar", {
@@ -33,6 +32,12 @@
 					})
 				]
 			});
+
+            //RTL test - set page to rtl to test
+            var checkBox8 = new sap.m.CheckBox({text: "+012 345 678", width:"400px"});
+            var checkBox9 = new sap.m.CheckBox({text: "+012 345 679", width:"400px", textDirection: sap.ui.core.TextDirection.LTR});
+            checkBox9.setTextAlign = function(){};
+            var checkBox10 = new sap.m.CheckBox({text: "+012 345 670", width:"400px", textDirection: sap.ui.core.TextDirection.LTR, textAlign: sap.ui.core.TextAlign.Right});
 
 			oForm = new sap.ui.layout.form.SimpleForm({
 				editable : true,
@@ -54,6 +59,10 @@
 									checkBox5,
 									checkBox6,
 									checkBox7,
+                                    new sap.m.Toolbar({ content: new sap.m.Text({text: "RTL support: Call these numbers when the house is on fire\u200e:\u200e"})}),
+                                    new sap.m.Toolbar({ content: [checkBox8, new sap.m.Text({text: "Default"})]}),
+                                    new sap.m.Toolbar({ content: [checkBox9, new sap.m.Text({text: "textDirection: LTR, no textAlign"})]}),
+                                    new sap.m.Toolbar({ content: [checkBox10, new sap.m.Text({text: "textDirection: LTR, textAlign: Right"})]}),
 									toolbar,
 									new sap.m.Button({
 										text: "Toggle Enabled",
