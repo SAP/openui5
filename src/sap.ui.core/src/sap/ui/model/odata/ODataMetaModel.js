@@ -230,6 +230,11 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 		return new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 	};
 
+	ODataMetaModel.prototype.destroy = function () {
+		MetaModel.prototype.destroy.apply(this, arguments);
+		return this.oModel.destroy.apply(this.oModel, arguments);
+	};
+
 	/**
 	 * Returns the OData association with the given qualified name, either as a path or as an
 	 * object, as indicated.
