@@ -248,12 +248,18 @@
 			oModelMock = this.mock(oMetaModel.oModel),
 			oResult = {};
 
+		this.mock(sap.ui.model.Model.prototype).expects("destroy").once();
+		// do not mock/stub this or else "destroy" will not bubble up!
+		this.spy(sap.ui.model.MetaModel.prototype, "destroy");
+
 		// generic dispatching
-		jQuery.each(["_getObject", "getProperty", "isList"], function (i, sName) {
+		jQuery.each(["destroy", "_getObject", "getProperty", "isList"], function (i, sName) {
 			oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
 
 			strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
 		});
+
+		ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
 
 		raises(function () {
 			oMetaModel.refresh();

@@ -67,6 +67,10 @@ sap.ui.define(['jquery.sap.global', './Model'],
 		return oNewContext;
 	};
 
+	MetaModel.prototype.destroy = function () {
+		return Model.prototype.destroy.apply(this, arguments);
+	};
+
 	/**
 	 * @see sap.ui.model.Model.prototype.destroyBindingContext
 	 * @param {object}
