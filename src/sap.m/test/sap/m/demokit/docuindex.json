@@ -57,7 +57,7 @@
 
 	"explored" : {
 		"entitiesDefaults" : {
-			"appComponent" : "CA-UI5-MOB",
+			"appComponent" : "CA-UI5-CTR",
 			"formFactors" : "ML"
 		},
 		"samplesRef" : {
