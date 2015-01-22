@@ -15,11 +15,16 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 * Constructor for a new ODataMetaModel.
 	 *
 	 * @class Model implementation for OData meta models, which are read-only models. No events
-	 * ({@link sap.ui.model.Model#event:parseError},
-	 * {@link sap.ui.model.Model#event:requestCompleted},
-	 * {@link sap.ui.model.Model#event:requestFailed},
-	 * {@link sap.ui.model.Model#event:requestSent}) are fired!
-	 * For asynchronous loading use {@link #loaded} instead, which is based on promises.
+	 * ({@link sap.ui.model.Model#event:parseError parseError},
+	 * {@link sap.ui.model.Model#event:requestCompleted requestCompleted},
+	 * {@link sap.ui.model.Model#event:requestFailed requestFailed},
+	 * {@link sap.ui.model.Model#event:requestSent requestSent}) are fired!
+	 * For asynchronous loading use {@link #loaded loaded} instead, which is based on promises.
+	 *
+	 * This implementation offers a unified access to both OData v2 metadata and v4 annotations.
+	 * It uses the existing {@link sap.ui.model.odata.ODataMetadata} as a foundation and merges v4
+	 * annotations from the existing {@link sap.ui.model.odata.ODataAnnotations} directly into the
+	 * corresponding entity or property.
 	 *
 	 * @extends sap.ui.model.MetaModel
 	 *
@@ -162,7 +167,7 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 		}
 
 		/*
-		 * Merge the given annotation data into the given meta data and lift SAPData extensions.
+		 * Merges the given annotation data into the given meta data and lifts SAPData extensions.
 		 * @param {object} oAnnotations
 		 *   annotations "JSON"
 		 * @param {object} oData

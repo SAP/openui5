@@ -185,12 +185,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
+		 * @class
 		 * The OData helper which can act as a formatter in XML template views.
 		 *
-		 * @alias sap.ui.model.odata.AnnotationHelper
-		 * @private
+		 * @static
+		 * @public
+		 * @name sap.ui.model.odata.AnnotationHelper
 		 */
-		return {
+		return /** @lends sap.ui.model.odata.AnnotationHelper */ {
 			/**
 			 * A formatter helping to interpret OData v4 annotations during template processing.
 			 *
@@ -198,6 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *    the raw value from the meta model
 			 * @returns {string}
 			 *    the resulting string value to write into the processed XML
+			 * @public
 			 */
 			format : function (vRawValue) {
 				// 14.4.11 Expression edm:String
@@ -234,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 			/**
 			 * Resolves an <code>edm:AnnotationPath</code> expression according to
-			 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268259"
+			 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268259">
 			 * 14.5.2 Expression edm:AnnotationPath</a>. Currently supports navigation properties
 			 * and term casts.
 			 *
@@ -303,6 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *    the raw value from the meta model
 			 * @returns {string}
 			 *    the resulting string value to write into the processed XML
+			 * @public
 			 */
 			simplePath : function (vRawValue) {
 				// 14.5.12 Expression edm:Path

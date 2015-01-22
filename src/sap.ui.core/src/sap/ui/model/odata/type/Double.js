@@ -109,7 +109,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		);
 
 	/**
-	 * Format the given value to the given target type. When formatting to <code>string</code>
+	 * Formats the given value to the given target type. When formatting to <code>string</code>
 	 * the type's constraint <code>scale</code> and formatting options will be taken into account.
 	 *
 	 * @param {string} sValue
@@ -155,14 +155,14 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Parse the given value which is expected to be of the given type to a double in string
-	 * representation.
+	 * Parses the given value, which is expected to be of the given type, to an Edm.Double in
+	 * <code>string</code> representation.
 	 *
 	 * @param {string|number} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
 	 * @param {string}
-	 *   sSourceType the source type (the expected type of <code>oValue</code>)
+	 *   sSourceType the source type (the expected type of <code>vValue</code>)
 	 * @returns {string}
 	 *   the parsed value
 	 * @throws sap.ui.model.ParseException
@@ -203,8 +203,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the
+	 * defined constraints.
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated

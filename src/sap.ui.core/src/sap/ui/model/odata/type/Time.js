@@ -30,7 +30,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	/**
 	 * Returns the formatter. Creates it lazily.
 	 * @param {sap.ui.model.odata.type.Time} oType
-	 *   the type instance
+	 *   the <code>Time</code> instance
 	 * @return {sap.ui.core.format.DateFormat}
 	 *   the formatter
 	 */
@@ -42,11 +42,11 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	}
 
 	/**
-	 * Verifies that the given object is really a time object in the model format.
+	 * Verifies that the given object is really a <code>Time</code> object in the model format.
 	 * @param {any} o
 	 *   the object to test
 	 * @returns {boolean}
-	 *   <code>true</code> if it is a time object
+	 *   <code>true</code>, if it is a time object
 	 */
 	function isTime(o) {
 		return typeof o === "object" && o.__edmType === "Edm.Time" && typeof o.ms === "number";
@@ -56,7 +56,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * Sets the constraints.
 	 *
 	 * @param {sap.ui.model.odata.type.Time} oType
-	 *   the type instance
+	 *   the <code>Time</code> instance
 	 * @param {object} [oConstraints]
 	 *   constraints
 	 * @param {boolean|string} [oConstraints.nullable=true]
@@ -77,7 +77,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	/**
 	 * Converts the given time object to a Date.
 	 * @param {object} oTime
-	 *   the time object
+	 *   the <code>Time</code> object
 	 * @returns {Date}
 	 *   a Date with hour, minute, second and milliseconds set according to the time object.
 	 * @throws FormatException if the time object's format does not match
@@ -203,7 +203,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @param {string} sSourceType
 	 *   the source type (the expected type of <code>sValue</code>)
 	 * @returns {object}
-	 *   the parsed value as described in {@link #formatValue}
+	 *   the parsed value as described in {@link #formatValue formatValue}
 	 * @throws sap.ui.model.ParseException
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
@@ -227,7 +227,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 
 	/**
 	 * Validates whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * defined constraints.
 	 *
 	 * @param {object} oValue
 	 *   the value to be validated

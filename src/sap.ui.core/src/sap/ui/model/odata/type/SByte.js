@@ -23,9 +23,11 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.SByte
 	 * @param {object} [oFormatOptions]
-	 *   format options, see {@link sap.ui.model.odata.type.Int#setFormatOptions}
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link sap.ui.model.odata.type.Int#setConstraints}
+	 *   format options; this type does not support any format options
+	 * @param {object} oConstraints
+	 *   the constraints
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */

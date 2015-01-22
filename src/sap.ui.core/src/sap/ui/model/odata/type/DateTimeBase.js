@@ -125,7 +125,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		);
 
 	/**
-	 * Format the given value to the given target type.
+	 * Formats the given value to the given target type.
 	 *
 	 * @param {Date} oValue
 	 *   the value to be formatted, which is represented as a JavaScript Date in the model
@@ -154,7 +154,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Parse the given value to JavaScript Date.
+	 * Parses the given value to JavaScript <code>Date</code>.
 	 *
 	 * @param {string} sValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
@@ -196,8 +196,8 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the
+	 * defined constraints.
 	 *
 	 * @param {string} oValue
 	 *   the value to be validated
@@ -219,8 +219,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	/**
 	 * Returns the type's name.
 	 *
-	 * @name sap.ui.model.odata.type.DateTimeBase#getName
-	 * @function
+	 * @alias sap.ui.model.odata.type.DateTimeBase#getName
 	 * @protected
 	 * @abstract
 	 */

@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
-	 * Set constraints for Int. This is meta information used when validating the value.
+	 * Sets the constraints for Edm.Int. This is meta information used when validating the value.
 	 *
 	 * @param {sap.ui.model.odata.type.Int} oType
 	 *   the type instance
@@ -107,7 +107,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Format the given value to the given target type.
+	 * Formats the given value to the given target type.
 	 * When formatting to <code>string</code> the format options are used.
 	 *
 	 * @param {number} iValue
@@ -140,7 +140,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Parse the given value, which is expected to be of the given source type, to an Int in
+	 * Parses the given value, which is expected to be of the given source type, to an Int in
 	 * number representation.
 	 * @param {number|string} vValue
 	 *   the value to be parsed. The empty string and <code>null</code> are parsed to
@@ -178,12 +178,12 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
+	 * Validates whether the given value in model representation is valid and meets the
 	 * defined constraints.
 	 * @param {number} iValue
 	 *   the value to be validated
-	 * @throws ValidateException, if the value is not in the allowed range of Int or if it is
-	 *   of invalid type.
+	 * @throws sap.ui.model.ValidateException
+	 *   if the value is not in the allowed range of Int or if it is of invalid type.
 	 * @public
 	 */
 	Int.prototype.validateValue = function(iValue) {
@@ -216,8 +216,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	/**
 	 * Returns the type's name.
 	 *
-	 * @name sap.ui.model.odata.type.Int#getName
-	 * @function
+	 * @alias sap.ui.model.odata.type.Int#getName
 	 * @protected
 	 * @abstract
 	 */
@@ -226,8 +225,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * Returns the type's supported range as object with properties <code>minimum</code> and
 	 * <code>maximum</code>.
 	 *
-	 * @name sap.ui.model.odata.type.Int#getRange
-	 * @function
+	 * @alias sap.ui.model.odata.type.Int#getRange
 	 * @protected
 	 * @abstract
 	 */
