@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var ToolbarRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
 	 */
 	ToolbarRenderer.render = sap.m.BarInPageEnabler.prototype.render;
-	
+
 	/**
 	 * Add classes attributes and styles to the root tag
 	 *
@@ -28,19 +28,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (rm, oToolbar) {
+		var sRole;
 		rm.addClass("sapMTB");
 
 		//ARIA
 		var aContent = oToolbar.getContent();
 		if (oToolbar.getActive() && (!aContent || aContent.length === 0)) {
-			rm.writeAccessibilityState(oToolbar, {
-				role: "button"
-			});
+			sRole = "button";
 		} else {
-			rm.writeAccessibilityState(oToolbar, {
-				role: "toolbar"
-			});
+			// Add role="heading" if the control parent is an instance of Dialog or Popover and it is use as a heading
+			sRole = (oToolbar.getParent() instanceof sap.m.Dialog || oToolbar.getParent() instanceof sap.m.Popover) && oToolbar.getHTMLTag() ? "heading" : "toolbar";
 		}
+
+		rm.writeAccessibilityState(oToolbar, {
+			role: sRole
+		});
 
 		if (!sap.m.Toolbar.hasFlexBoxSupport) {
 			rm.addClass("sapMTBNoFlex");
@@ -49,29 +51,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		} else {
 			rm.addClass("sapMTBNewFlex");
 		}
-	
+
 		if (oToolbar.getActive()) {
 			rm.addClass("sapMTBActive");
 			rm.writeAttribute("tabindex", "0");
 		} else {
 			rm.addClass("sapMTBInactive");
 		}
-	
+
 		rm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
-	
+
 		var sWidth = oToolbar.getWidth();
 		var sHeight = oToolbar.getHeight();
 		sWidth && rm.addStyle("width", sWidth);
 		sHeight && rm.addStyle("height", sHeight);
 	};
-	
+
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 		oToolbar.getContent().forEach(function(oControl) {
 			sap.m.BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 			rm.renderControl(oControl);
 		});
 	};
-	
+
 	/**
 	 * Determines, if the IBarContext classes should be added to the control
 	 * @private
@@ -79,8 +81,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	ToolbarRenderer.shouldAddIBarContext = function (oControl) {
 		return false;
 	};
-	
-	
+
+
 
 	return ToolbarRenderer;
 
