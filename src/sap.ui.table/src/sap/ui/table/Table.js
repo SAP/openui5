@@ -1092,6 +1092,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(sReason) {
+		this._bBusyIndicatorAllowed = true;
 		//needs to be called here to reset the firstVisible row so that the correct data is fetched
 		this._bRefreshing = true;
 		this._onBindingChange(sReason);
@@ -5376,7 +5377,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	Table.prototype._setBusy = function (mParameters) {
-		if (!this.getEnableBusyIndicator()) {
+		if (!this.getEnableBusyIndicator() || !this._bBusyIndicatorAllowed) {
 			return;
 		}
 
