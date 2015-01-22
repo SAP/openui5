@@ -844,9 +844,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				]
 			}));
 		};
-	
-		Input.prototype._addShowMoreButton = function() {
-			if (!this._oSuggestionPopup || !this._hasTabularSuggestions()) {
+
+		/*
+		 * Adds a more button to the footer of the tabular suggestion popup/dialog
+		 * @param{boolean} [bTabular] optional parameter to force override the tabular suggestions check
+		 */
+		Input.prototype._addShowMoreButton = function(bTabular) {
+			if (!this._oSuggestionPopup || !bTabular && !this._hasTabularSuggestions()) {
 				return;
 			}
 	
@@ -860,7 +864,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._oSuggestionPopup.setFooter(oButtonToolbar);
 			}
 		};
-	
+
+		/*
+		 * Removes the more button from the footer of the tabular suggestion popup/dialog
+		 */
 		Input.prototype._removeShowMoreButton = function() {
 			if (!this._oSuggestionPopup || !this._hasTabularSuggestions()) {
 				return;
@@ -1129,7 +1136,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInput._oList = oInput._getSuggestionsTable();
 	
 				if (oInput.getShowTableSuggestionValueHelp()) {
-					oInput._addShowMoreButton();
+					oInput._addShowMoreButton(bTabular);
 				}
 			}
 	

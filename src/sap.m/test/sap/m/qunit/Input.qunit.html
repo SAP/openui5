@@ -1228,6 +1228,8 @@
 	});
 
 	test("Tabular Suggestions on Desktop", function(){
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		var oInput = new sap.m.Input({
 			width: "100px",
 			suggestionWidth: "500px",
@@ -1360,6 +1362,11 @@
 
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+
+		// checks for the show more button (tabular suggestions only)
+		strictEqual(oPopup.getFooter().getContent().length, 2, "The footer has two items (spacer and button)");
+		strictEqual(oPopup.getFooter().getContent()[1] instanceof sap.m.Button, true, "The show more button is added to the popup");
+		strictEqual(oPopup.getFooter().getContent()[1].getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
@@ -1524,6 +1531,8 @@
 	});
 
 	test("Tabular Suggestion on Phone", function(){
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1697,6 +1706,10 @@
 		equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered during filtering of suggestions");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
+
+		// checks for the show more button (tabular suggestions only)
+		strictEqual(oPopup.getEndButton() instanceof sap.m.Button, true, "The show more button is added to the popup");
+		strictEqual(oPopup.getEndButton().getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		oPopup.getContent()[0].getItems()[1].$().trigger("tap");
 
