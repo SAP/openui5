@@ -1343,7 +1343,7 @@ sap.ui
 						case "DateTimeOffset":
 							//TODO: generate value for DateTimeOffset
 						default:
-							return this._generateDataFromEntity(mComplexTypes[sType], iIndex);
+							return this._generateDataFromEntity(mComplexTypes[sType], iIndex, mComplexTypes);
 						}
 
 					};
