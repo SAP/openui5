@@ -72,6 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"formatLocale"          : { type : "string",   defaultValue : null },
 					// "timezone"              : "UTC",
 					"accessibility"         : { type : "boolean",  defaultValue : true },
+					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : true,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
 					"animation"             : { type : "boolean",  defaultValue : true },
 					"rtl"                   : { type : "boolean",  defaultValue : null },
 					"debug"                 : { type : "boolean",  defaultValue : false },
@@ -585,6 +586,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		 */
 		getAccessibility : function () {
 			return this.accessibility;
+		},
+		
+		/**
+		 * Returns whether the framework automatically adds automatically
+		 * the ARIA role 'application' to the html body or not.
+		 * @return {boolean} 
+		 * @since 1.27.0
+		 * @public
+		 */
+		getAutoAriaBodyRole : function () {
+			return this.autoAriaBodyRole;
 		},
 
 		/**
