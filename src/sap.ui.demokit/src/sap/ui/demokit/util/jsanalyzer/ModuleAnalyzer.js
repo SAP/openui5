@@ -165,6 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			oClassInfo.defaultAggregation = (metadata.defaultAggregation && metadata.defaultAggregation.value.value) || undefined;
 
 			each(metadata.aggregations, "type", function(n, settings, doclet) {
+				
 				oClassInfo.aggregations[n] = {
 					name: n,
 					doc : doclet && doclet.description,
@@ -183,7 +184,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				oClassInfo.associations[n] = {
 					name: n,
 					doc : doclet && doclet.description,
-					deprecation : doclet && doclet.deprecated,
+					deprecation :doclet && doclet.deprecated,
 					since : doclet && doclet.since,
 					experimental : doclet && doclet.experimental,
 					visibility : (settings.visibility && settings.visibility.value.value) || "public",
@@ -215,11 +216,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				});
 			});
 
+			//FIXME: add methods information as well; this seems not to be parsed;
+
 		}
 		
 		return oClassInfo;
 	}
-
+	
 	function collectEnumInfo(node) {
 		
 		var doclet = Doclet.get(node);
