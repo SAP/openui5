@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core">
 	<Popover
 		title="{Name}"
-		class="sapUiPopupWithPadding"
+		class="sapUiContentPadding"
 		placement="Bottom" >
 		<footer>
 			<Toolbar>

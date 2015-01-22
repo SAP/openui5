@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core">
 	<ResponsivePopover
 		title="About"
-		class="sapUiPopupWithPadding">
+		class="sapUiContentPadding">
 		<content>
 			<Text text="... more content goes here" />
 		</content>
