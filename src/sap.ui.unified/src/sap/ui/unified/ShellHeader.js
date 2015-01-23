@@ -52,6 +52,9 @@ sap.ui.define(['jquery.sap.global', './library'],
 			renderSearch: function(rm, oHeader) {
 				var oSearch = oHeader.getSearch();
 				rm.write("<div id='", oHeader.getId(), "-hdr-search'");
+				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					rm.writeAttribute("role", "search");
+				}
 				rm.writeAttribute("class", "sapUiUfdShellSearch" + (oHeader.getSearchVisible() ? "" : " sapUiUfdShellHidden"));
 				rm.write("><div>");
 				if (oSearch) {
