@@ -1335,12 +1335,14 @@
 
 		/**
 		 * A map of URL prefixes keyed by the corresponding module name prefix.
+		 * URL prefix can either be given as string or as object with properties url and final. 
+		 * When final is set to true, module name prefix cannot be overwritten.
 		 * @see jQuery.sap.registerModulePath
 		 *
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback.
 		 * @private
 		 */
-			mUrlPrefixes = { '' : 'resources/' },
+			mUrlPrefixes = { '' : { 'url' : 'resources/' } },
 
 		/**
 		 * Module neither has been required nor preloaded not declared, but someone asked for it.
@@ -1534,7 +1536,7 @@
 			for (l = aSegments.length; l >= 0; l--) {
 				sNamePrefix = aSegments.slice(0, l).join('/');
 				if ( mUrlPrefixes[sNamePrefix] ) {
-					sResult = mUrlPrefixes[sNamePrefix];
+					sResult = mUrlPrefixes[sNamePrefix].url;
 					if ( l < aSegments.length ) {
 						sResult += aSegments.slice(l).join('/');
 					}
@@ -1559,7 +1561,7 @@
 					// Note: configured URL prefixes are guaranteed to end with a '/'
 					// But to support the legacy scenario promoted by the application tools ( "registerModulePath('Application','Application')" )
 					// the prefix check here has to be done without the slash
-					sUrlPrefix = mUrlPrefixes[sNamePrefix].slice(0, -1);
+					sUrlPrefix = mUrlPrefixes[sNamePrefix].url.slice(0, -1);
 
 					if ( sURL.indexOf(sUrlPrefix) === 0 ) {
 
@@ -1901,20 +1903,25 @@
 		 *
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback for
 		 * any search.
+		 * 
+		 * The prefix can either be given as string or as object which contains the url and a final property. 
+		 * If final is set to true, overwriting a module prefix is not possible anymore. 
 		 *
 		 * @param {string} sModuleName module name to register a path for
-		 * @param {string} sUrlPrefix path to register
-		 *
+		 * @param {string | object} vUrlPrefix path prefix to register, either a string literal or an object (e.g. {url : 'url/to/res', 'final': true})
+		 * @param {string} [vUrlPrefix.url] path prefix to register
+		 * @param {boolean} [vUrlPrefix.final] flag to avoid overwriting the url path prefix for the given module name at a later point of time
+		 * 
 		 * @public
 		 * @static
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
-		jQuery.sap.registerModulePath = function registerModulePath(sModuleName, sUrlPrefix) {
+		jQuery.sap.registerModulePath = function registerModulePath(sModuleName, vUrlPrefix) {
 			jQuery.sap.assert(!/\//.test(sModuleName), "module path must not contain a slash.");
 			sModuleName = sModuleName.replace(/\./g, "/");
 			// URL must not be empty
-			sUrlPrefix = sUrlPrefix || '.';
-			jQuery.sap.registerResourcePath(sModuleName, sUrlPrefix);
+			vUrlPrefix = vUrlPrefix || '.';
+			jQuery.sap.registerResourcePath(sModuleName, vUrlPrefix);
 		};
 
 		/**
@@ -1939,29 +1946,43 @@
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback for
 		 * any search.
 		 *
+		 * The url prefix can either be given as string or as object which contains the url and a final flag. 
+		 * If final is set to true, overwriting a resource name prefix is not possible anymore. 
+		 *
 		 * @param {string} sResourceNamePrefix in unified resource name syntax
-		 * @param {string} sUrlPrefix prefix to use instead of the sResourceNamePrefix
+		 * @param {string | object} vUrlPrefix prefix to use instead of the sResourceNamePrefix, either a string literal or an object (e.g. {url : 'url/to/res', 'final': true})
+		 * @param {string} [vUrlPrefix.url] path prefix to register
+		 * @param {boolean} [vUrlPrefix.final] flag to avoid overwriting the url path prefix for the given module name at a later point of time
+		 * 
 		 * @public
 		 * @static
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
-		jQuery.sap.registerResourcePath = function(sResourceNamePrefix, sUrlPrefix) {
+		jQuery.sap.registerResourcePath = function registerResourcePath(sResourceNamePrefix, vUrlPrefix) {
 
 			sResourceNamePrefix = String(sResourceNamePrefix || "");
 
-			if ( sUrlPrefix == null ) {
-				delete mUrlPrefixes[sResourceNamePrefix];
-			} else {
-				sUrlPrefix = String(sUrlPrefix);
-				// ensure that the prefix ends with a '/'
-				if ( sUrlPrefix.slice(-1) != '/' ) {
-					sUrlPrefix += '/';
-				}
-				mUrlPrefixes[sResourceNamePrefix] = sUrlPrefix;
+			if (mUrlPrefixes[sResourceNamePrefix] && mUrlPrefixes[sResourceNamePrefix]["final"] == true) {
+				log.warning( "registerResourcePath with prefix " + sResourceNamePrefix + " already set as final to '" + mUrlPrefixes[sResourceNamePrefix].url + "'. This call is ignored." );
+				return;
+			}	
+			
+			if ( typeof vUrlPrefix === 'string' || vUrlPrefix instanceof String ) {
+				vUrlPrefix = { 'url' : vUrlPrefix };
 			}
-
-			log.info("registerResourcePath ('" + sResourceNamePrefix + "', '" + sUrlPrefix + "')");
-
+			
+			if ( !vUrlPrefix || vUrlPrefix.url == null ) {
+				delete mUrlPrefixes[sResourceNamePrefix];
+				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");				
+			} else {
+				vUrlPrefix.url = String(vUrlPrefix.url);
+				// ensure that the prefix ends with a '/'
+				if ( vUrlPrefix.url.slice(-1) != '/' ) {
+					vUrlPrefix.url += '/';
+				}
+				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
+				log.info("registerResourcePath ('" + sResourceNamePrefix + "', '" + vUrlPrefix.url + "')" + ((vUrlPrefix['final']) ? " (final)" : ""));
+			}
 		};
 
 		/**
@@ -2022,7 +2043,7 @@
 		// dump the URL prefixes
 		log.info("URL prefixes set to:");
 		for (var n in mUrlPrefixes) {
-			log.info("  " + (n ? "'" + n + "'" : "(default)") + " : " + mUrlPrefixes[n]);
+			log.info("  " + (n ? "'" + n + "'" : "(default)") + " : " + mUrlPrefixes[n].url + ((mUrlPrefixes[n]['final']) ? " (final)" : "") );
 		}
 
 		/**
@@ -2756,7 +2777,15 @@
 		};
 
 		return function() {
-			return { modules : mModules, prefixes : mUrlPrefixes };
+			
+			//remove final information in mUrlPrefixes 
+			var mFlatUrlPrefixes = {};
+				jQuery.each(mUrlPrefixes, function(sKey,oUrlPrefix) {
+				mFlatUrlPrefixes[sKey] = oUrlPrefix.url;
+			});
+
+			
+			return { modules : mModules, prefixes : mFlatUrlPrefixes };
 		};
 
 	}());
@@ -2976,7 +3005,7 @@
 					}
 					sap.ui.debug.TechnicalInfo.open(function() {
 						var oInfo = getModuleSystemInfo();
-						return { modules : oInfo.modules, prefixes : oInfo.urlPrefixes, config: oCfgData };
+						return { modules : oInfo.modules, prefixes : oInfo.prefixes, config: oCfgData };
 					});
 				}
 			});
