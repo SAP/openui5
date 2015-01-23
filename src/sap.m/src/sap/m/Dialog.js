@@ -1216,8 +1216,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		if (this._headerTitle) {
 			this._headerTitle.setText(sTitle);
 		} else {
-			this._headerTitle = new sap.m.Label(this.getId() + "-title", {
-				text: sTitle
+			this._headerTitle = new sap.m.Title(this.getId() + "-title", {
+				text : sTitle
 			}).addStyleClass("sapMDialogTitle");
 
 			this._createHeader();
