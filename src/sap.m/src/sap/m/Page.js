@@ -343,7 +343,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Page.prototype._getInternalHeader = function() {
 		var oInternalHeader = this.getAggregation("_internalHeader");
 		if (!oInternalHeader) {
-			this.setAggregation('_internalHeader', new sap.m.Bar(this.getId() + "-intHeader"));
+			this.setAggregation('_internalHeader', new sap.m.Bar(this.getId() + "-intHeader"), true); // don't invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
 			oInternalHeader = this.getAggregation("_internalHeader");
 			if (sap.ui.Device.os.ios) {
 				if (this.getShowNavButton() && this._navBtn) {
