@@ -827,6 +827,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			}
 
 		}
+		
+		//Add ARIA role 'application'
+		var $body = jQuery("body");
+		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !$body.attr("role")) {
+			$body.attr("role", "application");
+		}
 
 		// make sure that we have no concurrent modifications on the init listeners
 		var aCallbacks = this.aInitListeners;
