@@ -245,6 +245,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				aModules.unshift("sap.ui.core.library");
 			}
 
+			// enable LessSupport if specified in configuration
+			if (this.oConfiguration["xx-lesssupport"] && jQuery.inArray("sap.ui.core.plugin.LessSupport", aModules) == -1) {
+				log.info("Including LessSupport into declared modules");
+				aModules.push("sap.ui.core.plugin.LessSupport");
+			}
+
 			log.info("Declared modules: " + aModules, METHOD);
 
 			var oCfgData = window["sap-ui-config"];
