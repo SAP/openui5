@@ -51,7 +51,17 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer._renderInnerControl = function(oRm, oControl){
-		oRm.write("<span class=\"sapMTokenText\">");
+		var sTextDir = oControl.getTextDirection();
+		
+		oRm.write("<span");
+		oRm.addClass("sapMTokenText");
+		oRm.writeClasses();
+		// set text direction
+		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+		oRm.write(">");
+		
 		var title = oControl.getText();
 		if (title) {
 			oRm.writeEscaped(title);
