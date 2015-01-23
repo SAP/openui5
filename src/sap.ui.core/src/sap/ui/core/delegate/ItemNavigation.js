@@ -746,6 +746,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		// set the focus to the clicked element or back to the last
 		var oSource = oEvent.target;
 
+		var checkFocusableParent = function( oDomRef, oItem){
+
+			// as table cell might have focusable content that have not focusable DOM insinde
+			// the table cell should not get the focus but the focusable element inside
+			var bFocusableParent = false;
+			var $CheckDom = jQuery(oDomRef);
+			while (!$CheckDom.is(":sapFocusable") && $CheckDom.get(0) != oItem) {
+				$CheckDom = $CheckDom.parent();
+			}
+
+			if ($CheckDom.get(0) != oItem) {
+				// focusable Dom found inside item
+				bFocusableParent = true;
+			}
+
+			return bFocusableParent;
+
+		};
+
 		if (jQuery.sap.containsOrEquals(this.oDomRef, oSource)) {
 
 			// the mouse down occured inside the main dom ref
@@ -760,10 +779,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						// no oEvent.preventDefault(); because cursor will not be set in Textfield
 						// no oEvent.stopPropagation(); because e.g. DatePicker can not close popup
 					} else {
-
 						// only focus the items if the click did not happen on a
 						// focusable element!
-						if (oItem === oSource || !jQuery(oSource).is(":sapFocusable")) {
+						if (oItem === oSource || !checkFocusableParent(oSource, oItem)) {
 							this.focusItem(i, oEvent);
 
 							// the table mode requires not to prevent the default
