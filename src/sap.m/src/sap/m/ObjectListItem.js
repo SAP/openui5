@@ -111,7 +111,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			 * Available options for the number direction are LTR (left-to-right) and RTL (right-to-left).
 			 * By default the item number inherits the text direction from its parent.
 			 */
-			numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Set the locked state of the object list item.
+			 * @since 1.28
+			 */
+			markLocked : {type : "boolean", group : "Misc", defaultValue : false}			
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
@@ -201,7 +207,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 */
 	ObjectListItem.prototype._hasBottomContent = function() {
 		
-		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers());
+		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked());
 	};
 	
 	/**
@@ -221,7 +227,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	
 		return aVisibleAttributes;
 	};
-	
+
 	/**
 	 * Lazy load list item's image.
 	 *
@@ -305,6 +311,22 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			});
 		}
 		return this._oFlagIcon;
+	};
+
+	/**
+	 * @private
+	 * @returns Lock icon control
+	 */
+	ObjectListItem.prototype._getLockIcon = function() {
+
+		if (!this._oLockIcon) {
+			var oLockIconUri = IconPool.getIconURI("locked");
+			this._oLockIcon = IconPool.createControlByURI({
+				id: this.getId() + "-lock",
+				src: oLockIconUri
+			}).addStyleClass("sapMObjStatusMarkerLocked");
+		}
+		return this._oLockIcon;
 	};
 	
 	/**

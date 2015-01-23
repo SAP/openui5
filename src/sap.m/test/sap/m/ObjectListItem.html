@@ -20,6 +20,25 @@
 		headerText: "Object List Items"
 	});
 
+    var lockedItem = new sap.m.ObjectListItem({
+        intro: "Optional Intro Text",
+        title: "Sed ut perspiciatis, unde omnis iste natus",
+        number: "802",
+        numberUnit: "Euro",
+        numberState : sap.ui.core.ValueState.Success,
+        attributes: [
+            new sap.m.ObjectAttribute({text: "First Attribute Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}),
+            new sap.m.ObjectAttribute({text: "Second Attribute"})
+        ],
+        firstStatus: new sap.m.ObjectStatus({text: "Critical Status", state: "Error"}),
+        showMarkers: true,
+        markFlagged: true,
+        markFavorite: true,
+        markLocked: true
+    });
+    list.addItem(lockedItem);
+
+
     var rtlTestItem = new sap.m.ObjectListItem({
         type: "Active",
         intro: "0882 13 14 15",
@@ -374,6 +393,13 @@
 			markersAndStatuses.setMarkFavorite(!markersAndStatuses.getMarkFavorite());
 		}
 	}));
+    page.addContent(new sap.m.Button({
+        id: "locked-button",
+        text: "Locked",
+        press: function() {
+            markersAndStatuses.setMarkLocked(!markersAndStatuses.getMarkLocked());
+        }
+    }));
 	app.placeAt('body');
 	
 </script>
