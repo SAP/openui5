@@ -28,21 +28,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (rm, oToolbar) {
-		var sRole;
 		rm.addClass("sapMTB");
 
-		//ARIA
+		// ARIA
 		var aContent = oToolbar.getContent();
 		if (oToolbar.getActive() && (!aContent || aContent.length === 0)) {
-			sRole = "button";
+			rm.writeAccessibilityState(oToolbar, {
+				role: "button"
+			});
 		} else {
-			// Add role="heading" if the control parent is an instance of Dialog or Popover and it is use as a heading
-			sRole = (oToolbar.getParent() instanceof sap.m.Dialog || oToolbar.getParent() instanceof sap.m.Popover) && oToolbar.getHTMLTag() ? "heading" : "toolbar";
+			rm.writeAccessibilityState(oToolbar, {
+				role: "toolbar"
+			});
 		}
 
-		rm.writeAccessibilityState(oToolbar, {
-			role: sRole
-		});
 
 		if (!sap.m.Toolbar.hasFlexBoxSupport) {
 			rm.addClass("sapMTBNoFlex");
