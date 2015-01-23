@@ -221,6 +221,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		this.aDaysWide = this.oLocaleData.getDays("wide");
 		this.aDaysAbbrevSt = this.oLocaleData.getDaysStandAlone("abbreviated");
 		this.aDaysWideSt = this.oLocaleData.getDaysStandAlone("wide");
+		this.aQuartersAbbrev = this.oLocaleData.getQuarters("abbreviated");
+		this.aQuartersWide = this.oLocaleData.getQuarters("wide");
+		this.aQuartersAbbrevSt = this.oLocaleData.getQuartersStandAlone("abbreviated");
+		this.aQuartersWideSt = this.oLocaleData.getQuartersStandAlone("wide");
 		this.aDayPeriods = this.oLocaleData.getDayPeriods("abbreviated");
 		this.aFormatArray = this.parseJavaDateFormat(this.oFormatOptions.pattern);
 		this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
@@ -239,6 +243,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		"W": "weekInMonth",
 		"D": "dayInYear",
 		"d": "day",
+		"Q": "quarter",
+		"q": "quarterStandalone",
 		"F": "dayOfWeekInMonth",
 		"E": "dayNameInWeek",
 		"c": "dayNameInWeekStandalone",
@@ -291,6 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			bPositiveOffset = oDate.getTimezoneOffset() > 0,
 			iHourOffset = Math.floor(iTZOffset / 60),
 			iMinuteOffset = iTZOffset % 60,
+			iQuarter = Math.floor(iMonth / 3),
 			sYear,
 			sWeek,
 			sHours,
@@ -338,6 +345,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 						aBuffer.push(this.aMonthsWideSt[iMonth]);
 					} else {
 						aBuffer.push(jQuery.sap.padLeft(String(iMonth + 1), "0", oPart.iDigits));
+					}
+					break;
+				case "quarter":
+					if (oPart.iDigits == 3) {
+						aBuffer.push(this.aQuartersAbbrev[iQuarter]);
+					} else if (oPart.iDigits >= 4) {
+						aBuffer.push(this.aQuartersWide[iQuarter]);
+					} else {
+						aBuffer.push(jQuery.sap.padLeft(String(iQuarter + 1), "0", oPart.iDigits));
+					}
+					break;
+				case "quarterStandalone":
+					if (oPart.iDigits == 3) {
+						aBuffer.push(this.aQuartersAbbrevSt[iQuarter]);
+					} else if (oPart.iDigits >= 4) {
+						aBuffer.push(this.aQuartersWideSt[iQuarter]);
+					} else {
+						aBuffer.push(jQuery.sap.padLeft(String(iQuarter + 1), "0", oPart.iDigits));
 					}
 					break;
 				case "era":
@@ -483,6 +508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			iMinutes = null,
 			iSeconds = null,
 			iMilliseconds = null,
+			iQuarter = null,
 			bPM = false,
 			oPart,
 			sPart,
@@ -627,6 +653,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 						iMonth = findEntryIndex(this.aMonthsAbbrevSt);
 						if (iMonth != null) {
 							iIndex += this.aMonthsAbbrevSt[iMonth].length;
+							break;
+						}
+						checkValid(oPart.sType, true);
+					}
+					break;
+				case "quarter":
+				case "quarterStandalone":
+					if (oPart.iDigits < 3) {
+						sPart = findNumbers(Math.max(oPart.iDigits, 2));
+						checkValid(oPart.sType, sPart === "");
+						iQuarter = parseInt(sPart, 10) - 1;
+						iIndex += sPart.length;
+						if (bStrict && iQuarter > 3) {
+							bValid = false;
+						}
+					} else {
+						iQuarter = findEntryIndex(this.aQuartersWide);
+						if (iQuarter != null) {
+							iIndex += this.aQuartersWide[iQuarter].length;
+							break;
+						}
+						iQuarter = findEntryIndex(this.aQuartersWideSt);
+						if (iQuarter != null) {
+							iIndex += this.aQuartersWideSt[iQuarter].length;
+							break;
+						}
+						iQuarter = findEntryIndex(this.aQuartersAbbrev);
+						if (iQuarter != null) {
+							iIndex += this.aQuartersAbbrev[iQuarter].length;
+							break;
+						}
+						iQuarter = findEntryIndex(this.aQuartersAbbrevSt);
+						if (iQuarter != null) {
+							iIndex += this.aQuartersAbbrevSt[iQuarter].length;
 							break;
 						}
 						checkValid(oPart.sType, true);
