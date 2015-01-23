@@ -101,11 +101,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 		function _handleError(oError) {
 			that.bFailed = true;
-			var mParams = { message: oError.message };
+			var mParams = { 
+				message: oError.message,
+				request: oError.request,
+				response: oError.response
+			};
 			if (oError.response) {
-					mParams.statusCode = oError.response.statusCode;
-					mParams.statusText = oError.response.statusText;
-					mParams.responseText = oError.response.body;
+				mParams.statusCode = oError.response.statusCode;
+				mParams.statusText = oError.response.statusText;
+				mParams.responseText = oError.response.body;
 			}
 
 			if (that.oRequestHandle && that.oRequestHandle.bSuppressErrorHandlerCall) {
