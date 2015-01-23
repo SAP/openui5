@@ -11,7 +11,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var ProgressIndicatorRenderer = {};
-	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,7 +24,9 @@ sap.ui.define(['jquery.sap.global'],
 		var sTextValue = oC.getDisplayValue();
 		var bShowText = oC.getShowValue();
 		var sState = oC.getState();
-	
+		var sTextDirectionLowerCase = oC.getTextDirection().toLowerCase();
+		var sControlId = oC.getId();
+
 		// write the HTML into the render manager
 		//PI border
 		oRm.write("<div");
@@ -39,7 +40,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("height", iHeightControl);
 		}
 		oRm.writeStyles();
-	
+
 		if (oC.getEnabled()) {
 			oRm.writeAttribute('tabIndex', '-1');
 		} else {
@@ -47,11 +48,11 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		oRm.writeClasses();
 		oRm.write(">"); // div element
-	
+
 		//PI bar
 		oRm.write("<div");
 		oRm.addClass("sapMPIBar");
-	
+
 		switch (sState) {
 		case sap.ui.core.ValueState.Warning:
 			oRm.addClass("sapMPIBarCritical");
@@ -69,35 +70,44 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMPIBarNeutral");
 			break;
 		}
-	
+
 		oRm.writeClasses();
-		oRm.writeAttribute("id", oC.getId() + "-bar");
+		oRm.writeAttribute("id", sControlId + "-bar");
 		oRm.writeAttribute("style", "width:" + fWidthBar + "%");
 		oRm.write(">"); // div element
-	
+
 		//PI textLeft
-		oRm.write("<span class='sapMPIText sapMPITextLeft' id='" + oC.getId() + "-textLeft'>");
-		
+		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Left", sControlId);
+
 		//textvalue is only showed if showValue set
 		if (bShowText) {
 			oRm.writeEscaped(sTextValue);
 		}
-	
+
 		oRm.write("</span>");
 		oRm.write("</div>"); // div element pi bar
-		
+
 		//PI textRight
-		oRm.write("<span class='sapMPIText sapMPITextRight' id='" + oC.getId() + "-textRight'>");
-	
+		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Right", sControlId);
+
 		//textvalue is only showed if showValue set
 		if (bShowText) {
 			oRm.writeEscaped(sTextValue);
 		}
 		oRm.write("</span>");
-	
+
 		oRm.write("</div>"); //div element pi text
 	};
-	
+
+	ProgressIndicatorRenderer._renderDisplayText = function(oRm, sTextDirectionLowerCase, sTextAlign, oControlId){
+		oRm.write("<span class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
+
+		if (sTextDirectionLowerCase !== "inherit") {
+			oRm.writeAttribute("dir", sTextDirectionLowerCase);
+		}
+
+		oRm.write('>');
+	};
 
 	return ProgressIndicatorRenderer;
 

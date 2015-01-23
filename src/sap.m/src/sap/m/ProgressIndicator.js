@@ -67,7 +67,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * The height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
 			 * @since 1.15.0
 			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
 

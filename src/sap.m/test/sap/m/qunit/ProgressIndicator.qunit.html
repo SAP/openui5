@@ -37,6 +37,29 @@
 		barColor : "NEGATIVE"
 	});
 	oProgInd2.placeAt("content");
+
+	var oProgInd3 = new sap.m.ProgressIndicator("pi3", {
+		width : "50%",
+		percentValue : 30,
+		displayValue : "display 30 %",
+		showValue : true,
+		barColor : "POSITIVE",
+		textDirection: "RTL"
+	});
+
+	oProgInd3.placeAt("content");
+
+	var oProgInd4 = new sap.m.ProgressIndicator("pi4", {
+		width : "50%",
+		percentValue : 30,
+		displayValue : "display 30 %",
+		showValue : true,
+		barColor : "POSITIVE",
+		textDirection: "LTR"
+	});
+
+	oProgInd4.placeAt("content");
+
 	sap.ui.getCore().applyChanges();
 
 	//deferment
@@ -96,8 +119,33 @@
 
 		oProgIndicator.destroy();
 	});
-</script>
 
+	test("explicitly setting textDirection to RTL should override the global setting", function(){
+		var $TestSubject = jQuery.sap.byId("pi3").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		equal(sDirAttribute, 'rtl', "the attribute 'dir' should have it's value set to rtl");
+	});
+
+	test("explicitly setting textDirection to LTR should override the global setting", function(){
+		var $TestSubject = jQuery.sap.byId("pi4").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		equal(sDirAttribute, 'ltr', "the attribute 'dir' should have it's value set to ltr");
+	});
+
+	test("not setting textDirection should not change the global text direction", function(){
+		var $TestSubject = jQuery.sap.byId("pi1").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		equal(sDirAttribute, undefined, "the attribute 'dir' should not exist");
+	});
+
+	test("explicitly setting textDirection to RTL should result in 'dir' attribute added", function(){
+		var $TestSubject = jQuery.sap.byId("pi3").find("span");
+		var sDirAttribute = $TestSubject.attr("dir");
+		var bDirAttributeExists = sDirAttribute !== null && sDirAttribute !== undefined;
+		equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
+	});
+
+</script>
 
 </head>
 <body>
