@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientPropertyBinding',
-		'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONModel',
+sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListBinding',
+		'sap/ui/model/json/JSONModel', 'sap/ui/model/json/JSONPropertyBinding',
 		'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel'],
-	function(ClientContextBinding, ClientPropertyBinding, JSONListBinding, JSONModel,
+	function(ClientContextBinding, JSONListBinding, JSONModel, JSONPropertyBinding,
 			JSONTreeBinding, MetaModel) {
 	"use strict";
 
@@ -222,8 +222,7 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	};
 
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
-		// avoid JSONPropertyBinding#setValue
-		return new ClientPropertyBinding(this, sPath, oContext, mParameters);
+		return new JSONPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
 	ODataMetaModel.prototype.bindTree = function (sPath, oContext, aFilters, mParameters) {
@@ -346,6 +345,18 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 		if (bLegacySyntax) {
 			throw new Error("Legacy syntax not supported by ODataMetaModel");
 		}
+	};
+
+	/**
+	 * Changes not supported by OData meta model!
+	 *
+	 * @throws {Error}
+	 * @returns {void}
+	 * @private
+	 */
+	ODataMetaModel.prototype.setProperty = function () {
+		// Note: this method is called by JSONPropertyBinding#setValue
+		throw new Error("Unsupported operation: ODataMetaModel#setProperty");
 	};
 
 	return ODataMetaModel;

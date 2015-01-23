@@ -300,11 +300,15 @@
 			strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindProperty(sPath, oContext, mParameters);
-			ok(oBinding instanceof sap.ui.model.ClientPropertyBinding);
+			ok(oBinding instanceof sap.ui.model.json.JSONPropertyBinding);
 			strictEqual(oBinding.getModel(), oMetaModel);
 			strictEqual(oBinding.getPath(), sPath);
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.mParameters, mParameters);
+
+			raises(function () {
+				oBinding.setValue("foo");
+			}, /Unsupported operation: ODataMetaModel#setProperty/);
 
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
 			ok(oBinding instanceof sap.ui.model.json.JSONListBinding);
