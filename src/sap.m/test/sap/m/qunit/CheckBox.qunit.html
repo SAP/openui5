@@ -428,6 +428,33 @@ jQuery.sap.require("sap.m.CheckBox");
 		testSetLabelProperty("textDirection", "Inherit", "Setter");
 	});
 
+    /* ----------------------------------------------- */
+    /* Test: 'textAlign' - via Constructor         */
+    /* ----------------------------------------------- */
+
+    test("'textAlign' - via Constructor", function(){
+        testSetLabelProperty("textAlign", "Begin", "Constructor");
+        testSetLabelProperty("textAlign", "End", "Constructor");
+        testSetLabelProperty("textAlign", "Left", "Constructor");
+        testSetLabelProperty("textAlign", "Right", "Constructor");
+        testSetLabelProperty("textAlign", "Center", "Constructor");
+        testSetLabelProperty("textAlign", "Initial", "Constructor");
+    });
+
+
+    /* ----------------------------------------------- */
+    /* Test: 'textAlign' - via Setter Method         */
+    /* ----------------------------------------------- */
+
+    test("'textAlign' - via Setter Method", function(){
+        testSetLabelProperty("textAlign", "Begin", "Setter");
+        testSetLabelProperty("textAlign", "End", "Setter");
+        testSetLabelProperty("textAlign", "Left", "Setter");
+        testSetLabelProperty("textAlign", "Right", "Setter");
+        testSetLabelProperty("textAlign", "Center", "Setter");
+        testSetLabelProperty("textAlign", "Initial", "Setter");
+    });
+
 
 	/* ----------------------------------------------- */
 	/* Test: 'width' - via Constructor                 */
