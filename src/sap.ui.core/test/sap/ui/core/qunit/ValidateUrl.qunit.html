@@ -75,6 +75,9 @@
 			sUrl = "http://www.sap.com/index.html?sap-par1=true&sap-par2=false#home";
 			ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
 
+			sUrl = "http://www.sap.com/index.html#hash/with/slashes?and/question/marks";
+			ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+			
 		});
 
 		test("Whitelist", function() {

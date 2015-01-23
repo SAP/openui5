@@ -316,6 +316,7 @@ sap.ui.define(['jquery.sap.global'],
 			sHash = result[6];
 
 		var rCheck = /[\x00-\x24\x26-\x29\x2b\x2c\x2f\x3a-\x40\x5b-\x5e\x60\x7b-\x7d\x7f-\uffff]/;
+		var rCheckHash = /[\x00-\x24\x26-\x29\x2b\x2c\x3a-\x3e\x5b-\x5e\x60\x7b-\x7d\x7f-\uffff]/;
 		var rCheckMail = /[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
 		// protocol
@@ -373,7 +374,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// hash
 		if (sHash) {
-			if (rCheck.test(sHash)) {
+			if (rCheckHash.test(sHash)) {
 				// forbidden character found
 				return false;
 			}
