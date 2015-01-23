@@ -247,7 +247,6 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 *   (the path to) the association with the given qualified name; <code>undefined</code> (for a
 	 *   path) or <code>null</code> (for an object) if no such association is found
 	 * @public
-	 * @static
 	 */
 	ODataMetaModel.prototype.getODataAssociation = function (sQualifiedName, bAsPath) {
 		return getPathOrObject(this.oModel, "association", sQualifiedName, bAsPath);
@@ -257,13 +256,12 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 * Returns the given OData association's end with the given role name.
 	 *
 	 * @param {object} oAssociation
-	 *   an association as returned by {@link #getODataAssocation}
+	 *   an association as returned by {@link #getODataAssocation getODataAssocation}
 	 * @param {string} sRoleName
 	 *   a role name within this association
 	 * @returns {object}
 	 *   the OData association's end or <code>null</code> if no such association end is found
 	 * @public
-	 * @static
 	 */
 	ODataMetaModel.prototype.getODataAssociationEnd = function (oAssociation, sRoleName) {
 		return oAssociation ? findObject(oAssociation.end, sRoleName, "role") : null;
@@ -281,7 +279,6 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 *   (the path to) the entity type with the given qualified name; <code>undefined</code> (for a
 	 *   path) or <code>null</code> (for an object) if no such type is found
 	 * @public
-	 * @static
 	 */
 	ODataMetaModel.prototype.getODataEntityType = function (sQualifiedName, bAsPath) {
 		return getPathOrObject(this.oModel, "entityType", sQualifiedName, bAsPath);
@@ -291,14 +288,13 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 * Returns the given OData entity type's navigation property with the given name.
 	 *
 	 * @param {object} oEntityType
-	 *   an entity type as returned by {@link #getODataEntityType}
+	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
 	 * @param {string} sName
 	 *   a local name, e.g. "ToSupplier"
 	 * @returns {object}
 	 *   the OData entity type's navigation property or <code>null</code> if no such navigation
 	 *   property is found
 	 * @public
-	 * @static
 	 */
 	ODataMetaModel.prototype.getODataNavigationProperty = function (oEntityType, sName) {
 		return oEntityType ? findObject(oEntityType.navigationProperty, sName) : null;
@@ -318,7 +314,7 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 * failure to load meta data or annotations.
 	 *
 	 * @public
-	 * @return {Promise} a Promise
+	 * @returns {Promise} a Promise
 	 */
 	ODataMetaModel.prototype.loaded = function(){
 		return this.oLoadedPromise;
@@ -327,7 +323,8 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	/**
 	 * Refresh not supported by OData meta model!
 	 *
-	 * @throws Error
+	 * @throws {Error}
+	 * @returns {void}
 	 * @public
 	 */
 	ODataMetaModel.prototype.refresh = function () {
@@ -339,7 +336,8 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/ClientProperty
 	 *
 	 * @param {boolean} bLegacySyntax
 	 *   must not be true!
-	 * @throws Error if <code>bLegacySyntax</code> is true
+	 * @throws {Error} if <code>bLegacySyntax</code> is true
+	 * @returns {void}
 	 * @public
 	 */
 	ODataMetaModel.prototype.setLegacySyntax = function (bLegacySyntax) {

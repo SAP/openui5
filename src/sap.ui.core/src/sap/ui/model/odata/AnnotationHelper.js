@@ -11,8 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			fnEscape = BindingParser.complexParser.escape;
 
 		/**
-		 * Handling of <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268262">
-		 * 14.5.3.1.1 Function odata.concat</a>.
+		 * Handling of "14.5.3.1.1 Function odata.concat".
 		 *
 		 * @param {object[]} aParameters
 		 *    the parameters
@@ -59,8 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
-		 * Handling of <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268276">
-		 * 14.5.12 Expression edm:Path</a>.
+		 * Handling of "14.5.12 Expression edm:Path".
 		 *
 		 * @param {string} sPath
 		 *    the string path value from the meta model
@@ -185,16 +183,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
-		 * @class
-		 * The OData helper which can act as a formatter in XML template views.
+		 * @classdesc
+		 * A collection of methods which help to consume
+		 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html">
+		 * OData v4 annotations</a> in XML template views.
 		 *
-		 * @static
+		 * Formatter functions like {@link #.format format} and {@link #.simplePath simplePath} can
+		 * be used in complex bindings to turn OData v4 annotations into texts or data bindings,
+		 * e.g. <code>&lt;sfi:SmartField value="{path: 'meta>Value', formatter:
+		 * 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/></code>.
+		 *
+		 * Helper functions like {@link #.resolvePath resolvePath} can be used by template
+		 * instructions in XML template views, e.g. <code>&lt;template:with path="meta>Value"
+		 * helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target"></code>.
+		 *
+		 * You need to {@link jQuery.sap.require} this module before use!
+		 *
 		 * @public
-		 * @name sap.ui.model.odata.AnnotationHelper
+		 * @namespace sap.ui.model.odata.AnnotationHelper
 		 */
 		return /** @lends sap.ui.model.odata.AnnotationHelper */ {
 			/**
-			 * A formatter helping to interpret OData v4 annotations during template processing.
+			 * A formatter function to be used in a complex binding inside an XML template view
+			 * in order to interpret OData v4 annotations. It knows about
+			 * <ul>
+			 *   <li> the constant "14.4.11 Expression edm:String", which is turned into a fixed
+			 *   text;
+			 *   <li> the dynamic "14.5.3 Expression edm:Apply" (for "14.5.3.1.1 Function
+			 *   odata.concat" only), which is turned into a data binding expression relative to an
+			 *   entity;
+			 *   <li> the dynamic "14.5.12 Expression edm:Path", which is turned into a data
+			 *   binding relative to an entity, including type information and constraints as
+			 *   available from meta data.
+			 * </ul>
+			 * Unsupported values are turned into a string nevertheless, but indicated as such.
+			 * Illegal values are output "as is" for a human reader to make sense of them.
+			 * Proper escaping is used to make sure that data binding syntax is not corrupted.
+			 *
+			 * Example:
+			 * <pre>
+			 * &lt;Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+			 * </pre>
 			 *
 			 * @param {any} vRawValue
 			 *    the raw value from the meta model
@@ -236,15 +265,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			},
 
 			/**
-			 * Resolves an <code>edm:AnnotationPath</code> expression according to
-			 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268259">
-			 * 14.5.2 Expression edm:AnnotationPath</a>. Currently supports navigation properties
+			 * Helper function for a <code>template:with</code> instruction that resolves a dynamic
+			 * "14.5.2 Expression edm:AnnotationPath". Currently supports navigation properties
 			 * and term casts.
+			 *
+			 * Example:
+			 * <pre>
+			 *   &lt;template:with path="meta>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+			 * </pre>
 			 *
 			 * @param {sap.ui.model.Context} oContext
 			 *   a context which must point to an annotation or annotation property of type
 			 *   <code>Edm.AnnotationPath</code>, embedded within an entity type;
-			 *   the context's model must be an <code>sap.ui.model.odata.ODataMetaModel</code>
+			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the target
 			 * @public
@@ -298,9 +331,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			},
 
 			/**
-			 * A formatter helping to interpret OData v4 annotations during template processing.
-			 * Returns only a simple path for bindings, without type or constraint information
-			 * (at least for those simple cases where this is possible).
+			 * A formatter function to be used in a complex binding inside an XML template view
+			 * in order to interpret OData v4 annotations, quite like {@link #.format format} but
+			 * with a simplified output aimed at design-time templating with smart controls.
+			 * It only knows about the dynamic "14.5.12 Expression edm:Path", which is turned into
+			 * a simple binding path, without type or constraint information (at least for those
+			 * simple cases where this is possible).
+			 *
+			 * Example:
+			 * <pre>
+			 *   &lt;sfi:SmartField value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/>
+			 * </pre>
 			 *
 			 * @param {any} vRawValue
 			 *    the raw value from the meta model
