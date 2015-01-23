@@ -318,7 +318,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			//set flag to avoid double calculation
 			if (!that._bCalSize) {
 				that._bCalSize = true;
-				that._storeScrollPosition();
+				if (bFromResize) {
+					// Save the current scroll position only when this method is called from resize handler
+					// otherwise it messes the initial scrolling setting of scrollenablement in RTL mode
+					that._storeScrollPosition();
+				}
 				that._clearCSSStyles();
 			}
 			//calculate the best placement of the popover if placementType is horizontal,  vertical or auto
@@ -327,26 +331,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				that._calcPlacement();
 				return;
 			}
-	
+
 			// update the "of" property on oPosition because parent can be already rerendered
 			if (that._oOpenBy instanceof sap.ui.core.Element) {
 				oPosition.of = that._getOpenByDomRef();
 			}
-	
+
 			// if the openBy dom reference is null or already detached from the dom tree because of rerendering
 			// there's no need to reposition the popover again
 			if (!oPosition.of || !jQuery.sap.containsOrEquals(document.documentElement, oPosition.of)) {
 				jQuery.sap.log.warning("sap.m.Popover: in function applyPosition, the openBy element doesn't have any DOM output or the DOM is already detached from DOM tree" + that);
 				return;
 			}
-	
+
 			var oRect = jQuery(oPosition.of).rect();
 			// if openBy Dom element is complete out of viewport after resize event, close the popover.
 			if (bFromResize && (oRect.top + oRect.height <= 0 || oRect.top >= that._$window.height() || oRect.left + oRect.width <= 0 || oRect.left >= that._$window.width())) {
 				that.close();
 				return;
 			}
-	
+
 			// some browser changes the scrollLeft of window after firing resize event
 			// which caused the popover to be positioned at the wrong place.
 			jQuery(window).scrollLeft(0);
@@ -355,6 +359,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			Popup.prototype._applyPosition.call(this, oPosition);
 			that._fnSetArrowPosition();
 			that._restoreScrollPosition();
+
 			//reset the flags
 			that._bCalSize = false;
 			that._bPosCalced = false;
