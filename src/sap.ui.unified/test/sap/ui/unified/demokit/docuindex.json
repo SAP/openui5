@@ -47,7 +47,7 @@
 					"sap.ui.unified.sample.CalendarSingleDaySelection",
 					"sap.ui.unified.sample.CalendarSingleIntervalSelection",
 					"sap.ui.unified.sample.CalendarMultipleDaySelection",
-					"sap.ui.unified.sample.CalendarSpecialDaysLegend"
+					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
 					"sap.ui.unified.sample.CalendarMultipleMonth"
 				]
 			},
