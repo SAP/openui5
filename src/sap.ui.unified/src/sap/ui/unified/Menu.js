@@ -170,11 +170,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	 */
 	Menu.prototype.onAfterRendering = function() {
 		var aItems = this.getItems();
-		var item = -1;
-		
+
 		for (var i = 0; i < aItems.length; i++) {
 			if (aItems[i].onAfterRendering && aItems[i].getDomRef()) {
-				item = i;
 				aItems[i].onAfterRendering();
 			}
 		}
@@ -183,14 +181,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			this.oHoveredItem.hover(true, this);
 		}
 		
-		var iMaxVisibleItems = this.getMaxVisibleItems();
-		var iMaxHeight = document.documentElement.clientHeight - 10;
-		if (iMaxVisibleItems > 0 && item >= 0) {
-			iMaxHeight = Math.min(iMaxHeight, aItems[item].$().outerHeight(true) * iMaxVisibleItems);
-		}
-		
-		if (this.$().outerHeight(true) > iMaxHeight) {
-			this.$().css("max-height", iMaxHeight + "px").toggleClass("sapUiMnuScroll", true);
+		checkAndLimitHeight(this);
+	};
+	
+	Menu.prototype.onThemeChanged = function(){
+		if (this.getDomRef() && this.getPopup().getOpenState() === sap.ui.core.OpenState.OPEN) {
+			checkAndLimitHeight(this);
+			this.getPopup()._applyPosition(this.getPopup()._oLastPosition);
 		}
 	};
 	
@@ -888,6 +885,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		var oParent = oMenu.getParent();
 		if (oParent && oParent instanceof MenuItemBase) {
 			oParent.onSubmenuToggle(bOpen);
+		}
+	}
+	
+	
+	function checkAndLimitHeight(oMenu) {
+		var iMaxVisibleItems = oMenu.getMaxVisibleItems(),
+			iMaxHeight = document.documentElement.clientHeight - 10,
+			$Menu = oMenu.$();
+		
+		if (iMaxVisibleItems > 0) {
+			var aItems = oMenu.getItems();
+			for (var i = 0; i < aItems.length; i++) {
+				if (aItems[i].getDomRef()) {
+					iMaxHeight = Math.min(iMaxHeight, aItems[i].$().outerHeight(true) * iMaxVisibleItems);
+					break;
+				}
+			}
+		}
+		
+		if ($Menu.outerHeight(true) > iMaxHeight) {
+			$Menu.css("max-height", iMaxHeight + "px").toggleClass("sapUiMnuScroll", true);
+		} else {
+			$Menu.css("max-height", "").toggleClass("sapUiMnuScroll", false);
 		}
 	}
 	
