@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
 	
 			/**
-			 * Defines the width of the input.
+			 * Defines the CSS width of the input. If not set, width is 100%.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 	
