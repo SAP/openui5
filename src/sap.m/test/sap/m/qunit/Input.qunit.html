@@ -688,7 +688,7 @@
 		ok(oItem, "Item should be created");
 
 		oItem.focus();
-		oItem.firePress();
+		oItem.$().trigger("tap");
 
 		equal(fnCallback.callCount, 1, "change event handler only called once");
 		var spyCall = fnCallback.getCall(0);
@@ -777,8 +777,12 @@
 		equal(oPopup1.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 		
 		//trigger selection
-		oPopup1.getContent()[0].getItems()[0].firePress();
-		this.clock.tick(500);
+		var oList = oPopup1.getContent()[0];
+		var oListItem = oList.getItems()[0];
+		oList.fireSelectionChange({
+			listItem : oListItem
+		});
+		
 		ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
 		equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
 		

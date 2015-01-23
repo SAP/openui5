@@ -56,14 +56,21 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 	}});
 	
-	
-	// GroupHeaderListItem is not selectable
-	GroupHeaderListItem.prototype.isSelectable = function() {
-		return false;
+	// GroupHeaderListItem does not respect the list mode
+	GroupHeaderListItem.prototype.getMode = function() {
+		return sap.m.ListType.None;
 	};
 	
 	GroupHeaderListItem.prototype.shouldClearLastValue = function() {
 		return true;
+	};
+	
+	// returns responsible table control for the item
+	GroupHeaderListItem.prototype.getTable = function() {
+		var oParent = this.getParent();
+		if (oParent instanceof sap.m.Table) {
+			return oParent;
+		}
 	};
 	
 	GroupHeaderListItem.prototype.onBeforeRendering = function() {

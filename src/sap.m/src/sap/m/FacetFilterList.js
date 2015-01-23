@@ -563,7 +563,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	
 	/**
 	 * Remove the given key from the selected keys cache. This does not deselect the associated item and therefore does
-	 * not cause onItemSetSelected to be called.
+	 * not cause onItemSelectedChange to be called.
 	 * 
 	 * @param sKey The key to remove. If null, then the value of sText will be used as the key.
 	 * @param sText If key is null then this parameter will be used as the key.
@@ -611,7 +611,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 	
 	
-	FacetFilterList.prototype.onItemSetSelected = function(oItem, bSelect) {
+	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
 		
 		// This method override runs when setSelected is called from ListItemBase. Here we update
 		// the selected keys cache based on whether the item is being selected or not. We also
@@ -622,7 +622,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		} else {
 			this._removeSelectedKey(oItem.getKey(), oItem.getText());
 		}
-		sap.m.ListBase.prototype.onItemSetSelected.apply(this, arguments);
+		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 		
 		this._updateSelectAllCheckBox(bSelect);
 		this.setActive(this.getActive() || bSelect);

@@ -453,11 +453,11 @@
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
 			var aItems = oTable.getItems();
 			aItems[2].setSelected(true);
-			equals(aItems[0]._radioButton.getSelected(), false, "SingleSelection: Item 0 should not be selected");
-			equals(aItems[1]._radioButton.getSelected(), false, "SingleSelection: Item 1 should not be selected");
-			equals(aItems[2]._radioButton.getSelected(), true, "SingleSelection: Item 2 should be selected");
-			equals(aItems[3]._radioButton.getSelected(), false, "SingleSelection: Item 3 should not be selected");
-			equals(aItems[4]._radioButton.getSelected(), false, "SingleSelection: Item 4 should not be selected");
+			equals(aItems[0].getModeControl().getSelected(), false, "SingleSelection: Item 0 should not be selected");
+			equals(aItems[1].getModeControl().getSelected(), false, "SingleSelection: Item 1 should not be selected");
+			equals(aItems[2].getModeControl().getSelected(), true, "SingleSelection: Item 2 should be selected");
+			equals(aItems[3].getModeControl().getSelected(), false, "SingleSelection: Item 3 should not be selected");
+			equals(aItems[4].getModeControl().getSelected(), false, "SingleSelection: Item 4 should not be selected");
 			oTable.fireSelect({ listItem : aItems[2] });		  
 		});
 		

@@ -14,6 +14,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	var ListBaseRenderer = {};
 	
 	/**
+	 * Determines the order of the mode for the renderer
+	 * -1 is for the beginning of the content
+	 * +1 is for the end of the content
+	 *  0 is to ignore this mode 
+	 * @static
+	 */
+	ListBaseRenderer.ModeOrder = {
+		None : 0,
+		Delete : 1,
+		MultiSelect : -1,
+		SingleSelect : 1,
+		SingleSelectLeft : -1,
+		SingleSelectMaster : 0
+	};
+	
+	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
 	 *
@@ -78,6 +94,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
+		
+		// accessibility state
+		this.writeAccessibilityState(rm, oControl);
 	
 		// list attributes
 		rm.addClass("sapMListUl");
@@ -107,7 +126,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 		//TODO: There should be a better way to set these private variables
 		bRenderItems && aItems.forEach(function(oItem) {
-			oControl._applySettingsToItem(oItem, true);
 			rm.renderControl(oItem);
 		});
 	
@@ -168,6 +186,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	ListBaseRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<ul");
 		oControl.addNavSection(oControl.getId("listUl"));
+	};
+	
+	/**
+	 * Writes the accessibility state
+	 *
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	ListBaseRenderer.writeAccessibilityState = function(rm, oControl) {
+		// TODO
 	};
 	
 	/**

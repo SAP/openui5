@@ -13,6 +13,49 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	 */
 	var ColumnListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	
+	ColumnListItemRenderer.render = function(rm, oLI) {
+		var oTable = oLI.getTable();
+		if (!oTable) {
+			return;
+		}
+
+		ListItemBaseRenderer.render.apply(this, arguments);
+
+		if (oLI.getVisible() && oTable.hasPopin()) {
+			this.renderPopin(rm, oLI, oTable);
+		}
+	};
+
+	ColumnListItemRenderer.openItemTag = function(rm, oLI) {
+		rm.write("<tr");
+	};
+
+	ColumnListItemRenderer.closeItemTag = function(rm, oLI) {
+		rm.write("</tr>");
+	};
+
+	ColumnListItemRenderer.handleNoFlex = function(rm, oLI) {
+	};
+
+	// wrap type content with a cell always
+	ColumnListItemRenderer.renderType = function(rm, oLI) {
+		rm.write('<td class="sapMListTblNavCol">');
+		ListItemBaseRenderer.renderType.apply(this, arguments);
+		rm.write('</td>');
+	};
+
+	// wrap mode content with a cell
+	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
+		rm.write('<td class="sapMListTblSelCol">');
+		ListItemBaseRenderer.renderModeContent.apply(this, arguments);
+		rm.write('</td>');
+	};
+
+	// ColumnListItem does not respect counter property of the LIB
+	ColumnListItemRenderer.renderCounter = function(rm, oLI) {
+	};
+	
+	
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
@@ -40,9 +83,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	 *
 	 * @param {sap.ui.core.RenderManager} rm RenderManager
 	 * @param {sap.m.ListItemBase} oLI List item
-	 * @param {sap.m.Table} oTable Table control
 	 */
-	ColumnListItemRenderer.renderLIContent = function(rm, oLI, oTable) {
+	ColumnListItemRenderer.renderLIContentWrapper = function(rm, oLI) {
+		var oTable = oLI.getTable();
 		if (!oTable) {
 			return;
 		}
@@ -194,12 +237,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		});
 	
 		rm.write("</div></td></tr>");
-	};
-	
-	ColumnListItemRenderer.renderInvisible = function(rm, oLI) {
-		rm.write("<tr");
-		this.writeInvisiblePlaceholderData(rm, oLI);
-		rm.write("></tr>");
 	};
 
 	return ColumnListItemRenderer;

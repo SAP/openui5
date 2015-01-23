@@ -120,9 +120,9 @@
 	}
 }
 
-.sapMLIBUnread.sapMLIBUnreadBold > *,
-.sapMLIBUnread.sapMLIBUnreadBold > .sapMListTblCell,
-.sapMLIBUnread.sapMLIBUnreadBold + .sapMListTblSubRow {
+.sapMLIBUnread,
+.sapMLIBUnread > .sapMListTblCell,
+.sapMLIBUnread + .sapMListTblSubRow {
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
 }
@@ -156,8 +156,8 @@
 }
 
 .sapMLIBActive .sapMLIBImgNav,
-.sapMLIBActive .sapMLIBIconDetActive,
-.sapMLIBActive .sapMLIBIconDelActive,
+.sapMLIBActive .sapMLIBIconDet,
+.sapMLIBActive .sapMLIBIconDel,
 .sapMLIBIconDet:active,
 .sapMLIBIconDel:active {
 	color: @sapUiLITextInverted;
@@ -232,7 +232,7 @@
 }
 
 .sapMLIBActive div,
-.sapMLIBActiveCounter {
+.sapMLIBActive .sapMLIBCounter {
 	color: @sapUiLITextInverted;
 }
 

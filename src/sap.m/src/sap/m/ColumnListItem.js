@@ -61,6 +61,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		this._aClonedHeaders = [];
 	};
 	
+	// returns responsible table control for the item
+	ColumnListItem.prototype.getTable = function() {
+		var oParent = this.getParent();
+		if (oParent instanceof sap.m.Table) {
+			return oParent;
+		}
+	};
+	
 	/**
 	 * Returns pop-in DOMRef as a jQuery Object
 	 *

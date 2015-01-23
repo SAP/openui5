@@ -1124,7 +1124,45 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (!oInput._hasTabularSuggestions() && !bTabular) {
 				oInput._oList = new List(oInput.getId() + "-popup-list", {
 					width : "100%",
-					showNoData : false
+					showNoData : false,
+					mode : sap.m.ListMode.SingleSelectMaster,
+					rememberSelection : false,
+					selectionChange : function(oEvent) {
+						var oListItem = oEvent.getParameter("listItem"),
+							sOriginalValue = oInput.getValue(),
+							sNewValue;
+
+						// fire suggestion item select event
+						oInput.fireSuggestionItemSelected({
+							selectedItem: oListItem._oItem
+						});
+
+						// choose which field should be used for the value
+						if (sOriginalValue !== oInput.getValue()) {
+							// if the event handler modified the input value we take this one as new value
+							sNewValue = oInput.getValue();
+						} else if (oListItem instanceof sap.m.DisplayListItem) {
+							// use label for two value suggestions
+							sNewValue = oListItem.getLabel();
+						} else {
+							// otherwise use title
+							sNewValue = oListItem.getTitle();
+						}
+
+						// update the input field
+						if (oInput._bUseDialog) {
+							oInput._oPopupInput.setValue(sNewValue);
+							oInput._oPopupInput._doSelect();
+						} else {
+							// call _getInputValue to apply the maxLength to the typed value
+							oInput._$input.val(oInput._getInputValue(sNewValue));
+							oInput._changeProxy();
+						}
+						oInput._oSuggestionPopup.close();
+						if (!sap.ui.Device.support.touch) {
+							oInput._doSelect();
+						}
+					}
 				});
 			} else {
 				// tabular suggestions
@@ -1288,43 +1326,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						}
 	
 						oListItem.setType(oItem.getEnabled() ? sap.m.ListType.Active : sap.m.ListType.Inactive);
-						/*eslint-disable no-loop-func */
-						oListItem.attachPress(function () {
-							var sOriginalValue = oInput.getValue(),
-								sNewValue;
-
-							// fire suggestion item select event
-							oInput.fireSuggestionItemSelected({
-								selectedItem: this._oItem
-							});
-
-							// choose which field should be used for the value
-							if (sOriginalValue !== oInput.getValue()) {
-								// if the event handler modified the input value we take this one as new value
-								sNewValue = oInput.getValue();
-							} else if (bListItem) {
-								// use label for two value suggestions
-								sNewValue = this.getLabel();
-							} else {
-								// otherwise use title
-								sNewValue = this.getTitle();
-							}
-
-							// update the input field
-							if (oInput._bUseDialog) {
-								oInput._oPopupInput.setValue(sNewValue);
-								oInput._oPopupInput._doSelect();
-							} else {
-								// call _getInputValue to apply the maxLength to the typed value
-								oInput._$input.val(oInput._getInputValue(sNewValue));
-								oInput._changeProxy();
-							}
-							oPopup.close();
-							if (!sap.ui.Device.support.touch) {
-								oInput._doSelect();
-							}
-						});
-						/*eslint-enable no-loop-func */
 						oListItem._oItem = oItem;
 						oListItem.addEventDelegate(oListItemDelegate);
 						aHitItems.push(oListItem);
