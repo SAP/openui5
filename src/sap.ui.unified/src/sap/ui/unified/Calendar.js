@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (i > 0) {
 					oMonthDate.setUTCDate(1);
 				}
-				oMonthDate.setUTCMonth(oDate.getMonth() + i);
+				oMonthDate.setUTCMonth(oDate.getUTCMonth() + i);
 				oMonth.setDate(CalendarUtils._createLocalDate(oMonthDate));
 			}
 
@@ -621,7 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					if (i > 0) {
 						oMonthDate.setUTCDate(1);
 					}
-					oMonthDate.setUTCMonth(oDate.getMonth() + i);
+					oMonthDate.setUTCMonth(oDate.getUTCMonth() + i);
 					if (!bNoFocus && oMonthDate.getUTCFullYear() == oDate.getUTCFullYear() && oMonthDate.getUTCMonth() == oDate.getUTCMonth()) {
 						oMonth.setDate(CalendarUtils._createLocalDate(oMonthDate));
 					}else {
