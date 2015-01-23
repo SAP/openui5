@@ -12,8 +12,8 @@ sap.ui.define(function() {
 	if (String.prototype.normalize != undefined || sap.ui.Device.browser.mobile == true) {
 		return;
 	} else {
-		jQuery.sap.require("sap.ui.thirdparty.UNorm");
-		jQuery.sap.require("sap.ui.thirdparty.UNormdata");
+		jQuery.sap.require("sap.ui.thirdparty.unorm");
+		jQuery.sap.require("sap.ui.thirdparty.unormdata");
 
 		/*eslint-disable no-extend-native */
 		String.prototype.normalize = function(str) {
