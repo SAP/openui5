@@ -71,22 +71,28 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 		}
 	},
 
-	init : function() {
-		//Call the base init
-		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
-
+	/** 
+	 * When the component is inialized, the resource and application models are set and the router is initialized
+	 * @public 
+	 */
+	init : function () {
 		var mConfig = this.getMetadata().getConfig();
 
-		// set the models
+		// call the base component's init function
+		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+
+		// set the internationalization model
 		this.setModel(new sap.ui.model.resource.ResourceModel({
 			bundleUrl : [mConfig.rootPath, mConfig.resourceBundle].join("/")
 		}), "i18n");
 
+		// set the mock data model
 		this.setModel(new sap.ui.demo.mdskeleton.model.MockableModel(mConfig.serviceConfig.md_skeleton));
 
+		// set the device model
 		this.setModel(new sap.ui.demo.mdskeleton.model.Device(), "device");
 
-		// Creates views based on the url/hash
+		// create the views based on the url/hash
 		this.getRouter().initialize();
 	}
 
