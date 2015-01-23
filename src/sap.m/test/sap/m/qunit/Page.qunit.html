@@ -124,6 +124,29 @@
 				equal($p3c.width(), jQuery(window).width(), "page 3 content width should cover the whole screen");
 			});
 			
+			test("render once only", function() { // regression test for issue 1570014242
+				var iRenderCounter = 0;
+				var oDelegate = {
+					onAfterRendering : function() {
+						iRenderCounter++;
+					}
+				};
+
+				var oRenderOncePage = new sap.m.Page();
+				oRenderOncePage.addDelegate(oDelegate);
+				equal(iRenderCounter, 0, "page should not be rendered directly after instantiation");
+				
+				oRenderOncePage.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				equal(iRenderCounter, 1, "page should be rendered only once");
+				
+				oRenderOncePage.rerender();
+				equal(iRenderCounter, 2, "page should be rendered twice after another forced rerendering");
+				
+				oRenderOncePage.destroy();
+			});
+			
+			
 			module("Properties Check");
 			if (sap.ui.Device.browser.chrome){
 				asyncTest("footer", function() {
