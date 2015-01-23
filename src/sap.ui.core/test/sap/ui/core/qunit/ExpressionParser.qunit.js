@@ -31,9 +31,9 @@
 
 	//*********************************************************************************************
 	jQuery.each([
-			{ binding: "{={target>sap:semantics}}" },
-			{ binding: "{={ b}   }" },
-			{ binding: "{=     { b} }" }
+			{ binding: "{=${target>sap:semantics}}" },
+			{ binding: "{=${ b}   }" },
+			{ binding: "{=     ${ b} }" }
 		], function(iUnused, oFixture) {
 		test("Valid embedded binding " + oFixture.binding, function () {
 			var oBinding = {
@@ -61,12 +61,12 @@
 
 	//*********************************************************************************************
 	jQuery.each([
-			{ binding: "{={binding0} === 'tel'}", args: ["tel"], result: true },
-			{ binding: "{={binding0} === 'mail'}", args: ["tel"], result: false },
-			{ binding: "{='tel' === {binding0}}", args: ["tel"], result: true },
-			{ binding: "{={binding0} === {binding1}}",
+			{ binding: "{=${binding0} === 'tel'}", args: ["tel"], result: true },
+			{ binding: "{=${binding0} === 'mail'}", args: ["tel"], result: false },
+			{ binding: "{='tel' === ${binding0}}", args: ["tel"], result: true },
+			{ binding: "{=${binding0} === ${binding1}}",
 				args: ["Felix", "Felix"], result: true },
-			{ binding: "{={binding0} === {binding1}}",
+			{ binding: "{=${binding0} === ${binding1}}",
 				args: ["Kurt", "Felix"], result: false }
 		], function(iUnused, oFixture) {
 		test("Operator === with result " + oFixture.result + ": " + oFixture.binding, function () {
@@ -122,7 +122,8 @@
 			//tokenizer error
 			{expression: "'foo' ==! 'bar'", message: "Expected '=' instead of '!'", at: 9},
 			//parser error
-			{expression: "'foo' 'bar'", message: "Invalid expression" /*TODO , at: 7 */}
+			{expression: "'foo' 'bar'", message: "Invalid expression" /*TODO , at: 7 */},
+			{expression: "$invalid}", message: "Expected '{' instead of 'i'", at: 2},
 		], function(iUnused, oFixture) {
 		test("Invalid expression: " + oFixture.expression, sinon.test(function () {
 			var oError;

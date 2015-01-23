@@ -92,13 +92,15 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			case '"':
 				aTokens.push(jQuery.proxy(STRING, null, oTokenizer.string()));
 				break;
-			case "{": //binding
-				oBinding = fnResolveBinding(sInput, oTokenizer.getIndex());
+			case "$":
+				oTokenizer.next("$");
+				oTokenizer.next("{"); //binding
+				oBinding = fnResolveBinding(sInput, oTokenizer.getIndex() - 1);
 				aTokens.push(jQuery.proxy(BINDING, null, aParts.length));
 				aParts.push(oBinding.result);
 				oTokenizer.setIndex(oBinding.at); //go to first character after binding string
 				break;
-			case "=": // operator ===
+			case "=": //operator ===
 				oTokenizer.next("=");
 				oTokenizer.next("=");
 				oTokenizer.next("=");
