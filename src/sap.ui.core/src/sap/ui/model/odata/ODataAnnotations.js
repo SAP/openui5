@@ -590,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					responseText : oJQXHR.responseText
 				};
 
-				if (!this.bAsync) {
+				if (!that.bAsync) {
 					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [that.error]);
 				} else {
 					that.fireFailed(that.error);
