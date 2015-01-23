@@ -1,7 +1,7 @@
 {
 	"explored": {
 		"entitiesDefaults": {
-			"appComponent": "CA-UI5",
+			"appComponent": "CA-UI5-CTR",
 			"formFactors": "ML"
 		},
 		"samplesRef": {
