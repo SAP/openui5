@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * Returns the formatter. Creates it lazily.
 	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
 	 *   the type instance
-	 * @return {sap.ui.core.format.DateFormat}
+	 * @returns {sap.ui.core.format.DateFormat}
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
@@ -99,9 +99,10 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeBase
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   type-specific format options; see sub-types
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @param {boolean} [oConstraints.isDateOnly=false]
@@ -130,11 +131,12 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @param {Date} oValue
 	 *   the value to be formatted, which is represented as a JavaScript Date in the model
 	 * @param {string} sTargetType
-	 *   the target type
-	 * @return {string}
+	 *   the target type; may be "any" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
+	 * @returns {string|Date}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -160,10 +162,11 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>oValue</code>)
-	 * @return {Date}
+	 *   the source type (the expected type of <code>sValue</code>); must be "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
+	 * @returns {Date}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Date
 	 * @public
@@ -199,9 +202,10 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * Validates whether the given value in model representation is valid and meets the
 	 * defined constraints.
 	 *
-	 * @param {string} oValue
+	 * @param {Date} oValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
 	DateTimeBase.prototype.validateValue = function (oValue) {

@@ -40,13 +40,22 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
-	 * <code>Edm.DateTime</code></a>. This type is only relevant for OData v2. In version 4 it has
-	 * been replaced by types which cover the various aspects of date and time better, namely
-	 * <code>Edm.Date</code> and <code>Edm.DateTimeOffset</code>. (The latter one has apparently
-	 * been added to v2 later.)
-	 * <p>
-	 * SAP has a specific annotation <code>display-format=Date</code> for <code>Edm.DateTime</code>
-	 * which this type supports, too.
+	 * <code>Edm.DateTime</code></a>.
+	 *
+	 * <b>Note</b>: In OData version 4 this type has been deprecated and replaced by types which
+	 * cover the various aspects of date and time better.
+	 *
+	 * If you want to display a date and a time, prefer {@link
+	 * sap.ui.model.odata.type.DateTimeOffset}, specifically designed for this purpose and already
+	 * available in version 2.
+	 *
+	 * Use <code>DateTime</code> with the SAP-specific annotation <code>display-format=Date</code>
+	 * (resp. the constraint <code>displayFormat: "Date"</code>) to display only a date. When
+	 * upgrading to version 4, consider switching to <code>Edm.Date</code>.
+	 *
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>Date</code>. With the constraint <code>displayFormat: "Date"</code>, the timezone is
+	 * UTF and the time part is ignored, otherwise it is a date/time value in local time.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *
@@ -55,9 +64,11 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *
 	 * @alias sap.ui.model.odata.type.DateTime
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link sap.ui.model.odata.type.DateTimeBase#validateValue validateValue}
+	 *   throws an error if any constraint is violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @param {string} [oConstraints.displayFormat=undefined]

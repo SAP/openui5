@@ -77,9 +77,10 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
-	 * @param {object} oConstraints
-	 *   the constraints
+	 *   type-specific format options; see sub-types
+	 * @param {object} [oConstraints]
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
@@ -113,11 +114,12 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @param {number} iValue
 	 *   the value in model representation to be formatted
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any", "int", "float" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {number|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -146,8 +148,10 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the value to be parsed. The empty string and <code>null</code> are parsed to
 	 *   <code>null</code>.
 	 * @param {string} sSourceType
-	 *   the internal type of vValue
-	 * @throws sap.ui.model.ParseException
+	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int" or
+	 *   "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to an
 	 *   integer type
 	 * @returns {number}
@@ -182,7 +186,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * defined constraints.
 	 * @param {number} iValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException}
 	 *   if the value is not in the allowed range of Int or if it is of invalid type.
 	 * @public
 	 */

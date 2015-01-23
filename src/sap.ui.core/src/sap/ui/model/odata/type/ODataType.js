@@ -3,9 +3,62 @@
  */
 
 /**
- * Namespace for
+ * The types in this namespace are {@link sap.ui.model.SimpleType simple types} corresponding
+ * to the
  * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
  * OData primitive types</a>.
+ *
+ * They can be used in any place where simple types are allowed (and the model representation
+ * matches), but they are of course most valuable in bindings to an {@link
+ * sap.ui.model.odata.v2.ODataModel ODataModel}.
+ *
+ * <b>Example:</b>
+ * <pre>
+ *   &lt;Label text="ID"/&gt;
+ *   &lt;Input value="{path: 'id', type: 'sap.ui.model.odata.type.String',
+ *       constraints: {nullable: false, maxLength: 10}}"/&gt;
+ *   &lt;Label text="valid through"/&gt;
+ *   &lt;Input value="{path: 'validThrough', type: 'sap.ui.model.odata.type.DateTime',
+ *       constraints: {displayFormat: 'Date'}}"/&gt;
+ * </pre>
+ *
+ * All types support formatting from the representation used in ODataModel ("model format") to
+ * various representations used by UI elements ("target type") and vice versa. Additionally they
+ * support validating a given value against the type's constraints.
+ *
+ * The following target types may be supported:
+ * <table>
+ * <tr><th>Type</th><th>Description</th></tr>
+ * <tr><td><code>string</code></td><td>The value is converted to a <code>string</code>, so that it
+ * can be displayed in an input field. Supported by all types.</td></tr>
+ * <tr><td><code>boolean</code></td><td>The value is converted to a <code>Boolean</code>, so that
+ * it can be displayed in a checkbox. Only supported by
+ * {@link sap.ui.model.odata.type.Boolean}.</td></tr>
+ * <tr><td><code>int</code></td><td>The value is converted to an integer (as <code>number</code>).
+ * May cause truncation of decimals and overruns. Supported by all numeric types.</td></tr>
+ * <tr><td><code>float</code></td><td>The value is converted to a <code>number</code>. Supported by
+ * all numeric types.</td></tr>
+ * <tr><td><code>any</code></td><td>A technical format. The value is simply passed through. Only
+ * supported by <code>format</code>, not by <code>parse</code>. Supported by all types.</td></tr>
+ * </table>
+ *
+ * All constraints may be given as strings besides their natural types (e.g.
+ * <code>nullable: "false"</code> or <code>maxLength: "10"</code>). This makes the life of
+ * template processors easier.
+ *
+ * <b>Handling of <code>null</code></b>:
+ *
+ * All types handle <code>null</code> in the same way. When formatting to <code>string</code>, it
+ * is simply passed through (and <code>undefined</code> becomes <code>null</code>, too). When
+ * parsing from <code>string</code>, it is also passed through.  Additionally,
+ * {@link sap.ui.model.type.odata.String String} and {@link sap.ui.model.type.odata.Guid Guid}
+ * convert the empty string to <code>null</code> when parsing. <code>validate</code> decides based
+ * on the constraint <code>nullable</code>: If <code>false</code>, <code>null</code> is not
+ * accepted and leads to a (locale-dependent) <code>ParseException</code>.
+ *
+ * This ensures that the user cannot clear an input field bound to an attribute with non-nullable
+ * type. However it does not ensure that the user really entered something if the field was empty
+ * before.
  *
  * @namespace
  * @name sap.ui.model.odata.type
@@ -29,6 +82,16 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 * <li>{@link sap.ui.model.SimpleType#parseValue parseValue}</li>
 	 * <li>{@link sap.ui.model.SimpleType#validateValue validateValue}</li>
 	 * </ul>
+	 *
+	 * All ODataTypes are immutable. All format options and constraints are given to the
+	 * constructor, they cannot be modified later.
+	 *
+	 * All ODataTypes use a locale-specific message when throwing an error caused by invalid
+	 * user input (e.g. if {@link sap.ui.model.odata.type.Double#parseValue Double.parseValue}
+	 * cannot parse the given value to a number, or if any type's {@link #validateValue
+	 * validateValue} gets a <code>null</code>, but the constraint <code>nullable</code> is
+	 * <code>false</code>).
+	 *
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
@@ -36,10 +99,9 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *
 	 * @alias sap.ui.model.odata.type.ODataType
 	 * @param {object} [oFormatOptions]
-	 *   format options; for OData types the support of format options has been removed. Parameter
-	 *   has not been removed to be consistent with other SimpleTypes.
+	 *   type-specific format options; see sub-types
 	 * @param {object} [oConstraints]
-	 *   constraints for this data type (e.g. <code>oConstraints.nullable</code>, see sub-types)
+	 *   type-specific constraints (e.g. <code>oConstraints.nullable</code>), see sub-types
 	 * @public
 	 * @since 1.27.0
 	 */
