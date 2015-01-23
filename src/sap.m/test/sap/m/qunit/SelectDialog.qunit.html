@@ -852,6 +852,54 @@
 			}, 500)
 		});
 
+		/********************************************************************************/
+			module("Focus Handling");
+		/********************************************************************************/
+
+		asyncTest("focus on SearchField after liveChange", function () {
+			// Arrange
+			var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new sap.ui.model.Filter(
+				"Title",
+				sap.ui.model.FilterOperator.Contains, sValue
+				);
+
+				oEvent.getSource().getBinding("items").filter([oFilter]);
+				sap.ui.getCore().applyChanges();
+
+				setTimeout(function() {
+					// Asert
+					strictEqual(jQuery.sap.byId('selectDialog-searchField-I')[0], document.activeElement, 'Focus should stay on the searchfield after liveChange');
+
+					// Delete
+					oSelectDialog.destroy();
+					start();
+				}, 1000);
+
+			});
+
+			var oSelectDialog = new sap.m.SelectDialog('selectDialog',{
+				liveChange: fnFireLiveChangeSpy
+			});
+
+			oSelectDialog.bindAggregation("items", {
+				path: "/items",
+				template: createTemplateListItem()
+			});
+		
+			oSelectDialog.setModel(new sap.ui.model.json.JSONModel(data10));
+			sap.ui.getCore().applyChanges();
+
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+
+				// Act
+				oSelectDialog._oSearchField.$('I').focus().val("1").trigger("input");
+			});
+
+			oSelectDialog.open();
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
