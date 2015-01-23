@@ -326,24 +326,14 @@
 								}, {
 									"Name" : "street",
 									"Value" : {
-										"Apply" : {
-											"Name" : "odata.uriEncode",
-											"Parameters" : [{
-												"Type" : "Path",
-												"Value" : "Address/Street"
-											}]
-										}
+										"Type" : "Path",
+										"Value" : "Address/Street"
 									}
 								}, {
 									"Name" : "city",
 									"Value" : {
-										"Apply" : {
-											"Name" : "odata.uriEncode",
-											"Parameters" : [{
-												"Type" : "Path",
-												"Value" : "Address/City"
-											}]
-										}
+										"Type" : "Path",
+										"Value" : "Address/City"
 									}
 								}]
 							}
