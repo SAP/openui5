@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global'],
 	Doclet.prototype._addTag = function(tag, content) {
 		if ( /^(public|private|protected)$/.test(tag) ) {
 			this.visibility = tag;
-		} else if ( /^(classdesc|description|deprecation|experimental|since|name|alias)$/.test(tag) ) {
+		} else if ( /^(classdesc|description|deprecated|experimental|since|name|alias)$/.test(tag) ) {
 			this[tag] = jQuery.trim(content);
 		} else if ( tag === "class" ) {
 			content = jQuery.trim(content);
