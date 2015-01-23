@@ -1,6 +1,6 @@
-sap.ui.define([], function() {
-	"use strict"
-	
+sap.ui.define([], function () {
+	"use strict";
+
 		/*
 		 * Use this file to implement your custom grouping functions
 		 * 
@@ -12,8 +12,7 @@ sap.ui.define([], function() {
 		 * 
 		 * the oContext parameter is not under your control!
 		 */
-	
-	
+
 	return {
 		/**
 		 * Grouping function to group the master list by rating
