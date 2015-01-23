@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (sValue) { rm.writeAttributeEscaped("value", sValue); }
 
 			//ARIA attributes
-			if (bShowRefreshButton) {
+			if (oSF.getEnabled() && bShowRefreshButton) {
 				oAccAttributes.describedby = {
 					value: sId + "-ACCF5",
 					append: true
