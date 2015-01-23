@@ -99,6 +99,7 @@
         <raw-module name="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/unormdata.js" depends="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/URI.js" />
+        <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Element.js,sap/ui/core/UIArea.js,sap/ui/core/Control.js,sap/ui/core/Component.js" />
@@ -185,6 +186,7 @@
         <exclude name="sap/ui/thirdparty/zyngascroll.js" />
         <!-- Excluding URI is removed because it's needed in sap/ui/core/IconPool -->
         <!-- <exclude name="sap/ui/thirdparty/URI.js" /> -->
+        <exclude name="sap/ui/thirdparty/URITemplate.js" />
         <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
         <!-- jquery.sap.global.js -->
         <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
