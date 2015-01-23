@@ -464,6 +464,11 @@ License: MIT License
 <year> = 2012
 <copyright holders> = Matteo Spinelli
 
+Component: TDOP
+Licensor: Douglas Crockford
+Website: https://github.com/douglascrockford/TDOP
+License: Apache License 2.0, granted to SAP by Douglas Crockford
+
 Component: Unicode Common Locale Data Repository
 Licensor: Unicode, Inc.
 Website: http://cldr.unicode.org/
