@@ -167,6 +167,22 @@
 			}
 		}
 	});
+	
+	// check if the ARIA attributes are rendered
+	test("aria attributes", function() {
+		var i = 0;
+
+		// check HTML divs
+		for (; i < aRatings.length; i++) {
+			init(aRatings[i].getId());
+			if (oRating.getVisible()) {
+				ok($RatingContainer.attr('role') == 'slider', "ARIA role is 'slider' on " + oRating);
+				ok($RatingContainer.attr('aria-valuenow') == oRating.getValue(), "aria-valuenow is correct on " + oRating);
+				ok($RatingContainer.attr('aria-valuemin') == 0, "aria-valuemin is correct on " + oRating);
+				ok($RatingContainer.attr('aria-valuemax') == oRating.getMaxValue(), "aria-valuemax is correct on " + oRating);
+			}
+		}
+	});
 
 	module("CSS and DOM");
 

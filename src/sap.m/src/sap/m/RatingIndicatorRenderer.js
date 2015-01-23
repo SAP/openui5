@@ -65,6 +65,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
+
+		// ARIA
+		oRm.writeAccessibilityState(oControl, {
+			"role": "slider",
+			"orientation": "horizontal",
+			"live": "assertive",
+			"valuemin": 0,
+			"label" : oControl._oResourceBundle.getText("RATING_ARIA_NAME"),
+			"disabled": !oControl.getEnabled()
+		});
+
 		oRm.write(">");
 		
 	

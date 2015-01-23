@@ -88,7 +88,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * The internal hovered rating icons are managed in this aggregation
 			 */
-			_iconsHovered : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsHovered", visibility : "hidden"}
+			_iconsHovered : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsHovered", visibility : "hidden"},
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
+	
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+
 		},
 		events : {
 
@@ -144,6 +155,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.allowTextSelection(false);
 		this._iIconCounter = 0;
 		this._fHoverValue = 0;
+		
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		if (RatingIndicator._pxCalculations === undefined) {
 			RatingIndicator._pxCalculations = [];
@@ -320,6 +333,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iPxIconSize = this._toPx(this.getIconSize()) || 16;
 		this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding")) || 4;
 	};
+	
+	/**
+	 * Called by the framework when rendering is completed.
+	 *
+	 * @private
+	 */
+	RatingIndicator.prototype.onAfterRendering = function() {
+		this._updateAriaValues();
+	};
 
 	/**
 	 * Destroys the control.
@@ -332,6 +354,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		delete this._iPxIconSize;
 		delete this._iPxPaddingSize;
 		delete this._fHoverValue;
+
+		delete this._oResourceBundle;
 	};
 
 	/* =========================================================== */
@@ -393,6 +417,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (iSelectedWidth < 0) {	// width should not be negative
 			iSelectedWidth = 0;
 		}
+		
+		this._updateAriaValues(fValue);
 
 		// adjust unselected container with the remaining width
 		$UnselectedContainerDiv.width((iWidth - iSelectedWidth) + sIconSizeMeasure);
@@ -409,6 +435,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		jQuery.sap.log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
+	};
+
+	/**
+	 * Updates the ARIA values.
+	 *
+	 * @private
+	 */
+	RatingIndicator.prototype._updateAriaValues = function (newValue) {
+		var $this = this.$();
+		
+		var fValue;
+		if (newValue === undefined) {
+			fValue = this.getValue();
+		} else {
+			fValue = newValue;
+		}
+		
+		var fMaxValue = this.getMaxValue();
+
+		$this.attr("aria-valuenow", fValue);
+		$this.attr("aria-valuemax", fMaxValue);
+
+		var sValueText = this._oResourceBundle.getText("RATING_VALUEARIATEXT", [fValue, fMaxValue]);
+		$this.attr("aria-valuetext", sValueText);
 	};
 
 	/**
