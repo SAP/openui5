@@ -1,5 +1,6 @@
 jQuery.sap.declare("sap.ui.demo.mdskeleton.Component");
-jQuery.sap.require("sap.ui.demo.mdskeleton.util.formatter");
+jQuery.sap.require("sap.ui.demo.mdskeleton.util.formatters");
+jQuery.sap.require("sap.ui.demo.mdskeleton.util.groupers");
 jQuery.sap.require("sap.ui.demo.mdskeleton.util.MyRouter");
 jQuery.sap.require("sap.ui.demo.mdskeleton.model.Device");
 jQuery.sap.require("sap.ui.demo.mdskeleton.model.MockableModel");
@@ -46,7 +47,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 					targetControl : "idAppControl",
 					subroutes : [
 						{
-							pattern : "{object}",
+							pattern : "objects/{objectId}",
 							name : "object",
 							view : "Detail"
 						}
