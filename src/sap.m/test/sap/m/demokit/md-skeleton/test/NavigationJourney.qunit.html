@@ -19,64 +19,66 @@
 		jQuery.sap.require("sap.ui.test.Opa5");
 		jQuery.sap.require("sap.ui.test.opaQunit");
 
-		jQuery.sap.require("sap.ui.test.opaQunit");
-
 		jQuery.sap.require("sap.ui.demo.mdskeleton.test.action.NavigationAction");
 		jQuery.sap.require("sap.ui.demo.mdskeleton.test.arrangement.NavigationArrangement");
 		jQuery.sap.require("sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion");
-
-		sap.ui.test.Opa.extendConfig({
-			actions : new sap.ui.demo.mdskeleton.test.action.NavigationAction(),
-			arrangements : new sap.ui.demo.mdskeleton.test.arrangement.NavigationArrangement(),
-			assertions : new sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion(),
-			viewNamespace : "sap.ui.demo.mdskeleton.view."
-		});
-
-		opaTest("Should see the objects list", function (Given, When, Then) {
-			// Arrangements
-			Given.iStartMyAppInAFrame("../index.html?responderOn=true");
-
-			//Actions
-			When.iLookAtTheScreen();
-
-			// Assertions
-			Then.iShouldSeeTheObjectList().
-				and.theObjectListShouldHave9Entries().
-				and.theDetailPageShowsTheFirstObject();
-		});
-
 		
-		
+		sap.ui.require(
+			[
+				"sap/ui/test/Opa"
+			],
+			function (Opa) {
+				"use strict";
 
-		opaTest("Should react on hashchange", function (Given, When, Then) {
-			// Actions
-			When.iChangeTheHashToObject3();
-
-			// Assertions
-			Then.iShouldBeOnTheObject3Page().
-				and.theObject3ShouldBeSelectedInTheMasterList();
-		});
+				sap.ui.test.Opa.extendConfig({
+					actions : new sap.ui.demo.mdskeleton.test.action.NavigationAction(),
+					arrangements : new sap.ui.demo.mdskeleton.test.arrangement.NavigationArrangement(),
+					assertions : new sap.ui.demo.mdskeleton.test.assertion.NavigationAssertion(),
+					viewNamespace : "sap.ui.demo.mdskeleton.view."
+				});
 		
+				opaTest("Should see the objects list", function (Given, When, Then) {
+					// Arrangements
+					Given.iStartMyAppInAFrame("../index.html?responderOn=true");
 		
-		opaTest("Should navigate on press", function (Given, When, Then) {
-			// Actions
-			When.iPressOnTheObject1();
-
-			// Assertions
-			Then.iShouldBeOnTheObject1Page();
-		});
+					//Actions
+					When.iLookAtTheScreen();
 		
-		opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
-			// Actions
-			When.iPressOnTheObject1();
+					// Assertions
+					Then.iShouldSeeTheObjectList().
+						and.theObjectListShouldHave9Entries().
+						and.theDetailPageShowsTheFirstObject();
+				});
 
-			// Assertions
-			Then.iShouldBeOnTheObject1Page().
-				and.iShouldSeeTheObjectLineItemsList().
-				and.theLineItemsListShouldHave4Entries().
-				and.theFirstLineItemHasIDLineItemID_1();
-			
-		});
+				opaTest("Should react on hashchange", function (Given, When, Then) {
+					// Actions
+					When.iChangeTheHashToObject3();
+		
+					// Assertions
+					Then.iShouldBeOnTheObject3Page().
+						and.theObject3ShouldBeSelectedInTheMasterList();
+				});
+				
+				opaTest("Should navigate on press", function (Given, When, Then) {
+					// Actions
+					When.iPressOnTheObject1();
+		
+					// Assertions
+					Then.iShouldBeOnTheObject1Page();
+				});
+		
+				opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
+					// Actions
+					When.iPressOnTheObject1();
+		
+					// Assertions
+					Then.iShouldBeOnTheObject1Page().
+						and.iShouldSeeTheObjectLineItemsList().
+						and.theLineItemsListShouldHave4Entries().
+						and.theFirstLineItemHasIDLineItemID_1();
+					
+				});
+			});
 	</script>
 
 </head>
