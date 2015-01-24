@@ -1,0 +1,103 @@
+{
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "1a2a3b3dd9db50184c568d393a3366d6315ece55",
+        "author": "Michael Sobczak <michael.sobczak@sap.com>",
+        "type": "FEATURE",
+        "text": "FileUploader: Multi request implemented",
+        "references": []
+      },
+      {
+        "id": "4cdb5b5a5161b968f85774ef54e5ec7a2646204f",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Menu: Improved ARIA support",
+        "references": []
+      },
+      {
+        "id": "b860a4e65871461115d695183c1315c2b139ab9d",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Shell/Overlay: Provided ARIA support",
+        "references": []
+      },
+      {
+        "id": "260f8c13dd21c1f28be106cbc496f66a599cdbb0",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.ShellHeadUserItem: Property showPopupIndicator added",
+        "references": []
+      },
+      {
+        "id": "e5e8e4ef74ad20669fac42cc2a6cf268dbd12797",
+        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "type": "FEATURE",
+        "text": "unified/FileUploader: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "75aa3c7bc2a39a4ffb8482c9c0818ccebaa0032e",
+        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "type": "FEATURE",
+        "text": "unifield.Calendar: Implemented display of multiple months",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "author": "Frank Weigel <frank.weigel@sap.com>",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "11f08b217449e36750a42add6e4a148d885b889a",
+        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "type": "FIX",
+        "text": "Popup: Fixed accidential auto-close of DatePicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "720948"
+          }
+        ]
+      },
+      {
+        "id": "b4dfea7f7a34ccc755430c5369a7192f04630c93",
+        "author": "Peter Muessig <peter.muessig@sap.com>",
+        "type": "FIX",
+        "text": "ShellHeader: Added missing dependency to the library",
+        "references": []
+      },
+      {
+        "id": "bf68f9487c2af0c7661fcbae76091396544ceb46",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: ARIA - announces item when navigating back from sub-menu",
+        "references": []
+      },
+      {
+        "id": "599c39eadec89779d103fca6d02837e761b3210e",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Fixed positioning in NavigationBar",
+        "references": []
+      },
+      {
+        "id": "587cc002b8f4990dfecfc6e00d009cf7cd5b2e22",
+        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellHeadItem: Navigation on click prevented",
+        "references": []
+      },
+      {
+        "id": "5a1f951be40b3dce60b3e20a5a62d8c4b473c461",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellOverlay: Enable cycling Tab-chain",
+        "references": []
+      }
+    ]
+  }
+}
