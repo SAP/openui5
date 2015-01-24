@@ -1653,7 +1653,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			if (this._headerTitle) {
 				this._headerTitle.setText(sTitle);
 			} else {
-				this._headerTitle = new sap.m.Label(this.getId() + "-title", {
+				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
 					text: this.getTitle()
 				});
 
