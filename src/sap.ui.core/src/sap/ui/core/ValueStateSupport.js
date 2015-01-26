@@ -50,12 +50,9 @@ sap.ui.define(['jquery.sap.global'],
 				return undefined; // this means there is no tooltip text configured, but a tooltip object like a RichTooltip
 			}
 	
-			if (oElement.getValueState) {
-				var state = oElement.getValueState();
-				if (state && (state != sap.ui.core.ValueState.None)) { // only for one of the three interesting state, not for the default
-					ensureTexts();
-					return (sTooltipText ? sTooltipText + " - " : "") + mTexts[state]; // add a suffix to the Tooltip
-				}
+			var sText = sap.ui.core.ValueStateSupport.getAdditionalText(oElement);
+			if (sText) {
+				return (sTooltipText ? sTooltipText + " - " : "") + sText;
 			}
 	
 			return sTooltipText; // when there is no value state
@@ -64,25 +61,31 @@ sap.ui.define(['jquery.sap.global'],
 	
 		/**
 		 * Returns a generic success, warning or error message if the given Element
-		 * has a property "valueState" with one of these three states.
+		 * has a property "valueState" with one of these three states or the given ValueState
+		 * represents one of these states.
 		 *
-		 * @param {sap.ui.core.Element} oElement the Element of which the valueState needs to be checked
+		 * @param {sap.ui.core.Element|sap.ui.core.ValueState} vValue the Element of which the valueState needs to be checked, or the ValueState explicitly
 		 * @returns {string} the success/warning/error text, if appropriate; otherwise null
 		 *
 		 * @public
 		 * @name sap.ui.core.ValueStateSupport.getAdditionalText
 		 * @function
 		 */
-		ValueStateSupport.getAdditionalText = function(oElement) {
-			var result = null;
-			if (oElement.getValueState) {
-				var state = oElement.getValueState();
-				if (state && (state != sap.ui.core.ValueState.None)) { // only for one of the three interesting state, not for the default
-					ensureTexts();
-					result = mTexts[state];
-				}
+		ValueStateSupport.getAdditionalText = function(vValue) {
+			var sState = null;
+			
+			if (vValue.getValueState) {
+				sState = vValue.getValueState();
+			} else if (sap.ui.core.ValueState[vValue]) {
+				sState = vValue;
 			}
-			return result;
+
+			if (sState && (sState != sap.ui.core.ValueState.None)) { // only for one of the three interesting state, not for the default
+				ensureTexts();
+				return mTexts[sState];
+			}
+			
+			return null;
 		};
 	
 		/**
