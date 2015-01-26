@@ -96,11 +96,11 @@ sap.ui.define(['jquery.sap.global'],
 		if (sap.ui.Device.system.desktop && iPageCount > 1) {
 			//heads up controls for desktop browsers
 			rm.write("<div class='sapMCrslControls sapMCrslHud'>");
-				rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabIndex='-1'><div class='sapMCrslHudInner'>");
+				rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabindex='-1'><div class='sapMCrslHudInner'>");
 				rm.renderControl(oCarousel._getNavigationArrow('left'));
 				rm.write("</div></a>");
 
-				rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabIndex='-1'><div class='sapMCrslHudInner'>");
+				rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabindex='-1'><div class='sapMCrslHudInner'>");
 				rm.renderControl(oCarousel._getNavigationArrow('right'));
 				rm.write("</div></a>");
 			rm.write("</div>");
