@@ -11,14 +11,14 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 				this.oInitialLoadFinishedDeferred.resolve();
 			} else {
 				this.getView().setBusy(true);
-				this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onMasterLoaded, this);
+				this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onDataLoaded, this);
 			}
 
 			this.getRouter().getRoute("object").attachPatternMatched(this.onRouteMatched, this);
 
 		},
 
-		onMasterLoaded : function (sChannel, sEvent, oData) {
+		onDataLoaded : function (sChannel, sEvent, oData) {
 			this.bindView(oData.bindingContext.getPath());
 			this.getView().setBusy(false);
 			this.oInitialLoadFinishedDeferred.resolve();
@@ -26,6 +26,11 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 
 		onRouteMatched : function (oEvent) {
 			var oParameters = oEvent.getParameters();
+			var sObjectPath = "/" + oParameters.arguments.object;
+
+			if (this.getView().getModel().getObject(sObjectPath)) {
+				this.onDataLoaded();
+			}
 
 			jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
 				// when detail navigation occurs, update the binding context
@@ -36,7 +41,8 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 
 		bindView : function (sObjectPath) {
 			var oView = this.getView();
-			oView.bindElement(sObjectPath);
+
+			oView.bindElement(sObjectPath, {expand : "LineItems"});
 
 			//Check if the data is already on the client
 			if (!oView.getModel().getData(sObjectPath)) {
@@ -88,21 +94,18 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 		 * @param oEvent listItem selection event
 		 */
 		onSelect : function (oEvent) {
-			var sMsg,
-				//We need the 'OrderID' and 'ProductID' of the
-				//selected OrderDetail to navigate to the corresponding
-				//line item view. Here's how this information is extracted:
-				oContext = oEvent.getSource().getBindingContext();
+			//We need the 'ObjectID' and 'LineItemID' of the
+			//selected LineItem to navigate to the corresponding
+			//line item view. Here's how this information is extracted:
+			var oContext = oEvent.getSource().getBindingContext();
 
-			//Dear Reviewer, is check for null necessary?
-			//navigation to line item has to happen here
+			//TODO Dear Reviewer, is check for null necessary?
 			if (oContext) {
-				sMsg = "Detail Item '" + oContext.getProperty('LineItemID') + '/';
+				var sMsg = "Detail Item '" + oContext.getProperty('ObjectID') + '/';
 				//TODO navigation to line item
-				sMsg += oContext.getProperty('ObjectID') + "' was pressed";
-				sap.m.MessageToast.show(sMsg, {
-					duration: 2000
-				});
+				sMsg += oContext.getProperty("LineItemID") + "' was pressed";
+				jQuery.sap.log.debug(sMsg);
+				this.getRouter().navTo("lineItem", {objectId : oContext.getProperty("ObjectID"), lineItemId: oContext.getProperty("LineItemID")});
 			} else {
 				sap.m.MessageToast.show("Detail Item was pressed. No Binding Context found!", {
 					duration: 2000

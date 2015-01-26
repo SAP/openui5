@@ -11,7 +11,7 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Detail", {
 			this.oInitialLoadFinishedDeferred.resolve();
 		} else {
 			this.getView().setBusy(true);
-			this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onMasterLoaded, this);
+			this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onDataLoaded, this);
 			this.getEventBus().subscribe("Master", "FirstItemSelected", this.onFirstItemSelected, this);
 		}
 
@@ -19,7 +19,7 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Detail", {
 
 	},
 
-	onMasterLoaded :  function () {
+	onDataLoaded :  function () {
 
 		this.getView().setBusy(false);
 		this.oInitialLoadFinishedDeferred.resolve();
