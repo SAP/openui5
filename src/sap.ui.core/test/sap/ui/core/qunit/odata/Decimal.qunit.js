@@ -118,10 +118,21 @@
 	test("parse", function () {
 		var oType = new sap.ui.model.odata.type.Decimal(); // constraints do not matter
 
-		strictEqual(oType.parseValue("1,234", "string"), "1234", "type string");
-		strictEqual(oType.parseValue("-12345", "string"), "-12345", "type string");
+		strictEqual(oType.parseValue("1,234,567.89", "string"), "1234567.89",
+			"multiple grouping separators");
+		strictEqual(oType.parseValue(" -12345 ", "string"), "-12345", "spaces");
+		strictEqual(oType.parseValue(".1234", "string"), "0.1234", "no integer digits");
+		strictEqual(oType.parseValue("-1234.", "string"), "-1234", "decimal point w/o decimals");
+		throws(function () {
+			oType.parseValue("1 234.567.890", "string");
+		}, "multiple decimal points");
+
 		strictEqual(oType.parseValue(1234, "int"), "1234", "type int");
 		strictEqual(oType.parseValue(1234.567, "float"), "1234.567", "type float");
+		strictEqual(oType.parseValue(1.2345e100, "float"), "12345000000000000000000000000000000000"
+			+ "000000000000000000000000000000000000000000000000000000000000000",
+			"float with more that 99 digits");
+		strictEqual(oType.parseValue(-1.2345e-5, "float"), "-0.000012345", "small float");
 
 		strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
 		strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
@@ -135,6 +146,32 @@
 				"Don't know how to parse sap.ui.model.odata.type.Decimal from boolean");
 		}
 	});
+
+	//*********************************************************************************************
+	test("parse large numbers, modified Swedish", sinon.test(function () {
+		var fnLocaleData = sap.ui.core.LocaleData.getInstance,
+			oType;
+
+		// special: non-breaking space as grouping separator
+		// We did not find any locale using different characters for plus or minus sign, so we
+		// modify the LocaleData here.
+		this.stub(sap.ui.core.LocaleData, "getInstance", function () {
+			var oLocaleData = fnLocaleData.apply(this, arguments);
+			oLocaleData.mData["symbols-latn-plusSign"] = ">";
+			oLocaleData.mData["symbols-latn-minusSign"] = "<";
+			return oLocaleData;
+		});
+
+		sap.ui.getCore().getConfiguration().setLanguage("sv");
+		oType = new sap.ui.model.odata.type.Decimal();
+
+		strictEqual(oType.parseValue(">1 234 567 890 123 456,789012", "string"),
+			"1234567890123456.789012", "plus sign, spaces");
+		strictEqual(oType.parseValue("<1 234\u00a0567 890\t123 456 789\u00a0012", "string"),
+			"-1234567890123456789012", "minus sign, tab, non-breaking spaces");
+		strictEqual(oType.parseValue(" 1 234\u00a0567 890,123456789012", "string"),
+			"1234567890.123456789012", "many decimals");
+	}));
 
 	//*********************************************************************************************
 	jQuery.each([
