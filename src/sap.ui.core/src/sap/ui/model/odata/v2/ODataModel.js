@@ -2898,7 +2898,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					delete that.mChangeHandles[sKey];
 					delete that.mChangedEntities[sKey];
 				} else {
-					jQuery.log.warning(that + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
+					jQuery.sap.log.warning(that + " - resetChanges: " + sKey + " is not changed nor a valid change key!");
 				}
 			});
 		} else {
