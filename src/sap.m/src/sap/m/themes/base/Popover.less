@@ -18,6 +18,10 @@
  	transition: opacity 0.2s linear;
 }
 
+.sapMPopoverHeader .sapMTitle {
+	font-size: .865rem;
+}
+
 .sapMPopover .sapMPopoverCont{
 	overflow: hidden;
 	position: relative;
@@ -67,27 +71,27 @@
 
 /* marker for Popover with a bar */
 .sapMPopoverWithBar{
-	
+
 }
 
 /* marker for Popover without a bar */
 .sapMPopoverWithoutBar{
-	
+
 }
 
 /* marker for Popover with NavContainer which includes pages inside */
 .sapMPopoverNav{
-	
+
 }
 /* marker for Popover with footer*/
 .sapMPopoverWithFooter{
-	
+
 }
 
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithBar.sapMPopoverWithFooter > .sapMPopoverCont {
 	margin-bottom: 0;
-	margin-top: 0;	
+	margin-top: 0;
 }
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithoutBar.sapMPopoverWithFooter > .sapMPopoverCont {
@@ -122,7 +126,7 @@
 }
 
 /* This css rule is for mvi theme. Because mvi is deleted right now, this rule will be commented out here in case mvi has to be restored.
-.sapMPopover:not(.sapMPopoverWithFooter) .sapMPopoverCont .sapMPage:not(.sapMPageWithFooter) > section { 
+.sapMPopover:not(.sapMPopoverWithFooter) .sapMPopoverCont .sapMPage:not(.sapMPageWithFooter) > section {
 	bottom: 0.625em;
 }
 */
