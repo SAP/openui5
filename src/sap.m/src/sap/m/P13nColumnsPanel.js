@@ -27,6 +27,18 @@ sap.ui.define([
 	{
 		metadata: {
 			library: "sap.m",
+			properties: {
+				/**
+				 * This property is used to specify a threshold of visible items 
+				 * 
+				 * @since 1.28.0
+				 */
+				visibleItemsThreshold: {
+					type: "int",
+					group: "Behavior",
+					defaultValue: -1
+				}
+			},			
 			aggregations: {
 				/**
 				 * list of columns that has been changed
@@ -1582,6 +1594,26 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * This method is executed before navigation, to provide validation result(s) for columnsPanel
+	 * 
+	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
+	 * @public
+	 * @since 1.28.0
+	 */	
+	P13nColumnsPanel.prototype.onBeforeNavigationFrom = function() {
+		var bResult = true; 
+		var aSelectedItems = this._oTable.getSelectedItems();
+		var iVisibleItemsThreshold = this.getVisibleItemsThreshold();
+		
+		if (aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold) {
+			bResult = false;
+		}
+		
+		return bResult;
+	};
+
+	
 	return P13nColumnsPanel;
 
 }, /* bExport= */true);

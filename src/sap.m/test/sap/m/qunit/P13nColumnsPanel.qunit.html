@@ -1467,6 +1467,30 @@
 			strictEqual(aTableItems[4].getSelected(), false, "Column C shall be unselected");
 
 		});
+		
+		test("Shall check onBeforeNavigationFrom", function() {
+			ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
+			
+			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true 
+			var bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
+			strictEqual(bValidationResult, true, "navigation validation shall not be influenced");
+			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
+			
+			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in true as threshold is not reached
+			oP13nColumnsPanel.setVisibleItemsThreshold(10);
+			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([{},{},{},{},{},{},{},{},{}]); // 9 table items are selected
+			
+			bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
+			strictEqual(bValidationResult, true, "navigation validation shall not be influenced as threshold is not reached");
+			
+			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in false as threshold is exceeded
+			oP13nColumnsPanel.setVisibleItemsThreshold(10);
+			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([{},{},{},{},{},{},{},{},{},{},{}]); // 11 table items are selected
+			
+			bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
+			strictEqual(bValidationResult, false, "navigation validation shall be influenced as threshold is exceeded");
+			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), 10, "Getter for visible items threshold shall return 10 (which was set before)");
+		});
 	}());
 </script>
 
