@@ -370,11 +370,12 @@
 		oObjectIdentifier.destroy();
 	});
 
-	test("Setting textDirection set to RTL", function() {
+	test("Setting textDirection to RTL", function() {
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
 			titleActive: true,
+			text: 'Some text',
 			textDirection: sap.ui.core.TextDirection.RTL
 
 		});
@@ -382,19 +383,19 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		var $oi = jQuery(oObjectIdentifier.getDomRef());
-		equal($oi.attr("dir"), "rtl", "Control has 'dir' property set to right-to-left");
-		equal($oi.find(".sapMObjectIdentifierIcons").css('float'), "left", "icons wrapper has float inline style property set to left");
+		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
+		equal(sTextDir, "RTL", "Control has 'dir' property set to right-to-left");
 
 		// Clean up
 		oObjectIdentifier.destroy();
 	});
 
-	test("Setting textDirection set to LTR", function() {
+	test("Setting textDirection to LTR", function() {
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
 			titleActive: true,
+			text: 'Some text',
 			textDirection: sap.ui.core.TextDirection.LTR
 
 		});
@@ -402,9 +403,8 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		var $oi = jQuery(oObjectIdentifier.getDomRef());
-		equal($oi.attr("dir"), "ltr", "Control has 'dir' property set to left-to-right");
-		equal($oi.find(".sapMObjectIdentifierIcons").css('float'), "right", "icons wrapper has float inline style property set to right");
+		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
+		equal(sTextDir, "LTR", "Control has 'dir' property set to left-to-right");
 
 		// Clean up
 		oObjectIdentifier.destroy();
