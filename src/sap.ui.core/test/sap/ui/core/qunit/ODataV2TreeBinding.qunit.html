@@ -736,7 +736,7 @@
 				
 				//Level 0.0
 				aContexts = oBinding.getNodeContexts(oContext);
-				equal(aContexts.length, 8, "TreeBinding nodeContexts length");
+				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
 				
 				oContext = aContexts[0];
 				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
@@ -759,16 +759,6 @@
 				equal(oModel.getProperty("HierarchyNode", oContext), "000360", "TreeBinding node content");
 				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
 				equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
-				
-				//Level 0.1
-				oContext = aContexts[7];
-				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
-				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
-				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
-				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
-				
-				aSubContexts = oBinding.getNodeContexts(oContext);
-				equal(aSubContexts.length, 8, "TreeBinding nodeContexts length");
 				
 				start();
 			};
