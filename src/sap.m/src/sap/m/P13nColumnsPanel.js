@@ -50,7 +50,7 @@ sap.ui.define([
 				addColumnsItem: {
 					parameters: {
 						/**
-						 * columnsItem that needs to be added in the model 
+						 * columnsItem that needs to be added in the model
 						 */
 						newItem: {
 							type: "sap.m.P13nColumnsItem"
@@ -72,7 +72,7 @@ sap.ui.define([
 						},
 						/**
 						 * contains columnsItems that needs to be changed in the model
-						 */						
+						 */
 						existingItems: {
 							type: "sap.m.P13nColumnsItem[]"
 						}
@@ -913,7 +913,7 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype._reOrderExistingTableItems = function() {
 		var aExistingTableItems = null, aExistingSelectedTableItems = null;
-		var iExistingSelectedTableItemIndex = -1;
+		var iExistingSelectedTableItemIndex = -1, sLanguage = null;
 		var that = this;
 
 		// get list of table items and list of selected items
@@ -932,13 +932,29 @@ sap.ui.define([
 
 		// Sort array of unselected table items by it's column name
 		if (aExistingTableItems && aExistingTableItems.length > 0) {
-			aExistingTableItems.sort(function(a, b) {
-				var sTextA = a.getCells()[0].getText();
-				var sTextB = b.getCells()[0].getText();
-				return sTextA.localeCompare(sTextB, window.navigator.language, {
-					numeric: true
+			try {
+				sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
+			} catch (exception) {
+				// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
+				if (window.console && window.console.log) {
+					if (!!exception.stack) {
+						window.console.log(exception.stack);
+					}else {
+						window.console.log(exception.toString());						
+					}
+				}
+				sLanguage = null;
+			}
+
+			if (sLanguage) {
+				aExistingTableItems.sort(function(a, b) {
+					var sTextA = a.getCells()[0].getText();
+					var sTextB = b.getCells()[0].getText();
+					return sTextA.localeCompare(sTextB, sLanguage, {
+						numeric: true
+					});
 				});
-			});
+			}
 		}
 
 		// remove all table items and refill items: 1. all selected, 2. all unselected, but sorted items
