@@ -1264,6 +1264,33 @@
 		});
 	});
 
+	module("Metamodel binding", {
+		setup: function() {
+			this.oModel = initModel(sURI, true);
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+
+	test("Entityset metadata w/o context", function() {
+		equal(this.oModel.getProperty("/Categories(1)/##name"), "Category");
+		equal(this.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
+		equal(this.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
+		equal(this.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
+		equal(this.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
+	});
+
+	test("Entityset metadata w/ context", function() {
+		var oContext = this.oModel.getContext("/Categories(1)")
+		equal(this.oModel.getProperty("##name", oContext), "Category");
+		equal(this.oModel.getProperty("##property/0/name", oContext), "CategoryID");
+		equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
+		equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
+		equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
+	});
+	
 	</script>
 
 </head>

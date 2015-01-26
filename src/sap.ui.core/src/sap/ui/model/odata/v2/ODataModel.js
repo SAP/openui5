@@ -1397,13 +1397,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._getObject = function(sPath, oContext) {
-		var oNode = this.isLegacySyntax() ? this.oData : null, sResolvedPath,
-				sKey;
+		var oNode = this.isLegacySyntax() ? this.oData : null, 
+			sResolvedPath = this.resolve(sPath, oContext),
+			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey;
 
 		//check for metadata path
-		if (this.oMetadata && sPath && sPath.indexOf('#') > -1)  {
-			sResolvedPath = this.resolve(sPath, oContext);
-			if (sResolvedPath) {
+		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
+			iSeparator = sResolvedPath.indexOf('/##');
+			if (iSeparator >= 0) {
+				// Metadata binding resolved by ODataMetaModel
+				sDataPath = sResolvedPath.substr(0, iSeparator);
+				sMetaPath = sResolvedPath.substr(iSeparator + 3);
+				oMetaContext = this.getMetaModel().getMetaContext(sDataPath);
+				oNode = this.getMetaModel()._getObject(sMetaPath, oMetaContext);
+			} else {
+				// Metadata binding resolved by ODataMetadata
 				oNode = this.oMetadata._getAnnotation(sResolvedPath);
 			}
 		} else {

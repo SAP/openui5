@@ -1201,7 +1201,41 @@
 		});
 	});
 
+	module("Metamodel binding", {
+		setup: function() {
+			this.oModel = initModel(sURI, true);
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
 
+	asyncTest("Entityset metadata w/o context", function() {
+		var that = this;
+		this.oModel.attachMetadataLoaded(function() {
+			equal(that.oModel.getProperty("/Categories(1)/##name"), "Category");
+			equal(that.oModel.getProperty("/Categories(1)/##property/0/name"), "CategoryID");
+			equal(that.oModel.getProperty("/Categories(1)/CategoryID/##type"), "Edm.Int32");
+			equal(that.oModel.getProperty("/Categories(1)/Products(0)/##name"), "Product");
+			equal(that.oModel.getProperty("/Categories(1)/Products(0)/ProductID/##type"), "Edm.Int32");
+			start();
+		});
+	});
+
+	asyncTest("Entityset metadata w/ context", function() {
+		var that = this;
+		this.oModel.attachMetadataLoaded(function() {
+			var oContext = that.oModel.getContext("/Categories(1)")
+			equal(that.oModel.getProperty("##name", oContext), "Category");
+			equal(that.oModel.getProperty("##property/0/name", oContext), "CategoryID");
+			equal(that.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
+			equal(that.oModel.getProperty("Products(0)/##name", oContext), "Product");
+			equal(that.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
+			start();
+		});
+	});
+	
 	</script>
 
 </head>

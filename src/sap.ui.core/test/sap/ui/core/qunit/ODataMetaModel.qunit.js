@@ -495,11 +495,8 @@
 							null, "getODataEntityType");
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
 							undefined, "getODataEntityType as path");
-						strictEqual(oMetaModel.getODataAssociation(
-							"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"), null);
-						strictEqual(oMetaModel.getODataAssociation(
-							"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products", true),
-							undefined);
+						strictEqual(oMetaModel.getODataEntitySet("ProductSet"), null,
+							"getODataEntitySet");
 					}, onError)["catch"](onError);
 				}));
 			}
@@ -531,58 +528,130 @@
 	});
 
 	//*********************************************************************************************
-	test("getODataAssociation", function() {
-		withMetaModel(function (oMetaModel) {
-			strictEqual(
-				oMetaModel.getODataAssociation("GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"),
-				oMetaModel.getObject("/dataServices/schema/0/association/5"));
-			strictEqual(oMetaModel.getODataAssociation("FOO.Assoc_BusinessPartner_Products"),
-				null);
-			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC.Foo"), null);
-			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC"), null);
-			strictEqual(oMetaModel.getODataAssociation(), null);
-		});
-	});
-
-	//*********************************************************************************************
-	test("getODataAssociation as path", function() {
-		withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataAssociation(
-					"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products", true),
-				"/dataServices/schema/0/association/5");
-			strictEqual(oMetaModel.getODataAssociation("FOO.Assoc_BusinessPartner_Products", true),
-				undefined);
-			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC.Foo", true), undefined);
-			strictEqual(oMetaModel.getODataAssociation("GWSAMPLE_BASIC", true), undefined);
-			strictEqual(oMetaModel.getODataAssociation(undefined, true), undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	test("getODataNavigationProperty", function() {
+	test("getODataAssociationEnd", function() {
 		withMetaModel(function (oMetaModel) {
 			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
 
-			strictEqual(oMetaModel.getODataNavigationProperty(oEntityType, "ToSupplier"),
-				oMetaModel.getObject("/dataServices/schema/0/entityType/1/navigationProperty/1"));
-			strictEqual(oMetaModel.getODataNavigationProperty(oEntityType, "Foo"), null);
-			strictEqual(oMetaModel.getODataNavigationProperty(null, "ToSupplier"), null);
-			strictEqual(oMetaModel.getODataNavigationProperty({}, "ToSupplier"), null);
+			strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToSupplier"),
+				oMetaModel.getObject("/dataServices/schema/0/association/5/end/0"));
+			strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToFoo"), null);
+			strictEqual(oMetaModel.getODataAssociationEnd(null, "ToSupplier"), null);
+			strictEqual(oMetaModel.getODataAssociationEnd({}, "ToSupplier"), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataAssociationEnd", function() {
+	test("getODataEntitySet", function() {
 		withMetaModel(function (oMetaModel) {
-			var oAssociation = oMetaModel.getODataAssociation(
-					"GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"),
-				sRoleName = "FromRole_Assoc_BusinessPartner_Products";
+			strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
+				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/entitySet/1"));
+			strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
+			strictEqual(oMetaModel.getODataEntitySet(), null);
+		});
+	});
+	//TODO test with no or multiple schemas; what if there is no default entity container?
 
-			strictEqual(oMetaModel.getODataAssociationEnd(oAssociation, sRoleName),
-				oMetaModel.getObject("/dataServices/schema/0/association/5/end/0"));
-			strictEqual(oMetaModel.getODataAssociationEnd(oAssociation, "Foo"), null);
-			strictEqual(oMetaModel.getODataAssociationEnd(null, sRoleName), null);
-			strictEqual(oMetaModel.getODataAssociationEnd({}, sRoleName), null);
+	//*********************************************************************************************
+	test("getMetaContext: entity set only", function() {
+		withMetaModel(function (oMetaModel) {
+			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')");
+
+			ok(oMetaContext instanceof sap.ui.model.Context);
+			strictEqual(oMetaContext.getModel(), oMetaModel);
+			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1");
+
+			strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')"), oMetaContext,
+				"the context has been cached");
+
+			raises(function () {
+				oMetaModel.getMetaContext("foo/bar");
+			}, /Not an absolute path: foo\/bar/);
+			raises(function () {
+				oMetaModel.getMetaContext();
+			}); // don't care about exception
+			raises(function () {
+				oMetaModel.getMetaContext("/FooSet('123')");
+			}, /Entity set not found: FooSet\('123'\)/);
+			raises(function () {
+				oMetaModel.getMetaContext("/('123')");
+			}, /Entity set not found: \('123'\)/);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getMetaContext: entity set & navigation properties", function() {
+		withMetaModel(function (oMetaModel) {
+			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier");
+
+			ok(oMetaContext instanceof sap.ui.model.Context);
+			strictEqual(oMetaContext.getModel(), oMetaModel);
+			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0");
+
+			strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier"), oMetaContext,
+				"the context has been cached");
+
+			raises(function () {
+				oMetaModel.getMetaContext("/ProductSet('ABC')/ToFoo(0)");
+			}, /\(Navigation\) Property not found: ToFoo\(0\)/);
+
+			raises(function () {
+				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier('ABC')");
+			}, /Multiplicity is 1: ToSupplier\('ABC'\)/);
+
+			// many navigation properties
+			oMetaContext = oMetaModel.getMetaContext(
+				"/SalesOrderSet('123')/ToLineItems(SalesOrderID='123',ItemPosition='1')/ToProduct"
+				+ "/ToSupplier/ToContacts(guid'01234567-89AB-CDEF-0123-456789ABCDEF')");
+			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/4");
+		});
+	});
+
+	//*********************************************************************************************
+	test("getMetaContext: entity set & property", function() {
+		withMetaModel(function (oMetaModel) {
+			var sPath = "/ProductSet('ABC')/ProductID",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			ok(oMetaContext instanceof sap.ui.model.Context);
+			strictEqual(oMetaContext.getModel(), oMetaModel);
+			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1/property/0");
+
+			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			raises(function () {
+				oMetaModel.getMetaContext("/ProductSet('ABC')/ProductID(0)");
+			}, /\(Navigation\) Property not found: ProductID\(0\)/);
+
+			raises(function () {
+				oMetaModel.getMetaContext("/FooSet('123')/Bar");
+			}, /Entity set not found: FooSet/);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getMetaContext: entity set, navigation property & property", function() {
+		withMetaModel(function (oMetaModel) {
+			var sPath = "/ProductSet('ABC')/ToSupplier/BusinessPartnerID",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			ok(oMetaContext instanceof sap.ui.model.Context);
+			strictEqual(oMetaContext.getModel(), oMetaModel);
+			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0/property/1");
+
+			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			raises(function () {
+				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Foo");
+			}, /\(Navigation\) Property not found: Foo/);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getMetaContext: entity set & complex property", function() {
+		withMetaModel(function (oMetaModel) {
+			raises(function () {
+				oMetaModel.getMetaContext("/BusinessPartnerSet('XYZ')/Address/Street");
+			}, /Unsupported: \/BusinessPartnerSet\('XYZ'\)\/Address\/Street/);
 		});
 	});
 }());
