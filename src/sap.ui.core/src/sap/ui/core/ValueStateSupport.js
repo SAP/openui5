@@ -8,7 +8,14 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 
-	
+		/**
+		 * Helper functionality for value state support.
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 * @public
+		 * @namespace sap.ui.core.ValueStateSupport
+		 */
 		var ValueStateSupport = {};
 		var mTexts = null;
 	

@@ -90,8 +90,6 @@ sap.ui.define(['jquery.sap.global'],
 	
 	/**
 	 * Helper functionality for enhancement of a Label with common label functionality.
-	 *
-	 * <b>This constructor must not be used directly. Instead sap.ui.core.LabelEnablement#enrich function should be used.</b>
 	 * 
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
