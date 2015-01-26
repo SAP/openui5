@@ -212,7 +212,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	
 	
 	IconPool.insertFontFaceStyle();
-	
+
+	// create an F4 ARIA announcement and remember its ID for later use in the renderer:
+	Input.prototype._sAriaF4LabelId = new sap.ui.core.InvisibleText({
+		text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VALUEHELP_ARIA_F4")
+	}).toStatic().getId();
+
 	/**
 	 * The default filter function for one and two-value. It checks whether the item text begins with the typed value.
 	 * @param {string} sValue the current filter string
