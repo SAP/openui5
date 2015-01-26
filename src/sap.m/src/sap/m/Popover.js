@@ -784,6 +784,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}, 0);
 		}
 
+		// Set focus to the first visible focusable element
+		var sFocusId = this._getInitialFocusId(),
+			oControl = sap.ui.getCore().byId(sFocusId);
+		jQuery.sap.focus(oControl ? oControl.getFocusDomRef() : jQuery.sap.domById(sFocusId));
+
 		this.fireAfterOpen({openBy: this._oOpenBy});
 	};
 
@@ -1505,15 +1510,35 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	Popover.prototype._getInitialFocusId = function(){
-		var oBeginButton = this.getBeginButton(),
-			oEndButton = this.getEndButton();
-
-		// Left or Right button can be visible false and therefore not rendered.
-		// In such a case, focus should be set somewhere else.
 		return this.getInitialFocus()
-				|| (oBeginButton && oBeginButton.getVisible() && oBeginButton.getId())
-				|| (oEndButton && oEndButton.getVisible() && oEndButton.getId())
-				|| this.getId();
+			|| this._getFirstVisibleButtonId()
+			|| this._getFirstFocusableContentElementId()
+			|| this.getId();
+	};
+
+	Popover.prototype._getFirstVisibleButtonId = function() {
+		var oBeginButton = this.getBeginButton(),
+			oEndButton = this.getEndButton(),
+			sButtonId = "";
+
+		if (oBeginButton && oBeginButton.getVisible()) {
+			sButtonId = oBeginButton.getId();
+		} else if (oEndButton && oEndButton.getVisible()) {
+			sButtonId = oEndButton.getId();
+		}
+
+		return sButtonId;
+	};
+
+	Popover.prototype._getFirstFocusableContentElementId = function() {
+		var sResult = "";
+		var $popoverContent = this.$("cont");
+		var oFirstFocusableDomRef = $popoverContent.firstFocusableDomRef();
+
+		if (oFirstFocusableDomRef) {
+			sResult = oFirstFocusableDomRef.id;
+		}
+		return sResult;
 	};
 
 	Popover.prototype._restoreFocus = function(){
