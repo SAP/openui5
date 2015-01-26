@@ -225,7 +225,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 		var oData = {
 			name : sId,
 			deprecated : (oDoc) ? this._formatDeprecated(oDoc.deprecation) : null,
-			deprecatedDescription : this._formatDeprecatedDescription(oDoc.deprecation),
+			deprecatedDescription : (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 			deprecatedMark : (oDoc) ? this._createDeprecatedMark(oDoc.deprecation) : null,
 			baseType : (oDoc) ? this._formatType(oDoc.baseType) : null,
 			baseTypeText : (oDoc) ? this._formatTypeText(oDoc.baseType) : null,
