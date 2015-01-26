@@ -466,6 +466,36 @@
 
 	});
 
+	test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function() {
+
+		// Arrange
+		var oButton1 = new sap.m.Button({text: "All"});
+		var oButton2 = new sap.m.Button({text: "Text", icon: sap.ui.core.IconPool.getIconURI("attachment")});
+		var oButton3 = new sap.m.Button({text: "Text", icon: sap.ui.core.IconPool.getIconURI("attachment")});
+
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [oButton1, oButton2, oButton3]
+		});
+
+		var oBar = new sap.m.Bar({contentMiddle: oSegmentedButton});
+
+		// System under Test
+		oBar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Control width is the first button width
+		var controlWidth = oButton1.$().width();
+
+		// Assert
+		ok(controlWidth > 50, 'Control width should be greater than 50px');
+		strictEqual(oButton2.$().width(), controlWidth, 'Second button width should be equal to the control width');
+		strictEqual(oButton3.$().width(), controlWidth, 'Third button width should be equal to the control width');
+
+		// Cleanup
+		oBar.destroy();
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
