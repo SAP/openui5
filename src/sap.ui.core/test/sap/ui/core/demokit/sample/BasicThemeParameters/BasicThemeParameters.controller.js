@@ -41,6 +41,8 @@ sap.ui.controller("sap.ui.core.sample.BasicThemeParameters.BasicThemeParameters"
 			for (var i in oDat){
 				this.oModel.setProperty("/params/" + i + "/value", sap.ui.core.theming.Parameters.get(oDat[i].name));
 			}
+			// don`t use theme parameters in models or bind them to your view!!
+			// this is only used here for sample display and should not be implemented in productive apps
 			this.getView().setModel(this.oModel);
 			jQuery.sap.delayedCall(0, this, function(){
 				this.beforeShow();
