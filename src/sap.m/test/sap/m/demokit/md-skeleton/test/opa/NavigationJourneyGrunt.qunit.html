@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>ABP Navigation</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
+
+	<script id="sap-ui-bootstrap"
+		src="/resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{"sap.ui.demo.mdskeleton.test.opa": "./"}'>
+	</script>
+
+
+	<script>
+		sap.ui.require(["sap/ui/demo/mdskeleton/test/opa/NavigationJourney"], function (NavigationJourney) {
+			NavigationJourney.start("../../gruntIndex.html?responderOn=true");
+		});
+	</script>
+
+</head>
+<body>
+	<div id="content"></div>
+	<h1 id="qunit-header">Opa tests for Navigation</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

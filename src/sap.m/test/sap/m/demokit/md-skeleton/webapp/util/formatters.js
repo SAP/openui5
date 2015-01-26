@@ -1,19 +1,7 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	/*
-	 * Use this file to implement your custom formatters functions
-	 * 
-	 * The predefined custom functions are simple examples and might be replaced by custom implementations
-	 *  
-	 */
-	
 	return {
-		
-		/*
-		 * Start of list mode formatters used in the view to set the list mode
-		 */
-
 		/**
 		 * Returns None for phone and SingleSelectMaster for other devices
 		 *
@@ -35,11 +23,6 @@ sap.ui.define([], function () {
 		listItemType : function (bIsPhone) {
 			return (bIsPhone ? "Active" : "Inactive");
 		},
-
-		/*
-		 * Start of predefined custom formatters
-		 * Implement your own value formatters in this section
-		 */
 
 		/**
 		 * Rounds the currency value to 2 digits

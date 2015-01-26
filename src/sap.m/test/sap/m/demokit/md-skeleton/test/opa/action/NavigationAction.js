@@ -1,8 +1,8 @@
-jQuery.sap.declare("sap.ui.demo.mdskeleton.test.action.NavigationAction");
+jQuery.sap.declare("sap.ui.demo.mdskeleton.test.opa.action.NavigationAction");
 jQuery.sap.require("sap.ui.test.Opa5");
 var Opa5 = sap.ui.test.Opa5;
 
-sap.ui.demo.mdskeleton.test.action.NavigationAction = Opa5.extend("sap.ui.demo.mdskeleton.test.action.NavigationAction", {
+sap.ui.demo.mdskeleton.test.opa.action.NavigationAction = Opa5.extend("sap.ui.demo.mdskeleton.test.opa.action.NavigationAction", {
 	iPressOnTheObject1 : function (sObjectName) {
 		var oObject1Item = null;
 
