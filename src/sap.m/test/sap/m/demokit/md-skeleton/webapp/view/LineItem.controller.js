@@ -9,7 +9,7 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 		this.sObjectPath = null;
 		this.sLineItemId = null;
 		
-		if(sap.ui.Device.system.phone) {
+		if (sap.ui.Device.system.phone) {
 			//don't wait for the master on a phone
 			this.oInitialLoadFinishedDeferred.resolve();
 		} else {
@@ -23,7 +23,7 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	onRouteMatched : function(oEvent) {
 		
 		var oParameters = oEvent.getParameters();
-		if(this.oObject.sObjectId !== oParameters.arguments.objectId ){
+		if (this.oObject.sObjectId !== oParameters.arguments.objectId ){
 			this.oObject = {};
 			this.oObject.sObjectId = oParameters.arguments.objectId;
 		}
@@ -131,7 +131,7 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	populateLineItems : function() {
 		if (!this.oObject.aLineItemIds) {
 			this.oObject.aLineItemIds = [];
-			var aIds = this.getView().getModel().getObject("/Objects('"+ this.oObject.sObjectId + "')/LineItems"),
+			var aIds = this.getView().getModel().getObject("/Objects('" + this.oObject.sObjectId + "')/LineItems"),
 				oRegExLineItemId = new RegExp("LineItemID_[0-9]*");
 			aIds.forEach(function(sId, iIndex) { 
 				// retrieve all line items and cache them in a private array
@@ -150,10 +150,9 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	 * whether there _is_ a next or previous item. 
 	 */
 	toggleButtonState : function () {
-		var oView = this.getView();
 		// TODO: Change this function, use a view model
-		this.byId("btnNext").setEnabled(this.itemExists(this.iCurrentIndex+1));
-		this.byId("btnPrevious").setEnabled(this.itemExists(this.iCurrentIndex-1));
+		this.byId("btnNext").setEnabled(this.itemExists(this.iCurrentIndex + 1));
+		this.byId("btnPrevious").setEnabled(this.itemExists(this.iCurrentIndex - 1));
 	},
 
 	/**
@@ -161,11 +160,7 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	 * @return {boolean} 
 	 */
 	itemExists : function(iIndex) {
-		if (this.oObject.aLineItemIds[iIndex]) {
-			return true;
-		} else {
-			return false;
-		}
+		return !!this.oObject.aLineItemIds[iIndex];
 	},
 
 	/** 
@@ -182,7 +177,7 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	 * @param {Event} oEvent the event object
 	 */
 	onNavToNextLineItem: function (oEvent) {
-		var iLineItemId = this.oObject.aLineItemIds[this.iCurrentIndex+1];
+		var iLineItemId = this.oObject.aLineItemIds[this.iCurrentIndex + 1];
 		this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this.oObject.sObjectId});
 	},
 	
@@ -193,7 +188,7 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	 * @param {Event} oEvent the event object
 	 */
 	onNavToPrevLineItem: function (oEvent) {
-		var iLineItemId = this.oObject.aLineItemIds[this.iCurrentIndex-1];
+		var iLineItemId = this.oObject.aLineItemIds[this.iCurrentIndex - 1];
 		this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this.oObject.sObjectId});
 	}
 

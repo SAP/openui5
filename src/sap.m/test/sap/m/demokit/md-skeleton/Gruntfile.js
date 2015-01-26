@@ -89,7 +89,6 @@ module.exports = function(grunt) {
 			},
 
 			unit: {
-
 				options: {
 					urls: [
 						'<%= dir.localServerTestUrl %>/unit/UnitTestsGrunt.qunit.html'
@@ -98,7 +97,6 @@ module.exports = function(grunt) {
 
 			},
 			opa: {
-
 				options: {
 					urls: [
 						'<%= dir.localServerTestUrl %>/opa/NavigationJourneyGrunt.qunit.html'
