@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.core.PopupSupport
-sap.ui.define([ 'jquery.sap.global', './Element' ], function(jQuery, Element) {
+sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery, Element, Control) {
 	"use strict";
 
 	/**
@@ -131,6 +131,103 @@ sap.ui.define([ 'jquery.sap.global', './Element' ], function(jQuery, Element) {
 			sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, {
 				isFromParentPopup : bIsParent ? bIsParent : false
 			});
+		};
+
+		/**
+		 * This function helps Popup controls to enable a tabchaining within its
+		 * content. For the commons.Dialog and ux3.ToolPopup there is a fake
+		 * element at the beginning and at the end of the DOM-structure. These
+		 * elements are used to enable a chaining. If these element are focused
+		 * this function determines which element in the content or footer area
+		 * has to be focused. Since those control have a content and footer area
+		 * with buttons it has to be checked whether a button or content-element
+		 * is available that can be focused.
+		 * 
+		 * @param [object]
+		 *            mParameters contain all necessary parameters
+		 * @param [object.object]
+		 *            mParameter.that is the control that calls this function.
+		 *            Needed for debug logging info
+		 * @param [object.object]
+		 *            mParameters.event is the event that is being forwarded
+		 *            from the
+		 * @param [object.string]
+		 *            mParameters.firstFocusable is the first focusable element
+		 *            in the control
+		 * @param [object.string]
+		 *            mParameters.lastFocusable is the last focusable element in
+		 *            the control
+		 * @param [object.jQuery]
+		 *            mParameters.$FocusablesContent are focusable elements in
+		 *            the content area of the control
+		 * @param [object.jQuery]
+		 *            mParameters.$FocusablesFooter are focusable elements in
+		 *            the footer area of the control (e.g. buttons)
+		 */
+		this.focusTabChain = function(mParameters) {
+			var oSourceDomRef = mParameters.event.target,
+				sName = mParameters.that.getMetadata().getName(),
+				oFocusDomRef;
+
+			if (mParameters.$FocusablesContent.length == 0 && mParameters.$FocusablesFooter.length == 0) {
+				// if there is neither content nor footer content (yet) simply do nothing
+				return;
+			}
+			/*
+			 * It's not needed to check if buttons are set since
+			 * jQuery(":focusable", jQuery.sap.byId(this.getId() + "-fhfe")) or
+			 * jQuery(":sapFocusable", jQuery.sap.byId(this.getId() + "-fhfe"))
+			 * returns an empty array. Therefore these elements won't be found
+			 * via 'lastFocusableDomRef()'
+			 */
+			if (oSourceDomRef.id === mParameters.firstFocusable) {
+				// the FocusHandlingFirstElement was focused and thus the focus
+				// should move to the last element.
+				jQuery.sap.log.debug("First dummy focus element was focused", "", sName);
+				if (mParameters.$FocusablesFooter.length > 0) {
+					jQuery.sap.log.debug("Last footer element will be focused", "", sName);
+					oFocusDomRef = mParameters.$FocusablesFooter[mParameters.$FocusablesFooter.length - 1];
+				} else {
+					jQuery.sap.log.debug("Last content element will be focused", "", sName);
+					oFocusDomRef = mParameters.$FocusablesContent[mParameters.$FocusablesContent.length - 1];
+				}
+			} else if (oSourceDomRef.id === mParameters.lastFocusable) {
+				// the FocusHandlingEndElement was focused and thus the focus
+				// should move to the first element.
+				jQuery.sap.log.debug("Last dummy focus element was focues", "", sName);
+				if (mParameters.$FocusablesContent.length > 0) {
+					jQuery.sap.log.debug("First content element will be focused", "", sName);
+					oFocusDomRef = mParameters.$FocusablesContent[0];
+				} else {
+					jQuery.sap.log.debug("First footer element will be focused", "", sName);
+					oFocusDomRef = mParameters.$FocusablesFooter[0];
+				}
+			}
+
+			if (oFocusDomRef) {
+				/*
+				 * This check especially for IE9 is needed because when IE9 is
+				 * used together with JAWS the element that will be focused
+				 * isn't read when the focus happens too fast. Therefore a delay
+				 * is added to JAWS can read the newly focused element.
+				 */
+				var iDelay = sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9 ? 100 : 0;
+
+				jQuery.sap.delayedCall(iDelay, this, function() {
+					// if the element is a control the focus should be called
+					// via the control
+					// especially if the control has an individual focus DOM-ref
+					var oControl = sap.ui.getCore().byId(oFocusDomRef.id);
+					if (oControl instanceof Control) {
+						jQuery.sap.log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", sName);
+					} else {
+						jQuery.sap.log.debug("oFocusDomRef will be focused", "", sName);
+					}
+					jQuery.sap.focus(oControl ? oControl : oFocusDomRef);
+
+					return oControl ? oControl.getId() : oFocusDomRef.id;
+				});
+			}
 		};
 	};
 
