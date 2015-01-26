@@ -49,7 +49,12 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 						{
 							pattern : "objects/{objectId}",
 							name : "object",
-							view : "Detail"
+							view : "Detail",
+						},
+						{
+							pattern : "object/{objectId}/lineitem/{lineItemId}",
+							name: "lineItem",
+							view: "LineItem"
 						}
 					]
 				},
