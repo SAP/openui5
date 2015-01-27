@@ -29,6 +29,13 @@
 					class="sapUiSmallMarginBottom"
 					press="handleShowMessageBoxPress_InitialFocus"
 					width="250px"/>
+			<Text
+					text="Set horizontal and vertical scrolling"/>
+			<Button
+					text="Show big content"
+					class="sapUiSmallMarginBottom"
+					press="handleShowMessageBoxPress_Scrolling"
+					width="250px"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
