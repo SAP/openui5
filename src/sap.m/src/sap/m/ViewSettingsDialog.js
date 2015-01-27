@@ -605,11 +605,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Opens the view settings dialog relative to the parent control
 	 *
 	 * @public
-	 * @param {sap.ui.core.Control}
-	 *            oParentControl the parent control
+	 * @param {String} the initial page to be opened in the dialog
+	 *	available values: "sort", "group", "filter"
+	 *
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
-	ViewSettingsDialog.prototype.open = function(oParentControl) {
+	ViewSettingsDialog.prototype.open = function(sCurrentPage) {
 		// add to static UI area manually because we don't have a renderer
 		if (!this.getParent() && !this._bAppendedToUIArea) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
@@ -639,6 +640,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._getDialog().setInitialFocus((sap.ui.Device.system.desktop && this._showSubHeader) ? this._segmentedButton : null);
 		// open dialog
 		this._getDialog().open();
+
+		// switch to the user defined page if set and valid
+		if (sCurrentPage) {
+			var oSegmentedButtons = {
+				"sort": 0,
+				"group": 1,
+				"filter": 2
+			};
+			if (oSegmentedButtons.hasOwnProperty(sCurrentPage)) {
+				var sSelectedButton = this.getId() + "-" + sCurrentPage + "button";
+				this._getSegmentedButton().setSelectedButton(sSelectedButton);
+				this._switchToPage(oSegmentedButtons[sCurrentPage]);
+			}
+		}
+
 		return this;
 	};
 

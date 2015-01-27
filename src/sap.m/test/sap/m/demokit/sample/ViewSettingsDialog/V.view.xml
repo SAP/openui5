@@ -10,6 +10,9 @@
 			<Button
 				text="Open View Settings Dialog"
 				press="handleOpenDialog" />
+			<Button
+					text="Open View Settings Dialog in Filter view"
+					press="handleOpenDialogFilter" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
