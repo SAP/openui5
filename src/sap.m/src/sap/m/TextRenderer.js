@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			oRm.addClass("sapMTextNoWrap");
 		} else if (bWrapping) {
 			// no space text must break
-			if (!/\s/.test(sText)) {
+			if (sText && sText.length > 0 && !/\s/.test(sText)) {
 				oRm.addClass("sapMTextBreakWord");
 			}
 		}
