@@ -7,8 +7,9 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		/* =========================================================== */
 
 		/**
-		* Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
-		*/
+		 * Called when the master list controller is instantiated. It sets up the event handling for the master/detail communication and other lifecycle tasks.
+		 * @public
+		 */
 		onInit : function () {
 			var oEventBus = this.getEventBus();
 
@@ -55,7 +56,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		/* event handlers                                              */
 		/* =========================================================== */
 
-		/*
+		/**
 		 * Event listener for the route matched event. The matching detail page will be loaded automatically.
 		 * @param {sap.ui.base.Event} oEvent the routing event
 		 */
@@ -75,9 +76,10 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			});
 		},
 
-		/* 
+		/**
 		 * Event handler for the master search field.
 		 * @param {sap.ui.base.Event} oEvent the search event
+		 * @public 
 		 */
 		onSearch : function (oEvent) {
 			var sQuery = oEvent.getParameter("query");
@@ -90,9 +92,10 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this._applyFilterSearch();
 		},
 
-		/* 
+		/**
 		 * Event handler for the sorter selection.
 		 * @param {sap.ui.base.Event} oEvent the select event
+		 * @public
 		 */
 		onSort : function (oEvent) {
 			var sPath = oEvent.getParameter("selectedItem").getKey();
@@ -101,9 +104,10 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this._applyGroupSort();
 		},
 
-		/* 
+		/**
 		 * Event handler for the filter selection.
 		 * @param {sap.ui.base.Event} oEvent the select event
+		 * @public
 		 */
 		onFilter : function (oEvent) {
 			var sKey = oEvent.getParameter("selectedItem").getKey(),
@@ -127,9 +131,10 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this._applyFilterSearch();
 		},
 
-		/* 
+		/**
 		 * Event handler for the grouper selection.
 		 * @param {sap.ui.base.Event} oEvent the search field event
+		 * @public
 		 */
 		onGroup : function (oEvent) {
 			var sKey = oEvent.getParameter("selectedItem").getKey(),
@@ -147,24 +152,20 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this._applyGroupSort();
 		},
 
-		/* 
+		/**
 		 * Event handler for the master list filter bar.
 		 * @param {sap.ui.base.Event} oEvent the filter bar event
+		 * @public
 		 */
 		onFilterBarPressed : function () {
 			this.onOpenViewSettings(); // TODO: is re-use of this event handler allowed or should we create an internal _openViewSettings method
 			// TODO: missing functionality, ViewSettingsDialog should open with the filter page directly
 		},
 
-		/* TODO: do we want comments like this in md-skeleton???
-		 *  SortGroupFilter can either be impplemented as single selects
-		 *  or one View Settings Dialog. Use the respective code blocks 
-		 *  to implement custom functionality
-		 */
-
-		/* 
+		/**
 		 * Event handler for the sort/group/filter button to open the ViewSettingsDialog.
 		 * @param {sap.ui.base.Event} oEvent the press event
+		 * @public
 		 */
 		onOpenViewSettings : function (oEvent) {
 			if (!this.oViewSettingsDialog) {
@@ -174,9 +175,10 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this.oViewSettingsDialog.open();
 		},
 
-		/* 
+		/**
 		 * Event handler for the ViewSettingsDialog cofirmation.
 		 * @param {sap.ui.base.Event} oEvent the confirm event
+		 * @public
 		 */
 		onConfirmViewSettingsDialog : function (oEvent) {
 			var mParams = oEvent.getParameters(),
@@ -185,9 +187,10 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 				bDescending,
 				oGroups,
 				aFilters = [],
-				sFilters = "";
+				aValues = [];
 
 			if (mParams.groupItem || mParams.sortItem) {
+				// update grouping state
 				if (mParams.groupItem) {
 					sKey = mParams.groupItem.getKey();
 					bDescending = mParams.groupDescending;
@@ -201,6 +204,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 					this.oListSorterState.group = [];
 				}
 	
+				// update sorting state
 				if (mParams.sortItem) {
 					sPath = mParams.sortItem.getKey();
 					bDescending = mParams.sortDescending;
@@ -211,6 +215,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 				this._applyGroupSort();
 			}
 
+			// update filter state
 			if (mParams.filterItems) {
 				// combine the filter array and the filter string
 				jQuery.each(mParams.filterItems, function (i, oItem) {
@@ -219,38 +224,39 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 
 					switch (sKey) {
 					case "Filter1":
-						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100));	
+						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100));
 						break;
 					case "Filter2":
 						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100));	
 						break;
 					}
-					sFilters += sValue + ", ";
+					aValues.push(sValue);
 				});
 				this.oListFilterState.filter = aFilters;
-				sFilters = sFilters.substr(0, sFilters.length - 2);
 			}
 
 			// update the filter bar
 			this.byId("filterBar").setVisible(this.oListFilterState.filter.length > 0);
-			this.byId("filterBarLabel").setText(this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterFilterBarText", [sFilters]));
+			this.byId("filterBarLabel").setText(this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterFilterBarText", [aValues.join(", ")]));
 
 			this._applyFilterSearch();
 		},
 
-		/* 
+		/**
 		 * Event listener for the not found event.
+		 * @public
 		 */
 		// TODO: can this be done in a better way?
 		onNotFound : function () {
 			this.oList.removeSelections();
 		},
 
-		/* 
+		/**
 		 * Event listener for the detail change event.
 		 * @param {string} sChannel the channel id
 		 * @param {sap.ui.base.Event} oEvent
 		 * @param {object} oData the custom data that contains the object path to update the list selection
+		 * @public
 		 */
 		onDetailChanged : function (sChannel, sEvent, oData) {
 			var that = this,
@@ -268,18 +274,19 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 				}
 
 				// select the list item that matches the object path
-				for (; i < aItems.length; i++) {
-					if (aItems[i].getBindingContext().getPath() === sObjectPath) {
-						that.oList.setSelectedItem(aItems[i], true);
-						break;
+				aItems.some(function (oItem) {
+					if (oItem.getBindingContext().getPath() === sObjectPath) {
+						this.oList.setSelectedItem(oItem);
+						return true;
 					}
-				}
+				}, this);
 			});
 		},
 
-		/* 
+		/**
 		 * Event handler for the list selection event
 		 * @param {sap.ui.base.Event} oEvent the list selectionChange event
+		 * @public
 		 */
 		onSelect : function (oEvent) {
 			// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
@@ -291,15 +298,16 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		/* begin: internal methods                                     */
 		/* =========================================================== */
 
-		/*
+		/**
 		 * Executes the callback function after the deferred is resolved
-		 * @param{function} fnToExecute the callback function 
+		 * @param{function} fnToExecute the callback function
+		 * @private 
 		 */
 		_waitForInitialListLoading : function (fnToExecute) {
 			jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(fnToExecute, this));
 		},
 
-		/*
+		/**
 		 * Shows the selected item on the detail page
 		 * On phones a additional history entry is created 
 		 * @param: {sap.m.ObjectListItem} oItem selected Item
@@ -312,7 +320,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			}, bReplace);
 		},
 
-		/*
+		/**
 		 * Sets the item count on the master list header
 		 * @private
 		 */
@@ -320,13 +328,13 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			var iItems,
 				sTitle;
 
+			// only update the counter if the length is final 
 			if (this.oList.getBinding('items').isLengthFinal()) {
 				iItems = this.byId("list").getBinding("items").getLength();
 				sTitle = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterTitleCount", [iItems]);
 
 				this.byId("page").setTitle(sTitle);			
 			}
-			// TODO: what to do if the length is not final???? ask core team
 		},
 
 		/*
@@ -338,7 +346,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this.oList.getBinding("items").filter(aFilters, "Application");
 		},
 
-		/*
+		/**
 		 * Internal helper method to apply both group and sort state together on the list binding
 		 * @private
 		 */ 
@@ -347,15 +355,15 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this.oList.getBinding("items").sort(aSorters);
 		},
 
-		/*
+		/**
 		 * Selects the first list in the master list
 		 * @private
 		 */
 		_selectFirstItem : function () {
-			var aItems = this.oList.getItems();
+			var oItem = this.oList.getItems()[0];
 
-			if (aItems.length) {
-				this.oList.setSelectedItem(aItems[0], true);
+			if (oItem) {
+				this.oList.setSelectedItem(oItem);
 			}
 		}
 

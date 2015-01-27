@@ -76,9 +76,10 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 		}
 	},
 
-	/**
-	 * When the component is inialized, the resource and application models are set and the router is initialized
-	 * @public
+	/** 
+	 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.  
+	 * In this method, the resource and application models are set and the router is initialized.
+	 * @public 
 	 */
 	init : function () {
 		var mConfig = this.getMetadata().getConfig();
