@@ -2016,6 +2016,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		// adding the result data to the data object
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
+			//need a deep data copy for import
+			oResultData = jQuery.extend(true, {}, oResultData);
 			that._importData(oResultData, mGetEntities);
 		}
 
