@@ -60,10 +60,10 @@
 					start();
 				},
 				beforeClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 				},
 				afterClose: function(){
-					equal(jQuery.sap.byId("actionsheet").css("visibility"), "hidden", "ActionSheet should be hidden before it's opened");
+					equal(jQuery.sap.byId("actionsheet").css("visibility"), "hidden", "ActionSheet should be hidden after it's closed");
 					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
 					start();
 				}
@@ -537,16 +537,21 @@
 			
 				});
 			}
+			
+			QUnit.done(function() {
+				// hide the content so that the QUnit results can be seen
+				jQuery("#content").css('height', '0');
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
 		<div id="contentHolder"></div>
+		<div id="uiArea"></div>
+		<div id="content"></div>
 		<h1 id="qunit-header">qUnit Page for sap.m.ActionSheet</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		<div id="uiArea"></div>
-		<div id="content"></div>
 
 	</body>
 </html>
