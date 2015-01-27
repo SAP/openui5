@@ -14,7 +14,10 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
+		sinon.config.useFakeTimers = false;
 
 		var sSrc = "../images/SAPLogo.jpg",
 			sSrc2 = "../images/SAPLogo@2.jpg",
@@ -258,6 +261,30 @@
 				equal($i5.css("visibility"), "visible", "Image with valid src should be set back to visible");
 				start();
 			}, 200);
+		});
+
+		asyncTest("Image with density 1.5, source handling after rerendering", function() {
+			var oSandbox = sinon.sandbox.create();
+
+			oSandbox.stub(sap.m.Image, "_currentDevicePixelRatio", 1.5);
+
+			var oImage = new sap.m.Image({
+				src: sSrc
+			});
+
+			oImage.placeAt("uiArea6");
+			sap.ui.getCore().applyChanges();
+			oImage.$().on("load", function() {
+				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
+				oImage.rerender();
+				oImage.$().on("load", function() {
+					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
+					oImage.destroy();
+					// Restore the stubbed property in the callback
+					oSandbox.restore();
+					start();
+				});
+			});
 		});
 		</script>
 	</head>
