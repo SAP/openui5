@@ -127,22 +127,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			oData = this.oModel._getObject(this.sPath, this.oContext);
 			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
 
-			if (bReloadNeeded) {
-				this.fireDataRequested();
-			}
-			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
-				that.oElementContext = oContext;
-				that._fireChange();
+			// don't fire any requests if metadata is not loaded yet.
+			if (this.oModel.oMetadata.isLoaded()) {
 				if (bReloadNeeded) {
-					if (that.oElementContext) {
-						oData = that.oElementContext.getObject();
-					}
-					//register datareceived call as  callAfterUpdate
-					that.oModel.callAfterUpdate(function() {
-						that.fireDataReceived({data: oData});
-					});
+					this.fireDataRequested();
 				}
-			}, bReloadNeeded);
+				this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+					that.oElementContext = oContext;
+					that._fireChange();
+					if (bReloadNeeded) {
+						if (that.oElementContext) {
+							oData = that.oElementContext.getObject();
+						}
+						//register datareceived call as  callAfterUpdate
+						that.oModel.callAfterUpdate(function() {
+							that.fireDataReceived({data: oData});
+						});
+					}
+				}, bReloadNeeded);
+			}
 		}
 	};
 

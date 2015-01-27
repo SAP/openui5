@@ -265,8 +265,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			/**
 			 * Event is fired if the annotations document has failed to load
 			 */
-			AnnotationsFailed: "annotationsFailed"
+			AnnotationsFailed: "annotationsFailed",
 
+			/**
+			 * Depending on the model implementation a RequestFailed should be fired if a batch request to a backend failed.
+			 * Contains the parameters:
+			 * message, statusCode, statusText and responseText
+			 * 
+			 */
+			BatchRequestFailed : "batchRequestFailed",
+
+			/**
+			 * Depending on the model implementation a RequestSent should be fired when a batch request to a backend is sent.
+			 * Contains Parameters: url, type, async
+			 * 
+			 */
+			BatchRequestSent : "batchRequestSent",
+
+			/**
+			 * Depending on the model implementation a RequestCompleted should be fired when a batch request to a backend is completed regardless if the request failed or succeeded.
+			 * Contains Parameters: url, type, async, success, errorobject
+			 * 
+			 */
+			BatchRequestCompleted : "batchRequestCompleted"
 	};
 
 	/**
@@ -336,6 +357,216 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 
+
+	/**
+	 * The 'batchRequestFailed' event is fired, when a batch request failed.
+	 * 
+	 * @name sap.ui.model.odata.v2.ODataModel#batchRequestFailed
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {string} oControlEvent.getParameters.message A text that describes the failure.
+	 * @param {string} oControlEvent.getParameters.statusCode HTTP status code returned by the request (if available)
+	 * @param {string} oControlEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
+	 * @param {string} [oControlEvent.getParameters.responseText] Response that has been received for the request ,as a text string
+	 * @public
+	 */
+
+	/**
+	 * Attach event-handler <code>fnFunction</code> to the 'batchRequestFailed' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.<br/>
+	 *
+	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object}
+	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	ODataModel.prototype.attachBatchRequestFailed = function(oData, fnFunction, oListener) {
+		this.attachEvent("batchRequestFailed", oData, fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Detach event-handler <code>fnFunction</code> from the 'batchRequestFailed' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.<br/>
+	 *
+	 * The passed function and listener object must match the ones previously used for event registration.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs.
+	 * @param {object}
+	 *            oListener Object on which the given function had to be called.
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	ODataModel.prototype.detachBatchRequestFailed = function(fnFunction, oListener) {
+		this.detachEvent("batchRequestFailed", fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Fire event batchRequestFailed to attached listeners.
+	 *
+	 * @param {object} [mArguments] the arguments to pass along with the event.
+	 * @param {string} [mArguments.message]  A text that describes the failure.
+	 * @param {string} [mArguments.statusCode]  HTTP status code returned by the request (if available)
+	 * @param {string} [mArguments.statusText] The status as a text, details not specified, intended only for diagnosis output
+	 * @param {string} [mArguments.responseText] Response that has been received for the request ,as a text string
+	 *
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	ODataModel.prototype.fireBatchRequestFailed = function(mArguments) {
+		this.fireEvent("batchRequestFailed", mArguments);
+		return this;
+	};
+
+
+	/**
+	 * The 'batchRequestSent' event is fired, after a request has been sent to a backend.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#batchRequestSent
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
+	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+	 * @public
+	 */
+
+	/**
+	 * Attach event-handler <code>fnFunction</code> to the 'requestSent' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
+	 *
+	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object}
+	 *            [oListener] Object on which to call the given function. If empty, the global context (window) is used.
+	 *
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	ODataModel.prototype.attachBatchRequestSent = function(oData, fnFunction, oListener) {
+		this.attachEvent("batchRequestSent", oData, fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Detach event-handler <code>fnFunction</code> from the 'batchRequestSent' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
+	 *
+	 * The passed function and listener object must match the ones previously used for event registration.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs.
+	 * @param {object}
+	 *            oListener Object on which the given function had to be called.
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	ODataModel.prototype.detachBatchRequestSent = function(fnFunction, oListener) {
+		this.detachEvent("batchRequestSent", fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Fire event batchRequestSent to attached listeners.
+	 *
+	 * @param {object} [mArguments] the arguments to pass along with the event.
+	 * @param {string} [mArguments.url] The url which is sent to the backend.
+	 * @param {string} [mArguments.type] The type of the request (if available)
+	 * @param {boolean} [mArguments.async] If the request is synchronous or asynchronous (if available)
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	ODataModel.prototype.fireBatchRequestSent = function(mArguments) {
+		this.fireEvent("batchRequestSent", mArguments);
+		return this;
+	};
+
+	/**
+	 * The 'batchRequestCompleted' event is fired, after a request has been completed (includes receiving a response),
+	 * no matter whether the request succeeded or not.
+	 * 
+	 * @name sap.ui.model.odata.v2.ODataModel#batchRequestCompleted
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {string} oControlEvent.getParameters.url The url which was sent to the backend
+	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
+	 * @param {boolean} oControlEvent.getParameters.success if the request has been successful or not. In case of errors consult the optional errorobject parameter.
+	 * @param {object} [oControlEvent.getParameters.errorobject] If the request failed the error if any can be accessed in this property.
+	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+	 * @public
+	 */
+
+	/**
+	 * Attach event-handler <code>fnFunction</code> to the 'batchRequestCompleted' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
+	 *
+	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object}
+	 *            [oListener] Object on which to call the given function. If empty, the global context (window) is used.
+	 *
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	ODataModel.prototype.attachBatchRequestCompleted = function(oData, fnFunction, oListener) {
+		this.attachEvent("batchRequestCompleted", oData, fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Detach event-handler <code>fnFunction</code> from the 'batchRequestCompleted' event of this <code>sap.ui.model.odata.v2.ODataModel</code>.
+	 *
+	 * The passed function and listener object must match the ones previously used for event registration.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs.
+	 * @param {object}
+	 *            oListener Object on which the given function had to be called.
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	ODataModel.prototype.detachBatchRequestCompleted = function(fnFunction, oListener) {
+		this.detachEvent("batchRequestCompleted", fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Fire event batchRequestCompleted to attached listeners.
+	 *
+	 * @param {object} [mArguments] the arguments to pass along with the event.
+	 * @param {string} [mArguments.url] The url which was sent to the backend.
+	 * @param {string} [mArguments.type] The type of the request (if available)
+	 * @param {boolean} [mArguments.async] If the request was synchronous or asynchronous (if available)
+	 * @param {string} [mArguments.info] additional information for the request (if available) <strong>deprecated</strong>
+	 * @param {object} [mArguments.infoObject] Additional information for the request (if available)
+	 *
+	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	ODataModel.prototype.fireBatchRequestCompleted = function(mArguments) {
+		this.fireEvent("batchRequestCompleted", mArguments);
+		return this;
+	};
+	
 	// Keep a map of service specific data, which can be shared across different model instances
 	// on the same OData service
 	ODataModel.mServiceData = {
@@ -633,7 +864,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		oEventInfo.headers = oRequest.headers;
 		oEventInfo.requests = [];
 		//in batch case list inner requests
-		if (this.bUseBatch) {
+		if (aBatchRequests) {
 			for (var i = 0; i < aBatchRequests.length; i++) {
 				var oBatchRequest = {};
 				//changeSets
@@ -1075,7 +1306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					fnCallBack(oNewContext);
 				};
 				var handleError = function(oError) {
-					if (oError.response.statusCode == '404' && oContext && bIsRelative) {
+					if (oError.statusCode == '404' && oContext && bIsRelative) {
 						var sContextPath = oContext.getPath();
 						// remove starting slash
 						sContextPath = sContextPath.substr(1);
@@ -1619,7 +1850,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oEventInfo;
 
 		var handleSuccess = function(oData, oResponse) {
-			that._processResponse(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+			that._processSuccess(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 			if (oRequest.requestUri.indexOf("$count") === -1) {
 				that.checkUpdate(false, false, mGetEntities);
 				if (that._isRefreshNeeded(oRequest, oResponse)){
@@ -1664,11 +1895,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._submitBatchRequest = function(oBatchRequest, aRequests, fnSuccess, fnError) {
-		var that = this,
-			oEventInfo;
+		var that = this;
 
 		var handleSuccess = function(oData, oBatchResponse) {
-			var oResponse, oRequestObject, oError, aChangeResponses,
+			var oResponse, oRequestObject, aChangeResponses,
 				aBatchResponses = oData.__batchResponses,
 				mChangeEntities = {},
 				mGetEntities = {},
@@ -1684,9 +1914,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						if (oResponse.message) {
 							for (j = 0; j < aRequests[i].length; j++) {
 								oRequestObject = aRequests[i][j];
-								if (!oRequestObject.request._aborted && oRequestObject.fnError) {
-									oError = that._handleError(oResponse);
-									oRequestObject.fnError(oError);
+								if (!oRequestObject.request._aborted) {
+									that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
 								}
 								oRequestObject.response = oResponse;
 							}
@@ -1697,11 +1926,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 								oRequestObject = aRequests[i][j];
 								//check for error
 								if (!oRequestObject.request._aborted) {
-									if (oChangeResponse.message && oRequestObject.fnError) {
-										oError = that._handleError(oChangeResponse);
-										oRequestObject.fnError(oError);
+									if (oChangeResponse.message) {
+										that._processError(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
 									} else {
-										that._processResponse(oRequestObject.request, oChangeResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+										that._processSuccess(oRequestObject.request, oChangeResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 									}
 								}
 								oRequestObject.response = oChangeResponse;
@@ -1711,11 +1939,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						oRequestObject = aRequests[i];
 						if (!oRequestObject.request._aborted) {
 							//check for error
-							if (oResponse.message && oRequestObject.fnError) {
-								oError = that._handleError(oResponse);
-								oRequestObject.fnError(oError);
+							if (oResponse.message) {
+								that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
 							} else {
-								that._processResponse(oRequestObject.request, oResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+								that._processSuccess(oRequestObject.request, oResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 							}
 						}
 						oRequestObject.response = oResponse;
@@ -1726,28 +1953,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (fnSuccess) {
 				fnSuccess(oData);
 			}
-			oEventInfo = that._createEventInfo(oBatchRequest, oBatchResponse, aRequests);
-
-			that.fireRequestCompleted(oEventInfo);
+			fireEvent("Completed", oBatchRequest, null, aRequests);
 		};
 
 		var handleError = function(oError) {
 			if (fnError) {
 				fnError(oError);
 			}
-			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
-
-			that.fireRequestCompleted(oEventInfo);
 			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
 			if (!oRequestHandle || !oRequestHandle.bAborted) {
-				that.fireRequestFailed(oEventInfo);
+				fireEvent("Failed", oBatchRequest, oError, aRequests);
 			}
+			fireEvent("Completed", oBatchRequest, oError, aRequests);
+		};
+		
+		var fireEvent = function(sType, oBatchRequest, oError, aRequests) {
+			var oEventInfo;
+			jQuery.each(aRequests, function(i, oRequest) {
+				if (jQuery.isArray(oRequest)) {
+					jQuery.each(oRequest, function(i, oRequest) {
+						oEventInfo = that._createEventInfo(oRequest.request, oError);
+						that["fireRequest" + sType](oEventInfo);
+					});
+				} else {
+					oEventInfo = that._createEventInfo(oRequest.request, oError);
+					that["fireRequest" + sType](oEventInfo);
+				}
+			});
+			
+			oEventInfo = that._createEventInfo(oBatchRequest, null, aRequests);
+			that["fireBatchRequest" + sType](oEventInfo);
 		};
 
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-
-		oEventInfo = this._createEventInfo(oBatchRequest, null, aRequests);
-		this.fireRequestSent(oEventInfo);
+		
+		fireEvent("Sent", oBatchRequest, null, aRequests);
 
 		return oRequestHandle;
 	};
@@ -1995,7 +2235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {boolean} bSuccess Processed successfully
 	 * @private
 	 */
-	ODataModel.prototype._processResponse = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
+	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
 		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
 		oEntityMetadata, that = this;
 
@@ -2063,9 +2303,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (fnSuccess) {
 			fnSuccess(oResponse.data, oResponse);
 		}
+		
 		return true;
 	};
 
+	/**
+	 * process request response for successful requests
+	 *
+	 * @param {object} oRequest The request
+	 * @param {object} oResponse The response
+	 * @param {function} fnError The error callback function
+	 * @private
+	 */
+	ODataModel.prototype._processError = function(oRequest, oResponse, fnError) {
+		var oError = this._handleError(oResponse);
+		var oEventInfo = this._createEventInfo(oRequest, oError);
+		this.fireRequestFailed(oEventInfo);
+		if (fnError) {
+			fnError(oError);
+		}
+	};
+	
 	/**
 	 * process a 'TwoWay' change
 	 *
@@ -2849,9 +3107,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
 			fnSuccess =	mParameters.success;
-			fnError   = mParameters.error;
+			fnError = mParameters.error;
 			sBatchGroupId = mParameters.batchGroupId;
-			bMerge    = mParameters.merge !== false;
+			bMerge = mParameters.merge !== false;
 		}
 
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
