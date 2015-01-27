@@ -1566,6 +1566,88 @@
 		
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
+	
+	module("StandartListItem RTL attributes");
+	
+	test("setter / getter titleTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "123 456"
+		});
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		oStdLI.setTitleTextDirection(sap.ui.core.TextDirection.RTL);
+		// Assert
+		equals(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		
+		// Clean up
+		oList.destroy();
+	});
+	
+	test("setter / getter infoTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "Title",
+			info : "+359 123 456"
+		});
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		oStdLI.setInfoTextDirection(sap.ui.core.TextDirection.RTL);
+		// Assert
+		equals(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		
+		// Clean up
+		oList.destroy();
+	});
+	
+	test("StandardListItem titleTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "123 456",
+			titleTextDirection: sap.ui.core.TextDirection.LTR
+			});
+		
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oTitle = oStdLI.$().find(".sapMSLITitleDiv").children(0);
+		// Assert
+		equals(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
+		
+		// Clean up
+		oList.destroy();
+	});
+	
+	test("StandardListItem infoTextDirection", function() {
+		var oStdLI = new sap.m.StandardListItem({
+			title : "Title",
+			info : "+359 1234 567",
+			infoTextDirection: sap.ui.core.TextDirection.LTR
+		});
+		
+		var oList = new sap.m.List({
+			items : [oStdLI]
+		});
+		
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oInfo = oStdLI.$().find(".sapMSLIInfo");
+		// Assert
+		equals(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
+		
+		// Clean up
+		oList.destroy();
+	});
 
 </script>
 
