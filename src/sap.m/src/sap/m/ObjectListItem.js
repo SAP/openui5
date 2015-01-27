@@ -356,6 +356,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			this._oTitleText = new sap.m.Text(this.getId() + "-titleText", {
 				maxLines: 2
 			});
+
+			this._oTitleText.setParent(this);
 		}
 		return this._oTitleText;
 	};
