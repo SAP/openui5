@@ -60,9 +60,9 @@
 		}
 	}
 
-	function initModel(sURI, bJSON){
+	function initModel(sURI, bJSON, bUseBatch){
 		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json:bJSON,loadMetadataAsync:false, useBatch: false});
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json:bJSON, useBatch: bUseBatch !== false});
 		return oModel;
 	}
 
@@ -523,8 +523,9 @@
 		oBinding.attachChange(handler);
 	});
 	
-	asyncTest("test model bindAggregation on Listbox events", 1, function(){
-		
+	asyncTest("test model bindAggregation on Listbox events", 2, function(){
+		var oModel = initModel(sURI, false, "Categories");
+		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
 		
@@ -712,7 +713,7 @@
 	});
 	
 	asyncTest("Custom Header test", function(){
-		var oModel = initModel(sURI, true);
+		var oModel = initModel(sURI, true, false);
 		oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
 		
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -830,7 +831,7 @@
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true,
-			bUseBatch: false,
+			useBatch: false,
 			refreshAfterChange: false
 		});
 
@@ -873,6 +874,189 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
+
+	function attachRequestEvents(oModel, oInfo) {
+		var fnHandler = function(oEvent) {
+			var sId = oEvent.getId();
+			if (!oInfo[sId]) {
+				oInfo[sId] = 0;
+			}
+			oInfo[sId]++;
+		};
+		var aEvents = [
+		    "attachRequestSent", "attachRequestFailed", "attachRequestCompleted",
+		    "attachBatchRequestSent", "attachBatchRequestFailed", "attachBatchRequestCompleted"
+		];
+		jQuery.each(aEvents, function(i, sEvent) {
+			oModel[sEvent](fnHandler);
+		});             
+	}
+	
+	asyncTest("async test request events - single", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: true,
+			useBatch: false
+		});
+		var oInfo = {};
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oModel.read("/Categories(1)");
+			oModel.read("/Categories(1)");
+			oModel.read("/Categories(9999)");
+			setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, 1, "One request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.batchRequestSent, undefined, "No batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, undefined, "No batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
+
+	asyncTest("async test request events - batch", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {};
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oModel.read("/Categories(1)");
+			oModel.read("/Categories(1)");
+			oModel.read("/Categories(9999)");
+			setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, 1, "One request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
+
+	asyncTest("async test request events - batch with one changeset", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {};
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oModel.read("/Categories(1)");
+			oModel.remove("/Categories(1)");
+			oModel.remove("/Categories(2)");
+			setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, undefined, "No request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
+
+	asyncTest("async test request events - batch with two changeset", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {};
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oModel.read("/Categories(1)");
+			oModel.remove("/Categories(1)", {changeSetId: 1});
+			oModel.remove("/Categories(2)", {changeSetId: 1});
+			oModel.remove("/Categories(1)", {changeSetId: 2});
+			oModel.remove("/Categories(2)", {changeSetId: 2});
+			setTimeout(function() {
+				equal(oInfo.requestSent, 5, "Five requests sent");
+				equal(oInfo.requestFailed, undefined, "No request failed");
+				equal(oInfo.requestCompleted, 5, "Five requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
+
+	asyncTest("async test request events - batch with two changeset, one failing", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {};
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oModel.read("/Categories(1)");
+			oModel.remove("/Categories(1)", {changeSetId: 1});
+			oModel.remove("/Categories(2)", {changeSetId: 1});
+			oModel.remove("/Categories(1)", {changeSetId: 2});
+			oModel.remove("/Fail500(2)", {changeSetId: 2});
+			setTimeout(function() {
+				equal(oInfo.requestSent, 5, "Five requests sent");
+				equal(oInfo.requestFailed, 2, "Two request failed");
+				equal(oInfo.requestCompleted, 5, "Five requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
+	
+	asyncTest("async test request events - batch fail", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {};
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oModel.read("/Categories(1)");
+			oModel.read("/Categories(1)");
+			oModel.read("/Batch500(9999)");
+			setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, 3, "Three request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, 1, "One batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
 	
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
@@ -990,7 +1174,7 @@
 
 	module("ODataModel.read", {
 		setup: function() {
-			this.oModel = initModel(sURI, false);
+			this.oModel = initModel(sURI, false, false);
 		},
 		teardown: function() {
 			this.oModel.destroy();
