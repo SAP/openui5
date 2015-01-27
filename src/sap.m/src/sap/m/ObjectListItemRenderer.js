@@ -215,29 +215,32 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			var statuses = [];
 			var markers = null;
 
-			//lock icon
-			var placeholderIcon = oLI._getPlaceholderIcon();
-			var lockIcon = oLI._getLockIcon();
-			lockIcon.setVisible(oLI.getMarkLocked());
+			if (oLI.getShowMarkers() || oLI.getMarkLocked()) {
+				var placeholderIcon = oLI._getPlaceholderIcon();
+				markers = [placeholderIcon];
 
-			markers = [placeholderIcon, lockIcon];
-			markers._isEmpty = function() {
-				return false;
-			};
+				markers._isEmpty = function() {
+					return false;
+				};
 
-			statuses.push(markers);
+				if (oLI.getMarkLocked()) {
+					var lockIcon = oLI._getLockIcon();
+					lockIcon.setVisible(oLI.getMarkLocked());
+					markers.push(lockIcon);
+				}
 
-			//end lock icon
+				if (oLI.getShowMarkers()) {
+					var favIcon = oLI._getFavoriteIcon();
+					var flagIcon = oLI._getFlagIcon();
 
-			if (oLI.getShowMarkers()) {
-				var favIcon = oLI._getFavoriteIcon();
-				var flagIcon = oLI._getFlagIcon();
-				favIcon.setVisible(oLI.getMarkFavorite());
-				flagIcon.setVisible(oLI.getMarkFlagged());
-				
-				//Markers will be rendered LTR in the order they're added to the array
-				statuses[0].push(favIcon);
-				statuses[0].push(flagIcon);
+					favIcon.setVisible(oLI.getMarkFavorite());
+					flagIcon.setVisible(oLI.getMarkFlagged());
+
+					markers.push(favIcon);
+					markers.push(flagIcon);
+				}
+
+				statuses.push(markers);
 			}
 
 			statuses.push(oLI.getFirstStatus());
