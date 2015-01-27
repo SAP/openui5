@@ -145,6 +145,29 @@
 				
 				oRenderOncePage.destroy();
 			});
+			
+			test("render once only with combinatorics", function() { // regression test for issue 1570014242
+				// the mechanism that avoids double rendering is different depending on whether there is a title/navbutton or not, hence this test
+				var iRenderCounter = 0;
+				var oDelegate = {
+					onAfterRendering : function() {
+						iRenderCounter++;
+					}
+				};
+
+				var oRenderOncePage = new sap.m.Page({showNavButton: true, title: "Test Page"});
+				oRenderOncePage.addDelegate(oDelegate);
+				equal(iRenderCounter, 0, "page should not be rendered directly after instantiation");
+				
+				oRenderOncePage.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				equal(iRenderCounter, 1, "page should be rendered only once");
+				
+				oRenderOncePage.rerender();
+				equal(iRenderCounter, 2, "page should be rendered twice after another forced rerendering");
+				
+				oRenderOncePage.destroy();
+			});
 
 			module("Properties Check");
 
