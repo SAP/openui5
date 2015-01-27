@@ -46,7 +46,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 			opaTest("Should navigate on press", function (Given, When, Then) {
 				// Actions
-				When.iPressOnTheObject1();
+				When.iPressOnTheObject1InMasterList();
 
 				// Assertions
 				Then.iShouldBeOnTheObject1Page();
@@ -54,7 +54,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 			opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
 				// Actions
-				When.iPressOnTheObject1();
+				When.iPressOnTheObject1InMasterList();
 
 				// Assertions
 				Then.iShouldBeOnTheObject1Page().
@@ -62,6 +62,43 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 					and.theLineItemsListShouldHave4Entries().
 					and.theFirstLineItemHasIDLineItemID_1();
 
+			});
+			
+			opaTest("Line Item Page shows Line Item and Navigation Buttons have correct state", function (Given, When, Then) {
+			
+				// Actions
+				When.iPressOnTheObject1InMasterList().
+					and.iPressOnTheItem1InLineItemList();
+
+				// Assertions
+				Then.iShouldBeOnTheLineItem1Page().
+					and.thePreviousButtonIsDisabled().
+					and.theNextButtonIsEnabled();
+				
+			});
+			
+			opaTest("Line Item Page pressing 'Next' Button on Line Item 1 page navigates to Line Item 2 and updates the Navigation Buttons", function (Given, When, Then) {
+				
+				// Actions
+				When.iPressTheNextButton();
+
+				// Assertions
+				Then.iShouldBeOnTheLineItem2Page().
+					and.thePreviousButtonIsEnabled().
+					and.theNextButtonIsEnabled();
+				
+			});
+			
+			opaTest("Line Item Page ressing 'Previous' Button on Line Item 2 page navigates to Line Item 1 and updates the Navigation Buttons", function (Given, When, Then) {
+				
+				// Actions
+				When.iPressThePreviousButton();
+
+				// Assertions
+				Then.iShouldBeOnTheLineItem1Page().
+					and.thePreviousButtonIsDisabled().
+					and.theNextButtonIsEnabled();
+				
 			});
 		}
 	};
