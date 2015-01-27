@@ -571,6 +571,40 @@
 				oIconTabBar.destroy();
 			});
 			
+			test("standalone IconTabHeader", function() {
+
+				// Arrange
+				var oIconTabHeader = new sap.m.IconTabHeader({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							text : 'Open',
+							count: '5545'
+						}),
+						new sap.m.IconTabSeparator({
+							icon: "sap-icon://manager"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager"
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabHeader.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				ok (oIconTabHeader.$().hasClass("sapMITH"), "oIconTabHeader has class sapMITH");
+				ok(oIconTabHeader.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
+				ok(!oIconTabHeader.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
+				ok(oIconTabHeader.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
+				ok(!oIconTabHeader.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
+
+				// Clean up
+				oIconTabHeader.destroy();
+			});
+			
 			module("icon color");
 			
 			test("Default", function() {
