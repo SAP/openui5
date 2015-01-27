@@ -147,7 +147,7 @@
                 markLocked: true
             });
 
-            lockedOlI.placeAt("qunit-fixture");
+            list.addItem(lockedOlI);
             sap.ui.getCore().applyChanges();
 
             ok(jQuery.sap.domById(lockedOlI.getId() + "-lock"), "Locked marker should be rendered.");
@@ -341,7 +341,8 @@
 			title: "Test Exit",
 			markFlagged : true,
 			markFavorite : true,
-			showMarkers: true
+			showMarkers: true,
+			markLocked: true
 		});
 
 
@@ -370,10 +371,12 @@
 			ok(sap.ui.getCore().byId("iconOLI-placeholder"), "Placeholder icon is found in UI5 Core");
 			ok(sap.ui.getCore().byId("iconOLI-flag"), "Flag icon is found in UI5 Core");
 			ok(sap.ui.getCore().byId("iconOLI-favorite"), "Favorite icon is found in UI5 Core");
+			ok(sap.ui.getCore().byId("iconOLI-lock"), "Locked icon is found in UI5 Core");
 			iconOLI.destroy();
 			ok(!sap.ui.getCore().byId("iconOLI-placeholder"), "Placeholder icon removed from UI5 Core");
 			ok(!sap.ui.getCore().byId("iconOLI-flag"), "Flag icon removed from UI5 Core");
 			ok(!sap.ui.getCore().byId("iconOLI-favorite"), "Favorite icon removed from UI5 Core");
+			ok(!sap.ui.getCore().byId("iconOLI-lock"), "Locked icon removed from UI5 Core");
 		});
 
 		test("TestImageExit", function() {

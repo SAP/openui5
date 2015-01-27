@@ -167,6 +167,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			this._oFlagIcon.destroy();
 			this._oFlagIcon = undefined;
 		}
+
+		if (this._oLockIcon) {
+			this._oLockIcon.destroy();
+			this._oLockIcon = undefined;
+		}
 		
 		if (this._oTitleText) {
 			this._oTitleText.destroy();
