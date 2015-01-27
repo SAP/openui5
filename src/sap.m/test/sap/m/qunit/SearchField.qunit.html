@@ -137,7 +137,16 @@
 		strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
 	});
 
-	
+	test("Screen Reader", function() {
+		var describedById = sf3Dom.getAttribute("aria-describedby");
+		var aLabels = describedById.split(' ');
+		var bLabelsExist = aLabels.every(function(id){
+			return !!document.getElementById(id);
+		});
+		ok(!!describedById, "Described by ID is set");
+		ok(bLabelsExist, "All descriptions are rendered in DOM");
+	});
+
 	// test the "reset" button
 	asyncTest("ResetButton", function() {
 		ok(true, "Test for reset button started");

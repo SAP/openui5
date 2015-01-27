@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global'],
 			//ARIA attributes
 			if (oSF.getEnabled() && bShowRefreshButton) {
 				oAccAttributes.describedby = {
-					value: sId + "-ACCF5",
+					value: oSF._sAriaF5LabelId,
 					append: true
 				};
 			}
@@ -131,11 +131,6 @@ sap.ui.define(['jquery.sap.global'],
 						rm.writeAttributeEscaped("title", oSF.getRefreshButtonTooltip());
 					}
 					rm.write( "></div>");
-				}
-
-				// ARIA write hidden element for the "press F5" description
-				if (bShowRefreshButton) {
-					rm.write("<label id='" + sId + "-ACCF5' class='sapUiInvisibleText' aria-hidden='true'>" + oSF._oRb.getText("SEARCHFIELD_ARIA_F5") + "</label>");
 				}
 			}
 		
