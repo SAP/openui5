@@ -852,6 +852,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	              if (oList.getShowRemoveFacetIcon()) {
 	              this._displayRemoveIcon(true, oList);
 	              }
+	              if (oList.getWordWrap()) {
+oPopover.setContentWidth("30%");
+	              }
 	              oList._applySearch();
 	       }
 	       return this;
