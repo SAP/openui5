@@ -478,7 +478,8 @@
 			oTPC4.openDialog();
 			sap.ui.getCore().applyChanges();
 			var oTablePersoDialog4 = oTPC4.getTablePersoDialog(),
-				oResetButton = oTablePersoDialog4._oDialog.getContent()[0].getContent()[1];
+				oResetButton = oTablePersoDialog4._oDialog.getContent()[0].getContent()[1],
+				oButtonDown = oTablePersoDialog4._oButtonDown,
 				oList = oTablePersoDialog4._oList;
 
 			//Act
@@ -486,6 +487,12 @@
 			oResetButton.firePress();
 			sap.ui.getCore().applyChanges();
 			equal(oList.getItems()[0].getLabel(), 'Bingo!', 'Even after reset, label should be the last rendered column name');
+			oList.setSelectedItem(oList.getItems()[0]);
+			oButtonDown.firePress();
+			sap.ui.getCore().applyChanges();
+			oResetButton.firePress();
+			sap.ui.getCore().applyChanges();
+			equal(oList.getSelectedItem(), oList.getItems()[0], 'After repositioning and after reset, the last selected item is still selected');
 
 		    oTPC4.destroy();
 			oTable4.destroy();
