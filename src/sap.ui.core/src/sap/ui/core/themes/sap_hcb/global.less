@@ -167,7 +167,7 @@
 /* Derived Chart Colors */
 
 @sapUiChartLabelHoverColor: @sapHCHighlightBG;             // #7a5100
-@sapUiChartLabelPressedColor: @sapHCHighlightBG;           // #7a5100
+@sapUiChartLabelPressedColor: @sapHCHighlightAltBG;        // #0f5d94
 @sapUiChartCategoryAxisLabelFontColor: @sapHCStandardFG;   // #ffffff
 @sapUiChartValueAxisLabelFontColor: @sapHCStandardFG;      // #ffffff
 @sapUiChartCategoryAxisLabelFontSize: @sapMFontSmallSize;  // 12px
@@ -182,8 +182,8 @@
 @sapUiChartLegendTitleFontColor: @sapHCStandardFG;         // #ffffff
 @sapUiChartLegendTitleFontSize: @sapMFontMediumSize;       // 14px
 @sapUiChartLegendLabelFontSize: @sapMFontSmallSize;        // 12px
-@sapUiChartPaletteUndefinedColor: @sapHCReducedAltBG;      // #a2a39f
-@sapUiChartGridlineColor: @sapHCReducedAltFG;              // #a2a39f
+@sapUiChartPaletteUndefinedColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartGridlineColor: @sapHCReducedAltFG;              // #999999
 @sapUiChartReferenceLineColor: @sapHCStandardFG;           // #ffffff
 @sapUiChartDataLabelFontColor: @sapHCStandardFG;           // #ffffff
 @sapUiChartReferenceLineLabelColor: @sapHCStandardFG;      // #ffffff
@@ -201,6 +201,14 @@
 @sapUiChartMainTitleFontSize: @sapMFontLargeSize;          // 16px
 @sapUiChartAxisTitleFontSize: @sapMFontMediumSize;         // 14px
 @sapUiChartTitleFontWeight: bold;
+
+@sapUiChartDataPointBorderColor: @sapHCStandardBG;                                       // #000000
+@sapUiChartDataPointBorderHoverSelectedColor: lighten(@sapUiChartBackgroundColor, 100%);
+@sapUiChartDataPointNotSelectedBackgroundOpacity: 0.5;
+
+@sapUiChartValueAxisLineOpacity: 0;
+@sapUiChartCategoryAxisLabelFontHoverColor: @sapHCStandardFG;   // #ffffff
+@sapUiChartCategoryAxisLabelFontPressedColor: @sapHCStandardFG; // #ffffff
 
 // qualitative palette
 

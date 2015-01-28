@@ -101,6 +101,87 @@
 @sapUiChartSequenceNeutral: @sapChart_Sequence_Neutral;
 
 
+/* ===================================== */
+/* Accent Colors                         */
+/* ===================================== */
+
+@sapUiAccent1: @sapAccentColor1; // #f0ab00 rgb(240, 171, 0)
+@sapUiAccent2: @sapAccentColor2; // #f27020 rgb(242, 112, 32)
+@sapUiAccent3: @sapAccentColor3; // #e52929 rgb(229, 41, 41)
+@sapUiAccent4: @sapAccentColor4; // #ab218e rgb(171, 33, 142)
+@sapUiAccent5: @sapAccentColor5; // #007cc0 rgb(0, 124, 192)
+@sapUiAccent6: @sapAccentColor6; // #008a3b rgb(0, 138, 59)
+@sapUiAccent7: @sapAccentColor7; // #004990 rgb(0, 73, 144)
+@sapUiAccent8: @sapAccentColor8; // #009de0 rgb(0, 157, 224)
+
+
+
+/* ===================================== */
+/* EFFECT COLORS                         */
+/* ===================================== */
+
+@sapUiDarkShadowTint: @sapDarkShadowColor;   // #000
+@sapUiLightShadowTint: @sapLightShadowColor; // #fff
+
+
+/* ===================================== */
+/* Special Colors                        */
+/* ===================================== */
+
+@sapUiDarkFocusColor: @sapDarkFocusColor;         // #005483 Renamed sapUxFocus
+@sapUiLightFocusColor: @sapLightFocusColor;       // #fff Added by UX
+@sapUiSearchHighlight: @sapSearchHighlightColor;  // #fffcb5
+@sapUiHelpHighlightColor: @sapHelpHighlightColor; // #3f8600
+
+
+/* ===================================== */
+/* Background Colors                     */
+/* ===================================== */
+
+/* Grayscale Backgrounds                 */
+
+@sapUiBaseBackground: @sapBaseBackground;     // #808080
+@sapUiLightestBG: @sapLightestBackground;     // #ffffff
+@sapUiExtraLightBG: @sapExtraLightBackground; // #f2f2f2 rgb(242, 242, 242)
+@sapUiLightBG: @sapLightBackground;           // #e5e5e5 rgb(229, 229, 229)
+@sapUiMediumBG: @sapMediumBackground;         // #dddddd  --- Not used in BC but used in GR!
+@sapUiDarkBG: @sapDarkBackground;             // #777777
+@sapUiExtraDarkBG: @sapExtraDarkBackground;   // #333333 rgb(51, 51, 51)
+@sapUiDarkestBG: @sapDarkestBackground;       // #000000
+
+
+/* ===================================== */
+/* Border Colors                         */
+/* ===================================== */
+
+/* Grayscale Borders                     */
+
+@sapUiBaseBorder: @sapBaseBorderColor;             // #808080
+@sapUiLightestBorder: @sapLightestBorderColor;     // #ffffff
+@sapUiExtraLightBorder: @sapExtraLightBorderColor; // #e5e5e5 rgb(229, 229, 229)
+@sapUiLightBorder: @sapLightBorderColor;           // #dddddd rgb(221, 221, 221)
+@sapUiMediumBorder: @sapMediumBorderColor;         // #cccccc rgb(204, 204, 204)
+@sapUiDarkBorder: @sapDarkBorderColor;             // #bfbfbf rgb(191, 191, 191)
+@sapUiExtraDarkBorder: @sapExtraDarkBorderColor;   // #999999 rgb(153, 153, 153) // TODO: remove
+@sapUiDarkestBorder: @sapDarkestBorderColor;       // #000000
+
+
+/* ===================================== */
+/* Font Colors                           */
+/* ===================================== */
+
+/* Grayscale Text                        */
+
+@sapUiExtraLightText: @sapExtraLightTextColor; // #707070 rgb(112, 112, 112)
+@sapUiLightText: @sapLightTextColor;           // #666666 rgb(102, 102, 102)
+@sapUiMediumText: @sapMediumTextColor;         // #444444 rgb(68, 68, 68)
+@sapUiDarkText: @sapDarkTextColor;             // #333333 rgb(51, 51, 51)
+@sapUiExtraDarkText: @sapExtraDarkTextColor;   // #222222
+
+
+
+
+
 /* ================================================== */
 /* Absolute fixed Colors - do not use in Controls!!   */
 /* ================================================== */
@@ -123,28 +204,6 @@
 @sapUiCritical: #d14900; //rgb(209, 73, 0)
 @sapUiPositive: #007833; //rgb(0, 120, 51)
 @sapUiNeutral:  #007cc0; //rgb(0, 124, 192)
-
-
-/* ===================================== */
-/* Accent Colors                         */
-/* ===================================== */
-
-@sapUiAccent1: @sapUiYellow; //   #f0ab00;	// rgb(240, 171, 0)
-@sapUiAccent2: @sapUiOrange; //   #f27020;	// rgb(242, 112, 32)
-@sapUiAccent3: @sapUiRed;    //   #e52929;	// rgb(229, 41, 41)
-@sapUiAccent4: @sapUiPurple; //   #ab218e;	// rgb(171, 33, 142)
-@sapUiAccent5: @sapUiBlue;   //   #007cc0;	// rgb(0, 124, 192)
-@sapUiAccent6: @sapUiGreen;  //   #008a3b;	// rgb(0, 138, 59)
-@sapUiAccent7: #004990;      // rgb(0, 73, 144)
-@sapUiAccent8: #009de0;      // rgb(0, 157, 224)
-
-
-/* ===================================== */
-/* Special Colors                        */
-/* ===================================== */
-
-@sapUiSearchHighlight: #fffcb5;
-
 
 
 /* ===================================== */
@@ -176,26 +235,9 @@
 
 @sapUiBaseBG: @sapBackgroundColor;			// "Quick" default #f2f2f2
 
-@sapUiBaseBorder: hsl(hue(@sapUiBase), saturation(@sapUiBase), lightness(@sapUiBase));  // #808080
-
 @sapUiBaseText:   @sapTextColor;			// "Quick" default #000000
 
 @sapUiBaseLine:   hsl(hue(@sapUiBase), saturation(@sapUiBase), lightness(@sapUiBase));  // #808080
-
-
-/* ===================================== */
-/* Background Colors                     */
-/* ===================================== */
-
-/* Grayscale Backgrounds                 */
-
-@sapUiLightestBG:   lighten(@sapBaseColor, 100);   // #ffffff
-@sapUiExtraLightBG: lighten(@sapBaseColor, 44.7);  // #f2f2f2 rgb(242, 242, 242)
-@sapUiLightBG:      lighten(@sapBaseColor, 39.7);  // #e5e5e5 rgb(229, 229, 229)
-@sapUiMediumBG:     lighten(@sapBaseColor, 36.5);  // #dddddd  --- not used in Fiori!
-@sapUiDarkBG:       darken(@sapBaseColor, 3.7);    // #777777
-@sapUiExtraDarkBG:  darken(@sapBaseColor, 30.2);   // #333333 rgb(51, 51, 51)
-@sapUiDarkestBG:    darken(@sapBaseColor, 100);    // #000000
 
 
 /* Tinted Backgrounds                    */
@@ -221,15 +263,7 @@
 /* Font Colors                           */
 /* ===================================== */
 
-/* Grayscale Text                        */
-
 @sapUiTextInverted:  lighten(@sapUiBaseText, 100%);   //#ffffff  rgb(255, 255, 255)
-
-@sapUiExtraLightText: lighten(@sapUiBaseText,44%);    //#707070  rgb(112, 112, 112)
-@sapUiLightText:      lighten(@sapUiBaseText, 40%);   //#666666  rgb(102, 102, 102)
-@sapUiMediumText:     lighten(@sapUiBaseText, 26.5%); //#444444  rgb(68, 68, 68)
-@sapUiDarkText:       lighten(@sapUiBaseText, 20%);   //#333333  rgb(51, 51, 51)
-@sapUiExtraDarkText:  lighten(@sapUiBaseText, 13.4%); // #222222;
 
 @sapUiStandardText:   @sapUiBaseText;                 //#000000  rgb(0, 0, 0)
 
@@ -254,19 +288,10 @@
 @sapUiCriticalText: @sapUiCritical; //rgb(209, 73, 0)
 @sapUiPositiveText: @sapUiPositive; //rgb(0, 120, 51)
 
+
 /* ===================================== */
 /* Border Colors                         */
 /* ===================================== */
-
-/* Grayscale Borders                     */
-
-@sapUiLightestBorder:   lighten(@sapUiBaseBorder, 100%);  // #ffffff
-@sapUiExtraLightBorder: lighten(@sapUiBaseBorder, 39.7%); // #e5e5e5 rgb(229, 229, 229)
-@sapUiLightBorder:      lighten(@sapUiBaseBorder, 36.5%); // #dddddd rgb(221, 221, 221)
-@sapUiMediumBorder:     lighten(@sapUiBaseBorder, 30%);   // #cccccc rgb(204, 204, 204)
-@sapUiDarkBorder:       lighten(@sapUiBaseBorder, 25%);   // #bfbfbf rgb(191, 191, 191)
-@sapUiExtraDarkBorder:  lighten(@sapUiBaseBorder, 10%);   // #999999 rgb(153, 153, 153) // TODO: remove
-@sapUiDarkestBorder:    darken(@sapUiBaseBorder, 100%);   // #000000
 
 /* Semantic Border Colors                */
 
@@ -293,14 +318,6 @@
 @sapUiTableRowAlternatingBG: #eff7fb;
 @sapUiTableRowSelectionBG: #d1e9f4;
 @sapUiTableRowSelectionReadOnlyBG: #c9e1ed;
-
-
-/* ===================================== */
-/* EFFECT COLORS                         */
-/* ===================================== */
-
-@sapUiDarkShadowTint: @sapUiShadowTint;
-@sapUiLightShadowTint: #fff;
 
 
 /* ===================================== */
@@ -472,6 +489,14 @@
 @sapUiChartMainTitleFontSize: @sapMFontLargeSize;                   // 16px
 @sapUiChartAxisTitleFontSize: @sapMFontMediumSize;                  // 14px
 @sapUiChartTitleFontWeight: bold;
+
+@sapUiChartDataPointBorderColor: @sapUiLightestBorder;                                 // #ffffff
+@sapUiChartDataPointBorderHoverSelectedColor: darken(@sapUiChartBackgroundColor, 40%);
+@sapUiChartDataPointNotSelectedBackgroundOpacity: 0.5;
+
+@sapUiChartValueAxisLineOpacity: 0;
+@sapUiChartCategoryAxisLabelFontHoverColor: @sapUiDarkText;   // #333333
+@sapUiChartCategoryAxisLabelFontPressedColor: @sapUiDarkText; // #333333
 
 // qualitative palette
 

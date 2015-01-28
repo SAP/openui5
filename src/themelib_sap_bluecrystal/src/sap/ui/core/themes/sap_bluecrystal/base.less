@@ -103,26 +103,6 @@
 // [Tags "Base", "Content", "Color", "Font"]
 @sapTitleColor: #333;
 
-// [Label "Negative Color"]
-// [Description "The color for elements showing negative state"]
-// [Tags "Base", "SemanticColor", "Color"]
-@sapNegativeColor: #e52929;
-
-// [Label "Critical Color"]
-// [Description "The color for elements showing critical state"]
-// [Tags "Base", "SemanticColor", "Color"]
-@sapCriticalColor: #f0ab00;
-
-// [Label "Positive Color"]
-// [Description "The color for elements showing positive state"]
-// [Tags "Base", "SemanticColor", "Color"]
-@sapPositiveColor: #008a3b;
-
-// [Label "Informative Color"]
-// [Description "The color for elements showing informative state"]
-// [Tags "Base", "SemanticColor", "Color"]
-@sapNeutralColor: #007cc0;
-
 // [Tags "Base", "Content", "Color", "Protected"]
 @sapContent_BackgroundGradientStartColor: lighten(desaturate(spin(@sapContent_BackgroundGradientMiddleColor,353),14),9); //should be #2DABB3
 
@@ -290,12 +270,12 @@
 // [Label "Reject Button Background Color"]
 // [Description "The background color of \"Reject\" buttons. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Button", "Color"]
-@sapButton_Reject_Background: darken(@sapNegativeColor,8);
+@sapButton_Reject_Background: @sapNegativeElementColor;
 
 // [Label "Accept Button Background Color"]
 // [Description "The background color of \"Accept\" buttons. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Button", "Color"]
-@sapButton_Accept_Background: darken(@sapPositiveColor,3.5);
+@sapButton_Accept_Background: @sapPositiveElementColor;
 
 // [Label "Field Background Color"]
 // [Description "The background color of input fields. This parameter is protected and is not yet released for being changed."]
@@ -392,32 +372,32 @@
 // [Label "Invalid Field Color"]
 // [Description "The base color of input fields with an invalid value. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Field", "Color"]
-@sapField_InvalidColor: @sapNegativeColor;
+@sapField_InvalidColor: @sapErrorColor;
 
 // [Label "Invalid Field Background Color"]
 // [Description "The background color of input fields with an invalid value. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Field", "Color"]
-@sapField_InvalidBackground: mix(@sapField_InvalidColor, #fff, 20);
+@sapField_InvalidBackground: @sapErrorBackground;
 
 // [Label "Warning Field Color"]
 // [Description "The base color of an input field indicating a warning. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Field", "Color"]
-@sapField_WarningColor: @sapCriticalColor;
+@sapField_WarningColor: @sapWarningColor;
 
 // [Label "Warning Field Background Color"]
 // [Description "The background color of an input field indicating a warning. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Field", "Color"]
-@sapField_WarningBackground: mix(@sapField_WarningColor, #fff, 20);
+@sapField_WarningBackground: @sapWarningBackground;
 
 // [Label "Success Field Color"]
 // [Description "The base color an input field indicating a successful user action. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Field", "Color"]
-@sapField_SuccessColor: @sapPositiveColor;
+@sapField_SuccessColor: @sapSuccessColor;
 
 // [Label "Success Field Background Color"]
 // [Description "The background color of an input field indicating a successful user action. This parameter is protected and is not yet released for being changed."]
 // [Tags "Base", "Field", "Color"]
-@sapField_SuccessBackground: mix(@sapField_SuccessColor, #fff, 20);
+@sapField_SuccessBackground: @sapSuccessBackground;
 
 // [Label "Group Title Background Color"]
 // [Description "The background color of the group header area. This parameter is protected and is not yet released for being changed."]
@@ -639,3 +619,116 @@
 // [Description "This color is the base chart color of the sequence 'Neutral'"]
 // [Tags "Base", "Chart", "Color"]
 @sapChart_Sequence_Neutral: #848f94;
+
+/*
+ UX COLOR SET
+*/
+
+
+
+/* ACCENT COLORS */
+@sapAccentColor1: #f0ab00;
+@sapAccentColor2: #f27020;
+@sapAccentColor3: #e52929;
+@sapAccentColor4: #ab218e;
+@sapAccentColor5: #007cc0;
+@sapAccentColor6: #008a3b;
+@sapAccentColor7: #004990;
+@sapAccentColor8: #009de0;
+
+
+/* Shadows */
+@sapDarkShadowColor:  #000;
+@sapLightShadowColor: #fff;
+
+
+/* SPECIAL COLORS */
+@sapDarkFocusColor:       darken(@sapHighlightColor, 12%); // #005483 Renamed sapUxFocus
+@sapLightFocusColor:      #fff; // Added by UX
+@sapSearchHighlightColor: #fffcb5;
+@sapHelpHighlightColor:   #3f8600;
+
+
+/* Grayscale Backgrounds */
+@sapBaseBackground:       @sapBaseColor;
+@sapLightestBackground:   lighten(@sapBaseBackground, 100); // #ffffff
+@sapExtraLightBackground: lighten(@sapBaseBackground, 44.7); // #f2f2f2
+@sapLightBackground:      lighten(@sapBaseBackground, 39.7); // #e5e5e5
+@sapMediumBackground:     lighten(@sapBaseBackground, 36.5); // #dddddd  Not used in BC but used in GR
+@sapDarkBackground:       darken(@sapBaseBackground, 3.7); // #777777
+@sapExtraDarkBackground:  darken(@sapBaseBackground, 30.2); // #333333
+@sapDarkestBackground:    darken(@sapBaseBackground, 100); // #000000
+
+
+/* Grayscale Borders */
+@sapBaseBorderColor:       @sapBaseColor;
+@sapLightestBorderColor:   lighten(@sapBaseBorderColor, 100%); // #ffffff
+@sapExtraLightBorderColor: lighten(@sapBaseBorderColor, 39.7%); // #e5e5e5
+@sapLightBorderColor:      lighten(@sapBaseBorderColor, 36.5%); // #dddddd
+@sapMediumBorderColor:     lighten(@sapBaseBorderColor, 30%); // #cccccc
+@sapDarkBorderColor:       lighten(@sapBaseBorderColor, 25%); // #bfbfbf
+@sapExtraDarkBorderColor:  lighten(@sapBaseBorderColor, 10%); // #999999
+@sapDarkestBorderColor:    darken(@sapBaseBorderColor, 100%); // #000000
+
+
+/* Grayscale Text */
+@sapExtraLightTextColor: lighten(@sapTextColor,44%); // #707070
+@sapLightTextColor:      lighten(@sapTextColor, 40%); // #666666
+@sapMediumTextColor:     lighten(@sapTextColor, 26.5%); // #444444
+@sapDarkTextColor:       lighten(@sapTextColor, 20%); // #333333
+@sapExtraDarkTextColor:  lighten(@sapTextColor, 13.4%); // #222222
+
+
+/* Semantic Background Colors */
+@sapErrorBackground:   mix(@sapErrorColor, #fff, 15%); // #fbdfdf
+@sapWarningBackground: #fffcb5;
+@sapSuccessBackground: mix(@sapSuccessColor, #fff, 12%); // #e0f1e7
+@sapNeutralBackground: mix(@sapNeutralColor, #fff, 10%); // #e6f2f9
+
+
+/* Semantic Border Colors */
+@sapErrorBorderColor:   @sapErrorColor; // #e52929
+@sapWarningBorderColor: @sapWarningColor;
+@sapSuccessBorderColor: @sapSuccessColor; // #008a3b
+
+
+/* Semantic Foreground Elements */
+@sapNegativeElementColor: @sapNegativeColor; // #cc1919
+@sapCriticalElementColor: @sapCriticalColor; // #d14900
+@sapPositiveElementColor: @sapPositiveColor; // #007833
+@sapNeutralElementColor:  @sapNeutralColor; // #007cc0
+
+
+/* Semantic Text */
+@sapNegativeTextColor:  @sapNegativeColor; // #cc1919
+@sapCriticalTextColor:  @sapCriticalColor; // #d14900
+@sapPositiveTextColor:  @sapPositiveColor; // #007833
+
+
+/* Semantic Foreground Colors */
+
+// [Label "Negative Color"]
+// [Description "The color for elements showing negative state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapNegativeColor: #cc1919;
+
+// [Label "Critical Color"]
+// [Description "The color for elements showing critical state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapCriticalColor: #d14900;
+
+// [Label "Positive Color"]
+// [Description "The color for elements showing positive state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapPositiveColor: #007833;
+
+// [Label "Informative Color"]
+// [Description "The color for elements showing informative state"]
+// [Tags "Base", "SemanticColor", "Color"]
+@sapNeutralColor: #007cc0;
+
+@sapErrorColor:   lighten(@sapNegativeColor, 8); // #e52929
+
+@sapWarningColor: #f0ab00;
+
+@sapSuccessColor: lighten(@sapPositiveColor, 3.5); // #008a3b
