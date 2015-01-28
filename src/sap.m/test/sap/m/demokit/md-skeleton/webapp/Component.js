@@ -15,7 +15,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 		rootView : "sap.ui.demo.mdskeleton.view.App",
 
 		config : {
-			resourceBundle : "i18n/messageBundle.properties",
+			resourceBundle : "sap.ui.demo.mdskeleton.i18n.messageBundle",
 			// always use absolute paths relative to our own component
 			// (relative paths will fail if running in the Fiori Launchpad)
 			rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdskeleton"),
@@ -76,9 +76,9 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 		}
 	},
 
-	/** 
+	/**
 	 * When the component is inialized, the resource and application models are set and the router is initialized
-	 * @public 
+	 * @public
 	 */
 	init : function () {
 		var mConfig = this.getMetadata().getConfig();
@@ -88,7 +88,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 
 		// set the internationalization model
 		this.setModel(new sap.ui.model.resource.ResourceModel({
-			bundleUrl : [mConfig.rootPath, mConfig.resourceBundle].join("/")
+			bundleName : mConfig.resourceBundle
 		}), "i18n");
 
 		// set the mock data model
