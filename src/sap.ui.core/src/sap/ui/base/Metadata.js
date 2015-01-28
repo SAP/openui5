@@ -141,6 +141,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * 
 	 * @return {boolean} whether this class is considered deprecated
 	 * @public
+	 * @since 1.26.4
 	 */
 	Metadata.prototype.isDeprecated = function() {
 		return this._bDeprecated;
