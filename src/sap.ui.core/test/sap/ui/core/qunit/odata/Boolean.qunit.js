@@ -75,15 +75,17 @@
 
 	//*********************************************************************************************
 	test("parse: user error", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.Boolean();
 
-		try {
-			oType.parseValue("foo", "string");
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message, 'Enter "Yes" or "No".');
-		}
+			try {
+				oType.parseValue("foo", "string");
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, 'EnterYesOrNo YES NO');
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -104,14 +106,16 @@
 			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: foo");
 		}
 
-		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
-		try {
-			oType.validateValue(null);
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, 'Enter "Yes" or "No".');
-		}
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
+			try {
+				oType.validateValue(null);
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException);
+				strictEqual(e.message, 'EnterYesOrNo YES NO');
+			}
+		});
 	});
 
 	//*********************************************************************************************

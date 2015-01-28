@@ -13,14 +13,16 @@
 		var oType;
 
 		function testRange(iValue, sExpectedMessage) {
-			try {
-				oType.validateValue(iValue);
-				ok(false, "Expected ValidateException not thrown");
-			}
-			catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, sExpectedMessage);
-			}
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				try {
+					oType.validateValue(iValue);
+					ok(false, "Expected ValidateException not thrown");
+				}
+				catch (e) {
+					ok(e instanceof sap.ui.model.ValidateException)
+					equal(e.message, sExpectedMessage);
+				}
+			});
 		}
 
 		//*********************************************************************************************
@@ -164,13 +166,11 @@
 				oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
 					groupingEnabled:true}),
 
-			sExpectedMessage = "Enter a number with a minimum value of "
-					+ oNumberFormat.format(iMin) + ".";
+			sExpectedMessage = "EnterIntMin " + oNumberFormat.format(iMin);
 			testRange(-Infinity, sExpectedMessage);
 			testRange(iMin - 1, sExpectedMessage);
 
-			sExpectedMessage = "Enter a number with a maximum value of "
-				+ oNumberFormat.format(iMax) + ".";
+			sExpectedMessage = "EnterIntMax " + oNumberFormat.format(iMax);
 			testRange(iMax + 1, sExpectedMessage);
 			testRange(Infinity, sExpectedMessage);
 		});
@@ -198,14 +198,16 @@
 			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
-			try {
-				oType.validateValue(null);
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "Enter a number with no decimals");
-			}
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
+				try {
+					oType.validateValue(null);
+					ok(false);
+				} catch (e) {
+					ok(e instanceof sap.ui.model.ValidateException)
+					equal(e.message, "EnterInt");
+				}
+			});
 		}));
 	}
 
