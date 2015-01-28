@@ -1,4 +1,3 @@
-jQuery.sap.require("sap.m.MessageToast");
 jQuery.sap.require("sap.ui.core.IconPool");
 
 sap.ui.controller("view.Detail", {

@@ -41,7 +41,6 @@ sap.ui.controller("sap.m.sample.TableSelectDialog.C", {
 	},
 
 	handleClose: function(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		var aContexts = oEvent.getParameter("selectedContexts");
 		if (aContexts.length) {
 			sap.m.MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));

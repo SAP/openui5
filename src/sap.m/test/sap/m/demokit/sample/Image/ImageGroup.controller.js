@@ -8,7 +8,6 @@ sap.ui.controller("sap.m.sample.Image.ImageGroup", {
 	},
 
 	handleImage3Press: function(evt) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("The image has been pressed");
 	}
 

@@ -1,6 +1,3 @@
-// For Feedback after Menu-Item Click
-jQuery.sap.require("sap.m.MessageToast");
-
 sap.ui.controller("sap.ui.unified.sample.MenuItemEventing.MenuItemEventing", {
 	
 	onInit: function(){

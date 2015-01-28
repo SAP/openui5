@@ -1,5 +1,3 @@
-jQuery.sap.require("sap.m.MessageToast");
-
 sap.ui.controller("sap.m.sample.ActionSelect.C", {
 
 	onInit: function () {

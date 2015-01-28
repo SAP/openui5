@@ -100,7 +100,6 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 	},
 
 	onPress: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show(oEvent.getSource().getId() + " Pressed");
 	},
 

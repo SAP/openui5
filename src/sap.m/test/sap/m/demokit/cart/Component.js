@@ -125,8 +125,6 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 			});
 			oMockServer.simulate("model/metadata.xml", "model/");
 			oMockServer.start();
-
-			jQuery.sap.require("sap.m.MessageToast");
 			var sMsg = "Running in demo mode with mock data.";
 			sap.m.MessageToast.show(sMsg, {
 				duration: 2000

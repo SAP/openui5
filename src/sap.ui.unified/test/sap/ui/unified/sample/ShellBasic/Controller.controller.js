@@ -1,5 +1,3 @@
-jQuery.sap.require("sap.m.MessageToast");
-
 sap.ui.controller("sap.ui.unified.sample.ShellBasic.Controller", {
 	onInit: function() {
 		var oData = {logo: jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/sap_50x26.png"};
