@@ -36,24 +36,24 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		iShouldBeOnTheObjectPage : function (sTitleName) {
+		iShouldBeOnPage : function (sViewName, sTitleName) {
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
-				viewName : "Detail",
+				viewName : sViewName,
 				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : sTitleName}) ],
 				success : function (aControls) {
 					strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
-					ok(true, "was on the "+ sTitleName +" detail page");
+					ok(true, "was on the "+ sTitleName + " " + sViewName + " page");
 				}
 			});
 		},
 
 		iShouldBeOnTheObject3Page : function () {
-			return this.iShouldBeOnTheObjectPage("Object 3");
+			return this.iShouldBeOnPage("Detail", "Object 3");
 		},
 
 		iShouldBeOnTheObject1Page : function () {
-			return this.iShouldBeOnTheObjectPage("Object 1");
+			return this.iShouldBeOnPage("Detail", "Object 1");
 		},
 		
 		iShouldSeeTheObjectLineItemsList : function () {
@@ -101,6 +101,45 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				},
 				errorMessage : "Object 3 is not selected."
 			});
-		}
+		},
+		
+		iShouldBeOnTheLineItem1Page : function() {
+			return this.iShouldBeOnPage ("LineItem", "Line Item: LineItemID_1");
+		},
+		
+		theLineItemNavigationButtonHasCorrectEnabledState : function( sName, sIcon, bEnabled) {
+			var sSuccessMessage = bEnabled ? "' button is enabled." : "' button is disabled.",
+				sErrorMessage = bEnabled ? "' button is disabled." : "' button is enabled.";
+			
+			return this.waitFor({
+				controlType : "sap.m.Button",
+				viewName : "LineItem",
+				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "icon", value : sIcon}) ],
+				success : function (aButtons) {
+					strictEqual(aButtons[0].getEnabled(), bEnabled, "'" + sName + sSuccessMessage);
+				},
+				errorMessage : "'" + sName + sErrorMessage
+			});
+		},
+		
+		thePreviousButtonIsDisabled : function() {
+			return this.theLineItemNavigationButtonHasCorrectEnabledState('Previous', 'sap-icon://up', false );
+		},
+		
+		thePreviousButtonIsEnabled : function() {
+			return this.theLineItemNavigationButtonHasCorrectEnabledState('Previous', 'sap-icon://up', true );
+		},
+		
+		theNextButtonIsEnabled : function() {
+			return this.theLineItemNavigationButtonHasCorrectEnabledState('Next', 'sap-icon://down', true );
+		},
+		
+		iShouldBeOnTheLineItem2Page : function() {
+			return this.iShouldBeOnPage ("LineItem", "Line Item: LineItemID_2");
+		},
+		
+		
+		
+		
 	});
 }, /* bExport= */ true);
