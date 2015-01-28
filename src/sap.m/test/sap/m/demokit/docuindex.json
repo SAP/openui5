@@ -336,6 +336,7 @@
 					"sap.m.sample.ListGrowing",
 					"sap.m.sample.ListItemTypes",
 					"sap.m.sample.ListLoading",
+					"sap.m.sample.P13nDialogController",
 					"sap.m.sample.ListNavType",
 					"sap.m.sample.ListNoData",
 					"sap.m.sample.ListSelection",
@@ -1110,7 +1111,7 @@
 			},
 			{
 				"id": "sap.m.sample.P13nDialog",
-				"name": "Personalization Dialog",
+				"name": "P13nDialog stand-alone",
 				"description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
 			},
 			{
@@ -1297,6 +1298,11 @@
 				"id": "sap.m.sample.ListLoading",
 				"name": "List - Loading Indication",
 				"description": "You can use enableBusyIndicator property to display loading animation while the data is being loaded from server. By default, this property is true and busy indicator will be shown after 1000ms. This behavior can be customized by setting the busyIndicatorDelay property. When this property is set to false, items stay on the List until data loading is completed."
+			},
+			{
+				"id": "sap.m.sample.P13nDialogController",
+				"name": "P13nDialogController",
+				"description": "tbd"
 			},
 			{
 				"id": "sap.m.sample.TableViewSettingsDialog",
