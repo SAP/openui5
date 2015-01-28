@@ -46,6 +46,9 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Guid</code></a>.
 	 *
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>string</code>.
+	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
@@ -53,9 +56,11 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 *
 	 * @alias sap.ui.model.odata.type.Guid
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
@@ -77,11 +82,12 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @param {string} sValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   is formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -108,15 +114,16 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	};
 
 	/**
-	 * Parses the given value, which is expected to be of the given type, to a GUID.
+	 * Parses the given value to a GUID.
 	 *
 	 * @param {string} sValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>)
+	 *   the source type (the expected type of <code>sValue</code>); must be "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
 	 */
@@ -142,11 +149,13 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 
 	/**
 	 * Validates whether the given value in model representation is valid and meets the
-	 * defined constraints.
+	 * given constraints.
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException}
+	 *   if the value is not valid
 	 * @public
 	 */
 	EdmGuid.prototype.validateValue = function (sValue) {

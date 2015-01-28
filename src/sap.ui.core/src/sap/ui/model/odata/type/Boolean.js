@@ -72,6 +72,9 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Boolean</code></a>.
 	 *
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>boolean</code>.
+	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
@@ -79,9 +82,11 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 *
 	 * @alias sap.ui.model.odata.type.Boolean
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
@@ -103,11 +108,13 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 * @param {boolean} bValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any", "boolean" or "string". If it is "string", the result is
+	 *   "Yes" or "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {boolean|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -133,13 +140,14 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 * @param {boolean|string} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
-	 * @param {string}
-	 *   sSourceType the source type (the expected type of <code>sValue</code>)
+	 * @param {string} sSourceType
+	 * 	 the source type (the expected type of <code>vValue</code>); may be "boolean" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {boolean}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
-	 *   Boolean
+	 * @throws {sap.ui.model.ParseException}
+	 *   if <code>sSourceType</code> is unsupported or if the given string is neither "Yes" nor
+	 *   "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
 	 * @public
 	 */
 	EdmBoolean.prototype.parseValue = function(vValue, sSourceType) {
@@ -168,12 +176,13 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Validates whether the given value in model representation is valid and meets the
-	 * defined constraints.
+	 * Validates whether the given value in model representation is valid and meets the given
+	 * constraints.
 	 *
 	 * @param {boolean} bValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
 	EdmBoolean.prototype.validateValue = function (bValue) {

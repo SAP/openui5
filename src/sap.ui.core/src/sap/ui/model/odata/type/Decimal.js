@@ -157,6 +157,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Decimal</code></a>.
 	 *
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>string</code>. It never uses exponential format ("1e-5").
+	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
@@ -164,9 +167,11 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @alias sap.ui.model.odata.type.Decimal
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @param {int|string} [oConstraints.precision=Infinity]
@@ -174,10 +179,13 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @param {int|string} [oConstraints.scale=0]
 	 *   the maximum number of digits allowed to the right of the decimal point; the number must be
 	 *   less than <code>precision</code> (if given). As a special case, "variable" is supported.
-	 *   <p>
+	 *
 	 *   The number of digits to the right of the decimal point may vary from zero to
 	 *   <code>scale</code>, and the number of digits to the left of the decimal point may vary
 	 *   from one to <code>precision</code> minus <code>scale</code>.
+	 *
+	 *   The number is always displayed with exactly <code>scale</code> digits to the right of the
+	 *   decimal point (unless <code>scale</code> is "variable").
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -192,17 +200,18 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		);
 
 	/**
-	 * Formats the given value to the given target type. When formatting to <code>string</code>
-	 * the type's constraint <code>scale</code> and formatting options will be taken into account.
+	 * Formats the given value to the given target type. When formatting to "string" the type's
+	 * constraint <code>scale</code> is taken into account.
 	 *
 	 * @param {string} sValue
 	 *   the value to be formatted, which is represented as a string in the model
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any", "float", "int" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {number|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -232,11 +241,13 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @param {string|number} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
-	 * @param {string}
-	 *   sSourceType the source type (the expected type of <code>oValue</code>)
+	 * @param {string} sSourceType
+	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int" or
+	 *   "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Decimal
 	 * @public
@@ -279,7 +290,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
 	Decimal.prototype.validateValue = function (sValue) {
