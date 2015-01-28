@@ -616,7 +616,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			return;
 		} else {
 			aListItems[iSelectedIndex].setSelected(true);
-			this._fireSuggestionItemSelectedEvent(aListItems[iSelectedIndex]);
 		}
 	
 		if (sap.ui.Device.system.desktop) {
@@ -676,6 +675,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
+			this._iPopupListSelectedIndex = -1;
 			this._oSuggestionPopup.close();
 	
 			// if popup is open, simply returns from here to prevent from setting the input to the last known value.
@@ -700,12 +700,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			if (this._iPopupListSelectedIndex >= 0) {
-				var oSelectedListItem = this._oList.getItems()[this._iPopupListSelectedIndex];
-
-				if (oSelectedListItem) {
-					this._fireSuggestionItemSelectedEvent(oSelectedListItem);
-				}
-
+				this._fireSuggestionItemSelectedEvent();
 				this._doSelect();
 
 				this._iPopupListSelectedIndex = -1;
@@ -798,6 +793,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._oList.destroyItems();
 			}
 		} else if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
+			this._iPopupListSelectedIndex = -1;
 			this._oSuggestionPopup.close();
 		}
 	};
@@ -838,6 +834,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				press : function() {
 					if (that.getShowTableSuggestionValueHelp()) {
 						that.fireValueHelpRequest({fromSuggestions: true});
+						that._iPopupListSelectedIndex = -1;
 						that._oSuggestionPopup.close();
 					}
 				}
@@ -1053,7 +1050,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					placement : sap.m.PlacementType.Vertical,
 					initialFocus : oInput
 				}).attachAfterClose(function() {
-					oInput._iPopupListSelectedIndex = -1;
+					if (oInput._iPopupListSelectedIndex  >= 0) {
+						oInput._fireSuggestionItemSelectedEvent();
+					}
 					// only destroy items in simple suggestion mode
 					if (oInput._oList instanceof Table) {
 						oInput._oList.removeSelections(true);
@@ -1163,6 +1162,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 							oInput._$input.val(oInput._getInputValue(sNewValue));
 							oInput._changeProxy();
 						}
+						oInput._iPopupListSelectedIndex = -1;
 						oInput._oSuggestionPopup.close();
 						if (!sap.ui.Device.support.touch) {
 							oInput._doSelect();
@@ -1288,6 +1288,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (!bFilter && oInput.getFilterSuggests()) {
 				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 				if (!oInput._bUseDialog) {
+					oInput._iPopupListSelectedIndex = -1;
 					oPopup.close();
 				} else {
 					// hide table on phone when value is empty
@@ -1365,6 +1366,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				if (!oInput._bUseDialog) {
 					if (oPopup.isOpen()) {
 						oInput._sCloseTimer = setTimeout(function() {
+							oInput._iPopupListSelectedIndex = -1;
 							oPopup.close();
 						}, 0);
 					}
@@ -1458,6 +1460,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						that._$input.val(that._getInputValue(sNewValue));
 						that._changeProxy();
 					}
+					that._iPopupListSelectedIndex = -1;
 					that._oSuggestionPopup.close();
 					if (!sap.ui.Device.support.touch) {
 						that._doSelect();
@@ -1479,11 +1482,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this._oSuggestionTable;
 	};
 	
-	Input.prototype._fireSuggestionItemSelectedEvent = function (oSelectedListItem) {
-		if (sap.m.ColumnListItem && oSelectedListItem instanceof sap.m.ColumnListItem) {
-			this.fireSuggestionItemSelected({selectedRow : oSelectedListItem});
-		} else {
-			this.fireSuggestionItemSelected({selectedItem : oSelectedListItem._oItem});
+	Input.prototype._fireSuggestionItemSelectedEvent = function () {
+		if (this._iPopupListSelectedIndex >= 0) {
+			var oSelectedListItem = this._oList.getItems()[this._iPopupListSelectedIndex];
+			if (oSelectedListItem) {
+				if (sap.m.ColumnListItem && oSelectedListItem instanceof sap.m.ColumnListItem) {
+					this.fireSuggestionItemSelected({selectedRow : oSelectedListItem});
+				} else {
+					this.fireSuggestionItemSelected({selectedItem : oSelectedListItem._oItem});
+				}
+			}
+			this._iPopupListSelectedIndex = -1;
 		}
 	};
 	
