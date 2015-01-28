@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var bUpperCase = oIconTabBar && oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getUpperCase();
 
 		// render wrapper div
-		oRM.write("<div ");
+		oRM.write("<div role='tablist' ");
 		oRM.addClass("sapMITH");
 		if (oControl._scrollable) {
 			oRM.addClass("sapMITBScrollable");
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (!(oItem instanceof sap.m.IconTabSeparator) && !oItem.getVisible()) {
 				return; // only render visible items
 			}
-			oRM.write("<div ");
+			oRM.write("<div role='tab' aria-controls='" + oControl.getParent().sId + "-content' ");
 			oRM.writeElementData(oItem);
 			oRM.addClass("sapMITBItem");
 

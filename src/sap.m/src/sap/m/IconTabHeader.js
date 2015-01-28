@@ -265,9 +265,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			bIsContentTheSame = true;
 		}
 
-
 		if (this.oSelectedItem && this.oSelectedItem.getVisible() && (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable() || this.oSelectedItem !== oItem )) {
-			this.oSelectedItem.$().removeClass("sapMITBSelected");
+			this.oSelectedItem.$()
+					.removeClass("sapMITBSelected")
+					.removeAttr('aria-selected')
+					.removeAttr('aria-expanded');
 		}
 
 		if (oItem.getVisible()) {
@@ -279,6 +281,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			//click on other item leads to showing the right content of this item
 			} else {
+				//change the content aria-labaled by the newly selected tab;
+				this.getParent().$("content").attr('aria-labelledby', oItem.sId);
+
 				// set new item
 				this.oSelectedItem = oItem;
 				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
@@ -287,7 +292,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				//to visualize the selection and we do not need to render the content
 				if (this.getParent() instanceof sap.m.IconTabBar && (this.getParent().getExpandable() || this.getParent().getExpanded())) {
 					// add selected styles
-					this.oSelectedItem.$().addClass("sapMITBSelected");
+					this.oSelectedItem.$()
+							.addClass("sapMITBSelected")
+							.attr({ 'aria-selected': true });
 
 					//if item has own content, this content is shown
 					var oSelectedItemContent = this.oSelectedItem.getContent();
@@ -367,7 +374,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this.oSelectedItem && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
-			this.oSelectedItem.$().addClass("sapMITBSelected");
+			this.oSelectedItem.$()
+					.addClass("sapMITBSelected")
+					.attr({ 'aria-selected': true });
 		}
 
 		if (this._bDoScroll) {
