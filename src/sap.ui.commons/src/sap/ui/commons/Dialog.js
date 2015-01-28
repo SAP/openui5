@@ -216,11 +216,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// TODO: re-calculate after theme switch?!!
 	
 		this.allowTextSelection(false);
-		
-		this._mParameters = {};
-		this._mParameters.that = this;
-		this._mParameters.firstFocusable = this.getId() + "-fhfe";
-		this._mParameters.lastFocusable = this.getId() + "-fhee";
 	};
 	
 	Dialog.prototype.setInitialFocus = function(sId) {
@@ -228,7 +223,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sId = sId.getId();
 		}
 		this.oPopup.setInitialFocusId(sId);
-		this.setAssociation("initialFocus", sId, /* suppress invalidate */ true);
+		this.setAssociation("initialFocus", sId, true);
 	};
 	
 	/**
@@ -452,8 +447,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireClosed(this._oRect);
 		}
 		this.oPopup = null;
-		
-		delete this._mParameters;
 	};
 	
 	/**
@@ -515,12 +508,62 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// since IE9 calls first "onfocusin" it has to be checked if the initial focus was set already
 			return;
 		}
-
-		this._mParameters.event = oEvent;
-		this._mParameters.$FocusablesContent = jQuery(":sapFocusable", this.$("cont"));
-		this._mParameters.$FocusablesFooter = jQuery(":sapFocusable", this.$("footer"));
-
-		this.oPopup.focusTabChain(this._mParameters);
+	
+		var sFirstFocusable = this.getId() + "-fhfe";
+		var sLastFocusable = this.getId() + "-fhee";
+		
+		var oSourceDomRef = oEvent.target;
+		var oFocusDomRef;
+		var $FocusablesCont = jQuery(":sapFocusable", this.$("cont"));
+		var $FocusablesFoot = jQuery(":sapFocusable", this.$("footer"));
+	
+		/*
+		 * It's not needed to check if buttons are set since jQuery(":focusable", jQuery.sap.byId(this.getId() + "-fhfe")) 
+		 * or jQuery(":sapFocusable", jQuery.sap.byId(this.getId() + "-fhfe")) returns an empty array. Therefore these
+		 * elements won't be found via 'lastFocusableDomRef()'
+		 */
+		if (oSourceDomRef.id === sFirstFocusable) {
+			// the FocusHandlingFirstElement was focused and thus the focus should move to the last element.
+			jQuery.sap.log.debug("First dummy focus element was focused", "", "sap.ui.commons.Dialog");
+			if ($FocusablesFoot.length > 0) {
+				jQuery.sap.log.debug("Last footer element will be focused", "", "sap.ui.commons.Dialog");
+				oFocusDomRef = $FocusablesFoot[$FocusablesFoot.length - 1];
+			} else {
+				jQuery.sap.log.debug("Last content element will be focused", "", "sap.ui.commons.Dialog");
+				oFocusDomRef = $FocusablesCont[$FocusablesCont.length - 1];
+			}
+		} else if (oSourceDomRef.id === sLastFocusable) {
+			// the FocusHandlingEndElement was focused and thus the focus should move to the first element.
+			jQuery.sap.log.debug("Last dummy focus element was focues", "", "sap.ui.commons.Dialog");
+			if ($FocusablesCont.length > 0) {
+				jQuery.sap.log.debug("First content element will be focused", "", "sap.ui.commons.Dialog");
+				oFocusDomRef = $FocusablesCont[0];
+			} else {
+				jQuery.sap.log.debug("First footer element will be focused", "", "sap.ui.commons.Dialog");
+				oFocusDomRef = $FocusablesFoot[0];
+			}
+		}
+		
+		if (oFocusDomRef) {
+			/*
+			 * This check especially for IE9 is needed because when IE9 is used together with JAWS the element that will be 
+			 * focused isn't read when the focus happens too fast. Therefore a delay is added to JAWS can read the newly
+			 * focused element. 
+			 */
+			var iDelay = sap.ui.Device.browser.msie &&  sap.ui.Device.browser.version === 9 ? 100 : 0;
+	
+			jQuery.sap.delayedCall(iDelay, this, function(){
+				// if the element is a control the focus should be called via the control
+				// especially if the control has an individual focus DOM-ref
+				var oControl = sap.ui.getCore().byId(oFocusDomRef.id);
+				if (oControl instanceof Control) {
+					jQuery.sap.log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", "sap.ui.commons.Dialog");
+				} else {
+					jQuery.sap.log.debug("oFocusDomRef will be focused", "", "sap.ui.commons.Dialog");
+				}
+				jQuery.sap.focus(oControl ? oControl : oFocusDomRef);
+			});
+		}
 	};
 	
 	/**

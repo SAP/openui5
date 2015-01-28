@@ -267,11 +267,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		this.oPopup = null;
 		this._bPositionSet = false;
 
-		this._mParameters = {};
-		this._mParameters.that = this;
-		this._mParameters.firstFocusable = this.getId() + "-firstFocusable";
-		this._mParameters.lastFocusable = this.getId() + "-lastFocusable";
-
 		this._bFocusSet = false;
 		this._proxyOpened = jQuery.proxy(fnPopupOpened, this);
 		this._proxyClosed = jQuery.proxy(fnOnClosed, this);
@@ -287,8 +282,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			delete this.oPopup;
 		}
 		delete this._bPositionSet;
-		
-		delete this._mParameters;
 
 		delete this._bFocusSet;
 		delete this._bPreventRestoreFocus;
@@ -305,24 +298,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		delete this._bThemeInverted;
 	
 		delete this._sInitialFocusId;
+		delete this._sFirstFocusableId;
+		delete this._sLastFocusableId;
 	};
-	
-	/* 
+
+	/**
 	 * Checks if the ToolPopup already has a focused element. If not it's checked whether
 	 * the fake-element should be used or if there is an element that could be focused instead
 	 */
-	var fnSetInitialFocus = function(that){
-		var oElement = jQuery.sap.byId(that._mParameters.firstFocusable).get(0);
-		var aFocusables = jQuery(":sapFocusable", that.$()).get();
+	var fnSetInitialFocus = function(oThis){
+		var sId = oThis.getId();
+		var sTempId = "";
+		var sFirstFocusId = sId + "-firstFocusable";
+		var sLastFocusId = sId + "-lastFocusable";
+	
+		var oElement = jQuery.sap.byId(sFirstFocusId).get(0);
+		var aFocusables = jQuery(":sapFocusable", oThis.$()).get();
 
 		// if there is an initial focus it was already set to the Popup onBeforeRendering
-		if (!that._bFocusSet) {
+		if (!oThis._bFocusSet) {
 			// search the first focusable element
 			if (aFocusables.length > 0) {
 				for (var i = 0; i < aFocusables.length; i++) {
-					if (aFocusables[i].id !== that._mParameters.firstFocusable && 
-						aFocusables[i].id !== that._mParameters.lastFocusable) {
-
+					sTempId = aFocusables[i].id;
+	 
+					if (sTempId !== sFirstFocusId && sTempId !== sLastFocusId) {
 						oElement = aFocusables[i];
 						break;
 					}
@@ -337,18 +337,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 		
 			jQuery.sap.focus(oElement);
-			that._sInitialFocusId = oElement.id;
+			oThis._sInitialFocusId = oElement.id;
 		} else {
-			that._sInitialFocusId = that.oPopup._sInitialFocusId;
+			oThis._sInitialFocusId = oThis.oPopup._sInitialFocusId;
+		}
+	
+		// initiate the first and last focusable element in content
+		if (!oThis._sLastFocusableId || !oThis._sFirstFocusableId) {
+			oThis._sLastFocusableId = sFirstFocusId;
+			oThis._sFirstFocusableId = sLastFocusId;
+
+			if (aFocusables.length > 2) {
+				// using second array content since first focusable item is the fake element
+				oFocusControl = jQuery(aFocusables[1]).control();
+				var oParent = oFocusControl[0].length > 0 ? oFocusControl[0].getParent() : null;
+				if (oParent && oParent.getId() != oThis.getId()) {
+					// If first focusable is part of a control, focus the controls instead
+					oThis._sFirstFocusableId = oParent.getId();
+				} else {
+					oThis._sFirstFocusableId = aFocusables[1].id;
+				}
+				
+				// using the second to last element in array since last one is the fake element
+				oFocusControl = jQuery(aFocusables[aFocusables.length - 2]).control();
+				oParent = oFocusControl[0] ? oFocusControl[0].getParent() : null;
+				if (oParent && oParent.getId() != oThis.getId()) {
+					// If last focusable is part of a control, focus the controls instead
+					oThis._sLastFocusableId = oParent.getId();
+				} else {
+					oThis._sLastFocusableId = aFocusables[aFocusables.length - 2].id;
+				}
+			}
+		
 		}
 	};
 
 	ToolPopup.prototype.onfocusin = function(oEvent){
-		this._mParameters.event = oEvent;
-		this._mParameters.$FocusablesContent = jQuery(":sapFocusable", this.$("content"));
-		this._mParameters.$FocusablesFooter = jQuery(":sapFocusable", this.$("buttons"));
-
-		this.oPopup.focusTabChain(this._mParameters);
+		var $NewFocus = jQuery();
+		var sId = this.getId();
+		var sFirstFocusId = sId + "-firstFocusable";
+		var sLastFocusId = sId + "-lastFocusable";
+	
+		if (oEvent.target.id === sFirstFocusId && oEvent.target.id !== this._sLastFocusableId) {
+			$NewFocus = jQuery.sap.byId(this._sLastFocusableId);
+		} else if (oEvent.target.id === sLastFocusId && oEvent.target.id !== this._sFirstFocusableId) {
+			$NewFocus = jQuery.sap.byId(this._sFirstFocusableId);
+		}
+	
+		if ($NewFocus.length) {
+			// if focus has to be corrected
+			$NewFocus.focus();
+		}
 	};
 
 	/**
