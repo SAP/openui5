@@ -10,6 +10,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.FlexBoxSizeAdjustments.Component", 
 				"sap.ui.layout"
 			]
 		},
+		includes : [ "FlexBoxSizeAdjustments/style.css" ],
 		config : {
 			sample : {
 				files : [
