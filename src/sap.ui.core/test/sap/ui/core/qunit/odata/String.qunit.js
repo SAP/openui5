@@ -133,7 +133,7 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Enter some text.");
+			strictEqual(e.message, "Enter a text");
 		}
 
 		oType = new sap.ui.model.odata.type.String({}, {nullable: false, maxLength: 3});

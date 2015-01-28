@@ -170,7 +170,7 @@
 			ok(false);
 		} catch (e) {
 			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message, "Enter a number.");
+			strictEqual(e.message, "Enter a number");
 		}
 	});
 
@@ -184,7 +184,7 @@
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "Enter a number.");
+				strictEqual(e.message, "Enter a number");
 			}
 		});
 	});
