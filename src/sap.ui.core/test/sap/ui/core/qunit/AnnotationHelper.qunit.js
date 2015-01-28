@@ -7,6 +7,7 @@
 	*/
 	"use strict";
 
+	jQuery.sap.require("sap.ui.base.BindingParser");
 	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper"); //TODO get rid of this?!
 
 	// WARNING! These are on by default and break the Promise polyfill...
@@ -277,12 +278,20 @@
 			}
 		);
 
-		jQuery.each([null, {}, {foo : "bar"}],
-			function (i, oRawValue) {
-				test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
+		jQuery.each([
+			{i: null, o: null},
+			{i: {}, o: "{}"},
+			{i: {foo: 'bar'}, o: "{'foo':'bar'}"},
+			{i: {foo: "b'ar"}, o: "{'foo':'b\\'ar'}"},
+			{i: {foo: 'b"ar'}, o: "{'foo':'b\"ar'}"},
+			{i: {foo: 'b\\ar'}, o: "{'foo':'b\\\\ar'}"},
+			{i: {foo: 'b\\"ar'}, o: "{'foo':'b\\\\\"ar'}"},
+			{i: {foo: 'b\tar'}, o: "{'foo':'b\\tar'}"}
+		], function (i, oFixture) {
+				test("Stringify invalid input where possible: " + JSON.stringify(oFixture.i),
 					function () {
-						strictEqual(formatAndParse(oRawValue, fnMethod),
-							"Unsupported: " + JSON.stringify(oRawValue));
+						strictEqual(formatAndParse(oFixture.i, fnMethod),
+							"Unsupported: " + oFixture.o);
 					}
 				);
 			}
@@ -455,6 +464,11 @@
 			ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oFixture.type.name),
 				"type is " + oFixture.type.name);
 			deepEqual(oSingleBindingInfo.type.oConstraints, oFixture.type.constraints);
+
+			// ensure that the formatted value does not contain double quotes
+			ok(sap.ui.model.odata.AnnotationHelper.format.call({
+				currentBinding: function() {return oCurrentBinding;}
+			}, oRawValue).indexOf('"') < 0);
 		});
 	});
 
@@ -464,9 +478,14 @@
 		{Apply : "unsupported"},
 		{Apply : {Name : "unsupported"}},
 		{Apply : {Name : "odata.concat"}},
-		{Apply : {Name : "odata.concat", Parameters : {}}}
+		{Apply : {Name : "odata.concat", Parameters : {}}},
+		{Apply : {Name : "odata.fillUriTemplate"}},
+		{Apply : {Name : "odata.fillUriTemplate", Parameters : {}}},
+		{Apply : {Name : "odata.fillUriTemplate", Parameters : []}},
+		{Apply : {Name : "odata.fillUriTemplate", Parameters : [{}]}},
+		{Apply : {Name : "odata.fillUriTemplate", Parameters : [{Type: "NoString"}]}}
 	], function (i, oApply) {
-		var sError = "Unsupported: " + JSON.stringify(oApply);
+		var sError = "Unsupported: " + JSON.stringify(oApply).replace(/"/g, "'");
 
 		test("14.5.3 Expression edm:Apply: " + sError, function () {
 			strictEqual(formatAndParseNoWarning(oApply), sError);
@@ -519,7 +538,7 @@
 				// Note: 1st value needs proper escaping!
 				Parameters: [{Type: "String", Value : "{foo}"}, oParameter]
 			}
-		}), "{foo}<Unsupported: " + JSON.stringify(oParameter) + ">");
+		}), "{foo}<Unsupported: " + JSON.stringify(oParameter).replace(/"/g, "'") + ">");
 	}));
 
 	//*********************************************************************************************
@@ -531,6 +550,89 @@
 			}
 		}), "*foo*<Unsupported: null>");
 	}));
+
+	//*********************************************************************************************
+	test("14.5.3.1.2 Function odata.fillUriTemplate", function () {
+		var oCurrentBinding = oTestModel.bindProperty(sPathPrefix +
+				"/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
+			oInvalid = {
+				Type: "Path",
+				Value: "{with:invalid:chars}"
+			},
+			oApply = {
+				Apply: "odata.uriEncode",
+				Parameters: [{
+					Type: "Path",
+					Value: "foo"
+				}]
+			},
+			oRawValue = {
+				Apply: {
+					Name: "odata.fillUriTemplate",
+					Parameters: [{
+						Type: "String",
+						Value: "http://www.foo.com/\"/{decimal},{unknown},{string}"
+					}, {
+						Name: "decimal",
+						Value: {
+							Type: "Path",
+							Value: "_Decimal"
+						}
+					}, {
+						Name: "string",
+						Value: {
+							Type: "Path",
+							Value: "_String"
+						}
+					}, {
+						Name: "invalid",
+						Value: oInvalid
+					}, {
+						Name: "apply",
+						Value: oApply
+					}]
+				}
+			};
+
+		// TODO rewrite to formatAndParse when the expression binding can actually be evaluated
+		strictEqual(sap.ui.model.odata.AnnotationHelper.format.call({
+				currentBinding : function () {
+					return oCurrentBinding;
+				}
+			}, oRawValue),
+			"{= odata.fillUriTemplate('http://www.foo.com/\"/{decimal},{unknown},{string}', "
+				+ "{'decimal': ${_Decimal}, 'string': ${_String}, 'invalid': '<Unsupported: "
+				+ JSON.stringify(oInvalid).replace(/"/g, "'").replace(/'/g, "\\'")
+				+ ">', 'apply': '<Unsupported: "
+				+ JSON.stringify(oApply).replace(/"/g, "'").replace(/'/g, "\\'")
+				+ ">'})}"
+		);
+	});
+
+	//*********************************************************************************************
+	// TODO: unsupported: nested apply, uriEncode, type determination in structured property
+//	test("14.5.3 Nested apply (odata.fillUriTemplate & uriEncode)", sinon.test(function () {
+//		withMetaModel(function (oMetaModel) {
+//			var oCurrentBinding = oMetaModel.bindProperty("/dataServices/schema/0/entityType/0/" +
+//					"com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
+//				oRawValue = oCurrentBinding.getValue(),
+//				oSingleBindingInfo,
+//				oModel = new sap.ui.model.json.JSONModel({
+//					Address: {
+//						Street : "Domplatz",
+//						City : "Speyer"
+//					}
+//				}),
+//				oControl = new TestControl({
+//					models: oModel,
+//					bindingContexts: oModel.createBindingContext("/")
+//				});
+//
+//			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+//			oControl.bindProperty("text", oSingleBindingInfo);
+//			strictEqual(oControl.getText(), "https://www.google.de/maps/place/'Domplatz','Speyer'");
+//		});
+//	}));
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.simplePath");
