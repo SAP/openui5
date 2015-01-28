@@ -306,7 +306,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			var $that = that.$(),
 				$Window = that._$Window;
 
-			that._deregisterResizeHandler();
 			that._setDimensions();
 			that._adjustScrollingPane();
 
@@ -761,20 +760,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	};
 
 	Dialog.prototype._adjustScrollingPane = function(){
-		var	$scrollArea = this._$scrollPane,
-			oCSS = {
-				"display": "block"
-			};
+		var	$scrollArea = this._$scrollPane;
 
 		// In Android version less than 4.1, the scrollEnablement needs to set position: absolute to $scrollArea.
 		// Thus the width 100% has to be set in order to make the scrollArea as big as the contentArea
 		if ($scrollArea.css("position") === "absolute") {
-			oCSS.width = "100%";
-		}
-
-		// If the content fits in, the display: inline-block should be replace with display: block.
-		if ($scrollArea.outerWidth(true) <= this._$content.width()) {
-			$scrollArea.css(oCSS);
+			$scrollArea.css("width", "100%");
 		}
 
 		if (this._oScroller) {
@@ -817,15 +808,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	};
 
 	Dialog.prototype._onResize = function(){
-		if (this._sResizeTimer || !this.getDomRef()) {
+		if (!this.getDomRef()) {
 			return;
+		}
+
+		if (this._sResizeTimer) {
+			window.clearTimeout(this._sResizeTimer);
 		}
 
 		var that = this,
 			oResizeDomRef = this.getDomRef("scroll");
-
-		this._iResizeDomWidth = this._iResizeDomWidth || oResizeDomRef.offsetWidth;
-		this._iResizeDomHeight = this._iResizeDomHeight || oResizeDomRef.offsetHeight;
 
 		this._sResizeTimer = window.setTimeout(function(){
 			var iNewWidth = oResizeDomRef.offsetWidth,
@@ -1113,7 +1105,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			var oResizeDomRef = this.getDomRef("scroll");
 			this._iResizeDomWidth = oResizeDomRef.offsetWidth;
 			this._iResizeDomHeight = oResizeDomRef.offsetHeight;
-			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(oResizeDomRef,  this._fnContentResize);
+			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(oResizeDomRef, this._fnContentResize);
 		}
 	};
 
