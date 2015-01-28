@@ -33,6 +33,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * This property determines which panel is initially shown when dialog is opened.
+				 * 
 				 * @since 1.26.0
 				 */
 				initialVisiblePanelType: {
@@ -44,6 +45,7 @@ sap.ui.define([
 				/**
 				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to true, clicking the
 				 * 'Reset' button will trigger the 'reset' event sending a notification that model data must be reset.
+				 * 
 				 * @since 1.26.0
 				 */
 				showReset: {
@@ -56,6 +58,7 @@ sap.ui.define([
 
 				/**
 				 * The dialog panels displayed in the dialog.
+				 * 
 				 * @since 1.26.0
 				 */
 				panels: {
@@ -69,16 +72,19 @@ sap.ui.define([
 
 				/**
 				 * Event fired if the 'ok' button in P13nDialog is clicked.
+				 * 
 				 * @since 1.26.0
 				 */
 				ok: {},
 				/**
 				 * Event fired if the 'cancel' button in P13nDialog is clicked.
+				 * 
 				 * @since 1.26.0
 				 */
 				cancel: {},
 				/**
 				 * Event fired if the 'reset' button in P13nDialog is clicked.
+				 * 
 				 * @since 1.26.0
 				 */
 				reset: {}
@@ -105,38 +111,35 @@ sap.ui.define([
 		this.addButton(new sap.m.Button({
 			text: this._oResourceBundle.getText("P13NDIALOG_OK"),
 			press: function() {
-				// TODO: current implementation finds only the first invalid panel. Should go through all panels and put all
-				// error messages together
-				var oPanel = null;
-				var fCallbackOK = function() {
-					oPanel.onAfterNavigationFrom();
-					var aPanels = that.getPanels();
+				var fFireOK = function() {
 					var oPayload = {};
-					jQuery.each(aPanels, function(i, _oPanel) {
-						oPayload[_oPanel.getType()] = _oPanel.getOkPayload();
+					that.getPanels().forEach(function(oPanel) {
+						oPayload[oPanel.getType()] = oPanel.getOkPayload();
 					});
 					that.fireOk({
 						payload: oPayload
 					});
 				};
-				that.getPanels().some(function(_oPanel) {
-					if (!_oPanel.onBeforeNavigationFrom()) {
-						oPanel = _oPanel;
-						return true;
+				var fCallbackOK = function() {
+					that.getPanels().forEach(function(oPanel) {
+						if (aFailedPanelTypes.indexOf(oPanel.getType()) > -1) {
+							oPanel.onAfterNavigationFrom();
+						}
+					});
+					fFireOK();
+				};
+				var aFailedPanelTypes = [];
+				that.getPanels().forEach(function(oPanel) {
+					if (!oPanel.onBeforeNavigationFrom()) {
+						aFailedPanelTypes.push(oPanel.getType());
 					}
 				});
-				if (!oPanel) {
-					var aPanels = that.getPanels();
-					var oPayload = {};
-					jQuery.each(aPanels, function(i, _oPanel) {
-						oPayload[_oPanel.getType()] = _oPanel.getOkPayload();
-					});
-					that.fireOk({
-						payload: oPayload
-					});
-					return;
+				if (aFailedPanelTypes.length) {
+					// In case of invalid panels show the dialog
+					that.showValidationDialog(fCallbackOK, null, aFailedPanelTypes);
+				} else {
+					fFireOK();
 				}
-				that.showValidationDialog(fCallbackOK, null);
 			}
 		}));
 		this.addButton(new sap.m.Button({
@@ -271,9 +274,20 @@ sap.ui.define([
 		return this.getSubHeader().getContentLeft()[0];
 	};
 
-	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, fCallbackCancel) {
+	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, fCallbackCancel, aFailedPanelTypes) {
+		var sMessageText = "";
+		aFailedPanelTypes.forEach(function(sPanelType) {
+			switch (sPanelType) {
+				case sap.m.P13nPanelType.filter:
+					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
+					break;
+				case sap.m.P13nPanelType.columns:
+					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
+					break;
+			}
+		});
 		jQuery.sap.require("sap.m.MessageBox");
-		sap.m.MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE"), {
+		sap.m.MessageBox.show(sMessageText, {
 			icon: sap.m.MessageBox.Icon.WARNING,
 			title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
 			actions: [
@@ -306,26 +320,28 @@ sap.ui.define([
 			type: sap.m.ButtonType.Default,
 			text: oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
 		});
-		oButton.addDelegate({
-			ontap: function(oEvent) {
-				var oButtonClicked = oEvent.srcControl;
-				var oPanelVisible = this.getVisiblePanel();
-
-				if (oPanelVisible && oPanelVisible.onBeforeNavigationFrom && !oPanelVisible.onBeforeNavigationFrom()) {
-					oEvent.stopImmediatePropagation(true);
-					var that = this;
-					var fCallbackOK = function() {
-
-						oPanelVisible.onAfterNavigationFrom();
-						if (that._getSegmentedButton()) {
-							that._getSegmentedButton().setSelectedButton(oButtonClicked);
-						}
-						that._switchPanel(oButtonClicked);
-					};
-					this.showValidationDialog(fCallbackOK, null);
-				}
-			}
-		}, true, this);
+// oButton.addDelegate({
+// ontap: function(oEvent) {
+// var oButtonClicked = oEvent.srcControl;
+// var oPanelVisible = this.getVisiblePanel();
+//
+// if (oPanelVisible && oPanelVisible.onBeforeNavigationFrom && !oPanelVisible.onBeforeNavigationFrom()) {
+// oEvent.stopImmediatePropagation(true);
+// var that = this;
+// var fCallbackOK = function() {
+//
+// oPanelVisible.onAfterNavigationFrom();
+// if (that._getSegmentedButton()) {
+// that._getSegmentedButton().setSelectedButton(oButtonClicked);
+// }
+// that._switchPanel(oButtonClicked);
+// };
+// this.showValidationDialog(fCallbackOK, null, [
+// oPanelVisible.getType()
+// ]);
+// }
+// }
+// }, true, this);
 
 		oButton.setModel(oPanel.getModel());
 		return oButton;
