@@ -649,6 +649,13 @@
 				"samples" : [ "sap.m.sample.TileContainer" ]
 			},
 			{
+				"id" : "sap.m.Title",
+				"name" : "Title",
+				"category" : "Display",
+				"since" : "1.28",
+				"samples" : [ "sap.m.sample.Title" ]
+			},
+			{
 				"id" : "sap.m.ToggleButton",
 				"name" : "Toggle Button",
 				"category" : "Action",
@@ -973,6 +980,11 @@
 				"id": "sap.m.sample.TextMaxLines",
 				"name": "Text - Max Lines",
 				"description": "The Text control has a property to limit the number of lines for wrapping texts."
+			},
+			{
+				"id": "sap.m.sample.Title",
+				"name": "Title",
+				"description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
 			},
 			{
 				"id": "sap.m.sample.ObjectHeader",
