@@ -716,9 +716,29 @@
 				"since" : "1.28",
 				"formFactors" : "-",
 				"samples" : [ "sap.m.sample.ContainerNoPadding", "sap.m.sample.ContainerPadding", "sap.m.sample.ContainerResponsivePadding", "sap.m.sample.ContainerPaddingAndMargin"]
+			},
+			{
+				"id" : "sap.m.MessagePage",
+				"name" : "Message Page",
+				"category" : "Display",
+				"since" : "1.28",
+				"samples" : [
+					"sap.m.sample.MessagePageNoItems",
+					"sap.m.sample.MessagePageSearchFilter"
+				]
 			}
 		],
 		"samples" : [
+			{
+				"id": "sap.m.sample.MessagePageNoItems",
+				"name": "MessagePage - No Items",
+				"description": "This sample displays the MessagePage when there is no data available"
+			},
+			{
+				"id": "sap.m.sample.MessagePageSearchFilter",
+				"name": "MessagePage - Search/Filter",
+				"description": "This sample displays the MessagePage when there is no matching content for the search string or for the selected filter category."
+			},
 			{
 				"id": "sap.m.sample.ComboBox",
 				"name": "ComboBox",

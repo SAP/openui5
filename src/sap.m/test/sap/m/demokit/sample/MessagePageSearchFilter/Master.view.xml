@@ -1,0 +1,48 @@
+<core:View
+	controllerName="sap.m.sample.MessagePageSearchFilter.Master"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core" >
+	<Page title="Orders" >
+		<subHeader>
+			<Bar>
+				<contentLeft>
+					<SearchField
+						id="searchField"
+						search="handleSearch"
+						width="100%" >
+					</SearchField>
+				</contentLeft>
+				<contentRight>
+					<Select
+							id="groupSelect"
+							change="handleFilter"
+							icon="sap-icon://filter"
+							type="IconOnly"
+							selectedKey="None"
+							autoAdjustWidth="true" >
+						<core:Item key="None" text="Clear Filter"/>
+						<core:Item key="InProgress" text="In Progress"/>
+						<core:Item key="NoItems" text="Completed"/>
+					</Select>
+				</contentRight>
+			</Bar>
+		</subHeader>
+		<List
+			id="list"
+			mode="{device>/listMode}"
+			select="handleListSelect"
+			items="{/SalesOrderCollection}"
+			visible="false">
+			<ObjectListItem
+				type="Active"
+				press="handleListItemPress"
+				title="{SoId}"
+				number="{GrossAmount}"
+				numberUnit="{CurrencyCode}" >
+				<attributes>
+					<ObjectAttribute text="{BuyerName}" />
+				</attributes>
+			</ObjectListItem>
+		</List>
+	</Page>
+</core:View>
