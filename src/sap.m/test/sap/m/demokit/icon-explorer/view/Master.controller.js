@@ -1,6 +1,6 @@
-jQuery.sap.require("model.Config");
+jQuery.sap.require("sap.ui.demokit.icex.model.Config");
 
-sap.ui.controller("view.Master", {
+sap.ui.controller("sap.ui.demokit.icex.view.Master", {
 
 	onInit : function () {
 		
@@ -8,7 +8,7 @@ sap.ui.controller("view.Master", {
 		var oModel = new sap.ui.model.json.JSONModel({
 			listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
 			listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive",
-			listPageSize : model.Config.getPageSize(),
+			listPageSize : sap.ui.demokit.icex.model.Config.getPageSize(),
 			showFooter : !sap.ui.Device.system.phone
 		});
 		this.getView().setModel(oModel, "ui");
@@ -37,7 +37,7 @@ sap.ui.controller("view.Master", {
 	},
 	
 	toFavorite : function (evt) {
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.publish("nav", "to", {
 			id : "Favorite"
 		});
@@ -54,7 +54,7 @@ sap.ui.controller("view.Master", {
 	_showDetail : function (item) {
 		
 		// tell app controller to navigate
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.publish("nav", "to", {
 			id : "Detail"
 		});
@@ -66,7 +66,7 @@ sap.ui.controller("view.Master", {
 	},
 	
 	pressGroupListItem : function (evt) {
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.publish("nav", "to", {
 			id : "Group",
 			data : {

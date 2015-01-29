@@ -1,4 +1,4 @@
-sap.ui.controller("view.Favorite", {
+sap.ui.controller("sap.ui.demokit.icex.view.Favorite", {
 
 	onInit : function() {
 		
@@ -12,6 +12,8 @@ sap.ui.controller("view.Favorite", {
 	},
 	
 	toggleUiModel : function() {
+		
+		//this.getView().setModel(sap.ui.getCore().getModel("fav"), "fav");
 		
 		var model = this.getView().getModel("ui");
 		if (!model) {
@@ -39,13 +41,13 @@ sap.ui.controller("view.Favorite", {
 	},
 	
 	navBack : function(evt) {
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.publish("nav", "back");
 	}, 
 	
 	deleteIconList : function(evt) {
 		var name = evt.getParameter("listItem").getTitle();
-		sap.ui.getCore().getModel("fav").toggleFavorite(name);
+		this.getView().getModel("fav").toggleFavorite(name);
 	},
 	
 	selectIconList : function(evt) {
@@ -59,7 +61,7 @@ sap.ui.controller("view.Favorite", {
 	_showDetail : function(item) {
 		
 		// tell app controller to navigate
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.publish("nav", "to", {
 			id : "Detail"
 		});

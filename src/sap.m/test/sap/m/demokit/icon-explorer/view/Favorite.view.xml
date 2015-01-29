@@ -1,4 +1,4 @@
-<mvc:View controllerName="view.Favorite"
+<mvc:View controllerName="sap.ui.demokit.icex.view.Favorite"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"

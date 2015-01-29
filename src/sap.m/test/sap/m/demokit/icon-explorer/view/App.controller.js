@@ -1,7 +1,7 @@
 jQuery.sap.require("jquery.sap.history");
 jQuery.sap.require("sap.m.InstanceManager");
 
-sap.ui.controller("view.App", {
+sap.ui.controller("sap.ui.demokit.icex.view.App", {
 	
 	getDefaultPage : function () {
 		return "Master";
@@ -39,7 +39,7 @@ sap.ui.controller("view.App", {
 		});
 		
 		// subscribe to event bus
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.subscribe("nav", "to", this.navHandler, this);
 		bus.subscribe("nav", "back", this.navHandler, this);
 		bus.subscribe("nav", "virtual", this.navHandler, this);
@@ -58,7 +58,7 @@ sap.ui.controller("view.App", {
 	},
 	
 	navTo : function (id, data, writeHistory) {
-		
+		var page = null;
 		if (id === undefined) {
 			
 			// invalid parameter
@@ -71,10 +71,13 @@ sap.ui.controller("view.App", {
 			// load view on demand
 			var app = this.getView().app;
 			if (app.getPage(id, master) === null) {
-				var page = sap.ui.view({
-					id : id,
-					viewName : "view." + id,
-					type : "XML"
+				this.getOwnerComponent().runAsOwner(function(){
+					page = sap.ui.view({
+						id : id,
+						viewName : "sap.ui.demokit.icex.view." + id,
+						type : "XML"
+					});
+					
 				});
 				if (master) {
 					app.addMasterPage(page);

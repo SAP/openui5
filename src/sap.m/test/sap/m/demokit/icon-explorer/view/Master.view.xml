@@ -1,4 +1,4 @@
-<mvc:View controllerName="view.Master"
+<mvc:View controllerName="sap.ui.demokit.icex.view.Master"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"

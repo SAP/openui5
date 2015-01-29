@@ -1,7 +1,7 @@
-sap.ui.jsview("view.App", {
+sap.ui.jsview("sap.ui.demokit.icex.view.App", {
 
 	getControllerName : function () {
-		return "view.App";
+		return "sap.ui.demokit.icex.view.App";
 	},
 	
 	createContent : function (oController) {
@@ -11,9 +11,9 @@ sap.ui.jsview("view.App", {
 		
 		this.app = new sap.m.SplitApp();
 		
-		this.app.addMasterPage(sap.ui.xmlview("Master", "view.Master"));
+		this.app.addMasterPage(sap.ui.xmlview("Master", "sap.ui.demokit.icex.view.Master"));
 		
-		this.app.addDetailPage(sap.ui.xmlview("Welcome", "view.Welcome"));
+		this.app.addDetailPage(sap.ui.xmlview("Welcome", "sap.ui.demokit.icex.view.Welcome"));
 		
 		return new sap.m.Shell("Shell", {
 			title : "SAPUI5 Icon Explorer",
