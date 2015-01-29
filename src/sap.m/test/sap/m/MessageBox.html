@@ -161,9 +161,13 @@
 			text: "Control",
 			width: "250px",
 			press: function(){
-				var oCheck = new sap.m.CheckBox("checkBoxId2", {
+				var oCheck1 = new sap.m.CheckBox("checkBoxId1", {
 					text: "The CheckBox this checked",
 					selected: false
+				});
+				var oCheck2 = new sap.m.CheckBox("checkBoxId2", {
+					text: "The CheckBox this checked",
+					selected: true
 				});
 				var oLayout = new sap.ui.layout.VerticalLayout({
 					width: "100%",
@@ -171,7 +175,8 @@
 						new sap.m.Text({
 							text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
 						}),
-						oCheck
+						oCheck1,
+						oCheck2
 					]
 				});
 
@@ -188,7 +193,7 @@
 							},
 							dialogId: "messageBoxId",
 							class: "",
-							initialFocus: oCheck
+							initialFocus: oCheck2
 						}
 				);
 			}
@@ -283,6 +288,73 @@
 						"",
 						""
 				);
+			}
+		}));
+
+
+		oVL.addContent(new sap.m.Text("text3", {
+					text: "\n Show info in MessageBox content"
+				})
+		);
+
+		oVL.addContent(new sap.m.Button({
+			text: 'Show Info',
+			width: "250px",
+			press: function () {
+				sap.m.MessageBox.show('Ask for more...', {
+					icon: sap.m.MessageBox.Icon.INFORMATION,
+					title: "Info MessageBox",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Test Callback"],
+					id: "messageBoxId1",
+					initialFocus: "Test Callback",
+					linkTitle: "Link",
+					details: "message1:1\nmessage2:2",
+					onClose: function(oAction) {
+						if ( oAction === "Test Callback") {
+							sap.m.MessageBox.alert("Callback is working", {title: "Result of CheckBox"});
+						}
+					}
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button({
+			text: 'Show Info in control',
+			width: "250px",
+			press: function () {
+				var oCheck3 = new sap.m.CheckBox("checkBoxId4", {
+					text: "The CheckBox this checked",
+					selected: false
+				});
+				var oCheck4 = new sap.m.CheckBox("checkBoxId5", {
+					text: "The CheckBox this checked",
+					selected: true
+				});
+				var oLayout = new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.m.Text({
+							text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
+						}),
+						oCheck3,
+						oCheck4
+					]
+				});
+
+				sap.m.MessageBox.show(oLayout, {
+					icon: sap.m.MessageBox.Icon.INFORMATION,
+					title: "Info MessageBox",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Test Callback"],
+					id: "messageBoxId1",
+					initialFocus: "Test Callback",
+					linkTitle: "Link",
+					details: "message1:1\nmessage2:2",
+					onClose: function(oAction) {
+						if ( oAction === "Test Callback") {
+							sap.m.MessageBox.alert("Callback is working", {title: "Result of CheckBox"});
+						}
+					}
+				});
 			}
 		}));
 

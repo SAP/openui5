@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.MessageBoxInfo.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Text
+					text="Show MessageBox with Info:"/>
+			<Button
+					text="Show Info"
+					class="sapUiSmallMarginBottom"
+					press="showInfo"
+					width="250px"/>
+			<Button
+					text="Show Info in Control"
+					class="sapUiSmallMarginBottom"
+					press="showCustomContentWithInfo"
+					width="250px"/>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

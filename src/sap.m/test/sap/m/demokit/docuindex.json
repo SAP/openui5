@@ -345,12 +345,13 @@
 				]
 			},
 			{
-				"id" : "sap.m.MessageBox",
+				"id" : "sap.m.MessageBox ",
 				"name" : "Message Box",
 				"category" : "Popup",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.MessageBox", "sap.m.sample.MessageBoxTypes", "sap.m.sample.MessageBoxCustom" ]
+				"samples" : [ "sap.m.sample.MessageBox", "sap.m.sample.MessageBoxInfo", "sap.m.sample.MessageBoxTypes", "sap.m.sample.MessageBoxCustom" ]
 			},
+
 			{
 				"id" : "sap.m.MessagePopover",
 				"name" : "Message Popover",
@@ -1455,6 +1456,11 @@
 				"description": "MessageBox is an easier way of showing a message type dialog. You only need to provide the message that you want to show to the user."
 			},
 			{
+				"id": "sap.m.sample.MessageBoxInfo",
+				"name": "Message Box with Info",
+				"description": "Display detail information in MessageBox and is compatible with some adaptations to sap.ca.ui.MessageDialog syntax"
+			},
+			{
 				"id": "sap.m.sample.MessageBoxTypes",
 				"name": "Message Box Header Icons",
 				"description": "MessageBox icons can be used to show the different value states that a MessageBox can display: success, warning, error, information and question."
@@ -1462,7 +1468,7 @@
 			{
 				"id": "sap.m.sample.MessageBoxCustom",
 				"name": "Message Box with Custom Content",
-				"description": "Here a MessageBox is described how it can be used with custom content - a layout e.g. Additionaly it is show how any binding can be used within the custom content."
+				"description": "Here a MessageBox is described how it can be used with custom content - a layout e.g. Additionally it is show how any binding can be used within the custom content."
 			},
 			{
 				"id": "sap.m.sample.MessagePopover",
