@@ -23,47 +23,47 @@
 
 	<script type="text/javascript">
 		var core = sap.ui.getCore();
-	
-		test("ShouldRenderNiceHtml", function() {	
+
+		test("ShouldRenderNiceHtml", function() {
 			// SUT
 			var id,
 				expectedWidth = "100px",
 				expectedHeight = "200px",
-				sut = new sap.m.TileContainer({ 
+				sut = new sap.m.TileContainer({
 						width : expectedWidth,
-						height : expectedHeight 
+						height : expectedHeight
 					});
-			
+
 			sut.placeAt("qunit-fixture");
 			id = sut.getId();
-			
+
 			// Act
 			core.applyChanges();
 
 			// Assert
 			strictEqual(sut.$().css("width"),expectedWidth);
 			strictEqual(sut.$().css("height"),expectedHeight);
-			
+
 			ok($("#" + id + "-scrl").length > 0);
 			ok($("#" + id + "-blind").length > 0);
 			ok($("#" + id + "-cnt").length > 0);
 			ok($("#" + id + "-pager").length > 0);
-			
-			
+
+
 			sut.destroy();
 		});
-		
+
 		test("ShouldRenderMultipleTiles", function() {
 			// Arrange
 			var tile1 = new sap.m.StandardTile(),
 				tile2 = new sap.m.CustomTile(),
 				sut;
-				
+
 
 			// SUT
 			sut = new sap.m.TileContainer({tiles : [tile1,tile2]});
-			
-			
+
+
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
@@ -76,18 +76,18 @@
 			// Cleanup
 			sut.destroy();
 		});
-		
+
 		test("ShouldSetEditable", function() {
 			// Arrange
 			var tile1 = new sap.m.StandardTile(),
 				tile2 = new sap.m.CustomTile(),
 				tiles = [tile1,tile2],
-				sut, 
+				sut,
 				i;
-			
+
 			// SUT
 			sut = new sap.m.TileContainer({tiles : tiles});
-						
+
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
@@ -99,24 +99,24 @@
 			for ( i = 0; i < tiles.length; i++) {
 				equal(tiles[i].isEditable(),true);
 			}
-			
+
 			// Cleanup
 			sut.destroy();
-				
+
 		});
-		
+
 		test("ShouldMoveATile", function() {
 			// Arrange
 			var m = sap.m,
 				tile0 = new m.StandardTile(),
 				tile1 = new m.CustomTile(),
 				tiles = [tile0,tile1],
-				sut, 
+				sut,
 				i;
-			
+
 			// SUT
 			sut = new m.TileContainer({tiles : tiles});
-						
+
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
@@ -125,12 +125,12 @@
 			// Assert
 			strictEqual(sut.getTiles()[0], tile1);
 			strictEqual(sut.getTiles()[1], tile0);
-			
-			
+
+
 			// Cleanup
 			sut.destroy();
 		});
-		
+
 		test("ShouldInsertATile", function() {
 			// Arrange
 			var sut,
@@ -139,7 +139,7 @@
 
 			// SUT
 			sut = new m.TileContainer();
-			
+
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
@@ -147,11 +147,11 @@
 
 			// Assert
 			strictEqual(sut.getTiles()[0], tileToAdd)
-			
+
 			// Cleanup
 			sut.destroy();
 		});
-		
+
 		test("ShouldDeleteATile", function() {
 			// Arrange
 			var sut,
@@ -162,19 +162,19 @@
 			sut = new m.TileContainer({
 				tiles : tileToDelete
 			});
-			
+
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
 			sut.deleteTile(tileToDelete);
-	
+
 			// Assert
 			strictEqual(sut.getTiles().length, 0)
-			
+
 			// Cleanup
 			sut.destroy();
 		});
-		
+
 		asyncTest("ShouldApplyDimensions", function() {
 			// Arrange
 			var sut,
@@ -192,7 +192,7 @@
 			sut = new m.TileContainer({
 				tiles : tile
 			});
-			
+
 			// Act
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
@@ -204,18 +204,18 @@
 				id= sut.getId();
 				oDim = sut._getContainerDimension();
 				pagerHeight = jQuery.sap.byId( id + "-pager").outerHeight();
-				
+
 				equal(sut.$().css("visibility"),"visible","TileContainer was visible");
-				
+
 				$scroll = jQuery.sap.byId(id + "-scrl");
 				equal($scroll.css("width"), oDim.outerwidth + "px","scroll width");
 				equal($scroll.css("height"), (oDim.outerheight - pagerHeight) + "px","scroll height");
-				
-				
+
+
 				$rightEdge = jQuery.sap.byId(id + "-rightedge");
 				equal($rightEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","right edge top");
 				equal($rightEdge.css("right"),expectedOffset + "px");
-				
+
 				$leftEdge = jQuery.sap.byId(id + "-leftedge");
 				equal($leftEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","left edge top");
 				equal($leftEdge.css("left"),expectedOffset + "px");
@@ -223,38 +223,172 @@
 				start();
 				// Cleanup
 				sut.destroy();
-				
+
 			},100);
 		});
-		
+
 		test("ShouldScrollIntoAView", function() {
 			//Arrange
 			var sut,
 				m = sap.m,
 				lastTile;
-			
-						
+
+
 			//SUT
 			sut = new m.TileContainer({tiles : new m.StandardTile()});
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
 			sut._calculatePositions();
-			
+
 			//Add one more Tile than total amount of Tiles fitting in the current container
 			while(sut._iMaxTiles +1 > sut.getTiles().length){
 				lastTile = new m.StandardTile();
 				sut.addTile(lastTile);
 				sut._calculatePositions();
 			}
-			
+
 			//Act
 			sut.scrollIntoView(lastTile,false);
-			
+
 			//Assert
 			equal(sut._iCurrentPage, 1);
 			equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
-			
+
 			//Cleanup
+			sut.destroy();
+		});
+
+
+		test('ShouldHaveAccessibilityAttributes', function () {
+			// SUT
+			var m 	  	= sap.m,
+				tile 	= new m.StandardTile(),
+				tiles 	= [tile],
+				sut 	= new m.TileContainer({tiles: tiles});
+
+			sut.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+
+			// Assert
+			equal(sut.$().attr('role'), 'listbox', 'listbox, listbox; equal success');
+			equal(sut.$().attr('aria-multiselectable'), "false", 'false, false; equal success');
+			equal(sut.$().attr('aria-activedescendant'), tile.getId());
+
+			sut.destroy();
+		});
+
+
+		test('ShouldHaveProperAccessibilityAttributesValues', function () {
+			// SUT
+			var m 	  	= sap.m,
+					tile1 	= new m.StandardTile(),
+					tile2 	= new m.StandardTile(),
+					tiles 	= [tile1, tile2],
+					sut 	= new m.TileContainer({tiles: tiles});
+
+			sut.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+
+			// Assert
+			equal(tile1.$().attr('aria-posinset'), 1, '1, 1; equal success');
+			equal(tile1.$().attr('aria-setsize'), 2, '2, 2; equal success');
+
+			sut.destroy();
+		});
+
+
+		test('TilesShouldHaveProperAccessibilityPositionAttributeValueAfterReordering', function () {
+			// SUT
+			var m 	  	= sap.m,
+				sut 	= new m.TileContainer({
+					tiles: [
+						new m.StandardTile({id: 'first'}),
+						new m.StandardTile({id: 'second'}),
+						new m.StandardTile({id: 'third'}),
+						new m.StandardTile({id: 'fourth'}),
+						new m.StandardTile({id: 'fifth'}),
+						new m.StandardTile({id: 'sixth'})
+					]
+				});
+
+			sut.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+
+			// build an array with the posinset values for each tile
+			var aInsetPositions = [];
+			sut.getTiles().forEach(function (tile) {
+				aInsetPositions.push(tile.$().attr('aria-posinset'))
+			});
+
+			// Assert that there are 6 tiles with aria-posinset attribute
+			equal(aInsetPositions.length, "6", '6, 6; equal success');
+
+			// Assert that all tiles have aria-posinset attribute with proper values:
+			// no duplicates and proper numeric order
+			var aExpectedResult = ['1', '2', '3', '4', '5', '6'];
+			var aActualResult = [];
+			sut.getTiles().forEach(function (tile) {
+				aActualResult.push(tile.$().attr('aria-posinset'));
+			});
+			deepEqual(aActualResult, aExpectedResult);
+
+			// Assert that all tiles have aria-posinset attribute with proper values
+			// after a tile has changed its position from left to right
+			aActualResult = [];
+			sut.moveTile(sut.getTiles()[0], 3);
+			sut.getTiles().forEach(function (tile) {
+				aActualResult.push(tile.$().attr('aria-posinset'));
+			});
+			deepEqual(aActualResult, aExpectedResult);
+			// Assert that the tile was actually moved
+			equal(sut.getTiles()[3].getId(), 'first', 'first, first; equal success');
+
+
+			// Assert that all tiles have aria-posinset attribute with proper values
+			// after a tile has changed its position from right to left
+			var aExpectedResult = ['1', '2', '3', '4', '5', '6'];
+			var aActualResult = [];
+			sut.moveTile(sut.getTiles()[4], 1);
+			sut.getTiles().forEach(function (tile) {
+				aActualResult.push(tile.$().attr('aria-posinset'));
+			});
+			deepEqual(aActualResult, aExpectedResult);
+			// Assert that the tile was actually moved
+			equal(sut.getTiles()[1].getId(), 'fifth', 'fifth, fifth; equal success');
+
+			sut.destroy();
+		});
+
+		test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function () {
+			// SUT
+			var m 	  	= sap.m,
+				sut 	= new m.TileContainer('testOrder', {
+						tiles : [
+							new m.StandardTile({id: 'first'}),
+							new m.StandardTile({id: 'second'}),
+							new m.StandardTile({id: 'third'}),
+							new m.StandardTile({id: 'fourth'}),
+							new m.StandardTile({id: 'fifth'}),
+							new m.StandardTile({id: 'sixth'})
+						]
+					});
+
+			sut.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+			sut.moveTile(sut.getTiles()[0], 3);
+			var aTilesDom = jQuery('.sapMTile');
+
+			// Assert that the index of the tile in the DOM is the same as the index of aggregation
+			equal(sut.getTiles()[3].getId(), jQuery(aTilesDom[3]).attr('id'), 'first, first; equal success');
+
 			sut.destroy();
 		});
 

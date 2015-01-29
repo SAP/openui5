@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>QUnit Tests - sap.m.CustomTile</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script>
+		var core = sap.ui.getCore();
+		module("Dimensions");
+
+		test('ShouldHaveAccessibilityAttributes', function () {
+			// SUT
+			var m = sap.m,
+				sut = new m.CustomTile(),
+				tiles = [sut, new m.CustomTile()],
+				cnt = new m.TileContainer({tiles: tiles});
+
+			cnt.placeAt("qunit-fixture");
+			// Act
+			core.applyChanges();
+			// Assert
+			equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+			equal(sut.$().attr('aria-posinset'), 1, '1, 1; equal success');
+			equal(sut.$().attr('aria-setsize'), 2, '2, 2; equal success');
+			cnt.destroy();
+		});
+
+	</script>
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit Tests - sap.m.CustomTile</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
