@@ -62,13 +62,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// finish writing html
 		oRm.writeClasses();
 		oRm.writeStyles();
-
-		// ARIA
-		oRm.writeAccessibilityState(oText, {
-			role: "textbox",
-			readonly: "true"
-		});
-
 		oRm.write(">");
 
 		// handle max lines
