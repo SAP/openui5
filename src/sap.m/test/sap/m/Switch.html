@@ -4,66 +4,100 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
 		<title>Switch - sap.m</title>
-		<style type="text/css">
-			.sapMSwtCont {
-				margin-left: 0.3125em;
-			}
-		</style>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script>
-			var oApp = new sap.m.App("myApp", {
-				initialPage: "page1"
+			var oTitle = new sap.m.Title({
+				text: "Common use cases:",
+				titleStyle: sap.ui.core.TitleLevel.H4,
+				level: sap.ui.core.TitleLevel.H1
 			});
 
-			var oSwitch0 = new sap.m.Switch({
-				state: true,
+			var oSwitchDefault = new sap.m.Switch({
 				change: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' state property to " + this.getState() + " on " + this);
+					jQuery.sap.log.info("Event fired: 'change' state property " + this.getState() + " on", this);
 				}
 			});
 
-			var oSwitch1 = new sap.m.Switch({
-				change: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' state property to " + oControlEvent.getParameter("state") + " on " + this);
-				}
+			var oLabelDefault = new sap.m.Label({
+				text: "Default",
+				labelFor: oSwitchDefault
+			});
+
+			var oSwitchDisabled = new sap.m.Switch({
+				enabled: false
+			});
+
+			var oLabelDisabled = new sap.m.Label({
+				text: "Disabled",
+				labelFor: oSwitch2
 			});
 
 			var oSwitch2 = new sap.m.Switch({
 				enabled: false
 			});
 
-			var oSwitch3 = new sap.m.Switch({
+			var oSwitchCustomText = new sap.m.Switch({
+				state: true,
 				customTextOn: "I",
 				customTextOff: "O"
 			});
 
-			var oSwitch4 = new sap.m.Switch({
-				customTextOn: "I",
-				customTextOff: "O",
-				state: true
+			var oLabelCustomText = new sap.m.Label({
+				text: "Custom text",
+				labelFor: oSwitchCustomText
 			});
 
-			var oSwitch5 = new sap.m.Switch({
-				state: true,
-				type: sap.m.SwitchType.AcceptReject
-			});
-
-			var oSwitch6 = new sap.m.Switch({
+			var oSwitchNoText = new sap.m.Switch({
 				customTextOn: " ",
 				customTextOff: " ",
 			});
 
-			var oPage1 = new sap.m.Page("page1", {
-				title: "Mobile Switch Control",
-				content : [oSwitch0, oSwitch1, oSwitch2, oSwitch3, oSwitch4, oSwitch5, oSwitch6]
+			var oLabelNoText = new sap.m.Label({
+				text: "No text",
+				labelFor: oSwitchNoText
 			});
 
-			oApp.addPage(oPage1);
-			oApp.placeAt("body");
+			var oSwitchAcceptReject = new sap.m.Switch({
+				type: sap.m.SwitchType.AcceptReject
+			});
+
+			var oLabelAcceptReject = new sap.m.Label({
+				text: "Type AcceptReject",
+				labelFor: oSwitchAcceptReject
+			});
+
+			new sap.m.App({
+				pages: [
+					new sap.m.Page({
+						title: "Switch Control",
+						content: [
+							oTitle,
+							new sap.m.VBox({
+								items: [
+									oLabelDefault,
+									oSwitchDefault,
+
+									oLabelDisabled,
+									oSwitchDisabled,
+
+									oLabelCustomText,
+									oSwitchCustomText,
+
+									oLabelNoText,
+									oSwitchNoText,
+
+									oLabelAcceptReject,
+									oSwitchAcceptReject
+								]
+							})
+						]
+					}).addStyleClass("sapUiContentPadding")
+				]
+			}).placeAt("body");
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
