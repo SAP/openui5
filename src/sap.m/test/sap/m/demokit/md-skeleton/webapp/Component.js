@@ -15,7 +15,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 		rootView : "sap.ui.demo.mdskeleton.view.App",
 
 		config : {
-			resourceBundle : "sap.ui.demo.mdskeleton.i18n.messageBundle",
+			messageBundle : "sap.ui.demo.mdskeleton.i18n.messageBundle",
 			// always use absolute paths relative to our own component
 			// (relative paths will fail if running in the Fiori Launchpad)
 			rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdskeleton"),
@@ -88,7 +88,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 
 		// set the internationalization model
 		this.setModel(new sap.ui.model.resource.ResourceModel({
-			bundleName : mConfig.resourceBundle
+			bundleName : mConfig.messageBundle
 		}), "i18n");
 
 		// set the mock data model
