@@ -365,8 +365,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	
 		if (this._bUseDialog) {
 			// click event has to be used in order to focus on the input in dialog
-			this.$().on("click", jQuery.proxy(function () {
-				if (this.getShowSuggestion() && this._oSuggestionPopup) {
+			// do not open suggestion dialog by click over the value help icon
+			this.$().on("click", jQuery.proxy(function (oEvent) {
+				if (this.getShowSuggestion() && this._oSuggestionPopup && oEvent.target.id != this.getId() + "__vhi") {
 					this._oSuggestionPopup.open();
 				}
 			}, this));
