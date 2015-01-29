@@ -39,7 +39,7 @@
 	width: 1.5rem;
 }
 
-/* Entity view */
+/* explored entity view */
 
 .sapMOH[data-deprecated^="true"] .sapMText.sapMOHTitle {
 	text-decoration: line-through;
@@ -58,7 +58,7 @@
 	font-style: italic;
 }
 
-/* Code view */
+/* explored code view */
 
 pre {
 	margin-top: 0;
@@ -70,77 +70,6 @@ code {
 
 .nameTitle {
 	font-weight: bold;
-}
-
-/* Samples */
-/*TODO remove once comp and viz explored samples are updated*/
-.marginOnlyTop {
-	margin-top: 1em;
-}
-.marginAll {
-	margin: 1em;
-}
-.marginNone {
-	margin: 0em;
-}
-.marginNoBottom {
-	margin: 1em 1em 0em 1em;
-}
-.marginNoTop {
-	margin: 0em 1em 1em 1em;
-}
-.marginTopBottom {
-	margin: 1em 0em 1em 0em;
-}
-.marginRight {
-	margin: 1em;
-}
-.marginTopLeft {
-	margin: 1em 0 0 1em;
-}
-
-/*TODO remove once comp and viz explored samples are updated*/
-/* Margins for content in Vertical Layout */
-.marginVerticalContent.sapUiVlt {
-	margin: 1em;
-}
-/*TODO remove once comp and viz explored samples are updated*/
-.marginVerticalContent .sapUiVltCell:not(:first-child) {
-	margin-top: 1em;
-}
-
-/*TODO remove once comp and viz explored samples are updated*/
-/* Margins for content in VBox */
-.sapMVBox.marginBoxContent{
-	padding: 1em;
-}
-/*TODO remove once comp and viz explored samples are updated*/
-.sapMPage.marginBoxContent > section > .sapMPageScroll{
-	padding: 1rem;
-}
-/*TODO remove once comp and viz explored samples are updated*/
-.gridMarginTop {
-	margin-top: 1rem;
-}
-/*TODO remove once comp and viz explored samples are updated*/
-.iconTabBarPaddingTop .sapMITBContent {
-	padding-top: 1rem;
-}
-.panelBoxContainer .sapMFlexBox {
-	height: 200px;
-}
-.zeroWidthItems .sapMFlexItem {
-	width: 0;
-}
-.visibleFlexItemSizes .sapMFlexItem {
-	border: 1px dashed ;
-	margin: 3px;
-	padding: 3px;
-}
-/*TODO remove once comp and viz explored samples are updated*/
-/*Provide IconTabBar content padding */
-.sap-phone .iconTabBarPaddingTop .sapMITBContent {
-	padding: 1rem;
 }
 
 #sampleFrame {

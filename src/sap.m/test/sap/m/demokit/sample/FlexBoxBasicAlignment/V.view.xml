@@ -1,10 +1,10 @@
 <mvc:View
 	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="panelBoxContainer"
 		width="100%" >
 		<l:content>
 
@@ -14,17 +14,16 @@
 						<Label text="Upper left" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Start"
 					justifyContent="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
@@ -33,17 +32,16 @@
 						<Label text="Upper center" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Start"
 					justifyContent="Center">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
@@ -52,17 +50,16 @@
 						<Label text="Upper right" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Start"
 					justifyContent="End">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
@@ -73,12 +70,13 @@
 				</headerToolbar>
 
 				<FlexBox
+					height="100px"
 					alignItems="Center"
 					justifyContent="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
 
@@ -90,14 +88,14 @@
 						<Label text="Middle center" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Center"
 					justifyContent="Center">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
 
@@ -109,17 +107,16 @@
 						<Label text="Middle right" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Center"
 					justifyContent="End">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
@@ -128,17 +125,16 @@
 						<Label text="Lower left" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="End"
 					justifyContent="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
@@ -147,17 +143,16 @@
 						<Label text="Lower center" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="End"
 					justifyContent="Center">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
@@ -166,18 +161,18 @@
 						<Label text="Lower right" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="End"
 					justifyContent="End">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
+
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
