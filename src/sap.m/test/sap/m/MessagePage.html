@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>MessagePage - sap.m</title>
+
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-libs="sap.m"
+			src="../../../resources/sap-ui-core.js"
+			>
+	</script>
+	<script>
+		// Simple MessagePage
+		var messagePage = new sap.m.MessagePage({
+			title:"Opportunity",
+			text:"No Items are present",
+			filterText: "Filter Text",
+			customFilterText: new sap.m.Link({text: "Custom Filter Text", href: "http://go.sap.com/index.html"})
+		});
+
+		var app = new sap.m.App();
+		app.addPage(messagePage);
+		app.placeAt('content');
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+<h1>Test Page for sap.m.MessagePage</h1>
+
+<div id="content" class="sapUiBody"></div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<core:View
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core" >
+	<Page
+		title="{CompanyName}"
+		class="sapUiFioriObjectPage"
+		showNavButton="{device>/isPhone}"
+		navButtonPress="handleNavButtonPress" >
+		<ObjectHeader
+			title="{SoId}"
+			number="{GrossAmount}"
+			numberUnit="{CurrencyCode}" >
+			<attributes>
+				<ObjectAttribute text="{BuyerName}" />
+				<ObjectAttribute text="{CreatedByBp}" />
+				<ObjectAttribute text="{CreatedAt}" />
+			</attributes>
+		</ObjectHeader>
+	</Page>
+</core:View>
