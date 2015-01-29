@@ -1,4 +1,3 @@
-jQuery.sap.require("sap.m.MessageToast");
 jQuery.sap.require("sap.ui.core.format.DateFormat");
 
 sap.ui.controller("sap.m.sample.Feed.C", {
@@ -33,12 +32,10 @@ sap.ui.controller("sap.m.sample.Feed.C", {
 	},
 	
 	onSenderPress: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("Clicked on Link: " + oEvent.getSource().getSender());
 },
 
 	onIconPress: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("Clicked on Image: " + oEvent.getSource().getSender());
 }
 });

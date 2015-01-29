@@ -1,5 +1,3 @@
-jQuery.sap.require("sap.m.MessageToast");
-
 sap.ui.controller("sap.m.sample.ViewSettingsDialogCustom.C", {
 
 	filterResetValue: 50,

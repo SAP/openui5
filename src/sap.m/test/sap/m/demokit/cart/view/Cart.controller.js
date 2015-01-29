@@ -139,7 +139,6 @@ sap.ui.controller("view.Cart", {
 						var bInputValid = oInputView.getController()._checkInput();
 						if (bInputValid) {
 							that._orderDialog.close();
-							jQuery.sap.require("sap.m.MessageToast");
 							var msg = "Your order was placed.";
 							that._resetCart();
 							sap.m.MessageToast.show(msg, {});

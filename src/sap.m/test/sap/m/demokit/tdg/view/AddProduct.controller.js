@@ -70,7 +70,7 @@ sap.ui.core.mvc.Controller.extend("sap.ui.demo.tdg.view.AddProduct", {
 					productId: mResponse.ID,
 					tab: "supplier"
 				}, false);
-				jQuery.sap.require("sap.m.MessageToast");
+
 				// ID of newly inserted product is available in mResponse.ID
 				this.oBusyDialog.close();
 				sap.m.MessageToast.show("Product '" + mPayload.Name + "' added");

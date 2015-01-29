@@ -8,7 +8,6 @@ sap.ui.controller("sap.m.sample.FeedListItem.List", {
 	},
 	
 	onPress: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("Clicked on " + oEvent.getSource().getSender());
 }
 });

@@ -14,12 +14,10 @@ sap.ui.controller("sap.m.sample.ListItemTypes.List", {
 	},
 
 	handlePress : function(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("'press' event fired!");
 	},
 
 	handleDetailPress : function(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("'detailPress' event fired!");
 	}
 

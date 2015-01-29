@@ -49,7 +49,6 @@ sap.ui.controller("sap.m.sample.InputChecked.C", {
 
 		// output result
 		if (canContinue) {
-			jQuery.sap.require("sap.m.MessageToast");
 			sap.m.MessageToast.show("The input is correct. You could now continue to the next screen.");
 		} else {
 			jQuery.sap.require("sap.m.MessageBox");

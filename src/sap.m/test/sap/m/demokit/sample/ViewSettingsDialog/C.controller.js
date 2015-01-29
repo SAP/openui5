@@ -17,7 +17,6 @@ sap.ui.controller("sap.m.sample.ViewSettingsDialog.C", {
 	},
 
 	handleConfirm: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		if (oEvent.getParameters().filterString) {
 			sap.m.MessageToast.show(oEvent.getParameters().filterString);
 		}

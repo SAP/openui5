@@ -7,12 +7,10 @@ sap.ui.controller("sap.m.sample.ListToolbar.List", {
 	},
 
 	handleInfobarPress : function (evt) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("info toolbar pressed");
 	},
 
 	handleButtonPress : function (evt) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("header toolbar button pressed");
 	}
 });

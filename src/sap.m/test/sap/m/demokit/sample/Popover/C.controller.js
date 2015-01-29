@@ -30,7 +30,6 @@ sap.ui.controller("sap.m.sample.Popover.C", {
 
 	handleEmailPress: function (oEvent) {
 		this._oPopover.close();
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("E-Mail has been sent");
 	}
 });

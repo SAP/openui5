@@ -9,7 +9,6 @@ sap.ui.controller("sap.m.sample.ObjectListItemMarkLocked.List", {
 	},
 
 	onListItemPress: function (evt) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show("Pressed : " + evt.getSource().getTitle());
 	}
 });
