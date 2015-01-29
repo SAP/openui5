@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.commons.Dialog
   Author: d046011/d046329(original tests)
 -->
@@ -14,7 +14,7 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -51,7 +51,7 @@
 		resizable : bResizable
 	});
 
-	//oCtrl = sap.ui.getCore().getControl("Dialog1");		
+	//oCtrl = sap.ui.getCore().getControl("Dialog1");
 	oDialog1.attachClosed(closedEventHandler);
 
 	// make sure the Dialog exists
@@ -110,7 +110,7 @@
 			oDialog1.destroy();
 		});
 	});
-	
+
 	asyncTest("Check XSS in title", function() {
 		expect(1);
 
@@ -123,7 +123,7 @@
 			applyContentPadding : bApplyContentPadding,
 			showCloseButton : bShowCloseButton,
 			resizable : bResizable
-		}); 
+		});
 		var sXss = unescape("%3Cscript%3Ealert%28%27xss%20possible%27%29%3C/script%3E");
 		var oBtn = new sap.ui.commons.Button({
 			text : "Open XSS-dialog"
@@ -132,16 +132,45 @@
 		oBtn.press = function() {
 			oDialogXSS.open();
 			oDialogXSS.setTitle(sXss);
-				
+
 			setTimeout(function() {
 				var bXss = oDialogXSS.$("lbl").text() === sXss;
-					
+
 				ok(bXss, "Text of title was escaped");
 				oDialogXSS.destroy();
 				start();
 			}, iPopupDelay);
 		};
 		oBtn.press();
+	});
+
+	asyncTest("Focus :sapTabbable elements", function() {
+		expect(1);
+
+		var oDialog = new sap.ui.commons.Dialog({
+			modal: true
+		});
+
+		oDialog.addContent(new sap.ui.commons.Image({
+			decorative: true,
+			src: './Dialog/openUI5_logo.png'
+		}));
+		oDialog.addContent(new sap.ui.commons.TextField("firstFocusText"));
+		oDialog.addContent(new sap.ui.commons.TextField());
+
+		var fnOpened = function() {
+			oDialog.oPopup.detachOpened(fnOpened);
+
+			var bTest = document.activeElement.id == "firstFocusText";
+			ok(bTest, "First text field was focused instead of image");
+
+			oDialog.close();
+			start();
+		};
+		oDialog.oPopup.setDurations(0, 0);
+		oDialog.oPopup.attachOpened(fnOpened);
+
+		oDialog.open();
 	});
 </script>
 

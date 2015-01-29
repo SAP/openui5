@@ -9,7 +9,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 	/**
 	 * This class provides some methods for Popup handling. This class can be
 	 * used as a mixin for controls that use a Popup as a local instance.
-	 * 
+	 *
 	 * @returns {sap.ui.core.PopupSupport}
 	 * @constructor
 	 * @private
@@ -22,7 +22,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 		 * Checks if the (optional) given jQuery-object or DOM-node is within a
 		 * Popup. If no object is given the instance of the control will be used
 		 * to check.
-		 * 
+		 *
 		 * @param {jQuery |
 		 *            Node} [oThis] is the object that should be checked
 		 *            (optional)
@@ -36,7 +36,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 
 		/**
 		 * This function returns the parent Popup if available.
-		 * 
+		 *
 		 * @param {control}
 		 *            [oThat] is an optional control instance. If another
 		 *            instance than "this" is given the corresponding control
@@ -57,7 +57,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 
 		/**
 		 * This returns the corresponding unique ID of the parent Popup.
-		 * 
+		 *
 		 * @param {control}
 		 *            [oThat] is an optional control instance. If another
 		 *            instance than "this" is given the corresponding control
@@ -71,7 +71,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 
 		/**
 		 * Adds the given child Popup id to the given parent's association.
-		 * 
+		 *
 		 * @param [string]
 		 *            sParentPopupId to which the id will be added
 		 * @param [string]
@@ -88,7 +88,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 		 * Removes the control id to the Popup. If a dedicated Popup id is given
 		 * then the control will be removed accordingly from this Popup. Else
 		 * the closest Popup will be used.
-		 * 
+		 *
 		 * @param {string}
 		 *            [sPopupId] from which Popup the control should be removed
 		 *            (optional)
@@ -108,7 +108,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 
 		/**
 		 * Closes a specific Popup when the control instance isn't available
-		 * 
+		 *
 		 * @param [string]
 		 *            sPopupId of Popup that should be closed
 		 */
@@ -119,7 +119,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 
 		/**
 		 * This function calls a popup to increase its z-index
-		 * 
+		 *
 		 * @param [string]
 		 *            sPopupId of Popup that should increase its z-index
 		 * @param [boolean]
@@ -142,7 +142,7 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 		 * has to be focused. Since those control have a content and footer area
 		 * with buttons it has to be checked whether a button or content-element
 		 * is available that can be focused.
-		 * 
+		 *
 		 * @param [object]
 		 *            mParameters contain all necessary parameters
 		 * @param [object.object]
@@ -169,7 +169,8 @@ sap.ui.define([ 'jquery.sap.global', './Element', './Control' ], function(jQuery
 				sName = mParameters.that.getMetadata().getName(),
 				oFocusDomRef;
 
-			if (mParameters.$FocusablesContent.length == 0 && mParameters.$FocusablesFooter.length == 0) {
+			if ((!!!mParameters.$FocusablesContent ||  !!!mParameters.$FocusablesFooter) ||
+				 (!mParameters.$FocusablesContent.length && !mParameters.$FocusablesFooter.length)) {
 				// if there is neither content nor footer content (yet) simply do nothing
 				return;
 			}
