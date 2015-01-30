@@ -1,0 +1,111 @@
+<mvc:View controllerName="sap.ui.demokit.icex.view.Detail"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+	<Page
+		id="page"
+		title="{/name}"
+		icon="{img>/icon/ui5}"
+		showNavButton="{/isPhone}"
+		navButtonPress="navBack">
+		<headerContent>
+			<Button
+				icon="sap-icon://favorite"
+				tooltip="Add Icon to Favorites"
+				press="favorite"
+				visible="{/showFavorite}">
+			</Button>
+			<Button
+				icon="sap-icon://unfavorite"
+				tooltip="Remove Icon from Favorites"
+				press="favorite"
+				visible="{/showUnfavorite}">
+			</Button>
+		</headerContent>
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://{/name}">
+				</Button>
+				<Button icon="sap-icon://{/name}">
+				</Button>
+				<Button icon="sap-icon://{/name}">
+				</Button>
+				<Button icon="sap-icon://{/name}">
+				</Button>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://{/name}" visible="{/isNoPhone}">
+				</Button>
+				<Button icon="sap-icon://{/name}">
+				</Button>
+				<Button icon="sap-icon://{/name}">
+				</Button>
+				<Button icon="sap-icon://{/name}" visible="{/isNoPhone}">
+				</Button>
+				<ToolbarSpacer/>
+				<Label text="id: {/id}">
+				</Label>
+			</Toolbar>
+		</footer>
+		<content>
+			<HBox>
+				<core:Icon src="sap-icon://{/name}" size="7em" class="preview previewColor1">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://{/name}" size="7em" class="preview previewColor2">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://{/name}" size="7em" class="preview previewColor3" visible="{/isNoPhone}">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://{/name}" size="7em" class="preview previewColor4" visible="{/isNoPhone}">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+			</HBox>
+			<List>
+				<StandardListItem type="Inactive" icon="sap-icon://{/name}" title="{/name}"
+					description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr">
+				</StandardListItem>
+				<StandardListItem type="Inactive" icon="sap-icon://{/name}" title="{/name}"
+					description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr">
+				</StandardListItem>
+				<StandardListItem type="Navigation" icon="sap-icon://{/name}" title="{/name}"
+					description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr">
+				</StandardListItem>
+				<StandardListItem type="Navigation" icon="sap-icon://{/name}" title="{/name}"
+					description="Lorem ipsum dolor sit amet, consetetur sadipscing elitr">
+				</StandardListItem>
+			</List>
+			<HBox class="detailButtonBox">
+				<Button
+					icon="sap-icon://{/name}"
+					text="Button"
+					type="Accept">
+					<layoutData><FlexItemData growFactor="1" /></layoutData>
+				</Button>
+				<Button
+					icon="sap-icon://{/name}"
+					text="Button"
+					type="Reject">
+					<layoutData><FlexItemData growFactor="1" /></layoutData>
+				</Button>
+				<Button
+					icon="sap-icon://{/name}"
+					text="Button">
+					<layoutData><FlexItemData growFactor="1" /></layoutData>
+				</Button>
+				<Button
+					icon="sap-icon://{/name}"
+					text="Button">
+					<layoutData><FlexItemData growFactor="1" /></layoutData>
+				</Button>
+			</HBox>
+		</content>
+	</Page>
+</mvc:View>
