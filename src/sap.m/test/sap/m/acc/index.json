@@ -21,6 +21,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.Switch",
+			"url": "../Switch.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
 			"appComponent": "CA-UI5-CTR-WDF"
