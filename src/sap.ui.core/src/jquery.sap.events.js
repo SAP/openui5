@@ -1529,9 +1529,18 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	
 	// Returns a jQuery object which contains all next/previous (bNext) tabbable DOM elements of the given starting point (oRef) within the given scopes (DOMRefs)
 	function findTabbables(oRef, aScopes, bNext) {
-		var $Ref = jQuery(oRef);
-		var $All = bNext ? jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()) : jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
-		var $Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+		var $Ref = jQuery(oRef),
+			$All, $Tabbables;
+		
+		if (bNext) {
+			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+		} else {
+			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
+		} 
+
+		var $Tabbables = jQuery.unique($Tabbables);
 		return $Tabbables.filter(function(){
 			return isContained(aScopes, this);
 		});
