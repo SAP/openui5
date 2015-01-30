@@ -8,22 +8,15 @@
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{ "sap.ui.demokit.icex" : "./" }'>
 		</script>
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<script>
 		
-			// Tell UI5 where to find application content
-			sap.ui.localResources("view");
-			sap.ui.localResources("model");
-			sap.ui.localResources("util");
-			jQuery.sap.registerModulePath('Application', 'Application');
-		
-			// Launch application
-			jQuery.sap.require("Application");
-			var oApp = new Application({
-				root : "content"
-			});
+			new sap.ui.core.ComponentContainer({
+				name : 'sap.ui.demokit.icex'
+			}).placeAt('content');
 			
 		</script>
 	</head>

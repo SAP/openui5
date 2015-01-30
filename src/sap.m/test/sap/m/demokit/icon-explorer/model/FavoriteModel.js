@@ -1,9 +1,9 @@
-jQuery.sap.declare("model.FavoriteModel");
+jQuery.sap.declare("sap.ui.demokit.icex.model.FavoriteModel");
 
 jQuery.sap.require("jquery.sap.storage");
-jQuery.sap.require("util.Sorter");
+jQuery.sap.require("sap.ui.demokit.icex.util.Sorter");
 
-sap.ui.model.json.JSONModel.extend("model.FavoriteModel", {
+sap.ui.model.json.JSONModel.extend("sap.ui.demokit.icex.model.FavoriteModel", {
 	
 	_STORAGE_KEY : "ICON_EXPLORER_FAVORITES",
 	
@@ -64,7 +64,7 @@ sap.ui.model.json.JSONModel.extend("model.FavoriteModel", {
 		
 		// sort groups by name
 		// (doing this here as i had trouble doing it in controller assumeably due to async load of data)
-		data.icons.sort(util.Sorter.sortByName);
+		data.icons.sort(sap.ui.demokit.icex.util.Sorter.sortByName);
 		
 		// update model
 		this.setData(data);

@@ -1,33 +1,34 @@
-jQuery.sap.declare("Application");
+jQuery.sap.declare("sap.ui.demokit.icex.Component");
 
-jQuery.sap.require("sap.ui.app.Application");
-jQuery.sap.require("model.FavoriteModel");
-jQuery.sap.require("util.Sorter");
+jQuery.sap.require("sap.ui.core.UIComponent");
+jQuery.sap.require("sap.ui.demokit.icex.model.FavoriteModel");
+jQuery.sap.require("sap.ui.demokit.icex.util.Sorter");
 
-sap.ui.app.Application.extend("Application", {
+sap.ui.core.UIComponent.extend("sap.ui.demokit.icex.Component", {
 
 	init : function() {
 		
+		// call overridden init (calls createContent)
+		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+		
 		// set img model
 		var imgModel = new sap.ui.model.json.JSONModel("model/img.json");
-		sap.ui.getCore().setModel(imgModel, "img");
+		this.setModel(imgModel, "img");
 		
 		// set favorite model
-		var favModel = new model.FavoriteModel();
-		sap.ui.getCore().setModel(favModel, "fav");
+		var favModel = new sap.ui.demokit.icex.model.FavoriteModel();
+		this.setModel(favModel, "fav");
 		
 		// set groups model	(with asyn processing)
 		jQuery.ajax("model/groups.json", {
 			dataType: "json",
-			success: this.onGroupsLoaded
+			success: jQuery.proxy(this.onGroupsLoaded, this)
 		});
+		
 	},
 	
-	main : function() {
-		
-		// place root control in html
-		var root = this.getRoot();
-		sap.ui.jsview("app", "view.App").placeAt(root);
+	createContent : function() {
+		return sap.ui.jsview("app", "sap.ui.demokit.icex.view.App");
 	},
 	
 	/**
@@ -42,7 +43,7 @@ sap.ui.app.Application.extend("Application", {
 			var time = new Date().getTime();
 			
 			// sort groups by name
-			data.groups.sort(util.Sorter.sortByName);
+			data.groups.sort(sap.ui.demokit.icex.util.Sorter.sortByName);
 			
 			for (var i = 0 ; i < data.groups.length ; i++) {
 				
@@ -53,7 +54,7 @@ sap.ui.app.Application.extend("Application", {
 				
 				// sort icons of group
 				if (data.groups[i].icons) {
-					data.groups[i].icons.sort(util.Sorter.sortByName);
+					data.groups[i].icons.sort(sap.ui.demokit.icex.util.Sorter.sortByName);
 				}
 			}
 			
@@ -67,7 +68,7 @@ sap.ui.app.Application.extend("Application", {
 					name : iconNames[i]
 				};
 			}
-			icons.sort(util.Sorter.sortByName);
+			icons.sort(sap.ui.demokit.icex.util.Sorter.sortByName);
 			data.groups.splice(0, 0, {
 				name : "all",
 				text : "All",
@@ -78,10 +79,10 @@ sap.ui.app.Application.extend("Application", {
 			// finally set model
 			var groupsModel = new sap.ui.model.json.JSONModel(data);
 			groupsModel.setSizeLimit(1000000);
-			sap.ui.getCore().setModel(groupsModel);
+			this.setModel(groupsModel);
 			
 			// trace ellapsed time
-			jQuery.sap.log.info("Application.js: Sorted all those groups and icons in " + (new Date().getTime() - time) + " ms");
+			jQuery.sap.log.info("Component.js: Sorted all those groups and icons in " + (new Date().getTime() - time) + " ms");
 		}
 	}
 });
