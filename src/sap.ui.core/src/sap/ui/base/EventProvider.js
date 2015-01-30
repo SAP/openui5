@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	
 		constructor : function() {
 	
-			BaseObject.apply(this);
+			BaseObject.call(this);
 	
 			/**
 			 * A map of arrays of event registrations keyed by the event names

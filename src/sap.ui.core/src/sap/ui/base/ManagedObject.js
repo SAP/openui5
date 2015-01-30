@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		constructor : function(sId, mSettings, oScope) {
 
-			EventProvider.apply(this); // no use to pass our arguments
+			EventProvider.call(this); // no use to pass our arguments
 			if (typeof (sId) != "string" && arguments.length > 0) {
 				// shift arguments in case sId was missing, but mSettings was given
 				oScope = mSettings;
@@ -344,23 +344,25 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			return this;
 		}
 
-		var oMetadata = this.getMetadata(),
+		var that = this,
+			oMetadata = this.getMetadata(),
 			mValidKeys = oMetadata.getJSONKeys(),
 			makeObject = ManagedObject.create,
 			preprocessor = ManagedObject._fnSettingsPreprocessor,
 			sKey, oValue, oKeyInfo;
 
-		var that = this;
-		// helper method for array handling when adding elements to aggregation, e.g. in case of content from an extension point
-		var flattenArrayOrAddAggregation = function (oElement, oKeyInfo){
-			if (jQuery.isArray(oElement)){
-				for (var i = 0, len = oElement.length; i < len; i++){
-					flattenArrayOrAddAggregation(oElement[i], oKeyInfo);
+		// add all given objects to the given aggregation. nested arrays are flattened 
+		// (might occur e.g. in case of content from an extension point)
+		function addAllToAggregation(aObjects) {
+			for (var i = 0, len = aObjects.length; i < len; i++) {
+				var vObject = aObjects[i];
+				if ( jQuery.isArray(vObject) ) {
+					addAllToAggregation(vObject);
+				} else {
+					that[oKeyInfo._sMutator](makeObject(vObject, oKeyInfo));
 				}
-			} else {
-				that[oKeyInfo._sMutator](makeObject(oElement, oKeyInfo));
 			}
-		};
+		}
 
 		// call the preprocessor if it has been defined
 		preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
@@ -412,7 +414,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		// process all settings
 		// process settings
 		for (sKey in mSettings) {
-			oValue = mSettings[sKey];			
+			oValue = mSettings[sKey];
 			// get info object for the key
 			if ( (oKeyInfo = mValidKeys[sKey]) !== undefined ) {
 				var oBindingInfo;
@@ -446,12 +448,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						this.bindAggregation(sKey, oBindingInfo);
 					} else {
 						oValue = oBindingInfo || oValue; // could be an unescaped string if altTypes contains 'string'
-						if ( oValue && !jQuery.isArray(oValue) ) {
-							oValue = [oValue];
-						}
 						if ( oValue ) {
-							// check if there is an array within the oValue array - could be e.g. in case of content coming from an extensionpoint
-							flattenArrayOrAddAggregation(oValue, oKeyInfo);
+							addAllToAggregation(jQuery.isArray(oValue) ? oValue : [oValue]); // wrap a single object as array 
 						}
 					}
 					break;
@@ -474,7 +472,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					} else {
 						this[oKeyInfo._sMutator](oValue[0], oValue[1], oValue[2]);
 					}
-						//this[oKeyInfo._sMutator].apply(this, oValue); // could be replacement for line before
 					break;
 				case -1: // SPECIAL_SETTING
 					// No assert
@@ -554,12 +551,12 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		// prototype for generic property change events
 		// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
-		EventProvider.prototype.fireEvent.apply(this, ["_change", {
+		EventProvider.prototype.fireEvent.call(this, "_change", {
 			"id": this.getId(),
 			"name": sPropertyName,
 			"oldValue": oOldValue,
 			"newValue": oValue
-		}]);
+		});
 
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -2601,10 +2598,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Update the binding context in this object and all aggregated children
 	 * @private
 	 */
-	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren, sModelName, bUpdateAll){
+	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren, sFixedModelName, bUpdateAll){
 
 		var oModel,
 			oModelNames = {},
+			sModelName,
 			oContext,
 			oBoundObject,
 			that = this;
@@ -2622,7 +2620,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				}
 			}
 		} else {
-			oModelNames[sModelName] = sModelName;
+			oModelNames[sFixedModelName] = sFixedModelName;
 		}
 
 		for (sModelName in oModelNames ) {
@@ -2673,7 +2671,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				if (!bSkipChildren) {
 					var oContext = this.getBindingContext(sModelName);
 					// also update context in all child elements
-					jQuery.each(this.mAggregations, function(sName, oAggregation) {
+					for (var sName in this.mAggregations) {
+						var oAggregation = this.mAggregations[sName];
 						if (oAggregation instanceof ManagedObject) {
 							oAggregation.oPropagatedProperties.oBindingContexts[sModelName] = oContext;
 							oAggregation.updateBindingContext(false,false,sModelName);
@@ -2683,7 +2682,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 								oAggregation[i].updateBindingContext(false,false,sModelName);
 							}
 						}
-					});
+					}
 				}
 			}
 		}
@@ -2792,21 +2791,23 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		var oProperties = this._getPropertiesToPropagate(),
 			bUpdateAll = vName === true, // update all bindings when no model name parameter has been specified
 			sName = bUpdateAll ? undefined : vName,
-			that = this;
-		jQuery.each(this.mAggregations, function(sAggregationName, oAggregation) {
-			if (that.mSkipPropagation[sAggregationName]) {
-				return true; //skip
+			sAggregationName, oAggregation, i;
+		
+		for (sAggregationName in this.mAggregations) {
+			if (this.mSkipPropagation[sAggregationName]) {
+				continue;
 			}
+			oAggregation = this.mAggregations[sAggregationName];
 			if (oAggregation instanceof ManagedObject) {
-				that._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName);
+				this._propagateProperties(vName, oAggregation, oProperties, bUpdateAll, sName);
 			} else if (oAggregation instanceof Array) {
-				for (var i = 0; i < oAggregation.length; i++) {
+				for (i = 0; i < oAggregation.length; i++) {
 					if (oAggregation[i] instanceof ManagedObject) {
-						that._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName);
+						this._propagateProperties(vName, oAggregation[i], oProperties, bUpdateAll, sName);
 					}
 				}
 			}
-		});
+		}
 	};
 
 	ManagedObject.prototype._propagateProperties = function(vName, oObject, oProperties, bUpdateAll, sName) {
@@ -2930,8 +2931,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @protected
 	 */
 	ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
-		var that = this,
-			bCloneChildren = true,
+		var bCloneChildren = true,
 			bCloneBindings = true;
 
 		if (oOptions) {
@@ -2956,6 +2956,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			mSettings = {},
 			mProps = this.mProperties,
 			sKey,
+			sName,
 			oClone,
 			escape = ManagedObject.bindingParser.escape;
 
@@ -2980,9 +2981,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		if (bCloneChildren) {
 			// Clone aggregations
-			jQuery.each(this.mAggregations, function(sName, oAggregation) {
+			for (sName in this.mAggregations) {
+				var oAggregation = this.mAggregations[sName];
 				//do not clone aggregation if aggregation is bound and bindings are cloned; aggregation is filled on update
-				if (oMetadata.hasAggregation(sName) && !(that.isBound(sName) && bCloneBindings)) {
+				if (oMetadata.hasAggregation(sName) && !(this.isBound(sName) && bCloneBindings)) {
 					if (oAggregation instanceof ManagedObject) {
 						mSettings[sName] = oAggregation.clone(sIdSuffix, aLocalIds);
 					} else if (jQuery.isArray(oAggregation)) {
@@ -2995,10 +2997,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						mSettings[sName] = oAggregation;
 					}
 				}
-			});
+			}
 
 			// Clone associations
-			jQuery.each(this.mAssociations, function(sName, oAssociation) {
+			for (sName in this.mAssociations) {
+				var oAssociation = this.mAssociations[sName];
 				// Check every associated ID against the ID array, to make sure associations within
 				// the template are properly converted to associations within the clone
 				if (jQuery.isArray(oAssociation)) {
@@ -3012,7 +3015,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					oAssociation += "-" + sIdSuffix;
 				}
 				mSettings[sName] = oAssociation;
-			});
+			}
 		}
 		// Create clone instance
 		oClone = new oClass(sId, mSettings);
@@ -3021,18 +3024,19 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		 * Context will only be updated when adding the control to the control tree;
 		 * Maybe we have to call updateBindingcontext() here?
 		 */
-		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
-			oClone.mBoundObjects[sName] = jQuery.extend({}, oBoundObject);
-		});
+		for (sName in this.mBoundObjects) {
+			oClone.mBoundObjects[sName] = jQuery.extend({}, this.mBoundObjects[sName]);
+		}
 
 		// Clone events
-		jQuery.each(this.mEventRegistry, function(sName, aListeners) {
-			oClone.mEventRegistry[sName] = aListeners.slice();
-		});
+		for (sName in this.mEventRegistry) {
+			oClone.mEventRegistry[sName] = this.mEventRegistry[sName].slice();
+		}
 
 		// Clone bindings
 		if (bCloneBindings) {
-			jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+			for (sName in this.mBindingInfos) {
+				var oBindingInfo = this.mBindingInfos[sName];
 				var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
 
 				// clone the template if it is not shared
@@ -3047,7 +3051,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				} else {
 					oClone.bindProperty(sName, oCloneBindingInfo);
 				}
-			});
+			}
 		}
 		return oClone;
 	};

@@ -1619,7 +1619,6 @@
 			// only for robustness, should not be possible by design (all callers append '.js')
 			if ( !m ) {
 				log.error("can only require Javascript module, not " + sModuleName);
-				oModule.state = FAILED;
 				return;
 			}
 
@@ -1637,18 +1636,7 @@
 			if ( oModule.state !== INITIAL ) {
 				if ( oModule.state === PRELOADED ) {
 					oModule.state = LOADED;
-					if ( mAMDShim[sModuleName] && typeof window.define === "function" && window.define.amd ) {
-						var amd = window.define.amd;
-						try {
-							delete window.define.amd;
-							execModule(sModuleName);
-						} finally {
-							window.define.amd = amd;
-						}
-					} else {
-						execModule(sModuleName);
-					}
-
+					execModule(sModuleName);
 				}
 
 				if ( oModule.state === READY ) {
@@ -1694,17 +1682,7 @@
 
 			// execute module __after__ loading it, this reduces the required stack space!
 			if ( oModule.state === LOADED ) {
-				if ( mAMDShim[sModuleName] && typeof window.define === "function" && window.define.amd ) {
-					var amd = window.define.amd;
-					try {
-						delete window.define.amd;
-						execModule(sModuleName);
-					} finally {
-						window.define.amd = amd;
-					}
-				} else {
-					execModule(sModuleName);
-				}
+				execModule(sModuleName);
 			}
 
 			if ( oModule.state !== READY ) {
@@ -1717,10 +1695,19 @@
 		function execModule(sModuleName) {
 
 			var oModule = mModules[sModuleName],
-				sOldPrefix, sScript;
+				sOldPrefix, sScript, vAMD;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
+
+				// check whether the module is known to use an existing AMD loader, remember the AMD flag  
+				vAMD = mAMDShim[sModuleName] && typeof window.define === "function" && window.define.amd;
+				
 				try {
+
+					if ( vAMD ) {
+						// temp. remove the AMD Flag from the loader 
+						delete window.define.amd;
+					}
 
 					if ( log.isLoggable() ) {
 						log.debug(sLogPrefix + "executing '" + sModuleName + "'");
@@ -1732,7 +1719,7 @@
 					oModule.state = EXECUTING;
 					_execStack.push(sModuleName);
 					if ( typeof oModule.data === "function" ) {
-						oModule.data.apply(window);
+						oModule.data.call(window);
 					} else {
 
 						sScript = oModule.data;
@@ -1784,6 +1771,13 @@
 						log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
 						jQuery.sap.includeScript(oModule.url);
 						return;
+					}
+					
+				} finally {
+					
+					// restore AMD flag 
+					if ( vAMD ) {
+						window.define.amd = vAMD;
 					}
 				}
 			}
@@ -2740,7 +2734,11 @@
 				return handleData(d);
 			}
 
-			oData = sResourceName && mModules[sResourceName] && mModules[sResourceName].data;
+			if ( sResourceName && mModules[sResourceName] ) {
+				oData = mModules[sResourceName].data;
+				mModules[sResourceName].state = LOADED;
+			}
+
 			if ( oData != null ) {
 
 				if (mOptions.async) {
