@@ -60,5 +60,5 @@ function (DeviceModel) {
 
 		// Assert
 		strictEqual(this.oDeviceModel.getDefaultBindingMode(), "OneWay", "Binding mode is correct");
-	});
+	})
 });

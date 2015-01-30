@@ -28,7 +28,7 @@ sap.ui.define([], function () {
 			return {
 				key : sKey,
 				text : oResourceBundle.getText("masterGroup1Header", [sKey])
-			}
+			};
 		},
 
 		
@@ -55,7 +55,7 @@ sap.ui.define([], function () {
 			return {
 				key : sKey,
 				text : sText
-			}	
+			};
 		}
 	};
 
