@@ -1,6 +1,6 @@
 var xhr = sinon.useFakeXMLHttpRequest(),
 	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
-	responseDelay = 200,
+	responseDelay = 10,
 	_setTimeout = window.setTimeout;
 
 xhr.useFilters = true;
@@ -8,292 +8,358 @@ xhr.addFilter(function(method, url) {
 	return url.indexOf(baseURL) != 0;
 });
 xhr.onCreate = function(request) {
-	request.onSend = function() {
-		if (request.url == baseURL + "$metadata") {
-			if (request.async === true) {
-				_setTimeout(function() {
-					request.respond(200, oMetaDataHeaders, sMetaData);
-				}, responseDelay);
-			} else {
-				request.respond(200, oMetaDataHeaders, sMetaData);				
-			}
-		}
-		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
-			if (request.requestHeaders["Accept"] == "application/atom+xml,application/atomsvc+xml,application/xml") {
-				_setTimeout(function() {
-					request.respond(200, oXMLHeaders, sCategoriesXML)
-				}, responseDelay); 
-			}
-			else {
-				_setTimeout(function() { 
-					request.respond(200, oJSONHeaders, sCategoriesJSON)
-				}, responseDelay);
-			}
-		}
-		if (request.url == baseURL + "Categories/$count") {
-			request.respond(200, oCountHeaders, "8");
-		}
-		if (request.url == baseURL + "Regions") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sRegionsXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products(2)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProducts2XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories(2)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategories2XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=8") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=100") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=100&$inlinecount=allpages") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=8&$orderby=CategoryName%20desc") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesOrderDescXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=8&$orderby=CategoryName%20asc") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesOrderAscXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=8&$expand=Products") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesExpandProductsXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products(1)?$expand=Category") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProducts1ExpandCategoryXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=CategoryName%20eq%20%27Beverages%27") {
-			request.respond(200, oCountHeaders, "1");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter1XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))") {
-			request.respond(200, oCountHeaders, "2");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=2&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter2XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)") {
-			request.respond(200, oCountHeaders, "3");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=3&$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter3XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)") {
-			request.respond(200, oCountHeaders, "1");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=1&$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter4XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)") {
-			request.respond(200, oCountHeaders, "7");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=7&$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter5XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)") {
-			request.respond(200, oCountHeaders, "2");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=2&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter6XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)") {
-			request.respond(200, oCountHeaders, "1");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=1&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter7XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories/$count?$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))") {
-			request.respond(200, oCountHeaders, "3");
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=3&$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sCategoriesFilter8XML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories(7)/Products?$skip=0&$top=5") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProductsXML)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories(7)/Products/$count") {
-			request.respond(200, oCountHeaders, "5");
-		}
-		if (request.url == baseURL + "Categories(1)") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sCategory1JSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories?$skip=0&$top=8&$select=CategoryName") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sCategorySelectJSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Categories(1)?$select=CategoryID") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sCategorySelect2JSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products/$count?$filter=ProductName%20eq%20%27Chai%27") {
-			request.respond(200, oCountHeaders, "1");
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chai%27&$expand=Category") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sProductExpandJSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chai%27") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sProductJSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products/$count?$filter=ProductName%20eq%20%27Chang%27") {
-			request.respond(200, oCountHeaders, "1");
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chang%27") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sProduct2JSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products(2)?$expand=Category") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sProduct2ExpandJSON1)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chang%27&$select=Category%2cProductName&$expand=Category") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sProductSelectExpandJSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products(2)?$select=Category%2c%20ProductID&$expand=Category") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sProduct2SelectExpandJSON)
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProductsAllXML);
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products(1)?$expand=Category%2fProducts%2fSupplier") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProductsExpand3LevelsXML);
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Employees") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sEmployeesXML);
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Employees(2)?$expand=Employees1%2fEmployees1%2fEmployees1") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sEmployees1Expand3LevelsXML);
-			}, responseDelay); 
-		}
+	var	responses = {
+		"$metadata": 
+			[200, oMetaDataHeaders, sMetaData],
+		"Categories/$count":
+			[200, oCountHeaders, "8"],
+		"Regions":
+			[200, oXMLHeaders, sRegionsXML],
+		"Products(2)":
+			[200, oXMLHeaders, sProducts2XML],
+		"Categories(2)":
+			[200, oXMLHeaders, sCategories2XML],
+		"Categories":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?horst=true":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?$skip=0&$top=8":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?$skip=0&$top=100":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Products(2)/Category":
+			[200, oXMLHeaders, sCategories2XML],
+		"Categories?$skip=0&$top=100&$inlinecount=allpages":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?$skip=0&$top=8&$orderby=CategoryName%20desc":
+			[200, oXMLHeaders, sCategoriesOrderDescXML],
+		"Categories?$skip=0&$top=8&$orderby=CategoryName%20asc":
+			[200, oXMLHeaders, sCategoriesOrderAscXML],
+		"Categories?$skip=0&$top=8&$expand=Products":
+			[200, oXMLHeaders, sCategoriesExpandProductsXML],
+		"Categories?$skip=0&$top=100&$expand=Products":
+			[200, oXMLHeaders, sCategoriesExpandProductsXML],
+		"Products(1)?$expand=Category":
+			[200, oXMLHeaders, sProducts1ExpandCategoryXML],
+		"Categories/$count?$filter=CategoryName%20eq%20%27Beverages%27":
+			[200, oCountHeaders, "1"],
+		"Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27":
+			[200, oXMLHeaders, sCategoriesFilter1XML],
+		"Categories?$skip=0&$top=100&$filter=CategoryName%20eq%20%27Beverages%27":
+			[200, oXMLHeaders, sCategoriesFilter1XML],
+		"Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))":
+			[200, oCountHeaders, "2"],
+		"Categories?$skip=0&$top=2&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))":
+			[200, oXMLHeaders, sCategoriesFilter2XML],
+		"Categories?$skip=0&$top=100&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20substringof(%27ons%27,CategoryName))":
+			[200, oXMLHeaders, sCategoriesFilter2XML],
+		"Categories/$count?$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)":
+			[200, oCountHeaders, "3"],
+		"Categories?$skip=0&$top=3&$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)":
+			[200, oXMLHeaders, sCategoriesFilter3XML],
+		"Categories?$skip=0&$top=100&$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)":
+			[200, oXMLHeaders, sCategoriesFilter3XML],
+		"Categories/$count?$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)":
+			[200, oCountHeaders, "1"],
+		"Categories?$skip=0&$top=1&$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)":
+			[200, oXMLHeaders, sCategoriesFilter4XML],
+		"Categories?$skip=0&$top=100&$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)":
+			[200, oXMLHeaders, sCategoriesFilter4XML],
+		"Categories/$count?$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)":
+			[200, oCountHeaders, "7"],
+		"Categories?$skip=0&$top=7&$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)":
+			[200, oXMLHeaders, sCategoriesFilter5XML],
+		"Categories?$skip=0&$top=100&$filter=(CategoryName%20le%20%27Z%27%20and%20CategoryName%20ge%20%27A%27%20and%20CategoryName%20ne%20%27Beverages%27)":
+			[200, oXMLHeaders, sCategoriesFilter5XML],
+		"Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)":
+			[200, oCountHeaders, "2"],
+		"Categories?$skip=0&$top=2&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)":
+			[200, oXMLHeaders, sCategoriesFilter6XML],
+		"Categories?$skip=0&$top=100&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)":
+			[200, oXMLHeaders, sCategoriesFilter6XML],
+		"Categories/$count?$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)":
+			[200, oCountHeaders, "1"],
+		"Categories?$skip=0&$top=1&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)":
+			[200, oXMLHeaders, sCategoriesFilter7XML],
+		"Categories?$skip=0&$top=100&$filter=(CategoryName%20eq%20%27Condiments%27%20or%20CategoryName%20eq%20%27Beverages%27)%20and%20endswith(Description,%27ings%27)":
+			[200, oXMLHeaders, sCategoriesFilter7XML],
+		"Categories/$count?$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))":
+			[200, oCountHeaders, "3"],
+		"Categories?$skip=0&$top=3&$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))":
+			[200, oXMLHeaders, sCategoriesFilter8XML],
+		"Categories?$skip=0&$top=100&$filter=(((CategoryName%20eq%20%27Beverages%27%20or%20CategoryName%20eq%20%27Dairy%20Products%27%20or%20CategoryName%20eq%20%27Grains%2fCereals%27)%20or%20CategoryID%20eq%203)%20and%20endswith(Description,%27s%27))":
+			[200, oXMLHeaders, sCategoriesFilter8XML],
+		"Categories(7)/Products?$skip=0&$top=5":
+			[200, oXMLHeaders, sProductsXML],
+		"Categories(7)/Products/$count":
+			[200, oCountHeaders, "5"],
+		"Categories(1)":
+			[200, oJSONHeaders, sCategory1JSON],
+		"Categories?$skip=0&$top=8&$select=CategoryName":
+			[200, oJSONHeaders, sCategorySelectJSON],
+		"Categories?$skip=0&$top=100&$select=CategoryName":
+			[200, oJSONHeaders, sCategorySelectJSON],
+		"Categories(1)?$select=CategoryID":
+			[200, oJSONHeaders, sCategorySelect2JSON],
+		"Products/$count?$filter=ProductName%20eq%20%27Chai%27":
+			[200, oCountHeaders, "1"],
+		"Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chai%27&$expand=Category":
+			[200, oJSONHeaders, sProductExpandJSON],
+		"Products?$skip=0&$top=100&$filter=ProductName%20eq%20%27Chai%27&$expand=Category":
+			[200, oJSONHeaders, sProductExpandJSON],
+		"Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chai%27":
+			[200, oJSONHeaders, sProductJSON],
+		"Products/$count?$filter=ProductName%20eq%20%27Chang%27":
+			[200, oCountHeaders, "1"],
+		"Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chang%27":
+			[200, oJSONHeaders, sProduct2JSON],
+		"Products?$skip=0&$top=100&$filter=ProductName%20eq%20%27Chang%27":
+			[200, oJSONHeaders, sProduct2JSON],
+		"Products(2)?$expand=Category":
+			[200, oJSONHeaders, sProduct2ExpandJSON1],
+		"Products?$skip=0&$top=1&$filter=ProductName%20eq%20%27Chang%27&$select=Category%2cProductName&$expand=Category":
+			[200, oJSONHeaders, sProductSelectExpandJSON],
+		"Products?$skip=0&$top=100&$filter=ProductName%20eq%20%27Chang%27&$select=Category%2cProductName&$expand=Category":
+			[200, oJSONHeaders, sProductSelectExpandJSON],
+		"Products(2)?$select=Category%2c%20ProductID&$expand=Category":
+			[200, oJSONHeaders, sProduct2SelectExpandJSON],
+		"Products":
+			[200, oXMLHeaders, sProductsAllXML],
+		"Products(1)?$expand=Category%2fProducts%2fSupplier":
+			[200, oXMLHeaders, sProductsExpand3LevelsXML],
+		"Employees":
+			[200, oXMLHeaders, sEmployeesXML],
+		"Employees(2)?$expand=Employees1%2fEmployees1%2fEmployees1":
+			[200, oXMLHeaders, sEmployees1Expand3LevelsXML],
 		//Filter ANDing Tests
 		//Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)
-		if (request.url == baseURL + "Products/$count?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M") {
-			request.respond(200, oCountHeaders, "9");
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProductsForFilterANDing1);
-			}, responseDelay);
-		}
-		if (request.url == baseURL + "Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)") {
-			request.respond(200, oCountHeaders, "5");
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProductsForFilterANDing2);
-			}, responseDelay); 
-		}
-		if (request.url == baseURL + "Products/$count?$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)") {
-			request.respond(200, oCountHeaders, "6");
-		}
-		if (request.url == baseURL + "Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sProductsForFilterANDing3);
-			}, responseDelay); 
-		}
-				if (request.url == baseURL + "Regions?$skip=0&$top=100&$expand=Territories&$inlinecount=allpages") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, sRegionsJSON);
-			}, responseDelay); 
-		}
+		"Products/$count?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M":
+			[200, oCountHeaders, "9"],
+		"Products?$skip=0&$top=9&$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M":
+			[200, oXMLHeaders, sProductsForFilterANDing1],
+		"Products/$count?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			[200, oCountHeaders, "5"],
+		"Products?$skip=0&$top=5&$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			[200, oXMLHeaders, sProductsForFilterANDing2],
+		"Products/$count?$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			[200, oCountHeaders, "6"],
+		"Products?$skip=0&$top=6&$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)":
+			[200, oXMLHeaders, sProductsForFilterANDing3],
+		"Regions?$skip=0&$top=100&$expand=Territories&$inlinecount=allpages":
+			[200, oJSONHeaders, sRegionsJSON],
 		
-		if (request.url == baseURL + "Regions/$count") {
-			_setTimeout(function() {
-				request.respond(200, oJSONHeaders, "4");
-			}, responseDelay); 
-		}
+		"Regions/$count":
+			[200, oJSONHeaders, "4"],
 		
 		// Multi-Origin Fault Tolerance
 		// Fake filter on ShipCity in Orders collection
-		if (request.url === baseURL + "Orders?$skip=0&$top=2&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sFaultTolerance1);
-			}, responseDelay);
+		"Orders?$skip=0&$top=2&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
+			[200, oXMLHeaders, sFaultTolerance1],
+		"Orders?$skip=2&$top=1&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
+			[200, oXMLHeaders, sFaultTolerance2]
+	};
+	
+	var getResponse = function(method, url) {
+		if (url.indexOf("Fail500") >= 0) {
+			return [500, oHTMLHeaders, "Server Error"];
 		}
-		if (request.url === baseURL + "Orders?$skip=2&$top=1&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages") {
-			_setTimeout(function() {
-				request.respond(200, oXMLHeaders, sFaultTolerance2);
-			}, responseDelay);
+		switch (method) {
+			case "GET":
+				return responses[url] || [404, oJSONHeaders, ""];
+			case "PUT":
+				return [204, oJSONHeaders, ""];
+			case "POST":
+				return [201, oJSONHeaders, ""];
+			case "DELETE":
+				return [204, oJSONHeaders, ""];
+			default:
+				return [500, oHTMLHeaders, ""];
 		}
+	};
+
+	request.onSend = function() {
+		function respond(code, headers, data) {
+			if (request.async) {
+				_setTimeout(function() {
+					request.respond(code, headers, data);
+				}, responseDelay);
+			} else {
+				request.respond(code, headers, data);
+			}
+		}	
+		
+		// Special handling based on headers
+		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
+			if (request.requestHeaders["Accept"] == "application/atom+xml,application/atomsvc+xml,application/xml") {
+				respond(200, oXMLHeaders, sCategoriesXML)
+			}
+			else {
+				respond(200, oJSONHeaders, sCategoriesJSON)
+			}
+			return;
+		}
+		
+		// Batch request
+		if (request.url == baseURL + "$batch") {
+			if (request.requestBody.indexOf("Batch500") > 0) {
+				respond(500, oJSONHeaders, "Request Failed");
+				return;
+			}
+			
+			var requests = parseBatchRequest(request.requestBody),
+				batchResponses = [],
+				nestedResponses,
+				failed,
+				batchResponse;
+			for (var i = 0; i < requests.length; i++) {
+				if (requests[i] instanceof Array) {
+					nestedResponses = [];
+					failed = false;
+					for (var j = 0; j < requests[i].length; j++) {
+						response = getResponse(requests[i][j].method, requests[i][j].url);
+						nestedResponses.push(response);
+						if (response[0] >= 300) failed = true;
+					}
+					if (failed) {
+						batchResponses.push([500, oJSONHeaders, "Changeset failed"]);
+					} else {
+						batchResponses.push(nestedResponses);
+					}
+				} else {
+					response = getResponse(requests[i].method, requests[i].url);
+					batchResponses.push(response);
+				}
+			}
+			batchResponse = createBatchResponse(batchResponses, "batch-408D0D264EF1AB69CA1BF7");
+			respond(202, oBatchHeaders, batchResponse);
+			return;
+		}
+		
+		// Look up response
+		respond.apply(this, getResponse(request.method, request.url.substr(baseURL.length)));
 	}
 };
 
+function parseBatchRequest(body) {
+	var token = body.split("\r\n")[1],
+		parts = body.split("\r\n" + token),
+		part, lines,
+		nestedRequests,
+		requests = [];
+	// loop through parts and create request objects
+	for (var i = 1; i < parts.length - 1; i++) {
+		part = parts[i];
+		if (part.indexOf("\r\nContent-Type: multipart/mixed") == 0) {
+			nestedRequests = parseBatchRequest("\r\n" + part.substr(part.indexOf("--")));
+			requests.push(nestedRequests); 
+		} else {
+			request = {};
+			lines = part.split("\r\n");
+			var result = lines[4].match(/(GET|POST|PUT|DELETE) ([^ ]*) HTTP\/1\.1/);
+			request.method = result[1];
+			request.url = result[2];
+			request.body = "";
+			request.headers = {};
+			var headers = true;
+			for (var j = 5; j < lines.length; j++) {
+				if (lines[j] == "") {
+					headers = false;
+					continue
+				}
+				if (headers) {
+					var header = lines[j].split(": ");
+					request.headers[header[0]] = header[1];
+				} else {
+					request.body += lines[j] + "\n";
+				}
+			}
+			requests.push(request);
+		}	
+	}
+	return requests;
+}
+
+function createBatchResponse(responses, token) {
+	var responseText = "",
+		code, headers, body,
+		header,
+		innerText,
+		response,
+		innerToken;
+	for (var i = 0; i < responses.length; i++) {
+		if (typeof responses[i][0] != "number") {
+			innerToken = "changeset-" + Math.random() * 1000000000000000000;
+			innerText = "\r\n";
+			innerText += createBatchResponse(responses[i], innerToken);
+			responseText += "--" + token + "\r\n"
+			responseText += "Content-Type: multipart/mixed; boundary=" + innerToken + "\r\n";
+			responseText += "Content-Length: " + innerText.length + "\r\n";
+			responseText += innerText + "\r\n";
+		} else {
+			code = responses[i][0];
+			headers = responses[i][1];
+			body = responses[i][2];
+			innerText = "HTTP/1.1 " + code + " ";
+			switch (code) {
+				case 200:
+					innerText += "OK";
+					break;
+				case 204:
+					innerText += "No content";
+					break;
+				case 201:
+					innerText += "Created";
+					break;
+				case 404:
+					innerText += "Not Found";
+					break;
+				case 500:
+					innerText += "Server Error";
+					break;
+			}
+			innerText += "\r\n";
+			for (var j in headers) {
+				innerText += j + ": " + headers[j] + "\r\n";
+			}
+			innerText += "Content-Length: " + body.length + "\r\n";
+			innerText += "\r\n";
+			if (body.length > 0) {
+				innerText += body + "\r\n";
+			}
+			responseText += "--" + token + "\r\n"
+			responseText += "Content-Type: application/http\r\n";
+			responseText += "Content-Transfer-Encoding: binary\r\n";
+			responseText += "Content-Length: " + innerText.length + "\r\n";
+			responseText += "\r\n";
+			responseText += innerText + "\r\n";
+		}
+	}
+	responseText += "--" + token + "--\r\n"
+	return responseText;
+}
+
 var oMetaDataHeaders = {
 		"Content-Type": "application/xml;charset=utf-8",
-		"DataServiceVersion": "1.0;"
+		"DataServiceVersion": "1.0"
 	};
 var oXMLHeaders = 	{
 		"Content-Type": "application/atom+xml;charset=utf-8",
-		"DataServiceVersion": "2.0;"
+		"DataServiceVersion": "2.0"
 	};
 var oJSONHeaders = 	{
 		"Content-Type": "application/json;charset=utf-8",
-		"DataServiceVersion": "2.0;"
+		"DataServiceVersion": "2.0"
 	};
 var oCountHeaders = 	{
 		"Content-Type": "text/plain;charset=utf-8",
-		"DataServiceVersion": "2.0;"
+		"DataServiceVersion": "2.0"
+	};
+var oBatchHeaders = 	{
+		"Content-Type": "multipart/mixed; boundary=batch-408D0D264EF1AB69CA1BF7",
+		"DataServiceVersion": "2.0"
+	};
+var oHTMLHeaders = 	{
+		"Content-Type": "text/html"
 	};
 
 
