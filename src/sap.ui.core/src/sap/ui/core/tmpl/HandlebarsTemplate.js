@@ -365,37 +365,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 			"aggregation": function(context, options) {
 				options = options || context;
 				
-				// extract the required info
-				var oRM = options.data.renderManager,
-				oRootControl = options.data.rootControl,
-				oMetadata = oRootControl.getMetadata(),
-				sAggregationName = options.hash.name,
-				sGetter = oMetadata.getAllAggregations()[sAggregationName]._sGetter,
-				aHTML = [];
-				
-				// retrieve the child elements via the specific getter
-				// and create the markup for the nested elements
-				var aChildren = oRootControl[sGetter]();
-				if (aChildren) {
-					for (var i = 0, l = aChildren.length; i < l; i++) {
-						// if the aggregation contains nested content => execute it!
-						if (options.fn) {
-							aHTML.push(options.fn({}, {
-								data: {
-									renderManager: oRM,
-								  rootControl: oRootControl,
-									control: aChildren[i]
-								}
-							}));
-						} else {
-							// simply render the control
-							aHTML.push(oRM.getHTML(aChildren[i]));
+				// when data provides the children object we are running in 
+				// the use case to be used as kind of scope for the aggregation
+				// to be used and when running without children object the 
+				// aggregation helper is used for defining an aggregation
+				// of a new control type being declared as template
+				if (options.data.children) {
+					
+					// extract the required info
+					var sAggregationName = options.hash.name;
+					
+					// By defining the aggregation helper the default aggregation
+					// of nested controls can be adopted
+					// {{#aggregation ...}}
+					//   {{control ...}}   <-- nested control
+					// {{/aggregation}}
+					if (options.fn) {
+						var oData = jQuery.extend({}, options.data, {
+							defaultAggregation: sAggregationName
+						});
+						options.fn({}, {
+							data: oData
+						});
+					}
+					
+				} else {
+					
+					// extract the required info
+					var oRM = options.data.renderManager,
+						oRootControl = options.data.rootControl,
+						oMetadata = oRootControl.getMetadata(),
+						sAggregationName = options.hash.name,
+						sGetter = oMetadata.getAllAggregations()[sAggregationName]._sGetter,
+						aHTML = [];
+					
+					// retrieve the child elements via the specific getter
+					// and create the markup for the nested elements
+					var aChildren = oRootControl[sGetter]();
+					if (aChildren) {
+						for (var i = 0, l = aChildren.length; i < l; i++) {
+							// if the aggregation contains nested content => execute it!
+							if (options.fn) {
+								aHTML.push(options.fn({}, {
+									data: {
+										renderManager: oRM,
+									  rootControl: oRootControl,
+										control: aChildren[i]
+									}
+								}));
+							} else {
+								// simply render the control
+								aHTML.push(oRM.getHTML(aChildren[i]));
+							}
 						}
 					}
+					
+					// return the markup
+					return new Handlebars.SafeString(aHTML.join(""));
+					
 				}
-				
-				// return the markup
-				return new Handlebars.SafeString(aHTML.join(""));
 				
 			},
 			
