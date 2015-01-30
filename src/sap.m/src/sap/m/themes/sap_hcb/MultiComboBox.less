@@ -105,15 +105,24 @@
 	z-index: 1;
 }
 
+// If a non-native placeholder is used, make sure that arrow button is in front of placeholder.
+.sapMMultiComboBox .sapMComboBoxBaseArrow {
+	z-index: 2;
+}
+
 /* ------------------------------ */
 /* InputInner                     */
 /* ------------------------------ */
 .sapMMultiComboBoxInputContainer > input.sapMComboBoxBaseInputInner {
 	height: 2.375rem;
+	// Padding must be removed in this case, because MCB calculates the size of the input field on its own.
+	padding-right: 0;
 }
 
 .sapUiSizeCompact .sapMMultiComboBoxInputContainer > input.sapMComboBoxBaseInputInner {
 	height: 1.625rem;
+	// Padding must be removed in this case, because MCB calculates the size of the input field on its own.
+	padding-right: 0;
 }
 
 /* ------------------------------ */

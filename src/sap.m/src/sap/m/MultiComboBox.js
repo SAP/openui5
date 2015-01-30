@@ -964,32 +964,35 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * 
 	 * @private
 	 */
-	MultiComboBox.prototype._setContainerSizes = function() {
-		var oDomRef = this.getDomRef();
-		if (!oDomRef) {
+	MultiComboBox.prototype._setContainerSizes = function() { 
+		var $MultiComboBox = this.$();
+		if (!$MultiComboBox.length) {
 			return;
 		}
 
-		var $MultiComboBox = jQuery(oDomRef);
-
 		var iAvailableWidth = this.$().find(".sapMMultiComboBoxBorder").width();
 		if (iAvailableWidth > 0) {
-			// Set Input width
+			// Determine input value width
 			var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
+
 			var $ShadowDiv = $MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv");
 			$ShadowDiv.text(this.getValue());
 			
 			var iInputWidthMinimalNeeded = $ShadowDiv.outerWidth() + iIconWidth;
-			var sWidth = (iInputWidthMinimalNeeded / parseFloat(sap.m.BaseFontSize)) + "rem";
 			var $InputContainer = $MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer");
-			$InputContainer.find(".sapMInputBaseInner").css("width", sWidth);
 
 			// Set Tokenizer width
 			var iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded;
-
+			var sInputWidth;
+			
 			if (this._oTokenizer.getScrollWidth() > iAvailableInnerSpace) {
 				this._oTokenizer.setPixelWidth(iAvailableInnerSpace);
+				sInputWidth = (iInputWidthMinimalNeeded / parseFloat(sap.m.BaseFontSize)) + "rem";
+			} else {
+				sInputWidth = ((iAvailableWidth - this._oTokenizer.getScrollWidth()) / parseFloat(sap.m.BaseFontSize)) + "rem";
 			}
+			
+			$InputContainer.find(".sapMInputBaseInner").css("width", sInputWidth);
 		}
 	};
 	
@@ -1020,19 +1023,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		}
 		return aSelectedItems;
 	};
-	
-	/**
-	 * Do not show placeholder in input field if at least one token exists. In case that no tokens exist the placeholder
-	 * should be shown but only if it was defined via property 'placeholder'.
-	 * 
-	 * @returns {string}
-	 * @private
-	 */
-	MultiComboBox.prototype._getPlaceholder = function(oControl) {
+
+	MultiComboBox.prototype.setPlaceholder = function(sPlaceholder) {
+		this._sPlaceholder = sPlaceholder;
+
+		var sTargetPlaceholder = sPlaceholder;
 		if (this._hasTokens()) {
-			return "";
+			sTargetPlaceholder = "";
 		}
-		return this.getPlaceholder();
+
+		ComboBoxBase.prototype.setPlaceholder.apply(this, [sTargetPlaceholder]);
+		return this;
 	};
 	
 	/**
@@ -1374,15 +1375,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 				this.fireChangeEvent('');
 			}
 		}
-	
-		if (this.isActive()) {
-			var oDomRef = jQuery(this.getFocusDomRef());
-			if (this._getPlaceholder() === "") {
-				oDomRef[0].placeholder = "";
-			} else {
-				oDomRef[0].placeholder = this.getPlaceholder();
-			}
+
+		var sTargetPlaceholder = this._sPlaceholder;
+		// Remove Placeholder when MCB has tokens.
+		if (this._hasTokens()) {
+			sTargetPlaceholder = "";
 		}
+		ComboBoxBase.prototype.setPlaceholder.apply(this, [sTargetPlaceholder]);
 	};
 	
 	/* =========================================================== */
@@ -2160,6 +2159,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (this._oTokenizer) {
 			this._oTokenizer.destroy();
 			this._oTokenizer = null;
+		}
+		
+		if (this._sPlaceholder) {
+			this._sPlaceholder = null;
 		}
 	};
 	
