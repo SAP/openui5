@@ -2068,9 +2068,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			if (!this.bDomReady) {
 				throw new Error("DOM is not ready yet. Static UIArea cannot be created.");
 			}
+			
+			var oAttributes = {id:STATIC_UIAREA_ID};
+			
+			if (jQuery("body").attr("role") != "application") {
+				// Only set ARIA application role if not available on html body (see configuration entry "autoAriaBodyRole")
+				oAttributes.role = "application";
+			}
 
 			var leftRight = this.getConfiguration().getRTL() ? "right" : "left";
-			oStatic = jQuery("<DIV/>", {id:STATIC_UIAREA_ID}).css({
+			oStatic = jQuery("<DIV/>", oAttributes).css({
 				"height"   : "0",
 				"width"    : "0",
 				"overflow" : "hidden",
