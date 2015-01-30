@@ -402,11 +402,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 					}
 
 					jQuery.each(vRawValue.AnnotationPath.split("/"), function (iUnused, sSegment) {
-						var oAssociation,
-							oAssociationEnd,
+						var oAssociationEnd,
 							oEntity,
-							oModel = oContext.getModel(),
-							oNavigationProperty;
+							oModel = oContext.getModel();
 
 						// term cast
 						if (sSegment.charAt(0) === "@") {
@@ -416,12 +414,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 						// navigation property
 						oEntity = oContext.getObject(sPath);
-						oNavigationProperty = oModel.getODataNavigationProperty(oEntity, sSegment);
-						if (oNavigationProperty) {
-							oAssociation
-								= oModel.getODataAssociation(oNavigationProperty.relationship);
-							oAssociationEnd = oModel.getODataAssociationEnd(oAssociation,
-								oNavigationProperty.toRole);
+						oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
+						if (oAssociationEnd) {
 							sPath = oModel.getODataEntityType(oAssociationEnd.type, true);
 							return true; // continue
 						}

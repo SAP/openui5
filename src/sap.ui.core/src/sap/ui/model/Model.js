@@ -584,7 +584,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * @return {string} resolved path or undefined
 	 */
 	Model.prototype.resolve = function(sPath, oContext) {
-		var bIsRelative = !jQuery.sap.startsWith(sPath, "/"),
+		var bIsRelative = typeof sPath == "string" && !jQuery.sap.startsWith(sPath, "/"),
 			sResolvedPath = sPath,
 			sContextPath;
 		if (bIsRelative) {
