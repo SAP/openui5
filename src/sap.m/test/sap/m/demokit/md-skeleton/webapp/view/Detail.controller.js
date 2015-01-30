@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 				this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onDataLoaded, this);
 			}
 
-			this.getRouter().getRoute("object").attachPatternMatched(this.onRouteMatched, this);
+			this.getRouter().getRoute("object").attachPatternMatched(this.onPatternMatched, this);
 
 		},
 
@@ -24,9 +24,8 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 			this.oInitialLoadFinishedDeferred.resolve();
 		},
 
-		onRouteMatched : function (oEvent) {
-			var oParameters = oEvent.getParameters();
-			var sObjectPath = "/" + oParameters.arguments.object;
+		onPatternMatched : function (oEvent) {
+			var sObjectPath = "/" + oEvent.getParameter("arguments").object;
 
 			if (this.getView().getModel().getObject(sObjectPath)) {
 				this.onDataLoaded();
