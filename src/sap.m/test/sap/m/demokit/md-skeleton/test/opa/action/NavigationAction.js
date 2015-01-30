@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				viewName : sViewName,
 				check : function (oList) {
 					return oList.getItems().some(function (oItem) {
-						if(oItem.getTitle() === sObjectTitle) {
+						if (oItem.getTitle() === sObjectTitle) {
 							oObjectListItem = oItem;
 							return true;
 						}
@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				viewName : sViewName,
 				check : function (oList) {
 					return oList.getItems().some(function (oItem) {
-						if(oItem.getCells()[0].getTitle() === sColumnItemTitle) {
+						if (oItem.getCells()[0].getTitle() === sColumnItemTitle) {
 							oColumnListItem = oItem;
 							return true;
 						}
@@ -72,11 +72,11 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		},
 
 		iPressTheNextButton : function () {
-			return this.iPressTheNavigationButton("Next", "sap-icon://down")
+			return this.iPressTheNavigationButton("Next", "sap-icon://down");
 		},
 
 		iPressThePreviousButton : function () {
-			return this.iPressTheNavigationButton("Previous", "sap-icon://up")
+			return this.iPressTheNavigationButton("Previous", "sap-icon://up");
 		},
 
 		iChangeTheHashToObject3 : function () {

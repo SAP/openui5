@@ -6,13 +6,13 @@ sap.ui.require(
 		'sap/ui/thirdparty/sinon',
 		'sap/ui/thirdparty/sinon-qunit'
 	],
-	function ( Groupers) {
+	function (Groupers, ResourceModel) {
 	"use strict";
 	var $ = jQuery;
 
 		QUnit.module("Grouping functions", {
 			setup: function () {
-				this._oResourceModel = new sap.ui.model.resource.ResourceModel({
+				this._oResourceModel = new ResourceModel({
 					bundleUrl : [$.sap.getModulePath("sap.ui.demo.mdskeleton"), "i18n/messageBundle.properties"].join("/")
 				});
 			},
@@ -29,7 +29,7 @@ sap.ui.require(
 			};
 		}
 
-		test("Should Group the Rating", function () {
+		QUnit.test("Should Group the Rating", function () {
 			// Arrange
 			var iRating2 = 2,
 				oContextObject2 = createContextObject(iRating2),
@@ -54,7 +54,7 @@ sap.ui.require(
 			strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating5]),"The group header is correct for rating 5");
 		});
 
-		test("Should group the price", function () {
+		QUnit.test("Should group the price", function () {
 			// Arrange
 			var oContextObjectLower = createContextObject(17.2),
 				oContextObjectHigher = createContextObject(55.5),

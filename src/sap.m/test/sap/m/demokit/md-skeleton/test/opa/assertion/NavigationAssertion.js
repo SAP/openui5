@@ -43,7 +43,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : sTitleName}) ],
 				success : function (aControls) {
 					strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
-					ok(true, "was on the "+ sTitleName + " " + sViewName + " page");
+					ok(true, "was on the " + sTitleName + " " + sViewName + " page");
 				}
 			});
 		},
@@ -104,7 +104,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		},
 		
 		iShouldBeOnTheLineItem1Page : function() {
-			return this.iShouldBeOnPage ("LineItem", "Line Item: LineItemID_1");
+			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_1");
 		},
 		
 		theLineItemNavigationButtonHasCorrectEnabledState : function( sName, sIcon, bEnabled) {
@@ -135,11 +135,8 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		},
 		
 		iShouldBeOnTheLineItem2Page : function() {
-			return this.iShouldBeOnPage ("LineItem", "Line Item: LineItemID_2");
-		},
-		
-		
-		
+			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_2");
+		}
 		
 	});
 }, /* bExport= */ true);
