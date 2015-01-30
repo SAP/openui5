@@ -31,6 +31,14 @@
 				"samples" : [ "sap.ui.core.sample.Icon" ]
 			},
 			{
+				"id" : "sap.ui.core.InvisibleText",
+				"name" : "InvisibleText",
+				"category" : "Display",
+				"since" : "1.28",
+				"appComponent" : "CA-UI5-CTR",
+				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
+			},
+			{
 				"id" : "sap.ui.core.mvc.XMLView",
 				"name" : "XMLView",
 				"category" : "Display",
@@ -87,6 +95,11 @@
 				"id": "sap.ui.core.sample.Icon",
 				"name": "Icon",
 				"description": "Built with an embedded font, icons scale well, and can be altered with CSS. They can also fire a press event. See the Icon Explorer for more icons."
+			},
+			{
+				"id" : "sap.ui.core.sample.InvisibleText",
+				"name" : "InvisibleText",
+				"description" : "Many controls provide the associations ariaLabelledBy and ariaDescribedBy for accessibility purposes. The InvisibleText control can be used by application to provide hidden texts on the UI which can be referenced via these associations."
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
