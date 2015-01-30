@@ -7,7 +7,6 @@
 				"Facets.fragment.xml",
 				"Field.fragment.xml",
 				"FormFacet.fragment.xml",
-				"FieldHelper.js",
 				"ODataMetaModel.json",
 				"data/annotations.xml",
 				"data/metadata.xml",

@@ -104,7 +104,7 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 
 	/*
 	 * Returns the thing with the given qualified name from the given model's array (within a
-	 * schema) of given name; either as a path or as an object, as indicated.
+	 * schema) of given name.
 	 *
 	 * @param {sap.ui.model.Model} oModel
 	 *   any model
@@ -113,12 +113,12 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 	 * @param {string} sQualifiedName
 	 *   a qualified name, e.g. "ACME.Foo"
 	 * @param {boolean} [bAsPath=false]
-	 *   determines whether the thing is returned as a path or as an object
+	 *   determines whether the thing itself is returned or just its path
 	 * @returns {object|string}
 	 *   (the path to) the thing with the given qualified name; <code>undefined</code> (for a path)
 	 *   or <code>null</code> (for an object) if no such thing is found
 	 */
-	function getPathOrObject(oModel, sArrayName, sQualifiedName, bAsPath) {
+	function getObject(oModel, sArrayName, sQualifiedName, bAsPath) {
 		var vResult = bAsPath ? undefined : null,
 			aParts = (sQualifiedName || "").split("."),
 			sNamespace = aParts[0],
@@ -128,9 +128,7 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 			if (oSchema.namespace === sNamespace) {
 				jQuery.each(oSchema[sArrayName] || [], function (j, oThing) {
 					if (oThing.name === sName) {
-						vResult = bAsPath
-							? "/dataServices/schema/" + i + "/" + sArrayName + "/" + j
-							: oThing;
+						vResult = bAsPath ? oThing.$path : oThing;
 						return false; // break
 					}
 				});
@@ -195,15 +193,21 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 		function merge(oAnnotations, oData) {
 			jQuery.each(oData.dataServices.schema || [], function (i, oSchema) {
 				liftSAPData(oSchema);
-				jQuery.each(oSchema.entityType || [], function (j, oEntity) {
-					var sEntityName = oSchema.namespace + "." + oEntity.name,
+
+				jQuery.each(oSchema.complexType || [], function (j, oComplexType) {
+					oComplexType.$path = "/dataServices/schema/" + i + "/complexType/" + j;
+				});
+
+				jQuery.each(oSchema.entityType || [], function (j, oEntityType) {
+					var sEntityName = oSchema.namespace + "." + oEntityType.name,
 						mPropertyAnnotations = oAnnotations.propertyAnnotations
 							&& oAnnotations.propertyAnnotations[sEntityName] || {};
 
-					liftSAPData(oEntity);
-					jQuery.extend(oEntity, oAnnotations[sEntityName]);
+					liftSAPData(oEntityType);
+					jQuery.extend(oEntityType, oAnnotations[sEntityName]);
+					oEntityType.$path = "/dataServices/schema/" + i + "/entityType/" + j;
 
-					jQuery.each(oEntity.property || [], function (k, oProperty) {
+					jQuery.each(oEntityType.property || [], function (k, oProperty) {
 						liftSAPData(oProperty);
 						jQuery.extend(oProperty, mPropertyAnnotations[oProperty.name]);
 					});
@@ -267,15 +271,13 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 	 * @public
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
-		var i,
-			oAssocationEnd,
+		var oAssocationEnd,
 			oEntitySet,
 			oEntityType,
 			sMetaPath,
 			sNavigationPropertyName,
 			aParts = sPath.split("/"),
-			iPropertyIndex,
-			sQualifiedName;
+			sQualifiedName; // qualified name of current entity type across navigations
 
 		/*
 		 * Strips the OData key predicate from a resource path segment.
@@ -293,39 +295,35 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 		if (aParts[0] !== "") {
 			throw new Error("Not an absolute path: " + sPath);
 		}
+		aParts.shift();
 
 		// from entity set to entity type
-		oEntitySet = this.getODataEntitySet(stripKeyPredicate(aParts[1]));
+		oEntitySet = this.getODataEntitySet(stripKeyPredicate(aParts[0]));
 		if (!oEntitySet) {
-			throw new Error("Entity set not found: " + aParts[1]);
+			throw new Error("Entity set not found: " + aParts[0]);
 		}
+		aParts.shift();
 		sQualifiedName = oEntitySet.entityType;
 
 		// follow (navigation) properties
-		for (i = 2; i < aParts.length; i += 1) {
+		while (aParts.length) {
 			oEntityType = this.getODataEntityType(sQualifiedName);
-			sNavigationPropertyName = stripKeyPredicate(aParts[i]);
+			sNavigationPropertyName = stripKeyPredicate(aParts[0]);
 			oAssocationEnd = this.getODataAssociationEnd(oEntityType, sNavigationPropertyName);
 
 			if (oAssocationEnd) {
 				// navigation property
 				sQualifiedName = oAssocationEnd.type;
-				if (oAssocationEnd.multiplicity === "1" && sNavigationPropertyName !== aParts[i]) {
+				if (oAssocationEnd.multiplicity === "1" && sNavigationPropertyName !== aParts[0]) {
 					// key predicate not allowed here
-					throw new Error("Multiplicity is 1: " + aParts[i]);
+					throw new Error("Multiplicity is 1: " + aParts[0]);
 				}
+				aParts.shift();
 			} else {
-				// structural property
-				iPropertyIndex = findIndex(oEntityType.property, aParts[i]);
-				if (iPropertyIndex < 0) {
-					throw new Error("(Navigation) Property not found: " + aParts[i]);
-				}
-				sMetaPath = this.getODataEntityType(sQualifiedName, true)
-					+ "/property/" + iPropertyIndex;
-
-				// complex property type is not supported yet
-				if (i + 1 < aParts.length) {
-					throw new Error("Unsupported: " + sPath);
+				// structural property, incl. complex types
+				sMetaPath = this.getODataProperty(oEntityType, aParts, true);
+				if (aParts.length) {
+					throw new Error("Property not found: " + aParts.join("/"));
 				}
 				break;
 			}
@@ -352,13 +350,30 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 				? findObject(oEntityType.navigationProperty, sName)
 				: null,
 			oAssociation = oNavigationProperty
-				? getPathOrObject(this.oModel, "association", oNavigationProperty.relationship)
+				? getObject(this.oModel, "association", oNavigationProperty.relationship)
 				: null,
 			oAssociationEnd = oAssociation
 				? findObject(oAssociation.end, oNavigationProperty.toRole, "role")
 				: null;
 
 		return oAssociationEnd;
+	};
+
+	/**
+	 * Returns the OData complex type with the given qualified name, either as a path or as an
+	 * object, as indicated.
+	 *
+	 * @param {string} sQualifiedName
+	 *   a qualified name, e.g. "ACME.Address"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the complex type is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the complex type with the given qualified name; <code>undefined</code> (for
+	 *   a path) or <code>null</code> (for an object) if no such type is found
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataComplexType = function (sQualifiedName, bAsPath) {
+		return getObject(this.oModel, "complexType", sQualifiedName, bAsPath);
 	};
 
 	/**
@@ -399,7 +414,53 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 	 * @public
 	 */
 	ODataMetaModel.prototype.getODataEntityType = function (sQualifiedName, bAsPath) {
-		return getPathOrObject(this.oModel, "entityType", sQualifiedName, bAsPath);
+		return getObject(this.oModel, "entityType", sQualifiedName, bAsPath);
+	};
+
+	/**
+	 * Returns the given OData type's property of given name. If an array is given instead of a
+	 * single name, it is consumed (via <code>Array.prototype.shift</code>) piece by piece until an
+	 * element is encountered which cannot be resolved as a property name of the current type; in
+	 * this case, the last property found is returned and <code>vName</code> contains only the
+	 * remaining names, with <code>vName[0]</code> being the one which was not found.
+	 *
+	 * @param {object} oType
+	 *   a complex type as returned by {@link #getODataComplexType getODataComplexType}, or
+	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
+	 * @param {string|string[]} vName
+	 *   the name of a property within this type (e.g. "Address"), or an array of such names (e.g.
+	 *   <code>["Address", "Street"]</code>) in order to drill-down into complex types;
+	 *   <b>BEWARE</b> that this array is modified by removing each part which is understood!
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the property is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the last OData property found; <code>undefined</code> (for a path) or
+	 *   <code>null</code> (for an object) if no property was found at all
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataProperty = function (oType, vName, bAsPath) {
+		var i,
+			aParts = jQuery.isArray(vName) ? vName : [vName],
+			oProperty = null,
+			sPropertyPath;
+
+		while (oType && aParts.length) {
+			i = findIndex(oType.property, aParts[0]);
+			if (i < 0) {
+				break;
+			}
+
+			aParts.shift();
+			oProperty = oType.property[i];
+			sPropertyPath = oType.$path + "/property/" + i;
+
+			if (aParts.length) {
+				// go to complex type in order to allow drill-down
+				oType = this.getODataComplexType(oProperty.type);
+			}
+		}
+
+		return bAsPath ? sPropertyPath : oProperty;
 	};
 
 	ODataMetaModel.prototype.getProperty = function () {
