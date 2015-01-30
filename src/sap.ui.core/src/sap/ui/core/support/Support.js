@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	Support.prototype._receiveEvent = function(oEvent) {
 		var sData = oEvent.data;
 
-		if (sData.indexOf("SAPUI5SupportTool*") === 0) {
+		if (typeof sData === "string" && sData.indexOf("SAPUI5SupportTool*") === 0) {
 			sData = sData.substr(18); // length of SAPUI5SupportTool*
 		} else {
 			return;

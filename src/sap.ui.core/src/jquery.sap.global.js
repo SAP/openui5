@@ -3901,7 +3901,8 @@
 		//	sData = "SAPFrameProtection*parent-unlocked";
 		// }
 		
-		if (oSource === FrameOptions.__self || oSource == null || sData.indexOf("SAPFrameProtection*") === -1) {
+		if (oSource === FrameOptions.__self || oSource == null || 
+			typeof sData !== "string" || sData.indexOf("SAPFrameProtection*") === -1) {
 			return;
 		}
 		if (oSource === FrameOptions.__parent) {
