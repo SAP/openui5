@@ -65,7 +65,6 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "icon", value : sIcon}) ],
 				success : function (aButtons) {
 					aButtons[0].$().trigger("tap");
-					ok(aButtons[0], "Pressed '" + sName + "' Button");
 				},
 				errorMessage : "'" + sName + "' button not found."
 			});
@@ -84,6 +83,17 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				success : function () {
 					sap.ui.test.Opa5.getWindow().location.hash = "#/Objects/ObjectID_3";
 				}
+			});
+		},
+
+		iPressTheBackButton : function () {
+			return this.waitFor({
+				id : "detailPage",
+				viewName : "Detail",
+				success: function (oPage) {
+					oPage.$("navButton").trigger("tap");
+				},
+				errorMessage : "did not find the nav button"
 			});
 		},
 

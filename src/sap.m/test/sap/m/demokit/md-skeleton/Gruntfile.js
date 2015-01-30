@@ -101,7 +101,7 @@ module.exports = function(grunt) {
 			opa: {
 				options: {
 					urls: [
-						'<%= dir.localServerTestUrl %>/opa/NavigationJourneyGrunt.qunit.html'
+						'<%= dir.localServerTestUrl %>/opa/OpaTestsGrunt.qunit.html'
 					],
 					// same as qunits timeout 90 seconds since opa test might take a while
 					timeout: 900000
@@ -126,7 +126,7 @@ module.exports = function(grunt) {
 	});
 
 	// Linting task
-	grunt.registerTask('lint', ['eslint']);
+	grunt.registerTask('lint', ['eslint:all']);
 
 	// Build task
 	grunt.registerTask('build', ['openui5_preload', 'copy']);

@@ -1,10 +1,11 @@
 <mvc:View
 	controllerName="sap.ui.demo.mdskeleton.view.Detail"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<Page
+		id="detailPage"
 		navButtonPress="onNavBack"
+		showNavButton="{device>/isPhone}"
 		title="{i18n>detailTitle}">
 		<content>
 			<ObjectHeader
@@ -28,7 +29,7 @@
 			<Table id="lineItemsList" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiSmallMarginTop">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="{i18n>detailLineItemTableHeading}"></Label>
+						<Label text="{i18n>detailLineItemTableHeading}"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -56,7 +57,7 @@
 						</cells>
 					</ColumnListItem>
 				</items>
-			</Table>	  				
+			</Table>
 		</content>
 		<footer>
 			<Toolbar>

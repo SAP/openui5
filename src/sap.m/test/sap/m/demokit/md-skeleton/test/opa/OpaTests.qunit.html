@@ -7,13 +7,11 @@
 
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-resourceroots='{"sap.ui.demo.mdskeleton.test.opa": "./"}'>
+		data-sap-ui-resourceroots='{"sap.ui.demo.mdskeleton.test.opa": "./", "sap.ui.demo.app" : "../../webapp/"}'>
 	</script>
 
 	<script>
-		sap.ui.require(["sap/ui/demo/mdskeleton/test/opa/NavigationJourney"], function (NavigationJourney) {
-			NavigationJourney.start("../../webapp/index.html?responderOn=true");
-		});
+		jQuery.sap.require("sap.ui.demo.mdskeleton.test.opa.AllJourneys");
 	</script>
 
 </head>
