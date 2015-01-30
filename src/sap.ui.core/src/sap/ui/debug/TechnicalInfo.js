@@ -8,13 +8,13 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 	"use strict";
 
 	/*global alert */
-	
-	
-	
+
+
+
 		var TechnicalInfo = {
-	
+
 			open : function(callback) {
-	
+
 				function serialize(o) {
 					if (o && window.JSON) {
 						return window.JSON.stringify(o);
@@ -24,7 +24,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 					}
 					return "" + o + (o ? "???" : "");
 				}
-	
+
 				function list(o,prefix) {
 					prefix = prefix || '';
 					if ( !prefix ) {
@@ -42,9 +42,9 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 						html.push("</table>");
 					}
 				}
-	
+
 				var ojQSData = this._ojQSData = callback() || {};
-	
+
 				var bCT = false,bLV = false,bEmbedded = true;
 				if ( jQuery.sap.getObject("sap.ui.debug.DebugEnv") ) {
 					bCT = sap.ui.debug.DebugEnv.getInstance().isControlTreeShown();
@@ -159,7 +159,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				}
 				this._oPopup.open(400);
 			},
-	
+
 			close : function() {
 				this._oPopup.destroy();
 				this._oPopup = undefined;
@@ -167,7 +167,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				this._$Ref = undefined;
 				this._ojQSData = undefined;
 			},
-	
+
 			_renderModules : function(html, iLimit) {
 				var CLASS_4_MOD_STATE = {
 						"5"  : " sapUiTInfMFail"  // FAILED
@@ -205,13 +205,13 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 					html.push("<span id='sap-ui-techinfo-more' title='Show all modules' class='sapUiTInfMMore'>...(" + iMore + " more)</span>");
 				}
 			},
-	
+
 			onShowAllModules : function(e) {
 				var html = [];
 				this._renderModules(html, 0);
 				this._$Ref.find("[id=sap-ui-techinfo-modules]").html(html.join(""));
 			},
-	
+
 			onCreateCustomModule : function(e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -223,7 +223,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				jQuery("input[name='modules']", this._$Ref).attr("value", modnames.join(","));
 				jQuery("form", this._$Ref)[0].submit();
 			},
-	
+
 			onOptimizeModuleSet : function(e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -244,7 +244,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				jQuery("input[name='modules']", $Form).attr("value", modnames.join(","));
 				$Form[0].submit();
 			},
-	
+
 			ensureDebugEnv : function(bShowControls) {
 				if ( !jQuery.sap.getObject("sap.ui.debug.DebugEnv") ) {
 					try {
@@ -262,7 +262,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 				}
 				return true;
 			},
-	
+
 			onShowControls : function(e) {
 				if ( e.target.readOnly ) {
 					e.preventDefault();
@@ -279,7 +279,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 					}
 				}
 			},
-	
+
 			onShowLogViewer : function(e) {
 				if ( e.target.readOnly ) {
 					e.preventDefault();
@@ -294,33 +294,32 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/core/C
 					}
 				}
 			},
-	
+
 			onUseDbgSources : function(e) {
 				jQuery.sap.debug(!!e.target.checked);
 			},
-	
+
 			onUseStatistics : function(e) {
 				jQuery.sap.statistics(!!e.target.checked);
 			},
-	
+
 			onOpenWebInspector: function(e) {
 				/*eslint-disable no-alert */
 				if (!sap.ui.getCore().getConfiguration().getWeinreServer()) {
 					alert("Cannot start Web Inspector - WEINRE server is not configured.");
 					e.preventDefault();
-				}
-				else if (!!!sap.ui.Device.browser.webkit) {
+				} else if (!!!sap.ui.Device.browser.webkit) {
 					alert("Cannot start Web Inspector - WEINRE only runs on WebKit, please use Chrome or Safari.");
 					e.preventDefault();
 				}
 				/*eslint-enable no-alert */
 			}
-	
-	
+
+
 		};
-	
-	
-	
+
+
+
 
 	return TechnicalInfo;
 

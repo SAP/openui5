@@ -279,7 +279,7 @@
 					<plugin>
 						<groupId>com.sap.eslint</groupId>
 						<artifactId>eslint-maven-plugin</artifactId>
-						<version>0.1.0</version>
+						<version>0.2.0-SNAPSHOT</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -289,6 +289,7 @@
 							</execution>
 						</executions>
 						<configuration>
+							<version>0.11.0</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
 							<quiet>true</quiet>
@@ -304,6 +305,13 @@
 								</formatter>
 							</formatters>
 						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>com.sap.eslint</groupId>
+								<artifactId>eslint-java</artifactId>
+								<version>0.2.0-SNAPSHOT</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>

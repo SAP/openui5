@@ -1092,14 +1092,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var hueValue = 0;
 		if (satValue == 0) {
 			hueValue = 0;
-		}
-		else if (red == max)   {
+		} else if (red == max)   {
 			hueValue = 60.0 * (green - blue) / delta;
-		}
-		else if (green == max) {
+		} else if (green == max) {
 			hueValue = 120.0 + 60.0 * (blue - red) / delta;
-		}
-		else if (blue == max)  {
+		} else if (blue == max)  {
 			hueValue = 240.0 + 60.0 * (red - green) / delta;
 		}
 		if (hueValue < 0.0) {

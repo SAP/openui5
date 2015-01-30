@@ -163,8 +163,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this._oScroller && !this._hasScrolling()) {
 			this._oScroller.destroy();
 			this._oScroller = null;
-		}
-		else if ( this._hasScrolling() && !this._oScroller) {
+		} else if ( this._hasScrolling() && !this._oScroller) {
 			jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
 			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, null, {
 				scrollContainerId: this.getId() + "-cont",

@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new PullToRefresh.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -31,49 +31,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
 			/**
 			 * Optional description. May be used to inform a user, for example, when the list has been updated last time.
 			 */
 			description : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Set to true to display an icon/logo. Icon must be set either in the customIcon property or in the CSS theme for the PullToRefresh control.
 			 */
 			showIcon : {type : "boolean", group : "Appearance", defaultValue : false},
-	
+
 			/**
 			 * Provide a URI to a custom icon image to replace the SAP logo. Large images are scaled down to max 50px height.
 			 */
 			customIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 * 
+			 *
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
 		events : {
-	
+
 			/**
 			 * Event indicates that the user has requested new data
 			 */
 			refresh : {}
 		}
 	}});
-	
-	
+
+
 	PullToRefresh.prototype.init = function(){
 		this._bTouchMode = sap.ui.Device.support.touch || jQuery.sap.simulateMobileOnDesktop; // FIXME: plus fakeOS mode
-		
+
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
 		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // texts
-		
+
 	};
-	
+
 	PullToRefresh.prototype._loadBI = function(){
 		// lazy create a Busy indicator to avoid overhead when invisible at start
 		if (this.getVisible() && !this._oBusyIndicator) {
@@ -85,23 +85,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oBusyIndicator.setParent(this);
 		}
 	};
-	
+
 	PullToRefresh.prototype.onBeforeRendering = function(){
 		// Check Busy indicator at later point to avoid overhead when initially invisible
 		this._loadBI();
-	
+
 		if (this._bTouchMode) {
 			jQuery(window).off("resize.sapMP2R", this.calculateTopTrigger);
 			var oParent = this.getParent();
 			this._oScroller = oParent && oParent.getScrollDelegate ? oParent.getScrollDelegate() : null;
-	
+
 			if (this._oScroller) {
 				this._oScroller.setBounce(true);
 				this._oScroller.setPullDown(this.getVisible() ? this : null);
 			}
 		}
 	};
-	
+
 	PullToRefresh.prototype.calculateTopTrigger = function(){
 		this._iTopTrigger = 1;
 		// find the scroll container that embeds the PullToRefresh control
@@ -111,11 +111,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._iTopTrigger = this.getDomRef("T").offsetTop;
 		}
 	};
-	
+
 	PullToRefresh.prototype.onAfterRendering = function(){
-	
+
 		this._oDomRef = this.getDomRef();
-		
+
 		if (this._bTouchMode) {
 			if (this._oScroller) {
 				this._oScroller.refresh();
@@ -126,9 +126,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.calculateTopTrigger();
 			}
 		}
-		
+
 	};
-	
+
 	PullToRefresh.prototype.exit = function(){
 		if (this._bTouchMode  && this._oScroller && this._oScroller._bIScroll) {
 			jQuery(window).off("resize.sapMP2R", this.calculateTopTrigger);
@@ -146,14 +146,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oBusyIndicator = null;
 		}
 	};
-	
+
 	// ScrollEnablement callback functions
 	PullToRefresh.prototype.doScrollMove = function(){
 		//callback for iScroll
 		if (!this._oScroller) { return; }
-		
+
 		var domRef = this._oDomRef;
-	
+
 		var _scroller = this._oScroller._scroller;
 		if (_scroller.y > -this._iTopTrigger && this._iState < 1 ) {
 			this.setState(1);
@@ -163,42 +163,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			_scroller.minScrollY = -domRef.offsetHeight;
 		}
 	};
-	
+
 	PullToRefresh.prototype.doPull = function(posY){
 		// callback native scrolling, pull
 		if (this._bTouchMode && this._iState < 2) {
 			// switch pull down state: rotate its arrow
-			this.setState(posY >= - 1 ? 1 : 0);
+			this.setState(posY >= -1 ? 1 : 0);
 		}
 	};
-	
+
 	PullToRefresh.prototype.doRefresh = function(){
 		this.setState(0);
 	};
-	
+
 	PullToRefresh.prototype.doScrollEnd = function(){
 		if (this._iState == 1) { // if released when ready - load
 			this.setState(2);
 			this.fireRefresh();
 		}
 	};
-	
+
 	/*
 	* Set display state: 0 - pull to refresh, 1 - release to refresh, 2 - loading
 	* @private
 	*/
 	PullToRefresh.prototype.setState = function(iState){
-	
+
 		if (this._iState == iState) {
 			return;
 		}
-		
+
 		this._iState = iState;
-		
+
 		if (!this._oDomRef) {
 			return;
 		}
-	
+
 		var $this = this.$();
 		var $text = $this.find(".sapMPullDownText");
 		switch (iState) {
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				break;
 		}
 	};
-	
+
 	/*
 	* Override re-rendering for description
 	* @private
@@ -230,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return this.setProperty("description", sDescription, true);
 	};
-	
+
 	/*
 	* Return a private custom icon image control for internal rendering
 	* @private
@@ -241,13 +241,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			densityAware : this.getIconDensityAware()
 		};
 		var aCssClasses = ['sapMPullDownCIImg'];
-		
+
 		this._oCustomImage = sap.m.ImageHelper.getImageControl(null, this._oCustomImage, this, mProperties, aCssClasses);
-		
+
 		return this._oCustomImage;
 	};
-	
-	
+
+
 	// mouse version (non-touch)
 	PullToRefresh.prototype.onclick = function() {
 		if (!this._bTouchMode) {
@@ -255,7 +255,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireRefresh();
 		}
 	};
-	
+
 	/**
 	 * Handle the key down event for F5, if focused.
 	 *
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			event.preventDefault();
 		}
 	};
-	
+
 	/**
 	 * Handle the enter key event
 	 *
@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireRefresh();
 		}
 	};
-	
+
 	/**
 	 * Handle the space key event
 	 *
@@ -292,13 +292,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	PullToRefresh.prototype.onsapspace = function(oEvent) {
 		oEvent.preventDefault();
-	
+
 		if (this._iState < 1) {
 			this.setState(2);
 			this.fireRefresh();
 		}
 	};
-	
+
 	// API implementation
 
 	/**
@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oScroller.refresh();
 		}
 	};
-	
+
 	/*
 	* Override visibility setter
 	* @private
@@ -323,13 +323,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getVisible() == bVisible) {
 			return this;
 		}
-		
+
 		if (this._oDomRef && this._oScroller && this._oScroller._oControl) {
 			this._oScroller._oControl.invalidate();
 		}
 		return this.setProperty("visible", bVisible);
 	};
-	
+
 
 	return PullToRefresh;
 

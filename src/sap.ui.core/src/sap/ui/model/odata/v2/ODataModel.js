@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mHeaders, bTokenHandling,
 			bWithCredentials, sMaxDataServiceVersion,
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
-			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces, 
+			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, bJSON, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -118,12 +118,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
-			
+
 			//collect internal changes in a deferred batchgroup as default
 			this.sDefaultChangeBatchGroup = "changes";
 			this.setDeferredBatchGroups([this.sDefaultChangeBatchGroup]);
 			this.setChangeBatchGroups({"*":{batchGroupId: this.sDefaultChangeBatchGroup}});
-			
+
 			// Load annotations support on demand
 			if (this.sAnnotationURI) {
 				jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
@@ -761,7 +761,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (oData.results) {
 			aList = [];
 			jQuery.each(oData.results, function(i, entry) {
-				var sKey = that._importData(entry, mChangedEntities); 
+				var sKey = that._importData(entry, mChangedEntities);
 				if (sKey) {
 					aList.push(sKey);
 				}
@@ -1432,11 +1432,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				if (oNode) {
 					if (oNode.__ref) {
 						oNode = this.oData[oNode.__ref];
-					}
-					else if (oNode.__list) {
+					} else if (oNode.__list) {
 						oNode = oNode.__list;
-					}
-					else if (oNode.__deferred) {
+					} else if (oNode.__deferred) {
 						// set to undefined and not to null because navigation properties can have a null value
 						oNode = undefined;
 					}
@@ -2605,12 +2603,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Trigger a request to the function import odata service that was specified in the model constructor. 
-	 * 
-	 * If the ReturnType of the function import is either an EntityType or a collection of EntityType the 
-	 * changes are reflected in the model, otherwise they are ignored, and the <code>response</code> can 
+	 * Trigger a request to the function import odata service that was specified in the model constructor.
+	 *
+	 * If the ReturnType of the function import is either an EntityType or a collection of EntityType the
+	 * changes are reflected in the model, otherwise they are ignored, and the <code>response</code> can
 	 * be processed in the successHandler.
-	 * 
+	 *
 	 * @param {string} sFunctionName A string containing the name of the function to call. The name is concatenated to the sServiceUrl which was
 	 *        specified in the model constructor.
 	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
@@ -2924,8 +2922,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
-	 * 
-	 * If the changeBatchGroup for the changed EntityType is set to deferred changes could be submitted 
+	 *
+	 * If the changeBatchGroup for the changed EntityType is set to deferred changes could be submitted
 	 * with submitChanges. Otherwise the change will be submitted directly.
 	 *
 	 * @param {string}  sPath path of the property to set
@@ -2990,14 +2988,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		} else {
 			oRequest = this._processChange(sKey, oEntry);
 		}
-		
+
 		if (!this.mChangeHandles[sKey]) {
 			oRequestHandle = {
 					abort: function() {
 						oRequest._aborted = true;
 					}
 			};
-	
+
 			this.mChangeHandles[sKey] = oRequestHandle;
 		}
 
@@ -3226,7 +3224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 		}
-		
+
 		sBatchGroupId = sBatchGroupId ? sBatchGroupId : this.sDefaultChangeBatchGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
@@ -3533,11 +3531,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.getChangeBatchGroups = function() {
 		return this.mChangeBatchGroups;
 	};
-	
+
 	/**
 	 * REgister function calls that should be called after an update (e.g. calling dataReceived event of a binding)
 	 * @param {function} oFunction The callback function
-	 * @private  
+	 * @private
 	 */
 	ODataModel.prototype.callAfterUpdate = function(oFunction) {
 		this.aCallAfterUpdate.push(oFunction);

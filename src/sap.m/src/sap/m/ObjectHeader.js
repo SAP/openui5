@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @since 1.28
 			 */
 			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
-			
+
 			/**
 			 * The title link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "titlePress" event should be registered.
 			 * @since 1.28
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @since 1.28
 			 */
 			titleTarget : {type : "string", group : "Behavior", defaultValue : null},
-			
+
 			/**
 			 * The intro link target URI. Supports standard hyperlink behavior. If an action should be triggered, this should not be set, but instead an event handler for the "introPress" event should be registered.
 			 * @since 1.28
@@ -157,19 +157,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @since 1.28
 			 */
 			introTarget : {type : "string", group : "Behavior", defaultValue : null},
-			
+
 			/**
 			 * This property specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
 			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
-			
+
 			/**
 			 * This property specifies the intro text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
 			introTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
-			
+
 			/**
 			 * This property specifies the number and unit directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._fNumberWidth = undefined;
 		this._titleText = new sap.m.Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
-		
+
 	};
 
 	/**
@@ -397,7 +397,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oControl = new sap.m.ObjectNumber(this.getId() + "-number", {
 				emphasized: false
 			});
-			
+
 			this.setAggregation("_objectNumber", oControl, true);
 		}
 		return oControl;
@@ -444,7 +444,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
-			
+
 			if (!this.getTitleHref()) {
 				this.fireTitlePress({
 					domRef : this._titleText.getFocusDomRef()
@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype.onsapenter = ObjectHeader.prototype._handleSpaceOrEnter;
-	
+
 	/**
 	 * Handle link behaviour of the link and title when are active
 	 *
@@ -517,7 +517,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._linkClick = function(oEvent, sSourceId) {
 		// mark the event for components that needs to know if the event was handled
 		oEvent.setMarked();
-		
+
 		// When there is the normal browser link, the browser does the job. According to the keyboard specification, Space should do the same as Enter or Click.
 		// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
 		var oClickEvent = document.createEvent('MouseEvents');
@@ -533,13 +533,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype._onOrientationChange = function() {
 		var sId = this.getId();
-		
+
 		if (sap.ui.Device.system.tablet && this.getFullScreenOptimized() && (this._hasAttributes() || this._hasStatus())){
 			this._rerenderStates();
 		}
 
 		if (sap.ui.Device.system.phone) {
-			
+
 			if (sap.ui.Device.orientation.portrait){
 
 				if (this.getTitle().length > 50) { // if on phone portrait mode, cut the title to 50 characters
@@ -569,9 +569,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called on orientation change to rerender the title.
-	 * nCutLen - the number of the characters to which the title should be cut 
+	 * nCutLen - the number of the characters to which the title should be cut
 	 * according to the design specification (80 or 50 chars)
-	 * 
+	 *
 	 * @private
 	 */
 	ObjectHeader.prototype._rerenderTitle = function(nCutLen) {
@@ -600,7 +600,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sap.ui.Device.system.desktop) {
 			sap.ui.Device.media.detachHandler(this._rerenderOH, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
-		
+
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 			sap.ui.Device.orientation.detachHandler(this._onOrientationChange, this);
 		}
@@ -634,7 +634,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._titleText.destroy();
 			this._titleText = undefined;
 		}
-		
+
 		if (this._introText) {
 			this._introText.destroy();
 			this._introText = undefined;
@@ -684,7 +684,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sap.ui.Device.system.desktop) {
 			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
-		
+
 		if (this._introText) {
 			this._introText.destroy();
 			this._introText = undefined;
@@ -695,12 +695,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getResponsive()) {
 			this._adjustNumberDiv();
 			this._adjustIntroDiv();
-			
+
 			if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && this.getFullScreenOptimized() && this._iCountVisAttrStat >= 1 && this._iCountVisAttrStat <= 3) {
 				// Adjust ObjectNumber alignment
 				this.getAggregation("_objectNumber").setTextAlign(sap.ui.core.TextAlign.Begin);
 			}
-			
+
 			// watch for orientation change only on tablet and phone
 			if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 				sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
@@ -734,7 +734,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oObjectNumber && oObjectNumber.getNumber()) {
 			var $numberDiv = jQuery.sap.byId(sId + "-number");
 			var $titleDiv = jQuery.sap.byId(sId + "-titlediv");
-			
+
 			if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
 					// change alignment to fit the design depending
@@ -742,9 +742,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					$numberDiv.removeClass("sapMObjectNumberBelowTitle");
 					$titleDiv.removeClass("sapMOHRTitleDivFull");
 				}
-				
+
 				var nParentWidth40 = $numberDiv.parent().width() * 0.4; //calculate 40% number div in pixels
-				
+
 				if ($numberDiv.outerWidth() > nParentWidth40) {
 					// change alignment to fit the design
 					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Begin);
@@ -754,7 +754,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * Adjust margin of the Intro div depending on size of the title and title arrow
 	 *
@@ -765,16 +765,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $titleTxt = jQuery.sap.byId(sId + "-txt");
 		var $titleArrow = jQuery.sap.byId(sId + "-titleArrow");
 		var $intro = jQuery.sap.byId(sId + "-intro");
-		
+
 		if ($intro.parent().hasClass("sapMOHRIntroMargin")) {
 			$intro.parent().removeClass("sapMOHRIntroMargin");
 		}
-		
+
 		if ($titleArrow.height() !== null && ($titleTxt.height() < $titleArrow.height())) {
 			$intro.parent().addClass("sapMOHRIntroMargin");
 		}
 	};
-	
+
 
 	/**
 	 * @param [string]
@@ -831,8 +831,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				if (statuses[i] instanceof sap.m.ObjectStatus && !statuses[i]._isEmpty()) {
 					bHasStatus = true;
 					break;
-				}
-				else if (statuses[i] instanceof sap.m.ProgressIndicator) {
+				} else if (statuses[i] instanceof sap.m.ProgressIndicator) {
 					bHasStatus = true;
 					break;
 				}
