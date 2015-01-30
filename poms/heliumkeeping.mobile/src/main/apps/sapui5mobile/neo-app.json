@@ -6,10 +6,8 @@
         "classifier": "${sapui5.classifier}",
         "type": "${sapui5.type}"
     },
-    "welcomeFile": "index.html",
     "authenticationMethod": "none",
     "cacheControl": [{
-        "maxAge": 604800
-    }],
-    "ui5CacheBuster": true
+        "maxAge": 3600
+    }]
 }

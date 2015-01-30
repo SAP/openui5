@@ -24,7 +24,7 @@
 	* POM SECTION: Maven Settings
 	***************************************************************************-->
 
-	<artifactId>ui5-cloudkeeping-nightly</artifactId>
+	<artifactId>ui5-cloudkeeping.nightly</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
