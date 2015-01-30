@@ -28,8 +28,8 @@
 	oDateOnly.setUTCSeconds(0);
 	oDateOnly.setUTCMilliseconds(0);
 
-	function createInstance(sTypeName, oConstraints) {
-		return new (jQuery.sap.getObject(sTypeName))({}, oConstraints);
+	function createInstance(sTypeName, oConstraints, oFormatOptions) {
+		return new (jQuery.sap.getObject(sTypeName))(oFormatOptions, oConstraints);
 	}
 
 	/*
@@ -218,6 +218,43 @@
 	});
 
 	//*********************************************************************************************
+	jQuery.each([
+		{oFormatOptions: {},  oExpected: {strictParsing: true}},
+		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
+		{oFormatOptions: {strictParsing: false, UTC: true}, oExpected: {strictParsing: false}},
+		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}},
+		// with displayFormat = Date
+		{oFormatOptions: {}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: undefined, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: {strictParsing: false}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: false}},
+		{oFormatOptions: {foo: "bar"}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {UTC: false}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: {style: "medium"}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true, style: "medium"}},
+	], function (i, oFixture) {
+		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			sinon.test(function () {
+					var oType = createInstance("sap.ui.model.odata.type.DateTime",
+						oFixture.oConstraints, oFixture.oFormatOptions),
+					oSpy = (oFixture.oConstraints) ?
+						this.spy(sap.ui.core.format.DateFormat, "getDateInstance") :
+						this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+
+				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
+				oType.formatValue(oDateTime, "string");
+				ok(oSpy.calledWithExactly(oFixture.oExpected));
+			})
+		);
+	});
+
+	//*********************************************************************************************
 	test("format and parse (Date)", function () {
 		var oType = new sap.ui.model.odata.type.DateTime({}, {displayFormat: "Date"});
 
@@ -275,5 +312,27 @@
 			oType = new sap.ui.model.odata.type.DateTimeOffset({},  oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
 		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([
+		{oFormatOptions: {},  oExpected: {strictParsing: true}},
+		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
+		{oFormatOptions: {strictParsing: false}, oExpected: {strictParsing: false}},
+		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}}
+	], function (i, oFixture) {
+		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			sinon.test(function () {
+					var oType = createInstance("sap.ui.model.odata.type.DateTimeOffset", {},
+						oFixture.oFormatOptions),
+					oSpy = this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+
+				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
+				oType.formatValue(oDateTime, "string");
+				ok(oSpy.calledWithExactly(oFixture.oExpected));
+			})
+		);
 	});
 } ());

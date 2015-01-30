@@ -39,11 +39,16 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
+		var oFormatOptions;
+
 		if (!oType.oFormat){
+			oFormatOptions = jQuery.extend({strictParsing: true}, oType.oFormatOptions);
 			if (isDateOnly(oType)) {
-				oType.oFormat = DateFormat.getDateInstance({strictParsing: true, UTC: true});
+				oFormatOptions.UTC = true;
+				oType.oFormat = DateFormat.getDateInstance(oFormatOptions);
 			} else {
-				oType.oFormat = DateFormat.getDateTimeInstance({strictParsing: true});
+				delete oFormatOptions.UTC;
+				oType.oFormat = DateFormat.getDateTimeInstance(oFormatOptions);
 			}
 		}
 		return oType.oFormat;
@@ -118,6 +123,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);
+					this.oFormatOptions = oFormatOptions;
 				},
 				metadata : {
 					"abstract": true

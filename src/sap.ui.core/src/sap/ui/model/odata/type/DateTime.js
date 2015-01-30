@@ -64,8 +64,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *
 	 * @alias sap.ui.model.odata.type.DateTime
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in {@link sap.ui.core.format.DateFormat}
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link sap.ui.model.odata.type.DateTimeBase#validateValue validateValue}
 	 *   throws an error if any constraint is violated
