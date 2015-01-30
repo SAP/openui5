@@ -3316,6 +3316,26 @@
 
 			});
 
+			/* ------------------------------------ */
+			/* setEditable()                        */
+			/* ------------------------------------ */
+
+			// BSP: 1570011983
+			test("it should set the display of the combobox arrow button to none", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					editable: false
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(jQuery(oComboBox.getDomRef("arrow")).css("display"), "none");
+			});
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */

@@ -20,7 +20,7 @@
 /* ComboBox                       */
 /* ------------------------------ */
 
-input.sapMComboBoxBaseInputInner {
+input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 	padding-right: 3rem;
 }
 
@@ -169,7 +169,7 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 /* CSS for control sap.m/ComboBox.control BlueCrystal theme compact size */
 /* ===================================================================== */
 
-.sapUiSizeCompact input.sapMComboBoxBaseInputInner {
+.sapUiSizeCompact input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 	padding-right: 2.5rem;
 }
 
@@ -196,4 +196,3 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 .sapUiSizeCompact li.sapMComboBoxBaseItem {
 	height: 2rem;
 }
-
