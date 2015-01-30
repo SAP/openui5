@@ -1,3 +1,4 @@
+/*eslint-env node*/
 'use strict';
 
 module.exports = function(grunt) {
@@ -78,9 +79,10 @@ module.exports = function(grunt) {
 			options: {
 				quiet: true
 			},
+
+			all: ['<%= dir.tests %>', '<%= dir.webapp %>'],
 			webapp: ['<%= dir.webapp %>']
 		},
-
 		qunit: {
 			options: {
 				/* for debugging*/
@@ -136,7 +138,7 @@ module.exports = function(grunt) {
 
 	// Default task
 	grunt.registerTask('default', [
-		'lint',
+		'lint:all',
 		'test'
 	]);
 };

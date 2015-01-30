@@ -8,7 +8,7 @@ sap.ui.require(
 	function(MockableModel, List) {
 		"use strict";
 
-		module("mock server tests", {
+		QUnit.module("mock server tests", {
 			setup: function () {
 				sinon.config.useFakeTimers = false;
 				this.oList =  new List();
@@ -22,7 +22,7 @@ sap.ui.require(
 			}
 		});
 
-		asyncTest("Should start up the mock server", function () {
+		QUnit.asyncTest("Should start up the mock server", function () {
 			// Arrange
 			this.stub(jQuery.sap, "getUriParameters", function () {
 				return {
@@ -33,19 +33,20 @@ sap.ui.require(
 						}
 						return "1000";
 					}
-				}
+				};
 			});
 			this.oMdSkeletonModel = new MockableModel({
 				serviceUrl: "../../../../../foo/",
 				dataFolderName: "md_skeleton"
 			});
 
-			this.oList.attachUpdateFinished(function () {
+			this.oList.attachUpdateFinished(function (fnResolve) {
 				// Assert
 				strictEqual(this.oList.getItems().length, 9, "The list shows the expected amount of products");
 
-				start();
+				QUnit.start();
 			}, this);
+
 
 			// Act
 			this.oList.setModel(this.oMdSkeletonModel);
@@ -55,7 +56,6 @@ sap.ui.require(
 					title: "{Name}"
 				})
 			});
-
 		});
 	}
 );

@@ -1,3 +1,4 @@
+/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
 jQuery.sap.require("sap.ui.qunit.qunit-css");
 jQuery.sap.require("sap.ui.thirdparty.qunit");
 jQuery.sap.require("sap.ui.qunit.qunit-junit");

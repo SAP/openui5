@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 					viewName : "Master",
 					check : function (oMasterList) {
 						return oMasterList.getItems().some(function (oItem) {
-							if(oItem.getTitle() === "Object 1") {
+							if (oItem.getTitle() === "Object 1") {
 								oObject1Item = oItem;
 								return true;
 							}
@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 							viewName : "Detail",
 							check : function (oLineItemList) {
 								return oLineItemList.getItems().some(function (oItem) {
-									if(oItem.getText() === "LineItemID_1") {
+									if (oItem.getText() === "LineItemID_1") {
 										oLineItem1 = oItem;
 										return true;
 									}
@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 								ok(oLineItemList, "Pressed the Object 1 item");
 							},
 							errorMessage : "the list did not contain Object 1"
-						})
+						});
 					},
 					errorMessage : "the list did not contain Object 1"
 				});

@@ -1,3 +1,4 @@
+/*global ok */ //declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.require(
 [
 	"sap/ui/demo/mdskeleton/model/Device",
@@ -7,7 +8,7 @@ sap.ui.require(
 function (DeviceModel) {
 	"use strict";
 
-	module("initialization", {
+	QUnit.module("initialization", {
 		teardown: function () {
 			this.oDeviceModel.destroy();
 		}
@@ -25,11 +26,11 @@ function (DeviceModel) {
 		strictEqual(this.oDeviceModel.getData().isNoPhone, !bIsPhone, "IsNoPhone property is correct");
 	}
 
-	test("Should initialize a device model for desktop", function () {
+	QUnit.test("Should initialize a device model for desktop", function () {
 		isPhoneTestCase.call(this, false);
 	});
 
-	test("Should initialize a device model for phone", function () {
+	QUnit.test("Should initialize a device model for phone", function () {
 		isPhoneTestCase.call(this, true);
 	});
 
@@ -45,20 +46,20 @@ function (DeviceModel) {
 		strictEqual(this.oDeviceModel.getData().isNoTouch, !bIsTouch, "IsNoTouch property is correct");
 	}
 
-	test("Should initialize a device model for non touch devices", function () {
+	QUnit.test("Should initialize a device model for non touch devices", function () {
 		isTouchTestCase.call(this, false);
 	});
 
-	test("Should initialize a device model for touch devices", function () {
+	QUnit.test("Should initialize a device model for touch devices", function () {
 		isTouchTestCase.call(this, true);
 	});
 
-	test("The binding mode of the device model should be one way", function () {
+	QUnit.test("The binding mode of the device model should be one way", function () {
 
 		// System under test
 		this.oDeviceModel = new DeviceModel();
 
 		// Assert
 		strictEqual(this.oDeviceModel.getDefaultBindingMode(), "OneWay", "Binding mode is correct");
-	})
+	});
 });
