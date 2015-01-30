@@ -127,6 +127,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var oDomRef = this.getTextDomRef();
 		if (oDomRef) {
 			oDomRef.textContent = this.getText(true);
+
+			// Toggles the sapMTextBreakWord class when the text value is changed
+			if (this.getWrapping()) {
+				// no space text must break
+				if (sText && sText.length > 0 && !/\s/.test(sText)) {
+					this.$().addClass("sapMTextBreakWord");
+				} else {
+					this.$().removeClass("sapMTextBreakWord");
+				}
+			}
 		}
 
 		return this;
