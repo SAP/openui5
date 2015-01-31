@@ -12,7 +12,7 @@ and supports data binding to different data models (JSON, XML and OData).
 Try it!
 -------
 Check out our [interactive control playground](https://openui5.hana.ondemand.com/#content/Controls/index.html)
-as well as a number of [sample applications](https://openui5.hana.ondemand.com/#demoapps.html)
+as well as a number of [sample applications](https://openui5.hana.ondemand.com/#demoapps.html).
 
 Get it!
 -------
