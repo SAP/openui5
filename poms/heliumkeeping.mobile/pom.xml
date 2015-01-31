@@ -229,59 +229,6 @@
 				</executions>
 			</plugin>
 			
-			<!-- unpack and copy the application in the Git workspace (from deployable) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack-deployable</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${deployable.groupId}</groupId>
-									<artifactId>${deployable.artifactId}</artifactId>
-									<version>${deployable.version}</version>
-									<classifier>${deployable.classifier}</classifier>
-									<type>${deployable.type}</type>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/${application}</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-							<skip>${skipUnpack}</skip>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-deployable</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${deployable.groupId}</groupId>
-									<artifactId>${deployable.artifactId}</artifactId>
-									<version>${deployable.version}</version>
-									<classifier>${deployable.classifier}</classifier>
-									<type>${deployable.type}</type>
-									<destFileName>${deployable.artifactId}.${deployable.type}</destFileName>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/${application}</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-							<skip>${skipUnpack}</skip>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
 		</plugins>
 
 	</build>
@@ -306,6 +253,64 @@
 				<skipCopy>false</skipCopy>
 				<skipUnpack>false</skipUnpack>
 			</properties>
+			<build>
+				<plugins>
+					
+					<!-- unpack and copy the application in the Git workspace (from deployable) -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-deployable</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${deployable.groupId}</groupId>
+											<artifactId>${deployable.artifactId}</artifactId>
+											<version>${deployable.version}</version>
+											<classifier>${deployable.classifier}</classifier>
+											<type>${deployable.type}</type>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.build.directory}/${application}</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+									<skip>${skipUnpack}</skip>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-deployable</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${deployable.groupId}</groupId>
+											<artifactId>${deployable.artifactId}</artifactId>
+											<version>${deployable.version}</version>
+											<classifier>${deployable.classifier}</classifier>
+											<type>${deployable.type}</type>
+											<destFileName>${deployable.artifactId}.${deployable.type}</destFileName>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.build.directory}/${application}</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+									<skip>${skipUnpack}</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+				</plugins>
+			</build>
 		</profile>
 	
 		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
