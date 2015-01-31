@@ -112,7 +112,7 @@
 		</pluginManagement>
 		
 		<plugins>
-
+			
 			<!-- generate a timestamp (e.g. for multiversion deployment) -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -132,7 +132,77 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			
+			<plugin>
+				<groupId>com.sap.ui5.tools.maven</groupId>
+				<artifactId>nwcloud-maven-plugin</artifactId>
+				<executions>
+					
+					<!-- create application in HCP if needed -->
+					<execution>
+						<id>sapui5-helium-create</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>helium-create</goal>
+						</goals>
+						<configuration>
+							<skip>${skipCreate}</skip>
+						</configuration>
+					</execution>
+			
+					<!-- prepare the Git workspace in the target folder -->
+					<execution>
+						<id>sapui5-helium-prepare</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>helium-prepare</goal>
+						</goals>
+						<configuration>
+							<skip>${skipPrepare}</skip>
+						</configuration>
+					</execution>
+			
+					<!-- uploading the new sources into the Git repository -->
+					<execution>
+						<id>sapui5-helium-upload</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-upload</goal>
+						</goals>
+						<configuration>
+							<skip>${skipUpload}</skip>
+						</configuration>
+					</execution>
+			
+					<!-- create the version of the application -->
+					<execution>
+						<id>sapui5-helium-create-version</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-create-version</goal>
+						</goals>
+						<configuration>
+							<skip>${skipCreateVersion}</skip>
+						</configuration>
+					</execution>
+			
+					<!-- activate the version of the application -->
+					<execution>
+						<id>sapui5-helium-activate-version</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-activate-version</goal>
+							<goal>helium-stop</goal>
+							<goal>helium-start</goal>
+						</goals>
+						<configuration>
+							<skip>${skipActivateVersion}</skip>
+						</configuration>
+					</execution>
+			
+				</executions>
+			</plugin>
+			
 			<!-- copy the application content in the Git workspace (from source folder) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -211,7 +281,7 @@
 					</execution>
 				</executions>
 			</plugin>
-	
+			
 		</plugins>
 
 	</build>
@@ -228,90 +298,14 @@
 			<activation>
 				<property>
 					<name>deploy</name>
-					<value>true</value>
+					<value>default</value>
 				</property>
 			</activation>
 			<properties>
-				<skipCreate>false</skipCreate>
 				<skipPrepare>false</skipPrepare>
 				<skipCopy>false</skipCopy>
 				<skipUnpack>false</skipUnpack>
 			</properties>
-			<build>
-				<plugins>
-		
-					<plugin>
-						<groupId>com.sap.ui5.tools.maven</groupId>
-						<artifactId>nwcloud-maven-plugin</artifactId>
-						<executions>
-				
-							<!-- create application in HCP if needed -->
-							<execution>
-								<id>sapui5-helium-create</id>
-								<phase>initialize</phase>
-								<goals>
-									<goal>helium-create</goal>
-								</goals>
-								<configuration>
-									<skip>${skipCreate}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- prepare the Git workspace in the target folder -->
-							<execution>
-								<id>sapui5-helium-prepare</id>
-								<phase>initialize</phase>
-								<goals>
-									<goal>helium-prepare</goal>
-								</goals>
-								<configuration>
-									<skip>${skipPrepare}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- uploading the new sources into the Git repository -->
-							<execution>
-								<id>sapui5-helium-upload</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-upload</goal>
-								</goals>
-								<configuration>
-									<skip>${skipUpload}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- create the version of the application -->
-							<execution>
-								<id>sapui5-helium-create-version</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-create-version</goal>
-								</goals>
-								<configuration>
-									<skip>${skipCreateVersion}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- activate the version of the application -->
-							<execution>
-								<id>sapui5-helium-activate-version</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-activate-version</goal>
-									<goal>helium-stop</goal>
-									<goal>helium-start</goal>
-								</goals>
-								<configuration>
-									<skip>${skipActivateVersion}</skip>
-								</configuration>
-							</execution>
-					
-						</executions>
-					</plugin>
-			
-				</plugins>
-			</build>
 		</profile>
 	
 		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
@@ -319,14 +313,17 @@
 			<id>master-deployment</id>
 			<activation>
 				<property>
-					<name>deployMaster</name>
-					<value>true</value>
+					<name>deploy</name>
+					<value>master</value>
 				</property>
 			</activation>
 			<properties>
 				<branch>master</branch>
 				<versionAlias>snapshot</versionAlias>
 				<application.dir>${application}-master</application.dir>
+				<skipPrepare>false</skipPrepare>
+				<skipCopy>false</skipCopy>
+				<skipUnpack>false</skipUnpack>
 			</properties>
 		</profile>
 	
@@ -335,8 +332,8 @@
 			<id>multiversion-deployment</id>
 			<activation>
 				<property>
-					<name>deployMultiVersion</name>
-					<value>true</value>
+					<name>deploy</name>
+					<value>multiversion</value>
 				</property>
 			</activation>
 			<properties>
@@ -346,81 +343,6 @@
 				<skipCopy>false</skipCopy>
 				<skipMultiVersion>false</skipMultiVersion>
 			</properties>
-			<build>
-				<plugins>
-		
-					<plugin>
-						<groupId>com.sap.ui5.tools.maven</groupId>
-						<artifactId>nwcloud-maven-plugin</artifactId>
-						<executions>
-				
-							<!-- prepare the Git workspace in the target folder -->
-							<execution>
-								<id>sapui5-helium-prepare</id>
-								<phase>initialize</phase>
-								<goals>
-									<goal>helium-prepare</goal>
-								</goals>
-								<configuration>
-									<skip>${skipPrepare}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- activate the version of the application -->
-							<execution>
-								<id>sapui5-helium-multiversion</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-multiversion</goal>
-								</goals>
-								<configuration>
-									<skip>${skipMultiVersion}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- uploading the new sources into the Git repository -->
-							<execution>
-								<id>sapui5-helium-upload</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-upload</goal>
-								</goals>
-								<configuration>
-									<skip>${skipUpload}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- create the version of the application -->
-							<execution>
-								<id>sapui5-helium-create-version</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-create-version</goal>
-								</goals>
-								<configuration>
-									<skip>${skipCreateVersion}</skip>
-								</configuration>
-							</execution>
-					
-							<!-- activate the version of the application -->
-							<execution>
-								<id>sapui5-helium-activate-version</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>helium-activate-version</goal>
-									<goal>helium-stop</goal>
-									<goal>helium-start</goal>
-								</goals>
-								<configuration>
-									<skip>${skipActivateVersion}</skip>
-								</configuration>
-							</execution>
-					
-						</executions>
-					</plugin>
-			
-				</plugins>
-			</build>
 		</profile>
 	
 	</profiles>
