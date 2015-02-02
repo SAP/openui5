@@ -239,14 +239,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				oListItem,
 				i = 0;
 
-			if (sValue === "") {
-				this.setSelection(null, { suppressInvalidate: true });
-
-				if (oSelectedItem !== this.getSelectedItem()) {
-					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-				}
-			}
-
 			for (; i < aItems.length; i++) {
 
 				// the item match with the value
@@ -287,11 +279,22 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				}
 			}
 
-			// open the picker while typing
+			if (sValue === "" || !bVisibleItems) {
+				this.setSelection(null, { suppressInvalidate: true });
+
+				if (oSelectedItem !== this.getSelectedItem()) {
+					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+
+					// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
+					oInputDomRef.removeAttribute("aria-activedescendant");
+				}
+			}
+
+			// open the picker on input
 			if (bVisibleItems) {
 				this.open();
 			} else {
-				this.close();
+				this.isOpen() ? this.close() : this.clearFilter();
 			}
 		};
 
@@ -409,9 +412,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (this.isOpen()) {
 				this.close();
-
-				// clear the filter to make all items visible
-				this.clearFilter();
 			}
 		};
 
@@ -960,10 +960,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.onAfterClose = function() {
 
 			// if the focus is back to the input after close the picker, the message should be open
-			if ( document.activeElement === this.getFocusDomRef() ) {
+			if (document.activeElement === this.getFocusDomRef()) {
 				this.openValueStateMessage();
 			}
 
+			// clear the filter to make all items visible
+			// note: to prevent flickering, the filter is cleared
+			// after the close animation is completed
+			this.clearFilter();
 		};
 
 		/*
