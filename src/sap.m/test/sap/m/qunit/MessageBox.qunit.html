@@ -254,6 +254,42 @@
 				jQuery.sap.require("sap.m.InstanceManager");
 				sap.m.InstanceManager.getOpenDialogs()[0].destroy();
 			});
+
+			test("Text Direction Tests", function () {
+				var sMessageBoxId = "messageboxRTL",
+					oMessageBox,
+					oMessageTextContainer;
+
+				// RTL
+				sap.m.MessageBox.confirm(sMessageText, {
+					title: sMessageTitle,
+					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+					onClose: callback,
+					id: sMessageBoxId,
+					textDirection: sap.ui.core.TextDirection.RTL
+				});
+
+				sap.ui.getCore().applyChanges();
+				oMessageBox = sap.ui.getCore().byId(sMessageBoxId);
+				oMessageTextContainer = oMessageBox.$().find("span.sapMText");
+				equals(jQuery(oMessageTextContainer).attr("dir"), "rtl", "Attribute 'dir' for Text Direction is set to RTL");
+				oMessageBox.destroy();
+
+				// LTR
+				sap.m.MessageBox.confirm(sMessageText, {
+					title: sMessageTitle,
+					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+					onClose: callback,
+					id: sMessageBoxId,
+					textDirection: sap.ui.core.TextDirection.LTR
+				});
+
+				sap.ui.getCore().applyChanges();
+				oMessageBox = sap.ui.getCore().byId(sMessageBoxId);
+				oMessageTextContainer = oMessageBox.$().find("span.sapMText");
+				equals(jQuery(oMessageTextContainer).attr("dir"), "ltr", "Attribute 'dir' for Text Direction is set to LTR");
+				oMessageBox.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -172,12 +172,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 *
 				 * <pre>
 				 * sap.m.MessageBox.show("This message should appear in the message box", {
-				 *     icon: sap.m.MessageBox.Icon.NONE,      // default
-				 *     title: "",                             // default
-				 *     actions: sap.m.MessageBox.Action.OK    // default
-				 *     onClose: null                          // default
-				 *     styleClass: ""                         // default
-				 *     initialFocus: null                     // default
+				 *     icon: sap.m.MessageBox.Icon.NONE,                    // default
+				 *     title: "",                                           // default
+				 *     actions: sap.m.MessageBox.Action.OK                  // default
+				 *     onClose: null                                        // default
+				 *     styleClass: ""                                       // default
+				 *     initialFocus: null                                   // default
+				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
 				 * </pre>
 				 *
@@ -206,6 +207,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.id] ID to be used for the dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
 				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @public
 				 * @static
 				 */
@@ -214,7 +216,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							sIcon, sTitle, vActions, fnCallback, sDialogId, sClass,
 							mDefaults = {
 								id: sap.ui.core.ElementMetadata.uid("mbox"),
-								initialFocus: null
+								initialFocus: null,
+								textDirection: sap.ui.core.TextDirection.Inherit
 							};
 
 					if (typeof mOptions === "string" || arguments.length > 2) {
@@ -316,7 +319,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 					});
 
 					if (typeof (vMessage) === "string") {
-						oDialog.addContent(new Text().setText(vMessage).addStyleClass("sapMMsgBoxText"));
+						oDialog.addContent(new Text({
+							textDirection: mOptions.textDirection
+						}).setText(vMessage).addStyleClass("sapMMsgBoxText"));
 					} else if (vMessage instanceof sap.ui.core.Control) {
 						oDialog.addContent(vMessage.addStyleClass("sapMMsgBoxText"));
 					}
@@ -348,10 +353,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 *
 				 * <pre>
 				 * sap.m.MessageBox.alert("This message should appear in the alert", {
-				 *     title: "Alert",                        // default
-				 *     onClose: null,                         // default
-				 *     styleClass: ""                         // default
-				 *     initialFocus: null                     // default
+				 *     title: "Alert",                                      // default
+				 *     onClose: null,                                       // default
+				 *     styleClass: ""                                       // default
+				 *     initialFocus: null                                   // default
+				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
 				 * </pre>
 				 *
@@ -376,6 +382,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.id] ID to be used for the alert dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the alert dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
 				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @public
 				 * @static
 				 */
@@ -415,10 +422,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 *
 				 * <pre>
 				 * sap.m.MessageBox.confirm("This message should appear in the confirm", {
-				 *     title: "Confirm",                      // default
-				 *     onClose: null                          // default
-				 *     styleClass: ""                         // default
-				 *     initialFocus: null                     // default
+				 *     title: "Confirm",                                    // default
+				 *     onClose: null                                        // default
+				 *     styleClass: ""                                       // default
+				 *     initialFocus: null                                   // default
+				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
 				 * });
 				 * </pre>
 				 *
@@ -444,6 +452,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.id] ID to be used for the confirmation dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the confirmation dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
 				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @public
 				 * @static
 				 */
