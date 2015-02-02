@@ -236,8 +236,8 @@
         <lib name="jquery_mobile" displayName="jQuery Mobile" homepage="http://jquerymobile.com">
         	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
         </lib>
-        <lib name="qunit-composite" displayName="JUnit reporter for QUnit v1.0.2pre" homepage="https://github.com/jquery/qunit-composite">
-        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        <lib name="qunit-composite" displayName="Qunit Composite" homepage="https://github.com/jquery/qunit-composite">
+        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-composite-MIT-LICENSE.txt" />
         </lib>
         <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/jquery/qunit-reporter-junit">
         	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
