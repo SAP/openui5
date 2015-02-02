@@ -161,17 +161,13 @@
 			strictEqual(oLink1.$().attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
 			// ARIA describedby for Subtle link
 			oLink1.setSubtle(true);
-			notEqual(oLink1.$().attr("aria-describedby").indexOf(oLink1.getId() + "-linkSubtle"), -1, "Property 'aria-describedby' should contain '" + oLink1.getId() + "-linkSubtle'");
 			notEqual(jQuery.sap.domById(oLink1.getId() + "-linkSubtle"), null, "Element with ID '" + oLink1.getId() + "-linkSubtle' should exist");
 			oLink1.setSubtle(false);
-			strictEqual(oLink1.$().attr("aria-describedby").indexOf(oLink1.getId() + "-linkSubtle"), -1, "Property 'aria-describedby' should not contain '" + oLink1.getId() + "-linkSubtle'");
 			strictEqual(jQuery.sap.domById(oLink1.getId() + "-linkSubtle"), null, "Element with ID '" + oLink1.getId() + "-linkSubtle' should not exist");
 			// ARIA describedby for Emphasized link
 			oLink1.setEmphasized(true);
-			notEqual(oLink1.$().attr("aria-describedby").indexOf(oLink1.getId() + "-linkEmphasized"), -1, "Property 'aria-describedby' should contain '" + oLink1.getId() + "-linkEmphasized'");
 			notEqual(jQuery.sap.domById(oLink1.getId() + "-linkEmphasized"), null, "Element with ID '" + oLink1.getId() + "-linkEmphasized' should exist");
 			oLink1.setEmphasized(false);
-			strictEqual(oLink1.$().attr("aria-describedby").indexOf(oLink1.getId() + "-linkEmphasized"), -1, "Property 'aria-describedby' should not contain '" + oLink1.getId() + "-linkEmphasized'");
 			strictEqual(jQuery.sap.domById(oLink1.getId() + "-linkEmphasized"), null, "Element with ID '" + oLink1.getId() + "-linkEmphasized' should not exist");
 
 			oLink1.destroy();

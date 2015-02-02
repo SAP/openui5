@@ -32,11 +32,7 @@
 		// ARIA attributes
 		rm.writeAccessibilityState(oControl, {
 			role: 'link',
-			haspopup: !oControl.getHref(),
-			describedby: {
-				value: oControl._getAriaDescribedByIds(),
-				append: true
-			}
+			haspopup: !oControl.getHref()
 		});
 
 		rm.addClass("sapMLnk");
@@ -101,10 +97,10 @@
 
 		// ARIA write hidden element for emphasized or subtle link
 		if (oControl.getEmphasized()) {
-			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapUiHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 		}
 		if (oControl.getSubtle()) {
-			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapUiHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
+			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
 		}
 
 		rm.write("</a>");

@@ -190,20 +190,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Link.prototype.setSubtle = function(bSubtle){
 		this.setProperty("subtle", bSubtle, true);
-		
+
 		var $this = this.$();
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
 			if (bSubtle) {
 				if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
-					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
-					$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkSubtle");
+					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
 				}
 			} else {
-				var sDescribedBy = $this.attr("aria-describedby");
-				if (sDescribedBy) {
-					$this.attr("aria-describedby", sDescribedBy.replace(this.getId() + "-linkSubtle", ""));
-				}
 				jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
 			}
 		}
@@ -212,20 +207,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Link.prototype.setEmphasized = function(bEmphasized){
 		this.setProperty("emphasized", bEmphasized, true);
-		
+
 		var $this = this.$();
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
 			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
 				if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
-					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden' aria-hidden='true'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
-					$this.attr("aria-describedby", $this.attr("aria-describedby") + " " + this.getId() + "-linkEmphasized");
+					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 				}
 			} else {
-				var sDescribedBy = $this.attr("aria-describedby");
-				if (sDescribedBy) {
-					$this.attr("aria-describedby", sDescribedBy.replace(" " + this.getId() + "-linkEmphasized", ""));
-				}
 				jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
 			}
 		}
@@ -271,26 +261,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.$().attr("target", sTarget);
 		}
 		return this;
-	};
-
-	/**
-	 * Function that calculates aria-describedby value.
-	 *
-	 * @private
-	 * @returns {String} the calculated value
-	 */
-	Link.prototype._getAriaDescribedByIds = function() {
-		var describedValue;
-		if (this.getSubtle()) {
-			describedValue = this.getId() + "-linkSubtle";
-		} else if (this.getEmphasized()) {
-			describedValue = this.getId() + "-linkEmphasized";
-		} else if (this.getSubtle() && this.getEmphasized()) {
-			describedValue = this.getId() + "-linkSubtle " + this.getId() + "-linkEmphasized";
-		} else {
-			describedValue = " ";
-		}
-		return describedValue;
 	};
 
 	/**
