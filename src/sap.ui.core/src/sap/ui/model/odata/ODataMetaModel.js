@@ -2,41 +2,60 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListBinding',
-		'sap/ui/model/json/JSONModel', 'sap/ui/model/json/JSONPropertyBinding',
-		'sap/ui/model/json/JSONTreeBinding', 'sap/ui/model/MetaModel'],
-	function(ClientContextBinding, JSONListBinding, JSONModel, JSONPropertyBinding,
+sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
+		'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONModel',
+		'sap/ui/model/json/JSONPropertyBinding', 'sap/ui/model/json/JSONTreeBinding',
+		'sap/ui/model/MetaModel'],
+	function(BindingMode, ClientContextBinding, JSONListBinding, JSONModel, JSONPropertyBinding,
 			JSONTreeBinding, MetaModel) {
 	"use strict";
 
 	/*global Promise */
 
 	/**
-	 * Constructor for a new ODataMetaModel.
+	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
+	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel} instead!
 	 *
-	 * @class Model implementation for OData meta models, which are read-only models. No events
+	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+	 *   the OData model's meta data object
+	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
+	 *   the OData model's annotations object
+	 *
+	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
+	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * as a foundation and merges v4 annotations from the existing
+	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding entity type or
+	 * property.
+	 *
+	 * Also, annotations from the "http://www.sap.com/Protocols/SAPData" namespace are lifted up
+	 * from the <code>extensions</code> array and transformed from objects into simple properties
+	 * with an "sap:" prefix for their name. Note that this happens in addition, thus the
+	 * following example shows both representations. This way, such annotations can be addressed
+	 * via a simple relative path instead of searching an array.
+	 * <pre>
+		{
+			"name" : "BusinessPartnerID",
+			"extensions" : [{
+				"name" : "label",
+				"value" : "Bus. Part. ID",
+				"namespace" : "http://www.sap.com/Protocols/SAPData"
+			}],
+			"sap:label" : "Bus. Part. ID"
+		}
+	 * </pre>
+	 *
+	 * This model is read-only and thus only supports
+	 * {@link sap.ui.model.BindingMode.OneTime OneTime} binding mode. No events
 	 * ({@link sap.ui.model.Model#event:parseError parseError},
 	 * {@link sap.ui.model.Model#event:requestCompleted requestCompleted},
 	 * {@link sap.ui.model.Model#event:requestFailed requestFailed},
 	 * {@link sap.ui.model.Model#event:requestSent requestSent}) are fired!
 	 * For asynchronous loading use {@link #loaded loaded} instead, which is based on promises.
 	 *
-	 * This implementation offers a unified access to both OData v2 metadata and v4 annotations.
-	 * It uses the existing {@link sap.ui.model.odata.ODataMetadata} as a foundation and merges v4
-	 * annotations from the existing {@link sap.ui.model.odata.ODataAnnotations} directly into the
-	 * corresponding entity or property.
-	 *
-	 * @extends sap.ui.model.MetaModel
-	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
-	 * @constructor
 	 * @alias sap.ui.model.odata.ODataMetaModel
-	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
-	 *   the OData model's metadata object
-	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
-	 *   the OData model's annotations object
+	 * @extends sap.ui.model.MetaModel
 	 * @public
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
@@ -44,7 +63,7 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 
 			constructor : function(oMetadata, oAnnotations) {
 				MetaModel.apply(this); // no arguments to pass!
-				this.sDefaultBindingMode = sap.ui.model.BindingMode.OneTime;
+				this.sDefaultBindingMode = BindingMode.OneTime;
 				this.mSupportedBindingModes = {"OneTime" : true};
 				this.oModel = new JSONModel();
 				this.oModel.setDefaultBindingMode(this.sDefaultBindingMode);
@@ -142,6 +161,9 @@ sap.ui.define(['sap/ui/model/ClientContextBinding', 'sap/ui/model/json/JSONListB
 	}
 
 	/*
+	 * Waits until the given OData meta data and annotations are fully loaded and merges them
+	 * into the given JSON model. Returns the promise used by {@link #loaded}.
+	 *
 	 * @param {sap.ui.model.json.JSONModel} oModel
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
