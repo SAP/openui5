@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Panel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, IconPool) {
 	"use strict";
 
 
@@ -118,11 +118,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @public
 	 */
 	Panel.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true); // don't rerender
+		this.setProperty("width", sWidth, true);
+
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			oDomRef.style.width = sWidth;
 		}
+
 		return this;
 	};
 
@@ -135,12 +137,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @public
 	 */
 	Panel.prototype.setHeight = function(sHeight) {
-		this.setProperty("height", sHeight, true); // don't rerender
+		this.setProperty("height", sHeight, true);
+
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			oDomRef.style.height = sHeight;
 			this._setContentHeight();
 		}
+
 		return this;
 	};
 
@@ -157,22 +161,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setProperty("expandable", bExpandable, false); // rerender since we set certain css classes
 
 		if (bExpandable && !this.oIconCollapsed) {
-			jQuery.sap.require("sap.ui.core.IconPool");
-
-			// we use only one icon (for collapsed) which is then rotated in css
-			var sCollapsedIconURI = sap.ui.core.IconPool.getIconURI("navigation-right-arrow");
-			var that = this;
-			var oIconCollapsed = sap.ui.core.IconPool.createControlByURI({
-				id : that.getId() + "-CollapsedImg",
-				src : sCollapsedIconURI
-			}).addStyleClass("sapMPanelExpandableIcon").attachPress(function(oEvent) {
-				that.setExpanded(!that.getExpanded());
-			});
-
-			// make sure it is focusable
-			oIconCollapsed.setDecorative(false);
-
-			this.oIconCollapsed = oIconCollapsed;
+			this.oIconCollapsed = this._createIcon();
 		}
 
 		return this;
@@ -223,7 +212,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
-	Panel.prototype.onAfterRendering = function() {
+	Panel.prototype.onAfterRendering = function () {
 
 		var $this = this.$();
 
@@ -246,28 +235,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 
-	Panel.prototype.exit = function() {
+	Panel.prototype.exit = function () {
 		if (this.oIconCollapsed) {
 			this.oIconCollapsed.destroy();
 			delete this.oIconCollapsed;
 		}
 	};
 
-	/**
-	 * Get the icon representing the collapsed state
-	 *
-	 * @return {sap.ui.core.Icon} the icon representing the collapsed state
-	 * @private
-	 */
-	Panel.prototype._getIcon = function() {
+	Panel.prototype._createIcon = function () {
+		var that = this,
+			sCollapsedIconURI = IconPool.getIconURI("navigation-right-arrow");
+
+		return IconPool.createControlByURI({
+			id: that.getId() + "-CollapsedImg",
+			src: sCollapsedIconURI,
+			decorative: false,
+			press: function () {
+				that.setExpanded(!that.getExpanded());
+			}
+		}).addStyleClass("sapMPanelExpandableIcon");
+	};
+
+	Panel.prototype._getIcon = function () {
 		return this.oIconCollapsed;
 	};
 
-	/**
-	 * Set the height of the panel content div
-	 * @private
-	 */
-	Panel.prototype._setContentHeight = function() {
+	Panel.prototype._setContentHeight = function () {
 		if (this.getHeight() === "auto") {
 			return;
 		}
