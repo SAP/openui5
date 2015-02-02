@@ -39,7 +39,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			i = 0,
 			sTooltip = oControl.getTooltip_AsString(),
 			// gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
-			bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;
+			bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari,
+			sLabelID;
 	
 		if (iSelectedWidth < 0) { //width should not be negative
 			iSelectedWidth = 0;
@@ -67,18 +68,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		// ARIA
+		sLabelID = oControl.getId() + "-ariaLabel";
+		oRm.writeAttribute("aria-labelledby", sLabelID);
+
 		oRm.writeAccessibilityState(oControl, {
 			"role": "slider",
 			"orientation": "horizontal",
 			"live": "assertive",
 			"valuemin": 0,
-			"label" : oControl._oResourceBundle.getText("RATING_ARIA_NAME"),
 			"disabled": !oControl.getEnabled()
 		});
 
 		oRm.write(">");
-		
-	
+
+		// ARIA
+		oRm.write("<label id='" + sLabelID + "' style='display:none;' aria-hidden='true'>" + oControl._oResourceBundle.getText("RATING_ARIA_NAME") + "</label>");
+
 		// render selected items div
 		oRm.write("<div class='sapMRISel");
 		if (bUseGradient) {
