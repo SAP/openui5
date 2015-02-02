@@ -4,67 +4,46 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 	return BaseController.extend("sap.ui.demo.mdskeleton.view.Detail", {
 
 		onInit : function () {
-			this.oInitialLoadFinishedDeferred = jQuery.Deferred();
+			this.getRouter().getRoute("object").attachPatternMatched(this.onObjectMatched, this);
 
-			if (sap.ui.Device.system.phone) {
-				//don't wait for the master on a phone
-				this.oInitialLoadFinishedDeferred.resolve();
-			} else {
-				this.getView().setBusy(true);
-				this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onDataLoaded, this);
-				this.getEventBus().subscribe("Master", "FirstItemSelected", this.onFirstItemSelected, this);
+			// When there is a list displayed, bind to the first item.
+			if (!sap.ui.Device.system.phone) {
+				this.getRouter().getRoute("main").attachPatternMatched(this.onMasterMatched, this);
 			}
-
-			this.getRouter().getRoute("object").attachPatternMatched(this.onRouteMatched, this);
-
 		},
 
-		onDataLoaded : function (sChannel, sEvent, oData) {
-			this.getView().setBusy(false);
-			this.oInitialLoadFinishedDeferred.resolve();
-		},
-
-		onFirstItemSelected :  function (sChannel, sEvent, oListItem) {
-
-			this.bindView(oListItem.getBindingContext().getPath());
-
-		},
-
-		onRouteMatched : function (oEvent) {
-			var oParameters = oEvent.getParameters();
+		onObjectMatched : function (oEvent) {
 			var sObjectPath = "/Objects('" + oEvent.getParameter("arguments").objectId + "')";
-
-			if (this.getView().getModel().getObject(sObjectPath)) {
-				this.onDataLoaded();
-			}
-
-			jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
-				// when detail navigation occurs, update the binding context
-				this.bindView(sObjectPath);
-			}, this));
+			this._bindView(sObjectPath);
 		},
 
-		bindView : function (sObjectPath) {
-			var oView = this.getView();
+		onMasterMatched : function () {
+			this.getOwnerComponent().oListSelector.oWhenListLoadingIsDone.then(function (sPath) {
+				if (sPath) {
+					this._bindView(sPath);
+				}
+			}.bind(this),
+			function () {
+				//TODO: what to do here? - no items in the list
+			});
+		},
 
-			oView.bindElement(sObjectPath, {expand : "LineItems"});
+		_bindView : function (sObjectPath) {
+			var oView = this.getView().bindElement(sObjectPath, {expand : "LineItems"});
+			oView.setBusy(true);
 
-			//Check if the data is already on the client
-			if (!oView.getModel().getData(sObjectPath)) {
+			this.getModel().whenThereIsDataForTheElementBinding(oView.getElementBinding())
+				.then(
+				function (sPath) {
+					this.getView().setBusy(false);
+					this.getOwnerComponent().oListSelector.selectAndScrollToAListItem(sPath);
+				}.bind(this),
+				function () {
 
-				// Check that the object specified actually was found.
-				oView.getElementBinding().attachEventOnce("dataReceived", jQuery.proxy(function () {
-					var oData = oView.getModel().getData(sObjectPath);
-					if (!oData) {
-						this.showEmptyView();
-						this.fireDetailNotFound();
-					} else {
-						this.fireDetailChanged(sObjectPath);
-					}
-				}, this));
-			} else {
-				this.fireDetailChanged(sObjectPath);
-			}
+					this.getView().setBusy(false);
+					this.showEmptyView();
+
+				}.bind(this));
 		},
 
 		//TODO empty view has to be adapted with empty page control which is not available yet
@@ -74,16 +53,6 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 				targetViewName : "sap.ui.demo.mdskeleton.view.NotFound",
 				targetViewType : "XML"
 			});
-		},
-
-		//this is not needed anymore or?
-		fireDetailChanged : function (sObjectPath) {
-			this.getEventBus().publish("Detail", "Changed", { objectPath : sObjectPath });
-		},
-
-		//this is not needed anymore or?
-		fireDetailNotFound : function () {
-			this.getEventBus().publish("Detail", "NotFound");
 		},
 
 		onNavBack : function () {

@@ -4,6 +4,7 @@ jQuery.sap.require("sap.ui.demo.mdskeleton.util.groupers");
 jQuery.sap.require("sap.ui.demo.mdskeleton.util.MyRouter");
 jQuery.sap.require("sap.ui.demo.mdskeleton.model.Device");
 jQuery.sap.require("sap.ui.demo.mdskeleton.model.MockableModel");
+jQuery.sap.require("sap.ui.demo.mdskeleton.util.ListSelector");
 
 sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 	metadata : {
@@ -40,8 +41,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 			},
 			routes : [
 				{
-					pattern : "",
-					name : "main",
+					name : "masterParent",
 					view : "Master",
 					targetAggregation : "masterPages",
 					targetControl : "idAppControl",
@@ -55,6 +55,19 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 							pattern : "object/{objectId}/lineitem/{lineItemId}",
 							name: "lineItem",
 							view: "LineItem"
+						}
+					]
+				},
+				{
+					name : "detailParent",
+					view : "Detail",
+					targetControl : "idAppControl",
+					subroutes: [
+						{
+							pattern : "",
+							name : "main",
+							view : "Master",
+							targetAggregation : "masterPages"
 						}
 					]
 				},
@@ -91,6 +104,8 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdskeleton.Component", {
 		this.setModel(new sap.ui.model.resource.ResourceModel({
 			bundleName : mConfig.messageBundle
 		}), "i18n");
+
+		this.oListSelector = new sap.ui.demo.mdskeleton.util.ListSelector();
 
 		// set the mock data model
 		this.setModel(new sap.ui.demo.mdskeleton.model.MockableModel(mConfig.serviceConfig.md_skeleton));

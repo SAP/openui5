@@ -11,8 +11,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		 * @public
 		 */
 		onInit : function () {
-			var oEventBus = this.getEventBus();
-
 			this.oList = this.byId("list");
 			// keeps the filter and search state 
 			this.oListFilterState = {
@@ -25,67 +23,19 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 				sort : []
 			};
 
-			// TODO : replace this with something else ???? promise?????
-			// fire an event after the list is loaded for the first time to update the detail page
-			this.oInitialLoadFinishedDeferred = jQuery.Deferred();
-			this.oList.attachEventOnce("updateFinished", function () {
-				this.oInitialLoadFinishedDeferred.resolve();
-				oEventBus.publish("Master", "InitialLoadFinished", {
-					bindingContext : this.oList.getItems()[0].getBindingContext()
-				});
-			}, this);
-
 			// update the master list object counter after new data is loaded
 			this.oList.attachEvent("updateFinished", function () {
 				this._updateListItemCount();
-				this.oList.setBusy(false);
 			}, this);
 
-			// skip master list update on phones, the pages are independet from eachother in the phone pattern
-			if (sap.ui.Device.system.phone) {
-				return;
-			}
-
-			// event setup for desktop and tablet devices
-			this.getRouter().getRoute("main").attachPatternMatched(this.onRouteMatched, this);
-			oEventBus.subscribe("Detail", "Changed", this.onDetailChanged, this);
-			oEventBus.subscribe("Detail", "NotFound", this.onNotFound, this);
+			var oListSelector = this.getOwnerComponent().oListSelector;
+			this.getRouter().getRoute("main").attachPatternMatched(oListSelector.selectAndScrollToFirstItem, oListSelector);
+			this.getOwnerComponent().oListSelector.setBoundMasterList(this.oList);
 		},
 
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
-
-		/**
-		 * Event listener for the route matched event. The matching detail page will be loaded automatically.
-		 * @param {sap.ui.base.Event} oEvent the routing event
-		 */
-		onRouteMatched : function (oEvent) {
-
-			// load the detail view in desktop
-			// TODO: replace with target (new routing feature)
-			this.getRouter().myNavToWithoutHash({
-				currentView : this.getView(),
-				targetViewName : "sap.ui.demo.mdskeleton.view.Detail",
-				targetViewType : "XML"
-			});
-
-			//Wait for the list to be loaded once
-			this.oInitialLoadFinishedDeferred.done(function () {
-
-				//On the empty hash select the first item
-				var oFirstItem = this._selectFirstItem();
-
-				if(oFirstItem) {
-
-					//inform the detail view that the first item is selected so the detail view displays the correct data
-					this.getEventBus().publish("Master", "FirstItemSelected", oFirstItem);
-
-				}
-
-			}.bind(this));
-
-		},
 
 		/**
 		 * Event handler for the master search field.
@@ -191,6 +141,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		 * @param {sap.ui.base.Event} oEvent the confirm event
 		 * @public
 		 */
+		//TODO: i am too long and i do too much am i tested? please refacor me!
 		onConfirmViewSettingsDialog : function (oEvent) {
 			var mParams = oEvent.getParameters(),
 				sKey,
@@ -238,7 +189,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100));
 						break;
 					case "Filter2":
-						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100));	
+						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100));
 						break;
 					}
 					aValues.push(sValue);
@@ -251,47 +202,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			this.byId("filterBarLabel").setText(this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterFilterBarText", [aValues.join(", ")]));
 
 			this._applyFilterSearch();
-		},
-
-		/**
-		 * Event listener for the not found event.
-		 * @public
-		 */
-		// TODO: can this be done in a better way?
-		onNotFound : function () {
-			this.oList.removeSelections();
-		},
-
-		/**
-		 * Event listener for the detail change event.
-		 * @param {string} sChannel the channel id
-		 * @param {sap.ui.base.Event} oEvent
-		 * @param {object} oData the custom data that contains the object path to update the list selection
-		 * @public
-		 */
-		onDetailChanged : function (sChannel, sEvent, oData) {
-			var that = this,
-				sObjectPath = oData.objectPath;
-
-			// wait until the list is loaded once
-			this._waitForInitialListLoading(function () {
-				var oSelectedItem = that.oList.getSelectedItem(),
-					aItems = that.oList.getItems(),
-					i = 0;
-
-				// skip update if the current selection is already matching the object path
-				if (oSelectedItem && oSelectedItem.getBindingContext().getPath() === sObjectPath) {
-					return;
-				}
-
-				// select the list item that matches the object path
-				aItems.some(function (oItem) {
-					if (oItem.getBindingContext().getPath() === sObjectPath) {
-						this.oList.setSelectedItem(oItem);
-						return true;
-					}
-				}, this);
-			});
 		},
 
 		/**
@@ -308,15 +218,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		/* =========================================================== */
 		/* begin: internal methods                                     */
 		/* =========================================================== */
-
-		/**
-		 * Executes the callback function after the deferred is resolved
-		 * @param{function} fnToExecute the callback function
-		 * @private 
-		 */
-		_waitForInitialListLoading : function (fnToExecute) {
-			jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(fnToExecute, this));
-		},
 
 		/**
 		 * Shows the selected item on the detail page
@@ -344,7 +245,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 				iItems = this.byId("list").getBinding("items").getLength();
 				sTitle = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterTitleCount", [iItems]);
 
-				this.byId("page").setTitle(sTitle);			
+				this.byId("page").setTitle(sTitle);
 			}
 		},
 
@@ -364,22 +265,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		_applyGroupSort : function () {
 			var aSorters = this.oListSorterState.group.concat(this.oListSorterState.sort);
 			this.oList.getBinding("items").sort(aSorters);
-		},
-
-		/**
-		 * Selects the first list in the master list
-		 * @private
-		 */
-		_selectFirstItem : function () {
-			var aItems = this.oList.getItems(),
-				oFirstItem;
-
-			if (aItems.length) {
-				oFirstItem = aItems[0];
-				this.oList.setSelectedItem(oFirstItem, true);
-			}
-
-			return oFirstItem;
 		}
 
 	});

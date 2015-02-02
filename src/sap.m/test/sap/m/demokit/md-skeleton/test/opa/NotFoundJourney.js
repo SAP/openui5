@@ -26,7 +26,6 @@ sap.ui.require(
 				Given.GivenIStartTheAppOnADesktopDevice(sHash);
 				fnTest.call(this, Given, When, Then);
 			});
-
 		}
 
 		opaTestPhoneAndDesktop("Should see the not found page if the hash is something that matches no route", "#somethingThatDoesNotExist", function (Given, When, Then) {

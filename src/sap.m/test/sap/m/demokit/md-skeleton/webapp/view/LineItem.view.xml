@@ -1,7 +1,5 @@
-<mvc:View
+<View
 	controllerName="sap.ui.demo.mdskeleton.view.LineItem"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<Page id="lineItemPage"
 		navButtonPress="onNavBack"
@@ -22,4 +20,4 @@
 			</Toolbar>
 		</footer>
 	</Page>
-</mvc:View>
+</View>

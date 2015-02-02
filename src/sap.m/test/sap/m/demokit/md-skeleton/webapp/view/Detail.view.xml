@@ -1,6 +1,5 @@
-<mvc:View
+<View
 	controllerName="sap.ui.demo.mdskeleton.view.Detail"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
 		id="detailPage"
@@ -64,4 +63,4 @@
 			</Toolbar>
 		</footer>
 	</Page>
-</mvc:View>
+</View>
