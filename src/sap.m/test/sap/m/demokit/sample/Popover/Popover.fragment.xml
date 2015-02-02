@@ -4,11 +4,13 @@
 	<Popover
 		title="{Name}"
 		class="sapUiContentPadding"
-		placement="Bottom" >
+		placement="Bottom"
+			initialFocus="email">
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
+					id="email"
 					text="Email"
 					icon="sap-icon://email"
 					press="handleEmailPress" />
