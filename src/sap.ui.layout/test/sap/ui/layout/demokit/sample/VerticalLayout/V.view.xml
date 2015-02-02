@@ -5,18 +5,21 @@
 	xmlns="sap.m">
 	<l:VerticalLayout class="sapUiSmallMargin" >
 		<Image
-			class="sapUiSmallMarginBottom"
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			class="sapUiSmallMarginEnd"
+			src="{img>/products/pic1}"
+			densityAware="true"
 			width="{/widthS}">
 		</Image>
 		<Image
-			class="sapUiSmallMarginBottom"
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			class="sapUiSmallMarginEnd"
+			src="{img>/products/pic1}"
+			densityAware="true"
 			width="{/widthM}">
 		</Image>
 		<Image
-			class="sapUiSmallMarginBottom"
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			class="sapUiSmallMarginEnd"
+			src="{img>/products/pic1}"
+			densityAware="true"
 			width="{/widthL}">
 		</Image>
 	</l:VerticalLayout>

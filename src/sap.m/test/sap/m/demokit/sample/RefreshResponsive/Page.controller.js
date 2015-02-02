@@ -27,7 +27,7 @@ sap.ui.controller("sap.m.sample.RefreshResponsive.Page", {
 		// load product data
 		this._productCount = 0;
 		var that = this;
-		jQuery.getJSON("test-resources/sap/ui/demokit/explored/products.json", function (oData) {
+		jQuery.getJSON(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), function (oData) {
 			that._productData = oData;
 			that._pushNewProduct();
 		});
@@ -46,9 +46,9 @@ sap.ui.controller("sap.m.sample.RefreshResponsive.Page", {
 	},
 
 	handleRefresh: function (oEvent) {
-		
+
 		setTimeout(jQuery.proxy(function () {
-			
+
 			this._pushNewProduct();
 			this.getView().byId("pullToRefresh").hide();
 

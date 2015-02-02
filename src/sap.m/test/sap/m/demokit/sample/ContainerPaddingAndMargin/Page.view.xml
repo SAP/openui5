@@ -10,7 +10,7 @@
 		<l:HorizontalLayout class="sapUiContentPadding">
 			<Image
 				densityAware="false"
-				src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+				src="{img>/products/pic1}"
 				width="{/widthS}"
 				class="sapUiSmallMarginEnd">
 				<layoutData>
@@ -19,7 +19,7 @@
 			</Image>
 			<Image
 				densityAware="false"
-				src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+				src="{img>/products/pic1}"
 				width="{/widthM}"
 				class="sapUiSmallMarginEnd">
 				<layoutData>
@@ -28,7 +28,7 @@
 			</Image>
 			<Image
 				densityAware="false"
-				src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+				src="{img>/products/pic1}"
 				width="{/widthL}" >
 				<layoutData>
 					<FlexItemData growFactor="3" />

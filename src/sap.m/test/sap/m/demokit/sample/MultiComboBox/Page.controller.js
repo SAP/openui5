@@ -2,10 +2,10 @@ sap.ui.controller("sap.m.sample.MultiComboBox.Page", {
 
 	onInit: function () {
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 	},
-	
+
 
 	handleSelectionChange: function(oEvent) {
 		var changedItem = oEvent.getParameter("changedItem");
@@ -31,7 +31,7 @@ sap.ui.controller("sap.m.sample.MultiComboBox.Page", {
 				messageText += ",";
 			}
 		}
-		
+
 		messageText += "]";
 
 		sap.m.MessageToast.show(messageText, {

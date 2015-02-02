@@ -1,11 +1,11 @@
 sap.ui.controller("sap.m.sample.ObjectHeaderFavFlag.Page", {
 
 	onInit : function (evt) {
-		
+
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
-		
+
 		// set local favorite model
 		this.getView().setModel(new sap.ui.model.json.JSONModel({}), "ff");
 		this._updateFFModel(true, true);

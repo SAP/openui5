@@ -7,11 +7,11 @@ sap.ui.controller("sap.m.sample.TablePerso.Table", {
 	onInit: function () {
 
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		var oGroupingModel = new sap.ui.model.json.JSONModel({ hasGrouping: false});
 		this.getView().setModel(oModel);
 		this.getView().setModel(oGroupingModel, 'Grouping');
-		
+
 		// init and activate controller
 		this._oTPC = new sap.m.TablePersoController({
 			table: this.getView().byId("productsTable"),
@@ -24,12 +24,12 @@ sap.ui.controller("sap.m.sample.TablePerso.Table", {
 	onPersoButtonPressed: function (oEvent) {
 		this._oTPC.openDialog();
 	},
-	
+
 	onTablePersoRefresh : function() {
 		sap.m.sample.TablePerso.DemoPersoService.resetPersData();
-		this._oTPC.refresh();	
+		this._oTPC.refresh();
 	},
-	
+
 	onTableGrouping : function(oEvent) {
 		this._oTPC.setHasGrouping(oEvent.getSource().getSelected());
 	}
