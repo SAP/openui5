@@ -63,7 +63,8 @@
 			rm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
 		}
 
-		if (oControl.getHref()) {
+		/* set href only if link is enabled - BCP incident 1570020625 */
+		if (oControl.getHref() && oControl.getEnabled()) {
 			rm.writeAttributeEscaped("href", oControl.getHref());
 		} else {
 			/*eslint-disable no-script-url */
