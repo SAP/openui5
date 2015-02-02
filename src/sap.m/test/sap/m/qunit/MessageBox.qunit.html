@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.MessageBox</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -15,10 +15,13 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script language="javascript">
 			sinon.config.useFakeTimers = true;
@@ -48,6 +51,7 @@
 			jQuery.sap.require("sap.m.MessageBox");
 
 			test("show", function(){
+
 				sap.m.MessageBox.show(sMessageText,{
 					title: sMessageTitle,
 					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
@@ -56,6 +60,7 @@
 					styleClass: sClassName
 				});
 				this.clock.tick(500);
+
 				var oMessageBox = sap.ui.getCore().byId("messagebox1");
 				ok(oMessageBox, "Dialog should be created");
 				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -64,6 +69,109 @@
 				ok(oMessageBox.$().hasClass(sClassName));
 				oMessageBox.destroy();
 			});
+
+
+			test("initial focus to control", function(){
+				var oButton = new sap.m.Button({
+					text:'Do something'
+				});
+
+				sap.m.MessageBox.show(sMessageText,{
+					title: sMessageTitle,
+					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO, oButton],
+					onClose: callback,
+					id: "messagebox2",
+					styleClass: sClassName,
+					initialFocus: oButton
+				});
+				this.clock.tick(500);
+
+				var oMessageBox = sap.ui.getCore().byId("messagebox2");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				equal(oMessageBox.getButtons().length, 4, "All three buttons are added to dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				equal(oMessageBox.getInitialFocus(),oButton.sId,"InitialFocus is set correctly");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("initial focus with string", function(){
+				sap.m.MessageBox.show(sMessageText,{
+					title: sMessageTitle,
+					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+					onClose: callback,
+					id: "messagebox3",
+					styleClass: sClassName,
+					initialFocus:'Cancel'
+				});
+				this.clock.tick(500);
+
+				var oMessageBox = sap.ui.getCore().byId("messagebox3");
+				var aButtons = oMessageBox.getButtons();
+
+				var sInitialFocusControlId = (function() {
+					var result;
+					for (var i = 0; i < aButtons.length; i++) {
+						if (aButtons[i].mProperties.text.toLowerCase() === 'Cancel'.toLowerCase()) {
+							result = aButtons[i].sId;
+						}
+					}
+					return result;
+				})();
+
+				var getInitialFocusControlId = (function() {
+					var sInitialFocusControlId;
+					for (var i = 0; i < aButtons.length; i++) {
+						if (aButtons[i].mProperties.text.toLowerCase() === 'Cancel'.toLowerCase()) {
+							sInitialFocusControlId = aButtons[i].sId;
+						}
+					}
+					return sInitialFocusControlId;
+				})();
+
+
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				equal(oMessageBox.getInitialFocus(),sInitialFocusControlId,"InitialFocus is set correctly");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("show with set initial focus with sap.m.MessageBox.Action", function(){
+				sap.m.MessageBox.show(sMessageText,{
+					title: sMessageTitle,
+					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+					onClose: callback,
+					id: "messagebox4",
+					styleClass: sClassName,
+					initialFocus: sap.m.MessageBox.Action.NO
+				});
+				this.clock.tick(500);
+
+				var oMessageBox = sap.ui.getCore().byId("messagebox4");
+				var aButtons = oMessageBox.getButtons();
+				var getInitialFocusControlId = (function() {
+					var sInitialFocusControlId;
+					for (var i = 0; i < aButtons.length; i++) {
+						if (aButtons[i].mProperties.text.toLowerCase() === 'NO'.toLowerCase()) {
+							sInitialFocusControlId = aButtons[i].sId;
+						}
+					}
+					return sInitialFocusControlId;
+				})();
+
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				equal(oMessageBox.getInitialFocus() ,getInitialFocusControlId,"InitialFocus is set correctly");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
 
 			test("alert", function(){
 				sap.m.MessageBox.alert(sMessageText, {
