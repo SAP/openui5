@@ -12,20 +12,27 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 			} else {
 				this.getView().setBusy(true);
 				this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onDataLoaded, this);
+				this.getEventBus().subscribe("Master", "FirstItemSelected", this.onFirstItemSelected, this);
 			}
 
-			this.getRouter().getRoute("object").attachPatternMatched(this.onPatternMatched, this);
+			this.getRouter().getRoute("object").attachPatternMatched(this.onRouteMatched, this);
 
 		},
 
 		onDataLoaded : function (sChannel, sEvent, oData) {
-			this.bindView(oData.bindingContext.getPath());
 			this.getView().setBusy(false);
 			this.oInitialLoadFinishedDeferred.resolve();
 		},
 
-		onPatternMatched : function (oEvent) {
-			var sObjectPath = "/" + oEvent.getParameter("arguments").object;
+		onFirstItemSelected :  function (sChannel, sEvent, oListItem) {
+
+			this.bindView(oListItem.getBindingContext().getPath());
+
+		},
+
+		onRouteMatched : function (oEvent) {
+			var oParameters = oEvent.getParameters();
+			var sObjectPath = "/Objects('" + oEvent.getParameter("arguments").objectId + "')";
 
 			if (this.getView().getModel().getObject(sObjectPath)) {
 				this.onDataLoaded();
@@ -33,7 +40,6 @@ sap.ui.define(["sap/ui/demo/mdskeleton/view/BaseController"], function (BaseCont
 
 			jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
 				// when detail navigation occurs, update the binding context
-				var sObjectPath = "/Objects('" + oEvent.getParameter("arguments").objectId + "')";
 				this.bindView(sObjectPath);
 			}, this));
 		},

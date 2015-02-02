@@ -5,3 +5,4 @@ jQuery.sap.require("sap.ui.test.opaQunit");
 
 jQuery.sap.require("sap.ui.demo.mdskeleton.test.opa.NavigationJourney");
 jQuery.sap.require("sap.ui.demo.mdskeleton.test.opa.NavigationJourneyPhone");
+jQuery.sap.require("sap.ui.demo.mdskeleton.test.opa.NotFoundJourney");
