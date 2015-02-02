@@ -1,6 +1,11 @@
 /* ============================================= */
 /* CSS for control sap.m/ObjectHeaderItem.control */
 /* ============================================= */
+.sapMOH h1, .sapMOHR h1 {
+	margin: 0;
+	font-weight: normal;
+}
+
 .sapMOH {
 	margin: 1rem;
 	padding: 1rem;
@@ -46,15 +51,10 @@
 	margin-bottom: 1rem;
 }
 
-.sapMOHIntroActive > a,.sapMOHTitleActive {
-	color: @sapUiLink;
-	text-decoration: none;
-}
-
 .sapMOHIntroActive > a:active,
 .sap-desktop .sapMOHIntroActive > a:hover,
-.sapMOHTitleActive .sapMText:active,
-.sap-desktop .sapMOHTitleActive .sapMText:hover {
+.sapMOHTitleActive h1 .sapMText:active,
+.sap-desktop .sapMOHTitleActive h1 .sapMText:hover {
 	text-decoration: underline;
 }
 
@@ -415,6 +415,7 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 .sap-desktop .sapMOHRTitleActive .sapMOHRTitleText:hover {
 	text-decoration: underline;
 }
+
 .sapMOHRTitleArrow {
 	display: inline-block;
 	vertical-align: top;

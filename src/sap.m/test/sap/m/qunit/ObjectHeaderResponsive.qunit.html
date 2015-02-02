@@ -275,7 +275,7 @@
 					
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					ok(!$sTitle.attr("href"), "Title does not have an attribute href and it's not a link.");
+					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
 					
 					// Clean up
 					oObjectHeader.destroy();
@@ -743,7 +743,7 @@
 					oCore.applyChanges();
 					
 					// Assert
-					ok(jQuery(".sapMOHRTitleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
+					ok(oObjectHeader.$("arrow-aria").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
 				});
 				
 				test("Active icon has aria attributes", function(){ 

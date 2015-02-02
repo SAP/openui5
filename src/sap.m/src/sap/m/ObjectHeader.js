@@ -413,12 +413,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		} else if (!this.getResponsive() && this.getTitleActive() && oEvent.srcControl === this._titleText) {
 			if (!this.getTitleHref()) {
+				oEvent.preventDefault();
 				this.fireTitlePress({
 					domRef : this._titleText.getFocusDomRef()
 				});
 			}
 		} else if (this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-txt" || jQuery(oEvent.target).parent().attr('id') === this.getId() + "-txt" )) {
 			if (!this.getTitleHref()) {
+				oEvent.preventDefault();
 				if (!sSourceId) { // if the click is over the span inside the "a" we should get appropriate sourceId (the one of the "a")
 					sSourceId = jQuery(oEvent.target).parent().attr('id');
 				}
@@ -446,6 +448,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			if (!this.getTitleHref()) {
+				oEvent.preventDefault();
 				this.fireTitlePress({
 					domRef : this._titleText.getFocusDomRef()
 				});
@@ -462,6 +465,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sSourceId = jQuery(oEvent.target).parent().attr('id');
 			}
 			if (!this.getTitleHref()) {
+				oEvent.preventDefault();
 				this.fireTitlePress({
 					domRef : jQuery.sap.domById(sSourceId)
 				});

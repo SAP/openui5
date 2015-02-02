@@ -89,7 +89,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 	};
-
+	
+	/**
+	 * Renders hidden div with ARIA descriptions of the favorite and flag icons.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 *
+	 * @param {sap.m.ObjectHeader}
+	 *            oControl the ObjectHeader
+	 *
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderMarkersAria = function(oRM, oControl) {
+		var sAriaDescription = "", // ARIA description message
+			oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
+		
+			// check if flag mark is set
+			if (oControl.getMarkFlagged()) {
+				sAriaDescription += (oLibraryResourceBundle.getText("ARIA_FLAG_MARK_VALUE") + " ");
+			}
+		
+			// check if favorite mark is set
+			if (oControl.getMarkFavorite()) {
+				sAriaDescription += (oLibraryResourceBundle.getText("ARIA_FAVORITE_MARK_VALUE") + " ");
+			}
+		
+			// if there is a description render ARIA node
+			if (sAriaDescription !== "") {	
+				// BEGIN ARIA hidden node
+				oRM.write("<div");
+		
+				oRM.writeAttribute("id", oControl.getId() + "-markers-aria");
+				oRM.writeAttribute("aria-hidden", "false");
+				oRM.addClass("sapUiHidden");
+				oRM.writeClasses();
+				oRM.write(">");
+				oRM.writeEscaped(sAriaDescription);
+		
+				oRM.write("</div>");
+				// END ARIA hidden node
+			}
+	};
+	
 	/**
 	 * Returns the array of icons from ObjectHeader.
 	 *
@@ -284,6 +326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			} else if (aRight[0] instanceof sap.ui.core.Icon) {
 				oRM.addClass("sapMOHStatusFixedWidth");
 				oRM.addClass("sapMObjStatusMarker");
+				oRM.writeAttribute("aria-describedby", oOH.getId() + "-markers-aria");
 			} else {
 				oRM.addClass("sapMOHStatus");
 			}
@@ -334,6 +377,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var iNoOfRows = iAttribsLength > iIconsAndStatusesLength ? iAttribsLength : iIconsAndStatusesLength;
 
 		if (!oOH.getResponsive()) {
+			if (oOH.getShowMarkers()) {
+				this._renderMarkersAria(oRM, oOH);
+			}
 			for (var iCount = 0; iCount < iNoOfRows; iCount++) {
 				this._renderRow(oRM, oOH, aVisibleAttribs[iCount], aIconsAndStatuses[iCount]);
 			}
@@ -383,6 +429,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderTitle = function(oRM, oOH) {
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
+		
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
@@ -404,6 +452,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					if (oOH.getTitleTarget()) {
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 					}
+				} else {
+					oRM.writeAttribute("href", "#");
 				}
 
 				//ARIA attributes
@@ -426,8 +476,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			oRM.writeClasses();
 			oRM.write(">");
-
+			oRM.write("<h1>");
 			this._renderChildControl(oRM, oOH, oOH._titleText);
+			oRM.write("</h1>");
 			if (oOH.getTitleActive()) {
 				oRM.write("</a>"); // End Title Text container
 			} else {
@@ -436,14 +487,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		if (oOH.getShowTitleSelector()) {
+			// BEGIN ARIA hidden node
+			oRM.write("<div");
+			oRM.writeAttribute("id", oOH.getId() + "-arrow-aria");
+			oRM.writeAttribute("aria-hidden", "false");
+			oRM.writeAccessibilityState({
+				role: "link",
+				haspopup: true
+			});
+			oRM.addClass("sapUiHidden");
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.writeEscaped(oLibraryResourceBundle.getText("OH_ARIA_SELECT_ARROW_VALUE"));
+			oRM.write("</div>");
+			// END ARIA hidden node
+			
 			oRM.write("<span"); // Start title arrow container
 			oRM.addClass("sapMOHTitleArrow");
 			oRM.writeClasses();
+			oRM.writeAttribute("aria-describedby", oOH.getId() + "-arrow-aria");
 
-			//ARIA attributes
-			oRM.writeAccessibilityState({
-				haspopup: true
-			});
 			oRM.write(">");
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
@@ -479,6 +542,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderFullOH = function(oRM, oOH) {
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
+
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oOH.getIntro()) {
 			this._renderIntro(oRM, oOH, "sapMOHIntro", "sapMOHIntroActive");
@@ -513,7 +578,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				//ARIA attributes
 				oRM.writeAccessibilityState({
 					role: "link",
-					haspopup: true
+					haspopup: true,
+					label: oLibraryResourceBundle.getText("OH_ARIA_ICON")
 				});
 			}
 			oRM.writeClasses();
@@ -786,6 +852,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 **/
 	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
+		
 		// Title container displayed to the left of the number and number units container.
 		oRM.write("<div"); // Start Title and Number container (block1 and block2)
 		oRM.writeAttribute("id", oControl.getId() + "-titlenumdiv");
@@ -829,7 +897,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				//ARIA attributes
 				oRM.writeAccessibilityState({
 					role: "link",
-					haspopup: true
+					haspopup: true,
+					label: oLibraryResourceBundle.getText("OH_ARIA_ICON")
 				});
 			}
 			oRM.writeClasses();
@@ -1037,6 +1106,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			aIcons.push(oControl._oFavIcon);
 			aIcons.push(oControl._oFlagIcon);
 
+			this._renderMarkersAria(oRM, oControl); // render hidden aria description of flag and favorite icons
+
 			// render icons
 			oRM.write("<span");
 			oRM.addClass("sapMObjStatusMarker");
@@ -1046,6 +1117,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			oRM.writeClasses();
 			oRM.writeAttribute("id", oControl.getId() + "-markers");
+			oRM.writeAttribute("aria-describedby", oControl.getId() + "-markers-aria");
+
 			oRM.write(">");
 			for (var i = 0; i < aIcons.length; i++) {
 				this._renderChildControl(oRM, oControl, aIcons[i]);
@@ -1237,7 +1310,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
 		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
-
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
+		
+		oRM.write("<h1>");
 		oRM.write("<span");
 		oRM.addClass("sapMOHRTitleTextContainer");
 		oRM.writeClasses();
@@ -1253,7 +1328,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				if (oOH.getTitleTarget()) {
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 				}
+			} else {
+				oRM.writeAttribute("href", "#");
 			}
+
 			oRM.writeAttribute("tabindex", "0");
 			//ARIA attributes
 			oRM.writeAccessibilityState({
@@ -1316,18 +1394,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		if (oOH.getShowTitleSelector()) {
+			// BEGIN ARIA hidden node
+			oRM.write("<div");
+			oRM.writeAttribute("id", oOH.getId() + "-arrow-aria");
+			oRM.writeAttribute("aria-hidden", "false");
+			oRM.writeAccessibilityState({
+				role: "link",
+				haspopup: true
+			});
+			oRM.addClass("sapUiHidden");
+			oRM.writeClasses();
+			oRM.write(">");
+			oRM.writeEscaped(oLibraryResourceBundle.getText("OH_ARIA_SELECT_ARROW_VALUE"));
+			oRM.write("</div>");
+			// END ARIA hidden node
+			
 			oRM.write("<span"); // Start title arrow container
 			oRM.addClass("sapMOHRTitleArrow");
 			oRM.writeClasses();
+			oRM.writeAttribute("aria-describedby", oOH.getId() + "-arrow-aria");
 
-			//ARIA attributes
-			oRM.writeAccessibilityState({
-				haspopup: true
-			});
 			oRM.write(">");
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
 		}
+		oRM.write("</h1>");
 	};
 
 	/**
