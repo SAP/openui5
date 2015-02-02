@@ -1,7 +1,10 @@
 sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 
 	onInit: function () {
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/uploadCollection.json");
+
+		// set mock data
+		var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json")
+		var oModel = new sap.ui.model.json.JSONModel(sPath);
 		this.getView().setModel(oModel);
 
 		var aDataCB= {

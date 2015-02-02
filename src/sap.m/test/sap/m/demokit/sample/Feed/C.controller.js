@@ -3,8 +3,9 @@ jQuery.sap.require("sap.ui.core.format.DateFormat");
 sap.ui.controller("sap.m.sample.Feed.C", {
 
 	onInit: function () {
-		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/feed.json");
+		// set mock model
+		var sPath = jQuery.sap.getModulePath("sap.m.sample.Feed", "/feed.json")
+		var oModel = new sap.ui.model.json.JSONModel(sPath);
 		this.getView().setModel(oModel);
 	},
 
@@ -30,7 +31,7 @@ sap.ui.controller("sap.m.sample.Feed.C", {
 			EntryCollection : aEntries
 		});
 	},
-	
+
 	onSenderPress: function (oEvent) {
 		sap.m.MessageToast.show("Clicked on Link: " + oEvent.getSource().getSender());
 },
