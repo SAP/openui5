@@ -185,9 +185,15 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
 		 */
 		SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
+			var sLabelledbyId = oSwitch.getId() + (oSwitch.getState() ? "-on" : "-off");
+
 			oRm.writeAccessibilityState(oSwitch, {
 				role: "checkbox",
-				checked: oSwitch.getState()
+				checked: oSwitch.getState(),
+				labelledby: {
+					value: sLabelledbyId,
+					append: true
+				}
 			});
 		};
 

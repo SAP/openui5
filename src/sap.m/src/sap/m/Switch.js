@@ -141,7 +141,8 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 			var sId = this.getId(),
 				oOnDomRef = oDomRef.querySelector("#" + sId + "-on"),
-				oOffDomRef = oDomRef.querySelector("#" + sId + "-off");
+				oOffDomRef = oDomRef.querySelector("#" + sId + "-off"),
+				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby");
 
 			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
 
@@ -153,11 +154,13 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			if (bState) {
 				this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
 				oDomRef.setAttribute("aria-checked", "true");
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-off", sId + "-on"));
 				oOnDomRef.removeAttribute("aria-hidden");
 				oOffDomRef.setAttribute("aria-hidden", "true");
 			} else {
 				this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
 				oDomRef.setAttribute("aria-checked", "false");
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-on", sId + "-off"));
 				oOnDomRef.setAttribute("aria-hidden", "true");
 				oOffDomRef.removeAttribute("aria-hidden");
 			}
