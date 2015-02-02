@@ -282,7 +282,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			//click on other item leads to showing the right content of this item
 			} else {
 				//change the content aria-labaled by the newly selected tab;
-				this.getParent().$("content").attr('aria-labelledby', oItem.sId);
+				if (this.getParent() instanceof sap.m.IconTabBar) {
+					this.getParent().$("content").attr('aria-labelledby', oItem.sId);
+				}
 
 				// set new item
 				this.oSelectedItem = oItem;
@@ -435,7 +437,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._fnResize, this));
 
 		// Change ITB content height on resize when ITB stretchContentHeight is set to true (IE9 fix)
-		if (!jQuery.support.newFlexBoxLayout && this.getParent().getStretchContentHeight()) {
+		if (!jQuery.support.newFlexBoxLayout &&
+			this.getParent() instanceof sap.m.IconTabBar && 
+			this.getParent().getStretchContentHeight()) {
 			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(this.getParent().getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
 			this._fnResizeNoFlexboxSupport();
 		}
