@@ -578,6 +578,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		if (sap.ui.Device.browser.internet_explorer) {
 			// TODO: Check when IE will support evaluate-method
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
+			oXMLDoc.preserveWhiteSpace = true;
 			oXMLDoc.loadXML(sXMLContent);
 			this.xmlCompatVersion = true;
 		} else if (oXMLDocument) {
