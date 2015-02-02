@@ -61,19 +61,30 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		 * @param {sap.ui.base.Event} oEvent the routing event
 		 */
 		onRouteMatched : function (oEvent) {
+
 			// load the detail view in desktop
 			// TODO: replace with target (new routing feature)
-			this.getRouter().myNavToWithoutHash({ 
+			this.getRouter().myNavToWithoutHash({
 				currentView : this.getView(),
 				targetViewName : "sap.ui.demo.mdskeleton.view.Detail",
 				targetViewType : "XML"
 			});
-	
-			// wait for the list to be loaded once
-			this._waitForInitialListLoading(function () {
-				// on the empty hash select the first item
-				this._selectFirstItem();
-			});
+
+			//Wait for the list to be loaded once
+			this.oInitialLoadFinishedDeferred.done(function () {
+
+				//On the empty hash select the first item
+				var oFirstItem = this._selectFirstItem();
+
+				if(oFirstItem) {
+
+					//inform the detail view that the first item is selected so the detail view displays the correct data
+					this.getEventBus().publish("Master", "FirstItemSelected", oFirstItem);
+
+				}
+
+			}.bind(this));
+
 		},
 
 		/**
@@ -314,7 +325,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		 * @private
 		 */
 		_showDetail : function (oItem) {
-			var bReplace = jQuery.device.is.phone ? false : true;
+			var bReplace = !jQuery.device.is.phone;
 			this.getRouter().navTo("object", {
 				objectId: oItem.getBindingContext().getProperty("ObjectID")
 			}, bReplace);
@@ -360,11 +371,15 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 		 * @private
 		 */
 		_selectFirstItem : function () {
-			var oItem = this.oList.getItems()[0];
+			var aItems = this.oList.getItems(),
+				oFirstItem;
 
-			if (oItem) {
-				this.oList.setSelectedItem(oItem);
+			if (aItems.length) {
+				oFirstItem = aItems[0];
+				this.oList.setSelectedItem(oFirstItem, true);
 			}
+
+			return oFirstItem;
 		}
 
 	});

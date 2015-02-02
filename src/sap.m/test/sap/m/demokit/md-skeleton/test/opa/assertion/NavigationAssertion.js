@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals'],
-	function(Opa5, AggregationLengthEquals) {
+sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals', 'sap/ui/test/matchers/PropertyStrictEquals'],
+	function(Opa5, AggregationLengthEquals, PropertyStrictEquals) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.mdskeleton.test.opa.assertion.NavigationAssertion", {
@@ -17,7 +17,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
 				viewName : "Detail",
-				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : "Object 1"}) ],
+				matchers : [ new PropertyStrictEquals({name : "title", value : "Object 1"}) ],
 				success : function () {
 					ok(true, "was on the first object page");
 				}
@@ -40,7 +40,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
 				viewName : sViewName,
-				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : sTitleName}) ],
+				matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName}) ],
 				success : function (aControls) {
 					strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
 					ok(true, "was on the " + sTitleName + " " + sViewName + " page");
@@ -114,7 +114,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				controlType : "sap.m.Button",
 				viewName : "LineItem",
-				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "icon", value : sIcon}) ],
+				matchers : [ new PropertyStrictEquals({ name : "icon", value : sIcon }) ],
 				success : function (aButtons) {
 					strictEqual(aButtons[0].getEnabled(), bEnabled, "'" + sName + sSuccessMessage);
 				},
@@ -136,6 +136,28 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		
 		iShouldBeOnTheLineItem2Page : function() {
 			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_2");
+		},
+
+		iShouldSeeTheEmptyPage : function () {
+			return this.waitFor({
+				viewName : "NotFound",
+				id : "notFoundPage",
+				success : function (oPage) {
+					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getResourceBundle().getText("notFoundTitle"), "was on the empty page");
+				},
+				errorMessage: "did not reach the empty page"
+			});
+		},
+
+		theTextShouldSayResourceNotFound : function () {
+			return this.waitFor({
+				viewName: "NotFound",
+				id: "notFoundText",
+				success: function (oText) {
+					strictEqual(oText.getText(), oText.getModel("i18n").getResourceBundle().getText("notFoundText"), "did show the correct not found text");
+				},
+				errorMessage: "did not display the resource not found text"
+			});
 		}
 		
 	});
