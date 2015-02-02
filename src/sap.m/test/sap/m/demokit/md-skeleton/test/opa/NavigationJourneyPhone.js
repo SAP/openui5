@@ -15,19 +15,18 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		viewNamespace : "sap.ui.demo.mdskeleton.view."
 	});
 
-	module("Desktop navigation");
+	module("Mobile navigation");
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.GivenIStartTheAppOnADesktopDevice();
+		Given.GivenIStartTheAppOnAPhone();
 
 		//Actions
 		When.iLookAtTheScreen();
 
 		// Assertions
 		Then.iShouldSeeTheObjectList().
-			and.theObjectListShouldHave9Entries().
-			and.theObjectPageShowsTheFirstObject();
+			and.theObjectListShouldHave9Entries();
 	});
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
@@ -35,14 +34,13 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		When.iChangeTheHashToObject3();
 
 		// Assertions
-		Then.iShouldBeOnTheObject3Page().
-			and.theObject3ShouldBeSelectedInTheMasterList();
+		Then.iShouldBeOnTheObject3Page();
 	});
 
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheObject1InMasterList();
+		When.iPressTheBackButton().and.iPressOnTheObject1InMasterList();
 
 		// Assertions
 		Then.iShouldBeOnTheObject1Page();
@@ -50,11 +48,10 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheObject1InMasterList();
+		When.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldBeOnTheObject1Page().
-			and.iShouldSeeTheObjectLineItemsList().
+		Then.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
 			and.theFirstLineItemHasIDLineItemID_1();
 
@@ -63,8 +60,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 	opaTest("Line Item Page shows Line Item and Navigation Buttons have correct state", function (Given, When, Then) {
 
 		// Actions
-		When.iPressOnTheObject1InMasterList().
-			and.iPressOnTheItem1InLineItemList();
+		When.iPressOnTheItem1InLineItemList();
 
 		// Assertions
 		Then.iShouldBeOnTheLineItem1Page().
