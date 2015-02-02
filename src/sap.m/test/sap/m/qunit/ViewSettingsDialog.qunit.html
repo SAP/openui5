@@ -226,11 +226,13 @@
 			}));
 
 			var vsd3 = vsd2.clone(); // this one will never be rendered and then destroyed
+			var vsd4 = vsd2.clone();
 
 			var oButton = new sap.m.Button({
 				text : "Open ViewSettingsDialog",
 				press : function () {
-					vsd2.open();
+					vsd2.open("filter");
+					vsd4.open("invalidPage")
 				}
 			});
 
@@ -307,12 +309,15 @@
 				oButton.firePress();
 				ok(jQuery.sap.domById("vsd2-dialog"), "Dialog should be rendered");
 				ok(jQuery.sap.domById("vsd2-navcontainer"), "Nav container should be rendered");
-				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
+				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");				
 				ok(!jQuery.sap.domById("vsd2-page2-cont"), "Page 2 (filter detail content) should not be rendered");
+				ok(jQuery.sap.byId("vsd2-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
+				ok(jQuery.sap.byId("vsd2-__clone2-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' default button should be selected when invalid page passed");
 			});
-
+			
 			asyncTest("Close ViewSettingsDialog", function (){
 				vsd2._dialog.getBeginButton().firePress();
+				vsd4._dialog.close();
 				// execute after rendering
  				setTimeout(function () {
  					ok(!vsd2._dialog.isOpen(), "Dialog should be in closed state");
