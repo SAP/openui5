@@ -182,6 +182,7 @@
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
+					id: "switch-id",
 					state: false
 				});
 
@@ -192,6 +193,7 @@
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
 				strictEqual(oSwitch.getDomRef("on").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-off");
 
 				// cleanup
 				oSwitch.destroy();
@@ -201,6 +203,7 @@
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
+					id: "switch-id",
 					state: true
 				});
 
@@ -211,6 +214,7 @@
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
 				strictEqual(oSwitch.getDomRef("off").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-on");
 
 				// cleanup
 				oSwitch.destroy();
@@ -219,7 +223,9 @@
 			test("setState() test case 3", function() {
 
 				// system under test
-				var oSwitch = new sap.m.Switch();
+				var oSwitch = new sap.m.Switch({
+					id: "switch-id"
+				});
 
 				// arrange
 				oSwitch.placeAt("content");
@@ -231,6 +237,7 @@
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
 				strictEqual(oSwitch.getDomRef("off").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-on");
 
 				// cleanup
 				oSwitch.destroy();
@@ -239,7 +246,9 @@
 			test("setState() test case 4", function() {
 
 				// system under test
-				var oSwitch = new sap.m.Switch();
+				var oSwitch = new sap.m.Switch({
+					id: "switch-id"
+				});
 
 				// arrange
 				oSwitch.placeAt("content");
@@ -251,9 +260,68 @@
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
 				strictEqual(oSwitch.getDomRef("on").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-off");
 
 				// cleanup
 				oSwitch.destroy();
+			});
+
+			/* ------------------------------ */
+			/* ariaLabelledBy()               */
+			/* ------------------------------ */
+
+			test("ariaLabelledBy() test case 1", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label-id",
+					text: "label"
+				});
+
+				var oSwitch = new sap.m.Switch({
+					id: "switch-id",
+					state: false,
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-off");
+
+				// cleanup
+				oSwitch.destroy();
+				oLabel.destroy();
+			});
+
+			test("ariaLabelledBy() test case 2", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					id: "switch-id",
+					state: true
+				});
+
+				var oLabel = new sap.m.Label({
+					id: "label-id",
+					text: "label",
+					labelFor: oSwitch
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-on");
+
+				// cleanup
+				oSwitch.destroy();
+				oLabel.destroy();
 			});
 
 			/* =========================================================== */
