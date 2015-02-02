@@ -118,12 +118,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SegmentedButton.prototype._createGhostButton = function (oButton) {
 		if (jQuery("#segMtBtn_calc").length == 0) {
-			this._oGhostButton = document.createElement("Button");
-			var span = document.createElement("span");
-			jQuery(span).addClass("sapMBtnContent");
-			this._oGhostButton.appendChild(span);
+			this._oGhostButton = document.createElement("ul");
+			var $li = jQuery("<li>");
+			$li.addClass("sapMBtnContent sapMSegBBtn");
 			this._oGhostButton.setAttribute("id", "segMtBtn_calc");
-			jQuery(this._oGhostButton).addClass("sapMBtn sapMBtnDefault sapMBtnPaddingLeft sapMSegBBtn");
+			jQuery(this._oGhostButton).append($li).addClass("sapMSegBIcons sapMBtn sapMBtnDefault sapMBtnPaddingLeft");
 			this._oGhostButton = jQuery(this._oGhostButton);
 		} else {
 			this._oGhostButton = jQuery("#segMtBtn_calc");
@@ -132,21 +131,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SegmentedButton.prototype._setGhostButtonText = function (oButton) {
 		var sText = oButton.getText(),
+			sIcon = oButton.getIcon(),
+			oImage,
+			oIcon,
+			sHtml,
+			oRm,
 			iGhostButtonWidth = 0,
-			ghostButton = jQuery("#segMtBtn_calc"); //refresh the dom pointer
+			$ghostButton = jQuery("#segMtBtn_calc").find("li");
 
-		if (oButton.getIcon().length === 0 && oButton.getWidth().length === 0) {
-			ghostButton.find("span").text(sText);
+		$ghostButton.text(sText);
+
+		if (sIcon.length > 0) {
+			oRm = new sap.ui.core.RenderManager();
+			oImage = oButton._getImage(null, oButton.getIcon());
+
+			if (oImage instanceof sap.m.Image) {
+				sHtml = oRm.getHTML(oImage);
+				$ghostButton.prepend(sHtml);
+			} else {
+				oIcon = new sap.ui.core.Icon({src: sIcon});
+				sHtml = oRm.getHTML(oIcon);
+				$ghostButton.prepend(sHtml);
+			}
+		}
+
+		if (oButton.getWidth().length === 0) {
 			// CSN# 772017/2014: in arrabian languages the jQuery size calculation is wrong (sub-pixel rounding issue)
 			if (sap.ui.getCore().getConfiguration().getLanguage() === "ar") {
 				// we manually add 1px as a workaround to not run into text truncation
 				iGhostButtonWidth = 1;
 			}
-			iGhostButtonWidth += ghostButton.width();
+			iGhostButtonWidth += $ghostButton.outerWidth();
 			this._aButtonWidth.push(iGhostButtonWidth);
 		} else {
 			this._aButtonWidth.push(0);
 		}
+
 	};
 
 	SegmentedButton.prototype._addGhostButton = function () {
