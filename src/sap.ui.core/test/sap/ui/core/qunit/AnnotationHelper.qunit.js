@@ -156,6 +156,7 @@
 		sPathPrefix = "/dataServices/schema/0/entityType/1", // GWSAMPLE_BASIC.Product
 		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
 		fnGetNavigationPath = sap.ui.model.odata.AnnotationHelper.getNavigationPath,
+		fnIsMultiple = sap.ui.model.odata.AnnotationHelper.isMultiple,
 		fnSimplePath = sap.ui.model.odata.AnnotationHelper.simplePath,
 		fnText = sap.ui.model.odata.AnnotationHelper.text,
 		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
@@ -827,12 +828,17 @@
 	//TODO support annotations embedded within entity container, entity set (or singleton?),
 	// complex type, property of entity or complex type
 
+	//TODO annotationPath : "ToSupplier@some.annotation.for.Navigation.Property" like getNavigationPath!
+
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.getNavigationPath");
 
 	//*********************************************************************************************
-	test("14.5.2 Expression edm:AnnotationPath: undefined", function () {
+	test("14.5.2 Expression edm:AnnotationPath: undefined, empty", function () {
 		strictEqual(formatAndParseNoWarning({}, null, fnGetNavigationPath), "");
+		strictEqual(
+			formatAndParseNoWarning({AnnotationPath : undefined}, null, fnGetNavigationPath), "");
+		strictEqual(formatAndParseNoWarning({AnnotationPath : ""}, null, fnGetNavigationPath), "");
 	});
 
 	//*********************************************************************************************
@@ -876,4 +882,88 @@
 		});
 	});
 	//TODO structural properties, type casts, $count
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.isMultiple");
+	//TODO strongly integrate tests for resolvePath, isMultiple, and getNavigationPath!
+
+	//*********************************************************************************************
+	jQuery.each([{
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "",
+		expectedResult : false
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions",
+		expectedResult : false
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier",
+		expectedResult : false
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier@some.annotation.for.Navigation.Property",
+		expectedResult : false
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
+		expectedResult : false
+	}, {
+		metaPath : "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		annotationPath : "ToLineItems/@foo.Bar",
+		expectedResult : true
+	}, {
+		metaPath : "/dataServices/schema/0/entityType/3/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		annotationPath : "ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
+		expectedResult : true
+	}], function (i, oFixture) {
+		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
+			withMetaModel(function (oMetaModel) {
+				var oCurrentBinding = oMetaModel.bindProperty(oFixture.metaPath),
+					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
+					sOriginalAnnotationPath = oRawValue.AnnotationPath,
+					vResult;
+
+				try {
+					// evil, test code only: write into ODataMetaModel
+					oRawValue.AnnotationPath = oFixture.annotationPath;
+
+					vResult = formatAndParseNoWarning(oRawValue, oCurrentBinding, fnIsMultiple);
+
+					strictEqual(vResult, oFixture.expectedResult);
+				} finally {
+					oRawValue.AnnotationPath = sOriginalAnnotationPath;
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		metaPath : "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		annotationPath : "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo"
+	}], function (i, oFixture) {
+		test("14.5.2 Expression edm:AnnotationPath: illegal " + oFixture.annotationPath, function () {
+			withMetaModel(function (oMetaModel) {
+				var oCurrentBinding = oMetaModel.bindProperty(oFixture.metaPath),
+					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
+					sOriginalAnnotationPath = oRawValue.AnnotationPath,
+					vResult;
+
+				try {
+					// evil, test code only: write into ODataMetaModel
+					oRawValue.AnnotationPath = oFixture.annotationPath;
+
+					formatAndParseNoWarning(oRawValue, oCurrentBinding, fnIsMultiple);
+					ok(false, "Exception expected");
+				} catch (e) {
+					strictEqual(e.message,
+						'Association end with multiplicity "*" is not the last one: '
+						+ oFixture.annotationPath);
+				} finally {
+					oRawValue.AnnotationPath = sOriginalAnnotationPath;
+				}
+			});
+		});
+	});
 } ());

@@ -51,11 +51,14 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 	onChangeInstance: function (oEvent) {
 		var sInstanceKey = this.getView().getModel("ui").getProperty("/selectedInstance"),
-			oType = this._getSelectedType();
+			oType = this._getSelectedType(),
+			sPath = oType.set + "("
+				+ sap.ui.model.odata.ODataUtils.formatValue(sInstanceKey, oType.itemKeyType)
+				+ ")";
 
-		this._showDetails(oType.set + "("
-			+ sap.ui.model.odata.ODataUtils.formatValue(sInstanceKey, oType.itemKeyType)
-			+ ")");
+		//TODO improve performance, do not repeat XML templating, just change data binding!
+//		this.getView().byId("detail").bindElement(sPath);
+		this._showDetails(sPath);
 	},
 
 	_bindSelectInstance: function() {
@@ -96,8 +99,7 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 			sEntityMetadataPath,
 			oView = this.getView(),
 			oMetaContext,
-			oMetaModel = oView.getModel("meta"),
-			oModel = oView.getModel(),
+			oMetaModel = oView.getModel().getMetaModel(),
 			sSelectedType = this._getSelectedType().type,
 			i;
 
@@ -121,7 +123,7 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 			viewName: "sap.ui.core.sample.ViewTemplate.scenario.Detail"
 		});
 
-		oDetailView.bindElement(sPath, {models: oModel});
+		oDetailView.bindElement(sPath);
 		oView.byId("detail").destroyItems().addItem(oDetailView);
 	}
 });
