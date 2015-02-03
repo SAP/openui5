@@ -96,14 +96,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		SwitchRenderer.renderText = function(oRm, oSwitch) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				bDefaultType = oSwitch.getType() === "Default",
+				bDefaultType = oSwitch.getType() === sap.m.SwitchType.Default,
 				bState = oSwitch.getState();
 
 			// on
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Text");
 			oRm.addClass(CSS_CLASS + "TextOn");
-			oRm.writeAttribute("id", oSwitch.getId() + "-on");
+			oRm.writeAttribute("id", oSwitch.getId() + "-texton");
 
 			if (!bState) {
 				oRm.writeAttribute("aria-hidden", "true");
@@ -111,7 +111,6 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.writeClasses();
 			oRm.write(">");
-
 			oRm.write("<span>");
 
 			if (bDefaultType) {
@@ -125,7 +124,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Text");
 			oRm.addClass(CSS_CLASS + "TextOff");
-			oRm.writeAttribute("id", oSwitch.getId() + "-off");
+			oRm.writeAttribute("id", oSwitch.getId() + "-textoff");
 
 			if (bState) {
 				oRm.writeAttribute("aria-hidden", "true");
@@ -185,7 +184,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
 		 */
 		SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
-			var sLabelledbyId = oSwitch.getId() + (oSwitch.getState() ? "-on" : "-off");
+			var sLabelledbyId = oSwitch.getId() + (oSwitch.getState() ? "-texton" : "-textoff");
 
 			oRm.writeAccessibilityState(oSwitch, {
 				role: "checkbox",

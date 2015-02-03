@@ -192,8 +192,8 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
-				strictEqual(oSwitch.getDomRef("on").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-off");
+				strictEqual(oSwitch.getDomRef("texton").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-textoff");
 
 				// cleanup
 				oSwitch.destroy();
@@ -213,8 +213,8 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
-				strictEqual(oSwitch.getDomRef("off").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-on");
+				strictEqual(oSwitch.getDomRef("textoff").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-texton");
 
 				// cleanup
 				oSwitch.destroy();
@@ -236,8 +236,8 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
-				strictEqual(oSwitch.getDomRef("off").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-on");
+				strictEqual(oSwitch.getDomRef("textoff").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-texton");
 
 				// cleanup
 				oSwitch.destroy();
@@ -259,8 +259,8 @@
 
 				// assert
 				strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
-				strictEqual(oSwitch.getDomRef("on").getAttribute("aria-hidden"), "true");
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-off");
+				strictEqual(oSwitch.getDomRef("texton").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "switch-id-textoff");
 
 				// cleanup
 				oSwitch.destroy();
@@ -290,7 +290,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-off");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-textoff");
 
 				// cleanup
 				oSwitch.destroy();
@@ -317,7 +317,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-on");
+				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), "label-id switch-id-texton");
 
 				// cleanup
 				oSwitch.destroy();
