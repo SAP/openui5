@@ -1,0 +1,45 @@
+<mvc:View controllerName="sap.ui.demokit.icex.view.Group"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:control="control"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+	<Page
+		id="page"
+		title="{text} ({count})"
+		showNavButton="true"
+		navButtonPress="navBack"
+		icon="{img>/icon/ui5}">
+		<headerContent>
+			<Button
+				icon="sap-icon://favorite-list"
+				tooltip="Show Favorites"
+				press="toFavorite">
+			</Button>
+		</headerContent>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+		<content>
+			<List
+				id="iconList"
+				select="selectIconList"
+				mode="{ui>/listMode}"
+				growing="true"
+				growingScrollToLoad="true"				
+				growingThreshold="{ui>/listPageSize}"
+				items="{icons}">
+				<items>
+					<StandardListItem
+						title="{name}"
+						type="{ui>/listItemType}"
+						press="pressIconListItem"
+						icon="sap-icon://{name}"
+						iconInset="true">
+					</StandardListItem>
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>
