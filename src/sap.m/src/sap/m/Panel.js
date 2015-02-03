@@ -176,38 +176,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Panel.prototype.setExpanded = function(bExpanded) {
-
-		// should not toggle if nothing changed
 		if (bExpanded === this.getExpanded()) {
 			return;
 		}
 
-		this.setProperty("expanded", bExpanded, true); // do not rerender !
+		this.setProperty("expanded", bExpanded, true);
 
 		if (!this.getExpandable()) {
 			return;
 		}
 
-		var $this = this.$();
-		$this.find(".sapMPanelExpandableIcon").toggleClass("sapMPanelExpandableIconExpanded");
-
 		// ARIA
 		this._getIcon().$().attr("aria-expanded", bExpanded.toString());
 
-		// need empty object as parameter to toggle since otherwise duration is set to 0
-		var oOptions = {};
-		if (!this.getExpandAnimation()) {
-			oOptions.duration = 0;
-		}
-
-		$this.find(".sapMPanelExpandablePart").slideToggle(oOptions);
-
-		// for controlling the visibility of the border
-		 $this.find(".sapMPanelWrappingDiv").toggleClass("sapMPanelWrappingDivExpanded");
-
-		this.fireExpand({
-			expand : bExpanded
-		});
+		this._toggleExpandCollapse();
+		this._toggleCssClasses();
+		this.fireExpand({ expand : bExpanded });
 
 		return this;
 	};
@@ -285,6 +269,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$this.find(".sapMPanelContent").css("height", parseInt($this.outerHeight(), 10) - iHeight);
 	};
 
+	Panel.prototype._toggleExpandCollapse = function () {
+		var oOptions = {};
+		if (!this.getExpandAnimation()) {
+			oOptions.duration = 0;
+		}
+
+		this.$().find(".sapMPanelExpandablePart").slideToggle(oOptions);
+	};
+
+	Panel.prototype._toggleCssClasses = function () {
+		var $this = this.$();
+
+		// for controlling the visibility of the border
+		$this.find(".sapMPanelWrappingDiv").toggleClass("sapMPanelWrappingDivExpanded");
+		$this.find(".sapMPanelExpandableIcon").toggleClass("sapMPanelExpandableIconExpanded");
+	};
 
 	return Panel;
 
