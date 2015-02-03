@@ -191,6 +191,14 @@
 		width: 1.0rem;
 		vertical-align: top;
 	}
+	.sapMBtnIconLeft {
+		margin-left: 0;
+	}
+	.sapMFooter-CTX .sapMSegB:not(.sapMSegBIcons) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus,
+	.sapMSegB:not(.sapMSegBIcons):not(.sapMBarChild) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+		padding-right: 0.5rem;
+		border-right: none;
+	}
 }
 
 /* IE mobile and desctop ignores outline-offset. Use an overlay: */
@@ -260,3 +268,11 @@ html[data-sap-ui-os^="Android4.4"] {
 		}
 	}
 }
+
+/* Android size compact fix */
+html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"] {
+	.sapUiSizeCompact .sapMSegBBtn img {
+		padding-bottom: 0.256rem;
+	}
+}
+
