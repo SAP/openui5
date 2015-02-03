@@ -14,11 +14,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 * Handling of "14.5.3.1.1 Function odata.concat".
 		 *
 		 * @param {object[]} aParameters
-		 *    the parameters
+		 *   the parameters
 		 * @param {sap.ui.model.Binding} oBinding
-		 *    the binding related to the current formatter call
+		 *   the binding related to the current formatter call
 		 * @returns {string}
-		 *    the resulting string value to write into the processed XML
+		 *   the resulting string value to write into the processed XML
 		 */
 		function concat(aParameters, oBinding) {
 			var aParts = [],
@@ -61,13 +61,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
 		 *
 		 * @param {object[]} aParameters
-		 *    the parameters
+		 *   the parameters
 		 * @param {sap.ui.model.Binding} oBinding
-		 *    the binding related to the current formatter call
+		 *   the binding related to the current formatter call
 		 * @returns {string}
-		 *    an expression binding in the format "{= odata.fillUriTemplate('template',
-		 *    {'param1': ${path1}, 'param2': ${path2}, ...}" or <code>undefined</code>
-		 *    if the parameters could not be processed
+		 *   an expression binding in the format "{= odata.fillUriTemplate('template',
+		 *   {'param1': ${path1}, 'param2': ${path2}, ...}" or <code>undefined</code>
+		 *   if the parameters could not be processed
 		 */
 		function fillUriTemplate(aParameters, oBinding) {
 			var i,
@@ -105,14 +105,66 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
+		 * Follows the given path in the given model, starting at the given resolved path,
+		 * and returns the resulting resolved path.
+		 *
+		 * @param {sap.ui.model.odata.ODataMetaModel} oModel
+		 *   the current model
+		 * @param {string} sResolvedPath
+		 *   an absolute path to start from
+		 * @param {string} sPath
+		 *   the value of the dynamic "14.5.12 Expression edm:Path" (or variant thereof)
+		 * @returns {string}
+		 *   the resulting resolved path
+		 */
+		function follow(oModel, sResolvedPath, sPath) {
+			var oAssociationEnd,
+				oEntity,
+				aParts = sPath.split("/");
+
+			if (sPath === "") { // empty path
+				return sResolvedPath;
+			}
+
+			while (aParts.length) {
+				// term cast
+				if (aParts[0].charAt(0) === "@") {
+					sResolvedPath += "/" + aParts[0].slice(1);
+					aParts.shift();
+					continue;
+				}
+
+				oEntity = oModel.getObject(sResolvedPath);
+				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, aParts[0]);
+				if (oAssociationEnd) {
+					// navigation property
+					sResolvedPath = oModel.getODataEntityType(oAssociationEnd.type, true);
+					aParts.shift();
+					continue;
+				}
+
+				sResolvedPath = oModel.getODataProperty(oEntity, aParts, true);
+				if (sResolvedPath) {
+					// structural properties
+					continue;
+				}
+
+				sResolvedPath = undefined; // some unsupported case
+				break;
+			}
+
+			return sResolvedPath;
+		}
+
+		/**
 		 * Handling of "14.5.12 Expression edm:Path".
 		 *
 		 * @param {string} sPath
-		 *    the string path value from the meta model
+		 *   the string path value from the meta model
 		 * @param {sap.ui.model.Binding} oBinding
-		 *    the binding related to the current formatter call
+		 *   the binding related to the current formatter call
 		 * @returns {string}
-		 *    the resulting string value to write into the processed XML
+		 *   the resulting string value to write into the processed XML
 		 */
 		function formatPath(sPath, oBinding) {
 			var oConstraints = {},
@@ -197,11 +249,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 * of the value.
 		 *
 		 * @param {any} vRawValue
-		 *    the raw value from the meta model
+		 *   the raw value from the meta model
 		 * @param {string} sName
-		 *    the name of the property which holds the illegal value
+		 *   the name of the property which holds the illegal value
 		 * @returns {string}
-		 *    the resulting string value to write into the processed XML
+		 *   the resulting string value to write into the processed XML
 		 */
 		function illegalValue(vRawValue, sName) {
 			jQuery.sap.log.warning("Illegal value for " + sName + ": "
@@ -257,9 +309,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 * Handles unsupported cases.
 		 *
 		 * @param {any} vRawValue
-		 *    the raw value from the meta model
+		 *   the raw value from the meta model
 		 * @returns {string}
-		 *    the resulting string value to write into the processed XML
+		 *   the resulting string value to write into the processed XML
 		 */
 		function unsupported(vRawValue) {
 			if (typeof vRawValue === "object") {
@@ -321,9 +373,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * </pre>
 			 *
 			 * @param {any} vRawValue
-			 *    the raw value from the meta model
+			 *   the raw value from the meta model
 			 * @returns {string}
-			 *    the resulting string value to write into the processed XML
+			 *   the resulting string value to write into the processed XML
 			 * @public
 			 */
 			format : function (vRawValue) {
@@ -369,9 +421,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			},
 
 			/**
+			 * A formatter function to be used in a complex binding inside an XML template view
+			 * in order to interpret OData v4 annotations. It knows about the dynamic
+			 * "14.5.2 Expression edm:AnnotationPath" and returns a binding expression for a
+			 * navigation path in an OData model, starting at an entity.
+			 * Currently supports navigation properties. Term casts and annotations of
+			 * navigation properties terminate the navigation path.
+			 *
+			 * Examples:
+			 * <pre>
+			 * &lt;template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
+			 *     &lt;form:SimpleForm binding="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}" />
+			 * &lt;/template:if>
+			 * </pre>
+			 *
+			 * @param {any} vRawValue
+			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
+			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
+			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
+			 * @returns {string}
+			 *   the resulting string value to write into the processed XML, e.g. "{ToSupplier}"
+			 *   or "{}" (in case no navigation is needed); returns "" in case the navigation path
+			 *   cannot be determined (this is treated as falsy in <code>template:if</code>
+			 *   statements!)
+			 * @public
+			 */
+			getNavigationPath : function (vRawValue) {
+				var aParts = [];
+
+				if (!vRawValue.AnnotationPath) {
+					return "";
+				}
+
+				jQuery.each(vRawValue.AnnotationPath.split("/"), function (iUnused, sSegment) {
+					var i = sSegment.indexOf("@");
+
+					if (i === 0) { // term cast
+						return false; // break
+					} else if (i > 0) { // annotation of a navigation property
+						aParts.push(sSegment.slice(0, i));
+						return false; // break
+					}
+					// navigation property
+					aParts.push(sSegment);
+				});
+				return "{" + aParts.join("/") + "}";
+			},
+
+			/**
 			 * Helper function for a <code>template:with</code> instruction that resolves a dynamic
-			 * "14.5.2 Expression edm:AnnotationPath". Currently supports navigation properties
-			 * and term casts.
+			 * "14.5.2 Expression edm:AnnotationPath" or "14.5.12 Expression edm:Path".
+			 * Currently supports navigation properties and term casts.
 			 *
 			 * Example:
 			 * <pre>
@@ -380,51 +480,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *
 			 * @param {sap.ui.model.Context} oContext
 			 *   a context which must point to an annotation or annotation property of type
-			 *   <code>Edm.AnnotationPath</code>, embedded within an entity type;
+			 *   <code>Edm.AnnotationPath</code> or <code>Edm.Path</code>, embedded within an
+			 *   entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
-			 *   the path to the target
+			 *   the path to the target, or <code>undefined</code> in case the path cannot be
+			 *   resolved
 			 * @public
 			 */
 			resolvePath : function (oContext) {
 				var aMatches,
-					sPath,
 					vRawValue = oContext.getObject();
 
 				aMatches = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/.exec(
 					oContext.getPath());
 				if (aMatches) {
 					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
-					sPath = aMatches[1];
-
-					if (vRawValue.AnnotationPath === "") { // empty path
-						return sPath;
+					if (vRawValue.hasOwnProperty("AnnotationPath")) {
+						return follow(oContext.getModel(), aMatches[1], vRawValue.AnnotationPath);
 					}
-
-					jQuery.each(vRawValue.AnnotationPath.split("/"), function (iUnused, sSegment) {
-						var oAssociationEnd,
-							oEntity,
-							oModel = oContext.getModel();
-
-						// term cast
-						if (sSegment.charAt(0) === "@") {
-							sPath = sPath + "/" + sSegment.slice(1);
-							return true; // continue
-						}
-
-						// navigation property
-						oEntity = oContext.getObject(sPath);
-						oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
-						if (oAssociationEnd) {
-							sPath = oModel.getODataEntityType(oAssociationEnd.type, true);
-							return true; // continue
-						}
-
-						sPath = undefined; // some unsupported case
-						return false; // break
-					});
-
-					return sPath;
+					if (vRawValue.hasOwnProperty("Path")) {
+						return follow(oContext.getModel(), aMatches[1], vRawValue.Path);
+					}
+					return undefined; // some unsupported case
 				}
 			},
 
@@ -442,9 +520,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * </pre>
 			 *
 			 * @param {any} vRawValue
-			 *    the raw value from the meta model
+			 *   the raw value from the meta model
 			 * @returns {string}
-			 *    the resulting string value to write into the processed XML
+			 *   the resulting string value to write into the processed XML
 			 * @public
 			 */
 			simplePath : function (vRawValue) {

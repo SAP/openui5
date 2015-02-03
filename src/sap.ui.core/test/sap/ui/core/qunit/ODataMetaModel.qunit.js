@@ -202,8 +202,22 @@
 			oModel,
 			oSandbox; // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
 
+		/*
+		 * Call the given "code under test" with the given OData meta model, making sure that
+		 * no changes to the model are kept in the cached singleton.
+		 */
+		function call(fnCodeUnderTest, oDataMetaModel) {
+			var sCopy = JSON.stringify(oDataMetaModel.getObject("/"));
+
+			try {
+				fnCodeUnderTest(oDataMetaModel);
+			} finally {
+				oDataMetaModel.getObject("/").dataServices = JSON.parse(sCopy).dataServices;
+			}
+		}
+
 		if (oDataMetaModel) {
-			fnCodeUnderTest(oDataMetaModel);
+			call(fnCodeUnderTest, oDataMetaModel);
 			return;
 		}
 
@@ -224,7 +238,7 @@
 			// calls the code under test once the meta model has loaded
 			stop();
 			oDataMetaModel.loaded().then(function() {
-				fnCodeUnderTest(oDataMetaModel);
+				call(fnCodeUnderTest, oDataMetaModel);
 				start();
 			}, onError)["catch"](onError);
 		} finally {
@@ -372,6 +386,10 @@
 				deepEqual(arguments[0], undefined, "almost no args");
 				ok(oMetadata, "metadata is loaded");
 
+				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0",
+					"$path");
+				delete oBusinessPartner.$path;
+
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
 
@@ -504,6 +522,46 @@
 	});
 
 	//*********************************************************************************************
+	test("getODataEntitySet", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
+				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/entitySet/1"));
+			strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
+			strictEqual(oMetaModel.getODataEntitySet(), null);
+		});
+	});
+	//TODO test with multiple schemas; what if there is no default entity container?
+	/*
+	 * http://www.odata.org/documentation/odata-version-2-0/overview/ says about
+	 * "IsDefaultEntityContainer":
+	 * "A CSDL document may include many Entity Containers; this attribute is used by data services
+	 * to indicate the default container. As described in [OData:URI], Entities in the default
+	 * container do not need to be container-qualified when addressed in URIs.This attribute may be
+	 * present on any element in a CSDL document"
+	 * e.g. "GWSAMPLE_BASIC_Entities.ProductSet"
+	 *
+	 * http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html
+	 * "13 Entity Container" says
+	 * "Each metadata document used to describe an OData service MUST define exactly one entity
+	 * container." But then again, there is "13.1.2 Attribute Extends"...
+	 *
+	 * ==> SAP Gateway supports a single entity container only, and OData v4 has been adjusted
+	 * accordingly.
+	 */
+
+	//*********************************************************************************************
+	test("getODataComplexType", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
+					oMetaModel.getObject("/dataServices/schema/0/complexType/0"));
+			strictEqual(oMetaModel.getODataComplexType("FOO.CT_Address"), null);
+			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.Foo"), null);
+			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC"), null);
+			strictEqual(oMetaModel.getODataComplexType(), null);
+		});
+	});
+
+	//*********************************************************************************************
 	test("getODataEntityType", function() {
 		withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
@@ -541,15 +599,90 @@
 	});
 
 	//*********************************************************************************************
-	test("getODataEntitySet", function() {
+	test("getODataProperty", function() {
 		withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
-				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/entitySet/1"));
-			strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
-			strictEqual(oMetaModel.getODataEntitySet(), null);
+			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
+				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
+				aParts;
+
+			// entity type
+			strictEqual(oMetaModel.getODataProperty(oEntityType, "Address"),
+				oMetaModel.getObject("/dataServices/schema/0/entityType/0/property/0"));
+			strictEqual(oMetaModel.getODataProperty(), null);
+			strictEqual(oMetaModel.getODataProperty(oEntityType), null);
+			strictEqual(oMetaModel.getODataProperty(oEntityType, "foo"), null);
+
+			// complex type
+			strictEqual(oMetaModel.getODataProperty(oComplexType, "Street"),
+				oMetaModel.getObject("/dataServices/schema/0/complexType/0/property/2"));
+			strictEqual(oMetaModel.getODataProperty(oComplexType), null);
+			strictEqual(oMetaModel.getODataProperty(oComplexType, "foo"), null);
+
+			// {string[]} path
+			aParts = ["foo"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts), null);
+			strictEqual(aParts.length, 1, "no parts consumed");
+			aParts = ["Address"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
+				oMetaModel.getObject("/dataServices/schema/0/entityType/0/property/0"));
+			strictEqual(aParts.length, 0, "all parts consumed");
+			aParts = ["Address", "foo"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
+				oMetaModel.getObject("/dataServices/schema/0/entityType/0/property/0"));
+			strictEqual(aParts.length, 1, "one part consumed");
+			aParts = ["Street"];
+			strictEqual(oMetaModel.getODataProperty(oComplexType, aParts),
+				oMetaModel.getObject("/dataServices/schema/0/complexType/0/property/2"));
+			strictEqual(aParts.length, 0, "all parts consumed");
+			aParts = ["Address", "Street"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
+				oMetaModel.getObject("/dataServices/schema/0/complexType/0/property/2"));
+			strictEqual(aParts.length, 0, "all parts consumed");
 		});
 	});
-	//TODO test with no or multiple schemas; what if there is no default entity container?
+
+	//*********************************************************************************************
+	test("getODataProperty as path", function() {
+		withMetaModel(function (oMetaModel) {
+			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
+				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
+				aParts;
+
+			// entity type
+			strictEqual(oMetaModel.getODataProperty(oEntityType, "Address", true),
+				"/dataServices/schema/0/entityType/0/property/0");
+			strictEqual(oMetaModel.getODataProperty(null, "", true), undefined);
+			strictEqual(oMetaModel.getODataProperty(oEntityType, undefined, true), undefined);
+			strictEqual(oMetaModel.getODataProperty(oEntityType, "foo", true), undefined);
+
+			// complex type
+			strictEqual(oMetaModel.getODataProperty(oComplexType, "Street", true),
+				"/dataServices/schema/0/complexType/0/property/2");
+			strictEqual(oMetaModel.getODataProperty(oComplexType, undefined, true), undefined);
+			strictEqual(oMetaModel.getODataProperty(oComplexType, "foo", true), undefined);
+
+			// {string[]} path
+			aParts = ["foo"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true), undefined);
+			strictEqual(aParts.length, 1, "no parts consumed");
+			aParts = ["Address"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
+				"/dataServices/schema/0/entityType/0/property/0");
+			strictEqual(aParts.length, 0, "all parts consumed");
+			aParts = ["Address", "foo"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
+				"/dataServices/schema/0/entityType/0/property/0");
+			strictEqual(aParts.length, 1, "one part consumed");
+			aParts = ["Street"];
+			strictEqual(oMetaModel.getODataProperty(oComplexType, aParts, true),
+				"/dataServices/schema/0/complexType/0/property/2");
+			strictEqual(aParts.length, 0, "all parts consumed");
+			aParts = ["Address", "Street"];
+			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
+				"/dataServices/schema/0/complexType/0/property/2");
+			strictEqual(aParts.length, 0, "all parts consumed");
+		});
+	});
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set only", function() {
@@ -592,7 +725,7 @@
 
 			raises(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToFoo(0)");
-			}, /\(Navigation\) Property not found: ToFoo\(0\)/);
+			}, /Property not found: ToFoo\(0\)/);
 
 			raises(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier('ABC')");
@@ -620,7 +753,7 @@
 
 			raises(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ProductID(0)");
-			}, /\(Navigation\) Property not found: ProductID\(0\)/);
+			}, /Property not found: ProductID\(0\)/);
 
 			raises(function () {
 				oMetaModel.getMetaContext("/FooSet('123')/Bar");
@@ -642,16 +775,31 @@
 
 			raises(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Foo");
-			}, /\(Navigation\) Property not found: Foo/);
+			}, /Property not found: Foo/);
 		});
 	});
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set & complex property", function() {
 		withMetaModel(function (oMetaModel) {
+			var sPath = "/ProductSet('ABC')/ToSupplier/Address/Street",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			ok(oMetaContext instanceof sap.ui.model.Context);
+			strictEqual(oMetaContext.getModel(), oMetaModel);
+			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/complexType/0/property/2");
+
+			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
 			raises(function () {
-				oMetaModel.getMetaContext("/BusinessPartnerSet('XYZ')/Address/Street");
-			}, /Unsupported: \/BusinessPartnerSet\('XYZ'\)\/Address\/Street/);
+				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Foo");
+			}, /Property not found: Foo/);
+
+			//TODO "nested" complex types are supported, we just need an example
+			raises(function () {
+				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Street/AndSoOn");
+			}, /Property not found: AndSoOn/);
 		});
 	});
+	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path
 }());

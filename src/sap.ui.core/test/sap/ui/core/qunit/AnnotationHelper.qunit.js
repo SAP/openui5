@@ -155,6 +155,7 @@
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
 		sPathPrefix = "/dataServices/schema/0/entityType/1", // GWSAMPLE_BASIC.Product
 		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
+		fnGetNavigationPath = sap.ui.model.odata.AnnotationHelper.getNavigationPath,
 		fnSimplePath = sap.ui.model.odata.AnnotationHelper.simplePath,
 		fnText = sap.ui.model.odata.AnnotationHelper.text,
 		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
@@ -323,8 +324,22 @@
 			ok(false, "Failed to load: " + JSON.stringify(oParameters));
 		}
 
+		/*
+		 * Call the given "code under test" with the given OData meta model, making sure that
+		 * no changes to the model are kept in the cached singleton.
+		 */
+		function call(fnCodeUnderTest, oDataMetaModel) {
+			var sCopy = JSON.stringify(oDataMetaModel.getObject("/"));
+
+			try {
+				fnCodeUnderTest(oDataMetaModel);
+			} finally {
+				oDataMetaModel.getObject("/").dataServices = JSON.parse(sCopy).dataServices;
+			}
+		}
+
 		if (oDataMetaModel) {
-			fnCodeUnderTest(oDataMetaModel);
+			call(fnCodeUnderTest, oDataMetaModel);
 			return;
 		}
 
@@ -359,7 +374,7 @@
 			// calls the code under test once the meta model has loaded
 			stop();
 			oDataMetaModel.loaded().then(function() {
-				fnCodeUnderTest(oDataMetaModel);
+				call(fnCodeUnderTest, oDataMetaModel);
 				start();
 			}, onError)["catch"](onError);
 		} finally {
@@ -698,10 +713,10 @@
 	//*********************************************************************************************
 	//TODO support type cast
 	//TODO support term casts to odata.mediaEditLink, odata.mediaReadLink, odata.mediaContentType?
-	//TODO support structural property
 	//TODO support $count
 	//TODO support "navigationProperty@Annotation"
-	jQuery.each(["unsupprted.type.cast",
+	jQuery.each([undefined, // means "delete property" here to check for maximum robustness
+		"unsupported.type.cast",
 		"unsupported_property",
 		"unsupported_property/@some.Annotation",
 		"navigationProperty@unsupported.Annotation" // annotation at nav.property itself!
@@ -715,6 +730,9 @@
 
 				// evil, test code only: write into ODataMetaModel
 				oMetaModel.getProperty(sMetaPath).AnnotationPath = sPath;
+				if (sPath === undefined) {
+					delete oMetaModel.getProperty(sMetaPath).AnnotationPath;
+				}
 
 				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
 
@@ -750,38 +768,112 @@
 	jQuery.each([{
 		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
 		annotationPath : "ToSupplier",
-		expectedTarget : "/dataServices/schema/0/entityType/0"
+		expectedResult : "/dataServices/schema/0/entityType/0"
 	}, {
 		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
 		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
-		expectedTarget : "/dataServices/schema/0/entityType/0/com.sap.vocabularies.Communication.v1.Address"
+		expectedResult : "/dataServices/schema/0/entityType/0/com.sap.vocabularies.Communication.v1.Address"
 	}, {
 		metaPath : "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
 		annotationPath : "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
-		expectedTarget : "/dataServices/schema/0/entityType/4/com.sap.vocabularies.UI.v1.HeaderInfo"
+		expectedResult : "/dataServices/schema/0/entityType/4/com.sap.vocabularies.UI.v1.HeaderInfo"
 	}], function (i, oFixture) {
 		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
 			withMetaModel(function (oMetaModel) {
 				var sMetaPath = oFixture.metaPath,
 					oContext = oMetaModel.createBindingContext(sMetaPath),
 					oRawValue = oMetaModel.getProperty(sMetaPath),
-					sOriginalAnnotationPath = oRawValue.AnnotationPath,
 					sResult;
 
-				try {
-					// evil, test code only: write into ODataMetaModel
-					oRawValue.AnnotationPath = oFixture.annotationPath;
+				// evil, test code only: write into ODataMetaModel
+				oRawValue.AnnotationPath = oFixture.annotationPath;
 
-					sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
 
-					strictEqual(sResult, oFixture.expectedTarget);
-				} finally {
-					oRawValue.AnnotationPath = sOriginalAnnotationPath;
-				}
+				strictEqual(sResult, oFixture.expectedResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		metaPath : "/dataServices/schema/0/entityType/0" // GWSAMPLE_BASIC.BusinessPartner
+			+ "/com.sap.vocabularies.Communication.v1.Address/street",
+		path : "Address",
+		expectedResult : "/dataServices/schema/0/entityType/0/property/0"
+	}, {
+		metaPath : "/dataServices/schema/0/entityType/0" // GWSAMPLE_BASIC.BusinessPartner
+			+ "/com.sap.vocabularies.Communication.v1.Address/street",
+		path : "Address/Street",
+		expectedResult : "/dataServices/schema/0/complexType/0/property/2"
+	}], function (i, oFixture) {
+		test("14.5.12 Expression edm:Path: " + oFixture.path, function () {
+			withMetaModel(function (oMetaModel) {
+				var sMetaPath = oFixture.metaPath,
+					oContext = oMetaModel.createBindingContext(sMetaPath),
+					oRawValue = oMetaModel.getProperty(sMetaPath),
+					sResult;
+
+				// evil, test code only: write into ODataMetaModel
+				oRawValue.Path = oFixture.path;
+
+				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+
+				strictEqual(sResult, oFixture.expectedResult);
 			});
 		});
 	});
 
 	//TODO support annotations embedded within entity container, entity set (or singleton?),
 	// complex type, property of entity or complex type
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.getNavigationPath");
+
+	//*********************************************************************************************
+	test("14.5.2 Expression edm:AnnotationPath: undefined", function () {
+		strictEqual(formatAndParseNoWarning({}, null, fnGetNavigationPath), "");
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions",
+		expectedPath : ""
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier",
+		expectedPath : "ToSupplier"
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier@some.annotation.for.Navigation.Property",
+		expectedPath : "ToSupplier"
+	}, {
+		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
+		expectedPath : "ToSupplier"
+	}, {
+		metaPath : "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		annotationPath : "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
+		expectedPath : "ToLineItems/ToProduct/ToSupplier/ToContacts"
+	}], function (i, oFixture) {
+		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
+			withMetaModel(function (oMetaModel) {
+				var oCurrentBinding = oMetaModel.bindProperty(oFixture.metaPath), //TODO not needed?!
+					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
+					oSingleBindingInfo;
+
+				// evil, test code only: write into ODataMetaModel
+				oRawValue.AnnotationPath = oFixture.annotationPath;
+
+				oSingleBindingInfo
+					= formatAndParseNoWarning(oRawValue, oCurrentBinding, fnGetNavigationPath);
+
+				strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+				strictEqual(oSingleBindingInfo.path, oFixture.expectedPath);
+				strictEqual(oSingleBindingInfo.type, undefined);
+			});
+		});
+	});
+	//TODO structural properties, type casts, $count
 } ());
