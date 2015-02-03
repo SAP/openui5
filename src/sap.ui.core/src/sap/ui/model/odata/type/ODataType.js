@@ -144,5 +144,57 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 		// do nothing!
 	};
 
+	/**
+	 * Normalizes the given number to the fixed format.
+	 *
+	 * @param {object} oFormatOptions
+	 *   the format options
+	 * @param {string} sText
+	 *   the number entered by a user with sign, decimal and grouping separator according to given
+	 *   format options
+	 * @param {string} rNumber
+	 *   the regular expression to check the normalized <code>sText</code>
+	 * @returns {string}
+	 *   the normalized number consisting of an optional "-", at least one digit and an optional
+	 *   "." followed by more digits (<code>/-?\d+(\.\d+)?/</code>) or <code>undefined</code> if
+	 *   the given text is in the wrong format
+	 * @private
+	 */
+	ODataType.normalizeNumber = function normalizeNumber(oFormatOptions, sText, rNumber) {
+		var aMatches,
+			sNewText,
+			sSign = "";
+
+		// remove all whitespace
+		sText = sText.replace(/\s/g, "");
+
+		// determine the sign
+		switch (sText.charAt(0)) {
+		case oFormatOptions.minusSign:
+			sSign = "-";
+			// falls through
+		case oFormatOptions.plusSign:
+			sText = sText.slice(1);
+			break;
+		// no default
+		}
+
+		// remove all grouping separators
+		while ((sNewText = sText.replace(oFormatOptions.groupingSeparator, "")) !== sText) {
+			sText = sNewText;
+		}
+
+		// replace one decimal separator by the dot
+		sText = sText.replace(oFormatOptions.decimalSeparator, ".");
+
+		// check validity and normalize
+		aMatches = rNumber.exec(sText);
+		if (aMatches) {
+			return sSign
+				+ (aMatches[1] || "0")
+				+ (aMatches[2] ? "." + aMatches[2] : "");
+		}
+	};
+
 	return ODataType;
 });

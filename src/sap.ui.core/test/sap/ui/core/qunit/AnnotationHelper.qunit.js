@@ -47,6 +47,10 @@
 			name : "sap.ui.model.odata.type.Int32",
 			constraints : {"nullable" : false}
 		},
+		oInt64 = {
+			name : "sap.ui.model.odata.type.Int64",
+			constraints : {"nullable" : false}
+		},
 		oSByte = {
 			name : "sap.ui.model.odata.type.SByte",
 			constraints : {"nullable" : false}
@@ -105,6 +109,10 @@
 							"type" : "Edm.Int32",
 							"nullable" : "false"
 						}, {
+							"name" : "_Int64",
+							"type" : "Edm.Int64",
+							"nullable" : "false"
+						}, {
 							"name" : "_SByte",
 							"type" : "Edm.SByte",
 							"nullable" : "false"
@@ -138,6 +146,8 @@
 							"Value" : {"Path" : "_Int16"}
 						}, {
 							"Value" : {"Path" : "_Int32"}
+						}, {
+							"Value" : {"Path" : "_Int64"}
 						}, {
 							"Value" : {"Path" : "_SByte"}
 						}, {
@@ -468,15 +478,18 @@
 		type : oInt32
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/8/Value",
-		type : oSByte
+		type : oInt64
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/9/Value",
-		type : oString10
+		type : oSByte
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/10/Value",
-		type : oString80
+		type : oString10
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/11/Value",
+		type : oString80
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/12/Value",
 		type : oTime
 	}], function (i, oFixture) {
 		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
