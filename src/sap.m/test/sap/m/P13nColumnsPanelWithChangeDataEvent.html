@@ -140,11 +140,17 @@
 		//processing of new columnsItems --> creation of new model entries
 		aNewColumnsItems.forEach(function(oNewColumnsItem) {
 			oColumnsItem = {
-				columnKey: oNewColumnsItem.getColumnKey(),
-				index: oNewColumnsItem.getIndex(),
-				visible: oNewColumnsItem.getVisible(),
-				width: oNewColumnsItem.getWidth()
+				columnKey: oNewColumnsItem.getColumnKey()
 			};
+			if (oNewColumnsItem.getIndex() !== undefined) {
+				oColumnsItem.index = oNewColumnsItem.getIndex();
+			}
+			if (oNewColumnsItem.getVisible() !== undefined) {
+				oColumnsItem.visible = oNewColumnsItem.getVisible();
+			}
+			if (oNewColumnsItem.getWidth() !== undefined) {
+				oColumnsItem.width = oNewColumnsItem.getWidth();
+			}
 			oData.persistentData.columns.columnsItems.push(oColumnsItem);
 		});
 
@@ -154,9 +160,15 @@
 			sColumnKey = oExistingColumnsItem.getColumnKey();
 			oColumnsItem = sap.ui.comp.personalization.Util.getArrayElementByKey("columnKey", sColumnKey, oData.persistentData.columns.columnsItems);
 			if (oColumnsItem) {
-				oColumnsItem.index = oExistingColumnsItem.getIndex();
-				oColumnsItem.visible = oExistingColumnsItem.getVisible();
-				oColumnsItem.width = oExistingColumnsItem.getWidth();
+				if (oExistingColumnsItem.getIndex() !== undefined) {
+					oColumnsItem.index = oExistingColumnsItem.getIndex();
+				}
+				if (oExistingColumnsItem.getVisible() !== undefined) {
+					oColumnsItem.visible = oExistingColumnsItem.getVisible();
+				}
+				if (oExistingColumnsItem.getWidth() !== undefined) {
+					oColumnsItem.width = oExistingColumnsItem.getWidth();
+				}
 			}
 		});
 
