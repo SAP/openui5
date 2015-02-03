@@ -131,10 +131,8 @@
 		}, 500);
 	});	
 	
-	stop();
-	
 	// Following test case has caused occasional trouble when being executed on internet explorer 9
-	// What is being tested works on ie. To be save for auromatic tests, the timeout for internet explorer
+	// What is being tested works on ie. To be save for automatic tests, the timeout for internet explorer
 	// tests is twice as big as usual.
 	var iTimeOut = 500; 
 	if(sap.ui.Device.browser.internet_explorer) {
@@ -265,7 +263,6 @@
 				"Favorite Icon is set");
 		}, iTimeOut);
 	});
-	stop();
 	
 	
 	
@@ -297,7 +294,6 @@
 			ok(bIsDisabled, "Create action is disabled");
 		}, 500);
 	});
-	stop();
 	
 
 	
@@ -311,7 +307,6 @@
 			ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 		}, 500);
 	});
-	stop();
 	
 	test("Remove two business actions: one directly, one by its Id", function() {
 		oActionBar1.removeBusinessAction(oCreateAction);
@@ -346,7 +341,6 @@
 			ok(bIsDisabled, "Delete action is disabled");
 		}, 500);
 	});
-	stop();
 	
 	
 	asyncTest("Hide business action buttons from \"action bar\"", function() {
@@ -360,7 +354,6 @@
 			ok(bVisible, "More Menu Button is visible");
 		}, 500);
 	});
-	stop();
 	
 	asyncTest("Show business action's buttons on \"action bar\" again and destroy them afterwards", function() {
 		expect(1);
@@ -372,7 +365,6 @@
 			ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 		}, 500);
 	});
-	stop();
 	
 	test("Destroy actionBar", function() {
 		oActionBar1.destroy();

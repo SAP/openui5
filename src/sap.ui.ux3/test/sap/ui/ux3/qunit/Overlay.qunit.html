@@ -78,7 +78,6 @@
 		qutils.triggerKeyboardEvent(oOverlay.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
 	});
 
-	stop();
 	asyncTest("Open Method", function() {
 		expect(3);
 		ok(!oOverlay.isOpen(), "Rendered Overlay is not open");
@@ -90,7 +89,6 @@
 	});
 
 	// at the end close
-	stop();
 	asyncTest("Close Events", function() {
 		oOverlay.attachClose(function(oEvent) {
 			equal(oOverlay.getId(),oEvent.getParameter("id"),  "Close event fired");
@@ -113,7 +111,6 @@
 		ok(!oDomRef, "Rendered Overlay should not exist in the page after destruction");
 	});
 
-	QUnit.stop();
 </script>
 </head>
 <body>

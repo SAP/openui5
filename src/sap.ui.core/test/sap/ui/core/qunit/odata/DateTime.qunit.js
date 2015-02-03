@@ -21,8 +21,8 @@
 		};
 
 	oDateOnly.setUTCFullYear(2014);
+	oDateOnly.setUTCDate(27); // make sure that setting the date before month (e.g. in case of today is Jan 31st setting month to Nov will result in Dec!)
 	oDateOnly.setUTCMonth(10);
-	oDateOnly.setUTCDate(27);
 	oDateOnly.setUTCHours(0);
 	oDateOnly.setUTCMinutes(0);
 	oDateOnly.setUTCSeconds(0);

@@ -79,7 +79,6 @@
 			equal($selItems.children()[0].id, item2.getId(), "DOM element marked as selected should be the one with the same ID as the selected item");
 		});
 		
-		stop();
 		var firstPos;
 		asyncTest("Selection Arrow", function() {
 			var arrow = jQuery.sap.domById(oCtrl.getId() + "-arrow");
@@ -173,7 +172,6 @@
 			equal(valid, true, "the ID 'item1' is a valid selection");
 		});
 		
-		stop();
 		asyncTest("Overflow", function() {
 			jQuery.sap.byId("uiArea1").css("width", "80px");
 			setTimeout(function(){
@@ -203,7 +201,6 @@
 			}, 500);
 		});
 		
-		stop();
 		asyncTest("Scrolling + Overflow", function() {
 			equal(jQuery.sap.domById(oCtrl.getId() + "-list").scrollLeft, 0, "list should not be scrolled initially");
 			

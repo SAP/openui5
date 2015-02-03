@@ -96,8 +96,6 @@
   		equal(oPopup, null, "oPopup must be null initially (order of execution problem?)");
   	});
   	
-  	QUnit.stop();
-  	
   	asyncTest("Open Popup", function() {
   		oPopup = new sap.ui.core.Popup(oDomRef);
   		equal(oPopup.isOpen(), false, "Popup should not be open initially");
