@@ -202,7 +202,7 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
     ], function (i, oFixture) {
-		test("constraints: " + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType = new sap.ui.model.odata.type.DateTime();
 
 			if (oFixture.warning) {
@@ -214,11 +214,11 @@
 
 			oType = new sap.ui.model.odata.type.DateTime({}, oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
-	test("format and parse (Date)", sinon.test(function () {
+	test("format and parse (Date)", function () {
 		var oType = new sap.ui.model.odata.type.DateTime({}, {displayFormat: "Date"});
 
 		strictEqual(oType.formatValue(oDateOnly, "string"), sFormattedDateOnly,
@@ -226,7 +226,7 @@
 		deepEqual(oType.parseValue(sFormattedDateOnly, "string"), oDateOnly);
 
 		parseError(oType, "Feb 30, 2014", "EnterDate", "invalid date");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("validate (Date)", function () {
@@ -261,7 +261,7 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
     ], function (i, oFixture) {
-		test("constraints: " + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType;
 
 			if (oFixture.warning) {
@@ -274,6 +274,6 @@
 
 			oType = new sap.ui.model.odata.type.DateTimeOffset({},  oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
-		}));
+		});
 	});
 } ());

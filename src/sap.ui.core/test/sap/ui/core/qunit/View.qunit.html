@@ -29,7 +29,7 @@
 
 	module("sap.ui.core.mvc.View");
 
-	test("runPreprocessor w/o config", sinon.test(function () {
+	test("runPreprocessor w/o config", function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
@@ -37,9 +37,9 @@
 		this.mock(sap.ui.core.util.XMLPreprocessor).expects("process").never();
 
 		strictEqual(oView.runPreprocessor("xml", oSource), oSource);
-	}));
+	});
 
-	test("runPreprocessor w/ config", sinon.test(function () {
+	test("runPreprocessor w/ config", function () {
 		var sCaller,
 			oPreprocessors = {
 				foo: { // Note: the type does not matter as long as we supply a preprocessor below
@@ -66,9 +66,9 @@
 		strictEqual(oView.mPreprocessors, oPreprocessors, "preprocessors stored at view");
 
 		strictEqual(oView.runPreprocessor("foo", oSource), oResult);
-	}));
+	});
 
-	test("runPreprocessor w/ invalid preprocessor", sinon.test(function () {
+	test("runPreprocessor w/ invalid preprocessor", function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -89,9 +89,9 @@
 			ok(true, ex); // TypeError: string is not a function
 		}
 		sinon.assert.notCalled(sap.ui.core.util.XMLPreprocessor.process);
-	}));
+	});
 
-	test("runPreprocessor w/ default preprocessor", sinon.test(function () {
+	test("runPreprocessor w/ default preprocessor", function () {
 		var sCaller,
 			oConfig = {},
 			oResult = {},
@@ -107,9 +107,9 @@
 			.once().withExactArgs(oSource, oConfig, sCaller).returns(oResult);
 
 		strictEqual(oView.runPreprocessor("xml", oSource), oResult);
-	}));
+	});
 
-	test("runPreprocessor w/o known preprocessor", sinon.test(function () {
+	test("runPreprocessor w/o known preprocessor", function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -128,7 +128,7 @@
 			ok(true, ex);
 		}
 		sinon.assert.notCalled(sap.ui.core.util.XMLPreprocessor.process);
-	}));
+	});
 </script>
 </head>
 <body>

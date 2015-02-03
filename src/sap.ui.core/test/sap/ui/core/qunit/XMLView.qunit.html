@@ -187,7 +187,7 @@ sap.ui.core.mvc.Controller</title>
 
 	});
 
-	test("Preprocessor", sinon.test(function() {
+	test("Preprocessor", function() {
 		var oResult,
 			oView,
 			sViewContent = [
@@ -204,7 +204,7 @@ sap.ui.core.mvc.Controller</title>
 
    		sinon.assert.calledOnce(sap.ui.core.mvc.View.prototype.runPreprocessor);
    		strictEqual(oView._xContent, oResult);
-	}));
+	});
 </script>
 </head>
 <body>

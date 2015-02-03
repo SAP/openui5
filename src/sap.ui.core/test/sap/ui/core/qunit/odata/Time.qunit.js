@@ -60,23 +60,21 @@
 
 	//*********************************************************************************************
 	jQuery.each(["false", false, "true", true, undefined], function (i, vNullable) {
-		test("with nullable=" + JSON.stringify(vNullable),
-			sinon.test(function () {
-				var oType;
+		test("with nullable=" + JSON.stringify(vNullable), function () {
+			var oType;
 
-				this.mock(jQuery.sap.log).expects("warning").never();
+			this.mock(jQuery.sap.log).expects("warning").never();
 
-				oType = new sap.ui.model.odata.type.Time({}, {
-					foo: "a",
-					nullable: vNullable
-				});
-				deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
-			})
-		);
+			oType = new sap.ui.model.odata.type.Time({}, {
+				foo: "a",
+				nullable: vNullable
+			});
+			deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
+		});
 	});
 
 	//*********************************************************************************************
-	test("illegal value for nullable", sinon.test(function () {
+	test("illegal value for nullable", function () {
 		var oType = new sap.ui.model.odata.type.Time({}, {nullable: false});
 
 		this.mock(jQuery.sap.log).expects("warning").once()
@@ -84,7 +82,7 @@
 
 		oType = new sap.ui.model.odata.type.Time(null, {nullable: "foo"});
 		deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("format success", function () {
@@ -136,7 +134,7 @@
 	});
 
 	//*********************************************************************************************
-	test("parse", sinon.test(function () {
+	test("parse", function () {
 		var oType = new sap.ui.model.odata.type.Time();
 
 		strictEqual(oType.parseValue(null, "string"), null, "null");
@@ -151,7 +149,7 @@
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 		oType = new sap.ui.model.odata.type.Time();
 		parseError(oType, "24:00:00", "beyond time of day");
-	}));
+	});
 
 	//*********************************************************************************************
 	jQuery.each([[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]],
@@ -172,7 +170,7 @@
 	);
 
 	//*********************************************************************************************
-	test("validate success", 0, sinon.test(function () {
+	test("validate success", 0, function () {
 		var oType = new sap.ui.model.odata.type.Time();
 
 		jQuery.each([null, {__edmType: "Edm.Time", ms: 4711}],
@@ -180,22 +178,21 @@
 				oType.validateValue(sValue);
 			}
 		);
-	}));
+	});
 
 	//*********************************************************************************************
-	test("validate: nullable", sinon.test(function () {
-		var oType = new sap.ui.model.odata.type.Time({}, {nullable: false});
-		this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText");
-		try {
-			oType.validateValue(null);
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException, "ValidateException: exception");
-			strictEqual(e.message, "Enter a time in the following format: 1:47:26 PM.",
-				"ValidateException: message");
-		}
-		sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText, "EnterTime");
-	}));
+	test("validate: nullable", function () {
+		TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.Time({}, {nullable: false});
+			try {
+				oType.validateValue(null);
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException, "ValidateException: exception");
+				strictEqual(e.message, "EnterTime 1:47:26 PM", "ValidateException: message");
+			}
+		});
+	});
 
 	//*********************************************************************************************
 	jQuery.each([

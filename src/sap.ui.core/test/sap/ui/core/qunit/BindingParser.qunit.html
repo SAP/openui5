@@ -220,7 +220,7 @@
 			parts: [{path: 'birthday/day', model:'special}Name'}]
 		}], function(iIndex, oFixture) {
 
-		test("Expression binding: " + oFixture.expression , sinon.test(function () {
+		test("Expression binding: " + oFixture.expression , function () {
 			var oBindingInfo,
 				oParseResult = {
 					result: {
@@ -243,7 +243,7 @@
 					parts: oFixture.parts
 				},
 				"binding info in success case");
-		}));
+		});
 	});
 
 	test("} in complex binding property value", function() {
@@ -253,7 +253,7 @@
 		strictEqual(o.model, "special}Name");
 	});
 
-	test("Expression binding: error handling", sinon.test(function () {
+	test("Expression binding: error handling", function () {
 		var sInvalidCompositeBinding = "prefix{={birthday/day} > 10}",
 			sMsg;
 
@@ -287,7 +287,7 @@
 
 		//TODO Add expression binding integration test to \git\sapui5.runtime\src\test\_databinding
 
-	}));
+	});
 	</script>
 
 </head>

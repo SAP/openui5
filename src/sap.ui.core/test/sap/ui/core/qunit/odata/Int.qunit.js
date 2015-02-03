@@ -175,7 +175,7 @@
 			testRange(Infinity, sExpectedMessage);
 		});
 
-		test("nullable", sinon.test(function () {
+		test("nullable", function () {
 			oType.validateValue(null);
 
 			this.mock(jQuery.sap.log).expects("warning").never();
@@ -208,7 +208,7 @@
 					equal(e.message, "EnterInt");
 				}
 			});
-		}));
+		});
 	}
 
 	anyInt("sap.ui.model.odata.type.Int16", -32768, 32767);
