@@ -98,6 +98,55 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
+	 * Normalizes the given number to the fixed format.
+	 *
+	 * @param {object} oFormatOptions
+	 *   the format options
+	 * @param {string} sText
+	 *   the number entered by a user with sign, decimal and grouping separator according to given
+	 *   format options
+	 * @returns {string}
+	 *   the normalized number consisting of an optional "-", at least one digit and an optional
+	 *   "." followed by more digits (<code>/-?\d+(\.\d+)?/</code>) or <code>undefined</code> if
+	 *   the given text is in the wrong format
+	 */
+	function normalizeNumber(oFormatOptions, sText) {
+		var aMatches,
+			sNewText,
+			sSign = "";
+
+		// remove all whitespace
+		sText = sText.replace(/\s/g, "");
+
+		// determine the sign
+		switch (sText.charAt(0)) {
+		case oFormatOptions.minusSign:
+			sSign = "-";
+			// falls through
+		case oFormatOptions.plusSign:
+			sText = sText.slice(1);
+			break;
+		// no default
+		}
+
+		// remove all grouping separators
+		while ((sNewText = sText.replace(oFormatOptions.groupingSeparator, "")) !== sText) {
+			sText = sNewText;
+		}
+
+		// replace one decimal separator by the dot
+		sText = sText.replace(oFormatOptions.decimalSeparator, ".");
+
+		// check validity and normalize
+		aMatches = /^(\d*)(?:\.(\d*))?$/.exec(sText);
+		if (aMatches) {
+			return sSign
+				+ (aMatches[1] || "0")
+				+ (aMatches[2] ? "." + aMatches[2] : "");
+		}
+	}
+
+	/**
 	 * Sets the constraints.
 	 *
 	 * @param {sap.ui.model.odata.type.Decimal} oType
@@ -253,27 +302,31 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Decimal.prototype.parseValue = function(vValue, sSourceType) {
-		var fResult;
+		var sResult;
 
 		if (vValue === null || vValue === "") {
 			return null;
 		}
 		switch (sSourceType) {
 		case "string":
-			fResult = getFormatter(this).parse(vValue);
-			if (isNaN(fResult)) {
+			sResult = normalizeNumber(getFormatter(this).oFormatOptions, vValue);
+			if (!sResult) {
 				throw new ParseException(getErrorMessage(this));
 			}
 			break;
 		case "int":
 		case "float":
-			fResult = vValue;
+			sResult = NumberFormat.getFloatInstance({
+				maxIntegerDigits: Infinity,
+				decimalSeparator: ".",
+				groupingEnabled: false
+			}).format(vValue);
 			break;
 		default:
 			throw new ParseException("Don't know how to parse " + this.getName() + " from "
 				+ sSourceType);
 		}
-		return String(fResult);
+		return sResult;
 	};
 
 	/**
