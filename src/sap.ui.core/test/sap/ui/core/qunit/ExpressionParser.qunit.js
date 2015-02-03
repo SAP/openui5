@@ -125,7 +125,7 @@
 			{expression: "'foo' 'bar'", message: "Invalid expression" /*TODO , at: 7 */},
 			{expression: "$invalid}", message: "Expected '{' instead of 'i'", at: 2},
 		], function(iUnused, oFixture) {
-		test("Invalid expression: " + oFixture.expression, sinon.test(function () {
+		test("Invalid expression: " + oFixture.expression, function () {
 			var oError;
 
 			this.stub(jQuery.sap.log, "error");
@@ -149,6 +149,6 @@
 				strictEqual(e.text, oFixture.expression, "Error.at");
 			}
 			ok(oError, "error is thrown on invalid expression");
-		}));
+		});
 	});
 } ());

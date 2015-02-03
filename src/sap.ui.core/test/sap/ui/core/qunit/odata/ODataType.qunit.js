@@ -12,7 +12,7 @@
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.ODataType");
 
-	test("basics", sinon.test(function () {
+	test("basics", function () {
 		var oType = new sap.ui.model.odata.type.ODataType();
 
 		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
@@ -32,6 +32,6 @@
 			sap.ui.model.SimpleType.prototype.setFormatOptions, "type overwrites setFormatOptions");
 		oType.setFormatOptions({foo: "bar"});
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
-	}));
+	});
 
 } ());

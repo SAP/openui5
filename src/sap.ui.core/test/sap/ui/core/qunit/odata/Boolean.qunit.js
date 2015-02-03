@@ -19,7 +19,7 @@
 		}
 	});
 
-	test("basics", sinon.test(function () {
+	test("basics", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
 		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
@@ -27,7 +27,7 @@
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		strictEqual(oType.oConstraints, undefined, "no constraints");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("format", function () {
@@ -119,7 +119,7 @@
 	});
 
 	//*********************************************************************************************
-	test("setConstraints", sinon.test(function () {
+	test("setConstraints", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
 		this.mock(jQuery.sap.log).expects("warning")
@@ -140,5 +140,5 @@
 
 		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "foo"});
 		strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
-	}));
+	});
 } ());

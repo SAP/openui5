@@ -45,7 +45,7 @@
 		{maxLength: -1, warning: "Illegal maxLength: -1"},
 		{maxLength: 0, warning: "Illegal maxLength: 0"}
 	], function (i, oFixture) {
-		test("constraints error #" + i, sinon.test(function () {
+		test("constraints error #" + i, function () {
 			var oType = new sap.ui.model.odata.type.String();
 
 			this.mock(jQuery.sap.log).expects("warning")
@@ -53,7 +53,7 @@
 
 			oType = new sap.ui.model.odata.type.String({}, {maxLength: oFixture.maxLength});
 			strictEqual(oType.oConstraints, undefined);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
@@ -161,7 +161,7 @@
 	});
 
 	//*********************************************************************************************
-	test("setConstraints w/ strings", sinon.test(function () {
+	test("setConstraints w/ strings", function () {
 		var oType = new sap.ui.model.odata.type.String();
 
 		this.mock(jQuery.sap.log).expects("warning").never();
@@ -171,5 +171,5 @@
 
 		oType = new sap.ui.model.odata.type.String({}, {nullable: "false"});
 		deepEqual(oType.oConstraints, {nullable: false});
-	}));
+	});
 } ());

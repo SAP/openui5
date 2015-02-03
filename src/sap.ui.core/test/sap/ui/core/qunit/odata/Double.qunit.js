@@ -64,7 +64,7 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
 	], function (i, oFixture) {
-		test("constraints: " + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType;
 
 			if (oFixture.warning) {
@@ -77,7 +77,7 @@
 
 			var oType = new sap.ui.model.odata.type.Double({}, oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
@@ -110,7 +110,7 @@
 	});
 
 	//*********************************************************************************************
-	test("format: modified Swedish", sinon.test(function () {
+	test("format: modified Swedish", function () {
 		var oType,
 			fnLocaleData = sap.ui.core.LocaleData.getInstance;
 
@@ -132,7 +132,7 @@
 		strictEqual(oType.formatValue("-1.234e+3", "string"), "<1\u00a0234", "check modification");
 		strictEqual(oType.formatValue("-1.234e+15", "string"), "<1,234\u00a0E>15",
 			"check replacement");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("parse", function () {

@@ -32,23 +32,21 @@
 
 	//*********************************************************************************************
 	jQuery.each(["false", false, "true", true, undefined], function (i, vNullable) {
-		test("with nullable=" + vNullable + " (type: " + typeof vNullable + ")",
-			sinon.test(function () {
-				var oType;
+		test("with nullable=" + vNullable + " (type: " + typeof vNullable + ")", function () {
+			var oType;
 
-				this.mock(jQuery.sap.log).expects("warning").never();
+			this.mock(jQuery.sap.log).expects("warning").never();
 
-				oType = new sap.ui.model.odata.type.Guid({}, {
-					foo: "a",
-					nullable: vNullable
-				});
-				deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
-			})
-		);
+			oType = new sap.ui.model.odata.type.Guid({}, {
+				foo: "a",
+				nullable: vNullable
+			});
+			deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
+		});
 	});
 
 	//*********************************************************************************************
-	test("default nullable is true", sinon.test(function () {
+	test("default nullable is true", function () {
 		var oType = new sap.ui.model.odata.type.Guid({}, {nullable: false});
 
 		this.mock(jQuery.sap.log).expects("warning").once()
@@ -56,7 +54,7 @@
 
 		oType = new sap.ui.model.odata.type.Guid(null, {nullable: "foo"});
 		deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("format success", function () {
@@ -128,7 +126,7 @@
 	);
 
 	//*********************************************************************************************
-	test("validate success", 0, sinon.test(function () {
+	test("validate success", 0, function () {
 		var oType = new sap.ui.model.odata.type.Guid();
 
 		jQuery.each([null, "0050568D-393C-1ED4-9D97-E65F0F3FCC23"],
@@ -136,7 +134,7 @@
 				oType.validateValue(sValue);
 			}
 		);
-	}));
+	});
 
 	//*********************************************************************************************
 	jQuery.each([

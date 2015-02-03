@@ -74,7 +74,7 @@
 		{i: {precision: 2, scale: 3}, o: {precision: 2, scale: Infinity},
 			warning: "Illegal scale: must be less than precision (precision=2, scale=3)"}
     ], function (i, oFixture) {
-		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function () {
 			var oType = new sap.ui.model.odata.type.Decimal();
 
 			if (oFixture.warning) {
@@ -86,7 +86,7 @@
 
 			oType= new sap.ui.model.odata.type.Decimal({}, oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
@@ -148,7 +148,7 @@
 	});
 
 	//*********************************************************************************************
-	test("parse large numbers, modified Swedish", sinon.test(function () {
+	test("parse large numbers, modified Swedish", function () {
 		var fnLocaleData = sap.ui.core.LocaleData.getInstance,
 			oType;
 
@@ -171,7 +171,7 @@
 			"-1234567890123456789012", "minus sign, tab, non-breaking spaces");
 		strictEqual(oType.parseValue(" 1 234\u00a0567 890,123456789012", "string"),
 			"1234567890.123456789012", "many decimals");
-	}));
+	});
 
 	//*********************************************************************************************
 	jQuery.each([
@@ -251,7 +251,7 @@
 	});
 
 	//*********************************************************************************************
-	test('scale="variable"', sinon.test(function () {
+	test('scale="variable"', function () {
 		var oType = new sap.ui.model.odata.type.Decimal();
 
 		this.mock(jQuery.sap.log).expects("warning").never();
@@ -275,7 +275,7 @@
 				}
 			});
 		});
-	}));
+	});
 
 	//*********************************************************************************************
 	test("validate: nullable", function () {
@@ -297,7 +297,7 @@
 	});
 
 	//*********************************************************************************************
-	test("setConstraints w/ strings", sinon.test(function () {
+	test("setConstraints w/ strings", function () {
 		var oType = new sap.ui.model.odata.type.Decimal();
 
 		this.mock(jQuery.sap.log).expects("warning").never();
@@ -308,5 +308,5 @@
 
 		oType= new sap.ui.model.odata.type.Decimal({}, {nullable: "true"});
 		strictEqual(oType.oConstraints, undefined);
-	}));
+	});
 } ());

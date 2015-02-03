@@ -255,30 +255,28 @@
 
 	//*********************************************************************************************
 	jQuery.each([false, true], function (i, bIsLoggable) {
-		test("template:if test='false', warn = " + bIsLoggable,
-			sinon.test(function () {
-				var aViewContent = [
-						mvcView(),
-						'<template:if test="false">',
-						'<Out/>',
-						'<\/template:if>',
-						'<!-- prevent empty tag -->',
-						'<\/mvc:View>'
-					],
-					oLogMock = this.mock(jQuery.sap.log);
+		test("template:if test='false', warn = " + bIsLoggable, function () {
+			var aViewContent = [
+					mvcView(),
+					'<template:if test="false">',
+					'<Out/>',
+					'<\/template:if>',
+					'<!-- prevent empty tag -->',
+					'<\/mvc:View>'
+				],
+				oLogMock = this.mock(jQuery.sap.log);
 
-				oLogMock.expects("isLoggable").once()
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
-					.returns(bIsLoggable);
-				oLogMock.expects("warning")
-					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-					.withExactArgs(
-						'qux: Constant test condition in ' + aViewContent[1],
-						null, "sap.ui.core.util.XMLPreprocessor");
+			oLogMock.expects("isLoggable").once()
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.withExactArgs(
+					'qux: Constant test condition in ' + aViewContent[1],
+					null, "sap.ui.core.util.XMLPreprocessor");
 
-				check(aViewContent);
-			})
-		);
+			check(aViewContent);
+		});
 	});
 
 	//*********************************************************************************************
@@ -421,7 +419,7 @@
 	//*********************************************************************************************
 	jQuery.each([false, true], function (i, bIsLoggable) {
 		test("template:if test='{formatter:...}', exception in formatter, warn = " + bIsLoggable,
-			sinon.test(function () {
+			function () {
 				var aViewContent = [
 						mvcView(),
 						'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
@@ -433,7 +431,6 @@
 					oError = new Error("deliberate failure"),
 					oLogMock = this.mock(jQuery.sap.log);
 
-				// Note: mocks inside sinon.test() are verified and restored automatically
 				oLogMock.expects("isLoggable").once()
 					.withExactArgs(jQuery.sap.log.Level.WARNING)
 					.returns(bIsLoggable);
@@ -454,36 +451,34 @@
 				check(aViewContent, {
 					models: new sap.ui.model.json.JSONModel({flag: true})
 				});
-			})
+			}
 		);
 	});
 
 	//*********************************************************************************************
 	jQuery.each([false, true], function (i, bIsLoggable) {
-		test("template:if test='{unrelated>/some/path}', warn = " + bIsLoggable,
-			sinon.test(function () {
-				var aViewContent = [
-						mvcView(),
-						'<template:if test="' + "{unrelated>/some/path}" + '">',
-						'<Out/>',
-						'</template:if>',
-						'<!-- prevent empty tag -->',
-						'</mvc:View>'
-					],
-					oLogMock = this.mock(jQuery.sap.log);
+		test("template:if test='{unrelated>/some/path}', warn = " + bIsLoggable, function () {
+			var aViewContent = [
+					mvcView(),
+					'<template:if test="' + "{unrelated>/some/path}" + '">',
+					'<Out/>',
+					'</template:if>',
+					'<!-- prevent empty tag -->',
+					'</mvc:View>'
+				],
+				oLogMock = this.mock(jQuery.sap.log);
 
-				oLogMock.expects("isLoggable").once()
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
-					.returns(bIsLoggable);
-				oLogMock.expects("warning")
-					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-					.withExactArgs(
-						'qux: Binding not ready in ' + aViewContent[1],
-						null, "sap.ui.core.util.XMLPreprocessor");
+			oLogMock.expects("isLoggable").once()
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.withExactArgs(
+					'qux: Binding not ready in ' + aViewContent[1],
+					null, "sap.ui.core.util.XMLPreprocessor");
 
-				check(aViewContent);
-			})
-		);
+			check(aViewContent);
+		});
 	});
 
 	//*********************************************************************************************
@@ -762,52 +757,49 @@
 
 	//*********************************************************************************************
 	jQuery.each([false, true], function (i, bIsLoggable) {
-		test("binding resolution, exception in formatter, debug = " + bIsLoggable,
-			sinon.test(function () {
-				var oError = new Error("deliberate failure"),
-					oLogMock = this.mock(jQuery.sap.log);
+		test("binding resolution, exception in formatter, debug = " + bIsLoggable, function () {
+			var oError = new Error("deliberate failure"),
+				oLogMock = this.mock(jQuery.sap.log);
 
-				// Note: mocks inside sinon.test() are verified and restored automatically
-				oLogMock.expects("isLoggable")
-					.twice() // Note: default is once()
-					.withExactArgs(jQuery.sap.log.Level.DEBUG)
-					.returns(bIsLoggable);
-				oLogMock.expects("debug")
-					.exactly(bIsLoggable ? 2 : 0) // do not construct arguments in vain!
-					.withExactArgs(
-						sinon.match(/qux: Error in formatter of <In text=".*"\/>/),
-						oError, "sap.ui.core.util.XMLPreprocessor");
-				window.foo = {
-						Helper: {
-							fail: function (oRawValue) {
-								throw oError;
+			oLogMock.expects("isLoggable")
+				.twice() // Note: default is once()
+				.withExactArgs(jQuery.sap.log.Level.DEBUG)
+				.returns(bIsLoggable);
+			oLogMock.expects("debug")
+				.exactly(bIsLoggable ? 2 : 0) // do not construct arguments in vain!
+				.withExactArgs(
+					sinon.match(/qux: Error in formatter of <In text=".*"\/>/),
+					oError, "sap.ui.core.util.XMLPreprocessor");
+			window.foo = {
+					Helper: {
+						fail: function (oRawValue) {
+							throw oError;
+						}
+					}
+				};
+
+			check([
+				mvcView(),
+				'<In text="{formatter: \'foo.Helper.fail\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
+				'<In text="{formatter: \'foo.Helper.fail\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+				'</mvc:View>'
+			], {
+				models: new sap.ui.model.json.JSONModel({
+					"com.sap.vocabularies.UI.v1.HeaderInfo": {
+						"Title": {
+							"Label": {
+								"String": "Customer"
+							},
+							"Value": {
+								"Path": "CustomerName"
 							}
 						}
-					};
-
-				check([
-					mvcView(),
-					'<In text="{formatter: \'foo.Helper.fail\','
-						+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
-					'<In text="{formatter: \'foo.Helper.fail\','
-						+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
-					'</mvc:View>'
-				], {
-					models: new sap.ui.model.json.JSONModel({
-						"com.sap.vocabularies.UI.v1.HeaderInfo": {
-							"Title": {
-								"Label": {
-									"String": "Customer"
-								},
-								"Value": {
-									"Path": "CustomerName"
-								}
-							}
-						}
-					})
-				});
-			})
-		);
+					}
+				})
+			});
+		});
 	});
 
 	//*********************************************************************************************
@@ -1196,7 +1188,7 @@
 	});
 
 	//*********************************************************************************************
-	test("fragment support", sinon.test(function () {
+	test("fragment support", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
 			return xml(['<In xmlns="foo"/>']);
 		});
@@ -1211,10 +1203,10 @@
 			]);
 		sinon.assert.calledWithExactly(sap.ui.core.XMLTemplateProcessor.loadTemplate, "myFragment",
 			"fragment");
-	}));
+	});
 
 	//*********************************************************************************************
-	test("fragment with FragmentDefinition", sinon.test(function () {
+	test("fragment with FragmentDefinition", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
 			return xml(['<FragmentDefinition xmlns="sap.ui.core">',
 			            '<In id="first"/>',
@@ -1233,10 +1225,10 @@
 			]);
 		sinon.assert.calledWithExactly(sap.ui.core.XMLTemplateProcessor.loadTemplate, "myFragment",
 			"fragment");
-	}));
+	});
 
 	//*********************************************************************************************
-	test("fragment in repeat", sinon.test(function () {
+	test("fragment in repeat", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
 			return xml(['<In xmlns="foo" src="{src}" />']);
 		});
@@ -1262,10 +1254,10 @@
 			'<In src="B"/>',
 			'<In src="C"/>'
 		]);
-	}));
+	});
 
 	//*********************************************************************************************
-	test("fragment with type != XML", sinon.test(function () {
+	test("fragment with type != XML", function () {
 		var oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
 		check([
@@ -1278,10 +1270,10 @@
 				+ '|type="JS" fragmentName="nonXMLFragment")\/>')
 			);
 		oXMLTemplateProcessorMock.expects("loadTemplate").never();
-	}));
+	});
 
 	//*********************************************************************************************
-	test("error on fragment with simple cyclic reference", sinon.test(function () {
+	test("error on fragment with simple cyclic reference", function () {
 		var oLogMock = this.mock(jQuery.sap.log);
 
 		oLogMock.expects("error")
@@ -1301,10 +1293,10 @@
 			{},
 			/Error: Stopped due to cyclic fragment reference/
 			);
-	}));
+	});
 
 	//*********************************************************************************************
-	test("error on fragment with ping pong cyclic reference", sinon.test(function () {
+	test("error on fragment with ping pong cyclic reference", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
 			if (sTemplateName === "A") {
 				return xml(['<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>']);
@@ -1319,5 +1311,5 @@
 			{},
 			/Error: Stopped due to cyclic fragment reference/
 			);
-	}));
+	});
 } ());

@@ -244,7 +244,7 @@
 	 */
 	function testIllegalValues(aValues, sTitle, sType, bAsObject, fnMethod) {
 		jQuery.each(aValues, function (i, vValue) {
-			test(sTitle + " (invalid: " + JSON.stringify(vValue) + ")", sinon.test(function () {
+			test(sTitle + " (invalid: " + JSON.stringify(vValue) + ")", function () {
 				var oLogMock = this.mock(jQuery.sap.log),
 					vRawValue = vValue;
 
@@ -257,7 +257,7 @@
 					null, "sap.ui.model.odata.AnnotationHelper");
 
 				strictEqual(formatAndParse(vRawValue, fnMethod), String(vValue));
-			}));
+			});
 		});
 	}
 
@@ -529,7 +529,7 @@
 	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", sinon.test(function () {
+	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
 		var oParameter = {Type: "Int16", Value: 42};
 
 		strictEqual(formatAndParseNoWarning({
@@ -539,17 +539,17 @@
 				Parameters: [{Type: "String", Value : "{foo}"}, oParameter]
 			}
 		}), "{foo}<Unsupported: " + JSON.stringify(oParameter).replace(/"/g, "'") + ">");
-	}));
+	});
 
 	//*********************************************************************************************
-	test("14.5.3.1.1 Function odata.concat: null parameter", sinon.test(function () {
+	test("14.5.3.1.1 Function odata.concat: null parameter", function () {
 		strictEqual(formatAndParseNoWarning({
 			Apply: {
 				Name: "odata.concat",
 				Parameters: [{Type: "String", Value : "*foo*"}, null]
 			}
 		}), "*foo*<Unsupported: null>");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("14.5.3.1.2 Function odata.fillUriTemplate", function () {
@@ -611,7 +611,7 @@
 
 	//*********************************************************************************************
 	// TODO: unsupported: nested apply, uriEncode, type determination in structured property
-//	test("14.5.3 Nested apply (odata.fillUriTemplate & uriEncode)", sinon.test(function () {
+//	test("14.5.3 Nested apply (odata.fillUriTemplate & uriEncode)", function () {
 //		withMetaModel(function (oMetaModel) {
 //			var oCurrentBinding = oMetaModel.bindProperty("/dataServices/schema/0/entityType/0/" +
 //					"com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
@@ -632,7 +632,7 @@
 //			oControl.bindProperty("text", oSingleBindingInfo);
 //			strictEqual(oControl.getText(), "https://www.google.de/maps/place/'Domplatz','Speyer'");
 //		});
-//	}));
+//	});
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.simplePath");

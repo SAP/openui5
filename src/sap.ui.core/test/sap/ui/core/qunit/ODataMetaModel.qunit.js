@@ -240,7 +240,7 @@
 	});
 
 	//*********************************************************************************************
-	test("basics", sinon.test(function() {
+	test("basics", function() {
 		var oMetaModel = new sap.ui.model.odata.ODataMetaModel({
 				getServiceMetadata : function () { return {}; },
 				isLoaded : function () { return true; }
@@ -279,7 +279,7 @@
 		raises(function () {
 			oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		});
-	}));
+	});
 
 	//*********************************************************************************************
 	test("bindings", function() {
@@ -340,7 +340,7 @@
 		annotationURI : ["/fake/annotations", "/fake/annotations2"],
 		title : "multiple annotation files"
 	}], function (i, oFixture) {
-		asyncTest("ODataMetaModel loaded: " + oFixture.title, sinon.test(function() {
+		asyncTest("ODataMetaModel loaded: " + oFixture.title, function() {
 			var oMetaModel, oModel;
 
 			setupSandbox(this.sandbox);
@@ -437,13 +437,13 @@
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			}, onError)["catch"](onError);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
 	jQuery.each([false, true, false, true], function (i, bAsync) {
 		asyncTest("Error loading" + (i < 2 ? " meta data" : " annotations" )
-				+ ", async: " + bAsync, sinon.test(function() {
+				+ ", async: " + bAsync, function() {
 			var oModel,
 				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
 				sAnnotationsURL = i < 2 ? "" : "/invalid/annotations",
@@ -467,14 +467,14 @@
 				ok(/Error loading meta model/.test(ex.message), ex.message);
 				ok(true, "error handler called as expected");
 			})["catch"](onError);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
 	jQuery.each(["annotations", "emptyAnnotations"], function (i, sAnnotation) {
 		jQuery.each(["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"],
 			function (j, sPath) {
-				asyncTest(sAnnotation + ", " + sPath, sinon.test(function() {
+				asyncTest(sAnnotation + ", " + sPath, function() {
 					var oMetaModel, oModel;
 
 					setupSandbox(this.sandbox);
@@ -498,7 +498,7 @@
 						strictEqual(oMetaModel.getODataEntitySet("ProductSet"), null,
 							"getODataEntitySet");
 					}, onError)["catch"](onError);
-				}));
+				});
 			}
 		);
 	});
