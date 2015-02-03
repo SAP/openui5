@@ -83,9 +83,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 	
 	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
-		rm.write("<label for='" + oLI.getId() + "-value' class='sapMGHLITitle'>");
+		var sTextDir = oLI.getTitleTextDirection();
+		rm.write("<label for='" + oLI.getId() + "-value' class='sapMGHLITitle'");
+		
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			rm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+		rm.write(">");
+		
 		rm.writeEscaped(oLI.getTitle());
-
+		
 		var iCount = oLI.getCount();
 		if (iCount) {
 			rm.writeEscaped(" (" + iCount + ")");
