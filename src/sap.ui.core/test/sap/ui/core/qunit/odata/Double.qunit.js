@@ -163,29 +163,33 @@
 
 	//*********************************************************************************************
 	test("parse: user error", function () {
-		var oType = new sap.ui.model.odata.type.Double();
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.Double();
 
-		try {
-			oType.parseValue("foo", "string");
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message, "Enter a number");
-		}
+			try {
+				oType.parseValue("foo", "string");
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, "EnterNumber");
+			}
+		});
 	});
 
 	//*********************************************************************************************
 	jQuery.each([false, null, 1, {}, "foo", "1.1", "1234"], function (i, sValue) {
 		test("validate errors: " + JSON.stringify(sValue), function () {
-			var oType = new sap.ui.model.odata.type.Double({}, {nullable: false});
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				var oType = new sap.ui.model.odata.type.Double({}, {nullable: false});
 
-			try {
-				oType.validateValue(sValue);
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "Enter a number");
-			}
+				try {
+					oType.validateValue(sValue);
+					ok(false);
+				} catch (e) {
+					ok(e instanceof sap.ui.model.ValidateException);
+					strictEqual(e.message, "EnterNumber");
+				}
+			});
 		});
 	});
 

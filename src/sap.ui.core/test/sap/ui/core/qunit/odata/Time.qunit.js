@@ -8,7 +8,8 @@
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		oCircular = {};
+		oCircular = {},
+		TestUtils = sap.ui.test.TestUtils;
 
 	oCircular.self = oCircular;
 
@@ -23,20 +24,17 @@
 	 * Tests that the given value leads to a ParseException.
 	 */
 	function parseError(oType, oValue, sReason) {
-		sinon.test(function () {
-			this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText");
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue(oValue, "string");
 				ok(false);
 			} catch (e) {
 				ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
-				strictEqual(e.message, "Enter a time in the following format: "
-					+ oType.formatValue(createTime(13, 47, 26, 0), "string") + ".",
+				strictEqual(e.message,
+					"EnterTime " + oType.formatValue(createTime(13, 47, 26, 0), "string"),
 					sReason + ": message");
 			}
-			sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText,
-				"EnterTime");
-		}).apply({}); // give sinon.test a this to enrich
+		});
 	}
 
 	//*********************************************************************************************
@@ -138,7 +136,7 @@
 	});
 
 	//*********************************************************************************************
-	test("parse", function () {
+	test("parse", sinon.test(function () {
 		var oType = new sap.ui.model.odata.type.Time();
 
 		strictEqual(oType.parseValue(null, "string"), null, "null");
@@ -152,10 +150,8 @@
 
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 		oType = new sap.ui.model.odata.type.Time();
-		//parseError(oType, "24:00:00", "beyond time of day");  // TODO: rework! 
-		// ==> IN THIS CASE THE ERROR MESSAGE IS ALSO TRANSLATED!
-		// ==> reconsider the validation based on error messages
-	});
+		parseError(oType, "24:00:00", "beyond time of day");
+	}));
 
 	//*********************************************************************************************
 	jQuery.each([[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]],

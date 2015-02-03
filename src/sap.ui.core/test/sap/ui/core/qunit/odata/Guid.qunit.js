@@ -128,49 +128,36 @@
 	);
 
 	//*********************************************************************************************
-	test("validate success", sinon.test(function () {
-		var oSpy = this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText"),
-			oType = new sap.ui.model.odata.type.Guid();
+	test("validate success", 0, sinon.test(function () {
+		var oType = new sap.ui.model.odata.type.Guid();
 
-		jQuery.each(["0050568D-393C-1ED4-9D97-E65F0F3FCC23", null],
+		jQuery.each([null, "0050568D-393C-1ED4-9D97-E65F0F3FCC23"],
 			function (i, sValue) {
 				oType.validateValue(sValue);
 			}
 		);
-
-		oType = new sap.ui.model.odata.type.Guid({}, {nullable: false});
-		try {
-			oType.validateValue(null);
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			ok(e.message ===
-				"Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF.");
-			ok(oSpy.calledOnce);
-			ok(oSpy.calledWith("EnterGuid"), "get text for 'EnterGuid'");
-		}
 	}));
 
 	//*********************************************************************************************
 	jQuery.each([
 		{value: 1234, message: "Illegal sap.ui.model.odata.type.Guid value: 1234"},
-		{value: "123",
-			message: "Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF."},
-		{value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23-2",
-			message: "Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF."},
-		{value: "G050568D-393C-1ED4-9D97-E65F0F3FCC23",
-			message: "Enter a GUID in the following format: 12345678-90AB-CDEF-1234-567890ABCDEF."}
+		{value: "123", message: "EnterGuid"},
+		{value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23-2", message: "EnterGuid"},
+		{value: "G050568D-393C-1ED4-9D97-E65F0F3FCC23", message: "EnterGuid"},
+		{value: null, message: "EnterGuid"}
 	], function (i, oFixture) {
 		test("validate exception for value " + oFixture.value, function () {
-			var oType = new sap.ui.model.odata.type.Guid();
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				var oType = new sap.ui.model.odata.type.Guid({}, {nullable: false});
 
-			try {
-				oType.validateValue(oFixture.value);
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, oFixture.message);
-			}
+				try {
+					oType.validateValue(oFixture.value);
+					ok(false);
+				} catch (e) {
+					ok(e instanceof sap.ui.model.ValidateException);
+					strictEqual(e.message, oFixture.message);
+				}
+			});
 		});
 	});
 } ());

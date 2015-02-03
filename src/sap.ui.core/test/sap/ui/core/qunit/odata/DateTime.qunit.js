@@ -16,9 +16,8 @@
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
 		oMessages = {
-			"EnterDateTime": "Enter a date and a time in the following format: " +
-				"Nov 27, 2014, 1:47:26 PM.",
-			"EnterDate": "Enter a date in the following format: Nov 27, 2014."
+			"EnterDateTime": "EnterDateTime Nov 27, 2014, 1:47:26 PM",
+			"EnterDate": "EnterDate Nov 27, 2014"
 		};
 
 	oDateOnly.setUTCFullYear(2014);
@@ -37,8 +36,7 @@
 	 * Tests that the given value leads to a ParseException.
 	 */
 	function parseError(oType, oValue, sExpectedErrorKey, sReason) {
-		sinon.test(function () {
-			this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText");
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue(oValue, "string");
 				ok(false);
@@ -46,17 +44,14 @@
 				ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
 				strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
-			sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText,
-				sExpectedErrorKey);
-		}).apply({}); // give sinon.test a this to enrich
+		});
 	}
 
 	/*
 	 * Tests that the given value leads to a ValidateException.
 	 */
 	function validateError(oType, oValue, sExpectedErrorKey, sReason) {
-		sinon.test(function () {
-			this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText");
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.validateValue(oValue);
 				ok(false);
@@ -64,9 +59,7 @@
 				ok(e instanceof sap.ui.model.ValidateException, sReason + ": exception");
 				strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
-			sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText,
-				sExpectedErrorKey);
-		}).apply({}); // give sinon.test a this to enrich
+		});
 	}
 
 	/*
