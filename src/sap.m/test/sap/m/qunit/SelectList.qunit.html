@@ -82,6 +82,60 @@
 			});
 
 			/* =========================================================== */
+			/* HTML module                                                 */
+			/* =========================================================== */
+
+			module("HTML");
+
+			/* ------------------------------ */
+			/* rendering                      */
+			/* ------------------------------ */
+
+			test("rendering", function() {
+
+				// system under test
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria",
+						}),
+
+						new sap.ui.core.Item({
+							key: "AR",
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AU",
+							text: "Australia"
+						})
+					],
+					selectedKey: "AU"
+				});
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
+				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-setsize"), "3");
+				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-setsize"), "3");
+
+				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-posinset"), "1");
+				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-posinset"), "2");
+				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-posinset"), "3");
+
+				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-selected"), "false");
+				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-selected"), "false");
+				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-selected"), "true");
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			/* =========================================================== */
 			/* Methods module                                              */
 			/* =========================================================== */
 
