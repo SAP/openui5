@@ -5,7 +5,7 @@
 .sapMSegB {
 	margin: 0; /*To override the native browser margin*/
 	padding: 0;
-	-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	border: none;
 	display: inline-block;
 	white-space: nowrap;
@@ -56,4 +56,11 @@
 	text-shadow: none;
 	cursor: default;
 	opacity: 0.5;
+}
+
+/* Android size compact fix */
+html[data-sap-ui-os^="Android"] {
+	.sapUiSizeCompact .sapMSegBBtn .sapUiIcon {
+		line-height: 1.6rem;
+	}
 }
