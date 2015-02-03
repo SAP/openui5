@@ -43,7 +43,7 @@ sap.ui.define(
 
 	return ODataModel.extend("sap.ui.demo.mdskeleton.model.MockableModel", {
 		/**
-		 * Creates an OData v2 model for the northwind service or initializes the mock server when responderOn=true is added as an Url parameter
+		 * Creates an OData v2 model for the given service url or initializes the mock server when responderOn=true is added as an Url parameter
 		 *
 		 * @param oModelConfig {object} Configuration of the model containing the mcokdataFolder and the Source of the actual service
 		 * @param oModelConfig.serviceUrl {string} The relative or absolute url to an Odata Service
@@ -55,6 +55,35 @@ sap.ui.define(
 		constructor: function (oModelConfig) {
 			initMockServer(oModelConfig);
 			ODataModel.call(this, oModelConfig.serviceUrl, /* JSON = */ true);
+		},
+
+		/**
+		 * Will wait until there is data in the model for the elementbinding given.
+		 *
+		 * @param oElementBinding the element binding that should contain the data
+		 * @returns {Promise} Gets resolved if the data is already on the client or when the data has been requested from the server. Gets rejected when there was no data on the server.
+		 */
+		whenThereIsDataForTheElementBinding : function (oElementBinding) {
+			var sPath = oElementBinding.getPath(),
+				oModel = oElementBinding.getModel();
+
+			return new Promise(function (fnSuccess, fnReject) {
+				//Check if the data is already on the client
+				if (oElementBinding.isInitial() || !oModel.getData(sPath)) {
+					// Check that the object specified actually was found.
+					oElementBinding.attachEventOnce("dataReceived", function () {
+						var oData = oModel.getData(sPath);
+						if (!oData) {
+							fnReject();
+						} else {
+							fnSuccess(sPath);
+						}
+					}, this);
+				} else {
+					fnSuccess(sPath);
+				}
+
+			});
 		}
 
 	});

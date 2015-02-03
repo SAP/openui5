@@ -19,6 +19,10 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 		 */
 		getRouter : function () {
 			return sap.ui.core.UIComponent.getRouterFor(this);
+		},
+
+		getModel : function (sName) {
+			return this.getView().getModel(sName);
 		}
 	});
 

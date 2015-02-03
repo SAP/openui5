@@ -3,20 +3,11 @@ jQuery.sap.require("sap.ui.demo.mdskeleton.view.BaseController");
 sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.LineItem", {
 
 	onInit : function() {
-		this.oInitialLoadFinishedDeferred = jQuery.Deferred();
 		this.oItems = null;
 		this.oObject = {};
 		this.sObjectPath = null;
 		this.sLineItemId = null;
-		
-		if (sap.ui.Device.system.phone) {
-			//don't wait for the master on a phone
-			this.oInitialLoadFinishedDeferred.resolve();
-		} else {
-			this.getView().setBusy(true);
-			this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onLoadFinished, this);
-		}
-		
+
 		this.getRouter().getRoute("lineItem").attachPatternMatched(this.onRouteMatched, this);
 	},
 
@@ -29,28 +20,8 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 		}
 		this.sObjectPath = "/Objects('" + this.oObject.sObjectId + "')";
 		this.sLineItemId = oParameters.arguments.lineItemId;
-		
-		//If parent object data is already loaded, we do not need to wait for
-		//the master view to finish loading.
-		if (this.getView().getModel().getObject(this.sObjectPath)) {
-			this.onLoadFinished();
-		}
 
-		jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
-			this.bindView(this.sObjectPath);
-		}, this));
-		
-	},
-	
-	/**
-	 * Removes the busy indicator and resolves the oInitialLoadFinishedDefferred promise 
-	 * Once the latter is resolved, the view can be bound and the other line items prepared for navigation.
-	 * 
-	 * @function
-	 */
-	onLoadFinished :  function () {
-		this.getView().setBusy(false);
-		this.oInitialLoadFinishedDeferred.resolve();
+		this._bindView();
 	},
 
 	/**
@@ -61,8 +32,9 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 	 * @function
 	 */
 
-	bindView : function () {
+	_bindView : function () {
 		var oView = this.getView();
+		oView.setBusy(true);
 
 		// We are binding the view to the object here, and NOT to the line item. This has a reason:
 		// In order to be able to navigate forwards and backwards through ALL line items belonging to an object,
@@ -72,18 +44,19 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 		// and then using 'expand' to retrieve all corresponding line items.  
 		oView.bindElement(this.sObjectPath, {expand: "LineItems"});
 
-		//Check if the data is already on the client
-		if (!oView.getModel().getObject(this.sObjectPath + "/LineItems")) {
 
-			// Check that the line item specified actually was found.
-			oView.getElementBinding().attachEventOnce("dataReceived", jQuery.proxy(function() {
+		this.getModel().whenThereIsDataForTheElementBinding(oView.getElementBinding())
+			.then(
+			function (sPath) {
+				this.getOwnerComponent().oListSelector.selectAndScrollToAListItem(sPath);
 				this.checkLineItemAndBind();
-			}, this));
+			}.bind(this),
+			function () {
 
-		} else {
-			this.checkLineItemAndBind();
-		}
+				this.getView().setBusy(false);
+				this.showEmptyView();
 
+			}.bind(this));
 	},
 
 	
@@ -96,16 +69,19 @@ sap.ui.demo.mdskeleton.view.BaseController.extend("sap.ui.demo.mdskeleton.view.L
 		// now, we need to make sure that the elements in our view show us the data from the particular line item in 
 		// the model. As the view has been bound to the object instead, we now need to bind the container element within the view (in our
 		// case, the page) to the particular line item.
-		var sItemPath = "/LineItems('" + this.sLineItemId + "')"; 
-		this.getView().byId("lineItemPage").bindElement(sItemPath);
-		
-		var oData = this.getView().getModel().getData(sItemPath);
-		if (!oData) {
-			this.showEmptyView();
-		} else {
-			this.populateLineItems();
-			this.toggleButtonState();
-		}
+		var sItemPath = "/LineItems('" + this.sLineItemId + "')",
+			oLineItemPage = this.byId("lineItemPage"),
+			oView = this.getView();
+
+		oLineItemPage.bindElement(sItemPath);
+
+		this.getModel().whenThereIsDataForTheElementBinding(oLineItemPage.getElementBinding()).then(
+			function () {
+				oView.setBusy(false);
+				this.populateLineItems();
+				this.toggleButtonState();
+			}.bind(this),
+			this.showEmptyView.bind(this));
 	},
 	
 	/**
