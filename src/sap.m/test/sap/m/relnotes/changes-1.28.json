@@ -634,7 +634,7 @@
         "id": "de3a0777a31209b28eb3eef918abaaba41c44492",
         "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
         "type": "FIX",
-        "text": "Input value of MultiComboBox is kept on de-select of list item; The logic which fills the value on List item "focus" is removed",
+        "text": "Input value of MultiComboBox is kept on de-select of list item; The logic which fills the value on List item \"focus\" is removed",
         "references": []
       },
       {
@@ -749,7 +749,7 @@
         "id": "492d36184d5184dc28a23db74d20c577f0812c14",
         "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
         "type": "FIX",
-        "text": "sap.m.Label: In Form, ":" now set if text is updated",
+        "text": "sap.m.Label: In Form, \":\" now set if text is updated",
         "references": []
       },
       {

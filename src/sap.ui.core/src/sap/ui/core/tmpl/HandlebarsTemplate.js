@@ -206,7 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				if (sPath) {
 					// bind and return the text
 					var oValue = oRootControl.bindProp(sPath);
-					return oValue && new Handlebars.SafeString(oValue);
+					return oValue && new Handlebars.SafeString(jQuery.sap.encodeHTML(oValue));
 				} else {
 					throw new Error("The expression \"text\" requires the option \"path\"!");
 				}
