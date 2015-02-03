@@ -122,7 +122,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	left: 2rem;
 }
 
-.sapMSwtText > span {
+.sapMSwtLabel {
 	display: block;
 	width: 1.875rem;
 	padding: 0 0.1875rem;
@@ -130,7 +130,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	line-height: inherit;
 }
 
-.sapMSwtTextOff > span {
+.sapMSwtLabelOff {
 	float: right;
 }
 
@@ -214,29 +214,29 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 
 /* icon fonts */
 
-.sapMSwtAcceptReject .sapMSwtText > span {
+.sapMSwtAcceptReject .sapMSwtLabel {
 	font-size: @sapMFontLargeSize;
 }
 
-.sapMSwtAcceptReject .sapMSwtTextOn > span::before {
+.sapMSwtAcceptReject .sapMSwtLabelOn::before {
 	content: "\e05b";
 	color: @sapHCPositive;
 }
 
-.sapMSwtAcceptReject .sapMSwtTextOff > span::before {
+.sapMSwtAcceptReject .sapMSwtLabelOff::before {
 	content: "\e03e";
 	color: @sapHCNegative;
 }
 
 /* hover */
 
-.sapMSwtAcceptReject.sapMSwtHoverable:hover .sapMSwtText > span::before {
+.sapMSwtAcceptReject.sapMSwtHoverable:hover .sapMSwtLabel::before {
 	color: @sapHCStandardFG;
 }
 
 /* disabled */
 
-.sapMSwtAcceptReject.sapMSwtDisabled .sapMSwtText > span::before {
+.sapMSwtAcceptReject.sapMSwtDisabled .sapMSwtLabel::before {
 	color: @sapHCReducedFG;
 }
 

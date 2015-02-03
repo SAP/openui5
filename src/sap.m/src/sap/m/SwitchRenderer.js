@@ -111,7 +111,11 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write("<span>");
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "LabelOn");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (bDefaultType) {
 				oRm.writeEscaped(oSwitch._sOn);
@@ -133,7 +137,11 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			oRm.write("<span>");
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "LabelOff");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (bDefaultType) {
 				oRm.writeEscaped(oSwitch._sOff);
