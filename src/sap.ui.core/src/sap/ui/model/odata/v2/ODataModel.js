@@ -299,8 +299,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} oControlEvent.getParameters.headers The request headers
 	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {boolean} oControlEvent.getParameters.success Request was successful or not
-	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests
 	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText, responseText
 	 * @public
 	 */
 	 
@@ -319,9 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} oControlEvent.getParameters.method The HTTP method
 	 * @param {map} oControlEvent.getParameters.headers The request headers
 	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
-	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests.
-	 * Each request object within the array contains the following properties: url, method, headers
-	 * 
+	 *
 	 * @public
 	 */
 	 
@@ -342,10 +340,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} oControlEvent.getParameters.headers The request headers
 	 * @param {boolean} oControlEvent.getParameters.success Request was successful or not
 	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
-	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests.
-	 * Each request object within the array contains the following properties: url, method, headers, response object
 	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response:
-	 * The response object contains the following properties: message, success, headers, statusCode, statusText
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText, responseText
 	 * @public
 	 */
 
@@ -359,10 +355,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
 
-	 * @param {string} oControlEvent.getParameters.message A text that describes the failure.
-	 * @param {string} oControlEvent.getParameters.statusCode HTTP status code returned by the request (if available)
-	 * @param {string} oControlEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
-	 * @param {string} [oControlEvent.getParameters.responseText] Response that has been received for the request ,as a text string
+	 * @param {string} oControlEvent.getParameters.ID The request ID
+	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} oControlEvent.getParameters.method The HTTP method
+	 * @param {map} oControlEvent.getParameters.headers The request headers
+	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
+	 * @param {boolean} oControlEvent.getParameters.success Request was successful or not
+	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText, responseText
+	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch)
+	 * Each request object within the array contains the following properties: url, method, headers, response object
 	 * @public
 	 */
 
@@ -406,11 +408,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Fire event batchRequestFailed to attached listeners.
 	 *
-	 * @param {object} [mArguments] the arguments to pass along with the event.
-	 * @param {string} [mArguments.message]  A text that describes the failure.
-	 * @param {string} [mArguments.statusCode]  HTTP status code returned by the request (if available)
-	 * @param {string} [mArguments.statusText] The status as a text, details not specified, intended only for diagnosis output
-	 * @param {string} [mArguments.responseText] Response that has been received for the request ,as a text string
+	 * @param {object} mArguments the arguments to pass along with the event.
+	 * @param {string} mArguments.ID The request ID
+	 * @param {string} mArguments.url The url which is sent to the backend
+	 * @param {string} mArguments.method The HTTP method
+	 * @param {map} mArguments.headers The request headers
+	 * @param {boolean} mArguments.async If the request is synchronous or asynchronous (if available)
+	 * @param {boolean} mArguments.success Request was successful or not
+	 * @param {object} mArguments.response The response object - empty object if no response
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText, responseText
+	 * @param {array} mArguments.requests Array of embedded requests ($batch)
+	 * Each request object within the array contains the following properties: url, method, headers, response object
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
@@ -432,6 +440,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
 	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
 	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch)
+	 * Each request object within the array contains the following properties: url, method, headers
 	 * @public
 	 */
 
@@ -479,6 +489,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} [mArguments.url] The url which is sent to the backend.
 	 * @param {string} [mArguments.type] The type of the request (if available)
 	 * @param {boolean} [mArguments.async] If the request is synchronous or asynchronous (if available)
+	 * @param {array} mArguments.requests Array of embedded requests ($batch)
+	 * Each request object within the array contains the following properties: url, method, headers
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
 	 */
@@ -496,11 +508,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {string} oControlEvent.getParameters.url The url which was sent to the backend
-	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
-	 * @param {boolean} oControlEvent.getParameters.success if the request has been successful or not. In case of errors consult the optional errorobject parameter.
-	 * @param {object} [oControlEvent.getParameters.errorobject] If the request failed the error if any can be accessed in this property.
-	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
+	 * @param {string} oControlEvent.getParameters.ID The request ID
+	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} oControlEvent.getParameters.method The HTTP method
+	 * @param {map} oControlEvent.getParameters.headers The request headers
+	 * @param {boolean} oControlEvent.getParameters.success Request was successful or not
+	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
+	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch)
+	 * Each request object within the array contains the following properties: url, method, headers, response object
+	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response:
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText, responseText
 	 * @public
 	 */
 
@@ -544,12 +561,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Fire event batchRequestCompleted to attached listeners.
 	 *
-	 * @param {object} [mArguments] the arguments to pass along with the event.
-	 * @param {string} [mArguments.url] The url which was sent to the backend.
-	 * @param {string} [mArguments.type] The type of the request (if available)
-	 * @param {boolean} [mArguments.async] If the request was synchronous or asynchronous (if available)
-	 * @param {string} [mArguments.info] additional information for the request (if available) <strong>deprecated</strong>
-	 * @param {object} [mArguments.infoObject] Additional information for the request (if available)
+	 * @param {string} mArguments.ID The request ID
+	 * @param {string} mArguments.url The url which is sent to the backend
+	 * @param {string} mArguments.method The HTTP method
+	 * @param {map} mArguments.headers The request headers
+	 * @param {boolean} mArguments.success Request was successful or not
+	 * @param {boolean} mArguments.async If the request is synchronous or asynchronous (if available)
+	 * @param {array} mArguments.requests Array of embedded requests ($batch) - empty array for non batch requests.
+	 * Each request object within the array contains the following properties: url, method, headers, response object
+	 * @param {object} mArguments.response The response object - empty object if no response:
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText, responseText
 	 *
 	 * @return {sap.ui.model.odata.v2.ODataModel} <code>this</code> to allow method chaining
 	 * @protected
@@ -854,9 +875,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		oEventInfo.method = oRequest.method;
 		oEventInfo.async = oRequest.async;
 		oEventInfo.headers = oRequest.headers;
-		oEventInfo.requests = [];
 		//in batch case list inner requests
 		if (aBatchRequests) {
+			oEventInfo.requests = [];
 			for (var i = 0; i < aBatchRequests.length; i++) {
 				var oBatchRequest = {};
 				//changeSets
@@ -911,15 +932,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oEventInfo.success = true;
 			if (vResponse.message) {
 				oEventInfo.response.message = vResponse.message;
-				vResponse = vResponse.response;
 				oEventInfo.success = false;
+			}
+			if (vResponse.response) {
+				// vResponse is response object
+				vResponse = vResponse.response;
 			}
 			//in case of aborted requests there is no further info
 			if (vResponse && vResponse.statusCode) {
 				oEventInfo.response.headers = vResponse.headers;
 				oEventInfo.response.statusCode = vResponse.statusCode;
 				oEventInfo.response.statusText = vResponse.statusText;
-				oEventInfo.response.responseText = vResponse.body;
+				oEventInfo.response.responseText = vResponse.body !== undefined ? vResponse.body : vResponse.responseText;
 			}
 		}
 		oEventInfo.ID = oRequest.requestID;
@@ -1820,19 +1844,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oEventInfo;
 
 		var handleSuccess = function(oData, oResponse) {
-			that._processSuccess(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
-			if (oRequest.requestUri.indexOf("$count") === -1) {
-				that.checkUpdate(false, mGetEntities);
-				if (that._isRefreshNeeded(oRequest, oResponse)){
-					that._refresh(false, undefined, mChangeEntities, mEntityTypes);
+			var fnSingleSuccess = function(oData, oResponse) {
+				if (fnSuccess) {
+					fnSuccess(oData, oResponse);
 				}
-			}
-			
-			that._updateChangedEntities(mChangeEntities);
-			
-			oEventInfo = that._createEventInfo(oRequest, oResponse);
-	
-			that.fireRequestCompleted(oEventInfo);
+				if (oRequest.requestUri.indexOf("$count") === -1) {
+					that.checkUpdate(false, mGetEntities);
+					if (that._isRefreshNeeded(oRequest, oResponse)){
+						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
+					}
+				}
+				that._updateChangedEntities(mChangeEntities);
+			};
+			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 		};
 		var handleError = function(oError) {
 			if (fnError) {
@@ -1870,6 +1894,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var handleSuccess = function(oData, oBatchResponse) {
 			var oResponse, oRequestObject, aChangeResponses,
 				aBatchResponses = oData.__batchResponses,
+				oEventInfo,
 				mChangeEntities = {},
 				mGetEntities = {},
 				mEntityTypes = {};
@@ -1884,6 +1909,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						if (oResponse.message) {
 							for (j = 0; j < aRequests[i].length; j++) {
 								oRequestObject = aRequests[i][j];
+
 								if (!oRequestObject.request._aborted) {
 									that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
 								}
@@ -1923,18 +1949,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (fnSuccess) {
 				fnSuccess(oData);
 			}
-			fireEvent("Completed", oBatchRequest, null, aRequests);
+			oEventInfo = that._createEventInfo(oBatchRequest, oBatchResponse, aRequests);
+			that.fireBatchRequestCompleted(oEventInfo);
 		};
 
 		var handleError = function(oError) {
 			if (fnError) {
 				fnError(oError);
 			}
+			fireEvent("Completed", oBatchRequest, oError, aRequests);
 			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
 			if (!oRequestHandle || !oRequestHandle.bAborted) {
 				fireEvent("Failed", oBatchRequest, oError, aRequests);
 			}
-			fireEvent("Completed", oBatchRequest, oError, aRequests);
 		};
 		
 		var fireEvent = function(sType, oBatchRequest, oError, aRequests) {
@@ -1951,7 +1978,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				}
 			});
 			
-			oEventInfo = that._createEventInfo(oBatchRequest, null, aRequests);
+			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
 			that["fireBatchRequest" + sType](oEventInfo);
 		};
 
@@ -2273,6 +2300,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (fnSuccess) {
 			fnSuccess(oResponse.data, oResponse);
 		}
+
+		var oEventInfo = this._createEventInfo(oRequest, oResponse);
+		this.fireRequestCompleted(oEventInfo);
 		
 		return true;
 	};
@@ -2287,11 +2317,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._processError = function(oRequest, oResponse, fnError) {
 		var oError = this._handleError(oResponse);
-		var oEventInfo = this._createEventInfo(oRequest, oError);
-		this.fireRequestFailed(oEventInfo);
 		if (fnError) {
 			fnError(oError);
 		}
+
+		var oEventInfo = this._createEventInfo(oRequest, oError);
+		this.fireRequestCompleted(oEventInfo);
+		this.fireRequestFailed(oEventInfo);
+
 	};
 	
 	/**
@@ -2442,6 +2475,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oError.response.body;
 			mParameters.statusCode = oError.response.statusCode;
 			mParameters.statusText = oError.response.statusText;
+			mParameters.headers = oError.response.headers;
 			mParameters.responseText = oError.response.body;
 		}
 		jQuery.sap.log.fatal(sErrorMsg);
