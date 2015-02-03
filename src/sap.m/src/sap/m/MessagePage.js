@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oIconControl = IconPool.createControlByURI({
 				id: this.getId() + "-pageIcon",
 				src: this.getIcon()
-			}, sap.m.Image);
+			}, sap.m.Image).addStyleClass("sapMMessagePageIcon");
 
 			return this._oIconControl;
 		};
