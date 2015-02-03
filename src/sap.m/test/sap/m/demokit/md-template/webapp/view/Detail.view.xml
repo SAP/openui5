@@ -1,0 +1,66 @@
+<View
+	controllerName="sap.ui.demo.mdtemplate.view.Detail"
+	xmlns="sap.m">
+	<Page
+		id="detailPage"
+		navButtonPress="onNavBack"
+		showNavButton="{device>/isPhone}"
+		title="{i18n>detailTitle}">
+		<content>
+			<ObjectHeader
+				title="{Name}"
+				number="{UnitNumber}"
+				numberUnit="{UnitOfMeasure}">
+			</ObjectHeader>
+			<IconTabBar
+			    expanded="{device>/isNoPhone}">
+			    <items>
+			      <IconTabFilter
+			        icon="sap-icon://hint">
+			        <Text text="Info content goes here ..." />
+			      </IconTabFilter>
+			      <IconTabFilter
+			        icon="sap-icon://attachment">
+			        <Text text="Attachments go here ..." />
+			      </IconTabFilter>
+			    </items>
+		  	</IconTabBar>
+			<Table id="lineItemsList" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiSmallMarginTop">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="{i18n>detailLineItemTableHeading}"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Label text="{i18n>detailLineItemTableIDColumn}" />
+					</Column>
+					<Column>
+						<Label text="{i18n>detailLineItemTableAttributeColumn}"/>
+					</Column>
+					<Column hAlign="Right">
+						<Label text="{i18n>detailLineItemTableUoMColumn}" />
+					</Column>
+				</columns>
+		
+				<items>
+					<ColumnListItem type="Navigation" press="onSelect">
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"
+								text="{LineItemID}"/>
+							<Text text="{Attribute}"/>
+							<ObjectNumber 
+								number="{UnitNumber}"
+								unit="{UnitOfMeasure}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+	</Page>
+</View>
