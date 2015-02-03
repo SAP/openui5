@@ -1013,6 +1013,42 @@
 				oInfo[sId] = 0;
 			}
 			oInfo[sId]++;
+			// Check for correct event parameters
+			var mParameters = oEvent.getParameters();
+			switch (sId) {
+				case "batchRequestSent":
+					ok(mParameters.requests, sId + " contains requests");
+				case "requestSent":
+					ok(mParameters.url, sId + " contains url");
+					ok(mParameters.method, sId + " contains method");
+					ok(mParameters.headers, sId + " contains headers");
+					break;
+				case "batchRequestFailed":
+					ok(mParameters.requests, sId + " contains requests");
+				case "requestFailed":
+					ok(mParameters.url, sId + " contains url");
+					ok(mParameters.method, sId + " contains method");
+					ok(mParameters.headers, sId + " contains headers");
+					ok(mParameters.response, sId + " contains response");
+					ok(mParameters.response.statusCode, sId + " contains response.statusCode");
+					ok(mParameters.response.statusText, sId + " contains response.statusText");
+					ok(mParameters.response.headers, sId + " contains response.headers");
+					ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
+					break;
+				case "batchRequestCompleted":
+					ok(mParameters.requests, sId + " contains requests");
+				case "requestCompleted":
+					ok(mParameters.url, sId + " contains url");
+					ok(mParameters.method, sId + " contains method");
+					ok(mParameters.headers, sId + " contains headers");
+					ok(mParameters.response, sId + " contains response");
+					ok(mParameters.response.statusCode, sId + " contains response.statusCode");
+					ok(mParameters.response.statusText, sId + " contains response.statusText");
+					ok(mParameters.response.headers, sId + " contains response.headers");
+					ok(mParameters.response.responseText !== undefined, sId + " contains response.responseText");
+					ok(mParameters.success !== undefined, sId + " contains success");
+					break;
+			}
 		};
 		var aEvents = [
 		    "attachRequestSent", "attachRequestFailed", "attachRequestCompleted",
