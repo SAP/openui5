@@ -22,9 +22,6 @@ sap.ui.define(['jquery.sap.global',
 				'./mapPolyfill',
 				'./filterPolyfill'],
 	function ($, HashChanger, UI5Object, View) {
-
-		var mViews = {};
-
 		/**
 		 * @class A Plugin to search UI5 controls.
 		 * 
@@ -49,8 +46,8 @@ sap.ui.define(['jquery.sap.global',
 
 			/**
 			 * Gets all the controls of a certain type that are currently instantiated.
-			 * 
-			 * @param {Function} fnConstructorType the control type, e.g: sap.m.CheckBox
+			 *
+			 * @param {Function} [fnConstructorType] the control type, e.g: sap.m.CheckBox
 			 * @returns {Array} an array of the found controls (can be empty)
 			 * @protected
 			 */
@@ -66,6 +63,11 @@ sap.ui.define(['jquery.sap.global',
 					}
 
 					oControl = oCoreElements[sPropertyName];
+					if (!fnConstructorType) {
+						aResult.push(oControl);
+						continue;
+					}
+
 					if (oControl instanceof fnConstructorType) {
 						aResult.push(oControl);
 					}
@@ -90,22 +92,11 @@ sap.ui.define(['jquery.sap.global',
 			 * @protected
 			 */
 			getView : function (sViewName) {
-				var oView = mViews[sViewName];
+				var aViews = this.getAllControls(View);
 
-				if (!oView) {
-					var aViews = this.getAllControls(View);
-
-					oView = aViews.filter(function (oViewInstance) {
-						return oViewInstance.getViewName() === sViewName;
-					})[0];
-
-					if (oView) {
-						mViews[sViewName] = oView;
-					}
-
-				}
-
-				return oView;
+				return aViews.filter(function (oViewInstance) {
+					return oViewInstance.getViewName() === sViewName;
+				})[0];
 			},
 
 			/**
@@ -147,16 +138,37 @@ sap.ui.define(['jquery.sap.global',
 					return oView.byId(oOptions.id);
 				}
 
-				return this.getAllControlsInContainer(oView.$(), oOptions.controlType);
+				return this.getAllControlsWithTheParent(oView, oOptions.controlType);
+			},
+
+			getAllControlsWithTheParent : function (oAncestor, fnControlType) {
+				return this._filterUniqueControlsByCondition(this.getAllControls(fnControlType),function (oControl) {
+					if (!oAncestor) {
+						return true;
+					}
+
+					var oParent = oControl.getParent();
+
+					while (oParent && oParent !== oAncestor) {
+						oParent = oParent.getParent();
+					}
+
+					return oParent === oAncestor;
+				});
 			},
 
 			getAllControlsInContainer : function ($Container, fnControlType) {
-				return $Container.find("*").control().filter(function (oControl, iPosition, aAllControls) {
-					var bKeepMe = true;
-
+				return this._filterUniqueControlsByCondition($Container.find("*").control(),function (oControl) {
 					if (fnControlType) {
-						bKeepMe = oControl instanceof fnControlType;
+						return oControl instanceof fnControlType;
 					}
+					return false;
+				});
+			},
+
+			_filterUniqueControlsByCondition : function (aControls, fnCondition) {
+				return aControls.filter(function (oControl, iPosition, aAllControls) {
+					var bKeepMe = !!fnCondition(oControl);
 
 					return bKeepMe && aAllControls.indexOf(oControl) == iPosition;
 				});
