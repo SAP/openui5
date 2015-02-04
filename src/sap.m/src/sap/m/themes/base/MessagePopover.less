@@ -1,0 +1,94 @@
+.sapMMsgPopover {
+	.sapMSegBBtnMixed {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.sapMDialogScrollCont {
+		padding: 0;
+	}
+
+	/* remove the Popover's arrow */
+	&.sapMMsgPopover-ModeToolbar .sapMPopoverArr {
+		display: none;
+	}
+
+	.sapMIBar .sapMBarChild {
+		margin-left: .25rem;
+		margin-right: .25rem;
+	}
+
+	.sapMMsgPopoverTitleText,
+	.sapMMsgPopoverDescriptionText {
+		float: left;
+		padding: 0 1rem 0 3rem;
+		margin-top: 1rem;
+	}
+
+	.sapMMsgPopoverDescriptionText {
+		padding-bottom: 1rem;
+	}
+
+	.sapMMsgPopoverTitleText {
+		vertical-align: middle;
+		font-weight: 600;
+	}
+}
+
+.sapMMsgPopover.sapMMsgPopover-init {
+	.sapMNavItem.sapMPage {
+		position: relative;
+	}
+
+	.sapMIBar {
+		border-bottom: 0;
+	}
+}
+
+.sapMMsgPopoverDescIcon {
+	position: absolute;
+	left: 0;
+	width: 3rem;
+	top: .7rem;
+	font-size: 1.35rem;
+}
+
+.sapMMsgPopoverCloseBtn {
+	.sapMBtnIcon {
+		width: 2.5rem;
+		height: 2.5rem;
+		font-size: 1rem;
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMMsgPopoverCloseBtn .sapMBtnIcon {
+		width: 1.626rem;
+		height: 1.626rem;
+		font-size: 0.75rem;
+	}
+
+	.sapMMsgPopover .sapMList .sapUiIcon {
+		font-size: 1rem;
+	}
+
+	.sapMMsgPopoverDescIcon {
+		width: 1.626rem;
+		height: 1.626rem;
+		line-height: 1.626rem;
+		font-size: 1rem;
+	}
+
+	.sapMMsgPopover .sapMBtnInner {
+		padding: 0;
+	}
+
+	.sapMMsgPopover .sapMBtnCustomIcon  {
+		margin-left: 0;
+	}
+
+	.sapMMsgPopoverDescIcon {
+		width: 3rem;
+	}
+}

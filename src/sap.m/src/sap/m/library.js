@@ -1,4 +1,4 @@
-/*!
+﻿﻿/*!
  * ${copyright}
  */
 
@@ -62,7 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.StandardTileType",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
-			"sap.m.ToolbarDesign"
+			"sap.m.ToolbarDesign",
+			"sap.m.VerticalPlacementType"
 		],
 		interfaces: [
 			"sap.m.IBar",
@@ -111,6 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListBase",
 			"sap.m.ListItemBase",
 			"sap.m.MessagePage",
+			"sap.m.MessagePopover",
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
@@ -173,6 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IconTabFilter",
 			"sap.m.IconTabSeparator",
 			"sap.m.OverflowToolbarLayoutData",
+			"sap.m.MessagePopoverItem",
 			"sap.m.P13nFilterItem",
 			"sap.m.P13nItem",
 			"sap.m.P13nSortItem",
@@ -1141,8 +1144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Transparent : "Transparent"
 	
 	};
-	
-	
+
 	/**
 	 * Types for the placement of popover control.
 	 *
@@ -1196,6 +1198,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	};
 	
+	/**
+	* Types for the placement of message popover control.
+	*
+	* @enum {string}
+	* @public
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	sap.m.VerticalPlacementType = {
+
+		/**
+		* Popover will be placed at the top of the reference control.
+		* @public
+		*/
+		Top : "Top",
+
+		/**
+		* Popover will be placed at the bottom of the reference control.
+		* @public
+		*/
+		Bottom : "Bottom",
+
+		/**
+		* Popover will be placed at the top or bottom of the reference control.
+		* @public
+		*/
+		Vertical : "Vertical"
+	};
 	
 	/**
 	 * Defines the display of table pop-ins
