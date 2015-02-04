@@ -287,7 +287,7 @@
  * sapUiResponsiveContainerContentPadding
  * These classes can be set on many UI5 containers and will 
  * add padding inside the container's content padding based 
- * on the selectors that are arguments for this mix-in.
+ * on the selectors that are arguments for this mixin.
  *
  * Arguments to this function-like mixin are the rootClass selector and
  * the content selector where the padding should be applied.
@@ -301,7 +301,7 @@
 
 .sapUiContainerContentPadding(@rootClass, @contentSelector: @sapUiEscapedEmptyString) {
 	@{rootClass}.sapUiContentPadding @{contentSelector} {
-		padding: 1rem !important;
+		padding: 1rem;
 		box-sizing: border-box;
 	}
 
@@ -309,14 +309,14 @@
 		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
 		.sapMSplitContainerPortrait > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
 		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
-			padding: 0 !important;
+			padding: 0;
 		}
 	}
 
 	@media (min-width:600px) and (max-width:1023px) {
 		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
 		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
-			padding: 1rem !important;
+			padding: 1rem;
 			box-sizing: border-box;
 		}
 	}
@@ -324,22 +324,22 @@
 	@media (min-width:1024px) {
 		.sapMSplitContainerHideMode > .sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector},
 		@{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
-			padding: 1rem 2rem !important;
+			padding: 1rem 2rem;
 			box-sizing: border-box;
 		}
 	}
 
 	/* overrides the responsive settings for the split app master page */
 	.sapMSplitContainerMaster @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
-		padding: 0 !important;
+		padding: 0;
 	}
 	
 	/* overrides the responsive settings for the split app detail page */
 	.sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
-		padding: 1rem !important;
+		padding: 1rem;
 	}
 
 	@{rootClass}.sapUiNoContentPadding @{contentSelector} {
-		padding: 0 !important;
+		padding: 0;
 	}
 }
