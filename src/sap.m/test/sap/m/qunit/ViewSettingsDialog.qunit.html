@@ -227,6 +227,8 @@
 
 			var vsd3 = vsd2.clone(); // this one will never be rendered and then destroyed
 			var vsd4 = vsd2.clone();
+			var vsd5 = vsd2.clone(); // this one will be used for focus on previously clicked filter element
+			var vsd6 = vsd2.clone(); // this one will be used for initial focus in filter view
 
 			var oButton = new sap.m.Button({
 				text : "Open ViewSettingsDialog",
@@ -301,7 +303,7 @@
 				// filters
 				vsd2.setSelectedFilterKeys(filterState);
 				ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-			})
+			});
 
 			module("Open and Close");
 
@@ -309,12 +311,12 @@
 				oButton.firePress();
 				ok(jQuery.sap.domById("vsd2-dialog"), "Dialog should be rendered");
 				ok(jQuery.sap.domById("vsd2-navcontainer"), "Nav container should be rendered");
-				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");				
+				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
 				ok(!jQuery.sap.domById("vsd2-page2-cont"), "Page 2 (filter detail content) should not be rendered");
 				ok(jQuery.sap.byId("vsd2-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
 				ok(jQuery.sap.byId("vsd2-__clone2-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' default button should be selected when invalid page passed");
 			});
-			
+
 			asyncTest("Close ViewSettingsDialog", function (){
 				vsd2._dialog.getBeginButton().firePress();
 				vsd4._dialog.close();
@@ -401,19 +403,20 @@
 			test("Back on key [SHIFT]+[ENTER] event", function () {
 				expect(2);
 
-				vsd2.open();
+				vsd6.open();
 
-				vsd2._switchToPage(0);
-				vsd2._switchToPage(1);
-				vsd2._switchToPage(2);
-				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
-				vsd2._switchToPage(3,vsd2.getFilterItems()[0]); // name details page
+				vsd6._switchToPage(0);
+				vsd6._switchToPage(1);
+				vsd6._switchToPage(2);
+				jQuery.sap.delayedCall(0, vsd6._navContainer, "to", [vsd6.getId() + '-page6', "show"]);
+				vsd6._switchToPage(3,vsd6.getFilterItems()[0]); // name details page
 
-				sap.ui.test.qunit.triggerKeyboardEvent(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
-				equal(vsd2._iContentPage, 2, "Internal page state should be on the second page");
-				equal(vsd2._navContainer.getCurrentPage(), vsd2._getPage1(), "NavContainer should be on the first page");
+				sap.ui.test.qunit.triggerKeyboardEvent(vsd6._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
+				equal(vsd6._iContentPage, 2, "Internal page state should be on the second page");
+				equal(vsd6._navContainer.getCurrentPage(), vsd6._getPage1(), "NavContainer should be on the first page");
 
-				vsd2._dialog.getEndButton().firePress();
+				vsd6._dialog.getEndButton().firePress();
+				vsd6.destroy();
 			});
 
 			asyncTest("Confirm event", function () {
@@ -479,6 +482,25 @@
 				vsd2._dialog.getEndButton().firePress();
 			});
 
+			test("Focus on first item in filter by section ", function () {
+
+				expect(1);
+				vsd5.open();
+
+				this.clock.tick(1000);
+
+				jQuery.sap.delayedCall(0, vsd5._navContainer, "to", [vsd5.getId() + '-page5', "show"]);
+				vsd5._filterList.getItems()[0].firePress();
+
+				this.clock.tick(1000);
+
+				if (!sap.ui.Device.system.phone) {
+					strictEqual(document.activeElement, vsd5._filterDetailList.getItems()[0].getFocusDomRef(), "The first item should get the focus");
+				}
+				vsd5._dialog.getEndButton().firePress();
+				vsd5.destroy();
+			});
+
 
 			module ("Construction/Destruction");
 
@@ -503,13 +525,13 @@
 						groupOrderList = vsd2._groupOrderList,
 						presetFilterList = vsd2._presetFilterList,
 						filterList = vsd2._filterList,
-						filterDetailList = vsd2._filterDetailList
+						filterDetailList = vsd2._filterDetailList,
 						titleLabel = vsd2._titleLabel,
 						detailTitleLabel = vsd2._detailTitleLabel,
 						resetButton = vsd2._resetButton,
 						header = vsd2._header,
 						sortButton = vsd2._sortButton,
-						groupButton = vsd2._groupButton
+						groupButton = vsd2._groupButton,
 						filterButton = vsd2._filterButton,
 						segmentedButton = vsd2._segmentedButton,
 						page1 = vsd2._page1,
@@ -665,7 +687,7 @@
 				vsd._dialog.close();
 		});
 
-		module ("Group tab only checks")
+		module ("Group tab only checks");
 
 		test("Check group tab only mode", function  () {
 			var vsd = new sap.m.ViewSettingsDialog("vsd-group", {
@@ -753,34 +775,34 @@
 							new sap.m.ViewSettingsItem({
 								key: "name1",
 								text: "Headphone",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name2",
 								text: "Mousepad",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name3",
-								text: "Monitor",
+								text: "Monitor"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name4",
-								text: "Backpack",
+								text: "Backpack"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name5",
 								text: "Printer",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name6",
 								text: "Optic Mouse",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name7",
-								text: "Dock Station",
+								text: "Dock Station"
 							})
 						]
 					}),
@@ -791,17 +813,17 @@
 							new sap.m.ViewSettingsItem({
 								key: "status1",
 								text: "Approved",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "status2",
 								text: "Open",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "status3",
 								text: "Denied",
-								selected: true,
+								selected: true
 							})
 						]
 					}),
@@ -812,31 +834,31 @@
 						items: [
 							new sap.m.ViewSettingsItem({
 								key: "value1",
-								text: "< 10 EUR",
+								text: "< 10 EUR"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value2",
-								text: "10 - 30 EUR",
+								text: "10 - 30 EUR"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value3",
 								text: "30 - 50 EUR",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value4",
-								text: "50 - 70 EUR",
+								text: "50 - 70 EUR"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value5",
-								text: "> 70 EUR",
+								text: "> 70 EUR"
 							})
 						]
 					}),
 					new sap.m.ViewSettingsCustomItem({
 						key: "myPriceFilter",
 						text: "Price",
-						customControl: customPriceFilter.clone(),
+						customControl: customPriceFilter.clone()
 					})
 				]
 			});
