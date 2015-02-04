@@ -50,11 +50,13 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		var oFormatOptions, iScale;
 
 		if (!oType.oFormat) {
-			oFormatOptions = {groupingEnabled: true};
+			oFormatOptions = {
+				groupingEnabled: true,
+				maxIntegerDigits: Infinity
+			};
 			iScale = getScale(oType);
-
 			if (iScale !== Infinity) {
-				oFormatOptions.maxFractionDigits = oFormatOptions.minFractionDigits = iScale;
+				oFormatOptions.decimals = iScale;
 			}
 			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
