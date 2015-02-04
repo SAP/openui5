@@ -755,13 +755,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					}
 				},
 				//keyboard acc - the 1st binding category (list) can't use initialfocus, so focus on 1st item from here
-				afterOpen: function(oEvent) {
+/*				afterOpen: function(oEvent) {
 					if (this.getInitialFocus() == null && that._displayedList.getItems().length > 0) {
 						jQuery.sap.delayedCall(1000, this, function() {
 							jQuery.sap.focus(that._displayedList.getItemNavigation().getItemDomRefs()[0]);
 						});
 					}
-				},
+				},*/
 				afterClose: function(oEvent) {
 
 					that._addDelegateFlag = true;
@@ -845,7 +845,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	              this._moveListToDisplayContainer(oList, oPopover);
 	              //keyboard acc - focus on 1st item of 1st page
-	              oPopover.setInitialFocus(oList.getItems()[0]);
+//	              oPopover.setInitialFocus(oList.getItems()[0]);
 	              oList.fireListOpen({});
 	              oPopover.openBy(oControl);
 	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true
