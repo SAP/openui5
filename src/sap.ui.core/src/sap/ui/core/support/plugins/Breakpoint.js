@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 				// app plugin only!
 				if (this.isToolPlugin()) {
-					throw Error();
+					throw new Error();
 				}
 
 				this._oStub = oSupportStub;
@@ -211,14 +211,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			// get class object
 			var oObj = jQuery.sap.getObject(sClassName);
-			var aMethods = [];
+			var aMethods = [], sKey;
 
 			if (!oObj) {
 				return aMethods;
 			}
 
 			// class methods
-			for (var sKey in oObj) {
+			for (sKey in oObj) {
 				if (!$.isFunction(oObj[sKey])) {
 					continue;
 				}
@@ -230,17 +230,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				});
 			}
 
-			/*eslint-disable no-loop-func */
+			function isNameInArray(sKey) {
+				return aMethods.some(function(o) {
+					return o.name === sKey;
+				});
+			}
+
 			// instance methods
-			for (var sKey in oObj.prototype) {
+			for (sKey in oObj.prototype) {
 				if (!$.isFunction(oObj.prototype[sKey])) {
 					continue;
 				}
 
 				// check if method already exists (happens with getMetadata)
-				if ($.grep(aMethods, function(o) {
-						return (o.name === sKey);
-					}).length === 1) {
+				if (isNameInArray(sKey)) {
 					continue;
 				}
 
@@ -250,7 +253,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					active: this.isClassBreakpointActive(sClassName, sKey)
 				});
 			}
-			/*eslint-enable no-loop-func */
 
 			// sort using method name (ascending)
 			return aMethods.sort(function(a, b) {
@@ -526,11 +528,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			var text = null;
 
-			if (!!sap.ui.Device.browser.chrome) {
+			if (sap.ui.Device.browser.chrome) {
 				text = "Please open your debugger by pressing CTRL + SHIFT + I.";
 			}
 
-			if (!!sap.ui.Device.browser.internet_explorer) {
+			if (sap.ui.Device.browser.internet_explorer) {
 				text = "Please open your debugger using F12, go to the 'Script' tab and attach it by pressing F5.";
 			}
 
