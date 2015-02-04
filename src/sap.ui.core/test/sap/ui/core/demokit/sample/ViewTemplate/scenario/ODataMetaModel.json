@@ -326,14 +326,24 @@
 								}, {
 									"Name" : "street",
 									"Value" : {
-										"Type" : "Path",
-										"Value" : "Address/Street"
+										"Apply" : {
+											"Name" : "odata.uriEncode",
+											"Parameters" : [{
+												"Type" : "Path",
+												"Value" : "Address/Street"
+											}]
+										}
 									}
 								}, {
 									"Name" : "city",
 									"Value" : {
-										"Type" : "Path",
-										"Value" : "Address/City"
+										"Apply" : {
+											"Name" : "odata.uriEncode",
+											"Parameters" : [{
+												"Type" : "Path",
+												"Value" : "Address/City"
+											}]
+										}
 									}
 								}]
 							}
@@ -2093,6 +2103,10 @@
 					"type" : "Edm.DateTime",
 					"precision" : "7",
 					"extensions" : [{
+						"name" : "display-format",
+						"value" : "Date",
+						"namespace" : "http://www.sap.com/Protocols/SAPData"
+					}, {
 						"name" : "label",
 						"value" : "Time Stamp",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
@@ -2105,6 +2119,7 @@
 						"value" : "false",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
+					"sap:display-format" : "Date",
 					"sap:label" : "Time Stamp",
 					"sap:sortable" : "false",
 					"sap:filterable" : "false"
@@ -2293,7 +2308,7 @@
 						"Path" : "DeliveryDate"
 					},
 					"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
-					"EdmType" : "Edm.DateTime"
+					"EdmType" : "Edm.Date"
 				}],
 				"com.sap.vocabularies.UI.v1.LineItem" : [{
 					"Label" : {
@@ -2361,7 +2376,7 @@
 						"Path" : "DeliveryDate"
 					},
 					"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
-					"EdmType" : "Edm.DateTime"
+					"EdmType" : "Edm.Date"
 				}],
 				"com.sap.vocabularies.UI.v1.FieldGroup#Note" : {
 					"Label" : {
