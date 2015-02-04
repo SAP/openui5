@@ -16,8 +16,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Generally, you would create at least two radio button controls which should have the same GroupName;
-	 * by this, you provide a limited choice for the user. Triggers an Event when User makes a change.
+	 * RadioButton is a control similar to CheckBox. It allows the user to choose only one of the predefined set of options.
+	 *
+	 * Usually, RadioButton is used in a group with other RadioButtons (with the groupName property or by using sap.m.RadioButtonGroup), thus providing a limited choice for the user.
+	 * An event is triggered when the user makes a change of the selection.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
