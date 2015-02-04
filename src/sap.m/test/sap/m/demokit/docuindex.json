@@ -394,8 +394,7 @@
 					"sap.m.sample.ObjectHeaderResponsiveII",
 					"sap.m.sample.ObjectHeaderResponsiveIII",
 					"sap.m.sample.ObjectHeaderResponsiveIV",
-					"sap.m.sample.ObjectHeaderResponsiveV",
-					"sap.suite.ui.commons.sample.HeaderContainerOH"
+					"sap.m.sample.ObjectHeaderResponsiveV"
 				]
 			},
 			{
