@@ -281,6 +281,9 @@ sap.ui.define([
 	P13nConditionPanel.prototype._addCondition2Map = function(oCondition) {
 		if (!oCondition.key) {
 			oCondition.key = "condition_" + this._iConditions;
+			if (this.getExclude()) {
+				oCondition.key = "x" + oCondition.key;
+			}
 		}
 		this._iConditions++;
 		this._oConditionsMap[oCondition.key] = oCondition;
@@ -784,6 +787,9 @@ sap.ui.define([
 		var sOrgKey = sKey;
 		if (!sKey) {
 			sKey = "condition_" + (this._iConditionCount);
+			if (this.getExclude()) {
+				sKey = "x" + sKey;
+			}
 		}
 		this._iConditionCount++;
 
@@ -815,7 +821,6 @@ sap.ui.define([
 					if (field["ID"] === "showIfGrouped") {
 						oControl.setEnabled(true);
 						oControl.setText(field["Label"]);
-						oControl.setTooltip(field["Label"]);
 						oControl.attachSelect(function() {
 							that._changeField(oConditionGrid);
 						});
@@ -1615,21 +1620,23 @@ sap.ui.define([
 			// handling of "(none)" value
 			sKeyField = null;
 			sKey = oConditionGrid.data("_key");
-			delete this._oConditionsMap[sKey];
-
-			this._enableCondition(oConditionGrid, false);
-
-			oSelectCheckbox.setSelected(false);
-			oSelectCheckbox.setEnabled(false);
-
-			this._bIgnoreSetConditions = true;
-			this.fireDataChange({
-				key: sKey,
-				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-				operation: "remove",
-				newData: null
-			});
-			this._bIgnoreSetConditions = false;
+			if (this._oConditionsMap[sKey] !== undefined) {
+				delete this._oConditionsMap[sKey];
+	
+				this._enableCondition(oConditionGrid, false);
+	
+				oSelectCheckbox.setSelected(false);
+				oSelectCheckbox.setEnabled(false);
+	
+				this._bIgnoreSetConditions = true;
+				this.fireDataChange({
+					key: sKey,
+					index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
+					operation: "remove",
+					newData: null
+				});
+				this._bIgnoreSetConditions = false;
+			}
 			return;
 		}
 
@@ -1664,7 +1671,7 @@ sap.ui.define([
 				operation: sOperation,
 				newData: oConditionData
 			});
-		} else {
+		} else if (this._oConditionsMap[sKey] !== undefined) {
 			delete this._oConditionsMap[sKey];
 
 			oSelectCheckbox.setSelected(false);
