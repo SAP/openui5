@@ -320,6 +320,42 @@
 			// cleanup
 			oRadioButton1.destroy();
 		});
+
+		test("setTextAlign()", function () {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				textAlign: sap.ui.core.TextAlign.Right
+			});
+
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			ok(oRadioButton1.$('label'), 'Label should be created');
+			strictEqual(oRadioButton1.$('label').css('text-align'), "right", "The align of the RadioButton's label should be right");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+
+		test("textAlign and RTL", function () {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				textAlign: sap.ui.core.TextAlign.End,
+				textDirection: sap.ui.core.TextDirection.RTL
+			});
+
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			strictEqual(oRadioButton1.$('label').css("text-align"), "left", "Text Align should be left");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
 		
 		/* ------------------------------ */
 		/*          tests label           */

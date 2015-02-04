@@ -81,7 +81,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
 			 * @since 1.25
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None}
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+			 * @since 1.28
+			 */
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin}
 		},
 		events : {
 
@@ -324,6 +330,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RadioButton.prototype.applyFocusInfo = function(oFocusInfo) {
 
 		this.$().focus();
+	};
+
+	/*
+	 * Sets the textAlign to the internal label
+	 *
+	 * @param {string} sAlign
+	 * @return {sap.m.RadioButton}
+	 * @since 1.28
+	 * @public
+	 */
+	RadioButton.prototype.setTextAlign = function(sAlign) {
+		this.setProperty("textAlign", sAlign, true);
+		if (this._oLabel) {
+			this._oLabel.setTextAlign(this.getTextAlign());
+		} else {
+			this._createLabel("textAlign", this.getTextAlign());
+		}
+		return this;
 	};
 
 
