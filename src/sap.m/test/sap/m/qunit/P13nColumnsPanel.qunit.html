@@ -959,6 +959,7 @@
 			oP13nColumnsPanel._updateTableItems = sinon.stub();
 			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
 
+			oP13nColumnsPanel._extractExistingColumnsItems = sinon.stub().returns([]);
 			oP13nColumnsPanel.getColumnsItems = sinon.stub();
 			oP13nColumnsPanel.getColumnsItems.returns([
 				{
@@ -991,7 +992,7 @@
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
-			strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall not be executed");
+			strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, true, "Method shall be executed");
 			strictEqual(oNewColumnsItem.setIndex.called, true, "Method shall be executed");
@@ -1028,6 +1029,7 @@
 			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
 			oP13nColumnsPanel._reOrderExistingTableItems = sinon.stub();
 
+			oP13nColumnsPanel._extractExistingColumnsItems = sinon.stub().returns([]);
 			oP13nColumnsPanel.getColumnsItems = sinon.stub();
 			oP13nColumnsPanel.getColumnsItems.returns([
 				{
@@ -1064,7 +1066,7 @@
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
-			strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall not be executed");
+			strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, true, "Method shall be executed");
 			strictEqual(oNewColumnsItem.setVisible.called, true, "Method shall be executed");
@@ -1096,7 +1098,7 @@
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.args[0][0], true, "Method setVisible called with the wrong input ");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.called, true, "Method shall be executed");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.args[0][0], undefined, "Method setIndex called with the wrong input ");
-			strictEqual(oP13nColumnsPanel._reOrderExistingTableItems.called, true, "Method shall not be executed");
+			strictEqual(oP13nColumnsPanel._reOrderExistingTableItems.called, false, "Method shall not be executed");
 		});
 
 		test("Shall check _createNewColumnsItem", function() {
@@ -1467,29 +1469,72 @@
 			strictEqual(aTableItems[4].getSelected(), false, "Column C shall be unselected");
 
 		});
-		
+
 		test("Shall check onBeforeNavigationFrom", function() {
 			ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
-			
+
 			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true 
 			var bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
 			strictEqual(bValidationResult, true, "navigation validation shall not be influenced");
 			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
-			
+
 			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in true as threshold is not reached
 			oP13nColumnsPanel.setVisibleItemsThreshold(10);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([{},{},{},{},{},{},{},{},{}]); // 9 table items are selected
-			
+			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}, {}, {}, {}
+			]); // 9 table items are selected
+
 			bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
 			strictEqual(bValidationResult, true, "navigation validation shall not be influenced as threshold is not reached");
-			
+
 			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in false as threshold is exceeded
 			oP13nColumnsPanel.setVisibleItemsThreshold(10);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([{},{},{},{},{},{},{},{},{},{},{}]); // 11 table items are selected
-			
+			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+			]); // 11 table items are selected
+
 			bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
 			strictEqual(bValidationResult, false, "navigation validation shall be influenced as threshold is exceeded");
 			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), 10, "Getter for visible items threshold shall return 10 (which was set before)");
+		});
+
+		test("Shall check _extractExistingColumnsItems", function() {
+			ok(oP13nColumnsPanel._extractExistingColumnsItems, "Method does not exist");
+
+			// CUT -> method shall not be executed -> as no valid input parameter is passed in 
+			var aExtractionResultExpected = [];
+			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems();
+			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
+
+			// CUT -> method shall be executed and a valid extraction result shall be passed back 
+			var aColumnsItems = [
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"getVisible": sinon.stub().returns(true),
+					"getWidth": sinon.stub().returns("100px")
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"getVisible": sinon.stub().returns(true),
+					"getWidth": sinon.stub().returns("120px")
+				}
+			];
+			aExtractionResultExpected = [
+				{
+					"columnKey": "4711",
+					"index": 1,
+					"visible": true,
+					"width": "100px"
+				}, {
+					"columnKey": "4712",
+					"index": 2,
+					"visible": true,
+					"width": "120px"
+				}
+			];
+			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems(aColumnsItems);
+			deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
 		});
 	}());
 </script>

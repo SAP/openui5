@@ -29,16 +29,16 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * This property is used to specify a threshold of visible items 
+				 * This property is used to specify a threshold of visible items
 				 * 
-				 * @since 1.28.0
+				 * @since 1.26.7
 				 */
 				visibleItemsThreshold: {
 					type: "int",
 					group: "Behavior",
 					defaultValue: -1
 				}
-			},			
+			},
 			aggregations: {
 				/**
 				 * list of columns that has been changed
@@ -72,7 +72,7 @@ sap.ui.define([
 				/**
 				 * event raised when columnsItems shall be changed or new one needs to be created in model
 				 * 
-				 * @since 1.28.0
+				 * @since 1.26.7
 				 */
 				changeColumnsItems: {
 					parameters: {
@@ -94,7 +94,7 @@ sap.ui.define([
 				 * event raised when setData on model should be called; this event serves the purpose of minimizing such calls since these can be very
 				 * performance expensive
 				 * 
-				 * @since 1.28.0
+				 * @since 1.26.7
 				 */
 				setData: {}
 			}
@@ -500,7 +500,7 @@ sap.ui.define([
 		var oColumn = this._oTable.getColumns()[0];
 		if (oColumn) {
 			sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL');
-			if (iSelectedItems && iSelectedItems > 0 && iSelectedItems < iTableItems) {
+			if (iSelectedItems !== null && iSelectedItems !== undefined && iSelectedItems >= 0) {
 				sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
 					iSelectedItems, iTableItems
 				]);
@@ -680,6 +680,8 @@ sap.ui.define([
 
 						if (oItem.getColumnKey) {
 							sItemKeyTemp = oItem.getColumnKey();
+						} else if (oItem.columnKey) {
+							sItemKeyTemp = oItem.columnKey;
 						} else {
 							sItemKeyTemp = oItem.data('P13nColumnKey');
 						}
@@ -724,7 +726,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * * react on item visibility changes
+	 * extract all needed information from given columnsItems to create a JSON based list
+	 * 
+	 * @private
+	 * @param {array} aColumnsItems list of columnsItems
+	 */
+	P13nColumnsPanel.prototype._extractExistingColumnsItems = function(aColumnsItems) {
+		var aExtractionResult = [], oExtractedObject = null;
+
+		if (aColumnsItems && aColumnsItems.length > 0) {
+			aColumnsItems.forEach(function(oColumnsItem) {
+				oExtractedObject = {
+					columnKey: oColumnsItem.getColumnKey(),
+					index: oColumnsItem.getIndex(),
+					visible: oColumnsItem.getVisible(),
+					width: oColumnsItem.getWidth()
+				};
+				aExtractionResult.push(oExtractedObject);
+			});
+		}
+
+		return aExtractionResult;
+	};
+
+	/**
+	 * react on item visibility changes
 	 * 
 	 * @private
 	 * @param {sap.m.ColumnListItem} oItem is the table item for that the index was changed
@@ -734,10 +760,13 @@ sap.ui.define([
 		var sItemKey = null, iColumnsItemIndex = null;
 		var aExistingColumnsItems = [], oColumnsItem = null;
 		var aNewColumnsItems = [], aColumnsItems = null;
+		var that = this;
 
 		if (oItem && iNewIndex !== null && iNewIndex !== undefined && iNewIndex > -1) {
 			sItemKey = oItem.data('P13nColumnKey');
 			aColumnsItems = this.getColumnsItems();
+			this._aExistingColumnsItems = this._extractExistingColumnsItems(aColumnsItems);
+
 			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
 			if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
 				oColumnsItem = aColumnsItems[iColumnsItemIndex];
@@ -759,6 +788,7 @@ sap.ui.define([
 
 			// fire consolidated model change event for all collected model changes
 			if (aNewColumnsItems.length > 0 || aExistingColumnsItems.length > 0) {
+				this.aOwnHandledColumnsItems = aNewColumnsItems;
 				this.fireChangeColumnsItems({
 					newItems: aNewColumnsItems,
 					existingItems: aExistingColumnsItems
@@ -768,13 +798,18 @@ sap.ui.define([
 			// fire event for setting of changed data into model
 			this.fireSetData();
 
-			// react on model changes for columnsItems that that already did exist
+			// react on model changes
 			if (aExistingColumnsItems && aExistingColumnsItems.length > 0) {
-				this._updateTableItems(oColumnsItem);
-				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
-					this._reOrderExistingTableItems();
-				}
+				aExistingColumnsItems.forEach(function(oItem) {
+					that._updateTableItems(oItem);
+				});
+				this._oTableItemsOrdering.fCheckReOrdering();
 			}
+
+// aNewColumnsItems.forEach(function(oItem) {
+// that._updateTableItems(oItem);
+// });
+
 		}
 	};
 
@@ -791,8 +826,9 @@ sap.ui.define([
 		var aNewColumnsItems = [], aColumnsItems = null;
 
 		if (aItems && aItems.length > 0) {
-
 			aColumnsItems = this.getColumnsItems();
+			this._aExistingColumnsItems = this._extractExistingColumnsItems(aColumnsItems);
+
 			aItems.forEach(function(oItem) {
 				oColumnsItem = iColumnsItemIndex = null;
 
@@ -825,6 +861,7 @@ sap.ui.define([
 
 			// fire consolidated model change event for all collected model changes
 			if (aNewColumnsItems.length > 0 || aExistingColumnsItems.length > 0) {
+				this.aOwnHandledColumnsItems = aNewColumnsItems;
 				this.fireChangeColumnsItems({
 					newItems: aNewColumnsItems,
 					existingItems: aExistingColumnsItems
@@ -834,13 +871,17 @@ sap.ui.define([
 			// fire event for setting of changed data into model
 			this.fireSetData();
 
-			// react on model changes for columnsItems that that already did exist
+			// react on model changes
 			if (aExistingColumnsItems && aExistingColumnsItems.length > 0) {
-				this._updateTableItems();
-				if (this._oTableItemsOrdering.fIsOrderingToBeDone()) {
-					this._reOrderExistingTableItems();
-				}
+				aExistingColumnsItems.forEach(function(oItem) {
+					that._updateTableItems(oItem);
+				});
+				this._oTableItemsOrdering.fCheckReOrdering();
 			}
+
+// aNewColumnsItems.forEach(function(oItem) {
+// that._updateTableItems(oItem);
+// });
 		}
 	};
 
@@ -951,8 +992,8 @@ sap.ui.define([
 				if (window.console && window.console.log) {
 					if (!!exception.stack) {
 						window.console.log(exception.stack);
-					}else {
-						window.console.log(exception.toString());						
+					} else {
+						window.console.log(exception.toString());
 					}
 				}
 				sLanguage = null;
@@ -1102,12 +1143,29 @@ sap.ui.define([
 	P13nColumnsPanel.prototype._applyColumnsItem2TableItem = function(oColumnsItem, oTableItem) {
 		var aTableItems = this._oTable.getItems();
 		var iMaxTableIndex = 0, oRemovedItem = null, iTableItemIndex;
+		var sColumnKey = null, iColumnsItemIndex = null, oExistingColumnsItem = null, bIndexPropertyAlreadyKnown = false;
 
 		if (oColumnsItem && oTableItem && aTableItems && aTableItems.length > 0) {
-			iMaxTableIndex = aTableItems.length;
-			iTableItemIndex = aTableItems.indexOf(oTableItem);
+			sColumnKey = oColumnsItem.getColumnKey();
+
+			// Check for special case that columnsItem is already known -> don't apply it again! That can happen if we create a new
+			// columnsItems. The binding will remove at first all existing columnsItems and will refill the whole aggregation. Known
+			// columnsItems does not need to be applied again!!
+			if (this._aExistingColumnsItems && this._aExistingColumnsItems.length > 0) {
+				iColumnsItemIndex = this._getArrayIndexByItemKey(sColumnKey, this._aExistingColumnsItems);
+				if (iColumnsItemIndex !== -1) {
+					oExistingColumnsItem = this._aExistingColumnsItems[iColumnsItemIndex];
+
+					if (oExistingColumnsItem && oExistingColumnsItem.index !== undefined && oExistingColumnsItem.index === oColumnsItem.getIndex()) {
+						bIndexPropertyAlreadyKnown = true;
+					}
+				}
+			}
+
 			// apply index property
-			if (oColumnsItem.getIndex() !== undefined) {
+			if (oColumnsItem.getIndex() !== undefined && !bIndexPropertyAlreadyKnown) {
+				iMaxTableIndex = aTableItems.length;
+				iTableItemIndex = aTableItems.indexOf(oTableItem);
 				if (iTableItemIndex !== oColumnsItem.getIndex() && oColumnsItem.getIndex() <= iMaxTableIndex) {
 					oRemovedItem = this._oTable.removeItem(oTableItem);
 					this._oTable.insertItem(oRemovedItem, oColumnsItem.getIndex());
@@ -1140,6 +1198,7 @@ sap.ui.define([
 		var iLiveChangeTimer = 0;
 		var that = this;
 		this._bOnAfterRenderingFirstTimeExecuted = false;
+		this._aExistingColumnsItems = [];
 
 		// ---------------------------------------------------------------
 		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
@@ -1368,7 +1427,7 @@ sap.ui.define([
 	 * Delivers a payload for columnsPanel that can be used at consumer side
 	 * 
 	 * @public
-	 * @since 1.28.0
+	 * @since 1.26.7
 	 * @returns {object} oPayload, which contains useful information
 	 */
 	P13nColumnsPanel.prototype.getOkPayload = function() {
@@ -1526,8 +1585,10 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
 		this.addAggregation("columnsItems", oColumnsItem);
+
 		this._updateTableItems(oColumnsItem);
 		this._oTableItemsOrdering.fCheckReOrdering();
+
 		return this;
 	};
 
@@ -1542,8 +1603,10 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
 		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
+
 		this._updateTableItems(oColumnsItem);
 		this._oTableItemsOrdering.fCheckReOrdering();
+
 		return this;
 	};
 
@@ -1558,9 +1621,9 @@ sap.ui.define([
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
 		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
 
+		this._updateTableItems(oColumnsItem);
 		this._oTableItemsOrdering.fCheckReOrdering();
 
-		// return the removed item or null
 		return oColumnsItem;
 	};
 
@@ -1599,21 +1662,20 @@ sap.ui.define([
 	 * 
 	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
 	 * @public
-	 * @since 1.28.0
-	 */	
+	 * @since 1.26.7
+	 */
 	P13nColumnsPanel.prototype.onBeforeNavigationFrom = function() {
-		var bResult = true; 
+		var bResult = true;
 		var aSelectedItems = this._oTable.getSelectedItems();
 		var iVisibleItemsThreshold = this.getVisibleItemsThreshold();
-		
+
 		if (aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold) {
 			bResult = false;
 		}
-		
+
 		return bResult;
 	};
 
-	
 	return P13nColumnsPanel;
 
 }, /* bExport= */true);
