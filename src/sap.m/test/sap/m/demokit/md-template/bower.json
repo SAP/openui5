@@ -4,10 +4,10 @@
   "authors": [
     "SAP SE"
   ],
-  "description": "md-skeleton",
+  "description": "md-template",
   "main": "webapp/index.html",
   "keywords": [
-    "md-skeleton"
+    "md-template"
   ],
   "license": "MIT",
   "private": true,
