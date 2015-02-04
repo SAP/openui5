@@ -71,7 +71,7 @@ sap.ui.controller("sap.ui.layout.sample.SimpleForm471.Page", {
 			return oFormFragment;
 		}
 
-		oFormFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.layout.sample.Form354." + sFragmentName);
+		oFormFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.layout.sample.SimpleForm471." + sFragmentName);
 
 		return this._formFragments[sFragmentName] = oFormFragment;
 	},
