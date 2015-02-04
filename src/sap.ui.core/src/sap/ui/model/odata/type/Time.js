@@ -35,8 +35,12 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
+		var oFormatOptions;
+
 		if (!oType.oFormat) {
-			oType.oFormat = DateFormat.getTimeInstance({strictParsing: true, UTC: true});
+			oFormatOptions = jQuery.extend({strictParsing: true}, oType.oFormatOptions);
+			oFormatOptions.UTC = true;
+			oType.oFormat = DateFormat.getTimeInstance(oFormatOptions);
 		}
 		return oType.oFormat;
 	}
@@ -141,8 +145,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 *
 	 * @alias sap.ui.model.odata.type.Time
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in {@link sap.ui.core.format.DateFormat}
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -157,6 +160,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);
+					this.oFormatOptions = oFormatOptions;
 			}
 		});
 

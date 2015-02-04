@@ -30,6 +30,8 @@
 				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
 				<Label text="DateTime, nullable: false"/>
 				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
+				<Label text="DateTime, style:  &quot;short&quot;"/>
+				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}"/>
 				<Label text="DateTime, displayFormat: &quot;Date&quot;"/>
 				<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
 				<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false"/>
@@ -38,10 +40,14 @@
 				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
 				<Label text="DateTimeOffset, nullable: false"/>
 				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
+				<Label text="DateTimeOffset, style:  &quot;short&quot;"/>
+				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'short'}}"/>
 				<Label text="Time"/>
 				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time'}"/>
 				<Label text="Time, nullable: false"/>
 				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}"/>
+				<Label text="Time, style: &quot;short&quot;"/>
+				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Decimal" />
 				<Label text="scale: 3"/>

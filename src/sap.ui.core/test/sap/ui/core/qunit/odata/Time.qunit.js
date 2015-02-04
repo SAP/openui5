@@ -7,6 +7,8 @@
 	*/
 	"use strict";
 
+	jQuery.sap.require("sap.ui.core.format.DateFormat");
+
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		oCircular = {},
 		TestUtils = sap.ui.test.TestUtils;
@@ -227,4 +229,28 @@
 		strictEqual(oType.formatValue(oValue, "string"), "13:53:49",
 			"adjusted to changed language");
 	});
+
+	//*********************************************************************************************
+	jQuery.each([
+		{oFormatOptions: {}, oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: undefined, oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: {strictParsing: false}, oExpected: {UTC: true, strictParsing: false}},
+		{oFormatOptions: {UTC: false}, oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: {foo: "bar"}, oExpected: {UTC: true, strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {style: "medium"},
+			oExpected: {UTC: true, strictParsing: true, style: "medium"}}
+	], function (i, oFixture) {
+		test("with oFormatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			sinon.test(function () {
+				var oType = new sap.ui.model.odata.type.Time(oFixture.oFormatOptions),
+				oSpy = this.spy(sap.ui.core.format.DateFormat, "getTimeInstance");
+
+				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
+				oType.formatValue(createTime(13, 47, 26, 0), "string");
+				ok(oSpy.calledWithExactly(oFixture.oExpected));
+			})
+		);
+	});
+
 } ());
