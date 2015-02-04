@@ -2527,8 +2527,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oPart.model = oPart.path.substr(0, iSeparatorPos);
 				oPart.path = oPart.path.substr(iSeparatorPos + 1);
 			}
-			// if a formatter exists or we have multiple bindings the binding mode can be one way only
-			if (oBindingInfo.formatter || oBindingInfo.parts.length > 1) {
+			// if a formatter exists the binding mode can be one way only
+			if (oBindingInfo.formatter) {
 				oPart.mode = sap.ui.model.BindingMode.OneWay;
 			}
 
@@ -2555,9 +2555,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	ManagedObject.prototype._bindProperty = function(sName, oBindingInfo) {
 		var oModel,
-			sMode,
 			oContext,
 			oBinding,
+			sMode,
+			sCompositeMode = sap.ui.model.BindingMode.TwoWay,
 			oType,
 			clType,
 			oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
@@ -2593,8 +2594,13 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oBinding.setType(oType, oPropertyInfo.type);
 			oBinding.setFormatter(oPart.formatter);
 
-			sMode = !oPart.mode ? oModel.getDefaultBindingMode() : oPart.mode;
+			sMode = oPart.mode || oModel.getDefaultBindingMode();
 			oBinding.setBindingMode(sMode);
+			
+			// Only if all parts have twoway binding enabled, the composite binding will also have twoway binding
+			if (sMode != sap.ui.model.BindingMode.TwoWay) {
+				sCompositeMode = sap.ui.model.BindingMode.OneWay;
+			}
 
 			aBindings.push(oBinding);
 		});
@@ -2609,7 +2615,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues);
 			oBinding.setType(oType, oPropertyInfo.type);
-			oBinding.setBindingMode(oBindingInfo.mode);
+			oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
 		} else {
 			oBinding = aBindings[0];
 		}
