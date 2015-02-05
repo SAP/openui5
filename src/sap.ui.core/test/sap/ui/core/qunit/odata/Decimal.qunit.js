@@ -148,13 +148,16 @@
 	});
 
 	//*********************************************************************************************
-	test("parse large numbers, modified Swedish", function () {
+	test("large numbers, modified Swedish", function () {
 		var fnLocaleData = sap.ui.core.LocaleData.getInstance,
-			oType;
+			oType,
+			oValue = "-1",
+			oExpected = "<1";
 
 		// special: non-breaking space as grouping separator
 		// We did not find any locale using different characters for plus or minus sign, so we
 		// modify the LocaleData here.
+		// TODO simply use formatOptions once they are supported
 		this.stub(sap.ui.core.LocaleData, "getInstance", function () {
 			var oLocaleData = fnLocaleData.apply(this, arguments);
 			oLocaleData.mData["symbols-latn-plusSign"] = ">";
@@ -163,7 +166,19 @@
 		});
 
 		sap.ui.getCore().getConfiguration().setLanguage("sv");
-		oType = new sap.ui.model.odata.type.Decimal();
+		oType = new sap.ui.model.odata.type.Decimal({}, {scale: "variable"});
+
+		strictEqual(oType.formatValue("1234567890123456.789012", "string"),
+			"1\u00a0234\u00a0567\u00a0890\u00a0123\u00a0456,789012",
+			"format w/ decimals");
+		strictEqual(oType.formatValue("-1234567890123456789012", "string"),
+			"<1\u00a0234\u00a0567\u00a0890\u00a0123\u00a0456\u00a0789\u00a0012",
+			"format w/ minus");
+		while (oValue.length < 102) {
+			oValue += "000";
+			oExpected += "\u00a0000";
+		}
+		strictEqual(oType.formatValue(oValue, "string"), oExpected, "format >99 integer digits");
 
 		strictEqual(oType.parseValue(">1 234 567 890 123 456,789012", "string"),
 			"1234567890123456.789012", "plus sign, spaces");
