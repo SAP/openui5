@@ -185,7 +185,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._oItemNavigation.destroy();
 			delete this._oItemNavigation;
 		}
-	
+
+		if (this._checkOverflowIntervalId) {
+			jQuery.sap.clearIntervalCall(this._checkOverflowIntervalId);
+			this._checkOverflowIntervalId = null;
+		}
+
 		// no super.exit() to call
 	};
 	
