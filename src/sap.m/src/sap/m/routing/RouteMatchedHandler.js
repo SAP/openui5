@@ -53,7 +53,13 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			oRouter.attachRouteMatched(this._onHandleRouteMatched, this);
 			// Route Pattern Matched is thrown only once for the end point of the current navigation
 			oRouter.attachRoutePatternMatched(this._handleRoutePatternMatched, this);
-	
+
+			this._oTargets = oRouter.getTargets();
+
+			if (this._oTargets) {
+				this._oTargets.attachDisplay(this._onHandleRouteMatched, this);
+			}
+
 			this._oRouter = oRouter;
 		}
 	});
@@ -73,7 +79,12 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		this._oRouter.detachRoutePatternMatched(this._handleRoutePatternMatched, this);
 	
 		this._oRouter = null;
-	
+
+		if (this._oTargets) {
+			this._oTargets.detachDisplay(this._onHandleRouteMatched, this);
+			this._oTargets = null;
+		}
+
 		return this;
 	};
 	
