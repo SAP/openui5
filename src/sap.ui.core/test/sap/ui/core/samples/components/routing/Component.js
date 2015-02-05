@@ -20,7 +20,12 @@ sap.ui.core.UIComponent.extend("samples.components.routing.Component", {
 					name : "firstRoute",
 					pattern : "first/{firstMandatoryParameter}"
 				}
-			]
+			],
+			targets: {
+				myTarget: {
+					viewType : "XML"
+				}
+			}
 		}
 	},
 

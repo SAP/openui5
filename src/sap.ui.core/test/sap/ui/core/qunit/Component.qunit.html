@@ -178,7 +178,7 @@
 	test("Should create a custom router class", function() {
 		//Arrange + System under test 
 		var oComponent = sap.ui.getCore().createComponent({
-			name: "samples.components.routing",
+			name: "samples.components.routing"
 		});
 
 
@@ -191,6 +191,28 @@
 
 		//Cleanup
 		oComponent.destroy();
+		ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
+	});
+
+	test("Should create the targets instance", function () {
+		//Arrange + System under test
+		var oComponent = sap.ui.getCore().createComponent({
+			name: "samples.components.routing"
+		});
+
+
+		//Act - initialize the component to create the router
+		oComponent.init();
+		var oTargets = oComponent.getTargets();
+
+		//Assert
+		ok(oTargets, "the component created targets");
+		ok(oTargets.getTarget("myTarget"), "the component created a target instance");
+
+		//Cleanup
+		oComponent.destroy();
+
+		ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
 	});
 
 	</script>
