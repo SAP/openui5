@@ -1940,7 +1940,7 @@
 				var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
 				// Assert
-				ok(oButton.innerText.indexOf("Text 1") > -1, "the tab content is displayed");
+				ok(jQuery(oButton).text().indexOf("Text 1") > -1, "the tab content is displayed");
 
 				// remove the IconTabFilter contents
 				var aItems = oIconTabBar.getItems();
@@ -1952,7 +1952,7 @@
 				oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
 
 				// Assert
-				ok(oButton.innerText.indexOf("Main Text") > -1, "the default content is displayed");
+				ok(jQuery(oButton).text().indexOf("Main Text") > -1, "the default content is displayed");
 
 				// Clean up
 				oIconTabBar.destroy();
