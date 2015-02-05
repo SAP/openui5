@@ -1,0 +1,152 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.TypeFileSize.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+
+	<form:SimpleForm
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		editable="true"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="FileSize Input" >
+		<form:content>
+			<Label text="FileSize" />
+			<Input value="{path:'/fileSize', type: 'sap.ui.model.type.FileSize'}"/>
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Min Integer Digits (minimal number of non-fraction digits)">
+		<form:content>
+			<Label text="3 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					minIntegerDigits: 3
+				}
+			}" />
+			
+			<Label text="5 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					minIntegerDigits: 5
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+	
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Max Integer Digits (maximal number of non-fraction digits)">
+		<form:content>
+			<Label text="2 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					maxIntegerDigits: 2
+				}
+			}" />
+			
+			<Label text="5 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					maxIntegerDigits: 5
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+	
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Min Fraction Digits (minimal number of fraction digits)">
+		<form:content>
+			<Label text="2 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					minFractionDigits: 2
+				}
+			}" />
+			
+			<Label text="5 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					minFractionDigits: 5
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Max Fraction Digits (maximal number of fraction digits)">
+		<form:content>
+			<Label text="2 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					maxFractionDigits: 2
+				}
+			}" />
+			
+			<Label text="5 digits" />
+			<Text text="{
+				path: '/fileSize',
+				type: 'sap.ui.model.type.FileSize',
+				formatOptions: {
+					maxFractionDigits: 5
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+
+
+</mvc:View>
