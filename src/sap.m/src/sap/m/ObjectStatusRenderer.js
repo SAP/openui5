@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, ValueStateSupport) {
 	"use strict";
 
 
@@ -23,9 +23,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
 		if (!oObjStatus._isEmpty()) {
-			/* Get the library resource bundle in order to create localized strings */
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+			var sState = oObjStatus.getState();
 			var sTextDir = oObjStatus.getTextDirection();
 
 			oRm.write("<div");
@@ -37,16 +36,19 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.addClass("sapMObjStatus");
-			oRm.addClass("sapMObjStatus" + oObjStatus.getState());
+			oRm.addClass("sapMObjStatus" + sState);
 			oRm.writeClasses();
 
 			/* ARIA region adding the aria-describedby to ObjectStatus */
-			oRm.writeAccessibilityState({
-				describedby: {
-					value: oObjStatus.getId() + "sapSRH",
-					append: true
-				}
-			});
+
+			if (sState != sap.ui.core.ValueState.None) {
+				oRm.writeAccessibilityState(oObjStatus, {
+					describedby: {
+						value: oObjStatus.getId() + "sapSRH",
+						append: true
+					}
+				});
+			}
 
 			oRm.write(">");
 
@@ -83,33 +85,22 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			/* ARIA adding hidden node in span element */
-			oRm.write("<span");
-			oRm.writeAttributeEscaped("id", oObjStatus.getId() + "sapSRH");
-			oRm.addClass("sapUiInvisibleText");
-			oRm.writeClasses();
-			oRm.writeAccessibilityState({
-				hidden: false
-			});
-			oRm.write(">");
-			switch (oObjStatus.getState()) {
-				case sap.ui.core.ValueState.None:
-					oRm.writeEscaped(oResourceBundle.getText("OBJSTATS_ARIA_NONESTATE"));
-					break;
-				case sap.ui.core.ValueState.Success:
-					oRm.writeEscaped(oResourceBundle.getText("OBJSTATS_ARIA_SUCCESSSTATE"));
-					break;
-				case sap.ui.core.ValueState.Warning:
-					oRm.writeEscaped(oResourceBundle.getText("OBJSTATS_ARIA_WARNINGSTATE"));
-					break;
-				case sap.ui.core.ValueState.Error:
-					oRm.writeEscaped(oResourceBundle.getText("OBJSTATS_ARIA_ERRORSTATE"));
-					break;
+			if (sState != sap.ui.core.ValueState.None) {
+				oRm.write("<span");
+				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "sapSRH");
+				oRm.addClass("sapUiInvisibleText");
+				oRm.writeClasses();
+				oRm.writeAccessibilityState({
+					hidden: false
+				});
+				oRm.write(">");
+				oRm.writeEscaped(ValueStateSupport.getAdditionalText(sState));
+				oRm.write("</span>");
 			}
-			oRm.write("</span>");
+
 			oRm.write("</div>");
 		}
 	};
-
 
 	return ObjectStatusRenderer;
 
