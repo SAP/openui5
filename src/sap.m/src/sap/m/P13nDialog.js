@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @public
-	 * @since 1.26
+	 * @since 1.26.0
 	 * @alias sap.m.P13nDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -32,7 +32,9 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * tbd
+				 * This property determines which panel is initially shown when dialog is opened.
+				 * 
+				 * @since 1.26.0
 				 */
 				initialVisiblePanelType: {
 					type: "sap.m.P13nPanelType",
@@ -43,6 +45,8 @@ sap.ui.define([
 				/**
 				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to true, clicking the
 				 * 'Reset' button will trigger the 'reset' event sending a notification that model data must be reset.
+				 * 
+				 * @since 1.26.0
 				 */
 				showReset: {
 					type: "boolean",
@@ -54,6 +58,8 @@ sap.ui.define([
 
 				/**
 				 * The dialog panels displayed in the dialog.
+				 * 
+				 * @since 1.26.0
 				 */
 				panels: {
 					type: "sap.m.P13nPanel",
@@ -66,14 +72,20 @@ sap.ui.define([
 
 				/**
 				 * Event fired if the 'ok' button in P13nDialog is clicked.
+				 * 
+				 * @since 1.26.0
 				 */
 				ok: {},
 				/**
 				 * Event fired if the 'cancel' button in P13nDialog is clicked.
+				 * 
+				 * @since 1.26.0
 				 */
 				cancel: {},
 				/**
 				 * Event fired if the 'reset' button in P13nDialog is clicked.
+				 * 
+				 * @since 1.26.0
 				 */
 				reset: {}
 			}
@@ -99,24 +111,35 @@ sap.ui.define([
 		this.addButton(new sap.m.Button({
 			text: this._oResourceBundle.getText("P13NDIALOG_OK"),
 			press: function() {
-				// TODO: current implementation finds only the first invalid panel. Should go through all panels and put all
-				// error messages together
-				var oPanel = null;
-				var fCallbackOK = function() {
-					oPanel.onAfterNavigation();
-					that.fireOk();
+				var fFireOK = function() {
+					var oPayload = {};
+					that.getPanels().forEach(function(oPanel) {
+						oPayload[oPanel.getType()] = oPanel.getOkPayload();
+					});
+					that.fireOk({
+						payload: oPayload
+					});
 				};
-				that.getContent().some(function(_oPanel) {
-					if (!_oPanel.onBeforeNavigation()) {
-						oPanel = _oPanel;
-						return true;
+				var fCallbackOK = function() {
+					that.getPanels().forEach(function(oPanel) {
+						if (aFailedPanelTypes.indexOf(oPanel.getType()) > -1) {
+							oPanel.onAfterNavigationFrom();
+						}
+					});
+					fFireOK();
+				};
+				var aFailedPanelTypes = [];
+				that.getPanels().forEach(function(oPanel) {
+					if (!oPanel.onBeforeNavigationFrom()) {
+						aFailedPanelTypes.push(oPanel.getType());
 					}
 				});
-				if (!oPanel) {
-					that.fireOk();
-					return;
+				if (aFailedPanelTypes.length) {
+					// In case of invalid panels show the dialog
+					that.showValidationDialog(fCallbackOK, null, aFailedPanelTypes);
+				} else {
+					fFireOK();
 				}
-				that.showValidationDialog(fCallbackOK, null);
 			}
 		}));
 		this.addButton(new sap.m.Button({
@@ -139,20 +162,24 @@ sap.ui.define([
 		this._oResetButton.setVisible(bShow);
 	};
 
-	/*
-	 * Adds some DialogItem <code>oDialogItem</code> to the aggregation named <code>DialogItems</code>. @param {sap.m.P13nPanel} oDialogItem The
-	 * DialogItem to add; if empty, nothing is added. @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name
-	 * P13nDialog#addDialogItem @function
+	/**
+	 * Adds some DialogItem <code>oDialogItem</code> to the aggregation named <code>DialogItems</code>.
+	 * 
+	 * @param {sap.m.P13nPanel} oDialogItem The DialogItem to add; if empty, nothing is added.
+	 * @returns {P13nDialog} <code>this</code> to allow method chaining.
+	 * @public
+	 * @name P13nDialog#addDialogItem
+	 * @function
 	 */
 	P13nDialog.prototype.addPanel = function(oPanel) {
-		this.addAggregation("content", oPanel);
+		this.addAggregation("panels", oPanel);
 
 		var oButton = this._mapPanelToButton(oPanel);
 		oPanel.data(P13nDialogRenderer.CSS_CLASS + "Button", oButton);
 		if (this._getSegmentedButton()) {
 			this._getSegmentedButton().addButton(oButton);
 		}
-		this._setDialogTitleFor(oPanel, this.getContent().length);
+		this._setDialogTitleFor(oPanel);
 		// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
 		this._setVisibilityOfPanel(oPanel);
 
@@ -166,14 +193,14 @@ sap.ui.define([
 	 * @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name P13nDialog#insertItem @function
 	 */
 	P13nDialog.prototype.insertPanel = function(oPanel, iIndex) {
-		this.insertAggregation("content", oPanel, iIndex);
+		this.insertAggregation("panels", oPanel, iIndex);
 
 		var oButton = this._mapPanelToButton(oPanel);
 		oPanel.data(P13nDialogRenderer.CSS_CLASS + "Button", oButton);
 		if (this._getSegmentedButton()) {
 			this._getSegmentedButton().insertButton(oButton, iIndex);
 		}
-		this._setDialogTitleFor(oPanel, this.getContent().length);
+		this._setDialogTitleFor(oPanel);
 		// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
 		this._setVisibilityOfPanel(oPanel);
 
@@ -185,9 +212,9 @@ sap.ui.define([
 	 * or id. @returns {sap.m.P13nPanel} The removed item or null. @public @name P13nDialog#removeItem @function
 	 */
 	P13nDialog.prototype.removePanel = function(vPanel) {
-		vPanel = this.removeAggregation("content", vPanel);
+		vPanel = this.removeAggregation("panels", vPanel);
 		if (this._getSegmentedButton()) {
-			this._getSegmentedButton().removeButton(vPanel && vPanel.data(P13nDialogRenderer.CSS_CLASS + "Button"));
+			this._getSegmentedButton().removeButton(vPanel && this._getButtonByPanel(vPanel));
 		}
 		return vPanel;
 	};
@@ -197,11 +224,25 @@ sap.ui.define([
 	 * selection. @returns {sap.m.P13nPanel[]} An array of the removed items (might be empty). @public @name P13nDialog#removeAllItems @function
 	 */
 	P13nDialog.prototype.removeAllPanels = function() {
-		var aPanels = this.removeAllAggregation("content");
+		var aPanels = this.removeAllAggregation("panels");
 		if (this._getSegmentedButton()) {
 			this._getSegmentedButton().removeAllButtons();
 		}
 		return aPanels;
+	};
+
+	/**
+	 * Destroys all the panels in the aggregation named <code>panels</code>.
+	 * 
+	 * @returns {sap.m.P13nDialog} <code>this</code> to allow method chaining.
+	 * @public
+	 */
+	P13nDialog.prototype.destroyPanels = function() {
+		this.destroyAggregation("panels");
+		if (this._getSegmentedButton()) {
+			this._getSegmentedButton().destroyButtons();
+		}
+		return this;
 	};
 
 	/**
@@ -211,7 +252,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._getSegmentedButton = function() {
-		if (this.getContent().length < 2) {
+		if (this.getPanels().length < 2) {
 			return null;
 		}
 		var that = this;
@@ -228,14 +269,25 @@ sap.ui.define([
 				]
 			}));
 			// Add button of first panel first
-			this._getSegmentedButton().addButton(this._getButtonByPanel(this.getContent()[0]));
+			this.getSubHeader().getContentLeft()[0].addButton(this._getButtonByPanel(this.getPanels()[0]));
 		}
 		return this.getSubHeader().getContentLeft()[0];
 	};
 
-	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, fCallbackCancel) {
+	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, fCallbackCancel, aFailedPanelTypes) {
+		var sMessageText = "";
+		aFailedPanelTypes.forEach(function(sPanelType) {
+			switch (sPanelType) {
+				case sap.m.P13nPanelType.filter:
+					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
+					break;
+				case sap.m.P13nPanelType.columns:
+					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
+					break;
+			}
+		});
 		jQuery.sap.require("sap.m.MessageBox");
-		sap.m.MessageBox.show(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE"), {
+		sap.m.MessageBox.show(sMessageText, {
 			icon: sap.m.MessageBox.Icon.WARNING,
 			title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
 			actions: [
@@ -268,25 +320,28 @@ sap.ui.define([
 			type: sap.m.ButtonType.Default,
 			text: oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
 		});
-		oButton.addDelegate({
-			ontap: function(oEvent) {
-				var oButtonClicked = oEvent.srcControl;
-				var oPanelVisible = this.getVisiblePanel();
-
-				if (oPanelVisible && oPanelVisible.onBeforeNavigation && !oPanelVisible.onBeforeNavigation()) {
-					oEvent.stopImmediatePropagation(true);
-					var that = this;
-					var fCallbackOK = function() {
-						oPanelVisible.onAfterNavigation();
-						if (that._getSegmentedButton()) {
-							that._getSegmentedButton().setSelectedButton(oButtonClicked);
-						}
-						that._switchPanel(oButtonClicked);
-					};
-					this.showValidationDialog(fCallbackOK, null);
-				}
-			}
-		}, true, this);
+// oButton.addDelegate({
+// ontap: function(oEvent) {
+// var oButtonClicked = oEvent.srcControl;
+// var oPanelVisible = this.getVisiblePanel();
+//
+// if (oPanelVisible && oPanelVisible.onBeforeNavigationFrom && !oPanelVisible.onBeforeNavigationFrom()) {
+// oEvent.stopImmediatePropagation(true);
+// var that = this;
+// var fCallbackOK = function() {
+//
+// oPanelVisible.onAfterNavigationFrom();
+// if (that._getSegmentedButton()) {
+// that._getSegmentedButton().setSelectedButton(oButtonClicked);
+// }
+// that._switchPanel(oButtonClicked);
+// };
+// this.showValidationDialog(fCallbackOK, null, [
+// oPanelVisible.getType()
+// ]);
+// }
+// }
+// }, true, this);
 
 		oButton.setModel(oPanel.getModel());
 		return oButton;
@@ -300,8 +355,9 @@ sap.ui.define([
 	P13nDialog.prototype._switchPanel = function(oButton) {
 		var oPanel = this._getPanelByButton(oButton);
 		this.setVerticalScrolling(oPanel.getVerticalScrolling());
-		this.getContent().forEach(function(oPanel_) {
+		this.getPanels().forEach(function(oPanel_) {
 			if (oPanel_ === oPanel) {
+				oPanel_.beforeNavigationTo();
 				oPanel_.setVisible(true);
 			} else {
 				oPanel_.setVisible(false);
@@ -316,10 +372,11 @@ sap.ui.define([
 	 * 
 	 * @returns {sap.m.P13nPanel || null}
 	 * @public
+	 * @since 1.26.0
 	 */
 	P13nDialog.prototype.getVisiblePanel = function() {
 		var oPanel = null;
-		this.getContent().some(function(oPanel_) {
+		this.getPanels().some(function(oPanel_) {
 			if (oPanel_.getVisible()) {
 				oPanel = oPanel_;
 				return true;
@@ -334,7 +391,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._getPanelByButton = function(oButton) {
-		for (var i = 0, aPanels = this.getContent(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
+		for (var i = 0, aPanels = this.getPanels(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
 			if (aPanels[i].data(P13nDialogRenderer.CSS_CLASS + "Button") === oButton) {
 				return aPanels[i];
 			}
@@ -360,7 +417,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._setVisibilityOfOtherPanels = function(oPanel, bVisible) {
-		for (var i = 0, aPanels = this.getContent(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
+		for (var i = 0, aPanels = this.getPanels(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
 			if (aPanels[i] === oPanel) {
 				continue;
 			}
@@ -375,23 +432,48 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._setVisibilityOfPanel = function(oPanel) {
-		var bVisible = this.getInitialVisiblePanelType() === oPanel.getType() || this.getContent().length === 1;
+		var bVisible = this.getInitialVisiblePanelType() === oPanel.getType() || this.getPanels().length === 1;
+		if (bVisible) {
+			oPanel.beforeNavigationTo();
+		}
+
 		oPanel.setVisible(bVisible);
+
 		if (bVisible) {
 			this._setVisibilityOfOtherPanels(oPanel, false);
-			var oButton = oPanel.data(P13nDialogRenderer.CSS_CLASS + "Button");
+			this.setVerticalScrolling(oPanel.getVerticalScrolling());
+			var oButton = this._getButtonByPanel(oPanel);
 			if (this._getSegmentedButton()) {
 				this._getSegmentedButton().setSelectedButton(oButton);
 			}
-			this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		}
 	};
 
 	P13nDialog.prototype.onBeforeRendering = function() {
+		Dialog.prototype.onBeforeRendering.apply(this, arguments);
 		if (this.getVisiblePanel()) {
 			this.setInitialVisiblePanelType(this.getVisiblePanel().getType());
 		}
 		Dialog.prototype.onBeforeRendering.apply(this, arguments);
+	};
+
+	P13nDialog.prototype.onAfterRendering = function() {
+		Dialog.prototype.onAfterRendering.apply(this, arguments);
+		var oContent = jQuery(this.getFocusDomRef()).find(".sapMDialogScrollCont");
+		var sId = this._getVisiblePanelID();
+		if (sId && oContent) {
+			// move panel div into dialog content div.
+			var oPanel = jQuery.find("#" + sId);
+			jQuery(oPanel).insertAfter(jQuery(oContent));
+		}
+	};
+
+	P13nDialog.prototype._getVisiblePanelID = function() {
+		var oPanel = this.getVisiblePanel();
+		if (oPanel) {
+			return this.getId() + "-panel_" + oPanel.getId();
+		}
+		return null;
 	};
 
 	/**
@@ -399,8 +481,8 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nDialog.prototype._setDialogTitleFor = function(oPanel, iPanelCount) {
-		if (iPanelCount > 1) {
+	P13nDialog.prototype._setDialogTitleFor = function(oPanel) {
+		if (this.getPanels().length > 1) {
 			this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
 			return;
 		}

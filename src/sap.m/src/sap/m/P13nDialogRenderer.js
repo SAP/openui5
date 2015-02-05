@@ -21,6 +21,20 @@ sap.ui.define([
 	 */
 	P13nDialogRenderer.CSS_CLASS = "sapMPersoDialog";
 
+	P13nDialogRenderer.render = function(oRm, oControl) {
+		DialogRenderer.render.apply(this, arguments);
+
+		var sId = oControl._getVisiblePanelID();
+		var oPanel = oControl.getVisiblePanel();
+		if (sId && oPanel) {
+			oRm.write("<div");
+			oRm.writeAttribute("id", sId);
+			oRm.write(">");
+			oRm.renderControl(oPanel);
+			oRm.write("</div>");
+		}
+	};
+
 	return P13nDialogRenderer;
 
 }, /* bExport= */true);

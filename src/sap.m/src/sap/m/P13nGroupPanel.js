@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides control sap.m.P13nGroupPanel.
@@ -11,11 +11,15 @@ sap.ui.define([
 	/**
 	 * Constructor for a new P13nGroupPanel.
 	 * 
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string}
+	 *            [sId] id for the new control, generated automatically if no id is given
+	 * @param {object}
+	 *            [mSettings] initial settings for the new control
+	 * 
 	 * @class The GroupPanel Control can be used to...
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
+	 * 
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nGroupPanel
@@ -30,6 +34,7 @@ sap.ui.define([
 
 				/**
 				 * defines the max number of groups.
+				 * @since 1.26
 				 */
 				maxGroups: {
 					type: "string",
@@ -38,8 +43,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the ConditionPanel is used on a dialog the
-				 * property should be set to true!
+				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the
+				 * ConditionPanel is used on a dialog the property should be set to true!
+				 * @since 1.26
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -48,8 +54,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
-				 * or"Phone" you can set a fixed layout.
+				 * can be used to control the layout behavior. Default is "" which will automatically change the
+				 * layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
+				 * @since 1.26
 				 */
 				layoutMode: {
 					type: "string",
@@ -70,7 +77,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * defined group Items
+				 * @since 1.26
 				 */
 				groupItems: {
 					type: "sap.m.P13nGroupItem",
@@ -82,7 +90,8 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a Item was added
+				 * event raised when a GroupItem was added
+				 * @since 1.26
 				 */
 				addGroupItem: {
 					parameters: {}
@@ -90,11 +99,13 @@ sap.ui.define([
 
 				/**
 				 * remove a group item
+				 * @since 1.26
 				 */
 				removeGroupItem: {},
 
-				/**
+				/**								 
 				 * update a group item
+				 * @since 1.26
 				 */
 				updateGroupItem: {}
 			}
@@ -114,7 +125,7 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nGroupPanel.prototype.getConditions = function() {
+	P13nGroupPanel.prototype._getConditions = function() {
 		return this._oGroupPanel.getConditions();
 	};
 
@@ -131,19 +142,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and opens a popup message dialog to give the
-	 * user the feedback that some values are wrong or missing.
+	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and
+	 * opens a popup message dialog to give the user the feedback that some values are wrong or missing.
 	 * 
 	 * @public
+	 * @since 1.26
 	 */
 	P13nGroupPanel.prototype.validateConditions = function() {
 		return this._oGroupPanel.validateConditions();
 	};
 
 	/**
-	 * removes all invalid Group conditions.
-	 * 
+	 * removes all invalid Group conditions.					 
+	 *  
 	 * @public
+	 * @since 1.28
 	 */
 	P13nGroupPanel.prototype.removeInvalidConditions = function() {
 		this._oGroupPanel.removeInvalidConditions();
@@ -153,16 +166,17 @@ sap.ui.define([
 	 * removes all errors/warning states from of all group conditions.
 	 * 
 	 * @public
+	 * @since 1.28
 	 */
 	P13nGroupPanel.prototype.removeValidationErrors = function() {
 		this._oGroupPanel.removeValidationErrors();
 	};
 
-	P13nGroupPanel.prototype.onBeforeNavigation = function() {
+	P13nGroupPanel.prototype.onBeforeNavigationFrom = function() {
 		return this.validateConditions();
 	};
 
-	P13nGroupPanel.prototype.onAfterNavigation = function() {
+	P13nGroupPanel.prototype.onAfterNavigationFrom = function() {
 		return this.removeInvalidConditions();
 	};
 
@@ -170,7 +184,9 @@ sap.ui.define([
 	 * setter for the supported operations array
 	 * 
 	 * @public
-	 * @param {array} array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @since 1.26
+	 * @param {array}
+	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
 	P13nGroupPanel.prototype.setOperations = function(aOperation) {
 		this._aOperations = aOperation;
@@ -178,24 +194,6 @@ sap.ui.define([
 		if (this._oGroupPanel) {
 			this._oGroupPanel.setOperations(this._aOperations);
 		}
-	};
-
-	/**
-	 * setter for a KeyFields array
-	 * 
-	 * @public
-	 * @param {array} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
-	 */
-	P13nGroupPanel.prototype.setKeyFields = function(aKeyFields) {
-		this._aKeyFields = aKeyFields;
-
-		if (this._oGroupPanel) {
-			this._oGroupPanel.setKeyFields(this._aKeyFields);
-		}
-	};
-
-	P13nGroupPanel.prototype.getKeyFields = function() {
-		return this._aKeyFields;
 	};
 
 	/**
@@ -230,16 +228,8 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.exit = function() {
-
-		var destroyHelper = function(o) {
-			if (o && o.destroy) {
-				o.destroy();
-			}
-			return null;
-		};
-
-		this._aKeyFields = destroyHelper(this._aKeyFields);
-		this._aOperations = destroyHelper(this._aOperations);
+		this._aKeyFields = null;
+		this._aOperations = null;
 	};
 
 	P13nGroupPanel.prototype.addItem = function(oItem) {
@@ -281,11 +271,41 @@ sap.ui.define([
 			});
 		});
 
-		if (!this._bIgnoreAdd) {
+		if (!this._bIgnoreBindCalls) {
 			this._oGroupPanel.setConditions(aConditions);
 		}
 	};
 
+	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
+		this.insertAggregation("groupItems", oGroupItem);
+		//TODO: implement this
+		return this;
+	};
+
+	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
+		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
+
+		return oGroupItem;
+	};
+
+	P13nGroupPanel.prototype.removeAllGroupItems = function() {
+		var aGroupItems = this.removeAllAggregation("groupItems");
+
+		this._oGroupPanel.setConditions([]);
+
+		return aGroupItems;
+	};
+
+	P13nGroupPanel.prototype.destroyGroupItems = function() {
+		this.destroyAggregation("groupItems");
+
+		if (!this._bIgnoreBindCalls) {
+			this._oGroupPanel.setConditions([]);
+		}
+
+		return this;
+	};
+	
 	P13nGroupPanel.prototype._handleDataChange = function() {
 		var that = this;
 
@@ -319,13 +339,13 @@ sap.ui.define([
 				});
 			}
 			if (sOperation === "add") {
-				that._bIgnoreAdd = true;
+				that._bIgnoreBindCalls = true;
 				that.fireAddGroupItem({
 					key: sKey,
 					index: iIndex,
 					groupItemData: oGroupItemData
 				});
-				that._bIgnoreAdd = false;
+				that._bIgnoreBindCalls = false;
 			}
 			if (sOperation === "remove") {
 				that.fireRemoveGroupItem({

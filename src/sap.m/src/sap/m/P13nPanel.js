@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @public
+	 * @since 1.26.0
 	 * @alias sap.m.P13nPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -28,6 +29,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Title text appears in the panel
+				 * @since 1.26.0
 				 */
 				title: {
 					type: "string",
@@ -36,7 +38,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * Panel type for generic use
+				 * @since 1.26.0
 				 */
 				type: {
 					type: "sap.m.P13nPanelType",
@@ -46,6 +49,7 @@ sap.ui.define([
 
 				/**
 				 * makes the vertical Scrolling on the P13nDialog enabled when the panel is shown
+				 * @since 1.26.0
 				 */
 				verticalScrolling: {
 					type: "boolean",
@@ -57,7 +61,8 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * tbd
+				 * Aggregation of items
+				 * @since 1.26.0
 				 */
 				items: {
 					type: "sap.m.P13nItem",
@@ -65,9 +70,34 @@ sap.ui.define([
 					singularName: "item",
 					bindable: "bindable"
 				}
+			},
+			events: {
+				/**
+				 * Due to performance the data of the panel can be requested in lazy mode e.g. when the panel is displayed
+				 * @since 1.28.0
+				 */
+				beforeNavigationTo: {}
 			}
 		}
 	});
+
+	/**
+	 * This method can be overwritten by subclass in order to return a payload
+	 * 
+	 * @public
+	 * @since 1.28.0
+	 */
+	P13nPanel.prototype.getOkPayload = function() {
+		return {};
+	};
+	
+	/**
+	 * @public
+	 * @since 1.28.0
+	 */
+	P13nPanel.prototype.beforeNavigationTo = function() {
+		this.fireBeforeNavigationTo();
+	};
 
 	/**
 	 * This method can be overwritten by subclass in order to prevent navigation to another panel. This could be the case if some content on the panel
@@ -75,8 +105,9 @@ sap.ui.define([
 	 * 
 	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
 	 * @public
+	 * @since 1.28.0
 	 */
-	P13nPanel.prototype.onBeforeNavigation = function() {
+	P13nPanel.prototype.onBeforeNavigationFrom = function() {
 		return true;
 	};
 
@@ -84,8 +115,9 @@ sap.ui.define([
 	 * This method can be overwritten by subclass in order to cleanup after navigation, e.g. to remove invalid content on the panel.
 	 * 
 	 * @public
+	 * @since 1.28.0
 	 */
-	P13nPanel.prototype.onAfterNavigation = function() {
+	P13nPanel.prototype.onAfterNavigationFrom = function() {
 		return;
 	};
 

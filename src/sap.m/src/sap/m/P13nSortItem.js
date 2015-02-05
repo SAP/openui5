@@ -29,7 +29,8 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * tbd
+				 * sap.m.P13nConditionOperation
+				 * @since 1.26.0
 				 */
 				operation: {
 					type: "string",
@@ -38,7 +39,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * key of the column
+				 * @since 1.26.0
 				 */
 				columnKey: {
 					type: "string",
