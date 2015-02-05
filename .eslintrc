@@ -7,7 +7,7 @@
 		"jQuery": true
 	},
 	"plugins": [
-		"eslint-plugin-openui5"
+		"openui5"
 	],
 	"rules": {
 		"block-scoped-var": 1,
