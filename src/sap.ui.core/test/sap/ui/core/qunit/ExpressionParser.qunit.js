@@ -307,4 +307,13 @@
 		deepEqual(oBindingInfo.formatter(true, false), {t: true, f: false});
 		deepEqual(oBindingInfo.formatter(false, true), {t: false, f: true});
 	});
+
+	//*********************************************************************************************
+	checkFixtures("odata functions", [{
+		expression: "{=odata.fillUriTemplate('http://foo.com/{p1,p2}', {'p1': 'v1', 'p2': 'v2'})}",
+		result: "http://foo.com/v1,v2"
+	}, {
+		expression: "{=odata.uriEncode('foo', 'Edm.String')}",
+		result: "'foo'"
+	}]);
 } ());
