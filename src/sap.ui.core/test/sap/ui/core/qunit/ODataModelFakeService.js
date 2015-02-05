@@ -11,6 +11,12 @@ xhr.onCreate = function(request) {
 	var	responses = {
 		"$metadata": 
 			[200, oMetaDataHeaders, sMetaData],
+		"$metadata?test=x": 
+			[200, oMetaDataHeaders, sMetaData],
+		"$metadata?test=x&sap-language=en&test2=xx": 
+			[200, oMetaDataHeaders, sMetaData],
+		"$metadata?sap-language=en&test2=xx": 
+			[200, oMetaDataHeaders, sMetaData],
 		"Categories/$count":
 			[200, oCountHeaders, "8"],
 		"Regions":
@@ -20,6 +26,10 @@ xhr.onCreate = function(request) {
 		"Categories(2)":
 			[200, oXMLHeaders, sCategories2XML],
 		"Categories":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?hubel=dubel":
+			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?test=x&hubel=dubel":
 			[200, oXMLHeaders, sCategoriesXML],
 		"Categories?horst=true":
 			[200, oXMLHeaders, sCategoriesXML],
