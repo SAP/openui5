@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			oRenderer = oMetadata.getRenderer();
 		} else {
 			// If the control is invisible, find out whether it uses its own visible implementation
-			var oVisibleProperty = oMetadata.getJSONKeys()["visible"];
+			var oVisibleProperty = oMetadata.getProperty("visible");
 
 			var bUsesDefaultVisibleProperty = 
 				   oVisibleProperty 
@@ -1082,17 +1082,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	
 		if (oElement != null) {
 			var oMetadata = oElement.getMetadata();
-			oMetadata._enrichChildInfos();
-	
+
 			var addACCForProp = function(sElemProp, sACCProp, oVal){
-				var oProp = oMetadata.getAllProperties()[sElemProp];
+				var oProp = oMetadata.getProperty(sElemProp);
 				if (oProp && oElement[oProp._sGetter]() === oVal) {
 					mAriaProps[sACCProp] = "true";
 				}
 			};
 	
 			var addACCForAssoc = function(sElemAssoc, sACCProp){
-				var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
+				var oAssoc = oMetadata.getAssociation(sElemAssoc);
 				if (oAssoc && oAssoc.multiple) {
 					var aIds = oElement[oAssoc._sGetter]();
 					if (sElemAssoc == "ariaLabelledBy") {

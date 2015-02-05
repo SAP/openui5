@@ -394,7 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				var oRootControl = options.data.rootControl,
 					oMetadata = oRootControl.getMetadata(),
 					sPropertyName = options.hash.name,
-					sGetter = oMetadata.getAllProperties()[sPropertyName]._sGetter;
+					sGetter = oMetadata.getProperty(sPropertyName)._sGetter;
 				return oRootControl[sGetter]();
 				
 			},
@@ -436,7 +436,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 						oRootControl = options.data.rootControl,
 						oMetadata = oRootControl.getMetadata(),
 						sAggregationName = options.hash.name,
-						sGetter = oMetadata.getAllAggregations()[sAggregationName]._sGetter,
+						sGetter = oMetadata.getAggregation(sAggregationName)._sGetter,
 						aHTML = [];
 					
 					// retrieve the child elements via the specific getter
@@ -499,7 +499,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 		// identify the control metadata: properties, aggregations, ... 
 		// the template will be executed with specific options
 		var oMetadata = {},
-			mJSONKeys = sap.ui.core.tmpl.TemplateControl.getMetadata().getJSONKeys(),
+			mJSONKeys = sap.ui.core.tmpl.TemplateControl.getMetadata().getAllSettings(),
 			mPrivateAggregations = sap.ui.core.tmpl.TemplateControl.getMetadata().getAllPrivateAggregations();
 		
 		// the options to identify the properties, aggregations, events, ...

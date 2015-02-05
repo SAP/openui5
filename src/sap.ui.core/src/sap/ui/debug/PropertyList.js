@@ -109,7 +109,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			var mProperties = this.getAggregationsAsProperties(oMetadata);
@@ -120,7 +119,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			oMetadata = oMetadata.getParent();

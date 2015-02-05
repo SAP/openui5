@@ -1175,9 +1175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 				var sName = oEvent.getParameter("name");
 				var sValue = oEvent.getParameter("value");
 
-				var oMetadata = oControl.getMetadata();
-				oMetadata.getJSONKeys(); // hack to enrich the properties
-				var oProperty = oControl.getMetadata().getAllProperties()[sName];
+				var oProperty = oControl.getMetadata().getProperty(sName);
 
 				if (oProperty && oProperty.type) {
 

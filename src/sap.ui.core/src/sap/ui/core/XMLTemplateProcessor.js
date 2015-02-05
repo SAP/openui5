@@ -310,21 +310,19 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 					return [];
 				}
 				var oMetadata = oClass.getMetadata();
-				var mJSONKeys = oMetadata.getJSONKeys();
+				var mKnownSettings = oMetadata.getAllSettings();
 
 				for (var i = 0; i < node.attributes.length; i++) {
-					var attr = node.attributes[i];
-
-					var sName = attr.name;
-					var sValue = attr.value;
+					var attr = node.attributes[i],
+						sName = attr.name,
+						oInfo = mKnownSettings[sName],
+						sValue = attr.value;
 
 					// apply the value of the attribute to a
 					//   * property,
 					//   * association (id of the control),
 					//   * event (name of the function in the controller) or
 					//   * CustomData element (namespace-prefixed attribute)
-
-					var oInfo = mJSONKeys[sName];
 
 					if (sName === "id") {
 						// special handling for ID
@@ -341,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						mSettings[sName] = sValue;
 						mSettings['containingView'] = oView._oContainingView;
 
-					} else if (sName === "binding") {
+					} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
 						var oBindingInfo = sap.ui.base.ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 						// TODO reject complex bindings, types, formatters; enable 'parameters'?
 						mSettings.objectBindings = mSettings.objectBindings || {};

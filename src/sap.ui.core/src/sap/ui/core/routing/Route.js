@@ -281,7 +281,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 
 					oTargets.attachEventOnce("display", function (oEvent) {
 						var oParameters = oEvent.getParameters();
-
 						oView = oParameters.view;
 						oTargetControl = oParameters.targetControl;
 					});

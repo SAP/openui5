@@ -364,7 +364,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				//            new sap.ui.commons.Image({src: "./acctest/../acctest/img/Employee.png"}).getSrc()
 				sap.ui.base.ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
 					var oMetadata = this.getMetadata(),
-						oProperty = oMetadata.getAllProperties()[sPropertyName],
+						oProperty = oMetadata.getProperty(sPropertyName),
 						oArgs;
 					if (oProperty && oProperty.type === "sap.ui.core.URI") {
 						oArgs = Array.prototype.slice.apply(arguments);

@@ -62,10 +62,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var bWriteDelegate = (!this._bSkipRoot || iLevel !== 0);
 		if (bWriteDelegate) {
 	
-			// make sure all prop / aggregation / association informations are available
-			// (getJSONKeys calls sap.ui.base.ManagedObjectMetadata.prototype._enrichChildInfos)
-			oControl.getMetadata().getJSONKeys();
-	
 			// write start and end
 			var start = this._delegate.start(oControl, sAggregationName, isDefaultAggregation);
 			var middle = this._delegate.middle(oControl, sAggregationName, isDefaultAggregation);

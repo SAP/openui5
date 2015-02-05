@@ -703,7 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	DataSet.prototype.updateItems = function(sChangeReason) {
 		var oBindingInfo = this.mBindingInfos["items"],
-			oAggregationInfo = this.getMetadata().getJSONKeys()["items"],
+			oAggregationInfo = this.getMetadata().getAggregation("items"),
 			oSelectedView = sap.ui.getCore().byId(this.getSelectedView()),
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,

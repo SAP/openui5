@@ -96,14 +96,7 @@ sap.ui.define(['jquery.sap.global'],
 		//if we have any result from either default content or customizing AND a target control is provided:
 		if (vResult && oTargetControl) {
 			//directly add the extension to the corresponding aggregation at the target control:
-			var oAggregationInfo;
-			if (!sAggregationName) {
-				// no aggregation name for the target control is provided, so we try to retrieve the default aggregation and use this instead
-				jQuery.sap.log.debug("no target aggregationName given - trying to attach the extension point content to the targetControl's default aggregation");
-				oAggregationInfo = oTargetControl.getMetadata().getDefaultAggregation();
-			} else {
-				oAggregationInfo = oTargetControl.getMetadata().getJSONKeys()[sAggregationName];
-			}
+			var oAggregationInfo = oTargetControl.getMetadata().getAggregation(sAggregationName);
 			if (oAggregationInfo) {
 				for (var i = 0, l = vResult.length; i < l; i++) {
 					// call the corresponding mutator for each element within the extension point - may be one or multiple elements

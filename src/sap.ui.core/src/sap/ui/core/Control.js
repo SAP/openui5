@@ -439,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 			}
 	
 			if (!bIsUIArea) {
-				var oContentAggInfo = oContainer.getMetadata().getAllAggregations()["content"];
+				var oContentAggInfo = oContainer.getMetadata().getAggregation("content");
 				var bContainerSupportsPlaceAt = true;
 				if (oContentAggInfo) {
 					if (!oContentAggInfo.multiple || oContentAggInfo.type != "sap.ui.core.Control") {
