@@ -6,7 +6,7 @@
 <title>qUnit Page for sap.ui.core.routing.Target</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
+	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
@@ -28,6 +28,17 @@
 
 		jQuery.sap.require("sap.ui.core.routing.Views");
 		jQuery.sap.require("sap.ui.core.routing.Target");
+
+		function createView (aContent, sId) {
+			var sXmlViewContent = aContent.join(''),
+					oViewOptions = {
+						id : sId,
+						viewContent: sXmlViewContent,
+						type: "XML"
+					};
+
+			return sap.ui.view(oViewOptions);
+		}
 
 		module("views - creation", {
 			setup: function () {
@@ -152,26 +163,16 @@
 			sinon.assert.calledWith(oSpy, sinon.match(/Control with ID/), sinon.match("sap.ui.core.routing.Target"));
 		});
 
+
 		module("target parent and children", {
 			setup: function () {
-				this.createView = function (aContent, sId) {
-					var sXmlViewContent = aContent.join(''),
-						oViewOptions = {
-							id : sId,
-							viewContent: sXmlViewContent,
-							type: "XML"
-						};
-
-					return sap.ui.view(oViewOptions);
-				};
-
-				this.oParentView = this.createView(
+				this.oParentView = createView(
 						['<View xmlns="sap.ui.core" xmlns:ux3="sap.ui.ux3">',
 							'<ux3:Shell id="myShell">',
 							'</ux3:Shell>',
 						'</View>'], "parent");
 
-				this.oChildView = this.createView(
+				this.oChildView = createView(
 						['<View xmlns="sap.ui.core">',
 						'</View>']);
 
@@ -238,7 +239,119 @@
 			oParentTarget.destroy();
 		});
 
+		module("display event", {
+			setup: function () {
+				this.oShell = new sap.ui.ux3.Shell();
+				this.oView =  createView(
+						['<View xmlns="sap.ui.core">',
+							'</View>']);
 
+				this.oConfig = {
+					key: "myTarget",
+					viewPath: "bar",
+					view: "foo",
+					targetAggregation: "content",
+					viewType: "XML",
+					viewId: "baz",
+					targetControl: this.oShell.getId()
+				};
+
+				this.oViews = new sap.ui.core.routing.Views();
+				// System under test + Arrange
+				this.oTarget = new sap.ui.core.routing.Target(
+						this.oConfig,
+						this.oViews
+				);
+			},
+			teardown: function () {
+				this.oShell.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+				this.oView.destroy();
+			}
+		});
+
+		test("should be able to fire/attach/detach the display event", function() {
+			// Arrange
+			var oParameters = { foo : "bar" },
+				fnEventSpy = this.spy(function(oEvent, oActualData) {
+					strictEqual(oActualData, oData, "the data is correct");
+					strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+					strictEqual(this, oListener, "the this pointer is correct");
+				}),
+				oListener = {},
+				oData = { some : "data" },
+				oFireReturnValue,
+				oDetachReturnValue,
+				oAttachReturnValue = this.oTarget.attachDisplay(oData, fnEventSpy, oListener);
+
+			// Act
+			oFireReturnValue = this.oTarget.fireDisplay(oParameters);
+			oDetachReturnValue = this.oTarget.detachDisplay(fnEventSpy, oListener);
+			this.oTarget.fireDisplay();
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			strictEqual(oAttachReturnValue, this.oTarget, "did return this for chaining for attach");
+			strictEqual(oDetachReturnValue, this.oTarget, "did return this for chaining for detach");
+			strictEqual(oFireReturnValue, this.oTarget, "did return this for chaining for fire");
+		});
+
+		test("Should fire the display event", function () {
+			// Arrange
+			var oData = { any: "object" },
+				that = this,
+				oParameters = null,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			var oStub = this.stub(this.oViews, "getView", function () {
+				return that.oView;
+			});
+
+			this.oTarget.attachDisplay(fnEventSpy);
+
+			// Act
+			this.oTarget.display(oData);
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+			strictEqual(oParameters.view, this.oView, "view got passed to the event");
+			strictEqual(oParameters.targetControl, this.oShell, "view got passed to the event");
+			strictEqual(oParameters.config, this.oConfig, "config got passed to the event");
+			strictEqual(oParameters.data, oData, "data got passed to the event");
+		});
+
+		module("destruction");
+
+		test("Should destroy all dependencies", function () {
+			// Arrange
+			var oParentTarget = new sap.ui.core.routing.Target(),
+					oViews = new sap.ui.core.routing.Views();
+
+			// System under test
+			var oTarget = new sap.ui.core.routing.Target(
+					{
+					},
+					oViews,
+					oParentTarget
+			);
+
+			// Act
+			oTarget.destroy();
+
+			// Assert
+			ok(oTarget.bIsDestroyed, "Did flag the target as destroyed");
+			strictEqual(oTarget._oParent, null, "Did free the parent reference");
+			strictEqual(oTarget._oViews, null, "Did free the views reference");
+			ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
+			strictEqual(oTarget._oOptions, null, "Did free the options reference");
+
+			// Cleanup
+			oParentTarget.destroy();
+			oViews.destroy();
+		});
 	})();
 </script>
 </head>

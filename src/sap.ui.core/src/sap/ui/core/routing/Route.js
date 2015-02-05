@@ -12,7 +12,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 * @class
 		 *
 		 * @param {sap.ui.core.routing.Router} The router instance, the route will be added to.
-		 * @param {object} oConfig configuration object for the route 
+		 * @param {object} oConfig configuration object for the route
+		 * @param {string} oConfig.name the name of the route - it will be used to retrieve the route from the router, it needs to be unique per router instance.</li>
 		 * @param {string} [oConfig.pattern] the url pattern where it needs to match again. A pattern may consist of the following:
 		 * <ul>
 		 * <li>
@@ -30,15 +31,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 * <li>
 		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </ul>
-		 * @param {string} oConfig.name the name of the route - it will be used to retrieve the route from the router, it needs to be unique per router instance.</li>
-		 * @param {string} [oConfig.view] The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
-		 * @param {string} [oConfig.viewType] The type of the view that is going to be created. eg: "XML", "JS"</li>
-		 * @param {string} [oConfig.viewPath] A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
-		 * @param {string} [oConfig.targetParent] the id of the parent of the targetControl - This should be the id view your targetControl is located in. By default, this will be the view created by a component, or if the Route is a subroute the view of the parent route is taken. You only need to specify this, if you are not using a router created by a component on your top level routes.</li>
-		 * @param {string} [oConfig.targetControl] Views will be put into a container Control, this might be a {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container. The id of this control has to be put in here.</li>
-		 * @param {string} [oConfig.targetAggregation] The name of an aggregation of the targetControl, that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the {@link sap.ui.ux3.Shell} it has "content".</li>
-		 * @param {boolean} [oConfig.clearTarget] Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
-		 * @param {boolean} [oConfig.greedy] since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
+		 * @param {object} [oConfig.subroutes] one or multiple routeconfigs taking all of these parameters again. If a subroute is hit, it will fire tge routeMatched event for all its parents. The routePatternMatched event will only be fired for the subroute not the parents. The routing will also display all the targets of the subroutes and its parents.
+		 * @param {boolean} [oConfig.greedy] @since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
+		 * @param {string|string[]} [oConfig.target] one or multiple name of targets {@link sap.ui.core.routing.Targets}. As soon as the route matches, the target will be displayed. All of the following parameters will be ignored, if a target is used.
+		 * @param {string} [oConfig.view] @deprecated since 1.28 - use target. The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
+		 * @param {string} [oConfig.viewType] @deprecated since 1.28 - use target. The type of the view that is going to be created. eg: "XML", "JS"</li>
+		 * @param {string} [oConfig.viewPath] @deprecated since 1.28 - use target. A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
+		 * @param {string} [oConfig.targetParent] @deprecated since 1.28 - use target. the id of the parent of the targetControl - This should be the id view your targetControl is located in. By default, this will be the view created by a component, or if the Route is a subroute the view of the parent route is taken. You only need to specify this, if you are not using a router created by a component on your top level routes.</li>
+		 * @param {string} [oConfig.targetControl] @deprecated since 1.28 - use target. Views will be put into a container Control, this might be a {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container. The id of this control has to be put in here.</li>
+		 * @param {string} [oConfig.targetAggregation] @deprecated since 1.28 - use target. The name of an aggregation of the targetControl, that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the {@link sap.ui.ux3.Shell} it has "content".</li>
+		 * @param {boolean} [oConfig.clearTarget] @deprecated since 1.28 - use target. Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
 		 * @param {sap.ui.core.routing.Route} [oParent] The parent route - if a parent route is given, the routeMatched event of this route will also trigger the route matched of the parent and it will also create the view of the parent(if provided).
 		 *
 		 * @public
@@ -57,7 +59,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				}
 				
 				var that = this,
-					vRoute = oConfig.pattern;
+					vRoute = oConfig.pattern,
+					aSubRoutes;
 				
 				if (!jQuery.isArray(vRoute)) {
 					vRoute = [vRoute];
@@ -65,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 
 				if (jQuery.isArray(oConfig.subroutes)) {
 					//Convert subroutes
-					var aSubRoutes = oConfig.subroutes;
+					aSubRoutes = oConfig.subroutes;
 					oConfig.subroutes = {};
 					jQuery.each(aSubRoutes, function(iSubrouteIndex, oSubRoute) {
 						oConfig.subroutes[oSubRoute.name] = oSubRoute;
@@ -76,13 +79,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				this._oParent = oParent;
 				this._oConfig = oConfig;
 
-				// create a new target for this route
-				this._oTarget = new Target(oConfig, oRouter._oViews, oParent && oParent._oTarget);
+				if (!oConfig.target) {
+					// create a new target for this route
+					this._oTarget = new Target(oConfig, oRouter._oViews, oParent && oParent._oTarget);
+				}
 
 				// recursively add the subroutes to this route
 				if (oConfig.subroutes) {
 					jQuery.each(oConfig.subroutes, function(sRouteName, oSubRouteConfig) {
-						if (oSubRouteConfig.name == undefined) {
+						if (oSubRouteConfig.name === undefined) {
 							oSubRouteConfig.name = sRouteName;
 						}
 						oRouter.addRoute(oSubRouteConfig, that);
@@ -109,6 +114,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						that._routeMatched(oRouter, oArguments, true);
 					});
 				});
+			},
+
+
+			/**
+			 * Destroys a route
+			 *
+			 * @public
+			 * @returns { sap.ui.core.routing.Route } this for chaining.
+			 */
+			destroy : function () {
+				EventProvider.prototype.destroy.apply(this);
+
+				this._aPattern = null;
+				this._aRoutes = null;
+				this._oParent = null;
+				this._oConfig = null;
+
+				this.bIsDestroyed = true;
+
+				return this;
 			},
 
 			/**
@@ -216,35 +241,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @function
 			 */
 			_routeMatched : function(oRouter, oArguments, bInital) {
-				var oView,
-					oTargetControl,
-					oParentPlaceInfo,
-					oPlaceInfo;
+				var oParentPlaceInfo,
+					oPlaceInfo,
+					oTarget,
+					oConfig,
+					oEventData,
+					oView = null,
+					oTargetControl = null,
+					oTargets;
 
 				// Recursively fire matched event and display views of this routes parents
 				if (this._oParent) {
 					oParentPlaceInfo = this._oParent._routeMatched(oRouter, oArguments);
 				}
 
-				var oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
+				oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
 
-				// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
-				this._oTarget._oOptions = oConfig;
-				oPlaceInfo = this._oTarget._place(oParentPlaceInfo);
-				oView = oPlaceInfo.oTargetParent;
-				oTargetControl = oPlaceInfo.oTargetControl;
-
-				if (oConfig.callback) {
-					oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
-				}
-
-				var oEventData = {
+				oEventData = {
 					name: oConfig.name,
 					arguments: oArguments,
-					targetControl: oTargetControl,
-					view: oView,
 					config : oConfig
 				};
+
+				// Route is defined without target in the config - use the internally created target to place the view
+				if (this._oTarget) {
+					oTarget = this._oTarget;
+					// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
+					oTarget._oOptions = oConfig;
+					oPlaceInfo = oTarget._place(oParentPlaceInfo);
+
+					oView = oPlaceInfo.oTargetParent;
+					oTargetControl = oPlaceInfo.oTargetControl;
+
+					// Extend the event data with view and targetControl
+					oEventData.view = oView;
+					oEventData.targetControl = oTargetControl;
+				} else {
+					oTargets = oRouter._oTargets;
+
+					oTargets.attachEventOnce("display", function (oEvent) {
+						var oParameters = oEvent.getParameters();
+
+						oView = oParameters.view;
+						oTargetControl = oParameters.targetControl;
+					});
+
+					oTargets.display(this._oConfig.target);
+				}
+
+				if (oConfig.callback) {
+					//Targets dont pass TargetControl and view since there might be multiple
+					oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
+				}
 
 				this.fireEvent("matched", oEventData);
 				oRouter.fireRouteMatched(oEventData);
@@ -258,15 +306,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				return oPlaceInfo;
 			}
 
-
 		});
 
 		Route.M_EVENTS = {
 			Matched : "matched",
 			PatternMatched : "patternMatched"
 		};
-
-
 
 		return Route;
 
