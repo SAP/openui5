@@ -598,6 +598,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			oFileNameLabel = new sap.m.Link(sItemId + "-ta_filenameHL", {
 				text : sFileNameLong,
 				enabled : bEnabled,
+				target : "_blank",
 				href : oItem.getUrl()
 			}).addStyleClass("sapMUCFileName");
 		}
@@ -1405,11 +1406,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 		if (oContext.editModeItem) {
 			iLine = oContext.editModeItem.split("-").pop();
-			sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), false);
+			sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
 			return;
 		} else {
 			sLinkId = sId.split(sId.split("-").pop())[0] + "ta_filenameHL";
-			sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+			sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), true);
 		}
 	};
 
@@ -1524,19 +1525,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			case "-ia_imageHL" :
 				//Edit mode
 				var iLine = oContext.editModeItem.split("-").pop();
-				sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), false);
+				sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
 				break;
 			case "ia_iconHL" :
 			case "ia_imageHL" :
 				//Display mode
 				sLinkId = oEvent.target.id.split(sTarget)[0] + "ta_filenameHL";
-				sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+				sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), true);
 				break;
 			default :
 				if (sTarget.substring(0,6) == "__item") {
 					var sListItemId = jQuery.sap.byId(sTarget).find("[id$='ta_HL']")[0].id;
 					sLinkId = sListItemId.split("ta_HL")[0] + "ta_filenameHL";
-					sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
+					sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), true);
 					break;
 				}
 				return;
