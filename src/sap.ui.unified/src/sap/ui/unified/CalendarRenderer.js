@@ -41,10 +41,13 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAttribute("tabindex", "-1");
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		oRm.writeAccessibilityState(oCal, {
-			role: "dialog",
-			label: rb.getText("DATEPICKER_DIALOG")
-		});
+		var mAccProps = {
+					label: rb.getText("CALENDAR_DIALOG")
+				};
+		if (oCal._bPoupupMode) {
+			mAccProps["role"] = "dialog";
+		}
+		oRm.writeAccessibilityState(oCal, mAccProps);
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);

@@ -176,7 +176,6 @@
 			{
 				"id" : "sap.m.DateRangeSelection",
 				"name" : "Date Range Selection",
-				"appComponent" : "CA-UI5-BS-FCB",
 				"category" : "User Input",
 				"since" : "1.22",
 				"formFactors" : "L",

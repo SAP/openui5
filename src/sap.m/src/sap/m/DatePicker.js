@@ -748,6 +748,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				bRelative = !!oBinding.oType.oOutputFormat.oFormatOptions.relative;
 			}
 
+			/* eslint-disable no-lonely-if */
 			if (!sPattern) {
 				// not databinding is used -> use given format
 				if (bDisplayFormat) {

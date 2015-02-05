@@ -838,10 +838,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oLocaleData = oThis._getLocaleData();
 			var iMonth = oDate.getUTCMonth();
 			var aMonthNames = [];
+			var aMonthNamesWide = [];
+			var sAriaLabel;
+			var bShort = false;
 			if (oThis._bLongMonth || !oThis._bNamesLengthChecked) {
 				aMonthNames = oLocaleData.getMonthsStandAlone("wide");
 			} else {
+				bShort = true;
 				aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
+				aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
 			}
 
 			var iMonths = _getMonths(oThis);
@@ -849,12 +854,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (iMonths > 1) {
 				var sPattern = oLocaleData.getIntervalPattern();
 				sText = sPattern.replace(/\{0\}/, aMonthNames[iMonth]).replace(/\{1\}/, aMonthNames[(iMonth + iMonths - 1) % 12]);
+				if (bShort) {
+					sAriaLabel = sPattern.replace(/\{0\}/, aMonthNamesWide[iMonth]).replace(/\{1\}/, aMonthNamesWide[(iMonth + iMonths - 1) % 12]);
+				}
 			}else {
 				sText = aMonthNames[iMonth];
+				if (bShort) {
+					sAriaLabel = aMonthNamesWide[iMonth];
+				}
 			}
 
 			var oHeader = oThis.getAggregation("header");
 			oHeader.setTextButton1(sText);
+			if (bShort) {
+				oHeader.setAriaLabelButton1(sAriaLabel);
+			}
 			oHeader.setTextButton2((oDate.getUTCFullYear()).toString());
 
 		}
