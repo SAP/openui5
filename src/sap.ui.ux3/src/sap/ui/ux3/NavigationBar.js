@@ -594,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	NavigationBar.prototype._checkOverflow = function(oListDomRef, of_back, of_fw) {
-		if (oListDomRef && this.getDomRef()) {
+		if (oListDomRef && this.getDomRef() && jQuery.sap.act.isActive()) {
 			var iScrollLeft = oListDomRef.scrollLeft;
 	
 			// check whether scrolling to the left is possible
