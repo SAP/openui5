@@ -19,8 +19,6 @@
 		}));
 	}
 
-	var marginStyle = jQuery.device.is.phone ? "sapUiSmallMargin" : "sapUiMediumMargin";
-
 	var attrs = [ new sap.m.ObjectAttribute({
 		text : "Ñagçyfox Contract #D1234567890"
 	}), new sap.m.ObjectAttribute({
@@ -644,15 +642,6 @@
 		showHeader : false,
 		enableScrolling : true
 	});
-
-	oh1.addStyleClass(marginStyle);
-	oh2.addStyleClass(marginStyle);
-	oh3.addStyleClass(marginStyle);
-	oh3_1.addStyleClass(marginStyle);
-	oh3_2.addStyleClass(marginStyle);
-	oh4.addStyleClass(marginStyle);
-	oh5.addStyleClass(marginStyle);
-	oh6.addStyleClass(marginStyle);
 
 	app.setInitialPage(page.getId());
 	app.addPage(page);
