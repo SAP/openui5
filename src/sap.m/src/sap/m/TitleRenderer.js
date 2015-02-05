@@ -20,7 +20,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @param {sap.ui.core.Control} oShell an object representation of the control that should be rendered
 	 */
 	TitleRenderer.render = function(oRm, oTitle){
-		var sLevel = oTitle.getLevel() || sap.ui.core.TitleLevel.Auto,
+		var oAssoTitle = oTitle._getTitle(),
+			sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || sap.ui.core.TitleLevel.Auto,
 			bAutoLevel = sLevel == sap.ui.core.TitleLevel.Auto,
 			sTag = bAutoLevel ? "div" : sLevel;
 		
@@ -47,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			oRm.addClass("sapMTitleTB");
 		}
 		
-		var sTooltip = oTitle.getTooltip_AsString();
+		var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
@@ -60,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		oRm.writeStyles();
 
 		oRm.write("><span>");
-		oRm.writeEscaped(oTitle.getText());
+		oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
 		oRm.write("</span></", sTag, ">");
 	};
 	
