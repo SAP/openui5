@@ -1716,12 +1716,13 @@ oPopover.setContentWidth("30%");
 	 * @param oSummaryBar
 	 * @private
 	 */
-	FacetFilter.prototype._addResetToSummary = function(oSummaryBar) {
-
-		if (oSummaryBar.getContent().length === 1) {
-
-			oSummaryBar.addContent(new sap.m.ToolbarSpacer({width: ""})); // Push the reset button to the end of the toolbar
-			oSummaryBar.addContent(this._createResetButton());
+FacetFilter.prototype._addResetToSummary = function(oSummaryBar) {
+	if (oSummaryBar.getContent().length === 1) {
+		oSummaryBar.addContent(new sap.m.ToolbarSpacer({width: ""})); // Push the reset button to the end of the toolbar
+			var oButton = this._createResetButton();
+			oSummaryBar.addContent(oButton);
+			oButton.addStyleClass("sapMFFRefresh");
+			oButton.addStyleClass("sapMFFBtnHoverable");
 		}
 	};
 
