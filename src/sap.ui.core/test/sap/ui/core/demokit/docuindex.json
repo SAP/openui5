@@ -53,7 +53,7 @@
 				"name" : "OPA5",
 				"category" : "Testing",
 				"since" : "1.24",
-				"samples" : [ 
+				"samples" : [
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
 					"sap.ui.core.sample.OpaDynamicWait",
@@ -78,9 +78,29 @@
 				"samples" : [
 					"sap.ui.core.sample.PatternMatching"
 				]
+			},
+			{
+			  "id" : "sap.ui.model.type.Date",
+			  "name" : "Date Type",
+			  "category" : "Data Binding",
+			  "since" : "1.10",
+			  "samples" : [
+				"sap.ui.core.sample.TypeDateAsDate",
+				"sap.ui.core.sample.TypeDateAsString"
+			  ]
 			}
 		],
 		"samples" : [
+			{
+				"id": "sap.ui.core.sample.TypeDateAsDate",
+				"name": "Date Type - Source As Date",
+				"description": "This sample explains the formatting options of the date type with the date being available as date object."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeDateAsString",
+				"name": "Date Type - Source As String",
+				"description": "This sample explains the formatting options of the date type with the date being available as string."
+			},
 			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
@@ -134,12 +154,12 @@
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
 				"name" : "Theme-dependent CSS-classes",
-				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements." 
+				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
 			},
 			{
 				"id" : "sap.ui.core.sample.BasicThemeParameters",
 				"name" : "Basic Theme Parameters",
-				"description" : "This sample displays a set of basic theme parameters. Available in the predefined themes 'Blue Crystal' and 'High Contrast Black'. They can be used for custom HTML or custom controls to ensure theme-dependent styling. Please ensure a semantic correct usage." 
+				"description" : "This sample displays a set of basic theme parameters. Available in the predefined themes 'Blue Crystal' and 'High Contrast Black'. They can be used for custom HTML or custom controls to ensure theme-dependent styling. Please ensure a semantic correct usage."
 			},
 			{
 				"id" : "sap.ui.core.sample.PatternMatching",
