@@ -49,6 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
 			this.oMetadata = null;
+			this.pLoaded = null;
 			this.mNamespaces = mParams.namespaces || {
 				sap:"http://www.sap.com/Protocols/SAPData",
 				m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
@@ -75,56 +76,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		// request the metadata of the service
 		var that = this;
 		var oRequest = this._createRequest(this.sUrl);
+		
+		this.pLoaded = new Promise(function(resolve, reject) {
 
-		function _handleSuccess(oMetadata, oResponse) {
-			that.bFailed = false;
-			if (!oMetadata || !oMetadata.dataServices) {
-				var mParameters = {
-						message: "Invalid metadata document",
-						request: oRequest,
-						response: oResponse
+			function _handleSuccess(oMetadata, oResponse) {
+				that.bFailed = false;
+				if (!oMetadata || !oMetadata.dataServices) {
+					var mParameters = {
+							message: "Invalid metadata document",
+							request: oRequest,
+							response: oResponse
+					};
+					_handleError(mParameters);
+					return;
+				}
+				that.oMetadata = oMetadata;
+				that.oRequestHandle = null;
+				resolve();
+				if (that.bAsync) {
+					that.fireLoaded(that);
+				} else {
+					//delay the event so anyone can attach to this _before_ it is fired, but make
+					//sure that bLoaded is already set properly
+					that.bLoaded = true;
+					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [that]);
+				}
+			}
+	
+			function _handleError(oError) {
+				that.bFailed = true;
+				var mParams = { 
+					message: oError.message,
+					request: oError.request,
+					response: oError.response
 				};
-				_handleError(mParameters);
-				return;
+				if (oError.response) {
+					mParams.statusCode = oError.response.statusCode;
+					mParams.statusText = oError.response.statusText;
+					mParams.responseText = oError.response.body;
+				}
+	
+				if (that.oRequestHandle && that.oRequestHandle.bSuppressErrorHandlerCall) {
+					return;
+				}
+				that.oRequestHandle = null;
+				reject(mParams);
+				if (that.bAsync) {
+					that.fireFailed(mParams);
+				} else {
+					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [mParams]);
+				}
 			}
-			that.oMetadata = oMetadata;
-			that.oRequestHandle = null;
-			if (that.bAsync) {
-				that.fireLoaded(that);
-			} else {
-				//delay the event so anyone can attach to this _before_ it is fired, but make
-				//sure that bLoaded is already set properly
-				that.bLoaded = true;
-				that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [that]);
-			}
-		}
+	
+			// execute the request
+			that.oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
+		});
 
-		function _handleError(oError) {
-			that.bFailed = true;
-			var mParams = { 
-				message: oError.message,
-				request: oError.request,
-				response: oError.response
-			};
-			if (oError.response) {
-				mParams.statusCode = oError.response.statusCode;
-				mParams.statusText = oError.response.statusText;
-				mParams.responseText = oError.response.body;
-			}
-
-			if (that.oRequestHandle && that.oRequestHandle.bSuppressErrorHandlerCall) {
-				return;
-			}
-			that.oRequestHandle = null;
-			if (that.bAsync) {
-				that.fireFailed(mParams);
-			} else {
-				that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [mParams]);
-			}
-		}
-
-		// execute the request
-		this.oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
 	};
 
 	/**
@@ -156,6 +163,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 */
 	ODataMetadata.prototype.isLoaded = function() {
 		return this.bLoaded;
+	};
+
+	/**
+	 * Returns a promise for the loaded state of the metadata
+	 * 
+	 * @public
+	 * @returns {Promise} returns a promise on metadata loaded state
+	 */
+	ODataMetadata.prototype.loaded = function() {
+		return this.pLoaded;
 	};
 
 	/**
