@@ -787,6 +787,11 @@
 			});
 			oP13nColumnsPanel._oTable.getModel().getJSON = sinon.stub().returns(oInitialModel);
 			sap.ui.Device.resize.attachHandler = sinon.stub();
+
+			// following lines are important for stable unit test run in firefox (version > 34) 
+			// if window timer function are stubed it has to be reset to the original functions as otherwise the unit test fill end up in errors   
+			var fClearTimeOut = window.clearTimeout;
+			var fSetTimeOut = window.setTimeout;
 			window.clearTimeout = sinon.stub();
 			window.setTimeout = sinon.stub();
 
@@ -799,6 +804,10 @@
 			strictEqual(sap.ui.Device.resize.attachHandler.called, true, "Resize handler shall be attached");
 			strictEqual(window.clearTimeout.called, true, "timer shall be cleared");
 			strictEqual(window.setTimeout.called, true, "time shall be set to call method _fnHandleResize");
+
+			//reset stubed time functions to original
+			window.clearTimeout = fClearTimeOut;
+			window.setTimeout = fSetTimeOut
 		});
 
 		test("Shall check exit", function() {
