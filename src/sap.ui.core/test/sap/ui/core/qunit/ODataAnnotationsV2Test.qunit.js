@@ -130,9 +130,19 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/other-property-value-aliases.xml",
 			serviceValid     : true,
 			annotationsValid : true
-		} 
-		
-		
+		},
+		"Text Properties" : {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : "fakeService://testdata/odata/other-property-textproperties.xml",
+			serviceValid     : true,
+			annotationsValid : true
+		},
+		"Entity Containers": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/sapdata01/$metadata",
+			serviceValid     : true,
+			annotationsValid : true
+		}
 	};
 
 
@@ -591,7 +601,7 @@ function runODataAnnotationTests() {
 
 
 	asyncTest("Multiple Property Annotations", function() {
-		expect(12);
+		expect(11);
 
 		var mTest = mAdditionalTestsServices["Multiple Property Annotations"];
 		var sServiceURI = mTest.service;
@@ -610,7 +620,6 @@ function runODataAnnotationTests() {
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
 	
-			ok(!!oAnnotations["MultiplePropertyAnnotations.Product"], "Target namespace exists");
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 	
 			ok(
@@ -688,7 +697,7 @@ function runODataAnnotationTests() {
 
 
 	asyncTest("Qualifiers in Property Annotations", function() {
-		expect(9);
+		expect(8);
 
 		var mTest = mAdditionalTestsServices["Property Annotation Qualifiers"];
 		var sServiceURI = mTest.service;
@@ -707,7 +716,6 @@ function runODataAnnotationTests() {
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
 	
-			ok(!!oAnnotations["PropertyAnnotationQualifiers.Product"], "Target namespace exists");
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 	
 			ok(
@@ -756,7 +764,7 @@ function runODataAnnotationTests() {
 
 
 	asyncTest("Other Property Values", function() {
-		expect(9);
+		expect(8);
 
 		var mTest = mAdditionalTestsServices["Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -775,7 +783,6 @@ function runODataAnnotationTests() {
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
 	
-			ok(!!oAnnotations["OtherPropertyValues.Product"], "Target namespace exists");
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 	
 			ok(
@@ -823,7 +830,7 @@ function runODataAnnotationTests() {
 	});
 
 	asyncTest("Aliases in Namespaces", function() {
-		expect(9);
+		expect(8);
 
 		var mTest = mAdditionalTestsServices["Aliases in Namespaces"];
 		var sServiceURI = mTest.service;
@@ -842,7 +849,6 @@ function runODataAnnotationTests() {
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
 	
-			ok(!!oAnnotations["NamespaceAliases.PurchaseOrder"], "Target namespace exists");
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 	
 			ok(
@@ -890,7 +896,7 @@ function runODataAnnotationTests() {
 	});
 	
 	asyncTest("Namespaces in Other Property Values", function() {
-		expect(23);
+		expect(22);
 
 		var mTest = mAdditionalTestsServices["Namespaces in Other Property Values"];
 		var sServiceURI = mTest.service;
@@ -909,8 +915,6 @@ function runODataAnnotationTests() {
 			ok(!!oMetadata, "Metadata is available.");
 	
 			ok(!!oAnnotations, "Annotations are available.");
-	
-			ok(!!oAnnotations["OtherPropertyValueAliases.Test"], "Target namespace exists");
 	
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
 	
@@ -1094,5 +1098,298 @@ function runODataAnnotationTests() {
 			);
 			start();
 		});
+	});
+
+	test("Text Properties", function() {
+		expect(14);
+
+		var mTest = mAdditionalTestsServices["Text Properties"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+
+		ok(!!oAnnotations, "Annotations are available.");
+
+		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
+		
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
+			"PropertyAnnotation definition exists"
+		);
+		
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
+			"PropertyAnnotation definition value exists"
+		);
+		
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
+			"Name1 with replaced alias exists"
+		);
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"],
+			"Name2 with replaced alias exists"
+		);
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
+			"Name3 with replaced alias exists"
+		);
+		
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
+			"Name1 with replaced alias exists and has EnumMember child node"
+		);
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
+			"Name2 with replaced alias exists and has String child node"
+		);
+		ok(
+			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
+			"Name3 with replaced alias exists and has Invalid child node"
+		);
+		
+		equals(
+			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
+			"com.sap.vocabularies.UI.v1.Value",
+			"Name1 with replaced alias exists and has EnumMember child node that contains alias replaced tet with trimmed white-spaces"
+		);
+		equals(
+			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name2"]["String"],
+			"   test test   ",
+			"Name2 with replaced alias exists and has String child node that contains the exact text inclunding white-spaces"
+		);
+		deepEqual(
+			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
+			{},
+			"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
+		);
+		
+
+	});
+	
+	test("Entity Containers", function() {
+		expect(30);
+
+		var mTest = mAdditionalTestsServices["Entity Containers"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+
+		ok(!!oAnnotations, "Annotations are available.");
+
+		
+		ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
+		
+		ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
+		
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"],
+			"Entity in container exists"
+		);
+
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"],
+			"Sub Entity in container exists"
+		);
+
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["ActivationAction"],
+			"Sub Entity value in container exists"
+		);
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["ActivationAction"]
+			["String"],
+			"Sub Entity value in container exists"
+		);
+		equal(
+			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["ActivationAction"]
+			["String"],
+			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Activate",
+			"Sub Entity value in container exists"
+		);
+		
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["EditAction"],
+			"Sub Entity value in container exists"
+		);
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["EditAction"]
+			["String"],
+			"Sub Entity value in container exists"
+		);
+		equal(
+			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["EditAction"]
+			["String"],
+			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Edit",
+			"Sub Entity value in container exists"
+		);
+		
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["ValidationFunction"],
+			"Sub Entity value in container exists"
+		);
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["ValidationFunction"]
+			["String"],
+			"Sub Entity value in container exists"
+		);
+		equal(
+			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["ValidationFunction"]
+			["String"],
+			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Validate",
+			"Sub Entity value in container exists"
+		);
+		
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["PreparationAction"],
+			"Sub Entity value in container exists"
+		);
+		ok(
+			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["PreparationAction"]
+			["String"],
+			"Sub Entity value in container exists"
+		);
+		equal(
+			oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
+			["SalesOrder"]
+			["com.sap.vocabularies.Common.v1.DraftRoot"]
+			["PreparationAction"]
+			["String"],
+			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Prepare",
+			"Sub Entity value in container exists"
+		);
+		
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
+			"Entity in namespace exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"],
+			"Entity in namespace exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[0],
+			"Entity entries in namespace exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[0]
+			["PropertyPath"],
+			"Property exists"
+		);
+		equal(
+			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[0]
+			["PropertyPath"],
+			"SalesOrderID",
+			"Entity in namespace exists"
+		);
+		
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
+			"Entity in namespace exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"],
+			"Entity in namespace exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[0],
+			"Entity entries in namespace exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[0]
+			["PropertyPath"],
+			"Property exists"
+		);
+		ok(
+			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[1]
+			["PropertyPath"],
+			"Property exists"
+		);
+		equal(
+			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[0]
+			["PropertyPath"],
+			"SalesOrderID",
+			"Entity in namespace exists"
+		);
+		equal(
+			oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"]
+			["com.sap.vocabularies.Common.v1.SemanticKey"]
+			[1]
+			["PropertyPath"],
+			"SalesOrderItemID",
+			"Entity in namespace exists"
+		);
 	});
 }
