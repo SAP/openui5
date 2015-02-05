@@ -92,7 +92,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (!(oItem instanceof sap.m.IconTabSeparator) && !oItem.getVisible()) {
 				return; // only render visible items
 			}
-			oRM.write("<div role='tab' aria-controls='" + oControl.getParent().sId + "-content' ");
+
+			var sTabParams = '';
+
+			if (!(oItem instanceof sap.m.IconTabSeparator)) {
+				//tab
+				sTabParams += 'role="tab" aria-controls="' + oControl.getParent().sId + '-content" ';
+
+				//if there is tab text
+				if (oItem && oItem.getText().length) {
+					sTabParams += 'aria-labelledby="' + oItem.getId() + '-text"';
+				} else if (oItem.getCount() !== "") {
+					//if there is no text and there is count
+					sTabParams += 'aria-labelledby="' + oItem.getId() + '-count"';
+				} else if (oItem.getIcon()) {
+					//if there is no text and no count, but there is an icon
+					sTabParams += 'aria-labelledby="' + oItem.getId() + '-icon"';
+				}
+			}
+
+			oRM.write('<div ' + sTabParams + ' ');
+
 			oRM.writeElementData(oItem);
 			oRM.addClass("sapMITBItem");
 
@@ -137,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.write("<div class='sapMITBHorizontalWrapper'>");
 				}
 
-				oRM.write("<span ");
+				oRM.write("<span id='" + oItem.getId() + "-count' ");
 				oRM.addClass("sapMITBCount");
 				oRM.writeClasses();
 				oRM.write(">");
