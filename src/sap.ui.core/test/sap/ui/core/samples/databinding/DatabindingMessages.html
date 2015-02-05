@@ -16,22 +16,27 @@
         data-sap-ui-theme="sap_bluecrystal"
         data-sap-ui-libs="sap.ui.layout,sap.m">
     </script>
-
+	
 	<script>
 		// Model
+		jQuery.sap.require("sap.ui.core.message.MessageManager");
+		
 		var oModel = new sap.ui.model.json.JSONModel({
 			form: {
 				name: "Max",
 				surname: "Mustermann",
 				street: "Musterstr.",
-				streetnr: "1",
-				birthdate: "1988-08-08",
+				streetnr: 1,
+				birthdate: new Date(),
 				zip: "12345",
 				city: "Musterstadt",
 				country: "DE"
 			}
 		});
-
+		
+		oDate = new sap.ui.model.type.Date();
+		oZip = new sap.ui.model.type.String(null,{maxLength: 5});
+		oStreet = new sap.ui.model.type.Integer();
 		// UI
 		var oLayout = new sap.ui.layout.form.ResponsiveGridLayout("L4");
 		var oForm = new sap.ui.layout.form.Form("F1",{
@@ -41,7 +46,7 @@
 			objectBindings: {
 				undefined: {path: "/form"}
 			},
-			title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
+			//title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
 			editable: true,
 			layout: oLayout,
@@ -64,7 +69,7 @@
 						new sap.ui.layout.form.FormElement({
 							label: "Date of birth",
 							fields: [
-								new sap.m.DateTimeInput({value: "{birthdate}"})
+								new sap.m.DateTimeInput({value: {path:"birthdate", type: oDate}})
 							]
 						}),
 						new sap.ui.layout.form.FormElement({
@@ -73,14 +78,8 @@
 								new sap.m.RadioButton({text: "male", selected: true, groupName: "MyTest"}),
 							    new sap.m.RadioButton({text: "female", selected: false, groupName: "MyTest"})
 							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: "Info",
-							fields: [
-								new sap.m.Text({text:"{info}"})
-							]
 						})
-						]
+					]
 				}),
 				new sap.ui.layout.form.FormContainer("C2",{
 					title: new sap.ui.core.Title({text: "Address", tooltip: "Title tooltip"}),
@@ -89,9 +88,8 @@
 							label: new sap.m.Label({text:"Street"}),
 							fields: [
 								new sap.m.Input({value: "{street}"}),
-							  	new sap.m.Input({
-							  		value: "{streetnr}",
-							  		width: "5em",
+								new sap.m.Input({
+									value: {path: "streetnr", type: oStreet},
 									layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
 								})
 							]
@@ -106,7 +104,7 @@
 							label: new sap.m.Label({text: "Post code"}),
 							fields: [
 								new sap.m.Input({
-									value: "{zip}",
+									value: {path: "zip", type: oZip},
 									layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
 								})
 							]
@@ -128,50 +126,111 @@
 				})
 			]
 		});
-		oForm.placeAt("content");
 
 		var oButton1 = new sap.m.Button({
-			text: "Set messages",
+			text: "add Warning",
 			press: function() {
-				oModel.setMessages({
-					"/form/name" : [{
-						state: "Error",
-						text: "Invalid order of characters in this name!"
-					}]
-				});
+				sap.ui.getCore().getMessageManager().addMessages(
+					new sap.ui.core.message.Message({
+						message: "Invalid order of characters in this name!",
+						type: sap.ui.core.MessageType.Warning,
+						target: "/form/name",
+						processor: oModel
+					})
+				)
 			}
 		});
-		oButton1.placeAt("buttons");
-
 		var oButton2 = new sap.m.Button({
-			text: "Set other messages",
+			text: "add Info",
 			press: function() {
-				oModel.setMessages({
-					"/form/zip" : [{
-						state: "Error",
-						text: "ZIP and City do not match!"
-					}],
-					"/form/city" : [{
-						state: "Warning",
-						text: "ZIP and City do not match!"
-					}]
-				});
+				sap.ui.getCore().getMessageManager().addMessages(
+					new sap.ui.core.message.Message({
+						message: "Nice last name!",
+						type: sap.ui.core.MessageType.Information,
+						processor: oModel
+					})
+				)
 			}
 		});
-		oButton2.placeAt("buttons");
-
 		var oButton3 = new sap.m.Button({
-			text: "Clear messages",
+			text: "add Success",
 			press: function() {
-				oModel.setMessages({});
+				sap.ui.getCore().getMessageManager().addMessages(
+					new sap.ui.core.message.Message({
+						message: "City sucessfully updated",
+						type: sap.ui.core.MessageType.Success,
+						target: "/form/city",
+						processor: oModel
+					})
+				)
 			}
 		});
-		oButton3.placeAt("buttons");
+		var oButton5 = new sap.m.Button({
+			text: "add Success for ZIP",
+			press: function() {
+				sap.ui.getCore().getMessageManager().addMessages(
+					new sap.ui.core.message.Message({
+						message: "de Zip is gut!",
+						type: sap.ui.core.MessageType.Success,
+						target: "/form/zip",
+						processor: oModel
+					})
+				)
+			}
+		});
+		
+		var oButton4 = new sap.m.Button({
+			text: "clear Messages",
+			press: function() {
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+			}
+		});
+		
+		var oMessagePopoverButton = new sap.m.Button({
+			text: 'Show MessagePopover',
+			type: 'Accept',
+			press: function () {
+				oMP.openBy(this);
+			}
+		});
+		
+		var oMP = new sap.m.MessagePopover({
+			items: {
+					path:"message>/", 
+					template: new sap.m.MessagePopoverItem({description: "{message>description}", type: "{message>type}", title:"{message>message}"})
+			}
+		});
+		
+		oMessagePopoverButton.addDependent(oMP);
+			
+		var oPage = new sap.m.Page({
+			title: 'DataBinding Messages',
+			content: [ oForm , oButton1, oButton2, oButton3, oButton4, oButton5],
+			footer:	new sap.m.Toolbar({
+				content: [
+					new sap.m.ToolbarSpacer(),
+					oMessagePopoverButton,
+					sap.m.CheckBox({
+						selected: false,
+						text: "Compact mode",
+						select : function() {
+							jQuery("body").toggleClass("sapUiSizeCompact");
+						}
+					}),
+					new sap.m.ToolbarSpacer()
+				]
+			})
+		});
 
+		var app = new sap.m.App("myApp", { initialPage: oPage });
+
+		app.addPage(oPage).placeAt('content');
+		
 	</script>
 </head>
 <body class="sapUiBody">
 	<div id="content"></div>
 	<div id="buttons"></div>
+	<div id="messages"></div>
 </body>
 </html>

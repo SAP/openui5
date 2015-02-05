@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode', './Context'],
-	function(jQuery, EventProvider, BindingMode, Context) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context'],
+	function(jQuery, MessageProcessor, BindingMode, Context) {
 	"use strict";
 
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * This is an abstract base class for model objects.
 	 * @abstract
 	 *
-	 * @extends sap.ui.base.EventProvider
+	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -37,10 +37,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * @public
 	 * @alias sap.ui.model.Model
 	 */
-	var Model = EventProvider.extend("sap.ui.model.Model", /** @lends sap.ui.model.Model.prototype */ {
+	var Model = MessageProcessor.extend("sap.ui.model.Model", /** @lends sap.ui.model.Model.prototype */ {
 
 		constructor : function () {
-			EventProvider.apply(this, arguments);
+			MessageProcessor.apply(this, arguments);
 
 			this.oData = {};
 			this.bDestroyed = false;
@@ -409,7 +409,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 		return this;
 	};
 
-
+	Model.prototype.attachMessageChange = function(oData, fnFunction, oListener) {
+		this.attachEvent("messageChange", oData, fnFunction, oListener);
+		return this;
+	};
+	
+	Model.prototype.detachMessageChange = function(fnFunction, oListener) {
+		this.detachEvent("messageChange", fnFunction, oListener);
+		return this;
+	};
+	
 	// the 'abstract methods' to be implemented by child classes
 
 	/**
@@ -717,6 +726,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 */
 	Model.prototype.refresh = function(bForceUpdate) {
 		this.checkUpdate(bForceUpdate);
+		if (bForceUpdate) {
+			this.fireMessageChange({oldMessages: this.mMessages});
+		}
 	};
 
 	/**
@@ -792,7 +804,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
 		}
 		this.bDestroyed = true;
-		EventProvider.prototype.destroy.apply(this, arguments);
+		MessageProcessor.prototype.destroy.apply(this, arguments);
 	};
 
 	/**

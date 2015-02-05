@@ -3,8 +3,8 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', './Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', './RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './tmpl/Template', 'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, DataType, EventProvider, Component, Configuration, Control, Element, ElementMetadata, FocusHandler, RenderManager, ResizeHandler, ThemeCheck, UIArea, Template/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', './Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', './RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './tmpl/Template', './message/MessageManager', 'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
+	function(jQuery, Device, Global, DataType, EventProvider, Component, Configuration, Control, Element, ElementMetadata, FocusHandler, RenderManager, ResizeHandler, ThemeCheck, UIArea, Template, MessageManager/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
 	"use strict";
 
 	/*global Promise */
@@ -470,7 +470,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 							 "attachValidationSuccess", "detachValidationSuccess", "fireValidationSuccess",
 							 "attachLocalizationChanged", "detachLocalizationChanged",
 							 "attachLibraryChanged", "detachLibraryChanged",
-							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication"]
+							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication",
+							 "setMessageManager", "getMessageManager"]
 		}
 
 	});
@@ -2338,6 +2339,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		jQuery.sap.assert(oModel == null || oModel instanceof sap.ui.model.Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
+			if (this.getMessageManager()) {
+				this.getMessageManager().deregisterMessageProcessor(this.oModels[sName]);
+			}
 			delete this.oModels[sName];
 			// propagate Models to all UI areas
 			jQuery.each(this.mUIAreas, function (i, oUIArea){
@@ -2351,10 +2355,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				oUIArea.oPropagatedProperties.oModels[sName] = oModel;
 				oUIArea.propagateProperties(sName);
 			});
+			if (this.getMessageManager()) {
+				this.getMessageManager().registerMessageProcessor(oModel);
+			}
 		} //else nothing to do
 		return this;
 	};
-
+	
+	Core.prototype.setMessageManager = function(oMessageManager) {
+		this.oMessageManager = oMessageManager;
+	};
+	
+	Core.prototype.getMessageManager = function() {
+		if (!this.oMessageManager) {
+			this.oMessageManager = new MessageManager();
+		}
+		return this.oMessageManager;
+	};
+	
 	/**
 	 * Get the model with the given model name.
 	 *

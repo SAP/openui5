@@ -927,8 +927,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.updateMessages = function(sName, aMessages) {
 		if (aMessages && aMessages.length > 0) {
-			this.setValueState(aMessages[0].state);
-			this.setValueStateText(aMessages[0].text);
+			this.setValueState(aMessages[0].type);
+			this.setValueStateText(aMessages[0].message);
 		} else {
 			this.setValueState(sap.ui.core.ValueState.None);
 		}

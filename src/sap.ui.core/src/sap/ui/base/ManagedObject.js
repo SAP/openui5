@@ -377,7 +377,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this.mAggregations = {};
 			this.mAssociations = {};
 			this.mMethods = {};
-
+			this.aControlMessages = [];
+			
 			// private properties
 			this.oParent = null;
 
@@ -2150,8 +2151,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
 		var that = this;
 
-		// jQuery.sap.log.debug("destroying " + this);
-
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate++;
@@ -2196,14 +2195,16 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate--;
 		}
-
+		
+		this.aControlMessages = undefined;
+		
 		EventProvider.prototype.destroy.apply(this, arguments);
 
 		// finally make the object unusable
 		this.setParent = function(){
 			throw Error("The object with ID " + that.getId() + " was destroyed and cannot be used anymore.");
 		};
-
+		
 		// make visible that it's been destroyed.
 		this.bIsDestroyed = true;
 
@@ -2565,14 +2566,38 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			that = this,
 			aBindings = [],
 			fModelChangeHandler = function(oEvent){
+				var oMessageManager = that.getMessageManager();
 				that.updateProperty(sName);
+				//clear Messages from messageManager
+				if (oMessageManager && that.aControlMessages.length > 0) {
+					that.getMessageManager().removeMessages(that.aControlMessages);
+					that.aControlMessages = [];	
+				}
+				//delete control Messages (value is updated from model) and update control with model messages
+				if (oBinding.getMessages()) {
+					that.updateMessages(sName, oBinding.getMessages());
+				}
 				if (oBinding.getBindingMode() === sap.ui.model.BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 				}
 			},
 			fMessageChangeHandler = function(oEvent){
-				that.updateMessages(sName, oBinding.getMessages());
+				var aAllMessages = [];
+				var sMessageType = oEvent.getParameter("type");
+				var aMessages = oEvent.getParameter("messages");
+		
+				if (sMessageType == "control") {
+					that.aControlMessages = aMessages;
+				}
+				//merge control/model messages
+				if (oBinding.getMessages()) {
+					aAllMessages = aAllMessages.concat(oBinding.getMessages());
+				}
+				if (that.aControlMessages.length > 0) {
+					aAllMessages = aAllMessages.concat(that.aControlMessages);
+				}
+				that.updateMessages(sName, aAllMessages);
 			};
 
 		// Only use context for bindings on the primary model
@@ -3412,6 +3437,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		jQuery.sap.assert(oModel == null || oModel instanceof Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
+			if (this.getMessageManager()) {
+				this.getMessageManager().deregisterMessageProcessor(this.oModels[sName]);
+			}
 			delete this.oModels[sName];
 			// propagate Models to children
 			// model changes are propagated until (including) the first descendant that has its own model with the same name
@@ -3428,6 +3456,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this.updateBindingContext(false, true, sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
+			if (this.getMessageManager()) {
+				this.getMessageManager().registerMessageProcessor(oModel);
+			}
 		} // else nothing to do
 		return this;
 	};
@@ -3844,7 +3875,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	};
 
-
+	ManagedObject.prototype.getMessageManager = function() {
+		return sap.ui.getCore().getMessageManager();
+	};
+	
 	return ManagedObject;
 
 }, /* bExport= */ true);
