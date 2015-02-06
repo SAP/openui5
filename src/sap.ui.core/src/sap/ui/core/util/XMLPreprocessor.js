@@ -4,8 +4,8 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
-	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/Context'],
-	function(jQuery, ManagedObject, XMLTemplateProcessor, Context) {
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
+	function(jQuery, ManagedObject, XMLTemplateProcessor, CompositeBinding, Context) {
 		'use strict';
 
 		var oUNBOUND = {}, // @see getAny
@@ -16,24 +16,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * Supports nesting of template instructions.
 			 */
 			With = ManagedObject.extend("sap.ui.core.util._with", {
-				metadata: {
-					properties: {
-						any: "any"
+				metadata : {
+					properties : {
+						any : "any"
 					},
-					aggregations: {
-						child: {multiple: false, type: "sap.ui.core.util._with"}
+					aggregations : {
+						child : {multiple : false, type : "sap.ui.core.util._with"}
 					}
-				},
-				/**
-				 * Returns the binding related to the current formatter call, especially the path,
-				 * context, and model. This is meant as a public API for any formatter used during
-				 * XML template processing.
-				 *
-				 * @returns {sap.ui.model.Binding}
-				 *   the binding related to the current formatter call
-				 */
-				currentBinding: function () {
-					return this.getBinding("any");
 				}
 			}),
 			/**
@@ -41,30 +30,101 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * used to get the list binding.
 			 */
 			Repeat = With.extend("sap.ui.core.util._repeat", {
-				metadata: {
-					aggregations: {
-						list: {multiple: true, type: "n/a", _doesNotRequireFactory: true}
+				metadata : {
+					aggregations : {
+						list : {multiple : true, type : "n/a", _doesNotRequireFactory : true}
 					}
 				},
 
-				updateList: function () {
+				updateList : function () {
 					// Override sap.ui.base.ManagedObject#updateAggregation for "list" and do
 					// nothing to avoid that any child objects are created
 				}
 			});
 
 		/**
+		 * Returns the callback interface for a call to the given control's formatter of the
+		 * binding part with given index.
+		 *
+		 * @param {sap.ui.core.util._with} oWithControl
+		 *   the "with" control
+		 * @param {number} [i]
+		 *   index of part in case of a composite binding
+		 * @returns {object}
+		 */
+		function getInterface(oWithControl, i) {
+			/*
+			 * Returns the binding related to the current formatter call.
+			 * @returns {sap.ui.model.PropertyBinding}
+			 */
+			function getBinding() {
+				var oBinding = oWithControl.getBinding("any");
+				return oBinding instanceof CompositeBinding
+					? oBinding.getBindings()[i]
+					: oBinding;
+			}
+
+			/*
+			 * This is meant as a public API for any formatter used during XML template processing
+			 * and provides access to the model and path which is needed to process OData v4
+			 * annotations.
+			 */
+			return {
+				/**
+				 * Returns the model related to the current formatter call.
+				 * @returns {sap.ui.model.Model}
+				 */
+				getModel : function () {
+					return getBinding().getModel();
+				},
+
+				/**
+				 * Returns the absolute path related to the current formatter call
+				 * @returns {string}
+				 */
+				getPath : function () {
+					var oBinding = getBinding();
+					return oBinding.getModel().resolve(oBinding.getPath(), oBinding.getContext());
+				}
+			};
+		}
+
+		/**
 		 * Gets the value of the control's "any" property via the given binding info.
 		 *
-		 * @param {sap.ui.core.util._with} oWithControl the "with" control
-		 * @param {object} oBindingInfo the binding info
-		 * @returns {any} the property value or <code>oUNBOUND</code> in case the binding is
-		 * not ready (because it refers to a model which is not available)
+		 * @param {sap.ui.core.util._with} oWithControl
+		 *   the "with" control
+		 * @param {object} oBindingInfo
+		 *   the binding info
+		 * @returns {any}
+		 *   the property value or <code>oUNBOUND</code> in case the binding is not ready (because
+		 *   it refers to a model which is not available)
 		 * @throws Error
 		 */
 		function getAny(oWithControl, oBindingInfo) {
+			/*
+			 * Prepares the given binding info or part of it; makes it "one time" and binds its
+			 * formatter function (if opted in) to an interface object.
+			 *
+			 * @param {number} i
+			 *   index of binding info's part (if applicable)
+			 * @param {object} oInfo
+			 *   a binding info or a part of it
+			 */
+			function prepare(i, oInfo) {
+				var fnFormatter = oInfo.formatter;
+
+				oInfo.mode = sap.ui.model.BindingMode.OneTime;
+				if (fnFormatter && fnFormatter.$) {
+					oInfo.formatter
+						= jQuery.proxy(fnFormatter, null, getInterface(oWithControl, i));
+				}
+			}
+
 			try {
-				oBindingInfo.mode = sap.ui.model.BindingMode.OneTime;
+				prepare(undefined, oBindingInfo);
+				jQuery.each(oBindingInfo.parts || [], prepare);
+
 				oWithControl.bindProperty("any", oBindingInfo);
 				return oWithControl.getBinding("any")
 					? oWithControl.getAny()
@@ -162,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 *
 			 * @private
 			 */
-			process: function(oRootElement, mSettings, sCaller) {
+			process : function(oRootElement, mSettings, sCaller) {
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
 				 * identification (separated by a colon) and appending the serialization of the
@@ -477,8 +537,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						sVar = sVar || oBindingInfo.model; // default variable is same model name
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({ //TODO setBindingContext?!
-							model: sVar,
-							path: sResolvedPath
+							model : sVar,
+							path : sResolvedPath
 						});
 					} else {
 						oNewWithControl.bindObject(sPath);
@@ -555,8 +615,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				}
 
 				visitNode(oRootElement, new With({
-					models: mSettings.models,
-					bindingContexts: mSettings.bindingContexts
+					models : mSettings.models,
+					bindingContexts : mSettings.bindingContexts
 				}));
 				return oRootElement;
 			}

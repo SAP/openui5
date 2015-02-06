@@ -117,6 +117,9 @@
 				function (sName, oBindingInfo) {
 					strictEqual(sName, "any");
 					strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime);
+					jQuery.each(oBindingInfo.parts || [], function (i, oInfoPart) {
+						strictEqual(oInfoPart.mode, sap.ui.model.BindingMode.OneTime);
+					});
 					fnBindProperty.apply(this, arguments);
 				});
 			oSandbox.spy(sap.ui.base.ManagedObject.prototype, "unbindProperty");
@@ -674,10 +677,8 @@
 	test("binding resolution", function () {
 		window.foo = {
 			Helper: {
-				help: function (oRawValue) {
-					return typeof oRawValue === "string"
-						? oRawValue
-						: "{" + oRawValue.value + "}";
+				help: function (vRawValue) {
+					return vRawValue.String || "{" + vRawValue.Path + "}";
 				}
 			}
 		};
@@ -685,22 +686,25 @@
 		check([
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
 			'<Label text="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/@com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
+				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/@com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
 			'<html:img src="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/@com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
+				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
 			'</mvc:View>'
 		], {
 			models: new sap.ui.model.json.JSONModel({
-				"@com.sap.vocabularies.UI.v1.HeaderInfo": {
-					"TypeImageUrl": "/coco/apps/main/img/Icons/product_48.png",
+				"com.sap.vocabularies.UI.v1.HeaderInfo": {
+					"TypeImageUrl": {
+						"String": "/coco/apps/main/img/Icons/product_48.png"
+					},
 					"Title": {
-						"Label": "Customer",
+						"Label": {
+							"String": "Customer"
+						},
 						"Value": {
-							"@odata.type": "#Path",
-							"value": "CustomerName"
+							"Path": "CustomerName"
 						}
 					}
 				}
@@ -716,42 +720,66 @@
 
 	//*********************************************************************************************
 	test("binding resolution: interface to formatter", function () {
-		var sPath = "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value";
-
-		window.foo = {
-			Helper: {
-				help: function (oRawValue) {
-					var oBinding = this.currentBinding();
-
-					ok(oBinding instanceof sap.ui.model.Binding);
-					strictEqual(oBinding.getPath(), sPath);
-
-					return "success";
-				}
-			}
-		};
-
-		check([
-			mvcView(),
-			'<Text text="{formatter: \'foo.Helper.help\', path: \'' + sPath + '\'}"/>',
-			'</mvc:View>'
-		], {
-			models: new sap.ui.model.json.JSONModel({
-				"definitions": {
-					"SomeEntity": {
-						"@com.sap.vocabularies.UI.v1.HeaderInfo": {
-							"Title": {
-								"Value": {
-									"@odata.type": "#Path",
-									"value": "WeightMeasure"
-								}
+		var oModel = new sap.ui.model.json.JSONModel({
+				"somewhere": {
+					"com.sap.vocabularies.UI.v1.HeaderInfo": {
+						"Title": {
+							"Label": {
+								"String": "Customer"
+							},
+							"Value": {
+								"Path": "CustomerName"
 							}
 						}
 					}
 				}
-			})
+			});
+
+		/*
+		 * Dummy formatter function.
+		 *
+		 * @param {object} oInterface
+		 * @param {any} vRawValue
+		 */
+		function help(oInterface, vRawValue) {
+			var oContext,
+				sExpectedPath = vRawValue.String
+					? "/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label"
+					: "/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value";
+
+			strictEqual(oInterface.getModel(), oModel);
+			strictEqual(oInterface.getPath(), sExpectedPath);
+
+			return vRawValue.String || "{" + vRawValue.Path + "}";
+		}
+		//TODO how to call this "opt-in flag"? prior art: _doesNotRequireFactory and ui5object
+		//TODO reserve values other than true? use hasOwnProperty?
+		help.$ = true;
+
+		window.foo = {
+			Helper: {
+				help: help
+			}
+		};
+		this.stub(jQuery.sap.log, "isLoggable").returns(true);
+		this.mock(jQuery.sap.log).expects("debug").never();
+
+		check([
+			mvcView(),
+			'<template:with'
+				+ ' path="/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo">',
+			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}"/>',
+			'<Text text="Value: {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
+			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
+				+ ': {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
+			'</template:with>',
+			'</mvc:View>'
+		], {
+			models: oModel
 		}, [
-			'<Text text="success"/>'
+			'<Text text="Customer"/>',
+			'<Text text="Value: {CustomerName}"/>',
+			'<Text text="Customer: {CustomerName}"/>'
 		]);
 	});
 
