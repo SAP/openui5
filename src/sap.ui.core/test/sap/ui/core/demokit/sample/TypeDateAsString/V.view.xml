@@ -1,0 +1,88 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.TypeDateAsString.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		editable="true"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Date Input" >
+		<form:content>
+			<Label text="Date" />
+			<Input value="{/date}" />
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Format Options" >
+		<form:content>
+
+			<Label text="Short" />
+			<Text text="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					style: 'short',
+					source: {
+						pattern: 'yyyy/MM/dd'
+					}
+				}
+			}" />
+
+			<Label text="Medium" />
+			<Text text="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					style: 'medium',
+					source: {
+						pattern: 'yyyy/MM/dd'
+					}
+				}
+			}" />
+
+			<Label text="Long" />
+			<Text text="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					style: 'long',
+					source: {
+						pattern: 'yyyy/MM/dd'
+					}
+				}
+			}" />
+
+			<Label text="Full" />
+			<Text text="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					style: 'full',
+					source: {
+						pattern: 'yyyy/MM/dd'
+					}
+				}
+			}" />
+
+		</form:content>
+	</form:SimpleForm>
+</mvc:View>
