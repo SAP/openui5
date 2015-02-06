@@ -81,6 +81,12 @@
 		ok(oModel,"Model initialized");
 		equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
 	});
+	test("get annotation 'sap:label' with namespace", function() {
+		var oModel = initModel(sServiceUri);
+		ok(oModel,"Model initialized");
+		equal(oModel.getProperty("/#UNKNOWN.Flight/FlightConnectionID/@sap:label"), undefined, "Unknown namespace");
+		equal(oModel.getProperty("/#RMTSAMPLEFLIGHT_2.Flight/FlightConnectionID/@sap:label"), "Flight Number", "Valid namespace");
+	});
 	test("get attribute 'type'", function() {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
