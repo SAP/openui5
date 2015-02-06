@@ -60,7 +60,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 			/**
 			 * Allows multiple files to be chosen and uploaded from the same folder.
-			 * This property is not supported by Internet Explorer 8 and 9.
+			 * This property is not supported by Internet Explorer 8 and 9 
+			 * In Release 1.26 this property is not supported in all browsers so if set to 'true' it will be ignored
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -294,12 +295,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		return this;
 	};
-
+	// in 1.26 multiple is not supported
 	UploadCollection.prototype.setMultiple = function(bMultiple) {
-		this.setProperty("multiple", bMultiple);
-		if (this._getFileUploader().getMultiple() !== bMultiple) {
-			this._getFileUploader().setMultiple(bMultiple);
-		}
 		return this;
 	};
 
@@ -1308,7 +1305,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				maximumFilenameLength : this.getMaximumFilenameLength(),
 				maximumFileSize : this.getMaximumFileSize(),
 				mimeType : this.getMimeType(),
-				multiple : this.getMultiple(),
+				multiple : false, // in 1.26 FileUploader does not support multiple (for XHR = true and useMultipart = false)
 				name : "uploadCollection",
 				sameFilenameAllowed : this.getSameFilenameAllowed(),
 				uploadOnChange : true,

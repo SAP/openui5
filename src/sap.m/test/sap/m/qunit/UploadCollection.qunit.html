@@ -482,9 +482,17 @@
 		var sGetterMethodFileUploader = "get" + sPropertyFileUploader[0].toUpperCase() + sPropertyFileUploader.slice(1);
 
 		oUploadCollection[sSetterMethod](oPropertyValue);
-		deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
+		if (sProperty === "multiple") { // in 1.26 multiple = true is ignored
+			deepEqual(oUploadCollection[sGetterMethod](), false, "Multiple should be always false");
+		}
+		else {
+			deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
+		}
 		if (bPropagate) {
 			switch (sProperty) {
+				case "multiple": // in 1.26 multiple is always "false"
+					deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), false, "Propagation to FileUploader");
+					break;
 				case "noDataText":
 					deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
 					break;
