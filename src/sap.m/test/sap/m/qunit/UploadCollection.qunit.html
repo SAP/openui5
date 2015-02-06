@@ -348,7 +348,7 @@
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Display", "'Display'-status after 'cancel' as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'cancel' as expected in Line 2");
 		
 		//check file name after cancel
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -365,7 +365,7 @@
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		oModel.setData(oData);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Display", "'Display'-status after 'ok' as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'ok' as expected in Line 2");
 
 		//check chnaged file name after save
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -401,7 +401,7 @@
 		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-cancelButton";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[2]._status, "Display", "'Display'-status after 'cancel' as expected in Line 3");
+		equal(this.oUploadCollection.aItems[2]._status, "display", "'display'-status after 'cancel' as expected in Line 3");
 
 		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
@@ -432,10 +432,10 @@
 		}
 	});
 	test("Display", function() {
-		//check status = "Display"
+		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
-			equal( this.oUploadCollection.aItems[i]._status, "Display", "Status of line " + i + " is correct");
+			equal( this.oUploadCollection.aItems[i]._status, "display", "Status of line " + i + " is correct");
 		}
 
 		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
