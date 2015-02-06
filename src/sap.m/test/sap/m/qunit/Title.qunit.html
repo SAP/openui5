@@ -92,6 +92,10 @@
 			ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
 		});
 		
+		test("Should render a text", function() {
+			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
+		});
+		
 		test("Should render a tooltip", function() {
 			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
@@ -129,6 +133,71 @@
 			
 			for (var level in sap.ui.core.TitleLevel) {
 				this.title.setLevel(level);
+				sap.ui.getCore().applyChanges();
+				
+				if (level === sap.ui.core.TitleLevel.Auto) {
+					sExpectedTag = "DIV";
+					strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
+				} else {
+					sExpectedTag = level.toUpperCase();
+					ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
+				}
+				
+				strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
+			}
+		});
+		
+		module("Title Association", {		 
+			setup : function() {
+				this.coreTitle = new sap.ui.core.Title({
+					text: "Hello2",
+					tooltip : "Tooltip2"
+				});
+				this.title = new sap.m.Title({
+					text : "Hello",
+					tooltip : "Tooltip",
+					title : this.coreTitle
+				});
+				this.title.placeAt("uiArea");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				this.title.destroy();
+				this.title = null;
+				if (this.coreTitle) {
+					this.coreTitle.destroy();
+					this.coreTitle = null;
+				}
+			}
+		});
+		
+		test("Should render a text", function() {
+			strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
+			this.coreTitle.setText("Hello3");
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.title.$().text(), "Hello3", "Text got rendered");
+			this.coreTitle.destroy();
+			this.coreTitle = null;
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
+		});
+		
+		test("Should render a tooltip", function() {
+			strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
+			this.coreTitle.setTooltip("Tooltip3");
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.title.$().attr("title"), "Tooltip3", "Tooltip got rendered");
+			this.coreTitle.destroy();
+			this.coreTitle = null;
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
+		});
+		
+		test("Semantic level correct", function() {
+			var sExpectedTag;
+			
+			for (var level in sap.ui.core.TitleLevel) {
+				this.coreTitle.setLevel(level);
 				sap.ui.getCore().applyChanges();
 				
 				if (level === sap.ui.core.TitleLevel.Auto) {

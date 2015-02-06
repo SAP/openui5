@@ -60,9 +60,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Initial}
 			
+		},
+		associations : {
+
+			/**
+			 * Association to a generic title description.
+			 * If such a title element is associated the properties text, level and tooltip (text only) of this element are consumed.
+			 * The corresponding properties of the title control are ignored.
+			 */
+			title : {type : "sap.ui.core.Title", multiple : false}
 		}
 	
 	}});
+	
+	// Returns the instance of the associated sap.ui.core.Title if exists
+	Title.prototype._getTitle = function(){
+		var sTitle = this.getTitle();
+		
+		if (sTitle) {
+			var oTitle = sap.ui.getCore().byId(sTitle);
+			if (oTitle && oTitle instanceof sap.ui.core.Title) {
+				return oTitle;
+			}
+		}
+		
+		return null;
+	};
+	
+	Title.prototype._onTitleChanged = function(){
+		this.invalidate();
+	};
+	
+	Title.prototype.setTitle = function(vTitle){
+		var that = this;
+		
+		var oOldTitle = this._getTitle();
+		if (oOldTitle) {
+			oOldTitle.invalidate = oOldTitle.__sapui5_title_originvalidate;
+			oOldTitle.exit = oOldTitle.__sapui5_title_origexit;
+			delete oOldTitle.__sapui5_title_origexit;
+			delete oOldTitle.__sapui5_title_originvalidate;
+		}
+		
+		this.setAssociation("title", vTitle);
+		
+		var oNewTitle = this._getTitle();
+		if (oNewTitle) {
+			oNewTitle.__sapui5_title_originvalidate = oNewTitle.invalidate;
+			oNewTitle.__sapui5_title_origexit = oNewTitle.exit;
+			oNewTitle.exit = function() {
+				that._onTitleChanged();
+				if (this.__sapui5_title_origexit) {
+					this.__sapui5_title_origexit.apply(this, arguments);
+				}
+			};
+			oNewTitle.invalidate = function() {
+				that._onTitleChanged();
+				this.__sapui5_title_originvalidate.apply(this, arguments);
+			};
+		}
+		
+		return this;
+	};
+
 	
 	return Title;
 
