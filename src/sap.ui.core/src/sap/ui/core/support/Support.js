@@ -236,7 +236,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 	 */
 	Support.prototype.openSupportTool = function() {
 		var sToolUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/support.html");
-		var sOriginParam = "?sap-ui-xx-support-origin=" + jQuery.sap.encodeURL(this._sLocalOrigin);
+		var sParams = "?sap-ui-xx-support-origin=" + jQuery.sap.encodeURL(this._sLocalOrigin);
+
+		var sBootstrapScript;
+		if (this._sType === mTypes.APPLICATION) {
+			// get bootstrap script name from script tag
+			var oBootstrap = jQuery.sap.domById("sap-ui-bootstrap");
+			if (oBootstrap) {
+				var sRootPath = jQuery.sap.getModulePath('./');
+				var sBootstrapSrc = oBootstrap.getAttribute('src');
+				if (typeof sBootstrapSrc === 'string' && sBootstrapSrc.indexOf(sRootPath) === 0) {
+					sBootstrapScript = sBootstrapSrc.substr(sRootPath.length);
+				}
+			}
+		} else if (this._sType === mTypes.IFRAME) {
+			// use script name from URI parameter to hand it over to the tool
+			sBootstrapScript = jQuery.sap.getUriParameters().get("sap-ui-xx-support-bootstrap");
+		}
+
+		// sap-ui-core.js is the default. no need for passing it to the support window
+		// also ensure that the bootstrap script is in the root module path
+		if (sBootstrapScript && sBootstrapScript !== 'sap-ui-core.js' && sBootstrapScript.indexOf('/') === -1) {
+			sParams += "&sap-ui-xx-support-bootstrap=" + jQuery.sap.encodeURL(sBootstrapScript);
+		}
 
 		function checkLocalUrl(sUrl){
 			//TODO find a proper check
@@ -247,15 +269,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 			if (!this._isOpen) {
 				if (!!sap.ui.Device.browser.internet_explorer) {
 					var sIFrameUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/msiebridge.html");
-					getSupportArea().html("").append("<iframe id=\"" + ID_SUPPORT_AREA + "-frame\" src=\"" + sIFrameUrl + sOriginParam + "\" onload=\"sap.ui.core.support.Support._onSupportIFrameLoaded();\"></iframe>");
+					getSupportArea().html("").append("<iframe id=\"" + ID_SUPPORT_AREA + "-frame\" src=\"" + sIFrameUrl + sParams + "\" onload=\"sap.ui.core.support.Support._onSupportIFrameLoaded();\"></iframe>");
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
 				} else {
-					this._oRemoteWindow = openWindow(sToolUrl + sOriginParam);
+					this._oRemoteWindow = openWindow(sToolUrl + sParams);
 					this._sRemoteOrigin = checkLocalUrl(sToolUrl) ? this._sLocalOrigin : sToolUrl;
 				}
 			}
 		} else if (this._sType === mTypes.IFRAME) {
-			this._oOpenedWindow = openWindow(sToolUrl + sOriginParam);
+			this._oOpenedWindow = openWindow(sToolUrl + sParams);
 		}
 	};
 
