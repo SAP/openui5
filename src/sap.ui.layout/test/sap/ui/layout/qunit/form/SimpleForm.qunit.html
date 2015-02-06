@@ -25,6 +25,7 @@
 	var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 			"sf1",
 			{
+				width: "100%",
 				minWidth : 1024,
 				maxContainerCols: 2,
 				content:[
@@ -103,6 +104,11 @@
 		qutils.delayTestStart();
 
 		module("Setter/Getter");
+
+		test("width", function() {
+			ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
+			ok(!/width:/.test(oSimpleForm2.$().attr("style")), "SimpleForm2: no width set");
+		});
 
 		test("used Layout", function() {
 			var oForm = oSimpleForm.getAggregation("form");
