@@ -1679,7 +1679,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				this._headerTitle.setText(sTitle);
 			} else {
 				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
-					text: this.getTitle()
+					text: this.getTitle(),
+					level: "H1"
 				});
 
 				this._createInternalHeader();

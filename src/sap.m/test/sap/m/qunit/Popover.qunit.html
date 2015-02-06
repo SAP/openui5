@@ -1100,6 +1100,8 @@
 				oButton.destroy();
 			});
 
+			module("Screen Reader");
+
 			test("ARIA role", function() {
 				var oButton = new sap.m.Button({
 					text: "Open Popover"
@@ -1129,6 +1131,27 @@
 				this.clock.tick(400);
 
 				equal(oPopover.$().attr('aria-labelledby'), oPopover._getAnyHeader().getId(), 'Popover aria labeledby attribute is equal to the header id');
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
+
+			test("ARIA Semantic heading of the popover", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover({
+					title: "Title text"
+				});
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+
+				equal(oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
+				ok(oPopover._headerTitle instanceof sap.m.Title, "Heading of the popover should be of type sap.m.Title");
 
 				oPopover.destroy();
 				oButton.destroy();
