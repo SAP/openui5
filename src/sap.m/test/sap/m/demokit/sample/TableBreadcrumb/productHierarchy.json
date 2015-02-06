@@ -24,8 +24,7 @@
 								"Width": 51,
 								"Depth": 42,
 								"Height": 18,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -49,8 +48,7 @@
 								"Width": 64,
 								"Depth": 34,
 								"Height": 4,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1010.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -74,8 +72,7 @@
 								"Width": 53,
 								"Depth": 24,
 								"Height": 6,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1063.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -106,8 +103,7 @@
 								"Width": 34,
 								"Depth": 14,
 								"Height": 2,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1071.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -131,8 +127,7 @@
 								"Width": 18,
 								"Depth": 19,
 								"Height": 21,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1112.jpg"
+								"DimUnit": "cm"
 							},
 							{
 								"ProductId": "P1239823",
@@ -149,8 +144,7 @@
 								"Width": 11,
 								"Depth": 11,
 								"Height": 3,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1111.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -181,8 +175,7 @@
 								"Width": 34,
 								"Depth": 14,
 								"Height": 2,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1072.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -206,8 +199,7 @@
 								"Width": 53,
 								"Depth": 34,
 								"Height": 7,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1114.jpg"
+								"DimUnit": "cm"
 							},
 							{
 								"ProductId": "XKP-312548",
@@ -224,8 +216,7 @@
 								"Width": 6,
 								"Depth": 2,
 								"Height": 0.5,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-6120.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -249,8 +240,7 @@
 								"Width": 87,
 								"Depth": 45,
 								"Height": 39,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1052.jpg"
+								"DimUnit": "cm"
 							},
 							{
 								"ProductId": "89932-922",
@@ -267,8 +257,7 @@
 								"Width": 42,
 								"Depth": 29,
 								"Height": 31,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1040.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"
@@ -299,8 +288,7 @@
 								"Width": 88,
 								"Depth": 13,
 								"Height": 49,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1030.jpg"
+								"DimUnit": "cm"
 							},
 							{
 								"ProductId": "870394932",
@@ -317,8 +305,7 @@
 								"Width": 102,
 								"Depth": 13,
 								"Height": 54,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1032.jpg"
+								"DimUnit": "cm"
 							},
 							{
 								"ProductId": "282948303-02",
@@ -335,8 +322,7 @@
 								"Width": 112,
 								"Depth": 13,
 								"Height": 60,
-								"DimUnit": "cm",
-								"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1138.jpg"
+								"DimUnit": "cm"
 							}
 						],
 						"CurrencyCode": "EUR"

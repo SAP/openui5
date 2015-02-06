@@ -3,7 +3,7 @@ sap.ui.controller("sap.m.sample.FacetFilterLight.FacetFilter", {
 	onInit: function() {
 
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 
 		// Append demo table into VBox, making a minor modification
@@ -39,14 +39,14 @@ sap.ui.controller("sap.m.sample.FacetFilterLight.FacetFilter", {
 
 	handleListClose: function(oEvent) {
 		// Get the Facet Filter lists and construct a (nested) filter for the binding
-		var oFacetFilter = oEvent.getSource().getParent();		
+		var oFacetFilter = oEvent.getSource().getParent();
 		var mFacetFilterLists = oFacetFilter.getLists().filter(function(oList) {
 				return oList.getSelectedItems().length;
 			});
 
 		if(mFacetFilterLists.length) {
 			// Build the nested filter with ORs between the values of each group and
-			// ANDs between each group		
+			// ANDs between each group
 			var oFilter = new sap.ui.model.Filter(mFacetFilterLists.map(function(oList) {
 				return new sap.ui.model.Filter(oList.getSelectedItems().map(function(oItem) {
 					return new sap.ui.model.Filter(oList.getTitle(), "EQ", oItem.getText());
@@ -56,7 +56,7 @@ sap.ui.controller("sap.m.sample.FacetFilterLight.FacetFilter", {
 		} else {
 			this._applyFilter([]);
 		}
-	}	
+	}
 
 });
 

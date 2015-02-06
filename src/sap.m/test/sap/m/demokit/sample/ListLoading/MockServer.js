@@ -11,9 +11,9 @@ sap.m.sample.ListLoading.MockServer = {
 
 	server : null,
 
-	rootUri : "/mockserver/products/",
+	rootUri : "/mockserver/",
 
-	dataPath : "test-resources/sap/ui/demokit/explored/mockdata/products/",
+	dataPath : "test-resources/sap/ui/demokit/explored/mockserver/",
 
 	start : function (oConfig) {
 		// configure respond to requests delay

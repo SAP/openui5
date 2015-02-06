@@ -1,7 +1,7 @@
 sap.ui.controller("sap.m.sample.ObjectHeaderResponsiveIV.Page", {
 
 	onInit: function() {
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 	},
 
@@ -9,7 +9,7 @@ sap.ui.controller("sap.m.sample.ObjectHeaderResponsiveIV.Page", {
 		jQuery.sap.require("sap.m.MessageBox");
 		sap.m.MessageBox.alert("Link was clicked!");
 	},
-	
+
 	onExit : function () {
 		if (this._oPopover) {
 			this._oPopover.destroy();

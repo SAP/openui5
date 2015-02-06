@@ -24,7 +24,7 @@
 	<Page
 		id="page"
 		title=" Product XY" >
-	
+
 
 		<content>
 			<ObjectHeader
@@ -97,12 +97,12 @@
 					<l:VerticalLayout>
 						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
 					</l:VerticalLayout>
-			
-					<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1073.jpg" />
-			
+
+					<Image src="test-resources/sap/ui/demokit/explored/img/HT-1073.jpg" />
+
 					<Text class="sapUiSmallMargin"
 						text="Lorem ipsum dolor st amet, consetetur ssadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
-			
+
 					<ScrollContainer height="100%" width="100%"
 						horizontal="false" vertical="true">
 						<List headerText="Some List Content 1"
@@ -113,8 +113,8 @@
 								icon="{ProductPicUrl}" iconDensityAware="false" iconInset="false" />
 						</List>
 					</ScrollContainer>
-			
-					<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg" />
+
+					<Image src="test-resources/sap/ui/demokit/explored/img/HT-1112.jpg" />
 				</pages>
 			</Carousel>
 			<u:SplitContainer id="splitContainer" showSecondaryContent="true">
@@ -139,7 +139,7 @@
 	}
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-	
+
 	sap.ui.controller("margin.qunit.controller", {
 
 		onInit: function(oEvent) {
@@ -157,9 +157,9 @@
 		}
 	});
 
-	
+
 	module("Apply pre-defined css classes");
-	
+
 	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
 		assert.ok( true, " " ); //Group tests
 		assert.ok( true, "TESTING MARGIN CLASS '" + sMarginClass + "'" );
@@ -167,7 +167,7 @@
 		oComponentContainer.setComponent(new margin.qunit.Component());
 		oComponentContainer.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		
+
 		var oTestView = sap.ui.getCore().byId("__xmlview" + iCount),
 			aControls = [
 				oPage = oTestView.byId('page'),
@@ -195,7 +195,7 @@
 			oControl.addStyleClass(sMarginClass);
 		});
 		sap.ui.getCore().applyChanges();
-		
+
 		//check values
 		equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);
 		equal(oObjectHeader.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " ObjectHeader " +  sExpectedMarginValue);
@@ -209,7 +209,7 @@
 			notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
 			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
 			equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
-			
+
 		}
 		equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
 		equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
@@ -218,15 +218,15 @@
 		//Can not check 'auto' because there is no way to  ask for it. Even 'oControl.getDomRef().style.width'
 		//does not deliver the correct result: the inline style is returned even though it is not what
 		//is used for determining the width
-		
+
 		//Clean up
 		oComponentContainer.destroy();
 		iCount++;
 	};
-	
+
 	//Needed to identify the views which are created during test
 	var iCount = 0;
-	
+
 	test("Test static margin classes", function() {
 		//Currently only works under chrome
 		if (sap.ui.Device.browser.chrome) {
@@ -235,7 +235,7 @@
 			fnTest.call(this, 'margin', 'sapUiSmallMargin', '16px', true);
 			fnTest.call(this, 'margin', 'sapUiMediumMargin', '32px', true);
 			fnTest.call(this, 'margin', 'sapUiLargeMargin', '48px', true);
-			
+
 			//Test Two-side margins
 			fnTest.call(this, 'margin-left', 'sapUiTinyMarginBeginEnd', '8px', true);
 			fnTest.call(this, 'margin-right', 'sapUiTinyMarginBeginEnd', '8px', true);
@@ -243,7 +243,7 @@
 			fnTest.call(this, 'margin-right', 'sapUiSmallMarginBeginEnd', '16px', true);
 			fnTest.call(this, 'margin-left', 'sapUiMediumMarginBeginEnd', '32px', true);
 			fnTest.call(this, 'margin-right', 'sapUiMediumMarginBeginEnd', '32px', true);
-			fnTest.call(this, 'margin-left', 'sapUiLargeMarginBeginEnd', '48px', true);	
+			fnTest.call(this, 'margin-left', 'sapUiLargeMarginBeginEnd', '48px', true);
 			fnTest.call(this, 'margin-right', 'sapUiLargeMarginBeginEnd', '48px', true);
 			fnTest.call(this, 'margin-top', 'sapUiTinyMarginTopBottom', '8px');
 			fnTest.call(this, 'margin-bottom', 'sapUiTinyMarginTopBottom', '8px');
@@ -253,28 +253,28 @@
 			fnTest.call(this, 'margin-bottom', 'sapUiMediumMarginTopBottom', '32px');
 			fnTest.call(this, 'margin-top', 'sapUiLargeMarginTopBottom', '48px');
 			fnTest.call(this, 'margin-bottom', 'sapUiLargeMarginTopBottom', '48px');
-			
+
 			//Test Single-sided margins
 			fnTest.call(this, 'margin-top', 'sapUiTinyMarginTop', '8px');
 			fnTest.call(this, 'margin-bottom', 'sapUiTinyMarginBottom', '8px');
 			fnTest.call(this, 'margin-left', 'sapUiTinyMarginBegin', '8px', true);
 			fnTest.call(this, 'margin-right', 'sapUiTinyMarginEnd', '8px', true);
-			
+
 			fnTest.call(this, 'margin-top', 'sapUiSmallMarginTop', '16px');
 			fnTest.call(this, 'margin-bottom', 'sapUiSmallMarginBottom', '16px');
 			fnTest.call(this, 'margin-left', 'sapUiSmallMarginBegin', '16px', true);
 			fnTest.call(this, 'margin-right', 'sapUiSmallMarginEnd', '16px', true);
-			
+
 			fnTest.call(this, 'margin-top', 'sapUiMediumMarginTop', '32px');
 			fnTest.call(this, 'margin-bottom', 'sapUiMediumMarginBottom', '32px');
 			fnTest.call(this, 'margin-left', 'sapUiMediumMarginBegin', '32px', true);
 			fnTest.call(this, 'margin-right', 'sapUiMediumMarginEnd', '32px', true);
-			
+
 			fnTest.call(this, 'margin-top', 'sapUiLargeMarginTop', '48px');
 			fnTest.call(this, 'margin-bottom', 'sapUiLargeMarginBottom', '48px');
 			fnTest.call(this, 'margin-left', 'sapUiLargeMarginBegin', '48px', true);
 			fnTest.call(this, 'margin-right', 'sapUiLargeMarginEnd', '48px', true);
-			
+
 			//Test No Margins: add margin classes AND use our No Margins at the same time:
 			//the No Margins classes should be stronger
 			fnTest.call(this, 'margin', 'sapUiLargeMargin sapUiNoMargin', '0px');
@@ -300,4 +300,3 @@
 </body>
 </html>
 
-                                                                                                                      

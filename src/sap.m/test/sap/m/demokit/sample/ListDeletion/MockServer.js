@@ -11,15 +11,15 @@ sap.m.sample.ListDeletion.MockServer = {
 
 	server : null,
 
-	rootUri : "/mockserver/products/",
+	rootUri : "/mockserver/",
 
-	dataPath : "test-resources/sap/ui/demokit/explored/mockdata/products/",
+	dataPath : "test-resources/sap/ui/demokit/explored/mockserver/",
 
 	start : function (oConfig) {
 		// configure respond to requests delay
 		sap.ui.core.util.MockServer.config(jQuery.extend({
 			autoRespond : true,
-			autoRespondAfter : 1000
+			autoRespondAfter : 2000
 		}, oConfig));
 
 		// create mockserver
