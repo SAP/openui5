@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ProgressIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, library, Control, ValueStateSupport) {
 	"use strict";
 
 
@@ -75,10 +75,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
-
-	ProgressIndicator.prototype.init = function () {
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
-	};
 
 	ProgressIndicator.prototype.onAfterRendering = function() {
 		//if the user sets a height, this wins against everything else, therefore the styles have to be calculated and set here
@@ -152,14 +148,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	ProgressIndicator.prototype._getStateText = function () {
-		switch (this.getState()) {
-			case sap.ui.core.ValueState.Warning:
-				return this._oResourceBundle.getText("VALUE_STATE_WARNING");
-			case sap.ui.core.ValueState.Error:
-				return this._oResourceBundle.getText("VALUE_STATE_ERROR");
-			case sap.ui.core.ValueState.Success:
-				return this._oResourceBundle.getText("VALUE_STATE_SUCCESS");
-		}
+		return ValueStateSupport.getAdditionalText(this.getState());
 	};
 
 	return ProgressIndicator;
