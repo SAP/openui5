@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			var aModules = this.oConfiguration.modules;
 			if ( this.oConfiguration.getDebug() ) {
 				// add debug module if configured
-				aModules.unshift("sap-ui-debug");
+				aModules.unshift("sap.ui.debug.DebugEnv");
 			}
 			// enforce the core library as the first loaded module
 			var i = jQuery.inArray("sap.ui.core.library", aModules);
