@@ -21,13 +21,14 @@
 		</headerContent>
 		
 		<ObjectHeader
+			id="entityHeader"
 			title="{/name}"
 			responsive="true"
-			backgroundDesign="Translucent" >
-			<customData>
-				<core:CustomData writeToDom="true" key="deprecated" value="{/deprecated}" />
-			</customData>
-
+			backgroundDesign="Translucent" 
+			number="{/deprecatedMark}"
+			numberState="Warning"
+			intro="{/deprecatedDescription}">
+			
 			<attributes>
 				<ObjectAttribute
 					title="Application Component"
@@ -53,6 +54,8 @@
 			</attributes>
 			
 			<headerContainer>
+		
+			
 				<IconTabBar
 					id="tabBar"
 					expanded="{device>/isNoPhone}"
@@ -64,7 +67,7 @@
 							key="about"
 							text="About"
 							visible="{/show/about}" >
-							<Text text="{/description}" class="entityAbout" />
+							<Text text="{/description}" />
 							<Table
 								class="myTable"
 								visible="{/show/values}"
@@ -149,7 +152,12 @@
 												</customData>
 											</Link>
 											<Text text="{defaultValue}" wrapping="false" />
-											<Text text="{doc}" />
+											<l:VerticalLayout>
+												<Text text="{doc}" />
+												<ObjectStatus
+													text="{deprecatedDescription}"
+													state="Warning"	/>
+											</l:VerticalLayout>
 											<Label text="{since}" />
 										</cells>
 									</ColumnListItem>
@@ -188,13 +196,19 @@
 													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
 												</customData>
 											</Text>
+		
 											<Text text="{cardinality}" wrapping="false" />
 											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
 												<customData>
 													<core:CustomData key="type" value="{type}" />
 												</customData>
 											</Link>
-											<Text text="{doc}" />
+											<l:VerticalLayout>
+												<Text text="{doc}" />
+												<ObjectStatus
+													text="{deprecatedDescription}"
+													state="Warning"	/>
+											</l:VerticalLayout>
 											<Label text="{since}" />
 										</cells>
 									</ColumnListItem>
@@ -239,7 +253,12 @@
 													<core:CustomData key="type" value="{type}" />
 												</customData>
 											</Link>
-											<Text text="{doc}" />
+											<l:VerticalLayout>
+												<Text text="{doc}" />
+												<ObjectStatus
+													text="{deprecatedDescription}"
+													state="Warning"	/>
+											</l:VerticalLayout>
 											<Label text="{since}" />
 										</cells>
 									</ColumnListItem>
@@ -278,7 +297,12 @@
 													<core:CustomData key="type" value="{type}" />
 												</customData>
 											</Link>
-											<Text text="{doc}" />
+											<l:VerticalLayout>
+												<Text text="{doc}" />
+												<ObjectStatus
+													text="{deprecatedDescription}"
+													state="Warning"	/>
+											</l:VerticalLayout>
 											<Label text="{since}" />
 										</cells>
 									</ColumnListItem>
@@ -317,14 +341,19 @@
 													<core:CustomData key="type" value="{type}" />
 												</customData>
 											</Link>
-											<Text text="{doc}" />
+											<l:VerticalLayout>
+												<Text text="{doc}" />
+												<ObjectStatus
+													text="{deprecatedDescription}"
+													state="Warning"	/>
+											</l:VerticalLayout>
 											<Label text="{since}" />
 										</cells>
 									</ColumnListItem>
 								</items>
 							</Table>
 						</IconTabFilter>
-
+		
 					</items>
 				</IconTabBar>
 			</headerContainer>

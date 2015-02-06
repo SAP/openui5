@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ProgressIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ProgressIndicator = Control.extend("sap.ui.commons.ProgressIndicator", /** @lends sap.ui.commons.ProgressIndicator.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
 
@@ -37,34 +37,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Switches enabled state of the control. Disabled fields have different colors, and can not be focused.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * The color of the bar. Enumeration sap.ui.core.BarColor provides CRITICAL (yellow), NEGATIVE (red), POSITIVE (green), NEUTRAL (blue) (default value).
 			 */
 			barColor : {type : "sap.ui.core.BarColor", group : "Appearance", defaultValue : sap.ui.core.BarColor.NEUTRAL},
-	
+
 			/**
 			 * The text value to be displayed in the bar.
 			 */
 			displayValue : {type : "string", group : "Appearance", defaultValue : '0%'},
-	
+
 			/**
 			 * The numerical value for the displayed length of the progress bar.
 			 */
 			percentValue : {type : "int", group : "Data", defaultValue : 0},
-	
+
 			/**
 			 * Specifies whether the current value shall be rendered inside the bar.
 			 */
 			showValue : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * The width of the control.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
 		}
 	}});
-	
+
 	/**
 	 * Function is called when ProgressIndicator is clicked.
 	 *
@@ -72,25 +72,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	ProgressIndicator.prototype.onclick = function(oEvent) {
-	
+
 		// Set focus to whole ProgressIndicator control
 		this.focus();
-	
+
 	};
-	
+
 	ProgressIndicator.prototype.setEndBar = function () {
-	
+
 		var widthBar = this.getPercentValue();
 		var widthBorder;
 		var sBarColor = this.getBarColor();
 		var time;
-	
+
 		this.oBar  = this.getDomRef("bar");
 		this.oEnd  = this.getDomRef("end");
 		this.oBox  = this.getDomRef("box");
-	
+
 		jQuery(this.oEnd).removeClass('sapUiProgIndEndHidden');
-	
+
 		switch (sBarColor) {
 			case "POSITIVE":
 				jQuery(this.oEnd).addClass('sapUiProgIndPosEnd');
@@ -108,52 +108,52 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				jQuery(this.oEnd).addClass('sapUiProgIndEnd');
 				break;
 		}
-	
+
 		if (widthBar > 100) {
 			widthBorder = (10000 / widthBar) + '%';
 		} else {
 			widthBorder = '100%';
 		}
-	
+
 		if (widthBar > 100) {
 			time = (widthBar - 100) * 20;
 		} else {
 			time = (100 - widthBar) * 20;
 		}
-	
+
 		jQuery(this.oBox).animate({width: widthBorder}, 0, 'linear');
-	
+
 		if (this.bRtl) {
 			jQuery(this.oEnd).animate({right: widthBorder}, time, 'linear');
 		} else {
 			jQuery(this.oEnd).animate({left: widthBorder}, time, 'linear');
 		}
-	
+
 		jQuery(this.oBar).animate({width: widthBar + '%'}, time, 'linear');
 		if (!this.oThis) {
 			this.oThis = this.$();
 		}
 		this.oThis.attr('aria-valuenow', widthBar + '%');
-	
+
 	};
-	
+
 	ProgressIndicator.prototype.setEndBarGoesBack = function (iPercentValue) {
-	
+
 		var widthBar = this.getPercentValue();
 		var widthBorder;
 		var sBarColor = this.getBarColor();
 		var time;
-	
+
 		this.oBar  = this.getDomRef("bar");
 		this.oEnd  = this.getDomRef("end");
 		this.oBox  = this.getDomRef("box");
-	
+
 		if (iPercentValue > 100) {
 			widthBorder = (10000 / iPercentValue) + '%';
 		} else {
 			widthBorder = '100%';
 		}
-	
+
 		switch (sBarColor) {
 			case "POSITIVE":
 				jQuery(this.oEnd).removeClass('sapUiProgIndPosEnd');
@@ -171,31 +171,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				jQuery(this.oEnd).removeClass('sapUiProgIndEnd');
 				break;
 		}
-	
+
 		jQuery(this.oEnd).addClass('sapUiProgIndEndHidden');
-	
+
 		if (widthBar > 100) {
 			time = (widthBar - 100) * 20;
 		} else {
 			time = (100 - widthBar) * 20;
 		}
-	
+
 		jQuery(this.oBox).animate({width: widthBorder}, 0, 'linear');
-	
+
 		if (this.bRtl) {
 			jQuery(this.oEnd).animate({right: widthBorder}, time, 'linear');
 		} else {
 			jQuery(this.oEnd).animate({left: widthBorder}, time, 'linear');
 		}
-	
+
 		jQuery(this.oBar).animate({width: widthBar + '%'}, time, 'linear');
 		if (!this.oThis) {
 			this.oThis = this.$();
 		}
 		this.oThis.attr('aria-valuenow', widthBar + '%');
-	
+
 	};
-	
+
 	/**
 	 * Property setter for the PercentValue
 	 * A new rendering is not necessary, only the bar has to be moved.
@@ -205,27 +205,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @public
 	 */
 	ProgressIndicator.prototype.setPercentValue = function(iPercentValue) {
-	
+
 		var widthBar = this.getPercentValue();
 		var widthBorder;
-	
+
 		this.oBar  = this.getDomRef("bar");
 		this.oEnd  = this.getDomRef("end");
 		this.oBox  = this.getDomRef("box");
-	
+
 		var that = this;
 		var time;
-	
+
 		if (iPercentValue < 0) {
 			iPercentValue = 0;
 		}
-	
+
 		if (iPercentValue > 100) {
 			widthBorder = (10000 / iPercentValue) + '%';
 		} else {
 			widthBorder = '100%';
 		}
-	
+
 		if (!this.oBar) {
 			// Not already rendered -> return and render
 			time = iPercentValue * 20;
@@ -233,22 +233,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			jQuery(this.oBar).animate({width: iPercentValue + '%'}, time, 'linear');
 			return this;
 		}
-	
+
 		if (iPercentValue > 100 && widthBar <= 100) {
 			time = (100 - widthBar) * 20;
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
 			jQuery(this.oBar).animate({width: '100%'}, time, 'linear', function() {
 			that.setEndBar();
 			});
-		}
-		else if (iPercentValue <= 100 && widthBar > 100) {
+		} else if (iPercentValue <= 100 && widthBar > 100) {
 			time = (widthBar - 100) * 20;
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
 			jQuery(this.oBar).animate({width: '100%'}, time, 'linear', function() {
 			that.setEndBarGoesBack();
 			});
-		}
-		else if (iPercentValue > 100 && widthBar > 100) {
+		} else if (iPercentValue > 100 && widthBar > 100) {
 			if (iPercentValue > widthBar) {
 				time = (iPercentValue - widthBar) * 20;
 			} else {
@@ -257,13 +255,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			widthBorder = (10000 / iPercentValue) + '%';
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
 			jQuery(this.oBox).animate({width: widthBorder}, 0, 'linear');
-	
+
 			if (this.bRtl) {
 				jQuery(this.oEnd).animate({right: widthBorder}, time, 'linear');
 			} else {
 				jQuery(this.oEnd).animate({left: widthBorder}, time, 'linear');
 			}
-	
+
 			jQuery(this.oBar).animate({width: iPercentValue + '%'}, time, 'linear', function() {
 			});
 			if (!this.oThis) {
@@ -283,10 +281,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 			this.oThis.attr('aria-valuenow', iPercentValue + '%');
 		}
-	
+
 		return this;
 	};
-	
+
 
 	return ProgressIndicator;
 

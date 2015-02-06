@@ -127,31 +127,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			Item.prototype.exit.call(this, oEvent);
 		}
 	};
+
 	
 	IconTabFilter.prototype.invalidate = function() {
 		var oIconTabBar,
-			oObjectHeader;
+			oIconTabHeader;
 	
-		// the iconTabHeader is rendered by the IconTabBar or the ObjectHeader or standalone, we treat these cases here
+		// the iconTabHeader is rendered by the IconTabBar or standalone, we treat these cases here
 		if (this.getParent() instanceof sap.m.IconTabHeader && this.getParent().getParent() instanceof sap.m.IconTabBar) {
-			oIconTabBar = this.getParent().getParent();
+			oIconTabHeader = this.getParent(); 
+			oIconTabBar = oIconTabHeader.getParent();
 			if (!arguments.length) {
 				// only invalidate the header if invalidate was not called from a child control (content)
-				this.getParent().invalidate();
+				// by default the IconTabHeader.invalidate() method invalidates the whole IconTabBar
+				// here the IconTabHeader is invalidated with the standard Control.invalidate functionality 
+				sap.ui.core.Control.prototype.invalidate.apply(oIconTabHeader, arguments);
 			} else {
-				if (oIconTabBar.getParent() instanceof sap.m.ObjectHeader) {
-					// invalidate the object header to re-render IconTabBar content and header
-					oObjectHeader = oIconTabBar.getParent();
-					oObjectHeader.invalidate();
-				} else {
-					// invalidate the IconTabBar to re-render the content (this will not update the header)
-					oIconTabBar.invalidate();
-				}
+				// invalidate the IconTabBar
+				oIconTabBar.invalidate();
 			}
 		} else {
 			// if used standalone just invalidate this filter element
 			sap.ui.core.Element.prototype.invalidate.apply(this, arguments);
 		}
+	};
+	
+	IconTabFilter.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+
+		// invalidate the whole IconTabBar - the header and the content
+		
+		if (sAggregationName == "content") {
+			sap.ui.core.Element.prototype.removeAllAggregation.call(this, sAggregationName, true);
+			this.invalidate(true);
+		} else {
+			sap.ui.core.Element.prototype.removeAllAggregation.apply(this, arguments);
+		}
+		
+		return this;
+	};
+
+	IconTabFilter.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		
+		// invalidate the whole IconTabBar - the header and the content
+		
+		var oChild;
+		
+		if (sAggregationName == "content") {
+			oChild = sap.ui.core.Element.prototype.removeAggregation.call(this, sAggregationName, vObject, true);
+			this.invalidate(true);
+		} else {
+			oChild = sap.ui.core.Element.prototype.removeAggregation.apply(this, arguments);
+		}
+		
+		return oChild;
 	};
 
 	/**

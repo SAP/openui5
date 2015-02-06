@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
+		var mAccProps = {};
 
 		oRm.write("<div");
 		oRm.writeControlData(oHead);
@@ -33,6 +34,8 @@ sap.ui.define(['jquery.sap.global'],
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
+
+		oRm.writeAccessibilityState(oHead);
 
 		oRm.write(">"); // div element
 
@@ -55,6 +58,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapUiCalHeadB1");
 		oRm.writeAttribute('tabindex', "-1");
 		oRm.writeClasses();
+		if (oHead.getAriaLabelButton1()) {
+			mAccProps["label"] = oHead.getAriaLabelButton1();
+		}
+		oRm.writeAccessibilityState(null, mAccProps);
+		mAccProps = {};
 		oRm.write(">"); // button element
 		oRm.write(oHead.getTextButton1() || "");
 		oRm.write("</button>");
@@ -65,6 +73,10 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapUiCalHeadB2");
 		oRm.writeAttribute('tabindex', "-1");
 		oRm.writeClasses();
+		if (oHead.getAriaLabelButton2()) {
+			mAccProps["label"] = oHead.getAriaLabelButton2();
+		}
+		oRm.writeAccessibilityState(null, mAccProps);
 		oRm.write(">"); // button element
 		oRm.write(oHead.getTextButton2() || "");
 		oRm.write("</button>");

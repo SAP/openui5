@@ -27,7 +27,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 	 */
 	var XMLView = View.extend("sap.ui.core.mvc.XMLView", /** @lends sap.ui.core.mvc.XMLView.prototype */ { metadata : {
 	
-		library : "sap.ui.core"
+		library : "sap.ui.core",
+		specialSettings : {
+			/**
+			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * then that other XMLView is provided with this setting to be able to delegate
+			 * View functionality (createId, getController) to that 'real' view.
+			 */
+			containingView : true,
+			/**
+			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * that subtree is provided with this setting.
+			 */
+			xmlNode : true
+		}
 	}});
 	
 	

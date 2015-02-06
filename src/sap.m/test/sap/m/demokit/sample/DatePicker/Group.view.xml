@@ -3,17 +3,19 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox class="marginBoxContent">
+	<VBox class="sapUiSmallMargin">
 		<Label text="simple DatePicker" labelFor="DP1"/>
 		<DatePicker
 			id="DP1"
 			placeholder="Enter Date ..."
-			change="handleChange"/>
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
 		<Label text="DatePicker with given Value and Formatter" labelFor="DP2"/>
 		<DatePicker
 			id="DP2"
 			value="2014-03-26" valueFormat="yyyy-MM-dd" displayFormat="long"
-			change="handleChange"/>
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
 		<Label text="DatePicker with given DateValue and Formatter" labelFor="DP3"/>
 		<DatePicker
 			id="DP3"
@@ -22,16 +24,19 @@
 		<Text
 			id="T1"
 			text="change event result"
+			class="sapUiSmallMarginBottom"
 			/>
 		<Label text="DatePicker using DataBinding" labelFor="DP4"/>
 		<DatePicker
 			id="DP4"
 			value="{path:'/dateValue', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"
+			class="sapUiSmallMarginBottom"
 			/>
 		<Label text="Text bound to the same model like DatePicker" labelFor="T2" />
 		<Text
 			id="T2"
 			text="{path:'/dateValue', type:'sap.ui.model.type.Date', formatOptions: { style: 'long'}}"
+			class="sapUiSmallMarginBottom"
 			/>
 	</VBox>
 </mvc:View>

@@ -16,8 +16,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Generally, you would create at least two radio button controls which should have the same GroupName;
-	 * by this, you provide a limited choice for the user. Triggers an Event when User makes a change.
+	 * RadioButton is a control similar to CheckBox. It allows the user to choose only one of the predefined set of options.
+	 *
+	 * Usually, RadioButton is used in a group with other RadioButtons (with the groupName property or by using sap.m.RadioButtonGroup), thus providing a limited choice for the user.
+	 * An event is triggered when the user makes a change of the selection.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -81,7 +83,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
 			 * @since 1.25
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None}
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+			 * @since 1.28
+			 */
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin}
 		},
 		events : {
 
@@ -324,6 +332,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RadioButton.prototype.applyFocusInfo = function(oFocusInfo) {
 
 		this.$().focus();
+	};
+
+	/*
+	 * Sets the textAlign to the internal label
+	 *
+	 * @param {string} sAlign
+	 * @return {sap.m.RadioButton}
+	 * @since 1.28
+	 * @public
+	 */
+	RadioButton.prototype.setTextAlign = function(sAlign) {
+		this.setProperty("textAlign", sAlign, true);
+		if (this._oLabel) {
+			this._oLabel.setTextAlign(this.getTextAlign());
+		} else {
+			this._createLabel("textAlign", this.getTextAlign());
+		}
+		return this;
 	};
 
 

@@ -1,7 +1,10 @@
 sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 
 	onInit: function () {
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/uploadCollection.json");
+
+		// set mock data
+		var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json")
+		var oModel = new sap.ui.model.json.JSONModel(sPath);
 		this.getView().setModel(oModel);
 
 		var aDataCB= {
@@ -76,31 +79,30 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 		if (oEvent) {
 			var oData = this.oView.getModel().getData();
 			var oItem = {};
-			var sUploadedFiles = oEvent.getParameters().oSource.mProperties.value;
-			if (oEvent.getSource()._oFileUploader.getMultiple() && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-				sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
+			var sUploadedFile = oEvent.getParameters().getParameter("fileName");
+			// at the moment parameter fileName is not set in IE9
+			if (!sUploadedFile) {
+				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+				sUploadedFile = aUploadedFile[0];
 			}
-			var aUploadedFiles = sUploadedFiles.split(/\" "/);
-			for (var i = 0; i < aUploadedFiles.length; i++) {
-				oItem = {
-					"contributor" : "You",
-					"documentId" : oData.items[1].documentId,
-					"fileName" : aUploadedFiles[i],
-					"fileSize" : 10, // TODO get file size
-					"mimeType" : "",
-					"thumbnailUrl" : "",
-					"uploadedDate" : fnCurrentDate(),
-					"url" : "myUrl"
-				};
-				oData.items.unshift(oItem);
+			var nDocId = jQuery.now(); // generate Id
+			oItem = {
+				"contributor" : "You",
+				"documentId" : nDocId.toString(),
+				"fileName" : sUploadedFile,
+				"fileSize" : 10, // TODO get file size
+				"mimeType" : "",
+				"thumbnailUrl" : "",
+				"uploadedDate" : fnCurrentDate(),
+				"url" : "myUrl"
 			};
+			oData.items.unshift(oItem);
 			this.oView.getModel().setData(oData);
 			sap.m.MessageToast.show("Upload successful");
 		}
 	},
 
 	onPress: function (oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show(oEvent.getSource().getId() + " Pressed");
 	},
 

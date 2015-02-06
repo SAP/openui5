@@ -15,6 +15,9 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Int16</code></a>.
 	 *
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>number</code>.
+	 *
 	 * @extends sap.ui.model.odata.type.Int
 	 *
 	 * @author SAP SE
@@ -23,9 +26,13 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int16
 	 * @param {object} [oFormatOptions]
-	 *   format options, see {@link sap.ui.model.odata.type.Int#setFormatOptions}
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link sap.ui.model.odata.type.Int#setConstraints}
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
+	 * @param {object} oConstraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
+	 * @param {boolean|string} [oConstraints.nullable=true]
+	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -40,7 +47,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	/**
 	 * Returns the type's name.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 *   the type's name
 	 * @public
 	 */

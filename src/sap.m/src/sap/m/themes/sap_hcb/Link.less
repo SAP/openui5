@@ -16,15 +16,14 @@
 	text-decoration: underline;
 }
 
-/* Hover Decoration only for desktop clients*/
-.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+.sapMLnk:focus:not(.sapMLnkDsbl) {
 	text-decoration: none;
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
-.sap-desktop[data-sap-ui-browser^="ie"] {
+html[data-sap-ui-browser^="ie"] {
 	.sapMLnk:focus {
 		outline: none;
 		position: relative;
@@ -48,10 +47,6 @@
 
 .sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
 	outline: none;
-}
-
-.sapMLnk:active {
-	background-color: transparent;
 }
 
 .sapUiFormEdit .sapMLnk {

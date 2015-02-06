@@ -1,6 +1,11 @@
 /* ============================================= */
 /* CSS for control sap.m/ObjectHeaderItem.control */
 /* ============================================= */
+.sapMOH h1, .sapMOHR h1 {
+	margin: 0;
+	font-weight: normal;
+}
+
 .sapMOH {
 	margin: 1rem;
 	padding: 1rem;
@@ -46,15 +51,10 @@
 	margin-bottom: 1rem;
 }
 
-.sapMOHIntroActive > a,.sapMOHTitleActive {
-	color: @sapUiLink;
-	text-decoration: none;
-}
-
 .sapMOHIntroActive > a:active,
 .sap-desktop .sapMOHIntroActive > a:hover,
-.sapMOHTitleActive .sapMText:active,
-.sap-desktop .sapMOHTitleActive .sapMText:hover {
+.sapMOHTitleActive h1 .sapMText:active,
+.sap-desktop .sapMOHTitleActive h1 .sapMText:hover {
 	text-decoration: underline;
 }
 
@@ -291,7 +291,7 @@ div[class*='sapMOHRBg'] {
 .sapMOHR {
 	width: 100%;
 	height: 100%;
-	padding: 1.1rem 2rem 0 1.5rem;
+	padding: 1.1rem 2rem 0 2rem;
 	box-sizing: border-box;
 }
 
@@ -334,7 +334,7 @@ div[class*='sapMOHRBg'] {
 }
 
 .sapMOHRTitleIcon > .sapMOHRTitle {
-	margin-left: 3.5rem;
+	margin-left: 4rem;
 	min-height: 3.375rem;
 }
 
@@ -372,12 +372,24 @@ html[data-sap-ui-browser ^= "ie"] {
 .sapMOHR .sapMObjStatusMarker{
 	font-family: SAP-icons;
 	font-size: 1rem;
-	padding-left: 0.5rem;
 	white-space: nowrap;
 }
 
 .sapMOHR .sapMObjStatusMarker .sapUiIcon {
 	display: inline;
+	margin-left: 0.5rem;
+}
+
+.sapMOHR .sapMObjStatusMarker.sapMObjStatusMarkerOpposite .sapUiIcon {
+	margin-right: 0.5rem;
+	margin-left: 0;
+}
+
+/* overwrite transform for the markers favorite and flag icon */
+html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
+	-ms-transform: none; /* IE 9 */
+	-webkit-transform: none; /* Chrome, Safari, Opera */
+	transform: none;
 }
 
 .sapMOHRIntro {
@@ -403,6 +415,7 @@ html[data-sap-ui-browser ^= "ie"] {
 .sap-desktop .sapMOHRTitleActive .sapMOHRTitleText:hover {
 	text-decoration: underline;
 }
+
 .sapMOHRTitleArrow {
 	display: inline-block;
 	vertical-align: top;
@@ -441,13 +454,20 @@ html[data-sap-ui-browser ^= "ie"] {
 	width: 30%;
 	box-sizing: border-box;
 	padding: 0.85rem 0 0 1rem;
+	text-align: end;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
 	text-align: right;
+}
+
+html[dir=rtl][data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
+	text-align: left;
 }
 
 .sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates .sapMObjectAttributeDiv > span[class*='sapMObjectAttribute'] {
 	float: none;
 }
-
 
 .sapMOHR .sapMObjectNumber {
 	display: inline-block;
@@ -553,13 +573,21 @@ html[data-sap-ui-browser ^= "ie"] {
 	box-sizing: border-box;
 }
 
-.sapMOHRTwoCols .sapMOHRStatesCont1 {
+.sapMOHRTwoCols.sapMOHRStatesCont1 {
 	padding-right: 0.5rem;
 }
 
 .sapMOHRTwoCols.sapMOHRStatesCont2 {
-	text-align: right;
+	text-align: end;
 	padding-left: 0.5rem;
+}
+
+html[data-sap-ui-browser^=ie] .sapMOHRTwoCols.sapMOHRStatesCont2 {
+	text-align: right;
+}
+
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHRTwoCols.sapMOHRStatesCont2 {
+	text-align: left;
 }
 
 .sapMOHRTwoCols.sapMOHRStatesCont2 .sapMOHRAttr .sapMObjectAttributeDiv > span[class*='sapMObjectAttribute'] {

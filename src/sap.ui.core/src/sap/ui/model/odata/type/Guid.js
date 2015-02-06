@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
-		'sap/ui/model/SimpleType', 'sap/ui/model/ValidateException'],
-	function(FormatException, ParseException, SimpleType, ValidateException) {
+sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
+		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var rGuid = /^[A-F0-9]{8}-([A-F0-9]{4}-){3}[A-F0-9]{12}$/i;
@@ -21,52 +21,78 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	}
 
 	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Guid} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		oType.oConstraints = undefined;
+		if (vNullable === false || vNullable === "false") {
+			oType.oConstraints = {nullable: false};
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
+	}
+
+	/**
 	 * Constructor for an OData primitive type <code>Edm.Guid</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Guid</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>string</code>.
+	 *
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @alias sap.ui.model.odata.type.Guid
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmGuid = SimpleType.extend("sap.ui.model.odata.type.Guid",
+	var EdmGuid = ODataType.extend("sap.ui.model.odata.type.Guid",
 			/** @lends sap.ui.model.odata.type.Guid.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
 
 	/**
-	 * Formats the given value to the given target type
+	 * Formats the given value to the given target type.
 	 *
 	 * @param {string} sValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   is formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
 	EdmGuid.prototype.formatValue = function(sValue, sTargetType) {
-		if (sValue == undefined || sValue == null) {
+		if (sValue === undefined || sValue === null) {
 			return null;
 		}
 		if (sTargetType === "string" || sTargetType === "any") {
@@ -79,7 +105,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	/**
 	 * Returns the type's name.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 *   the type's name
 	 * @public
 	 */
@@ -88,15 +114,16 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	};
 
 	/**
-	 * Parses the given value, which is expected to be of the given type, to a GUID.
+	 * Parses the given value to a GUID.
 	 *
 	 * @param {string} sValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>)
+	 *   the source type (the expected type of <code>sValue</code>); must be "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
 	 */
@@ -121,30 +148,14 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/ParseException',
 	};
 
 	/**
-	 * Sets the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	EdmGuid.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
-
-		this.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			this.oConstraints = {nullable: false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
-		}
-	};
-
-	/**
 	 * Validates whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * given constraints.
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException}
+	 *   if the value is not valid
 	 * @public
 	 */
 	EdmGuid.prototype.validateValue = function (sValue) {

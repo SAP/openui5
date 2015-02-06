@@ -149,7 +149,6 @@ sap.ui.controller("sap.m.sample.TableBreadcrumb.Page", {
 	handleOrderPress: function (oEvent) {
 		var aProductsSelected = sap.m.sample.TableBreadcrumb.Formatter.listProductsSelected(this.getView());
 		if (aProductsSelected) {
-			jQuery.sap.require("sap.m.MessageToast");
 			sap.m.MessageToast.show("Ordering: " + aProductsSelected.map(function (mProduct) {
 				return mProduct.Name;
 			}));

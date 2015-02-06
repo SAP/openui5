@@ -163,7 +163,7 @@
 
 /* In iOS/mac the line content is shown at the bottom of the line.
 the following lines remove the responsible top margin/padding  */
-html[data-sap-ui-os^="mac"],
+html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"],
 html[data-sap-ui-os^="iOS"] {
 	.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
 	.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
@@ -186,6 +186,90 @@ html[data-sap-ui-os^="iOS"] {
 /* ************************************************************************************* */
 /* Borderless Design (Cozy Form Factor)                                                  */
 /* ************************************************************************************* */
+/* In iOS/mac the line content is shown at the bottom of the line.
+the following lines remove the responsible top margin/padding  */
+html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"] .sapMUC .sapMListShowSeparatorsNone,
+html[data-sap-ui-os^="iOS"] .sapMUC .sapMListShowSeparatorsNone {
+	/* ---------------------------------------*/
+	/* General List Item  (Cozy Form Factor)  */
+	/* ---------------------------------------*/
+	.sapMLIB.sapMUCListItem {
+		>.sapMLIBContent.sapMLIBContentMargin {
+			margin-top:			0rem;	//	no idea why this is needed to align
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0rem;
+		}
+
+		.sapMUCText {
+			margin-top: 		0rem;
+		}
+
+		.sapMUCBtnHL {
+			margin-top	:		0rem;
+		}
+	}
+
+	/* --------------------------------------*/
+	/* Single List Item  (Cozy Form Factor)  */
+	/* --------------------------------------*/
+	.sapMLIB.sapMUCListSingleItem {
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0rem;
+		}
+
+		.sapMUCText {
+			margin-top: 		0rem;
+		}
+
+		.sapMUCBtnHL {
+			margin-top:			0rem;
+		}
+	}
+
+	/* -------------------------------------*/
+	/* First List Item  (Cozy Form Factor)  */
+	/* -------------------------------------*/
+	.sapMLIB.sapMUCListFirstItem {
+	.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0.5rem;
+		}
+
+		.sapMUCText {
+			margin-top: 		0.5rem;
+		}
+
+		.sapMUCBtnHL {
+			margin-top	:		0.5rem;
+		}
+	}
+	/* ------------------------------------*/
+	/* Last List Item  (Cozy Form Factor)  */
+	/* ------------------------------------*/
+	.sapMLIB.sapMUCListLastItem {
+		>.sapMLIBContent.sapMLIBContentMargin {
+			margin-top:			0rem;	//	no idea why this is needed to align
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0rem;
+		}
+
+		.sapMUCText {
+			margin-top: 		0rem;
+		}
+
+		.sapMUCBtnHL {
+			margin-top	:		0rem;
+		}
+	}
+}
+
 .sapMUC .sapMListShowSeparatorsNone {
 	.sapMLIB.sapMUCListSingleItem,
 	.sapMLIB.sapMUCListFirstItem,
@@ -345,12 +429,39 @@ html[data-sap-ui-os^="iOS"] {
 /* ************************************************************************************* */
 /* In iOS/mac the content of the line is shown at the bottom of the line.
 the following lines remove the responsible top margin */
-html[data-sap-ui-os^="mac"].sapUiSizeCompact .sapMUC,
+html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"].sapUiSizeCompact .sapMUC,
 html[data-sap-ui-os^="iOS"].sapUiSizeCompact .sapMUC {
-		.sapMUCBtnHL {
-			margin-top:				1rem;
+	.sapMUCBtnHL {
+		margin-top:				1rem;
+	}
+
+	.sapMListShowSeparatorsNone {
+		/* ------------------------------------------*/
+		/* General List Item  (Compact Form Factor)  */
+		/* ------------------------------------------*/
+		.sapMLIB.sapMUCListItem .sapMUCBtnHL {
+				margin-top:			1rem;
+		}
+		/* -----------------------------------------*/
+		/* Single List Item  (Compact Form Factor)  */
+		/* -----------------------------------------*/
+		.sapMLIB.sapMUCListSingleItem .sapMUCBtnHL {
+				margin-top:			1rem;
+		}
+		/* ----------------------------------------*/
+		/* First List Item  (Compact Form Factor)  */
+		/* ----------------------------------------*/
+		.sapMLIB.sapMUCListFirstItem sapMUCBtnHL {
+				margin-top:			1.5rem;
+		}
+		/* ---------------------------------------*/
+		/* Last List Item  (Compact Form Factor)  */
+		/* ---------------------------------------*/
+		.sapMLIB.sapMUCListLastItem .sapMUCBtnHL {
+				margin-top:			1rem;
 		}
 	}
+}
 
 .sapUiSizeCompact .sapMUC {
 	.sapMUC .sapMUCFileName.sapMLnk {

@@ -66,6 +66,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 */
 				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: sap.m.SwitchType.Default }
 			},
+			associations: {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
 			events: {
 
 				/**
@@ -124,11 +132,17 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 
 		Switch.prototype._setDomState = function(bState) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				sState = bState ? this._sOn : this._sOff;
+				sState = bState ? this._sOn : this._sOff,
+				oDomRef = this.getDomRef();
 
-			if (!this._$Switch) {
-				return this;
+			if (!oDomRef) {
+				return;
 			}
+
+			var sId = this.getId(),
+				oOnDomRef = oDomRef.querySelector("#" + sId + "-texton"),
+				oOffDomRef = oDomRef.querySelector("#" + sId + "-textoff"),
+				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby");
 
 			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
 
@@ -137,8 +151,19 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				this._$Checkbox[0].setAttribute("value", sState);
 			}
 
-			bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
-					: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+			if (bState) {
+				this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
+				oDomRef.setAttribute("aria-checked", "true");
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-textoff", sId + "-texton"));
+				oOnDomRef.removeAttribute("aria-hidden");
+				oOffDomRef.setAttribute("aria-hidden", "true");
+			} else {
+				this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+				oDomRef.setAttribute("aria-checked", "false");
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-texton", sId + "-textoff"));
+				oOnDomRef.setAttribute("aria-hidden", "true");
+				oOffDomRef.removeAttribute("aria-hidden");
+			}
 
 			this._$Switch.addClass(CSS_CLASS + "Trans");
 

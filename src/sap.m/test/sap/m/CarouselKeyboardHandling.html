@@ -376,17 +376,16 @@
 			var event = e;
 		});
 
-		var imgElephant = new sap.m.Image("elephant", {
-			src: "images/demo/nature/elephant.jpg",
-			alt: "Mighty Elephant",
-			densityAware: false,
-			decorative: false
+		var imgElephant = new sap.m.Text("elephant", {
+			text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the" +
+			" industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and " +
+			"scrambled it to make a type specimen book"
 		});
 
-		var imgFishImg = new Lightbox("fish", {
-			src: "images/demo/nature/fish.jpg",
-			large: "images/demo/nature/fish.jpg",
-			alt: "Lively Fish"
+		var imgFishImg = new sap.m.Text("fish", {
+			text: 'It is a long established fact that a reader will be distracted by the readable content of a page ' +
+			'when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution ' +
+			'of letters, as opposed to using "Content here, content here", making it look like readable English. '
 		});
 
 
@@ -535,6 +534,6 @@
 		</script>
 
 	</head>
-	<body id="body" class="sapUiBody">
+	<body id="body" class="sapUiBody" role="application">
 	</body>
 </html>

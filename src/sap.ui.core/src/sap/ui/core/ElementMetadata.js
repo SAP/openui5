@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/*global Promise */
+
 // Provides class sap.ui.core.ElementMetadata
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	function(jQuery, ManagedObjectMetadata) {
@@ -114,6 +116,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			jQuery.extend(oRenderer, vRenderer);
 			jQuery.sap.setObject(this.getRendererName(), oRenderer);
 		}
+
+		if (typeof oStaticInfo["designTime"] === "boolean") {
+			this._bHasDesignTime = oStaticInfo["designTime"];
+		} else if (oStaticInfo["designTime"]) {
+			this._bHasDesignTime = true;
+			this._oDesignTime = oStaticInfo["designTime"];
+		}
+
 	};
 	
 	ElementMetadata.prototype.afterApplySettings = function() {
@@ -125,6 +135,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		return this._sVisibility === "hidden";
 	};
 	
+	ElementMetadata.prototype.loadDesignTime = function() {
+		
+		var that = this;
+		return new Promise(function(fnResolve, fnReject) {
+			
+			if (!that._oDesignTime && that._bHasDesignTime) {
+				var sModule = jQuery.sap.getResourceName(that.getElementName(), ".designtime");
+				sap.ui.require([sModule], function(oDesignTime) {
+					that._oDesignTime = oDesignTime;
+					fnResolve(oDesignTime);
+				});
+			} else {
+				fnResolve(that._oDesignTime);
+			}
+			
+		});
+		
+	};
 
 	return ElementMetadata;
 

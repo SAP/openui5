@@ -920,6 +920,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getId() + "-inner";
 	};
 
+	/**
+	 * Message handling
+	 * @param {string} sName The Property Name
+	 * @param {array} aMessages Array of Messages
+	 */
+	InputBase.prototype.updateMessages = function(sName, aMessages) {
+		if (aMessages && aMessages.length > 0) {
+			this.setValueState(aMessages[0].type);
+			this.setValueStateText(aMessages[0].message);
+		} else {
+			this.setValueState(sap.ui.core.ValueState.None);
+		}
+	};
+
 	return InputBase;
 
 }, /* bExport= */ true);

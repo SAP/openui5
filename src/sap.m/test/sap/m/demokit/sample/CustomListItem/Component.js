@@ -10,7 +10,6 @@ sap.ui.core.UIComponent.extend("sap.m.sample.CustomListItem.Component", {
 				"sap.ui.layout"
 			]
 		},
-		includes : [ "CustomListItem/style.css" ],
 		config : {
 			sample : {
 				files : [

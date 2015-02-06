@@ -5,14 +5,14 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="navigationExamples sapUiFioriObjectPage"
+		class="navigationExamples"
 		width="100%" >
 		<l:content>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Variable width" />
+						<Title level="H2" text="Variable width" />
 					</Toolbar>
 				</headerToolbar>
 
@@ -33,7 +33,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Same width, transition effect" />
+						<Title level="H2" text="Same width, transition effect" />
 					</Toolbar>
 				</headerToolbar>
 

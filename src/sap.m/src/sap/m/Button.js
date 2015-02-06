@@ -70,7 +70,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *
 			 * If only one version of image is provided, set this value to false to avoid the attempt of fetching density perfect image.
 			 */
-			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true}
+			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		associations : {
 

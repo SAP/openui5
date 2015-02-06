@@ -45,6 +45,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.writeAttributeEscaped("tabindex","0");
 
+		// ARIA
+		rm.writeAccessibilityState(oCarousel, {
+			role: "list"
+		});
+
 		rm.write(">");
 
 		var aPages = oCarousel.getPages();
@@ -69,7 +74,13 @@ sap.ui.define(['jquery.sap.global'],
 			if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
 				rm.write(" sapMCrslBottomOffset");
 			}
-			rm.write("'>");
+			rm.write("' id='" + oCarousel.sId + "-" + oPage.sId + "-slide'");
+			// ARIA
+			rm.writeAccessibilityState(oPage, {
+				role:"listitem"
+			});
+
+			rm.write(">");
 				rm.renderControl(oCarousel._createScrollContainer(oPage, iIndex));
 			rm.write("</div>");
 		};
@@ -85,11 +96,11 @@ sap.ui.define(['jquery.sap.global'],
 		if (sap.ui.Device.system.desktop && iPageCount > 1) {
 			//heads up controls for desktop browsers
 			rm.write("<div class='sapMCrslControls sapMCrslHud'>");
-				rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabIndex='-1'><div class='sapMCrslHudInner'>");
+				rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabindex='-1'><div class='sapMCrslHudInner'>");
 				rm.renderControl(oCarousel._getNavigationArrow('left'));
 				rm.write("</div></a>");
 
-				rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabIndex='-1'><div class='sapMCrslHudInner'>");
+				rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabindex='-1'><div class='sapMCrslHudInner'>");
 				rm.renderControl(oCarousel._getNavigationArrow('right'));
 				rm.write("</div></a>");
 			rm.write("</div>");
@@ -108,6 +119,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Renders the page indicator, using the provided {@link sap.ui.core.RenderManager}.
+	 * Page indicator is only rendered if there is more than one carousel page
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param aPages array of controls to be rendered
@@ -115,14 +127,16 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	CarouselRenderer._renderPageIndicator = function(rm, iPageCount, bBottom){
 		//page indicator div
-		rm.write("<div class='sapMCrslControls sapMCrslBulleted" +
-				(bBottom ? " sapMCrslBottomOffset" : "") +
-				"'>");
-		for ( var i = 1; i <= iPageCount; i++) {
-			//item span
-			rm.write("<span data-slide=" + i + ">" + i + "</span>");
+		if (iPageCount > 1) {
+			rm.write("<div class='sapMCrslControls sapMCrslBulleted" +
+					(bBottom ? " sapMCrslBottomOffset" : "") +
+					"'>");
+			for ( var i = 1; i <= iPageCount; i++) {
+				//item span
+				rm.write("<span data-slide=" + i + ">" + i + "</span>");
+			}
+			rm.write("</div>");
 		}
-		rm.write("</div>");
 	};
 
 	return CarouselRenderer;

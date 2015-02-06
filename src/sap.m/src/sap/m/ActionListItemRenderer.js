@@ -40,6 +40,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 	};
 	
+	/**
+	 * Action list item does not respect counter property of the LIB
+	 * @overwrite
+	 */
+	ActionListItemRenderer.renderCounter = function(rm, oLI) {
+	};
+	
 
 	return ActionListItemRenderer;
 

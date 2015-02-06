@@ -2,7 +2,7 @@ sap.ui.controller("sap.m.sample.SelectDialog.C", {
 
 	onInit : function () {
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 	},
 
@@ -15,6 +15,7 @@ sap.ui.controller("sap.m.sample.SelectDialog.C", {
 	handleSelectDialogPress: function (oEvent) {
 		if (! this._oDialog) {
 			this._oDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.Dialog", this);
+			this._oDialog.setModel(this.getView().getModel());
 		}
 
 		// Multi-select if required
@@ -25,7 +26,9 @@ sap.ui.controller("sap.m.sample.SelectDialog.C", {
 		var bRemember = !!oEvent.getSource().data("remember");
 		this._oDialog.setRememberSelections(bRemember);
 
-		this._oDialog.setModel(this.getView().getModel());
+		// clear the old search filter
+		this._oDialog.getBinding("items").filter([]);
+
 		// toggle compact style
 		jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
 		this._oDialog.open();
@@ -39,7 +42,6 @@ sap.ui.controller("sap.m.sample.SelectDialog.C", {
 	},
 
 	handleClose: function(oEvent) {
-		jQuery.sap.require("sap.m.MessageToast");
 		var aContexts = oEvent.getParameter("selectedContexts");
 		if (aContexts.length) {
 			sap.m.MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));

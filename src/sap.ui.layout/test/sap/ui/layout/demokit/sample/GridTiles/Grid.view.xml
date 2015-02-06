@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
-	<l:Grid defaultSpan="L4 M6 S6" class="gridMarginTop">
+	<l:Grid defaultSpan="L4 M6 S6" class="sapUiSmallMarginTop">
 		<l:content>
 
 			<!-- Third / Half width items -->

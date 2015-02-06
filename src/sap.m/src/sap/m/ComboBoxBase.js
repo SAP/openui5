@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				/**
 				 * Defines the maximum width of the text field. This value can be provided in %, em, px… and all CSS units.
 				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: '100%'}
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -64,6 +64,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/* ----------------------------------------------------------- */
 
 		/**
+		 * Given an item, retrieve the corresponding list item.
+		 *
+		 * @param {sap.ui.core.Item} vItem
+		 * @returns {sap.m.StandardListItem | null}
+		 */
+		ComboBoxBase.prototype.getListItem = function(oItem) {
+			return (oItem && oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem")) || null;
+		};
+
+		/**
 		 * Map an item type of sap.ui.core.Item to an item type of sap.m.StandardListItem.
 		 *
 		 * @param {sap.ui.core.Item} oItem
@@ -80,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				sListItem = CSS_CLASS + "Item",
 				sListItemEnabled = oItem.getEnabled() ? "Enabled" : "Disabled",
 				sListItemSelected = (oItem === this.getSelectedItem()) ? sListItem + "Selected" : "",
-				oListItem = oItem.data(CSS_CLASS + "ListItem"),
+				oListItem = this.getListItem(oItem),
 				bItemVisible = oListItem ? oListItem.getVisible() : true;
 
 			oListItem = new sap.m.StandardListItem().addStyleClass(sListItem + " " + sListItem + sListItemEnabled + " " + sListItemSelected);
@@ -103,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 */
 		ComboBoxBase.prototype._findMappedItem = function(oListItem, aItems) {
 			for (var i = 0, aItems = aItems || this.getItems(), aItemsLength = aItems.length; i < aItemsLength; i++) {
-				if (aItems[i].data(ComboBoxBaseRenderer.CSS_CLASS + "ListItem") === oListItem) {
+				if (this.getListItem(aItems[i]) === oListItem) {
 					return aItems[i];
 				}
 			}
@@ -481,7 +491,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 */
 		ComboBoxBase.prototype.getVisibleItems = function() {
 			for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
-				oListItem = aItems[i].data(ComboBoxBaseRenderer.CSS_CLASS + "ListItem");
+				oListItem = this.getListItem(aItems[i]);
 
 				if (oListItem && oListItem.getVisible()) {
 					aVisibleItems.push(aItems[i]);
@@ -625,10 +635,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @protected
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
-			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
 
 			for (var i = 0, oListItem, aItems = this.getItems(); i < aItems.length; i++) {
-				oListItem = aItems[i].data(CSS_CLASS + "ListItem");
+				oListItem = this.getListItem(aItems[i]);
 				oListItem.setVisible(true);
 			}
 		};
@@ -809,14 +818,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeItem = function(vItem) {
-			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
 
 			// remove the item from the aggregation items
 			vItem = this.removeAggregation("items", vItem);
 
 			// remove the corresponding mapped item from the List
 			if (this.getList()) {
-				this.getList().removeItem(vItem && vItem.data(CSS_CLASS + "ListItem"));
+				this.getList().removeItem(this.getListItem(vItem));
 			}
 
 			// return the removed item or null

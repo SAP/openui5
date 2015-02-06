@@ -21,7 +21,12 @@
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
 
 				// Applications
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-skeleton/test/NavigationJourney.qunit.html");
+
+				// Md - skeleton
+				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-template/test/unit/UnitTests.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/md-template/test/opa/OpaTests.qunit.html");
+
+				// tdg
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Navigation.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/tdg/tests/Filter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/test/BuyProductJourney.qunit.html");
@@ -55,7 +60,7 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Button.qunit.html");
 
 				// Carousel
-				//Commented out since there have been failing tests during Git/Gerrit Builds. 
+				//Commented out since there have been failing tests during Git/Gerrit Builds.
 				//Seems like this happens since the sinon clock had been introduced to simulate
 				//delays.Needs further investigation
 				//suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Carousel.qunit.html");
@@ -143,12 +148,15 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/List.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ListBase.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ListBaseBinding.qunit.html");
-				
+
 				// Predefined Margins
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MarginCssClasses.qunit.html");
 
 				// MessageBox
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageBox.qunit.html");
+
+				// MessagePage
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessagePage.qunit.html");
 
 				// MessageToast
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/MessageToast.qunit.html");
@@ -197,7 +205,7 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nSortPanel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nGroupPanel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDialog.qunit.html");
-				
+
 				// Popover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Popover.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Popover.qunit.html?sap-ui-xx-fakeOS=ios"); // autoclose is implemented differently on mobile than on desktop
@@ -210,6 +218,9 @@
 
 				// RadioButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RadioButton.qunit.html");
+
+				// RadioButtonGroup
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RadioButtonGroup.qunit.html");
 
 				// RatingIndicator
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/RatingIndicator.qunit.html");
@@ -229,7 +240,7 @@
 				}
 
 				// SearchField
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SearchField_desktop.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SearchField.qunit.html");
 
 				// SegmentedButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/SegmentedButton.qunit.html");
@@ -254,6 +265,9 @@
 
 				// StandardTile
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/StandardTile.qunit.html");
+
+				// Support
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Support.qunit.html");
 
 				// Switch
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Switch.qunit.html");
@@ -281,11 +295,17 @@
 				// TileContainer
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TileContainer.qunit.html");
 
+				// Title
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Title.qunit.html");
+
 				// ToggleButton
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ToggleButton.qunit.html");
 
 				// Toolbar
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Toolbar.qunit.html");
+
+				// OverflowToolbar
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/OverflowToolbar.qunit.html");
 
 				// Token
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Token.qunit.html");
@@ -300,7 +320,7 @@
 
 				// ViewSettingsDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsDialog.qunit.html");
-				
+
 				// QUnit Tests for responsive behaviour (for example Responsive Margins)
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QUnitCompositesUsingIFrames.qunit.html");
 			}

@@ -4,14 +4,14 @@ sap.ui.controller("sap.m.sample.ContainerPadding.Page", {
 
 	onInit: function () {
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 	},
 
 	onDialogOpen: function (oEvent) {
 		if (!this.dialog) {
 			this.dialog = sap.ui.xmlfragment(
-				"sap.m.sample.ContentPadding.Dialog",
+				"sap.m.sample.ContainerPadding.Dialog",
 				this // associate controller with the fragment
 			);
 			this.getView().addDependent(this.dialog);

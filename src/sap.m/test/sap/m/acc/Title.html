@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Title - sap.m</title>
+		<script src="../../../../resources/sap-ui-core.js"
+				type="text/javascript" id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+		
+		function addTest(sText, oControl){
+			var sId = jQuery.sap.uid();
+			jQuery(function(){
+				jQuery("body").append("<h3 style='margin:5px'>"+sText+"</h3><div style='padding:1rem' id='"+sId+"'></div><hr>");
+				oControl.placeAt(sId);
+			});
+		}
+
+		jQuery(function(){
+			for (var level in sap.ui.core.TitleLevel) {
+				var sText = " with " + (level == sap.ui.core.TitleLevel.Auto ? "unspecified semantic level" : "semantic level " + level);
+				addTest("Title" + sText, new sap.m.Title({
+					text: "This is the title control" + sText,
+					level: level
+				}));
+			}
+			for (var level in sap.ui.core.TitleLevel) {
+				var sText = " with " + (level == sap.ui.core.TitleLevel.Auto ? "unspecified semantic level" : "semantic level " + level);
+				addTest("Title" + sText + " and a tooltip", new sap.m.Title({
+					text: "This is the title control" + sText,
+					level: level,
+					tooltip: "Some Tooltip"
+				}));
+			}
+		});
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h2 style="margin:5px;margin-bottom:15px">sap.m.Title</h2>
+	</body>
+</html>

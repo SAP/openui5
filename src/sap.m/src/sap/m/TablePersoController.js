@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	"use strict";
 
 
-	
+
 	/**
 	 * The TablePersoController can be used to connect a table that you want to provide
 	 * a personalization dialog for, with a persistence service such as one provided by
@@ -30,14 +30,14 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * @alias sap.m.TablePersoController
 	 */
 	var TablePersoController = ManagedObject.extend("sap.m.TablePersoController", /** @lends sap.m.TablePersoController */
-	
+
 	{
 		constructor: function(sId, mSettings) {
-	
+
 			ManagedObject.apply(this, arguments);
-	
+
 		},
-	
+
 		metadata: {
 			properties: {
 				"contentWidth": {type: "sap.ui.core.CSSSize"},
@@ -73,21 +73,21 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			},
 			library: "sap.m"
 		}
-	
+
 	});
-	
-	
+
+
 	/**
 	 * Initializes the TablePersoController instance after creation.
 	 *
 	 * @protected
 	 */
 	TablePersoController.prototype.init = function() {
-	
+
 		// Table Personalization schema
 		this._schemaProperty = "_persoSchemaVersion";
 		this._schemaVersion = "1.0";
-	
+
 		// To store the intermediate personalization data
 		this._oPersonalizations = null;
 		//Initialize delegate map
@@ -99,26 +99,26 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		//Internal flag which may be checked by clients which
 		//have workaround for missing event in place
 		this._triggersPersDoneEvent = true;
-	
+
 	};
-	
+
 	/**
 	 * Do some clean up: remove event delegates, etc
 	 *
 	 * @protected
 	 */
 	TablePersoController.prototype.exit = function() {
-	
+
 		// Clean up onBeforRendering delegates
 		this._callFunctionForAllTables(jQuery.proxy(function(oTable){
 			oTable.removeDelegate(this._mDelegateMap[oTable]);
 		}, this));
-		
+
 		delete this._mDelegateMap;
 		delete this._mTablePersMap;
 		delete this._mInitialTableStateMap;
 	};
-	
+
 	/**
 	 * Activates the controller, i.e. tries to retrieve existing persisted
 	 * personalizations, creates a TablePersoDialog for the associated
@@ -127,15 +127,15 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * @public
 	 */
 	TablePersoController.prototype.activate = function() {
-	
+
 		//Remember initial table columns states before personalization
 		this._callFunctionForAllTables(this._rememberInitialTableStates);
 		// Add 'onBeforeRendering' delegates to all tables
 		this._callFunctionForAllTables(this._createAndAddDelegateForTable);
-		
+
 		return this;
 	};
-	
+
 	/**
 	 * Returns a  _tablePersoDialog instance if available. It can be NULL if
 	 * the controller has not been activated yet.
@@ -145,8 +145,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	TablePersoController.prototype.getTablePersoDialog = function() {
 		return this.getAggregation("_tablePersoDialog");
 	};
-	
-	
+
+
 	/**
 	 * Applies the personalizations by getting the existing personalizations
 	 * and adjusting to the table.
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			jQuery.sap.log.error("Problem reading persisted personalization data.");
 		});
 	};
-	
+
 	/**
 	 * Creates 'onBeforeRendering' delegate for given table and adds it to the controller'
 	 * '_mDelegateMap'
@@ -190,14 +190,14 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			//By adding our function as a delegate to the table's 'beforeRendering' event,
 			//this._fnTableOnBeforeRenderingDel will be executed whenever the table is
 			//rendered or re-rendered
-			
+
 			oTable.addDelegate(oTableOnBeforeRenderingDel);
 			//Finally add delegate to map to enable proper housekeeping, i.e. cleaning
 			//up delegate when TablePersoController instance is destroyed
 			this._mDelegateMap[oTable] = oTableOnBeforeRenderingDel;
 		}
 	};
-	
+
 	/**
 	 * Creation of the TablePersoDialog based on the content of oTable and
 	 * save the personalizations
@@ -217,10 +217,10 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					showSelectAll: this.getShowSelectAll(),
 					showResetAll: this.getShowResetAll()
 			});
-	
+
 	// Link to this new TablePersoDialog via the aggregation
 		this.setAggregation("_tablePersoDialog", oTablePersoDialog);
-	
+
 	// When the TablePersoDialog closes, we want to retrieve the personalizations
 	// made, amend the table, and also persist them
 		oTablePersoDialog.attachConfirm(jQuery.proxy(function() {
@@ -229,9 +229,9 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			this.savePersonalizations();
 			this.firePersonalizationsDone();
 		}, this));
-	
+
 	};
-	
+
 	/**
 	 * Adjusts the table by getting the existing personalizations
 	 * and applying them to the table.
@@ -246,11 +246,11 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			} else {
 				this._callFunctionForAllTables(this._personalizeTable);
 			}
-			
+
 		}
 	};
-	
-	
+
+
 	/**
 	 * Personalizes the table, i.e. sets column order and visibility
 	 * according to the stored personalization settings
@@ -259,8 +259,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 */
 	TablePersoController.prototype._personalizeTable = function(oTable) {
 		var mPersoMap = this._getPersoColumnMap(oTable);
-		
-		//mPersoMap may be null if oTable's id is not static 
+
+		//mPersoMap may be null if oTable's id is not static
 		//or if any of the column ids is not static
 		if (!!mPersoMap && !!this._oPersonalizations) {
 			var bDoSaveMigration = false;
@@ -278,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 						bDoSaveMigration = true;
 					}
 				}
-				
+
 				if (oTableColumn) {
 					oTableColumn.setVisible(oNewSetting.visible);
 					oTableColumn.setOrder(oNewSetting.order);
@@ -286,29 +286,29 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					jQuery.sap.log.warning("Personalization could not be applied to column " + oNewSetting.id + " - not found!");
 				}
 			}
-			
+
 			if (bDoSaveMigration) {
 				this.savePersonalizations();
 			}
-	
+
 			// Force re-rendering of Table for column reorder
 			oTable.invalidate();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Persist the personalizations
 	 *
 	 * @public
 	 */
 	TablePersoController.prototype.savePersonalizations = function() {
-	
+
 		var oBundle = this._oPersonalizations;
-	
+
 		// Add schema version to bundle
 		oBundle[this._schemaProperty] = this._schemaVersion;
-	
+
 		// Commit to backend service
 		var oWritePromise = this.getPersoService().setPersData(oBundle);
 		oWritePromise.done(function() {
@@ -317,12 +317,12 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		oWritePromise.fail(function() {
 			jQuery.sap.log.error("Problem persisting personalization data.");
 		});
-	
+
 	};
-	
-	
+
+
 	/**
-	 * Refresh the personalizations: reloads the personalization information from the table perso 
+	 * Refresh the personalizations: reloads the personalization information from the table perso
 	 * provider, applies it to the controller's table and updates the controller's table perso dialog.
 	 *
 	 * @public
@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			this._mTablePersMap = {};
 			oTable.invalidate();
 		};
-	
+
 		this._callFunctionForAllTables(fnRefreshTable);
 		var oTablePersoDialog = this.getAggregation("_tablePersoDialog");
 		if (!!oTablePersoDialog) {
@@ -341,8 +341,8 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			oTablePersoDialog.setPersoMap(this._getPersoColumnMap(sap.ui.getCore().byId(oTablePersoDialog.getPersoDialogFor())));
 		}
 	};
-	
-	
+
+
 	/**
 	 * Opens the TablePersoDialog, stores the personalized settings on close,
 	 * modifies the table columns, and sends them to the persistence service
@@ -358,7 +358,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			jQuery.sap.log.warning("sap.m.TablePersoController: trying to open TablePersoDialog before TablePersoService has been activated.");
 		}
 	};
-	
+
 	/**
 	 * Reflector for the controller's 'contentWidth' property.
 	 * @param {sap.ui.core.CSSSize} sWidth
@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Reflector for the controller's 'contentHeight' property.
 	 * @param {sap.ui.core.CSSSize} sHeight
@@ -386,7 +386,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Reflector for the controller's 'hasGrouping' property.
 	 * @param {boolean} bHasGrouping
@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Reflector for the controller's 'showSelectAll' property.
 	 * @param {boolean} bShowSelectAll
@@ -414,7 +414,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Reflector for the controller's 'showResetAll' property.
 	 * @param {boolean} bShowResetAll
@@ -428,14 +428,14 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Using this method, the first part of tablePerso persistence ids can be
 	 * provided, in case the table's app does not provide that part itself.
-	 * 
+	 *
 	 * If a component name is set using this method, it will be used, regardless of
 	 * whether the table's app has a different component name or not.
-	 * 
+	 *
 	 * @param {string} sCompName
 	 * @public
 	 */
@@ -443,20 +443,20 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		this.setProperty("componentName", sCompName, true);
 		return this;
 	};
-	
+
 	/**
 	 * Returns the controller's component name set via 'setComponentName' if present, otherwise it
 	 * delivers the given oControl's component name by recursive asking its
 	 * parents for their component name. If none of oControl's ancestors has a component
 	 * name, the function returns 'empty_component'.
-	 * 
+	 *
 	 * @private
 	 */
 	TablePersoController.prototype._getMyComponentName = function(oControl) {
 		if (this.getComponentName()) {
 			return this.getComponentName();
 		}
-		
+
 		if (oControl === null) {
 			return "empty_component";
 		}
@@ -466,12 +466,12 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return this._getMyComponentName(oControl.getParent());
 	};
-	
+
 	/**
 	 * Checks if a table is specified for the singular association 'table'.
 	 * Otherwise, the first table of the multiple association 'tables' will be returned.
 	 * This function returns controls, not ids!
-	 * 
+	 *
 	 * @private
 	 */
 	TablePersoController.prototype._getFirstTable = function() {
@@ -482,12 +482,12 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return oTable;
 	};
-	
+
 	/**
 	 * Takes a function and calls it for all table, specified in the controller's
 	 * 'table' or 'tables' association. The passed in function must take
 	 * a table as first parameter!
-	 * 
+	 *
 	 * @private
 	 */
 	TablePersoController.prototype._callFunctionForAllTables = function(fnToCall) {
@@ -503,7 +503,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			}
 		}
 	};
-	
+
 	/**
 	* Simple heuristic to determine if an ID is generated or static
 	* @private
@@ -511,17 +511,17 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	TablePersoController.prototype._isStatic = function (sId) {
 		var sUidPrefix = sap.ui.getCore().getConfiguration().getUIDPrefix();
 		var rGeneratedPrefix = new RegExp("^" + sUidPrefix);
-		return ! rGeneratedPrefix.test(sId);
+		return !rGeneratedPrefix.test(sId);
 	};
-	
-	
+
+
 	/**
-	 * Lazy instantiation of private member _mPersMap 
+	 * Lazy instantiation of private member _mPersMap
 	 * This is a map containg key value pairs of the following kind:
 	 * 		- key: a table column object
-	 * 		- value: column personalization identifier of the form 
-	 * 		  <componentName>-<tableIdSuffix>-<columnIDSuffix> 
-	 * and vice versa! This map is created once, before the corresponding 
+	 * 		- value: column personalization identifier of the form
+	 * 		  <componentName>-<tableIdSuffix>-<columnIDSuffix>
+	 * and vice versa! This map is created once, before the corresponding
 	 * table is rendered for the first time.
 	 * @param oTable the table for whose columns shall be the resulting map's keys.
 	 * @private
@@ -539,9 +539,9 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 				//but would be ok in that case
 				return sId.substring(iLastDashIndex + 1);
 			};
-			
+
 			var sTableIdSuffix = fnExtractIdSuffix.call(this, oTable.getId());
-			
+
 			//Check table id. Must be static
 			if (!this._isStatic(sTableIdSuffix)) {
 				jQuery.sap.log.error("Table " + oTable.getId() + " must have a static id suffix. Otherwise personalization can not be persisted.");
@@ -551,10 +551,10 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 			}
 			var sNextPersoColumnIdentifier;
 			var sComponentName = this._getMyComponentName(oTable);
-			
-			
+
+
 			var that = this;
-			
+
 			oTable.getColumns().forEach(function(oNextColumn) {
 				//Check if result has been invalidated by a previous iteration
 				if (!!mResult) {
@@ -580,7 +580,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		}
 		return mResult;
 	};
-	
+
 	/**
 	 * Store's the given table's initial state in the controler's initial state map.
 	 * @private
@@ -589,7 +589,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	TablePersoController.prototype._rememberInitialTableStates = function (oTable) {
 		this._mInitialTableStateMap[oTable] = this._tableColumnInfo(oTable, this._getPersoColumnMap(oTable), this.getPersoService());
 	};
-	
+
 	/**
 	 * Returns table column settings (header text, order, visibility) for a table
 	 * @private
@@ -598,7 +598,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 	 * @param {object} oPersoService the table's personalization provider instance
 	 */
 	TablePersoController.prototype._tableColumnInfo = function (oTable, oPersoMap, oPersoService) {
-		
+
 		//Check if persoMap has been passed into the dialog.
 		//Otherwise, personalization is not possible.
 		if (!!oPersoMap) {
@@ -609,12 +609,12 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 				if (oPersoService.getCaption) {
 					sCaption = oPersoService.getCaption(oColumn);
 				}
-				
+
 				var sGroup = null;
 				if (oPersoService.getGroup) {
 					sGroup = oPersoService.getGroup(oColumn);
 				}
-				
+
 				if (!sCaption) {
 					var oColHeader = oColumn.getHeader();
 					//Check if header control has either text or 'title' property
@@ -623,15 +623,15 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					} else if (oColHeader.getTitle && oColHeader.getTitle()) {
 						sCaption = oColHeader.getTitle();
 					}
-					
+
 					if (!sCaption) {
 						//Fallback: use column id and issue warning to let app developer know to add captions to columns
 						sCaption = oColumn.getId();
 						jQuery.sap.log.warning("Please 'getCaption' callback implentation in your TablePersoProvider for column " + oColumn + ". Table personalization uses column id as fallback value.");
 					}
 				}
-				
-				//In this case, oColumn is one of our controls. Therefore, sap.ui.core.Element.toString() 
+
+				//In this case, oColumn is one of our controls. Therefore, sap.ui.core.Element.toString()
 				//is called which delivers something like 'Element sap.m.Column#<sId>' where sId is the column's sId property
 				aColumnInfo.push({
 					text : sCaption,
@@ -641,16 +641,16 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					group : sGroup
 				});
 			});
-	
+
 			// Sort to make sure they're presented in the right order
 			aColumnInfo.sort(function(a, b) { return a.order - b.order; });
-	
+
 			return aColumnInfo;
 		}
 		return null;
 	};
-	
-	
+
+
 
 	return TablePersoController;
 

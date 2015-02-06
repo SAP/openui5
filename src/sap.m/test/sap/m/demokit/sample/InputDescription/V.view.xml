@@ -1,34 +1,41 @@
 <mvc:View
+	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 			<Input
 				value="10"
 				description="PC"
 				width="100px"
-				fieldWidth="60%" />
+				fieldWidth="60%" 
+				class="sapUiSmallMarginBottom" />
 			<Input
 				value="220"
 				description="EUR / 5 pieces"
 				width="200px"
-				fieldWidth="60px" />
+				fieldWidth="60px"
+				class="sapUiSmallMarginBottom" />
 			<Input
 				value="220.000"
 				description="EUR"
 				width="250px"
-				fieldWidth="80%" />
+				fieldWidth="80%"
+				class="sapUiSmallMarginBottom" />
 			<Input 
 				value="007"
 				description="Bastian Schweinsteiger"
 				width="300px"
-				fieldWidth="50px" />
+				fieldWidth="50px"
+				class="sapUiSmallMarginBottom" />
 			<Input
 				value="EDP_LAPTOP"
 				description="IT Laptops"
 				width="300px"
-				fieldWidth="75%" />
-		</items>
-	</VBox>  
+				fieldWidth="75%"
+				class="sapUiSmallMarginBottom" />
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

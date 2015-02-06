@@ -39,7 +39,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	BarRenderer.decorateRootElement = function (oRM, oControl) {
 		oRM.addClass("sapMBar");
 		oRM.addClass(this.getContext(oControl));
-	
+		oRM.writeAccessibilityState(oControl, {
+			role: "toolbar"
+		});
+
 		if (oControl.getTranslucent() && (sap.ui.Device.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
 			oRM.addClass("sapMBarTranslucent");
 		}

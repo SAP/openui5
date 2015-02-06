@@ -3,20 +3,23 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout>
+	<l:VerticalLayout class="sapUiSmallMargin" >
 		<Image
-			class="marginTopLeft"
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			class="sapUiSmallMarginEnd"
+			src="{img>/products/pic1}"
+			densityAware="true"
 			width="{/widthS}">
 		</Image>
 		<Image
-			class="marginTopLeft"
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			class="sapUiSmallMarginEnd"
+			src="{img>/products/pic1}"
+			densityAware="true"
 			width="{/widthM}">
 		</Image>
 		<Image
-			class="marginTopLeft"
-			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			class="sapUiSmallMarginEnd"
+			src="{img>/products/pic1}"
+			densityAware="true"
 			width="{/widthL}">
 		</Image>
 	</l:VerticalLayout>

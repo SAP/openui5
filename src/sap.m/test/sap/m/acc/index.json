@@ -1,14 +1,39 @@
 {
 	"tests" : [
 		{
-			"control" : "sap.m.ComboBox",
-			"url" : "../ComboBox.html",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"control": "sap.m.ComboBox",
+			"url": "../ComboBox.html",
+			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
-			"control" : "sap.m.FeedInput",
-			"url" : "../FeedInput.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"control": "sap.m.DatePicker",
+			"url": "DatePicker.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.FeedInput",
+			"url": "../FeedInput.html",
+			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.SelectList",
+			"url": "../SelectList.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Slider",
+			"url": "../Slider.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Switch",
+			"url": "../Switch.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Title",
+			"url": "Title.html",
+			"appComponent": "CA-UI5-CTR-WDF"
 		}
 	]
 }

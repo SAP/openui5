@@ -227,6 +227,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	};
 	
 	/**
+	 * Returns the name of the Component (which is the namespace only with the module name)
+	 * @return {string} Component name
+	 * @public
+	 */
+	ComponentMetadata.prototype.getComponentName = function() {
+		return this._sComponentName;
+	};
+	
+	/**
 	 * Returns the dependencies defined in the metadata of the component. If not specified, the return value is null.
 	 * @return {Object} Component dependencies. 
 	 * @public

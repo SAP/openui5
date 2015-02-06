@@ -369,6 +369,47 @@
 		// cleanup
 		oObjectIdentifier.destroy();
 	});
+
+	test("Setting textDirection to RTL", function() {
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: 'Test title',
+			titleActive: true,
+			text: 'Some text',
+			textDirection: sap.ui.core.TextDirection.RTL
+
+		});
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
+		equal(sTextDir, "RTL", "Control has 'dir' property set to right-to-left");
+
+		// Clean up
+		oObjectIdentifier.destroy();
+	});
+
+	test("Setting textDirection to LTR", function() {
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: 'Test title',
+			titleActive: true,
+			text: 'Some text',
+			textDirection: sap.ui.core.TextDirection.LTR
+
+		});
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var sTextDir = oObjectIdentifier.getAggregation("_textControl").getTextDirection();
+		equal(sTextDir, "LTR", "Control has 'dir' property set to left-to-right");
+
+		// Clean up
+		oObjectIdentifier.destroy();
+	});
+
 	
 	module("Keyboard handling");
 	

@@ -65,6 +65,7 @@
 		oHL.addContent(new sap.m.Button({
 			text: "Confirm",
 			press: function(){
+				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.confirm("Confirmation dialog is opened?", {
 					onClose: function(bConfirmed){
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
@@ -77,6 +78,7 @@
 		oHL.addContent(new sap.m.Button({
 			text: "Alert",
 			press: function(){
+				// MessageBox.alert(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.alert("Alert some message", {
 					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
 				});
@@ -89,35 +91,34 @@
 		oVL.addContent(new sap.m.Button({
 			text: "MessageBox with Layout",
 			press: function(){
+				var oCheck;
 				var oLayout = new sap.ui.layout.VerticalLayout({
 					width: "100%",
 					content: [
 						new sap.m.Text({
-							text: "Wanna see the status of the CheckBox in an additional MessageBox?",
+							text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
 						}),
-						new sap.m.CheckBox("checkBoxId", {
-							text: "The CheckBox this is me",
-							checked: false
-						})
+						oCheck = new sap.m.CheckBox("checkBoxId", {
+						text: "The CheckBox this checked",
+						checked: false
+					})
 					]
 				});
-
-				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
-				sap.m.MessageBox.show(oLayout,
-						sap.m.MessageBox.Icon.WARNING,
-						"Title of first MessageBox",
-						[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						function(oAction) {
-							if ( oAction === sap.m.MessageBox.Action.YES ) {
-								var oCheck = sap.ui.getCore().byId("checkBoxId");
-								var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-
-								// alert(sMessage, fnCallBack, sTitle)
-								sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+				// MessageBox.show(message, callback, title, dialogId, class , initialFocus)
+				sap.m.MessageBox.show(oLayout,{
+							sIcon: sap.m.MessageBox.Icon.WARNING,
+							title: "Title of first MessageBox",
+							actions:	[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+							onClose: function (oAction) {
+									if (oAction === sap.m.MessageBox.Action.YES) {
+										var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+										// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass ,oInitialFocus)
+										sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+									}
+								},
+							dialogId: "messageBoxId",
+							initialFocus: sap.m.MessageBox.Action.NO
 							}
-						},
-						sap.m.MessageBox.Action.NO,
-						"messageBoxId"
 				);
 			}
 		}));
@@ -131,6 +132,7 @@
 			text: "Action",
 			width: "250px",
 			press: function(){
+				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.confirm("Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL" , {
 					onClose: function(bConfirmed){
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
@@ -147,6 +149,7 @@
 			text: 'Button text',
 			width: "250px",
 			press: function () {
+				// MessageBox.show(message, icon, title, actions, callback, dialogId, class , initialFocus)
 				sap.m.MessageBox.show('Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive', {
 					icon: sap.m.MessageBox.Icon.INFORMATION,
 					title: "Set initial button focus",
@@ -158,11 +161,48 @@
 			}
 		}));
 
+		oVL.addContent(new sap.m.Button({
+			text: "Control",
+			width: "250px",
+			press: function(){
+				var oCheck = new sap.m.CheckBox("checkBoxId2", {
+					text: "The CheckBox this checked",
+					selected: false
+				});
+				var oLayout = new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.m.Text({
+							text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
+						}),
+						oCheck
+					]
+				});
+				// MessageBox.show(message, icon, title, actions, callback, dialogId, class , initialFocus)
+				sap.m.MessageBox.show(oLayout, {
+							icon: sap.m.MessageBox.Icon.WARNING,
+							title: "Title of first MessageBox",
+							actions:	[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Do something"],
+							onClose: function (oAction) {
+								if (oAction === "Do something") {
+									var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+									// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass ,oInitialFocus)
+									sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+								}
+							},
+							dialogId: "messageBoxId",
+							class: "",
+							initialFocus: oCheck
+						}
+				);
+			}
+		}));
+
 		app.addPage(page1).placeAt("content");
 	</script>
 
 </head>
-<body id="body" class="sapUiBody">
+<body id="body" class="sapUiBody" role="application">
 <div id="content"></div>
 </body>
 </html>

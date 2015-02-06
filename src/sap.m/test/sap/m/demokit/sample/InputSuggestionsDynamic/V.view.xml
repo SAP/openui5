@@ -4,9 +4,10 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		class="marginBoxContent" >
-		<items>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
 			<Label text="Product" />
 			<Input
 				id="productInput"
@@ -19,6 +20,6 @@
 					<core:Item text="{Name}" />
 				</suggestionItems>
 			</Input>
-		</items>
-	</VBox>
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

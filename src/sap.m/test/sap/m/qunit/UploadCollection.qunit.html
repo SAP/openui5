@@ -22,12 +22,82 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	}
 
+	var oData = {
+			"items" : [{
+				"contributor" : "Susan Baker",
+				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Screenshot.ico",
+				"fileSize" : 20,
+/* 				"mimeType" : "image/jpg", */
+				"thumbnailUrl" : "",
+				"uploadedDate" : "2014-07-30",
+				"url" : ""
+			},{
+				"contributor" : "John Smith",
+				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Notes.txt",
+				"fileSize" : 10,
+				"mimeType" : "text/plain",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "2014-08-01",
+				"url" : "/pathToTheFile/Notes.txt"
+			},{
+				"contributor" : "J Edgar Hoover",
+				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Document.txt",
+				"fileSize" : 15,
+				"mimeType" : "text/plain",
+				"thumbnailUrl" : "",
+				"uploadedDate" : "2014-09-01",
+				"url" : "/pathToTheFile/Document.txt"
+			},{
+				"contributor" : "Kate Brown",
+				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Picture of a woman.png",
+				"fileSize" : 70,
+				"mimeType" : "image/png",
+				"thumbnailUrl" : "/test-resources/sap/m/images/Woman_04.png",
+				"uploadedDate" : "2014-07-25",
+				"url" : "/test-resources/sap/m/images/Woman_04.png"
+			}]
+		};
+
+	var oItemTemplate = new sap.m.UploadCollectionItem({
+		contributor : "{contributor}",
+		documentId : "{documentId}",
+		enableEdit : "{enableEdit}",
+		enableDelete : "{enableDelete}",
+		fileName : "{fileName}",
+		fileSize : "{fileSize}",
+		mimeType : "{mimeType}",
+		thumbnailUrl : "{thumbnailUrl}",
+		uploadedDate : "{uploadedDate}",
+		url : "{url}"
+	});
+
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData(oData);
+	sap.ui.getCore().setModel(oModel);
+
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
 	module("Rendering", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection = new sap.m.UploadCollection({
+						items : {
+							path : "/items",
+							template : oItemTemplate
+						}
+			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
@@ -37,150 +107,12 @@
 	});
 
 	test("Basic tests", function() {
-		ok(this.oUploadCollection, "UploadCollection instantiated")
+		ok(this.oUploadCollection, "UploadCollection instantiated");
 		ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
 		ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
 		ok(jQuery.sap.domById("__collection0-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
 		ok(jQuery.sap.domById("__collection0-uploader"), "FileUploader is rendered");
 	});
-
-	module("Properties", {
-		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection()
-			this.oUploadCollection.placeAt("uiArea");
-			sap.ui.getCore().applyChanges();
-		},
-		teardown : function() {
-			this.oUploadCollection.destroy();
-		}
-	});
-
-	testSetter = function(oUploadCollection, sProperty, oPropertyValue, bPropagate) {
-		if (!bPropagate) {
-			// set default value
-			bPropagate = false;
-		}
-
-		var sSetterMethod = "set" + sProperty[0].toUpperCase() + sProperty.slice(1);
-		var sGetterMethod = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
-		var sGetterMethodFileUploader = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
-
-		switch (sProperty) {
-			case "uploadEnabled":
-				sPropertyFileUploader = "enabled";
-				break;
-			default:
-				sPropertyFileUploader = sProperty;
-		}
-		var sGetterMethodFileUploader = "get" + sPropertyFileUploader[0].toUpperCase() + sPropertyFileUploader.slice(1);
-
-		oUploadCollection[sSetterMethod](oPropertyValue);
-		deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
-		if (bPropagate) {
-			switch (sProperty) {
-				case "noDataText":
-					deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
-					break;
-				default:
-					deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
-			}
-		}
-	}
-
-	test("Default values", function() {
-		var sFileType,
-			sMaximumFilenameLength = 0,
-			nMaximumFileSize = 0,
-			sMimeType,
-			bMultiple = false,
-			sNoDataText = "",
-			bSameFilenameAllowed = false,
-			bShowSeparators = "None",
-			bUploadEnabled = true,
-			sUploadUrl = "../../../upload";
-
-		strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
-		strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
-		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
-		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
-		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
-		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
-		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
-		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
-		strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
-		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
-		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
-	});
-
-	test("fileType", function() {
-		var bPropagateTrue = true;
-		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
-
-		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
-	})
-
-	test("maximumFilenameLength", function() {
-		var bPropagateTrue = true;
-		var iMaximumFilenameLength = 4711;
-
-		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, bPropagateTrue);
-	})
-
-	test("maximumFileSize", function() {
-		var bPropagateTrue = true;
-		var iMaximumFileSize = 4711;
-
-		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, bPropagateTrue);
-	})
-
-	test("mimeType", function() {
-		var bPropagateTrue = true;
-		var aMimeTypes = ["text", "image", "unittest"];
-
-		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, bPropagateTrue);
-	})
-
-	test("multiple", function() {
-		var bPropagateTrue = true;
-		var bMultiple = true;
-
-		testSetter(this.oUploadCollection, "multiple", bMultiple, bPropagateTrue);
-	})
-
-	test("noDataText", function() {
-		var bPropagateTrue = true;
-		var sNoDataText = "myNoDataText";
-
-		testSetter(this.oUploadCollection, "noDataText", sNoDataText, bPropagateTrue);
-		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
-	})
-
-	test("sameFilenameAllowed", function() {
-		var bPropagateTrue = true;
-		var bSameFilenameAllowed = true;
-
-		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, bPropagateTrue);
-	})
-
-	test("showSeparators", function() {
-		var bShowSeparators = "All";
-
-		testSetter(this.oUploadCollection, "showSeparators", bShowSeparators);
-	})
-
-	test("uploadEnabled", function() {
-		var bPropagateTrue = true;
-		var bUploadEnabled = false;
-
-		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, bPropagateTrue);
-	})
-
-	test("uploadUrl", function() {
-		var bPropagateTrue = true;
-		var sUploadUrl = "my/upload/url";
-
-		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, bPropagateTrue);
-	})
 
 
 	
@@ -189,7 +121,12 @@
 	/* --------------------------------------- */
 	module("API Methods", {
 		setup : function() {
-			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+	});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
@@ -261,70 +198,7 @@
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
-			var oData = {
-			"items" : [{
-				"contributor" : "Susan Baker",
-				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-				"enableEdit" : true,
-				"enableDelete" : true,
-				"fileName" : "Screenshot.ico",
-				"fileSize" : 20,
-/* 				"mimeType" : "image/jpg", */
-				"thumbnailUrl" : "",
-				"uploadedDate" : "2014-07-30",
-				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
-			},{
-				"contributor" : "John Smith",
-				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
-				"enableEdit" : true,
-				"enableDelete" : true,
-				"fileName" : "Notes.txt",
-				"fileSize" : 10,
-				"mimeType" : "text/plain",
-				"thumbnailUrl" : "",
-				"uploadedDate" : "2014-08-01",
-				"url" : "/pathToTheFile/Notes.txt"
-			},{
-				"contributor" : "J Edgar Hoover",
-				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
-				"enableEdit" : true,
-				"enableDelete" : true,
-				"fileName" : "Document.txt",
-				"fileSize" : 15,
-				"mimeType" : "text/plain",
-				"thumbnailUrl" : "",
-				"uploadedDate" : "2014-09-01",
-				"url" : "/pathToTheFile/Document.txt"
-			},{
-				"contributor" : "Kate Brown",
-				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
-				"enableEdit" : true,
-				"enableDelete" : true,
-				"fileName" : "Picture of a woman.png",
-				"fileSize" : 70,
-				"mimeType" : "image/png",
-				"thumbnailUrl" : "/test-resources/sap/m/images/Woman_04.png",
-				"uploadedDate" : "2014-07-25",
-				"url" : "/test-resources/sap/m/images/Woman_04.png"
-			}]
-		};
-		var oItemTemplate = new sap.m.UploadCollectionItem({
-			contributor : "{contributor}",
-			documentId : "{documentId}",
-			enableEdit : "{enableEdit}",
-			enableDelete : "{enableDelete}",
-			fileName : "{fileName}",
-			fileSize : "{fileSize}",
-			mimeType : "{mimeType}",
-			thumbnailUrl : "{thumbnailUrl}",
-			uploadedDate : "{uploadedDate}",
-			url : "{url}"
-		});
-	
-		var oModel = new sap.ui.model.json.JSONModel();
-		oModel.setData(oData);
-		sap.ui.getCore().setModel(oModel);	
-	
+
 	module("Event tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -347,6 +221,23 @@
 				filenameLengthExceed : function(oEvent) {
 					ok(true, "Event filenameLengthExceed fired");
 					equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided")
+				},
+				change : function(oEvent) {
+					ok(true, "Event change fired");
+					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+						equal(oEvent.getParameters().getParameter("newValue"), "file1", "correct file1 name in change event ");
+					}
+					else {
+						equal(oEvent.getParameters().getParameter("files")[0], "file1", "correct file1 name in change event ");
+						equal(oEvent.getParameters().getParameter("files")[1], "file2", "correct file1 name in change event ");
+					}
+				},
+				uploadComplete : function(oEvent) {
+					ok(true, "Event uploadComplete fired");
+					equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event ");
+				},
+				uploadTerminated : function(oEvent) {
+					ok(true, "Event uploadTerminated fired");
 				}
 			});
 			this.oUploadCollection.placeAt("uiArea");
@@ -382,6 +273,44 @@
 		oFileUploader.fireFilenameLengthExceed({
 			fileName : "someFileName"
 		});
+	});
+
+	test("Event change", function() {
+		var aFiles = [];
+		aFiles.push("file1");
+		aFiles.push("file2");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+			// at present FileUploader does not set the parameter files for IE9
+			expect(2);
+			oFileUploader.fireChange({
+				newValue : "file1"
+			});
+		}
+		else {
+			expect(3); // verifies the event handler was executed
+			oFileUploader.fireChange({
+				files : aFiles
+			});
+		}
+	});
+
+	test("Event complete", function() {
+		sFileName = "file1";
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		expect(2); // verifies the event handler was executed
+		oFileUploader.fireUploadComplete({
+			fileName : sFileName
+		});
+	});
+
+	test("Event terminate", function() {
+		sFileName = "file1";
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		expect(1); // verifies the event handler was executed
+		oFileUploader.fireUploadAborted({
+			fileName : sFileName
+		})
 	});
 	
 	module("Edit tests", {
@@ -420,7 +349,7 @@
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Display", "'Display'-status after 'cancel' as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'cancel' as expected in Line 2");
 		
 		//check file name after cancel
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -437,7 +366,7 @@
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		oModel.setData(oData);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Display", "'Display'-status after 'ok' as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'ok' as expected in Line 2");
 
 		//check chnaged file name after save
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -473,7 +402,7 @@
 		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-cancelButton";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[2]._status, "Display", "'Display'-status after 'cancel' as expected in Line 3");
+		equal(this.oUploadCollection.aItems[2]._status, "display", "'display'-status after 'cancel' as expected in Line 3");
 
 		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
@@ -504,10 +433,10 @@
 		}
 	});
 	test("Display", function() {
-		//check status = "Display"
+		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
-			equal( this.oUploadCollection.aItems[i]._status, "Display", "Status of line " + i + " is correct");
+			equal( this.oUploadCollection.aItems[i]._status, "display", "Status of line " + i + " is correct");
 		}
 
 		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
@@ -519,9 +448,150 @@
 
 		expect(8); // verifies the event handler was executed
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
-//		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
-
+		sap.ui.getCore().applyChanges();
+		// No Event should be triggered, because there is no url provided at aItems[0] --> no change at expect(8)!
+		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 	});
+
+	module("Properties", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+
+	testSetter = function(oUploadCollection, sProperty, oPropertyValue, bPropagate) {
+		if (!bPropagate) {
+			// set default value
+			bPropagate = false;
+		}
+
+		var sSetterMethod = "set" + sProperty[0].toUpperCase() + sProperty.slice(1);
+		var sGetterMethod = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
+		var sGetterMethodFileUploader = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
+
+		switch (sProperty) {
+			case "uploadEnabled":
+				sPropertyFileUploader = "enabled";
+				break;
+			default:
+				sPropertyFileUploader = sProperty;
+		}
+		var sGetterMethodFileUploader = "get" + sPropertyFileUploader[0].toUpperCase() + sPropertyFileUploader.slice(1);
+
+		oUploadCollection[sSetterMethod](oPropertyValue);
+		deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
+		if (bPropagate) {
+			switch (sProperty) {
+				case "noDataText":
+					deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
+					break;
+				default:
+					deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
+			}
+		}
+	}
+
+	test("Default values", function() {
+			var sFileType,
+			sMaximumFilenameLength = 0,
+			nMaximumFileSize = 0,
+			sMimeType,
+			bMultiple = false,
+			sNoDataText = "",
+			bSameFilenameAllowed = false,
+			bShowSeparators = "None",
+			bUploadEnabled = true,
+			sUploadUrl = "../../../upload";
+
+		strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
+		strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
+		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
+		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
+		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
+		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
+		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
+		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
+		strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
+	});
+
+	test("fileType", function() {
+		var bPropagateTrue = true;
+		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
+
+		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
+	});
+
+	test("maximumFilenameLength", function() {
+		var bPropagateTrue = true;
+		var iMaximumFilenameLength = 4711;
+
+		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, bPropagateTrue);
+	});
+
+	test("maximumFileSize", function() {
+		var bPropagateTrue = true;
+		var iMaximumFileSize = 4711;
+
+		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, bPropagateTrue);
+	});
+
+	test("mimeType", function() {
+		var bPropagateTrue = true;
+		var aMimeTypes = ["text", "image", "unittest"];
+
+		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, bPropagateTrue);
+	});
+
+	test("multiple", function() {
+		var bPropagateTrue = true;
+		var bMultiple = true;
+
+		testSetter(this.oUploadCollection, "multiple", bMultiple, bPropagateTrue);
+	});
+
+	test("noDataText", function() {
+		var bPropagateTrue = true;
+		var sNoDataText = "myNoDataText";
+
+		testSetter(this.oUploadCollection, "noDataText", sNoDataText, bPropagateTrue);
+		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
+	});
+
+	test("sameFilenameAllowed", function() {
+		var bPropagateTrue = true;
+		var bSameFilenameAllowed = true;
+
+		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, bPropagateTrue);
+	});
+
+	test("showSeparators", function() {
+		var bShowSeparators = "All";
+
+		testSetter(this.oUploadCollection, "showSeparators", bShowSeparators);
+	});
+
+	test("uploadEnabled", function() {
+		var bPropagateTrue = true;
+		var bUploadEnabled = false;
+
+		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, bPropagateTrue);
+	});
+
+	test("uploadUrl", function() {
+		var bPropagateTrue = true;
+		var sUploadUrl = "my/upload/url";
+
+		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, bPropagateTrue);
+	});
+
+
 
 </script>
 

@@ -72,12 +72,12 @@ html[data-sap-ui-os=win8] .sapMITBScrollContainer {
 }
 
 .sapMITBNoText > .sapMITBFilter > .sapMITBContentArrow {
-	margin: 0 1rem;
+	margin: 0 auto;
 	width: 3rem;
 }
 
 .sapMITBNoText > .sapMITBFilter:first-child > .sapMITBContentArrow {
-	margin: 0 1rem 0 0;
+	margin: 0 auto 0 0;
 }
 
 .sapMITBVertical.sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
@@ -87,10 +87,6 @@ html[data-sap-ui-os=win8] .sapMITBScrollContainer {
 .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
 	height: 0.875rem;
 	border-bottom-width: 0.375rem;
-}
-
-.sap-phone .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
-	height: 0.625rem;
 }
 
 .sapMITBAll > .sapMITBTab {
@@ -110,7 +106,7 @@ html[dir='rtl'] .sapMITBContentArrow {
 
 .sapMITBContent {
 	background-color: @sapHCStandardBG;
-	padding: 0 1rem 1rem;
+	padding: 1rem;
 	position: relative;
 }
 
@@ -169,6 +165,11 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	color: @sapHCStandardFG;
 	vertical-align: top;
 	text-align: center;
+	position: relative;
+}
+
+.sap-desktop .sapMITBFilter {
+	cursor: pointer;
 }
 
 .sapMITBDisabled {
@@ -178,26 +179,28 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 /* Tab Filter Item */
 
 .sapMITBFilter {
-	padding: 0 0.25rem;
+	margin: 0 0.25rem;
 }
 
-.sapMITBTextOnly .sapMITBFilter {
+.sapMITBTextOnly .sapMITBFilter,
+.sapMITBTextOnly .sapMITBFilter:first-child {
 	padding: 0;
 	margin: 0 1rem;
 }
 
 .sap-phone .sapMITBTextOnly .sapMITBFilter {
 	padding: 0 0.75rem;
+	margin: 0 1rem;
 }
 
 .sap-phone .sapMITBFilter {
-	padding: 0 0.125rem;
+	margin: 0 0.125rem;
 }
 
 .sapMITBNoText .sapMITBFilter > .sapMITBTab {
 	width: 3rem;
 	height: 3rem;
-	padding: 0 1rem;
+	padding: 0 0.75rem;
 }
 
 .sap-phone .sapMITBFilter:last-child,
@@ -214,7 +217,7 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 }
 
 .sapMITBFilter:first-child {
-	padding-left: 0;
+	margin-left: 0;
 }
 
 .sapMITBHorizontal.sapMITBFilter:first-child > .sapMITBTab {
@@ -227,7 +230,12 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 
 .sapMITBNoText .sapMITBFilter,
 .sap-phone .sapMITBNoText .sapMITBFilter {
-	padding: 0;
+	margin:  0 0.25rem;
+}
+
+.sapMITBNoText .sapMITBFilter:first-child,
+.sap-phone .sapMITBNoText .sapMITBFilter:first-child {
+	margin-left: 0;
 }
 
 .sapMITBFilter .sapMITBText {
@@ -540,22 +548,17 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 	visibility: hidden;
 }
 
-.sapMITBFilter:focus,
 .sapMITBArrowScroll:focus,
-.sapMITBSep:focus,
-.sapMITBSepIcon:focus,
 .sapMITBHead:focus,
-.sapMITBText:focus,
-.sapMITBTextOnly .sapMITBText:focus,
 .sapMITBFilterIcon:focus,
-.sapMITBAll:focus {
+.sapMITBItem:focus, {
 	outline: none;
 }
 
 /* Custom focus outline */
-.sap-desktop .sapMITBFilterIcon:focus,
-.sap-desktop .sapMITBTextOnly .sapMITBText:focus,
-.sap-desktop .sapMITBAll:focus {
+.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+.sap-desktop .sapMITBItem:focus.sapMITBAll {
 	outline: 0.125rem dotted @sapHCStandardFG;
 }
 

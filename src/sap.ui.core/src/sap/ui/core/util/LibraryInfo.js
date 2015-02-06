@@ -46,12 +46,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 		
 		var sUrl = jQuery.sap.getModulePath(sLibraryName, '/'),
 			that = this;
+			
+		var sLibraryType = ".library"; 
+		
+		var aParts = /themelib_(.*)/i.exec(sLibraryName);
+		if (aParts != null) {
+			sLibraryType = ".theme";
+			var sThemeName = aParts[1];
+			sUrl = "sap/ui/core/themes/" + sThemeName + "/";	
+		}
 		
 		jQuery.ajax({
-			url : sUrl + ".library",
+			url : sUrl + sLibraryType,
 			dataType : "xml",
 			error : function(xhr, status, e) {
-				jQuery.sap.log.error("failed to load library details from '" + sUrl + ".library': " + status + ", " + e);
+				jQuery.sap.log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + status + ", " + e);
 				that._oLibInfos[sLibraryName] = {name: sLibraryName, data: null, url: sUrl};
 				fnCallback(that._oLibInfos[sLibraryName]);
 			},
@@ -73,6 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				result.copyright = $data.find("copyright").text();
 				result.version = $data.find("version").text();
 				result.documentation = $data.find("documentation").text();
+				result.releasenotes = $data.find("releasenotes").attr("url"); // in the appdata section
 			}
 			
 			fnCallback(result);
@@ -146,6 +156,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			});
 		});
 	};
+	
+	LibraryInfo.prototype._getReleaseNotes = function(sLibraryName, sVersion, fnCallback) {
+		this._loadLibraryMetadata(sLibraryName, function(oData){
+			/* var lib = oData.name,
+				libUrl = oData.url;*/
+	
+			if (!oData.data) {
+				fnCallback({});
+				return;
+			}
+			
+			var oVersion = jQuery.sap.Version(sVersion);
+			
+			var iMajor = oVersion.getMajor();
+			var iMinor = oVersion.getMinor();
+			var iPatch = oVersion.getPatch();
+			
+			var $Doc = jQuery(oData.data).find("appData").find("releasenotes");
+			var sUrl = $Doc.attr("url");
+			
+			if (!sUrl) {
+				jQuery.sap.log.warning("failed to load release notes for library " + sLibraryName );
+				fnCallback({});
+				return;
+			}
+				
+			sUrl = sUrl.replace("{major}", iMajor);
+			sUrl = sUrl.replace("{minor}", iMinor);
+			
+			if (sUrl.search("{patch}") != -1) {
+				sUrl = sUrl.replace("{patch}", iPatch);
+			}
+		
+			if (oVersion.getSuffix() === "-SNAPSHOT"){
+				sVersion = iMajor + "." + iMinor + "." + iPatch;
+			}
+			
+
+			if ($Doc.attr("resolve") == "lib") {
+				sUrl = oData.url + sUrl;
+			}
+			
+			jQuery.ajax({
+				url : sUrl,
+				dataType : "json",
+				error : function(xhr, status, e) {
+					jQuery.sap.log.warning("failed to load release notes for library '" + sLibraryName + ", " + e);
+					fnCallback({});
+				},
+				success : function(oData, sStatus, oXHR) {
+					fnCallback(oData[sVersion]);
+				}
+			});
+		});
+	};
+	
+	
 
 	return LibraryInfo;
 

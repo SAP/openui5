@@ -57,8 +57,7 @@
 			oTree1.addNode(oNode12);
 		
 		return oTree1;
-  	}
-		
+		}
 		
 		function createTransparentTree () {
 			var oTree2 = new sap.ui.commons.Tree("tree2", {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:false, showHeader:false});		
@@ -89,15 +88,30 @@
 			oTree2.addNode(oNode22);
 		
 		return oTree2;
-  	}		
+		}
 		
 		var oStandardTree = createStandardTree();
 		oStandardTree.placeAt("target1");
 		
 		var oTransparentTree = createTransparentTree();
 		oTransparentTree.placeAt("target2");
-
-
+		
+		function checkSelectedNodes(aNodes, aExpectedIds) {
+			var iIndex;
+			if (aNodes.length != aExpectedIds.length) {
+				return false
+			}
+			for (var i = 0; i < aNodes.length; i++) {
+				iIndex = aExpectedIds.indexOf(aNodes[i].getId());
+				if (iIndex >= 0) {
+					aExpectedIds.splice(iIndex, 1);
+				} else {
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		/******* qUnit Tests *******/
 		module("Tree", {
 		  setup: function() {
@@ -243,8 +257,7 @@
 			node12.select();
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 1, "Event parameter nodes contains 1 entry");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node16", "Event parameter contains Node 1.2.1");
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node16"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0});
@@ -254,8 +267,7 @@
 			ok( !node12.getIsSelected(), "Root 2 is not selected");
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 1, "Event parameter nodes contains 1 entry");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node12", "Event parameter contains Root 2");
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0});
@@ -278,8 +290,7 @@
 			ok( !node12.getIsSelected(), "Root 2 is not selected");
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 1, "Event parameter nodes contains 1 entry");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node12", "Event parameter contains Root 2");
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0, ctrlKey: true});
@@ -289,9 +300,7 @@
 			ok( node12.getIsSelected(), "Root 2 is selected");
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 2, "Event parameter nodes contains 2 entries");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node12", "Event parameter contains Root 2");
-				equal(oEvent.getParameter("nodes")[1].getId(), "node16", "Event parameter contains Node 1.2.1");
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12", "node16"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0, ctrlKey: true});
@@ -304,10 +313,7 @@
 			node16.select();
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 3, "Event parameter nodes contains 3 entries");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node16", "Event parameter contains Node 1.2.1");
-				equal(oEvent.getParameter("nodes")[1].getId(), "node17", "Event parameter contains Node 1.2.1.1");
-				equal(oEvent.getParameter("nodes")[2].getId(), "node12", "Event parameter contains Root 2");
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0, shiftKey: true});
@@ -317,22 +323,18 @@
 			ok( node12.getIsSelected(), "Root 2 is selected");
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 1, "Event parameter nodes contains 1 entry");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node12", "Event parameter contains Root 2");
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12"]), "Selected nodes as expected");
 			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node12.getDomRef().firstChild, {button: 0});
 			oStandardTree.detachSelectionChange(handler);
-			ok( !node16.getIsSelected(), "Node 1.2.1 is selected");
+			ok( !node16.getIsSelected(), "Node 1.2.1 is not selected");
 			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
-			ok( node12.getIsSelected(), "Root 2 is not selected");
+			ok( node12.getIsSelected(), "Root 2 is selected");
 
 			handler = function(oEvent) {
-				equal(oEvent.getParameter("nodes").length, 3, "Event parameter nodes contains 3 entries");
-				equal(oEvent.getParameter("nodes")[0].getId(), "node16", "Event parameter contains Node 1.2.1");
-				equal(oEvent.getParameter("nodes")[1].getId(), "node17", "Event parameter contains Node 1.2.1.1");
-				equal(oEvent.getParameter("nodes")[2].getId(), "node12", "Event parameter contains Root 2");
-			};
+				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
+			}; 
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0, shiftKey: true});
 			oStandardTree.detachSelectionChange(handler);

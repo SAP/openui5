@@ -101,11 +101,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 		function _handleError(oError) {
 			that.bFailed = true;
-			var mParams = { message: oError.message };
+			var mParams = { 
+				message: oError.message,
+				request: oError.request,
+				response: oError.response
+			};
 			if (oError.response) {
-					mParams.statusCode = oError.response.statusCode;
-					mParams.statusText = oError.response.statusText;
-					mParams.responseText = oError.response.body;
+				mParams.statusCode = oError.response.statusCode;
+				mParams.statusText = oError.response.statusText;
+				mParams.responseText = oError.response.body;
 			}
 
 			if (that.oRequestHandle && that.oRequestHandle.bSuppressErrorHandlerCall) {
@@ -318,11 +322,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					// check for navigation properties
 					// if no navigation property found we assume that the current part is a normal property so we return the current oParentEntityType
 					// which is the parent entity type of that property
-					if (oParentEntityType.navigationProperty) {
-						oResultEntityType = that._getEntityTypeByNavProperty(oParentEntityType, aParts[i]);
-						if (oResultEntityType) {
-							oParentEntityType = oResultEntityType;
-						}
+					oResultEntityType = that._getEntityTypeByNavProperty(oParentEntityType, aParts[i]);
+					if (oResultEntityType) {
+						oParentEntityType = oResultEntityType;
 					}
 
 					oEntityType = oParentEntityType;
@@ -689,7 +691,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	
 	ODataMetadata.prototype._getEntityTypeByNavProperty = function(oEntityType, sNavPropertyName) {
 		var that = this, aAssociationName, oAssociation, aEntityTypeName, oNavEntityType;
-	
+		if (!oEntityType.navigationProperty) {
+			return undefined;
+		}
 		jQuery.each(oEntityType.navigationProperty, function(k, oNavigationProperty) {
 			if (oNavigationProperty.name === sNavPropertyName) {
 				// get association for navigation property and then the collection name

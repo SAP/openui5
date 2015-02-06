@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.Support</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-compatVersion="1.16"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script language="javascript">
+
+			sinon.config.useFakeTimers = true;
+			sap.ui.test.qunit.delayTestStart();
+
+			jQuery.sap.require("sap.m.Support");
+			var sSupportTitle = "Technical Information";
+
+
+			module("Open API");
+			test("Test main control functionality", function() {
+				sap.m.Support.open();
+
+				this.clock.tick(500);
+
+				var oSupport = sap.ui.getCore().byId("__dialog0");
+				ok(oSupport, "Support dialog should be created");
+				equal(oSupport.isOpen(), true, "Support dialog should be open now");
+				equal(oSupport.getType(), sap.m.DialogType.Standard , "Support dialog should have type Standard");
+				equal(oSupport.getButtons().length, 1, "1 Close button is added to Support dialog");
+				equal(oSupport.getTitle(), sSupportTitle, "Title is OK");
+
+				oSupport.destroy();
+			});
+
+			module("On and Off API");
+			test("Register/Unregister event", function() {
+
+				var sEventName = "ontouchstart";
+				document[sEventName] = "alabala";
+				var oSupport = sap.m.Support.on();
+				this.clock.tick(500);
+
+				ok(oSupport, "Support dialog event should be registered already");
+				equal(oSupport.isEventRegistered(), true, "Support dialog event should be registered already");
+
+				oSupport = sap.m.Support.off();
+
+				ok(oSupport, "Support dialog event should be unregistered now");
+				equal(oSupport.isEventRegistered(), false, "Support dialog event should be unregistered already");
+
+				delete document[sEventName];
+			});
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.Support</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

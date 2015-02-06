@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	/**
 	 * Constructor for a new DropdownBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -84,10 +84,10 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		this._oValueBeforeOpen = null;
 		this.__aItems = null;
 		this._iCursorPosBeforeBackspace = null;
-		/** 
-		 * Array of ListItems containing SearchHelp followed by Separator 
-		 * @type {sap.ui.core.ListItem[]} 
-		 * @private 
+		/**
+		 * Array of ListItems containing SearchHelp followed by Separator
+		 * @type {sap.ui.core.ListItem[]}
+		 * @private
 		 */
 		this._searchHelpItem = null;
 		this._iItemsForHistory = 10; // UX defined history shall appear if there are more than 10 items
@@ -416,6 +416,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		if (!this.mobile && this.getEnabled && this.getEnabled() && this.getEditable()) {
 			if (this.oPopup && this.oPopup.isOpen()) {
 				this._close();
+				this._doSelect();
 			} else if (!this._F4ForClose) {
 				this._open();
 			}
@@ -425,28 +426,13 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 	};
 
-	/**
-	 * Handle mouseup event
-	 * @param {jQuery.Event} oEvent the occuring event
-	 * @protected
-	 */
-	DropdownBox.prototype.onmouseup = function(oEvent) {
-		if (oEvent.target == this.getF4ButtonDomRef() || this.mobile) {
-			return;
-		}
-
-		this._doSelect();
-		oEvent.preventDefault();
-
-	};
-
 	DropdownBox.prototype.onmousedown = function(oEvent){
 
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
 
-		// DropdownBox opens and closes on cleck on F4-Button and on input field
+		// DropdownBox opens and closes on click on F4-Button and on input field
 		if (this.oPopup && this.oPopup.isOpen()) {
 			this._F4ForClose = true;
 		} else {
@@ -608,9 +594,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			} // 'normalize' cursor position for upcoming handling... especially IE8
 			this._iCursorPosBeforeBackspace = null; // forget being called by backspace handling
 			bValid = this._doTypeAhead($Ref.val().substr(0, iCursorPos - 1), "");
-		}
-		// this must happen to check for valid entry after paste and if required -> rollback
-		else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
+		} else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
+			// this must happen to check for valid entry after paste and if required -> rollback
 			$Ref.val(this._oValueBeforePaste);
 		}
 		// Ensure visibility as well as filtering and new height is applied
@@ -1542,7 +1527,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	DropdownBox.prototype.checkValueInItems = function() {
 
 		var sValue = this.getValue();
-		var aItems = this.getItems();
+		var aItems = ComboBox.prototype.getItems.apply(this); // use real items, even if popup is open (without filter....)
 		// save and restore wanted item
 		var sWantedSelectedKey = this._sWantedSelectedKey;
 		var sWantedSelectedItemId = this._sWantedSelectedItemId;
@@ -1635,7 +1620,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				oListBox.removeItem(this.__oSeparator);
 			}
 		}
-		// new items are added automatically by opening listbox (no support to change property while 
+		// new items are added automatically by opening listbox (no support to change property while
 		// listbox is open)
 
 	};

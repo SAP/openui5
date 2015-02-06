@@ -39,7 +39,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 				name : sCompName
 			});
 		}
-		
+
 		// create data object
 		var oMetadata = oComp.getMetadata();
 		var oConfig = (oMetadata) ? oMetadata.getConfig() : null;
@@ -47,7 +47,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 			title : "Code: " + oSample.name,
 			files : []
 		};
-		
+
 		// retrieve files
 		// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
 		var that = this;
@@ -62,7 +62,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 			for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
 				var sFile = oConfig.sample.files[i];
 				var sUrl = sRef + "/" + sFile;
-				if (! (sUrl in this._viewData.component.codeCache)) {
+				if (!(sUrl in this._viewData.component.codeCache)) {
 					this._viewData.component.codeCache[sUrl] = "";
 					jQuery.ajax(sUrl, {
 						async: false,
@@ -78,20 +78,20 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 				});
 			}
 		}
-		
+
 		// set model
 		this.getView().setModel(new sap.ui.model.json.JSONModel(oData));
-		
+
 		// scroll to top of page
 		var page = this.getView().byId("page");
 		page.scrollTo(0);
 	},
-	
+
 	onDownload : function (evt) {
-		
+
 		jQuery.sap.require("sap.ui.thirdparty.jszip");
 		var ozipFile = new JSZip();
-		
+
 		// zip files
 		var data = this.getView().getModel().getData();
 		for (var i = 0 ; i < data.files.length ; i++) {
@@ -108,7 +108,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 	},
 
 	/**
-	 * 
+	 *
 	 */
 	_convertCodeToHtml : function (code) {
 

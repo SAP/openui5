@@ -1,12 +1,11 @@
-jQuery.sap.require("sap.m.MessageToast");
 jQuery.sap.require("sap.ui.core.IconPool");
 
-sap.ui.controller("view.Detail", {
+sap.ui.controller("sap.ui.demokit.icex.view.Detail", {
 
 	onInit : function() {
 		
 		// register for events
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.subscribe("app", "RefreshDetail", this.refreshDetail, this);
 		
 		// set empty model
@@ -14,7 +13,9 @@ sap.ui.controller("view.Detail", {
 	},
 	
 	_setModel : function(iconName) {
-		var favorite = sap.ui.getCore().getModel("fav").isFavorite(iconName);
+		
+		var favModel = this.getView().getModel("fav");
+		var favorite = (favModel) ? favModel.isFavorite(iconName) : false;
 		var model = this.getView().getModel();
 		if (!model) {
 			model = new sap.ui.model.json.JSONModel({});
@@ -39,7 +40,7 @@ sap.ui.controller("view.Detail", {
 	},
 	
 	navBack : function(evt) {
-		var bus = sap.ui.getCore().getEventBus();
+		var bus = this.getOwnerComponent().getEventBus();
 		bus.publish("nav", "back");
 	},
 	
@@ -48,7 +49,7 @@ sap.ui.controller("view.Detail", {
 		if (data && data.name) {
 			
 			// update favorite model
-			var favModel = sap.ui.getCore().getModel("fav");
+			var favModel = this.getView().getModel("fav");
 			var nowAFavorite = favModel.toggleFavorite(data.name);
 			
 			// show  message

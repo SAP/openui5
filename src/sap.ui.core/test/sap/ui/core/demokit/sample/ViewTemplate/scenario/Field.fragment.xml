@@ -3,12 +3,25 @@
 	xmlns:core="sap.ui.core"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<HBox>
-		<template:if test="{path: 'meta>Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isSemanticsEmail'}" >
-			<core:Icon src="sap-icon://email" />
+		<template:if test="{meta>Value}"><!-- "RecordType" : "com.sap.vocabularies.UI.v1.DataField" -->
+			<template:with path="meta>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+				<template:if test="{= ${target>sap:semantics} === 'email'}" >
+					<core:Icon src="sap-icon://email" />
+				</template:if>
+				<template:if test="{= ${target>sap:semantics} === 'tel'}" >
+					<core:Icon src="sap-icon://phone" />
+				</template:if>
+			</template:with>
+			<!-- TODO wait until expression parser supports fillUriTemplate in Url/UrfRef -->
+			<template:if test="false"><!--template:if test="{meta>Url}"-->
+				<template:then>
+					<Link text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+						href="{path: 'meta>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				</template:then>
+				<template:else>
+					<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				</template:else>
+			</template:if>
 		</template:if>
-		<template:if test="{path: 'meta>Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.FieldHelper.isSemanticsTel'}" >
-			<core:Icon src="sap-icon://phone" />
-		</template:if>
-		<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 	</HBox>
 </core:FragmentDefinition>

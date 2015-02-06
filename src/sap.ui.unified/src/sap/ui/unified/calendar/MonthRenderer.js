@@ -31,8 +31,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		oRm.writeClasses();
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.writeAttributeEscaped("title", sTooltip);
 		}
+
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		oRm.writeAccessibilityState(oMonth, {
+			role: "grid",
+			readonly: "true",
+			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
+			label: rb.getText("CALENDAR_DIALOG")
+		});
 
 		oRm.write(">"); // div element
 
@@ -47,6 +55,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		var oLocaleData = oMonth._getLocaleData();
 		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
 		var sId = oMonth.getId();
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+		// header
+		if (oMonth.getShowHeader()) {
+			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			oRm.write("<div id=\"" + sId + "-Head\"class=\"sapUiCalMonthHead\" >");
+			oRm.write(aMonthNames[oDate.getUTCMonth()]);
+			oRm.write("</div>");
+		}
 
 		// week numbers
 		var aWeekDays = [];
@@ -55,17 +72,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		} else {
 			aWeekDays = oLocaleData.getDaysStandAlone("narrow");
 		}
+		var aWeekDaysWide = oLocaleData.getDaysStandAlone("wide");
+
+		oRm.write("<div");
+		oRm.writeAttribute("id", sId + "-CW");
+		oRm.addStyle("display", "none");
+		oRm.writeStyles();
+		oRm.writeAccessibilityState(null, {role: "columnheader"});
+		oRm.write(">"); // div
+		oRm.write(rb.getText("CALENDAR_WEEK"));
+		oRm.write("</div>");
+
+		oRm.write("<div");
+		oRm.writeAccessibilityState(null, {role: "row"});
+		oRm.write(">"); // div
+
 		for ( var i = 0; i < 7; i++) {
 			oRm.write("<div");
 			oRm.addClass("sapUiCalWH");
+			oRm.writeAttribute("id", sId + "-WH" + ((i + iFirstDayOfWeek) % 7) );
 			if (i == 0) {
 				oRm.addClass("sapUiCalFirstWDay");
 			}
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(null, {role: "columnheader", label: aWeekDaysWide[(i + iFirstDayOfWeek) % 7]});
 			oRm.write(">"); // div element
 			oRm.write(aWeekDays[(i + iFirstDayOfWeek) % 7]);
 			oRm.write("</div>");
 		}
+
+		oRm.write("</div>");
 
 		// days
 		oRm.write("<div id=\"" + sId + "-days\" class=\"sapUiCalDays\">"); // extra DIV around the days to allow rerendering only it's content
@@ -87,6 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
 		var iWeekendStart = oLocaleData.getWeekendStart();
 		var iWeekendEnd = oLocaleData.getWeekendEnd();
+		var sToday = oLocaleData.getRelativeDay(0);
 		var oToday = new Date();
 		var sId = oMonth.getId();
 
@@ -109,29 +146,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 		var iNextMonth = (iMonth + 1) % 12;
 		var iSelected = 0;
 		var oType;
+		var mAccProps;
+		var iWeekNumber = 0;
+		var oFormatLong = oMonth._getFormatLong();
 
 		do {
+			mAccProps = {
+					role: "gridcell",
+					selected: false,
+					label: ""
+				};
 
 			sYyyymmdd = oMonth._oFormatYyyymmdd.format(oDay, true);
 			iWeekDay = oDay.getUTCDay();
 			iSelected = oMonth._checkDateSelected(oDay);
 			oType = oMonth._getDateType(oDay);
+
+			if (iWeekDay == iFirstDayOfWeek) {
+				// begin of row
+				oRm.write("<div");
+				oRm.writeAccessibilityState(null, {role: "row"});
+				oRm.write(">"); // div
+			}
+
 			oRm.write("<div");
 			oRm.writeAttribute("id", sId + "-" + sYyyymmdd);
 			oRm.addClass("sapUiCalDay");
 			oRm.addClass("sapUiCalWDay" + iWeekDay);
 			if (iWeekDay == iFirstDayOfWeek) {
 				oRm.addClass("sapUiCalFirstWDay");
+				iWeekNumber = CalendarUtils.calculateWeekNumber(oDay, iYear, sLocale, oLocaleData);
 			}
 			if (iMonth != oDay.getUTCMonth()) {
 				oRm.addClass("sapUiCalDayOtherMonth");
+				mAccProps["disabled"] = true;
 			}
 			if (oDay.getUTCMonth() == oToday.getMonth() && oDay.getUTCFullYear() == oToday.getFullYear() && oDay.getUTCDate() == oToday.getDate()) {
 				oRm.addClass("sapUiCalDayToday");
+				mAccProps["label"] = sToday + " ";
 			}
 
 			if (iSelected > 0) {
 				oRm.addClass("sapUiCalDaySel"); // day selected
+				mAccProps["selected"] = true;
 			}
 			if (iSelected == 2) {
 				oRm.addClass("sapUiCalDaySelStart"); // interval start
@@ -158,23 +215,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("data-sap-day", sYyyymmdd);
 			oRm.writeClasses();
+			mAccProps["describedby"] = sId + "-WNum-" +  iWeekNumber + " " + sId + "-WH" + iWeekDay;
+			mAccProps["label"] = mAccProps["label"] + oFormatLong.format(oDay, true);
+			oRm.writeAccessibilityState(null, mAccProps);
 			oRm.write(">"); // div element
 
-			oRm.write("<span class=\"sapUiCalDayNum\">");
+			oRm.write("<span");
+			oRm.addClass("sapUiCalDayNum");
+			oRm.writeClasses();
+			oRm.write(">"); // span
 			oRm.write(oDay.getUTCDate());
 			oRm.write("</span>");
 
 			if (iWeekDay == iFirstDayOfWeek) {
 				// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
-				oRm.write("<span class=\"sapUiCalWeekNum\">");
-				oRm.write(CalendarUtils.calculateWeekNumber(oDay, iYear, sLocale, oLocaleData));
+				oRm.write("<span");
+				oRm.writeAttribute("id", sId + "-WNum-" +  iWeekNumber);
+				oRm.addClass("sapUiCalWeekNum");
+				oRm.writeClasses();
+				oRm.writeAccessibilityState(null, {role: "rowheader", desribedby:sId + "-CW"});
+				oRm.write(">"); // span
+				oRm.write(iWeekNumber);
 				oRm.write("</span>");
 			}
 
 			oRm.write("</div>");
 
-			oDay.setUTCDate(oDay.getUTCDate() + 1);
+			if (iWeekDay == (iFirstDayOfWeek + 6) % 7) {
+				// end of row
+				oRm.write("</div>");
+			}
 
+			oDay.setUTCDate(oDay.getUTCDate() + 1);
 		} while (oDay.getUTCMonth() != iNextMonth || oDay.getUTCDay() != iFirstDayOfWeek);
 
 	};

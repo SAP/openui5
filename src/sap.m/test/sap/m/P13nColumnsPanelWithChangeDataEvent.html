@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="UTF-8">
+<title>ColumnsPanel - sap.m</title>
+<script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-compatVersion="1.20">
+	
+</script>
+<script>
+	jQuery.sap.require("jquery.sap.xml");
+	jQuery.sap.require("sap.ui.comp.personalization.Util");
+	jQuery.sap.require("sap.m.P13nColumnsPanel");
+	jQuery.sap.require("sap.m.P13nItem");
+
+	var oApp = new sap.m.App("myApp", {
+		initialPage: "page1"
+	});
+
+	var that = this;
+	this._oModel = new sap.ui.model.json.JSONModel();
+
+	var _oData = {
+		transientData: {
+			columns: {
+				title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
+				items: [
+					{
+						columnKey: '4711',
+						visible: true,
+						text: "Column1",
+						tooltip: "Column1_Tooltip"
+					}, {
+						columnKey: '4712',
+						visible: true,
+						text: "Column2",
+						tooltip: "Column2_Tooltip"
+					}, {
+						columnKey: '4713',
+						visible: false,
+						text: "Column3",
+						tooltip: "Column3_Tooltip"
+					}, {
+						columnKey: '4714',
+						visible: true,
+						text: "Column4",
+						tooltip: "Column4_Tooltip"
+					}, {
+						columnKey: '4715',
+						visible: true,
+						text: "Column5",
+						tooltip: "Column5_Tooltip"
+					}, {
+						columnKey: '4716',
+						visible: false,
+						text: "Column6",
+						tooltip: "Column6_Tooltip"
+					}, {
+						columnKey: '4717',
+						visible: true,
+						text: "Column7",
+						tooltip: "Column7_Tooltip"
+					}, {
+						columnKey: '4718',
+						visible: true,
+						text: "Column8",
+						tooltip: "Column8_Tooltip"
+					}, {
+						columnKey: '4719',
+						visible: false,
+						text: "Column9",
+						tooltip: "Column9_Tooltip"
+					}, {
+						columnKey: '4720',
+						visible: false,
+						text: "Column10",
+						tooltip: "Column10_Tooltip"
+					}
+				]
+			}
+		},
+		persistentData: {
+			columns: {
+				columnsItems: [
+					{
+						columnKey: '4711',
+						index: 1
+					}, {
+						columnKey: '4712',
+						index: 0
+					}, {
+						columnKey: '4714',
+						visible: false
+					}, {
+						columnKey: '4716',
+						width: "100px"
+					}
+				]
+			}
+		}
+	};
+
+	this._oModel.setData(_oData);
+
+	this._oColumnsPanel = new sap.m.P13nColumnsPanel({
+		title: "{/transientData/columns/title}",
+		type: "columns",
+		items: {
+			path: '/transientData/columns/items',
+			template: new sap.m.P13nItem({
+				columnKey: "{columnKey}",
+				text: '{text}',
+				visible: '{visible}',
+				tooltip: '{tooltip}'
+			})
+		},
+		columnsItems: {
+			path: "/persistentData/columns/columnsItems",
+			template: new sap.m.P13nColumnsItem({
+				columnKey: "{columnKey}",
+				index: "{index}",
+				visible: "{visible}",
+				width: "{width}"
+			})
+		}
+	});
+
+	this._oColumnsPanel.setModel(this._oModel);
+
+	/* Event handler for changing and setting of model data*/
+
+	this._oColumnsPanel.attachChangeColumnsItems(function(oEvent) {
+		var oData = this._oModel.getData();
+		var aNewColumnsItems = oEvent.getParameter('newItems');
+		var aExistingColumnsItems = oEvent.getParameter('existingItems');
+		var oColumnsItem = null, sColumnKey = null;
+
+		//processing of new columnsItems --> creation of new model entries
+		aNewColumnsItems.forEach(function(oNewColumnsItem) {
+			oColumnsItem = {
+				columnKey: oNewColumnsItem.getColumnKey()
+			};
+			if (oNewColumnsItem.getIndex() !== undefined) {
+				oColumnsItem.index = oNewColumnsItem.getIndex();
+			}
+			if (oNewColumnsItem.getVisible() !== undefined) {
+				oColumnsItem.visible = oNewColumnsItem.getVisible();
+			}
+			if (oNewColumnsItem.getWidth() !== undefined) {
+				oColumnsItem.width = oNewColumnsItem.getWidth();
+			}
+			oData.persistentData.columns.columnsItems.push(oColumnsItem);
+		});
+
+		//processing of existing columnsItems --> model change 
+		aExistingColumnsItems.forEach(function(oExistingColumnsItem) {
+			oColumnsItem = null;
+			sColumnKey = oExistingColumnsItem.getColumnKey();
+			oColumnsItem = sap.ui.comp.personalization.Util.getArrayElementByKey("columnKey", sColumnKey, oData.persistentData.columns.columnsItems);
+			if (oColumnsItem) {
+				if (oExistingColumnsItem.getIndex() !== undefined) {
+					oColumnsItem.index = oExistingColumnsItem.getIndex();
+				}
+				if (oExistingColumnsItem.getVisible() !== undefined) {
+					oColumnsItem.visible = oExistingColumnsItem.getVisible();
+				}
+				if (oExistingColumnsItem.getWidth() !== undefined) {
+					oColumnsItem.width = oExistingColumnsItem.getWidth();
+				}
+			}
+		});
+
+	}, this);
+
+	this._oColumnsPanel.attachSetData(function() {
+		var oData = this._oModel.getData();
+		this._oModel.setData(oData);
+	}, this);
+
+	/* Event handler end*/
+
+	var oPage = new sap.m.Page("page1", {
+		content: [
+			this._oColumnsPanel
+		]
+	});
+
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody"></body>
+</html>

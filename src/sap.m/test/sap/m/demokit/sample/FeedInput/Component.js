@@ -9,7 +9,6 @@ sap.ui.core.UIComponent.extend("sap.m.sample.FeedInput.Component", {
 				"sap.m"
 			]
 		},
-		includes : [ "FeedInput/style.css" ],
 		config : {
 			sample : {
 				files : [

@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.ViewSettingsDialog</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -15,11 +15,14 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script language="javascript">
 
 			jQuery.sap.require("sap.ui.model.FilterOperator");
+			sinon.config.useFakeTimers = false;
 
 			var core = sap.ui.getCore();
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -101,7 +104,7 @@
 				key: "myPriceSorter",
 				text: "Price"
 			}));
-	
+
 			// init grouping (some simple sorters with default grouping and some with a custom grouping)
 			vsd2.addGroupItem(new sap.m.ViewSettingsItem({
 				key: "myNameGrouper",
@@ -119,7 +122,7 @@
 				key: "myPriceGrouper",
 				text: "Price"
 			}));
-	
+
 			vsd2.addFilterItem(new sap.m.ViewSettingsFilterItem({
 				key: "myNameFilter",
 				text: "Name",
@@ -221,13 +224,17 @@
 				key: "myPresetFilter3",
 				text: "Expensive stuff"
 			}));
-			
+
 			var vsd3 = vsd2.clone(); // this one will never be rendered and then destroyed
+			var vsd4 = vsd2.clone();
+			var vsd5 = vsd2.clone(); // this one will be used for focus on previously clicked filter element
+			var vsd6 = vsd2.clone(); // this one will be used for initial focus in filter view
 
 			var oButton = new sap.m.Button({
 				text : "Open ViewSettingsDialog",
 				press : function () {
-					vsd2.open();
+					vsd2.open("filter");
+					vsd4.open("invalidPage")
 				}
 			});
 
@@ -241,7 +248,7 @@
 			});
 
 			app.addPage(page).placeAt("content");
-			
+
 			/* test state for the dialog */
 			var filterState = {
 				"name1": true,
@@ -267,7 +274,7 @@
 				strictEqual(vsd2.getSelectedSortItem(), null, 'The default value for selectedSortItem should be "null"');
 				strictEqual(vsd2.getSelectedGroupItem(), null, 'The default value for selectedGroupItem should be "null"');
 				strictEqual(vsd2.getSelectedPresetFilterItem(), null, 'The default value for selectedPresetFilterItem should be "null"');
-			});	
+			});
 
 			module ("getter/setter");
 
@@ -294,9 +301,9 @@
 				strictEqual(core.byId(vsd2.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
 
 				// filters
-				vsd2.setSelectedFilterKeys(filterState);				
+				vsd2.setSelectedFilterKeys(filterState);
 				ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-			})
+			});
 
 			module("Open and Close");
 
@@ -306,15 +313,19 @@
 				ok(jQuery.sap.domById("vsd2-navcontainer"), "Nav container should be rendered");
 				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
 				ok(!jQuery.sap.domById("vsd2-page2-cont"), "Page 2 (filter detail content) should not be rendered");
+				ok(jQuery.sap.byId("vsd2-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
+				ok(jQuery.sap.byId("vsd2-__clone2-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' default button should be selected when invalid page passed");
 			});
 
 			asyncTest("Close ViewSettingsDialog", function (){
 				vsd2._dialog.getBeginButton().firePress();
+				vsd4._dialog.close();
 				// execute after rendering
  				setTimeout(function () {
  					ok(!vsd2._dialog.isOpen(), "Dialog should be in closed state");
 					start();
  				}, 1000);
+
 			});
 
 			module ("Events");
@@ -371,13 +382,13 @@
 						vsd2.detachCancel(fnChecks);
 						start();
 					};
-	
+
 					expect(8);
-	
+
 					// open dialog to store previous state
 					vsd2.open();
 					vsd2.attachCancel(fnChecks);
-	
+
 					// set everything to unselected / false and fire ESC key
 					vsd2.open();
 					vsd2.setSelectedSortItem();
@@ -392,21 +403,22 @@
 			test("Back on key [SHIFT]+[ENTER] event", function () {
 				expect(2);
 
-				vsd2.open();
-				
-				vsd2._switchToPage(0);
-				vsd2._switchToPage(1);
-				vsd2._switchToPage(2);
-				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
-				vsd2._switchToPage(3,vsd2.getFilterItems()[0]); // name details page
-				
-				sap.ui.test.qunit.triggerKeyboardEvent(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
-				equal(vsd2._iContentPage, 2, "Internal page state should be on the second page");
-				equal(vsd2._navContainer.getCurrentPage(), vsd2._getPage1(), "NavContainer should be on the first page");
+				vsd6.open();
 
-				vsd2._dialog.getEndButton().firePress();
+				vsd6._switchToPage(0);
+				vsd6._switchToPage(1);
+				vsd6._switchToPage(2);
+				jQuery.sap.delayedCall(0, vsd6._navContainer, "to", [vsd6.getId() + '-page6', "show"]);
+				vsd6._switchToPage(3,vsd6.getFilterItems()[0]); // name details page
+
+				sap.ui.test.qunit.triggerKeyboardEvent(vsd6._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
+				equal(vsd6._iContentPage, 2, "Internal page state should be on the second page");
+				equal(vsd6._navContainer.getCurrentPage(), vsd6._getPage1(), "NavContainer should be on the first page");
+
+				vsd6._dialog.getEndButton().firePress();
+				vsd6.destroy();
 			});
-			
+
 			asyncTest("Confirm event", function () {
 				expect(12);
 				// open dialog to store previous state
@@ -439,6 +451,57 @@
 				vsd2._resetButton.firePress();
 			});
 
+			module("Focus", {
+				setup: function() {
+					this.clock = sinon.useFakeTimers();
+				},
+				teardown: function() {
+					this.clock.restore();
+				}
+			});
+
+			test("Focus on previously selected filter items", function () {
+
+				expect(1);
+
+				vsd2.open();
+
+				vsd2._switchToPage(0);
+				vsd2._switchToPage(1);
+				vsd2._switchToPage(2);
+
+				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
+				vsd2._filterList.getItems()[0].firePress();
+
+				this.clock.tick(1000);
+				sap.ui.test.qunit.triggerKeyboardEvent(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
+				this.clock.tick(1000);
+				if (!sap.ui.Device.system.phone) {
+					strictEqual(document.activeElement, vsd2._filterList.getItems()[0].getFocusDomRef(), "Previously selected filter item should get the focus");
+				}
+				vsd2._dialog.getEndButton().firePress();
+			});
+
+			test("Focus on first item in filter by section ", function () {
+
+				expect(1);
+				vsd5.open();
+
+				this.clock.tick(1000);
+
+				jQuery.sap.delayedCall(0, vsd5._navContainer, "to", [vsd5.getId() + '-page5', "show"]);
+				vsd5._filterList.getItems()[0].firePress();
+
+				this.clock.tick(1000);
+
+				if (!sap.ui.Device.system.phone) {
+					strictEqual(document.activeElement, vsd5._filterDetailList.getItems()[0].getFocusDomRef(), "The first item should get the focus");
+				}
+				vsd5._dialog.getEndButton().firePress();
+				vsd5.destroy();
+			});
+
+
 			module ("Construction/Destruction");
 
 			asyncTest("Destroy ViewSettingsDialog after all pages have been visited", function (){
@@ -453,7 +516,7 @@
 				vsd2._switchToPage(2);
 				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
 				vsd2._switchToPage(3,vsd2.getFilterItems()[0]); // name details page
-	
+
 				setTimeout(function () {
 					// store poiners to internal controls
 					var sortList = vsd2._sortList,
@@ -462,13 +525,13 @@
 						groupOrderList = vsd2._groupOrderList,
 						presetFilterList = vsd2._presetFilterList,
 						filterList = vsd2._filterList,
-						filterDetailList = vsd2._filterDetailList
+						filterDetailList = vsd2._filterDetailList,
 						titleLabel = vsd2._titleLabel,
 						detailTitleLabel = vsd2._detailTitleLabel,
 						resetButton = vsd2._resetButton,
 						header = vsd2._header,
 						sortButton = vsd2._sortButton,
-						groupButton = vsd2._groupButton
+						groupButton = vsd2._groupButton,
 						filterButton = vsd2._filterButton,
 						segmentedButton = vsd2._segmentedButton,
 						page1 = vsd2._page1,
@@ -476,12 +539,12 @@
 						navContainer = vsd2._navContainer,
 						dialog = vsd2._dialog,
 						subHeader = vsd2._subHeader;
-	
+
 					vsd2.destroy();
-	
+
 					// check if internal controls are destroyed correctly (when initialized they must be destroyed)
 					strictEqual(vsd2.$().length, 0, "There is no Domref for ViewSettingsDialog");
-	
+
 					// check if all internal controls are destroyed successfully
 					strictEqual(sortList.bIsDestroyed, true, "sort list is destroyed successfully");
 					strictEqual(sortOrderList.bIsDestroyed, true, "sort order list is destroyed successfully");
@@ -503,7 +566,7 @@
 					strictEqual(navContainer.bIsDestroyed, true, "navContainer is destroyed successfully");
 					strictEqual(dialog.bIsDestroyed, true, "dialog is destroyed successfully");
 					strictEqual(subHeader.bIsDestroyed, true, "subHeader is destroyed successfully");
-	
+
 					// check if all controls are set to null correctly
 					strictEqual(vsd2._sortList, null, "sort list is null");
 					strictEqual(vsd2._sortOrderList, null, "sort order list is null");
@@ -527,6 +590,7 @@
 					strictEqual(vsd2._subHeader, null, "subHeader is null");
 					start();
 				}, 1000);
+
 			});
 
 			test("Destroy ViewSettingsDialog that has never been opened/rendered", function (){
@@ -623,7 +687,7 @@
 				vsd._dialog.close();
 		});
 
-		module ("Group tab only checks")
+		module ("Group tab only checks");
 
 		test("Check group tab only mode", function  () {
 			var vsd = new sap.m.ViewSettingsDialog("vsd-group", {
@@ -711,34 +775,34 @@
 							new sap.m.ViewSettingsItem({
 								key: "name1",
 								text: "Headphone",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name2",
 								text: "Mousepad",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name3",
-								text: "Monitor",
+								text: "Monitor"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name4",
-								text: "Backpack",
+								text: "Backpack"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name5",
 								text: "Printer",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name6",
 								text: "Optic Mouse",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "name7",
-								text: "Dock Station",
+								text: "Dock Station"
 							})
 						]
 					}),
@@ -749,17 +813,17 @@
 							new sap.m.ViewSettingsItem({
 								key: "status1",
 								text: "Approved",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "status2",
 								text: "Open",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "status3",
 								text: "Denied",
-								selected: true,
+								selected: true
 							})
 						]
 					}),
@@ -770,31 +834,31 @@
 						items: [
 							new sap.m.ViewSettingsItem({
 								key: "value1",
-								text: "< 10 EUR",
+								text: "< 10 EUR"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value2",
-								text: "10 - 30 EUR",
+								text: "10 - 30 EUR"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value3",
 								text: "30 - 50 EUR",
-								selected: true,
+								selected: true
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value4",
-								text: "50 - 70 EUR",
+								text: "50 - 70 EUR"
 							}),
 							new sap.m.ViewSettingsItem({
 								key: "value5",
-								text: "> 70 EUR",
+								text: "> 70 EUR"
 							})
 						]
 					}),
 					new sap.m.ViewSettingsCustomItem({
 						key: "myPriceFilter",
 						text: "Price",
-						customControl: customPriceFilter.clone(),
+						customControl: customPriceFilter.clone()
 					})
 				]
 			});
@@ -829,7 +893,7 @@
 			strictEqual(vsd._filterDetailList.getMode(), sap.m.ListMode.SingleSelectLeft, "The value detail list is in single select left mode");
 			strictEqual(vsd._filterDetailList.getSelectedItem().data("item"), vsd.getFilterItems()[2].getItems()[2], "The item 'value3' is selected");
 		});
-	
+
 		asyncTest("Check add/remove/toggle/hasStyleClass methods", function () {
 			var oVSD = new sap.m.ViewSettingsDialog("ViewSettingsDialog"),
 				sCustomStyleClass = "myStyleClass";
@@ -876,6 +940,7 @@
 			});
 			oVSD._dialog.close();
 		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

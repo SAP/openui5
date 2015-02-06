@@ -58,6 +58,11 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
+			 * Aligns the text of the checkbox. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+			 */
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+
+			/**
 			 * Width of Label
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
@@ -204,6 +209,10 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 
 	CheckBox.prototype.setTextDirection = function(sDirection){
 		this._setLabelProperty("textDirection", sDirection);
+	};
+
+	CheckBox.prototype.setTextAlign = function(sAlign){
+		this._setLabelProperty("textAlign", sAlign);
 	};
 
 	CheckBox.prototype.exit = function() {

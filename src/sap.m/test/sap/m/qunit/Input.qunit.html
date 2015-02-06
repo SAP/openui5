@@ -268,6 +268,15 @@
 		ok(oInput.$().children(".sapMInputValHelp").children(".sapMInputValHelpInner").length === 1, "Has an inner value help indicator element");
 		ok(oInput.$().hasClass("sapMInputVH") === true, "Outer div has additional CSS class\"sapMInputVH\"");
 
+		// screen reader announcement for F4, there should be at least one description
+		var describedById = oInput.getFocusDomRef().getAttribute("aria-describedby");
+		var aLabels = describedById.split(' ');
+		var bLabelsExist = aLabels.every(function(id){
+			return !!document.getElementById(id);
+		});
+		ok(!!describedById, "At least one described by ID is set for screen reader");
+		ok(bLabelsExist, "All screen reader descriptions are rendered in DOM");
+
 		// temporarily overwrite function to get a placeholder on all browsers
 
 		this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
@@ -688,7 +697,7 @@
 		ok(oItem, "Item should be created");
 
 		oItem.focus();
-		oItem.firePress();
+		oItem.$().trigger("tap");
 
 		equal(fnCallback.callCount, 1, "change event handler only called once");
 		var spyCall = fnCallback.getCall(0);
@@ -777,8 +786,12 @@
 		equal(oPopup1.getContent()[0].getItems().length, 1, "Suggestions are filtered");
 		
 		//trigger selection
-		oPopup1.getContent()[0].getItems()[0].firePress();
-		this.clock.tick(500);
+		var oList = oPopup1.getContent()[0];
+		var oListItem = oList.getItems()[0];
+		oList.fireSelectionChange({
+			listItem : oListItem
+		});
+		
 		ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
 		equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
 		
@@ -1228,6 +1241,8 @@
 	});
 
 	test("Tabular Suggestions on Desktop", function(){
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		var oInput = new sap.m.Input({
 			width: "100px",
 			suggestionWidth: "500px",
@@ -1360,6 +1375,11 @@
 
 		ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		equal(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
+
+		// checks for the show more button (tabular suggestions only)
+		strictEqual(oPopup.getFooter().getContent().length, 2, "The footer has two items (spacer and button)");
+		strictEqual(oPopup.getFooter().getContent()[1] instanceof sap.m.Button, true, "The show more button is added to the popup");
+		strictEqual(oPopup.getFooter().getContent()[1].getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
@@ -1524,6 +1544,8 @@
 	});
 
 	test("Tabular Suggestion on Phone", function(){
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1697,6 +1719,10 @@
 		equal(oPopup.getContent()[0].$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		strictEqual(oDialogRendererSpy.callCount, 0, "Dialog is not re-rendered during filtering of suggestions");
 		ok(!oInput._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
+
+		// checks for the show more button (tabular suggestions only)
+		strictEqual(oPopup.getEndButton() instanceof sap.m.Button, true, "The show more button is added to the popup");
+		strictEqual(oPopup.getEndButton().getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		oPopup.getContent()[0].getItems()[1].$().trigger("tap");
 

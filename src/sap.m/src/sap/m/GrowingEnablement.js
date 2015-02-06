@@ -139,12 +139,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		reset : function() {
 			this._iItemCount = 0;
 		},
-		
+
 		// determines growing reset with binding change reason
 		// according to UX sort/filter/refresh/context should reset the growing
 		shouldReset : function(sChangeReason) {
 			var mChangeReason = sap.ui.model.ChangeReason;
-			
+
 			return 	sChangeReason == mChangeReason.Sort ||
 					sChangeReason == mChangeReason.Filter ||
 					sChangeReason == mChangeReason.Context ||
@@ -211,7 +211,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 */
 		_getLoading : function(sId) {
 			var that = this;
-			return this._oLoading || (this._oLoading = new sap.m.CustomListItem({
+			
+			if (this._oLoading) {
+				return this._oLoading;
+			}
+			
+			this._oLoading = new sap.m.CustomListItem({
 				id : sId,
 				content : new sap.ui.core.HTML({
 					content :	"<div class='sapMSLIDiv sapMGrowingListLoading'>" +
@@ -224,7 +229,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 						rm.destroy();
 					}
 				})
-			}).setParent(this._oControl, null, true));
+			}).setParent(this._oControl, null, true);
+			
+			// growing loading indicator as a list item should not be affected from the List Mode
+			this._oLoading.getMode = function() {
+				return sap.m.ListMode.None;
+			};
+			
+			return this._oLoading;
 		},
 
 		/**
@@ -239,8 +251,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			}
 
 			this._oControl.addNavSection(sId);
+			
+			if (this._oTrigger) {
+				return this._oTrigger;
+			}
 
-			return this._oTrigger || (this._oTrigger = new sap.m.CustomListItem({
+			this._oTrigger = new sap.m.CustomListItem({
 				id : sId,
 				content : new sap.ui.core.HTML({
 					content :	"<div class='sapMGrowingListTrigger'>" +
@@ -272,7 +288,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				onAfterRendering : function(oEvent) {
 					this._oTrigger.$().prop("tabindex", 0);
 				}
-			}, this));
+			}, this);
+			
+			// growing button as a list item should not be affected from the List Mode
+			this._oTrigger.getMode = function() {
+				return sap.m.ListMode.None;
+			};
+			
+			return this._oTrigger;
 		},
 
 		/**
@@ -452,7 +475,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
 			}
-			this._oControl.getBinding("items").getContexts(0, this._iItemCount);
+			this._oControl.getBinding("items").getContexts(0, this._oControl.getGrowingThreshold());
 		},
 
 		/**
@@ -523,8 +546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 									if (aContexts.diff[i].type === "delete") {
 										bFromScratch = true;
 										break;
-									}
-									else if (aContexts.diff[i].type === "insert") {
+									} else if (aContexts.diff[i].type === "insert") {
 										if (!bFirstAddedItemChecked && aContexts.diff[i].index !== this._iRenderedDataItems) {
 											bFromScratch = true;
 											break;
@@ -576,8 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 									aItems = this._oControl.mAggregations["items"]; // access via getItems() copies the array, so direct access... it is only used in the next line to give the item instance, so it's fine
 									this.deleteListItem(aItems[iIndex]);
-								}
-								else if (aContexts.diff[i].type === "insert") { // case 2: element is added
+								} else if (aContexts.diff[i].type === "insert") { // case 2: element is added
 									oClone = fnFactory("", aContexts[iIndex]);
 									oClone.setBindingContext(aContexts[iIndex], oBindingInfo.model);
 

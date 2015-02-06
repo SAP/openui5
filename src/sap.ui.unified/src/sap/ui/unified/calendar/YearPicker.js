@@ -49,6 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	(function() {
 
+		YearPicker.prototype.init = function(){
+
+			this._iColumns = 4;
+
+		};
+
 		YearPicker.prototype.onAfterRendering = function(){
 
 			var that = this;
@@ -124,7 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			var iYear = oThis.getYear();
 			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().children(".sapUiCalYear");
+			var aDomRefs = oThis.$().find(".sapUiCalYear");
 			var iIndex = 10;
 
 			if (iYear > 9990) {
@@ -150,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
 			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
 			oThis._oItemNavigation.setCycling(false);
-			oThis._oItemNavigation.setColumns(4, true);
+			oThis._oItemNavigation.setColumns(oThis._iColumns, true);
 			oThis._oItemNavigation.setFocusedIndex(iIndex);
 			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
 

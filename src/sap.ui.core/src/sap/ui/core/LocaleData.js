@@ -133,6 +133,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Get stand alone quarter names in width "narrow", "abbreviated" or "wide"
+		 *
+		 * @param {string} sWidth the required width for the quarter names
+		 * @returns {array} array of quarters
+		 * @public
+		 */
+		getQuartersStandAlone : function(sWidth) {
+			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
+			return this._get("quarters-standAlone-" + sWidth);
+		},
+
+		/**
 		 * Get day periods in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day period names
@@ -205,11 +217,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Get currency format pattern
 		 *
+		 * @param {string} sContext the context of the currency pattern (standard or accounting)
 		 * @returns {string} The pattern
 		 * @public
 		 */
-		getCurrencyPattern : function() {
-			return this._get("currencyFormat").standard;
+		getCurrencyPattern : function(sContext) {
+			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
 		
 		/**
@@ -322,7 +335,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			var oCurrencySymbols = this._get("currencySymbols");
 			return (oCurrencySymbols && oCurrencySymbols[sCurrency]) || sCurrency;
 		},
-		
+
+		/**
+		 * Returns the currency code which is corresponded with the given currency symbol.
+		 *
+		 * @param {string} sCurrencySymbol The currency symbol which needs to be converted to currency code
+		 * @return {string} The corresponded currency code defined for the given currency symbol. Null is returned if no currency code can be found by using the given currency symbol.
+		 * @public
+		 * @since 1.27.0
+		 */
+		getCurrencyCodeBySymbol : function(sCurrencySymbol) {
+			var oCurrencySymbols = this._get("currencySymbols"), sCurrencyCode;
+			for (sCurrencyCode in oCurrencySymbols) {
+				if (oCurrencySymbols[sCurrencyCode] === sCurrencySymbol) {
+					return sCurrencyCode;
+				}
+			}
+			return null;
+		},
+
 		_getRelative : function(sType, iDiff) {
 			if (Math.abs(iDiff) <= 1) {
 				return this._get("dateField-" + sType + "-relative-" + iDiff);
@@ -450,6 +481,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"quarters-format-abbreviated":["Q1","Q2","Q3","Q4"],
 			"quarters-format-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 			"quarters-standAlone-narrow":["1","2","3","4"],
+			"quarters-standAlone-abbreviated":["Q1","Q2","Q3","Q4"],
+			"quarters-standAlone-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
 			"symbols-latn-plusSign":"+",

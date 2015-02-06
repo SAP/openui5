@@ -128,6 +128,7 @@
 				ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(600);
 				var $Dialog = jQuery.sap.byId("dialog"),
+					$ScrollDiv = oDialog.$("scroll"),
 					oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
 					oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
 					oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
@@ -137,15 +138,16 @@
 				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 				ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
+				equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
 				if(!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop){
 					equal(oLeftButtonFocusDom, document.activeElement, "left button should have the focus");
 				}
 
 				if(jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop){
-					expect(8);
-				}else{
 					expect(9);
+				}else{
+					expect(10);
 				}
 				ok(oIconDom, "Icon should be rendered.");
 				ok(oTitleDom, "Title should be rendered");
@@ -246,7 +248,7 @@
 				//Assert
 				resultingScrollPaneWidth = sut._$scrollPane.width();
 				resultingContentWidth =  sut._$content.width();
-				ok(resultingScrollPaneWidth > resultingContentWidth,"scroll pane width: " + resultingScrollPaneWidth + " was bigger than the contentWidth - we are able to scroll");
+				ok(resultingScrollPaneWidth >= resultingContentWidth,"scroll pane width: " + resultingScrollPaneWidth + " was bigger than the contentWidth - we are able to scroll");
 
 				ok(sut._$content.width() >= 398 && sut._$content.width() <= 500, "content width should be with in the set value and minimum value of dialog");
 				sut.destroy();
@@ -274,9 +276,9 @@
 				this.clock.tick(500);
 
 				resultingScrollPaneWidth = sut._$scrollPane.width();
-				resultingContentWidth =  sut._$content.width();
+				resultingContentWidth =  sut.$("scrollCont").width();
 				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth );
-				ok(90 < resultingScrollPaneWidth, "The content fits in the scollpane");
+				ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
 				sut.destroy();
 				jQuery("html").removeClass("sap-desktop");
 			});
@@ -864,6 +866,24 @@
 
 				// Cleanup
 				oContainer.destroy();
+			});
+
+			test("Clear CSS property 'display' from scrolling area before size calculation", function(){
+				expect(2);
+				var oDialog = new sap.m.Dialog({
+					contentWidth: "450px",
+					contentHeight: "400px"
+				});
+
+				oDialog.open();
+				this.clock.tick(500);
+
+				ok(oDialog.isOpen(), "Dialog is opened");
+				this.stub(oDialog, "_adjustScrollingPane", function(){
+					equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
+				});
+				oDialog._reapplyPosition();
+				oDialog.destroy();
 			});
 		</script>
 	</head>

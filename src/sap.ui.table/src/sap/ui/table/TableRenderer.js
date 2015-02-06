@@ -21,12 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oTable an object representation of the control that should be rendered
 	 */
 	TableRenderer.render = function(rm, oTable) {
-
-		// return immediately if control is invisible
-		if (!oTable.getVisible()) {
-			return;
-		}
-
 		// create the rows of the table
 		// (here we could think about a swith to allow the programmatic usage of the table)
 		oTable._createRows();
@@ -910,13 +904,15 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeClasses();
 			rm.write("><div");
 			rm.addClass("sapUiTableCell");
+			
 			rm.writeClasses();
-			/*
-			if (oTable.getRowHeight() > 0) {
+			
+			if (oTable.getRowHeight() && oTable.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 				rm.addStyle("height", oTable.getRowHeight() + "px");
+				rm.addStyle("max-height", oTable.getRowHeight() + "px");
 			}
 			rm.writeStyles();
-			*/
+			
 			rm.write(">");
 			this.renderTableCellControl(rm, oTable, oCell, iCellIndex);
 			rm.write("</div></td>");

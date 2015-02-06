@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			hasPopin = false,
 			hasFooter = false,
 			mode = oTable.getMode(),
+			iModeOrder = ListBaseRenderer.ModeOrder[mode],
 			clsPrefix = "sapMListTbl",
 			idPrefix = oTable.getId("tbl"),
 			cellTag = (type == "Head") ? "th" : "td",
@@ -73,11 +74,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.writeClasses();
 		rm.write(">");
 	
-		if (mode != "None" && mode != "SingleSelect" && mode != "Delete") {
-			if (mode == "SingleSelectMaster") {
-				createBlankCell("None");
-				hiddens++;
-			} else if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
+		if (iModeOrder == -1) {
+			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
 				rm.write("<th class='" + clsPrefix + "SelCol'><div class='sapMLIBSelectM'>");
 				rm.renderControl(oTable._getSelectAllCheckbox());
 				rm.write("</div></th>");
@@ -85,10 +83,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			} else {
 				createBlankCell("SelCol");
 			}
-		}
-	
-		if (sap.ui.core.theming.Parameters.get("sapUiLIUnreadAsBubble") == "true" && oTable.getShowUnread()) {
-			createBlankCell("UnreadCol");
 		}
 	
 		aColumns.forEach(function(oColumn, order) {
@@ -144,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	
 		createBlankCell("NavCol", type + "Nav");
 	
-		if (mode == "SingleSelect" || mode == "Delete") {
+		if (iModeOrder == 1) {
 			createBlankCell("SelCol");
 		}
 	
@@ -174,6 +168,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.write("<table");
 		rm.addClass("sapMListTbl");
 		rm.addStyle("table-layout", oControl.getFixedLayout() ? "fixed" : "auto");
+	};
+	
+	/**
+	 * Writes the accessibility state of the table
+	 *
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 */
+	TableRenderer.writeAccessibilityState = function(rm, oList) {
+		// TODO
 	};
 	
 	/**

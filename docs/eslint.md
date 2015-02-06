@@ -177,7 +177,7 @@ Ruleset
 |[space-in-brackets](http://eslint.org/docs/rules/space-in-brackets.html) |off |off | |
 |[space-infix-ops](http://eslint.org/docs/rules/space-infix-ops.html) |error |error | |
 |[space-return-throw-case](http://eslint.org/docs/rules/space-return-throw-case.html) |error |error | |
-|[space-unary-word-ops](http://eslint.org/docs/rules/space-unary-word-ops.html) |off |**error** |again, a majority in the team voted for this rule for better readability |
+|[space-unary-ops](http://eslint.org/docs/rules/space-unary-ops.html) |off |**error** |again, a majority in the team voted for this rule for better readability |
 |[max-nested-callbacks](http://eslint.org/docs/rules/max-nested-callbacks.html) |off |**warning** |3 |
 |[one-var](http://eslint.org/docs/rules/one-var.html) |off |off | |
 |[wrap-regex](http://eslint.org/docs/rules/wrap-regex.html) |off |off | |
@@ -220,7 +220,7 @@ To apply these rules in other projects, you can use the following ESLint setting
 		"no-unused-vars": [2, {"vars":"all", "args":"none"}],
 		"radix": 2,
 		"space-after-keywords": [2, "always"],
-		"space-unary-word-ops": 2,
+		"space-unary-ops": 2,
 		"wrap-iife": [2, "any"],
 
 		"camelcase": 1,

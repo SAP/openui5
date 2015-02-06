@@ -375,7 +375,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aSelectedPaths = [];
 		this._aNavSections = [];
 		this._bUpdating = false;
-		
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
@@ -389,6 +388,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	ListBase.prototype.onAfterRendering = function() {
 		this._startItemNavigation();
+		this._sLastMode = this.getMode();
 		if (!this._oGrowingDelegate && this.isBound("items")) {
 			this._updateFinished();
 		}
@@ -634,8 +634,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
-		if (!oListItem instanceof sap.m.ListItemBase) {
-			jQuery.sap.log.warning("setSelectedItem is called without ListItem parameter on " + this);
+		if (this.indexOfItem(oListItem) < 0) {
+			jQuery.sap.log.warning("setSelectedItem is called without valid ListItem parameter on " + this);
 			return;
 		}
 		if (this._bSelectionMode) {
@@ -768,18 +768,48 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
-	ListBase.prototype.setMode = function(sMode) {
-		var sOldMode = this.getMode();
-		if (sOldMode != sMode) {
-			this.setProperty("mode", sMode);
-			var iSelectionLength = this.getSelectedItems().length;
-			this._bSelectionMode = this.getMode().indexOf("Select") > -1;
 	
-			// remove selection only if needed
-			if (iSelectionLength > 1 || !this._bSelectionMode) {
-				this.removeSelections(true);
-			}
+	/**
+	 * Returns the last list mode, the mode that is rendered
+	 * This can be used to detect mode changes during rendering
+	 * 
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getLastMode = function(sMode) {
+		return this._sLastMode;
+	};
+	
+	ListBase.prototype.setMode = function(sMode) {
+		sMode = this.validateProperty("mode", sMode);
+		var sOldMode = this.getMode();
+		if (sOldMode == sMode) {
+			return this;
 		}
+		
+		// update property with invalidate
+		this.setProperty("mode", sMode);
+		
+		// determine the selection mode
+		this._bSelectionMode = sMode.indexOf("Select") > -1;
+		
+		// remove selections if mode is not a selection mode
+		if (!this._bSelectionMode) {
+			this.removeSelections(true);
+			return this;
+		}
+		
+		// update selection status of items 
+		var aSelecteds = this.getSelectedItems();
+		if (aSelecteds.length > 1) {
+			// remove selection if there are more than one item is selected
+			// we cannot determine 
+			this.removeSelections(true);
+		} else if (sOldMode === sap.m.ListMode.MultiSelect) {
+			// if old mode is multi select then we need to remember selected item 
+			// in case of new item selection right after setMode call
+			this._oSelectedItem = aSelecteds[0];
+		}
+		
 		return this;
 	};
 	
@@ -853,35 +883,30 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 	
-	/*
-	 * This function runs when setVisible is called from ListItemBase
-	 * @protected
-	 */
-	ListBase.prototype.onItemVisibleChange = function(oItem, bVisible) {
-		// invalidate the item navigation
+	
+	// this gets called when visible property of the ListItem is changed
+	ListBase.prototype.onItemVisibleChange = function(oListItem, bVisible) {
 		this._bItemNavigationInvalidated = true;
 	};
 	
-	/*
-	 * This function runs when setSelected is called from ListItemBase
-	 * @protected
-	 */
-	ListBase.prototype.onItemSetSelected = function(oItem, bSelect) {
-		if (this.getMode() == "MultiSelect") {
-			this._updateSelectedPaths(oItem, bSelect);
+	// this gets called when selected property of the ListItem is changed
+	ListBase.prototype.onItemSelectedChange = function(oListItem, bSelected) {
+		
+		if (this.getMode() == sap.m.ListMode.MultiSelect) {
+			this._updateSelectedPaths(oListItem, bSelected);
 			return;
 		}
 	
-		if (bSelect) {
+		if (bSelected) {
 			this._aSelectedPaths.length = 0;
 			this._oSelectedItem && this._oSelectedItem.setSelected(false, true);
-			this._oSelectedItem = oItem;
-		} else if (this._oSelectedItem === oItem) {
+			this._oSelectedItem = oListItem;
+		} else if (this._oSelectedItem === oListItem) {
 			this._oSelectedItem = null;
 		}
 	
-		// update selection path for item
-		this._updateSelectedPaths(oItem, bSelect);
+		// update selection path for the list item
+		this._updateSelectedPaths(oListItem, bSelected);
 	};
 	
 	/*
@@ -1039,33 +1064,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * Apply ListBase settings to given list item if selectable
 	 * TODO: There should be a better way to set these private variables
 	 */
-	ListBase.prototype._applySettingsToItem = function(oItem, bOnlyProperties) {
-		if (!oItem) {
-			return oItem;
+	ListBase.prototype._applySettingsToItem = function(oListItem) {
+	
+		if (oListItem && !oListItem.getParent() && oListItem.getSelected()) {
+			this.onItemSelectedChange(oListItem, true);
 		}
 	
-		oItem._listId = this.getId();
-		oItem._showUnread = this.getShowUnread();
-		if (!oItem.isSelectable()) {
-			return oItem;
-		}
-	
-		oItem._mode = this.getMode();
-		oItem._modeAnimationOn = this.getModeAnimationOn();
-		oItem._includeItemInSelection = this.getIncludeItemInSelection();
-		if (bOnlyProperties) {
-			return oItem;
-		}
-	
-		// FIXME: very lame to share events
-		oItem._select = this._select;
-		oItem._delete = this._delete;
-	
-		if (!oItem.getParent() && oItem.getSelected()) {
-			this.onItemSetSelected(oItem, true);
-		}
-	
-		return oItem;
+		return oListItem;
 	};
 	
 	// select item if it was already selected before and not selected now
@@ -1080,25 +1085,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	};
 	
-	// List fires select event caused by checkbox/radiobutton
-	ListBase.prototype._select = function(oEvent) {
-		var oListItem = sap.ui.getCore().byId(this.oParent.getId()),
-			oList = sap.ui.getCore().byId(oListItem._listId),
-			bSelect = oEvent.getParameter("selected"),
-			sMode = oList.getMode();
-	
-		oListItem.setSelected(bSelect);
-	
-		if (sMode == "MultiSelect") {
-			oList._fireSelectionChangeEvent([oListItem]);
-		} else if (oList._bSelectionMode && bSelect) {
-			oList._fireSelectionChangeEvent([oListItem]);
+	// this gets called from item when selection is changed via checkbox/radiobutton/press event
+	ListBase.prototype.onItemSelect = function(oListItem, bSelected) {
+		if (this.getMode() == sap.m.ListMode.MultiSelect) {
+			this._fireSelectionChangeEvent([oListItem]);
+		} else if (this._bSelectionMode && bSelected) {
+			this._fireSelectionChangeEvent([oListItem]);
 		}
-	};
-	
-	// List fires select event caused by the list item
-	ListBase.prototype._selectTapped = function(oListItem) {
-		this._fireSelectionChangeEvent([oListItem]);
 	};
 	
 	// Fire selectionChange event and support old select event API
@@ -1116,25 +1109,31 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	
 		// support old API
-		this.fireSelect({ listItem : oListItem });
+		this.fireSelect({
+			listItem : oListItem 
+		});
 	};
 	
-	// List fires delete event caused by the delete image
-	ListBase.prototype._delete = function(oEvent) {
-		var oListItem = sap.ui.getCore().byId(this.oParent.getId());
-		var oList = sap.ui.getCore().byId(oListItem._listId);
-		oList.fireDelete({
+	// this gets called from item when delete is triggered via delete button
+	ListBase.prototype.onItemDelete = function(oListItem) {
+		this.fireDelete({
 			listItem : oListItem
 		});
 	};
 	
-	// this will be called from item when it is pressed to fire event
-	// FIXME: why item does not fire its own events
-	ListBase.prototype._onItemPressed = function(oItem, oEvent) {
-		jQuery.sap.delayedCall(0, this, function(){
+	// this gets called from item when item is pressed(enter/tap/click)
+	ListBase.prototype.onItemPress = function(oListItem, oSrcControl) {
+		
+		// do not fire press event for inactive type 
+		if (oListItem.getType() == sap.m.ListType.Inactive) {
+			return;
+		}
+		
+		// fire event async
+		jQuery.sap.delayedCall(0, this, function() {
 			this.fireItemPress({
-				listItem : oItem,
-				srcControl : oEvent.srcControl || oItem
+				listItem : oListItem,
+				srcControl : oSrcControl
 			});
 		});
 	};
@@ -1663,7 +1662,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 		
 		if (this.isAllSelectableSelected()) {
-			this.removeSelections(true, true);
+			this.removeSelections(false, true);
 		} else {
 			this.selectAll(true);
 		}

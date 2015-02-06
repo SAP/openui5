@@ -1,11 +1,9 @@
-jQuery.sap.require("sap.m.MessageToast");
-
 sap.ui.controller("sap.m.sample.ActionSelect.C", {
 
 	onInit: function () {
 
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 
 		// add buttons with javaScript (yet not possible with XML views)

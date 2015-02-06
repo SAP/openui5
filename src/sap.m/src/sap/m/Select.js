@@ -79,7 +79,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				 * If set to true, the width of the select input is determined by the selected item’s content.
 				 * @since 1.16
 				 */
-				autoAdjustWidth: { type: "boolean", group: "Appearance", defaultValue: false }
+				autoAdjustWidth: { type: "boolean", group: "Appearance", defaultValue: false },
+
+				/**
+				 * Sets the horizontal alignment of the text within the input field.
+				 * @since 1.28
+				 */
+				textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: sap.ui.core.TextAlign.Initial },
+
+				/**
+				 * Specifies the direction of the text within the input field with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28
+				 */
+				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit }
 			},
 			defaultAggregation : "items",
 			aggregations: {
@@ -99,7 +111,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem: { type: "sap.ui.core.Item", multiple: false }
+				selectedItem: { type: "sap.ui.core.Item", multiple: false },
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
 			events: {
 
@@ -333,7 +351,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @private
 		 */
-		Select.prototype.onAfterOpen = function() {};
+		Select.prototype.onAfterOpen = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "true");
+			}
+		};
 
 		/**
 		 * This event handler will be called before the picker pop-up is closed.
@@ -351,7 +375,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @private
 		 */
-		Select.prototype.onAfterClose = function() {};
+		Select.prototype.onAfterClose = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-expanded", "false");
+			}
+		};
 
 		/**
 		 * Getter for the control's picker pop-up.
@@ -533,6 +563,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._onBeforeOpenDialog = function() {
 			var oHeader = this.getPicker().getCustomHeader();
 			oHeader.getContentLeft()[0].setValue(this.getSelectedItem().getText());
+			oHeader.getContentLeft()[0].setTextDirection(this.getTextDirection());
+			oHeader.getContentLeft()[0].setTextAlign(this.getTextAlign());
 		};
 
 		/* =========================================================== */
@@ -994,10 +1026,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				oList.setSelection(vItem);
 			}
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setAssociation("selectedItem", vItem || null, true);
-			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", true);
+			this.setAssociation("selectedItem", vItem, true);
+			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
+
+			if (typeof vItem === "string") {
+				vItem = sap.ui.getCore().byId(vItem);
+			}
+
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
 		};
 
@@ -1508,28 +1543,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.setSelectedItemId = function(vItem) {
 			vItem = this.validateProperty("selectedItemId", vItem);
-			var oItem = sap.ui.getCore().byId(vItem);
 
-			if (!(oItem instanceof sap.ui.core.Item) && vItem !== "") {
-				jQuery.sap.log.warning('Warning: setSelectedItemId() "sItem" has to be a string id of an sap.ui.core.Item instance, an empty string or undefined on', this);
-				return this;
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
 			}
 
-			if (!oItem) {
-				oItem = this.getDefaultSelectedItem();
-			}
-
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setSelection(oItem);
+			this.setSelection(vItem);
+			vItem = this.getSelectedItem();
 
 			// update the label text
-			if (oItem) {
-				this.setValue(oItem.getText());
+			if (vItem) {
+				this.setValue(vItem.getText());
 			/*eslint-disable no-cond-assign */
-			} else if (oItem = this.getDefaultSelectedItem()) {
+			} else if (vItem = this.getDefaultSelectedItem()) {
 			/*eslint-enable no-cond-assign */
-				this.setValue(oItem.getText());
+				this.setValue(vItem.getText());
 			} else {
 				this.setValue("");
 			}
@@ -1587,6 +1615,32 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// and "selectedItemId" property need to be updated in onBeforeRendering()
 			return this.setProperty("selectedKey", sKey);	// update "selectedKey" property, re-rendering is needed
 		};
+
+		/**
+		 * Setter for property <code>textAlign</code>.
+		 *
+		 * Default value is an sap.ui.core.TextAlign.Initial <code>"Initial"</code>.
+		 * If the provided <code>sValue</code> has a default value,
+		 * the browser default is used.
+		 *
+		 * @param {sap.ui.core.TextAlign} sValue New value for property <code>textAlign</code>.
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @public
+		 * @since 1.28
+		 */
+
+		/**
+		 * Setter for property <code>textDirection</code>.
+		 *
+		 * Default value is an sap.ui.core.TextDirection.Inherit <code>"Inherit"</code>.
+		 * If the provided <code>sValue</code> has a default value,
+		 * the inherited direction from the DOM is used.
+		 *
+		 * @param {sap.ui.core.TextDirection} sValue New value for property <code>textDirection</code>.
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @public
+		 * @since 1.28
+		 */
 
 		/**
 		 * Retrieves the item from the aggregation named <code>items</code> at the given 0-based index.

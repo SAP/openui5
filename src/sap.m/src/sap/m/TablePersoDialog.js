@@ -94,20 +94,20 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			var bSelected = oEvent.getParameter('selected'),
 				oData = this._oP13nModel.getData();
 			if (oEvent.getSource().getId() === this._getSelectAllCheckboxId()) {
-				//'Select All' checkbox has been changed
+				// 'Select All' checkbox has been changed
 				oData.aColumns.forEach(function(oColumn) {
 					oColumn.visible = bSelected;
 				});
 			} else {
-				//One of the list checkboxes has been modified
-				//Update the state of the 'Select All' checkbox
+				// One of the list checkboxes has been modified
+				// Update the state of the 'Select All' checkbox
 				var bSelectAll = !oData.aColumns.some(function(oColumn) {
 					return !oColumn.visible;
 				});
 
 				oData.aHeader.visible = bSelectAll;
 			}
-			//call setData to trigger update of bound controls
+			// Call setData to trigger update of bound controls
 			this._oP13nModel.setData(oData);
 		}, this);
 
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			})
 		}).addStyleClass("sapMPersoDialogLI");
 
-		//Button definition for sorting of the table content(up/down)
+		// Button definition for sorting of the table content(up/down)
 		this._oButtonUp = new Button({
 						icon: "sap-icon://arrow-top",
 						enabled: false,
@@ -139,13 +139,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		});
 
 		this._fnHandleResize = function() {
-			//check if dialog is rendered
+			// Check if dialog is rendered
 			if (that._oDialog) {
 				var $dialogCont = jQuery("#" + that._oDialog.getId() + "-cont");
 				if ($dialogCont.children().length > 0) {
 					var iContentHeight = $dialogCont.children()[0].clientHeight;
 
-					// take the header border into account otherwise the scroll container's
+					// Take the header border into account otherwise the scroll container's
 					// height is 2px more and causes the selectAllToolbar to scroll as well
 					var iHeaderHeight = that.getShowSelectAll() ? that._oSelectAllToolbar.$().outerHeight() : 0;
 					that._oScrollContainer.setHeight((iContentHeight - iHeaderHeight) + 'px');
@@ -154,24 +154,24 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		};
 
 		this._fnUpdateArrowButtons = function() {
-			//Initialisation of the enabled property
+			// Initialisation of the enabled property
 			var bButtonDownEnabled = true,
 				bButtonUpEnabled = true,
 				sValue = that._oSearchField.getValue(),
 				iItemCount = that._oList.getItems().length;
 			if (!!sValue || that._oList.getSelectedItems().length === 0) {
-				//Disable buttons if search filters the list or if list is empty
+				// Disable buttons if search filters the list or if list is empty
 				bButtonUpEnabled = false;
 				bButtonDownEnabled = false;
 			} else {
-				//data available (1 or more items)
+				// Data available (1 or more items)
 				if (that._oList.getItems()[0].getSelected()) {
-					//first item selected: disable button "arrow top" and focus button "arrow bottom"
+					// First item selected: disable button "arrow top" and focus button "arrow bottom"
 					bButtonUpEnabled = false;
 					jQuery.sap.focus(that._oButtonDown.getDomRef());
 				}
 				if (that._oList.getItems()[iItemCount - 1].getSelected()) {
-					//last item selected: disable button "arrow bottom" and focus button "arrow top"
+					// Last item selected: disable button "arrow bottom" and focus button "arrow top"
 					bButtonDownEnabled = false;
 					jQuery.sap.focus(that._oButtonUp.getDomRef());
 				}
@@ -182,10 +182,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		};
 
 		this._fnAfterListRendering = function(oEvent) {
-			//find all checkboxes in the list
+			// Find all checkboxes in the list
 			var aItems = oEvent.srcControl.$().find('.sapMCb'),
 				iItemsLength = aItems.length;
-			//'forEach' does not work
+			// 'forEach' does not work
 			for (var i = 0; i < iItemsLength; i++) {
 				var $checkBox = jQuery(aItems[i]).parent(),
 					aSiblings = $checkBox.siblings(),
@@ -197,39 +197,57 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 					$checkBox.insertBefore($label);
 				}
 			}
+
+			if (that._sLastSelectedItemId) {
+				var aItems = that._oList.getItems(),
+					fnItemMatches = function (oListItem) {
+						var bResult = (oListItem.getBindingContext('Personalization').getProperty('id') === that._sLastSelectedItemId);
+						if (bResult) {
+							that._oList.setSelectedItem(oListItem);
+						}
+						return bResult;
+					};
+				// Use 'some' to make sure it only traverses the array of listItems
+				// as far as needed
+				aItems.some(fnItemMatches);
+				// Clear last selected item so it does not get used again
+				that._sLastSelectedItemId = null;
+			}
 		};
 
 		this._fnAfterToolbarRendering = function (oEvent) {
-			// remove the toolbar from the tab chain
+			// Remove the toolbar from the tab chain
 			that._oSelectAllToolbar.$().attr('tabindex', '-1');
 		};
 
 		this._fnAfterDialogOpen = function (oEvent) {
-			// on shift+tab the subheader gets focused
+			// On shift+tab the subheader gets focused
 			that._oDialog.getSubHeader().$().attr('tabindex', '-1');
+			// Make sure that arrow buttons are updated when dialog is opened
+			that._fnUpdateArrowButtons.call(that);
 		};
 
 		this._fnAfterScrollContainerRendering = function (oEvent) {
-			// scroll container gets focused in Firefox
+			// Scroll container gets focused in Firefox
 			that._oScrollContainer.$().attr('tabindex', '-1');
 		};
-
+		
 		this._oList =  new List({
 			includeItemInSelection: true,
 			noDataText: this._oRb.getText('PERSODIALOG_NO_DATA'),
 			mode: sap.m.ListMode.SingleSelectMaster,
-			select: this._fnUpdateArrowButtons
+			selectionChange: this._fnUpdateArrowButtons
 		});
-
+		
 		this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
 
 		this._oSearchField = new sap.m.SearchField(this.getId() + "-searchField", {
 			width: "100%",
 			liveChange: function (oEvent) {
 				var sValue = oEvent.getSource().getValue(),
-					iDelay = (sValue ? 300 : 0); // no delay if value is empty
+					iDelay = (sValue ? 300 : 0); // No delay if value is empty
 
-				// execute search after user stops typing for 300ms
+				// Execute search after user stops typing for 300ms
 				clearTimeout(iLiveChangeTimer);
 				if (iDelay) {
 					iLiveChangeTimer = setTimeout(function () {
@@ -239,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 					that._executeSearch();
 				}
 			},
-			// execute the standard search
+			// Execute the standard search
 			search: function (oEvent) {
 				that._executeSearch();
 			}
@@ -346,7 +364,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			template: this._oColumnItemTemplate
 		});
 
-		//Update 'Move' button's state
+		if (!this._oList.getSelectedItem()) {
+			// Make sure initial selection is set
+			if (this._oList.getItems().length > 0) {
+				this._sLastSelectedItemId = this._oList.getItems()[0].getBindingContext('Personalization').getProperty('id');
+			}
+		}
+
+		// Update 'Move' button's state
 		this._fnUpdateArrowButtons.call(this);
 
 		// Now show the dialog
@@ -428,15 +453,20 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	*/
 	TablePersoDialog.prototype._resetAll = function () {
 		if (this.getInitialColumnState()) {
-			//Deep copy of Initial Data, otherwise initial data will be changed
-			//and can only be used once to restore the initial state
+			// Deep copy of Initial Data, otherwise initial data will be changed
+			// and can only be used once to restore the initial state
 
 			var aInitialStateCopy = jQuery.extend(true, [], this.getInitialColumnState()),
 			    that = this;
+			// CSN 0120031469 0000184938 2014
+			// Remember last selected row, so it can be selected again after
+			// reset all is done
+			var oLastSelectedItem = this._oList.getSelectedItem();
+			this._sLastSelectedItemId = oLastSelectedItem ? oLastSelectedItem.getBindingContext('Personalization').getProperty('id') : null; 
 
-			//CSN 0120061532 0001380609 2014
-			//Make sure that captions are not replaced by column id's. This my be the case if
-			//initalStateCopy has been created too early
+			// CSN 0120061532 0001380609 2014
+			// Make sure that captions are not replaced by column id's. This my be the case if
+			// initalStateCopy has been created too early
 			if (!!this._mColumnCaptions) {
 				aInitialStateCopy.forEach(
 					function(oColumn) {
@@ -466,7 +496,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 		// Abort if nothing selected
 		var oSelectedItem = this._oList.getSelectedItem();
-		if (! oSelectedItem) {
+		if (!oSelectedItem) {
 			return;
 		}
 
@@ -487,16 +517,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		// Do the swap
 		var temp = oData.aColumns[swap];
 		oData.aColumns[swap] = oData.aColumns[item];
-		//Make sure the order member is adapted as well!
+		// Make sure the order member is adapted as well!
 		oData.aColumns[swap].order = swap;
 		oData.aColumns[item] = temp;
-		//Make sure the order member is adapted as well!
+		// Make sure the order member is adapted as well!
 		oData.aColumns[item].order = item;
 
 		// Remove selection before binding
 		this._oList.removeSelections(true);
 
-		//call setData to trigger update of bound controls
+		// Call setData to trigger update of bound controls
 		this._oP13nModel.updateBindings();
 
 
@@ -512,23 +542,23 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		// perfrom the necessary calculations
 		if (!!oSwapItem.getDomRef()) {
 			var iElementOffset =  oSwapItem.$().position().top,
-				//this is the minimal height that should be visible from the selected element
-			    //18 means 18px which corresponds to 3em
+				// This is the minimal height that should be visible from the selected element
+			    // 18 means 18px which corresponds to 3em
 				iMinHeight = 18,
 				iViewPortHeight = this._oScrollContainer.$().height(),
 				iViewPortStart = this._oScrollContainer.$().offset().top - this._oList.$().offset().top,
 				iViewPortEnd = iViewPortStart + iViewPortHeight;
 
 			if (iElementOffset < iViewPortStart ) {
-				//selected element is above or below visible viewport
-				//scroll page up
+				// Selected element is above or below visible viewport
+				// scroll page up
 				this._oScrollContainer.scrollTo(0, Math.max(0, iViewPortStart - iViewPortHeight + iMinHeight));
 			} else if (iElementOffset + iMinHeight > iViewPortEnd) {
-				//selected element is above or below visible viewport
-				//scroll down a page (this is the height of the scroll container)
+				// Selected element is above or below visible viewport
+				// scroll down a page (this is the height of the scroll container)
 				this._oScrollContainer.scrollTo(0, iElementOffset);
 			}
-			// otherwise, element is within the scroll container's viewport, so no action is necessary
+			// Otherwise, element is within the scroll container's viewport, so no action is necessary
 		}
 
 		this._fnUpdateArrowButtons.call(this);
@@ -555,7 +585,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			}
 		});
 
-		//Remember column captions, needed for 'Reset All'
+		// Remember column captions, needed for 'Reset All'
 		this._mColumnCaptions = {};
 		aCurrentColumns.forEach(
 				function(oColumn) {
@@ -592,8 +622,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		var oBar = this._oDialog.getSubHeader();
 		if (!bHasGrouping) {
 			if (oBar.getContent().length === 1) {
-				//Only search field is displayed, add up- and down
-				//buttons
+				// Only search field is displayed, add up- and down
+				// buttons
 				oBar.insertContent(this._oButtonDown, 0);
 				oBar.insertContent(this._oButtonUp, 0);
 			}
@@ -612,7 +642,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	TablePersoDialog.prototype.setShowSelectAll = function (bShowSelectAll) {
 		this.setProperty("showSelectAll", bShowSelectAll, true);
 		this._oSelectAllToolbar.setVisible(bShowSelectAll);
-		//Need to recalculate content height now
+		// Need to recalculate content height now
 		this._fnHandleResize.call(this);
 		return this;
 	};

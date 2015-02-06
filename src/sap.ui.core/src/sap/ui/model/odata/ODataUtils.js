@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	/**
 	 * @alias sap.ui.model.odata.ODataUtils
 	 * @namespace
-	 * @private
+	 * @public
 	 */
 	var ODataUtils = function() {};
 

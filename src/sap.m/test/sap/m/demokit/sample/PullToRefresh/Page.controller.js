@@ -10,7 +10,7 @@ sap.ui.controller("sap.m.sample.PullToRefresh.Page", {
 		// load product data
 		this._productCount = 0;
 		var that = this;
-		jQuery.getJSON("test-resources/sap/ui/demokit/explored/products.json", function (oData) {
+		jQuery.getJSON(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), function (oData) {
 				that._productData = oData;
 				that._pushNewProduct();
 		});
@@ -27,7 +27,7 @@ sap.ui.controller("sap.m.sample.PullToRefresh.Page", {
 			oView.getModel().setData(oData);
 		}
 	},
-	
+
 	// simulate a refresh of the date that lasts 2 secs
 	handleRefresh : function (evt) {
 		var that = this;

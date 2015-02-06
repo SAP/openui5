@@ -4,12 +4,13 @@
 			"files": [
 				"Component.js",
 				"Detail.view.xml",
+				"Facets.fragment.xml",
 				"Field.fragment.xml",
-				"FieldHelper.js",
+				"FormFacet.fragment.xml",
 				"ODataMetaModel.json",
-				"../data2/annotations.xml",
-				"../data2/metadata.xml",
-				"../data2/Product.json",
+				"data/annotations.xml",
+				"data/metadata.xml",
+				"data/ProductSet.json",
 				"Main.controller.js",
 				"Main.view.xml"
 			]

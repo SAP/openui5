@@ -1,24 +1,18 @@
 <mvc:View
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:core="sap.ui.core"
 	height="100%"
 	controllerName="sap.m.sample.Button.Page">
 
-	<html:style>
-	  .invisibleLabel {
-		  display: none;
-	  }
-	</html:style>
-
 	<Page
 		title="Page"
-		class="marginBoxContent" >
+		class="sapUiContentPadding" >
 		<customHeader>
 			<Toolbar>
 				<Button type="Back" press="onPress" />
 				<ToolbarSpacer/>
-				<Label text="Title" />
+				<Title text="Title" level="H2"/>
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://edit" press="onPress" ariaLabelledBy="editButtonLabel"/>
 			</Toolbar>
@@ -73,14 +67,14 @@
 			<!-- Collection of labels (some of which are invisible) used to provide ARIA descriptions for the buttons -->
 			<Label id="genericButtonDescription" text="Note: The buttons in this sample display MessageToast when pressed."/>
 
-			<Label class="invisibleLabel" id="defaultButtonDescription" text="Description of default button goes here."/>
-			<Label class="invisibleLabel" id="acceptButtonDescription" text="Description of accept button goes here."/>
-			<Label class="invisibleLabel" id="rejectButtonDescription" text="Description of reject button goes here."/>
-			<Label class="invisibleLabel" id="comingSoonButtonDescription" text="This feature is not active just now."/>
+			<core:InvisibleText id="defaultButtonDescription" text="Description of default button goes here."/>
+			<core:InvisibleText id="acceptButtonDescription" text="Description of accept button goes here."/>
+			<core:InvisibleText id="rejectButtonDescription" text="Description of reject button goes here."/>
+			<core:InvisibleText id="comingSoonButtonDescription" text="This feature is not active just now."/>
 
 			<!-- These labels exist only to provide targets for the ARIA label on the Edit and Action buttons -->
-			<Label class="invisibleLabel" id="editButtonLabel" text="Edit Button Label"/>
-			<Label class="invisibleLabel" id="actionButtonLabel" text="Action Button Label"/>
+			<core:InvisibleText id="editButtonLabel" text="Edit Button Label"/>
+			<core:InvisibleText id="actionButtonLabel" text="Action Button Label"/>
 		</content>
 		<footer>
 			<Toolbar>

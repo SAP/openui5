@@ -96,7 +96,10 @@
         <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
         <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/swipe-view.js" />
+        <raw-module name="sap/ui/thirdparty/unorm.js" />
+        <raw-module name="sap/ui/thirdparty/unormdata.js" depends="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/URI.js" />
+        <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Element.js,sap/ui/core/UIArea.js,sap/ui/core/Control.js,sap/ui/core/Component.js" />
@@ -177,10 +180,13 @@
         <exclude name="sap/ui/thirdparty/sinon-server.js" />
         <exclude name="sap/ui/thirdparty/sinon-qunit.js" />
         <exclude name="sap/ui/thirdparty/swipe-view.js" />
+        <exclude name="sap/ui/thirdparty/unorm.js" />
+        <exclude name="sap/ui/thirdparty/unormdata.js" />
         <exclude name="sap/ui/thirdparty/vkbeautify.js" />
         <exclude name="sap/ui/thirdparty/zyngascroll.js" />
         <!-- Excluding URI is removed because it's needed in sap/ui/core/IconPool -->
         <!-- <exclude name="sap/ui/thirdparty/URI.js" /> -->
+        <exclude name="sap/ui/thirdparty/URITemplate.js" />
         <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
         <!-- jquery.sap.global.js -->
         <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
@@ -230,8 +236,8 @@
         <lib name="jquery_mobile" displayName="jQuery Mobile" homepage="http://jquerymobile.com">
         	<license url="http://jQuery.org/license" type="MIT License" file="../thirdparty/licenses/jQuery-MIT-LICENSE.txt" />
         </lib>
-        <lib name="qunit-composite" displayName="JUnit reporter for QUnit v1.0.2pre" homepage="https://github.com/jquery/qunit-composite">
-        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        <lib name="qunit-composite" displayName="Qunit Composite" homepage="https://github.com/jquery/qunit-composite">
+        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-composite-MIT-LICENSE.txt" />
         </lib>
         <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/jquery/qunit-reporter-junit">
         	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
@@ -298,6 +304,12 @@
         </lib>
         <lib name="blanket" displayName="blanket.js" homepage="http://blanketjs.org/">
         	<license url="https://github.com/alex-seville/blanket/blob/master/LICENSE-MIT" type="MIT License" file="../thirdparty/licenses/blanket-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
+        	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
+        </lib>
+        <lib name="unorm" displayName="unorm.js" homepage="https://github.com/walling/unorm">
+        	<license url="http://raw.githubusercontent.com/walling/unorm/v1.3.3/LICENSE.md" type="MIT License" file="../thirdparty/licenses/unorm-MIT-LICENSE.txt" />
         </lib>
     </thirdparty>
     

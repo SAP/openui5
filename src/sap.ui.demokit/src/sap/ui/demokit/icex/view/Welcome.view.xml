@@ -1,0 +1,43 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc" >
+	<Page
+		title="Welcome">
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+		<content>
+			<HBox>
+				<core:Icon src="sap-icon://lab" size="3em" class="preview previewColor1">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://competitor" size="3em" class="preview previewColor3">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://inventory" size="3em" class="preview previewColor2">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://stethoscope" size="3em" class="preview previewColor4">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://loan" size="3em" class="preview previewColor3">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://pharmacy" size="3em" class="preview previewColor1">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://marketing-campaign" size="3em" class="preview previewColor2">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+				<core:Icon src="sap-icon://bar-code" size="3em" class="preview previewColor4">
+					<core:layoutData><FlexItemData growFactor="1" /></core:layoutData>
+				</core:Icon>
+			</HBox>
+			<Text
+				class="welcomeText"
+				text="SAPUI5 comes with a built-in set of 500 icons that you can easily use in your applications. The Icon Explorer helps you to find icons by browsing through categories or simply by searching. You get a live preview of how the icon will look when being applied to a SAPUI5 control. Add the discovered icons to your favorites to remember them at a later stage." />
+		</content>
+	</Page>
+</mvc:View>

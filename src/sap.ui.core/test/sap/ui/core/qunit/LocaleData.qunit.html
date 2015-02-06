@@ -71,7 +71,7 @@
 			var oLocale = new sap.ui.core.Locale(sLocale),
 				oLocaleData = new sap.ui.core.LocaleData(oLocale),
 				fnCustomTests = window["customTests_" + sLocale];
-			genericTests(oLocaleData);
+			genericTests(oLocaleData, sLocale);
 			if (fnCustomTests) fnCustomTests(oLocaleData);
 		});
 	});
@@ -81,7 +81,7 @@
 	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods", 
 	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
 	*/
-	function genericTests(oLocaleData) {
+	function genericTests(oLocaleData, sLocale) {
 		equal(typeof oLocaleData.getOrientation(), "string", "getOrientation()");
 		equal(typeof oLocaleData.getLanguages(), "object", "getLanguages()");
 		equal(typeof oLocaleData.getScripts(), "object", "getLanguages()");
@@ -120,6 +120,12 @@
 		ok(oLocaleData.getWeekendStart() >= 0 && oLocaleData.getWeekendStart() <7, "getWeekendStart()");
 		equal(typeof oLocaleData.getWeekendEnd(), "number", "getWeekendEnd()");
 		ok(oLocaleData.getWeekendEnd() >= 0 && oLocaleData.getWeekendEnd() <7, "getWeekendEnd()");
+
+		if (sLocale !== "xx_XX") {
+			equal(oLocaleData.getCurrencyCodeBySymbol("€"), "EUR", "Currency Symbol € has currency code EUR");
+			equal(oLocaleData.getCurrencyCodeBySymbol("US$"), "USD", "Currency Symbol US$ has currency code USD");
+			equal(oLocaleData.getCurrencyCodeBySymbol("$"), null, "Currency Symbol $ has no currency code defined");
+		}
 	}
 	
 	function customTests_de_AT(oLocaleData) {

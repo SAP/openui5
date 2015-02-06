@@ -1,5 +1,5 @@
+/* global sinon */
 var xhr = sinon.useFakeXMLHttpRequest(),
-	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 	responseDelay = 50,
 	_setTimeout = window.setTimeout;
 
@@ -43,6 +43,18 @@ xhr.onCreate = function(request) {
 				sAnswer = "Sorry, not found...";
 				break;
 
+
+			case "fakeService://testdata/odata/sapdata01/":
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sNorthwindData;
+				break;
+
+			case "fakeService://testdata/odata/sapdata01/$metadata":
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sMetadataWithEntityContainers;
+				break;
+
+
 			case "fakeService://testdata/odata/northwind-annotations-normal.xml":
 				sAnswer = sNorthwindAnnotations;
 				break;
@@ -53,6 +65,34 @@ xhr.onCreate = function(request) {
 
 			case "fakeService://testdata/odata/epm-annotations-complex.xml":
 				sAnswer = sEPMAnnotationsComplex;
+				break;
+
+			case "fakeService://testdata/odata/2014-12-08-test.xml":
+				sAnswer = sTest20141208Annotations;
+				break;
+
+			case "fakeService://testdata/odata/multiple-property-annotations.xml":
+				sAnswer = sMultiplePropertyAnnotations;
+				break;
+
+			case "fakeService://testdata/odata/property-annotation-qualifiers.xml":
+				sAnswer = sPropertyAnnotationQualifiers;
+				break;
+
+			case "fakeService://testdata/odata/other-property-values.xml":
+				sAnswer = sOtherPropertyValues;
+				break;
+
+			case "fakeService://testdata/odata/namespaces-aliases.xml":
+				sAnswer = sNamespaceAliases;
+				break;
+
+			case "fakeService://testdata/odata/other-property-value-aliases.xml":
+				sAnswer = sOtherPropertyValueAliases;
+				break;
+
+			case "fakeService://testdata/odata/other-property-textproperties.xml":
+				sAnswer = sOtherPropertyTextNodes;
 				break;
 
 			default:
@@ -69,7 +109,7 @@ xhr.onCreate = function(request) {
 			request.respond(iStatus, mHeaders, sAnswer);
 		}
 
-	}
+	};
 };
 
 
@@ -83,14 +123,14 @@ var mXMLHeaders = 	{
 	"Content-Type": "application/atom+xml;charset=utf-8",
 	"DataServiceVersion": "2.0;"
 };
-var mJSONHeaders = 	{
-	"Content-Type": "application/json;charset=utf-8",
-	"DataServiceVersion": "2.0;"
-};
-var mCountHeaders = 	{
-	"Content-Type": "text/plain;charset=utf-8",
-	"DataServiceVersion": "2.0;"
-};
+//var mJSONHeaders = 	{
+//	"Content-Type": "application/json;charset=utf-8",
+//	"DataServiceVersion": "2.0;"
+//};
+//var mCountHeaders = 	{
+//	"Content-Type": "text/plain;charset=utf-8",
+//	"DataServiceVersion": "2.0;"
+//};
 
 
 
@@ -99,16 +139,16 @@ var sNorthwindAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
-		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" /> \
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
 	</edmx:Reference>\
 	<edmx:Reference Uri="/coco/vocabularies/Communication.xml">\
-		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml" >\
-		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
-		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" /> \
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
 	</edmx:Reference>	\
 	<edmx:DataServices>\
 		<!-- Entity Data Model Conceptual Schemas, as specified in [MC-CSDL]	and annotated as specified in [MS-ODATA] -->\
@@ -201,7 +241,7 @@ var sNorthwindAnnotations = '\
 										<Annotation Term="UI.Map"/>\
 										<PropertyValue Property="Label" String="Supplier Address on Map" />\
 										<PropertyValue Property="Target" AnnotationPath="Supplier/@vCard.Address" />\
-									</Record> \
+									</Record>\
 								</Collection>\
 							</PropertyValue>\
 						</Record>\
@@ -266,7 +306,7 @@ var sNorthwindAnnotations = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Supplier">		 \
+			<Annotations Target="NorthwindModel.Supplier">		\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Supplier" />\
@@ -313,7 +353,7 @@ var sNorthwindAnnotations = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/supplier_48.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>					 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							<PropertyValue Property="Label" String="Supplier ID" />\
 							<PropertyValue Property="Value" Path="SupplierID" />\
@@ -485,7 +525,7 @@ var sNorthwindAnnotations = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Customer">		 \
+			<Annotations Target="NorthwindModel.Customer">\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Customer" />\
@@ -578,7 +618,7 @@ var sNorthwindAnnotations = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/product32.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>										 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							 <PropertyValue Property="Label" String="Product Name" />\
 							 <PropertyValue Property="Value" Path="Product/ProductName" />\
@@ -645,15 +685,15 @@ var sNorthwindAnnotationsMalformed = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
-		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" /> \
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
 	</edmx:Reference>\
-		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml" >\
-		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" /> \
-	</edmx:Reference> \
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" />\
+	</edmx:Reference>\
 	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
-		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" /> \
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
 \
 	<edmx:DataServices>\
 		<!-- Entity Data Model Conceptual Schemas, as specified in [MC-CSDL]	and annotated as specified in [MS-ODATA] -->\
@@ -744,7 +784,7 @@ var sNorthwindAnnotationsMalformed = '\
 										<Annotation Term="UI.Map"/>\
 										<PropertyValue Property="Label" String="Supplier Address on Map" />\
 										<PropertyValue Property="Target" AnnotationPath="Supplier/@vCard.Address" />\
-									</Record> \
+									</Record>\
 								</Collection>\
 							</PropertyValue>\
 						</Record>\
@@ -809,7 +849,7 @@ var sNorthwindAnnotationsMalformed = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Supplier">		 \
+			<Annotations Target="NorthwindModel.Supplier">\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Supplier" />\
@@ -856,7 +896,7 @@ var sNorthwindAnnotationsMalformed = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/supplier_48.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>					 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							<PropertyValue Property="Label" String="Supplier ID" />\
 							<PropertyValue Property="Value" Path="SupplierID" />\
@@ -1012,7 +1052,7 @@ var sNorthwindAnnotationsMalformed = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/cart_48.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>										\
+						</Record>\
 					</Collection>\
 				</Annotation>\
 				<Annotation Term="UI.Facets">\
@@ -1028,7 +1068,7 @@ var sNorthwindAnnotationsMalformed = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
-			<Annotations Target="NorthwindModel.Customer">		 \
+			<Annotations Target="NorthwindModel.Customer">\
 				<Annotation Term="UI.HeaderInfo">\
 					<Record>\
 						<PropertyValue Property="TypeName" String="Customer" />\
@@ -1121,7 +1161,7 @@ var sNorthwindAnnotationsMalformed = '\
 							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/product32.png">\
 								<Annotation Term="UI.IsImageURL"/>\
 							</PropertyValue>\
-						</Record>										 \
+						</Record>\
 						<Record Type="UI.DataField">\
 							 <PropertyValue Property="Label" String="Product Name" />\
 							 <PropertyValue Property="Value" Path="Product/ProductName" />\
@@ -3183,3 +3223,390 @@ var sEPMAnnotationsComplex = '\
 			</Schema>\
 		</edmx:DataServices>\
 	</edmx:Edmx>';
+
+var sTest20141208Annotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Communication.xml">\
+		<edmx:Include Alias="vCard" Namespace="com.sap.vocabularies.Communication.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml">\
+		<edmx:Include Alias="CQP" Namespace="Org.OData.Measures.V1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">\
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/opu/odata/sap/FTGEN_HB_TE/$metadata">\
+		<edmx:Include Alias="FTGEN_HB_TE" Namespace="FTGEN_HB_TE"/>\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+	<Annotations Target="Test.2014-12-08">\
+		<Annotation Term="UI.Identification">\
+			<Collection>\
+				<Record Type=\'UI.DataField\'>\
+					<Annotation Term=\'UI.Importance\' EnumMember=\'UI.Priority/High\'/>\
+					<PropertyValue Property=\'Value\'>\
+						<Apply Function=\'odata.concat\'>\
+							<Path>CompanyCodeTESet/ContactPerson</Path>\
+							<String> (</String>\
+							<Path>CompanyCode</Path>\
+							<String>)</String>\
+						</Apply>\
+					</PropertyValue>\
+				</Record>\
+			</Collection>\
+		</Annotation>\
+	 </Annotations>\
+	</Schema>\
+ </edmx:DataServices>\
+</edmx:Edmx>';
+
+var sMultiplePropertyAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="MultiplePropertyAnnotations.Product/Price/Amount">\
+				<Annotation Term="CQP.ISOCurrency" Path="Price/CurrencyCode"/>\
+			</Annotations>\
+			<Annotations Target="MultiplePropertyAnnotations.Product/Price/Amount">\
+				<Annotation Term="Common.Label" String="Price"/>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+var sPropertyAnnotationQualifiers = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="PropertyAnnotationQualifiers.Product/Price/Amount">\
+				<Annotation Term="CQP.ISOCurrency" Path="Price/CurrencyCode" Qualifier="Amount1"/>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+var sOtherPropertyValues = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="OtherPropertyValues.Product/Price/Amount">\
+				<Annotation Term="CQP.ISOCurrency" Qualifier="Amount2">\
+					<String>EUR</String>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+
+var sNamespaceAliases = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/Common.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common" />\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NamespaceAliases.PurchaseOrder/GrossAmount">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Gross Amount" />\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+var sOtherPropertyValueAliases = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Communication.xml">\
+		<edmx:Include Alias="vCard" Namespace="com.sap.vocabularies.Communication.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml">\
+		<edmx:Include Alias="CQP" Namespace="Org.OData.Measures.V1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/Common.xml">\
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>\
+	</edmx:Reference>\
+	<edmx:Reference Uri="/sap/opu/odata/sap/FTGEN_HB_TE/$metadata">\
+		<edmx:Include Alias="FTGEN_HB_TE" Namespace="FTGEN_HB_TE"/>\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="OtherPropertyValueAliases.Test/Value">\
+				<Annotation Term="UI.Name">\
+					<EnumMember>UI.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="vCard.Name">\
+					<EnumMember>vCard.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="CQP.Name">\
+					<EnumMember>CQP.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="Common.Name">\
+					<EnumMember>Common.Value</EnumMember>\
+				</Annotation>\
+				<Annotation Term="FTGEN_HB_TE.Name">\
+					<EnumMember>FTGEN_HB_TE.Value</EnumMember>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+var sOtherPropertyTextNodes = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="OtherPropertyValueAliases.Test/Value">\
+				<Annotation Term="UI.Name1">\
+					<EnumMember>       \
+						UI.Value            \
+					</EnumMember>\
+				</Annotation>\
+				<Annotation Term="UI.Name2">\
+					<String>   test test   </String>\
+				</Annotation>\
+				<Annotation Term="UI.Name3">\
+					<Invalid>UI.Value</Invalid>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+
+
+var sMetadataWithEntityContainers = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:Reference Uri="https://https:/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'LOCAL\')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"/>\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="AIVS_NEW_BO_SRV" sap:schema-version="1" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<EntityType Name="SalesOrderType" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="DraftKeySalesOrder"/>\
+					<PropertyRef Name="KeySalesOrder"/>\
+				</Key>\
+				<Property Name="DraftKeySalesOrder" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Draft Key (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="KeySalesOrder" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Active Key (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="SalesOrderID" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="BusinessPartnerID" Type="Edm.String" sap:label="Business Partner ID"/>\
+				<Property MaxLength="5" Name="CurrencyCode" Type="Edm.String" sap:label="Currency Code" sap:semantics="currency-code"/>\
+				<Property Name="GrossAmount" Precision="15" Scale="2" Type="Edm.Decimal" sap:label="Gross Amount" sap:unit="CurrencyCode"/>\
+				<Property Name="NetAmount" Precision="15" Scale="2" Type="Edm.Decimal" sap:label="Net Amount" sap:unit="CurrencyCode"/>\
+				<Property Name="TaxAmount" Precision="15" Scale="2" Type="Edm.Decimal" sap:label="Tax Amount" sap:unit="CurrencyCode"/>\
+				<Property MaxLength="1" Name="LifecycleStatus" Type="Edm.String" sap:creatable="false" sap:label="Lifecycle Status" sap:updatable="false"/>\
+				<Property MaxLength="1" Name="BillingStatus" Type="Edm.String" sap:creatable="false" sap:label="Confirmation Status" sap:updatable="false"/>\
+				<Property MaxLength="1" Name="DeliveryStatus" Type="Edm.String" sap:creatable="false" sap:label="Ordering Status" sap:updatable="false"/>\
+				<Property MaxLength="35" Name="OpportunityID" Type="Edm.String" sap:label="Opportunity ID"/>\
+				<Property Name="CreationDateTime" Precision="7" Type="Edm.DateTime" sap:creatable="false" sap:label="Created at" sap:updatable="false"/>\
+				<Property MaxLength="12" Name="CreationUserName" Type="Edm.String" sap:creatable="false" sap:label="Created by" sap:updatable="false"/>\
+				<Property Name="LastChangedDateTime" Precision="7" Type="Edm.DateTime" sap:creatable="false" sap:label="Changed at" sap:updatable="false"/>\
+				<Property MaxLength="12" Name="LastChangedUserName" Type="Edm.String" sap:creatable="false" sap:label="Changed by" sap:updatable="false"/>\
+				<Property Name="EditState" Type="Edm.Byte" sap:creatable="false" sap:label="Edit State (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="3" Name="BusinessPartnerRole" Type="Edm.String" sap:creatable="false" sap:label="Role" sap:updatable="false"/>\
+				<Property MaxLength="255" Name="MailAddress" Type="Edm.String" sap:creatable="false" sap:label="E-Mail" sap:updatable="false"/>\
+				<Property MaxLength="30" Name="PhoneNumber" Type="Edm.String" sap:creatable="false" sap:label="Phone No." sap:updatable="false"/>\
+				<Property MaxLength="30" Name="FaxNumber" Type="Edm.String" sap:creatable="false" sap:label="Fax No." sap:updatable="false"/>\
+				<Property MaxLength="80" Name="CompanyName" Type="Edm.String" sap:creatable="false" sap:label="Company" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="LegalForm" Type="Edm.String" sap:creatable="false" sap:label="Legal Form" sap:updatable="false"/>\
+				<NavigationProperty FromRole="FromRole_toItem" Name="Item" Relationship="AIVS_NEW_BO_SRV.toItem" ToRole="ToRole_toItem"/>\
+				<NavigationProperty FromRole="FromRole_toTwinEntity" Name="TwinEntity" Relationship="AIVS_NEW_BO_SRV.toTwinEntity" ToRole="ToRole_toTwinEntity"/>\
+				<NavigationProperty FromRole="FromRole_toDraftAdministrativeData" Name="DraftAdministrativeData" Relationship="AIVS_NEW_BO_SRV.toDraftAdministrativeData" ToRole="ToRole_toDraftAdministrativeData"/>\
+			</EntityType>\
+			<EntityType Name="SalesOrderItemType" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="DraftKeySalesOrderItem"/>\
+					<PropertyRef Name="KeySalesOrder"/>\
+					<PropertyRef Name="KeySalesOrderItem"/>\
+				</Key>\
+				<Property Name="DraftKeySalesOrderItem" Nullable="false" Type="Edm.Guid" sap:creatable="false" sap:label="Draft Key (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="SalesOrderID" Type="Edm.String" sap:creatable="false" sap:label="Sales Order ID" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="KeySalesOrder" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Active Key (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="SalesOrderItemID" Type="Edm.String" sap:label="Item ID"/>\
+				<Property MaxLength="10" Name="KeySalesOrderItem" Nullable="false" Type="Edm.String" sap:creatable="false" sap:label="Active Key (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="ProductID" Type="Edm.String" sap:label="Product ID"/>\
+				<Property Name="Quantity" Precision="13" Scale="3" Type="Edm.Decimal" sap:label="Quantity" sap:unit="QuantityUnitCode"/>\
+				<Property MaxLength="3" Name="QuantityUnitCode" Type="Edm.String" sap:label="Unit of Measure" sap:semantics="unit-of-measure"/>\
+				<Property Name="DeliveryDate" Precision="7" Type="Edm.DateTime" sap:label="Delivery Date"/>\
+				<Property MaxLength="5" Name="CurrencyCode" Type="Edm.String" sap:label="Currency Code" sap:semantics="currency-code"/>\
+				<Property Name="GrossAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Gross Amount" sap:unit="CurrencyCode"/>\
+				<Property Name="NetAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Net Amount" sap:unit="CurrencyCode"/>\
+				<Property Name="TaxAmount" Precision="16" Scale="3" Type="Edm.Decimal" sap:label="Tax Amount" sap:unit="CurrencyCode"/>\
+				<Property MaxLength="1" Name="AvailableToPromiseStatus" Type="Edm.String" sap:creatable="false" sap:label="ATP Status" sap:updatable="false"/>\
+				<Property MaxLength="10" Name="OpportunityItemID" Type="Edm.String" sap:label="Opportunity Item ID"/>\
+				<Property Name="EditState" Type="Edm.Byte" sap:creatable="false" sap:label="Edit State (tech.)" sap:updatable="false"/>\
+				<Property MaxLength="2" Name="TypeCode" Type="Edm.String" sap:creatable="false" sap:label="Type Code" sap:updatable="false"/>\
+				<Property MaxLength="40" Name="Category" Type="Edm.String" sap:creatable="false" sap:label="Category" sap:updatable="false"/>\
+				<Property Name="TaxTarifCode" Type="Edm.Byte" sap:creatable="false" sap:label="Tax Tarif Code" sap:updatable="false"/>\
+				<Property MaxLength="3" Name="MeasureUnit" Type="Edm.String" sap:creatable="false" sap:label="Unit of Measure" sap:semantics="unit-of-measure" sap:updatable="false"/>\
+				<Property Name="WeightMeasure" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Weight" sap:unit="MeasureUnit" sap:updatable="false"/>\
+				<Property MaxLength="3" Name="WeightUnit" Type="Edm.String" sap:creatable="false" sap:label="Unit of Measure" sap:semantics="unit-of-measure" sap:updatable="false"/>\
+				<Property MaxLength="255" Name="PictureURL" Type="Edm.String" sap:creatable="false" sap:label="Image" sap:semantics="photo" sap:updatable="false"/>\
+				<Property Name="Width" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Width" sap:unit="DimensionUnit" sap:updatable="false"/>\
+				<Property Name="Depth" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Depth" sap:unit="DimensionUnit" sap:updatable="false"/>\
+				<Property Name="Height" Precision="13" Scale="3" Type="Edm.Decimal" sap:creatable="false" sap:label="Height" sap:unit="DimensionUnit" sap:updatable="false"/>\
+				<Property MaxLength="3" Name="DimensionUnit" Type="Edm.String" sap:creatable="false" sap:label="Dimension Unit" sap:semantics="unit-of-measure" sap:updatable="false"/>\
+				<Property MaxLength="255" Name="Description" Type="Edm.String" sap:creatable="false" sap:label="Description" sap:updatable="false"/>\
+				<NavigationProperty FromRole="FromRole_toItemTwinEntity" Name="TwinEntity" Relationship="AIVS_NEW_BO_SRV.toItemTwinEntity" ToRole="ToRole_toItemTwinEntity"/>\
+				<NavigationProperty FromRole="FromRole_toItemDraftAdministrativeData" Name="DraftAdministrativeData" Relationship="AIVS_NEW_BO_SRV.toItemDraftAdministrativeData" ToRole="ToRole_toItemDraftAdministrativeData"/>\
+			</EntityType>\
+			<EntityType Name="DraftAdministrativeDataType" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="DraftID"/>\
+				</Key>\
+				<Property Name="DraftID" Nullable="false" Type="Edm.Binary" sap:creatable="false" sap:label="Draft ID" sap:updatable="false"/>\
+				<Property Name="CreationDateTime" Precision="7" Type="Edm.DateTime" sap:creatable="false" sap:label="Created at" sap:updatable="false"/>\
+				<Property MaxLength="12" Name="CreationUserName" Type="Edm.String" sap:creatable="false" sap:label="Created by" sap:updatable="false"/>\
+				<Property Name="LastChangedDateTime" Precision="7" Type="Edm.DateTime" sap:creatable="false" sap:label="Last changed at" sap:updatable="false"/>\
+				<Property MaxLength="12" Name="LastChangedUserName" Type="Edm.String" sap:creatable="false" sap:label="Last changed by" sap:updatable="false"/>\
+				<Property Name="ProcessedSinceDateTime" Precision="7" Type="Edm.DateTime" sap:creatable="false" sap:label="Processed since" sap:updatable="false"/>\
+				<Property MaxLength="12" Name="ProcessorUserName" Type="Edm.String" sap:creatable="false" sap:label="Processed by" sap:updatable="false"/>\
+			</EntityType>\
+			<ComplexType Name="ValidationResult">\
+				<Property Name="IsValid" Nullable="false" Type="Edm.Boolean" sap:creatable="false" sap:filterable="false" sap:label="Indicator" sap:sortable="false" sap:updatable="false"/>\
+			</ComplexType>\
+			<Association Name="toItem" sap:content-version="1">\
+				<End Multiplicity="1" Role="FromRole_toItem" Type="AIVS_NEW_BO_SRV.SalesOrderType"/>\
+				<End Multiplicity="*" Role="ToRole_toItem" Type="AIVS_NEW_BO_SRV.SalesOrderItemType"/>\
+			</Association>\
+			<Association Name="toTwinEntity" sap:content-version="1">\
+				<End Multiplicity="0..1" Role="FromRole_toTwinEntity" Type="AIVS_NEW_BO_SRV.SalesOrderType"/>\
+				<End Multiplicity="0..1" Role="ToRole_toTwinEntity" Type="AIVS_NEW_BO_SRV.SalesOrderType"/>\
+			</Association>\
+			<Association Name="toDraftAdministrativeData" sap:content-version="1">\
+				<End Multiplicity="1" Role="FromRole_toDraftAdministrativeData" Type="AIVS_NEW_BO_SRV.SalesOrderType"/>\
+				<End Multiplicity="0..1" Role="ToRole_toDraftAdministrativeData" Type="AIVS_NEW_BO_SRV.DraftAdministrativeDataType"/>\
+			</Association>\
+			<Association Name="toItemTwinEntity" sap:content-version="1">\
+				<End Multiplicity="0..1" Role="FromRole_toItemTwinEntity" Type="AIVS_NEW_BO_SRV.SalesOrderItemType"/>\
+				<End Multiplicity="0..1" Role="ToRole_toItemTwinEntity" Type="AIVS_NEW_BO_SRV.SalesOrderItemType"/>\
+			</Association>\
+			<Association Name="toItemDraftAdministrativeData" sap:content-version="1">\
+				<End Multiplicity="1" Role="FromRole_toItemDraftAdministrativeData" Type="AIVS_NEW_BO_SRV.SalesOrderItemType"/>\
+				<End Multiplicity="0..1" Role="ToRole_toItemDraftAdministrativeData" Type="AIVS_NEW_BO_SRV.DraftAdministrativeDataType"/>\
+			</Association>\
+			<EntityContainer Name="AIVS_NEW_BO_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">\
+				<EntitySet EntityType="AIVS_NEW_BO_SRV.SalesOrderItemType" Name="SalesOrderItem" sap:content-version="1" sap:searchable="true"/>\
+				<EntitySet EntityType="AIVS_NEW_BO_SRV.DraftAdministrativeDataType" Name="DraftAdministrativeData" sap:addressable="false" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:pageable="false" sap:updatable="false"/>\
+				<EntitySet EntityType="AIVS_NEW_BO_SRV.SalesOrderType" Name="SalesOrder" sap:content-version="1" sap:searchable="true"/>\
+				<AssociationSet Association="AIVS_NEW_BO_SRV.toItem" Name="toItem" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">\
+					<End EntitySet="SalesOrder" Role="FromRole_toItem"/>\
+					<End EntitySet="SalesOrderItem" Role="ToRole_toItem"/>\
+				</AssociationSet>\
+				<AssociationSet Association="AIVS_NEW_BO_SRV.toItemDraftAdministrativeData" Name="toItemDraftAdministrativeData" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">\
+					<End EntitySet="SalesOrderItem" Role="FromRole_toItemDraftAdministrativeData"/>\
+					<End EntitySet="DraftAdministrativeData" Role="ToRole_toItemDraftAdministrativeData"/>\
+				</AssociationSet>\
+				<AssociationSet Association="AIVS_NEW_BO_SRV.toItemTwinEntity" Name="toItemTwinEntity" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">\
+					<End EntitySet="SalesOrderItem" Role="FromRole_toItemTwinEntity"/>\
+					<End EntitySet="SalesOrderItem" Role="ToRole_toItemTwinEntity"/>\
+				</AssociationSet>\
+				<AssociationSet Association="AIVS_NEW_BO_SRV.toTwinEntity" Name="toTwinEntity" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">\
+					<End EntitySet="SalesOrder" Role="FromRole_toTwinEntity"/>\
+					<End EntitySet="SalesOrder" Role="ToRole_toTwinEntity"/>\
+				</AssociationSet>\
+				<AssociationSet Association="AIVS_NEW_BO_SRV.toDraftAdministrativeData" Name="toDraftAdministrativeData" sap:content-version="1" sap:creatable="false" sap:deletable="false" sap:updatable="false">\
+					<End EntitySet="SalesOrder" Role="FromRole_toDraftAdministrativeData"/>\
+					<End EntitySet="DraftAdministrativeData" Role="ToRole_toDraftAdministrativeData"/>\
+				</AssociationSet>\
+				<FunctionImport EntitySet="SalesOrder" Name="Edit" ReturnType="AIVS_NEW_BO_SRV.SalesOrderType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderType">\
+					<Parameter Mode="In" Name="DraftKeySalesOrder" Type="Edm.Guid"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+				</FunctionImport>\
+				<FunctionImport Name="Validate" ReturnType="AIVS_NEW_BO_SRV.ValidationResult" m:HttpMethod="GET" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderType">\
+					<Parameter Mode="In" Name="DraftKeySalesOrder" Type="Edm.Guid"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+				</FunctionImport>\
+				<FunctionImport EntitySet="SalesOrder" Name="Prepare" ReturnType="AIVS_NEW_BO_SRV.SalesOrderType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderType">\
+					<Parameter Mode="In" Name="DraftKeySalesOrder" Type="Edm.Guid"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+				</FunctionImport>\
+				<FunctionImport EntitySet="SalesOrder" Name="Activate" ReturnType="AIVS_NEW_BO_SRV.SalesOrderType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderType">\
+					<Parameter Mode="In" Name="DraftKeySalesOrder" Type="Edm.Guid"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+				</FunctionImport>\
+				<FunctionImport EntitySet="SalesOrderItem" Name="PrepareItem" ReturnType="AIVS_NEW_BO_SRV.SalesOrderItemType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderItemType">\
+					<Parameter Mode="In" Name="DraftKeySalesOrderItem" Type="Edm.Guid"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrderItem" Type="Edm.String"/>\
+				</FunctionImport>\
+				<FunctionImport Name="ValidateItem" ReturnType="AIVS_NEW_BO_SRV.ValidationResult" m:HttpMethod="GET" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderItemType">\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrderItem" Type="Edm.String"/>\
+					<Parameter Mode="In" Name="DraftKeySalesOrderItem" Type="Edm.Guid"/>\
+				</FunctionImport>\
+				<FunctionImport EntitySet="SalesOrder" Name="CalculateGrossAmount" ReturnType="AIVS_NEW_BO_SRV.SalesOrderType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderType" sap:label="Calculate Gross Amount">\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+					<Parameter Mode="In" Name="DraftKeySalesOrder" Type="Edm.Guid"/>\
+				</FunctionImport>\
+				<FunctionImport EntitySet="SalesOrder" Name="Copy" ReturnType="AIVS_NEW_BO_SRV.SalesOrderType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderType" sap:label="Copy">\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+					<Parameter Mode="In" Name="DraftKeySalesOrder" Type="Edm.Guid"/>\
+				</FunctionImport>\
+				<FunctionImport EntitySet="SalesOrderItem" Name="CopyItem" ReturnType="AIVS_NEW_BO_SRV.SalesOrderItemType" m:HttpMethod="POST" sap:action-for="AIVS_NEW_BO_SRV.SalesOrderItemType" sap:label="Copy Item">\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrderItem" Type="Edm.String"/>\
+					<Parameter MaxLength="10" Mode="In" Name="KeySalesOrder" Type="Edm.String"/>\
+					<Parameter Mode="In" Name="DraftKeySalesOrderItem" Type="Edm.Guid"/>\
+				</FunctionImport>\
+			</EntityContainer>\
+			<Annotations Target="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/SalesOrder" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftRoot">\
+					<Record>\
+						<PropertyValue Property="ActivationAction" String="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Activate"/>\
+						<PropertyValue Property="EditAction" String="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Edit"/>\
+						<PropertyValue Property="ValidationFunction" String="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Validate"/>\
+						<PropertyValue Property="PreparationAction" String="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Prepare"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/SalesOrderItem" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftNode">\
+					<Record>\
+						<PropertyValue Property="ValidationFunction" String="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/ValidateSOI"/>\
+						<PropertyValue Property="PreparationAction" String="AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/PrepareSOI"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.Common.v1.DraftActivationVia">\
+					<Collection>\
+						<String>AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/SalesOrder</String>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="AIVS_NEW_BO_SRV.SalesOrderType" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">\
+					<Collection>\
+						<PropertyPath>SalesOrderID</PropertyPath>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="AIVS_NEW_BO_SRV.SalesOrderItemType" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticKey">\
+					<Collection>\
+						<PropertyPath>SalesOrderID</PropertyPath>\
+						<PropertyPath>SalesOrderItemID</PropertyPath>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<atom:link href="https://https:/sap/opu/odata/sap/AIVS_UNION_SRV/$metadata" rel="self" xmlns:atom="http://www.w3.org/2005/Atom"/>\
+			<atom:link href="https://https:/sap/opu/odata/sap/AIVS_UNION_SRV/$metadata" rel="latest-version" xmlns:atom="http://www.w3.org/2005/Atom"/>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
+

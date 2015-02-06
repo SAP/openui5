@@ -265,43 +265,9 @@ test("Should retrieve multiple controls by global id's with regexp and control t
 	strictEqual(aRetrievedControls.length, 0);
 });
 
-module("Controls in a view");
-
-test("Should get a single control of a view", function() {
-	// Arrange
-	var sView = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
-				'<Button id="foo">',
-				'</Button>',
-			'</core:View>'
-		].join('');
-
-	var oView = sap.ui.xmlview("view", { viewContent : sView });
-	oView.setViewName("bar");
-	oView.placeAt("qunit-fixture");
-	sap.ui.getCore().applyChanges();
-
-	// System under Test
-	var oPlugin = new OpaPlugin();
-
-	//Act
-	var oRetrievedButton = oPlugin.getMatchingControls({
-		viewNamespace : "",
-		viewName : "bar",
-		id : "foo"
-	});
-
-	// Assert
-	ok(oRetrievedButton, "did return the button");
-
-	//Cleanup
-	oView.destroy();
-	oPlugin.destroy();
-});
-
-test("Should get multiple controls of a view", function() {
-	// Arrange
-	var sView = [
+module("Controls in a view", {
+	setup: function () {
+		var sView = [
 			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
 				'<Button id="foo">',
 				'</Button>',
@@ -312,69 +278,104 @@ test("Should get multiple controls of a view", function() {
 			'</core:View>'
 		].join('');
 
-	var oView = sap.ui.xmlview("view", { viewContent : sView });
-	oView.setViewName("bar");
-	oView.placeAt("qunit-fixture");
+		this.oView = sap.ui.xmlview({ viewContent : sView });
+		this.oView.setViewName("bar");
+
+		// System under Test
+		this.oPlugin = new OpaPlugin();
+	},
+	teardown: function () {
+		this.oView.destroy();
+		this.oPlugin.destroy();
+	}
+});
+
+test("Should get a single control of a view", function(assert) {
+	// Arrange
+	this.oView.placeAt("qunit-fixture");
 	sap.ui.getCore().applyChanges();
 
-	// System under Test
-	var oPlugin = new OpaPlugin();
+	//Act
+	var oRetrievedButton = this.oPlugin.getMatchingControls({
+		viewNamespace : "",
+		viewName : "bar",
+		id : "foo"
+	});
+
+	// Assert
+	assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
+});
+
+
+test("Should get multiple controls of a view", function() {
+	// Arrange
+	this.oView.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
 
 	//Act
-	var aRetrievedButtons = oPlugin.getMatchingControls({
+	var aRetrievedButtons = this.oPlugin.getMatchingControls({
 		viewNamespace : "",
 		viewName : "bar",
 		id : ["foo","bar"]
 	});
 
 	// Assert
-	strictEqual(aRetrievedButtons.length, 2, "did return all the buttons");
-	strictEqual(aRetrievedButtons[0].getId(), "view--foo", "did return the foo button as first element");
-	strictEqual(aRetrievedButtons[1].getId(), "view--bar", "did return the bar button as second element");
-
-	//Cleanup
-	oView.destroy();
-	oPlugin.destroy();
+	assert.strictEqual(aRetrievedButtons.length, 2, "did return all the buttons");
+	assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
+	assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("bar").getId(), "did return the bar button as second element");
 });
 
-test("Should not throw an exception if the core is not defined", function() {
-	// System under Test
-	var oPlugin = new OpaPlugin();
+test("Should get multiple invisible controls of a view", function() {
+	//Act
+	var aRetrievedButtons = this.oPlugin.getMatchingControls({
+		viewNamespace : "",
+		viewName : "bar",
+		controlType : sap.ui.commons.Button,
+		visible: false
+	});
 
+	// Assert
+	assert.strictEqual(aRetrievedButtons.length, 3, "did return all the buttons");
+	assert.strictEqual(aRetrievedButtons[0].getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
+	assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("bar").getId(), "did return the bar button as second element");
+	assert.strictEqual(aRetrievedButtons[2].getId(), this.oView.byId("baz").getId(), "did return the bar button as second element");
+});
+
+QUnit.module("Core init", {
+	setup: function () {
+		this.oPlugin =  new OpaPlugin();
+	},
+	teardown: function () {
+		this.oPlugin.destroy();
+	}
+});
+
+QUnit.test("Should not throw an exception if the core is not defined", function(assert) {
 	//Arrange
-	oPlugin.oCore = undefined;
+	this.oPlugin.oCore = undefined;
 
 	//Act
-	oPlugin.getMatchingControls({ id : "foo" });
-	oPlugin.getMatchingControls({
+	this.oPlugin.getMatchingControls({ id : "foo" });
+	this.oPlugin.getMatchingControls({
 		controlType : "anything"
 	});
 
 	// Assert
-	ok(true, "did not throw an exception");
-
-	//Cleanup
-	oPlugin.destroy();
+	assert.ok(true, "did not throw an exception");
 });
 
-test("Should not throw an exception if the elements of core are not defined", function() {
-	// System under Test
-	var oPlugin = new OpaPlugin();
-
+QUnit.test("Should not throw an exception if the elements of core are not defined", function(assert) {
 	//Arrange
-	oPlugin.oCore = {};
+	this.oPlugin.oCore = {};
 
 	//Act
-	oPlugin.getMatchingControls({ id : "foo" });
-	oPlugin.getMatchingControls({
+	this.oPlugin.getMatchingControls({ id : "foo" });
+	this.oPlugin.getMatchingControls({
 		controlType : "anything"
 	});
 
 	// Assert
-	ok(true, "did not throw an exception");
-
-	//Cleanup
-	oPlugin.destroy();
+	assert.ok(true, "did not throw an exception");
 });
 
 </script>

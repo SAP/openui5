@@ -1,0 +1,88 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	height="100%"
+	controllerName="sap.ui.core.sample.InvisibleText.V">
+
+	<Page
+		title="Page"
+		class="sapUiContentPadding" >
+		<customHeader>
+			<Toolbar>
+				<Button type="Back" press="onPress" />
+				<ToolbarSpacer/>
+				<Title text="Title" />
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://edit" press="onPress" ariaLabelledBy="editButtonLabel"/>
+			</Toolbar>
+
+		</customHeader>
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button text="Default" press="onPress" />
+				<Button type="Reject" text="Reject" press="onPress" />
+				<Button icon="sap-icon://action" press="onPress" ariaLabelledBy="actionButtonLabel"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+
+		</subHeader>
+		<content>
+			<HBox>
+				<Button text="Default"
+						press="onPress"
+						ariaDescribedBy="defaultButtonDescription genericButtonDescription">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button type="Accept"
+						text="Accept"
+						press="onPress"
+						ariaDescribedBy="acceptButtonDescription genericButtonDescription">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button type="Reject"
+						text="Reject"
+						press="onPress"
+						ariaDescribedBy="rejectButtonDescription genericButtonDescription">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+			    </Button>
+				<Button text="Coming Soon"
+						press="onPress"
+						ariaDescribedBy="comingSoonButtonDescription genericButtonDescription"
+						enabled="false">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+
+			</HBox>
+
+			<!-- Collection of labels (some of which are invisible) used to provide ARIA descriptions for the buttons -->
+			<Label id="genericButtonDescription" text="Note: The buttons in this sample display MessageToast when pressed."/>
+
+			<core:InvisibleText id="defaultButtonDescription" text="Description of default button goes here."/>
+			<core:InvisibleText id="acceptButtonDescription" text="Description of accept button goes here."/>
+			<core:InvisibleText id="rejectButtonDescription" text="Description of reject button goes here."/>
+			<core:InvisibleText id="comingSoonButtonDescription" text="This feature is not active just now."/>
+
+			<!-- These labels exist only to provide targets for the ARIA label on the Edit and Action buttons -->
+			<core:InvisibleText id="editButtonLabel" text="Edit Button Label"/>
+			<core:InvisibleText id="actionButtonLabel" text="Action Button Label"/>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button type="Emphasized" text="Emphasized" press="onPress" />
+				<Button text="Default" press="onPress" />
+				<Button icon="sap-icon://action" press="onPress" />
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

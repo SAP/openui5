@@ -2,11 +2,45 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
-		'sap/ui/model/ValidateException', 'sap/ui/model/type/String'],
-	function(FormatException, ParseException, SimpleType, ValidateException, StringType) {
+sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
+		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException',
+		'sap/ui/model/type/String'],
+	function(FormatException, ODataType, ParseException, ValidateException, StringType) {
 	"use strict";
+
+	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.String} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vMaxLength, vNullable;
+
+		oType.oConstraints = undefined;
+		if (oConstraints) {
+			vMaxLength = oConstraints.maxLength;
+			if (typeof vMaxLength === "string") {
+				vMaxLength = parseInt(vMaxLength, 10);
+			}
+			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
+				oType.oConstraints = {maxLength: vMaxLength};
+			} else if (vMaxLength !== undefined) {
+				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
+					null, oType.getName());
+			}
+
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.nullable = false;
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
+		}
+	}
 
 	/**
 	 * Constructor for an OData primitive type <code>Edm.String</code>.
@@ -15,16 +49,21 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.String</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>string</code>.
+	 *
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
 	 * @param {boolean|string} [oConstraints.nullable=true]
@@ -32,44 +71,46 @@ sap.ui.define(['sap/ui/model/FormatException',
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmString = SimpleType.extend("sap.ui.model.odata.type.String",
+	var EdmString = ODataType.extend("sap.ui.model.odata.type.String",
 			/** @lends sap.ui.model.odata.type.String.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
 
 	/**
-	 * Format the given value to the given target type. When formatting to <code>string</code>
-	 * the formatting options will be taken into account.
+	 * Formats the given value to the given target type.
 	 *
-	 * @function
 	 * @param {string} sValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string|number|boolean}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported or the string cannot be formatted to the target
 	 *   type
+	 * @function
 	 * @public
 	 */
 	EdmString.prototype.formatValue = StringType.prototype.formatValue;
 
 	/**
-	 * Parse the given value which is expected to be of the given type to a string.
+	 * Parses the given value which is expected to be of the given type to a string.
 	 *
 	 * @param {string|number|boolean} vValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>sValue</code>)
+	 *   the source type (the expected type of <code>vValue</code>); must be "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
 	 */
@@ -78,12 +119,13 @@ sap.ui.define(['sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the
+	 * defined constraints.
 	 *
 	 * @param {string} sValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
 	EdmString.prototype.validateValue = function (sValue) {
@@ -101,39 +143,6 @@ sap.ui.define(['sap/ui/model/FormatException',
 		}
 		throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle().getText(
 			iMaxLength ? "EnterTextMaxLength" : "EnterText", [iMaxLength]));
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	EdmString.prototype.setConstraints = function(oConstraints) {
-		var vMaxLength, vNullable;
-
-		this.oConstraints = undefined;
-		if (oConstraints) {
-			vMaxLength = oConstraints.maxLength;
-			if (typeof vMaxLength === "string") {
-				vMaxLength = parseInt(vMaxLength, 10);
-			}
-			if (typeof vMaxLength === "number" && !isNaN(vMaxLength) && vMaxLength > 0) {
-				this.oConstraints = {maxLength: vMaxLength};
-			} else if (vMaxLength !== undefined) {
-				jQuery.sap.log.warning("Illegal maxLength: " + oConstraints.maxLength,
-					null, this.getName());
-			}
-
-			vNullable = oConstraints.nullable;
-			if (vNullable === false || vNullable === "false") {
-				this.oConstraints = this.oConstraints || {};
-				this.oConstraints.nullable = false;
-			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
-			}
-		}
 	};
 
 	/**

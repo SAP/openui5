@@ -44,6 +44,9 @@
 		t5.setWidth("400px");
 		sap.ui.setRoot("content5", t5);
 
+		var t6 = new sap.m.Text("Text6", {text:""});
+		sap.ui.setRoot("content6", t6);
+
 		// run tests
 		// =========
 
@@ -120,7 +123,8 @@
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
 			equals(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
-			equals(jQuery(oDom).css("direction"),"rtl","Text Direction is RTL");
+			equals(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
+
 			// RTL left
 			t1.setTextAlign(sap.ui.core.TextAlign.Left);
 			oCore.applyChanges();
@@ -146,7 +150,7 @@
 			oDom = jQuery.sap.domById('Text1');
 			equals(oDom.innerHTML,"Hello World!", "Text entered again");
 		});
-		
+
 		test("wrapping & no-wrapping", function() {
 			strictEqual(t1.$().css("white-space"), "pre-line", "Text has correct white-spece style for wrapping");
 			strictEqual(t4.$().hasClass("sapMTextNoWrap"), true, "Text has correct class for non-wrapping");
@@ -166,18 +170,18 @@
 			t5.canUseNativeLineClamp = function() {
 				return false;
 			};
-			
+
 			t5.addEventDelegate({
 				onAfterRendering : function() {
 					t5.clampText();
 				}
 			}, t5);
-			
+
 			t5.rerender();
 			oCore.applyChanges();
-			
+
 			strictEqual(t5.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
-			
+
 			setTimeout(function() {
 				// need to wait ellipsis is correctly calculated
 				ok(t5.$("inner").css("max-height") && t5.$("inner").css("max-height") != "none", "Text has max-height");
@@ -206,33 +210,41 @@
 
 			}, 200);
 		});
-		
+
 		test("When width is not set max-width should apply to control", function() {
 			var sut = new sap.m.Text({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
-			
+
 			sut.setWidth("10rem");
 			sap.ui.getCore().applyChanges();
 			ok(!sut.$().hasClass("sapMTextMaxWidth"), "Text has width and does not have max width restriction.");
 			sut.destroy();
 		});
-		
+
 		test("getTextDomRef should respect maxlines", function() {
 			var sut = new sap.m.Text({text : "line1\nline2\nline3", maxLines: 2}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
-			
+
 			sut.setMaxLines(1);
 			sap.ui.getCore().applyChanges();
 			ok(sut.getDomRef() === sut.getTextDomRef(), "TextDomRef is the controls dom ref.");
 			sut.destroy();
 		});
-		
+
 		test("text should be shrinkable", function() {
 			var oText = new sap.m.Text;
 			ok(oText.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Text control implements IShrinkable interface");
 			oText.destroy();
+		});
+
+		test("wrapping and break word with initially empty text", function() {
+			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
+			t6.setText("LongTextWithNoSpaces");
+			strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
+			t6.setText("LongTextWith Spaces");
+			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
 	</script>
@@ -250,5 +262,6 @@
 	<div id="content3"></div>
 	<div id="content4"></div>
 	<div id="content5"></div>
+	<div id="content6"></div>
 </body>
 </html>

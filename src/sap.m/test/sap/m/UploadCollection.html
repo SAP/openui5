@@ -240,7 +240,7 @@
 				"mimeType" : "application/pdf",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-07-26",
-				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf"
+				"url" : ""
 			}, {
 				"contributor" : "Kate Brown",
 				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
@@ -334,16 +334,17 @@
 		if (oEvent) {
 			var oData = oModel.getData();
 			var oItem = {};
-			var sUploadedFiles = oEvent.getParameters().oSource.mProperties.value;
-			if (this._oFileUploader.getMultiple() && !(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
-				sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
+			var sUploadedFile = oEvent.getParameters().getParameter("fileName");
+			// at the moment parameter fileName is not set in IE9
+			if (!sUploadedFile) {
+				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
+				sUploadedFile = aUploadedFile[0];
 			}
-			var aUploadedFiles = sUploadedFiles.split(/\" "/);
-			for (var i = 0; i < aUploadedFiles.length; i++) {
-				oItem = {
+			var nDocId = jQuery.now(); // generate Id
+			oItem = {
 					"contributor" : "You",
-					"documentId" : this.getItems()[i].getId(),
-					"fileName" : aUploadedFiles[i],
+					"documentId" : nDocId.toString(),
+					"fileName" : sUploadedFile,
 					"fileSize" : 10, // TODO get file size
 					"mimeType" : "",
 					"thumbnailUrl" : "",
@@ -351,7 +352,6 @@
 					"url" : "myUrl"
 				};
 				oData.items.unshift(oItem);
-			};
 			oModel.setData(oData);
 			sap.m.MessageToast.show("Upload successful");
 		}

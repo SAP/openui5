@@ -723,6 +723,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			getMaxScrollTop : function() {
 				return (this._$Container && this._$Container.length) ? this._$Container[0].scrollHeight - this._$Container.height() : -1;
 			},
+			
+			_cleanup : function() {
+				if (this._sResizeListenerId) {
+					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+					this._sResizeListenerId = null;
+				}
+			},
 	
 			_setOverflow : function(){
 				var $Container = this._$Container;
@@ -731,7 +738,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 	
 				// Let container scroll into the configured directions
-				$Container.css("z-index", "0"); // performance hack for webkit
 				if (sap.ui.Device.os.ios) {
 					$Container
 						.css("overflow-x", this._bHorizontal ? "scroll" : "hidden")

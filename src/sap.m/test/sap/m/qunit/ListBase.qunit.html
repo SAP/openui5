@@ -570,8 +570,11 @@
 
 			// call method & do tests
 			strictEqual(oList.setMode(sap.m.ListMode.None).getMode(), sap.m.ListMode.None, 'The property "mode" is "None" on ' + oList);
-			strictEqual(oList.getSelectedItem(), oListItem, 'The selection is still there after setting mode "None" twice on ' + oList);
+			strictEqual(oList.getSelectedItem(), null, 'The selection is not available after setting mode "None" on ' + oList);
+			oListItem.setSelected(true);
+			strictEqual(oList.getSelectedItem(), null, 'While mode is "None" we cannot select an item even via API call on ' + oListItem);
 			strictEqual(oList.setMode(sap.m.ListMode.SingleSelect).getMode(), sap.m.ListMode.SingleSelect, 'The property "mode" is "None" on ' + oList);
+			oListItem.setSelected(true);
 			strictEqual(oList.getSelectedItem(), oListItem, 'The selection is still there after switching the mode to "SingleSelect" on ' + oList);
 			// TODO: decide if check on internal variables is needed (Cahit)
 			strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelect" on ' + oList);

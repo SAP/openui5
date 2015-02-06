@@ -68,13 +68,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.13.2
 			 */
 			maxLines : {type : "int", group : "Appearance", defaultValue : null}
-		},
-		associations : {
-
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		}
 	}});
 
@@ -134,6 +127,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var oDomRef = this.getTextDomRef();
 		if (oDomRef) {
 			oDomRef.textContent = this.getText(true);
+
+			// Toggles the sapMTextBreakWord class when the text value is changed
+			if (this.getWrapping()) {
+				// no space text must break
+				if (sText && sText.length > 0 && !/\s/.test(sText)) {
+					this.$().addClass("sapMTextBreakWord");
+				} else {
+					this.$().removeClass("sapMTextBreakWord");
+				}
+			}
 		}
 
 		return this;

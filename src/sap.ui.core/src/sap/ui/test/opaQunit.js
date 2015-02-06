@@ -37,7 +37,7 @@ opaTest = function (testName, expected, callback, async) {
 		});
 
 		promise.fail(function (oOptions) {
-			ok(false, oOptions.errorMessage || " failed to wait for the check in the test: " + testName);
+			ok(false, oOptions.errorMessage);
 			start();
 		});
 	};

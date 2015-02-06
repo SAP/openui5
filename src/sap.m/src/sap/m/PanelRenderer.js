@@ -20,24 +20,33 @@ sap.ui.define(['jquery.sap.global'],
 	 *          oControl an object representation of the control that should be rendered
 	 */
 	PanelRenderer.render = function(oRm, oControl) {
-		// start Panel
+		this._startPanel(oRm, oControl);
+
+		this._renderHeader(oRm, oControl);
+
+		this._renderContent(oRm, oControl);
+
+		this._endPanel(oRm);
+	};
+
+	PanelRenderer._startPanel = function (oRm, oControl) {
 		oRm.write("<section");
-		oRm.writeControlData(oControl);
+
 		oRm.addClass("sapMPanel");
 		oRm.addStyle("width", oControl.getWidth());
 		oRm.addStyle("height", oControl.getHeight());
+
+		oRm.writeAccessibilityState(oControl, { role: "form" });
+		oRm.writeControlData(oControl);
 		oRm.writeClasses();
 		oRm.writeStyles();
 
-		// ARIA
-		oRm.writeAccessibilityState(oControl, {
-			role: "form"
-		});
-
 		oRm.write(">");
+	};
 
-		var bIsExpandable = oControl.getExpandable();
-		var oHeaderTBar = oControl.getHeaderToolbar();
+	PanelRenderer._renderHeader = function (oRm, oControl) {
+		var bIsExpandable = oControl.getExpandable(),
+			oHeaderTBar = oControl.getHeaderToolbar();
 
 		if (bIsExpandable) {
 
@@ -89,7 +98,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 
 			// ARIA
-			oRm.write(" role=\"heading\">");
+			oRm.write("role=\"heading\">");
 
 			oRm.writeEscaped(sHeaderText);
 			oRm.write("</div>");
@@ -103,7 +112,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oInfoTBar) {
 			if (bIsExpandable) {
-				// use this class as marker class - to ease selection later in onAfterRendering
+				// use this class as marker class to ease selection later in onAfterRendering
 				oInfoTBar.addStyleClass("sapMPanelExpandablePart");
 			}
 
@@ -111,26 +120,43 @@ sap.ui.define(['jquery.sap.global'],
 			oInfoTBar.setDesign(sap.m.ToolbarDesign.Info, true);
 			oRm.renderControl(oInfoTBar);
 		}
+	};
 
-		// render content
+	PanelRenderer._renderContent = function (oRm, oControl) {
+		this._startContent(oRm, oControl.getExpandable());
+
+		this._renderChildren(oRm, oControl.getContent());
+
+		this._endContent(oRm);
+	};
+
+	PanelRenderer._startContent = function (oRm, bIsExpandable) {
 		oRm.write("<div");
 		oRm.addClass("sapMPanelContent");
 		oRm.addClass("sapMPanelBG");
 
 		if (bIsExpandable) {
-			// use this class as marker class - to ease selection later in onAfterRendering
+			// use this class as marker class to ease selection later in onAfterRendering
 			oRm.addClass("sapMPanelExpandablePart");
 		}
 
 		oRm.writeClasses();
 		oRm.write(">");
-		var aChildren = oControl.getContent();
+	};
+
+	PanelRenderer._renderChildren = function (oRm, aChildren) {
 		var iLength = aChildren.length;
+
 		for (var i = 0; i < iLength; i++) {
 			oRm.renderControl(aChildren[i]);
 		}
-		oRm.write("</div>");
+	};
 
+	PanelRenderer._endContent = function (oRm) {
+		oRm.write("</div>");
+	};
+
+	PanelRenderer._endPanel = function (oRm) {
 		oRm.write("</section>");
 	};
 

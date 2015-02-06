@@ -41,14 +41,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			oRm.addClass("sapMTextNoWrap");
 		} else if (bWrapping) {
 			// no space text must break
-			if (!/\s/.test(sText)) {
+			if (sText && sText.length > 0 && !/\s/.test(sText)) {
 				oRm.addClass("sapMTextBreakWord");
 			}
 		}
 
 		// write style and attributes
 		sWidth ? oRm.addStyle("width", sWidth) : oRm.addClass("sapMTextMaxWidth");
-		sTextDir && oRm.addStyle("direction", sTextDir.toLowerCase());
+		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
 		sTooltip && oRm.writeAttributeEscaped("title", sTooltip);
 		if (sTextAlign) {
 			sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
@@ -60,13 +62,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// finish writing html
 		oRm.writeClasses();
 		oRm.writeStyles();
-
-		// ARIA
-		oRm.writeAccessibilityState(oText, {
-			role: "textbox",
-			readonly: "true"
-		});
-
 		oRm.write(">");
 
 		// handle max lines

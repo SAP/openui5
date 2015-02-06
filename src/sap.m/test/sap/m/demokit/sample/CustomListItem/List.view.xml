@@ -13,12 +13,12 @@
 			<core:Icon
 				src="sap-icon://lab"
 				size="2em"
-				class="content" />
-			<Label text="... and another one ..."   class="content" />
+				class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
+			<Label text="... and another one ..."   class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
 			<core:Icon
 				src="sap-icon://competitor"
 				size="2em"
-				class="content" />
+				class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
 		</CustomListItem>
 		<CustomListItem type="Navigation">
 			<Switch state="true"  class="content"/>

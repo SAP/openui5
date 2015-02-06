@@ -3,8 +3,8 @@
  */
 
 // Provides the render manager sap.ui.core.RenderManager
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.encoder'],
-	function(jQuery, Interface, BaseObject /* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/core/LabelEnablement', 'jquery.sap.act', 'jquery.sap.encoder'],
+	function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
@@ -98,6 +98,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	RenderManager.prototype.getRenderer = function(oControl) {
 		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
+	};
+	
+	/**
+	 * Sets the focus handler to be used by the RenderManager.
+	 * 
+	 * @param {sap.ui.core.FocusHandler} oFocusHandler the focus handler to be used.
+	 * @private
+	 */
+	RenderManager.prototype._setFocusHandler = function(oFocusHandler) {
+		jQuery.sap.assert(oFocusHandler && oFocusHandler instanceof sap.ui.core.FocusHandler, "oFocusHandler must be a sap.ui.core.FocusHandler");
+		this.oFocusHandler = oFocusHandler;
 	};
 	
 	//Triggers the BeforeRendering event on the given Control
@@ -305,34 +316,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	
 	(function() {
 	
-		//Returns the information of the current focus
-		var storeCurrentFocus = function(){
-			var oCore = sap.ui.getCore();
-	
-			// Store current focus
-			var sFocusedControlId = oCore.getCurrentFocusedControlId(),
-				oFocusInfo = null,
-				oFocusedDomRef = null;
-	
-			if (sFocusedControlId) {
-				var oFocusedControl = oCore.getElementById(sFocusedControlId);
-				if (oFocusedControl) {
-					oFocusInfo = oFocusedControl.getFocusInfo();
-					oFocusedDomRef = oFocusedControl.getFocusDomRef();
-				}
-			}
-	
-			return {focusedControlId: sFocusedControlId, focusInfo: oFocusInfo, focusDomRef: oFocusedDomRef};
-		};
-	
 		//Does everything needed after the rendering (restore focus, calling "onAfterRendering", initialize event binding)
 		var finalizeRendering = function(oRM, aRenderedControls, oStoredFocusInfo){
-			// Notify the behavior object that the controls will be attached to DOM
-			for (var i = 0, size = aRenderedControls.length; i < size; i++) {
-				var oControl = aRenderedControls[i];
-				if (oControl.bOutput && oControl.bOutput !== "invisible") {
-					oRM._bLocked = true;
-					try {
+			
+			var i, size = aRenderedControls.length;
+			
+			for (i = 0; i < size; i++) {
+				aRenderedControls[i]._sapui_bInAfterRenderingPhase = true;
+			}
+			oRM._bLocked = true;
+			
+			try {
+				
+				// Notify the behavior object that the controls will be attached to DOM
+				for (i = 0; i < size; i++) {
+					var oControl = aRenderedControls[i];
+					if (oControl.bOutput && oControl.bOutput !== "invisible") {
 						var oEvent = jQuery.Event("AfterRendering");
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
@@ -341,26 +340,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 						oControl._handleEvent(oEvent);
 						// end performance measurement
 						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
-					} finally {
-						oRM._bLocked = false;
 					}
 				}
+			
+			} finally {
+				for (i = 0; i < size; i++) {
+					delete aRenderedControls[i]._sapui_bInAfterRenderingPhase;
+				}
+				oRM._bLocked = false;
 			}
-	
+			
 			//finally restore focus
 			try {
-				if (oStoredFocusInfo && oStoredFocusInfo.focusedControlId) {
-					var oFocusedControl = sap.ui.getCore().getElementById(oStoredFocusInfo.focusedControlId);
-					if (oFocusedControl && oFocusedControl.getFocusDomRef() != oStoredFocusInfo.focusDomRef ) {
-						oFocusedControl.applyFocusInfo(oStoredFocusInfo.focusInfo);
-					}
-				}
+				oRM.oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
 				jQuery.sap.log.warning("Problems while restore focus after rendering: " + e, null, oRM);
 			}
 	
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
-			for (var i = 0, size = aRenderedControls.length; i < size; i++) {
+			for (i = 0; i < size; i++) {
 				var oControl = aRenderedControls[i],
 					aBindings = oControl.aBindParameters;
 	
@@ -412,8 +410,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
 				RenderManager.preserveContent(oTargetDomNode);
 			}
-	
-			var oStoredFocusInfo = storeCurrentFocus();
+			
+			var oStoredFocusInfo = this.oFocusHandler ? this.oFocusHandler.getControlFocusInfo() : null;
 	
 			var vHTML = RenderManager.prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
 	
@@ -694,7 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		function getPreserveArea() {
 			var $preserve = jQuery("#" + ID_PRESERVE_AREA);
 			if ($preserve.length === 0) {
-				$preserve = jQuery("<DIV/>",{role:"application",id:ID_PRESERVE_AREA}).
+				$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
 					addClass("sapUiHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
 					appendTo(document.body);
 			}
@@ -1164,6 +1162,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
 				if (oAssoc && oAssoc.multiple) {
 					var aIds = oElement[oAssoc._sGetter]();
+					if (sElemAssoc == "ariaLabelledBy") {
+						var aLabelIds = sap.ui.core.LabelEnablement.getReferencingLabels(oElement);
+						if (aLabelIds.length) {
+							aIds = aLabelIds.concat(aIds);
+						}
+					}
+					
 					if (aIds.length > 0) {
 						mAriaProps[sACCProp] = aIds.join(" ");
 					}
@@ -1303,7 +1308,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			this.write("</span>");
 		}
 	};
-
 
 	/**
 	 * Renders an invisible dummy element for controls that have set their visible-property to

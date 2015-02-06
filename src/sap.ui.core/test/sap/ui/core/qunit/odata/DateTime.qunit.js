@@ -16,8 +16,8 @@
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
 		oMessages = {
-			"EnterDateTime": "Enter a date and a time (like Nov 27, 2014, 1:47:26 PM).",
-			"EnterDate": "Enter a date (like Nov 27, 2014)."
+			"EnterDateTime": "EnterDateTime Nov 27, 2014, 1:47:26 PM",
+			"EnterDate": "EnterDate Nov 27, 2014"
 		};
 
 	oDateOnly.setUTCFullYear(2014);
@@ -28,16 +28,15 @@
 	oDateOnly.setUTCSeconds(0);
 	oDateOnly.setUTCMilliseconds(0);
 
-	function createInstance(sTypeName, oConstraints) {
-		return new (jQuery.sap.getObject(sTypeName))({}, oConstraints);
+	function createInstance(sTypeName, oConstraints, oFormatOptions) {
+		return new (jQuery.sap.getObject(sTypeName))(oFormatOptions, oConstraints);
 	}
 
 	/*
 	 * Tests that the given value leads to a ParseException.
 	 */
 	function parseError(oType, oValue, sExpectedErrorKey, sReason) {
-		sinon.test(function () {
-			this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText");
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue(oValue, "string");
 				ok(false);
@@ -45,17 +44,14 @@
 				ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
 				strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
-			sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText,
-				sExpectedErrorKey);
-		}).apply({}); // give sinon.test a this to enrich
+		});
 	}
 
 	/*
 	 * Tests that the given value leads to a ValidateException.
 	 */
 	function validateError(oType, oValue, sExpectedErrorKey, sReason) {
-		sinon.test(function () {
-			this.spy(sap.ui.getCore().getLibraryResourceBundle(), "getText");
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.validateValue(oValue);
 				ok(false);
@@ -63,9 +59,7 @@
 				ok(e instanceof sap.ui.model.ValidateException, sReason + ": exception");
 				strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
-			sinon.assert.calledWith(sap.ui.getCore().getLibraryResourceBundle().getText,
-				sExpectedErrorKey);
-		}).apply({}); // give sinon.test a this to enrich
+		});
 	}
 
 	/*
@@ -77,7 +71,7 @@
 		oType.validateValue(null);
 
 		oConstraints.nullable = false;
-		oType.setConstraints(oConstraints);
+		oType = createInstance(sTypeName, oConstraints);
 		validateError(oType, null, sExpectedErrorKey, "nullable");
 
 		try {
@@ -110,7 +104,7 @@
 			var oType = createInstance(sTypeName);
 
 			ok(oType instanceof sap.ui.model.odata.type.DateTimeBase, "is a DateTime");
-			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+			ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 			strictEqual(oType.getName(), sTypeName, "type name");
 			strictEqual(oType.oFormatOptions, undefined, "format options ignored");
 			strictEqual(oType.oConstraints, undefined, "default constraints");
@@ -208,7 +202,7 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
     ], function (i, oFixture) {
-		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType = new sap.ui.model.odata.type.DateTime();
 
 			if (oFixture.warning) {
@@ -218,13 +212,50 @@
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
-			oType.setConstraints(oFixture.i);
+			oType = new sap.ui.model.odata.type.DateTime({}, oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
-	test("format and parse (Date)", sinon.test(function () {
+	jQuery.each([
+		{oFormatOptions: {},  oExpected: {strictParsing: true}},
+		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
+		{oFormatOptions: {strictParsing: false, UTC: true}, oExpected: {strictParsing: false}},
+		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}},
+		// with displayFormat = Date
+		{oFormatOptions: {}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: undefined, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: {strictParsing: false}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: false}},
+		{oFormatOptions: {foo: "bar"}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {UTC: false}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true}},
+		{oFormatOptions: {style: "medium"}, oConstraints: {displayFormat: "Date"},
+			oExpected: {UTC: true, strictParsing: true, style: "medium"}},
+	], function (i, oFixture) {
+		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			sinon.test(function () {
+					var oType = createInstance("sap.ui.model.odata.type.DateTime",
+						oFixture.oConstraints, oFixture.oFormatOptions),
+					oSpy = (oFixture.oConstraints) ?
+						this.spy(sap.ui.core.format.DateFormat, "getDateInstance") :
+						this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+
+				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
+				oType.formatValue(oDateTime, "string");
+				ok(oSpy.calledWithExactly(oFixture.oExpected));
+			})
+		);
+	});
+
+	//*********************************************************************************************
+	test("format and parse (Date)", function () {
 		var oType = new sap.ui.model.odata.type.DateTime({}, {displayFormat: "Date"});
 
 		strictEqual(oType.formatValue(oDateOnly, "string"), sFormattedDateOnly,
@@ -232,11 +263,7 @@
 		deepEqual(oType.parseValue(sFormattedDateOnly, "string"), oDateOnly);
 
 		parseError(oType, "Feb 30, 2014", "EnterDate", "invalid date");
-
-		// back to DateTime, see that resetting the constraints works
-		oType.setConstraints();
-		strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime);
-	}));
+	});
 
 	//*********************************************************************************************
 	test("validate (Date)", function () {
@@ -271,8 +298,8 @@
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
     ], function (i, oFixture) {
-		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
-			var oType = new sap.ui.model.odata.type.DateTimeOffset();
+		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
+			var oType;
 
 			if (oFixture.warning) {
 				this.mock(jQuery.sap.log).expects("warning")
@@ -282,8 +309,30 @@
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
-			oType.setConstraints(oFixture.i);
+			oType = new sap.ui.model.odata.type.DateTimeOffset({},  oFixture.i);
 			deepEqual(oType.oConstraints, oFixture.o);
-		}));
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([
+		{oFormatOptions: {},  oExpected: {strictParsing: true}},
+		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
+		{oFormatOptions: {strictParsing: false}, oExpected: {strictParsing: false}},
+		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
+		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}}
+	], function (i, oFixture) {
+		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			sinon.test(function () {
+					var oType = createInstance("sap.ui.model.odata.type.DateTimeOffset", {},
+						oFixture.oFormatOptions),
+					oSpy = this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+
+				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
+				oType.formatValue(oDateTime, "string");
+				ok(oSpy.calledWithExactly(oFixture.oExpected));
+			})
+		);
 	});
 } ());

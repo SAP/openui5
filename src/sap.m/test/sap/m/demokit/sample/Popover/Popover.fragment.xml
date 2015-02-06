@@ -3,12 +3,14 @@
 	xmlns:core="sap.ui.core">
 	<Popover
 		title="{Name}"
-		class="sapUiPopupWithPadding"
-		placement="Bottom" >
+		class="sapUiContentPadding"
+		placement="Bottom"
+			initialFocus="email">
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
+					id="email"
 					text="Email"
 					icon="sap-icon://email"
 					press="handleEmailPress" />

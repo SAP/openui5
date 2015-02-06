@@ -131,7 +131,7 @@
 				var sTheme = jQuery("#theme").val();
 				var bRTL = jQuery("#rtl").is(":checked");
 				var $Content = jQuery("#content");
-				var sParams = "?sap-ui-theme=" + sTheme + "&sap-ui-rtl=" + bRTL;
+				var sParams = "?sap-ui-language=en&sap-ui-theme=" + sTheme + "&sap-ui-rtl=" + bRTL;
 				var aBuffer = [];
 				
 				aBuffer.push("<table id='tests' cellspacing='0' style='width:100%'><thead><tr>");
@@ -153,6 +153,19 @@
 				$Content.html(aBuffer.join(""));
 			}
 			
+			 function getLibraryNames(){
+				var aLibs = sap.ui.getVersionInfo().libraries,
+					aResult = [],
+					sLib, i;
+				for (i=0; i<aLibs.length; i++) {
+					sLib = aLibs[i].name;
+					if (jQuery.inArray(sLib, aResult) < 0) {
+						aResult.push(sLib);
+					}
+				}
+				return aResult;
+			}
+			
 			var oData = {};
 			var bLibsAvailable = false;
 			var aThemes = ["sap_bluecrystal", "sap_hcb"];
@@ -162,21 +175,21 @@
 				sTitle = jQuery("#title").html();
 				document.title = sTitle;
 				
-				var oInfo = sap.ui.getVersionInfo();
+				var aLibs = getLibraryNames();
 				
-				for (var i=0; i<oInfo.libraries.length; i++) {
-					var sPath = jQuery.sap.getModulePath(oInfo.libraries[i].name);
+				for (var i=0; i<aLibs.length; i++) {
+					var sPath = jQuery.sap.getModulePath(aLibs[i]);
 					sPath = sPath.replace("resources", "test-resources");
 					var oTestInfo = jQuery.sap.syncGetJSON(sPath + "/acc/index.json");
 					if (oTestInfo.success) {
-						oData[oInfo.libraries[i].name] = {
+						oData[aLibs[i]] = {
 							testinfo : oTestInfo.data,
-							name : oInfo.libraries[i].name,
+							name : aLibs[i],
 							root : sPath + "/acc/"
 						};
 						bLibsAvailable = true;
 					} else {
-						jQuery.sap.log.warning("Problem while loading acc test info for lib '" + oInfo.libraries[i].name + "': " + oTestInfo.status + " - " + oTestInfo.error);
+						jQuery.sap.log.warning("Problem while loading acc test info for lib '" + aLibs[i] + "': " + oTestInfo.status + " - " + oTestInfo.error);
 					}
 				}
 

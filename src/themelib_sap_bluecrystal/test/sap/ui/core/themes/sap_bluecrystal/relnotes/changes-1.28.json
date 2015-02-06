@@ -1,0 +1,273 @@
+{
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "79f822e3ae64341aff91d6a6a8e1867485da9945",
+        "author": "Michael Graf <mi.graf@sap.com>",
+        "type": "FEATURE",
+        "text": "CSS classes implementation for Container Padding Concept",
+        "references": []
+      },
+      {
+        "id": "0c55080f238c63c91b1011b8977613b6582a10d2",
+        "author": "Martin Wittmann <martin.wittmann@sap.com>",
+        "type": "FEATURE",
+        "text": "Introduced pre-defined Margin Classes",
+        "references": []
+      },
+      {
+        "id": "d89822ec1c3f4f9423cdf3d82f359b5b0bab7bf7",
+        "author": "Gergana Marcheva <gergana.marcheva@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectHeader: Implementation of the new design specification of Responsive Object Header",
+        "references": []
+      },
+      {
+        "id": "7c35431e4282b795acfeea837d6780bc6078ac4a",
+        "author": "Alexander Ivanov <alexander.ivanov01@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectListItem: Implemented display of multiple months",
+        "references": []
+      },
+      {
+        "id": "531e8ad9bc3f47d771a560e4890e5d19c26199b5",
+        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.m.Title: Text control for semantic header title texts",
+        "references": []
+      },
+      {
+        "id": "75aa3c7bc2a39a4ffb8482c9c0818ccebaa0032e",
+        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "type": "FEATURE",
+        "text": "unifield.Calendar: Implemented display of multiple months",
+        "references": []
+      },
+      {
+        "id": "44e4f8c1a1ed7d175a1a5174bfa35b069c90c13a",
+        "author": "Martin Wittmann <martin.wittmann@sap.com>",
+        "type": "FIX",
+        "text": "Added missing margins to css class 'sapUIFioriObjectPage'",
+        "references": []
+      },
+      {
+        "id": "05fa416d2077068b06c06ed645819812e6abaad4",
+        "author": "Michael Sobczak <michael.sobczak@sap.com>",
+        "type": "FIX",
+        "text": "Fixed chart colors",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "author": "Frank Weigel <frank.weigel@sap.com>",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "aca1c65d32ba1c542be90062f8670e20e86968aa",
+        "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
+        "type": "FIX",
+        "text": "Added missing placeholders in MultiComboBox in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "5058ee96354df5692526ae1bab50d68da1ff4b70",
+        "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
+        "type": "FIX",
+        "text": "Removed unnecessary line-height for condensed table cell.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "747699"
+          }
+        ]
+      },
+      {
+        "id": "d62fc43fc4c0347297b731a1dba7f134577fe650",
+        "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
+        "type": "FIX",
+        "text": "Revert of sapUiTableCellControlPadding class",
+        "references": []
+      },
+      {
+        "id": "9a0f8d8555689ae0b4e8383d123e260eb674f68e",
+        "author": "Michael Sobczak <michael.sobczak@sap.com>",
+        "type": "FIX",
+        "text": "ThingInspector overlay contrast fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "695384"
+          }
+        ]
+      },
+      {
+        "id": "dcd99262f064d350f79eeb201361ec8eddde97b8",
+        "author": "Cahit Guerguec <cahit.guerguec@sap.com>",
+        "type": "FIX",
+        "text": "m.ListItemBase: Compact selection mode margin adapted",
+        "references": []
+      },
+      {
+        "id": "1d29b2dd90793e27e9c03f1ac2c978b6ff14421b",
+        "author": "Arley Triana Morin <arley.triana.morin@sap.com>",
+        "type": "FIX",
+        "text": "m.Switch: Fixed broken animation",
+        "references": []
+      },
+      {
+        "id": "908aeeb01968fe861620d763f66d64a4b47538d0",
+        "author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.ActionSelect: disabled items are now displayed correctly",
+        "references": []
+      },
+      {
+        "id": "2e6b38543304dd5bf6e1d616e444b16f78e6b10b",
+        "author": "Martin Wittmann <martin.wittmann@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Hide superfluous hover buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472020642"
+          }
+        ]
+      },
+      {
+        "id": "a6ea5f62dfc7651d93bf51beaa7e109d9034e467",
+        "author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Input: Corrected width of the value state message",
+        "references": []
+      },
+      {
+        "id": "8cb329631dc7dc355b3bf917c3ef0c60816f2f96",
+        "author": "Andreas Kunz <andreas.kunz@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Link: Cleanup and minor fixes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "683459"
+          }
+        ]
+      },
+      {
+        "id": "28699a06294fe1772424dd3bcfeb8df809487fb3",
+        "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Fixed issue with shrinking width",
+        "references": []
+      },
+      {
+        "id": "1513e4514539b101cb0e82672718186c3e0781b1",
+        "author": "Borislav Yovchev <borislav.yovchev@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Fixed outline and coloring",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "826787"
+          }
+        ]
+      },
+      {
+        "id": "1b596c2e13075462ff3b6847aaf3e10912a7060f",
+        "author": "Borislav Yovchev <borislav.yovchev@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Fixed spacing in Responsive Object Header",
+        "references": []
+      },
+      {
+        "id": "c829bd3027f67d6c2ee141f0552d74ec9a27b976",
+        "author": "Gergana Marcheva <gergana.marcheva@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Fixed alignment issue in IE that displayed ObjectNumber incorrectly",
+        "references": []
+      },
+      {
+        "id": "3833820dabb74c26de457de4baf186ae1947a332",
+        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Page: Fixed content position when subheader not visible",
+        "references": []
+      },
+      {
+        "id": "f0b5652c2e461bb2fab39397ce0b50473297d00c",
+        "author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.SearchField: Minor fixes",
+        "references": []
+      },
+      {
+        "id": "ad999162ac3d1623b1edf006b5434fb258678504",
+        "author": "Wenqian Wang <wenqian.wang@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Token: Fixed vertical alignment of delete icon with text",
+        "references": []
+      },
+      {
+        "id": "5f3205528a76aa4acce301a214ea90878059840a",
+        "author": "Siarhei Ulasenka <siarhei.ulasenka@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer, MultiInput, MultiComboBox: Fixed IOS8 scrolling",
+        "references": []
+      },
+      {
+        "id": "52f8a1a97952d0014620c3643a33eff911dec32a",
+        "author": "Gernot Kuhr <gernot.kuhr@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: CSS Fixes, API: Added Layout Support",
+        "references": []
+      },
+      {
+        "id": "27557aae6bcaef543e7b486b149c38021901e251",
+        "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixed alignment of DatePicker Button",
+        "references": []
+      },
+      {
+        "id": "0c719fd6a0b6058fef1c6d7352bd808555899156",
+        "author": "Christopher Zuendorf <christopher.zuendorf@sap.com>",
+        "type": "FIX",
+        "text": "Fixed padding for sap.m.FlexBox container inside a sap.ui.table.Table cell in condensed mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "747699"
+          }
+        ]
+      },
+      {
+        "id": "c283fe8170d2a1433fac2f3637dcfc9f60d8f927",
+        "author": "Jan Mummenthaler <jan.mummenthaler@sap.com>",
+        "type": "FIX",
+        "text": "ux3.ActionBar: Highlight update action",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1427851"
+          }
+        ]
+      },
+      {
+        "id": "416be9ccd54e81bdc6d42c9937c76c2129c61aeb",
+        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "type": "FIX",
+        "text": "ux3.Shell: Fixed NavigationBar rendering in Chrome",
+        "references": []
+      },
+      {
+        "id": "403a42f7dad7aaf1b73706b8bca27c2f831c38c4",
+        "author": "Cahit Guerguec <cahit.guerguec@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.Toolbar: Fixed float effect on a flex item",
+        "references": []
+      }
+    ]
+  }
+}

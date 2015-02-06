@@ -99,7 +99,7 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					var sExpected = 
+					var sExpected =
 					"\"First; name\";Last name;Foo bar\r\n" +
 					"Al;Dente;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
@@ -157,7 +157,7 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					var sExpected = 
+					var sExpected =
 					"\"First; name\";Last name;Foo bar\r\n" +
 					"Corey;Ander;No\r\n" +
 					"Sandy;Barr;Yes\r\n" +
@@ -169,6 +169,55 @@
 					"Andy;Friese;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
 					"Anita;Mann;No\r\n" +
+					"Peter;\"Mul\r\n" +
+					"ti\r\n" +
+					"Li\r\n" +
+					"ne\";Yes\r\n" +
+					"Constance;Noring;Yes\r\n" +
+					"Jack;O'Lantern;Yes\r\n" +
+					"Doris;Open;Yes\r\n" +
+					"Gene;Poole;Yes\r\n" +
+					"Doris;Schutt;Yes\r\n" +
+					"Justin;Time;Yes\r\n" +
+					"Mo;Town;Yes\r\n" +
+					"Matt;Tress;Yes\r\n" +
+					"Lou;Zara;Yes";
+					equal(sContent, sExpected, "Generated file content should be correct.");
+				})
+				.fail(function() {
+					ok(false, 'Generate should not fail.');
+				})
+				.always(function() {
+					this.destroy();
+					start();
+				});
+
+			});
+
+			asyncTest("Generate with old binding syntax", 1, function() {
+
+				var oExport = new sap.ui.core.util.Export({
+					exportType: new sap.ui.core.util.ExportTypeCSV({
+						separatorChar: ";"
+					}),
+					models: createJSONModel(),
+					columns: createColumns()
+				});
+
+				// old binding syntax should also work
+				oExport.bindRows('/', null, new sap.ui.model.Sorter("lastName", false), [ new sap.ui.model.Filter({ path: "checked", operator: "EQ", value1: true }) ]);
+
+				oExport
+				.generate()
+				.done(function(sContent) {
+					var sExpected =
+					"\"First; name\";Last name;Foo bar\r\n" +
+					"Sandy;Barr;Yes\r\n" +
+					"Tim;Burr;Yes\r\n" +
+					"Al;Dente;Yes\r\n" +
+					"Brighton;Early;Yes\r\n" +
+					"Andy;Friese;Yes\r\n" +
+					"Tish;Hughes;Yes\r\n" +
 					"Peter;\"Mul\r\n" +
 					"ti\r\n" +
 					"Li\r\n" +

@@ -749,7 +749,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 		
 		DemokitApp.addReleaseNotesToDevGuide = function(oIndexData, sUrl, sTitle, iLevel) {
 			if (!sUrl) {
-				sUrl = "docs/guide/relnotes/ReleaseNotes.html";
+				sUrl = "releasenotes.html";
 			}
 			if (!sTitle) {
 				sTitle = "Release Notes";
@@ -772,7 +772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			
 			if (oIndex) {
 				oIndex.links = oIndex.links || [];
-				oIndex.links.push({ref: sUrl, text: sTitle, alias: "docs/guide/ReleaseNotes.html"});
+				oIndex.links.push({ref: sUrl, text: sTitle, alias: "releasenotes.html"});
 			}
 			
 			return oIndexData;

@@ -17,7 +17,7 @@
 
 <script type="text/javascript">
 
-	var sf1, sf2,
+	var sf1, sf2, sf3,
 		sPlaceholder = "search for..",
 		sValue = "value",
 		sQuery = "",
@@ -34,8 +34,8 @@
 		aEvents.push({event: oEvent, query: sLive});
 	};
 
-	function doTouchStart(sTarget, oParams){
-		var sEventName = "touchstart";
+	function doTouchEnd(sTarget, oParams){
+		var sEventName = "touchend";
 		var oTarget = jQuery.sap.domById(sTarget);
 		var $Target = jQuery(oTarget);
 		var oEvent = jQuery.Event(sEventName);
@@ -52,6 +52,10 @@
 		if(oElement && oElement["on"+sEventName]){
 			oElement["on"+sEventName].apply(oElement, [oEvent]);
 		}
+	}
+
+	function getIconId(oSF, sButton){
+		return window.getComputedStyle(oSF.getDomRef(sButton), ":after").getPropertyValue("content");
 	}
 
 	new sap.m.SearchField("sf1", {
@@ -74,11 +78,18 @@
 	new sap.m.SearchField("sf3", {
 		placeholder: sPlaceholder,
 		value: sValue,
-		enabled: false,
-		showMagnifier: false,
-		search:onSearch,
-		liveChange: onLiveChange,
-		visible: false
+		enabled: true,
+		showRefreshButton: true,
+		visible: true
+	}).placeAt("content");
+
+	new sap.m.SearchField("sf4", {
+		placeholder: sPlaceholder,
+		value: sValue,
+		enabled: true,
+		showRefreshButton: true,
+		showSearchButton: false,
+		visible: true
 	}).placeAt("content");
 
 	qutils.delayTestStart();
@@ -87,15 +98,19 @@
 		setup : function() {
 			sf1 = sap.ui.getCore().getControl("sf1");
 			sf2 = sap.ui.getCore().getControl("sf2");
-			sf1Dom = jQuery.sap.domById("sf1-I");
-			sf2Dom = jQuery.sap.domById("sf2-I");
+			sf3 = sap.ui.getCore().getControl("sf3");
+			sf1Dom = sf1.getFocusDomRef();
+			sf2Dom = sf2.getFocusDomRef();
+			sf3Dom = sf3.getFocusDomRef();
 		},
 		teardown : function() {
 			sf1 = null;
 			sf2 = null;
+			sf3 = null;
 			sf1Dom = null;
 			sf2Dom = null;
-			aEvents = null;
+			sf3Dom = null;
+			aEvents = [];
 		}
 	});
 
@@ -104,22 +119,33 @@
 		equal(sf1.getValue(), sValue, "Value property, UI5");
 		equal(sf1Dom.value, sValue, "Value property, DOM");
 		equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
-		equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
+		if(sf2Dom.placeholder){
+			equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
+		} else {
+			// IE9
+			equal(sf2.$("P").text(), sPlaceholder, "Placeholder in IE9");
+		}
 		equal(sf2.getEnabled(), false, "Enabled property, UI5");
 		equal(sf2Dom.disabled, true, "Disabled property, DOM");
-		ok(jQuery(sf2Dom).hasClass("sapMSFIDisabled"),"CSS class name for \"disabled\" is set");
-		ok(!jQuery.sap.domById("sf3"), "Search field 3 should not be rendered");
+		ok(sf2.$().hasClass("sapMSFDisabled"),"CSS class name for \"disabled\" is set");
+		// Button icons
+		ok(/\uE00D/.test(getIconId(sf1, "search")), "First button icon is magnifier");
+		ok(/\uE00A/.test(getIconId(sf3, "search")), "Third button icon is synchronize");
+		// showSearchButton:false :
+		ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
+		var rightOffset = window.getComputedStyle(jQuery("#sf4-reset")[0]).getPropertyValue("right");
+		strictEqual(rightOffset, "0px", "Reset button is right aligned if showSearchButton == false");
 	});
 
-	/* test is only valid in MVI theme
-	TODO: remove if MVI theme remains deleted, re-enable otherwise
-	test("Magnifier icon", function() {
-		equal(sf1.getShowMagnifier(), true, "showMagnifier property, UI5");
-		equal(sf1.$().find(".sapMSFMG").size(), 1, "magnifier is present, DOM");
-		equal(sf2.getShowMagnifier(), false, "showMagnifier property, UI5");
-		equal(sf2.$().find(".sapMSFMG").size(), 0, "magnifier is not present, DOM");
+	test("Screen Reader", function() {
+		var describedById = sf3Dom.getAttribute("aria-describedby");
+		var aLabels = describedById.split(' ');
+		var bLabelsExist = aLabels.every(function(id){
+			return !!document.getElementById(id);
+		});
+		ok(!!describedById, "Described by ID is set");
+		ok(bLabelsExist, "All descriptions are rendered in DOM");
 	});
-	*/
 
 	// test the "reset" button
 	asyncTest("ResetButton", function() {
@@ -127,8 +153,8 @@
 		sQuery = "test";
 		aEvents = [];
 		// touch the reset button
-		doTouchStart("sf1-reset");
-		doTouchStart("sf2-reset");
+		doTouchEnd("sf1-reset");
+		doTouchEnd("sf2-reset");
 
 		setTimeout(function(){
 			ok(sf1.getValue() == "", "Value property should be empty after reset, UI5");
@@ -137,10 +163,28 @@
 			ok(sf2.getValue() == sValue, "Disabled searchField should not react on reset, UI5");
 			ok(sf2Dom.value == sValue, "Disabled searchField should not react on reset, DOM");
 			// check events: both search and liveChange should be fired
-			equal(aEvents.length, 2, "there should be 2 events in the log");
+			ok(aEvents.length >= 2, "there should be at least 2 events in the log");
 			aEvents = [];
 			start();
 			}, 200);
+	});
+
+	asyncTest("Focused SearchField", function() {
+		ok(true, "Test for focused search field started");
+		// touch the search field
+		doTouchEnd("sf3-reset");
+		
+		setTimeout(function(){
+			ok(sf3.$().hasClass("sapMFocus"), "Third search field is focused after reset button press");
+			ok(/\uE00D/.test(getIconId(sf3, "search")), "Focused search field icon is magnifier");
+
+			document.activeElement.blur();
+			setTimeout( function(){
+				ok(/\uE00A/.test(getIconId(sf3, "search")), "Defocused search field icon is synchronize");
+				start();
+				}, 350)
+			}, 200);
+		
 	});
 
 </script>

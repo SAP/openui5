@@ -34,6 +34,7 @@ sap.ui.define([
 
 				/**
 				 * defines the max number of groups.
+				 * @since 1.26
 				 */
 				maxGroups: {
 					type: "string",
@@ -44,6 +45,7 @@ sap.ui.define([
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the
 				 * ConditionPanel is used on a dialog the property should be set to true!
+				 * @since 1.26
 				 */
 				containerQuery: {
 					type: "boolean",
@@ -54,6 +56,7 @@ sap.ui.define([
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically change the
 				 * layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
+				 * @since 1.26
 				 */
 				layoutMode: {
 					type: "string",
@@ -74,7 +77,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * tbd
+				 * defined group Items
+				 * @since 1.26
 				 */
 				groupItems: {
 					type: "sap.m.P13nGroupItem",
@@ -86,7 +90,8 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * event raised when a Item was added
+				 * event raised when a GroupItem was added
+				 * @since 1.26
 				 */
 				addGroupItem: {
 					parameters: {}
@@ -94,11 +99,13 @@ sap.ui.define([
 
 				/**
 				 * remove a group item
+				 * @since 1.26
 				 */
 				removeGroupItem: {},
 
 				/**								 
 				 * update a group item
+				 * @since 1.26
 				 */
 				updateGroupItem: {}
 			}
@@ -139,6 +146,7 @@ sap.ui.define([
 	 * opens a popup message dialog to give the user the feedback that some values are wrong or missing.
 	 * 
 	 * @public
+	 * @since 1.26
 	 */
 	P13nGroupPanel.prototype.validateConditions = function() {
 		return this._oGroupPanel.validateConditions();
@@ -148,6 +156,7 @@ sap.ui.define([
 	 * removes all invalid Group conditions.					 
 	 *  
 	 * @public
+	 * @since 1.28
 	 */
 	P13nGroupPanel.prototype.removeInvalidConditions = function() {
 		this._oGroupPanel.removeInvalidConditions();
@@ -157,6 +166,7 @@ sap.ui.define([
 	 * removes all errors/warning states from of all group conditions.
 	 * 
 	 * @public
+	 * @since 1.28
 	 */
 	P13nGroupPanel.prototype.removeValidationErrors = function() {
 		this._oGroupPanel.removeValidationErrors();
@@ -174,6 +184,7 @@ sap.ui.define([
 	 * setter for the supported operations array
 	 * 
 	 * @public
+	 * @since 1.26
 	 * @param {array}
 	 *            array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
 	 */
@@ -184,25 +195,6 @@ sap.ui.define([
 			this._oGroupPanel.setOperations(this._aOperations);
 		}
 	};
-
-	/**
-	 * setter for a KeyFields array
-	 * 
-	 * @public
-	 * @param {array}
-	 *            array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
-	 */
-//	P13nGroupPanel.prototype.setKeyFields = function(aKeyFields) {
-//		this._aKeyFields = aKeyFields;
-//
-//		if (this._oGroupPanel) {
-//			this._oGroupPanel.setKeyFields(this._aKeyFields);
-//		}
-//	};
-//
-//	P13nGroupPanel.prototype.getKeyFields = function() {
-//		return this._aKeyFields;
-//	};
 
 	/**
 	 * Initialize the control
@@ -236,16 +228,8 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.exit = function() {
-
-		var destroyHelper = function(o) {
-			if (o && o.destroy) {
-				o.destroy();
-			}
-			return null;
-		};
-
-		this._aKeyFields = destroyHelper(this._aKeyFields);
-		this._aOperations = destroyHelper(this._aOperations);
+		this._aKeyFields = null;
+		this._aOperations = null;
 	};
 
 	P13nGroupPanel.prototype.addItem = function(oItem) {

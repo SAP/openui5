@@ -4,160 +4,151 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="panelBoxContainer sapUiFioriObjectPage"
 		width="100%" >
 		<l:content>
-			<Panel class="visibleFlexItemSizes">
+
+			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Equal flexibility and content" />
+						<Title level="H2" text="Equal flexibility and content" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+						<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png">
+						</Button>
+						<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png">
+						</Button>
+						<Button text="3" width="100%" type="Accept" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
+						</Button>
 					</items>
 				</FlexBox>
-
 			</Panel>
 
-			<Panel class="visibleFlexItemSizes">
+			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Different flexibility, equal content" />
+						<Title level="H2" text="Different flexibility, equal content" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+						<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png">
+						</Button>
+						<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
 							<layoutData>
 								<FlexItemData growFactor="2" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png">
+						</Button>
+						<Button text="3" width="100%" type="Accept" >
 							<layoutData>
 								<FlexItemData growFactor="3" />
 							</layoutData>
-						</Image>
+						</Button>
 					</items>
 				</FlexBox>
-
 			</Panel>
 
-			<Panel class="visibleFlexItemSizes">
+			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Equal flexibility, different content" />
+						<Title level="H2" text="Equal flexibility, different content" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+						<Button text="1" width="50px" type="Emphasized" class="sapUiSmallMarginEnd" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" width="64px">
+						</Button>
+						<Button text="2" width="100px" type="Reject" class="sapUiSmallMarginEnd">
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" width="96px">
+						</Button>
+						<Button text="3" width="150px" type="Accept" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
+						</Button>
 					</items>
 				</FlexBox>
-
 			</Panel>
 
-			<Panel class="visibleFlexItemSizes">
+			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Equal flexibility, different content, width 0" />
+						<Title level="H2" text="Equal flexibility, different content, width 0" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
-					class="zeroWidthItems"
+					class="sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems"
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+						<Button text="1" width="100%" type="Emphasized" class="sapUiSmallMarginEnd" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" width="64px">
+						</Button>
+						<Button text="2" width="100%" type="Reject" class="sapUiSmallMarginEnd">
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" width="96px">
+						</Button>
+						<Button text="3" width="100%" type="Accept" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
+						</Button>
 					</items>
 				</FlexBox>
-
 			</Panel>
 
-			<Panel class="visibleFlexItemSizes">
+			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Different flexibility and content, width 0" />
+						<Title level="H2" text="Different flexibility and content, width 0" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
-					class="zeroWidthItems"
+					class="sapUiDemoFlexBoxSizeAdjustmentsZeroWidthItems"
 					alignItems="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
-							<layoutData>
-								<FlexItemData growFactor="3" />
-							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" width="64px">
-							<layoutData>
-								<FlexItemData growFactor="2" />
-							</layoutData>
-						</Image>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" width="96px">
+						<Button text="1" width="50px" type="Emphasized" class="sapUiSmallMarginEnd" >
 							<layoutData>
 								<FlexItemData growFactor="1" />
 							</layoutData>
-						</Image>
+						</Button>
+						<Button text="2" width="100px" type="Reject" class="sapUiSmallMarginEnd">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Button>
+						<Button text="3" width="150px" type="Accept" >
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Button>
 					</items>
 				</FlexBox>
-
 			</Panel>
+
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

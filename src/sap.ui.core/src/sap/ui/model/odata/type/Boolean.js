@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException',
-		'sap/ui/model/SimpleType', 'sap/ui/model/ValidateException'],
-	function(Core, FormatException, ParseException, SimpleType, ValidateException) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+		'sap/ui/model/ValidateException'],
+	function(Core, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	/**
@@ -46,47 +47,74 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	}
 
 	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.Boolean} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 */
+	function setConstraints(oType, oConstraints) {
+		var vNullable = oConstraints && oConstraints.nullable;
+
+		oType.oConstraints = undefined;
+		if (vNullable === false || vNullable === "false") {
+			oType.oConstraints = {nullable : false};
+		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		}
+	}
+
+	/**
 	 * Constructor for an OData primitive type <code>Edm.Boolean</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Boolean</code></a>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
+	 * <code>boolean</code>.
+	 *
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @alias sap.ui.model.odata.type.Boolean
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
+	 *   type ignores them since it does not support any format options
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmBoolean = SimpleType.extend("sap.ui.model.odata.type.Boolean",
+	var EdmBoolean = ODataType.extend("sap.ui.model.odata.type.Boolean",
 			/** @lends sap.ui.model.odata.type.Boolean.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
 				}
 			}
 		);
 
 	/**
-	 * Format the given boolean value to the given target type.
+	 * Formats the given boolean value to the given target type.
 	 *
 	 * @param {boolean} bValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
-	 *   the target type
+	 *   the target type; may be "any", "boolean" or "string". If it is "string", the result is
+	 *   "Yes" or "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {boolean|string}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -107,18 +135,19 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	};
 
 	/**
-	 * Parse the given value from the given type to a boolean.
+	 * Parses the given value from the given type to a boolean.
 	 *
 	 * @param {boolean|string} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
-	 * @param {string}
-	 *   sSourceType the source type (the expected type of <code>sValue</code>)
+	 * @param {string} sSourceType
+	 * 	 the source type (the expected type of <code>vValue</code>); may be "boolean" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {boolean}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
-	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
-	 *   Boolean
+	 * @throws {sap.ui.model.ParseException}
+	 *   if <code>sSourceType</code> is unsupported or if the given string is neither "Yes" nor
+	 *   "No" in the current {@link sap.ui.core.Configuration#getLanguage language}.
 	 * @public
 	 */
 	EdmBoolean.prototype.parseValue = function(vValue, sSourceType) {
@@ -147,12 +176,13 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 	};
 
 	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the given
+	 * constraints.
 	 *
 	 * @param {boolean} bValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
 	EdmBoolean.prototype.validateValue = function (bValue) {
@@ -165,24 +195,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException', 'sap/ui/model
 		if (typeof bValue !== "boolean") {
 			// This is a "technical" error by calling validate w/o parse
 			throw new ValidateException("Illegal " + this.getName() + " value: " + bValue);
-		}
-	};
-
-	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	EdmBoolean.prototype.setConstraints = function(oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
-
-		this.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			this.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, this.getName());
 		}
 	};
 

@@ -4,14 +4,12 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-
-			<Button
-				text="Open Action Sheet"
-				press="handleOpen" />
-
+			<Button text="Open Action Sheet"
+				press="handleOpen"
+				class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

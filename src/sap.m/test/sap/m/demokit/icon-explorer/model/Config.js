@@ -1,8 +1,8 @@
-jQuery.sap.declare("model.Config");
+jQuery.sap.declare("sap.ui.demokit.icex.model.Config");
 
-model.Config = {};
+sap.ui.demokit.icex.model.Config = {};
 
-model.Config.getPageSize = function() {
+sap.ui.demokit.icex.model.Config.getPageSize = function() {
 
 	// Lacking the capability to detect the rendering performance
 	// of the device we assume that "desktop devices"

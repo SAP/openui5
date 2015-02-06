@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	Version="4.0">
+	<edmx:Reference
+		Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication">
+			<Annotation Term="Core.Description">
+				<String>Terms for annotating communication-relevant information
+					inspired by
+					- RFC6350 vCard (http://tools.ietf.org/html/rfc6350)
+					- RFC5545 iCalendar (http://tools.ietf.org/html/rfc5545)
+					- RFC5322 Internet Message Format
+					(http://tools.ietf.org/html/rfc5322)
+					- RFC6351 xCard (XML Representation for vCard)
+				</String>
+			</Annotation>
+			<Annotation Term="Core.Description" Qualifier="Published">
+				<String>2013-10-16 © Copyright 2013 SAP AG. All rights reserved
+				</String>
+			</Annotation>
+			<Term Name="Contact" Type="Communication.ContactData" AppliesTo="EntityType">
+				<Annotation Term="Core.Description" String="Address book entry" />
+			</Term>
+			<ComplexType Name="ContactData">
+				<Property Name="fn" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.Description" String="Full name" />
+				</Property>
+				<Property Name="n" Type="Communication.Name" Nullable="true" />
+				<Property Name="nickname" Type="Edm.String" Nullable="true" />
+				<Property Name="photo" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="bday" Type="Edm.Date" Nullable="true" />
+				<Property Name="anniversary" Type="Edm.Date" Nullable="true" />
+				<Property Name="gender" Type="Communication.Gender"
+					Nullable="true" />
+				<Property Name="title" Type="Edm.String" Nullable="true" />
+				<Property Name="role" Type="Edm.String" Nullable="true" />
+				<Property Name="org" Type="Edm.String" Nullable="true" />
+				<Property Name="orgunit" Type="Edm.String" Nullable="true" />
+				<Property Name="note" Type="Edm.String" Nullable="true" />
+				<Property Name="adr" Type="Collection(Communication.AddressType)" />
+				<Property Name="tel" Type="Collection(Communication.PhoneNumber)" />
+				<Property Name="email" Type="Collection(Communication.EmailAddress)" />
+				<Property Name="geo" Type="Collection(Communication.GeoData)" />
+			</ComplexType>
+			<ComplexType Name="Name">
+				<Property Name="surname" Type="Edm.String" Nullable="true" />
+				<Property Name="given" Type="Edm.String" Nullable="true" />
+				<Property Name="additional" Type="Edm.String" Nullable="true" />
+				<Property Name="prefix" Type="Edm.String" Nullable="true" />
+				<Property Name="suffix" Type="Edm.String" Nullable="true" />
+			</ComplexType>
+			<Term Name="Address" Type="Communication.AddressType" AppliesTo="EntityType">
+				<Annotation Term="Core.Description" String="Street Address" />
+			</Term>
+			<ComplexType Name="AddressType">
+				<Property Name="street" Type="Edm.String" Nullable="true" />
+				<Property Name="locality" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.Description" String="City or similar" />
+				</Property>
+				<Property Name="region" Type="Edm.String" Nullable="true">
+					<Annotation Term="Core.Description" String="State, province, or similar" />
+				</Property>
+				<Property Name="code" Type="Edm.String" Nullable="true" />
+				<Property Name="country" Type="Edm.String" Nullable="true" />
+				<Property Name="pobox" Type="Edm.String" Nullable="true" />
+				<Property Name="label" Type="Edm.String" Nullable="true" />
+				<Property Name="type" Type="Communication.ContactInformationType"
+					Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="PhoneNumber">
+				<Property Name="uri" Type="Edm.String">
+					<Annotation Term="Core.Documentation"
+						String="This SHOULD use the tel: URL schema defined in RFC3966" />
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="type" Type="Communication.ContactInformationType"
+					Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="EmailAddressData">
+				<Property Name="address" Type="Edm.String" />
+				<Property Name="type" Type="Communication.ContactInformationType"
+					Nullable="true" />
+			</ComplexType>
+			<ComplexType Name="GeoData">
+				<Property Name="uri" Type="Edm.String">
+					<Annotation Term="Core.Documentation"
+						String="This SHOULD use the geo: URL schema defined in RFC5870 which encodes the same information as an Edm.GeographyPoint" />
+					<Annotation Term="Core.IsURL" />
+				</Property>
+				<Property Name="type" Type="Communication.ContactInformationType"
+					Nullable="true" />
+			</ComplexType>
+			<EnumType Name="ContactInformationType" IsFlags="true">
+				<Member Name="work" Value="1" />
+				<Member Name="home" Value="2" />
+				<Member Name="other" Value="3" />
+				<Member Name="preferred" Value="4" />
+			</EnumType>
+			<EnumType Name="Gender">
+				<Member Name="M">
+					<Annotation Term="Core.Description" String="male" />
+				</Member>
+				<Member Name="F">
+					<Annotation Term="Core.Description" String="female" />
+				</Member>
+				<Member Name="O">
+					<Annotation Term="Core.Description" String="other" />
+				</Member>
+				<Member Name="N">
+					<Annotation Term="Core.Description" String="not applicable" />
+				</Member>
+				<Member Name="U">
+					<Annotation Term="Core.Description" String="unknown" />
+				</Member>
+			</EnumType>
+			<Term Name="Event" Type="Communication.EventData" AppliesTo="EntityType">
+				<Annotation Term="Core.Description" String="Calendar entry" />
+			</Term>
+			<ComplexType Name="EventData">
+				<Property Name="summary" Type="Edm.String" Nullable="true" />
+				<Property Name="description" Type="Edm.String" Nullable="true" />
+				<Property Name="categories" Type="Collection(Edm.String)"
+					Nullable="true" />
+				<Property Name="dtstart" Type="Edm.DateTimeOffset"
+					Nullable="true" />
+				<Property Name="dtend" Type="Edm.DateTimeOffset" Nullable="true" />
+				<Property Name="duration" Type="Edm.Duration" Nullable="true" />
+				<Property Name="class" Type="Edm.String" Nullable="true" />
+				<Property Name="status" Type="Edm.String" Nullable="true" />
+				<Property Name="location" Type="Edm.String" Nullable="true" />
+				<Property Name="transp" Type="Edm.Boolean" Nullable="true" />
+				<Property Name="wholeday" Type="Edm.Boolean" Nullable="true" />
+				<Property Name="fbtype" Type="Edm.String" Nullable="true" />
+			</ComplexType>
+			<Term Name="Task" Type="Communication.TaskData" AppliesTo="EntityType">
+				<Annotation Term="Core.Description" String="Task list entry" />
+			</Term>
+			<ComplexType Name="TaskData">
+				<Property Name="summary" Type="Edm.String" Nullable="true" />
+				<Property Name="description" Type="Edm.String" Nullable="true" />
+				<Property Name="due" Type="Edm.DateTimeOffset" Nullable="true" />
+				<Property Name="completed" Type="Edm.DateTimeOffset"
+					Nullable="true" />
+				<Property Name="percentcomplete" Type="Edm.Byte" Nullable="true" />
+				<Property Name="priority" Type="Edm.Byte" Nullable="true" />
+			</ComplexType>
+			<Term Name="Message" Type="Communication.MessageData" AppliesTo="EntityType">
+				<Annotation Term="Core.Description" String="Email message" />
+			</Term>
+			<ComplexType Name="MessageData">
+				<Property Name="from" Type="Edm.String" Nullable="true" />
+				<Property Name="sender" Type="Edm.String" Nullable="true" />
+				<Property Name="to" Type="Collection(Edm.String)" Nullable="true" />
+				<Property Name="cc" Type="Collection(Edm.String)" Nullable="true" />
+				<Property Name="bcc" Type="Collection(Edm.String)"
+					Nullable="true" />
+				<Property Name="subject" Type="Edm.String" Nullable="true" />
+				<Property Name="body" Type="Edm.String" Nullable="true" />
+				<Property Name="keywords" Type="Collection(Edm.String)"
+					Nullable="true" />
+				<Property Name="received" Type="Edm.DateTimeOffset"
+					Nullable="true" />
+			</ComplexType>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

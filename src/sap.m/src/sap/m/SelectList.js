@@ -377,10 +377,13 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			var oSelectedItem = this.getSelectedItem(),
 				CSS_CLASS = SelectListRenderer.CSS_CLASS;
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setAssociation("selectedItem", vItem || null, true);
-			this.setProperty("selectedItemId", vItem ? vItem.getId() : "", true);
+			this.setAssociation("selectedItem", vItem, true);
+			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
+
+			if (typeof vItem === "string") {
+				vItem = sap.ui.getCore().byId(vItem);
+			}
+
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
 
 			if (oSelectedItem) {
@@ -654,21 +657,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 */
 		SelectList.prototype.setSelectedItemId = function(vItem) {
 			vItem = this.validateProperty("selectedItemId", vItem);
-			var oItem = sap.ui.getCore().byId(vItem);
-
-			if (!(oItem instanceof sap.ui.core.Item) && vItem !== "" && vItem !== undefined) {
-				jQuery.sap.log.warning('Warning: setSelectedItemId() "sItem" has to be a string id of an sap.ui.core.Item instance, an empty string or undefined on', this);
-				return this;
-			}
-
-			if (!oItem) {
-				oItem = this.getDefaultSelectedItem();
-			}
-
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
-			this.setSelection(oItem);
-
+			this.setSelection(vItem);
 			return this;
 		};
 

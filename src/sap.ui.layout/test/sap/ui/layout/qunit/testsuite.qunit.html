@@ -14,13 +14,14 @@
 			function suite() {
 				var suite = new parent.jsUnitTestSuite(),
 					contextPath = "/" + window.location.pathname.split("/")[1];
-			
+
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/Form.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/SimpleForm.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/VerticalLayout.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/HorizontalLayout.qunit.html");
-			
-					// Some controls are not working for IE8, so no automatical test for older IE versions 
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/FixFlex.qunit.html");
+
+					// Some controls are not working for IE8, so no automatical test for older IE versions
 					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9) {
 						return suite;
 					}
@@ -35,6 +36,6 @@
 			}
 
 		</script>
-		
+
 	</body>
 </html>

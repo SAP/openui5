@@ -3,8 +3,9 @@
  */
 
 // Provides object sap.ui.core.util.XMLPreprocessor
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XMLTemplateProcessor'],
-	function(jQuery, ManagedObject, XMLTemplateProcessor) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/Context'],
+	function(jQuery, ManagedObject, XMLTemplateProcessor, Context) {
 		'use strict';
 
 		var oUNBOUND = {}, // @see getAny
@@ -163,6 +164,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 			 */
 			process: function(oRootElement, mSettings, sCaller) {
 				/**
+				 * Throws an error with the given message, prefixing it with the caller
+				 * identification (separated by a colon) and appending the serialization of the
+				 * given DOM element.
+				 *
+				 * @param {string} sMessage
+				 *   some error message which must end with a space (and take into account, that
+				 *   the serialized XML is appended)
+				 * @param {Element} oElement
+				 *   the DOM element
+				 */
+				function error(sMessage, oElement) {
+					throw new Error(sCaller + ": " + sMessage + serializeSingleElement(oElement));
+				}
+
+				/**
 				 * Get the XML element for given <template:if> element which has to be part of the
 				 * output.
 				 *
@@ -193,12 +209,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 							if (iElementIndex > 0) {
 								oElseElement = oChildNodeList.item(iElementIndex);
 								if (!isTemplateElement(oElseElement, "else")) {
-									unexpectedTag(oElseElement);
+									error("Expected <" + oIfElement.prefix
+										+ ":else>, but instead saw ", oElseElement);
 								}
 								iElementIndex
 									= getNextChildElementIndex(oIfElement, iElementIndex + 1);
 								if (iElementIndex > 0) {
-									unexpectedTag(oChildNodeList.item(iElementIndex));
+									error("Expected </" + oIfElement.prefix
+										+ ":if>, but instead saw ",
+										oChildNodeList.item(iElementIndex));
 								}
 							}
 						}
@@ -331,6 +350,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 							warn(': Error in formatter of ', ex);
 							vTest = false;
 						}
+					} else {
+						// constant test conditions are suspicious, but useful during development
+						warn(': Constant test condition in ', null);
 					}
 					oChild = getThenOrElse(oElement, vTest && vTest !== "false");
 					if (oChild) {
@@ -356,9 +378,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 						oNewWithControl,
 						sVar = oElement.getAttribute("var");
 
+					if (sVar === "") {
+						error("Missing variable name for ", oElement);
+					}
 					if (!oBindingInfo) {
-						throw new Error(sCaller + ': Missing binding for '
-							+ serializeSingleElement(oElement));
+						error("Missing binding for ", oElement);
 					}
 
 					// set up a scope for the loop variable, so to say
@@ -372,8 +396,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 					oNewWithControl.unbindAggregation("list", true);
 					sModelName = oBindingInfo.model; // added by bindAggregation
 					if (!oListBinding) {
-						throw new Error(sCaller + ": Missing model '" + sModelName + "' in "
-							+ serializeSingleElement(oElement));
+						error("Missing model '" + sModelName + "' in ", oElement);
 					}
 					aContexts = oListBinding.getContexts();
 
@@ -407,31 +430,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 					var oBindingInfo,
 						oModel,
 						oNewWithControl,
+						fnHelper,
+						sHelper = oElement.getAttribute("helper"),
+						vHelperResult,
 						sPath = oElement.getAttribute("path"),
 						sResolvedPath,
 						sVar = oElement.getAttribute("var");
 
+					if (sVar === "") {
+						error("Missing variable name for ", oElement);
+					}
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
 					//TODO Simplify code once named contexts are supported by the core
-					if (sVar) { // create a "named context"
+					if (sHelper || sVar) { // create a "named context"
 						//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
 						oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
-							throw new Error(sCaller + ": Missing model '" + oBindingInfo.model
-								+ "' in " + serializeSingleElement(oElement));
+							error("Missing model '" + oBindingInfo.model + "' in ", oElement);
 						}
 						//TODO any trick to avoid explicit resolution of relative paths here?
 						sResolvedPath = oModel.resolve(oBindingInfo.path,
 							oWithControl.getBindingContext(oBindingInfo.model));
 						if (!sResolvedPath) {
-							throw new Error(sCaller + ': Cannot resolve path for '
-								+ serializeSingleElement(oElement));
+							error("Cannot resolve path for ", oElement);
 						}
+						if (sHelper) {
+							fnHelper = jQuery.sap.getObject(sHelper);
+							if (typeof fnHelper !== "function") {
+								error("Cannot resolve helper for ", oElement);
+							}
+							vHelperResult = fnHelper(oModel.createBindingContext(sResolvedPath));
+							if (vHelperResult instanceof Context) {
+								oModel = vHelperResult.getModel();
+								sResolvedPath = vHelperResult.getPath();
+							} else if (vHelperResult !== undefined) {
+								if (typeof vHelperResult !== "string" || vHelperResult === "") {
+									error("Illegal helper result '" + vHelperResult + "' in ",
+										oElement);
+								}
+								sResolvedPath = vHelperResult;
+							}
+						}
+						sVar = sVar || oBindingInfo.model; // default variable is same model name
 						oNewWithControl.setModel(oModel, sVar);
-						oNewWithControl.bindObject({
+						oNewWithControl.bindObject({ //TODO setBindingContext?!
 							model: sVar,
 							path: sResolvedPath
 						});
@@ -441,16 +486,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 
 					liftChildNodes(oElement, oNewWithControl);
 					oElement.parentNode.removeChild(oElement);
-				}
-
-				/**
-				 * Throws an error that the element represents an unexpected tag.
-				 *
-				 * @param {Element} oElement the DOM element
-				 */
-				function unexpectedTag(oElement) {
-					throw new Error(sCaller + ": Unexpected tag "
-						+ serializeSingleElement(oElement));
 				}
 
 				/**
@@ -507,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/XM
 							return;
 
 						default:
-							unexpectedTag(oNode);
+							error("Unexpected tag ", oNode);
 						}
 					} else if (oNode.namespaceURI === "sap.ui.core"
 						&& localName(oNode) === "Fragment"

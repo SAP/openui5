@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	
 			if (oSource instanceof sap.ui.layout.form.FormContainer) {
 				if (this._mainGrid) {
-					this._mainRFGrid.onLayoutDataChange(oEvent);
+					this._mainGrid.onLayoutDataChange(oEvent);
 				}
 			} else if (!(oSource instanceof sap.ui.layout.form.FormElement)) { // LayoutData on FormElement not supported in ResponsiveGridLayout
 				var oParent = oSource.getParent();

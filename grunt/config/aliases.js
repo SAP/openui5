@@ -71,17 +71,20 @@ module.exports = function(grunt, config) {
 
 			// adopt the version to "current" prerelease (with timestamp)
 			var version = grunt.config(['package', 'version']);
-			if (grunt.option('publish') === 'release') {
-				// in case of a release, check if version from package.json is NOT a prerelease version
-				// the version in package.json should be change before running the publish build
-				var parsedVersion = semver.parse(version);
-				if (parsedVersion.prerelease.length > 0) {
+			var parsedVersion = semver.parse(version);
+
+			if (parsedVersion.prerelease.length > 0) {
+
+				// only increase version for prereleases
+				version = semver.inc(version, 'prerelease', grunt.config('buildtime')) + '+sha.<%= lastchange.substr(0,7) %>';
+
+				if (grunt.option('publish') === 'release') {
+					// in case of a release, check if version from package.json is NOT a prerelease version
+					// the version in package.json should be change before running the publish build
 					grunt.fail.fatal('Unable to publish release. "' + version + '" is a prerelease version (see package.json).');
 					return;
 				}
-			} else {
-				// only increase version for prereleases
-				version = semver.inc(version, 'prerelease', grunt.config('buildtime')) + '+sha.<%= lastchange.substr(0,7) %>';
+
 			}
 			grunt.config(['package', 'version'], version);
 
@@ -102,17 +105,19 @@ module.exports = function(grunt, config) {
 
 				// theme
 				aTasks.push('openui5_theme:target-' + library.name);
-
 			});
 
 			aTasks.push('replace');
 			aTasks.push('concat');
+			aTasks.push('uglify');
 
 			config.libraries.forEach(function(library) {
+
 				// library preload
 				if (library.type !== 'theme') {
-					aTasks.push('openui5_library_preload:target-preload-' + library.name);
+					aTasks.push('openui5_preload:library-' + library.name);
 				}
+
 			});
 
 			if (grunt.option('publish')) {

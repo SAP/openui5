@@ -12,10 +12,6 @@
 }
 
 .sapMLIB {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -24,6 +20,13 @@
 	-moz-box-align: center;
 	-ms-flex-align: center;
 	align-items: center;
+}
+
+.sapMLIBTypeNavigation{
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .sapMLIB:focus,
@@ -43,10 +46,6 @@
 	cursor: pointer;
 }
 
-.sapMLIBSelectSM {
-	display: none;
-}
-
 .sapMLIBImgNav,
 .sapMLIBImgDet,
 .sapMLIBImgDel,
@@ -55,7 +54,8 @@
 .sapMLIBSelectSL,
 .sapMLIBSelectM,
 .sapMLIBSelectD,
-.sapMLIBCounter {
+.sapMLIBCounter,
+.sapMLIBContent ~ .sapMLIBCursor {
 	-webkit-box-flex: 0;
 	-moz-box-flex: 0;
 	-ms-flex: none;

@@ -1,84 +1,82 @@
 <mvc:View
 	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="panelBoxContainer sapUiFioriObjectPage"
 		width="100%" >
 		<l:content>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Upper left" />
+						<Title level="H2" text="Upper left" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Start"
 					justifyContent="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Upper center" />
+						<Title level="H2" text="Upper center" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Start"
 					justifyContent="Center">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Upper right" />
+						<Title level="H2" text="Upper right" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Start"
 					justifyContent="End">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Middle left" />
+						<Title level="H2" text="Middle left" />
 					</Toolbar>
 				</headerToolbar>
 
 				<FlexBox
+					height="100px"
 					alignItems="Center"
 					justifyContent="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
 
@@ -87,17 +85,17 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Middle center" />
+						<Title level="H2" text="Middle center" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Center"
 					justifyContent="Center">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
 
@@ -106,78 +104,75 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Middle right" />
+						<Title level="H2" text="Middle right" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="Center"
 					justifyContent="End">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Lower left" />
+						<Title level="H2" text="Lower left" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="End"
 					justifyContent="Start">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Lower center" />
+						<Title level="H2" text="Lower center" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="End"
 					justifyContent="Center">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
 
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Lower right" />
+						<Title level="H2" text="Lower right" />
 					</Toolbar>
 				</headerToolbar>
-
 				<FlexBox
+					height="100px"
 					alignItems="End"
 					justifyContent="End">
 					<items>
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+						<Button text="1" type="Emphasized" class="sapUiSmallMarginEnd" />
+						<Button text="2" type="Reject" class="sapUiSmallMarginEnd" />
+						<Button text="3" type="Accept" />
 					</items>
 				</FlexBox>
-
 			</Panel>
+
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

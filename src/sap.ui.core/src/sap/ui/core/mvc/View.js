@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.View.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ExtensionPoint', 'sap/ui/core/library'],
-	function(jQuery, Control, ExtensionPoint, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/ExtensionPoint', 'sap/ui/core/library'],
+	function(jQuery, ManagedObject, Control, ExtensionPoint, library) {
 	"use strict";
 
 
@@ -88,7 +88,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 			 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
 			 */
 			beforeRendering : {}
-		}
+		},
+		specialSettings : { 
+			
+			/**
+			 * Controller instance to use for this view. 
+			 */
+			controller : true,
+			
+			/**
+			 * Name of the controller class to use for this view. 
+			 * If given, it overrides the same information in the view definition (XML, HTML).
+			 */
+			controllerName : true,
+			
+			/**
+			 * Preprocessors that the view can use before constructing the view. 
+			 */
+			preprocessors : true,
+			
+			/**
+			 * (module) Name of a resource bundle that should be loaded for this view  
+			 */
+			resourceBundleName : true,
+			
+			/**
+			 * URL of a resource bundle that should be loaded for this view 
+			 */
+			resourceBundleUrl : true,
+			
+			/**
+			 * Locale that should be used to load a resourcebundle for thisview 
+			 */
+			resourceBundleLocale : true,
+			
+			/**
+			 * Model name under which the resource bundle should be stored.
+			 */
+			resourceBundleAlias : true,
+			
+			/**
+			 * Type of the view
+			 */
+			type : true,
+			
+			/**
+			 * A view definition
+			 */ 
+			viewContent : true,
+
+			/**
+			 * Additional configuration data that should be given to the view at construction time 
+			 * and which will be available early, even before model data or other constructor settings are applied.  
+			 */ 
+			viewData : true
+
+		} 
 	}});
 	
 	
@@ -110,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 		this.mPreprocessors	= mSettings.preprocessors || {};
 
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
-		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName)) {
+		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			var that = this;
 			this._fnSettingsPreprocessor = function(mSettings) {
 				var sId = this.getId();
@@ -118,7 +173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 					if (that.isPrefixedId(sId)) {
 						sId = sId.substring((that.getId() + "--").length);
 					}
-					var mCustomSettings = sap.ui.core.CustomizingConfiguration.getCustomProperties(that.sViewName, sId);
+					var mCustomSettings = sap.ui.core.CustomizingConfiguration.getCustomProperties(that.sViewName, sId, that);
 					if (mCustomSettings) {
 						mSettings = jQuery.extend(mSettings, mCustomSettings); // override original property initialization with customized property values
 					}
@@ -197,38 +252,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 	 * @private
 	 */
 	 function createAndConnectController(oThis, mSettings) {
+		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+			// only set when used internally
+			var oController = mSettings.controller;
 
-		// only set when used internally
-		var oController = mSettings.controller;
-
-		// check for default controller
-		if (!oController && oThis.getControllerName) {
-			// get optional default controller name
-			var defaultController = oThis.getControllerName();
-			if (defaultController) {
-				// create controller
-				oController = sap.ui.controller(defaultController);
-			}
-		}
-
-		if (sap.ui.getCore().getConfiguration().getDesignMode() &&
-			!sap.ui.getCore().getConfiguration().getSuppressDeactivationOfControllerCode()) {
-			// Stub all controller methods in design mode
-			for (var sMethod in oController) {
-				if (typeof oController[sMethod] === "function"
-					// Do not stub abstract controller class methods as they are used internally.
-					// Do not use oController.hasOwnProperty(sMethod),
-					// as there could be a base class of the controller and we want only skip the methods of abstract controller
-					&& !sap.ui.core.mvc.Controller.prototype[sMethod]) {
-					oController[sMethod] = function() {};
+			if (!oController && oThis.getControllerName) {
+				// get optional default controller name
+				var defaultController = oThis.getControllerName();
+				if (defaultController) {
+					// create controller
+					oController = sap.ui.controller(defaultController);
 				}
 			}
-		}
 
-		if ( oController ) {
-			oThis.oController = oController;
-			// connect controller
-			oController.connectToView(oThis);
+			if ( oController ) {
+				oThis.oController = oController;
+				// connect controller
+				oController.connectToView(oThis);
+			}
+		} else {
+			oThis.oController = {};
 		}
 	}
 
@@ -408,7 +451,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 		
 		// view replacement
 		if (sap.ui.core.CustomizingConfiguration) {
-			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName);
+			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
 			if (customViewConfig) {
 				jQuery.sap.log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
 				jQuery.extend(oView, customViewConfig);
@@ -469,22 +512,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Extensio
 	View._resolveEventHandler = function(sName, oController) {
 
 		var fnHandler;
-		
-		switch (sName.indexOf('.')) {
-			case 0:
-				// starts with a dot, must be a controller local handler
-				fnHandler = oController && oController[sName.slice(1)];
-				break;
-			case -1:
-				// no dot at all: first check for a controller local, then for a global handler
-				fnHandler = oController && oController[sName];
-				if ( fnHandler != null ) {
-					// if the name can be resolved, don't try to find a global handler (even if it is not a function) 
+
+		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+			switch (sName.indexOf('.')) {
+				case 0:
+					// starts with a dot, must be a controller local handler
+					fnHandler = oController && oController[sName.slice(1)];
 					break;
-				}
-				// falls through 
-			default:
-				fnHandler = jQuery.sap.getObject(sName);
+				case -1:
+					// no dot at all: first check for a controller local, then for a global handler
+					fnHandler = oController && oController[sName];
+					if ( fnHandler != null ) {
+						// if the name can be resolved, don't try to find a global handler (even if it is not a function) 
+						break;
+					}
+					// falls through 
+				default:
+					fnHandler = jQuery.sap.getObject(sName);
+			}
+		} else {
+			// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
+			fnHandler = function() {};
 		}
 
 		if ( typeof fnHandler === "function" ) {

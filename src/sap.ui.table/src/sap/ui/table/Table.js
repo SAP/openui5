@@ -88,11 +88,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
-			/**
 			 * Flag whether to use the scroll mode or paging mode. If the Paginator mode is used it will require the sap.ui.commons library!
 			 */
 			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : sap.ui.table.NavigationMode.Scrollbar},
@@ -185,7 +180,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 * Set this parameter to true to implement your own filter behaviour. Instead of the filter input box a button will be rendered for which' press event (customFilter) you can register an event handler.
 			 * @since 1.23.0
 			 */
-			enableCustomFilter : {type : "boolean", group : "Behavior", defaultValue : false}
+			enableCustomFilter : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Set this parameter to true to make the table handle the busy indicator by its own. The table will switch to busy as soon as it scrolls into an unpaged area.
+			 * @since 1.27.0
+			 */
+			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "columns",
 		aggregations : {
@@ -1091,6 +1092,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(sReason) {
+		this._bBusyIndicatorAllowed = true;
 		//needs to be called here to reset the firstVisible row so that the correct data is fetched
 		this._bRefreshing = true;
 		this._onBindingChange(sReason);
@@ -1104,6 +1106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.updateRows = function(sReason) {
+		this._setBusy(false);
 
 		// by default the start index is the first visible row
 		var iStartIndex = this.getFirstVisibleRow();
@@ -1400,8 +1403,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var iThreshold = this.getThreshold() ? Math.max(this.getVisibleRowCount(), this.getThreshold()) : 0;
 			var iFixedBottomRowCount = this.getFixedBottomRowCount();
 			aContexts = oBinding.getContexts(iStartIndex, iVisibleRowCount - iFixedBottomRowCount, iThreshold);
+			this._setBusy({
+				requestedLength: iVisibleRowCount - iFixedBottomRowCount,
+				receivedLength: aContexts.length });
+
 			if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
 				aContexts = aContexts.concat(oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1));
+				this._setBusy({
+					requestedLength: iFixedBottomRowCount,
+					receivedLength: aContexts.length });
 			}
 		}
 		for (var i = 0; i < iVisibleRowCount; i++) {
@@ -1410,6 +1420,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				oClone.setBindingContext(aContexts[i], oBindingInfo.model);
 				oClone._bHidden = false;
 			} else {
+				if (oBindingInfo) {
+					oClone.setBindingContext(null, oBindingInfo.model);
+				} else {
+					oClone.setBindingContext(null);
+				}
+
 				oClone._bHidden = true;
 			}
 			this.addAggregation("rows", oClone, true);
@@ -1597,21 +1613,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				var iTotalFixedRows = iFixedRows + iFixedBottomRows;
 				iThreshold = this.getThreshold() ? Math.max((this.getVisibleRowCount() - iTotalFixedRows), this.getThreshold()) : 0;
 				aContexts = oBinding.getContexts(this.getFirstVisibleRow() + iFixedRows, aRows.length - iTotalFixedRows, iThreshold);
+				this._setBusy({
+					requestedLength: aRows.length - iTotalFixedRows,
+					receivedLength: aContexts.length});
 				// static rows: we fetch the contexts without threshold to avoid loading
 				// of unnecessary data. Make sure to fetch after the normal rows to avoid
 				// outgoing double requests for the contexts.
 				if (iFixedRows > 0) {
 					aFixedContexts = oBinding.getContexts(0, iFixedRows);
+					this._setBusy({
+						requestedLength: iFixedRows,
+						receivedLength: aFixedContexts.length});
+
 					aContexts = aFixedContexts.concat(aContexts);
 				}
 				if (iFixedBottomRows > 0 && (iVisibleRowCount - iFixedBottomRows) < oBinding.getLength()) {
 					aFixedBottomContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRows, iFixedBottomRows);
+					this._setBusy({
+						requestedLength: iFixedBottomRows,
+						receivedLength: aFixedBottomContexts.length});
+
 					aContexts = aContexts.concat(aFixedBottomContexts);
 				}
 			} else if (aRows.length > 0) {
 				// thresholding is deactivated when value is 0
 				iThreshold = this.getThreshold() ? Math.max(this.getVisibleRowCount(), this.getThreshold()) : 0;
 				aContexts = oBinding.getContexts(this.getFirstVisibleRow(), aRows.length, iThreshold);
+				this._setBusy({
+					requestedLength: aRows.length,
+					receivedLength: aContexts.length});
 			}
 		}
 
@@ -2832,7 +2862,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnMoveStart = function(oColumn) {
-
+		this.$().addClass("sapUiTableDragDrop");
+		
 		this._disableTextSelection();
 
 		var $col = oColumn.$();
@@ -3015,6 +3046,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnMoved = function(oEvent) {
+		this.$().removeClass("sapUiTableDragDrop");
 
 		var iDnDColIndex = parseInt(this._$colGhost.attr("data-sap-ui-colindex"), 10);
 		var oDnDCol = this.getColumns()[iDnDColIndex];
@@ -3078,8 +3110,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				"opacity": ""
 			});
 		}
-		delete this._iNewColPos;
 
+		// Re-apply focus
+		setTimeout(function() {
+			var iOldFocusedIndex = this._oItemNavigation.getFocusedIndex();
+			this._oItemNavigation.focusItem(0, oEvent);
+			this._oItemNavigation.focusItem(iOldFocusedIndex, oEvent);
+		}.bind(this), 0);
+
+		delete this._iNewColPos;
 	};
 
 	/**
@@ -5049,22 +5088,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 	};
 
+	/**
+	 * Calculates the maximum rows to display within the table.
+	 */
 	Table.prototype._calculateRowsToDisplay = function(iHeight) {
+		var iMinRowCount = this.getMinAutoRowCount() || 5;
+
+		// If no iHeight is passed, return minimum row count.
+		if (!iHeight) {
+			return iMinRowCount;
+		}
 		var $this = this.$();
 		var iControlHeight = this.$().outerHeight();
 		var iContentHeight = $this.find('.sapUiTableCCnt').outerHeight();
-		var iMinRowCount = this.getMinAutoRowCount() || 5;
 
-		var iRowHeight = $this.find(".sapUiTableCtrl tr[data-sap-ui-rowindex='0']").outerHeight();
-		//No rows displayed when visible row count == 0, now row height can be determined, therefore we set standard row height
-		if (iRowHeight == null) {
+		// Determine default row height.
+		var iRowHeight = jQuery("tr:not(.sapUiAnalyticalTableSum) .sapUiTableCell").parent().outerHeight();
+
+		// No rows displayed when visible row count == 0, no row height can be determined, therefore we set standard row height
+		if (!iRowHeight) {
 			var sRowHeightParamName = "sap.ui.table.Table:sapUiTableRowHeight";
 			if ($this.parents().hasClass('sapUiSizeCompact')) {
 				sRowHeightParamName = "sap.ui.table.Table:sapUiTableCompactRowHeight";
 			}
 			iRowHeight = parseInt(Parameters.get(sRowHeightParamName), 10);
 		}
-		var iAvailableSpace = iHeight - (iControlHeight - iContentHeight);
+
+		// Maximum height of the table is the height of the window minus two row height, reserved for header and footer.
+		var iMaxHeight = jQuery(window).height() - 2 * iRowHeight;
+		var iCalculatedSpace = iHeight - (iControlHeight - iContentHeight);
+
+		// Make sure that table does not grow to infinity
+		var iAvailableSpace = Math.min(iCalculatedSpace, iMaxHeight);
 
 		// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
 		return Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight));
@@ -5319,6 +5374,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		jQuery.each(aColumns, function(iIndex, oColumn){
 			oColumn._restoreAppDefaults();
 		});
+	};
+
+	Table.prototype._setBusy = function (mParameters) {
+		if (!this.getEnableBusyIndicator() || !this._bBusyIndicatorAllowed) {
+			return;
+		}
+
+		var oBinding = this.getBinding("rows");
+		if (!oBinding) {
+			return;
+		}
+
+		if (mParameters) {
+			if (mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0 && mParameters.receivedLength !== oBinding.getLength()) {
+				this.setBusy(true);
+			}
+		} else {
+			this.setBusy(false);
+		}
+
 	};
 
 	return Table;

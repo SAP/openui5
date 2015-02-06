@@ -43,7 +43,7 @@
 				items : [
 					new sap.ui.core.Item({
 							key: "0",
-							text: "item 0",
+							text: "item 0"
 						}),
 					new sap.ui.core.Item({
 							key: "0",
@@ -145,14 +145,17 @@
 	}
 
 	TBHeader = new sap.m.Toolbar({
+        active: true,
 		content : getToolbarContent("This is a Header")
 	});
 
 	TBSubHeader = new sap.m.Toolbar({
+        active: true,
 		content : getToolbarContent("This is a SubHeader")
 	});
 
 	TBFooter = new sap.m.Toolbar({
+        active: true,
 		content : getToolbarContent("This is a Footer")
 	});
 
@@ -257,7 +260,7 @@
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SearchField({
-						placeholder : "This has 100% width by default",
+						placeholder : "This has 100% width by default"
 					})
 				]
 			}),

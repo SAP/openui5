@@ -381,6 +381,37 @@
 				checkIfDestroyed(this.subObj2);
 				checkIfDestroyed(this.subObj3);
 			});
+
+			test("applySettings on a 'multiple' aggregation", function() {
+				this.obj.applySettings({
+					subObjects: [this.subObj, this.subObj3]
+				});
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3], "all objects in a given array should have been nadded");
+
+				this.obj.applySettings({
+					subObjects: [this.subObj2]
+				});
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3, this.subObj2], "another call should append objects to the aggregation");
+				this.obj.removeAllAggregation("subObjects");
+				
+				this.obj.applySettings({
+					subObjects: this.subObj2
+				});
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj2], "a single object should be treated like a singleton array");
+				this.obj.removeAllAggregation("subObjects");
+				
+				this.obj.applySettings({
+					subObjects: [[this.subObj3, this.subObj2], this.subObj]
+				});
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj3, this.subObj2, this.subObj], "a nested array should have been resolved");
+				this.obj.removeAllAggregation("subObjects");
+
+				this.obj.applySettings({
+					subObjects: [[this.subObj3, [this.subObj, [this.subObj2]]]]
+				});
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj3, this.subObj, this.subObj2], "multiple levels of nested arrays should have been resolved");
+				this.obj.removeAllAggregation("subObjects");
+			});
 			
 			test("Add/Insert item twice", function() {
 				this.obj.addAggregation("subObjects", this.subObj);

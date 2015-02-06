@@ -1,0 +1,48 @@
+{
+	"SalesOrderCollection": [{
+		"SoId": "300000097",
+		"LifecycleStatus": "P",
+		"GrossAmount": "13224.47",
+		"BuyerName": "11113.00",
+		"CurrencyCode": "EUR",
+		"CreatedAt": "2013-05-22T22:00:00",
+		"CreatedByBp": "EPM USER",
+		"CompanyName": "SAP AG"
+	}, {
+		"SoId": "300000001",
+		"LifecycleStatus": "N",
+		"GrossAmount": "12493.73",
+		"BuyerName": "10498.94",
+		"CurrencyCode": "EUR",
+		"CreatedAt": "2013-05-22T22:00:00",
+		"CreatedByBp": "EPM USER",
+		"CompanyName": "SAP AG"
+	}, {
+		"SoId": "300000002",
+		"LifecycleStatus": "N",
+		"GrossAmount": "11666.69",
+		"BuyerName": "9803.94",
+		"CurrencyCode": "EUR",
+		"CreatedAt": "2013-05-22T22:00:00",
+		"CreatedByBp": "EPM USER",
+		"CompanyName": "SAP AG"
+	}, {
+		"SoId": "300000007",
+		"LifecycleStatus": "N",
+		"GrossAmount": "5720.31",
+		"BuyerName": "4806.98",
+		"CurrencyCode": "EUR",
+		"CreatedAt": "2013-05-22T22:00:00",
+		"CreatedByBp": "EPM USER",
+		"CompanyName": "SAP AG"
+	}, {
+		"SoId": "300000008",
+		"LifecycleStatus": "N",
+		"GrossAmount": "4444.17",
+		"BuyerName": "3734.60",
+		"CurrencyCode": "EUR",
+		"CreatedAt": "2013-05-22T22:00:00",
+		"CreatedByBp": "EPM USER",
+		"CompanyName": "SAP AG"
+	}]
+}

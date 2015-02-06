@@ -1352,16 +1352,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @returns {any}
 	 */
 	ODataModel.prototype._getObject = function(sPath, oContext) {
-		var oNode = this.isLegacySyntax() ? this.oData : null, sResolvedPath,
-			sKey;
+		var oNode = this.isLegacySyntax() ? this.oData : null, 
+			sResolvedPath = this.resolve(sPath, oContext),
+			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey;
 
 		//check for metadata path
-		if (this.oMetadata && sPath && sPath.indexOf('#') > -1)  {
-			sResolvedPath = this.resolve(sPath, oContext);
-			if (sResolvedPath) {
+		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
+			iSeparator = sResolvedPath.indexOf('/##');
+			if (iSeparator >= 0) {
+				// Metadata binding resolved by ODataMetaModel
+				sDataPath = sResolvedPath.substr(0, iSeparator);
+				sMetaPath = sResolvedPath.substr(iSeparator + 3);
+				oMetaContext = this.getMetaModel().getMetaContext(sDataPath);
+				oNode = this.getMetaModel()._getObject(sMetaPath, oMetaContext);
+			} else {
+				// Metadata binding resolved by ODataMetadata
 				oNode = this.oMetadata._getAnnotation(sResolvedPath);
 			}
-		} else {
+		} else  {
 			if (oContext) {
 				sKey = oContext.getPath();
 				// remove starting slash
@@ -1383,11 +1391,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				if (oNode) {
 					if (oNode.__ref) {
 						oNode = this.oData[oNode.__ref];
-					}
-					else if (oNode.__list) {
+					} else if (oNode.__list) {
 						oNode = oNode.__list;
-					}
-					else if (oNode.__deferred) {
+					} else if (oNode.__deferred) {
 					// set to undefined and not to null because navigation properties can have a null value
 						oNode = undefined;
 					}
@@ -1814,8 +1820,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		} else {
 			if (oPayload && oPayload.__metadata) {
 				sETagHeader = oPayload.__metadata.etag;
-			}
-			else if (sPath) {
+			} else if (sPath) {
 				sEntry = sPath.replace(this.sServiceUrl + '/','');
 				iIndex = sEntry.indexOf("?");
 				if (iIndex > -1) {

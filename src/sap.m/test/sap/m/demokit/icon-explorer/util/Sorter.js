@@ -1,6 +1,6 @@
-jQuery.sap.declare("util.Sorter");
+jQuery.sap.declare("sap.ui.demokit.icex.util.Sorter");
 
-util.Sorter = {
+sap.ui.demokit.icex.util.Sorter = {
 	
 	sortByName : function(a, b) {
 		if (!a || !a.name) {

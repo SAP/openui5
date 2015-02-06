@@ -919,7 +919,36 @@
 				}	
 			});
 			
-			
+			test("tokenizer with enhancements getCh, getIndex, init, setIndex", function () {
+				var oTokenizer = jQuery.sap._createJSTokenizer(),
+					oTokenizer2 = jQuery.sap._createJSTokenizer();
+
+				oTokenizer.init("{='foo'}");
+				strictEqual(oTokenizer.getIndex(), -1, "index after init without start index");
+				strictEqual(oTokenizer.getCh(), " ");
+
+				oTokenizer.init("{='foo'}", 2);
+				strictEqual(oTokenizer.getIndex(), 1, "index after init with start index");
+				strictEqual(oTokenizer.getCh(), " ");
+
+				oTokenizer.next();
+				strictEqual(oTokenizer.getIndex(), 2, "index after next");
+				strictEqual(oTokenizer.getCh(), "'");
+
+				oTokenizer.setIndex(7);
+				strictEqual(oTokenizer.getIndex(), 7, "index after setIndex");
+				strictEqual(oTokenizer.getCh(), "}");
+
+				throws(function() {
+					oTokenizer.setIndex(0);
+				}, /Must not set index 0 before previous index 7/, "setIndex must not go back in text");
+				oTokenizer.setIndex(42);
+				strictEqual(oTokenizer.getCh(), "", "move index beyond text end");
+
+				oTokenizer2.init("{='other foo'}");
+				ok(oTokenizer2.getIndex() !== oTokenizer.getIndex(), "different instances");
+			});
+
 		</script>
 	</head>
 	<body>

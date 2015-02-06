@@ -57,7 +57,7 @@
 
 	"explored" : {
 		"entitiesDefaults" : {
-			"appComponent" : "CA-UI5-MOB",
+			"appComponent" : "CA-UI5-CTR",
 			"formFactors" : "ML"
 		},
 		"samplesRef" : {
@@ -176,7 +176,6 @@
 			{
 				"id" : "sap.m.DateRangeSelection",
 				"name" : "Date Range Selection",
-				"appComponent" : "CA-UI5-BS-FCB",
 				"category" : "User Input",
 				"since" : "1.22",
 				"formFactors" : "L",
@@ -310,7 +309,7 @@
 				"name" : "Label",
 				"category" : "Display",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.Label" ]
+				"samples" : [ "sap.m.sample.Label", "sap.ui.layout.sample.Form354", "sap.ui.layout.sample.SimpleForm354" ]
 			},
 			{
 				"id" : "sap.m.Link",
@@ -393,9 +392,7 @@
 					"sap.m.sample.ObjectHeaderResponsiveII",
 					"sap.m.sample.ObjectHeaderResponsiveIII",
 					"sap.m.sample.ObjectHeaderResponsiveIV",
-					"sap.m.sample.ObjectHeaderResponsiveV",
-					"sap.m.sample.ObjectHeaderResponsiveVI",
-					"sap.suite.ui.commons.sample.HeaderContainerOH"
+					"sap.m.sample.ObjectHeaderResponsiveV"
 				]
 			},
 			{
@@ -424,7 +421,7 @@
 				"name" : "Object List Item",
 				"category" : "List",
 				"since" : "1.12",
-				"samples" : [ "sap.m.sample.ObjectListItem" ]
+				"samples" : [ "sap.m.sample.ObjectListItem",  "sap.m.sample.ObjectListItemMarkLocked"]
 			},
 			{
 				"id" : "sap.m.Page",
@@ -433,8 +430,8 @@
 				"since" : "1.10",
 				"samples" : [
 					"sap.m.sample.Page",
-					"sap.m.sample.PageSpacing",
 					"sap.m.sample.PageStandardClasses",
+					"sap.m.sample.PageSpacing",
 					"sap.m.sample.PageListReportIconTabBar",
 					"sap.m.sample.PageListReportToolbar"
 				]
@@ -520,7 +517,6 @@
 				"name" : "Segmented Button",
 				"category" : "User Input",
 				"since" : "1.10",
-				"appComponent" : "CA-UI5-CTR",
 				"samples" : [ "sap.m.sample.SegmentedButton" ]
 			},
 			{
@@ -649,6 +645,13 @@
 				"samples" : [ "sap.m.sample.TileContainer" ]
 			},
 			{
+				"id" : "sap.m.Title",
+				"name" : "Title",
+				"category" : "Display",
+				"since" : "1.28",
+				"samples" : [ "sap.m.sample.Title" ]
+			},
+			{
 				"id" : "sap.m.ToggleButton",
 				"name" : "Toggle Button",
 				"category" : "Action",
@@ -716,9 +719,29 @@
 				"since" : "1.28",
 				"formFactors" : "-",
 				"samples" : [ "sap.m.sample.ContainerNoPadding", "sap.m.sample.ContainerPadding", "sap.m.sample.ContainerResponsivePadding", "sap.m.sample.ContainerPaddingAndMargin"]
+			},
+			{
+				"id" : "sap.m.MessagePage",
+				"name" : "Message Page",
+				"category" : "Display",
+				"since" : "1.28",
+				"samples" : [
+					"sap.m.sample.MessagePageNoItems",
+					"sap.m.sample.MessagePageSearchFilter"
+				]
 			}
 		],
 		"samples" : [
+			{
+				"id": "sap.m.sample.MessagePageNoItems",
+				"name": "MessagePage - No Items",
+				"description": "This sample displays the MessagePage when there is no data available"
+			},
+			{
+				"id": "sap.m.sample.MessagePageSearchFilter",
+				"name": "MessagePage - Search/Filter",
+				"description": "This sample displays the MessagePage when there is no matching content for the search string or for the selected filter category."
+			},
 			{
 				"id": "sap.m.sample.ComboBox",
 				"name": "ComboBox",
@@ -797,7 +820,7 @@
 			{
 				"id": "sap.m.sample.LinkSubtle",
 				"name": "Link - Subtle",
-				"description": "Subtle link should be used to indicate less important link in the table with large number of links."
+				"description": "Subtle links should be used to indicate less important links in tables with a large number of links. In this example all columns contain links, only the first column is non-subtle."
 			},
 			{
 				"id": "sap.m.sample.LinkEmphasized",
@@ -892,7 +915,7 @@
 			{
 				"id": "sap.m.sample.PageSpacing",
 				"name": "Fiori Object Page - sapUiFioriObjectPage",
-				"description": "This page shows a standard setup for showing the details of an object based on: Object Header, Icon Tab Bar, Form, List, Table and Panel. By applying the CSS class 'sapUiFioriObjectPage' you arrange all the controls with a standard spacing."
+				"description": "This CSS class has been replaced by the margin/padding concept in the sample \"PageStandardClasses\", please do not use it anymore. This page shows a standard setup for showing the details of an object based on: Object Header, Icon Tab Bar, Form, List, Table and Panel. By applying the CSS class 'sapUiFioriObjectPage' you arrange all the controls with a standard spacing. "
 			},
 			{
 				"id": "sap.m.sample.PageStandardClasses",
@@ -975,6 +998,11 @@
 				"description": "The Text control has a property to limit the number of lines for wrapping texts."
 			},
 			{
+				"id": "sap.m.sample.Title",
+				"name": "Title",
+				"description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
+			},
+			{
 				"id": "sap.m.sample.ObjectHeader",
 				"name": "Object Header",
 				"description": "This is a Object Header which displays the basic information about objects similar to the Object List Item. Besides a title and number you can show multiple attributes (on the left) and statuses (on the right)."
@@ -1033,11 +1061,6 @@
 				"id": "sap.m.sample.ObjectHeaderResponsiveV",
 				"name": "Object Header Responsive V",
 				"description": "This is a responsive Object Header without a number and with a Title, 3 Statuses/Attributes."
-			},
-			{
-				"id": "sap.m.sample.ObjectHeaderResponsiveVI",
-				"name": "Object Header Responsive VI",
-				"description": "This is a responsive Object Header with title and intro having link functionality"
 			},
 			{
 				"id" : "sap.m.sample.ObjectIdentifier",
@@ -1111,7 +1134,7 @@
 			},
 			{
 				"id": "sap.m.sample.P13nDialog",
-				"name": "Personalization Dialog",
+				"name": "P13nDialog stand-alone",
 				"description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
 			},
 			{
@@ -1298,7 +1321,7 @@
 				"id": "sap.m.sample.ListLoading",
 				"name": "List - Loading Indication",
 				"description": "You can use enableBusyIndicator property to display loading animation while the data is being loaded from server. By default, this property is true and busy indicator will be shown after 1000ms. This behavior can be customized by setting the busyIndicatorDelay property. When this property is set to false, items stay on the List until data loading is completed."
-			},
+			},			
 			{
 				"id": "sap.m.sample.TableViewSettingsDialog",
 				"name": "Table - View Settings",
@@ -1378,6 +1401,11 @@
 				"id": "sap.m.sample.ObjectListItem",
 				"name": "Object List Item",
 				"description": "The Object List Item has many possibilities to provide a quick overview for an object within a list."
+			},
+			{
+				"id": "sap.m.sample.ObjectListItemMarkLocked",
+				"name": "Object List Item - markLocked, markFlagged, markFavorite",
+				"description": "This sample shows the different states of an object list item: locked, flagged and favourite"
 			},
 			{
 				"id": "sap.m.sample.StandardListItem",
@@ -1472,7 +1500,7 @@
 			{
 				"id": "sap.m.sample.TitleToolBar",
 				"name": "Title Toolbar",
-				"description": "A TitleToolBar is always 3 rem in height. The Text inside of it should always have the header font-size of 4. This results in 16px. For achieving this you can add the style-class sapMH4FontSize"
+				"description": "A TitleToolBar is always 3 rem in height. For the title text inside the sap.m.Title control should be used."
 			},
 			{
 				"id": "sap.m.sample.UploadCollection",

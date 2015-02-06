@@ -393,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	Toolbar.prototype.exit = function() {
 		this._cleanup();
 	};
-	
+			
 	Toolbar.prototype.onLayoutDataChange = function() {
 		this.rerender();
 	};

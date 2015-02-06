@@ -309,6 +309,47 @@
 						"AnnotationPath" : "@com.sap.vocabularies.Communication.v1.Address"
 					},
 					"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldForAnnotation"
+				}, {
+					"Label" : {
+						"String" : "Link to"
+					},
+					"Value" : {
+						"String" : "Google Maps"
+					},
+					"Url" : {
+						"UrlRef" : {
+							"Apply" : {
+								"Name" : "odata.fillUriTemplate",
+								"Parameters" : [{
+									"Type" : "String",
+									"Value" : "https://www.google.de/maps/place/{street},{city}"
+								}, {
+									"Name" : "street",
+									"Value" : {
+										"Apply" : {
+											"Name" : "odata.uriEncode",
+											"Parameters" : [{
+												"Type" : "Path",
+												"Value" : "Address/Street"
+											}]
+										}
+									}
+								}, {
+									"Name" : "city",
+									"Value" : {
+										"Apply" : {
+											"Name" : "odata.uriEncode",
+											"Parameters" : [{
+												"Type" : "Path",
+												"Value" : "Address/City"
+											}]
+										}
+									}
+								}]
+							}
+						}
+					},
+					"RecordType" : "com.sap.vocabularies.UI.v1.DataFieldWithUrl"
 				}],
 				"com.sap.vocabularies.UI.v1.LineItem" : [{
 					"Label" : {
@@ -1079,9 +1120,10 @@
 							"String" : "Height"
 						},
 						"Value" : {
-							"Int" : "15"
+							"Path" : "Height"
 						},
-						"RecordType" : "com.sap.vocabularies.UI.v1.DataField"
+						"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType" : "Edm.Decimal"
 					}],
 					"RecordType" : "com.sap.vocabularies.UI.v1.FieldGroupType"
 				},
@@ -1519,7 +1561,10 @@
 					}],
 					"sap:label" : "Time Stamp",
 					"sap:creatable" : "false",
-					"sap:updatable" : "false"
+					"sap:updatable" : "false",
+					"com.sap.vocabularies.Common.v1.FieldControl" : {
+						"EnumMember" : "Common.FieldControlType/ReadOnly"
+					}
 				}, {
 					"name" : "ChangedAt",
 					"type" : "Edm.DateTime",
@@ -1626,7 +1671,7 @@
 				},
 				"com.sap.vocabularies.UI.v1.DataPoint#Status" : {
 					"Title" : {
-						"String" : "Status"
+						"String" : "Overall Status"
 					},
 					"Value" : {
 						"Path" : "LifecycleStatusDescription",
@@ -1641,6 +1686,18 @@
 					"Value" : {
 						"Path" : "GrossAmount",
 						"EdmType" : "Edm.Decimal"
+					},
+					"CriticalityCalculation" : {
+						"ImprovementDirection" : {
+							"EnumMember" : "com.sap.vocabularies.UI.v1.CriticalityCalculationType/Maximize"
+						},
+						"ToleranceRangeLowValue" : {
+							"Int" : "5000"
+						},
+						"DeviationRangeLowValue" : {
+							"Int" : "500"
+						},
+						"RecordType" : "com.sap.vocabularies.UI.v1.CriticalityCalculationType"
 					},
 					"RecordType" : "com.sap.vocabularies.UI.v1.DataPointType"
 				},
@@ -2046,6 +2103,10 @@
 					"type" : "Edm.DateTime",
 					"precision" : "7",
 					"extensions" : [{
+						"name" : "display-format",
+						"value" : "Date",
+						"namespace" : "http://www.sap.com/Protocols/SAPData"
+					}, {
 						"name" : "label",
 						"value" : "Time Stamp",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
@@ -2058,6 +2119,7 @@
 						"value" : "false",
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
+					"sap:display-format" : "Date",
 					"sap:label" : "Time Stamp",
 					"sap:sortable" : "false",
 					"sap:filterable" : "false"
@@ -2246,7 +2308,7 @@
 						"Path" : "DeliveryDate"
 					},
 					"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
-					"EdmType" : "Edm.DateTime"
+					"EdmType" : "Edm.Date"
 				}],
 				"com.sap.vocabularies.UI.v1.LineItem" : [{
 					"Label" : {
@@ -2314,7 +2376,7 @@
 						"Path" : "DeliveryDate"
 					},
 					"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
-					"EdmType" : "Edm.DateTime"
+					"EdmType" : "Edm.Date"
 				}],
 				"com.sap.vocabularies.UI.v1.FieldGroup#Note" : {
 					"Label" : {
@@ -2814,7 +2876,7 @@
 							"Path" : "PhoneNumber"
 						},
 						"type" : {
-							"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/voice"
+							"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
 						},
 						"RecordType" : "com.sap.vocabularies.Communication.v1.PhoneNumberType"
 					}],
@@ -2823,7 +2885,7 @@
 							"Path" : "EmailAddress"
 						},
 						"type" : {
-							"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
+							"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work com.sap.vocabularies.Communication.v1.ContactInformationType/preferred"
 						},
 						"RecordType" : "com.sap.vocabularies.Communication.v1.EmailAddressType"
 					}],

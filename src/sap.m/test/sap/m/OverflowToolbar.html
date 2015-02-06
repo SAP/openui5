@@ -1,0 +1,463 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.OverflowToolbar</title>
+
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<style type="text/css"></style>
+
+<script>
+
+	var oUriParameters = jQuery.sap.getUriParameters();
+	jQuery.sap.require("sap.m.Toolbar");
+	jQuery.sap.require("sap.m.OverflowToolbar");
+	jQuery.sap.require("sap.m.OverflowToolbarLayoutData");
+
+	// for behaviour testing
+	if (oUriParameters.get("noFlex")) {
+		sap.m.Toolbar.hasNewFlexBoxSupport = false;
+		sap.m.Toolbar.hasFlexBoxSupport = false;
+	} else if (oUriParameters.get("oldFlex")) {
+		sap.m.Toolbar.hasNewFlexBoxSupport = false;
+		sap.m.Toolbar.hasFlexBoxSupport = true;
+	} else if (oUriParameters.get("newFlex")) {
+		sap.m.Toolbar.hasNewFlexBoxSupport = true;
+		sap.m.Toolbar.hasFlexBoxSupport = true;
+	}
+
+	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
+	var sDeleteIconURI = sap.ui.core.IconPool.getIconURI("delete");
+	var sChangeIconURI = sap.ui.core.IconPool.getIconURI("cause");
+	var sNotesIconURI = sap.ui.core.IconPool.getIconURI("notes");
+	var sRequestIconURI = sap.ui.core.IconPool.getIconURI("request");
+	var sReceiptIconURI = sap.ui.core.IconPool.getIconURI("receipt");
+
+	var toolbarContent1 = [
+		new sap.m.Label({
+			text : "This is an old player"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Fast Rewind"
+		}),
+		new sap.m.Button({
+			text : "Rewind"
+		}),
+		new sap.m.Button({
+			text : "Record"
+		}),
+		new sap.m.Button({
+			text : "Play"
+		}),
+		new sap.m.Button({
+			text : "Pause"
+		}),
+		new sap.m.Button({
+			text : "Stop"
+		}),
+		new sap.m.Button({
+			text : "Forward"
+		}),
+		new sap.m.Button({
+			text : "Fast Forward"
+		})
+	];
+
+	var toolbarContent2 = [
+		new sap.m.Label({
+			text : "The last 2 buttons always overflow"
+		}),
+		new sap.m.ToolbarSpacer(),
+
+		new sap.m.Button({icon: sAddIconURI, text: "Add"}),
+		new sap.m.Button({icon: sDeleteIconURI, text: "Delete"}),
+		new sap.m.Button({icon: sChangeIconURI, text: "Change"}),
+		new sap.m.Button({icon: sNotesIconURI, text: "Notes"}),
+
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "REQUEST",
+			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false}),
+			icon: sRequestIconURI
+		}),
+		new sap.m.Button({
+			text : "RECEIPT",
+			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false}),
+			icon: sReceiptIconURI
+		}),
+		new sap.m.Button({
+			text : "Undo",
+			layoutData: new sap.m.OverflowToolbarLayoutData({stayInOverflow: true})
+		}),
+		new sap.m.Button({
+			text : "Redo",
+			layoutData: new sap.m.OverflowToolbarLayoutData({stayInOverflow: true})
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Cut"
+		}),
+		new sap.m.Button({
+			text : "Copy"
+		}),
+		new sap.m.Button({
+			text : "Paste"
+		})
+	];
+
+	var toolbarContent3 = [
+		new sap.m.Button({
+			text: "About"
+		}),
+		new sap.m.Label({
+			text : "Find hotels"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Load search",
+			type: sap.m.ButtonType.Transparent
+		}),
+		new sap.m.Button({
+			text : "Save search",
+			type: sap.m.ButtonType.Transparent
+		}),
+		new sap.m.Button({
+			text : "Save",
+			type: sap.m.ButtonType.Transparent
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.SearchField("sf1", {width:'25%'}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "BOOK NOW!",
+			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+		}),
+		new sap.m.Button({
+			text : "BOOK LATER!",
+			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Label({
+			text : "Country:"
+		}),
+		new sap.m.Select({
+			name: "select-country",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "France"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "Sweden"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "Italy"
+				})
+			]
+		})
+	];
+
+	var toolbarContent4 = [
+
+		new sap.m.Label({
+			text : "Nothing on this toolbar can overflow"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.ComboBox({
+			placeholder: "Choose your country",
+
+			items: [
+				{
+					"key": "DZ",
+					"text": "Algeria"
+				},
+
+				{
+					"key": "AR",
+					"text": "Argentina"
+				},
+
+				{
+					"key": "AU",
+					"text": "Australia"
+				},
+
+				{
+					"key": "AT",
+					"text": "Austria"
+				}
+			]
+		}),
+		new sap.m.ToolbarSeparator(),
+		new sap.m.Button({
+			text : "VERY LONG ACCEPT TEXT",
+			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+		}),
+		new sap.m.Button({
+			text : "VERY LONG REJECT TEXT",
+			layoutData: new sap.m.OverflowToolbarLayoutData({moveToOverflow: false})
+		})
+	];
+
+	var toolbarContent5 = [
+
+		new sap.m.Button({
+			text : "Shrinkable up to 100px and does not go to overflow",
+			icon: "sap-icon://person-placeholder",
+			layoutData : new sap.m.OverflowToolbarLayoutData({
+				shrinkable : true,
+				minWidth: "100px",
+				moveToOverflow: false
+			})
+		}),
+
+		new sap.m.ToolbarSpacer(),
+
+
+		new sap.m.Button({
+			text : "Shrinkable up to 100px and can overflow",
+			icon: "sap-icon://person-placeholder",
+			layoutData : new sap.m.ToolbarLayoutData({
+				shrinkable : true,
+				minWidth: "100px"
+			})
+		}),
+
+		new sap.m.ToolbarSpacer(),
+
+		new sap.m.Button({
+			text : "Shrinkable up to 100px and can overflow",
+			icon: "sap-icon://person-placeholder",
+			layoutData : new sap.m.ToolbarLayoutData({
+				shrinkable : true,
+				minWidth: "100px"
+			})
+		}),
+
+		new sap.m.ToolbarSpacer(),
+
+		new sap.m.Button({
+			text : "Shrinkable up to 100px and can overflow",
+			icon: "sap-icon://person-placeholder",
+			layoutData : new sap.m.ToolbarLayoutData({
+				shrinkable : true,
+				minWidth: "100px"
+			})
+		})
+	];
+
+	var toolbarContent6 = [
+		new sap.m.Label({
+			text : "Input controls"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Regular Button"
+		}),
+		new sap.m.ToggleButton({
+			text: "Toggle me"
+		}),
+		new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({
+					text : "Left Button"
+				}),
+				new sap.m.Button({
+					text : "Middle Button"
+				}),
+				new sap.m.Button({
+					text : "Right Button"
+				})
+			]
+		}),
+		new sap.m.Input({
+			placeholder: "Input",
+			width: "150px"
+		}),
+		new sap.m.DateTimeInput({
+			placeholder: "DateTimeInput",
+			width: "150px"
+		}),
+		new sap.m.CheckBox({
+			text : "Checkbox"
+		}),
+		new sap.m.RadioButton({
+			text : "Option a",
+			groupName : "a"
+		}),
+		new sap.m.RadioButton({
+			text : "Option b",
+			groupName : "a"
+		})
+	];
+
+	var toolbarContentFooter = [
+		new sap.m.Label({
+			text : "When the toolbar is in the footer, the action sheet opens above it."
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Footer Button 1"
+		}),
+		new sap.m.Button({
+			text : "Footer Button 2"
+		}),
+		new sap.m.Button({
+			text : "Footer Button 3"
+		}),
+
+		new sap.m.Select({
+			type: sap.m.SelectType.IconOnly,
+			icon: sap.ui.core.IconPool.getIconURI("filter"),
+			autoAdjustWidth: true,
+			items : [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "Footer Select 1"
+				}),
+				new sap.ui.core.Item({
+					key: "0",
+					text: "Footer Select 2"
+				})
+			]
+		}),
+
+		new sap.m.Button({
+			text : "Footer Button 4"
+		}),
+		new sap.m.Button({
+			text : "Footer Button 5"
+		}),
+		new sap.m.Button({
+			text : "Footer Button 6"
+		})
+	];
+
+	var aAllToolbars = [
+		new sap.m.OverflowToolbar("otb1", {
+			width: 'auto',
+			content : toolbarContent1
+		}),
+
+		new sap.m.OverflowToolbar("otb2", {
+			width: 'auto',
+			content : toolbarContent2
+		}),
+
+		new sap.m.OverflowToolbar("otb3", {
+			width: 'auto',
+			content : toolbarContent3
+		}),
+
+		new sap.m.OverflowToolbar("otb4", {
+			width: 'auto',
+			content : toolbarContent4
+		}),
+
+		new sap.m.OverflowToolbar("otb5", {
+			width: 'auto',
+			content : toolbarContent5
+		}),
+
+		new sap.m.OverflowToolbar("otb6", {
+			width: 'auto',
+			content : toolbarContent6
+		}),
+
+		new sap.m.OverflowToolbar("otbFooter", {
+			width: 'auto',
+			content : toolbarContentFooter
+		})
+	];
+
+
+	var oPage = new sap.m.Page({
+		title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
+		enableScrolling : true,
+		subHeader: aAllToolbars[0],
+		content: [
+
+
+			new sap.m.Slider({
+				value: 100,
+				liveChange: function(oControlEvent) {
+
+					var sSize = oControlEvent.getParameter("value");
+
+					if (sSize === 100) {
+						sSize = "auto";
+					} else {
+						sSize += "%";
+					}
+
+					aAllToolbars.forEach(function (oToolbar) {
+						if (sap.m.Toolbar.isRelativeWidth(oToolbar.getWidth())) {
+							oToolbar.setWidth(sSize);
+						}
+					});
+
+				}
+			})
+
+
+		].concat(aAllToolbars.slice(1, aAllToolbars.length - 1)),
+	footer: aAllToolbars[aAllToolbars.length - 1]
+	});
+
+
+	var oApp = new sap.m.App();
+
+	var oWorkExample = new sap.m.OverflowToolbar("otb", {
+		width: 'auto',
+		content : [
+			new sap.m.Button({
+				text : "Play",
+				width: "100px"
+			}),
+			new sap.m.Label({
+				text : "This is an old player very very old old player"
+			}),
+			new sap.m.Button({
+				text : "Fast Rewind",
+				width: "100px"
+			}),
+			new sap.m.Button({
+				text : "Rewind",
+				width: "100px"
+			}),
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Button({
+				text : "Record",
+				width: "100px"
+			}),
+			new sap.m.Button({
+				text : "Pause",
+				width: "100px"
+			}),
+			new sap.m.Button({
+				text : "Stop",
+				width: "100px"
+			}),
+			new sap.m.Button({
+				text : "Forward",
+				width: "100px"
+			})
+		]
+	});
+
+//	oWorkExample.placeAt("body");
+	oApp.addPage(oPage).placeAt("body");
+
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

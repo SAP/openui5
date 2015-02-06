@@ -18,8 +18,8 @@ sap.ui.controller("sap.m.sample.ListLoading.List", {
 		});
 
 		// create and set ODATA Model
-		this.oProductModel = new sap.ui.model.odata.ODataModel("/mockserver/products", true);
-		this.getView().setModel(this.oProductModel, "productmodel");
+		this.oProductModel = new sap.ui.model.odata.ODataModel("/mockserver", true);
+		this.getView().setModel(this.oProductModel);
 	},
 
 	onExit : function() {

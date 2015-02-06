@@ -1099,6 +1099,63 @@
 				oPopover.destroy();
 				oButton.destroy();
 			});
+
+			module("Screen Reader");
+
+			test("ARIA role", function() {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover();
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+
+				equal(oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
+
+			test("ARIA labeledby attribute", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover();
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+
+				equal(oPopover.$().attr('aria-labelledby'), oPopover._getAnyHeader().getId(), 'Popover aria labeledby attribute is equal to the header id');
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
+
+			test("ARIA Semantic heading of the popover", function () {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover({
+					title: "Title text"
+				});
+				oPopover.openBy(oButton);
+				this.clock.tick(400);
+
+				equal(oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
+				ok(oPopover._headerTitle instanceof sap.m.Title, "Heading of the popover should be of type sap.m.Title");
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

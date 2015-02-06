@@ -44,6 +44,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		metadata: {
 			properties: {
 				type: "string"
+			},
+			specialSettings: {
+				/*
+				 * Name of the fragment to load 
+				 */
+				fragmentName : true,
+				/*
+				 * Content of the fragment
+				 */
+				fragmentContent : true,
+				/*
+				 * An enclosing view that contains this instance of the fragment (optional)
+				 */
+				containingView : true
 			}
 		},
 		

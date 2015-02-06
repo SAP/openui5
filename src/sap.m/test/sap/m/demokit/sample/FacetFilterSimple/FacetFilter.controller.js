@@ -3,7 +3,7 @@ sap.ui.controller("sap.m.sample.FacetFilterLight.FacetFilter", {
 	onInit: function() {
 
 		// set explored app's demo model on this sample
-		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/products.json");
+		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 
 		// Append demo table into VBox, making a minor modification
@@ -34,7 +34,7 @@ sap.ui.controller("sap.m.sample.FacetFilterLight.FacetFilter", {
 		for(var i=0; i < aFacetFilterLists.length; i++) {
 			for(var i=0; i < aFacetFilterLists.length; i++) {
 				aFacetFilterLists[i].setSelectedKeys();
-			}		
+			}
 		}
 		this._applyFilter([]);
 	},
@@ -45,7 +45,7 @@ sap.ui.controller("sap.m.sample.FacetFilterLight.FacetFilter", {
 		var mFacetFilterLists = oFacetFilter.getLists().filter(function(oList) {
 				return oList.getActive() && oList.getSelectedItems().length;
 			});
-		
+
 
 		// Build the nested filter with ORs between the values of each group and
 		// ANDs between each group

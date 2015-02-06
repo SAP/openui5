@@ -167,6 +167,22 @@
 			}
 		}
 	});
+	
+	// check if the ARIA attributes are rendered
+	test("aria attributes", function() {
+		var i = 0;
+
+		// check HTML divs
+		for (; i < aRatings.length; i++) {
+			init(aRatings[i].getId());
+			if (oRating.getVisible()) {
+				ok($RatingContainer.attr('role') == 'slider', "ARIA role is 'slider' on " + oRating);
+				ok($RatingContainer.attr('aria-valuenow') == oRating.getValue(), "aria-valuenow is correct on " + oRating);
+				ok($RatingContainer.attr('aria-valuemin') == 0, "aria-valuemin is correct on " + oRating);
+				ok($RatingContainer.attr('aria-valuemax') == oRating.getMaxValue(), "aria-valuemax is correct on " + oRating);
+			}
+		}
+	});
 
 	module("CSS and DOM");
 
@@ -236,7 +252,9 @@
 		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 		oRating0.setValue(99); // too large
 		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
-		oRating0.setValue("Querstromzerspaner"); // NaN
+		throws(function () {
+			oRating0.setValue("Querstromzerspaner")
+		}, /expected float/, "Passing in a wrong type should throw an error")
 		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 
 		// change icons
@@ -255,6 +273,23 @@
 		strictEqual(oRating0.getIconSize(), "20pt", 'Check if the icon size is 20pt on ' + oRating0);
 		oRating0.setIconSize("10%");
 		strictEqual(oRating0.getIconSize(), "10%", 'Check if the icon size is 10% on ' + oRating0);
+	});
+	
+	test("value setter defaults", function() {
+		var oRating = new sap.m.RatingIndicator({
+			value: 5
+		});
+
+		oRating.setValue(undefined);
+		strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"undefined\" on " + oRating);
+
+		oRating.setValue(5);
+		strictEqual(oRating.getValue(), 5, "The rating value is 5 after reset on " + oRating);
+
+		oRating.setValue(null);
+		strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"null\" on " + oRating);
+
+		oRating.destroy();
 	});
 
 	module("Events");

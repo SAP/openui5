@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global'],
 				sName = oSwitch.getName(),
 				CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
-			oRm.write('<div');
+			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Cont");
 
 			if (!bEnabled) {
@@ -51,6 +51,8 @@ sap.ui.define(['jquery.sap.global'],
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
+
+			this.writeAccessibilityState(oRm, oSwitch);
 
 			oRm.write("><div");
 			oRm.writeAttribute("id", oSwitch.getId() + "-switch");
@@ -94,17 +96,26 @@ sap.ui.define(['jquery.sap.global'],
 
 		SwitchRenderer.renderText = function(oRm, oSwitch) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				bDefaultType = oSwitch.getType() === "Default";
+				bDefaultType = oSwitch.getType() === sap.m.SwitchType.Default,
+				bState = oSwitch.getState();
 
 			// on
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Text");
 			oRm.addClass(CSS_CLASS + "TextOn");
-			oRm.writeAttribute("id", oSwitch.getId() + "-on");
+			oRm.writeAttribute("id", oSwitch.getId() + "-texton");
+
+			if (!bState) {
+				oRm.writeAttribute("aria-hidden", "true");
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
-
-			oRm.write("<span>");
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "LabelOn");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (bDefaultType) {
 				oRm.writeEscaped(oSwitch._sOn);
@@ -117,11 +128,20 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div");
 			oRm.addClass(CSS_CLASS + "Text");
 			oRm.addClass(CSS_CLASS + "TextOff");
-			oRm.writeAttribute("id", oSwitch.getId() + "-off");
+			oRm.writeAttribute("id", oSwitch.getId() + "-textoff");
+
+			if (bState) {
+				oRm.writeAttribute("aria-hidden", "true");
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 
-			oRm.write("<span>");
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "LabelOff");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (bDefaultType) {
 				oRm.writeEscaped(oSwitch._sOff);
@@ -162,6 +182,26 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write(">");
+		};
+
+		/**
+		 * Writes the accessibility state.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 */
+		SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
+			var sLabelledbyId = oSwitch.getId() + (oSwitch.getState() ? "-texton" : "-textoff");
+
+			oRm.writeAccessibilityState(oSwitch, {
+				role: "checkbox",
+				checked: oSwitch.getState(),
+				labelledby: {
+					value: sLabelledbyId,
+					append: true
+				}
+			});
 		};
 
 		return SwitchRenderer;

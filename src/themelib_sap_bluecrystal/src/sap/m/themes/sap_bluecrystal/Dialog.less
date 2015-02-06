@@ -33,6 +33,10 @@
 	font-size: 1rem;
 }
 
+.sapMDialogIcon ~ .sapMDialogTitle {
+  display: inline;
+}
+
 /* remove the branding color of bar in page when page is in dialog*/
 .sapMDialog .sapMIBar.sapMPageHeader::before{
 	border-top: none;
@@ -44,7 +48,7 @@
 	filter: none;
 }
 
-.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
+.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMTitle {
 	color: @sapUiLightText;
 	vertical-align: middle;
 }
@@ -107,15 +111,15 @@
 	color: @sapUiPositiveText;
 }
 
-.sapMDialogWarning > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMLabel {
+.sapMDialogWarning > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMTitle {
 	color: @sapUiCriticalText;
 }
 
-.sapMDialogError > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMLabel {
+.sapMDialogError > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMTitle {
 	color: @sapUiNegativeText;
 }
 
-.sapMDialogSuccess > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMLabel {
+.sapMDialogSuccess > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle.sapMTitle {
 	color: @sapUiPositiveText;
 }
 

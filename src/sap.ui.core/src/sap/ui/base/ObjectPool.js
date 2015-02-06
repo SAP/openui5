@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	var ObjectPool = BaseObject.extend("sap.ui.base.ObjectPool", /** @lends sap.ui.base.ObjectPool.prototype */ {
 		constructor: function(oObjectClass) {
 		
-			BaseObject.apply(this);
+			BaseObject.call(this);
 		
 			this.oObjectClass = oObjectClass;
 		

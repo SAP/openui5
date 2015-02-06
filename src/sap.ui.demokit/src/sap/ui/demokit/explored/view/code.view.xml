@@ -23,7 +23,7 @@
 		</headerContent>
 		<content>
 			<IconTabBar
-				class="iconTabBarPaddingTop"
+				class="sapUiContentPadding"
 				expandable="false"
 				selectedKey="{/selectedTab}"
 				items="{/files}" >

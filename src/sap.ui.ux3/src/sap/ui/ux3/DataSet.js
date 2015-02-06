@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new DataSet.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -26,90 +26,90 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSet = Control.extend("sap.ui.ux3.DataSet", /** @lends sap.ui.ux3.DataSet.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * show Toolbar
 			 */
 			showToolbar : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * show filter
 			 */
 			showFilter : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Show/hide SearchField in Toolbar
 			 */
 			showSearchField : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Selection mode of the DataSet
 			 */
 			multiSelect : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Aggregation of DataSetItems
 			 */
-			items : {type : "sap.ui.ux3.DataSetItem", multiple : true, singularName : "item", bindable : "bindable"}, 
-	
+			items : {type : "sap.ui.ux3.DataSetItem", multiple : true, singularName : "item", bindable : "bindable"},
+
 			/**
 			 * views
 			 */
-			views : {type : "sap.ui.ux3.DataSetView", multiple : true, singularName : "view"}, 
-	
+			views : {type : "sap.ui.ux3.DataSetView", multiple : true, singularName : "view"},
+
 			/**
 			 * Filter control (e.g. a FacetFilter) for the DataSet
 			 */
-			filter : {type : "sap.ui.core.Control", multiple : true, singularName : "filter"}, 
-	
+			filter : {type : "sap.ui.core.Control", multiple : true, singularName : "filter"},
+
 			/**
 			 * Internally managed by Dataset
 			 */
-			_viewSwitches : {type : "sap.ui.core.Control", multiple : true, singularName : "_viewSwitch", visibility : "hidden"}, 
-	
+			_viewSwitches : {type : "sap.ui.core.Control", multiple : true, singularName : "_viewSwitch", visibility : "hidden"},
+
 			/**
 			 * A Toolbar, internally managed by Dataset
 			 */
 			_toolbar : {type : "sap.ui.commons.Toolbar", multiple : false, visibility : "hidden"}
 		},
 		associations : {
-	
+
 			/**
 			 * Selected view of the Dataset
 			 */
 			selectedView : {type : "sap.ui.ux3.DataSetView", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * selection Changed
 			 */
 			selectionChanged : {
 				parameters : {
-	
+
 					/**
 					 * Old lead selected index
 					 */
-					oldLeadSelectedIndex : {type : "int"}, 
-	
+					oldLeadSelectedIndex : {type : "int"},
+
 					/**
 					 * New lead selected index
 					 */
 					newLeadSelectedIndex : {type : "int"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event which is fired when the user triggers a search
 			 */
 			search : {
 				parameters : {
-	
+
 					/**
 					 * The search query
 					 */
@@ -118,8 +118,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		}
 	}});
-	
-	
+
+
 	DataSet.prototype.init = function() {
 		var that = this, oToolbar;
 		//each DS needs a selectionModel for its items
@@ -156,17 +156,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._setToolbar(oToolbar);
 		this._iShiftStart = null;
 	};
-	
+
 	DataSet.prototype.exit = function() {
 		this._oSegBut.destroy();
 		this._oSearchField.destroy();
 		this.destroyAggregation("_toolbar");
 	};
-	
+
 	DataSet.prototype._prepareToolbar = function() {
 		var iViewCount = this.getViews().length,
 			oToolbar = this._getToolbar();
-			
+
 		if (iViewCount > 1 && this._oSegBut.show == false) {
 			oToolbar.insertItem(this._oSegBut,0);
 				this._oSegBut.show = true;
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._oSearchField.show = false;
 		}
 	};
-	
+
 	/**
 	 * Press handler for the view selection buttons
 	 *
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		oldView.exitView(this.getItems());
 		this.setSelectedView(viewId);
 	};
-	
+
 	/**
 	 * Fire filter event
 	 *
@@ -215,20 +215,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	DataSet.prototype.sort = function() {
 		this.fireSort();
 	};
-	
+
 	/**
 	 * adds selection interval to array of selected items.
-	 * 
+	 *
 	 * @private
 	 */
 	DataSet.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this.selectionModel.addSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
-	
+
 	/**
 	 * sets selection interval to array of selected items.
-	 * 
+	 *
 	 * @private
 	 */
 	DataSet.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
@@ -237,39 +237,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 	/**
 	 * removes selection interval from array of selected items
-	 * 
+	 *
 	 * @private
 	 */
 	DataSet.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this.selectionModel.removeSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
-	
+
 	/** use this function to retrieve the lead selected index
-	 * 
-	 * @public 
+	 *
+	 * @public
 	 */
 	DataSet.prototype.getSelectedIndex = function() {
 			return this.selectionModel.getLeadSelectedIndex();
 	};
-	
+
 	/** use this function to retrieve all selected indices if multiple select is enabled
-	 * 
-	 * @public 
+	 *
+	 * @public
 	 */
 	DataSet.prototype.getSelectedIndices = function(){
 		return this.selectionModel.getSelectedIndices() || [];
 	};
-	
+
 	/** clears dataset from all previous selections
-	 * 
-	 * @public 
+	 *
+	 * @public
 	 */
 	DataSet.prototype.clearSelection = function() {
 		this.selectionModel.clearSelection();
 		return this;
 	};
-	
+
 	/**
 	 * Selection handler for the DataSetItem selection event.
 	 *
@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			aItems = this.getItems(),
 			iIndex = jQuery.inArray(oItem,aItems),
 			oldSelectedIndex = this.getLeadSelection();
-	
+
 		if (!this.getMultiSelect()) {
 			if (oldSelectedIndex == iIndex && !oParams.shift) {
 				this.setLeadSelection( -1);
@@ -302,21 +302,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					this._iShiftStart = iIndex;
 				}
 			}
-	
+
 			if (oParams.shift) {
 				if (!this._iShiftStart && this._iShiftStart !== 0) {
 					this._iShiftStart = oldSelectedIndex;
 				}
 				if (this._iShiftStart >= 0 && oParams.ctrl) {
 					this.addSelectionInterval(this._iShiftStart, iIndex);
-				} else if (this._iShiftStart >= 0 & ! oParams.ctrl) {
+				} else if (this._iShiftStart >= 0 & !oParams.ctrl) {
 					this.setSelectionInterval(this._iShiftStart, iIndex);
 				} else {
 					this.setLeadSelection(iIndex);
 					this._iShiftStart = iIndex;
 				}
 			}
-	
+
 			if (!oParams.shift && !oParams.ctrl) {
 				if (oldSelectedIndex == iIndex && iIndex != this._iShiftStart) {
 					this.setLeadSelection( -1);
@@ -327,7 +327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		}
 	};
-	
+
 	/**
 	 * Prepare rendering: Calls init end exit hooks on the selected view instance. Necessary to keep the view
 	 * consistent to the DataSet state.
@@ -352,9 +352,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._bDirty = false;
 		}
 	};
-	
+
 	//*** Selection Model methods ***
-	
+
 	/**
 	 * Returns the LeadSelection index
 	 *
@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	DataSet.prototype.getLeadSelection = function() {
 		return this.selectionModel.getLeadSelectedIndex();
 	};
-	
+
 	/**
 	 * Set the LeadSelection index
 	 *
@@ -378,7 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	DataSet.prototype.setLeadSelection = function(iIndex) {
 		this.selectionModel.setLeadSelectedIndex(iIndex);
 	};
-	
+
 	/**
 	 * Returns true if iIndex is selected
 	 *
@@ -389,7 +389,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	DataSet.prototype.isSelectedIndex = function(iIndex) {
 		return (this.selectionModel.isSelectedIndex(iIndex));
 	};
-	
+
 	/**
 	 * Returns id of selected Item from given index
 	 *
@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	DataSet.prototype.getSelectedItemId = function(iIndex) {
 		 return this.getItems()[iIndex].getId();
 	};
-	
+
 	/**
 	 * Creates a view switch button
 	 *
@@ -411,7 +411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	*/
 	DataSet.prototype.createViewSwitch = function(oView, iIndex) {
 		 var oViewSwitch;
-	
+
 		 if (oView.getIcon()) {
 			 oViewSwitch = new sap.ui.commons.Button({
 				 id : this.getId() + "-view-" + oView.getId(),
@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 //oViewSwitch.attachPress(function(oEvent){that.press(oEvent,iIndex);}, that);
 		 return oViewSwitch;
 	};
-	
+
 	/**
 	 * Rerendering of the Toolbar
 	 *
@@ -472,9 +472,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			rm.destroy();
 		}
 	};
-	
+
 	//*** override API methods ***
-	
+
 	/**
 	 * setter for multi selection mode
 	 * @param {boolean}
@@ -496,7 +496,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		return this;
 	};
-	
+
 	DataSet.prototype.removeItem = function(oItem) {
 		var result = this.removeAggregation("items", oItem, true);
 		if (result) {
@@ -506,7 +506,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		return result;
 	};
-	
+
 	DataSet.prototype.removeAllItems = function() {
 		var aItems = this.getItems(), result;
 		jQuery.each(aItems,function(i,oItem) {
@@ -517,36 +517,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._bDirty = true;
 		return result;
 	};
-	
+
 	DataSet.prototype.destroyItems = function() {
 		var result = this.destroyAggregation("items");
 		this._bDirty = true;
 		return result;
 	};
-	
+
 	DataSet.prototype.addItem = function(oItem) {
 		this.addAggregation("items", oItem, true);
 		oItem.attachSelected(this.selectItem,this);
 		this._bDirty = true;
 		return this;
 	};
-	
+
 	DataSet.prototype.insertItem = function(oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex, true);
 		oItem.attachSelected(this.selectItem,this);
 		this._bDirty = true;
 		return this;
 	};
-	
+
 	DataSet.prototype.setFilterValue = function(sFilterValue) {
 		this.setProperty("filterValue",sFilterValue, true);
 		return this;
 	};
-	
+
 	DataSet.prototype.getFilterValue = function() {
 		return this.getProperty("filterValue");
 	};
-	
+
 	DataSet.prototype.insertView = function(oView, iIndex) {
 		var oViewSwitch = this.createViewSwitch(oView,iIndex,true);
 		if (!this.getSelectedView()) {
@@ -557,7 +557,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.addView = function(oView) {
 		var iIndex = this.getViews().length,
 			oViewSwitch = this.createViewSwitch(oView,iIndex);
@@ -569,10 +569,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.removeView = function(oView) {
 		var result = this.removeAggregation("views", oView, true);
-		
+
 		if (result) {
 			if (this.getSelectedView() == result.getId()) {
 				this.setSelectedView(this.getViews()[0]);
@@ -581,41 +581,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			} else {
 				this._rerenderToolbar();
 			}
-		
+
 			this._oSegBut.removeButton(this.getId() + "-view-" + result.getId()).destroy();
 		}
 		return result;
 	};
-	
+
 	DataSet.prototype.destroyViews = function() {
 		this._oSegBut.destroyButtons();
 		this.destroyAggregation("views");
 		return this;
 	};
-	
+
 	DataSet.prototype.removeAllViews = function() {
 		var result = this.removeAllAggregation("views");
 		this._oSegBut.destroyButtons();
 		return result;
 	};
-	
+
 	DataSet.prototype.setEnableSorting = function(bEnableSorting) {
 		//suppress rerendering ofDataSet. Rerender only the toolbar.
 		this.setProperty("enableSorting", bEnableSorting, true);
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.setEnableFiltering = function(bEnableFiltering) {
 		//suppress rerendering ofDataSet. Rerender only the toolbar.
 		this.setProperty("enableFiltering", bEnableFiltering, true);
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.setSelectedView = function(vView) {
 		var oldSelectedView = this.getSelectedView();
-		
+
 		this.setAssociation("selectedView", vView);
 		if (oldSelectedView != this.getSelectedView()) {
 			this._bDirty = true;
@@ -625,7 +625,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		return this;
 	};
-	
+
 
 	/**
 	 * add a toolbarItem to the toolbar
@@ -640,7 +640,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._getToolbar().addItem(oToolbarItem);
 		this._rerenderToolbar();
 	};
-	
+
 
 	/**
 	 * remove a toolbarItem to the toolbar
@@ -654,17 +654,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._getToolbar().removeItem(oToolbarItem);
 		this._rerenderToolbar();
 	};
-	
+
 	DataSet.prototype.setShowToolbar = function(bShow) {
 		this.setProperty("showToolbar",bShow, true);
 		this._rerenderToolbar();
 	};
-	
+
 	DataSet.prototype.setShowFilter = function(bShow) {
 		this.setProperty("showFilter",bShow, true);
 		this._rerenderFilter();
 	};
-	
+
 	DataSet.prototype.setShowSearchField = function(bShow) {
 		this.setProperty("showSearchField",bShow, true);
 		this._rerenderToolbar();
@@ -682,13 +682,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	DataSet.prototype._getToolbar = function() {
 		return this.getAggregation("_toolbar");
 	};
-	
+
 	DataSet.prototype.refreshItems = function() {
 		var	oBinding = this.getBinding("items"),
 			oSelectedView = sap.ui.getCore().byId(this.getSelectedView());
-		
+
 		oBinding.bUseExtendedChangeDetection = true;
-		
+
 		if (oSelectedView && oSelectedView.getItemCount && oSelectedView.getItemCount()) {
 			var iItemCount = Math.max(oSelectedView.getItemCount(),this.getItems().length);
 			if (iItemCount) {
@@ -700,7 +700,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			oBinding.getContexts();
 		}
 	};
-	
+
 	DataSet.prototype.updateItems = function(sChangeReason) {
 		var oBindingInfo = this.mBindingInfos["items"],
 			oAggregationInfo = this.getMetadata().getJSONKeys()["items"],
@@ -713,9 +713,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			iIndex,
 			that = this,
 			aContexts = [];
-		
+
 		oBinding.bUseExtendedChangeDetection = true;
-		
+
 		if (oSelectedView && oSelectedView.getItemCount && oSelectedView.getItemCount()) {
 			var iItemCount = Math.max(oSelectedView.getItemCount(),this.getItems().length);
 			if (iItemCount) {
@@ -726,7 +726,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		} else {
 			aContexts = oBinding.getContexts();
 		}
-	
+
 		if (aContexts.diff && sChangeReason) {
 			var aDiff = aContexts.diff;
 			for (var i = 0; i < aDiff.length; i++) {
@@ -756,7 +756,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			});
 		}
 	};
-	
+
 
 	return DataSet;
 

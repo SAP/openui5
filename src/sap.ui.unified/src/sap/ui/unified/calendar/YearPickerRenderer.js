@@ -35,6 +35,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
+		oRm.writeAccessibilityState(oYP, {
+			role: "grid",
+			readonly: "true",
+			multiselectable: "false"
+		});
+
 		oRm.write(">"); // div element
 
 		var iYear = iCurrentYear - 10;
@@ -46,6 +52,13 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		for ( var i = 0; i < 20; i++) {
+			if (i == 0 || i % oYP._iColumns == 0) {
+				// begin of row
+				oRm.write("<div");
+				oRm.writeAccessibilityState(null, {role: "row"});
+				oRm.write(">"); // div element
+			}
+
 			oRm.write("<div");
 			oRm.writeAttribute("id", sId + "-y" + iYear);
 			oRm.addClass("sapUiCalYear");
@@ -54,10 +67,16 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeClasses();
+			oRm.writeAccessibilityState(null, {role: "gridcell"});
 			oRm.write(">"); // div element
 			oRm.write(iYear);
 			oRm.write("</div>");
 			iYear++;
+
+			if ((i + 1) % oYP._iColumns == 0) {
+				// end of row
+				oRm.write("</div>");
+			}
 		}
 
 		oRm.write("</div>");

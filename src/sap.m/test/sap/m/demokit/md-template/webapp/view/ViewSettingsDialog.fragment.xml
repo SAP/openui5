@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+  <ViewSettingsDialog
+    confirm="onConfirmViewSettingsDialog"
+    resetFilters="onViewSettingsDialogResetFilters">
+    <sortItems>
+      <ViewSettingsItem text="{i18n>masterSort1}" key="Price" selected="true" />
+      <ViewSettingsItem text="{i18n>masterSort2}" key="Name" />
+    </sortItems>
+    <groupItems>
+      <ViewSettingsItem text="{i18n>masterGroup1}" key="Group1" />
+      <ViewSettingsItem text="{i18n>masterGroup2}" key="Group2" />
+    </groupItems>
+    <filterItems>
+      <ViewSettingsFilterItem
+        text="{i18n>masterFilterPriceName}"
+        key="Price"
+        multiSelect="false">
+        <items>
+          <ViewSettingsItem text="{i18n>masterFilterPrice1}" key="Filter1" />
+          <ViewSettingsItem text="{i18n>masterFilterPrice2}" key="Filter2" />
+        </items>
+      </ViewSettingsFilterItem>
+    </filterItems>
+  </ViewSettingsDialog>
+</core:FragmentDefinition>

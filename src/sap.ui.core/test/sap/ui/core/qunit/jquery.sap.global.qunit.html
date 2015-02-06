@@ -26,6 +26,7 @@
 			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */ 
 			jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript");
 			jQuery.sap.includeStyleSheet("testdata/testA.css", "jsunitIncludeStyleSheetTest");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
 
 			module("Basic", {
 				setup : function() {
@@ -145,6 +146,37 @@
 				equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
 				equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 			});
+
+			//****************************************************
+			// module loading (require/declare/define)
+			//****************************************************
+
+			module("sap.ui.require");
+
+			test("basic functionality", 3, function () {
+
+				var server = sinon.fakeServer.create();
+				server.respondWith(/first/, 'sap.ui.define([], function () {' +
+						'return {my : "firstmodule"}' +
+						'}, /* bExport= */ true);');
+				server.respondWith(/second/, 'sap.ui.define([], function () {' +
+						'return {my : "secondmodule"}' +
+						'}, /* bExport= */ true);');
+				server.autoRespond = true;
+
+				stop();
+				var calledBack = false;
+				sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
+					strictEqual(firstModule.my, "firstmodule");
+					strictEqual(secondModule.my, "secondmodule");
+					calledBack = true;
+					start();
+				});
+				equal(calledBack, false, "callback must not have been called synchronously");
+				
+				server.restore();
+			});
+
 			
 			//****************************************************
 			// loadResource tests
@@ -227,6 +259,61 @@
 					start();
 				});
 			});
+			
+			
+			//****************************************************
+			// registerModule tests
+			//****************************************************
+
+			module("registerModule");
+
+			test("w/o final flag (legacy variant)", function(){
+				
+				var sPathInput = "/qunit/test/path";
+				var sPathOutput;
+
+				//first, set path to anything (should be overwritten then...)
+				jQuery.sap.registerModulePath("qunit.test.path1", "/this/is/the/wrong/path/");
+
+				jQuery.sap.registerModulePath("qunit.test.path1", sPathInput);
+				sPathOutput = jQuery.sap.getModulePath("qunit.test.path1");
+
+				ok(sPathOutput == sPathInput, "Not-existing final flag was handled successfully.");
+			});
+
+			test("set final=false", function(){
+				var sPathInput = "/qunit/test/path";
+				var sPathOutput;
+
+				//first, set path to anything (should be overwritten then...)
+				jQuery.sap.registerModulePath("qunit.test.path2", "/this/is/the/wrong/path/");
+
+				jQuery.sap.registerModulePath("qunit.test.path2", {'url': sPathInput, 'final': false});
+				sPathOutput = jQuery.sap.getModulePath("qunit.test.path2");
+
+				ok(sPathOutput == sPathInput, "False final flag was handled successfully.");
+			});
+
+			test("set final=true", function(){
+				var sPathInput = "/qunit/test/path";
+				var sPathOutput;
+
+				//first, set path to the value it should be and stay (should NOT be overwritten then...)
+				jQuery.sap.registerModulePath("qunit.test.path3", {'url': sPathInput, 'final': true});
+
+				jQuery.sap.registerModulePath("qunit.test.path3", "/this/is/the/wrong/path/");
+				sPathOutput = jQuery.sap.getModulePath("qunit.test.path3");
+
+				ok(sPathOutput == sPathInput, "Active final flag was handled successfully.");
+			});
+
+			test("no empty Module URLs allowed", function(){
+				jQuery.sap.registerModulePath("qunit.test.path4", "");
+				var sPathOutput = jQuery.sap.getModulePath("qunit.test.path4");
+
+				ok(sPathOutput == ".", "Setting empty URL avoided successfully.");
+			});			
+			
 
 		</script>
 		

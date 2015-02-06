@@ -51,16 +51,18 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	};
 	
 	/**
-	 * Determines whether item is selectable or not
+	 * Determines item specific mode
 	 * 
 	 * ActionListItems are not selectable because they are command controls (like Button or Link) so triggering the associated command, rather than selection is 
 	 * appropriate to happen upon user action on these items. By overwriting isSelectable (inherited from ListItemBase) we exclude the item from processing
 	 * specific to selectable list-items.
 	 *
-	 * @private
+	 * @protected
 	 * @overwrite
 	 */
-	ActionListItem.prototype.isSelectable = function() {};
+	ActionListItem.prototype.getMode = function() {
+		return sap.m.ListType.None;
+	};
 	
 	/**
 	 * Event handler called when the space key is pressed.

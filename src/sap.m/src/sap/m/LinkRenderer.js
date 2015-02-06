@@ -29,14 +29,10 @@
 		rm.write("<a");
 		rm.writeControlData(oControl);
 
-		//ARIA attributes
+		// ARIA attributes
 		rm.writeAccessibilityState(oControl, {
 			role: 'link',
-			haspopup: !oControl.getHref(),
-			describedby: {
-				value: oControl._getAriaDescribedByIds(),
-				append: true
-			}
+			haspopup: !oControl.getHref()
 		});
 
 		rm.addClass("sapMLnk");
@@ -51,7 +47,7 @@
 		if (!oControl.getEnabled()) {
 			rm.addClass("sapMLnkDsbl");
 			rm.writeAttribute("disabled", "true");
-			rm.writeAttribute("tabIndex", "-1");
+			rm.writeAttribute("tabIndex", "-1"); // still focusable by mouse click, but not in the tab chain
 		} else {
 			rm.writeAttribute("tabIndex", "0");
 		}
@@ -63,7 +59,8 @@
 			rm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
 		}
 
-		if (oControl.getHref()) {
+		/* set href only if link is enabled - BCP incident 1570020625 */
+		if (oControl.getHref() && oControl.getEnabled()) {
 			rm.writeAttributeEscaped("href", oControl.getHref());
 		} else {
 			/*eslint-disable no-script-url */
@@ -100,10 +97,10 @@
 
 		// ARIA write hidden element for emphasized or subtle link
 		if (oControl.getEmphasized()) {
-			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapMLnkHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
+			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 		}
 		if (oControl.getSubtle()) {
-			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapMLnkHidden' aria-hidden='true'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
+			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
 		}
 
 		rm.write("</a>");

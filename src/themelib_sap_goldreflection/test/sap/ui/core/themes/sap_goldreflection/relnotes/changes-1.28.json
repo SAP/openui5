@@ -1,0 +1,21 @@
+{
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "75aa3c7bc2a39a4ffb8482c9c0818ccebaa0032e",
+        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "type": "FEATURE",
+        "text": "unifield.Calendar: Implemented display of multiple months",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "author": "Frank Weigel <frank.weigel@sap.com>",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      }
+    ]
+  }
+}

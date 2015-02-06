@@ -12,6 +12,19 @@
 	function anyInt(sName, iMin, iMax) {
 		var oType;
 
+		function testRange(iValue, sExpectedMessage) {
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				try {
+					oType.validateValue(iValue);
+					ok(false, "Expected ValidateException not thrown");
+				}
+				catch (e) {
+					ok(e instanceof sap.ui.model.ValidateException)
+					equal(e.message, sExpectedMessage);
+				}
+			});
+		}
+
 		//*********************************************************************************************
 		module(sName, {
 			setup: function () {
@@ -25,7 +38,7 @@
 
 		test("basics", function () {
 			ok(oType instanceof sap.ui.model.odata.type.Int, "is an Int");
-			ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+			ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 			equal(oType.getName(), sName, "is the right name");
 			strictEqual(oType.oFormatOptions, undefined, "no formatting options");
 			strictEqual(oType.oConstraints, undefined, "are the right constraints");
@@ -35,11 +48,11 @@
 		test("localization change", function () {
 			var oControl = new sap.ui.core.Control();
 
+			oType.formatValue(1234, "string"); // ensure that there is a formatter to remove
 			oControl.bindProperty("tooltip", {path: "/unused", type: oType});
 			sap.ui.getCore().getConfiguration().setLanguage("de-CH");
 			strictEqual(oType.oFormat, null, "localization change resets formatter");
-			strictEqual(oType.formatValue(1234, "int"), 1234,
-				"formatter will be creates only for string");
+			oType.formatValue(1234, "int");
 			strictEqual(oType.oFormat, null, "no formatter for int");
 			strictEqual(oType.formatValue(1234, "string"), "1'234", "adjusted to changed language");
 			ok(oType.oFormat, "Formatter has been created on demand");
@@ -101,7 +114,7 @@
 					}
 					catch (e) {
 						ok(e instanceof sap.ui.model.ParseException)
-						equal(e.message, "Enter an integer.");
+						equal(e.message, "Enter a number with no decimals");
 					}
 				});
 		});
@@ -121,16 +134,12 @@
 			});
 		});
 
-		test("setConstraints: empty", function () {
-			oType.setConstraints();
-			strictEqual(oType.oConstraints, undefined, "default constraints");
-		});
-
 		jQuery.each([undefined, false, true], function (i, bNullable) {
 			test("setConstraints: nullable=" + bNullable, function () {
 				var oExpectedConstraints = bNullable === false ? {nullable: false} : undefined;
 
-				oType.setConstraints({minimum: -100, maximum: 100, nullable: bNullable});
+				oType = new (jQuery.sap.getObject(sName))({},
+					{minimum: -100, maximum: 100, nullable: bNullable});
 				deepEqual(oType.oConstraints, oExpectedConstraints, "only nullable accepted");
 			});
 		});
@@ -148,61 +157,58 @@
 			}
 			catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "Enter an integer.");
+				equal(e.message, "Enter a number with no decimals");
 			}
 		});
 
-		jQuery.each([-Infinity, iMin - 1, iMax + 1, Infinity], function (i, iValue) {
-			test("not in value range: " + iValue,
-				function () {
-					var oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
-							groupingEnabled:true});
+		test("range tests", function () {
+			var sExpectedMessage,
+				oNumberFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+					groupingEnabled:true}),
 
-					try {
-						oType.validateValue(iValue);
-						ok(false, "Expected ValidateException not thrown");
-					}
-					catch (e) {
-						ok(e instanceof sap.ui.model.ValidateException)
-						equal(e.message, "Enter an integer within the "
-							+ oNumberFormat.format(iMin) + " to "
-							+ oNumberFormat.format(iMax) + " range.");
-					}
-				});
+			sExpectedMessage = "EnterIntMin " + oNumberFormat.format(iMin);
+			testRange(-Infinity, sExpectedMessage);
+			testRange(iMin - 1, sExpectedMessage);
+
+			sExpectedMessage = "EnterIntMax " + oNumberFormat.format(iMax);
+			testRange(iMax + 1, sExpectedMessage);
+			testRange(Infinity, sExpectedMessage);
 		});
 
-		test("nullable", sinon.test(function () {
+		test("nullable", function () {
 			oType.validateValue(null);
 
 			this.mock(jQuery.sap.log).expects("warning").never();
 
-			oType.setConstraints({nullable: true});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: "true"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: false});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
 			strictEqual(oType.oConstraints.nullable, false);
 
-			oType.setConstraints({nullable: "false"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "false"});
 			strictEqual(oType.oConstraints.nullable, false);
 
-			oType.setConstraints({nullable: true});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: "true"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
 			strictEqual(oType.oConstraints, undefined);
 
-			oType.setConstraints({nullable: false});
-			try {
-				oType.validateValue(null);
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "Enter an integer.");
-			}
-		}));
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
+				try {
+					oType.validateValue(null);
+					ok(false);
+				} catch (e) {
+					ok(e instanceof sap.ui.model.ValidateException)
+					equal(e.message, "EnterInt");
+				}
+			});
+		});
 	}
 
 	anyInt("sap.ui.model.odata.type.Int16", -32768, 32767);

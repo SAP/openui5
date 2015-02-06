@@ -86,7 +86,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		this._bAbstract = !!oStaticInfo["abstract"];
 		this._bFinal = !!oStaticInfo["final"];
 		this._sStereotype = oStaticInfo.stereotype || (this._oParent ? this._oParent._sStereotype : "object");
-		
+		this._bDeprecated = !!oStaticInfo["deprecated"];
+
 		// handle interfaces
 		this._aInterfaces = jQuery.sap.unique(oStaticInfo.interfaces || []);
 	
@@ -133,6 +134,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 */
 	Metadata.prototype.getStereotype = function() {
 		return this._sStereotype;
+	};
+	
+	/**
+	 * Whether this class is deprecated and should not be used any more 
+	 * 
+	 * @return {boolean} whether this class is considered deprecated
+	 * @public
+	 * @since 1.26.4
+	 */
+	Metadata.prototype.isDeprecated = function() {
+		return this._bDeprecated;
 	};
 	
 	/**

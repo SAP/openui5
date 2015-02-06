@@ -8,13 +8,13 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
-	function(jQuery, Core) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI'],
+	function(jQuery, Core, URI1) {
 	"use strict";
 
+		/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
 
-	
-	
+
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.
 		 *
@@ -26,16 +26,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * @alias sap.ui.core.theming.Parameters
 		 */
 		var Parameters = {};
-	
+
 		var mParameters = null;
 		var sTheme = null;
-		
+
 		function resetParameters() {
 			mParameters = null;
 		}
-	
+
+		function checkAndResolveUrls(mParams, sResourceUrl){
+			//only resolve relative urls
+			var rRelativeUrl = /^url\(['|"]{1}(?!https?:\/\/|\/)(.*)['|"]{1}\)$/,
+				sAbsolutePath = sResourceUrl.replace(/library-parameters\.json.*/, "");
+
+			/*eslint-disable no-loop-func */
+			for (var sId in mParams){
+				if (rRelativeUrl.test(mParams[sId])){
+					mParams[sId] = mParams[sId].replace(rRelativeUrl, function($0, $1, $2){
+						var sNormalizedPath = new URI(sAbsolutePath + $1).normalize().path();
+						return "url('" + sNormalizedPath + "')";
+					});
+				}
+			}
+			/*eslint-enable no-loop-func */
+			return mParams;
+		}
+
 		/*
-		 * Load parameters for a library/theme combination as identified by the URL of the library.css 
+		 * Load parameters for a library/theme combination as identified by the URL of the library.css
 		 */
 		function loadParameters() {
 
@@ -45,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 			if (aParams && aParams.length >= 2) {
 				var sParams = aParams[1];
 
-				// decode only if necessary 
+				// decode only if necessary
 				if (sParams.charAt(0) !== "{" && sParams.charAt(sParams.length - 1) !== "}") {
 					try {
 						sParams = decodeURI(sParams);
@@ -73,28 +91,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 			sUrl = sUrl.replace(/\/library([^\/.]*)\.(?:css|less)($|[?#])/, function($0,$1,$2) {
 				return "/library-parameters.json" + ($2 ? $2 : "");
 			});
-			
-			// load and evaluate parameter file 
+
+			// load and evaluate parameter file
 			oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
 			if (oResponse.success) {
+
 				oResult = (typeof oResponse.data == "string") ? jQuery.parseJSON(oResponse.data) : oResponse.data; // FIXME jQuery1.7.1 always parses JSON, so why is it checked here?
 				if ( jQuery.isArray(oResult) ) {
-					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array  
+					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
 					for (var j = 0; j < oResult.length; j++) {
-					  jQuery.extend(mParameters, oResult[j]);
+						oResult[j] = checkAndResolveUrls(oResult[j], sUrl);
+						jQuery.extend(mParameters, oResult[j]);
 					}
 				} else {
-				  jQuery.extend(mParameters, oResult);
+					oResult = checkAndResolveUrls(oResult, sUrl);
+					jQuery.extend(mParameters, oResult);
 				}
 			} else {
 				// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
 				jQuery.sap.log.warning("Could not load theme parameters from: " + sUrl); // could be an error as well, but let's avoid more CSN messages...
 			}
 		}
-	
+
 		function getParameters() {
 			if (!mParameters) {
-	
+
 				mParameters = {};
 				sTheme = sap.ui.getCore().getConfiguration().getTheme();
 
@@ -103,7 +124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 			}
 			return mParameters;
 		}
-	
+
 		/**
 		 * Called by the Core when a new library and its stylesheet have been loaded.
 		 * Must be called AFTER a link-tag (with id: "sap-ui-theme" + sLibName) for the theme has been created.
@@ -117,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 				loadParameters.apply(oLink);
 			}
 		};
-		
+
 		/**
 		 * Returns the current value for the given CSS parameter.
 		 * If no parameter is given, a map containing all parameters is returned. This map is a copy, so changing values in the map does not have any effect.
@@ -129,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * @public
 		 */
 		Parameters.get = function(sName) {
-	
+
 			if (arguments.length == 1) {
 
 				var sParam = getParameters()[sName];
@@ -151,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 				return undefined;
 			}
 		};
-		
+
 		/**
 		 *
 		 * Uses the parameters provide to re-set the parameters map or
@@ -175,11 +196,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 				}
 			});
 		};
-		
+
 		/**
-		 * Resets the CSS parameters which finally will reload the parameters 
+		 * Resets the CSS parameters which finally will reload the parameters
 		 * the next time they are queried via the method <code>get</code>.
-		 * 
+		 *
 		 * @public
 		 */
 		Parameters.reset = function() {
@@ -189,10 +210,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 				resetParameters();
 			}
 		};
-	
+
 		/**
 		 * Helper function to get an image URL based on a given theme parameter.
-		 * 
+		 *
 		 * @private
 		 * @param {string} sParamName the theme parameter which contains the logo definition. If nothing is defined the parameter 'sapUiGlobalLogo' is used.
 		 * @param {boolean} bForce whether a valid URL should be returned even if there is no logo defined.
@@ -208,14 +229,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 					logo = null;
 				}
 			}
-			
+
 			if (!!bForce && !logo) {
 				return sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif');
 			}
-			
+
 			return logo;
 		};
-	
+
 
 	return Parameters;
 

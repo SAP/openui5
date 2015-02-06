@@ -1,5 +1,3 @@
-jQuery.sap.require("sap.m.MessageToast");
-
 sap.ui.controller("sap.ui.unified.sample.FileUploaderComplex.Controller", {
 	handleUploadComplete: function(oEvent) {
 		var sResponse = oEvent.getParameter("response");

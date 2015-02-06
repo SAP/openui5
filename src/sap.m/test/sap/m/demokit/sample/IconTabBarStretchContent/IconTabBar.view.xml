@@ -1,9 +1,10 @@
 <mvc:View
+	controllerName="sap.m.sample.IconTabBarStretchContent.IconTabBar"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<IconTabBar
-		class="iconTabBarPaddingTop"
+		class="sapUiContentPadding"
 		id="idIconTabBarStretchContent"
 		stretchContentHeight="true"
 		backgroundDesign="Transparent"
@@ -15,10 +16,10 @@
 				<Carousel>
 					<pages>
 						<l:VerticalLayout>
-							<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
+							<Image src="{img>/products/pic1}" densityAware="false" />
 						</l:VerticalLayout>
-						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1073.jpg" />
-						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg" />
+						<Image src="{img>/products/pic2}" densityAware="false" />
+						<Image src="{img>/products/pic3}" densityAware="false" />
 					</pages>
 				</Carousel>
 			</IconTabFilter>

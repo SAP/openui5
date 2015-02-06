@@ -54,8 +54,15 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.renderItems = function(oRm, oList) {
+			var iSize = oList.getItems().length,
+				oSelectedItem = oList.getSelectedItem();
+
 			for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-				this.renderItem(oRm, oList, aItems[i]);
+				this.renderItem(oRm, oList, aItems[i], {
+					selected: oSelectedItem === aItems[i],
+					setsize: iSize,
+					posinset: i + 1
+				});
 			}
 		};
 
@@ -65,8 +72,9 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
+		 * @param {object} mStates
 		 */
-		SelectListRenderer.renderItem = function(oRm, oList, oItem) {
+		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
 			var bEnabled = oItem.getEnabled(),
 				oSelectedItem = oList.getSelectedItem(),
 				CSS_CLASS = SelectListRenderer.CSS_CLASS,
@@ -104,7 +112,7 @@ sap.ui.define(['jquery.sap.global'],
 					oRm.writeAttributeEscaped("title", sTooltip);
 				}
 
-				this.writeItemAccessibilityState(oRm, oList, oItem);
+				this.writeItemAccessibilityState.apply(this, arguments);
 
 				oRm.write(">");
 				oRm.writeEscaped(oItem.getText());
@@ -132,13 +140,16 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
+		 * @param {object} mStates
 		 */
-		SelectListRenderer.writeItemAccessibilityState = function(oRm, oList, oItem) {
+		SelectListRenderer.writeItemAccessibilityState = function(oRm, oList, oItem, mStates) {
 			var sRole = (oItem instanceof sap.ui.core.SeparatorItem) ? "separator" : "option";
 
 			oRm.writeAccessibilityState(oItem, {
 				role: sRole,
-				selected: oList.isItemSelected(oItem)
+				selected: mStates.selected,
+				setsize: mStates.setsize,
+				posinset: mStates.posinset
 			});
 		};
 

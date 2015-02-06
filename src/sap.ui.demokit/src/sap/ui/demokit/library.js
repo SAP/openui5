@@ -178,9 +178,14 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 		});
 	};
 	
-	sap.ui.demokit._loadAllLibInfo = function(sAppRoot, sInfoType /*"_getDocuIndex", "_getThirdPartyInfo", "_getLibraryInfo"*/, fnCallback) {
+	sap.ui.demokit._loadAllLibInfo = function(sAppRoot, sInfoType /*"_getDocuIndex", "_getThirdPartyInfo", "_getLibraryInfo", "_getReleaseNotes", "_getLibraryInfoAndReleaseNotes"*/, fnCallback) {
 		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
 		var libInfo = new sap.ui.core.util.LibraryInfo();
+		
+		var bFetchReleaseNotes = sInfoType == "_getLibraryInfoAndReleaseNotes";
+		if (bFetchReleaseNotes) {
+			sInfoType = "_getLibraryInfo";
+		}
 		
 		sap.ui.demokit._getAppInfo(function(oAppInfo) {
 			if (!(oAppInfo && oAppInfo.libraries)) {
@@ -202,6 +207,12 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 				oLibVersions[libName] = libVersion;
 				/*eslint-disable no-loop-func */
 				libInfo[sInfoType](libName, function(oExtensionData){
+					var fnDone = function() {
+						count++;
+						if (count == len) {
+							fnCallback(aLibs, oLibInfos, oAppInfo);
+						}
+					};
 					oLibInfos[oExtensionData.library] = oExtensionData;
 					// fallback to version coming from version info file
 					// (in case of ABAP we always should refer to the libVersion if available!)
@@ -209,10 +220,12 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 					var sVersion = oLibVersions[oExtensionData.library];
 					if (sVersion) {
 						oLibInfos[oExtensionData.library].version = sVersion;
-					}
-					count++;
-					if (count == len) {
-						fnCallback(aLibs, oLibInfos, oAppInfo);
+						libInfo._getReleaseNotes(oExtensionData.library, sVersion, function(oReleaseNotes) {
+							oLibInfos[oExtensionData.library].relnotes = oReleaseNotes;
+							fnDone();
+						});
+					} else {
+						fnDone();
 					}
 				});
 				/*eslint-enable no-loop-func */

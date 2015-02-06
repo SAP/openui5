@@ -1,0 +1,56 @@
+{
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "5b0d7e147f9c48078235c547af121b65cfa51fd4",
+        "author": "Thilo Seidel <thilo.seidel@sap.com>",
+        "type": "FEATURE",
+        "text": "Explored App enhanced with theme-switch",
+        "references": []
+      },
+      {
+        "id": "f0240eecfee4a607c954942c1a2af9bf5b8ea5e9",
+        "author": "Martin Wittmann <martin.wittmann@sap.com>",
+        "type": "FEATURE",
+        "text": "Extended predefined CSS margin classes - Added responsive CSS margin classes - Added tiny CSS margin sizes - Added 'no margin' classes",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "author": "Frank Weigel <frank.weigel@sap.com>",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "52f8a1a97952d0014620c3643a33eff911dec32a",
+        "author": "Gernot Kuhr <gernot.kuhr@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: CSS Fixes, API: Added Layout Support",
+        "references": []
+      },
+      {
+        "id": "8c56460c389b651c3e02afe6db8e3e895730629e",
+        "author": "Gernot Kuhr <gernot.kuhr@sap.com>",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Explored App fixed, Image/doc paths corrected",
+        "references": []
+      },
+      {
+        "id": "03d2a30ce36cbb772ddf8773c8d4fb1862a59f79",
+        "author": "Thilo Seidel <thilo.seidel@sap.com>",
+        "type": "FEATURE",
+        "text": "RTL-Mode added to Explored Settings",
+        "references": []
+      },
+      {
+        "id": "c672e7272d1183ff85d7adb4a9cb0c74b8829228",
+        "author": "Tobias Oetzel <tobias.oetzel@sap.com>",
+        "type": "FEATURE",
+        "text": "sap.ui.core.routing.Route: Greedy routes match with greed",
+        "references": []
+      }
+    ]
+  }
+}

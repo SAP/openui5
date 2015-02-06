@@ -12,7 +12,7 @@
 				items="{/ProductCollection}">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Products"></Label>
+						<Title text="Products" level="H2"/>
 						<ToolbarSpacer></ToolbarSpacer>
 						<Button icon="sap-icon://drop-down-list" press="handleViewSettingsDialogButtonPressed" />
 					</Toolbar>

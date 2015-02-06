@@ -205,18 +205,17 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {function} [mOptions.onClose] Function to be called when the user taps a button or closes the message box.
 				 * @param {string} [mOptions.id] ID to be used for the dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string} [mOptions.initialFocus] initialFocus, set the action name or the text of the button that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @public
 				 * @static
 				 */
 				MessageBox.show = function (vMessage, mOptions) {
 					var oDialog, oResult = null, that = this, aButtons = [], i,
-							sIcon, sTitle, vActions, fnCallback, sDialogId, sClass, oInitialFocus,
+							sIcon, sTitle, vActions, fnCallback, sDialogId, sClass,
 							mDefaults = {
 								id: sap.ui.core.ElementMetadata.uid("mbox"),
 								initialFocus: null
 							};
-					var initialFocusButton = null;
 
 					if (typeof mOptions === "string" || arguments.length > 2) {
 						// Old API compatibility
@@ -227,15 +226,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						fnCallback = arguments[4];
 						sDialogId = arguments[5];
 						sClass = arguments[6];
-						oInitialFocus = arguments[7];
 						mOptions = {
 							icon: sIcon,
 							title: sTitle,
 							actions: vActions,
 							onClose: fnCallback,
 							id: sDialogId,
-							styleClass: sClass,
-							initialFocus: oInitialFocus
+							styleClass: sClass
 						};
 					}
 
@@ -248,6 +245,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 					if (!mOptions.actions || mOptions.actions.length === 0) {
 						mOptions.actions = [Action.OK];
 					}
+
+
 
 					/** creates a button for the given action */
 					function button(sAction) {
@@ -267,11 +266,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 								oDialog.close();
 							}
 						});
-
-						if ((mOptions.initialFocus) && (mOptions.initialFocus.toLowerCase() === oButton.mProperties.text.toLowerCase())) {
-							initialFocusButton = oButton;
-						}
-
 						return oButton;
 					}
 
@@ -287,14 +281,40 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						oDialog.destroy();
 					}
 
+					function getInitialFocusControl() {
+						var i = 0;
+						var oInitialFocusControl = null;
+						if (mOptions.initialFocus) {
+							if (mOptions.initialFocus instanceof sap.ui.core.Control) {//covers sap.m.Control cases
+								oInitialFocusControl = mOptions.initialFocus;
+							}
+							if (typeof mOptions.initialFocus === "string") {//covers string and MessageBox.Action cases
+								for (i = 0; i < aButtons.length; i++) {
+									if (mOptions.initialFocus.toLowerCase() === aButtons[i].getText().toLowerCase()) {
+										oInitialFocusControl = aButtons[i];
+										break;
+									}
+								}
+							}
+						}
+						return oInitialFocusControl;
+					}
+
 					oDialog = new Dialog({
 						id: mOptions.id,
 						type: sap.m.DialogType.Message,
 						title: mOptions.title,
 						icon: mIcons[mOptions.icon],
-						initialFocus: initialFocusButton,
+						initialFocus: getInitialFocusControl(),
 						afterClose: onclose
 					});
+
+					oDialog.addEventDelegate({
+						onAfterRendering: function () {
+							oDialog.$().attr("role", "alertdialog");
+						}
+					});
+
 					if (typeof (vMessage) === "string") {
 						oDialog.addContent(new Text().setText(vMessage).addStyleClass("sapMMsgBoxText"));
 					} else if (vMessage instanceof sap.ui.core.Control) {
@@ -355,7 +375,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.title='Alert'] Title to be displayed in the alert dialog
 				 * @param {string} [mOptions.id] ID to be used for the alert dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the alert dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string} [mOptions.initialFocus] initialFocus, set the action name or the text of the button that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @public
 				 * @static
 				 */
@@ -366,7 +386,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						actions: Action.OK,
 						id: sap.ui.core.ElementMetadata.uid("alert"),
 						initialFocus: null
-					}, fnCallback, sTitle, sDialogId, sStyleClass, oInitialFocus;
+					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
 						// Old API Compatibility
@@ -375,13 +395,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						sTitle = arguments[2];
 						sDialogId = arguments[3];
 						sStyleClass = arguments[4];
-						oInitialFocus = arguments[5];
 						mOptions = {
 							onClose: fnCallback,
 							title: sTitle,
 							id: sDialogId,
-							styleClass: sStyleClass,
-							initialFocus: oInitialFocus
+							styleClass: sStyleClass
 						};
 					}
 
@@ -425,7 +443,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.onClose='Confirmation'] Title to display in the confirmation dialog
 				 * @param {string} [mOptions.id] ID to be used for the confirmation dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the confirmation dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string} [mOptions.initialFocus] initialFocus, set the action name or the text of the button that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @public
 				 * @static
 				 */
@@ -436,7 +454,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						actions: [Action.OK, Action.CANCEL],
 						id: sap.ui.core.ElementMetadata.uid("confirm"),
 						initialFocus: null
-					}, fnCallback, sTitle, sDialogId, sStyleClass, oInitialFocus;
+					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
 						// Old API Compatibility
@@ -445,13 +463,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						sTitle = arguments[2];
 						sDialogId = arguments[3];
 						sStyleClass = arguments[4];
-						oInitialFocus = arguments[5];
 						mOptions = {
 							onClose: fnCallback,
 							title: sTitle,
 							id: sDialogId,
-							styleClass: sStyleClass,
-							initialFocus: oInitialFocus
+							styleClass: sStyleClass
 						};
 					}
 

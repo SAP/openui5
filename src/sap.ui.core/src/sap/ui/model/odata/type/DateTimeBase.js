@@ -3,9 +3,9 @@
  */
 
 sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
-		'sap/ui/model/ParseException', 'sap/ui/model/SimpleType',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
 		'sap/ui/model/ValidateException'],
-	function(DateFormat, FormatException, ParseException, SimpleType, ValidateException) {
+	function(DateFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var oDemoDate = new Date(2014, 10, 27, 13, 47, 26);
@@ -32,6 +32,64 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	}
 
 	/**
+	 * Returns the formatter. Creates it lazily.
+	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
+	 *   the type instance
+	 * @returns {sap.ui.core.format.DateFormat}
+	 *   the formatter
+	 */
+	function getFormatter(oType) {
+		var oFormatOptions;
+
+		if (!oType.oFormat){
+			oFormatOptions = jQuery.extend({strictParsing: true}, oType.oFormatOptions);
+			if (isDateOnly(oType)) {
+				oFormatOptions.UTC = true;
+				oType.oFormat = DateFormat.getDateInstance(oFormatOptions);
+			} else {
+				delete oFormatOptions.UTC;
+				oType.oFormat = DateFormat.getDateTimeInstance(oFormatOptions);
+			}
+		}
+		return oType.oFormat;
+	}
+
+	/**
+	 * Sets the constraints.
+	 *
+	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
+	 *   the type instance
+	 * @param {object} [oConstraints]
+	 *   constraints, see {@link #constructor}
+	 * @private
+	 */
+	function setConstraints(oType, oConstraints) {
+		oType.oConstraints = undefined;
+		if (oConstraints) {
+			switch (oConstraints.nullable) {
+			case undefined:
+			case true:
+			case "true":
+				break;
+			case false:
+			case "false":
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.nullable = false;
+				break;
+			default:
+				jQuery.sap.log.warning("Illegal nullable: " + oConstraints.nullable, null,
+					oType.getName());
+			}
+
+			if (oConstraints.isDateOnly === true) {
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.isDateOnly = true;
+			}
+		}
+		oType._handleLocalizationChange();
+	}
+
+	/**
 	 * Base constructor for the primitive types <code>Edm.DateTime</code> and
 	 * <code>Edm.DateTimeOffset</code>.
 	 *
@@ -39,16 +97,17 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * OData primitive types</a> <code>Edm.DateTime</code> and <code>Edm.DateTimeOffset</code>.
 	 *
-	 * @extends sap.ui.model.SimpleType
+	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeBase
 	 * @param {object} [oFormatOptions]
-	 *   format options; this type does not support any format options
+	 *   type-specific format options; see sub-types
 	 * @param {object} [oConstraints]
-	 *   constraints
+	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
+	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> will be accepted
 	 * @param {boolean} [oConstraints.isDateOnly=false]
@@ -58,26 +117,32 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @abstract
 	 * @since 1.27.0
 	 */
-	var DateTimeBase = SimpleType.extend("sap.ui.model.odata.type.DateTimeBase",
+	var DateTimeBase = ODataType.extend("sap.ui.model.odata.type.DateTimeBase",
 			/** @lends sap.ui.model.odata.type.DateTimeBase.prototype */
 			{
 				constructor : function (oFormatOptions, oConstraints) {
-					this.setConstraints(oConstraints);
+					ODataType.apply(this, arguments);
+					setConstraints(this, oConstraints);
+					this.oFormatOptions = oFormatOptions;
+				},
+				metadata : {
+					"abstract": true
 				}
 			}
 		);
 
 	/**
-	 * Format the given value to the given target type.
+	 * Formats the given value to the given target type.
 	 *
 	 * @param {Date} oValue
 	 *   the value to be formatted, which is represented as a JavaScript Date in the model
 	 * @param {string} sTargetType
-	 *   the target type
-	 * @return {string}
+	 *   the target type; may be "any" or "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
+	 * @returns {string|Date}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
-	 *   will be formatted to <code>null</code>
-	 * @throws sap.ui.model.FormatException
+	 *   are formatted to <code>null</code>
+	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
@@ -89,7 +154,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		case "any":
 			return oValue;
 		case "string":
-			return this._getFormatter().format(oValue);
+			return getFormatter(this).format(oValue);
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -97,16 +162,17 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Parse the given value to JavaScript Date.
+	 * Parses the given value to JavaScript <code>Date</code>.
 	 *
 	 * @param {string} sValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
-	 *   the source type (the expected type of <code>oValue</code>)
-	 * @return {Date}
+	 *   the source type (the expected type of <code>sValue</code>); must be "string".
+	 *   See {@link sap.ui.model.odata.type} for more information.
+	 * @returns {Date}
 	 *   the parsed value
-	 * @throws sap.ui.model.ParseException
+	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported or if the given string cannot be parsed to a
 	 *   Date
 	 * @public
@@ -119,7 +185,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		}
 		switch (sSourceType) {
 		case "string":
-			oResult = this._getFormatter().parse(sValue);
+			oResult = getFormatter(this).parse(sValue);
 			if (!oResult) {
 				throw new ParseException(getErrorMessage(this));
 			}
@@ -139,29 +205,13 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Returns the formatter. Creates it lazily.
-	 * @return {sap.ui.core.format.DateFormat}
-	 *   the formatter
-	 * @private
-	 */
-	DateTimeBase.prototype._getFormatter = function () {
-		if (!this.oFormat){
-			if (isDateOnly(this)) {
-				this.oFormat = DateFormat.getDateInstance({strictParsing: true, UTC: true});
-			} else {
-				this.oFormat = DateFormat.getDateTimeInstance({strictParsing: true});
-			}
-		}
-		return this.oFormat;
-	};
-
-	/**
-	 * Validate whether the given value in model representation is valid and meets the
-	 * defined constraints (if any).
+	 * Validates whether the given value in model representation is valid and meets the
+	 * defined constraints.
 	 *
-	 * @param {string} oValue
+	 * @param {Date} oValue
 	 *   the value to be validated
-	 * @throws sap.ui.model.ValidateException if the value is not valid
+	 * @returns {void}
+	 * @throws {sap.ui.model.ValidateException} if the value is not valid
 	 * @public
 	 */
 	DateTimeBase.prototype.validateValue = function (oValue) {
@@ -177,43 +227,9 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	};
 
 	/**
-	 * Set the constraints.
-	 *
-	 * @param {object} [oConstraints]
-	 *   constraints, see {@link #constructor}
-	 * @private
-	 */
-	DateTimeBase.prototype.setConstraints = function(oConstraints) {
-		this.oConstraints = undefined;
-		if (oConstraints) {
-			switch (oConstraints.nullable) {
-			case undefined:
-			case true:
-			case "true":
-				break;
-			case false:
-			case "false":
-				this.oConstraints = this.oConstraints || {};
-				this.oConstraints.nullable = false;
-				break;
-			default:
-				jQuery.sap.log.warning("Illegal nullable: " + oConstraints.nullable, null,
-					this.getName());
-			}
-
-			if (oConstraints.isDateOnly === true) {
-				this.oConstraints = this.oConstraints || {};
-				this.oConstraints.isDateOnly = true;
-			}
-		}
-		this._handleLocalizationChange();
-	};
-
-	/**
 	 * Returns the type's name.
 	 *
-	 * @name sap.ui.model.odata.type.DateTimeBase#getName
-	 * @function
+	 * @alias sap.ui.model.odata.type.DateTimeBase#getName
 	 * @protected
 	 * @abstract
 	 */

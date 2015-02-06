@@ -1,0 +1,8 @@
+{
+	"version":"2.0",
+	"name":"sap.test.lib3.library-preload",
+	"dependencies":["sap.test.lib2.library-preload"],
+	"modules":{
+		"sap/test/lib3/library.js":"jQuery.sap.declare(\"sap.test.lib3.library\");jQuery.sap.require(\"sap.test.lib2.library\");sap.ui.getCore().initLibrary({name:\"sap.test.lib3\",noLibraryCSS:true});"
+	}
+}

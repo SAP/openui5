@@ -4,7 +4,8 @@
 	xmlns="sap.m">
 	<Page
 		title="Bar can center a Title."
-		class="marginBoxContent"
+		titleLevel="H2"
+		class="sapUiContentPadding"
 		showNavButton="true" >
 		<headerContent>
 			<Button icon="sap-icon://action" />
@@ -13,7 +14,7 @@
 			<Toolbar>
 				<Button type="Back" />
 				<ToolbarSpacer></ToolbarSpacer>
-				<Label text="Toolbar center"></Label>
+				<Title text="Toolbar center" level="H3"></Title>
 				<ToolbarSpacer></ToolbarSpacer>
 			</Toolbar>
 		</subHeader>

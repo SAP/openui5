@@ -9,7 +9,7 @@ sap.m.sample.InputSuggestionsOpenSearch.MockServer = {
 			// use explored app's demo data
 			this._productCount = 0;
 			var that = this;
-			jQuery.ajax("test-resources/sap/ui/demokit/explored/products.json", {
+			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
 				async: false,
 				success: function (data) {
 					that._productData = data;

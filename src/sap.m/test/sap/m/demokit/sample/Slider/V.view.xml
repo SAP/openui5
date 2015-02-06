@@ -2,13 +2,13 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout class="marginVerticalContent">
-		<Slider value="30" width="90%" />
-		<Slider value="27" width="10em" />
-		<Slider value="40" width="15em" />
+	<l:VerticalLayout class="sapUiContentPadding">
+		<Slider value="30" width="90%" class="sapUiSmallMarginBottom" />
+		<Slider value="27" width="10em" class="sapUiSmallMarginBottom" />
+		<Slider value="40" width="15em" class="sapUiSmallMarginBottom" />
 		<Slider value="5" width="66%"
-			min="0" max="50" enabled="false" />
+			min="0" max="50" enabled="false" class="sapUiSmallMarginBottom" />
 		<Slider value="9" width="77%"
-			min="0" max="10" />
+			min="0" max="10" class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

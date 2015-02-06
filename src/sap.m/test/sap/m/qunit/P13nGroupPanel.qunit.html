@@ -91,6 +91,33 @@
 		// assertions
 		strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
+		oP13nGroupPanel.setContainerQuery(true);
+		strictEqual(oP13nGroupPanel.getContainerQuery(), true, "getContainerQuery should return true");
+
+		oP13nGroupPanel.setMaxGroups(5);
+		strictEqual(oP13nGroupPanel.getMaxGroups(), "5", "getMaxGroups should return 5");
+
+		// cleanup
+		oP13nGroupPanel.destroy();
+	});
+
+	test("Validation Tests", function(){
+		
+		// system under test
+		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+			layoutMode : "Desktop"
+		});
+
+		// arrange
+		oP13nGroupPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
+
+		oP13nGroupPanel.removeInvalidConditions();
+		oP13nGroupPanel.removeValidationErrors();
+
 		// cleanup
 		oP13nGroupPanel.destroy();
 	});
@@ -127,6 +154,35 @@
 
 		// assertions
 		var nItems= 2;
+		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+		// cleanup
+		oP13nGroupPanel.destroy();
+	});
+	
+	test("Insert Remove GroupItems test", function(){
+		
+		// system under test
+		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+		bindGroupPanel(oP13nGroupPanel);
+
+		// arrange
+		oP13nGroupPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		
+		oP13nGroupPanel.insertGroupItem( new sap.m.P13nGroupItem({
+			columnKey : "c1",
+			operation : "Ascending",
+			showIfGrouped : true 
+		}));
+		
+		// assertions
+		var nItems= 3;
+		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+		oP13nGroupPanel.removeAllGroupItems();
+		nItems= 0;
 		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 		// cleanup

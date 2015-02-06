@@ -3,14 +3,14 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent"
+		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Label text="Label a" />
-			<Label text="Label b" />
-			<Label text="Label c" />
-			<Label text="Label d" design="Bold" />
-			<Label text="Label e" />
+			<Label text="Label a" class="sapUiSmallMarginBottom" />
+			<Label text="Label b" class="sapUiSmallMarginBottom" />
+			<Label text="Label c" class="sapUiSmallMarginBottom" />
+			<Label text="Label d" class="sapUiSmallMarginBottom" design="Bold" />
+			<Label text="Label e" class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

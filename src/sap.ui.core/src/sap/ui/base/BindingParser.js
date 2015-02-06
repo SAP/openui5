@@ -3,8 +3,8 @@
  */
 
 // Provides static class sap.ui.base.BindingParser
-sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
-	function(jQuery/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
+	function(jQuery, ExpressionParser/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -94,9 +94,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 			oBindingInfo = {parts:[]},
 			aFragments = [],
 			bUnescaped,
-			oParseResult,
 			p = 0,
-			m,end;
+			m,
+			oEmbeddedBinding,
+			bContainsExpression;
 
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
@@ -153,6 +154,44 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 			}
 		}
 
+		/**
+		 * Determines the binding info for the given string sInput starting at the given iStart and
+		 * returns an object with the corresponding binding info as <code>result</code> and the
+		 * position where to continue parsing as <code>at</code> property.
+		 *
+		 * @param {string} sInput The input string from which to resolve an embedded binding
+		 * @param {number} iStart The start index for binding resolution in the input string
+		 * @returns {object} An object with the following properties:
+		 *   result: The binding info for the embedded binding
+		 *   at: The position after the last character for the embedded binding in the input string
+		 */
+		function resolveEmbeddedBinding(sInput, iStart) {
+			var oParseResult,
+				iEnd;
+			// an embedded binding: check for a property name that would indicate a complex object
+			if ( rObject.test(sInput.slice(iStart)) ) {
+				oParseResult = parseObject(sInput, iStart);
+				resolveType(oParseResult.result,'type');
+				resolveObject(oParseResult.result,'filters');
+				resolveObject(oParseResult.result,'sorter');
+				resolveRef(oParseResult.result,'formatter');
+				resolveRef(oParseResult.result,'factory'); // list binding
+				resolveRef(oParseResult.result,'groupHeaderFactory');
+				return oParseResult;
+			}
+			// otherwise it must be a simple binding (path only)
+			// TODO find closing brace via regex as well?
+			iEnd = sInput.indexOf('}', iStart);
+			if ( iEnd < iStart ) {
+				throw new SyntaxError("no closing braces found in '" + sInput + "' after pos:" + iStart);
+			}
+			return {
+				result: makeSimpleBindingInfo(sInput.slice(iStart + 1, iEnd)),
+				at: iEnd + 1
+			};
+		}
+
+		rFragments.lastIndex = 0; //previous parse call may have thrown an Error: reset lastIndex
 		while ( (m = rFragments.exec(sString)) !== null ) {
 			
 			// check for a skipped literal string fragment  
@@ -168,36 +207,25 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 				bUnescaped = true;
 				
 			} else {
-				
-				// an embedded binding: check for a property name that would indicate a complex object 
-				if ( rObject.test(sString.slice(m.index)) ) {
-					
-					oParseResult = parseObject(sString, m.index);
-					resolveType(oParseResult.result,'type');
-					resolveObject(oParseResult.result,'filters');
-					resolveObject(oParseResult.result,'sorter');
-					resolveRef(oParseResult.result,'formatter');
-					resolveRef(oParseResult.result,'factory'); // list binding
-					resolveRef(oParseResult.result,'groupHeaderFactory');
-					aFragments.push(oBindingInfo.parts.length);
-					oBindingInfo.parts.push(oParseResult.result);
-					rFragments.lastIndex = oParseResult.at;
-					
-				} else {
-					
-					// otherwise it must be a simple binding (path only)
-					
-					// TODO find closing brace via regex as well?
-					end = sString.indexOf('}', m.index);
-					if ( end < m.index ) {
-						throw new SyntaxError("no closing braces found in '" + sString + "' after pos:" + m.index);
+				aFragments.push(oBindingInfo.parts.length);
+				if (sString.charAt(m.index + 1) === "=") { //expression
+					oEmbeddedBinding = ExpressionParser.parse(resolveEmbeddedBinding, sString,
+						m.index + 2);
+					if (sString.charAt(oEmbeddedBinding.at) !== "}") {
+						throw new SyntaxError("Expected '}' and instead saw '"
+							+ sString.charAt(oEmbeddedBinding.at)
+							+ "' in expression binding "
+							+ sString
+							+ " at position "
+							+ oEmbeddedBinding.at);
 					}
-					
-					aFragments.push(oBindingInfo.parts.length);
-					oBindingInfo.parts.push(makeSimpleBindingInfo(sString.slice(m.index + 1, end)));
-					rFragments.lastIndex = end + 1;
-					
+					oEmbeddedBinding.at += 1;
+					bContainsExpression = true;
+				} else {
+					oEmbeddedBinding = resolveEmbeddedBinding(sString, m.index);
 				}
+				oBindingInfo.parts.push(oEmbeddedBinding.result);
+				rFragments.lastIndex = oEmbeddedBinding.at;
 			}
 			
 			// remember where we are
@@ -215,6 +243,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 				// special case: a single binding only
 				oBindingInfo = oBindingInfo.parts[0];
 			} else /* if ( aFragments.length > 1 ) */ {
+				if (bContainsExpression) {
+					throw new SyntaxError("Expression not allowed in composite binding: "
+						+ sString);
+				}
 				// create the formatter function from the fragments
 				oBindingInfo.formatter = makeFormatter(aFragments);
 			}

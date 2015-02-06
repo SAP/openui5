@@ -592,6 +592,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._oPreviousFocus = Popup.getCurrentFocusInfo();
 		}
 
+		// It is mandatroy to check if the new Popup runs within another Popup because
+		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
+		// the Datepicker runs in a Popup and the corresponding Calendar will also open
+		// in a Popup. Then the corresponding date will be focused immediatelly. If the
+		// Calendar-Popup wasn't added to the previous Popup as child it is impossible to
+		// check in 'onFocusEvent' properly if the focus is being set to a Calendar-Popup which is
+		// a child of a Popup.
+		if (this.isInPopup(of) || this.isInPopup(this._oPosition.of)) {
+			var sParentId = this.getParentPopupId(of) ||  this.getParentPopupId(this._oPosition.of);
+			var sChildId = "";
+
+			var oContent = this.getContent();
+			if (oContent instanceof sap.ui.core.Element) {
+				sChildId = oContent.getId();
+			} else if (typeof oContent === "object") {
+				sChildId = oContent.id;
+			}
+
+			this.addChildToPopup(sParentId, sChildId);
+			this.addChildToPopup(sParentId, this._popupUID);
+		}
+
 		var $Ref = this._$(true);
 
 		var iRealDuration = "fast";
@@ -717,21 +739,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 		this.bOpen = true;
 
-		if (this.isInPopup(of) || this.isInPopup(this._oPosition.of)) {
-			var sParentId = this.getParentPopupId(of) ||  this.getParentPopupId(this._oPosition.of);
-			var sChildId = "";
-
-			var oContent = this.getContent();
-			if (oContent instanceof sap.ui.core.Element) {
-				sChildId = oContent.getId();
-			} else if (typeof oContent === "object") {
-				sChildId = oContent.id;
-			}
-
-			this.addChildToPopup(sParentId, sChildId);
-			this.addChildToPopup(sParentId, this._popupUID);
-		}
-
 		if (this._bModal || this._bAutoClose) { // initialize focus handling
 			this._addFocusEventListeners();
 		}
@@ -818,7 +825,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				if (!this.touchEnabled && !this._sTimeoutId) {
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
-					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, "close", [iDuration, "autocloseBlur"]);
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
+						this.close(iDuration, "autocloseBlur");
+						var oOf = this._oLastPosition && this._oLastPosition.of;
+						if (oOf) {
+							var sParentPopupId = this.getParentPopupId(oOf);
+							if (sParentPopupId) {
+								// Also inform the parent popup that the focus is lost from the child popup
+								// Parent popup can check whether the current focused element is inside the parent popup. If it's still inside the
+								// parent popup, it keeps open, otherwise parent popup is also closed.
+								var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
+								sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
+							}
+						}
+					});
 				}
 			}
 		}
@@ -976,7 +996,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 			// update the DomRef because it could have been rerendered during closing
 			$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
-			if ($Ref.length > 1) {
+			if ($Ref.length) {
 				// also hide the new DOM ref
 				jQuery($Ref).hide().css({
 					"visibility" : "hidden",
@@ -1910,22 +1930,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @private
 	 */
 	Popup.prototype._addFocusableArea = function(sChannel, sEvent, oEventData) {
-		var sParentPopupId = this._popupUID; // save for call below
 		if (jQuery.inArray(oEventData.id, this.getChildPopups()) === -1) {
 			this.addChildPopup(oEventData.id);
-		}
-
-		// Forward the blur event of the child to the parent Popup
-		var $ChildDomRef = jQuery('[data-sap-ui-popup="' + oEventData.id + '"]');
-		if ($ChildDomRef.length > 0) {
-			var fnOnBlur = function(oEvent) {
-				$ChildDomRef.off("blur", fnOnBlur);
-
-				var sEventId = "sap.ui.core.Popup.onFocusEvent-" + sParentPopupId;
-				sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oEvent);
-			};
-
-			$ChildDomRef.on("blur", fnOnBlur);
 		}
 	};
 

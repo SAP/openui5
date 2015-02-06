@@ -12,10 +12,29 @@
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script type="text/javascript">
+		jQuery.sap.require("sap.ui.core.util.MockServer");
+		jQuery.sap.require("sap.ui.model.odata.ODataModel");
+
+		var sServiceURI = "/service/" ;
+		var sMetaDataURI = "qunit/data/";
+
+		// configure respond to requests delay
+		sap.ui.core.util.MockServer.config({
+			autoRespond : true,
+			autoRespondAfter : 1000
+		});
+
+		// create mockserver
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sServiceURI
+		});
+
+		// start mockserver
+		oMockServer.simulate(sMetaDataURI + "metadata.xml", sMetaDataURI);
+		oMockServer.start();
 
 		jQuery.sap.require("sap.ui.model.FilterOperator");
 		jQuery.sap.require("sap.m.MessageBox");
-		jQuery.sap.require("sap.ui.model.odata.ODataModel");
 
 		// filter function for the list search
 		var fnDoSearch = function (oEvent, bProductSearch) {
@@ -27,7 +46,7 @@
 			if(sSearchValue !== undefined && sSearchValue.length > 0) {
 				if(bProductSearch) {
 					// create multi-field filter to allow search over all attributes
-					aFilters.push(new sap.ui.model.Filter("ProductID", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("ProductId", sap.ui.model.FilterOperator.Contains , sSearchValue));
 					// apply the filter to the bound items, and the Select Dialog will update
 					itemsBinding.filter(aFilters, "Application");
 				} else {
@@ -60,7 +79,7 @@
 
 			// create the local filter to apply
 			if(sSearchValue !== undefined) {
-				aFilters.push(new sap.ui.model.Filter((bProductSearch ? "ProductID" : "name" ), sap.ui.model.FilterOperator.Contains , sSearchValue));
+				aFilters.push(new sap.ui.model.Filter((bProductSearch ? "ProductId" : "name" ), sap.ui.model.FilterOperator.Contains , sSearchValue));
 			}
 			return aFilters;
 		};
@@ -347,13 +366,13 @@
 			unread : false,
 			cells : [
 				new sap.m.Label({
-					text : "{ProductID}"
+					text : "{ProductId}"
 				}),  new sap.m.Label({
 					text : "{Name}"
 				}),  new sap.m.Label({
-					text : "{Price/CurrencyCode}"
+					text : "{Price}"
 				}),  new sap.m.Label({
-					text : "{Price/Amount}"
+					text : "{Weight}"
 				})
 			]
 		});
@@ -854,26 +873,7 @@
 			}
 		});
 
-		/* 8) table select dialog with web service binding, prefiltered by "HT" */
-		var sProxyBaseUrl = "../../../proxy/";
-
-		var aServices = [
-			{
-				serviceUrl : sProxyBaseUrl + "http/services.odata.org/(S(k0llwbowwin2l5shlweie0c2))/OData/OData.svc/",
-				products : {
-					collection : "/Products",
-					properties : [ "ID", "Name", "Description", "ReleaseDate", "Price", "Rating" ]
-				}
-			},
-			{
-				serviceUrl : sProxyBaseUrl + "http/ldcibcn.wdf.sap.corp:53600/sap/bc/sepm_odata/purchase/",
-				products : {
-					collection : "/ProductCollection",
-					properties : [ "ProductID", "Name", "Price/Amount", "Price/CurrencyCode" ]
-				}
-			}
-		];
-
+		/* 8) table select dialog with web service binding, prefiltered by "id_1" */
 		var oTableSelectDialog8 = new sap.m.TableSelectDialog("TableSelectDialog8", {
 			title: "Choose an extended tech products",
 			noDataText: "Sorry, no tech today",
@@ -903,7 +903,7 @@
 						styleClass : "limit",
 						width : "30%",
 						header : new sap.m.Label({
-							text : "Currency"
+							text : "Price"
 						}),
 						minScreenWidth : "Tablet",
 						demandPopin : true
@@ -914,7 +914,7 @@
 						width : "30%",
 						popinDisplay : "Inline",
 						header : new sap.m.Label({
-							text : "Price"
+							text : "Weight"
 						}),
 						minScreenWidth : "Tablet",
 						demandPopin : true
@@ -957,26 +957,26 @@
 		oTableSelectDialog8.attachCancel(fnCancelDialog);
 
 		var oButton8 = new sap.m.Button("Button8", {
-			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"HT\" with web service binding and no fixed width",
+			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
 			press: function () {
 				// initiate model
-				var oServiceModel = new sap.ui.model.odata.ODataModel(aServices[1].serviceUrl, true, "anzeiger", "display");
-				oTableSelectDialog8.setModel(oServiceModel);
+				var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+				oTableSelectDialog8.setModel(oModel);
 
 				// bind aggregation with filters
 				oTableSelectDialog8.bindAggregation("items", {
-					path: "/ProductCollection",
-					filters: fnCreatePrefilter("HT", true),
+					path: "/Products",
+					filters: fnCreatePrefilter("id_1", true),
 					template: oProductItemTemplate
 				});
 
 				// open dialog
-				oTableSelectDialog8.open("HT");
+				oTableSelectDialog8.open("id_1");
 			}
 		});
 		
 
-		/* 9) table select dialog with web service binding, prefiltered by "HT" and fixed width set to 800px */
+		/* 9) table select dialog with web service binding, prefiltered by "id_1" and fixed width set to 800px */
 
 		var oTableSelectDialog9 = new sap.m.TableSelectDialog("TableSelectDialog9", {
 			contentWidth: "800px",
@@ -1068,12 +1068,12 @@
 				oTableSelectDialog9.open("");
 
 				// initiate model
-				var oServiceModel = new sap.ui.model.odata.ODataModel(aServices[1].serviceUrl, true, "anzeiger", "display");
-				oTableSelectDialog9.setModel(oServiceModel);
+				var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+				oTableSelectDialog9.setModel(oModel);
 
 				// bind aggregation with filters
 				oTableSelectDialog9.bindAggregation("items", {
-					path: "/ProductCollection",
+					path: "/Products",
 					filters: fnCreatePrefilter("", true),
 					template: oProductItemTemplate
 				});

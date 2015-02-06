@@ -16,7 +16,7 @@
 		var oType = new sap.ui.model.odata.type.String();
 
 		ok(oType instanceof sap.ui.model.odata.type.String, "is a String");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
@@ -45,15 +45,15 @@
 		{maxLength: -1, warning: "Illegal maxLength: -1"},
 		{maxLength: 0, warning: "Illegal maxLength: 0"}
 	], function (i, oFixture) {
-		test("constraints error #" + i, sinon.test(function () {
+		test("constraints error #" + i, function () {
 			var oType = new sap.ui.model.odata.type.String();
 
 			this.mock(jQuery.sap.log).expects("warning")
 				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
 
-			oType.setConstraints({maxLength: oFixture.maxLength});
+			oType = new sap.ui.model.odata.type.String({}, {maxLength: oFixture.maxLength});
 			strictEqual(oType.oConstraints, undefined);
-		}));
+		});
 	});
 
 	//*********************************************************************************************
@@ -106,13 +106,15 @@
 			}
 		);
 
-		try {
-			oType.validateValue("ABCD");
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Enter a text with a maximum of 3 characters.");
-		}
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			try {
+				oType.validateValue("ABCD");
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException);
+				strictEqual(e.message, "EnterTextMaxLength 3");
+			}
+		});
 
 		try {
 			oType.validateValue(42);
@@ -124,48 +126,50 @@
 	});
 
 	//*********************************************************************************************
-	test("nullable", sinon.test(function () {
-		var oType = new sap.ui.model.odata.type.String({}, {nullable: false});
+	test("nullable", function () {
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.String({}, {nullable: false});
 
-		deepEqual(oType.oConstraints, {nullable: false}, "nullable: false");
-		try {
-			oType.validateValue(null);
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Enter a text.");
-		}
+			deepEqual(oType.oConstraints, {nullable: false}, "nullable: false");
+			try {
+				oType.validateValue(null);
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException);
+				strictEqual(e.message, "EnterText");
+			}
 
-		oType.setConstraints({nullable: false, maxLength: 3});
-		try {
-			oType.validateValue(null);
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Enter a text with a maximum of 3 characters.");
-		}
+			oType = new sap.ui.model.odata.type.String({}, {nullable: false, maxLength: 3});
+			try {
+				oType.validateValue(null);
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException);
+				strictEqual(e.message, "EnterTextMaxLength 3");
+			}
 
-		oType.setConstraints({nullable: true});
-		oType.validateValue(null); // does not throw
-		strictEqual(oType.oConstraints, undefined, "nullable: true");
+			oType = new sap.ui.model.odata.type.String({}, {nullable: true});
+			oType.validateValue(null); // does not throw
+			strictEqual(oType.oConstraints, undefined, "nullable: true");
 
-		this.mock(jQuery.sap.log).expects("warning").once()
-			.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
+			this.mock(jQuery.sap.log).expects("warning").once()
+				.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
 
-		oType = new sap.ui.model.odata.type.String(null, {nullable: ""});
-		strictEqual(oType.oConstraints, undefined, "illegal nullable -> default");
-	}));
+			oType = new sap.ui.model.odata.type.String(null, {nullable: ""});
+			strictEqual(oType.oConstraints, undefined, "illegal nullable -> default");
+		});
+	});
 
 	//*********************************************************************************************
-	test("setConstraints w/ strings", sinon.test(function () {
+	test("setConstraints w/ strings", function () {
 		var oType = new sap.ui.model.odata.type.String();
 
 		this.mock(jQuery.sap.log).expects("warning").never();
 
-		oType.setConstraints({nullable: "true", maxLength: "10"});
+		oType = new sap.ui.model.odata.type.String({}, {nullable: "true", maxLength: "10"});
 		deepEqual(oType.oConstraints, {maxLength: 10});
 
-		oType.setConstraints({nullable: "false"});
+		oType = new sap.ui.model.odata.type.String({}, {nullable: "false"});
 		deepEqual(oType.oConstraints, {nullable: false});
-	}));
+	});
 } ());

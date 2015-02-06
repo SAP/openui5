@@ -5,8 +5,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="marginVerticalContent nestedFlexboxes"
-		width="95%" >
+		class="sapUiContentPadding nestedFlexboxes"
+		width="100%" >
 		<l:content>
 			<HBox
 				fitContainer="true"

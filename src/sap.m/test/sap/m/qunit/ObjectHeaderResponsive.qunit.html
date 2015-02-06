@@ -275,36 +275,16 @@
 					
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					ok(!$sTitle.attr("href"), "Title does not have an attribute href and it's not a link.");
+					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
 					
 					// Clean up
 					oObjectHeader.destroy();
 				});
 				
-				test("Intro is active and is rendered as a link", function () {
+				test("Intro is sap.mLink when it is active", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
 						intro: "OH intro text",
-						introActive: true,
-						introHref: "http://www.sap.com"
-					});
-
-					// System under test
-					oObjectHeader.placeAt("qunit-fixture");
-					oCore.applyChanges();
-					
-					// Assert
-					var $sIntro = oObjectHeader.$("intro");
-					ok($sIntro.attr("href"), "Intro has attribute href and is a link.");
-					
-					// Clean up
-					oObjectHeader.destroy();
-				});
-				
-				test("Title is active but it's not a link", function () {
-					// Arrange
-					var oObjectHeader = createObjectHeader({
-						intro: "OH title",
 						introActive: true
 					});
 
@@ -314,11 +294,43 @@
 					
 					// Assert
 					var $sIntro = oObjectHeader.$("intro");
-					ok($sIntro.attr("href") === "javascript:void(0);", "Intro does not have a valid href and it's not a link.");
+					ok($sIntro.hasClass("sapMLnk"), "Intro is sap.m.Link");
 					
 					// Clean up
 					oObjectHeader.destroy();
 				});
+				
+				test("Active title tap", function() {
+					var domRef = null;
+					var eventHandler = function(oEvent) {
+						domRef = oEvent.getParameters().domRef;
+					}
+					
+					var oObjectHeader = createObjectHeader({
+						title: "OH title - last word will be cut from the rest of the title",
+						titleActive: true,
+						titlePress: eventHandler,
+						showMarkers: true,
+						markFlagged: true,
+						markFavorite: true
+					});
+			
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					sap.ui.test.qunit.triggerEvent("tap", oObjectHeader.$("txt"));
+					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "Title should be clickable when clicking on \"a\" element");
+					domRef = null;
+					
+					qutils.triggerEvent("tap", oObjectHeader.$("txt").children(0));
+					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
+					domRef = null;
+				
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				
 			module("Basic aggregations rendering", {
 				teardown: function () {
@@ -667,6 +679,87 @@
 					// Assert
 					equal(count, 1, "6 states are rendered in one column on phone");
 					notEqual(count, 3, "States aren't rendered in 3 columns.");
+				});
+				
+				
+				/******************************************************************/
+		module("OH Screen Reader support", {
+			teardown: function () {
+				oCore.byId(sControlId).destroy();
+			}
+		});
+				
+				test("OH has aria-labelledby", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					ok(oObjectHeader.$().attr("aria-labelledby"), "OH has attribute aria-labelledby");
+				});
+				
+				test("OH has attribute role=region", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					var $objectHeader = oObjectHeader.$();
+					
+					ok($objectHeader.attr("role"), "OH has attribute role");
+					equal($objectHeader.attr("role"), "region", "role is region");
+				});
+				
+				test("Active title has aria attributes", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok($sTitle.attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
+					equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
+				});
+				
+				
+				test("Title arrow has aria-haspopup", function(){ 
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						showTitleSelector: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					ok(oObjectHeader.$("arrow-aria").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
+				});
+				
+				test("Active icon has aria attributes", function(){ 
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						icon: sap.ui.core.IconPool.getIconURI("inbox"),
+						iconActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+					
+					// Assert
+					ok(jQuery(".sapMOHRIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
+					equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 				});
 				
 		</script>

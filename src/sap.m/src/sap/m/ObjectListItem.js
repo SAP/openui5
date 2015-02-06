@@ -90,7 +90,34 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			 * Object list item number and numberUnit value state.
 			 * @since 1.16.0
 			 */
-			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None}
+			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
+
+			/**
+			 * Determines the text direction of the item title.
+			 * Available options for the title direction are LTR (left-to-right) and RTL (right-to-left).
+			 * By default the item title inherits the text direction from its parent.
+			 */
+			titleTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Determines the text direction of the item intro.
+			 * Available options for the intro direction are LTR (left-to-right) and RTL (right-to-left).
+			 * By default the item intro inherits the text direction from its parent.
+			 */
+			introTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Determines the text direction of the item number.
+			 * Available options for the number direction are LTR (left-to-right) and RTL (right-to-left).
+			 * By default the item number inherits the text direction from its parent.
+			 */
+			numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Set the locked state of the object list item.
+			 * @since 1.28
+			 */
+			markLocked : {type : "boolean", group : "Misc", defaultValue : false}			
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
@@ -140,6 +167,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			this._oFlagIcon.destroy();
 			this._oFlagIcon = undefined;
 		}
+
+		if (this._oLockIcon) {
+			this._oLockIcon.destroy();
+			this._oLockIcon = undefined;
+		}
 		
 		if (this._oTitleText) {
 			this._oTitleText.destroy();
@@ -180,7 +212,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 */
 	ObjectListItem.prototype._hasBottomContent = function() {
 		
-		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers());
+		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked());
 	};
 	
 	/**
@@ -200,7 +232,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	
 		return aVisibleAttributes;
 	};
-	
+
 	/**
 	 * Lazy load list item's image.
 	 *
@@ -285,6 +317,22 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 		return this._oFlagIcon;
 	};
+
+	/**
+	 * @private
+	 * @returns Lock icon control
+	 */
+	ObjectListItem.prototype._getLockIcon = function() {
+
+		if (!this._oLockIcon) {
+			var oLockIconUri = IconPool.getIconURI("locked");
+			this._oLockIcon = IconPool.createControlByURI({
+				id: this.getId() + "-lock",
+				src: oLockIconUri
+			}).addStyleClass("sapMObjStatusMarkerLocked");
+		}
+		return this._oLockIcon;
+	};
 	
 	/**
 	 * @private
@@ -313,6 +361,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			this._oTitleText = new sap.m.Text(this.getId() + "-titleText", {
 				maxLines: 2
 			});
+
+			this._oTitleText.setParent(this);
 		}
 		return this._oTitleText;
 	};

@@ -24,14 +24,14 @@
 	<Page
 		id="page"
 		title=" Product XY" >
-	
+
 
 		<content>
 			<ObjectHeader
 				id="objectHeader"
 				title="{Name}"
 				number="{Price}"
-				numberUnit="{CurrencyCode}" >
+				unit="{CurrencyCode}" >
 				<attributes>
 					<ObjectAttribute title="Weight" text="{WeightMeasure} {WeightUnit}" />
 					<ObjectAttribute title="Dimensions" text="{Width} x {Depth} X {Height} {DimUnit}" />
@@ -97,12 +97,12 @@
 					<l:VerticalLayout>
 						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
 					</l:VerticalLayout>
-			
-					<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1073.jpg" />
-			
+
+					<Image src="test-resources/sap/ui/demokit/explored/img/HT-1073.jpg" />
+
 					<Text class="sapUiSmallMargin"
 						text="Lorem ipsum dolor st amet, consetetur ssadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
-			
+
 					<ScrollContainer height="100%" width="100%"
 						horizontal="false" vertical="true">
 						<List headerText="Some List Content 1"
@@ -113,8 +113,8 @@
 								icon="{ProductPicUrl}" iconDensityAware="false" iconInset="false" />
 						</List>
 					</ScrollContainer>
-			
-					<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg" />
+
+					<Image src="test-resources/sap/ui/demokit/explored/img/HT-1112.jpg" />
 				</pages>
 			</Carousel>
 			<u:SplitContainer id="splitContainer" showSecondaryContent="true">
@@ -139,7 +139,7 @@
 	}
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-	
+
 	sap.ui.controller("margin.qunit.controller", {
 
 		onInit: function(oEvent) {
@@ -157,9 +157,9 @@
 		}
 	});
 
-	
+
 	module("Apply pre-defined css classes");
-	
+
 	var fnTest = function(sCssProperty, sMarginClass, sExpectedMarginValue, bHorizontal) {
 		assert.ok( true, " " ); //Group tests
 		assert.ok( true, "TESTING MARGIN CLASS '" + sMarginClass + "'" );
@@ -167,7 +167,7 @@
 		oComponentContainer.setComponent(new margin.qunit.Component());
 		oComponentContainer.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		
+
 		var oTestView = sap.ui.getCore().byId("__xmlview" + iCount),
 			aControls = [
 				oPage = oTestView.byId('page'),
@@ -195,7 +195,7 @@
 			oControl.addStyleClass(sMarginClass);
 		});
 		sap.ui.getCore().applyChanges();
-		
+
 		//check values
 		equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);
 		equal(oObjectHeader.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " ObjectHeader " +  sExpectedMarginValue);
@@ -209,7 +209,7 @@
 			notEqual(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
 			oRestrictedWidthPanel.removeStyleClass('sapUiForceWidthAuto');
 			equal(oRestrictedWidthPanel.$().css('width'), '200px', "width Panel 200px");
-			
+
 		}
 		equal(oList.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " List " +  sExpectedMarginValue );
 		equal(oScrollCont.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Scroll Container " +  sExpectedMarginValue );
@@ -218,17 +218,17 @@
 		//Can not check 'auto' because there is no way to  ask for it. Even 'oControl.getDomRef().style.width'
 		//does not deliver the correct result: the inline style is returned even though it is not what
 		//is used for determining the width
-		
+
 		//Clean up
 		oComponentContainer.destroy();
 		iCount++;
 	};
-	
+
 	//Needed to identify the views which are created during test
 	var iCount = 0;
-	
+
 	test("Test responsive margin classes", function() {
-	
+
 		//Test Responsive Margins: resize the containing page and check how the
 		//elements respond.
 		//First check the margins for large desktop screens
@@ -239,7 +239,7 @@
 		} else {
 			fnTest.call(this, 'margin', 'sapUiResponsiveMargin', sExpectedMargin, true);
 		}
-		
+
 
 	});
 </script>
@@ -255,4 +255,3 @@
 </body>
 </html>
 
-                                                                                                                      

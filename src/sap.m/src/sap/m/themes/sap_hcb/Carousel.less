@@ -34,8 +34,8 @@
 }
 
 /* Carousel controls: Bulleted */
-
 .sapMCrslBulleted > span {
+	text-indent: 2rem;
 	line-height: 0;
 	text-decoration: none;
 	overflow: hidden;
@@ -136,8 +136,6 @@
 
 html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
 .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
 	left: auto;
 	right: 0;
 	text-indent: 0.0625rem;
@@ -145,13 +143,16 @@ html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,
 
 html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon {
-	display: table-cell;
-	vertical-align: middle;
 	right: auto;
 	left: 0;
 	text-indent: -0.0625rem;
 }
 
+.sapMCrslHudInner > .sapUiIcon {
+	display: table-cell;
+	vertical-align: middle;
+	cursor: inherit !important;
+}
 /* extra bits */
 /* captions */
 

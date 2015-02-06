@@ -195,7 +195,7 @@
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
-			aConditions = oFilterPanel._getConditions();
+			aConditions = oFilterPanel.getConditions();
 	
 			var sConditions= ""; 
 			for (i = 0; i < aConditions.length; i++) {

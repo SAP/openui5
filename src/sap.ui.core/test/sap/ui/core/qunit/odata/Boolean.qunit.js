@@ -19,15 +19,15 @@
 		}
 	});
 
-	test("basics", sinon.test(function () {
+	test("basics", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
 		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
+		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
 		strictEqual(oType.oFormatOptions, undefined, "no format options");
 		strictEqual(oType.oConstraints, undefined, "no constraints");
-	}));
+	});
 
 	//*********************************************************************************************
 	test("format", function () {
@@ -75,15 +75,17 @@
 
 	//*********************************************************************************************
 	test("parse: user error", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.Boolean();
 
-		try {
-			oType.parseValue("foo", "string");
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message, 'Enter "Yes" or "No".');
-		}
+			try {
+				oType.parseValue("foo", "string");
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, 'EnterYesOrNo YES NO');
+			}
+		});
 	});
 
 	//*********************************************************************************************
@@ -104,37 +106,39 @@
 			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: foo");
 		}
 
-		oType.setConstraints({nullable: false});
-		try {
-			oType.validateValue(null);
-			ok(false);
-		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, 'Enter "Yes" or "No".');
-		}
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
+			try {
+				oType.validateValue(null);
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException);
+				strictEqual(e.message, 'EnterYesOrNo YES NO');
+			}
+		});
 	});
 
 	//*********************************************************************************************
-	test("setConstraints", sinon.test(function () {
+	test("setConstraints", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
 		this.mock(jQuery.sap.log).expects("warning")
 			.once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
 
-		oType.setConstraints({nullable: false});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
 		deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
 
-		oType.setConstraints({nullable: "false"});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "false"});
 		deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
 
-		oType.setConstraints({nullable: true});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: true});
 		strictEqual(oType.oConstraints, undefined, "nullable true");
 
-		oType.setConstraints({nullable: "true"});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "true"});
 		strictEqual(oType.oConstraints, undefined, 'nullable "true"');
 
-		oType.setConstraints({nullable: "foo"});
+		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "foo"});
 		strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
-	}));
+	});
 } ());

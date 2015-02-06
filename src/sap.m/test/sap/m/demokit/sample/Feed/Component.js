@@ -9,7 +9,6 @@ sap.ui.core.UIComponent.extend("sap.m.sample.Feed.Component", {
 				"sap.m"
 			]
 		},
-		includes : [ "Feed/style.css" ],
 		config : {
 			sample : {
 				files : [

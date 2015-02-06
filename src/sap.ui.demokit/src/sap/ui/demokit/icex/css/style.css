@@ -1,0 +1,42 @@
+.invisible {
+	display: none;
+}
+
+.welcomeText {
+	font-size: 1.0rem;
+	margin: 2rem;
+}
+
+.detailButtonBox {
+	margin: 1em;
+}
+
+.preview {
+	color: white;
+	padding: 1rem 0;
+	width: 100%;
+	transition: transform 2s, -webkit-transform 2s;	/* transition: IE10, Opera, Firefox, Chrome 26  */
+	-webkit-transition: -webkit-transform 2s; 		/* -webkit-transition: Safari, Android Browser, BB Browser, Chrome 25 */
+}
+
+.preview:hover {
+	background-color: #E69A17;
+	transform: rotate(360deg); 						/* transform: IE10, Opera, Firefox */
+	-webkit-transform: rotate(360deg); 				/* -webkit-transform: Chrome, Safari, Android Browser, BB Browser */
+}
+
+.previewColor1 {
+	background-color: #64E4CE;
+}
+
+.previewColor2 {
+	background-color: #031E48;
+}
+
+.previewColor3 {
+	background-color: #1C4C98;
+}
+
+.previewColor4 {
+	background-color: #8875E7;
+}

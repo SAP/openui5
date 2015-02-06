@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SearchField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Parameters) {
 	"use strict";
 
 
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
 	
 			/**
-			 * Defines the width of the input.
+			 * Defines the CSS width of the input. If not set, width is 100%.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 	
@@ -94,6 +94,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			selectOnFocus : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -135,14 +147,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	IconPool.insertFontFaceStyle();
 	
-	
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an F5 ARIA announcement and remember its ID for later use in the renderer:
+	SearchField.prototype._sAriaF5LabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("SEARCHFIELD_ARIA_F5")
+	}).toStatic().getId();
+
 	SearchField.prototype.init = function() {
 	
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
 		this._inputEvent = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10 ? "keyup" : "input";
-	
+
 		// Default placeholder: "Search"
-		this.setProperty("placeholder", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH"),true);
+		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
 		// TODO: suggestions and search provider
 	};
 	

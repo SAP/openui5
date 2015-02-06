@@ -7,11 +7,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 
 	/**
-	 * DatePicker renderer. 
+	 * DatePicker renderer.
 	 * @namespace
 	 */
 	var DatePickerRenderer = Renderer.extend(InputBaseRenderer);
-	
+
 	/**
 	 * Adds control specific class
 	 *
@@ -19,15 +19,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.m.DatePicker} oDP an object representation of the control that should be rendered
 	 */
 	DatePickerRenderer.addOuterClasses = function(oRm, oDP) {
-	
+
 		oRm.addClass("sapMDP");
-	
+
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 			oRm.addClass("sapMInputIE9");
 		}
-	
+
 	};
-	
+
 	/**
 	 * add extra content to Input
 	 *
@@ -35,22 +35,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.m.DatePicker} oDP an object representation of the control that should be rendered
 	 */
 	DatePickerRenderer.writeInnerContent = function(oRm, oDP) {
-	
+
 		if (oDP.getEnabled() && oDP.getEditable()) {
 			var aClasses = [];
 			var mAttributes = {};
-	
+
 			mAttributes["id"] = oDP.getId() + "-icon";
 			mAttributes["tabindex"] = "-1"; // to get focus events on it, needed for popup autoclose handling
 			oRm.writeIcon("sap-icon://appointment-2", aClasses, mAttributes);
 		}
-	
+
 		// invisible span with description for keyboard navigation
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 			// ResourceBundle always returns the key if the text is not found
 		var sText = rb.getText("DATEPICKER_KEYBOARD");
 		var sDateType = rb.getText("DATEPICKER_DATE_TYPE");
-	
+
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oDP, oDP.getTooltip_AsString());
 		if (sTooltip) {
 			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
@@ -60,9 +60,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		oRm.write('<SPAN id="' + oDP.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		oRm.writeEscaped(sText);
 		oRm.write('</SPAN>');
-	
+
 	};
-	
+
 	/**
 	 * Write the value of the input.
 	 *
@@ -70,11 +70,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerValue = function(oRm, oDP) {
-	
+
 		oRm.writeAttributeEscaped("value", oDP._formatValue(oDP.getDateValue()));
-	
+
 	};
-	
+
 	/**
 	 * This method is reserved for derived classes to add extra attributes for the input element.
 	 *
@@ -82,26 +82,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
-	
+
 		if (sap.ui.Device.browser.mobile) {
 			// prevent keyboard in mobile devices
 			oRm.writeAttribute("readonly", "readonly");
 		}
-	
+
+	};
+
+	DatePickerRenderer.writeAccessibilityState = function(oRm, oDP) {
+
 		var mProps = {
+			role: "combobox",
 			multiline: false,
 			autocomplete: "none",
 			haspopup: true,
+			owns: oDP.getId() + "-cal",
 			describedby: {value: oDP.getId() + "-Descr", append: true}};
-	
+
 		if (oDP.getValueState() == sap.ui.core.ValueState.Error) {
 			mProps["invalid"] = true;
 		}
-	
+
 		oRm.writeAccessibilityState(oDP, mProps);
-	
+
 	};
-	
 
 	return DatePickerRenderer;
 

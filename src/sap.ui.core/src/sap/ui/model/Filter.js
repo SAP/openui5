@@ -3,8 +3,8 @@
  */
 
 // Provides a filter for list bindings
-sap.ui.define(['jquery.sap.global', './FilterOperator'],
-	function(jQuery, FilterOperator) {
+sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/UnicodeNormalizer'],
+	function(jQuery, FilterOperator, UnicodeNormalizer) {
 	"use strict";
 
 
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', './FilterOperator'],
 				this.bAnd = oFilterData.and || oFilterData.bAnd;
 				this.fnTest = oFilterData.test;
 			} else {
-				//If parameters are used we have to check weather a regular or a multi filter is speficied
+				//If parameters are used we have to check whether a regular or a multi filter is specified
 				if (jQuery.isArray(sPath)) {
 					this.aFilters = sPath;
 				} else {
@@ -88,6 +88,8 @@ sap.ui.define(['jquery.sap.global', './FilterOperator'],
 				this.oValue1 = oValue1;
 				this.oValue2 = oValue2;
 			}
+			this.oValue1 = this._normalizeValue(this.oValue1);
+			this.oValue2 = this._normalizeValue(this.oValue2);
 			if (jQuery.isArray(this.aFilters) && !this.sPath && !this.sOperator && !this.oValue1 && !this.oValue2) {
 				this._bMultiFilter = true;
 				jQuery.each(this.aFilters, function(iIndex, oFilter) {
@@ -103,6 +105,19 @@ sap.ui.define(['jquery.sap.global', './FilterOperator'],
 		}
 	
 	});
+	
+	/**
+	 * Normalizes the filtered value if it is a String and the function is defined.
+	 *
+	 * @param {object} oValue the value to be filtered.
+	 * @private
+	 */
+	Filter.prototype._normalizeValue = function(oValue) {
+		if (typeof oValue === "string" && String.prototype.normalize != undefined) {
+			oValue = oValue.normalize();
+		}
+		return oValue;
+	};
 
 	return Filter;
 

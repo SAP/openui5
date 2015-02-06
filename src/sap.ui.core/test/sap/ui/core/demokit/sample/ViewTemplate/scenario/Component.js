@@ -8,7 +8,6 @@
  * @version @version@
  */
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.scenario.Component");
-jQuery.sap.require("sap.ui.core.sample.ViewTemplate.scenario.FieldHelper");
 jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
@@ -19,7 +18,7 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 				+ "/Annotations(TechnicalName='ZANNO4SAMPLE_ANNO_MDL',Version='0001')/$value",
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
 			sMockServerBaseUri
-				= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/data2/",
+				= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
 			oLayout = new sap.m.HBox(),
 			oMockServer,
 			oUriParameters = jQuery.sap.getUriParameters(),

@@ -3,10 +3,10 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Toolbar design="Transparent" height="3rem">
-		<Text text="Title Only" class="sapMH4FontSize"/>
+		<Title text="Title Only"/>
 	</Toolbar>
 	<Toolbar design="Transparent" height="3rem">
-		<Text text="Title and Actions" class="sapMH4FontSize"/>
+		<Title text="Title and Actions"/>
 		<ToolbarSpacer/>
 		<Button icon="sap-icon://group-2"/>
 		<Button icon="sap-icon://action-settings"/>
