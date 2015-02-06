@@ -11,7 +11,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Upper left" />
+						<Title level="H2" text="Upper left" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -29,7 +29,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Upper center" />
+						<Title level="H2" text="Upper center" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -47,7 +47,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Upper right" />
+						<Title level="H2" text="Upper right" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -65,7 +65,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Middle left" />
+						<Title level="H2" text="Middle left" />
 					</Toolbar>
 				</headerToolbar>
 
@@ -85,7 +85,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Middle center" />
+						<Title level="H2" text="Middle center" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -104,7 +104,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Middle right" />
+						<Title level="H2" text="Middle right" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -122,7 +122,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Lower left" />
+						<Title level="H2" text="Lower left" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -140,7 +140,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Lower center" />
+						<Title level="H2" text="Lower center" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -158,7 +158,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Lower right" />
+						<Title level="H2" text="Lower right" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox

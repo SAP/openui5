@@ -8,7 +8,7 @@
 		items="{/ProductCollection}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products"></Label>
+				<Title text="Products" level="H2"/>
 				<ToolbarSpacer></ToolbarSpacer>
 				<!--  Add the Personalization button -->
 				<CheckBox text="Grouping" select="onTableGrouping" />

@@ -12,7 +12,7 @@
 			<Panel id="panel1" busyIndicatorDelay="0" >
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Panel 1" />
+						<Title text="Panel 1" level="H2"/>
 						<ToolbarSpacer />
 						<Button icon="sap-icon://action" text="Trigger Action" press="onAction" />
 					</Toolbar>

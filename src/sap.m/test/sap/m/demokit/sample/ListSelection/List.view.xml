@@ -12,7 +12,7 @@
 		<headerToolbar>
 			<Toolbar>
 				<content>
-					<Label text="Products" />
+					<Title text="Products" level="H2" />
 					<ToolbarSpacer />
 					<Select
 						selectedKey="MultiSelect"
