@@ -289,7 +289,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<version>0.11.0</version>
+							<version>0.13.0</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
 							<quiet>true</quiet>
