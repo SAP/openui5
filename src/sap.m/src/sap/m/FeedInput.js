@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * The placeholder text shown in the input area as long as the user has not entered any text value.
 			 */
-			placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here..."},
+			placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here"},
 
 			/**
 			 * The text value of the feed input. As long as the user has not entered any text the post butoon is disabled
