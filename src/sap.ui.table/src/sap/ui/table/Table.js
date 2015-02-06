@@ -5387,7 +5387,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 
 		if (mParameters) {
-			if (mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0) {
+			if (mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0 && mParameters.receivedLength !== oBinding.getLength()) {
 				this.setBusy(true);
 			}
 		} else {
