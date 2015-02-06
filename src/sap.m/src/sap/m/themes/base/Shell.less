@@ -32,6 +32,9 @@
 	z-index: 1; /* to lift it above the CenterBox shadow */
 	background-color: @sapUiBrand;
 }
+
+/* this "sapMBrandingBar-CTX" CSS class can be set by any container control that comes with its own branding bar, so any shell inside will not display its branding bar */
+.sapMBrandingBar-CTX .sapMShellBrandingBar,
 .sapUiUfdShell .sapMShellBrandingBar {
 	display: none;
 }
