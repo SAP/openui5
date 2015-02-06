@@ -996,7 +996,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 			// update the DomRef because it could have been rerendered during closing
 			$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
-			if ($Ref.length > 1) {
+			if ($Ref.length) {
 				// also hide the new DOM ref
 				jQuery($Ref).hide().css({
 					"visibility" : "hidden",
