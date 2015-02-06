@@ -6,7 +6,16 @@
 		title="{i18n>lineItemTitle}"
 		showNavButton="true" >
 	    <headerContent>
-	      <Button id="btnPrevious" icon="sap-icon://up" press="onNavToPrevLineItem" /><Button id="btnNext" icon="sap-icon://down" press="onNavToNextLineItem" />
+	      	<Button 
+	      		id="btnPrevious" 
+	      		icon="sap-icon://up"
+	      		enabled="{controlStates>/previousButtonEnabled}" 
+	      		press="onNavToPrevLineItem" />
+	      	<Button 
+	      		id="btnNext" 
+	      		icon="sap-icon://down" 
+	      		enabled="{controlStates>/nextButtonEnabled}"
+	      		press="onNavToNextLineItem" />
 	    </headerContent>
 		<content>
 			<ObjectHeader
