@@ -25,7 +25,7 @@
 				</Input>
 				<Button text="Set Hash" press="onSetHash"></Button>
 			</f:SimpleForm>
-			<html:h3 class="sapUiSmallMarginLeft">Routes</html:h3>
+			<Title class="sapUiSmallMarginBegin sapUiSmallMarginTop" text="Routes" level="H2"/>
 			<Table items="{/patterns}">
 				<headerToolbar>
 					<Toolbar>

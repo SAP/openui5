@@ -10,7 +10,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Reverse, horizontal" />
+						<Title level="H2" text="Reverse, horizontal" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -27,7 +27,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Top to bottom, vertical" />
+						<Title level="H2" text="Top to bottom, vertical" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -44,7 +44,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Bottom to top, reverse vertical" />
+						<Title level="H2" text="Bottom to top, reverse vertical" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -61,7 +61,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Arbitrary flex item order" />
+						<Title level="H2" text="Arbitrary flex item order" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox

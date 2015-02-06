@@ -12,7 +12,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Variable width" />
+						<Title level="H2" text="Variable width" />
 					</Toolbar>
 				</headerToolbar>
 
@@ -33,7 +33,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Same width, transition effect" />
+						<Title level="H2" text="Same width, transition effect" />
 					</Toolbar>
 				</headerToolbar>
 

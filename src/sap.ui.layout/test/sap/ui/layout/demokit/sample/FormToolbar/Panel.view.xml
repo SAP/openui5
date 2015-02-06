@@ -6,7 +6,7 @@
 	<Panel>
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Address" />
+				<Title text="Address" level="H2"/>
 				<ToolbarSpacer />
 				<Button icon="sap-icon://settings" />
 				<Button icon="sap-icon://drop-down-list" />

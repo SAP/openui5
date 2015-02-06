@@ -8,7 +8,7 @@
 			<Panel>
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Horizontally opposing flex items" />
+						<Title level="H2" text="Horizontally opposing flex items" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox

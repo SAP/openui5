@@ -12,7 +12,7 @@
 		items="{/ProductCollection}">
 		<headerToolbar>
 			<Toolbar>
-				<Label text="Products" />
+				<Title text="Products" level="H2" />
 				<ToolbarSpacer />
 				<Button
 					icon="sap-icon://refresh"

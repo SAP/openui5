@@ -10,7 +10,7 @@
 			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Equal flexibility and content" />
+						<Title level="H2" text="Equal flexibility and content" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -38,7 +38,7 @@
 			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Different flexibility, equal content" />
+						<Title level="H2" text="Different flexibility, equal content" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -66,7 +66,7 @@
 			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Equal flexibility, different content" />
+						<Title level="H2" text="Equal flexibility, different content" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -94,7 +94,7 @@
 			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Equal flexibility, different content, width 0" />
+						<Title level="H2" text="Equal flexibility, different content, width 0" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
@@ -123,7 +123,7 @@
 			<Panel class="sapUiDemoFlexBoxSizeAdjustments">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="Different flexibility and content, width 0" />
+						<Title level="H2" text="Different flexibility and content, width 0" />
 					</Toolbar>
 				</headerToolbar>
 				<FlexBox
