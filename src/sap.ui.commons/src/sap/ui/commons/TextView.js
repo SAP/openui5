@@ -108,15 +108,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setProperty("text", sText, true); // no re-rendering!
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aLines = this.getText().split("\n");
-			for (var i = 0; i < aLines.length; i++) {
-				aLines[i] = jQuery.sap.encodeHTML(aLines[i]);
-			}
-			sText = aLines.join("<br>");
-			oDomRef.innerHTML = sText;
+			// in case of 
+			sText = this.getText(); // the default value '' ensures valid text string
+			oDomRef.innerHTML = jQuery.sap.encodeHTML(sText).replace(/&#xa;/g, "<br>");
 			// when no tooltip is applied use the text as tooltip
-			if (!this.getTooltip_AsString() && sText) {
-				oDomRef.title = this.getText(); // IE8 doesn't like HTML encoded attribute values
+			if (!this.getTooltip_AsString()) {
+				oDomRef.title = sText; // IE8 doesn't like HTML encoded attribute values
 			}
 		}
 		if (this._oPopup) {
