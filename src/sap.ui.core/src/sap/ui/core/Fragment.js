@@ -548,9 +548,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				
 				this._oContainingView = mSettings.containingView || this;
 				
-				var sHTML = mSettings.fragmentContent || _getHTMLTemplate(mSettings.fragmentName);
+				var vHTML = mSettings.fragmentContent || _getHTMLTemplate(mSettings.fragmentName);
 				this._oTemplate = document.createElement("div");
-				var vHTML = sap.ui.core.RenderManager.prepareHTML5(sHTML);
 	
 				if (typeof vHTML === "string") {
 					this._oTemplate.innerHTML = vHTML;
