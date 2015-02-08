@@ -37,9 +37,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			var mParams = jQuery.sap.getUriParameters();
 			
 			// TODO: Remove deprecated code once all projects adapted
-			QUnit.equals = QUnit.assert.equal;
-			window.equals = QUnit.assert.equal;
-	
+			QUnit.equals = window.equals = window.equal;
+
 			// Set global timeout for all tests
 			var sTimeout = mParams.get("sap-ui-qunittimeout");
 			if (!sTimeout || isNaN(sTimeout)) {

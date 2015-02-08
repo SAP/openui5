@@ -209,7 +209,7 @@
 					if (oResult && jQuery(oResult).text().indexOf("completed") >= 0) {
 						
 						// extract the QUnit result
-						var $testName = jQuery(doc).find("h1#qunit-header a").text();
+						var $testName = jQuery(doc).find("h1#qunit-header").text();
 						var $results = jQuery(doc).find("ol#qunit-tests > li");
 						var oContext = oInst.fnGetTestResults($testName, $results);
 						var oCoverage = $frame[0].contentWindow._$blanket;
@@ -351,19 +351,23 @@
 					aTestMessages.push(oTestMessage);
 				}
 
-				var $test = jQuery(aTestResults[i]).find("strong");
-				var sTest = jQuery($test[0]).text();
+				var $test = jQuery(aTestResults[i]);
+				var sTestSummary = $test.find("strong").text();
 				
-				var sTestName = sTest.split("(");
-				var sCounts = sTest.match(/(\d+, \d+, \d+)/)[0].split(", ");
-				var sNumFailed = sCounts[0];
-				var sNumPassed = sCounts[1];
-				var sNumAll = sCounts[2];
+				var m = sTestSummary.match(/^(.*)\((\d+)(?:,\s*(\d+),\s*(\d+))?\)\s*$/);
+				var sTestName = m[1];
+				if ( m[3] || m[4] ) { 
+					var sNumFailed = m[2];
+					var sNumPassed = m[3];
+					var sNumAll = m[4];
+				} else {
+					var sNumPassed = sNumAll = m[2];
+					var sNumFailed = "0";
+				}
 				
-				$failedTestResult = jQuery(aTestResults[i]);
-				var sRerunLink = $failedTestResult[0].children[1].href;
+				var sRerunLink = $test.find("A").attr("href");
 				
-				var sLineItemClass = sCounts[0] == "0" ? "pass" : "fail";
+				var sLineItemClass = sNumFailed === "0" ? "pass" : "fail";
 				if(sLineItemClass === "fail") {
 					oContext.tests[0].outcome = sLineItemClass;
 				}
@@ -371,15 +375,15 @@
 				oContext.tests[0].results.push({result:{TestName: sTestName[0], Failed: sNumFailed, Passed: sNumPassed, All: sNumAll, rerunlink: sRerunLink, sLiClass: sLineItemClass, testmessages: aTestMessages }});
 				
 				var ntotalTests = parseInt(jQuery("div#reportingHeader span.total").text());
-				ntotalTests = ntotalTests + parseInt(sCounts[2]);
+				ntotalTests = ntotalTests + parseInt(sNumAll);
 				jQuery("div#reportingHeader span.total").text(ntotalTests);
 				
 				var nPassedTests = parseInt(jQuery("div#reportingHeader span.passed").text());
-				nPassedTests = nPassedTests + parseInt(sCounts[1]);
+				nPassedTests = nPassedTests + parseInt(sNumPassed);
 				jQuery("div#reportingHeader span.passed").text(nPassedTests);
 				
 				var nFailedTests = parseInt(jQuery("div#reportingHeader span.failed").text());
-				nFailedTests = nFailedTests + parseInt(sCounts[0]);
+				nFailedTests = nFailedTests + parseInt(sNumFailed);
 				jQuery("div#reportingHeader span.failed").text(nFailedTests);
 			}
 

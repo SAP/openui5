@@ -250,7 +250,6 @@
 		ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
 	});
 	
-	stop();
 	asyncTest("Favorite Action disabled: no event anymore", function() {
 		expect(1);
 		action = "favorite";
@@ -288,7 +287,6 @@
 		ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
 	});
 	
-	stop();
 	asyncTest("Flag Action disabled: no event anymore", function() {
 		expect(1);
 		action = "flag";
@@ -299,7 +297,6 @@
 		},500);
 	});
 	
-	stop();
 	asyncTest("UpdateSelected Event", function() {
 		expect(3);
 		action = "update";
@@ -317,7 +314,6 @@
 		}, 500);
 	});
 
-	stop();
 	asyncTest("FeedSubmit Event", function() {
 		expect(5);
 		action = "update";
@@ -349,7 +345,6 @@
 		ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
 	});
 	
-	stop();
 	asyncTest("Update Action disabled: no event anymore", function() {
 		expect(1);
 		action = "update";
@@ -359,7 +354,7 @@
 			start();
 		},500);
 	});
-	stop();
+
 	asyncTest("Open Method", function() {
 		expect(5);
 		facet = "overview";
@@ -376,7 +371,7 @@
 					}, 500);
 		}, 500);
 	});
-	stop();
+
 	asyncTest("FacetSelected Event", function() {
 		expect(3);
 		facet = "activities";
@@ -389,7 +384,6 @@
 				}, 500);
 	});
 
-	stop();
 	asyncTest("FollowSelected Event", function() {
 		expect(19);
 		equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
@@ -447,7 +441,6 @@
 		ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
 	});
 	
-	stop();
 	asyncTest("Follow Action disabled: no event anymore", function() {
 		expect(1);
 		action = "follow";
@@ -457,8 +450,8 @@
 			start();
 		},500);
 	});
+	
 	// at the end close
-	stop();
 	asyncTest("Close Event", function() {
 		expect(3);
 		ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
@@ -478,7 +471,6 @@
 		oShell.destroy();
 	});
 	
-	QUnit.stop();
 </script>
 </head>
 <body>
