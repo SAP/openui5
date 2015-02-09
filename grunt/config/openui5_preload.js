@@ -22,7 +22,10 @@ module.exports = function(grunt, config) {
 		// set target configuration
 		openui5_preload['library-' + library.name] = {
 			options: {
-				resources: libraryPath,
+				resources: {
+					cwd: libraryPath,
+					src: [ '**/*.js' ] // only include js files (leave out e.g. *.properties files)
+				},
 				dest: libraryPath
 			},
 			libraries: libraryConfig
