@@ -1,8 +1,8 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.MessagePageNoItems.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
-	<SplitApp id="splitApp"></SplitApp>
+	<MessagePage title="Product">
+	</MessagePage>
 </mvc:View>
