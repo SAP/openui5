@@ -64,10 +64,7 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 			oLayout.addItem(sap.ui.view({
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
-				models : {
-					undefined : oModel,
-					"meta" : oModel.getMetaModel()
-				}
+				models : oModel
 			}));
 		}, function (oError) {
 			jQuery.sap.require("sap.m.MessageBox");
