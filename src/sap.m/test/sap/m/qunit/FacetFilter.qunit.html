@@ -2350,7 +2350,8 @@
 
 					start();
 					sap.ui.getCore().applyChanges();
-					var oButton = getButtonCtrl(oFF, 0);
+					// var oButton = getButtonCtrl(oFF, 0);
+					var oButton = oFF._getButtonForList(oFFL);
 					ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
 					destroyFF(oFF);
 				});

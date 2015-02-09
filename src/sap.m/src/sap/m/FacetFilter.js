@@ -778,7 +778,10 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
 					} else {
-						that._handlePopoverAfterClose(oList);
+//						that._handlePopoverAfterClose(oList);
+//fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
+						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
+						oPopover.destroySubHeader();
 					}
 				},
 				horizontalScrolling: false
