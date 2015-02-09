@@ -194,7 +194,7 @@
 				"name" : "Dialog",
 				"category" : "Popup",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.Dialog", "sap.m.sample.DialogSearch" ]
+				"samples" : [ "sap.m.sample.Dialog", "sap.m.sample.DialogSearch", "sap.m.sample.DialogConfirm" ]
 			},
 			{
 				"id" : "sap.m.DisplayListItem",
@@ -1183,6 +1183,11 @@
 				"description": "When using a Search Field in a Dialog it is best to put it to the dialog's sub header to have it visible all the time."
 			},
 			{
+			  "id": "sap.m.sample.DialogConfirm",
+			  "name": "Dialog with confirm options",
+			  "description": "Creating a dialog with confirm and reject options that replaces the forwardingDialog functionality."
+			},
+			{
 				"id": "sap.m.sample.ListSelectionSearch",
 				"name": "List - Selection & Search",
 				"description": "When searching a list with multi selection the previously selected items will stay selected. This is managed by the list control for you."
@@ -1321,7 +1326,7 @@
 				"id": "sap.m.sample.ListLoading",
 				"name": "List - Loading Indication",
 				"description": "You can use enableBusyIndicator property to display loading animation while the data is being loaded from server. By default, this property is true and busy indicator will be shown after 1000ms. This behavior can be customized by setting the busyIndicatorDelay property. When this property is set to false, items stay on the List until data loading is completed."
-			},			
+			},
 			{
 				"id": "sap.m.sample.TableViewSettingsDialog",
 				"name": "Table - View Settings",
