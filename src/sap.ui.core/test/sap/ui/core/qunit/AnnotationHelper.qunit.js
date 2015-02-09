@@ -13,7 +13,8 @@
 	// WARNING! These are on by default and break the Promise polyfill...
 	sinon.config.useFakeTimers = false;
 
-	var oCIRCULAR = {},
+	var AnnotationHelper = sap.ui.model.odata.AnnotationHelper, // shorten lines
+		oCIRCULAR = {},
 		oBoolean = {
 			name : "sap.ui.model.odata.type.Boolean",
 			constraints : {"nullable" : false}
@@ -155,10 +156,10 @@
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
 		sPathPrefix = "/dataServices/schema/0/entityType/1", // GWSAMPLE_BASIC.Product
 		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
-		fnGetNavigationPath = sap.ui.model.odata.AnnotationHelper.getNavigationPath,
-		fnIsMultiple = sap.ui.model.odata.AnnotationHelper.isMultiple,
-		fnSimplePath = sap.ui.model.odata.AnnotationHelper.simplePath,
-		fnText = sap.ui.model.odata.AnnotationHelper.text,
+		fnGetNavigationPath = AnnotationHelper.getNavigationPath,
+		fnIsMultiple = AnnotationHelper.isMultiple,
+		fnSimplePath = AnnotationHelper.simplePath,
+		fnText = AnnotationHelper.text,
 		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {
@@ -178,28 +179,26 @@
 
 	/**
 	 * Formats the value using the AnnotationHelper and then parses the result via the complex
-	 * parser. Provides access to the given current binding.
+	 * parser. Provides access to the given current context.
 	 *
 	 * @param {any} vValue
-	 * @param {sap.ui.model.Binding} [oCurrentBinding]
+	 * @param {sap.ui.model.Context} [oCurrentContext]
 	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
 	 *   the custom formatter function to call
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParse(vValue, oCurrentBinding, fnMethod) {
+	function formatAndParse(vValue, oCurrentContext, fnMethod) {
 		var sResult;
 
-		if (typeof oCurrentBinding === "function") { // allow oCurrentBinding to be omitted
-			fnMethod = oCurrentBinding;
-			oCurrentBinding = null;
+		if (typeof oCurrentContext === "function") { // allow oCurrentContext to be omitted
+			fnMethod = oCurrentContext;
+			oCurrentContext = null;
 		}
-		fnMethod = fnMethod || sap.ui.model.odata.AnnotationHelper.format;
-		sResult = fnMethod.call({
-			currentBinding : function () {
-				return oCurrentBinding;
-			}
-		}, vValue);
+		fnMethod = fnMethod || AnnotationHelper.format;
+		sResult = fnMethod.$
+			? fnMethod(getInterface(oCurrentContext), vValue)
+			: fnMethod(vValue);
 
 		// @see applySettings: complex parser returns undefined if there is nothing to unescape
 		return sap.ui.base.BindingParser.complexParser(sResult, undefined, true) || sResult;
@@ -207,27 +206,44 @@
 
 	/**
 	 * Formats the value using the AnnotationHelper and then parses the result via the complex
-	 * parser. Makes sure no warning is raised. Provides access to the given current binding.
+	 * parser. Makes sure no warning is raised. Provides access to the given current context.
 	 *
 	 * @param {any} vValue
-	 * @param {sap.ui.model.Binding} [oCurrentBinding]
+	 * @param {sap.ui.model.Context} [oCurrentContext]
 	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
 	 *   the custom formatter function to call
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParseNoWarning(vValue, oCurrentBinding, fnMethod) {
+	function formatAndParseNoWarning(vValue, oCurrentContext, fnMethod) {
 		var oSandbox = sinon.sandbox.create(),
 			oLogMock = oSandbox.mock(jQuery.sap.log);
 
 		oLogMock.expects("warning").never();
 
 		try {
-			return formatAndParse(vValue, oCurrentBinding, fnMethod);
+			return formatAndParse(vValue, oCurrentContext, fnMethod);
 		} finally {
 			oLogMock.verify();
 			oSandbox.restore();
 		}
+	}
+
+	/**
+	 * Returns the callback interface related to the given context.
+	 *
+	 * @param {sap.ui.model.Context} oCurrentContext
+	 * @returns {object}
+	 */
+	function getInterface(oCurrentContext) {
+		return {
+			getModel : function () {
+				return oCurrentContext.getModel();
+			},
+			getPath : function () {
+				return oCurrentContext.getPath();
+			}
+		};
 	}
 
 	/**
@@ -409,9 +425,9 @@
 					}
 				}),
 				sMetaPath = "/Value",
-				oCurrentBinding = oMetaModel.bindProperty(sMetaPath),
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getProperty(sMetaPath),
-				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
 			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			strictEqual(oSingleBindingInfo.path, sPath);
@@ -428,11 +444,6 @@
 	//*********************************************************************************************
 	jQuery.each([{
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/0/Value",
-		type : oBoolean
-	}, {
-		path : "Value",
-		context : oTestModel.createBindingContext(
-			sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/0/"),
 		type : oBoolean
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/1/Value",
@@ -470,11 +481,11 @@
 	}], function (i, oFixture) {
 		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
 				+ ", type = " + oFixture.type.name, function () {
-			var oCurrentBinding = oTestModel.bindProperty(oFixture.path, oFixture.context),
-				oRawValue = oCurrentBinding.getValue(),
+			var oCurrentContext = oTestModel.getContext(oFixture.path),
+				oRawValue = oTestModel.getObject(oFixture.path),
 				oSingleBindingInfo;
 
-			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
 			strictEqual(oSingleBindingInfo.path, oRawValue.Path);
 			ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oFixture.type.name),
@@ -482,9 +493,7 @@
 			deepEqual(oSingleBindingInfo.type.oConstraints, oFixture.type.constraints);
 
 			// ensure that the formatted value does not contain double quotes
-			ok(sap.ui.model.odata.AnnotationHelper.format.call({
-				currentBinding: function() {return oCurrentBinding;}
-			}, oRawValue).indexOf('"') < 0);
+			ok(AnnotationHelper.format(getInterface(oCurrentContext), oRawValue).indexOf('"') < 0);
 		});
 	});
 
@@ -511,10 +520,10 @@
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat", function () {
 		withMetaModel(function (oMetaModel) {
-			var oCurrentBinding = oMetaModel.bindProperty(
-					"/dataServices/schema/0/entityType/4/com.sap.vocabularies.UI.v1.HeaderInfo/" +
-					"Title/Value"),
-				oRawValue = oCurrentBinding.getValue(),
+			var sPath = "/dataServices/schema/0/entityType/4/"
+					+ "com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+				oCurrentContext = oMetaModel.getContext(sPath),
+				oRawValue = oMetaModel.getObject(sPath),
 				oSingleBindingInfo,
 				oModel = new sap.ui.model.json.JSONModel({FirstName: "John", LastName: "Doe"}),
 				oControl = new TestControl({
@@ -525,7 +534,7 @@
 			//TODO remove this workaround to fix whitespace issue
 			oRawValue.Apply.Parameters[1].Value = " ";
 
-			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			ok(oSingleBindingInfo.parts, "binding info has parts");
 			ok(oSingleBindingInfo.formatter, "binding info has formatter");
@@ -569,7 +578,7 @@
 
 	//*********************************************************************************************
 	test("14.5.3.1.2 Function odata.fillUriTemplate", function () {
-		var oCurrentBinding = oTestModel.bindProperty(sPathPrefix +
+		var oCurrentContext = oTestModel.getContext(sPathPrefix +
 				"/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
 			oInvalid = {
 				Type: "Path",
@@ -611,11 +620,7 @@
 			};
 
 		// TODO rewrite to formatAndParse when the expression binding can actually be evaluated
-		strictEqual(sap.ui.model.odata.AnnotationHelper.format.call({
-				currentBinding : function () {
-					return oCurrentBinding;
-				}
-			}, oRawValue),
+		strictEqual(AnnotationHelper.format(getInterface(oCurrentContext), oRawValue),
 			"{= odata.fillUriTemplate('http://www.foo.com/\"/{decimal},{unknown},{string}', "
 				+ "{'decimal': ${_Decimal}, 'string': ${_String}, 'invalid': '<Unsupported: "
 				+ JSON.stringify(oInvalid).replace(/"/g, "'").replace(/'/g, "\\'")
@@ -629,9 +634,10 @@
 	// TODO: unsupported: nested apply, uriEncode, type determination in structured property
 //	test("14.5.3 Nested apply (odata.fillUriTemplate & uriEncode)", function () {
 //		withMetaModel(function (oMetaModel) {
-//			var oCurrentBinding = oMetaModel.bindProperty("/dataServices/schema/0/entityType/0/" +
-//					"com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
-//				oRawValue = oCurrentBinding.getValue(),
+//			var sPath = "/dataServices/schema/0/entityType/0/" +
+//					"com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef",
+//				oCurrentContext = oMetaModel.getContext(sPath),
+//				oRawValue = oMetaModel.getObject(sPath),
 //				oSingleBindingInfo,
 //				oModel = new sap.ui.model.json.JSONModel({
 //					Address: {
@@ -644,7 +650,7 @@
 //					bindingContexts: oModel.createBindingContext("/")
 //				});
 //
-//			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+//			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 //			oControl.bindProperty("text", oSingleBindingInfo);
 //			strictEqual(oControl.getText(), "https://www.google.de/maps/place/'Domplatz','Speyer'");
 //		});
@@ -669,10 +675,10 @@
 					}
 				}),
 				sMetaPath = "/Value",
-				oCurrentBinding = oMetaModel.bindProperty(sMetaPath),
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getProperty(sMetaPath),
 				oSingleBindingInfo
-					= formatAndParseNoWarning(oRawValue, oCurrentBinding, fnSimplePath);
+					= formatAndParseNoWarning(oRawValue, oCurrentContext, fnSimplePath);
 
 			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			strictEqual(oSingleBindingInfo.path, sPath);
@@ -681,7 +687,7 @@
 
 			if (sPath.indexOf(":") < 0 && fnEscape(sPath) === sPath) {
 				// @see sap.ui.base.BindingParser: rObject, rBindingChars
-				strictEqual(fnSimplePath(oRawValue), "{" + sPath + "}",
+				strictEqual(fnSimplePath(null, oRawValue), "{" + sPath + "}",
 					"make sure that simple cases look simple");
 			}
 		});
@@ -704,7 +710,7 @@
 				// evil, test code only: write into ODataMetaModel
 				oMetaModel.getProperty(sMetaPath).AnnotationPath = sPath;
 
-				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+				sResult = AnnotationHelper.resolvePath(oContext);
 
 				strictEqual(sResult, sPathPrefix + sPath.replace('@', '/'));
 			});
@@ -735,7 +741,7 @@
 					delete oMetaModel.getProperty(sMetaPath).AnnotationPath;
 				}
 
-				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+				sResult = AnnotationHelper.resolvePath(oContext);
 
 				strictEqual(sResult, undefined, "unsupported path");
 			});
@@ -758,7 +764,7 @@
 					|| new sap.ui.model.Context(oMetaModel, sMetaPath),
 					sResult;
 
-				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+				sResult = AnnotationHelper.resolvePath(oContext);
 
 				strictEqual(sResult, undefined, "unsupported origin");
 			});
@@ -789,7 +795,7 @@
 				// evil, test code only: write into ODataMetaModel
 				oRawValue.AnnotationPath = oFixture.annotationPath;
 
-				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+				sResult = AnnotationHelper.resolvePath(oContext);
 
 				strictEqual(sResult, oFixture.expectedResult);
 			});
@@ -818,7 +824,7 @@
 				// evil, test code only: write into ODataMetaModel
 				oRawValue.Path = oFixture.path;
 
-				sResult = sap.ui.model.odata.AnnotationHelper.resolvePath(oContext);
+				sResult = AnnotationHelper.resolvePath(oContext);
 
 				strictEqual(sResult, oFixture.expectedResult);
 			});
@@ -865,7 +871,7 @@
 	}], function (i, oFixture) {
 		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
 			withMetaModel(function (oMetaModel) {
-				var oCurrentBinding = oMetaModel.bindProperty(oFixture.metaPath), //TODO not needed?!
+				var oCurrentContext = oMetaModel.getContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
 					oSingleBindingInfo;
 
@@ -873,7 +879,7 @@
 				oRawValue.AnnotationPath = oFixture.annotationPath;
 
 				oSingleBindingInfo
-					= formatAndParseNoWarning(oRawValue, oCurrentBinding, fnGetNavigationPath);
+					= formatAndParseNoWarning(oRawValue, oCurrentContext, fnGetNavigationPath);
 
 				strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 				strictEqual(oSingleBindingInfo.path, oFixture.expectedPath);

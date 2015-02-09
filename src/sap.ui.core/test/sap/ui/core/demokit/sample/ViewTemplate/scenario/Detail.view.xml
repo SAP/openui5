@@ -10,13 +10,11 @@
 				<core:Title text="HeaderInfo"/>
 			</form:title>
 			<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo">
-				<Label text="Type Name"/>
-				<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-				<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-				<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<!-- Note: composite bindings instead of separate labels for testing only! -->
+				<Text text="[Type Name] {path: 'meta>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<Text text="[{path: 'meta>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'meta>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				<template:if test="{meta>Description}"> <!-- HeaderInfo Description is Nullable -->
-					<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-					<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					<Text text="[{path: 'meta>Description/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'meta>Description/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				</template:if>
 			</template:with>
 		</form:SimpleForm>

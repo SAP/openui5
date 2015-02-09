@@ -7,7 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 	function(jQuery, BindingParser) {
 		'use strict';
 
-		var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
+		var AnnotationHelper,
+			rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 			fnEscape = BindingParser.complexParser.escape;
 
 		/**
@@ -15,12 +16,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *
 		 * @param {object[]} aParameters
 		 *   the parameters
-		 * @param {sap.ui.model.Binding} oBinding
-		 *   the binding related to the current formatter call
+		 * @param {object} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @returns {string}
 		 *   the resulting string value to write into the processed XML
 		 */
-		function concat(aParameters, oBinding) {
+		function concat(aParameters, oInterface) {
 			var aParts = [],
 				i, oParameter;
 
@@ -29,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				if (oParameter) {
 					switch (oParameter.Type) {
 					case "Path":
-						aParts.push(formatPath(oParameter.Value, oBinding));
+						aParts.push(formatPath(oParameter.Value, oInterface));
 						break;
 					case "String":
 						aParts.push(escapedString(oParameter.Value));
@@ -62,14 +63,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *
 		 * @param {object[]} aParameters
 		 *   the parameters
-		 * @param {sap.ui.model.Binding} oBinding
-		 *   the binding related to the current formatter call
+		 * @param {object} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @returns {string}
 		 *   an expression binding in the format "{= odata.fillUriTemplate('template',
 		 *   {'param1': ${path1}, 'param2': ${path2}, ...}" or <code>undefined</code>
 		 *   if the parameters could not be processed
 		 */
-		function fillUriTemplate(aParameters, oBinding) {
+		function fillUriTemplate(aParameters, oInterface) {
 			var i,
 				aParts = [],
 				sPrefix,
@@ -105,45 +106,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
-		 * Follows the given path in the given model, starting at the given resolved path,
-		 * and returns the resulting resolved path.
+		 * Follows the given path in the given model, starting at the given absolute path,
+		 * and returns the resulting absolute path.
 		 *
 		 * @param {sap.ui.model.odata.ODataMetaModel} oModel
 		 *   the current model
-		 * @param {string} sResolvedPath
+		 * @param {string} sContextPath
 		 *   an absolute path to start from
 		 * @param {string} sPath
 		 *   the value of the dynamic "14.5.12 Expression edm:Path" (or variant thereof)
 		 * @returns {string}
-		 *   the resulting resolved path
+		 *   the resulting absolute path
 		 */
-		function follow(oModel, sResolvedPath, sPath) {
+		function follow(oModel, sContextPath, sPath) {
 			var oAssociationEnd,
 				oEntity,
 				aParts = sPath.split("/");
 
-			while (sPath && aParts.length && sResolvedPath) {
+			while (sPath && aParts.length && sContextPath) {
 				if (aParts[0].charAt(0) === "@") {
 					// term cast
-					sResolvedPath += "/" + aParts[0].slice(1);
+					sContextPath += "/" + aParts[0].slice(1);
 					aParts.shift();
 					continue;
 				}
 
-				oEntity = oModel.getObject(sResolvedPath);
+				oEntity = oModel.getObject(sContextPath);
 				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, aParts[0]);
 				if (oAssociationEnd) {
 					// navigation property
-					sResolvedPath = oModel.getODataEntityType(oAssociationEnd.type, true);
+					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
 					aParts.shift();
 					continue;
 				}
 
 				// structural properties or some unsupported case
-				sResolvedPath = oModel.getODataProperty(oEntity, aParts, true);
+				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
 			}
 
-			return sResolvedPath;
+			return sContextPath;
 		}
 
 		/**
@@ -151,17 +152,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *
 		 * @param {string} sPath
 		 *   the string path value from the meta model
-		 * @param {sap.ui.model.Binding} oBinding
-		 *   the binding related to the current formatter call
+		 * @param {object} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @returns {string}
 		 *   the resulting string value to write into the processed XML
 		 */
-		function formatPath(sPath, oBinding) {
+		function formatPath(sPath, oInterface) {
 			var oConstraints = {},
-				oModel = oBinding.getModel(),
-				sResolvedPath // resolved binding path (not relative anymore!)
-					= oModel.resolve(oBinding.getPath(), oBinding.getContext()),
-				aParts = sResolvedPath.split("/"), // parts of binding path (between slashes)
+				oModel = oInterface.getModel(),
+				sContextPath = oInterface.getPath(),
+				aParts = sContextPath.split("/"), // parts of binding path (between slashes)
 				aProperties,
 				sType;
 
@@ -252,12 +252,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
-		 * Follows the given path in the given model, starting at the given resolved path, and
+		 * Follows the given path in the given model, starting at the given absolute path, and
 		 * returns whether the navigation path ends with an association end with multiplicity "*".
 		 *
 		 * @param {sap.ui.model.odata.ODataMetaModel} oModel
 		 *   the current model
-		 * @param {string} sResolvedPath
+		 * @param {string} sContextPath
 		 *   an absolute path to start from
 		 * @param {string} sPath
 		 *   the value of the dynamic "14.5.12 Expression edm:Path" (or variant thereof)
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *   the last one
 		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
 		 */
-		function isMultiple(oModel, sResolvedPath, sPath) {
+		function isMultiple(oModel, sContextPath, sPath) {
 			var oAssociationEnd,
 				oEntity,
 				iIndexOfAt,
@@ -278,19 +278,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				aParts = sPath.split("/"),
 				sSegment;
 
-			while (sPath && aParts.length && sResolvedPath) {
+			while (sPath && aParts.length && sContextPath) {
 				sSegment = aParts[0];
 				iIndexOfAt = sSegment.indexOf("@");
 				if (iIndexOfAt === 0) {
 					// term cast
-					sResolvedPath += "/" + sSegment.slice(1);
+					sContextPath += "/" + sSegment.slice(1);
 					aParts.shift();
 					continue;
 				} else if (iIndexOfAt > 0) { // annotation of a navigation property
 					sSegment = sSegment.slice(0, iIndexOfAt);
 				}
 
-				oEntity = oModel.getObject(sResolvedPath);
+				oEntity = oModel.getObject(sContextPath);
 				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
 //TODO				if (oAssociationEnd) {
 					// navigation property
@@ -300,13 +300,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							+ sPath);
 					}
 					bMultiplicity = oAssociationEnd.multiplicity === "*";
-					sResolvedPath = oModel.getODataEntityType(oAssociationEnd.type, true);
+					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
 					aParts.shift();
 					continue;
 //				}
 //
 //				// structural properties or some unsupported case
-//TODO				sResolvedPath = oModel.getODataProperty(oEntity, aParts, true);
+//TODO				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
 			}
 
 			return bMultiplicity;
@@ -396,7 +396,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 * @public
 		 * @namespace sap.ui.model.odata.AnnotationHelper
 		 */
-		return /** @lends sap.ui.model.odata.AnnotationHelper */ {
+		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
 			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
@@ -423,13 +423,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * &lt;Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 			 * </pre>
 			 *
+			 * @param {object} oInterface
+			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model
 			 * @returns {string}
 			 *   the resulting string value to write into the processed XML
 			 * @public
 			 */
-			format : function (vRawValue) {
+			format : function (oInterface, vRawValue) {
 				var sResult;
 
 				// 14.4.11 Expression edm:String
@@ -443,7 +445,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.5.12 Expression edm:Path
 				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
 					if (typeof vRawValue.Path === "string") {
-						return formatPath(vRawValue.Path, this.currentBinding());
+						return formatPath(vRawValue.Path, oInterface);
 					}
 					return illegalValue(vRawValue, "Path");
 				}
@@ -453,12 +455,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 					switch (vRawValue.Apply.Name) {
 					case "odata.concat": // 14.5.3.1.1 Function odata.concat
 						if (jQuery.isArray(vRawValue.Apply.Parameters)) {
-							return concat(vRawValue.Apply.Parameters, this.currentBinding());
+							return concat(vRawValue.Apply.Parameters, oInterface);
 						}
 						break;
 					case "odata.fillUriTemplate": // 14.5.3.1.2 Function odata.fillUriTemplate
-						sResult = fillUriTemplate(vRawValue.Apply.Parameters,
-							this.currentBinding());
+						sResult = fillUriTemplate(vRawValue.Apply.Parameters, oInterface);
 						if (sResult) {
 							return sResult;
 						}
@@ -486,6 +487,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * &lt;/template:if>
 			 * </pre>
 			 *
+			 * @param {object} oInterface
+			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
@@ -497,7 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   statements!)
 			 * @public
 			 */
-			getNavigationPath : function (vRawValue) {
+			getNavigationPath : function (oInterface, vRawValue) {
 				var aParts = [];
 
 				if (!vRawValue.AnnotationPath) {
@@ -534,6 +537,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * &lt;template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'}">
 			 * </pre>
 			 *
+			 * @param {object} oInterface
+			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
@@ -548,15 +553,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   the last one
 			 * @public
 			 */
-			isMultiple : function (vRawValue) {
-				var oBinding = this.currentBinding(),
-					aMatches,
-					oModel = oBinding.getModel(),
-					sResolvedPath // resolved binding path (not relative anymore!)
-						= oModel.resolve(oBinding.getPath(), oBinding.getContext());
+			isMultiple : function (oInterface, vRawValue) {
+				var aMatches,
+					oModel = oInterface.getModel(),
+					sContextPath = oInterface.getPath();
 
 				aMatches = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/.exec(
-					sResolvedPath);
+					sContextPath);
 //TODO				if (aMatches) {
 					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
 //					if (vRawValue.hasOwnProperty("AnnotationPath")) {
@@ -617,18 +620,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   &lt;sfi:SmartField value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/>
 			 * </pre>
 			 *
+			 * @param {object} oInterface
+			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model
 			 * @returns {string}
 			 *   the resulting string value to write into the processed XML
 			 * @public
 			 */
-			simplePath : function (vRawValue) {
+			simplePath : function (oInterface, vRawValue) {
 				// 14.5.12 Expression edm:Path
 				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
 					if (typeof vRawValue.Path === "string") {
 						return rBadChars.test(vRawValue.Path)
-							? formatPath(vRawValue.Path, this.currentBinding())
+							? formatPath(vRawValue.Path, oInterface)
 							: "{" + vRawValue.Path + "}";
 					}
 					return illegalValue(vRawValue, "Path");
@@ -637,4 +642,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				return unsupported(vRawValue);
 			}
 		};
+
+		AnnotationHelper.format.$ = true;
+		AnnotationHelper.getNavigationPath.$ = true;
+		AnnotationHelper.isMultiple.$ = true;
+		AnnotationHelper.simplePath.$ = true;
+
+		return AnnotationHelper;
 	}, /* bExport= */ true);
