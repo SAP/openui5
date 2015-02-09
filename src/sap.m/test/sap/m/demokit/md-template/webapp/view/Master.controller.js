@@ -106,7 +106,7 @@ sap.ui.demo.mdtemplate.view.BaseController.extend("sap.ui.demo.mdtemplate.view.M
 				};
 
 			if (sKey !== "none") {
-				this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], false, jQuery.proxy(sap.ui.demo.mdtemplate.util.groupers[sKey], oEvent.getSource()))];
+				this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], false, jQuery.proxy(sap.ui.demo.mdtemplate.util.grouper[sKey], oEvent.getSource()))];
 			} else {
 				this.oListSorterState.group = [];
 			}
@@ -161,7 +161,7 @@ sap.ui.demo.mdtemplate.view.BaseController.extend("sap.ui.demo.mdtemplate.view.M
 						Group2 : "UnitNumber"
 					};
 	
-					this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], bDescending, sap.ui.demo.mdtemplate.util.groupers[sKey])];
+					this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], bDescending, sap.ui.demo.mdtemplate.util.grouper[sKey])];
 				} else {
 					this.oListSorterState.group = [];
 				}

@@ -1,6 +1,6 @@
 sap.ui.require(
 [
-	"sap/ui/demo/mdtemplate/util/formatters"
+	"sap/ui/demo/mdtemplate/util/formatter"
 ],
 function (formatter) {
 	"use strict";
