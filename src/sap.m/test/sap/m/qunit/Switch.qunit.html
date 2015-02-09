@@ -355,6 +355,25 @@
 				});
 			});
 
+			test("A Switch control type of AcceptReject should render invisible elements with the corresponding text nodes for screen reader announcement", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					type: sap.m.SwitchType.AcceptReject
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getDomRef("texton").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
+				strictEqual(oSwitch.getDomRef("textoff").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
 			/* =========================================================== */
 			/* CSS and DOM module                                          */
 			/* =========================================================== */

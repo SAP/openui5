@@ -96,8 +96,12 @@ sap.ui.define(['jquery.sap.global'],
 
 		SwitchRenderer.renderText = function(oRm, oSwitch) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				bDefaultType = oSwitch.getType() === sap.m.SwitchType.Default,
-				bState = oSwitch.getState();
+				bType = oSwitch.getType(),
+				bDefaultType = bType === sap.m.SwitchType.Default,
+				bAcceptRejectType = bType === sap.m.SwitchType.AcceptReject,
+				bState = oSwitch.getState(),
+				bAccessibility = sap.ui.getCore().getConfiguration().getAccessibility(),
+				oRb = oSwitch.constructor._oRb;
 
 			// on
 			oRm.write("<div");
@@ -122,6 +126,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("</span>");
+
+			if (bAcceptRejectType && bAccessibility) {
+				this.renderInvisibleElement(oRm, oSwitch, oRb.getText("SWITCH_ARIA_ACCEPT"));
+			}
+
 			oRm.write("</div>");
 
 			// off
@@ -136,7 +145,6 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.writeClasses();
 			oRm.write(">");
-
 			oRm.write("<span");
 			oRm.addClass(CSS_CLASS + "Label");
 			oRm.addClass(CSS_CLASS + "LabelOff");
@@ -148,6 +156,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("</span>");
+
+			if (bAcceptRejectType && bAccessibility) {
+				this.renderInvisibleElement(oRm, oSwitch, oRb.getText("SWITCH_ARIA_REJECT"));
+			}
+
 			oRm.write("</div>");
 		};
 
@@ -202,6 +215,21 @@ sap.ui.define(['jquery.sap.global'],
 					append: true
 				}
 			});
+		};
+
+		/**
+		 * Writes an invisible span element with a text node that is referenced in the ariaLabelledBy
+		 * associations for screen reader announcement.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 * @param {string} sText
+		 */
+		SwitchRenderer.renderInvisibleElement = function(oRm, oSwitch, sText) {
+			oRm.write('<span aria-hidden="true" style="display: none">');
+			oRm.writeEscaped(sText);
+			oRm.write("</span>");
 		};
 
 		return SwitchRenderer;
