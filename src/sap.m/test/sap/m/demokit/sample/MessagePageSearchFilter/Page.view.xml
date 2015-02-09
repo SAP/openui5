@@ -1,8 +1,0 @@
-<mvc:View
-	controllerName="sap.m.sample.MessagePageSearchFilter.Page"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
-
-	xmlns="sap.m">
-	<SplitApp id="splitApp"></SplitApp>
-</mvc:View>
