@@ -198,7 +198,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		MessagePage.prototype._getIconControl = function() {
 			this._oIconControl = IconPool.createControlByURI({
 				id: this.getId() + "-pageIcon",
-				src: this.getIcon()
+				src: this.getIcon(),
+				height: "8rem"
 			}, sap.m.Image).addStyleClass("sapMMessagePageIcon");
 
 			return this._oIconControl;
