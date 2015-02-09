@@ -1107,7 +1107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oWeekDay;
 
 				// check day names
-				var aWeekHeaders = oThis.$().children(".sapUiCalWH");
+				var aWeekHeaders = oThis.$().find(".sapUiCalWH");
 				var bTooLong = false;
 				var i = 0;
 
