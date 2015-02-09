@@ -559,7 +559,6 @@ sap.ui.define([
 		this._aKeyFields = [];
 		this._oConditionsMap = {};
 		this._iConditions = 0;
-		this._iConditionCount = 0;
 		this._sLayoutMode = "Desktop";
 
 		this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[0];
@@ -669,7 +668,6 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._clearConditions = function() {
 		this._oConditionsGrid.removeAllContent();
-		this._iConditionCount = 0;
 	};
 
 	/*
@@ -763,6 +761,45 @@ sap.ui.define([
 	};
 
 	/**
+	 * returns the key of the condition grid or creates a new key
+	 *
+	 * @private
+	 * @param {object}
+	 *            	oConditionGrid  
+	 * @returns {string} 
+	 * 				the new or existing key 
+	 */
+	P13nConditionPanel.prototype._getKeyFromConditionGrid = function(oConditionGrid) {
+		var sKey = oConditionGrid.data("_key");
+		if (!sKey) {
+			sKey = this._createConditionKey();
+		}
+		return sKey;
+	};
+
+	/**
+	 * creates a new key for the condition grids 
+	 *
+	 * @private
+	 * @returns {string} 
+	 * 				the new key 
+	 */
+	P13nConditionPanel.prototype._createConditionKey = function() {
+		var i = 0;
+		var sKey;
+		do {
+			sKey = "condition_" + i;
+			if (this.getExclude()) {
+				sKey = "x" + sKey;
+			}
+			i++;
+		}
+		while (this._oConditionsMap[sKey]);
+		
+		return sKey;
+	};
+
+	/**
 	 * appends a new condition grid with all containing controls in the main grid
 	 *
 	 * @private
@@ -783,15 +820,6 @@ sap.ui.define([
 		if (iPos === undefined) {
 			iPos = oTargetGrid.getContent().length;
 		}
-
-		var sOrgKey = sKey;
-		if (!sKey) {
-			sKey = "condition_" + (this._iConditionCount);
-			if (this.getExclude()) {
-				sKey = "x" + sKey;
-			}
-		}
-		this._iConditionCount++;
 
 		var oConditionGrid = new sap.ui.layout.Grid({
 			width: "100%",
@@ -885,7 +913,7 @@ sap.ui.define([
 						} else {
 							if (this.getUsePrevConditionSetting() && !this.getAutoReduceKeyFieldItems()) {
 								// select the key from the condition above
-								if (iPos > 0 && sOrgKey === null) {
+								if (iPos > 0 && sKey === null) {
 									oGrid = oTargetGrid.getContent()[iPos - 1];
 									oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
 								} else {
@@ -945,7 +973,7 @@ sap.ui.define([
 						} else {
 							if (this.getUsePrevConditionSetting()) {
 								// select the key from the condition above
-								if (iPos > 0 && sOrgKey === null) {
+								if (iPos > 0 && sKey === null) {
 									var oGrid = oTargetGrid.getContent()[iPos - 1];
 									oControl.setSelectedKey(oGrid.operation.getSelectedKey());
 								}
@@ -1619,7 +1647,7 @@ sap.ui.define([
 		if (sKeyField === "" || sKeyField == null) {
 			// handling of "(none)" value
 			sKeyField = null;
-			sKey = oConditionGrid.data("_key");
+			sKey = this._getKeyFromConditionGrid(oConditionGrid);
 			if (this._oConditionsMap[sKey] !== undefined) {
 				delete this._oConditionsMap[sKey];
 	
@@ -1653,7 +1681,7 @@ sap.ui.define([
 			"value2": oValue2,
 			"showIfGrouped": bShowIfGrouped
 		};
-		sKey = oConditionGrid.data("_key");
+		sKey = this._getKeyFromConditionGrid(oConditionGrid);
 
 		if (sValue !== "") {
 			var sOperation = "update";
@@ -1661,6 +1689,7 @@ sap.ui.define([
 				sOperation = "add";
 			}
 			this._oConditionsMap[sKey] = oConditionData;
+			oConditionGrid.data("_key", sKey);
 
 			oSelectCheckbox.setSelected(true);
 			oSelectCheckbox.setEnabled(true);
@@ -1673,6 +1702,7 @@ sap.ui.define([
 			});
 		} else if (this._oConditionsMap[sKey] !== undefined) {
 			delete this._oConditionsMap[sKey];
+			oConditionGrid.data("_key", null);
 
 			oSelectCheckbox.setSelected(false);
 			oSelectCheckbox.setEnabled(false);
@@ -1717,7 +1747,7 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._removeCondition = function(oTargetGrid, oConditionGrid) {
 		if (oConditionGrid.getContent().length > 1) {
-			var sKey = oConditionGrid.data("_key");
+			var sKey = this._getKeyFromConditionGrid(oConditionGrid);
 			var iIndex = oConditionGrid.getParent().getContent().indexOf(oConditionGrid);
 			delete this._oConditionsMap[sKey];
 			oConditionGrid.destroy();
