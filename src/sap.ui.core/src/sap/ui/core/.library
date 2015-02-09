@@ -310,6 +310,9 @@
         <lib name="unorm" displayName="unorm.js" homepage="https://github.com/walling/unorm">
         	<license url="http://raw.githubusercontent.com/walling/unorm/v1.3.3/LICENSE.md" type="MIT License" file="../thirdparty/licenses/unorm-MIT-LICENSE.txt" />
         </lib>
+        <lib name="tdop" displayName="Top Down Operator Precedence" homepage="https://github.com/douglascrockford/TDOP">
+        	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/TDOP-Apache-LICENSE.txt" />
+        </lib>
     </thirdparty>
     
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"

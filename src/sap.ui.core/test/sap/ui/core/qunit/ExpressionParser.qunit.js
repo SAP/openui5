@@ -58,7 +58,6 @@
 		});
 	});
 
-
 	//*********************************************************************************************
 	jQuery.each([
 			{ binding: "{=${binding0} === 'tel'}", args: ["tel"], result: true },
@@ -118,37 +117,82 @@
 
 	//*********************************************************************************************
 	jQuery.each([
-			{expression: "'foo'  invalid", message: "Invalid token in expression", at: 7},
 			//tokenizer error
-			{expression: "'foo' ==! 'bar'", message: "Expected '=' instead of '!'", at: 9},
+			{binding: "{='foo' ==! 'bar'}", message: "Expected '=' instead of '!'", at: 11},
 			//parser error
-			{expression: "'foo' 'bar'", message: "Invalid expression" /*TODO , at: 7 */},
-			{expression: "$invalid}", message: "Expected '{' instead of 'i'", at: 2},
+			{binding: "{='foo' 'bar'}", message: "Unexpected literal: bar" /*TODO , at: 7 */},
+			{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4},
+			{binding: "{='foo' ${bar}}", message: "Unexpected binding: ${bar}" /*TODO, at: 4 */ }
 		], function(iUnused, oFixture) {
-		test("Invalid expression: " + oFixture.expression, function () {
+		test("Invalid binding: " + oFixture.binding, function () {
 			var oError;
 
 			this.stub(jQuery.sap.log, "error");
 			try {
-				sap.ui.base.ExpressionParser.parse(
-					function () { ok(false, "unexpected call to fnResolveBinding"); },
-					oFixture.expression);
+				// call ExpressionParser through BindingParser to gain resolution of bindings
+				sap.ui.base.BindingParser.complexParser(oFixture.binding);
 			}
 			catch (e) {
+				ok(jQuery.sap.log.error.callCount > 0, "error logged to console for " + e);
 				strictEqual(jQuery.sap.log.error.args[0][0],
 					oFixture.message + (oFixture.at ? " at " + oFixture.at : ""),
 					"console error message");
-				strictEqual(jQuery.sap.log.error.args[0][1], oFixture.expression,
-					"console error details");
+				if (oFixture.at) {
+					strictEqual(jQuery.sap.log.error.args[0][1], oFixture.binding,
+						"console error details");
+				}
 				strictEqual(jQuery.sap.log.error.args[0][2], "sap.ui.base.ExpressionParser",
 						"console error component");
 				oError = e;
 				ok(e instanceof SyntaxError, "Error type");
 				strictEqual(e.message, oFixture.message, "Error.message");
 				strictEqual(e.at, oFixture.at, "Error.at");
-				strictEqual(e.text, oFixture.expression, "Error.at");
+				if (oFixture.at) {
+					strictEqual(e.text, oFixture.binding, "Error.at");
+				}
 			}
-			ok(oError, "error is thrown on invalid expression");
+			ok(oError, "error is thrown on invalid binding");
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([
+			{ expression: "true", result: true }, // boolean literal
+			{ expression: "false", result: false },
+			{ expression: "null", result: null }, // null
+			{ expression: "true || false", result: true }, // || operator
+			{ expression: "true && false", result: false }, // && operator
+			{ expression: "false || false || true", result: true },
+			{ expression: "true || true && false", result: true }
+		], function(iUnused, oFixture) {
+		test("Literals and logical operators " + oFixture.expression + ": " + oFixture.result,
+			function () {
+				var oExpression;
+
+				oExpression = sap.ui.base.ExpressionParser.parse(
+					function () { ok(false, "unexpected call to fnResolveBinding"); },
+					oFixture.expression);
+				strictEqual(oExpression.result.formatter(), oFixture.result,
+					"formatter result is " + oFixture.result);
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([
+			{ expression: "false && true || true", result: true }
+		], function(iUnused, oFixture) {
+		test("Precedence logical operators " + oFixture.expression + ": " + oFixture.result, 
+			function () {
+				var oExpression;
+
+				oExpression = sap.ui.base.ExpressionParser.parse(
+					function () { ok(false, "unexpected call to fnResolveBinding"); },
+					oFixture.expression);
+				strictEqual(oExpression.result.formatter(), oFixture.result,
+					"formatter result is " + oFixture.result);
+			//TODO !==
+			//TODO number literal
+			//TODO useRawValues?
 		});
 	});
 } ());
