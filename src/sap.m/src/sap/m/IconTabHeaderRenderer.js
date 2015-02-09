@@ -100,14 +100,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				sTabParams += 'role="tab" aria-controls="' + oControl.getParent().sId + '-content" ';
 
 				//if there is tab text
-				if (oItem && oItem.getText().length) {
-					sTabParams += 'aria-labelledby="' + oItem.getId() + '-text"';
-				} else if (oItem.getCount() !== "") {
-					//if there is no text and there is count
-					sTabParams += 'aria-labelledby="' + oItem.getId() + '-count"';
-				} else if (oItem.getIcon()) {
-					//if there is no text and no count, but there is an icon
-					sTabParams += 'aria-labelledby="' + oItem.getId() + '-icon"';
+				if (oItem) {
+					if (oItem.getText().length || oItem.getCount() !== "" || oItem.getIcon()) {
+						sTabParams += 'aria-labelledby="';
+						var aIds = [];
+
+						if (oItem.getText().length) {
+							aIds.push(oItem.getId() + '-text');
+						}
+						if (oItem.getCount() !== "") {
+							aIds.push(oItem.getId() + '-count');
+						}
+						if (oItem.getIcon()) {
+							aIds.push(oItem.getId() + '-icon');
+						}
+
+						sTabParams += aIds.join(' ');
+						sTabParams += '"';
+					}
 				}
 			}
 
