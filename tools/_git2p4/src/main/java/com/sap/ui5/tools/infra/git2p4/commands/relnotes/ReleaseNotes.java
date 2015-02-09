@@ -201,7 +201,7 @@ public class ReleaseNotes {
   }
 
   private void saveToFile(UILibNotes uiLibraryNotes) throws IOException {
-    Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
     String json = gson.toJson(uiLibraryNotes.versions);
     notesFile.getParentFile().mkdirs();
     FileWriter fw = new FileWriter(notesFile);
