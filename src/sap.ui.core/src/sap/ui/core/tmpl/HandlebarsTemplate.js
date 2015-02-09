@@ -39,12 +39,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 		constructor : function(sId, mSettings) {
 			Template.apply(this, arguments);
 		}
-	
+		
 	});
 	
 	
 	// register this template type (as it is the default we do it also in the Template)
 	Template.registerType("text/x-handlebars-template", "sap.ui.core.tmpl.HandlebarsTemplate");
+	
+	
+	function decodeHash(oHash) {
+		for (var sKey in oHash) {
+			oHash[sKey] = oHash[sKey].replace("&gt;", ">").replace("&lt;", "<").replace("&quot;", "\"").replace("&amp;", "&");
+		}
+	}
+	
+	function determinePath(sPath, sParentPath) {
+		// either the path starts with "/" or with e.g. "i18n>/"
+		// but what about relative named model paths - unclear
+		return (/^(\/|\w+>\/)/.test(sPath) ? "" : (sParentPath || "")) + sPath;
+	}
 	
 	
 	/**
@@ -93,12 +106,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 					return fnEach.apply(this, arguments);
 				} else {
 					
+					// make sure to decode the hash entries
+					decodeHash(options.hash);
+					
 					// parse the path & find the model
 					var oRM = options.data.renderManager,
 						oRootControl = options.data.rootControl,
 						sParentPath = options.data.path,
 						oParentControl = options.data.parentControl,
-						sPath = (jQuery.sap.startsWith(options.hash.path, "/") ? "" : (sParentPath || "")) + options.hash.path,
+						sPath = determinePath(options.hash.path, sParentPath),
 						oProperty = oRootControl.bindList(sPath),
 						aHTML = [],
 						data;
@@ -110,7 +126,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				  
 					// iterate through the entries of the property
 					if (oProperty) {
-						jQuery.each(oProperty, function(sKey, oValue) {
+						for (var sKey in oProperty) {
+							//var oValue = oProperty[sKey];
 							if (data) {
 								data.renderManager = oRM;
 								data.rootControl = oRootControl;
@@ -123,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 							// we do not pass a context since the expressions for UI5 are 
 							// based on the models
 							aHTML.push(options.fn({}, { data: data }));
-						});
+						}
 					}
 						
 					// let's return the markup
@@ -149,10 +166,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 					return fnIf.apply(this, arguments);
 				} else {
 					
+					// make sure to decode the hash entries
+					decodeHash(options.hash);
+					
 					// lookup the required infos
 					var oRootControl = options.data.rootControl,
 					sParentPath = options.data.path,
-					sPath = (jQuery.sap.startsWith(options.hash.path, "/") ? "" : (sParentPath || "")) + options.hash.path;
+					sPath = determinePath(options.hash.path, sParentPath);
 					
 					// only in case of a path is specified the handler can work
 					if (sPath) {
@@ -175,10 +195,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 					return fnUnless.apply(this, arguments);
 				} else {
 					
+					// make sure to decode the hash entries
+					decodeHash(options.hash);
+					
 					// lookup the required infos
 					var oRootControl = options.data.rootControl,
 					sParentPath = options.data.path,
-					sPath = (jQuery.sap.startsWith(options.hash.path, "/") ? "" : (sParentPath || "")) + options.hash.path;
+					sPath = determinePath(options.hash.path, sParentPath);
 					
 					// only in case of a path is specified the handler can work
 					if (sPath) {
@@ -197,10 +220,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 			"text": function(context, options) {
 				options = options || context;
 				
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
+				
 				// lookup the required infos
 				var oRootControl = options.data.rootControl,
 				sParentPath = options.data.path,
-				sPath = (jQuery.sap.startsWith(options.hash.path, "/") ? "" : (sParentPath || "")) + options.hash.path;
+				sPath = determinePath(options.hash.path, sParentPath);
 				
 				// only in case of a path is specified the handler can work
 				if (sPath) {
@@ -215,6 +241,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				
 			"element": function(context, options) {
 				options = options || context;
+				
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
 				
 				// create and return the DOM element
 				var oRM = options.data.renderManager,
@@ -250,6 +279,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				
 			"control": function(context, options) {
 				options = options || context;
+				
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
 				
 				// extract the data information
 				var oRM = options.data.renderManager,
@@ -296,11 +328,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				// remove the found nested children from the mSettings because they will
 				// be handled after the creation of the new control instance
 				var mSettings = jQuery.extend({}, options.hash);
-				jQuery.each(mSettings, function(sKey, oValue) {
+				for (var sKey in mSettings) {
+					//var oValue = mSettings[sKey];
 					if (mChildren[sKey]) {
 						delete mSettings[sKey];
 					}
-				});
+				}
 				
 				// create the new control (out of the hash information)
 				var oNewControl = oRootControl.createControl(mSettings, options.data.path, !!mParentChildren, oView);
@@ -311,7 +344,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				if (!jQuery.isEmptyObject(mChildren)) {
 					mSettings = options.hash;
 					var oAllAggregation = oMetadata.getAllAggregations();
-					jQuery.each(mChildren, function(sAggregationName, aChildAggregation) {
+					for (var sAggregationName in mChildren) {
+						var aChildAggregation = mChildren[sAggregationName];
 						for (var i = 0, l = aChildAggregation.length; i < l; i++) {
 							var oChildControl = aChildAggregation[i],
 								oAggregation = oAllAggregation[sAggregationName],
@@ -332,7 +366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 								}
 							}
 						}
-					});
+					}
 				}
 				
 				// if we find a parent children map the control will not return 
@@ -353,6 +387,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 			"property": function(context, options) {
 				options = options || context;
 				
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
+				
 				// use the getter to access the property
 				var oRootControl = options.data.rootControl,
 					oMetadata = oRootControl.getMetadata(),
@@ -364,6 +401,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 			
 			"aggregation": function(context, options) {
 				options = options || context;
+				
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
 				
 				// when data provides the children object we are running in 
 				// the use case to be used as kind of scope for the aggregation
@@ -466,6 +506,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 		var oHelpers = {
 			"property": function(context, options) {
 				options = options || context;
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
 				// identify the property and register non standard properties (anything else than id, style, class)
 				var sName = options.hash.name;
 				if (sName && sName !== "id" && !mJSONKeys[sName]) {
@@ -477,6 +519,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 			},
 			"aggregation": function(context, options) {
 				options = options || context;
+				// make sure to decode the hash entries
+				decodeHash(options.hash);
 				// identify the aggregations and register non standard aggregations (anything else than tooltip, customData, layoutData)
 				var sName = options.hash.name;
 				if (sName && !mJSONKeys[sName] && !mPrivateAggregations[sName]) {
