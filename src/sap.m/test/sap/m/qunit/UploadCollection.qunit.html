@@ -474,6 +474,7 @@
 		var sGetterMethod = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
 		var sGetterMethodFileUploader = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
 
+		// map UploadCollection properties names to FileUploader properties names, e.g. "uploadenabled" on UC side ~ "enabled" on FU side
 		switch (sProperty) {
 			case "uploadEnabled":
 				sPropertyFileUploader = "enabled";
@@ -565,10 +566,10 @@
 	});
 
 	test("sameFilenameAllowed", function() {
-		var bPropagateTrue = true;
 		var bSameFilenameAllowed = true;
-
-		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, bPropagateTrue);
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed);
+		equal(oFileUploader.getSameFilenameAllowed(), false, "FileUploader uses default value sameFilenameAllowed = false.");
 	});
 
 	test("showSeparators", function() {

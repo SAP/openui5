@@ -313,14 +313,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		return this;
 	};
 
-	UploadCollection.prototype.setSameFilenameAllowed = function(bSameFilenameAllowed) {
-		this.setProperty("sameFilenameAllowed", bSameFilenameAllowed);
-		if (this._getFileUploader().getSameFilenameAllowed() !== bSameFilenameAllowed) {
-			this._getFileUploader().setSameFilenameAllowed(bSameFilenameAllowed);
-		}
-		return this;
-	};
-
 	UploadCollection.prototype.setShowSeparators = function(bShowSeparators) {
 		this.setProperty("showSeparators", bShowSeparators);
 		if (this._oList.getShowSeparators() !== bShowSeparators) {
@@ -1345,7 +1337,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				mimeType : this.getMimeType(),
 				multiple : this.getMultiple(),
 				name : "uploadCollection",
-				sameFilenameAllowed : this.getSameFilenameAllowed(),
 				uploadOnChange : true,
 				uploadUrl : this.getUploadUrl(),
 				useMultipart : false,
