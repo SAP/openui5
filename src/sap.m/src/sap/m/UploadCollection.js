@@ -257,6 +257,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {});
 		this._oList.addStyleClass("sapMUCList");
+		this._aAddItems = [];
+		this.aItems = [];
 	};
 
 	/* =========================================================== */
@@ -353,9 +355,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype.onBeforeRendering = function() {
 		var oNumberOfAttachmentsLabel = oNumberOfAttachmentsLabel || {};
 		var sNoDataText = sNoDataText || this.getNoDataText();
+		var bPrepareList = true;
+		var bAddLeave = true;
 		var i, j, bItemToBeDeleted;
 
-		if (this.aItems && this.aItems.length > 0) {
+		if (this.aItems.length > 0) {
 			var cAitems = this.aItems.length;
 			// collect items with the status "uploading"
 			var aUploadingItems = [];
@@ -432,10 +436,38 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}
 		}
 
-		//prepare the list with list items
-		this._clearList();
-		this._fillList(this.aItems);
-		this._oList.setHeaderToolbar(this.oHeaderToolbar);
+		//check if preparation of the list is necessary in during the 'add'
+		var cAddItems = this._aAddItems.length;
+		for (var k = 0; k < cAddItems; k++) {
+			if (this.aItems[k]._status) {
+				switch (this.aItems[k]._status) {
+					case UploadCollection._displayStatus :
+//						list has NOT to be prepared!
+						bPrepareList = false;
+						bAddLeave = false;
+						break;
+					default :
+//						list has to be prepared!
+						bPrepareList = true;
+						bAddLeave = true;
+						break;
+				}
+				if (bAddLeave === true) {
+					//leave the loop because the list has to be shown with new prepared data!
+					break;
+				}
+			} else {
+				bPrepareList = true;
+				this._aAddItems.splice(this._aAddItems.length - 1,1);
+				break;
+			}
+		}
+		if (bPrepareList === true) {
+			//prepare the list with list items
+			this._clearList();
+			this._fillList(this.aItems);
+			this._oList.setHeaderToolbar(this.oHeaderToolbar);
+		}
 	};
 
 	/**
@@ -1060,7 +1092,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._onChange = function(oEvent) {
 		if (oEvent) {
 			var that = this;
-			var oHeaderParameter, sRequestValue, iCountFiles, i, sFileName;
+			var sRequestValue, iCountFiles, i, sFileName;
+			this._aAddItems = [];
 			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 				// FileUploader does not support files parameter for IE9 for the time being
 				var sNewValue = oEvent.getParameter("newValue");
@@ -1111,6 +1144,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				oItem.setUrl(null);
 				this.aItems.unshift(oItem);
 				this.insertItem(oItem);
+				this._aAddItems.unshift(this.aItems[0]);
 			} else {
 				this._requestIdValue = this._requestIdValue + 1;
 				sRequestValue = this._requestIdValue.toString();
@@ -1131,22 +1165,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oItem.fileSize = oEvent.getParameter("files")[i].size;
 					this.aItems.unshift(oItem);
 					this.insertItem(oItem);
+					this._aAddItems.unshift(this.aItems[0]);
 				}
 				//headerParameters
 				if (aHeaderParametersAfter) {
 					jQuery.each(aHeaderParametersAfter, function (iIndex, headerParameter) {
-						var oHeaderParameter = new sap.ui.unified.FileUploaderParameter({
+						that._oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
 							name : headerParameter.getProperty("name"),
 							value: headerParameter.getProperty("value")
-						});
-						that._oFileUploader.addHeaderParameter(oHeaderParameter);
+						}));
 					});
 				}
-				oHeaderParameter = new sap.ui.unified.FileUploaderParameter({
+				that._oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
 					name : this._requestIdName,
 					value: sRequestValue
-				});
-				that._oFileUploader.addHeaderParameter(oHeaderParameter);
+				}));
 			}
 		}
 	};
@@ -1252,18 +1285,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._onUploadProgress = function(oEvent) {
 		if (oEvent) {
-			var i, sUploadedFile, sPercentUploaded, nPercentUploaded, $PercentUploaded, sRequestId, cItems;
+			var i, sUploadedFile, sPercentUploaded, iPercentUploaded, sRequestId, cItems;
 			sUploadedFile = oEvent.getParameter("fileName");
 			sRequestId = this._getRequestId(oEvent);
-			nPercentUploaded = Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100);
-			sPercentUploaded = nPercentUploaded.toString();
+			iPercentUploaded = Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100);
+			if (iPercentUploaded === 100) {
+				iPercentUploaded = iPercentUploaded - 1;
+			}
 			sPercentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded]);
 			cItems = this.aItems.length;
 			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i].getProperty("fileName") === sUploadedFile && this.aItems[i]._requestIdName == sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
-					$PercentUploaded = jQuery.sap.byId(this.aItems[i].getId() + "-ta_progress");
-					$PercentUploaded.text(sPercentUploaded);
-					this.aItems[i]._percentUploaded = nPercentUploaded;
+					sap.ui.getCore().byId(this.aItems[i].getId() + "-ta_progress").setText(sPercentUploaded);
+					this.aItems[i]._percentUploaded = iPercentUploaded;
 					break;
 				}
 			}
