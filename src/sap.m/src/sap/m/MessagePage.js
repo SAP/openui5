@@ -35,11 +35,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				/**
 				 * MessagePage text
 				 */
-				text : {type : "string", group : "Misc", defaultValue : null},
+				text : {type : "string", group : "Misc", defaultValue : "No matching items found."},
 				/**
 				 * MessagePage filter text
 				 */
-				filterText : {type : "string", group : "Misc", defaultValue : null},
+				filterText : {type : "string", group : "Misc", defaultValue : "Check the filter settings."},
 				/**
 				 * MessagePage title
 				 */
