@@ -526,8 +526,10 @@ sap.ui.define([
 	P13nFilterPanel.prototype.removeAllFilterItems = function() {
 		var aFilterItems = this.removeAllAggregation("filterItems");
 
-		this.setConditions([]);
-
+		if (!this._bIgnoreBindCalls) {
+			this.setConditions([]);
+		}
+		
 		return aFilterItems;
 	};
 
@@ -586,10 +588,12 @@ sap.ui.define([
 				that._bIgnoreBindCalls = false;
 			}
 			if (sOperation === "remove") {
+				that._bIgnoreBindCalls = true;
 				that.fireRemoveFilterItem({
 					key: sKey,
 					index: iIndex
 				});
+				that._bIgnoreBindCalls = false;
 			}
 		};
 	};
