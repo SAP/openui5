@@ -254,17 +254,17 @@
 	});
 
 	test("Expression binding: error handling", function () {
-		var sInvalidCompositeBinding = "prefix{={birthday/day} > 10}",
+		var sInvalidCompositeBinding = "prefix{=${birthday/day} > 10}",
 			sMsg;
 
 		this.stub(sap.ui.base.ExpressionParser, "parse", function (fnResolveBinding, sInput) {
 			if (sInput === "{=invalid}") {
 				throw new Error("error message");
 			}
-			else if (sInput === "{='foo',}") {
-				return {at: sInput.length - 2};
+			if (sInput === "{='foo',}") {
+				return {at: sInput.length - 2, result: {}};
 			}
-			return {at: sInput.length - 1};
+			return {at: sInput.length - 1, result: {}};
 		});
 
 		throws(function() {

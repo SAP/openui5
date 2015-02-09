@@ -12,8 +12,7 @@
 					<core:Icon src="sap-icon://phone" />
 				</template:if>
 			</template:with>
-			<!-- TODO wait until expression parser supports fillUriTemplate in Url/UrfRef -->
-			<template:if test="false"><!--template:if test="{field>Url}"-->
+			<template:if test="{meta>Url}">
 				<template:then>
 					<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
 						href="{path: 'field>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />

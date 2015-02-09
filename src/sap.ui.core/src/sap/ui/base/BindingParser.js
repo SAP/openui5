@@ -220,11 +220,18 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 							+ oEmbeddedBinding.at);
 					}
 					oEmbeddedBinding.at += 1;
-					bContainsExpression = true;
+					if (oEmbeddedBinding.result) {
+						bContainsExpression = true;
+					} else {
+						aFragments[aFragments.length - 1] = String(oEmbeddedBinding.constant);
+						bUnescaped = true;
+					}
 				} else {
 					oEmbeddedBinding = resolveEmbeddedBinding(sString, m.index);
 				}
-				oBindingInfo.parts.push(oEmbeddedBinding.result);
+				if (oEmbeddedBinding.result) {
+					oBindingInfo.parts.push(oEmbeddedBinding.result);
+				}
 				rFragments.lastIndex = oEmbeddedBinding.at;
 			}
 			
