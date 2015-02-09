@@ -172,10 +172,12 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 * Lift all extensions from the <a href="http://www.sap.com/Protocols/SAPData">
 		 * SAP Annotations for OData Version 2.0</a> namespace up as attributes with "sap:" prefix.
 		 *
+		 * @param {number} iUnused
+		 *   unused index so that the function can be used directly in jQuery.each
 		 * @param {object} o
 		 *   any object
 		 */
-		function liftSAPData(o) {
+		function liftSAPData(iUnused, o) {
 			jQuery.each(o.extensions || [], function (i, oExtension) {
 				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 					o["sap:" + oExtension.name] = oExtension.value;
@@ -214,10 +216,23 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 */
 		function merge(oAnnotations, oData) {
 			jQuery.each(oData.dataServices.schema || [], function (i, oSchema) {
-				liftSAPData(oSchema);
+				liftSAPData(0, oSchema);
+
+				jQuery.each(oSchema.association || [], liftSAPData);
 
 				jQuery.each(oSchema.complexType || [], function (j, oComplexType) {
 					oComplexType.$path = "/dataServices/schema/" + i + "/complexType/" + j;
+					jQuery.each(oComplexType.property || [], liftSAPData);
+				});
+
+				jQuery.each(oSchema.entityContainer || [], function (j, oEntityContainer) {
+					liftSAPData(0, oEntityContainer);
+					jQuery.each(oEntityContainer.associationSet || [], liftSAPData);
+					jQuery.each(oEntityContainer.entitySet || [], liftSAPData);
+					jQuery.each(oEntityContainer.functionImport || [], function (k, oFunction) {
+						liftSAPData(0, oFunction);
+						jQuery.each(oFunction.parameter || [], liftSAPData);
+					});
 				});
 
 				jQuery.each(oSchema.entityType || [], function (j, oEntityType) {
@@ -225,14 +240,16 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 						mPropertyAnnotations = oAnnotations.propertyAnnotations
 							&& oAnnotations.propertyAnnotations[sEntityName] || {};
 
-					liftSAPData(oEntityType);
+					liftSAPData(0, oEntityType);
 					jQuery.extend(oEntityType, oAnnotations[sEntityName]);
 					oEntityType.$path = "/dataServices/schema/" + i + "/entityType/" + j;
 
 					jQuery.each(oEntityType.property || [], function (k, oProperty) {
-						liftSAPData(oProperty);
+						liftSAPData(0, oProperty);
 						jQuery.extend(oProperty, mPropertyAnnotations[oProperty.name]);
 					});
+
+					jQuery.each(oEntityType.navigationProperty || [], liftSAPData);
 				});
 			});
 		}

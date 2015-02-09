@@ -47,13 +47,28 @@
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
 				<Property Name="NakedProperty" Type="Edm.String"/>\
+				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
-				m:IsDefaultEntityContainer="true">\
+				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
 					sap:content-version="1" />\
+				<AssociationSet Name="Assoc_FooSet" Association="GWSAMPLE_BASIC.Assoc_Foo" sap:creatable="false">\
+					<End EntitySet="BusinessPartnerSet" Role="FromRole_Foo"/>\
+					<End EntitySet="BusinessPartnerSet" Role="ToRole_Foo"/>\
+				</AssociationSet>\
+				<FunctionImport Name="Foo" ReturnType="GWSAMPLE_BASIC.BusinessPartner" EntitySet="BusinessPartnerSet" m:HttpMethod="POST" sap:action-for="GWSAMPLE_BASIC.BusinessPartner">\
+					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In" MaxLength="10" sap:label="ID"/>\
+				</FunctionImport>\
 			</EntityContainer>\
+			<ComplexType Name="CT_Address">\
+				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"/>\
+			</ComplexType>\
+			<Association Name="Assoc_Foo" sap:content-version="1">\
+				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="FromRole_Foo"/>\
+				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="*" Role="ToRole_Foo"/>\
+			</Association>\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
@@ -374,8 +389,17 @@
 					oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
+					oEntityContainer = oGWSampleBasic.entityContainer[0],
+					oAssociation = oGWSampleBasic.association[0],
+					oAssociationSet = oEntityContainer.associationSet[0],
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
+					oBusinessPartnerSet = oEntityContainer.entitySet[0],
+					oCTAddress = oGWSampleBasic.complexType[0],
+					oCTAddressCity = oCTAddress.property[0],
+					oFunctionImport = oEntityContainer.functionImport[0],
+					oNavigationProperty = oBusinessPartner.navigationProperty[0],
+					oParameter = oFunctionImport.parameter[0],
 					sSAPData = "http://www.sap.com/Protocols/SAPData";
 
 				start();
@@ -402,6 +426,33 @@
 				delete oBusinessPartnerId["sap:creatable"];
 				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
+
+				strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0", "$path");
+				delete oCTAddress.$path;
+
+				deepEqual(oCTAddressCity["sap:label"], "City");
+				delete oCTAddressCity["sap:label"];
+
+				deepEqual(oAssociation["sap:content-version"], "1");
+				delete oAssociation["sap:content-version"];
+
+				deepEqual(oAssociationSet["sap:creatable"], "false");
+				delete oAssociationSet["sap:creatable"];
+
+				deepEqual(oBusinessPartnerSet["sap:content-version"], "1");
+				delete oBusinessPartnerSet["sap:content-version"];
+
+				deepEqual(oEntityContainer["sap:use-batch"], "false");
+				delete oEntityContainer["sap:use-batch"];
+
+				deepEqual(oFunctionImport["sap:action-for"], "GWSAMPLE_BASIC.BusinessPartner");
+				delete oFunctionImport["sap:action-for"];
+
+				deepEqual(oParameter["sap:label"], "ID");
+				delete oParameter["sap:label"];
+
+				deepEqual(oNavigationProperty["sap:filterable"], "true");
+				delete oNavigationProperty["sap:filterable"];
 
 				if (i > 0) {
 					ok(oAnnotations, "annotations are also loaded");
