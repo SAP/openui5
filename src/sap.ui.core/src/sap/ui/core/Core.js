@@ -354,8 +354,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			 */
 			sap.ui.getCore = jQuery.sap.getter(this.getInterface());
 
-			//Init the HTML5 support if necessary before initialize the RenderManager
-			RenderManager.initHTML5Support();
 			// create the RenderManager so it can be used already
 			this.oRenderManager = new RenderManager();
 

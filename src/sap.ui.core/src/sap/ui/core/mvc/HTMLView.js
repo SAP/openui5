@@ -174,14 +174,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/DeclarativeSupport', 'sap/ui/co
 				throw new Error("Neither view name nor view content is given. One of them is required.");
 			}
 	
-			var sHTML = mSettings.viewContent || HTMLView._getTemplate(mSettings.viewName);
+			var vHTML = mSettings.viewContent || HTMLView._getTemplate(mSettings.viewName);
 			this._oTemplate = document.createElement("div");
-			var sHTML = RenderManager.prepareHTML5(sHTML);
 	
-			if (typeof sHTML === "string") {
-				this._oTemplate.innerHTML = sHTML;
+			if (typeof vHTML === "string") {
+				this._oTemplate.innerHTML = vHTML;
 			} else {
-				var oNodeList = sHTML;
+				var oNodeList = vHTML;
 				var oFragment = document.createDocumentFragment();
 				for (var i = 0; i < oNodeList.length;i++) {
 					oFragment.appendChild(oNodeList.item(i));

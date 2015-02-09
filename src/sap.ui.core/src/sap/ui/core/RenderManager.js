@@ -413,11 +413,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			
 			var oStoredFocusInfo = this.oFocusHandler ? this.oFocusHandler.getControlFocusInfo() : null;
 	
-			var vHTML = RenderManager.prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
+			var sHTML = this.aBuffer.join("");
 	
 			if (this._fPutIntoDom) {
 				//Case when render function was called
-				this._fPutIntoDom(oTargetDomNode, vHTML);
+				this._fPutIntoDom(oTargetDomNode, sHTML);
 			} else {
 				for (var i = 0; i < this.aRenderedControls.length; i++) {
 					//TODO It would be enough to loop over the controls for which renderControl was initially called but for this
@@ -433,21 +433,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 				if (typeof vInsert === "number") {
 					if (vInsert <= 0) { // new HTML should be inserted at the beginning
-						jQuery(oTargetDomNode).prepend(vHTML);
+						jQuery(oTargetDomNode).prepend(sHTML);
 					} else { // new element should be inserted at a certain position > 0
 						var $predecessor = jQuery(oTargetDomNode).children().eq(vInsert - 1); // find the element which should be directly before the new one
 						if ($predecessor.length === 1) {
 							// element found - put the HTML in after this element
-							$predecessor.after(vHTML);
+							$predecessor.after(sHTML);
 						} else {
 							// element not found (this should not happen when properly used), append the new HTML
-							jQuery(oTargetDomNode).append(vHTML);
+							jQuery(oTargetDomNode).append(sHTML);
 						}
 					}
 				} else if (!vInsert) {
-					jQuery(oTargetDomNode).html(vHTML); // Put the HTML into the given DOM Node
+					jQuery(oTargetDomNode).html(sHTML); // Put the HTML into the given DOM Node
 				} else {
-					jQuery(oTargetDomNode).append(vHTML); // Append the HTML into the given DOM Node
+					jQuery(oTargetDomNode).append(sHTML); // Append the HTML into the given DOM Node
 				}
 			}
 			
@@ -494,7 +494,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			// FIXME: MULTIPLE ROOTS
 			// The implementation of this method doesn't support multiple roots for a control.
 			// Affects all places where 'oldDomNode' is used
-			this._fPutIntoDom = function(oTarget, vHTML){
+			this._fPutIntoDom = function(oTarget, sHTML){
 	
 				if (oControl && oTargetDomNode) {
 	
@@ -513,9 +513,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					var fAppend = function(){
 						var jTarget = jQuery(oTargetDomNode);
 						if (oTargetDomNode.innerHTML == "") {
-							jTarget.html(vHTML);
+							jTarget.html(sHTML);
 						} else {
-							jTarget.append(vHTML);
+							jTarget.append(sHTML);
 						}
 					};
 	
@@ -529,18 +529,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 							}
 						}
 	
-						if (vHTML) {
+						if (sHTML) {
 							fAppend();
 						}
 	
 					} else { //Control either rendered initially or rerendered at the same location
 	
-						if (vHTML) {
+						if (sHTML) {
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
-									jQuery(oldDomNode).html(vHTML);
+									jQuery(oldDomNode).html(sHTML);
 								} else {
-									jQuery(oldDomNode).replaceWith(vHTML);
+									jQuery(oldDomNode).replaceWith(sHTML);
 								}
 							} else {
 								fAppend();
@@ -591,68 +591,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
 	
 		return oControl.getMetadata().getRenderer();
-	};
-	
-	/**
-	 * Makes the HTML5 tags known to older IE browsers; to be called once before rendering happens.
-	 *
-	 * Applies two workarounds
-	 * <ol>
-	 * <li>1. "SHIV": create each HTML5 tag once in the window document to make IE8 aware of it
-	 * <li>2. "INNERSHIV": IE8 fails when using innerHTML in conjunction with HTML5 tags for a DOM element __not__ part of the document.
-	 *        prepareHTML5 uses a dummy DOM element to convert the innerHTML to a set of DOM nodes first.
-	 * </ol>
-	 * @static
-	 * @private
-	 */
-	//Called once by the Core during initialization
-	RenderManager.initHTML5Support = function() {
-		if (!!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version === 8 || sap.ui.Device.browser.version === 7)) { // IE8 is recognized as "7.0"!!
-	
-			var aTags = [ "article", "aside", "audio", "canvas", "command", "datalist", "details",
-					"figcaption", "figure", "footer", "header", "hgroup", "keygen", "mark", "meter", "nav",
-					"output", "progress", "rp", "rt", "ruby", "section", "source", "summary", "template", "time", "video", "wbr" ];
-	
-			// 1. SHIV, create each HTML5 element once to make IE8 recognize it
-			// see http://paulirish.com/2011/the-history-of-the-html5-shiv/ for an explanation
-			for (var i = 0; i < aTags.length; i++) {
-				document.createElement(aTags[i]);
-			}
-	
-			// 2. INNERSHIV, converts string with HTML5 tags to DOM nodes before using them with jQuery
-			// see http://jdbartlett.com/innershiv/ for an explanation of the matter
-			var rhtmltags = new RegExp("<(" + aTags.join("|") + ")(\\s|>)", "i");
-			var d = null;
-			RenderManager.prepareHTML5 = function(sHTML) {
-				if ( sHTML && sHTML.match(rhtmltags) ) {
-					if (!d) {
-						d = document.createElement('div');
-						d.style.display = 'none';
-					}
-	
-					var e = d.cloneNode(true);
-					// in case of early usage of HTML views (before DOMReady) the 
-					// prepareHTML5 call will fail since the body is undefined
-					var f = document.body || document.createDocumentFragment();
-					f.appendChild(e);
-					e.innerHTML = sHTML.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-					f.removeChild(e);
-	
-					return e.childNodes;
-				}
-				return sHTML;
-			};
-	
-			jQuery.sap.log.info("IE8 HTML5 support activated");
-	
-		} else {
-	
-			jQuery.sap.log.info("no IE8 HTML5 support required");
-	
-			RenderManager.prepareHTML5 = function(sHTML) {
-				return sHTML;
-			};
-		}
 	};
 	
 	/**
