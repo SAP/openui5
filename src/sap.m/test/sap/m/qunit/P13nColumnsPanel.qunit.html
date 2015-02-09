@@ -1511,7 +1511,7 @@
 			ok(oP13nColumnsPanel._extractExistingColumnsItems, "Method does not exist");
 
 			// CUT -> method shall not be executed -> as no valid input parameter is passed in 
-			var aExtractionResultExpected = [];
+			var aExtractionResultExpected = null;
 			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems();
 			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
 
@@ -1544,6 +1544,149 @@
 			];
 			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems(aColumnsItems);
 			deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
+		});
+
+		test("Shall check _extractExistingTableItems", function() {
+			ok(oP13nColumnsPanel._extractExistingTableItems, "Method does not exist");
+
+			var aExtractionResultExpected = null, aExtractionResult = null;
+
+			// CUT -> method shall not be executed -> as no valid input parameter is passed in
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
+			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
+			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
+
+			// CUT -> method shall be executed and a valid extraction result shall be passed back 
+			var oTableItem1 = new sap.m.ColumnListItem();
+			oTableItem1.data('P13nColumnKey', '4711');
+			oTableItem1.data('P13nColumnWidth', '100px');
+			oTableItem1.setSelected(true);
+			var oTableItem2 = new sap.m.ColumnListItem();
+			oTableItem2.data('P13nColumnKey', '4712');
+			oTableItem2.data('P13nColumnWidth', '120px');
+			oTableItem2.setSelected(false);
+			var oTableItem3 = new sap.m.ColumnListItem();
+			oTableItem3.data('P13nColumnKey', '4713');
+			oTableItem3.data('P13nColumnWidth', '80px');
+			oTableItem3.setSelected(false);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem3, oTableItem1, oTableItem2
+			]);
+
+			aExtractionResultExpected = [
+				{
+					"columnKey": "4713",
+					"index": 0,
+					"visible": false,
+					"width": "80px"
+				}, {
+					"columnKey": "4711",
+					"index": 1,
+					"visible": true,
+					"width": "100px"
+				}, {
+					"columnKey": "4712",
+					"index": 2,
+					"visible": false,
+					"width": "120px"
+				}
+
+			];
+			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
+			deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
+		});
+
+		test("Shall check this._getTableItemsChangeStatus", function() {
+			ok(oP13nColumnsPanel._getTableItemsChangeStatus, "Method does not exist");
+
+			var bTableItemsChangeStatusResult = null;
+			var oTableItem1 = new sap.m.ColumnListItem();
+			oTableItem1.data('P13nColumnKey', '4711');
+			oTableItem1.data('P13nColumnWidth', '');
+
+			var oTableItem2 = new sap.m.ColumnListItem();
+			oTableItem2.data('P13nColumnKey', '4712');
+			oTableItem2.data('P13nColumnWidth', '');
+
+			// CUT -> method shall not be executed -> as table is empty & saved table items are also empty
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
+			oP13nColumnsPanel._aExistingTableItems = null;
+			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
+			strictEqual(bTableItemsChangeStatusResult, false, "No changes detected: table is empty & saved table items are also empty");
+
+			// CUT -> method shall not be executed -> Change shall be detected
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1
+			]);
+			oP13nColumnsPanel._aExistingTableItems = null;
+			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
+			strictEqual(bTableItemsChangeStatusResult, true, "Changes detected: table is filled with one items & saved table items are also empty");
+
+			// CUT -> method shall be executed -> Change shall be detected
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
+			oP13nColumnsPanel._aExistingTableItems = [
+				{
+					"columnKey": "4713",
+				}
+			];
+			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
+			strictEqual(bTableItemsChangeStatusResult, true, "Changes detected: table is empty & saved table items is filled with one item");
+
+			// CUT -> method shall be executed -> Both places have the same child items -> No changes!
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1
+			]);
+			oP13nColumnsPanel._aExistingTableItems = [
+				{
+					"columnKey": "4711",
+					"index": 0,
+					"visible": false,
+					"width": ''
+				}
+			];
+			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
+			strictEqual(bTableItemsChangeStatusResult, false, "No changes detected: table has same content as saved table item list");
+
+			// CUT -> method shall be executed -> Changes shall be detected -> Order is different
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1, oTableItem2
+			]);
+			oP13nColumnsPanel._aExistingTableItems = [
+				{
+					"columnKey": "4712",
+					"index": 0,
+					"visible": false,
+					"width": ''
+				}, {
+					"columnKey": "4711",
+					"index": 0,
+					"visible": false,
+					"width": ''
+				}
+			];
+			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
+			strictEqual(bTableItemsChangeStatusResult, true, "Changes deteced: Order of table items is different to saved table items");
+
+			// CUT -> method shall be executed -> Changes shall be detected -> Order is equal, but property index is different
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1, oTableItem2
+			]);
+			oP13nColumnsPanel._aExistingTableItems = [
+				{
+					"columnKey": "4711",
+					"index": 0,
+					"visible": true,
+					"width": ''
+				}, {
+					"columnKey": "4712",
+					"index": 0,
+					"visible": false,
+					"width": ''
+				}
+			];
+			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
+			strictEqual(bTableItemsChangeStatusResult, true, "Changes deteced: Order is equal, but property index is different");
+			
 		});
 	}());
 </script>
