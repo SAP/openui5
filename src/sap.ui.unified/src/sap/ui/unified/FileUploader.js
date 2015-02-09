@@ -790,6 +790,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var that = this;
 		var oXhr = aXhr[iIndex];
 		var sFilename = aFiles[iIndex].name;
+
+		if (sap.ui.Device.browser.internet_explorer) {
+			var sContentType = aFiles[iIndex].type;
+			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
+			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
+		}
+
 		var oRequestHeaders = oXhr.requestHeaders;
 
 		var fnProgressListener = function(oProgressEvent) {
