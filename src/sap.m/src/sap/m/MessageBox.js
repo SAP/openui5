@@ -179,6 +179,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 *     styleClass: ""                                       // default
 				 *     initialFocus: null                                   // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
+				 *     verticalScrolling: true                              // default
+				 *     horizontalScrolling: true                            // default
 				 * });
 				 * </pre>
 				 *
@@ -206,8 +208,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {function} [mOptions.onClose] Function to be called when the user taps a button or closes the message box.
 				 * @param {string} [mOptions.id] ID to be used for the dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {boolean} [mOptions.verticalScrolling] Added since version 1.28.0. verticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.horizontalScrolling] Added since version 1.28.0. horizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
 				 * @static
 				 */
@@ -217,7 +221,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							mDefaults = {
 								id: sap.ui.core.ElementMetadata.uid("mbox"),
 								initialFocus: null,
-								textDirection: sap.ui.core.TextDirection.Inherit
+								textDirection: sap.ui.core.TextDirection.Inherit,
+								verticalScrolling: true,
+								horizontalScrolling: true
 							};
 
 					if (typeof mOptions === "string" || arguments.length > 2) {
@@ -248,8 +254,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 					if (!mOptions.actions || mOptions.actions.length === 0) {
 						mOptions.actions = [Action.OK];
 					}
-
-
 
 					/** creates a button for the given action */
 					function button(sAction) {
@@ -309,6 +313,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						title: mOptions.title,
 						icon: mIcons[mOptions.icon],
 						initialFocus: getInitialFocusControl(),
+						verticalScrolling: mOptions.verticalScrolling,
+						horizontalScrolling: mOptions.horizontalScrolling,
 						afterClose: onclose
 					});
 
@@ -358,6 +364,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 *     styleClass: ""                                       // default
 				 *     initialFocus: null                                   // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
+				 *     verticalScrolling: true                              // default
+				 *     horizontalScrolling: true                            // default
 				 * });
 				 * </pre>
 				 *
@@ -381,8 +389,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.title='Alert'] Title to be displayed in the alert dialog
 				 * @param {string} [mOptions.id] ID to be used for the alert dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the alert dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {boolean} [mOptions.verticalScrolling] Added since version 1.28.0. verticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.horizontalScrolling] Added since version 1.28.0. horizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
 				 * @static
 				 */
@@ -427,7 +437,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 *     styleClass: ""                                       // default
 				 *     initialFocus: null                                   // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
-				 * });
+				 *     verticalScrolling: true                              // default
+				 *     horizontalScrolling: true                            // default
+				 *     });
 				 * </pre>
 				 *
 				 * The callback is called with the following signature
@@ -451,8 +463,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {string} [mOptions.onClose='Confirmation'] Title to display in the confirmation dialog
 				 * @param {string} [mOptions.id] ID to be used for the confirmation dialog. Intended for test scenarios, not recommended for productive apps
 				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the confirmation dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @param {string|sap.m.MessageBox.Action|sap.ui.core.Control} [mOptions.initialFocus] initialFocus, set the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {boolean} [mOptions.verticalScrolling] Added since version 1.28.0. verticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.horizontalScrolling] Added since version 1.28.0. horizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
 				 * @static
 				 */

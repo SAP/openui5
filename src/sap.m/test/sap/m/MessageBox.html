@@ -65,7 +65,6 @@
 		oHL.addContent(new sap.m.Button({
 			text: "Confirm",
 			press: function(){
-				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.confirm("Confirmation dialog is opened?", {
 					onClose: function(bConfirmed){
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
@@ -78,7 +77,6 @@
 		oHL.addContent(new sap.m.Button({
 			text: "Alert",
 			press: function(){
-				// MessageBox.alert(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.alert("Alert some message", {
 					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
 				});
@@ -104,7 +102,7 @@
 					})
 					]
 				});
-				// MessageBox.show(message, callback, title, dialogId, class , initialFocus)
+
 				sap.m.MessageBox.show(oLayout,{
 							sIcon: sap.m.MessageBox.Icon.WARNING,
 							title: "Title of first MessageBox",
@@ -112,7 +110,7 @@
 							onClose: function (oAction) {
 									if (oAction === sap.m.MessageBox.Action.YES) {
 										var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-										// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass ,oInitialFocus)
+										// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 										sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
 									}
 								},
@@ -132,7 +130,6 @@
 			text: "Action",
 			width: "250px",
 			press: function(){
-				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.confirm("Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL" , {
 					onClose: function(bConfirmed){
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
@@ -149,7 +146,6 @@
 			text: 'Button text',
 			width: "250px",
 			press: function () {
-				// MessageBox.show(message, icon, title, actions, callback, dialogId, class , initialFocus)
 				sap.m.MessageBox.show('Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive', {
 					icon: sap.m.MessageBox.Icon.INFORMATION,
 					title: "Set initial button focus",
@@ -178,7 +174,7 @@
 						oCheck
 					]
 				});
-				// MessageBox.show(message, icon, title, actions, callback, dialogId, class , initialFocus)
+
 				sap.m.MessageBox.show(oLayout, {
 							icon: sap.m.MessageBox.Icon.WARNING,
 							title: "Title of first MessageBox",
@@ -186,7 +182,7 @@
 							onClose: function (oAction) {
 								if (oAction === "Do something") {
 									var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-									// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass ,oInitialFocus)
+									// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 									sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
 								}
 							},
@@ -197,6 +193,99 @@
 				);
 			}
 		}));
+
+
+		oVL.addContent(new sap.m.Text("text2", {
+					text: "\nSet horizontal and vertical scrolling"
+				})
+		);
+
+		var sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus.";
+
+		oVL.addContent(new sap.m.Button({
+			text: "List with long text",
+			width: "250px",
+			press: function(){
+				var oLayout = new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.m.List({
+							inset : false,
+							width : "100%",
+							items : [
+								new sap.m.InputListItem({
+									label : sLongText
+								}), new sap.m.InputListItem({
+									label : sLongText
+								}), new sap.m.InputListItem({
+									label : sLongText
+								})
+							]
+						})
+					]
+				});
+
+
+				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
+				sap.m.MessageBox.show(oLayout,
+						sap.m.MessageBox.Icon.WARNING,
+						"Title of first MessageBox",
+						[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						function(oAction) {
+							if ( oAction === sap.m.MessageBox.Action.YES ) {
+								var oCheck = sap.ui.getCore().byId("checkBoxId");
+								var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+
+								// alert(sMessage, fnCallBack, sTitle)
+								sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+							}
+						},
+						"messageBoxId",
+						"",
+						"",
+						true,
+						false
+				);
+			}
+		}));
+
+
+
+		oVL.addContent(new sap.m.Button({
+			text: "Long text",
+			width: "250px",
+			press: function(){
+				var oLayout = new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.m.Text({
+							text: sLongText,
+							wrapping: true
+						})
+					]
+				});
+
+				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
+				sap.m.MessageBox.show(oLayout,
+						sap.m.MessageBox.Icon.WARNING,
+						"Title of first MessageBox",
+						[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						function(oAction) {
+							if ( oAction === sap.m.MessageBox.Action.YES ) {
+								var oCheck = sap.ui.getCore().byId("checkBoxId");
+								var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+
+								// alert(sMessage, fnCallBack, sTitle)
+								sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+							}
+						},
+						"messageBoxId",
+						"",
+						""
+				);
+			}
+		}));
+
 
 		app.addPage(page1).placeAt("content");
 	</script>
