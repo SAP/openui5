@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<Dialog
+		title="Reject"
+		type="Message" >
+		<Text text="Reject the leave request submitted by Frank Jones?" />
+		<HBox
+			justifyContent="Center">
+			<VBox>
+				<Text text="Leave Type: " />
+				<Text text="Between: " />
+				<Text text="To: " />
+				<Text text="Comment: " />
+			</VBox>
+			<VBox>
+				<Text text="Vacation" />
+				<Text text="Jun 26, 2013" />
+				<Text text="Jun 27, 2013" />
+				<Text text="Vacation conflict with Mary" />
+			</VBox>
+		</HBox>
+		<TextArea
+			id="confirmDialogTextarea"
+			width="100%"
+			placeholder="Add note (optional)" />
+		<beginButton>
+			<Button text="Reject" app:dialogType="Confirm" press="onConfirmPressed" />
+		</beginButton>
+		<endButton>
+			<Button text="Cancel" app:dialogType="Confirm" press="onDialogCloseButton"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
