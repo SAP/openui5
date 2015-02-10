@@ -61,6 +61,22 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 		this._showDetails(sPath);
 	},
 
+	onSourceCode: function (oEvent) {
+		var oView = this.getView(),
+			sSource,
+			bVisible = oView.byId("toggleSourceCode").getPressed();
+
+		oView.getModel("ui").setProperty("/codeVisible", bVisible);
+		if (bVisible) {
+			sSource = jQuery.sap.serializeXML(oView.byId("detail").getItems()[0]._xContent)
+				.replace(/<!--.*-->/g, "") // remove comments
+				.replace(/\t/g, "  ") // indent by just 2 spaces
+				.replace(/\n\s*\n/g, "\n"); // remove empty lines
+			oView.getModel("ui").setProperty("/code",
+				"<pre><code>" + jQuery.sap.encodeHTML(sSource) + "</code></pre>");
+		}
+	},
+
 	_bindSelectInstance: function() {
 		var oBinding,
 			oType = this._getSelectedType(),
@@ -125,5 +141,6 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 		oDetailView.bindElement(sPath);
 		oView.byId("detail").destroyItems().addItem(oDetailView);
+		this.onSourceCode();
 	}
 });
