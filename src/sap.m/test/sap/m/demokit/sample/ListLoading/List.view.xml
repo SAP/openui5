@@ -21,7 +21,9 @@
 		</headerToolbar>
 		<StandardListItem
 			title="{Name}"
-			info="{Price} EUR"
-			description="{ShortDescription}" />
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			iconDensityAware="false"
+			iconInset="false" />
 	</List>
 </mvc:View>
