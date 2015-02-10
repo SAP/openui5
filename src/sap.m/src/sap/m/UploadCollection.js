@@ -1292,7 +1292,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			if (iPercentUploaded === 100) {
 				iPercentUploaded = iPercentUploaded - 1;
 			}
-			sPercentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded]);
+			sPercentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [iPercentUploaded]);
 			cItems = this.aItems.length;
 			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i].getProperty("fileName") === sUploadedFile && this.aItems[i]._requestIdName == sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
