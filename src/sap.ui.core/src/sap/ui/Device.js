@@ -1251,7 +1251,9 @@ if (typeof window.sap.ui !== "object") {
 		var android_phone = (/(?=android)(?=.*mobile)/i.test(navigator.userAgent));
 		// According to google documentation: https://developer.chrome.com/multidevice/webview/overview, the WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android.
 		// If you're attempting to differentiate between the WebView and Chrome for Android, you should look for the presence of the Version/_X.X_ string in the WebView user-agent string
-		var bChromeWebView = device.os.android && (device.os.version >= 4.4) && /Version\/\d.\d/.test(navigator.userAgent);
+		// The stock browser of Samsung device uses Chrome kernal from Android version 4.4. It behaves differently than the Chrome Webview, therefore it's excluded from this check by checking the 'SAMSUNG'
+		// string in the user agent.
+		var bChromeWebView = device.os.android && device.browser.chrome && (device.os.version >= 4.4) && /Version\/\d.\d/.test(navigator.userAgent) && !/SAMSUNG/.test(navigator.userAgent);
 		if (device.os.name === device.os.OS.IOS) {
 			return /ipad/i.test(navigator.userAgent);
 		} else {
@@ -1278,7 +1280,7 @@ if (typeof window.sap.ui !== "object") {
 				//this is how android distinguishes between tablet and phone
 				//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
 				var bTablet = (Math.min(window.screen.width / densityFactor, window.screen.height / densityFactor) >= 600);
-				
+
 				// special workaround for Nexus 7 where the window.screen.width is 600px or 601px in portrait mode (=> tablet) 
 				// but window.screen.height 552px in landscape mode (=> phone), because the browser UI takes some space on top.
 				// So the detected device type depends on the orientation :-(
@@ -1289,9 +1291,8 @@ if (typeof window.sap.ui !== "object") {
 						&& (/Nexus 7/i.test(navigator.userAgent))) {
 					bTablet = true;
 				}
-				
-				return bTablet;
 
+				return bTablet;
 			} else {
 				// in desktop browser, it's detected as tablet when
 				// 1. Windows 8 device with a touch screen where "Touch" is contained in the userAgent
