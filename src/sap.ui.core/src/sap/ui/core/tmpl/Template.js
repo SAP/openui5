@@ -506,14 +506,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				// retrieve the content 
 				sContent = $element.html();
 
-				var rBindingPattern = /path="(\w|\/|&gt;)+"/i;
-				if (rBindingPattern.test(sContent)) {
-					// Since jQuery.html() escapes such chars like '>' with '&gt;'
-					// check if a binding path is inside the content and replace
-					// the escaped '&gt;' with a '>'.
-					sContent = sContent.replace("&gt;", ">");
-				}
-	
 				// check the preconditions for rendering and set the render property
 				// if the DOM ref is part of the documents body
 				var sTagName = oElement.tagName.toLowerCase();
