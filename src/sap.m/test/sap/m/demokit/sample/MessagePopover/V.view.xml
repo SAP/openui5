@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="sap.m.sample.MessagePopover.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Button
+				text="Show MessagePopover"
+				press="handleMessagePopoverPress"
+				width="250px"/>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

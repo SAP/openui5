@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>QUnit Page for sap.m.MessagePopover</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+
+		var sCustomId = "custom-msg-popover-id",
+			fnSpy = {},
+			oMessagePopover,
+			oButton;
+
+		QUnit.module("Public API", {
+			setup: function () {
+				fnSpy.beforeOpen = sinon.spy();
+				fnSpy.afterOpen = sinon.spy();
+				fnSpy.beforeClose = sinon.spy();
+				fnSpy.afterClose = sinon.spy();
+
+				oMessagePopover = new sap.m.MessagePopover(sCustomId, {
+					beforeOpen: fnSpy.beforeOpen,
+					afterOpen: fnSpy.afterOpen,
+					beforeClose: fnSpy.beforeClose,
+					afterClose: fnSpy.afterClose
+				});
+
+				oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+				oButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function(){});
+			},
+			teardown: function () {
+				oMessagePopover.destroy();
+				oButton.destroy();
+
+				sap.ui.base.ObjectPool.prototype.returnObject.restore();
+				oMessagePopover = null;
+				oButton = null;
+			}
+		});
+
+		QUnit.test("getId() should return correct id", function (assert) {
+			var sId = oMessagePopover.getId();
+
+			assert.strictEqual(sId, sCustomId, "#" + sId + " should be equal to #" + sCustomId);
+		});
+
+		QUnit.test("getDomRef() should return HTML element", function (assert) {
+			oMessagePopover.openBy(oButton);
+			var oDomRef = oMessagePopover.getDomRef();
+
+			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
+		});
+
+		QUnit.test("$() should return jQuery object", function (assert) {
+			oMessagePopover.openBy(oButton);
+			var $oDomRef = oMessagePopover.$();
+
+			assert.ok($oDomRef instanceof jQuery, "return value should be an instance of jQuery");
+		});
+
+		QUnit.test("setPlacement() should set the placement when valid placement is used", function (assert) {
+			oMessagePopover.setPlacement(sap.m.VerticalPlacementType.Bottom);
+			assert.strictEqual(oMessagePopover.getPlacement(), sap.m.VerticalPlacementType.Bottom, "message popover should be placed at the Bottom");
+
+			oMessagePopover.setPlacement(sap.m.VerticalPlacementType.Top);
+			assert.strictEqual(oMessagePopover.getPlacement(), sap.m.VerticalPlacementType.Top, "message popover should be placed at the Top");
+
+			oMessagePopover.setPlacement(sap.m.VerticalPlacementType.Vertical);
+			assert.strictEqual(oMessagePopover.getPlacement(), sap.m.VerticalPlacementType.Vertical, "message popover should be placed Vertical");
+		});
+
+		QUnit.test("setPlacement() should throw and error when invalid placement is used", function (assert) {
+			assert.throws(function () {
+				oMessagePopover.setPlacement(sap.m.PlacementType.Left);
+			}, "message popover should throw an error when positioned on the Left");
+
+			assert.throws(function () {
+				oMessagePopover.setPlacement(sap.m.PlacementType.Right);
+			}, "message popover should throw an error when positioned on the Right");
+
+			assert.throws(function () {
+				oMessagePopover.setPlacement(sap.m.PlacementType.Horizontal);
+			}, "message popover should throw an error when positioned Horizontal");
+
+			assert.throws(function () {
+				oMessagePopover.setPlacement(sap.m.PlacementType.Auto);
+			}, "message popover should throw an error when positioned Auto");
+		});
+
+		QUnit.test("isOpen() should return correct boolean value", function (assert) {
+			oMessagePopover.openBy(oButton);
+			this.clock.tick(500);
+			assert.strictEqual(oMessagePopover.isOpen(), true, "message popover should be open");
+
+			oMessagePopover.close();
+			this.clock.tick(500);
+			assert.strictEqual(oMessagePopover.isOpen(), false, "message popover should be closed");
+		});
+
+		QUnit.test("beforeOpen callback should be called with correct parameter and this binding", function (assert) {
+			oMessagePopover.openBy(oButton);
+
+			assert.strictEqual(fnSpy.beforeOpen.calledOnce, true, "callback is called only once");
+
+			assert.strictEqual(fnSpy.beforeOpen.calledBefore(fnSpy.afterOpen), true, "callback should be called before afterOpen");
+			assert.strictEqual(fnSpy.beforeOpen.calledBefore(fnSpy.beforeClose), true, "callback should be called before beforeClose");
+			assert.strictEqual(fnSpy.beforeOpen.calledBefore(fnSpy.afterClose), true, "callback should be called before afterClose");
+
+			assert.strictEqual(fnSpy.beforeOpen.calledOn(oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(fnSpy.beforeOpen.args[0][0].getParameter("openBy").getId(), oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("afterOpen callback should be called with correct argument and this binding", function (assert) {
+			oMessagePopover.openBy(oButton);
+			this.clock.tick(500);
+
+			assert.strictEqual(fnSpy.afterOpen.calledOnce, true, "callback should be called only once");
+
+			assert.strictEqual(fnSpy.afterOpen.calledAfter(fnSpy.beforeOpen), true, "callback should be called after beforeOpen");
+			assert.strictEqual(fnSpy.afterOpen.calledBefore(fnSpy.beforeClose), true, "callback should be called before beforeClose");
+			assert.strictEqual(fnSpy.afterOpen.calledBefore(fnSpy.afterClose), true, "callback should be called before afterClose");
+
+			assert.strictEqual(fnSpy.afterOpen.calledOn(oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(fnSpy.afterOpen.args[0][0].getParameter("openBy").getId(), oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("beforeClose callback should be called with correct argument and this binding", function (assert) {
+			oMessagePopover.openBy(oButton);
+			this.clock.tick(500);
+			oMessagePopover.close();
+
+			assert.strictEqual(fnSpy.beforeClose.calledOnce, true, "callback should be called only once");
+
+			assert.strictEqual(fnSpy.beforeClose.calledAfter(fnSpy.beforeOpen), true, "callback should be called after beforeOpen");
+			assert.strictEqual(fnSpy.beforeClose.calledAfter(fnSpy.afterOpen), true, "callback should be called after afterOpen");
+			assert.strictEqual(fnSpy.beforeClose.calledBefore(fnSpy.afterClose), true, "callback should be called before afterClose");
+
+			assert.strictEqual(fnSpy.beforeClose.calledOn(oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(fnSpy.beforeClose.args[0][0].getParameter("openBy").getId(), oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.test("afterClose callback should be called with correct argument and this binding", function (assert) {
+			oMessagePopover.openBy(oButton);
+			this.clock.tick(500);
+			oMessagePopover.close();
+			this.clock.tick(500);
+
+			assert.strictEqual(fnSpy.afterClose.calledOnce, true, "callback should be called only once");
+
+			assert.strictEqual(fnSpy.afterClose.calledAfter(fnSpy.beforeOpen), true, "callback should be called after beforeOpen");
+			assert.strictEqual(fnSpy.afterClose.calledAfter(fnSpy.afterOpen), true, "callback should be called after afterOpen");
+			assert.strictEqual(fnSpy.afterClose.calledAfter(fnSpy.beforeClose), true, "callback should be called after beforeClose");
+
+			assert.strictEqual(fnSpy.afterClose.calledOn(oMessagePopover), true, "callback should be called with correct this binding");
+			assert.strictEqual(fnSpy.afterClose.args[0][0].getParameter("openBy").getId(), oButton.getId(),
+				"callback should be called with correct argument");
+		});
+
+		QUnit.module("HTML representation", {
+			setup: function () {
+				oMessagePopover = new sap.m.MessagePopover(sCustomId);
+
+				oButton = new sap.m.Button({
+					text: "Show MessagePopover"
+				});
+
+				oButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				oMessagePopover.destroy();
+				oButton.destroy();
+
+				oMessagePopover = null;
+				oButton = null;
+			}
+		});
+
+		QUnit.test("sapMMsgPopover class should be present", function (assert) {
+			oMessagePopover.openBy(oButton);
+			var oDomRef = oMessagePopover.getDomRef();
+
+			assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgPopover"), -1, "sapMMsgPopover class should present on the HTML element");
+		});
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

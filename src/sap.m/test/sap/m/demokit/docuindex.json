@@ -352,6 +352,13 @@
 				"samples" : [ "sap.m.sample.MessageBox", "sap.m.sample.MessageBoxTypes", "sap.m.sample.MessageBoxCustom" ]
 			},
 			{
+				"id" : "sap.m.MessagePopover",
+				"name" : "Message Popover",
+				"category" : "Popup",
+				"since" : "1.28",
+				"samples" : [ "sap.m.sample.MessagePopover" ]
+			},
+			{
 				"id" : "sap.m.MessageToast",
 				"name" : "Message Toast",
 				"category" : "Popup",
@@ -1446,6 +1453,11 @@
 				"id": "sap.m.sample.MessageBoxCustom",
 				"name": "Message Box with Custom Content",
 				"description": "Here a MessageBox is described how it can be used with custom content - a layout e.g. Additionaly it is show how any binding can be used within the custom content."
+			},
+			{
+				"id": "sap.m.sample.MessagePopover",
+				"name": "MessagePopover",
+				"description": "MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message."
 			},
 			{
 				"id": "sap.m.sample.MessageToast",
