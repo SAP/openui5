@@ -209,6 +209,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 							sType = 'sap.ui.model.odata.type.Int32';
 							break;
 
+						case "Edm.Int64":
+							sType = 'sap.ui.model.odata.type.Int64';
+							break;
+
 						case "Edm.SByte":
 							sType = 'sap.ui.model.odata.type.SByte';
 							break;
