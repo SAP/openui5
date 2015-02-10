@@ -33,10 +33,10 @@
 		var oP13nColumnsPanel = null;
 
 		module("Properties", {
-			setup : function() {
+			setup: function() {
 				oP13nColumnsPanel = new sap.m.P13nColumnsPanel({});
 			},
-			teardown : function() {
+			teardown: function() {
 				/* 			oP13nColumnsPanel.destroy();
 				 oP13nColumnsPanel = null; */
 			}
@@ -57,7 +57,9 @@
 			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
 			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
 			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
 			//CUT -> check that the method is not executed as this._oSelectedItem is empty
 			oP13nColumnsPanel._oSelectedItem = null;
@@ -69,20 +71,16 @@
 			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveToTop();
-			strictEqual(handleItemIndexChangedSpy.notCalled, true,
-					"Boundary check did fail -> general moveItem method shall not be executed");
+			strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
 
 			//CUT -> check that the method _is executed with old and new Indexes
 			getArrayIndexByItemKeySpy.returns(5);
 			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveToTop();
-			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 0), true,
-					"Item move was done with wrong parameter");
-			strictEqual(changeColumnsItemsIndexesSpy.called, true,
-					"Method: _changeColumnsItemsIndexes was not called, although it should not be done");
-			strictEqual(afterMoveItemSpy.called, true,
-					"Method: _afterMoveItem was not called, although it should not be done");
+			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 0), true, "Item move was done with wrong parameter");
+			strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should not be done");
+			strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
 		});
 
 		test("Shall check _ItemMoveUp", function() {
@@ -96,7 +94,9 @@
 			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
 			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
 			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
 			//CUT -> check that the method is not executed as this._oSelectedItem is empty
 			oP13nColumnsPanel._oSelectedItem = null;
@@ -110,8 +110,7 @@
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveUp();
 
-			strictEqual(handleItemIndexChangedSpy.notCalled, true,
-					"Boundary check did fail -> general moveItem method shall not be executed");
+			strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
 
 			//CUT -> check that the method is executed with old and new Indexes
 			getArrayIndexByItemKeySpy.returns(5);
@@ -119,8 +118,7 @@
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveUp();
 
-			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true,
-					"Item move was done with wrong parameter");
+			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true, "Item move was done with wrong parameter");
 
 			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, where the new index was filled by method: _getPreviousItemIndex
 			getArrayIndexByItemKeySpy.returns(5);
@@ -134,14 +132,10 @@
 
 			oP13nColumnsPanel._ItemMoveUp();
 
-			strictEqual(getPreviousItemIndexSpy.called, true,
-					"Method: getPreviousItemIndex shall not be called to get the previous selected item");
-			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 3), true,
-					"Item move was done with wrong parameter");
-			strictEqual(changeColumnsItemsIndexesSpy.called, true,
-					"Method: _changeColumnsItemsIndexes was not called, although it should not be done");
-			strictEqual(afterMoveItemSpy.called, true,
-					"Method: _afterMoveItem was not called, although it should not be done");
+			strictEqual(getPreviousItemIndexSpy.called, true, "Method: getPreviousItemIndex shall not be called to get the previous selected item");
+			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 3), true, "Item move was done with wrong parameter");
+			strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should not be done");
+			strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
 		});
 
 		test("Shall check _ItemMoveDown", function() {
@@ -155,7 +149,9 @@
 			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
 			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
 			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
 			//CUT -> check that the method is not executed as this._oSelectedItem is empty
 			oP13nColumnsPanel._oSelectedItem = null;
@@ -169,8 +165,7 @@
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveDown();
 
-			strictEqual(handleItemIndexChangedSpy.notCalled, true,
-					"Boundary check did fail -> general moveItem method shall not be executed");
+			strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
 
 			//CUT -> check that the method _is executed with old and new Indexes
 			getArrayIndexByItemKeySpy.returns(4);
@@ -178,8 +173,7 @@
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveDown();
 
-			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 5), true,
-					"Item move was done with wrong parameter");
+			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 5), true, "Item move was done with wrong parameter");
 
 			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, whereas the new index was filled by method: _getNextSelectedItemIndex
 			getArrayIndexByItemKeySpy.returns(2);
@@ -193,14 +187,10 @@
 			handleItemIndexChangedSpy.reset();
 			oP13nColumnsPanel._ItemMoveDown();
 
-			strictEqual(getNextItemIndexSpy.called, true,
-					"Method: getNextItemIndex shall not be called to get the previous selected item");
-			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true,
-					"Item move was done with wrong parameter");
-			strictEqual(changeColumnsItemsIndexesSpy.called, true,
-					"Method: _changeColumnsItemsIndexes was not called, although it should not be done");
-			strictEqual(afterMoveItemSpy.called, true,
-					"Method: _afterMoveItem was not called, although it should not be done");
+			strictEqual(getNextItemIndexSpy.called, true, "Method: getNextItemIndex shall not be called to get the previous selected item");
+			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true, "Item move was done with wrong parameter");
+			strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should not be done");
+			strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
 		});
 
 		test("Shall check _ItemMoveToBottom", function() {
@@ -226,15 +216,16 @@
 			oTableItem1.data('P13nColumnKey', '4711');
 			var oTableItem2 = new sap.m.ColumnListItem();
 			oTableItem2.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem2, oTableItem1]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem2, oTableItem1
+			]);
 
 			getArrayIndexByItemKeySpy.returns(1);
 			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 			oP13nColumnsPanel._ItemMoveToBottom();
 
-			strictEqual(handleItemIndexChangedSpy.notCalled, true,
-					"Boundary check did fail -> general moveItem method shall not be executed");
+			strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
 
 			//CUT -> check that the method _is executed with old and new Indexes
 			var oTableItem1 = new sap.m.ColumnListItem();
@@ -247,79 +238,67 @@
 			oTableItem4.data('P13nColumnKey', '4714');
 			var oTableItem5 = new sap.m.ColumnListItem();
 			oTableItem5.data('P13nColumnKey', '4715');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns(
-					[oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5
+			]);
 
 			getArrayIndexByItemKeySpy.returns(1);
 			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
 			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4712');
 			oP13nColumnsPanel._ItemMoveToBottom();
 
-			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true,
-					"Item move was done with wrong parameter");
-			strictEqual(changeColumnsItemsIndexesSpy.called, true,
-					"Method: _changeColumnsItemsIndexes was not called, although it should be done");
-			strictEqual(afterMoveItemSpy.called, true,
-					"Method: _afterMoveItem was not called, although it should not be done");
+			strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true, "Item move was done with wrong parameter");
+			strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should be done");
+			strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
 		});
 
-		test(
-				"Shall check _changeColumnsItemsIndexes",
-				function() {
-					ok(oP13nColumnsPanel._changeColumnsItemsIndexes, "Method does not exist");
+		test("Shall check _changeColumnsItemsIndexes", function() {
+			ok(oP13nColumnsPanel._changeColumnsItemsIndexes, "Method does not exist");
 
-					var getColumnsItemsSpy = sinon.stub();
-					oP13nColumnsPanel.getColumnsItems = getColumnsItemsSpy;
-					getColumnsItemsSpy.returns([{
-						"getColumnKey" : sinon.stub().returns("4711"),
-						"getIndex" : sinon.stub().returns(1),
-						"setIndex" : sinon.stub()
-					}, {
-						"getColumnKey" : sinon.stub().returns("4712"),
-						"getIndex" : sinon.stub().returns(2),
-						"setIndex" : sinon.stub()
-					}]);
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}]);
+			var getColumnsItemsSpy = sinon.stub();
+			oP13nColumnsPanel.getColumnsItems = getColumnsItemsSpy;
+			getColumnsItemsSpy.returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"setIndex": sinon.stub()
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"setIndex": sinon.stub()
+				}
+			]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}
+			]);
 
-					//CUT -> check that the method is not executed as no parameter are passed in
-					oP13nColumnsPanel._changeColumnsItemsIndexes();
-					strictEqual(oP13nColumnsPanel.getColumnsItems.notCalled, true,
-							"Method: getColumnsItems was called, although it should not be done because of missing input parameter");
+			//CUT -> check that the method is not executed as no parameter are passed in
+			oP13nColumnsPanel._changeColumnsItemsIndexes();
+			strictEqual(oP13nColumnsPanel.getColumnsItems.notCalled, true, "Method: getColumnsItems was called, although it should not be done because of missing input parameter");
 
-					//CUT -> check that the method is executed AND the index of first columnsItem has been changed to 0
-					oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-					oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4712');
-					oP13nColumnsPanel._changeColumnsItemsIndexes(1, 2);
+			//CUT -> check that the method is executed AND the index of first columnsItem has been changed to 0
+			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4712');
+			oP13nColumnsPanel._changeColumnsItemsIndexes(1, 2);
 
-					strictEqual(oP13nColumnsPanel.getColumnsItems.called, true,
-							"Method: getColumnsItems was not called, although it should not be done");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getColumnKey.called, true,
-							"Method: getColumnKey of first columnsItem was not called, although it should be done");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getIndex.called, true,
-							"Method: getIndex of first columnsItem was not called, although it should be done");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.called, true,
-							"Method: setIndex of first columnsItem was not called, although it should be done");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(0), true,
-							"setIndex of first columnsItem has been called with wrong property value");
+			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method: getColumnsItems was not called, although it should not be done");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getColumnKey.called, true, "Method: getColumnKey of first columnsItem was not called, although it should be done");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getIndex.called, true, "Method: getIndex of first columnsItem was not called, although it should be done");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.called, true, "Method: setIndex of first columnsItem was not called, although it should be done");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(0), true, "setIndex of first columnsItem has been called with wrong property value");
 
-					// Second columnsItem with key = 4712 shall not be changed as this is the instance of oSelectedItem; that shall be 
-					// excluded as this has already the right index value
-					strictEqual(
-							oP13nColumnsPanel.getColumnsItems()[1].getColumnKey.called,
-							true,
-							"Method: getColumnKey of second columnsItem was not called, although it should be done to identify the current columnsItem");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getIndex.notCalled, true,
-							"Method: getIndex of first columnsItem was called, although it should not be done");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.notCalled, true,
-							"Method: setIndex of first columnsItem was called, although it should not be done");
+			// Second columnsItem with key = 4712 shall not be changed as this is the instance of oSelectedItem; that shall be 
+			// excluded as this has already the right index value
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getColumnKey.called, true, "Method: getColumnKey of second columnsItem was not called, although it should be done to identify the current columnsItem");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getIndex.notCalled, true, "Method: getIndex of first columnsItem was called, although it should not be done");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.notCalled, true, "Method: setIndex of first columnsItem was called, although it should not be done");
 
-					//CUT -> check that the method is executed AND the index of first columnsItem has been changed to 0
-					oP13nColumnsPanel.getColumnsItems()[0].setIndex.reset();
-					oP13nColumnsPanel._changeColumnsItemsIndexes(2, 1);
+			//CUT -> check that the method is executed AND the index of first columnsItem has been changed to 0
+			oP13nColumnsPanel.getColumnsItems()[0].setIndex.reset();
+			oP13nColumnsPanel._changeColumnsItemsIndexes(2, 1);
 
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(2), true,
-							"setIndex of first columnsItem has been called with wrong property value");
-				});
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(2), true, "setIndex of first columnsItem has been called with wrong property value");
+		});
 
 		test("Shall check _swopShowSelectedButton", function() {
 			ok(oP13nColumnsPanel._swopShowSelectedButton, "Method does not exist");
@@ -344,28 +323,31 @@
 			//CUT		
 			oP13nColumnsPanel._afterMoveItem();
 			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "Method _scrollToSelectedItem wasn't called");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
-					"Method _calculateMoveButtonAppearance wasn't called");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Method _calculateMoveButtonAppearance wasn't called");
 		});
 
 		test("Shall check _filterItems if no filters are activated", function() {
 			ok(oP13nColumnsPanel._filterItems, "Method does not exist");
 			var oItem = {
-				"id" : "4711",
-				"getId" : function() {
+				"id": "4711",
+				"getId": function() {
 					return this.id;
 				},
-				"getCells" : function() {
-					return [{
-						"getText" : function() {
-							return "TestText";
+				"getCells": function() {
+					return [
+						{
+							"getText": function() {
+								return "TestText";
+							}
 						}
-					}];
+					];
 				},
-				"setVisible" : sinon.stub()
+				"setVisible": sinon.stub()
 			};
 
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oItem]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oItem
+			]);
 			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([]);
 			oP13nColumnsPanel._bShowSelected = false;
 			oP13nColumnsPanel._bSearchFilterActive = false;
@@ -373,29 +355,31 @@
 			//CUT
 			oP13nColumnsPanel._filterItems();
 			strictEqual(oItem.setVisible.called, true, "Wrong filter logic: The one existing item should be set to visible");
-			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true,
-					"Wrong filter logic: The table should return at least one item");
-			strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, false,
-					"Wrong filter logic: getSelectedItems should not be called at all");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Wrong filter logic: The table should return at least one item");
+			strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, false, "Wrong filter logic: getSelectedItems should not be called at all");
 		});
 
 		test("Shall check _filterItems if Search field filters is activ", function() {
 			var oItem = {
-				"id" : "4711",
-				"getId" : function() {
+				"id": "4711",
+				"getId": function() {
 					return this.id;
 				},
-				"getCells" : function() {
-					return [{
-						"getText" : function() {
-							return "TestText";
+				"getCells": function() {
+					return [
+						{
+							"getText": function() {
+								return "TestText";
+							}
 						}
-					}];
+					];
 				},
-				"setVisible" : sinon.stub()
+				"setVisible": sinon.stub()
 			};
 
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oItem]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oItem
+			]);
 			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([]);
 			oP13nColumnsPanel._bShowSelected = false;
 			oP13nColumnsPanel._bSearchFilterActive = true;
@@ -424,22 +408,28 @@
 
 		test("Shall check _filterItems if \"ShowSelected\" filter is activ", function() {
 			var oItem = {
-				"id" : "4711",
-				"getId" : function() {
+				"id": "4711",
+				"getId": function() {
 					return this.id;
 				},
-				"getCells" : function() {
-					return [{
-						"getText" : function() {
-							return "TestText";
+				"getCells": function() {
+					return [
+						{
+							"getText": function() {
+								return "TestText";
+							}
 						}
-					}];
+					];
 				},
-				"setVisible" : sinon.stub()
+				"setVisible": sinon.stub()
 			};
 
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oItem]);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([oItem]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oItem
+			]);
+			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
+				oItem
+			]);
 			oP13nColumnsPanel._bShowSelected = true;
 			oP13nColumnsPanel._bSearchFilterActive = false;
 
@@ -464,78 +454,69 @@
 			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "getItems method was not called at all");
 			strictEqual(oP13nColumnsPanel._oTable.getItems.callCount, 1, "getItems method shall have been called 1 time");
 			strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, true, "getSelectedItems shall have been called");
-			strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.callCount, 1,
-					"getSelectedItems method shall have been called 1 time");
+			strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.callCount, 1, "getSelectedItems method shall have been called 1 time");
 		});
 
-		test(
-				"Shall check _executeSearch",
-				function() {
-					ok(oP13nColumnsPanel._executeSearch, "Method does not exist");
-					oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue')
-					oP13nColumnsPanel._deactivateSelectedItem = sinon.stub();
-					oP13nColumnsPanel._filterItems = sinon.stub();
-					oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-					oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
+		test("Shall check _executeSearch", function() {
+			ok(oP13nColumnsPanel._executeSearch, "Method does not exist");
+			oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue')
+			oP13nColumnsPanel._deactivateSelectedItem = sinon.stub();
+			oP13nColumnsPanel._filterItems = sinon.stub();
+			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
+			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
 
-					//CUT -> execute method -> _oSelectedItem is undefined 
-					oP13nColumnsPanel._executeSearch();
-					strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
-					strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
-					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false,
-							"method: _deactivateSelectedItem shall not be called, as _oSelectedItem is empty");
-					strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
-							"method: _calculateMoveButtonAppearance shall be called");
-					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true,
-							"method: _scrollToSelectedItem shall be called");
-					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true,
-							"method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
+			//CUT -> execute method -> _oSelectedItem is undefined 
+			oP13nColumnsPanel._executeSearch();
+			strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
+			strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
+			strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false, "method: _deactivateSelectedItem shall not be called, as _oSelectedItem is empty");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "method: _calculateMoveButtonAppearance shall be called");
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "method: _scrollToSelectedItem shall be called");
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true, "method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
 
-					//CUT -> execute method with _oSelectedItem that is invisible after filterItems method
-					oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue');
-					oP13nColumnsPanel._deactivateSelectedItem.reset();
-					oP13nColumnsPanel._filterItems.reset()
-					oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
-					oP13nColumnsPanel._scrollToSelectedItem.reset();
-					oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem({
-						"visible" : false
-					});
+			//CUT -> execute method with _oSelectedItem that is invisible after filterItems method
+			oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue');
+			oP13nColumnsPanel._deactivateSelectedItem.reset();
+			oP13nColumnsPanel._filterItems.reset()
+			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
+			oP13nColumnsPanel._scrollToSelectedItem.reset();
+			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem({
+				"visible": false
+			});
 
-					oP13nColumnsPanel._executeSearch();
-					strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
-					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, true,
-							"method: _deactivateSelectedItem shall be called, as _oSelectedItem is NOT empty and invisble");
-					strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
-					strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
-					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true,
-							"method: _scrollToSelectedItem shall be called");
-					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(oP13nColumnsPanel._oSelectedItem), true,
-							"method: _scrollToSelectedItem shall be called with _oSelectedItem as input parameter");
+			oP13nColumnsPanel._executeSearch();
+			strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
+			strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, true, "method: _deactivateSelectedItem shall be called, as _oSelectedItem is NOT empty and invisble");
+			strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
+			strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "method: _scrollToSelectedItem shall be called");
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(oP13nColumnsPanel._oSelectedItem), true, "method: _scrollToSelectedItem shall be called with _oSelectedItem as input parameter");
 
-					//CUT -> execute method, but no content is filled in Search field or was removed via reset button
-					oP13nColumnsPanel._oSearchField.setValue('');
-					oP13nColumnsPanel._deactivateSelectedItem.reset();
-					oP13nColumnsPanel._filterItems.reset()
-					oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
-					oP13nColumnsPanel._scrollToSelectedItem.reset();
-					oP13nColumnsPanel._oSelectedItem = undefined;
+			//CUT -> execute method, but no content is filled in Search field or was removed via reset button
+			oP13nColumnsPanel._oSearchField.setValue('');
+			oP13nColumnsPanel._deactivateSelectedItem.reset();
+			oP13nColumnsPanel._filterItems.reset()
+			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
+			oP13nColumnsPanel._scrollToSelectedItem.reset();
+			oP13nColumnsPanel._oSelectedItem = undefined;
 
-					oP13nColumnsPanel._executeSearch();
-					strictEqual(oP13nColumnsPanel._bSearchFilterActive, false, "Search filter shall be deactived");
-					strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false,
-							"method: _deactivateSelectedItem shall not be called, as _oSelectedItem is NOT empty and invisble");
-					strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
-					strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
-					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true,
-							"method: _scrollToSelectedItem shall be called");
-					strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true,
-							"method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
-				});
+			oP13nColumnsPanel._executeSearch();
+			strictEqual(oP13nColumnsPanel._bSearchFilterActive, false, "Search filter shall be deactived");
+			strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false, "method: _deactivateSelectedItem shall not be called, as _oSelectedItem is NOT empty and invisble");
+			strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
+			strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "method: _scrollToSelectedItem shall be called");
+			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true, "method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
+		});
 
 		test("Shall check _updateSelectAllDescription", function() {
 			ok(oP13nColumnsPanel._updateSelectAllDescription, "Method does not exist");
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([{}, {}, {}]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
+			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
+				{}, {}, {}
+			]);
 			var sText = "Test text from ressource bundle";
 			oP13nColumnsPanel._oRb.getText = sinon.stub().returns(sText);
 
@@ -555,7 +536,7 @@
 			ok(oP13nColumnsPanel._itemPressed, "Method does not exist");
 
 			var oEvent = {}, oItem = {
-				"id" : "tempItem"
+				"id": "tempItem"
 			};
 			oEvent.getParameter = sinon.stub().returns(oItem);
 			oP13nColumnsPanel._removeHighLightingFromItem = sinon.stub();
@@ -566,18 +547,15 @@
 			oP13nColumnsPanel._oSelectedItem = null;
 			oP13nColumnsPanel._itemPressed(oEvent);
 
-			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, false,
-					"HighLighting does not need to be removed");
+			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, false, "HighLighting does not need to be removed");
 			strictEqual(oP13nColumnsPanel._oSelectedItem, oItem, "The selected table item is wrong");
 			strictEqual(oP13nColumnsPanel._setHighLightingToItem.called, true, "The selected item shall be highlighted");
-			strictEqual(oP13nColumnsPanel._setHighLightingToItem.calledWith(oItem), true,
-					"Wrong item instance passed to highlighting method");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
-					"Move button appearance was not recalculated");
+			strictEqual(oP13nColumnsPanel._setHighLightingToItem.calledWith(oItem), true, "Wrong item instance passed to highlighting method");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Move button appearance was not recalculated");
 
 			//CUT (a table item is already selected up to here)
 			var oItem2 = {
-				"id" : "tempItem2"
+				"id": "tempItem2"
 			};
 			oEvent.getParameter.returns(oItem2);
 			oP13nColumnsPanel._oSelectedItem = oItem;
@@ -587,141 +565,117 @@
 
 			oP13nColumnsPanel._itemPressed(oEvent);
 
-			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, true,
-					"HighLighting needs to be removed from previous selected item");
+			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, true, "HighLighting needs to be removed from previous selected item");
 			strictEqual(oP13nColumnsPanel._oSelectedItem, oItem2, "The selected table item is wrong");
 			strictEqual(oP13nColumnsPanel._setHighLightingToItem.called, true, "The selected item shall be highlighted");
-			strictEqual(oP13nColumnsPanel._setHighLightingToItem.calledWith(oItem2), true,
-					"Wrong item instance passed to highlighting method");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
-					"Move button appearance was not recalculated");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.callCount, 1,
-					"Calculation of move button appearance was called to often.");
+			strictEqual(oP13nColumnsPanel._setHighLightingToItem.calledWith(oItem2), true, "Wrong item instance passed to highlighting method");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Move button appearance was not recalculated");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.callCount, 1, "Calculation of move button appearance was called to often.");
 		});
 
-		test(
-				"Shall check _calculateMoveButtonAppearance",
-				function() {
-					ok(oP13nColumnsPanel._calculateMoveButtonAppearance, "Method does not exist");
+		test("Shall check _calculateMoveButtonAppearance", function() {
+			ok(oP13nColumnsPanel._calculateMoveButtonAppearance, "Method does not exist");
 
-					//CUT (no table item was selected up to here) 
-					oP13nColumnsPanel._oSelectedItem = null;
-					oP13nColumnsPanel._calculateMoveButtonAppearance();
+			//CUT (no table item was selected up to here) 
+			oP13nColumnsPanel._oSelectedItem = null;
+			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
-					strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false,
-							"To Top button shall be disabled if no item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false,
-							"Up button shall be disabled if no item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false,
-							"Down button shall be disabled if no item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false,
-							"To Bottom button shall be disabled if no item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if no item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if no item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if no item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall be disabled if no item is selected");
 
-					//CUT (selected table item is the first item in the list)
-					var oItem = new sap.m.ColumnListItem({
-						"id" : "tempItemAtTopIndex"
-					});
-					oItem.data('P13nColumnKey', '4711');
-					oP13nColumnsPanel._oSelectedItem = oItem;
+			//CUT (selected table item is the first item in the list)
+			var oItem = new sap.m.ColumnListItem({
+				"id": "tempItemAtTopIndex"
+			});
+			oItem.data('P13nColumnKey', '4711');
+			oP13nColumnsPanel._oSelectedItem = oItem;
 
-					oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(0);
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(0);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
-					oP13nColumnsPanel._calculateMoveButtonAppearance();
+			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
-					strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false,
-							"To Top button shall be disabled if first item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false,
-							"Up button shall be disabled if first item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true,
-							"Down button shall be enabled if the first item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true,
-							"To Bottom button shall be enabled if the first item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if first item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if first item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true, "Down button shall be enabled if the first item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true, "To Bottom button shall be enabled if the first item is selected");
 
-					//CUT (selected table item is the last item in the list)
-					var oItem = new sap.m.ColumnListItem({
-						"id" : "tempItemAtBottomIndex"
-					});
-					oItem.data('P13nColumnKey', '4711');
-					oP13nColumnsPanel._oSelectedItem = oItem;
-					oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(5);
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			//CUT (selected table item is the last item in the list)
+			var oItem = new sap.m.ColumnListItem({
+				"id": "tempItemAtBottomIndex"
+			});
+			oItem.data('P13nColumnKey', '4711');
+			oP13nColumnsPanel._oSelectedItem = oItem;
+			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(5);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
-					oP13nColumnsPanel._calculateMoveButtonAppearance();
+			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
-					strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true,
-							"To Top button shall be enabled if last item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true,
-							"Up button shall be enabled if last item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false,
-							"Down button shall be disabled if the last item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false,
-							"To bottom button shall be disabled if the last item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true, "To Top button shall be enabled if last item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true, "Up button shall be enabled if last item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the last item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To bottom button shall be disabled if the last item is selected");
 
-					//CUT (selected table item is one in the middle)
-					var oItem = new sap.m.ColumnListItem({
-						"id" : "tempItemWithinTheMiddle1"
-					});
-					oItem.data('P13nColumnKey', '4711');
-					oP13nColumnsPanel._oSelectedItem = oItem;
-					oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(3);
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			//CUT (selected table item is one in the middle)
+			var oItem = new sap.m.ColumnListItem({
+				"id": "tempItemWithinTheMiddle1"
+			});
+			oItem.data('P13nColumnKey', '4711');
+			oP13nColumnsPanel._oSelectedItem = oItem;
+			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(3);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
-					oP13nColumnsPanel._calculateMoveButtonAppearance();
+			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
-					strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true,
-							"To Top button shall be enabled if any middle item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true,
-							"Up button shall be enabled if any middle item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true,
-							"Down button shall be enabled if any middle item is selected");
-					strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true,
-							"To Bottom button shall be enabled if any middle item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true, "To Top button shall be enabled if any middle item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true, "Up button shall be enabled if any middle item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true, "Down button shall be enabled if any middle item is selected");
+			strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true, "To Bottom button shall be enabled if any middle item is selected");
 
-					//CUT (selected table item does return with an index that is higher as the max the table length)
-					var oItem = new sap.m.ColumnListItem({
-						"id" : "tempItemWithinTheMiddle2"
-					});
-					oItem.data('P13nColumnKey', '4711');
-					oP13nColumnsPanel._oSelectedItem = oItem;
-					oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(6);
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			//CUT (selected table item does return with an index that is higher as the max the table length)
+			var oItem = new sap.m.ColumnListItem({
+				"id": "tempItemWithinTheMiddle2"
+			});
+			oItem.data('P13nColumnKey', '4711');
+			oP13nColumnsPanel._oSelectedItem = oItem;
+			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(6);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
-					oP13nColumnsPanel._calculateMoveButtonAppearance();
+			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
-					strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false,
-							"To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
-					strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false,
-							"Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
-					strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false,
-							"Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
-					strictEqual(
-							oP13nColumnsPanel._oMoveToBottomButton.getEnabled(),
-							false,
-							"To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
 
-					//CUT (selected table item does return with an index that is lower the 0, which is the lowest table index)
-					var oItem = new sap.m.ColumnListItem({
-						"id" : "tempItemWithinTheMiddle3"
-					});
-					oItem.data('P13nColumnKey', '4711');
-					oP13nColumnsPanel._oSelectedItem = oItem;
-					oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(-1);
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{}, {}, {}, {}, {}, {}]);
+			//CUT (selected table item does return with an index that is lower the 0, which is the lowest table index)
+			var oItem = new sap.m.ColumnListItem({
+				"id": "tempItemWithinTheMiddle3"
+			});
+			oItem.data('P13nColumnKey', '4711');
+			oP13nColumnsPanel._oSelectedItem = oItem;
+			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(-1);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				{}, {}, {}, {}, {}, {}
+			]);
 
-					oP13nColumnsPanel._calculateMoveButtonAppearance();
+			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
-					strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false,
-							"To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
-					strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false,
-							"Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
-					strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false,
-							"Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
-					strictEqual(
-							oP13nColumnsPanel._oMoveToBottomButton.getEnabled(),
-							false,
-							"To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
-				});
+			strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
+			strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
+		});
 
 		test("Shall check _setHighLightingToItem", function() {
 			ok(oP13nColumnsPanel._setHighLightingToItem, "Method does not exist");
@@ -752,10 +706,8 @@
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 
 			oP13nColumnsPanel._deactivateSelectedItem();
-			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, false,
-					"No item is selected & no highlighting needs to be removed");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, false,
-					"No item is selected & no highlighting needs to be removed");
+			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, false, "No item is selected & no highlighting needs to be removed");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, false, "No item is selected & no highlighting needs to be removed");
 
 			//CUT
 			var oItem = sinon.stub();
@@ -764,14 +716,10 @@
 			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
 
 			oP13nColumnsPanel._deactivateSelectedItem();
-			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, true,
-					"An item is selected -> method to remove highlighting needs to be called");
-			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.calledWith(oItem), true,
-					"Method to remove item highlighting needs to be called for actual selected item");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
-					"Item selection was removed -> -> Recalculate move button appearance");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.callCount, 1,
-					"Recalculate of move button appearance shall only be called once");
+			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, true, "An item is selected -> method to remove highlighting needs to be called");
+			strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.calledWith(oItem), true, "Method to remove item highlighting needs to be called for actual selected item");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Item selection was removed -> -> Recalculate move button appearance");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.callCount, 1, "Recalculate of move button appearance shall only be called once");
 			strictEqual(oP13nColumnsPanel._oSelectedItem, null, "Instance of selected item shall be reset");
 		});
 
@@ -800,7 +748,9 @@
 			oTableItem6 = new sap.m.ColumnListItem();
 			oTableItem6.data('P13nColumnKey', '4716');
 
-			var aTableItems = [oTableItem2, oTableItem3, oTableItem4, oTableItem1, oTableItem5, oTableItem6];
+			var aTableItems = [
+				oTableItem2, oTableItem3, oTableItem4, oTableItem1, oTableItem5, oTableItem6
+			];
 			iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey("4711", aTableItems);
 			strictEqual(iItemIndex, 3, "Wrong index return for a valid item");
 
@@ -812,7 +762,9 @@
 			oTableItem1.data('P13nColumnKey', '4712');
 			oTableItem2 = new sap.m.ColumnListItem();
 			oTableItem2.data('P13nColumnKey', '4714');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem1, oTableItem2]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1, oTableItem2
+			]);
 
 			iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey(oItem);
 			strictEqual(iItemIndex, -1, "Wrong index return -> item is valid but it shall not exist in that list of items");
@@ -826,15 +778,20 @@
 			oP13nColumnsPanel._fnHandleResize = sinon.stub();
 
 			var oInitialModel = {
-				"id" : "initial model"
+				"id": "initial model"
 			};
 			oP13nColumnsPanel._oTable.getModel = sinon.stub().returns({
-				"getJSON" : function() {
+				"getJSON": function() {
 					return {};
 				}
 			});
 			oP13nColumnsPanel._oTable.getModel().getJSON = sinon.stub().returns(oInitialModel);
 			sap.ui.Device.resize.attachHandler = sinon.stub();
+
+			// following lines are important for stable unit test run in firefox (version > 34) 
+			// if window timer function are stubed it has to be reset to the original functions as otherwise the unit test fill end up in errors   
+			var fClearTimeOut = window.clearTimeout;
+			var fSetTimeOut = window.setTimeout;
 			window.clearTimeout = sinon.stub();
 			window.setTimeout = sinon.stub();
 
@@ -842,13 +799,15 @@
 			oP13nColumnsPanel._bOnAfterRenderingFirstTimeExecuted = false;
 			oP13nColumnsPanel.onAfterRendering();
 
-			strictEqual(oP13nColumnsPanel._bOnAfterRenderingFirstTimeExecuted, true,
-					"Marker that onAfterRendering method was called shall be set to true");
-			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true,
-					"Calculation of move button appearance shall be called");
+			strictEqual(oP13nColumnsPanel._bOnAfterRenderingFirstTimeExecuted, true, "Marker that onAfterRendering method was called shall be set to true");
+			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Calculation of move button appearance shall be called");
 			strictEqual(sap.ui.Device.resize.attachHandler.called, true, "Resize handler shall be attached");
 			strictEqual(window.clearTimeout.called, true, "timer shall be cleared");
 			strictEqual(window.setTimeout.called, true, "time shall be set to call method _fnHandleResize");
+
+			//reset stubed time functions to original
+			window.clearTimeout = fClearTimeOut;
+			window.setTimeout = fSetTimeOut
 		});
 
 		test("Shall check exit", function() {
@@ -925,19 +884,19 @@
 			var oTableItem3 = new sap.m.ColumnListItem();
 			oTableItem3.data('P13nColumnKey', '4712');
 			oTableItem3.getSelected = sinon.stub().returns(true)
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem1, oTableItem2, oTableItem3]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1, oTableItem2, oTableItem3
+			]);
 
 			//CUT -> check that the method is NOT executed, as no start index is passed in
 			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex();
 			strictEqual(oResultIndex, -1, "No valid index shall be found");
-			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false,
-					"Method getItems from main table shall not be called");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false, "Method getItems from main table shall not be called");
 
 			//CUT -> check that the method is executed and previuos item index is returned
 			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
 			strictEqual(oResultIndex, 1, "No valid index shall be found");
-			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false,
-					"Method getItems from main table shall not be called");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false, "Method getItems from main table shall not be called");
 
 			// button "show selected" will be actived and with that method _getPreviousItemIndex shall only considers selected items
 			oP13nColumnsPanel._bShowSelected = true;
@@ -968,19 +927,19 @@
 			var oTableItem3 = new sap.m.ColumnListItem();
 			oTableItem3.data('P13nColumnKey', '4712');
 			oTableItem3.getSelected = sinon.stub().returns(true)
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem1, oTableItem2, oTableItem3]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem1, oTableItem2, oTableItem3
+			]);
 
 			//CUT -> check that the method is NOT executed, as no start index is passed in
 			oResultIndex = oP13nColumnsPanel._getNextItemIndex();
 			strictEqual(oResultIndex, -1, "No valid index shall be found");
-			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false,
-					"Method getItems from main table shall not be called");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, false, "Method getItems from main table shall not be called");
 
 			//CUT -> check that the method is executed and next item index is returned
 			oResultIndex = oP13nColumnsPanel._getNextItemIndex(1);
 			strictEqual(oResultIndex, 2, "No valid index shall be found");
-			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true,
-					"Method getItems from main table shall be called to get the maximum border to where an item can be moved");
+			strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table shall be called to get the maximum border to where an item can be moved");
 
 			// button "show selected" will be actived and with that method _getPreviousItemIndex shall only considers selected items
 			oP13nColumnsPanel._bShowSelected = true;
@@ -1010,15 +969,17 @@
 			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
 
 			oP13nColumnsPanel.getColumnsItems = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems.returns([{
-				"getColumnKey" : sinon.stub().returns("4711"),
-				"getIndex" : sinon.stub().returns(1),
-				"setIndex" : sinon.stub()
-			}, {
-				"getColumnKey" : sinon.stub().returns("4712"),
-				"getIndex" : sinon.stub().returns(2),
-				"setIndex" : sinon.stub()
-			}]);
+			oP13nColumnsPanel.getColumnsItems.returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"setIndex": sinon.stub()
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"setIndex": sinon.stub()
+				}
+			]);
 
 			//CUT -> check that the method is NOT executed, as needed input parameter are missing
 			oP13nColumnsPanel._handleItemIndexChanged();
@@ -1076,15 +1037,17 @@
 			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
 
 			oP13nColumnsPanel.getColumnsItems = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems.returns([{
-				"getColumnKey" : sinon.stub().returns("4711"),
-				"getVisible" : sinon.stub().returns(true),
-				"setVisible" : sinon.stub()
-			}, {
-				"getColumnKey" : sinon.stub().returns("4712"),
-				"getVisible" : sinon.stub().returns(false),
-				"setVisible" : sinon.stub()
-			}]);
+			oP13nColumnsPanel.getColumnsItems.returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getVisible": sinon.stub().returns(true),
+					"setVisible": sinon.stub()
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getVisible": sinon.stub().returns(false),
+					"setVisible": sinon.stub()
+				}
+			]);
 
 			//CUT -> check that the method is NOT executed, as needed input parameter is missing
 			oP13nColumnsPanel._handleItemVisibilityChanged();
@@ -1139,8 +1102,7 @@
 			var oNewColumnsItem = oP13nColumnsPanel._createNewColumnsItem(sItemKey);
 			notEqual(oNewColumnsItem, null, "columnsItem shall be instanciated");
 			strictEqual(oNewColumnsItem.getColumnKey(), sItemKey, "New columnsItem shall conatins the given key");
-			strictEqual(oNewColumnsItem instanceof sap.m.P13nColumnsItem, true,
-					"new columnsItem shall be an instance of type sap.m.P13nColumnsItem");
+			strictEqual(oNewColumnsItem instanceof sap.m.P13nColumnsItem, true, "new columnsItem shall be an instance of type sap.m.P13nColumnsItem");
 		});
 
 		test("Shall check _getColumnsItemByKey", function() {
@@ -1150,19 +1112,20 @@
 
 			//CUT -> check that method is executed and null is returned as no itemKey is passed in
 			oColumnsItem = oP13nColumnsPanel._getColumnsItemByKey();
-			strictEqual(oColumnsItem, null,
-					"no columnsItem shall be returned as no itemKey is passed in for that can be searched");
+			strictEqual(oColumnsItem, null, "no columnsItem shall be returned as no itemKey is passed in for that can be searched");
 
 			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
-				"getColumnKey" : sinon.stub().returns("4711"),
-				"getIndex" : sinon.stub().returns(1),
-				"setIndex" : sinon.stub()
-			}, {
-				"getColumnKey" : sinon.stub().returns("4712"),
-				"getIndex" : sinon.stub().returns(2),
-				"setIndex" : sinon.stub()
-			}]);
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"setIndex": sinon.stub()
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"setIndex": sinon.stub()
+				}
+			]);
 
 			//CUT -> check that method is executed and a well defined columnsItem is returned
 			oColumnsItem = null;
@@ -1170,156 +1133,137 @@
 			oColumnsItem = oP13nColumnsPanel._getColumnsItemByKey("4712");
 
 			strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method getColumnsItems shall be executed");
-			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true,
-					"Method _getArrayIndexByItemKey shall be executed");
+			strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method _getArrayIndexByItemKey shall be executed");
 			notEqual(oColumnsItem, null, "columnsItem shall not be null as a valid columnsItem does exist with key 4712");
-			strictEqual(oColumnsItem.getColumnKey(), "4712",
-					"returned columnsItem instance is wrong as it shall have the columnKey 4712");
+			strictEqual(oColumnsItem.getColumnKey(), "4712", "returned columnsItem instance is wrong as it shall have the columnKey 4712");
 		});
 
-		test("Shall check _updateTableItems",
-				function() {
-					ok(oP13nColumnsPanel._updateTableItems, "Method does not exist");
+		test("Shall check _updateTableItems", function() {
+			ok(oP13nColumnsPanel._updateTableItems, "Method does not exist");
 
-					var oColumnsItem = new sap.m.P13nColumnsItem({
-						"columnKey" : "4711"
-					});
+			var oColumnsItem = new sap.m.P13nColumnsItem({
+				"columnKey": "4711"
+			});
 
-					var oTableItem1 = new sap.m.ColumnListItem();
-					oTableItem1.data('P13nColumnKey', '4711');
-					var oTableItem2 = new sap.m.ColumnListItem();
-					oTableItem2.data('P13nColumnKey', '4712');
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem2, oTableItem1]);
+			var oTableItem1 = new sap.m.ColumnListItem();
+			oTableItem1.data('P13nColumnKey', '4711');
+			var oTableItem2 = new sap.m.ColumnListItem();
+			oTableItem2.data('P13nColumnKey', '4712');
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem2, oTableItem1
+			]);
 
-					oP13nColumnsPanel._applyColumnsItem2TableItem = sinon.stub();
+			oP13nColumnsPanel._applyColumnsItem2TableItem = sinon.stub();
 
-					//CUT -> check that method is executed for the given columnsItem
-					oP13nColumnsPanel._updateTableItems(oColumnsItem);
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true,
-							"Method _applyColumnsItem2TableItem shall be executed");
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 1,
-							'Method _applyColumnsItem2TableItem was executed to often');
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oColumnsItem, oTableItem1), true,
-							'Method _applyColumnsItem2TableItem was called with the wrong input parameter');
+			//CUT -> check that method is executed for the given columnsItem
+			oP13nColumnsPanel._updateTableItems(oColumnsItem);
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true, "Method _applyColumnsItem2TableItem shall be executed");
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 1, 'Method _applyColumnsItem2TableItem was executed to often');
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oColumnsItem, oTableItem1), true, 'Method _applyColumnsItem2TableItem was called with the wrong input parameter');
 
-					//CUT -> check that method is executed for all existing columnsItems & corresponding table items (in the example 2 times)
-					oP13nColumnsPanel._applyColumnsItem2TableItem.reset();
-					oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
-						"getColumnKey" : sinon.stub().returns("4711"),
-						"getIndex" : sinon.stub().returns(1),
-						"setIndex" : sinon.stub()
-					}, {
-						"getColumnKey" : sinon.stub().returns("4712"),
-						"getIndex" : sinon.stub().returns(2),
-						"setIndex" : sinon.stub()
-					}]);
+			//CUT -> check that method is executed for all existing columnsItems & corresponding table items (in the example 2 times)
+			oP13nColumnsPanel._applyColumnsItem2TableItem.reset();
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"setIndex": sinon.stub()
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"setIndex": sinon.stub()
+				}
+			]);
 
-					oP13nColumnsPanel._updateTableItems();
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true,
-							"Method _applyColumnsItem2TableItem shall be executed");
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 2,
-							'Method _applyColumnsItem2TableItem was executed to often');
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[0],
-							oTableItem1), true,
-							'Method _applyColumnsItem2TableItem was first time called with the wrong input parameter');
-					strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[1],
-							oTableItem2), true,
-							'Method _applyColumnsItem2TableItem was second time called with the wrong input parameter');
-				});
+			oP13nColumnsPanel._updateTableItems();
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true, "Method _applyColumnsItem2TableItem shall be executed");
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 2, 'Method _applyColumnsItem2TableItem was executed to often');
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[0], oTableItem1), true, 'Method _applyColumnsItem2TableItem was first time called with the wrong input parameter');
+			strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[1], oTableItem2), true, 'Method _applyColumnsItem2TableItem was second time called with the wrong input parameter');
+		});
 
-		test(
-				"Shall check _addTableItem ",
-				function() {
-					ok(oP13nColumnsPanel._addTableItem, "Method does not exist");
+		test("Shall check _addTableItem ", function() {
+			ok(oP13nColumnsPanel._addTableItem, "Method does not exist");
 
-					var oNewCreatedTableItem = null, oItem = null;
+			var oNewCreatedTableItem = null, oItem = null;
 
-					oP13nColumnsPanel._oTable.insertItem = sinon.stub();
-					oP13nColumnsPanel._oTable.addItem = sinon.stub();
-					oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
-						"getColumnKey" : sinon.stub().returns("4711"),
-						"getIndex" : sinon.stub().returns(1),
-						"getVisible" : sinon.stub().returns(true),
-						"getWidth" : sinon.stub().returns("100px")
-					}, {
-						"getColumnKey" : sinon.stub().returns("4712"),
-						"getIndex" : sinon.stub().returns(2),
-						"getVisible" : sinon.stub().returns(true),
-						"getWidth" : sinon.stub().returns("120px")
-					}]);
+			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
+			oP13nColumnsPanel._oTable.addItem = sinon.stub();
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"getVisible": sinon.stub().returns(true),
+					"getWidth": sinon.stub().returns("100px")
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"getVisible": sinon.stub().returns(true),
+					"getWidth": sinon.stub().returns("120px")
+				}
+			]);
 
-					// CUT -> method shall not be executed, as the one needed input parameter is missing 
-					oP13nColumnsPanel._addTableItem();
-					strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false,
-							"Method _oTable.addItem shall not be executed");
+			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			oP13nColumnsPanel._addTableItem();
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
 
-					// CUT -> method shall be executed and new item shall be added as no columnsItem can be found for it
-					oItem = new sap.m.P13nItem({
-						"columnKey" : "4713"
-					})
-					oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
-					oNewCreatedTableItem.setSelected = sinon.stub();
-					oP13nColumnsPanel._createNewTableItemBasedOnP13nItem = sinon.stub();
-					oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+			// CUT -> method shall be executed and new item shall be added as no columnsItem can be found for it
+			oItem = new sap.m.P13nItem({
+				"columnKey": "4713"
+			})
+			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
+			oNewCreatedTableItem.setSelected = sinon.stub();
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem = sinon.stub();
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
 
-					oP13nColumnsPanel._addTableItem(oItem);
-					strictEqual(oNewCreatedTableItem.setSelected.called, false,
-							"Method oNewCreatedTableItem.setSelected shall not be executed");
-					strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false,
-							"Method _oTable.insertItem shall not be executed");
+			oP13nColumnsPanel._addTableItem(oItem);
+			strictEqual(oNewCreatedTableItem.setSelected.called, false, "Method oNewCreatedTableItem.setSelected shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.insertItem shall not be executed");
 
-					// CUT -> method shall be executed and new item shall be inserted as a valid columnsItem is found for it
-					oP13nColumnsPanel._oTable.addItem.reset();
-					oP13nColumnsPanel._oTable.insertItem.reset();
-					oItem = new sap.m.P13nItem({
-						"columnKey" : "4711"
-					})
-					oNewCreatedTableItem.data('P13nColumnKey', "4711");
-					oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+			// CUT -> method shall be executed and new item shall be inserted as a valid columnsItem is found for it
+			oP13nColumnsPanel._oTable.addItem.reset();
+			oP13nColumnsPanel._oTable.insertItem.reset();
+			oItem = new sap.m.P13nItem({
+				"columnKey": "4711"
+			})
+			oNewCreatedTableItem.data('P13nColumnKey', "4711");
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
 
-					oP13nColumnsPanel._addTableItem(oItem);
-					strictEqual(oNewCreatedTableItem.setSelected.called, true,
-							"Method oNewCreatedTableItem.setSelected shall be executed");
-					strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true,
-							"Method _oTable.insertItem shall be called with right input parameter");
+			oP13nColumnsPanel._addTableItem(oItem);
+			strictEqual(oNewCreatedTableItem.setSelected.called, true, "Method oNewCreatedTableItem.setSelected shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true, "Method _oTable.insertItem shall be called with right input parameter");
 
-					// CUT -> method shall be executed and new item shall be added. But ONLY very less columnsItem properties are filled
-					oP13nColumnsPanel._oTable.addItem.reset();
-					oP13nColumnsPanel._oTable.insertItem.reset();
-					oNewCreatedTableItem.setSelected.reset();
-					oItem = new sap.m.P13nItem({
-						"columnKey" : "4711"
-					})
-					oNewCreatedTableItem.data('P13nColumnKey', "4711");
-					oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
+			// CUT -> method shall be executed and new item shall be added. But ONLY very less columnsItem properties are filled
+			oP13nColumnsPanel._oTable.addItem.reset();
+			oP13nColumnsPanel._oTable.insertItem.reset();
+			oNewCreatedTableItem.setSelected.reset();
+			oItem = new sap.m.P13nItem({
+				"columnKey": "4711"
+			})
+			oNewCreatedTableItem.data('P13nColumnKey', "4711");
+			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
 
-					oP13nColumnsPanel.getColumnsItems()[0].getIndex = sinon.stub().returns(undefined);
-					oP13nColumnsPanel.getColumnsItems()[0].getVisible = sinon.stub().returns(undefined);
-					oP13nColumnsPanel.getColumnsItems()[0].getWidth = sinon.stub().returns("200px");
+			oP13nColumnsPanel.getColumnsItems()[0].getIndex = sinon.stub().returns(undefined);
+			oP13nColumnsPanel.getColumnsItems()[0].getVisible = sinon.stub().returns(undefined);
+			oP13nColumnsPanel.getColumnsItems()[0].getWidth = sinon.stub().returns("200px");
 
-					oP13nColumnsPanel._addTableItem(oItem);
+			oP13nColumnsPanel._addTableItem(oItem);
 
-					// following methods were executed, but just to check whether the corresponding property does exist or is undefined
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getVisible.called, true,
-							"Method columnsItems.getVisible shall be executed, to check, whether visible property must be set");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getIndex.called, true,
-							"Method columnsItems.getIndex shall be executed, to check, whether index property must be set");
-					strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getWidth.called, true,
-							"Method columnsItems.getWidth shall be executed, to check, whether width property must be set");
+			// following methods were executed, but just to check whether the corresponding property does exist or is undefined
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getVisible.called, true, "Method columnsItems.getVisible shall be executed, to check, whether visible property must be set");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getIndex.called, true, "Method columnsItems.getIndex shall be executed, to check, whether index property must be set");
+			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getWidth.called, true, "Method columnsItems.getWidth shall be executed, to check, whether width property must be set");
 
-					// next test shall check what was executed with the less columnsItem data
-					strictEqual(oNewCreatedTableItem.setSelected.called, false,
-							"Method oNewCreatedTableItem.setSelected shall not be executed, as visible property is undefined");
-					strictEqual(oNewCreatedTableItem.data('P13nColumnWidth'), "200px",
-							"New width shall be set into custom data of new table item");
-					strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false,
-							"Method _oTable.insertItem shall NOT be executed");
-				});
+			// next test shall check what was executed with the less columnsItem data
+			strictEqual(oNewCreatedTableItem.setSelected.called, false, "Method oNewCreatedTableItem.setSelected shall not be executed, as visible property is undefined");
+			strictEqual(oNewCreatedTableItem.data('P13nColumnWidth'), "200px", "New width shall be set into custom data of new table item");
+			strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.insertItem shall NOT be executed");
+		});
 
 		test("Shall check _insertTableItem", function() {
 			ok(oP13nColumnsPanel._insertTableItem, "Method does not exist");
@@ -1328,17 +1272,19 @@
 
 			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
 			oP13nColumnsPanel._oTable.addItem = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([{
-				"getColumnKey" : sinon.stub().returns("4711"),
-				"getIndex" : sinon.stub().returns(1),
-				"getVisible" : sinon.stub().returns(true),
-				"getWidth" : sinon.stub().returns("100px")
-			}, {
-				"getColumnKey" : sinon.stub().returns("4712"),
-				"getIndex" : sinon.stub().returns(2),
-				"getVisible" : sinon.stub().returns(true),
-				"getWidth" : sinon.stub().returns("120px")
-			}]);
+			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
+				{
+					"getColumnKey": sinon.stub().returns("4711"),
+					"getIndex": sinon.stub().returns(1),
+					"getVisible": sinon.stub().returns(true),
+					"getWidth": sinon.stub().returns("100px")
+				}, {
+					"getColumnKey": sinon.stub().returns("4712"),
+					"getIndex": sinon.stub().returns(2),
+					"getVisible": sinon.stub().returns(true),
+					"getWidth": sinon.stub().returns("120px")
+				}
+			]);
 
 			// CUT -> method shall not be executed, as the one needed input parameter is missing 
 			oP13nColumnsPanel._insertTableItem();
@@ -1347,7 +1293,7 @@
 
 			// CUT -> method shall be executed and new item shall be inserted at the passed input parameter, as no columnsItem can be found for it
 			oItem = new sap.m.P13nItem({
-				"columnKey" : "4713"
+				"columnKey": "4713"
 			})
 			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
 			oNewCreatedTableItem.setSelected = sinon.stub();
@@ -1355,30 +1301,26 @@
 			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
 
 			oP13nColumnsPanel._insertTableItem(3, oItem);
-			strictEqual(oNewCreatedTableItem.setSelected.called, false,
-					"Method oNewCreatedTableItem.setSelected shall not be executed");
+			strictEqual(oNewCreatedTableItem.setSelected.called, false, "Method oNewCreatedTableItem.setSelected shall not be executed");
 			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall never be executed");
 			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 3), true,
-					"Method _oTable.insertItem shall be called with right input parameter");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 3), true, "Method _oTable.insertItem shall be called with right input parameter");
 
 			// CUT -> method shall be executed and new item shall be inserted at the index found from a valid columnsItem
 			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.reset();
 			oP13nColumnsPanel._oTable.addItem.reset();
 			oP13nColumnsPanel._oTable.insertItem.reset();
 			oItem = new sap.m.P13nItem({
-				"columnKey" : "4711"
+				"columnKey": "4711"
 			})
 			oNewCreatedTableItem.data('P13nColumnKey', "4711");
 			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
 
 			oP13nColumnsPanel._insertTableItem(3, oItem);
-			strictEqual(oNewCreatedTableItem.setSelected.called, true,
-					"Method oNewCreatedTableItem.setSelected shall be executed");
+			strictEqual(oNewCreatedTableItem.setSelected.called, true, "Method oNewCreatedTableItem.setSelected shall be executed");
 			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall never be executed");
 			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true,
-					"Method _oTable.insertItem shall be called with right input parameter");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true, "Method _oTable.insertItem shall be called with right input parameter");
 		});
 
 		test("Shall check _createNewTableItemBasedOnP13nItem", function() {
@@ -1399,48 +1341,44 @@
 
 			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
 			notEqual(oNewCreatedTableItem, null, "A new table item instance shall be created");
-			strictEqual(oNewCreatedTableItem.data('P13nColumnKey'), "4711",
-					"New created table item instance shall have custom data for P13nColumnKey");
+			strictEqual(oNewCreatedTableItem.data('P13nColumnKey'), "4711", "New created table item instance shall have custom data for P13nColumnKey");
 			strictEqual(oItem.getColumnKey.called, true, "Method getColumnKey() shall be called to get data of oItem");
 		});
 
-		test(
-				"Shall check _applyColumnsItem2TableItem",
-				function() {
-					ok(oP13nColumnsPanel._applyColumnsItem2TableItem, "Method does not exist");
+		test("Shall check _applyColumnsItem2TableItem", function() {
+			ok(oP13nColumnsPanel._applyColumnsItem2TableItem, "Method does not exist");
 
-					var oColumnsItem = new sap.m.P13nColumnsItem({
-						"columnKey" : "4711",
-						"index" : 1,
-						"visible" : true,
-						"width" : "100px"
-					});
+			var oColumnsItem = new sap.m.P13nColumnsItem({
+				"columnKey": "4711",
+				"index": 1,
+				"visible": true,
+				"width": "100px"
+			});
 
-					var oTableItem = new sap.m.ColumnListItem();
-					oTableItem.data('P13nColumnKey', '4711');
-					oTableItem.setSelected = sinon.stub();
-					oP13nColumnsPanel._oTable.removeItem = sinon.stub();
-					oP13nColumnsPanel._oTable.insertItem = sinon.stub();
+			var oTableItem = new sap.m.ColumnListItem();
+			oTableItem.data('P13nColumnKey', '4711');
+			oTableItem.setSelected = sinon.stub();
+			oP13nColumnsPanel._oTable.removeItem = sinon.stub();
+			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
 
-					oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem]);
+			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
+				oTableItem
+			]);
 
-					// CUT -> method shall be executed but due to missing input parameter nothing shall happen
-					oP13nColumnsPanel._applyColumnsItem2TableItem();
-					strictEqual(oTableItem.setSelected.called, false, "Method oTableItem.setSelected shall not be executed");
-					strictEqual(oP13nColumnsPanel._oTable.removeItem.called, false,
-							"Method _oTable.removeItem shall not be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false,
-							"Method _oTable.insertItem shall not be executed");
-					strictEqual(oTableItem.data('P13nColumnWidth'), null, "Table item shall not contains any width information");
+			// CUT -> method shall be executed but due to missing input parameter nothing shall happen
+			oP13nColumnsPanel._applyColumnsItem2TableItem();
+			strictEqual(oTableItem.setSelected.called, false, "Method oTableItem.setSelected shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.removeItem.called, false, "Method _oTable.removeItem shall not be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.insertItem shall not be executed");
+			strictEqual(oTableItem.data('P13nColumnWidth'), null, "Table item shall not contains any width information");
 
-					// CUT -> method shall be executed and changes from oColumnsItem shall be taken over into oTableItem
-					oP13nColumnsPanel._applyColumnsItem2TableItem(oColumnsItem, oTableItem);
-					strictEqual(oTableItem.setSelected.called, true, "Method oTableItem.setSelected shall be executed");
-					strictEqual(oP13nColumnsPanel._oTable.removeItem.called, true, "Method _oTable.removeItem shall be executed");
-					strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-					strictEqual(oTableItem.data('P13nColumnWidth'), "100px",
-							"Table item shall contain the defined width information");
-				});
+			// CUT -> method shall be executed and changes from oColumnsItem shall be taken over into oTableItem
+			oP13nColumnsPanel._applyColumnsItem2TableItem(oColumnsItem, oTableItem);
+			strictEqual(oTableItem.setSelected.called, true, "Method oTableItem.setSelected shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.removeItem.called, true, "Method _oTable.removeItem shall be executed");
+			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
+			strictEqual(oTableItem.data('P13nColumnWidth'), "100px", "Table item shall contain the defined width information");
+		});
 
 	}());
 </script>
