@@ -367,14 +367,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * so further calls must not iterate the metadata structure again.
 	 * 
 	 * #/Category/CategoryName --> will get the Category entity type
+	 * @param {string} sName the qualified or unqualified name of the entity
 	 * @return {object} the entity type or null if not found
 	 */
 	ODataMetadata.prototype._getEntityTypeByName = function(sName) {
-		var oEntityType, that = this;
+		var oEntityType, that = this, sEntityName, sNamespace, iSeparator;
 		
 		if (!sName) {
 			jQuery.sap.assert(undefined, "sName not defined!");
 			return null;
+		}
+		iSeparator = sName.indexOf(".");
+		if (iSeparator > 0) {
+			sNamespace = sName.substr(0, iSeparator);
+			sEntityName = sName.substr(iSeparator + 1);
+		} else {
+			sEntityName = sName;
 		}
 		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
 			jQuery.sap.assert(undefined, "No metadata loaded!");
@@ -384,9 +392,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			oEntityType = this.mEntityTypes[sName];
 		} else {
 			jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-				if (oSchema.entityType) {
+				if (oSchema.entityType && (!sNamespace || oSchema.namespace === sNamespace)) {
 					jQuery.each(oSchema.entityType, function(k, oEntity) {
-						if (oEntity.name === sName) {
+						if (oEntity.name === sEntityName) {
 							oEntityType = oEntity;
 							that.mEntityTypes[sName] = oEntityType;
 							oEntityType.namespace = oSchema.namespace;
