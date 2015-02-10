@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		return Opa5.extend("sap.ui.demo.mdtemplate.test.opa.arrangement.NavigationArrangement", {
 			_getFrameUrl : function (sHash, bAddPhone) {
 				sHash = sHash || "";
-				var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/app/index.", "html"),
+				var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/app/index", ".html"),
 					sUrlParameters = "?responderOn=true";
 
 				if (bAddPhone) {
