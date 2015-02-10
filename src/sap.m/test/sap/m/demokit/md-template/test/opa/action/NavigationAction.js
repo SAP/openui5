@@ -58,7 +58,6 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		},
 
 		iPressTheNavigationButton : function ( sName, sIcon) {
-
 			return this.waitFor({
 				controlType : "sap.m.Button",
 				viewName : "LineItem",
@@ -93,8 +92,27 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				success: function (oPage) {
 					oPage.$("navButton").trigger("tap");
 				},
-				errorMessage : "did not find the nav button"
+				errorMessage : "Did not find the nav button on detail page"
 			});
+		},
+		
+		iPressTheBackButtonOnLineItemPage : function () {
+			return this.waitFor({
+				id : "lineItemPage",
+				viewName : "LineItem",
+				success: function (oPage) {
+					oPage.$("navButton").trigger("tap");
+				},
+				errorMessage : "Did not find the nav button on line item page"
+			});
+		},
+		
+		iGoBackInBrowserHistory : function () {
+			window.history.go(-1);
+		},
+		
+		iGoForwardInBrowserHistory : function () {
+			window.history.go(1);
 		},
 
 		iLookAtTheScreen : function () {

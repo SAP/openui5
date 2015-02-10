@@ -73,7 +73,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 	});
 
-	opaTest("Line Item Page pressing 'Next' Button on Line Item 1 page navigates to Line Item 2 and updates the Navigation Buttons", function (Given, When, Then) {
+	opaTest("Line Item Page: pressing 'Next' Button on Line Item 1 page navigates to Line Item 2 and updates the Navigation Buttons", function (Given, When, Then) {
 
 		// Actions
 		When.iPressTheNextButton();
@@ -85,7 +85,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 	});
 
-	opaTest("Line Item Page ressing 'Previous' Button on Line Item 2 page navigates to Line Item 1 and updates the Navigation Buttons", function (Given, When, Then) {
+	opaTest("Line Item Page: pressing 'Previous' Button on Line Item 2 page navigates to Line Item 1 and updates the Navigation Buttons", function (Given, When, Then) {
 
 		// Actions
 		When.iPressThePreviousButton();
@@ -93,7 +93,37 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		// Assertions
 		Then.iShouldBeOnTheLineItem1Page().
 			and.thePreviousButtonIsDisabled().
-			and.theNextButtonIsEnabled().
+			and.theNextButtonIsEnabled();
+
+	});
+	
+	opaTest("Line Item Page: after several 'Next' and 'Previous' navigation, going back in browser history should take us back to Detail Page for Object 1", function (Given, When, Then) {
+
+		// Actions
+		When.iGoBackInBrowserHistory();
+
+		// Assertions
+		Then.iShouldBeOnTheObject1Page();
+
+	});
+	
+	opaTest("Line Item Page: going forward in browser history should take us back to Line Item 1 a", function (Given, When, Then) {
+
+		// Actions
+		When.iGoForwardInBrowserHistory();
+
+		// Assertions
+		Then.iShouldBeOnTheLineItem1Page();
+	});
+	
+	
+	opaTest("Line Item Page: pressing 'Back' Button on Line Item 1 page navigates back to Detail Page for Object 1", function (Given, When, Then) {
+
+		// Actions
+		When.iPressTheBackButtonOnLineItemPage();
+
+		// Assertions
+		Then.iShouldBeOnTheObject1Page().
 			and.iTeardownMyAppFrame();
 
 	});
