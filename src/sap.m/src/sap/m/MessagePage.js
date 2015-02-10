@@ -90,9 +90,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}});
 
 		MessagePage.prototype.init = function() {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			this.setAggregation("_page", new sap.m.Page({
 				showHeader: this.getShowHeader()
 			}));
+			this.setProperty("text", oBundle.getText("MESSAGE_PAGE_TEXT"), true);
+			this.setProperty("filterText", oBundle.getText("MESSAGE_PAGE_FILTER_TEXT"), true);
 		};
 
 		MessagePage.prototype.onBeforeRendering = function() {
