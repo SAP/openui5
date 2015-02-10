@@ -199,9 +199,10 @@ public class LogDownloader {
 	
 	
 			// Step 2: extract the actual HTTP log file names by parsing the log list
-			List<String> logFileNames = this.parseCommandOutput(json.getString("commandOutput"));
+			String commandOutput= json.has("commandOutput") ? json.getString("commandOutput") : "";
+			List<String> logFileNames = this.parseCommandOutput(commandOutput);
 	
-			if (logFileNames.size() < 1) { // no logs?
+			if (logFileNames.size() < 1 && applicationConfig.getApplication().equals("openui5")) { // no logs?
 				error("no log files could be extracted from JSON");
 			} else {
 				log("..." + logFileNames.size() + " log file names found (server: " + server + ").\n");
@@ -308,7 +309,12 @@ public class LogDownloader {
 			
 			// check for errors
 			if (result != null && result.getInt("exitCode") != 0) { // error in API call?
-				error(result.getString("errorMsg") + "\n\nresult json is: " + result + "\n\ncommandline was:\n" + commandline.replace(PASSWORD, "***"));
+				if (application.equals("openui5")) {
+					error(result.getString("errorMsg") + "\n\nresult json is: " + result + "\n\ncommandline was:\n" + commandline.replace(PASSWORD, "***"));
+				} else {
+					warn(result.getString("errorMsg") + "\n\nresult json is: " + result + "\n\ncommandline was:\n" + commandline.replace(PASSWORD, "***"));
+					return new JSONObject();
+				}
 			}
 			
 			// now check for JSON parsing error
