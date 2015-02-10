@@ -752,13 +752,22 @@
 
 			return vRawValue.String || "{" + vRawValue.Path + "}";
 		}
-		//TODO how to call this "opt-in flag"? prior art: _doesNotRequireFactory and ui5object
-		//TODO reserve values other than true? use hasOwnProperty?
-		help.$ = true;
+		help.requiresIContext = true;
+
+		/*
+		 * Dummy formatter function to check that only <code>requiresIContext = true</code> counts.
+		 *
+		 * @param {any} vRawValue
+		 */
+		function other(vRawValue) {
+			strictEqual(arguments.length, 1);
+		}
+		other.requiresIContext = "ignored";
 
 		window.foo = {
 			Helper: {
-				help: help
+				help: help,
+				other: other
 			}
 		};
 		this.stub(jQuery.sap.log, "isLoggable").returns(true);
@@ -768,6 +777,7 @@
 			mvcView(),
 			'<template:with'
 				+ ' path="/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo">',
+			'<Text text="{formatter: \'foo.Helper.other\', path: \'Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}"/>',
 			'<Text text="Value: {formatter: \'foo.Helper.help\', path: \'Title/Value\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
@@ -777,6 +787,7 @@
 		], {
 			models: oModel
 		}, [
+			'<Text text="undefined"/>',
 			'<Text text="Customer"/>',
 			'<Text text="Value: {CustomerName}"/>',
 			'<Text text="Customer: {CustomerName}"/>'

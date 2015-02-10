@@ -423,7 +423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * &lt;Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 			 * </pre>
 			 *
-			 * @param {object} oInterface
+			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model
@@ -487,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * &lt;/template:if>
 			 * </pre>
 			 *
-			 * @param {object} oInterface
+			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
@@ -537,7 +537,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * &lt;template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'}">
 			 * </pre>
 			 *
-			 * @param {object} oInterface
+			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
@@ -620,7 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   &lt;sfi:SmartField value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/>
 			 * </pre>
 			 *
-			 * @param {object} oInterface
+			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model
@@ -643,10 +643,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			}
 		};
 
-		AnnotationHelper.format.$ = true;
-		AnnotationHelper.getNavigationPath.$ = true;
-		AnnotationHelper.isMultiple.$ = true;
-		AnnotationHelper.simplePath.$ = true;
+		AnnotationHelper.format.requiresIContext = true;
+		AnnotationHelper.getNavigationPath.requiresIContext = true;
+		AnnotationHelper.isMultiple.requiresIContext = true;
+		AnnotationHelper.simplePath.requiresIContext = true;
 
 		return AnnotationHelper;
 	}, /* bExport= */ true);
