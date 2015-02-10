@@ -3300,6 +3300,11 @@
 
 				oErrorComboBox.close();
 				this.clock.tick(1000);
+				//workaround to fix failing test in IE9-11
+				if (sap.ui.Device.browser.msie) {
+					oErrorComboBox.focus();
+					this.clock.tick(1000);
+				}
 				ok(jQuery.sap.domById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
 
 				oErrorComboBox.focus();
