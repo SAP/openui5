@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.routing.Targets</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
+	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+	
+</script>
+
+<script>
+	(function () {
+		"use strict";
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		}
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+
+		jQuery.sap.require("sap.ui.core.routing.Targets");
+		jQuery.sap.require("sap.ui.core.routing.Views");
+
+		module("getTarget and target names", {
+			setup: function () {
+				// System under test + Arrange
+				this.oViews = new sap.ui.core.routing.Views();
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: {
+						myTarget: {
+							view: "myView"
+						},
+						myParent : {
+							view: "myParentView",
+							children : {
+								myChild : {
+									view: "myChildView"
+								}
+							}
+						}
+					},
+					views: this.oViews
+				});
+			},
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		test("Should be able to get an existing target by key", function () {
+			// Act
+			var oTarget = this.oTargets.getTarget("myTarget");
+
+			// Assert
+			strictEqual(oTarget._oOptions.view, "myView", "Did retrieve the correct Target");
+			strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
+		});
+
+		test("Should return undefined if a target does not exist", function () {
+			// Act
+			var oTarget = this.oTargets.getTarget("foo");
+
+			// Assert
+			strictEqual(oTarget, undefined, "Did not find such a target");
+		});
+
+		test("Should be able to get a child target", function () {
+			// Act
+			var oChild = this.oTargets.getTarget("myChild");
+
+			// Assert
+			strictEqual(oChild._oOptions.view, "myChildView", "Did retrieve the correct Target");
+			strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
+		});
+
+
+		module("config - defaults and additional values", {
+			setup: function () {
+				// System under test + Arrange
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: {
+						myView: {
+							someThingToBeReplaced: "replaced",
+							viewLevel: 5
+						}
+					},
+					config: {
+						targetAggregation: "foo",
+						someThingCustom: "bar",
+						someThingToBeReplaced: "baz"
+					}
+				});
+			},
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		test("Should be able to get an existing target if no key was specified - view should be the key", function () {
+			// Act
+			var oOptions = this.oTargets.getTarget("myView")._oOptions;
+
+			// Assert
+			strictEqual(oOptions.viewLevel, 5, "Did use the view level");
+			strictEqual(oOptions.targetAggregation, "foo", "Did pass one of the routing api values from the config");
+			strictEqual(oOptions.someThingToBeReplaced, "replaced", "Did overwrite ");
+		});
+
+		module("display", {
+			setup: function () {
+				// System under test + Arrange
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: {
+						firstTarget: {
+						},
+						secondTarget: {
+						}
+					}
+				});
+			},
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		test("Should display one target", function () {
+			// Arrange
+			// Replace display with an empty fn
+			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+			var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display", jQuery.noop);
+
+			// Act
+			this.oTargets.display("firstTarget");
+
+			// Assert
+			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+			strictEqual(fnSecondDisplayStub.callCount, 0, "Did not invoke display on the second target");
+		});
+
+		test("Should display multiple targets", function () {
+			// Arrange
+			// Replace display with an empty fn
+			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+			var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display", jQuery.noop);
+
+			// Act
+			this.oTargets.display(["firstTarget", "secondTarget"]);
+
+			// Assert
+			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+			strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
+		});
+
+		test("Should log an error if user tries to display a non existing Target", function () {
+			// Assert
+			var oErrorSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+
+			// Act
+			this.oTargets.display("foo");
+
+			// Assert
+			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match("sap.ui.core.routing.Targets"));
+		});
+
+		test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
+			// Assert
+			var oErrorSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+
+			// Act
+			this.oTargets.display(["foo", "firstTarget"]);
+
+			// Assert
+			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match("sap.ui.core.routing.Targets"));
+		});
+
+	})();
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Targets</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+
+</body>
+</html>
