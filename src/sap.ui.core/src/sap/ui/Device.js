@@ -1256,6 +1256,10 @@ if (typeof window.sap.ui !== "object") {
 			return /ipad/i.test(navigator.userAgent);
 		} else {
 			if (device.support.touch) {
+				if (isWin8) {
+					return true;
+				}
+				
 				//in real mobile device
 				var densityFactor = window.devicePixelRatio ? window.devicePixelRatio : 1; // may be undefined in Windows Phone devices
 				if (!bChromeWebView && (device.os.name === device.os.OS.ANDROID) && device.browser.webkit && (device.browser.webkitVersion > 537.10)) {
