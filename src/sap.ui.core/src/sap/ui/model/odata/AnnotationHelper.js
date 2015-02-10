@@ -537,8 +537,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
 			 * <ul>
-			 *   <li> the constant "14.4.11 Expression edm:String", which is turned into a fixed
-			 *   text;
+			 *   <li> the constant "14.4.11 Expression edm:String", which is turned into a data
+			 *   binding expression relative to an entity (e.g. <code>
+			 *   "{##com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String}"</code>,
+			 *   which is the preferred way in order to reference translatable texts from OData v4
+			 *   annotations) or into a fixed text (e.g. <code>"Width"</code>, in case the original
+			 *   annotation was not embedded into an entity type);
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply"
 			 *   <ul>
 			 *     <li> "14.5.3.1.1 Function odata.concat" is turned into a data binding
@@ -551,7 +555,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   </ul>
 			 *   <li> the dynamic "14.5.12 Expression edm:Path", which is turned into a data
 			 *   binding relative to an entity, including type information and constraints as
-			 *   available from meta data.
+			 *   available from meta data, e.g. <code>"{path : 'Name',
+			 *   type : 'sap.ui.model.odata.type.String', constraints : {'maxLength':'255'}}"
+			 *   </code>.
 			 * </ul>
 			 * Unsupported values are turned into a string nevertheless, but indicated as such.
 			 * Illegal values are output "as is" for a human reader to make sense of them.
