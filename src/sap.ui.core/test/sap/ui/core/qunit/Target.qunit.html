@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.routing.Target</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
+	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+	
+</script>
+
+<script>
+	(function () {
+		"use strict";
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		}
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+
+		jQuery.sap.require("sap.ui.core.routing.Views");
+		jQuery.sap.require("sap.ui.core.routing.Target");
+
+		module("views - creation", {
+			setup: function () {
+				this.oShell = new sap.ui.ux3.Shell();
+				this.oViews = new sap.ui.core.routing.Views();
+				// System under test + Arrange
+				this.oTarget = new sap.ui.core.routing.Target(
+					{
+						key: "myTarget",
+						viewPath: "bar",
+						view: "foo",
+						targetAggregation: "content",
+						viewType: "XML",
+						targetControl: this.oShell.getId()
+					},
+					this.oViews
+				);
+			},
+			teardown: function () {
+				this.oShell.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+			}
+		});
+
+		test("Should create a view specified by a target", function () {
+			// Arrange
+			var oButton = new sap.m.Button();
+
+			var oStub = this.stub(this.oViews, "getView", function () {
+				return oButton;
+			});
+
+			// Act
+			this.oTarget.display();
+
+			// Assert
+			strictEqual(oButton.getParent(), this.oShell, "the view was placed inside of the shell");
+
+			// Cleanup
+			oButton.destroy();
+		});
+
+		test("Should pass the correct values to the view creation", function () {
+			// Arrange
+			var oStub = this.stub(this.oViews, "getView", function (oOptions) {
+				strictEqual(oOptions.viewName, "bar.foo");
+				strictEqual(oOptions.viewType, "XML");
+			});
+
+			//Act
+			this.oTarget.display();
+
+			// Assert
+			strictEqual(oStub.callCount, 1, "Did inform the view creation");
+		});
+
+		test("Should clear a target aggregation", function () {
+			// Arrange
+			var oButton = new sap.m.Button(),
+				oExistingButton = new sap.m.Button();
+
+			this.oTarget._oOptions.clearTarget = true;
+			this.oShell.addContent(oExistingButton);
+
+			var oStub = this.stub(this.oViews, "getView", function () {
+				return oButton;
+			});
+
+			// Act
+			this.oTarget.display();
+
+			// Assert
+			strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the the Shell");
+			strictEqual(this.oShell.getContent()[0], oButton, "it is the displayed button");
+			//TODO: Should we destroy in this case? Is it a regression if we do so?
+			//ok(oExistingButton.bIsDestroyed, "the button got destroyed");
+
+			// Cleanup
+			oButton.destroy();
+			oExistingButton.destroy();
+		});
+
+		test("Should log an error if the target parent is not found", function () {
+			// Arrange
+			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+
+			this.oTarget._oOptions.targetParent = "foo";
+
+			//Act
+			this.oTarget.display();
+
+			// Assert
+			sinon.assert.calledWith(oSpy, sinon.match(/target parent/), sinon.match("sap.ui.core.routing.Target"));
+		});
+
+		test("Should log an error if the target control does not have an aggregation specified", function () {
+			// Arrange
+			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+
+			this.oTarget._oOptions.targetAggregation = "foo";
+
+			//Act
+			this.oTarget.display();
+
+			// Assert
+			sinon.assert.calledWith(oSpy, sinon.match(/aggregation/), sinon.match("sap.ui.core.routing.Target"));
+		});
+
+		test("Should log an error if the target control could not be found", function () {
+			// Arrange
+			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+
+			this.oTarget._oOptions.targetControl = "foo";
+
+			//Act
+			this.oTarget.display();
+
+			// Assert
+			sinon.assert.calledWith(oSpy, sinon.match(/Control with ID/), sinon.match("sap.ui.core.routing.Target"));
+		});
+
+		module("target parent and children", {
+			setup: function () {
+				this.createView = function (aContent, sId) {
+					var sXmlViewContent = aContent.join(''),
+						oViewOptions = {
+							id : sId,
+							viewContent: sXmlViewContent,
+							type: "XML"
+						};
+
+					return sap.ui.view(oViewOptions);
+				};
+
+				this.oParentView = this.createView(
+						['<View xmlns="sap.ui.core" xmlns:ux3="sap.ui.ux3">',
+							'<ux3:Shell id="myShell">',
+							'</ux3:Shell>',
+						'</View>'], "parent");
+
+				this.oChildView = this.createView(
+						['<View xmlns="sap.ui.core">',
+						'</View>']);
+
+				this.oViews = new sap.ui.core.routing.Views();
+				this.oViews.setView("child", this.oChildView);
+
+				// System under test + Arrange
+				this.oTarget = new sap.ui.core.routing.Target(
+						{
+							targetControl: "myShell",
+							targetAggregation: "content",
+							view: "child",
+							viewType: "XML"
+						},
+						this.oViews
+				);
+			},
+			teardown: function () {
+				this.oParentView.destroy();
+				this.oChildView.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+			}
+		});
+
+		test("Should use a different target parent", function () {
+			// Arrange
+			this.oTarget._oOptions.targetParent = "parent";
+			this.oViews.setView("parent", this.oParentView);
+
+			// Act
+			this.oTarget.display();
+
+			// Assert
+			var oShell = this.oParentView.byId("myShell");
+			strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+			strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+		});
+
+		test("Should display a child target", function () {
+			// Arrange
+			var oRootShell = new sap.ui.ux3.Shell(),
+				oParentTarget = new sap.ui.core.routing.Target({
+					targetControl : oRootShell.getId(),
+					targetAggregation: "content",
+					view: "parent",
+					viewType: "XML"
+				},
+				this.oViews);
+
+			this.oViews.setView("parent", this.oParentView);
+
+			this.oTarget._oParent = oParentTarget;
+
+			// Act
+			this.oTarget.display();
+
+			// Assert
+			var oShell = this.oParentView.byId("myShell");
+			strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+			strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+
+			// Cleanup
+			oParentTarget.destroy();
+		});
+
+
+	})();
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Target</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+
+</body>
+</html>
