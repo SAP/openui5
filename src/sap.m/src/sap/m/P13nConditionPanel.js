@@ -1746,26 +1746,23 @@ sap.ui.define([
 	 *            oConditionGrid from where the remove is triggered
 	 */
 	P13nConditionPanel.prototype._removeCondition = function(oTargetGrid, oConditionGrid) {
-		if (oConditionGrid.getContent().length > 1) {
-			var sKey = this._getKeyFromConditionGrid(oConditionGrid);
-			var iIndex = oConditionGrid.getParent().getContent().indexOf(oConditionGrid);
-			delete this._oConditionsMap[sKey];
-			oConditionGrid.destroy();
+		var sKey = this._getKeyFromConditionGrid(oConditionGrid);
+		var iIndex = oConditionGrid.getParent().getContent().indexOf(oConditionGrid);
+		delete this._oConditionsMap[sKey];
+		oConditionGrid.destroy();
 
-			if (oTargetGrid.getContent().length < 1) {
-				this._createConditionRow(oTargetGrid);
-			} else {
-				this._updateConditionButtons(oTargetGrid);
-			}
-
-			this.fireDataChange({
-				key: sKey,
-				index: iIndex,
-				operation: "remove",
-				newData: null
-			});
-
+		if (oTargetGrid.getContent().length < 1) {
+			this._createConditionRow(oTargetGrid);
+		} else {
+			this._updateConditionButtons(oTargetGrid);
 		}
+
+		this.fireDataChange({
+			key: sKey,
+			index: iIndex,
+			operation: "remove",
+			newData: null
+		});
 	};
 
 	/**
