@@ -6,7 +6,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
-	 <Page>
+	<Page showHeader="false">
 		<content>
 			<Toolbar>
 				<ToolbarSpacer/>
