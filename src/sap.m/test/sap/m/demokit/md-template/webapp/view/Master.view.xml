@@ -36,11 +36,11 @@
 				refresh="onRefresh" />
 			<List
 				id="list"
-				items="{/Objects}"
+				items="{path: '/Objects'}"
 				noDataText="{i18n>masterListNoDataText}"
 				mode="{
 					path: 'device>/isPhone',
-					formatter: 'sap.ui.demo.mdtemplate.util.formatters.listMode'
+					formatter: 'sap.ui.demo.mdtemplate.util.formatter.listMode'
 				}"
 				select="onSelect">
 				<infoToolbar>
@@ -54,13 +54,13 @@
 					<ObjectListItem
 						type="{
 							path: 'device>/isPhone',
-							formatter: 'sap.ui.demo.mdtemplate.util.formatters.listItemType'
+							formatter: 'sap.ui.demo.mdtemplate.util.formatter.listItemType'
 						}"
 						press="onSelect"
 						title="{Name}"
 						number="{
 							path: 'UnitNumber',
-							formatter: 'sap.ui.demo.mdtemplate.util.formatters.currencyValue'
+							formatter: 'sap.ui.demo.mdtemplate.util.formatter.currencyValue'
 						}"
 						numberUnit="{UnitOfMeasure}">
 					</ObjectListItem>

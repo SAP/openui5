@@ -1,6 +1,6 @@
 jQuery.sap.declare("sap.ui.demo.mdtemplate.Component");
-jQuery.sap.require("sap.ui.demo.mdtemplate.util.formatters");
-jQuery.sap.require("sap.ui.demo.mdtemplate.util.groupers");
+jQuery.sap.require("sap.ui.demo.mdtemplate.util.formatter");
+jQuery.sap.require("sap.ui.demo.mdtemplate.util.grouper");
 jQuery.sap.require("sap.ui.demo.mdtemplate.util.MyRouter");
 jQuery.sap.require("sap.ui.demo.mdtemplate.model.Device");
 jQuery.sap.require("sap.ui.demo.mdtemplate.model.MockableModel");

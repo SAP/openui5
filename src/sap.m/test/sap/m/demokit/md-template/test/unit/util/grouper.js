@@ -1,12 +1,12 @@
 /*global QUnit, jQuery *///declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.require(
 	[
-		'sap/ui/demo/mdtemplate/util/groupers',
+		'sap/ui/demo/mdtemplate/util/grouper',
 		'sap/ui/model/resource/ResourceModel',
 		'sap/ui/thirdparty/sinon',
 		'sap/ui/thirdparty/sinon-qunit'
 	],
-	function (Groupers, ResourceModel) {
+	function (grouper, ResourceModel) {
 	"use strict";
 	var $ = jQuery;
 
@@ -45,11 +45,11 @@ sap.ui.require(
 			oGetModelStub.withArgs("i18n").returns(this._oResourceModel);
 
 			// Assert
-			oGrouperReturn = $.proxy(Groupers.Group1, oControlStub)(oContextObject2);
+			oGrouperReturn = $.proxy(grouper.Group1, oControlStub)(oContextObject2);
 			strictEqual(oGrouperReturn.key, iRating2,"The key was as expected for rating 2");
 			strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating2]),"The group header is correct for rating 2");
 
-			oGrouperReturn = $.proxy(Groupers.Group1, oControlStub)(oContextObject5);
+			oGrouperReturn = $.proxy(grouper.Group1, oControlStub)(oContextObject5);
 			strictEqual(oGrouperReturn.key, iRating5,"The key was as expected for rating 5");
 			strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating5]),"The group header is correct for rating 5");
 		});
@@ -68,11 +68,11 @@ sap.ui.require(
 			oGetModelStub.withArgs("i18n").returns(this._oResourceModel);
 
 			// Assert
-			oGrouperReturn = $.proxy(Groupers.Group2, oControlStub)(oContextObjectLower);
+			oGrouperReturn = $.proxy(grouper.Group2, oControlStub)(oContextObjectLower);
 			strictEqual(oGrouperReturn.key,"LE20", "The key is as expected for a low value");
 			strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup2Header1"), "The group header is as expected for a low value");
 
-			oGrouperReturn = $.proxy(Groupers.Group2, oControlStub)(oContextObjectHigher);
+			oGrouperReturn = $.proxy(grouper.Group2, oControlStub)(oContextObjectHigher);
 			strictEqual(oGrouperReturn.key,"GT20", "The key is as expected for a high value");
 			strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup2Header2"), "The group header is as expected for a high value");
 		});
