@@ -9,6 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 		var AnnotationHelper,
 			rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
+			// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
+			rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 			fnEscape = BindingParser.complexParser.escape;
 
 		/**
@@ -30,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				if (oParameter) {
 					switch (oParameter.Type) {
 					case "Path":
-						aParts.push(formatPath(oParameter.Value, oInterface));
+						aParts.push(formatPath(oParameter.Value, oInterface, true));
 						break;
 					case "String":
 						aParts.push(escapedString(oParameter.Value));
@@ -154,22 +156,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *   the string path value from the meta model
 		 * @param {object} oInterface
 		 *   the callback interface related to the current formatter call
+		 * @param {boolean} bWithType
+		 *   if <code>true</code> the type is included into the binding
 		 * @returns {string}
 		 *   the resulting string value to write into the processed XML
 		 */
-		function formatPath(sPath, oInterface) {
+		function formatPath(sPath, oInterface, bWithType) {
 			var oConstraints = {},
 				oModel = oInterface.getModel(),
 				sContextPath = oInterface.getPath(),
-				aParts = sContextPath.split("/"), // parts of binding path (between slashes)
+				aMatches = rEntityTypePath.exec(sContextPath),
 				aProperties,
 				sType;
 
-			if (aParts[0] === "" && aParts[1] === "dataServices" && aParts[2] === "schema") {
-				// go up to "/dataServices/schema/<i>/entityType/<j>/"
-				aParts.splice(6, aParts.length - 6);
-				aParts.push("property");
-				aProperties = oModel.getProperty(aParts.join("/"));
+
+			if (aMatches) {
+				// go up to "/dataServices/schema/<i>/entityType/<j>/", then down to ".../property"
+				aProperties = oModel.getProperty(aMatches[1] + "/property");
 
 				jQuery.each(aProperties, function (i, oProperty) {
 					if (oProperty.name === sPath) {
@@ -234,8 +237,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				});
 			}
 
-			return "{path : " + stringify(sPath) + ", type : '" + sType
-				+ "', constraints : " + stringify(oConstraints) + "}";
+			if (bWithType && sType) {
+				return "{path : " + stringify(sPath) + ", type : '" + sType
+					+ "', constraints : " + stringify(oConstraints) + "}";
+			} else if (rBadChars.test(sPath)) {
+				return "{path : " + stringify(sPath) + "}";
+			} else {
+				return "{" + sPath + "}";
+			}
 		}
 
 		/**
@@ -436,11 +445,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			format : function (oInterface, vRawValue) {
-				var sResult;
+				var aMatches, sResult;
 
 				// 14.4.11 Expression edm:String
 				if (vRawValue && vRawValue.hasOwnProperty("String")) {
 					if (typeof vRawValue.String === "string") {
+						aMatches = rEntityTypePath.exec(oInterface.getPath());
+						if (aMatches) {
+							return formatPath("##"
+								+ oInterface.getPath().slice(aMatches[1].length + 1) + "/String",
+								oInterface, false);
+						}
 						return fnEscape(vRawValue.String);
 					}
 					return illegalValue(vRawValue, "String");
@@ -449,7 +464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.5.12 Expression edm:Path
 				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
 					if (typeof vRawValue.Path === "string") {
-						return formatPath(vRawValue.Path, oInterface);
+						return formatPath(vRawValue.Path, oInterface, true);
 					}
 					return illegalValue(vRawValue, "Path");
 				}
@@ -560,10 +575,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			isMultiple : function (oInterface, vRawValue) {
 				var aMatches,
 					oModel = oInterface.getModel(),
-					sContextPath = oInterface.getPath();
+					sContextPath = oInterface.getPath(),
+					aMatches = rEntityTypePath.exec(sContextPath);
 
-				aMatches = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/.exec(
-					sContextPath);
 //TODO				if (aMatches) {
 					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
 //					if (vRawValue.hasOwnProperty("AnnotationPath")) {
@@ -594,11 +608,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			resolvePath : function (oContext) {
-				var aMatches,
+				var aMatches = rEntityTypePath.exec(oContext.getPath()),
 					vRawValue = oContext.getObject();
 
-				aMatches = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/.exec(
-					oContext.getPath());
 				if (aMatches) {
 					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
 					if (vRawValue.hasOwnProperty("AnnotationPath")) {
@@ -636,9 +648,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.5.12 Expression edm:Path
 				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
 					if (typeof vRawValue.Path === "string") {
-						return rBadChars.test(vRawValue.Path)
-							? formatPath(vRawValue.Path, oInterface)
-							: "{" + vRawValue.Path + "}";
+						//TODO oInterface should be 1st, consistently!
+						return formatPath(vRawValue.Path, oInterface, false);
 					}
 					return illegalValue(vRawValue, "Path");
 				}
