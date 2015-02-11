@@ -108,11 +108,11 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		},
 		
 		iGoBackInBrowserHistory : function () {
-			window.history.go(-1);
+			sap.ui.test.Opa5.getWindow().history.go(-1);
 		},
 		
 		iGoForwardInBrowserHistory : function () {
-			window.history.go(1);
+			sap.ui.test.Opa5.getWindow().history.go(1);
 		},
 
 		iLookAtTheScreen : function () {

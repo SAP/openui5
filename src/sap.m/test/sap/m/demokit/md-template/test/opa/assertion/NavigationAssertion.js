@@ -44,7 +44,8 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				success : function (aControls) {
 					strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
 					ok(true, "was on the " + sTitleName + " " + sViewName + " page");
-				}
+				},
+				errorMessage : "We are not on " + sTitleName
 			});
 		},
 

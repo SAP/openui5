@@ -89,7 +89,17 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		// Assertions
 		Then.iShouldBeOnTheLineItem1Page().
 			and.thePreviousButtonIsDisabled().
-			and.theNextButtonIsEnabled().
+			and.theNextButtonIsEnabled();
+
+	});
+	
+	opaTest("Line Item Page: after several 'Next' and 'Previous' navigation, going back in browser history should take us back to Detail Page for Object 1", function (Given, When, Then) {
+
+		// Actions
+		When.iGoBackInBrowserHistory();
+
+		// Assertions
+		Then.iShouldBeOnTheObject1Page().
 			and.iTeardownMyAppFrame();
 
 	});

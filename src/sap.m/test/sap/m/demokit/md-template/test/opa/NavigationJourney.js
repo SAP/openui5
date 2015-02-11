@@ -103,26 +103,6 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		When.iGoBackInBrowserHistory();
 
 		// Assertions
-		Then.iShouldBeOnTheObject1Page();
-
-	});
-	
-	opaTest("Line Item Page: going forward in browser history should take us back to Line Item 1 a", function (Given, When, Then) {
-
-		// Actions
-		When.iGoForwardInBrowserHistory();
-
-		// Assertions
-		Then.iShouldBeOnTheLineItem1Page();
-	});
-	
-	
-	opaTest("Line Item Page: pressing 'Back' Button on Line Item 1 page navigates back to Detail Page for Object 1", function (Given, When, Then) {
-
-		// Actions
-		When.iPressTheBackButtonOnLineItemPage();
-
-		// Assertions
 		Then.iShouldBeOnTheObject1Page().
 			and.iTeardownMyAppFrame();
 
