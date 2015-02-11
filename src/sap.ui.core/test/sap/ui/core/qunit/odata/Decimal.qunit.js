@@ -9,7 +9,6 @@
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-	jQuery.sap.require("sap.ui.model.odata.type.Decimal");
 	jQuery.sap.require("sap.ui.core.Control");
 
 	//*********************************************************************************************
@@ -31,28 +30,8 @@
 		ok(!(oType instanceof sap.ui.model.type.Float), "is not a Float");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
+		strictEqual(oType.oFormatOptions, undefined, "default format options");
 		strictEqual(oType.oFormat, null, "no formatter preload");
-	});
-
-	//*********************************************************************************************
-	test("w/ float format options", function () {
-		var oType = new sap.ui.model.odata.type.Decimal({
-				minIntegerDigits: 5,
-				maxIntegerDigits: 5,
-				minFractionDigits: 5,
-				maxFractionDigits: 5,
-				pattern: "",
-				groupingEnabled: false,
-				groupingSeparator: "'",
-				decimalSeparator: ",",
-				plusSign: '+',
-				minusSign: '-',
-				showMeasure: true,
-				style: 'short',
-				roundingMode: 'floor'
-			});
-
-		strictEqual(oType.oFormatOptions, undefined, "float format options are ignored");
 	});
 
 	//*********************************************************************************************
@@ -152,23 +131,13 @@
 	//*********************************************************************************************
 	test("large numbers, modified Swedish", function () {
 		var fnLocaleData = sap.ui.core.LocaleData.getInstance,
-			oType,
+			oType = new sap.ui.model.odata.type.Decimal({plusSign: ">", minusSign: "<"},
+				{scale: "variable"}),
 			oValue = "-1",
 			oExpected = "<1";
 
 		// special: non-breaking space as grouping separator
-		// We did not find any locale using different characters for plus or minus sign, so we
-		// modify the LocaleData here.
-		// TODO simply use formatOptions once they are supported
-		this.stub(sap.ui.core.LocaleData, "getInstance", function () {
-			var oLocaleData = fnLocaleData.apply(this, arguments);
-			oLocaleData.mData["symbols-latn-plusSign"] = ">";
-			oLocaleData.mData["symbols-latn-minusSign"] = "<";
-			return oLocaleData;
-		});
-
 		sap.ui.getCore().getConfiguration().setLanguage("sv");
-		oType = new sap.ui.model.odata.type.Decimal({}, {scale: "variable"});
 
 		strictEqual(oType.formatValue("1234567890123456.789012", "string"),
 			"1\u00a0234\u00a0567\u00a0890\u00a0123\u00a0456,789012",
@@ -325,5 +294,44 @@
 
 		oType= new sap.ui.model.odata.type.Decimal({}, {nullable: "true"});
 		strictEqual(oType.oConstraints, undefined);
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		set: {foo: "bar"},
+		expect: {foo: "bar", groupingEnabled: true, maxIntegerDigits: Infinity}
+	}, {
+		set: {decimalSeparator: ".", maxIntegerDigits: 20}, scale: 13,
+		expect: {decimalSeparator: ".", groupingEnabled: true, maxFractionDigits: 13,
+			maxIntegerDigits: 20, minFractionDigits: 13}
+	}, {
+		set: {groupingEnabled: false}, scale: 13,
+		expect: {groupingEnabled: false, maxFractionDigits: 13, maxIntegerDigits: Infinity,
+			minFractionDigits: 13}
+	}, {
+		set: {decimals: 20}, scale: 13,
+		expect: {decimals: 20, groupingEnabled: true, maxFractionDigits: 13,
+			maxIntegerDigits: Infinity, minFractionDigits: 13}
+	}, {
+		set: {maxFractionDigits: 20}, scale: 13,
+		expect: {groupingEnabled: true, maxFractionDigits: 20, maxIntegerDigits: Infinity,
+			minFractionDigits: 13}
+	}, {
+		set: {minFractionDigits: 10}, scale: 13,
+		expect: {groupingEnabled: true, maxFractionDigits: 13, maxIntegerDigits: Infinity,
+			minFractionDigits: 10}
+	}], function (i, oFixture) {
+		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
+			var oSpy,
+				oType = new sap.ui.model.odata.type.Decimal(oFixture.set, {
+					scale: oFixture.scale || "variable"
+				});
+
+			deepEqual(oType.oFormatOptions, oFixture.set);
+
+			oSpy = this.spy(sap.ui.core.format.NumberFormat, "getFloatInstance");
+			oType.formatValue("42", "string");
+			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
+		});
 	});
 } ());

@@ -16,8 +16,11 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
+		var oFormatOptions;
+
 		if (!oType.oFormat) {
-			oType.oFormat = NumberFormat.getIntegerInstance({groupingEnabled: true});
+			oFormatOptions = jQuery.extend({groupingEnabled: true}, oType.oFormatOptions);
+			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
 		}
 		return oType.oFormat;
 	}
@@ -91,6 +94,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			{
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
+					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
 				},
 				metadata : {
