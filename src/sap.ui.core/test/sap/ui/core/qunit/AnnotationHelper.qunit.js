@@ -19,6 +19,10 @@
 			name : "sap.ui.model.odata.type.Boolean",
 			constraints : {"nullable" : false}
 		},
+		oByte = {
+			name : "sap.ui.model.odata.type.Byte",
+			constraints : {"nullable" : false}
+		},
 		oDateTime = {
 			name : "sap.ui.model.odata.type.DateTime",
 			constraints : {"nullable": false, "isDateOnly": true}
@@ -78,6 +82,10 @@
 							"type" : "Edm.Boolean",
 							"nullable" : "false"
 						}, {
+							"name" : "_Byte",
+							"type" : "Edm.Byte",
+							"nullable" : "false"
+						}, {
 							"name" : "_DateTime",
 							"type" : "Edm.DateTime",
 							"nullable" : "false",
@@ -132,6 +140,8 @@
 						}],
 						"com.sap.vocabularies.UI.v1.Identification" : [{
 							"Value" : {"Path" : "_Boolean"}
+						}, {
+							"Value" : {"Path" : "_Byte"}
 						}, {
 							"Value" : {"Path" : "_DateTime"}
 						}, {
@@ -526,39 +536,42 @@
 		type : oBoolean
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/1/Value",
-		type : oDateTime
+		type : oByte
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/2/Value",
-		type : oDateTimeOffset
+		type : oDateTime
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/3/Value",
-		type : oDecimal
+		type : oDateTimeOffset
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/4/Value",
-		type : oDouble
+		type : oDecimal
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/5/Value",
-		type : oGuid
+		type : oDouble
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/6/Value",
-		type : oInt16
+		type : oGuid
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/7/Value",
-		type : oInt32
+		type : oInt16
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/8/Value",
-		type : oInt64
+		type : oInt32
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/9/Value",
-		type : oSByte
+		type : oInt64
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/10/Value",
-		type : oString10
+		type : oSByte
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/11/Value",
-		type : oString80
+		type : oString10
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/12/Value",
+		type : oString80
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/13/Value",
 		type : oTime
 	}], function (i, oFixture) {
 		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
@@ -656,7 +669,7 @@
 	test("14.5.3.1.2 Function odata.fillUriTemplate: test data", function () {
 		withTestModel(function (oTestModel) {
 			var oCurrentContext = oTestModel.getContext(sPathPrefix +
-				"/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
+				"/com.sap.vocabularies.UI.v1.Identification/3/Url/UrlRef"),
 				oInvalid = {
 					Type: "Path",
 					Value: "{with:invalid:chars}"
@@ -719,7 +732,7 @@
 	], function (iUnused, oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
 			var oCurrentContext = oTestModel.getContext(sPathPrefix +
-					"/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef"),
+					"/com.sap.vocabularies.UI.v1.Identification/3/Url/UrlRef"),
 				oRawValue = {
 					Apply: {
 						Name: "odata.uriEncode",

@@ -217,4 +217,5 @@
 
 	anyInt("sap.ui.model.odata.type.SByte", -128, 127);
 
+	anyInt("sap.ui.model.odata.type.Byte", 0, 255);
 } ());
