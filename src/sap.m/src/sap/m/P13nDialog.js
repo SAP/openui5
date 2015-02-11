@@ -105,6 +105,7 @@ sap.ui.define([
 
 	P13nDialog.prototype._initDialog = function() {
 		var that = this;
+		this.setHorizontalScrolling(false);
 		this.setContentWidth("50rem");
 		this.setContentHeight("40rem");
 		this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
