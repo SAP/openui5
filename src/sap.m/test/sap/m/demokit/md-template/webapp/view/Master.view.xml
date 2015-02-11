@@ -36,7 +36,7 @@
 				refresh="onRefresh" />
 			<List
 				id="list"
-				items="{path: '/Objects'}"
+				items="{path: '/Objects', parameters: {operationMode: 'Client'}}"
 				noDataText="{i18n>masterListNoDataText}"
 				mode="{
 					path: 'device>/isPhone',
