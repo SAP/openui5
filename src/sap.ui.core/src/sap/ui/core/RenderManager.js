@@ -821,14 +821,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 */
 	RenderManager.prototype.writeEscaped = function(/** string */ sText, bLineBreaks) {
 		jQuery.sap.assert( typeof sText === "string", "sText must be a string");
+		sText = jQuery.sap.encodeHTML(sText);
 		if (bLineBreaks) {
-			var aLines = sText.split("\n");
-			for (var i = 0; i < aLines.length; i++) {
-				aLines[i] = jQuery.sap.encodeHTML(aLines[i]);
-			}
-			sText = aLines.join("<br>");
-		} else {
-			sText = jQuery.sap.encodeHTML(sText);
+			sText = sText.replace(/&#xa;/g, "<br>");
 		}
 		this.aBuffer.push(sText);
 		return this;
