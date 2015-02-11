@@ -254,6 +254,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 						sType = 'sap.ui.model.odata.type.Boolean';
 						break;
 
+					case "Edm.Byte":
+						sType = 'sap.ui.model.odata.type.Byte';
+						break;
+
 					case "Edm.DateTime":
 						sType = 'sap.ui.model.odata.type.DateTime';
 						oConstraints.displayFormat = oProperty["sap:display-format"];
