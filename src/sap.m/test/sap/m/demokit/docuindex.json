@@ -559,7 +559,7 @@
 				"name" : "Multi Input",
 				"category" : "User Input",
 				"since" : "1.22",
-				"samples" : [ "sap.m.sample.MultiInput", "sap.m.sample.MultiInputValidators" ]
+				"samples" : [ "sap.m.sample.MultiInput", "sap.m.sample.MultiInputValidators", "sap.m.sample.MultiInputMultiLine" ]
 			},
 			{
 				"id" : "sap.m.SelectDialog",
@@ -1153,6 +1153,11 @@
 				"id": "sap.m.sample.MultiInputValidators",
 				"name": "MultiInput Validators",
 				"description": "MultiInput uses validators to accept, decline and change tokens."
+			},
+			{
+				"id": "sap.m.sample.MultiInputMultiLine",
+				"name": "MultiInput Multi-line Mode",
+				"description": "Multi-line display mode allows to fully view all tokens and easily edit tokens in the MultiInput. This diyplay mode should be used if you need overview of all content in the MultiInput."
 			},
 			{
 				"id": "sap.m.sample.Token",

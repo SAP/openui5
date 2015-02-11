@@ -300,12 +300,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Token.prototype.onkeydown = function(oEvent) {
-
-		if ((oEvent.ctrlKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) { //metaKey for MAC command
+		
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) { 
+			//metaKey for MAC command		
 			this.onsapspace(oEvent);
 			oEvent.preventDefault();
 		}
-
 	};
 
 	return Token;
