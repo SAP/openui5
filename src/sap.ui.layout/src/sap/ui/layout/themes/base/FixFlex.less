@@ -106,3 +106,44 @@
 		}
 	}
 }
+
+/* Styles for scrolling
+   ========================================================================== */
+.sapUiFixFlexInnerScrolling {
+	& > .sapUiFixFlexFlexible {
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	&.sapUiFixFlexRow {
+		& > .sapUiFixFlexFlexible {
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+	}
+}
+
+.sapUiFixFlexScrolling {
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	display: block;
+
+	& > .sapUiFixFlexFlexible {
+		display: block;
+
+		& > .sapUiFixFlexFlexibleContainer {
+			position: static;
+			height: 100%;
+		}
+	}
+
+	&.sapUiFixFlexRow {
+		overflow-x: auto;
+		overflow-y: hidden;
+		white-space: nowrap;
+		& > .sapUiFixFlexFlexible,
+		& > .sapUiFixFlexFixed {
+			display: inline-block;
+		}
+	}
+}

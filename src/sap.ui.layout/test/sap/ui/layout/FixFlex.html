@@ -19,6 +19,7 @@
 			 * ============================================ */
 
 			var oFixFlexColumn = new sap.ui.layout.FixFlex({
+				minFlexSize: 455,
 
 				fixContent: [new sap.m.Panel({
 					expandable: true,
@@ -30,8 +31,10 @@
 				})],
 
 				flexContent: new sap.m.Carousel({
+					height:'800px',
+
 					pages: [new sap.m.Image({
-						src: "../../../../test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
 					}), new sap.m.Image({
 						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-1112.jpg"
 					})]
@@ -41,7 +44,7 @@
 
 			var page1 = new sap.m.Page('page1', {
 				title: 'FixFlex vertical layout',
-				enableScrolling: false,
+				enableScrolling: true,
 				content: [oFixFlexColumn],
 				footer: fnCreateNavigation()
 			});
@@ -53,6 +56,8 @@
 			var oFixFlexHorizontal = new sap.ui.layout.FixFlex({
 				fixFirst: false,
 				vertical: false,
+				minFlexSize: 455,
+
 
 				fixContent: [
 					// Dummy button
@@ -65,8 +70,10 @@
 					})],
 
 				flexContent: new sap.m.Carousel({
+					width: '800px',
+
 					pages: [new sap.m.Image({
-						src: "../../../../test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
 					}), new sap.m.Image({
 						src: "../../../../test-resources/sap/ui/demokit/explored/img/HT-1112.jpg"
 					})]
@@ -84,278 +91,34 @@
 			 * Page 3!
 			 * ============================================ */
 
-			var oData = {
-				items: [{
-					name: 'Michelle',
-					color: 'orange',
-					number: 3.14,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Joseph',
-					color: 'blue',
-					number: 1.618,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'David',
-					color: 'green',
-					number: 0.12,
-					tools: 2.0,
-					support: 'normal',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Michelle',
-					color: 'orange',
-					number: 3.14,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Joseph',
-					color: 'blue',
-					number: 1.618,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'David',
-					color: 'green',
-					number: 0.12,
-					tools: 2.0,
-					support: 'normal',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Michelle',
-					color: 'orange',
-					number: 3.14,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Joseph',
-					color: 'blue',
-					number: 1.618,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'David',
-					color: 'green',
-					number: 0.12,
-					tools: 2.0,
-					support: 'normal',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Michelle',
-					color: 'orange',
-					number: 3.14,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Joseph',
-					color: 'blue',
-					number: 1.618,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'David',
-					color: 'green',
-					number: 0.12,
-					tools: 2.0,
-					support: 'normal',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Michelle',
-					color: 'orange',
-					number: 3.14,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'Joseph',
-					color: 'blue',
-					number: 1.618,
-					tools: 2.0,
-					support: 'prime',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}, {
-					name: 'David',
-					color: 'green',
-					number: 0.12,
-					tools: 2.0,
-					support: 'normal',
-					events: 'None',
-					city: 'Walldorf',
-					country: 'Germany',
-					phone: '03525-2323-2352352'
-				}],
-				cols: ['Name', 'Color', 'Number', 'Tools', 'Support', 'Events', 'City', 'Country', 'Phone']
-			};
-
-			//make sure table id suffix is set (this is necessary for personalization)
-			var oTable = new sap.m.Table('testTable', {
-				headerToolbar: new sap.m.Toolbar({
-					content: [new sap.m.Label({
-						text: 'Info'
-					}), new sap.m.ToolbarSpacer({}),
-						/* new sap.m.Button('idPersonalizationResetButton', {
-						 icon: 'sap-icon://refresh'
-						 }), */
-						new sap.m.Button('idPersonalizationButton', {
-							icon: 'sap-icon://action-settings'
-						})]
-				}),
-				columns: oData.cols.map(function (colname) {
-					//make sure column id suffix is set
-					return new sap.m.Column(colname, {
-						header: new sap.m.Label({
-							text: colname
-						}),
-						visible: colname != 'Color'
-					})
-				})
-			});
-
-			oTable.setModel(new sap.ui.model.json.JSONModel(oData));
-			oTable.bindAggregation('items', '/items', new sap.m.ColumnListItem({
-				cells: oData.cols.map(function (colname) {
-					return new sap.m.Label({
-						text: '{' + colname.toLowerCase() + '}'
-					})
-				})
-			}));
-
-			var oPersoService = {
-				getPersData: function () {
-					var oDeferred = new jQuery.Deferred();
-					var oBundle = this._oBundle;
-					oDeferred.resolve(oBundle);
-					return oDeferred.promise();
-				},
-
-				setPersData: function (oBundle) {
-					var oDeferred = new jQuery.Deferred();
-					this._oBundle = oBundle;
-					oDeferred.resolve();
-					return oDeferred.promise();
-				},
-
-				resetPersData: function () {
-					var oDeferred = new jQuery.Deferred();
-
-					var oInitialData = {
-						_persoSchemaVersion: '1.0',
-						aColumns: [{
-							id: 'empty_component-testTable-Name',
-							order: 2,
-							text: 'Name',
-							visible: true
-						}, {
-							id: 'empty_component-testTable-Number',
-							order: 1,
-							text: 'Number',
-							visible: true
-						}, {
-							id: 'empty_component-testTable-Color',
-							order: 0,
-							text: 'Color',
-							visible: true
-						}]
-					};
-
-					this._oBundle = oInitialData;
-
-					// this._oBundle = null;
-					oDeferred.resolve();
-					return oDeferred.promise();
-				},
-
-				getCaption: function (oColumn) {
-					if (oColumn.getHeader() && oColumn.getHeader().getText) {
-						if (oColumn.getHeader().getText() == 'Color') {
-							return 'Color: this is a very very very very long Column Name to check how the TablePersoDialog deals with it';
-						}
-					}
-					return null;
-				},
-
-				getGroup: function (oColumn) {
-					if (oColumn.getHeader() && oColumn.getHeader().getText) {
-						if (oColumn.getHeader().getText() == 'Color') {
-							return 'Primary Group';
-						}
-					}
-					return 'Secondary Group';
-				}
-			};
-
-			jQuery.sap.require('sap.m.TablePersoController');
-
-			var oTPC = new sap.m.TablePersoController({
-				table: oTable,
-				persoService: oPersoService,
-				hasGrouping: false
-			});
-			oTPC.activate();
-
-			sap.ui.getCore().byId('idPersonalizationButton').attachPress(function () {
-				oTPC.openDialog();
-			});
-
 			var oFixFlex3 = new sap.ui.layout.FixFlex({
-				fixContentSize: '250px',
+				fixContent: [new sap.m.ObjectHeader("oh1Small", {
+					responsive: true,
+					backgroundDesign: "Translucent",
+					intro: "Type XS",
+					title: "Example 2 Small container",
+					number: "624,00",
+					numberUnit: "Euro",
+					fullScreenOptimized: false,
+					showMarkers: false,
+					markFlagged: true,
+					markFavorite: true,
+					numberState: sap.ui.core.ValueState.Success,
+					attributes: [
+						new sap.m.ObjectAttribute({
+							title: "Manufacturer",
+							text: "ACME Corp",
+							active: true
+						})
+					],
+					statuses: [
+						new sap.m.ObjectStatus({
+							title: "Approval",
+							text: "Pending",
+							state: sap.ui.core.ValueState.Warning
 
-				fixContent: [new sap.m.ScrollContainer({
-					vertical: true,
-					content: [oTable],
-					height: "100%"
+						})
+					]
 				})],
 
 				flexContent: new sap.m.IconTabBar({
@@ -399,7 +162,7 @@
 			});
 
 			var page3 = new sap.m.Page('page3', {
-				title: 'Table with databinding in FixFlex',
+				title: 'Table with ObjectHeader',
 				enableScrolling: false,
 				content: [oFixFlex3],
 				footer: fnCreateNavigation()
@@ -411,9 +174,11 @@
 
 			var oFixFlex4 = new sap.ui.layout.FixFlex({
 				fixContentSize: '50%',
+				minFlexSize: 555,
 
 				fixContent: [new sap.ui.layout.FixFlex({
 					vertical: false,
+					minFlexSize: 555,
 
 					flexContent: new sap.m.Button({
 						text: 'Dummy Button - flexContent in FixFlex in fixContent'
@@ -429,6 +194,7 @@
 				})],
 
 				flexContent: new sap.ui.layout.FixFlex({
+					minFlexSize: 555,
 					flexContent: new sap.m.Button({
 						text: 'Dummy Button -  flexContent in FixFlex in flexContent'
 					}),
@@ -666,7 +432,7 @@
 							app.to('page2');
 						}
 					}), new sap.m.Button({
-						text: 'FixFlex Table',
+						text: 'FixFlex with ObjectHeader',
 						press: function () {
 							app.to('page3');
 						}
