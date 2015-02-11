@@ -3,53 +3,55 @@
  */
 /*global crossroads *///declare unusual global vars for JSLint/SAPUI5 validation
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', './HashChanger', './Route', './Views', 'sap/ui/thirdparty/crossroads', 'sap/ui/thirdparty/signals'],
-	function(jQuery, EventProvider, ManagedObject, HashChanger, Route, Views) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', './HashChanger', './Route', './Views', './Targets', 'sap/ui/thirdparty/crossroads', 'sap/ui/thirdparty/signals'],
+	function(jQuery, EventProvider, ManagedObject, HashChanger, Route, Views, Targets) {
 	"use strict";
 
-
-	
-		
 		var oRouters = {};
-	
+
 		/**
 		 * Instantiates a SAPUI5 Router
 		 * 
 		 * @class
 		 * @extends sap.ui.base.EventProvider
 		 *
-		 * @param {object|array} [oRoutes] may contain many Route configurations as @see sap.ui.core.routing.Route#constructor.<br/>
+		 * @param {object|object[]} [oRoutes] may contain many Route configurations as @see sap.ui.core.routing.Route#constructor.<br/>
 		 * Each of the routes contained in the array/object will be added to the router.<br/>
          * The name attribute of a route is special - it may also be a key of the route. Eg a route with the name "RouteName" : { RouteName : { pattern : "ThePattern" } , AnotherRouteName : {...}}
 		 * 
 		 * The values that may be provided are the same as in @see sap.ui.core.routing.Route#constructor
 		 * 
-		 * @param {object} [oConfig] Default values for route configuration - also takes the same parameters as @see sap.ui.core.routing.Route#constructor<br/>
+		 * @param {object} [oConfig] Default values for route configuration - also takes the same parameters as @see sap.ui.core.routing.Target#constructor<br/>
 		 * Eg: the config object specifies : { viewType : "XML" }<br/>
-		 * The Routes look like this: [ { name : "xmlRoute" }, { name : "jsRoute" , viewType : "JS" } ]<br/>
+		 * The targets look like this:{ xmlTarget : { ... } }, jsTarget : { viewType : "JS" ... } }<br/>
 		 * <br/>
 		 * Then the effective config will look like this: <br/>
-		 * [ { name : "xmlRoute" , viewType : "XML" }, { name : "jsRoute" , viewType : "JS" } ]<br/>
+		 * { xmlTarget : {  viewType : "XML" ... } }, jsTarget : { viewType : "JS" ... } }<br/>
 		 * <br/>
-		 * Since the xmlRoute does not specify its viewType, XML is taken from the config object. The jsRoute is specifying it, so the viewType will be JS.
+		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
 		 * 
 		 * @param {sap.ui.core.UIComponent} [oOwner] the owner of all the views that will be created by this Router.
+		 * @param {object} [oTargetsConfig] {@link sap.ui.core.routing.Targets} @since 1.28 the target configuration, see Targets documentation. You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.
 		 * @public
 		 * @alias sap.ui.core.routing.Router
 		 */
 		var Router = EventProvider.extend("sap.ui.core.routing.Router", /** @lends sap.ui.core.routing.Router.prototype */ {
 
-			constructor : function(oRoutes, oConfig, oOwner) {
+			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig) {
 				EventProvider.apply(this);
-	
+
 				this._oConfig = oConfig;
 				this._oRouter = crossroads.create();
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
-				this._oViews = new Views({component : oOwner});
-				this._oOwner = oOwner;
+				this._oViews = this._createViews(oOwner);
 
-				var that = this;
+				if (oTargetsConfig) {
+					this._oTargets = this._createTargets(oConfig, oTargetsConfig);
+				}
+
+				var that = this,
+					aRoutes;
 
 				if (!oRoutes) {
 					oRoutes = {};
@@ -57,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 				if (jQuery.isArray(oRoutes)) {
 					//Convert route object
-					var aRoutes = oRoutes;
+					aRoutes = oRoutes;
 					oRoutes = {};
 					jQuery.each(aRoutes, function(iRouteIndex, oRouteConfig) {
 						oRoutes[oRouteConfig.name] = oRouteConfig;
@@ -65,13 +67,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				}
 
 				jQuery.each(oRoutes, function(sRouteName, oRouteConfig) {
-					if (oRouteConfig.name == undefined) {
+					if (oRouteConfig.name === undefined) {
 						oRouteConfig.name = sRouteName;
 					}
 					that.addRoute(oRouteConfig);
 				});
 
 			},
+
+			_createViews : function (oOwner) {
+				return new Views({component : oOwner});
+			},
+
+			_createTargets : function (oConfig, oTargetsConfig) {
+				return new Targets({
+					views: this._oViews,
+					config: oConfig,
+					targets: oTargetsConfig
+				});
+			},
+
 			metadata : {
 				publicMethods: ["initialize", "getURL", "register", "getRoute"]
 			}
@@ -102,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			this._oRoutes[oConfig.name] = new Route(this, oConfig, oParent);
 		};
 
-		Router.prototype.parse = function (sNewHash, sOldHash) {
+		Router.prototype.parse = function (sNewHash) {
 			this._oRouter.parse(sNewHash);
 		};
 
@@ -162,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			return this;
 	
 		};
-	
+
 		/**
 		 * Removes the router from the hash changer @see sap.ui.core.routing.HashChanger
 		 *
@@ -171,24 +186,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 */
 		Router.prototype.destroy = function () {
 			EventProvider.prototype.destroy.apply(this);
-	
+
 			if (!this._bIsInitialized) {
 				jQuery.sap.log.info("Router is not initialized, but got destroyed.");
 			}
-	
+
 			if (this.fnHashChanged) {
 				this.oHashChanger.detachEvent("hashChanged", this.fnHashChanged);
 			}
-	
-			this._oOwner = null;
-	
+
 			//will remove all the signals attached to the routes - all the routes will not be useable anymore
 			this._oRouter.removeAllRoutes();
 			this._oRouter = null;
-	
+
+			jQuery.each(this._oRoutes, function(iRouteIndex, oRoute) {
+				oRoute.destroy();
+			});
+			this._oRoutes = null;
+			this._oConfig = null;
+
+			if (this._oTargets) {
+				this._oTargets.destroy();
+				this._oTargets = null;
+			}
+
+			this.bIsDestroyed = true;
+
 			return this;
 		};
-		
+
 		/**
 		 * Returns the URL for the route and replaces the placeholders with the values in oParameters
 		 * 
@@ -280,6 +306,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			}
 
 			return this;
+		};
+
+		/**
+		 * Returns the instance of Targets, if you pass a targets config to the router
+		 *
+		 * @public
+		 * @returns {sap.ui.core.routing.Targets|undefined} The instance of targets, the router uses to place views or undefined if you did not specify the targets parameter in the router's constructor.
+		 */
+		Router.prototype.getTargets = function () {
+			return this._oTargets;
 		};
 
 		/**

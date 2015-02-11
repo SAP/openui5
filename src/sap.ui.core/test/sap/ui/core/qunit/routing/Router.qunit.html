@@ -10,7 +10,7 @@
 <title>qUnit Page for sap.ui.core.routing.Router</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
+	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
@@ -40,7 +40,7 @@
 
 		module = original;
 
-		//ie 8 support, since this test uses sap.m controls wich use Array.forEach
+		//ie 8 support, since this test uses sap.m controls which use Array.forEach
 		if (!Array.prototype.forEach) {
 			Array.prototype.forEach = function (fn, scope) {
 				'use strict';
@@ -125,6 +125,27 @@
 
 			//Assert
 			strictEqual(parseSpy.callCount, 1, "did notify for initial hash but did not dispatch change after destroy");
+
+		});
+
+		test("Should destroy the routers dependencies", function() {
+			// System under test + Arrange
+			var oRouter = new sap.ui.core.routing.Router([ { name : "myRoute", pattern : "foo" } ], {}, {}, {myTarget : {}});
+
+			var oTargets = oRouter.getTargets(),
+				oRoute = oRouter.getRoute("myRoute");
+
+			//Act
+			oRouter.destroy();
+
+			//Assert
+			ok(oRouter.bIsDestroyed, "did set the destroy flag");
+			ok(oTargets.bIsDestroyed, "did destroy the targets");
+			ok(oRoute.bIsDestroyed, "did destroy the route");
+			strictEqual(oRouter._oRouter, null, "did free the crossroads router");
+			strictEqual(oRouter._oRoutes, null, "did free the UI5 routes");
+			strictEqual(oRouter._oTargets, null, "did free the UI5 targets");
+			strictEqual(oRouter._oConfig, null, "did free the config");
 
 		});
 
@@ -880,10 +901,11 @@
 					name : "name",
 					viewId: "test-view",
 					view : "myView",
-					viewType: "JS",
 					pattern : "view1"
 				}
-			]);
+			],{
+				viewType: "JS"
+			});
 
 			sap.ui.controller("myView", {});
 			sap.ui.jsview("myView", {
@@ -1044,8 +1066,8 @@
 				fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 				oView = createXmlView(),
 				oRouter = new sap.ui.core.routing.Router({}, {}, oUIComponent),
-				fnViewStub = this.stub(sap.ui, "view", function () {
-					return oView;
+					fnViewStub = this.stub(sap.ui, "view", function () {
+						return oView;
 				});
 
 			// Act
@@ -1058,6 +1080,152 @@
 			// Cleanup
 			oRouter.destroy();
 		});
+
+		module("targets", {
+				setup: function () {
+					this.oShell = new sap.ui.ux3.Shell();
+					this.oChildShell = new sap.ui.ux3.Shell();
+					this.oSecondShell = new sap.ui.ux3.Shell();
+					this.sPattern = "anything";
+
+					this.oDefaults = {
+						viewType: "XML",
+						// we stub the view creation
+						viewPath: "bar",
+						view: "foo",
+						// only shells will be used
+						targetAggregation: "content"
+					};
+
+					this.oRouterConfig = {
+						routeName : {
+							pattern : this.sPattern
+						}
+					}
+				},
+				teardown: function () {
+					this.oRouter.destroy();
+					this.oShell.destroy();
+					this.oChildShell.destroy();
+					this.oSecondShell.destroy();
+				}
+			});
+
+		test("Should display a target referenced by a route", function () {
+			// Arrange
+			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+				return createXmlView();
+			});
+
+			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
+
+			var oTargetConfig = {
+				myTarget : {
+					targetControl: this.oShell.getId()
+				}
+			};
+			this.oRouterConfig.routeName.target = "myTarget";
+
+			// System under test
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+
+			// Act
+			this.oRouter.parse(this.sPattern);
+
+			// Assert
+			strictEqual(this.oRouter._oTargets._oViews, this.oRouter._oViews, "Targets are using the same view repository");
+			strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
+
+			strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myTarget"));
+
+			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+		});
+
+		test("Should display multiple targets referenced by a route", function () {
+			// Arrange
+			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+				return createXmlView();
+			});
+
+			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
+
+			var oTargetConfig = {
+				myTarget : {
+					targetControl: this.oShell.getId()
+				},
+				secondTarget: {
+					targetControl: this.oSecondShell.getId()
+				}
+			};
+			this.oRouterConfig.routeName.target = ["myTarget", "secondTarget"];
+
+			// System under test
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+
+			// Act
+			this.oRouter.parse(this.sPattern);
+
+			// Assert
+			strictEqual(oPlaceSpy.callCount, 2, "Did place both targets");
+
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myTarget"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("secondTarget"));
+
+			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
+		});
+
+		test("Should display child targets referenced by a route", function () {
+			// Arrange
+			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+				return createXmlView();
+			});
+
+			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
+			var oTargetConfig = {
+				myTarget : {
+					targetControl: this.oShell.getId(),
+					children : {
+						myChild : {
+							targetControl: this.oSecondShell.getId()
+						}
+					}
+				}
+			};
+			this.oRouterConfig.routeName.target = ["myChild"];
+
+			// System under test
+			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+
+			// Act
+			this.oRouter.parse(this.sPattern);
+
+			// Assert
+			strictEqual(oPlaceSpy.callCount, 2, "Did place myTarget");
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myTarget"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myChild"));
+
+			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
+			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
+		});
+
+		module("getTargets");
+
+		test("Should get the created targets instance", function () {
+			// System under test + arrange
+			var oRouter = new sap.ui.core.routing.Router({}, {}, null, {});
+
+			strictEqual(oRouter.getTargets(), oRouter._oTargets, "Did return the Targets instance");
+		});
+
+		test("Should return undefined if no targets where defined", function () {
+
+			// System under test + arrange
+			var oRouter = new sap.ui.core.routing.Router();
+
+			strictEqual(oRouter.getTargets(), undefined, "Did not create a Targets instance");
+		})
 	})();
 </script>
 </head>

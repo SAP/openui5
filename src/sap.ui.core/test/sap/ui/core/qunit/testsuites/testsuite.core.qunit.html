@@ -40,19 +40,6 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/SinonJS.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ThemeParameters.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UIArea.qunit.html");
-
-			var sUrlParameters = "";
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
-				sUrlParameters = "?noglobals=true";
-			}
-
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/HashChanger.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/History.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Router.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Route.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Views.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Target.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Targets.qunit.html" + sUrlParameters);
 			return suite;
 		}
 		  

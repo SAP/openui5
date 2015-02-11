@@ -105,7 +105,17 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	UIComponentMetadata.prototype.getRoutes = function() {
 		return this._mRouting && this._mRouting.routes;
 	};
-	
+
+	/**
+	 * Returns the targets configuration.
+	 * @return {object} targets configuration
+	 * @private
+	 * @since 1.28
+	 * @experimental Since 1.28 Implementation might change.
+	 */
+	UIComponentMetadata.prototype.getTargetsConfig = function() {
+		return this._mRouting && this._mRouting.targets;
+	};
 
 	return UIComponentMetadata;
 

@@ -4,7 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>qUnit Page for sap.ui.core.routing.Route</title>
 
-	<script src="../../../../../resources/sap-ui-core.js"
+	<script src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m">
 	</script>
 
@@ -33,7 +33,7 @@
 
 			test("Should not call pattern matched only matched", function () {
 				// Arrange
-				var oRoute = new sap.ui.core.routing.Route(null, { name : "testRoute" }),
+				var oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : "testRoute" }),
 						fnMatchedSpy = this.spy(),
 						fnPatternMatchedSpy = this.spy();
 
@@ -57,7 +57,7 @@
 				test(sTestName, function() {
 					// Arrange
 					var sName = "testRoute",
-							oRoute = new sap.ui.core.routing.Route(null, { name : sName }),
+							oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : sName }),
 							fnEventSpy = this.spy(function(oEvent, oActualData) {
 								strictEqual(oActualData, oData, "the data is correct");
 								strictEqual(oEvent.getParameters().name, sName, "the name is correct");
@@ -86,7 +86,7 @@
 				test(sTestName, function() {
 					// Arrange
 					var sName = "testRoute",
-						oRoute = new sap.ui.core.routing.Route(null, { name : sName }),
+						oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : sName }),
 						fnEventSpy = this.spy(),
 						fnRouteMatchedSpy = this.spy(),
 						oListener = {};

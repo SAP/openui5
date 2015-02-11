@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 				}
 				throw e;
 			}
-	
+
 		},
 	
 		metadata : {
@@ -81,7 +81,8 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 						pattern : "FirstView/{from}",
 						view : "myViewId"
 					},
-				]
+				],
+				targets: {}
 				*/
 			}
 			//autoDestroy: false // TODO: destroy component when view should be destroyed (not implemented yet!)
@@ -127,7 +128,8 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 				fnRouterConstructor = jQuery.sap.getObject(fnRouterConstructor);
 			}
 			
-			this._oRouter = new fnRouterConstructor(aRoutes, oRoutingConfig, this);
+			this._oRouter = new fnRouterConstructor(aRoutes, oRoutingConfig, this, oMetadata.getTargetsConfig());
+			this._oTargets = this._oRouter.getTargets();
 		}
 	
 		// create the content
@@ -201,6 +203,18 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 */
 	UIComponent.prototype.getRouter = function() {
 		return this._oRouter;
+	};
+
+
+	/**
+	 * Returns the reference to the targets instance which has been created by
+	 * the UIComponent once the targets in the routing metadata has been defined.
+	 * @since 1.28
+	 * @return {sap.ui.core.routing.Targets} the targets instance
+	 * @public
+	 */
+	UIComponent.prototype.getTargets = function() {
+		return this._oTargets;
 	};
 	
 	/**

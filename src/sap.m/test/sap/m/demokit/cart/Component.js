@@ -15,18 +15,12 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 				{
 					pattern: "category/{id}",
 					name: "category",
-					view: "Category",
-					viewLevel: 2,
-					targetAggregation: "masterPages",
-					subroutes: [
-						{
-							pattern: "category/{id}/product/{productId}",
-							name: "product",
-							view: "Product",
-							viewLevel: 3,
-							targetAggregation: "detailPages"
-						}
-					]
+					target: "categoryView"
+				},
+				{
+					pattern: "category/{id}/product/{productId}",
+					name: "product",
+					target: ["categoryView", "productView"]
 				},
 				{
 					pattern: "cart",
@@ -34,29 +28,39 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 					view: "Cart",
 					targetAggregation: "masterPages"
 				},
-				{	pattern: "",
-					name : "home",
-					view : "Home",
-					viewLevel : 1,
-					targetAggregation : "masterPages",
-					subroutes : [
+				{    pattern: "",
+					name: "home",
+					view: "Home",
+					viewLevel: 1,
+					targetAggregation: "masterPages",
+					subroutes: [
 						{
 							pattern: "product/{productId}",
 							name: "cartProduct",
-							view: "Product",
-							viewLevel: 3,
-							targetAggregation: "detailPages"
+							targets: "productView"
 						},
 						{
-							pattern : "{all*}",
-							name : "notFound",
-							view : "notFound",
-							viewLevel : 3,
-							targetAggregation : "detailPages"
+							pattern: "{all*}",
+							name: "notFound",
+							view: "notFound",
+							viewLevel: 3,
+							targetAggregation: "detailPages"
 						}
 					]
 				}
-			]
+			],
+			targets: {
+				productView: {
+					view: "Product",
+					viewLevel: 3,
+					targetAggregation: "detailPages"
+				},
+				categoryView: {
+					view: "Category",
+					viewLevel: 2,
+					targetAggregation: "masterPages"
+				}
+			}
 		}
 	},
 
