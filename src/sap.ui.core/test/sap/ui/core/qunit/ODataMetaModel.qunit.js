@@ -621,6 +621,11 @@
 			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo"), null);
 			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC"), null);
 			strictEqual(oMetaModel.getODataEntityType(), null);
+
+			// change the namespace to contain a dot
+			oMetaModel.getObject("/dataServices/schema/0").namespace = "GWSAMPLE.BASIC";
+			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE.BASIC.Product"),
+				oMetaModel.getObject("/dataServices/schema/0/entityType/1"));
 		});
 	});
 
