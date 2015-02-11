@@ -233,7 +233,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		switch (sSourceType) {
 		case "string":
 			sResult = ODataType.normalizeNumber(getFormatter(this).oFormatOptions, vValue,
-				/^(\d+)$/ );
+				/^0*(\d+)$/ );
 			if (!sResult) {
 				throw new ParseException(getText("EnterInt"));
 			}
