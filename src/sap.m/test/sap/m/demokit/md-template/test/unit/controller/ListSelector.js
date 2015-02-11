@@ -1,6 +1,6 @@
 sap.ui.require(
 	[
-		"sap/ui/demo/mdtemplate/util/ListSelector",
+		"sap/ui/demo/mdtemplate/controller/ListSelector",
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/thirdparty/sinon-qunit"
 	],

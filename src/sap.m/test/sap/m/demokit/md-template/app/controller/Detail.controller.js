@@ -1,7 +1,9 @@
-sap.ui.define(["sap/ui/demo/mdtemplate/view/BaseController"], function (BaseController) {
+sap.ui.define([
+		"sap/ui/demo/mdtemplate/controller/BaseController"
+	], function (BaseController) {
 	"use strict";
 
-	return BaseController.extend("sap.ui.demo.mdtemplate.view.Detail", {
+	return BaseController.extend("sap.ui.demo.mdtemplate.controller.Detail", {
 
 		onInit : function () {
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
@@ -11,7 +13,7 @@ sap.ui.define(["sap/ui/demo/mdtemplate/view/BaseController"], function (BaseCont
 				this.getRouter().getRoute("main").attachPatternMatched(this._onMasterMatched, this);
 			}
 		},
-		
+
 		/**
 		 * This function makes sure that the details of the first item in
 		 * in the master list are displayed when the app is started with 
@@ -83,15 +85,15 @@ sap.ui.define(["sap/ui/demo/mdtemplate/view/BaseController"], function (BaseCont
 				}.bind(this));
 		},
 
-        /**
-         * On detail view, 'nav back' is only relevant when
-         * running on phone devices. On larger screens, the detail
-         * view has no other view to go back to.
-         * If running on phone though, the app 
-         * will navigate back to the 'main' view.
-         * 
-         * @function
-         */
+		/**
+		 * On detail view, 'nav back' is only relevant when
+		 * running on phone devices. On larger screens, the detail
+		 * view has no other view to go back to.
+		 * If running on phone though, the app 
+		 * will navigate back to the 'main' view.
+		 * 
+		 * @function
+		 */
 		onNavBack : function () {
 			// This is only relevant when running on phone devices
 			this.getRouter().myNavBack("main");

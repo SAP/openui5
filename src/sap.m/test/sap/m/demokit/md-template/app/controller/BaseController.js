@@ -1,7 +1,9 @@
-sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
+sap.ui.define([
+		"sap/ui/core/mvc/Controller"
+	], function (Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.mdtemplate.view.BaseController", {
+	return Controller.extend("sap.ui.demo.mdtemplate.controller.BaseController", {
 
 		/**
 		 * Convenience method for accessing the event bus in every controller of the application

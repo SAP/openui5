@@ -1,19 +1,19 @@
-sap.ui.define(
-	[
+sap.ui.define([
 		"sap/ui/core/util/MockServer"
 	], function (MockServer) {
 	"use strict";
 
-	/**
-	 * Initializes the mock server (typically when the app is called with the URL parameter "responderOn=true").
-	 * The local mock data in the model/data/<ModelName> folder is returned instead of the real data for testing.
-	 *
-	 * @private
-	 */
-	
 	return {
+
 		_sServiceUrl : "here/goes/your/serviceUrl/",
 		_sModulePath : "sap.ui.demo.mdtemplate.service",
+
+		/**
+		 * Initializes the mock server (typically when the app is called with the URL parameter "responderOn=true").
+		 * The local mock data in this folder is returned instead of the real data for testing.
+		 *
+		 * @public
+		 */
 
 		init : function (s) {
 			// create server
@@ -35,4 +35,5 @@ sap.ui.define(
 			jQuery.sap.log.info("Running the app with mock data");
 		}
 	};
+
 }, /* bExport= */ true);
