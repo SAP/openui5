@@ -15,11 +15,16 @@
 				color: blue;
 				background-color: #FFFFDD;
 			}
+
+			#heading {
+				font-size: 1rem;
+				font-weight: bold;
+			}
 		</style>
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.ui.commons, sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script>
@@ -30,6 +35,39 @@
 
 			// create and add a page with texts
 			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+
+			var form = new sap.ui.layout.form.SimpleForm({
+				minWidth : 1024,
+				maxContainerCols : 2,
+				editable: false,
+				content : [
+					new sap.m.Text("heading", {
+						text: 'Section for Right-to-left testing. Please, switch the page direction to RTL -> &sap-ui-rtl=true'
+					}),
+					new sap.m.Label({
+						text: 'default behavior'
+					}),
+					new sap.m.Text({
+						text: '(012) 345 678'
+					}),
+					new sap.m.Label({
+						text: 'textDirection -> ltr'
+					}),
+					new sap.m.Text({
+						textDirection: 'LTR',
+						text: '(012) 345 678'
+					}),
+					new sap.m.Label({
+						text: 'textDirection -> ltr, textAlign -> right'
+					}),
+					new sap.m.Text({
+						textDirection: 'LTR',
+						textAlign: 'Right',
+						text: '(012) 345 678'
+					})
+				]
+			});
+
 			var page = new sap.m.Page("textPage", {
 				title:"Text",
 				content : [
@@ -70,9 +108,11 @@
 			   			text: "Text [10. RTL + MAXLINE:2] " + lorem,
 			   			textDirection: "RTL",
 			   			maxLines: 2
-			   		})
+			   		}),
+					form
 	            ]
 			});
+
 			app.addPage(page);
 
 		</script>

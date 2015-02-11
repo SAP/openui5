@@ -6,7 +6,7 @@
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript" 
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script type="text/javascript">
@@ -101,6 +101,45 @@
 				design: "Bold"
 			});
 			oHeader4.placeAt("Header4");
+
+			var oVL = new sap.ui.layout.VerticalLayout({
+				content:[
+					new sap.m.Text("heading", {
+						text: '\n Section for Right-to-left testing. Please, switch the page direction to RTL -> &sap-ui-rtl=true'
+					}),
+					new sap.m.Label({
+						text: "Default behavior",
+						width: '100%',
+						design: "Bold"
+					}),
+					new sap.m.Label({
+						text: '(012) 345 678',
+						width: '100%'
+					}),
+					new sap.m.Label({
+						text: 'LTR content direction, wrong default alignment',
+						width: '100%',
+						design: "Bold"
+					}),
+					new sap.m.Label({
+						text: '(012) 345 678',
+						textDirection: 'LTR',
+						width: '100%'
+					}),
+					new sap.m.Label({
+						text: 'LTR content direction, right alignment',
+						width: '100%',
+						design: "Bold"
+					}),
+					new sap.m.Label({
+						text: '(012) 345 678',
+						textDirection: 'LTR',
+						textAlign: 'Right',
+						width: '100%'
+					}),
+				]
+			});
+			oVL.placeAt("RTLTesting");
 			
 		</script>
 		<style type="text/css">
@@ -110,7 +149,10 @@
 			.labelHeader {
 				font-size: 22px;
 				margin-bottom: 0px;
-				
+			}
+			#heading {
+				font-size: 1rem;
+				font-weight: bold;
 			}
 		</style>
 	</head>
@@ -130,5 +172,6 @@
 		<div id="Left"></div>
 		<div id="Right"></div>
 		<div id="NoText"></div>
+		<div id="RTLTesting"></div>
 	</body>
 </html>

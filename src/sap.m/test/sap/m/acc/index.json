@@ -1,6 +1,11 @@
 {
 	"tests" : [
 		{
+		  "control": "sap.m.Carousel",
+		  "url": "../Carousel.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.ComboBox",
 			"url": "../ComboBox.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -11,9 +16,44 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+		  "control": "sap.m.Dialog",
+		  "url": "../Dialog.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.FeedInput",
 			"url": "../FeedInput.html",
 			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+		  "control": "sap.m.MessageBox",
+		  "url": "../MessageBox.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+		  "control": "sap.m.MessageToast",
+		  "url": "../MessageToast.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+		  "control": "sap.m.Panel",
+		  "url": "../Panel.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+		  "control": "sap.m.Popover",
+		  "url": "../Popover.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+		  "control": "sap.m.RadioButton",
+		  "url": "../RadioButton.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+		  "control": "sap.m.RadioButtonGroup",
+		  "url": "../RadioButtonGroup.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
 			"control": "sap.m.SelectList",
@@ -29,6 +69,11 @@
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+		  "control": "sap.m.Text",
+		  "url": "../Text.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
 			"control": "sap.m.Title",

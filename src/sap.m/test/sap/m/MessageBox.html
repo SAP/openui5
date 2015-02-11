@@ -3,6 +3,12 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>MessageBox - sap.m</title>
+	<style>
+		#heading {
+			font-size: 1rem;
+			font-weight: bold;
+		}
+	</style>
 	<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
@@ -358,6 +364,39 @@
 			}
 		}));
 
+
+		oVL.addContent(new sap.m.Text("heading", {
+			text: '\n Section for Right-to-left testing. Please, switch the page direction to RTL -> &sap-ui-rtl=true'
+		}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Phone number (default)",
+			width: "300px",
+			textDirection: "LTR",
+			press: function(){
+				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
+				sap.m.MessageBox.show("(012) 345 678", {
+					icon: sap.m.MessageBox.Icon.INFORMATION,
+					title: "Phone number",
+					actions: [sap.m.MessageBox.Action.OK]
+				});
+			}
+		}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Phone number in LTR (corrected)",
+			width: "300px",
+			textDirection: "LTR",
+			press: function(){
+				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
+				sap.m.MessageBox.show("(012) 345 678", {
+					icon: sap.m.MessageBox.Icon.INFORMATION,
+					title: "Phone number in LTR",
+					actions: [sap.m.MessageBox.Action.OK],
+					textDirection: "LTR"
+				});
+			}
+		}));
 
 		app.addPage(page1).placeAt("content");
 	</script>

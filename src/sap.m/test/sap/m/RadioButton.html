@@ -8,7 +8,7 @@
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.core"
+			data-sap-ui-libs="sap.m, sap.ui.core, sap.ui.commons"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
@@ -28,6 +28,15 @@
             #flexbox2 {
                 padding: 0 2rem;
             }
+
+			#heading {
+				font-size: 1rem;
+				font-weight: bold;
+			}
+
+			#label1, #label2, #label3 {
+				line-height: 3rem;
+			}
         </style>
 
 		<script type="text/javascript">
@@ -265,6 +274,43 @@
 				]
 			});
 
+			var RTLSimpleForm = new sap.ui.layout.form.SimpleForm("RTLSimpleForm", {
+				minWidth : 1024,
+				maxContainerCols : 2,
+				content: [
+					new sap.m.Text("heading", {
+						text: 'Section for Right-to-left testing. Please, switch the page direction to RTL -> &sap-ui-rtl=true. Text align switch is possible only when radio button has setted width'
+					}),
+					new sap.m.Label("label1", {
+						text: "Default behavior"
+					}),
+					new sap.m.RadioButton({
+						width: "200px",
+						text: "(012) 345 678",
+						groupName:"group5"
+					}),
+					new sap.m.Label("label2", {
+						text: "Text direction - LTR"
+					}),
+					new sap.m.RadioButton({
+						width: "200px",
+						text: "(012) 345 678",
+						groupName:"group5",
+						textDirection: "LTR"
+					}),
+					new sap.m.Label("label3", {
+						text: "Text direction - LTR, text align - right"
+					}),
+					new sap.m.RadioButton({
+						width: "200px",
+						text: "(012) 345 678",
+						groupName:"group5",
+						textDirection: "LTR",
+						textAlign: "Right"
+					})
+				]
+			});
+
 			bindListData(data, oItemTemplate, oList2);
             radioBtnPage.addContent(vboxStates);
 			radioBtnPage.addContent(oFBox2);
@@ -277,6 +323,7 @@
 					toolbar.setEnabled(bToolbarAEnabled);
 				}
 			}));
+			radioBtnPage.addContent(RTLSimpleForm);
 
 			radioBtnPage.placeAt('body');
 		</script>
