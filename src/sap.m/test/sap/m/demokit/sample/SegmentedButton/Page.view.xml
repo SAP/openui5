@@ -17,7 +17,7 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<VBox width="100%" alignItems="Center">
+			<VBox width="100%">
 				<SegmentedButton selectedButton="satellite" class="sapUiSmallMarginBottom" >
 					<Button text="Map" />
 					<Button text="Satellite" id="satellite" />
@@ -27,6 +27,16 @@
 					<Button icon="sap-icon://taxi" />
 					<Button icon="sap-icon://lab" />
 					<Button icon="sap-icon://competitor" id="competitor" />
+				</SegmentedButton>
+				<SegmentedButton selectedButton="lab">
+					<Button icon="sap-icon://taxi" text="Taxi" />
+					<Button icon="sap-icon://lab" text="Lab" id="lab" />
+					<Button icon="sap-icon://competitor" text="Competitor" />
+				</SegmentedButton>
+				<SegmentedButton>
+					<Button text="Selected" />
+					<Button text="Enabled" />
+					<Button text="Disabled" enabled="false"/>
 				</SegmentedButton>
 			</VBox>
 		</content>

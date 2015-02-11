@@ -525,7 +525,7 @@
 				"name" : "Segmented Button",
 				"category" : "User Input",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.SegmentedButton" ]
+				"samples" : [ "sap.m.sample.SegmentedButton",  "sap.m.sample.SegmentedButtonVSD",  "sap.m.sample.SegmentedButtonDialog",  "sap.m.sample.SegmentedButtonLI"]
 			},
 			{
 				"id" : "sap.m.Select",
@@ -1119,6 +1119,21 @@
 				"id": "sap.m.sample.SegmentedButton",
 				"name": "Segmented Button",
 				"description": "The Segmented Button allows the user to pick one out of many options for displaying the content of the current page. It is a UI pattern from iOS, now also available for other platforms. Putting the Segmented Button to a Bar control on non-iOS platforms will result in something very close to a tab."
+			},
+			{
+				"id": "sap.m.sample.SegmentedButtonVSD",
+				"name": "Segmented Button in View Settings Dialog",
+				"description": "Segmented Button used in View Settings Dialog component"
+			},
+			{
+				"id": "sap.m.sample.SegmentedButtonDialog",
+				"name": "Segmented Button in Dialog",
+				"description": "Segmented Button used in Dialog component"
+			},
+			{
+				"id": "sap.m.sample.SegmentedButtonLI",
+				"name": "Segmented Button in Input List Item",
+				"description": "Segmented Button used in Input List Item component"
 			},
 			{
 				"id": "sap.m.sample.Select",

@@ -1,0 +1,18 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		title="Dialog with Segmented Button"
+		class="sapUiContentPadding" >
+		<content>
+			<SegmentedButton selectedButton="SBApproved">
+				<Button icon="sap-icon://employee-approvals" text="Approved" id="SBApproved" />
+				<Button icon="sap-icon://employee-rejections" text="Rejected" />
+				<Button icon="sap-icon://employee-lookup" text="Lookup" />
+			</SegmentedButton>
+		</content>
+		<beginButton>
+			<Button text="Close" press="onCloseDialog" />
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

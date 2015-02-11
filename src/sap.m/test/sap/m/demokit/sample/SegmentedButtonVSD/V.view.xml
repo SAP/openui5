@@ -1,0 +1,15 @@
+<mvc:View
+	controllerName="sap.m.sample.SegmentedButtonVSD.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Button
+				text="Open View Settings Dialog"
+				press="handleOpenDialog" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>
