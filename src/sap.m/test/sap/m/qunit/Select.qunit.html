@@ -32,14 +32,14 @@
 				});
 			};
 
-			var fnStartMockServer = function(sUri, iRespondAfter) {
+			var fnStartMockServer = function(sUri, iAutoRespondAfter) {
 				var sMetadataUrl = "data/metadata.xml";
 				sUri = sUri || "/service/";
 
 				// configure respond to requests delay
 				sap.ui.core.util.MockServer.config({
 					autoRespond: true,
-					autoRespondAfter: iRespondAfter || 10
+					autoRespondAfter: iAutoRespondAfter || 10
 				});
 
 				// create mock server
@@ -1556,7 +1556,7 @@
 
 				// arrange
 				var sUri = "/service/";
-				var oMockServer = fnStartMockServer();
+				var oMockServer = fnStartMockServer(sUri, 10);
 				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
 				oSelect.setModel(oModel);
 				oSelect.placeAt("content");
@@ -1589,7 +1589,7 @@
 
 				// arrange
 				var sUri = "/service/";
-				var oMockServer = fnStartMockServer();
+				var oMockServer = fnStartMockServer(sUri, 10);
 				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
 				oSelect.setModel(oModel);
 				oSelect.placeAt("content");
