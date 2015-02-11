@@ -586,16 +586,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/* --- user interaction handling methods --- */
 
-	ListBox.prototype.onfocusin = function (oEvent) {
-		if (!!sap.ui.Device.browser.internet_explorer && ((sap.ui.Device.browser.version == 7) || (sap.ui.Device.browser.version == 8)) /* =IE8! */ && (oEvent.target != this.getDomRef()) && (oEvent.target.className != "sapUiLbxI")) {
-			var parent = oEvent.target.parentNode;
-
-			if (jQuery(parent).hasClass("sapUiLbxI")) {
-				parent.focus();
-			}
-		}
-	};
-
 	ListBox.prototype.onmousedown = function(oEvent) {
 		if (!!sap.ui.Device.browser.webkit && oEvent.target && oEvent.target.id === this.getId()) { // ListBox scrollbar has been clicked; webkit completely removes the focus, which breaks autoclose popups
 			var idToFocus = document.activeElement ? document.activeElement.id : this.getId();
