@@ -14,18 +14,10 @@
 	overflow: hidden;
 }
 
-.sapMITBHead.sapMITBTextOnly {
-	margin-left: 1rem;
-}
-
 .sap-phone .sapMITBHead {
 	display: inline-block;
 	margin: 1rem 0 0;
 	vertical-align: top;
-}
-
-.sap-phone .sapMITBHead.sapMITBTextOnly .sapMITBFilter {
-	margin-left: -0.75rem;
 }
 
 .sap-tablet .sapMITBHead,
@@ -33,10 +25,6 @@ html[data-sap-ui-os=win8] .sapMITBHead {
 	display: inline-block;
 	margin: 1rem 1rem 0 0;
 	vertical-align: top;
-}
-
-.sap-tablet .sapMITBHead.sapMITBTextOnly {
-	margin-left: -1rem;
 }
 
 .sapMITBScrollContainer {
@@ -207,10 +195,19 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	margin: 0 0.25rem;
 }
 
-.sapMITBTextOnly .sapMITBFilter,
+.sapMITBTextOnly .sapMITBFilter {
+	padding: 0;
+	margin: 0 1rem;
+}
+
 .sapMITBTextOnly .sapMITBFilter:first-child {
-	 padding: 0;
-	 margin: 0 1rem;
+	padding: 0 0 0 1px;
+	margin: 0 1rem 0 0.5rem;
+}
+
+.sapMITBTextOnly .sapMITBFilter:last-child {
+	padding: 0 1px 0 0;
+	margin: 0 0.5rem 0 1rem;
 }
 
 .sap-phone .sapMITBTextOnly .sapMITBFilter {
@@ -644,7 +641,7 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 .sapMITBArrowScroll:focus,
 .sapMITBHead:focus,
 .sapMITBFilterIcon:focus,
-.sapMITBItem:focus, {
+.sapMITBItem:focus {
 	outline: none;
 }
 
