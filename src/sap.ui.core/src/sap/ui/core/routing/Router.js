@@ -3,8 +3,8 @@
  */
 /*global crossroads *///declare unusual global vars for JSLint/SAPUI5 validation
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', './HashChanger', './Route', 'sap/ui/thirdparty/crossroads', 'sap/ui/thirdparty/signals'],
-	function(jQuery, EventProvider, ManagedObject, HashChanger, Route) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', './HashChanger', './Route', './Views', 'sap/ui/thirdparty/crossroads', 'sap/ui/thirdparty/signals'],
+	function(jQuery, EventProvider, ManagedObject, HashChanger, Route, Views) {
 	"use strict";
 
 
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				this._oRouter = crossroads.create();
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
-				this._oViews = {};
+				this._oViews = new Views({component : oOwner});
 				this._oOwner = oOwner;
 
 				var that = this;
@@ -233,33 +233,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @public
 		 */
 		Router.prototype.getView = function (sViewName, sViewType, sViewId) {
-			if (!sViewName) {
-				jQuery.sap.log.error("A name for the view has to be defined");
-			}
+			var oView = this._oViews.getView({
+				viewName: sViewName,
+				type: sViewType,
+				id: sViewId
+			});
 
-			if (!this._oViews[sViewName]) {
-				var fnCreateView = function() {
-					var oViewOptions = {
-						type: sViewType,
-						viewName: sViewName
-					};
-					if (sViewId) {
-						oViewOptions.id = sViewId;
-					}
-					return sap.ui.view(oViewOptions);
-				};
-				if (this._oOwner) {
-					this._oViews[sViewName] = this._oOwner.runAsOwner(fnCreateView);
-				} else {
-					this._oViews[sViewName] = fnCreateView();
-				}
-				this.fireViewCreated({
-					view: this._oViews[sViewName],
-					viewName: sViewName,
-					type: sViewType
-				});
-			}
-			return this._oViews[sViewName];
+			this.fireViewCreated({
+				view: oView,
+				viewName: sViewName,
+				type: sViewType
+			});
+
+			return oView;
 		};
 
 		/**
@@ -269,13 +255,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {sap.ui.core.mvc.View} oView the view instance
 		 * @since 1.22
 		 * @public
+		 * @returns {sap.ui.core.routing.Router} @since 1.28 the this pointer for chaining
 		 */
 		Router.prototype.setView = function (sViewName, oView) {
-			if (!sViewName) {
-				jQuery.sap.log.error("A name for the view has to be defined");
-			}
-
-			this._oViews[sViewName] = oView;
+			this._oViews.setView(sViewName, oView);
+			return this;
 		};
 		
 		/**
@@ -286,6 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {object} oParameters Parameters for the route
 		 * @param {boolean} bReplace Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
 		 * @public
+		 * @returns {sap.ui.core.routing.Router} this for chaining.
 		 */
 		Router.prototype.navTo = function (sName, oParameters, bReplace) {
 			if (bReplace) {
@@ -293,6 +278,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			} else {
 				this.oHashChanger.setHash(this.getURL(sName, oParameters));
 			}
+
+			return this;
 		};
 
 		/**

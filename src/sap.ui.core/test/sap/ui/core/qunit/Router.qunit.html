@@ -544,6 +544,26 @@
 			router.destroy();
 		});
 
+		module("navTo", {
+			setup: function () {
+				this.oRouter = new sap.ui.core.routing.Router();
+				this.oRouter.oHashChanger = {
+					setHash: jQuery.noop
+				};
+			},
+			teardown: function () {
+				this.oRouter.destroy();
+			}
+		});
+
+		test("Should be able to chain NavTo", function () {
+			// Act
+			var oReturnValue = this.oRouter.navTo();
+
+			// Assert
+			strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
+		});
+
 		module("View generation");
 
 		test("View initialization", function() {
@@ -888,6 +908,155 @@
 			//Cleanup
 			router.destroy();
 			oShell.destroy();
+		});
+
+		module("View events");
+
+		function createXmlView () {
+			var sXmlViewContent = [
+				'<View xmlns="sap.ui.core">',
+				'</View>'
+			].join('');
+
+			var oViewOptions = {
+				viewContent: sXmlViewContent,
+				type: "XML"
+			};
+
+			return sap.ui.view(oViewOptions);
+		}
+
+		module("views - creation and caching", {
+			setup: function () {
+				// System under test + Arrange
+				this.oRouter = new sap.ui.core.routing.Router();
+
+				this.oView = createXmlView();
+			},
+			teardown: function () {
+				this.oRouter.destroy();
+			}
+		});
+
+		test("Should create a view", function () {
+			var that = this,
+				fnStub = this.stub(sap.ui, "view", function (oViewOptions) {
+					strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
+					strictEqual(oViewOptions.type, "bar", "DId pass the type");
+					strictEqual(oViewOptions.id, "baz", "DId pass the id");
+
+					return that.oView;
+				});
+
+			//Act
+			var oReturnValue = this.oRouter.getView("foo", "bar", "baz");
+
+			//Assert
+			strictEqual(oReturnValue, this.oView, "the view was created");
+			strictEqual(fnStub.callCount, 1, "the stub was invoked");
+		});
+
+
+		test("Should set a view to the cache", function () {
+			var that = this,
+					oReturnValue,
+					fnStub = this.stub(sap.ui, "view", function () {
+						return this.oView;
+					});
+
+			//Act
+			oReturnValue = this.oRouter.setView("foo.bar", this.oView);
+			var oRetrievedView = this.oRouter.getView("foo.bar", "bar", "baz");
+
+			//Assert
+			strictEqual(oRetrievedView, this.oView, "the view was returned");
+			strictEqual(oReturnValue, this.oRouter, "able to chain this function");
+			strictEqual(fnStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
+		});
+
+
+		module("events", {
+			setup: function () {
+				// System under test + Arrange
+				this.oRouter = new sap.ui.core.routing.Router();
+			},
+			teardown: function () {
+				this.oRouter.destroy();
+			}
+		});
+
+		test("should be able to fire/attach/detach the created event", function() {
+			// Arrange
+			var oParameters = { foo : "bar" },
+					fnEventSpy = this.spy(function(oEvent, oActualData) {
+						strictEqual(oActualData, oData, "the data is correct");
+						strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+						strictEqual(this, oListener, "the this pointer is correct");
+					}),
+					oListener = {},
+					oData = { some : "data" },
+					oFireReturnValue,
+					oDetachReturnValue,
+					oAttachReturnValue = this.oRouter.attachViewCreated(oData, fnEventSpy, oListener);
+
+			// Act
+			oFireReturnValue = this.oRouter.fireViewCreated(oParameters);
+			oDetachReturnValue = this.oRouter.detachViewCreated(fnEventSpy, oListener);
+			this.oRouter.fireViewCreated();
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			strictEqual(oAttachReturnValue, this.oRouter, "did return this for chaining for attach");
+			strictEqual(oDetachReturnValue, this.oRouter, "did return this for chaining for detach");
+			strictEqual(oFireReturnValue, this.oRouter, "did return this for chaining for fire");
+		});
+
+		test("Should fire the view created event if a view is created", function () {
+			// Arrange
+			var oView = createXmlView(),
+				fnStub = this.stub(sap.ui, "view", function () {
+					return oView;
+				}),
+				sViewType = "XML",
+				sViewName = "foo",
+				oParameters,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			this.oRouter.attachViewCreated(fnEventSpy);
+
+			// Act
+			var oReturnValue = this.oRouter.getView(sViewName, sViewType);
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 1, "The view created event was fired");
+			strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
+			strictEqual(oParameters.viewName, sViewName, "Did pass the viewName to the event parameters");
+			strictEqual(oParameters.type, sViewType, "Did pass the viewType to the event parameters");
+		});
+
+		module("component");
+
+		test("Should create a view with an component", function () {
+			// Arrange
+			var oUIComponent = new sap.ui.core.UIComponent({}),
+				fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
+				oView = createXmlView(),
+				oRouter = new sap.ui.core.routing.Router({}, {}, oUIComponent),
+				fnViewStub = this.stub(sap.ui, "view", function () {
+					return oView;
+				});
+
+			// Act
+			var oReturnValue = oRouter.getView("XML", "foo");
+
+			// Assert
+			strictEqual(fnOwnerSpy.callCount, 1, "Did run with owner");
+			ok(fnOwnerSpy.calledBefore(fnViewStub), "Did invoke the owner function before creating the view");
+
+			// Cleanup
+			oRouter.destroy();
 		});
 	})();
 </script>
