@@ -64,23 +64,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					: oBinding;
 			}
 
-			/*
-			 * This is meant as a public API for any formatter used during XML template processing
-			 * and provides access to the model and path which is needed to process OData v4
-			 * annotations.
+			/**
+			 * Context interface provided by XML template processing as an additional first
+			 * argument to any formatter function which opts in to this mechanism. Candidates for
+			 * such formatter functions are all those used in binding expressions which are
+			 * evaluated during XML template processing, including those used inside template
+			 * instructions like <code>&lt;template:if></code>. The formatter function needs to be
+			 * marked with a property <code>requiresIContext = true</code> to express that it
+			 * requires this extended signature (compared to ordinary formatter functions). The
+			 * usual arguments will be provided after the first one (currently: the raw value from
+			 * the model).
+			 *
+			 * This interface provides callback functions to access the model and path  which are
+			 * needed to process OData v4 annotations. It initially offers a subset of methods
+			 * from {@link sap.ui.model.Context} so that formatters might also be called with a
+			 * context object for convenience, e.g. outside of XML template processing.
+			 *
+			 * Example: Suppose you have a formatter function called "foo" like this
+			 * <pre>
+			 * window.foo = function (oInterface, vRawValue) {
+			 *     //TODO ...
+			 * };
+			 * window.foo.requiresIContext = true;
+			 * </pre>
+			 * and it is used within an XML template like this
+			 * <pre>
+			 * &lt;template:if test="{path: '...', formatter: 'foo'}">
+			 * </pre>
+			 * Then <code>foo</code> will be called with arguments
+			 * <code>oInterface, vRawValue</code> such that
+			 * <code>oInterface.getModel().getObject(oInterface.getPath()) === vRawValue</code>
+			 * holds.
+			 *
+			 * @interface
+			 * @name sap.ui.core.util.XMLPreprocessor.IContext
+			 * @public
 			 */
-			return {
+			return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
 				/**
 				 * Returns the model related to the current formatter call.
+				 *
 				 * @returns {sap.ui.model.Model}
+				 *   the model related to the current formatter call
+				 * @public
 				 */
 				getModel : function () {
 					return getBinding().getModel();
 				},
 
 				/**
-				 * Returns the absolute path related to the current formatter call
+				 * Returns the absolute path related to the current formatter call.
+				 *
 				 * @returns {string}
+				 *   the absolute path related to the current formatter call
+				 * @public
 				 */
 				getPath : function () {
 					var oBinding = getBinding();
@@ -115,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				var fnFormatter = oInfo.formatter;
 
 				oInfo.mode = sap.ui.model.BindingMode.OneTime;
-				if (fnFormatter && fnFormatter.$) {
+				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
 						= jQuery.proxy(fnFormatter, null, getInterface(oWithControl, i));
 				}
@@ -197,10 +234,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		}
 
 		/**
+		 * @classdesc
 		 * The XML pre-processor for template instructions in XML views.
 		 *
-		 * @alias sap.ui.core.util.XMLPreprocessor
-		 * @private
+		 * @namespace sap.ui.core.util.XMLPreprocessor
+		 * @public
 		 */
 		return {
 			/**

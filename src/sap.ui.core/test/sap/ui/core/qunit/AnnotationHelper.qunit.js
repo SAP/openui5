@@ -206,7 +206,7 @@
 			oCurrentContext = null;
 		}
 		fnMethod = fnMethod || AnnotationHelper.format;
-		sResult = fnMethod.$
+		sResult = fnMethod.requiresIContext === true
 			? fnMethod(getInterface(oCurrentContext), vValue)
 			: fnMethod(vValue);
 
