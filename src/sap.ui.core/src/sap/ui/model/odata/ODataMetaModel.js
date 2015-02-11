@@ -24,8 +24,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
 	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
 	 * as a foundation and merges v4 annotations from the existing
-	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding entity type or
-	 * property.
+	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
 	 *
 	 * Also, annotations from the "http://www.sap.com/Protocols/SAPData" namespace are lifted up
 	 * from the <code>extensions</code> array and transformed from objects into simple properties
@@ -212,48 +211,126 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		}
 
 		/*
+		 * Visits all children inside the given array, lifts "SAPData" extensions and inlines OData
+		 * v4 annotations for each child.
+		 *
+		 * @param {object[]} aChildren
+		 *   any array of children
+		 * @param {object} mChildAnnotations
+		 *   map from child name (or role) to annotations
+		 * @param {function} [fnCallback]
+		 *   optional callback for each child
+		 */
+		function visitChildren(aChildren, mChildAnnotations, fnCallback) {
+			jQuery.each(aChildren || [], function (iUnused, oChild) {
+				liftSAPData(iUnused, oChild);
+				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
+
+				if (fnCallback) {
+					fnCallback(oChild);
+				}
+			});
+		}
+
+		/*
 		 * Merges the given annotation data into the given meta data and lifts SAPData extensions.
+		 *
 		 * @param {object} oAnnotations
 		 *   annotations "JSON"
 		 * @param {object} oData
 		 *   meta data "JSON"
 		 */
 		function merge(oAnnotations, oData) {
+			/*
+			 * Gets the map from child name to annotations for a parent with the given qualified
+			 * name which lives inside the entity container as indicated.
+			 *
+			 * @param {string} sQualifiedName
+			 *   the parent's qualified name
+			 * @param {boolean} bInContainer
+			 *   whether the parent lives inside the entity container (or beside it)
+			 * @returns {object}
+			 *   the map from child name to annotations
+			 */
+			function getChildAnnotations(sQualifiedName, bInContainer) {
+				var o = bInContainer
+					? oAnnotations.EntityContainer
+					: oAnnotations.propertyAnnotations;
+				return o && o[sQualifiedName] || {};
+			}
+
 			jQuery.each(oData.dataServices.schema || [], function (i, oSchema) {
-				liftSAPData(0, oSchema);
+				/*
+				 * Visits all parents inside the current schema's array of given name,
+				 * lifts "SAPData" extensions, inlines OData v4 annotations,
+				 * and adds <code>$path</code> for each parent.
+				 *
+				 * @param {string} sArrayName
+				 *   name of array of parents
+				 * @param {boolean} bInContainer
+				 *   whether the parents live inside the entity container (or beside it)
+				 * @param {function} fnCallback
+				 *   mandatory callback for each parent, child annotations are passed in
+				 */
+				function visitParents(sArrayName, bInContainer, fnCallback) {
+					var aParents = oSchema[sArrayName];
 
-				jQuery.each(oSchema.association || [], liftSAPData);
+					jQuery.each(aParents || [], function (j, oParent) {
+						var sQualifiedName = oSchema.namespace + "." + oParent.name,
+							mChildAnnotations = getChildAnnotations(sQualifiedName, bInContainer);
 
-				jQuery.each(oSchema.complexType || [], function (j, oComplexType) {
-					oComplexType.$path = "/dataServices/schema/" + i + "/complexType/" + j;
-					jQuery.each(oComplexType.property || [], liftSAPData);
+						liftSAPData(j, oParent);
+						jQuery.extend(oParent, oAnnotations[sQualifiedName]);
+						oParent.$path = "/dataServices/schema/" + i + "/" + sArrayName + "/" + j;
+
+						fnCallback(oParent, mChildAnnotations);
+					});
+				}
+
+				liftSAPData(i, oSchema);
+				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
+
+				visitParents("association", false, function (oAssociation, mChildAnnotations) {
+					visitChildren(oAssociation.end, mChildAnnotations);
 				});
 
-				jQuery.each(oSchema.entityContainer || [], function (j, oEntityContainer) {
-					liftSAPData(0, oEntityContainer);
-					jQuery.each(oEntityContainer.associationSet || [], liftSAPData);
-					jQuery.each(oEntityContainer.entitySet || [], liftSAPData);
-					jQuery.each(oEntityContainer.functionImport || [], function (k, oFunction) {
-						liftSAPData(0, oFunction);
-						jQuery.each(oFunction.parameter || [], liftSAPData);
-					});
+				visitParents("complexType", false, function (oComplexType, mChildAnnotations) {
+					visitChildren(oComplexType.property, mChildAnnotations);
 				});
 
-				jQuery.each(oSchema.entityType || [], function (j, oEntityType) {
-					var sEntityName = oSchema.namespace + "." + oEntityType.name,
-						mPropertyAnnotations = oAnnotations.propertyAnnotations
-							&& oAnnotations.propertyAnnotations[sEntityName] || {};
+				visitParents("entityContainer", true,
+					function (oEntityContainer, mChildAnnotations) {
+						/*
+						 * Visits all parameters of the given function import.
+						 *
+						 * @param {object} oFunctionImport
+						 *   a function import's v2 meta data object
+						 */
+						function visitParameters(oFunctionImport) {
+							var sQualifiedName = oSchema.namespace + "." + oEntityContainer.name,
+								mAnnotations = oAnnotations.EntityContainer
+									&& oAnnotations.EntityContainer[sQualifiedName]
+									|| {};
 
-					liftSAPData(0, oEntityType);
-					jQuery.extend(oEntityType, oAnnotations[sEntityName]);
-					oEntityType.$path = "/dataServices/schema/" + i + "/entityType/" + j;
+							jQuery.each(oFunctionImport.parameter || [],
+								function (iUnused, oParam) {
+									liftSAPData(iUnused, oParam);
+									jQuery.extend(oParam,
+										mAnnotations[oFunctionImport.name + "/" + oParam.name]);
+								}
+							);
+						}
 
-					jQuery.each(oEntityType.property || [], function (k, oProperty) {
-						liftSAPData(0, oProperty);
-						jQuery.extend(oProperty, mPropertyAnnotations[oProperty.name]);
-					});
+						visitChildren(oEntityContainer.associationSet, mChildAnnotations);
+						visitChildren(oEntityContainer.entitySet, mChildAnnotations);
+						visitChildren(oEntityContainer.functionImport, mChildAnnotations,
+							visitParameters);
+					}
+				);
 
-					jQuery.each(oEntityType.navigationProperty || [], liftSAPData);
+				visitParents("entityType", false, function (oEntityType, mChildAnnotations) {
+					visitChildren(oEntityType.property, mChildAnnotations);
+					visitChildren(oEntityType.navigationProperty, mChildAnnotations);
 				});
 			});
 		}
