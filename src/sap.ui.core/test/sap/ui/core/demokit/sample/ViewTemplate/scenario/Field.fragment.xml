@@ -12,7 +12,7 @@
 					<core:Icon src="sap-icon://phone" />
 				</template:if>
 			</template:with>
-			<template:if test="{meta>Url}">
+			<template:if test="{field>Url}">
 				<template:then>
 					<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
 						href="{path: 'field>Url/UrlRef', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
