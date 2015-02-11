@@ -26,11 +26,19 @@ sap.ui.controller("sap.m.sample.DateRangeSelection.C", {
 	handleChange: function (oEvent) {
 		var sFrom = oEvent.getParameter("from");
 		var sTo = oEvent.getParameter("to");
+		var bValid = oEvent.getParameter("valid");
 
 		this._iEvent++;
 
 		var oText = this.byId("TextEvent");
 		oText.setText("Id: " + oEvent.oSource.getId() + "\nFrom: " + sFrom + "\nTo: " + sTo);
+
+		var oDRS = oEvent.oSource;
+		if (bValid) {
+			oDRS.setValueState(sap.ui.core.ValueState.None);
+		} else {
+			oDRS.setValueState(sap.ui.core.ValueState.Error);
+		}
 	}
 
 });
