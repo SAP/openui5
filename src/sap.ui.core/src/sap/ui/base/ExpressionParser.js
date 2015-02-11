@@ -4,6 +4,7 @@
 
 sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	"use strict";
+	/*global URI */
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
 	//    see http://portal.acm.org/citation.cfm?id=512931
@@ -131,7 +132,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				led: unexpected,
 				nud: unexpected
 			}
-	};
+		};
 
 	addInfix("===", 10, function (x, y) { return x === y; });
 	addInfix("!==", 10, function (x, y) { return x !== y; });
@@ -579,7 +580,23 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			var oResult, oTokens;
 
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
-			oResult = parse(oTokens.tokens, sInput, mGlobals || {});
+			oResult = parse(oTokens.tokens, sInput, mGlobals || {
+				odata: {
+					fillUriTemplate: function () {
+						if (!URI.expand) {
+							jQuery.sap.require("sap.ui.thirdparty.URITemplate");
+						}
+						return URI.expand.apply(URI, arguments).toString();
+					},
+					uriEncode: function () {
+						var ODataUtils;
+
+						jQuery.sap.require("sap.ui.model.odata.ODataUtils");
+						ODataUtils = sap.ui.model.odata.ODataUtils;
+						return ODataUtils.formatValue.apply(ODataUtils, arguments);
+					}
+				}
+			});
 
 			//TODO TDD replace !iStart by iStart === undefined
 			if (!iStart && oTokens.at < sInput.length) {
