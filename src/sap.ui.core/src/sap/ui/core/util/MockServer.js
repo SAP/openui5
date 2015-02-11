@@ -1180,7 +1180,7 @@ sap.ui
 								};
 								// add the navigation properties
 								jQuery.each(oEntitySet.navprops, function(sKey, oNavProp) {
-									if (oEntry[sKey] && !oEntry[sKey]["__deferred"]){
+									if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"]){
 										that._oMockdata[oNavProp.to.entitySet] = that._oMockdata[oNavProp.to.entitySet]
 										.concat([ oEntry[sKey] ]);
 									}
