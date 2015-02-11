@@ -129,6 +129,8 @@
 		strictEqual(oType.parseValue("1,234,567", "string"), "1234567",
 			"multiple grouping separators");
 		strictEqual(oType.parseValue(" -12345 ", "string"), "-12345", "spaces");
+		strictEqual(oType.parseValue("0012345", "string"), "12345", "leading zeroes");
+		strictEqual(oType.parseValue("0", "string"), "0", "only 0");
 		strictEqual(oType.parseValue(12345, "int"), "12345", "int as source type");
 		strictEqual(oType.parseValue(12345.678, "float"), "12345", "float as source type");
 		strictEqual(oType.parseValue(-1.2345e5, "float"), "-123450", "float in exp. notation");

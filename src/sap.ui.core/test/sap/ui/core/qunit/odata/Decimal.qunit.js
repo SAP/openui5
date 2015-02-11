@@ -121,6 +121,8 @@
 		strictEqual(oType.parseValue("1,234,567.89", "string"), "1234567.89",
 			"multiple grouping separators");
 		strictEqual(oType.parseValue(" -12345 ", "string"), "-12345", "spaces");
+		strictEqual(oType.parseValue("0012345", "string"), "12345", "leading zeroes");
+		strictEqual(oType.parseValue("0", "string"), "0", "only 0");
 		strictEqual(oType.parseValue(".1234", "string"), "0.1234", "no integer digits");
 		strictEqual(oType.parseValue("-1234.", "string"), "-1234", "decimal point w/o decimals");
 		throws(function () {

@@ -263,7 +263,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		switch (sSourceType) {
 		case "string":
 			sResult = ODataType.normalizeNumber(getFormatter(this).oFormatOptions, vValue,
-					/^(\d*)(?:\.(\d*))?$/);
+					/^0*(\d*)(?:\.(\d*))?$/);
 			if (!sResult) {
 				throw new ParseException(getErrorMessage(this));
 			}
