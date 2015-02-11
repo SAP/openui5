@@ -68,10 +68,8 @@ sap.ui.demo.mdtemplate.view.BaseController.extend("sap.ui.demo.mdtemplate.view.L
 				this._checkLineItemAndBind();
 			}.bind(this),
 			function () {
-
 				this.getView().setBusy(false);
-				this._showEmptyView();
-
+				this.showEmptyView();
 			}.bind(this));
 	},
 
@@ -100,23 +98,12 @@ sap.ui.demo.mdtemplate.view.BaseController.extend("sap.ui.demo.mdtemplate.view.L
 				this._populateLineItems();
 				this._toggleButtonState();
 			}.bind(this),
-			this._showEmptyView.bind(this));
-	},
-	
+			function () {
 
-	/**
-	 * Invoked when the selected line item (e.g. wrong parameter in URL) is not found in the model.
-	 * Navigation to the corresponding view is triggered.
-	 * 
-	 * @function
-	 * @private
-	 */
-	_showEmptyView : function () {
-		this.getRouter().myNavToWithoutHash({ 
-			currentView : this.getView(),
-			targetViewName : "sap.ui.demo.mdtemplate.view.NotFound",
-			targetViewType : "XML"
-		});
+				this.getView().setBusy(false);
+				this.showEmptyView();
+
+			}.bind(this));
 	},
 	
 
