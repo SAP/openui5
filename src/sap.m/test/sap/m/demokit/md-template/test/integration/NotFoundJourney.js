@@ -3,9 +3,9 @@
 sap.ui.require(
 	[
 		'sap/ui/test/Opa5',
-		'sap/ui/demo/mdtemplate/test/opa/action/NavigationAction',
-		'sap/ui/demo/mdtemplate/test/opa/arrangement/NavigationArrangement',
-		'sap/ui/demo/mdtemplate/test/opa/assertion/NavigationAssertion'
+		'sap/ui/demo/mdtemplate/test/integration/action/NavigationAction',
+		'sap/ui/demo/mdtemplate/test/integration/arrangement/NavigationArrangement',
+		'sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion'
 	],
 	function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		Opa5.extendConfig({

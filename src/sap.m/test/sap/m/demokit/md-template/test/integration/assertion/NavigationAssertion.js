@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 	function(Opa5, AggregationLengthEquals, PropertyStrictEquals) {
 	"use strict";
 
-	return Opa5.extend("sap.ui.demo.mdtemplate.test.opa.assertion.NavigationAssertion", {
+	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.assertion.NavigationAssertion", {
 		iShouldSeeTheObjectList : function () {
 			return this.waitFor({
 				id : "list",

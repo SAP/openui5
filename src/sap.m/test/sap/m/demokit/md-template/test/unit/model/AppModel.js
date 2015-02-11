@@ -1,67 +1,17 @@
 sap.ui.require(
 	[
-		"sap/ui/demo/mdtemplate/model/MockableModel",
+		"sap/ui/demo/mdtemplate/model/AppModel",
 		"sap/m/List",
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/thirdparty/sinon-qunit"
 	],
-	function(MockableModel, List) {
+	function (AppModel, List) {
 		"use strict";
-
-		QUnit.module("mock server tests", {
-			setup: function () {
-				sinon.config.useFakeTimers = false;
-				this.oList =  new List();
-				this.oList.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-			},
-			teardown: function () {
-				sinon.config.useFakeTimers = true;
-				this.oMdTemplateModel.destroy();
-				this.oList.destroy();
-			}
-		});
-
-		QUnit.asyncTest("Should start up the mock server", function (assert) {
-			// Arrange
-			this.stub(jQuery.sap, "getUriParameters", function () {
-				return {
-					get: function (sURIParameter) {
-						// mock server test
-						if (sURIParameter === "responderOn") {
-							return "true";
-						}
-						return "1000";
-					}
-				};
-			});
-			this.oMdTemplateModel = new MockableModel({
-				serviceUrl: "../../../../../foo/",
-				dataFolderName: "md_template"
-			});
-
-			this.oList.attachUpdateFinished(function (fnResolve) {
-				// Assert
-				assert.strictEqual(this.oList.getItems().length, 9, "The list shows the expected amount of products");
-
-				QUnit.start();
-			}, this);
-
-
-			// Act
-			this.oList.setModel(this.oMdTemplateModel);
-			this.oList.bindItems({
-				path : "/Objects",
-				template :  new sap.m.StandardListItem({
-					title: "{Name}"
-				})
-			});
-		});
 
 		QUnit.module("Wait for element binding", {
 			setup: function () {
 				sinon.config.useFakeTimers = false;
-				this.oMdTemplateModel = new MockableModel({
+				this.oMdTemplateModel = new AppModel({
 					serviceUrl: "../../../../../foo/",
 					dataFolderName: "md_template"
 				});
