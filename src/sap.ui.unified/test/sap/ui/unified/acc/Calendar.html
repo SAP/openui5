@@ -54,7 +54,9 @@
 			                    ["20160101",undefined,"Neujahr",1],
 			                    ["20160106",undefined,"Heilige Drei Könige",1]];
 
-			var oCal = new sap.ui.unified.Calendar("Cal1").placeAt("sample1");
+			var oCal = new sap.ui.unified.Calendar("Cal1",{
+				ariaLabelledBy: ["H-C1"]
+			}).placeAt("sample1");
 
 			for (var i = 0; i < aSpecialDays.length; i++) {
 				var aSpecialDay = aSpecialDays[i];
@@ -74,16 +76,19 @@
 
 			// single interval selection
 			oCal = new sap.ui.unified.Calendar("Cal2",{
-				intervalSelection: true
+				intervalSelection: true,
+				ariaLabelledBy: ["H-C2"]
 			}).placeAt("sample2");
 
 			oCal = new sap.ui.unified.Calendar("Cal3",{
 				intervalSelection: false,
-				singleSelection: false
+				singleSelection: false,
+				ariaLabelledBy: ["H-C3"]
 			}).placeAt("sample3");
 
 			oCal = new sap.ui.unified.Calendar("Cal4",{
-				months: 2
+				months: 3,
+				ariaLabelledBy: ["H-C2"]
 			}).placeAt("sample4");
 
 		</script>
@@ -92,25 +97,25 @@
 	<body class="sapUiBody" role="application">
 
 		<h1>Test Page for <code>sap.ui.unified.Calendar</code></h1>
-		<h2>Single day Selection Calendar</h2>
+		<h2 id="H-C1">Single day Selection Calendar</h2>
 		<br>
 		<div>
 			<div id="sample1" style="display:inline-block;"></div>
 		</div>
 		<br>
-		<h2>Single interval Selection Calendar</h2>
+		<h2 id="H-C2">Single interval Selection Calendar</h2>
 		<br>
 		<div>
 			<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
 		</div>
 		<br>
-		<h2>multiple day Selection Calendar</h2>
+		<h2 id="H-C3">multiple day Selection Calendar</h2>
 		<br>
 		<div>
 			<div id="sample3" style="display:inline-block;"></div>
 		</div>
 		<br>
-		<h2>Calendar with multiple months</h2>
+		<h2 id="H-C4">Calendar with multiple months</h2>
 		<br>
 		<div>
 			<div id="sample4" style="display:inline-block;"></div>

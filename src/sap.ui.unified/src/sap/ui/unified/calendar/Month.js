@@ -65,6 +65,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"}
 		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
 		events : {
 
 			/**
@@ -315,6 +322,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				return oParent._getShowMonthHeader();
 			} else {
 				return this.getProperty("showHeader");
+			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getAriaLabelledBy = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getAriaLabelledBy) {
+				return oParent.getAriaLabelledBy();
+			} else {
+				return this.getAssociation("ariaLabelledBy", []);
 			}
 
 		};

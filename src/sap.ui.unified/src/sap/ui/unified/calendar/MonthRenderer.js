@@ -24,6 +24,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 
 		var oDate = oMonth._getDate();
 		var sTooltip = oMonth.getTooltip_AsString();
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		var sId = oMonth.getId();
+		var oAriaLabel = {value: sId + "-Descr", append: true};
 
 		oRm.write("<div");
 		oRm.writeControlData(oMonth);
@@ -34,15 +37,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		if (oMonth.getShowHeader()) {
+			oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
+		}
+
 		oRm.writeAccessibilityState(oMonth, {
 			role: "grid",
 			readonly: "true",
 			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
-			label: rb.getText("CALENDAR_DIALOG")
+			labelledby: oAriaLabel
 		});
 
 		oRm.write(">"); // div element
+
+		oRm.write("<span id=\"" + sId + "-Descr\" style=\"display: none;\">" + rb.getText("CALENDAR_DIALOG") + "</span>");
 
 		this.renderMonth(oRm, oMonth, oDate);
 
@@ -215,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("data-sap-day", sYyyymmdd);
 			oRm.writeClasses();
-			mAccProps["describedby"] = sId + "-WNum-" +  iWeekNumber + " " + sId + "-WH" + iWeekDay;
+			mAccProps["describedby"] = sId + "-CW" + " " + sId + "-WNum-" +  iWeekNumber + " " + sId + "-WH" + iWeekDay;
 			mAccProps["label"] = mAccProps["label"] + oFormatLong.format(oDay, true);
 			oRm.writeAccessibilityState(null, mAccProps);
 			oRm.write(">"); // div element
