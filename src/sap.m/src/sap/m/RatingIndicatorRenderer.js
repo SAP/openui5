@@ -69,14 +69,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		// ARIA
 		sLabelID = oControl.getId() + "-ariaLabel";
-		oRm.writeAttribute("aria-labelledby", sLabelID);
 
 		oRm.writeAccessibilityState(oControl, {
 			"role": "slider",
 			"orientation": "horizontal",
 			"live": "assertive",
 			"valuemin": 0,
-			"disabled": !oControl.getEnabled()
+			"disabled": !oControl.getEnabled(),
+			"labelledby": {
+				value: sLabelID,
+				append: true
+			}
 		});
 
 		oRm.write(">");
