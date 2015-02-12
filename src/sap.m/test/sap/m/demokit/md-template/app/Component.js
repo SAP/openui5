@@ -6,7 +6,7 @@ sap.ui.define([
 		"sap/ui/demo/mdtemplate/controller/ListSelector",
 		"sap/ui/demo/mdtemplate/Router",
 		"sap/ui/demo/mdtemplate/model/formatter",
-		"sap/ui/demo/mdtemplate/model/grouper",
+		"sap/ui/demo/mdtemplate/model/grouper"
 	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, Router) {
 	"use strict";
 

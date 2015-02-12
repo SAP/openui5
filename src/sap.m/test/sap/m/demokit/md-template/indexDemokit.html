@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>MD Template</title>
+
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-preload="async"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{"sap.ui.demo.mdtemplate": "./app/", "sap.ui.demo.mdtemplate.service": "./test/service/"}'>
+		</script>
+
+		<script>
+		sap.ui.getCore().attachInit(function () {
+			// set up mock server for local testing
+			if (jQuery.sap.getUriParameters().get("responderOn") === "true") {
+				jQuery.sap.require("sap.ui.demo.mdtemplate.service.server");
+				sap.ui.demo.mdtemplate.service.server.init();
+			}
+
+			// initialize the UI component
+			new sap.m.Shell({
+				app: new sap.ui.core.ComponentContainer({
+					height : "100%",
+					name : "sap.ui.demo.mdtemplate"
+				})
+			}).placeAt("content");
+		});
+		</script>
+	</head>
+
+	<body class="sapUiBody" id="content">
+	</body>
+
+</html>

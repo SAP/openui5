@@ -111,8 +111,7 @@ sap.ui.define([
 			//We need the 'ObjectID' and 'LineItemID' of the
 			//selected LineItem to navigate to the corresponding
 			//line item view. Here's how this information is extracted:
-			var oContext = oEvent.getSource().getBindingContext(),
-				sMsg = "Detail Item '" + oContext.getProperty('ObjectID') + '/';
+			var oContext = oEvent.getSource().getBindingContext();
 
 			jQuery.sap.log.debug(oContext.getProperty("LineItemID") + "' was pressed");
 			this.getRouter().navTo("lineItem", {objectId : oContext.getProperty("ObjectID"), 

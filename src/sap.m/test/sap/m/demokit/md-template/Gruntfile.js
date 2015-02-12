@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 			},
 			src: {
 				options: {
-					appresources: [''],
+					appresources: ['.'],
 					testresources: ['<%= dir.tests %>']
 				}
 			},
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
 			unit: {
 				options: {
 					urls: [
-						'<%= dir.localServerTestUrl %>/unit/UnitTestsGrunt.qunit.html'
+						'<%= dir.localServerTestUrl %>/unit/unitTests.qunit.html'
 					]
 				}
 
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 			opa: {
 				options: {
 					urls: [
-						'<%= dir.localServerTestUrl %>/opa/OpaTestsGrunt.qunit.html'
+						'<%= dir.localServerTestUrl %>/integration/opaTests.qunit.html'
 					],
 					// same as qunits timeout 90 seconds since opa test might take a while
 					timeout: 900000

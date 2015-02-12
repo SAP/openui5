@@ -142,8 +142,8 @@ sap.ui.define([
 		 */
 		_toggleButtonState : function () {
 			var oControlStateModel = this.getView().getModel('controlStates');
-			oControlStateModel.setProperty("/nextButtonEnabled", this._itemExists(this.iCurrentIndex+1));
-			oControlStateModel.setProperty("/previousButtonEnabled", this._itemExists(this.iCurrentIndex-1));
+			oControlStateModel.setProperty("/nextButtonEnabled", this._itemExists(this.iCurrentIndex + 1));
+			oControlStateModel.setProperty("/previousButtonEnabled", this._itemExists(this.iCurrentIndex - 1));
 		},
 	
 	
