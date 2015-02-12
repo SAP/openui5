@@ -68,9 +68,11 @@ sap.ui.controller("sap.m.sample.InputChecked.C", {
 			return oValue;
 		},
 		validateValue: function (oValue) {
-			var mailregex = /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/;
+			// The following Regex is NOT a completely correct one and only used for demonstration purposes.
+			// RFC 5322 cannot even checked by a Regex and the Regex for RFC 822 is very long and complex.
+			var mailregex = /^\w+[\w-+\.]*\@\w+([-\.]\w+)*\.[a-zA-Z]{2,}$/;
 			if (!oValue.match(mailregex)) {
-				throw new sap.ui.model.ValidateException("is not a valid email address");
+				throw new sap.ui.model.ValidateException("'" + oValue + "' is not a valid email address");
 			}
 		}
 	})
