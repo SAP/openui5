@@ -17,12 +17,6 @@
 		},
 		"links": [
 			{
-				"text": "Icon Explorer",
-				"ref": "test-resources/sap/m/demokit/icon-explorer/index.html",
-				"icon": "sapmdemo/icon-explorer",
-				"desc": "Helps you find icons out of a built-in set of almost 500"
-			},
-			{
 				"text": "Approve Purchase Orders",
 				"ref": "test-resources/sap/m/demokit/poa/index.html",
 				"icon": "sapmdemo/poa",
