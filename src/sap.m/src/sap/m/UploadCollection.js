@@ -390,9 +390,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			} else {
 				// aItems is not empty but getItems() = []
 				if (bItemToBeDeleted == true) {
-					for (i = 0; i < cAitems; i++) {
+					for (i = cAitems; i--;) {
 						if (this.aItems[i]._status === UploadCollection._toBeDeletedStatus) {
-							this.aItems.splice(i,1);
+							this.aItems.splice(i, 1);
 						}
 					}
 				}
@@ -847,6 +847,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var sItemId = oParams.id.split("-deleteButton")[0];
 		var index = null;
 		var sCompact = "";
+		var sFileName;
+		var sMessageText;
 		oContext.sDeletedItemId = sItemId;
 		for (var i = 0; i < aItems.length; i++) {
 			if (aItems[i].sId === sItemId) {
@@ -860,7 +862,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 		if (!!aItems[index]) {
 			// popup delete file
-			sap.m.MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", aItems[index].getFileName()), {
+			sFileName =  aItems[index].getFileName();
+			if (!sFileName) {
+				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_WITHOUT_FILENAME_TEXT");
+			} else {
+				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", sFileName);
+			}
+			sap.m.MessageBox.show(sMessageText, {
 				title : this._oRb.getText("UPLOADCOLLECTION_DELETE_TITLE"),
 				actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
 				onClose : function(oAction) {
