@@ -274,6 +274,7 @@
 				getServiceMetadata : function () { return {}; },
 				isLoaded : function () { return true; }
 			}),
+			oMetaModelMock = this.mock(oMetaModel),
 			oModelMock = this.mock(oMetaModel.oModel),
 			oResult = {};
 
@@ -282,11 +283,16 @@
 		this.spy(sap.ui.model.MetaModel.prototype, "destroy");
 
 		// generic dispatching
-		jQuery.each(["destroy", "_getObject", "getProperty", "isList"], function (i, sName) {
+		jQuery.each(["destroy", "isList"], function (i, sName) {
 			oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
 
 			strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
 		});
+
+		// getProperty dispatches to _getObject
+		oMetaModelMock.expects("_getObject").once().withExactArgs("foo", 0, false)
+			.returns(oResult);
+		strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
 
 		ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
 
@@ -355,6 +361,113 @@
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.aFilters, aFilters);
 			strictEqual(oBinding.mParameters, mParameters);
+		});
+	});
+
+	//*********************************************************************************************
+	test("_getObject", function () {
+		withMetaModel(function (oMetaModel) {
+			var oContext;
+
+			// w/o context
+			strictEqual(oMetaModel._getObject(""), null);
+			strictEqual(oMetaModel._getObject("/"), oMetaModel.oModel._getObject("/"));
+			strictEqual(oMetaModel._getObject("/foo"), undefined);
+			strictEqual(oMetaModel._getObject("/dataServices"),
+				oMetaModel.oModel._getObject("/dataServices"));
+			strictEqual(oMetaModel._getObject("/dataServices/schema"),
+				oMetaModel.oModel._getObject("/dataServices/schema"));
+
+			// with sap.ui.model.Context
+			oContext = oMetaModel.getContext("/dataServices/schema");
+			strictEqual(oMetaModel._getObject(undefined, oContext),
+				oMetaModel.oModel._getObject("/dataServices/schema"));
+			oContext = oMetaModel.getContext("/dataServices");
+			strictEqual(oMetaModel._getObject("schema", oContext),
+				oMetaModel.oModel._getObject("/dataServices/schema"));
+
+			// with object context
+			oContext = oMetaModel._getObject("/dataServices");
+			strictEqual(oMetaModel._getObject("schema", oContext),
+				oMetaModel.oModel._getObject("/dataServices/schema"));
+			oContext = oMetaModel._getObject("/dataServices/schema");
+			strictEqual(oMetaModel._getObject(undefined, oContext),
+				oMetaModel.oModel._getObject("/dataServices/schema"));
+			// absolute path wins over object context
+			oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
+			strictEqual(oMetaModel._getObject("/dataServices/schema/0/entityType/1", oContext),
+				oMetaModel.oModel._getObject("/dataServices/schema/0/entityType/1"));
+		});
+	});
+
+	//*********************************************************************************************
+	jQuery.each([false, true], function (i, bIsLoggable) {
+		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
+			// Note: this only works in case withMetaModel() is synchronous
+			var oLogMock = this.mock(jQuery.sap.log);
+
+			oLogMock.expects("isLoggable").once()
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.withExactArgs("Invalid part: bar", "path: /foo/bar, context: undefined",
+					"sap.ui.model.odata.ODataMetaModel");
+
+			withMetaModel(function (oMetaModel) {
+				strictEqual(oMetaModel._getObject("/foo/bar"), undefined);
+			});
+		});
+
+		test("_getObject: warning with sap.ui.model.Context, log = " + bIsLoggable, function () {
+			// Note: this only works in case withMetaModel() is synchronous
+			var oLogMock = this.mock(jQuery.sap.log);
+
+			oLogMock.expects("isLoggable").once()
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.withExactArgs("Invalid part: relative",
+					"path: some/relative/path, context: /dataServices/schema/0/entityType/0",
+					"sap.ui.model.odata.ODataMetaModel");
+
+			withMetaModel(function (oMetaModel) {
+				var oContext = oMetaModel.getContext("/dataServices/schema/0/entityType/0");
+				strictEqual(oMetaModel._getObject("some/relative/path", oContext), undefined);
+			});
+		});
+
+		test("_getObject: warning with object context, log = " + bIsLoggable, function () {
+			// Note: this only works in case withMetaModel() is synchronous
+			var oLogMock = this.mock(jQuery.sap.log);
+
+			oLogMock.expects("isLoggable").once()
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bIsLoggable);
+			oLogMock.expects("warning")
+				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.withExactArgs("Invalid part: relative",
+					"path: some/relative/path, context: [object Object]",
+					"sap.ui.model.odata.ODataMetaModel");
+
+			withMetaModel(function (oMetaModel) {
+				var oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
+				strictEqual(oMetaModel._getObject("some/relative/path", oContext), undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("_getObject: Invalid relative path w/o context", function () {
+		// Note: this only works in case withMetaModel() is synchronous
+		this.mock(jQuery.sap.log).expects("error").once().withExactArgs(
+			"Invalid relative path w/o context",
+			"some/relative/path",
+			"sap.ui.model.odata.ODataMetaModel");
+
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel._getObject("some/relative/path"), null);
 		});
 	});
 
