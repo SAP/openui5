@@ -91,8 +91,8 @@
 		oProgIndicator.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		strictEqual(oProgIndicator.$().find(".sapMPITextLeft")[0].innerText, "", "no text is rendered");
-		strictEqual(oProgIndicator.$().find(".sapMPITextRight")[0].innerText, "", "no text is rendered");
+		strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
+		strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
 
 		oProgIndicator.destroy();
 	});
