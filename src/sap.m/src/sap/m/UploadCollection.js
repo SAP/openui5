@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {});
 		this._oList.addStyleClass("sapMUCList");
-		this._aAddItems = [];
+		this._cAddItems = 0;
 		this.aItems = [];
 	};
 
@@ -357,10 +357,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var sNoDataText = sNoDataText || this.getNoDataText();
 		var bPrepareList = true;
 		var bAddLeave = true;
-		var i, j, bItemToBeDeleted;
+		var i, j, bItemToBeDeleted, cAitems;
 
 		if (this.aItems.length > 0) {
-			var cAitems = this.aItems.length;
+			cAitems = this.aItems.length;
 			// collect items with the status "uploading"
 			var aUploadingItems = [];
 			for (i = 0; i < cAitems; i++) {
@@ -437,29 +437,31 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 
 		//check if preparation of the list is necessary in during the 'add'
-		var cAddItems = this._aAddItems.length;
-		for (var k = 0; k < cAddItems; k++) {
-			if (this.aItems[k]._status) {
-				switch (this.aItems[k]._status) {
-					case UploadCollection._displayStatus :
-//						list has NOT to be prepared!
-						bPrepareList = false;
-						bAddLeave = false;
+		if (this._cAddItems > 0) {
+			cAitems = this.aItems.length;
+			for (var k = 0; k < cAitems; k++) {
+				if (this.aItems[k]._status) {
+					switch (this.aItems[k]._status) {
+						case UploadCollection._displayStatus :
+	//						list has NOT to be prepared!
+							bPrepareList = false;
+							bAddLeave = false;
+							break;
+						default :
+	//						list has to be prepared!
+							bPrepareList = true;
+							bAddLeave = true;
+							break;
+					}
+					if (bAddLeave === true) {
+						//leave the loop because the list has to be shown with new prepared data!
 						break;
-					default :
-//						list has to be prepared!
-						bPrepareList = true;
-						bAddLeave = true;
-						break;
-				}
-				if (bAddLeave === true) {
-					//leave the loop because the list has to be shown with new prepared data!
+					}
+				} else {
+					bPrepareList = true;
+					this._cAddItems = 0;
 					break;
 				}
-			} else {
-				bPrepareList = true;
-				this._aAddItems.splice(this._aAddItems.length - 1,1);
-				break;
 			}
 		}
 		if (bPrepareList === true) {
@@ -1093,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (oEvent) {
 			var that = this;
 			var sRequestValue, iCountFiles, i, sFileName;
-			this._aAddItems = [];
+			this._cAddItems = 0;
 			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 				// FileUploader does not support files parameter for IE9 for the time being
 				var sNewValue = oEvent.getParameter("newValue");
@@ -1144,7 +1146,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				oItem.setUrl(null);
 				this.aItems.unshift(oItem);
 				this.insertItem(oItem);
-				this._aAddItems.unshift(this.aItems[0]);
+				this._cAddItems++;
 			} else {
 				this._requestIdValue = this._requestIdValue + 1;
 				sRequestValue = this._requestIdValue.toString();
@@ -1165,7 +1167,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oItem.fileSize = oEvent.getParameter("files")[i].size;
 					this.aItems.unshift(oItem);
 					this.insertItem(oItem);
-					this._aAddItems.unshift(this.aItems[0]);
+					this._cAddItems++;
 				}
 				//headerParameters
 				if (aHeaderParametersAfter) {
