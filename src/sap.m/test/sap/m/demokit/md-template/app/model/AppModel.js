@@ -1,6 +1,6 @@
 sap.ui.define(
 	[
-		"sap/ui/model/odata/v2/ODataModel",
+		"sap/ui/model/odata/v2/ODataModel"
 	], function (ODataModel) {
 	"use strict";
 
@@ -32,7 +32,6 @@ sap.ui.define(
 				} else {
 					fnSuccess(sPath);
 				}
-
 			});
 		}
 

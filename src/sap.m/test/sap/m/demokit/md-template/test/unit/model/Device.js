@@ -46,7 +46,7 @@ sap.ui.require(
 			assert.strictEqual(this.oDeviceModel.getData().isNoTouch, !bIsTouch, "IsNoTouch property is correct");
 		}
 
-		QUnit.test("Should initialize a device model for non touch devices", function () {
+		QUnit.test("Should initialize a device model for non touch devices", function (assert) {
 			isTouchTestCase.call(this, assert, false);
 		});
 
