@@ -1606,6 +1606,82 @@
 				oSelect.destroy();
 			});
 
+			// BCP 1580006106
+			test("synchronizeSelection() should not override the selection if the items aggregation is bound to a OData model and filters are used", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: {
+						path: "/Products",
+						template: new sap.ui.core.Item({
+							key: "{ProductId}",
+							text: "{Name}"
+						})
+					}
+				});
+
+				// arrange
+				var sUri = "/service/";
+				var iAutoRespondAfter = 10;
+				var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oSelect.setModel(oModel);
+
+				// IDs and names of the products in the model:
+				//
+				// id_1  Gladiator MX
+				// id_2  Psimax
+				// id_3  Hurricane GX
+				// id_4  Webcam
+				// id_5  Monitor Locking Cable
+				// id_6  Laptop Case
+				// id_7  Removable CD/DVD
+				// id_8  USB Stick 16 GByte
+				// id_9  Deskjet Super Highspeed
+				// id_10 Laser Allround Pro
+				// id_11 Flat S
+				// id_12 Flat Medium
+				// id_13 Flat X-large II
+				// id_14 High End Laptop 2b
+				// id_15 Very Natural Keyboard
+				// id_16 Hardcore Hacker
+
+				oSelect.getBinding("items").filter(new sap.ui.model.Filter([
+					new sap.ui.model.Filter({
+						path: "Name",
+						operator: sap.ui.model.FilterOperator.StartsWith,
+						value1: "F"
+					}),
+					new sap.ui.model.Filter({
+						path: "Name",
+						operator: sap.ui.model.FilterOperator.EndsWith,
+						value1: "S"
+					})
+				], true));
+
+				oSelect.setSelectedKey("id_5");
+				oSelect.placeAt("content");
+				this.clock.tick(iAutoRespondAfter + 1);	// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting to make sure that the data from the OData model is available)
+				sap.ui.getCore().applyChanges();	// enforces an immediate update of the visible UI (aka "rendering")
+
+				oSelect.getBinding("items").filter(new sap.ui.model.Filter([
+					new sap.ui.model.Filter({
+						path: "Name",
+						operator: sap.ui.model.FilterOperator.StartsWith,
+						value1: "F"
+					})
+				], true));
+				oSelect.setSelectedKey("id_12");	// in this scenario, this call to .setSelectedKey() triggers re-rendering
+				this.clock.tick(1);	// tick the clock ahead some ms millisecond after the re-rendering occur
+
+				// assert
+				strictEqual(oSelect.getSelectedKey(), "id_12");
+
+				// cleanup
+				oMockServer.stop();
+				oSelect.destroy();
+			});
+
 			test("getSelectedKey() JSON model, the aggregation items is bound, the selectedKey property is bound", function() {
 
 				// system under test
