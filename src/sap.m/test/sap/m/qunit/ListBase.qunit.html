@@ -1222,7 +1222,17 @@
 			
 			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			oListItem1.getTabbables()[0].focus();
+			
+			var oFocusedInput = oListItem1.getTabbables()[0];
+			oFocusedInput.focus();
+			
+			// in case of when testrunner does not put the focus 
+			if (document.activeElement != oFocusedInput) {
+				oListItem1.onfocusin(new jQuery.Event("focusin", {
+					target : oFocusedInput
+				}));
+			}
+			
 			strictEqual(oList.getItemNavigation().getFocusedIndex(), 1, "Focus index is set correctly");
 
 			// cleanup
