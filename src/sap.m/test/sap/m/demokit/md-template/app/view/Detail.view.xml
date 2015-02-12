@@ -1,5 +1,5 @@
 <View
-	controllerName="sap.ui.demo.mdtemplate.view.Detail"
+	controllerName="sap.ui.demo.mdtemplate.controller.Detail"
 	xmlns="sap.m">
 	<Page
 		id="detailPage"

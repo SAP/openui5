@@ -105,7 +105,6 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		// Assertions
 		Then.iShouldBeOnTheObject1Page().
 			and.iTeardownMyAppFrame();
-
 	});
-
+	
 });

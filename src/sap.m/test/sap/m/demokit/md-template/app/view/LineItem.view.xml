@@ -1,5 +1,5 @@
 <View
-	controllerName="sap.ui.demo.mdtemplate.view.LineItem"
+	controllerName="sap.ui.demo.mdtemplate.controller.LineItem"
 	xmlns="sap.m">
 	<Page id="lineItemPage"
 		navButtonPress="onNavBack"
