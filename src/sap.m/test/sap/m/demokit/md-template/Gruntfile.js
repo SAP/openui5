@@ -33,45 +33,14 @@ module.exports = function(grunt) {
 			},
 			src: {
 				options: {
-					appresources: ['<%= dir.webapp %>'],
-					testresources: [ '<%= dir.tests %>']
+					appresources: [''],
+					testresources: ['<%= dir.tests %>']
 				}
 			},
 			dist: {
 				options: {
 					appresources: '<%= dir.dist %>'
 				}
-			}
-		},
-
-		openui5_preload: {
-			component: {
-				options: {
-					resources: {
-						cwd: '<%= dir.webapp %>',
-						prefix: 'todo'
-					},
-					dest: '<%= dir.dist %>'
-				},
-				components: true
-			}
-		},
-
-		clean: {
-			dist: '<%= dir.dist %>/'
-		},
-
-		copy: {
-			dist: {
-				files: [ {
-					expand: true,
-					cwd: '<%= dir.webapp %>',
-					src: [
-						'**',
-						'!test/**'
-					],
-					dest: '<%= dir.dist %>'
-				} ]
 			}
 		},
 
