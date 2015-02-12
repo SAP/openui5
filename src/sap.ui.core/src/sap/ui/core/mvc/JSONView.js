@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 					// => make sure to store old preprocessor in case of nested views
 					settings : function(oSettings) {
 						var oMetadata = this.getMetadata(),
-						aValidKeys = oMetadata.getJSONKeys(),
+						aValidKeys = oMetadata.getJSONKeys(), // UID names required, they're part of the documented contract
 						sKey, oValue, oKeyInfo;
 						for (sKey in oSettings) {
 							// get info object for the key

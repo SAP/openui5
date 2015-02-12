@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (!oMetadata.isInstanceOf("sap.ui.core.Label")) {
 			throw new Error("sap.ui.core.LabelEnablement only supports Controls with interface sap.ui.core.Label");
 		}
-		var oLabelForAssociation = oMetadata.getAllAssociations()["labelFor"];
+		var oLabelForAssociation = oMetadata.getAssociation("labelFor");
 		if (!oLabelForAssociation || oLabelForAssociation.multiple) {
 			throw new Error("sap.ui.core.LabelEnablement only supports Controls with a to-1 association 'labelFor'");
 		}

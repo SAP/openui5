@@ -285,6 +285,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getProperties = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mProperties;
 	};
 	
@@ -302,6 +305,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllProperties = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAllProperties;
 	};
 	
@@ -360,6 +366,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAggregations = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAggregations;
 	};
 	
@@ -378,6 +387,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllAggregations = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAllAggregations;
 	};
 	
@@ -395,6 +407,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAllPrivateAggregations;
 	};
 	
@@ -413,6 +428,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		sAggregationName = sAggregationName || this._sDefaultAggregation;
 		var oAggr = sAggregationName ? this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName] : undefined;
 		// typeof is used as a fast (but weak) substitute for hasOwnProperty
@@ -441,7 +459,38 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @return {Object} An info object for the default aggregation
 	 */
 	ManagedObjectMetadata.prototype.getDefaultAggregation = function() {
-		return this._sDefaultAggregation && this.getAllAggregations()[this._sDefaultAggregation];
+		return this.getAggregation();
+	};
+	
+	/**
+	 * Returns an info object for a public setting with the given name that either is 
+	 * a managed property or a managed aggregation of cardinality 0..1 and with at least
+	 * one simple alternative type. The setting can be defined by the class itself or 
+	 * by one of its ancestor classes.
+	 * 
+	 * If neither the described class nor its ancestor classes define a suitable setting 
+	 * with the given name, <code>undefined</code> is returned.
+	 *  
+	 * @param {string} sName name of the property like setting
+	 * @returns {Object} An info object describing the property or aggregation or <code>undefined</code>
+	 * @public
+	 * @since 1.27.0
+	 * @experimental Type, structure and behavior of the returned info object is not documented 
+	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects} 
+	 *   in the constructor documentation of this class.
+	 */
+	ManagedObjectMetadata.prototype.getPropertyLikeSetting = function(sName) {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
+		// typeof is used as a fast (but weak) substitute for hasOwnProperty
+		var oProp = this._mAllProperties[sName];
+		if ( typeof oProp === 'object' ) {
+			return oProp;
+		}
+		oProp = this._mAllAggregations[sName];
+		// typeof is used as a fast (but weak) substitute for hasOwnProperty
+		return ( typeof oProp === 'object' && oProp.altTypes && oProp.altTypes.length > 0 ) ? oProp : undefined; 
 	};
 	
 	// ---- associations ----------------------------------------------------------------------
@@ -495,6 +544,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAssociations = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAssociations;
 	};
 	
@@ -512,6 +564,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAllAssociations;
 	};
 
@@ -567,6 +622,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getEvents = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mEvents;
 	};
 	
@@ -583,6 +641,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *   in the constructor documentation of this class.
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
+		if ( !this._bEnriched ) {
+			this._enrichChildInfos();
+		}
 		return this._mAllEvents;
 	};	
 
@@ -763,13 +824,15 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	
 		this._enrichChildInfos();
 	
-		var mJSONKeys = {};
+		var mAllSettings = {},
+			mJSONKeys = {};
+		
 		function addKeys(m) {
 			var sName, oInfo;
 			for (sName in m) {
 				oInfo = m[sName];
 				if ( !mJSONKeys[sName] || oInfo._iKind < mJSONKeys[sName]._iKind ) {
-					mJSONKeys[sName] = oInfo;
+					mAllSettings[sName] = mJSONKeys[sName] = oInfo;
 				}
 				mJSONKeys[oInfo._sUID] = oInfo;
 			}
@@ -782,7 +845,18 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		addKeys(this.getAllEvents());
 	
 		this._mJSONKeys = mJSONKeys;
-		return mJSONKeys;
+		this._mAllSettings = mAllSettings;
+		return this._mJSONKeys;
+	};
+	
+	/**
+	 * @private
+	 */
+	ManagedObjectMetadata.prototype.getAllSettings = function() {
+		if ( !this._mAllSettings ) {
+			this.getJSONKeys();
+		}
+		return this._mAllSettings;
 	};
 	
 	/**
@@ -819,22 +893,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	
 		var that = this;
 		var proto = this.getClass().prototype;
-		function cap(sName) {
-			return sName.slice(0,1).toUpperCase() + sName.slice(1);
-		}
-		
 		function method(sPrefix, sName, fn, bDeprecated) {
-			var sName = sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-			if ( !proto[sName] ) {
-				proto[sName] = bDeprecated ? function() {
-					jQuery.sap.log.warning("Usage of deprecated feature: " + that.getName() + "." + sName);
-					return fn.apply(this, arguments);
-				} : fn;
-				that._aPublicMethods.push(sName);
-			}
-		}
-	
-		function method2(sName, fn, bDeprecated) {
+			sName = sPrefix + sName.slice(0,1).toUpperCase() + sName.slice(1);
 			if ( !proto[sName] ) {
 				proto[sName] = bDeprecated ? function() {
 					jQuery.sap.log.warning("Usage of deprecated feature: " + that.getName() + "." + sName);
@@ -845,12 +905,11 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		}
 	
 		jQuery.each(this._mProperties, function(n,info) {
-			var N = cap(n);
-			method2("get" + N, function() { return this.getProperty(n); });
-			method2("set" + N, function(v) { this.setProperty(n,v); return this; }, info.deprecated);
+			method("get", n, function() { return this.getProperty(n); });
+			method("set", n, function(v) { this.setProperty(n,v); return this; }, info.deprecated);
 			if ( info.bindable ) {
-				method2("bind" + N, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, info.deprecated);
-				method2("unbind" + N, function(p) { this.unbindProperty(n,p); return this; });
+				method("bind", n, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, info.deprecated);
+				method("unbind", n, function(p) { this.unbindProperty(n,p); return this; });
 			}
 		});
 		jQuery.each(this._mAggregations, function(n,info) {

@@ -67,11 +67,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		// apply the settings
 		Control.prototype.applySettings.apply(this, arguments);
 	
-		// all unknown keys which value is a string will be added 
+		// all unknown keys whose value is a string will be added 
 		// as attribute to the DOM element
 		var that = this,
 			oMetadata = this.getMetadata(),
-			mJSONKeys = oMetadata.getJSONKeys();
+			mJSONKeys = oMetadata.getJSONKeys(); // must handle all keys that applySettings accepts
 		jQuery.each(mSettings, function(sKey, oValue) {
 			if (sKey !== "id" && sKey !== "text" && !mJSONKeys[sKey] && typeof oValue === "string") {
 				that.attr(sKey, oValue);

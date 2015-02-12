@@ -195,7 +195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ExportColumn', './
 	});
 
 	// The aggregation is only to get the data / contexts. no actual rows will be created so no template/factory is needed here
-	Export.getMetadata().getAllAggregations()["rows"]._doesNotRequireFactory = true;
+	Export.getMetadata().getAggregation("rows")._doesNotRequireFactory = true;
 
 	/**
 	 * @private

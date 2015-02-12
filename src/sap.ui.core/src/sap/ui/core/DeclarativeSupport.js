@@ -430,7 +430,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getProperty = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllProperties()[sName];
+		return fnClass.getMetadata().getProperty(sName);
 	};
 
 
@@ -500,7 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getAssociation = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllAssociations()[sName];
+		return fnClass.getMetadata().getAssociation(sName);
 	};
 
 	/**
@@ -512,7 +512,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getAggregation = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllAggregations()[sName];
+		return fnClass.getMetadata().getAggregation(sName);
 	};
 
 
@@ -525,7 +525,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getEvent = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllEvents()[sName];
+		return fnClass.getMetadata().getEvent(sName);
 	};
 
 

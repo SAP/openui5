@@ -108,7 +108,7 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 					}
 
 					if (oTargetControl) {
-						var oAggregationInfo = oTargetControl.getMetadata().getJSONKeys()[oOptions.targetAggregation];
+						var oAggregationInfo = oTargetControl.getMetadata().getAggregation(oOptions.targetAggregation);
 						if (oAggregationInfo) {
 							//Set view for content
 							var sViewName = oOptions.view;

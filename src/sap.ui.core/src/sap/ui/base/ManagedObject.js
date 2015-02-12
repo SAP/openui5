@@ -797,7 +797,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 		var that = this,
 			oMetadata = this.getMetadata(),
-			mValidKeys = oMetadata.getJSONKeys(),
+			mValidKeys = oMetadata.getJSONKeys(), // UID names required, they're part of the documented contract of applySettings
 			makeObject = ManagedObject.create,
 			preprocessor = ManagedObject._fnSettingsPreprocessor,
 			sKey, oValue, oKeyInfo;
@@ -1047,8 +1047,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 */
 	ManagedObject.prototype.getProperty = function(sPropertyName) {
 		var oValue = this.mProperties[sPropertyName],
-			oMetadata = this.getMetadata(),
-			oProperty = oMetadata.getAllProperties()[sPropertyName],
+			oProperty = this.getMetadata().getProperty(sPropertyName),
 			oType;
 
 		if (!oProperty) {
@@ -1092,8 +1091,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @protected
 	 */
 	ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
-		var oMetadata = this.getMetadata(),
-			oProperty = oMetadata.getAllProperties()[sPropertyName],
+		var oProperty = this.getMetadata().getProperty(sPropertyName),
 			oType;
 
 		if (!oProperty) {
@@ -2023,7 +2021,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 
 			var iIndex = this.indexOfAggregation(sAggregationName, oChild);
-			var oAggregationInfo = this.getMetadata().getJSONKeys()[sAggregationName];
+			var oAggregationInfo = this.getMetadata().getAggregation(sAggregationName);
 			// Note: we assume that this is the given child's parent, i.e. -1 not expected!
 			if (iIndex == -2) { // 0..1
 				if (oAggregationInfo && this[oAggregationInfo._sMutator]) { // TODO properly deal with hidden aggregations
@@ -2477,12 +2475,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			iSeparatorPos,
 			bAvailable = true,
 			that = this,
-			oMetadata = this.getMetadata(),
-			oProperty = oMetadata.getAllProperties()[sName],
-			oKeyInfo = oMetadata.getJSONKeys()[sName];
+			oProperty = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// check whether property or alternative type on aggregation exists
-		if (!oProperty && !(oKeyInfo && oKeyInfo.altTypes)) {
+		if (!oProperty) {
 			throw new Error("Property \"" + sName + "\" does not exist in " + this);
 		}
 
@@ -2562,7 +2558,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			sCompositeMode = sap.ui.model.BindingMode.TwoWay,
 			oType,
 			clType,
-			oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
+			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName), // TODO fix handling of hidden entitites?
+			sInternalType = oPropertyInfo._iKind === /* PROPERTY */ 0 ? oPropertyInfo.type : oPropertyInfo.altTypes[0],
 			that = this,
 			aBindings = [],
 			fModelChangeHandler = function(oEvent){
@@ -2616,7 +2613,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			}
 
 			oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
-			oBinding.setType(oType, oPropertyInfo.type);
+			oBinding.setType(oType, sInternalType);
 			oBinding.setFormatter(oPart.formatter);
 
 			sMode = oPart.mode || oModel.getDefaultBindingMode();
@@ -2639,7 +2636,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 			}
 			oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues);
-			oBinding.setType(oType, oPropertyInfo.type);
+			oBinding.setType(oType, sInternalType);
 			oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
 		} else {
 			oBinding = aBindings[0];
@@ -2673,7 +2670,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 */
 	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset){
 		var oBindingInfo = this.mBindingInfos[sName],
-			oPropertyInfo = this.getMetadata().getJSONKeys()[sName];
+			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName);
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
@@ -2697,7 +2694,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	ManagedObject.prototype.updateProperty = function(sName) {
 		var oBindingInfo = this.mBindingInfos[sName],
 			oBinding = oBindingInfo.binding,
-			oPropertyInfo = this.getMetadata().getJSONKeys()[sName];
+			oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// If model change was triggered by the property itself, don't call the setter again
 		if (oBindingInfo.skipPropertyUpdate) {
@@ -2717,7 +2714,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					property : sName,
 					type : oBinding.getType(),
 					newValue : oBinding.getValue(),
-					oldValue : this.getProperty(sName),
+					oldValue : this[oPropertyInfo._sGetter](),
 					exception: oException
 				}, false, true); // bAllowPreventDefault, bEnableEventBubbling
 				oBindingInfo.skipModelUpdate = true;
@@ -2830,7 +2827,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			aSorters,
 			aFilters,
 			oMetadata = this.getMetadata(),
-			oAggregation = oMetadata.getAllAggregations()[sName];
+			oAggregation = oMetadata.getAggregation(sName);
 
 		// check whether aggregation exists
 		if (!oAggregation) {
@@ -2956,7 +2953,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 */
 	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
 		var oBindingInfo = this.mBindingInfos[sName],
-			oAggregationInfo = this.getMetadata().getJSONKeys()[sName];
+			oAggregationInfo = this.getMetadata().getAggregation(sName);
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
@@ -2990,7 +2987,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		var oBindingInfo = this.mBindingInfos[sName],
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
-			oAggregationInfo = this.getMetadata().getJSONKeys()[sName],  // TODO fix handling of hidden aggregations
+			oAggregationInfo = this.getMetadata().getAggregation(sName),  // TODO fix handling of hidden aggregations
 			oClone,
 			oNewGroup = null,
 			sGroupFunction = null,
@@ -3810,7 +3807,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @deprecated
 	 */
 	ManagedObject._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
-		var mKeys = oPrototype.getMetadata().getJSONKeys(); // TODO fix handling of hidden entitites?
+		var mKeys = oPrototype.getMetadata().getAllSettings(); 
 		var oOldAggrInfo = mKeys[sOldAggrName];
 		var oNewAggrInfo = mKeys[sNewAggrName];
 
