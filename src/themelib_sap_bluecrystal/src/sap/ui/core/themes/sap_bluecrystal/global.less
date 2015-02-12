@@ -6,6 +6,9 @@
 /* Semantic Theming Mapping              */
 /* ===================================== */
 
+@sapUiSelected: @sapHighlightColor;
+@sapUiActive: @sapBrandColor;
+
 @sapUiContentLabelColor: @sapContent_LabelColor;
 @sapUiContentDisabledTextColor: @sapContent_DisabledTextColor;
 @sapUiContentForegroundColor: @sapContent_ForegroundColor;
@@ -200,10 +203,10 @@
 /* Semantic Foreground Colors - do not use in Controls!!   */
 /* ======================================================= */
 
-@sapUiNegative:	#cc1919; //rgb(204, 25, 25)
-@sapUiCritical: #d14900; //rgb(209, 73, 0)
-@sapUiPositive: #007833; //rgb(0, 120, 51)
-@sapUiNeutral:  #007cc0; //rgb(0, 124, 192)
+@sapUiNegative: @sapNegativeColor; // #cc1919, rgb(204, 25, 25)
+@sapUiCritical: @sapCriticalColor; // #d14900, rgb(209, 73, 0)
+@sapUiPositive: @sapPositiveColor; // #007833, rgb(0, 120, 51)
+@sapUiNeutral:  @sapNeutralColor;  // #007cc0, rgb(0, 124, 192)
 
 
 /* ===================================== */
@@ -284,9 +287,9 @@
 
 /* Semantic Text                         */
 
-@sapUiNegativeText:	@sapUiNegative; //rgb(204, 25, 25)
-@sapUiCriticalText: @sapUiCritical; //rgb(209, 73, 0)
-@sapUiPositiveText: @sapUiPositive; //rgb(0, 120, 51)
+@sapUiNegativeText: @sapNegativeTextColor; // #cc1919, rgb(204, 25, 25)
+@sapUiCriticalText: @sapCriticalTextColor; // #d14900, rgb(209, 73, 0)
+@sapUiPositiveText: @sapPositiveTextColor; // #007833, rgb(0, 120, 51)
 
 
 /* ===================================== */
@@ -295,16 +298,16 @@
 
 /* Semantic Border Colors                */
 
-@sapUiErrorBorder:    @sapUiRed;    //  #e52929;
-@sapUiWarningBorder:  @sapUiYellow; //  #f0ab00;
-@sapUiSuccessBorder:  @sapUiGreen;  //  #008a3b;
+@sapUiErrorBorder:    @sapErrorBorderColor;   //  #e52929;
+@sapUiWarningBorder:  @sapWarningBorderColor; //  #f0ab00;
+@sapUiSuccessBorder:  @sapSuccessBorderColor; //  #008a3b;
 
 /* Semantic Background Colors            */
 
-@sapUiErrorBG: mix(@sapUiRed, @sapUiWhite, 15%);
-@sapUiWarningBG: #fffcb5;
-@sapUiSuccessBG: mix(@sapUiGreen, @sapUiWhite, 12%);
-@sapUiNeutralBG: mix(@sapUiBlue, @sapUiWhite, 10%);
+@sapUiErrorBG: @sapErrorBackground;     // #fbdfdf
+@sapUiWarningBG: @sapWarningBackground; // #fffcb5
+@sapUiSuccessBG: @sapSuccessBackground; // #e0f1e7
+@sapUiNeutralBG: @sapNeutralBackground; // #e6f2f9
 
 /* Line Colors                           */
 
@@ -331,10 +334,11 @@
 
 /* Semantic Foreground Elements          */
 
-@sapUiNegativeElement: @sapUiNegative;  // #cc1919 rgb(204, 25, 25)
-@sapUiCriticalElement: @sapUiCritical;  // #d14900 rgb(209, 73, 0)
-@sapUiPositiveElement: @sapUiPositive;  // #007833 rgb(0, 120, 51)
-@sapUiNeutralElement:  @sapUiNeutral;   // #007cc0 rgb(0, 124, 192)
+@sapUiNegativeElement: @sapNegativeElementColor;  // #cc1919 rgb(204, 25, 25)
+@sapUiCriticalElement: @sapCriticalElementColor;  // #d14900 rgb(209, 73, 0)
+@sapUiPositiveElement: @sapPositiveElementColor;  // #007833 rgb(0, 120, 51)
+@sapUiNeutralElement:  @sapNeutralElementColor;   // #007cc0 rgb(0, 124, 192)
+
 
 /* ===================================== */
 /* HOVER COLORS             */
