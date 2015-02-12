@@ -2709,7 +2709,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnError   = mParameters.error;
 			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
-			bMerge    = mParameters.merge !== false;
+			bMerge    = mParameters.merge === true;
 			mUrlParams = mParameters.urlParameters;
 		}
 
