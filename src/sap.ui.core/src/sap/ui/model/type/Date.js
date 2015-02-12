@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	Date1.prototype.parseValue = function(oValue, sInternalType) {
-		var oResult;
+		var oResult, oBundle;
 		switch (sInternalType) {
 			case "string":
 				if (oValue === "") {
@@ -90,7 +90,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				}
 				var oResult = this.oOutputFormat.parse(oValue);
 				if (!oResult) {
-					throw new sap.ui.model.ParseException(oValue + " is not a valid Date value");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new sap.ui.model.ParseException(oBundle.getText(this.sName + ".Invalid"));
 				}
 				if (this.oInputFormat) {
 					if (this.oFormatOptions.source.pattern == "timestamp") {
@@ -110,8 +111,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 */
 	Date1.prototype.validateValue = function(oValue) {
 		if (this.oConstraints) {
-			var aViolatedConstraints = [],
-				oInputFormat = this.oInputFormat;
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [],
+				oInputFormat = this.oInputFormat,
+				that = this;
 
 			// convert date into date object to compare
 			if (oInputFormat && this.oFormatOptions.source.pattern != "timestamp") {
@@ -126,16 +130,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 					case "minimum":
 						if (oValue < oContent) {
 							aViolatedConstraints.push("minimum");
+							aMessages.push(oBundle.getText(that.sName + ".Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
 						if (oValue > oContent) {
 							aViolatedConstraints.push("maximum");
+							aMessages.push(oBundle.getText(that.sName + ".Maximum", [oContent]));
 						}
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};

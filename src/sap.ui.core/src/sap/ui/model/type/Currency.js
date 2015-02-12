@@ -68,12 +68,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	Currency.prototype.parseValue = function(vValue, sInternalType) {
-		var vResult;
+		var vResult, oBundle;
 		switch (sInternalType) {
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
 				if (!jQuery.isArray(vResult)) {
-					throw new sap.ui.model.ParseException(vValue + " is not a valid Currency value");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new sap.ui.model.ParseException(oBundle.getText("Currency.Invalid", [vValue]));
 				}
 				break;
 			case "int":
@@ -93,22 +94,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	Currency.prototype.validateValue = function(aValues) {
 		var iValue = aValues[0];
 		if (this.oConstraints) {
-			var aViolatedConstraints = [];
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [];
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
 						if (iValue < oContent) {
 							aViolatedConstraints.push("minimum");
+							aMessages.push(oBundle.getText("Currency.Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
 						if (iValue > oContent) {
 							aViolatedConstraints.push("maximum");
+							aMessages.push(oBundle.getText("Currency.Maximum", [oContent]));
 						}
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};

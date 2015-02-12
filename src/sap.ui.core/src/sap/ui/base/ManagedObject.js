@@ -238,9 +238,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						oldValue : { type : 'any' },
 						/**
-						 * Exception that was thrown and caught during validation.
+						 * Localized message describing the validation issues
 						 */
-						exception: { type : 'sap.ui.model.ValidateException' }
+						message: { type : 'string' }
 					}
 				},
 				/**
@@ -271,9 +271,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						 */
 						oldValue : { type : 'any' },
 						/**
-						 * Exception that was thrown and caught during parsing.
+						 * Localized message describing the parse error
 						 */
-						exception: { type : 'sap.ui.model.ParseException' }
+						message: { type : 'string' }
 					}
 				},
 				/**
@@ -302,11 +302,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 						/**
 						 * Old value (external representation) as previously stored in the ManagedObject. 
 						 */
-						oldValue : { type : 'any' },
-						/**
-						 * Exception that was thrown and caught during formatting.
-						 */
-						exception: { type : 'sap.ui.model.FormatException' }
+						oldValue : { type : 'any' }
 					}
 				}
 			},
@@ -2761,32 +2757,34 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					// Only fire validation success, if a type is used
 					if (oBinding.getType()) {
 						this.fireValidationSuccess({
-							element : this,
-							property : sName,
-							type : oBinding.getType(),
-							newValue : oValue,
-							oldValue : oOldValue
+							element: this,
+							property: sName,
+							type: oBinding.getType(),
+							newValue: oValue,
+							oldValue: oOldValue
 						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
 					}
 				} catch (oException) {
 					oBindingInfo.skipPropertyUpdate = false;
 					if (oException instanceof sap.ui.model.ParseException) {
 						this.fireParseError({
-							element : this,
-							property : sName,
-							type : oBinding.getType(),
-							newValue : oValue,
-							oldValue : oOldValue,
-							exception: oException
+							element: this,
+							property: sName,
+							type: oBinding.getType(),
+							newValue: oValue,
+							oldValue: oOldValue,
+							exception: oException,
+							message: oException.message
 						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
 					} else if (oException instanceof sap.ui.model.ValidateException) {
 						this.fireValidationError({
-							element : this,
-							property : sName,
-							type : oBinding.getType(),
-							newValue : oValue,
-							oldValue : oOldValue,
-							exception: oException
+							element: this,
+							property: sName,
+							type: oBinding.getType(),
+							newValue: oValue,
+							oldValue: oOldValue,
+							exception: oException,
+							message: oException.message
 						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
 					} else {
 						throw oException;

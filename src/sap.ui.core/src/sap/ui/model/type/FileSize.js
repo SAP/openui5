@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	FileSize.prototype.parseValue = function(vValue, sInternalType) {
-		var vResult;
+		var vResult, oBundle;
 
 		if (vValue == undefined || vValue == null) {
 			return null;
@@ -95,7 +95,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(vResult)) {
-					throw new sap.ui.model.ParseException(vValue + " is not a valid FileSize value");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new sap.ui.model.ParseException(oBundle.getText("FileSize.Invalid"));
 				}
 				break;
 			case "int":
@@ -118,7 +119,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 	 */
 	FileSize.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var aViolatedConstraints = [],
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [],
 				oInputFormat = this.oInputFormat;
 
 			if (oInputFormat && typeof vValue === "string") {
@@ -137,16 +140,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 					case "minimum":
 						if (vValue < oContent) {
 							aViolatedConstraints.push("minimum");
+							aMessages.push(oBundle.getText("FileSize.Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
 						if (vValue > oContent) {
 							aViolatedConstraints.push("maximum");
+							aMessages.push(oBundle.getText("FileSize.Maximum", [oContent]));
 						}
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};

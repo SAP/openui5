@@ -58,6 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	BooleanType.prototype.parseValue = function(oValue, sInternalType) {
+		var oBundle;
 		switch (sInternalType) {
 			case "boolean":
 				return oValue;
@@ -65,10 +66,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				if (oValue.toLowerCase() == "true" || oValue == "X") {
 					return true;
 				}
-				if (oValue.toLowerCase() == "false" || oValue == "") {
+				if (oValue.toLowerCase() == "false" || oValue == "" || oValue == " ") {
 					return false;
 				}
-				throw new sap.ui.model.ParseException("Don't know how to parse Boolean from " + sInternalType);
+				oBundle = sap.ui.getCore().getLibraryResourceBundle();
+				throw new sap.ui.model.ParseException(oBundle.getText("Boolean.Invalid"));
 			case "int": // TODO return 1 for true?!
 			case "float":
 			default:
