@@ -2,6 +2,17 @@ jQuery.sap.require("sap.m.MessageBox");
 
 sap.ui.controller("sap.m.sample.MessageBox.C", {
 
+	onInit : function() {
+		// create any data and a model and set it to the view
+		var oData = {
+			checkBox1Text : "This checkBox is not checked",
+			checkBox2Text : "This checkBox is checked"
+		};
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		var oView = this.getView();
+		oView.setModel(oModel)
+	},
+
 	handleConfirmationMessageBoxPress: function(oEvent) {
 		var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
 		sap.m.MessageBox.show(
@@ -49,6 +60,31 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 					initialFocus: "Custom button text"
 				}
 		);
+	},
+
+	handleShowMessageBoxPress_InitialFocus_Control: function(oEvent) {
+		var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+		var oLayout = sap.ui.xmlfragment("sap.m.sample.MessageBox.Layout", this);
+
+		// get the view and add the layout as a dependent. Since the layout is being put
+		// into an aggregation any possible binding will be 'forwarded' to the layout.
+		var oView = this.getView();
+		oView.addDependent(oLayout);
+		var oCheck = sap.ui.getCore().byId("checkBoxId2");
+
+		sap.m.MessageBox.show(oLayout, {
+			icon: sap.m.MessageBox.Icon.WARNING,
+			title: "Title of first MessageBox",
+			actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+			onClose: function (oAction) {
+				if (oAction === sap.m.MessageBox.Action.YES) {
+					var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+					sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+				}
+			},
+			dialogId: "messageBoxId1",
+			initialFocus: oCheck
+		});
 	},
 
 	handleShowMessageBoxPress_Scrolling: function(oEvent) {

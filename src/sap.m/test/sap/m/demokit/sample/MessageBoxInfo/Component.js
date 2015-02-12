@@ -1,9 +1,9 @@
-jQuery.sap.declare("sap.m.sample.MessageBox.Component");
+jQuery.sap.declare("sap.m.sample.MessageBoxInfo.Component");
 
-sap.ui.core.UIComponent.extend("sap.m.sample.MessageBox.Component", {
+sap.ui.core.UIComponent.extend("sap.m.sample.MessageBoxInfo.Component", {
 
 	metadata : {
-		rootView : "sap.m.sample.MessageBox.V",
+		rootView : "sap.m.sample.MessageBoxInfo.V",
 		dependencies : {
 			libs : [
 				"sap.m",
