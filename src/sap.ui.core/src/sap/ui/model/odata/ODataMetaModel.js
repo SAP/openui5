@@ -139,10 +139,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 */
 	function getObject(oModel, sArrayName, sQualifiedName, bAsPath) {
 		var vResult = bAsPath ? undefined : null,
-			aParts = (sQualifiedName || "").split("."),
-			sNamespace = aParts[0],
-			sName = aParts[1];
+			iSeparatorPos,
+			sNamespace,
+			sName;
 
+		sQualifiedName = sQualifiedName || "";
+		iSeparatorPos = sQualifiedName.lastIndexOf(".");
+		sNamespace = sQualifiedName.slice(0, iSeparatorPos);
+		sName = sQualifiedName.slice(iSeparatorPos + 1);
 		jQuery.each(oModel.getObject("/dataServices/schema") || [], function (i, oSchema) {
 			if (oSchema.namespace === sNamespace) {
 				jQuery.each(oSchema[sArrayName] || [], function (j, oThing) {
