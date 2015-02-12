@@ -23,7 +23,24 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 
 		getModel : function (sName) {
 			return this.getView().getModel(sName);
+		},
+		
+		/**
+		 * Invoked when the selected line item (e.g. wrong parameter in URL) is not found in the model.
+		 * Navigation to the corresponding view is triggered.
+		 * 
+		 * Will be removed, once router targets are available
+		 * 
+		 * @function
+		 */
+		showEmptyView : function () {
+			this.getRouter().myNavToWithoutHash({ 
+				currentView : this.getView(),
+				targetViewName : "sap.ui.demo.mdtemplate.view.NotFound",
+				targetViewType : "XML"
+			});
 		}
+
 	});
 
 }, /* bExport= */ true);

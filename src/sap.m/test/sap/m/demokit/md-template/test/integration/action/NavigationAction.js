@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 	function(Opa5) {
 	"use strict";
 
-	return Opa5.extend("sap.ui.demo.mdtemplate.test.opa.action.NavigationAction", {
+	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.action.NavigationAction", {
 		iPressAnObjectListItem : function (sViewName, sListId, sObjectTitle) {
 			var oObjectListItem = null;
 

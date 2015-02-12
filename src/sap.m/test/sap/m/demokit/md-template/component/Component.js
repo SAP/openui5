@@ -3,8 +3,10 @@ jQuery.sap.require("sap.ui.demo.mdtemplate.util.formatter");
 jQuery.sap.require("sap.ui.demo.mdtemplate.util.grouper");
 jQuery.sap.require("sap.ui.demo.mdtemplate.util.MyRouter");
 jQuery.sap.require("sap.ui.demo.mdtemplate.model.Device");
-jQuery.sap.require("sap.ui.demo.mdtemplate.model.MockableModel");
+jQuery.sap.require("sap.ui.demo.mdtemplate.model.AppModel");
 jQuery.sap.require("sap.ui.demo.mdtemplate.util.ListSelector");
+
+// TODO: use sap.ui.define
 
 sap.ui.core.UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
 	metadata : {
@@ -20,15 +22,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
 			// always use absolute paths relative to our own component
 			// (relative paths will fail if running in the Fiori Launchpad)
 			rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdtemplate"),
-			serviceConfig : {
-				md_template : {
-					// If responderOn=true is provided as an url parameter, the model will serve the data in the model/data/<dataFolderName> data.
-					// See model/MockableModel.js for the implementation.
-					dataFolderName: "md_template",
-					// If responderOn is not provided in the URL the model would hit the actual OData server.
-					serviceUrl: "here/goes/your/serviceUrl/"
-				}
-			}
+			serviceUrl: "here/goes/your/serviceUrl/"
 		},
 
 		routing : {
@@ -107,8 +101,8 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
 
 		this.oListSelector = new sap.ui.demo.mdtemplate.util.ListSelector();
 
-		// set the mock data model
-		this.setModel(new sap.ui.demo.mdtemplate.model.MockableModel(mConfig.serviceConfig.md_template));
+		// set the app data model
+		this.setModel(new sap.ui.demo.mdtemplate.model.AppModel(mConfig.serviceUrl));
 
 		// set the device model
 		this.setModel(new sap.ui.demo.mdtemplate.model.Device(), "device");

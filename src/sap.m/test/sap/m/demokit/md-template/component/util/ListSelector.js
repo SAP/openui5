@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 		 */
 		constructor : function () {
 
-			// this promise needs to be created in the constructor, since it is allowed to invoke selectItem functions before calling setBoundMasterList
+			// This promise needs to be created in the constructor, since it is allowed to invoke selectItem functions before calling setBoundMasterList
 			this.oWhenListLoadingIsDone = new Promise(function (fnResolve, fnReject) {
 				// Used to wait until the setBound masterList function is invoked
 				new Promise(function (fnResolveListHasBeenSet) {
@@ -23,9 +23,13 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 							var oFirstListItem = oList.getItems()[0];
 
 							if (oFirstListItem) {
+								// Have to make sure that first list Item is selected
+								// and a select event is triggered. Like that, the corresponding
+								// detail page is loaded automatically
+								//oList.setSelectedItem(oFirstListItem, true, true);
 								fnResolve(oFirstListItem.getBindingContext().getPath());
 							} else {
-								//no items in the list
+								// No items in the list
 								fnReject();
 							}
 
