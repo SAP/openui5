@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , jQuerySap1 */) {
 	"use strict";
 	/*global URI */
 
@@ -132,7 +132,15 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				led: unexpected,
 				nud: unexpected
 			}
-		};
+		},
+		//Fix length tokens. A token being a prefix of another must come last, e.g. ! after !==
+		aTokens = ["===", "!==", "!", "||", "&&", ".", "(", ")", "{", "}", ":", ",", "?"],
+		rTokens;
+
+	jQuery.each(aTokens, function(i, sToken) {
+		aTokens[i] = jQuery.sap.escapeRegExp(sToken);
+	});
+	rTokens = new RegExp(aTokens.join("|"), "g");
 
 	addInfix("===", 10, function (x, y) { return x === y; });
 	addInfix("!==", 10, function (x, y) { return x !== y; });
@@ -348,66 +356,26 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 					|| (ch === "." || ch === "-")
 						&& /\d/.test(sInput.charAt(oTokenizer.getIndex() + 1))) {
 				oToken = {id: "CONSTANT", value: oTokenizer.number()};
+			} else if (ch === "'" || ch === '"') {
+				oToken = {id: "CONSTANT", value: oTokenizer.string()};
+			} else if (ch === "$") {
+				oTokenizer.next("$");
+				oTokenizer.next("{"); //binding
+				oBinding = fnResolveBinding(sInput, oTokenizer.getIndex() - 1);
+				oToken = {
+					id: "BINDING",
+					value: aParts.length
+				};
+				aParts.push(oBinding.result);
+				oTokenizer.setIndex(oBinding.at); //go to first character after binding string
 			} else {
-				//TODO Refactor to regexp matching for tokens with constant value
-				switch (ch) {
-				case "'":  //string literal
-				case '"':
-					oToken = {id: "CONSTANT", value: oTokenizer.string()};
-					break;
-				case "$":
-					oTokenizer.next("$");
-					oTokenizer.next("{"); //binding
-					oBinding = fnResolveBinding(sInput, oTokenizer.getIndex() - 1);
-					oToken = {
-						id: "BINDING",
-						value: aParts.length
-					};
-					aParts.push(oBinding.result);
-					oTokenizer.setIndex(oBinding.at); //go to first character after binding string
-					break;
-				case "=": //operator ===
-					oTokenizer.next("=");
-					oTokenizer.next("=");
-					oTokenizer.next("=");
-					oToken = {id: "==="};
-					break;
-				case "!": //operator !==
-					oTokenizer.next("!");
-					if (sInput.charAt(oTokenizer.getIndex() + 1) === "=") {
-						oTokenizer.next("=");
-						oTokenizer.next("=");
-						oToken = {id: "!=="};
-					} else {
-						oToken = {id: "!"};
-					}
-					break;
-				case "|": //operator ||
-					oTokenizer.next("|");
-					oTokenizer.next("|");
-					oToken = {id: "||"};
-					break;
-				case "&": //operator &&
-					oTokenizer.next("&");
-					oTokenizer.next("&");
-					oToken = {id: "&&"};
-					break;
-				case ".":
-				case "(":
-				case ")":
-				case "{":
-				case "}":
-				case ":":
-				case ",":
-				case "?":
-					oTokenizer.next(ch);
-					oToken = {id: ch};
-					break;
-				case "":
-					return false; // end of input
-				default: //unrecognized character: end of input
-					return false;
+				rTokens.lastIndex = iIndex;
+				aMatches = rTokens.exec(sInput);
+				if (!aMatches || aMatches.index !== iIndex) {
+					return false; // end of input or unrecognized character
 				}
+				oToken = {id: aMatches[0]};
+				oTokenizer.setIndex(iIndex + aMatches[0].length);
 			}
 			oToken.input = sInput;
 			oToken.start = iIndex;
