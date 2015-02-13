@@ -19,7 +19,7 @@
 			});
 
 		oIcon.setModel(new sap.ui.model.json.JSONModel(
-			{mail: "mail", tel: "tel", tel2: "tel"}
+			{mail: "mail", tel: "tel", tel2: "tel", 3: 3, five: 5, thirteen: 13}
 		));
 		strictEqual(oIcon.getColor(), sResult);
 	}
@@ -314,4 +314,40 @@
 		expression: "{=odata.uriEncode('foo', 'Edm.String')}",
 		result: "'foo'"
 	}]);
+
+	//*********************************************************************************************
+	checkFixtures("Multiplicative operators", [
+		{ expression: "${/3} * ${/five}", result: "15" },
+		{ expression: "42 / 7", result: "6" },
+		{ expression: "-8 % '3'", result: "-2" },
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("Additive operators", [
+		{ expression: "${/3} + ${/five}", result: "8" },
+		{ expression: "'foo' + 'bar'", result: "foobar" },
+		{ expression: "42 - ${/thirteen}", result: "29" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("Relational operators", [
+		{ expression: "3 <= 2", result: "false" },
+		{ expression: "${/thirteen} <= ${/3}", result: "false" },
+		{ expression: "'foo' < 'bar'", result: "false" },
+		{ expression: "-1 >= -1", result: "true" },
+		{ expression: "'foobar' > 'foo'", result: "true" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("Math", [
+		{ expression: "Math.max(5, ${/3})", result: "5" },
+		{ expression: "Math.max(5, ${/3}, '42')", result: "42" },
+		{ expression: "Math.round(Math.log10(10))", result: "1" },
+		{ expression: "Math.SQRT1_2 < 1", result: "true" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("encodeURIComponent", [
+		{ expression: "encodeURIComponent('foo bar')", result: "foo%20bar" }
+	]);
 } ());
