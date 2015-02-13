@@ -134,7 +134,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			}
 		},
 		//Fix length tokens. A token being a prefix of another must come last, e.g. ! after !==
-		aTokens = ["===", "!==", "!", "||", "&&", ".", "(", ")", "{", "}", ":", ",", "?"],
+		aTokens = ["===", "!==", "!", "||", "&&", ".", "(", ")", "{", "}", ":", ",", "?", "*",
+			"/", "%", "+", "-", "<=", "<", ">=", ">"],
 		rTokens;
 
 	jQuery.each(aTokens, function(i, sToken) {
@@ -142,10 +143,19 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	});
 	rTokens = new RegExp(aTokens.join("|"), "g");
 
+	addInfix("*", 14, function (x, y) { return x * y; });
+	addInfix("/", 14, function (x, y) { return x / y; });
+	addInfix("%", 14, function (x, y) { return x % y; });
+	addInfix("+", 13, function (x, y) { return x + y; });
+	addInfix("-", 13, function (x, y) { return x - y; });
+	addInfix("<=", 11, function (x, y) { return x <= y; });
+	addInfix("<", 11, function (x, y) { return x < y; });
+	addInfix(">=", 11, function (x, y) { return x >= y; });
+	addInfix(">", 11, function (x, y) { return x > y; });
 	addInfix("===", 10, function (x, y) { return x === y; });
 	addInfix("!==", 10, function (x, y) { return x !== y; });
-	addInfix("||", 6, function (x, fnY) { return x || fnY(); }, true);
 	addInfix("&&", 7, function (x, fnY) { return x && fnY(); }, true);
+	addInfix("||", 6, function (x, fnY) { return x || fnY(); }, true);
 
 	//Formatter functions to evaluate symbols like literals or operators in the expression grammar
 	/**
@@ -220,8 +230,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	 * @param {function} fnRight - formatter function for the right operand
 	 * @param {function} fnOperator
 	 *   function taking two arguments which evaluates the infix operator
-	 * @param {any[]} aParts - the array of binding values
 	 * @param {boolean} bLazy - whether the right operand is e
+	 * @param {any[]} aParts - the array of binding values
 	 * @return {any} - the result of the operator function applied to the two operands
 	 */
 	function INFIX(fnLeft, fnRight, fnOperator, bLazy, aParts) {
@@ -342,8 +352,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			ch = oTokenizer.getCh();
 			iIndex = oTokenizer.getIndex();
 
-			if (/[a-z]/i.test(ch)) { //TODO TDD allow for non-leading digits e.g. Math.atan2
-				aMatches = /[a-z]+/i.exec(sInput.slice(iIndex));
+			if (/[a-z]/i.test(ch)) {
+				aMatches = /[a-z]\w*/i.exec(sInput.slice(iIndex));
 				if (aMatches[0] === "false"
 					|| aMatches[0] === "null"
 					|| aMatches[0] === "true") {
@@ -549,6 +559,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
 			oResult = parse(oTokens.tokens, sInput, mGlobals || {
+				encodeURIComponent: encodeURIComponent,
+				Math: Math,
 				odata: {
 					fillUriTemplate: function () {
 						if (!URI.expand) {
