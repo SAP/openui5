@@ -5,8 +5,8 @@
 		confirm="onConfirmViewSettingsDialog"
 		resetFilters="onViewSettingsDialogResetFilters">
 		<sortItems>
-			<ViewSettingsItem text="{i18n>masterSort1}" key="Price" selected="true" />
-			<ViewSettingsItem text="{i18n>masterSort2}" key="Name" />
+			<ViewSettingsItem text="{i18n>masterSort1}" key="Name" selected="true" />
+			<ViewSettingsItem text="{i18n>masterSort2}" key="UnitNumber" />
 		</sortItems>
 		<groupItems>
 			<ViewSettingsItem text="{i18n>masterGroup1}" key="Group1" />

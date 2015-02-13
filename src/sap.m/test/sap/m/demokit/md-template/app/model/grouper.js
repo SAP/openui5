@@ -14,23 +14,6 @@ sap.ui.define([], function () {
 		 */
 
 	return {
-		/**
-		 * Grouping function to group the master list by rating
-		 *
-		 * @public
-		 * @param oContext the current list item context
-		 * @returns {object} an object with the rating as key and a text for the group header
-		 */
-		Group1 : function (oContext){
-			var sKey = oContext.getProperty("Rating"),
-				oResourceBundle = this.getModel("i18n").getResourceBundle(); // this is the source control
-
-			return {
-				key : sKey,
-				text : oResourceBundle.getText("masterGroup1Header", [sKey])
-			};
-		},
-
 		
 		/**
 		 * Grouping function to group the master list by price
@@ -39,7 +22,7 @@ sap.ui.define([], function () {
 		 * @param oContext the current list item context
 		 * @returns {object} an object with the rating as key and a text for the group headers
 		 */
-		Group2 : function (oContext){
+		Group1 : function (oContext){
 			var iPrice = oContext.getProperty("UnitNumber"),
 				sKey,
 				sText,
@@ -47,10 +30,10 @@ sap.ui.define([], function () {
 
 			if (iPrice <= 20) {
 				sKey = "LE20";
-				sText = oResourceBundle.getText("masterGroup2Header1");
+				sText = oResourceBundle.getText("masterGroup1Header1");
 			} else {
 				sKey = "GT20";
-				sText = oResourceBundle.getText("masterGroup2Header2");
+				sText = oResourceBundle.getText("masterGroup1Header2");
 			}
 			return {
 				key : sKey,

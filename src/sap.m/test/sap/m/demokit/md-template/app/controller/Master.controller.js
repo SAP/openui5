@@ -25,10 +25,20 @@ sap.ui.define([
 				group : [],
 				sort : []
 			};
+			
+			// Control state model
+			// TODO: needs a better naming!?
+			this.oViewModel = new sap.ui.model.json.JSONModel({
+				isFilterBarVisible : false,
+				filterBarLabel : "",
+				masterListTitle : this.getResourceBundle().getText("masterTitle") // do we want to put this in here as well? To be consistent: YES
+			});
+			this.getView().setModel(this.oViewModel, 'controlStates');
+			
 
 			// update the master list object counter after new data is loaded
-			this.oList.attachEvent("updateFinished", function () {
-				this._updateListItemCount();
+			this.oList.attachEvent("updateFinished", function (oData) {
+				this._updateListItemCount(oData.getParameter("total"));
 			}, this);
 
 			var oListSelector = this.getOwnerComponent().oListSelector;
@@ -88,9 +98,7 @@ sap.ui.define([
 				this.oListFilterState.filter = [];
 			}
 
-			// update the filter bar
-			this.byId("filterBar").setVisible(this.oListFilterState.filter.length > 0);
-			this.byId("filterBarLabel").setText(this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterFilterBarText", [sValue]));
+			this._updateFilterBar(sValue);
 
 			this._applyFilterSearch();
 		},
@@ -104,11 +112,11 @@ sap.ui.define([
 			var sKey = oEvent.getParameter("selectedItem").getKey(),
 				// TODO: make this better!
 				oGroups = {
-					Group1 : "Rating",
-					Group2 : "UnitNumber"
+					Group1 : "UnitNumber",
+					Group2 : "Name"
 				};
 
-			if (sKey !== "none") {
+			if (sKey !== "None") {
 				this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], false, jQuery.proxy(sap.ui.demo.mdtemplate.model.grouper[sKey], oEvent.getSource()))];
 			} else {
 				this.oListSorterState.group = [];
@@ -160,10 +168,9 @@ sap.ui.define([
 					sKey = mParams.groupItem.getKey();
 					bDescending = mParams.groupDescending;
 					oGroups = {
-						Group1 : "Rating",
-						Group2 : "UnitNumber"
+						Group1 : "UnitNumber",
+						Group2 : "Name"
 					};
-	
 					this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], bDescending, sap.ui.demo.mdtemplate.model.grouper[sKey])];
 				} else {
 					this.oListSorterState.group = [];
@@ -199,11 +206,7 @@ sap.ui.define([
 				});
 				this.oListFilterState.filter = aFilters;
 			}
-
-			// update the filter bar
-			this.byId("filterBar").setVisible(this.oListFilterState.filter.length > 0);
-			this.byId("filterBarLabel").setText(this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterFilterBarText", [aValues.join(", ")]));
-
+			this._updateFilterBar(aValues.join(", "));
 			this._applyFilterSearch();
 		},
 
@@ -225,7 +228,7 @@ sap.ui.define([
 		/**
 		 * Shows the selected item on the detail page
 		 * On phones a additional history entry is created 
-		 * @param: {sap.m.ObjectListItem} oItem selected Item
+		 * @param {sap.m.ObjectListItem} oItem selected Item
 		 * @private
 		 */
 		_showDetail : function (oItem) {
@@ -237,25 +240,23 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the master list header
+		 * @param {integer} the total number of items in the list
 		 * @private
 		 */
-		_updateListItemCount : function () {
-			var iItems,
-				sTitle;
+		_updateListItemCount : function (iTotalItems) {
+			var sTitle;
 
 			// only update the counter if the length is final 
 			if (this.oList.getBinding('items').isLengthFinal()) {
-				iItems = this.byId("list").getBinding("items").getLength();
-				sTitle = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("masterTitleCount", [iItems]);
-
-				this.byId("page").setTitle(sTitle);
+				sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
+				this.oViewModel.setProperty("/masterListTitle", sTitle);
 			}
 		},
 
-		/*
-		  * Internal helper method to apply both filter and search state together on the list binding
-		  * @private
-		  */
+		/**
+		 * Internal helper method to apply both filter and search state together on the list binding
+		 * @private
+		 */
 		_applyFilterSearch : function () {
 			var aFilters = this.oListFilterState.search.concat(this.oListFilterState.filter);
 			this.oList.getBinding("items").filter(aFilters, "Application");
@@ -268,6 +269,16 @@ sap.ui.define([
 		_applyGroupSort : function () {
 			var aSorters = this.oListSorterState.group.concat(this.oListSorterState.sort);
 			this.oList.getBinding("items").sort(aSorters);
+		},
+		
+		/**
+		 * Internal helper methos that sets the filter bar visibility property and the lablel-text to be shown
+		 * @param String the selected filter value
+		 * @private
+		 */
+		_updateFilterBar : function (sValue) {
+			this.oViewModel.setProperty("/isFilterBarVisible", (this.oListFilterState.filter.length > 0));
+			this.oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
 		}
 
 	});

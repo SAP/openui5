@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
-		title="{i18n>masterTitle}">
+		title="{controlStates>/masterListTitle}">
 		<headerContent>
 			<Toolbar>
 				<ToolbarSpacer/>
@@ -27,16 +27,22 @@
 				</contentMiddle>
 				
 			</Bar>
-			
 		</subHeader>
 		<content>
 			<PullToRefresh
 				id="pullToRefresh"
 				visible="{device>/isTouch}"
 				refresh="onRefresh" />
+			<!-- For client side filtering add this to the items attribute:  parameters: {operationMode: 'Client'}}" -->
 			<List
 				id="list"
-				items="{path: '/Objects', parameters: {operationMode: 'Client'}}"
+				items="{
+					path: '/Objects',
+					sorter: {
+						path: 'Name',
+						descending: false
+						}
+					}"
 				noDataText="{i18n>masterListNoDataText}"
 				mode="{
 					path: 'device>/isPhone',
@@ -46,8 +52,10 @@
 				<infoToolbar>
 					<Toolbar
 						id="filterBar"
-						visible="false">
-						<Label id="filterBarLabel" />
+						visible="{controlStates>/isFilterBarVisible}">
+						<Label 
+							id="filterBarLabel"
+							text="{controlStates>/filterBarLabel}" />
 					</Toolbar>
 				</infoToolbar>
 				<items>
@@ -67,48 +75,57 @@
 				</items>
 			</List>
 		</content>
-		<!-- just to show a black empty line -->
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Select
+					id="sortSelect"
 					type="IconOnly"
 					icon="sap-icon://sort"
 					autoAdjustWidth="true"
 					change="onSort">
 					<core:Item
-						key="UnitNumber"
+						id="masterSort1"
+						key="Name"
 						text="{i18n>masterSort1}"/>
+					<core:Item
+						id="masterSort2"
+						key="UnitNumber"
+						text="{i18n>masterSort2}"/>
 				</Select>
 				<Select
+					id="filterSelect"
 					type="IconOnly"
 					icon="sap-icon://filter"
 					autoAdjustWidth="true"
 					change="onFilter">
 					<core:Item
+						id="masterFilterNone"
 						key="None"
 						text="{i18n>masterFilterNone}"/>
 					<core:Item
+						id="masterFilter1"
 						key="Filter1"
 						text="{i18n>masterFilter1}"/>
 					<core:Item
+						id="masterFilter2"
 						key="Filter2"
 						text="{i18n>masterFilter2}"/>
 				</Select>
 				<Select
+					id="groupSelect"
 					type="IconOnly"
 					icon="sap-icon://group-2"
 					autoAdjustWidth="true"
 					change="onGroup">
 					<core:Item
-						key="none"
+						id="masterGroupNone"
+						key="None"
 						text="{i18n>masterGroupNone}"/>
 					<core:Item
+						id="masterGroup1"
 						key="Group1"
 						text="{i18n>masterGroup1}"/>
-					<core:Item
-						key="Group2"
-						text="{i18n>masterGroup2}"/>
 				</Select>
 			</Toolbar>
 		</footer>
