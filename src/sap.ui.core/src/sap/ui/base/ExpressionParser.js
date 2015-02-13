@@ -70,9 +70,18 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			},
 			"!": {
 				lbp: 15,
-				//TDD led: unexpected,
+				led: unexpected,
 				nud: function (oToken, oParser) {
-					return jQuery.proxy(NOT, null, oParser.expression(this.lbp));
+					return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+						function (x) { return !x; });
+				}
+			},
+			"typeof": {
+				lbp: 15,
+				led: unexpected,
+				nud: function (oToken, oParser) {
+					return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+							function (x) { return typeof x; });
 				}
 			},
 			"?": {
@@ -146,8 +155,14 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	addInfix("*", 14, function (x, y) { return x * y; });
 	addInfix("/", 14, function (x, y) { return x / y; });
 	addInfix("%", 14, function (x, y) { return x % y; });
-	addInfix("+", 13, function (x, y) { return x + y; });
-	addInfix("-", 13, function (x, y) { return x - y; });
+	addInfix("+", 13, function (x, y) { return x + y; }).nud = function (oToken, oParser) {
+		return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+			function (x) { return +x; });
+	};
+	addInfix("-", 13, function (x, y) { return x - y; }).nud = function (oToken, oParser) {
+		return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+				function (x) { return -x; });
+	};
 	addInfix("<=", 11, function (x, y) { return x <= y; });
 	addInfix("<", 11, function (x, y) { return x < y; });
 	addInfix(">=", 11, function (x, y) { return x >= y; });
@@ -255,14 +270,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	}
 
 	/**
-	 * Formatter function for the unary ! operator.
+	 * Formatter function for a unary operator.
 	 *
 	 * @param {function} fnRight - formatter function for the operand
+	 * @param {function} fnOperator
+	 *   function to evaluate the unary operator taking one argument
 	 * @param {any[]} aParts - the array of binding values
-	 * @return {any} - the result of ! applied to the operand
+	 * @return {any} - the result of the operator function applied to the operand
 	 */
-	function NOT(fnRight, aParts) {
-		return !fnRight(aParts);
+	function UNARY(fnRight, fnOperator, aParts) {
+		return fnOperator(fnRight(aParts));
 	}
 
 	/**
@@ -272,6 +289,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	 * @param {number} iBindingPower - the binding power = precedence of the infix operator
 	 * @param {function} fnOperator - the function to evaluate the operator
 	 * @param {boolean} [bLazy=false] - whether the right operand is lazily evaluated
+	 * @return {object} the newly created symbol for the infix operator
 	 */
 	function addInfix(sId, iBindingPower, fnOperator, bLazy) {
 		mSymbols[sId] = {
@@ -286,6 +304,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			},
 			nud: unexpected
 		};
+		return mSymbols[sId];
 	}
 
 	/**
@@ -358,6 +377,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					|| aMatches[0] === "null"
 					|| aMatches[0] === "true") {
 					oToken = {id: "CONSTANT", value: oTokenizer.word()};
+				} else if (aMatches[0] === "typeof") {
+					oToken = {id: "typeof"};
+					oTokenizer.setIndex(iIndex + aMatches[0].length);
 				} else {
 					oToken = {id: "IDENTIFIER", value: aMatches[0]};
 					oTokenizer.setIndex(iIndex + aMatches[0].length);
