@@ -108,12 +108,23 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		},
 		
 		iGoBackInBrowserHistory : function () {
-			sap.ui.test.Opa5.getWindow().history.go(-1);
+			return this.waitFor({
+				success : function () {
+					sap.ui.test.Opa5.getWindow().history.back();
+				},
+				errorMessage : "Failed to go back in browser history"
+			});
 		},
 		
-		iGoForwardInBrowserHistory : function () {
-			sap.ui.test.Opa5.getWindow().history.go(1);
-		},
+//TODO remove comments once 'sap.ui.test.Opa5.getWindow().history.forward' is fixed		
+//		iGoForwardInBrowserHistory : function () {
+//			return this.waitFor({
+//				success : function () {
+//					sap.ui.test.Opa5.getWindow().history.forward();
+//				},
+//				errorMessage : "Failed to go forward in browser history"
+//			});
+//		},
 
 		iLookAtTheScreen : function () {
 			return this;
