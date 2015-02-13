@@ -464,11 +464,11 @@
 	unsupported();
 
 	//*********************************************************************************************
-	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
-		test("14.4.11 Expression edm:String: " + sString, function () {
-			strictEqual(formatAndParseNoWarning({"String" : sString}), sString);
-		});
-	});
+//	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
+//		test("14.4.11 Expression edm:String: " + sString, function () {
+//			strictEqual(formatAndParseNoWarning({"String" : sString}), sString);
+//		});
+//	});
 
 	//*********************************************************************************************
 	testIllegalValues(aNonStrings, "14.4.11 Expression edm:String", "String", true);
@@ -485,9 +485,7 @@
 
 			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
-			deepEqual(oSingleBindingInfo, {
-				path : "##com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String"
-			});
+			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
 
 			// ensure that the formatted value does not contain double quotes
 			ok(sap.ui.model.odata.AnnotationHelper.format(getInterface(oCurrentContext),
@@ -503,8 +501,7 @@
 
 			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
-			deepEqual(oSingleBindingInfo, {
-				path : "##foo{Dimensions}/Data/0/Label/String"});
+			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
 		});
 	});
 

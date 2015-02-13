@@ -274,8 +274,53 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		});
 	}
 
-	ODataMetaModel.prototype._getObject = function () {
-		return this.oModel._getObject.apply(this.oModel, arguments);
+	/**
+	 * Returns the value of the object or property inside this model's data which can be reached,
+	 * starting at the given context, by following the given path.
+	 *
+	 * @param {string} sPath
+	 *   a relative or absolute path
+	 * @param {object|sap.ui.model.Context} [oContext]
+	 *   the context to be used as a starting point in case of a relative path
+	 * @returns {any}
+	 *   the value of the object or property or <code>null</code> in case a relative path without
+	 *   a context is given
+	 * @private
+	 */
+	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
+		var i, oNode = oContext, aParts, sResolvedPath = sPath || "";
+
+		if (!oContext || oContext instanceof sap.ui.model.Context){
+			sResolvedPath = this.resolve(sPath || "", oContext);
+			if (!sResolvedPath) {
+				jQuery.sap.log.error("Invalid relative path w/o context", sPath,
+					"sap.ui.model.odata.ODataMetaModel");
+				return null;
+			}
+		}
+
+		if (sResolvedPath.charAt(0) === "/") {
+			oNode = this.oModel._getObject("/");
+			sResolvedPath = sResolvedPath.slice(1);
+		}
+
+		if (sResolvedPath) {
+			aParts = sResolvedPath.split("/");
+			for (i = 0; i < aParts.length; i += 1) {
+				if (!oNode) {
+					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+						jQuery.sap.log.warning("Invalid part: " + aParts[i],
+							"path: " + sPath + ", context: "
+							+ (oContext instanceof sap.ui.model.Context ?
+								oContext.getPath() : oContext),
+							"sap.ui.model.odata.ODataMetaModel");
+					}
+					break;
+				}
+				oNode = oNode[aParts[i]];
+			}
+		}
+		return oNode;
 	};
 
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
@@ -303,13 +348,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	/**
 	 * Returns the OData meta model context corresponding to the given OData model path.
 	 *
-	 * @param {string} sPath
+	 * @param {string} [sPath]
 	 *   an absolute path pointing to an entity or property, e.g.
 	 *   "/ProductSet(1)/ToSupplier/BusinessPartnerID"; this equals the
 	 *   <a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions#ResourcePath">
 	 *   resource path</a> component of a URI according to OData v2 URI conventions
 	 * @returns {sap.ui.model.Context}
-	 *   the context for the corresponding meta data object, i.e. an entity type or its property
+	 *   the context for the corresponding meta data object, i.e. an entity type or its property,
+	 *   or <code>null</code> in case no path is given
 	 * @throws {Error} in case no context can be determined
 	 * @public
 	 */
@@ -319,7 +365,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			oEntityType,
 			sMetaPath,
 			sNavigationPropertyName,
-			aParts = sPath.split("/"),
+			aParts,
 			sQualifiedName; // qualified name of current entity type across navigations
 
 		/*
@@ -335,6 +381,11 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 				: sSegment;
 		}
 
+		if (!sPath) {
+			return null;
+		}
+
+		aParts = sPath.split("/");
 		if (aParts[0] !== "") {
 			throw new Error("Not an absolute path: " + sPath);
 		}
@@ -507,7 +558,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	ODataMetaModel.prototype.getProperty = function () {
-		return this.oModel.getProperty.apply(this.oModel, arguments);
+		return this._getObject.apply(this, arguments);
 	};
 
 	ODataMetaModel.prototype.isList = function () {
