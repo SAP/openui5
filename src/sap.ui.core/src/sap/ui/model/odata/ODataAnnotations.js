@@ -399,7 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				for (var nodeIndexValue = 0; nodeIndexValue < propertyAnnotationNodes.length; nodeIndexValue += 1) {
 					propertyAnnotationNode = this.xPath.nextNode(propertyAnnotationNodes, nodeIndexValue);
 					sTermValue = this.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"), oAlias);
-					var sQualifierValue = propertyAnnotationNode.getAttribute("Qualifier");
+					var sQualifierValue = annotationNode.getAttribute("Qualifier") || propertyAnnotationNode.getAttribute("Qualifier");
 					if (sQualifierValue) {
 						sTermValue += "#" + sQualifierValue;
 					}
@@ -434,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				propertyAnnotationNodes = this.xPath.selectNodes(oXMLDoc, "./d:Annotation", annotationNode);
 				for (var nodeIndexAnnotation = 0; nodeIndexAnnotation < propertyAnnotationNodes.length; nodeIndexAnnotation += 1) {
 					propertyAnnotationNode = this.xPath.nextNode(propertyAnnotationNodes, nodeIndexAnnotation);
-					annotationQualifier = propertyAnnotationNode.getAttribute("Qualifier");
+					annotationQualifier = annotationNode.getAttribute("Qualifier") || propertyAnnotationNode.getAttribute("Qualifier");
 					annotationTerm = this.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"), oAlias);
 					if (annotationQualifier) {
 						annotationTerm += "#" + annotationQualifier;
