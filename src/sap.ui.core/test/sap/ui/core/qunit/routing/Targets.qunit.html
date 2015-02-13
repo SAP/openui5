@@ -323,7 +323,7 @@
 			strictEqual(fnEventSpy.callCount, 1, "the event got fired");
 			strictEqual(oParameters.view, this.oView, "view got passed to the event");
 			strictEqual(oParameters.targetControl, this.oShell, "view got passed to the event");
-			allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, this.oTargetsCofig.myTarget, this.oDefaultConfig));
+			allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, { name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig));
 		});
 
 		test("Should fire the display event for multiple targets and childs", function () {

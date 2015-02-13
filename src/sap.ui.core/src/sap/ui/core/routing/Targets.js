@@ -75,8 +75,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 					oTarget,
 					oOptions;
 
-				oOptions = $.extend(true, {}, this._oConfig, oTargetOptions);
-				oTarget = new Target(oOptions, this._oViews, oParent);
+				oOptions = $.extend(true, { name: sName }, this._oConfig, oTargetOptions);
+				oTarget = this._constructTarget(oOptions, oParent);
 				oTarget.attachDisplay(function (oEvent) {
 					var oParameters = oEvent.getParameters();
 
@@ -97,6 +97,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 			},
 
 			/**
+			 * Hook for the mobile library
+			 * @private
+ 			 */
+			_constructTarget : function (oOptions, oParent) {
+				return new Target(oOptions, this._oViews, oParent);
+			},
+
+			/**
 			 * Creates a view and puts it in an aggregation of the specified control.
 			 *
 			 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
@@ -105,6 +113,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 			 * @returns {sap.ui.core.routing.Targets} this pointer for chaining
 			 */
 			display : function (vTargets, vData) {
+				// hook to distinguish between the router and an application calling this
+				this._display(vTargets, vData);
+			},
+
+			_display : function (vTargets, vData) {
 				var that = this;
 
 				if ($.isArray(vTargets)) {

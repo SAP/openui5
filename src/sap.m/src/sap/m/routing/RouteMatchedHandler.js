@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router'],
-	function(jQuery, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router) {
+sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router', './TargetHandler'],
+	function(jQuery, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router, TargetHandler) {
 	"use strict";
 
 
@@ -41,14 +41,16 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	var RouteMatchedHandler = BaseObject.extend("sap.m.routing.RouteMatchedHandler", {
 		constructor : function (oRouter, bCloseDialogs) {
 			//until we reverse the order of events fired by router we need to queue handleRouteMatched
-			this._aQueue = [];
+//			this._aQueue = [];
+
+			this._oTargetHandler = new TargetHandler(bCloseDialogs);
 	
 			if (bCloseDialogs === undefined) {
 				this._bCloseDialogs = true;
 			} else {
 				this._bCloseDialogs = !!bCloseDialogs;
 			}
-	
+
 			// Route matched is thrown for each container in the route hierarchy
 			oRouter.attachRouteMatched(this._onHandleRouteMatched, this);
 			// Route Pattern Matched is thrown only once for the end point of the current navigation
@@ -127,25 +129,13 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * @private
 	 */
 	RouteMatchedHandler.prototype._handleRoutePatternMatched = function(oEvent) {
-		var iTargetViewLevel = +oEvent.getParameter("config").viewLevel,
-			oHistory = History.getInstance(),
-			bBack,
-			//Only one navigation per NavContainer in the queue, it has to be the last one for the container
-			aResultingNavigations = this._createResultingNavigations(oEvent.getParameter("name"));
-	
-		this._closeDialogs();
-	
-		if (isNaN(iTargetViewLevel) || isNaN(this._iCurrentViewLevel) || iTargetViewLevel === this._iCurrentViewLevel) {
-			bBack = oHistory.getDirection() === "Backwards";
-		} else {
-			bBack = iTargetViewLevel < this._iCurrentViewLevel;
-		}
-	
-		while (aResultingNavigations.length) {
-			this._handleRouteMatched(aResultingNavigations.shift().oParams, bBack);
-		}
-	
-		this._iCurrentViewLevel = iTargetViewLevel;
+		var iTargetViewLevel = +oEvent.getParameter("config").viewLevel;
+
+		this._oTargetHandler.navigate({
+			viewLevel: iTargetViewLevel,
+			navigationIdentifier : oEvent.getParameter("name"),
+			askHistory: true
+		});
 	};
 	
 	/**
@@ -154,153 +144,20 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * @private
 	 */
 	RouteMatchedHandler.prototype._onHandleRouteMatched = function(oEvent) {
-		this._aQueue.push({
-			oTargetControl : oEvent.getParameter("targetControl"),
-			oArguments : oEvent.getParameter("arguments"),
-			oConfig : oEvent.getParameter("config"),
-			oView : oEvent.getParameter("view"),
-			sRouteName : oEvent.getParameter("name")
+		var oParameters = oEvent.getParameters(),
+			oConfig = oParameters.config;
+
+		this._oTargetHandler.addNavigation({
+			targetControl : oParameters.targetControl,
+			eventData : oParameters.arguments,
+			view : oParameters.view,
+			navigationIdentifier : oParameters.name,
+			transition: oConfig.transition,
+			transitionParameters: oConfig.transitionParameters,
+			preservePageInSplitContainer: oConfig.preservePageInSplitContainer
 		});
 	};
-	
-	/**
-	 * Goes through the queue and adds the last Transition for each container in the queue
-	 * In case of a navContainer or phone mode, only one transition for the container is allowed.
-	 * In case of a splitContainer in desktop mode, two transitions are allowed, one for the master and one for the detail.
-	 * Both transitions will be the same. 
-	 * @returns {array} a queue of navigations
-	 * @private
-	 */
-	RouteMatchedHandler.prototype._createResultingNavigations = function(sRouteName) {
-		var i,
-			bFoundTheCurrentNavigation,
-			oCurrentParams,
-			oCurrentContainer,
-			oCurrentNavigation,
-			aResults = [],
-			oView,
-			bIsSplitContainer,
-			bIsNavContainer,
-			bPreservePageInSplitContainer,
-			oResult;
-	
-		while (this._aQueue.length) {
-			bFoundTheCurrentNavigation = false;
-			oCurrentParams = this._aQueue.shift();
-			oCurrentContainer = oCurrentParams.oTargetControl;
-			bIsSplitContainer = oCurrentContainer instanceof SplitContainer;
-			bIsNavContainer = oCurrentContainer instanceof NavContainer;
-			oView = oCurrentParams.oView;
-			oCurrentNavigation = {
-						oContainer : oCurrentContainer,
-						oParams : oCurrentParams,
-						bIsMasterPage : (bIsSplitContainer && !!oCurrentContainer.getMasterPage(oView.getId()))
-					};
-			bPreservePageInSplitContainer = bIsSplitContainer &&
-											oCurrentParams.oConfig.preservePageInSplitContainer &&
-											//only switch the page if the container has a page in this aggregation
-											oCurrentContainer.getCurrentPage(oCurrentNavigation.bIsMasterPage)
-											&& sRouteName !== oCurrentParams.sRouteName;
-	
-			//Skip no nav container controls
-			if (!(bIsNavContainer || bIsSplitContainer) || !oView) {
-				continue;
-			}
-	
-			for (i = 0; i < aResults.length; i++) {
-				oResult = aResults[i];
-				
-				//The result targets a different container
-				if (oResult.oContainer !== oCurrentContainer) {
-					continue;
-				}
-	
-				//Always override the navigation when its a navContainer, and if its a splitContainer - in the mobile case it behaves like a nav container
-				if (bIsNavContainer || sap.ui.Device.system.phone) {
-					aResults.splice(i, 1);
-					aResults.push(oCurrentNavigation);
-					bFoundTheCurrentNavigation = true;
-					break;
-				}
-	
-				//We have a desktop SplitContainer and need to add to transitions if necessary
-				//The page is in the same aggregation - overwrite the previous transition
-				if (oResult.bIsMasterPage === oCurrentNavigation.bIsMasterPage) {
-					if (bPreservePageInSplitContainer) {
-						//the view should be preserved, check the next navigation
-						break;
-					}
-	
-					aResults.splice(i, 1);
-					aResults.push(oCurrentNavigation);
-					bFoundTheCurrentNavigation = true;
-					break;
-				}
-			}
-	
-			if (oCurrentContainer instanceof SplitContainer && !sap.ui.Device.system.phone) {
-				//We have a desktop SplitContainer and need to add to transitions if necessary
-				oCurrentNavigation.bIsMasterPage = !!oCurrentContainer.getMasterPage(oView.getId());
-			}
-	
-			//A new Nav container was found
-			if (!bFoundTheCurrentNavigation) {
-				if (!!oCurrentContainer.getCurrentPage(oCurrentNavigation.bIsMasterPage) && bPreservePageInSplitContainer) {
-					//the view should be preserved, check the next navigation
-					continue;
-				}
-				aResults.push(oCurrentNavigation);
-			}
-		}
-	
-		return aResults;
-	};
-	
-	
-	/**
-	 * Triggers all navigation on the correct containers with the transition direction.
-	 *
-	 * @param {object} oParams the navigation parameters
-	 * @param {boolean} bBack forces the nav container to show a backwards transition
-	 * @private
-	 */
-	RouteMatchedHandler.prototype._handleRouteMatched = function(oParams, bBack) {
-		var oTargetControl = oParams.oTargetControl,
-			oPreviousPage,
-			//Parameters for the nav Container
-			oArguments = oParams.oArguments,
-			//Nav container does not work well if you pass undefined as transition
-			sTransition = oParams.oConfig.transition || "",
-			oTransitionParameters = oParams.oConfig.transitionParameters,
-			sViewId = oParams.oView.getId(),
-			//this is only necessary if the target control is a Split container since the nav container only has a pages aggregation
-			bNextPageIsMaster = oTargetControl instanceof SplitContainer && !!oTargetControl.getMasterPage(sViewId);
-	
-		//It is already the current page, no need to navigate
-		if (oTargetControl.getCurrentPage(bNextPageIsMaster).getId() === sViewId) {
-			jQuery.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl");
-			return;
-		}
-	
-		jQuery.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
-	
-		if (bBack) {
-			// insert previous page if not in nav container yet
-			oPreviousPage = oTargetControl.getPreviousPage(bNextPageIsMaster);
-	
-			if (!oPreviousPage || oPreviousPage.getId() !== sViewId) {
-				oTargetControl.insertPreviousPage(sViewId, sTransition , oArguments);
-			}
-	
-			oTargetControl.backToPage(sViewId, oArguments, oTransitionParameters);
-	
-		} else {
-			oTargetControl.to(sViewId, sTransition, oArguments, oTransitionParameters);
-		}
-	
-	};
-	
-	
+
 	/**
 	 * Closes all dialogs if the closeDialogs property is set to true.
 	 *

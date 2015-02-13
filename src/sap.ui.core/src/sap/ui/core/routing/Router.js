@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-/*global crossroads *///declare unusual global vars for JSLint/SAPUI5 validation
 
+/*global crossroads */
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', './HashChanger', './Route', './Views', './Targets', 'sap/ui/thirdparty/crossroads', 'sap/ui/thirdparty/signals'],
 	function(jQuery, EventProvider, ManagedObject, HashChanger, Route, Views, Targets) {
 	"use strict";

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/Target', 'sap/ui/thirdparty/signals', 'sap/ui/thirdparty/crossroads'],
-	function(jQuery, EventProvider, Target, signals, crossroads) {
+	function(jQuery, EventProvider, Target) {
 	"use strict";
 
 		/**
@@ -78,6 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				this._aRoutes = [];
 				this._oParent = oParent;
 				this._oConfig = oConfig;
+				this._oRouter = oRouter;
 
 				if (!oConfig.target) {
 					// create a new target for this route
@@ -111,7 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						jQuery.each(arguments, function(iArgumentIndex, sArgument) {
 							oArguments[that._aRoutes[iIndex]._paramsIds[iArgumentIndex]] = sArgument;
 						});
-						that._routeMatched(oRouter, oArguments, true);
+						that._routeMatched(oArguments, true);
 					});
 				});
 			},
@@ -240,19 +241,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @name sap.ui.core.routing.Route#_routeMatched
 			 * @function
 			 */
-			_routeMatched : function(oRouter, oArguments, bInital) {
-				var oParentPlaceInfo,
+			_routeMatched : function(oArguments, bInital) {
+				var oRouter = this._oRouter,
+					oParentPlaceInfo,
 					oPlaceInfo,
 					oTarget,
 					oConfig,
 					oEventData,
 					oView = null,
-					oTargetControl = null,
-					oTargets;
+					oTargetControl = null;
 
 				// Recursively fire matched event and display views of this routes parents
 				if (this._oParent) {
-					oParentPlaceInfo = this._oParent._routeMatched(oRouter, oArguments);
+					oParentPlaceInfo = this._oParent._routeMatched(oArguments);
 				}
 
 				oConfig =  jQuery.extend({}, oRouter._oConfig, this._oConfig);
@@ -277,15 +278,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					oEventData.view = oView;
 					oEventData.targetControl = oTargetControl;
 				} else {
-					oTargets = oRouter._oTargets;
-
-					oTargets.attachEventOnce("display", function (oEvent) {
-						var oParameters = oEvent.getParameters();
-						oView = oParameters.view;
-						oTargetControl = oParameters.targetControl;
-					});
-
-					oTargets.display(this._oConfig.target);
+					// let targets do the placement + the events
+					oRouter._oTargets._display(this._oConfig.target, oArguments);
 				}
 
 				if (oConfig.callback) {
@@ -303,9 +297,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				}
 
 				return oPlaceInfo;
-			}
+			},
 
+			_getTarget : function () {
+				return this._oTarget || this._oRouter._oTargets.getTarget(this._oConfig.target);
+			}
 		});
+
 
 		Route.M_EVENTS = {
 			Matched : "matched",
