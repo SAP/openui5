@@ -288,7 +288,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._createListHeader = function () {
-			var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_CLOSE_BUTTON");
+			var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE");
 			var sCloseBtnDescrId = this.getId() + "-CloseBtnDescr";
 			var oCloseBtnARIAHiddenDescr = new HTML(sCloseBtnDescrId, {
 				content: "<span id=\"" + sCloseBtnDescrId + "\" style=\"display: none;\">" + sCloseBtnDescr + "</span>"
@@ -330,7 +330,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._createDetailsHeader = function () {
-			var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_CLOSE_BUTTON");
+			var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE");
 			var sCloseBtnDescrId = this.getId() + "-CloseBtnDetDescr";
 			var oCloseBtnARIAHiddenDescr = new HTML(sCloseBtnDescrId, {
 				content: "<span id=\"" + sCloseBtnDescrId + "\" style=\"display: none;\">" + sCloseBtnDescr + "</span>"
