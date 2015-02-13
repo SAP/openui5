@@ -30,31 +30,6 @@ sap.ui.require(
 			};
 		}
 
-		QUnit.test("Should Group the Rating", function (assert) {
-			// Arrange
-			var iRating2 = 2,
-				oContextObject2 = createContextObject(iRating2),
-				iRating5 = 5,
-				oContextObject5 = createContextObject(iRating5),
-				oGetModelStub = this.stub(),
-				oControlStub = {
-					getModel: oGetModelStub
-				},
-				oGrouperReturn;
-
-			// System under test
-			oGetModelStub.withArgs("i18n").returns(this._oResourceModel);
-
-			// Assert
-			oGrouperReturn = $.proxy(grouper.Group1, oControlStub)(oContextObject2);
-			assert.strictEqual(oGrouperReturn.key, iRating2,"The key was as expected for rating 2");
-			assert.strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating2]),"The group header is correct for rating 2");
-
-			oGrouperReturn = $.proxy(grouper.Group1, oControlStub)(oContextObject5);
-			assert.strictEqual(oGrouperReturn.key, iRating5,"The key was as expected for rating 5");
-			assert.strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header", [iRating5]),"The group header is correct for rating 5");
-		});
-
 		QUnit.test("Should group the price", function (assert) {
 			// Arrange
 			var oContextObjectLower = createContextObject(17.2),
@@ -69,13 +44,13 @@ sap.ui.require(
 			oGetModelStub.withArgs("i18n").returns(this._oResourceModel);
 
 			// Assert
-			oGrouperReturn = $.proxy(grouper.Group2, oControlStub)(oContextObjectLower);
+			oGrouperReturn = $.proxy(grouper.Group1, oControlStub)(oContextObjectLower);
 			assert.strictEqual(oGrouperReturn.key,"LE20", "The key is as expected for a low value");
-			assert.strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup2Header1"), "The group header is as expected for a low value");
+			assert.strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup1Header1"), "The group header is as expected for a low value");
 
-			oGrouperReturn = $.proxy(grouper.Group2, oControlStub)(oContextObjectHigher);
+			oGrouperReturn = $.proxy(grouper.Group1, oControlStub)(oContextObjectHigher);
 			assert.strictEqual(oGrouperReturn.key,"GT20", "The key is as expected for a high value");
-			assert.strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup2Header2"), "The group header is as expected for a high value");
+			assert.strictEqual(oGrouperReturn.text,this._oResourceModel.getResourceBundle().getText("masterGroup1Header2"), "The group header is as expected for a high value");
 		});
 
 	}
