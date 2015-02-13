@@ -581,18 +581,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			format : function (oInterface, vRawValue) {
-				var aMatches, sResult;
+				var sResult;
 
 				// 14.4.11 Expression edm:String
 				if (vRawValue && vRawValue.hasOwnProperty("String")) {
 					if (typeof vRawValue.String === "string") {
-						aMatches = rEntityTypePath.exec(oInterface.getPath());
-						if (aMatches) {
-							return formatPath("##"
-								+ oInterface.getPath().slice(aMatches[1].length + 1) + "/String",
-								oInterface, false).value;
-						}
-						return fnEscape(vRawValue.String);
+						return formatPath("/##" + oInterface.getPath() + "/String",
+							oInterface, false).value;
+//						return fnEscape(vRawValue.String);
 					}
 					return illegalValue(vRawValue, "String");
 				}

@@ -303,13 +303,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	/**
 	 * Returns the OData meta model context corresponding to the given OData model path.
 	 *
-	 * @param {string} sPath
+	 * @param {string} [sPath]
 	 *   an absolute path pointing to an entity or property, e.g.
 	 *   "/ProductSet(1)/ToSupplier/BusinessPartnerID"; this equals the
 	 *   <a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions#ResourcePath">
 	 *   resource path</a> component of a URI according to OData v2 URI conventions
 	 * @returns {sap.ui.model.Context}
-	 *   the context for the corresponding meta data object, i.e. an entity type or its property
+	 *   the context for the corresponding meta data object, i.e. an entity type or its property,
+	 *   or <code>null</code> in case no path is given
 	 * @throws {Error} in case no context can be determined
 	 * @public
 	 */
@@ -319,7 +320,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			oEntityType,
 			sMetaPath,
 			sNavigationPropertyName,
-			aParts = sPath.split("/"),
+			aParts,
 			sQualifiedName; // qualified name of current entity type across navigations
 
 		/*
@@ -335,6 +336,11 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 				: sSegment;
 		}
 
+		if (!sPath) {
+			return null;
+		}
+
+		aParts = sPath.split("/");
 		if (aParts[0] !== "") {
 			throw new Error("Not an absolute path: " + sPath);
 		}

@@ -741,6 +741,15 @@
 	});
 
 	//*********************************************************************************************
+	test("getMetaContext: empty data path", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getMetaContext(undefined), null);
+			strictEqual(oMetaModel.getMetaContext(null), null);
+			strictEqual(oMetaModel.getMetaContext(""), null);
+		});
+	});
+
+	//*********************************************************************************************
 	test("getMetaContext: entity set only", function() {
 		withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')");
@@ -755,9 +764,6 @@
 			raises(function () {
 				oMetaModel.getMetaContext("foo/bar");
 			}, /Not an absolute path: foo\/bar/);
-			raises(function () {
-				oMetaModel.getMetaContext();
-			}); // don't care about exception
 			raises(function () {
 				oMetaModel.getMetaContext("/FooSet('123')");
 			}, /Entity set not found: FooSet\('123'\)/);
