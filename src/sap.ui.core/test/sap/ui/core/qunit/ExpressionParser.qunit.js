@@ -266,6 +266,8 @@
 			{ binding: "{=odata.fillUriTemplate )}", message: "Unexpected )", token: ")" },
 			{ binding: "{=, 'foo'}", message: "Unexpected ,", token: "," },
 			{ binding: "{='foo' , 'bar'}", message: "Unexpected ,", token: "," },
+			{ binding: "{='foo' ! 'bar'}", message: "Unexpected !", token: "!" },
+			{ binding: "{='foo' typeof 'bar'}", message: "Unexpected typeof", token: "typeof" },
 			{ binding: "{=odata.}", message: "Expected IDENTIFIER but instead saw }", token: "}" },
 			{ binding: "{=odata.", message: "Expected IDENTIFIER but instead saw end of input"},
 			{ binding: "{=true ||", message: "Expected expression but instead saw end of input"},
@@ -335,7 +337,8 @@
 		{ expression: "${/thirteen} <= ${/3}", result: "false" },
 		{ expression: "'foo' < 'bar'", result: "false" },
 		{ expression: "-1 >= -1", result: "true" },
-		{ expression: "'foobar' > 'foo'", result: "true" }
+		{ expression: "'foobar' > 'foo'", result: "true" },
+		{ expression: "${/thirteen} < ${/3}", result: "false" }
 	]);
 
 	//*********************************************************************************************
@@ -349,5 +352,13 @@
 	//*********************************************************************************************
 	checkFixtures("encodeURIComponent", [
 		{ expression: "encodeURIComponent('foo bar')", result: "foo%20bar" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("Unary +, -, typeof", [
+		{ expression: "{=+true}", result: "1" },
+		{ expression: "{=--42}", result: "42" },
+		{ expression: "{=typeof 42}", result: "number" },
+		{ expression: "{=typeof42}", result: "undefined" } // typeof is no fix length token
 	]);
 } ());
