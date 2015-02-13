@@ -15,13 +15,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @class
 		 * @extends sap.ui.base.EventProvider
 		 *
-		 * @param {object|object[]} [oRoutes] may contain many Route configurations as @see sap.ui.core.routing.Route#constructor.<br/>
+		 * @param {object|object[]} [oRoutes] may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.<br/>
 		 * Each of the routes contained in the array/object will be added to the router.<br/>
          * The name attribute of a route is special - it may also be a key of the route. Eg a route with the name "RouteName" : { RouteName : { pattern : "ThePattern" } , AnotherRouteName : {...}}
 		 * 
-		 * The values that may be provided are the same as in @see sap.ui.core.routing.Route#constructor
+		 * The values that may be provided are the same as in {@link sap.ui.core.routing.Route#constructor}
 		 * 
-		 * @param {object} [oConfig] Default values for route configuration - also takes the same parameters as @see sap.ui.core.routing.Target#constructor<br/>
+		 * @param {object} [oConfig] Default values for route configuration - also takes the same parameters as {@link sap.ui.core.routing.Target#constructor}<br/>
 		 * Eg: the config object specifies : { viewType : "XML" }<br/>
 		 * The targets look like this:{ xmlTarget : { ... } }, jsTarget : { viewType : "JS" ... } }<br/>
 		 * <br/>
@@ -30,8 +30,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * <br/>
 		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
 		 * 
-		 * @param {sap.ui.core.UIComponent} [oOwner] the owner of all the views that will be created by this Router.
-		 * @param {object} [oTargetsConfig] {@link sap.ui.core.routing.Targets} @since 1.28 the target configuration, see Targets documentation. You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.
+		 * @param {sap.ui.core.UIComponent} [oOwner] the owner of all the views that will be created by this Router, will get forwarded to the {@link sap.ui.core.routing.Views}, created by the router.
+		 * @param {object} [oTargetsConfig] {@link sap.ui.core.routing.Targets} @since 1.28 the target configuration, see {@link sap.ui.core.routing.Targets} documentation. You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.
 		 * @public
 		 * @alias sap.ui.core.routing.Router
 		 */
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				this._oRouter = crossroads.create();
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
-				this._oViews = this._createViews(oOwner);
+				this._oViews = new Views({component : oOwner});
 
 				if (oTargetsConfig) {
 					this._oTargets = this._createTargets(oConfig, oTargetsConfig);
@@ -73,10 +73,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 					that.addRoute(oRouteConfig);
 				});
 
-			},
-
-			_createViews : function (oOwner) {
-				return new Views({component : oOwner});
 			},
 
 			_createTargets : function (oConfig, oTargetsConfig) {
@@ -250,8 +246,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		};
 
 		/**
+		 * Returns the views instance created by the router
+		 *
+		 * @return {sap.ui.core.routing.Views} the Views instance
+		 * @public
+		 * @since 1.28
+		 */
+		Router.prototype.getViews = function () {
+			return this._oViews;
+		};
+
+
+		/**
 		 * Returns a cached view for a given name or creates it if it does not yet exists
-		 * 
+		 *
+		 * @deprecated @since 1.28 use {@link #getViews} instead.
 		 * @param {string} sViewName Name of the view
 		 * @param {string} sViewType Type of the view
 		 * @param {string} sViewId Optional view id
@@ -276,7 +285,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 		/**
 		 * Adds or overwrites a view in the viewcache of the router, the viewname serves as a key
-		 * 
+		 *
+		 * @deprecated @since 1.28 use {@link #getViews} instead.
 		 * @param {string} sViewName Name of the view
 		 * @param {sap.ui.core.mvc.View} oView the view instance
 		 * @since 1.22
@@ -370,6 +380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * oListener-instance (if present) or in a 'static way'.
 		 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
 		 *
+		 * @deprecated @since 1.28 use {@link #getViews} instead.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
 		 */
@@ -383,6 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * The passed function and listener object must match the ones previously used for event registration.
 		 *
+		 * @deprecated @since 1.28 use {@link #getViews} instead.
 		 * @param {function} fnFunction The function to call, when the event occurs.
 		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
@@ -396,6 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		/**
 		 * Fire event viewCreated to attached listeners.
 		 *
+		 * @deprecated @since 1.28 use {@link #getViews} instead.
 		 * @param {object} [mArguments] the arguments to pass along with the event.
 		 * 
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining

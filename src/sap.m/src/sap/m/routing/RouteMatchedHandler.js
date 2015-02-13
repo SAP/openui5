@@ -28,11 +28,14 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * </br>
 	 * You can also specify "transitionParameters" on a Route, to give the transition parameters.</br>
 	 * </br>
+	 * preservePageInSplitContainer is deprecated since 1.28 since Targets make this parameter obsolete.
 	 * If you want to preserve the current view when navigating, but you want to navigate to it when nothing is displayed in the navContainer, you can set preservePageInSplitContainer = true</br>
 	 * When the route that has this flag directly matches the pattern, the view will still be switched by the splitContainer.
 	 * </br>
 	 * @see sap.m.NavContainer
-	 * 
+	 *
+	 *
+	 * @deprecated @since 1.28 use {@link sap.m.routing.Router|sap.m.routing.Targets} instead. The functionality of the routematched handler is built in into these two classes, there is no need to create this anymore.
 	 * @param {sap.ui.core.routing.Router} router - A router that creates views</br>
 	 * @param {boolean} closeDialogs - the default is true - will close all open dialogs before navigating, if set to true. If set to false it will just navigate without closing dialogs.
 	 * @public

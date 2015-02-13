@@ -26,7 +26,6 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.splitapp.Component", {
 					viewPath : "view.inbox",
 					view : "Home",
 					viewLevel : 0,
-					preservePageInSplitContainer : true,
 					targetAggregation : "masterPages",
 					subroutes : [
 						{

@@ -8,7 +8,6 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 				viewType: "XML",
 				viewPath: "view",
 				targetControl: "splitApp",
-				clearTarget: false,
 				transition: "slide"
 			},
 			routes: [

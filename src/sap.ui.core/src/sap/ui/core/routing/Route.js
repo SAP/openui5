@@ -10,7 +10,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 * Instantiates a SAPUI5 Route
 		 *
 		 * @class
-		 *
 		 * @param {sap.ui.core.routing.Router} The router instance, the route will be added to.
 		 * @param {object} oConfig configuration object for the route
 		 * @param {string} oConfig.name the name of the route - it will be used to retrieve the route from the router, it needs to be unique per router instance.</li>
@@ -31,16 +30,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 * <li>
 		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </ul>
-		 * @param {object} [oConfig.subroutes] one or multiple routeconfigs taking all of these parameters again. If a subroute is hit, it will fire tge routeMatched event for all its parents. The routePatternMatched event will only be fired for the subroute not the parents. The routing will also display all the targets of the subroutes and its parents.
-		 * @param {boolean} [oConfig.greedy] @since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
-		 * @param {string|string[]} [oConfig.target] one or multiple name of targets {@link sap.ui.core.routing.Targets}. As soon as the route matches, the target will be displayed. All of the following parameters will be ignored, if a target is used.
+		  * @param {boolean} [oConfig.greedy] @since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
+		 * @param {string|string[]} [oConfig.target] one or multiple name of targets {@link sap.ui.core.routing.Targets}. As soon as the route matches, the target will be displayed. All the deprecated parameters are ignored, if a target is used.
 		 * @param {string} [oConfig.view] @deprecated since 1.28 - use target. The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
 		 * @param {string} [oConfig.viewType] @deprecated since 1.28 - use target. The type of the view that is going to be created. eg: "XML", "JS"</li>
 		 * @param {string} [oConfig.viewPath] @deprecated since 1.28 - use target. A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
 		 * @param {string} [oConfig.targetParent] @deprecated since 1.28 - use target. the id of the parent of the targetControl - This should be the id view your targetControl is located in. By default, this will be the view created by a component, or if the Route is a subroute the view of the parent route is taken. You only need to specify this, if you are not using a router created by a component on your top level routes.</li>
 		 * @param {string} [oConfig.targetControl] @deprecated since 1.28 - use target. Views will be put into a container Control, this might be a {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container. The id of this control has to be put in here.</li>
 		 * @param {string} [oConfig.targetAggregation] @deprecated since 1.28 - use target. The name of an aggregation of the targetControl, that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the {@link sap.ui.ux3.Shell} it has "content".</li>
-		 * @param {boolean} [oConfig.clearTarget] @deprecated since 1.28 - use target. Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
+		 * @param {boolean} [oConfig.clearTarget] @deprecated since 1.28 - use target. Default is false. Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
+		 * @param {object} [oConfig.subroutes] @deprecated since 1.28 - use targets.children one or multiple routeconfigs taking all of these parameters again. If a subroute is hit, it will fire tge routeMatched event for all its parents. The routePatternMatched event will only be fired for the subroute not the parents. The routing will also display all the targets of the subroutes and its parents.
 		 * @param {sap.ui.core.routing.Route} [oParent] The parent route - if a parent route is given, the routeMatched event of this route will also trigger the route matched of the parent and it will also create the view of the parent(if provided).
 		 *
 		 * @public
@@ -143,8 +142,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {object} oParameters Parameters for the route
 			 * @return {string} the unencoded pattern with interpolated arguments
 			 * @public
-			 * @name sap.ui.core.routing.Route#getURL
-			 * @function
 			 */
 			getURL : function (oParameters) {
 				return this._aRoutes[0].interpolate(oParameters);
@@ -155,8 +152,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 *
 			 * @return {string} the routes pattern
 			 * @public
-			 * @name sap.ui.core.routing.Route#getPattern
-			 * @function
 			 */
 			getPattern : function() {
 				return this._aPattern[0];
@@ -174,8 +169,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public
 			 * @since 1.25.1
-			 * @name sap.ui.core.routing.Route#attachMatched
-			 * @function
 			 */
 			attachMatched : function(oData, fnFunction, oListener) {
 				return this.attachEvent("matched", oData, fnFunction, oListener);
@@ -191,8 +184,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public
 			 * @since 1.25.1
-			 * @name sap.ui.core.routing.Route#detachMatched
-			 * @function
 			 */
 			detachMatched : function(fnFunction, oListener) {
 				return this.detachEvent("matched", fnFunction, oListener);
@@ -210,8 +201,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public
 			 * @since 1.25.1
-			 * @name sap.ui.core.routing.Route#attachPatternMatched
-			 * @function
 			 */
 			attachPatternMatched : function(oData, fnFunction, oListener) {
 				return this.attachEvent("patternMatched", oData, fnFunction, oListener);
@@ -227,8 +216,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public
 			 * @since 1.25.1
-			 * @name sap.ui.core.routing.Route#detachPatternMatched
-			 * @function
 			 */
 			detachPatternMatched : function(fnFunction, oListener) {
 				return this.detachEvent("patternMatched", fnFunction, oListener);
@@ -238,7 +225,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * Executes the behaviour when route is matched
 			 *
 			 * @private
-			 * @name sap.ui.core.routing.Route#_routeMatched
 			 * @function
 			 */
 			_routeMatched : function(oArguments, bInital) {

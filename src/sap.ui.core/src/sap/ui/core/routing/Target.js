@@ -5,24 +5,18 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 	function(EventProvider) {
 		"use strict";
 
-		//TODO: make public later
 		/**
+		 * Provides a convenient way for placing views into the correct containers of your application.
+		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.
 		 * Don't call this constructor directly, use {@link sap.ui.core.routing.Targets} instead, it will create instances of a Target
-		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor.
+		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor, please read the documentation there. Additional parameters are allowed in the mobile library, and the default of clearTaget will be false instead of true.
 		 *
-		 * @class provides a convenient way for placing views into the correct containers of your application
+		 * @class
 		 * @extends sap.ui.base.EventProvider
-		 * @param {object} oOptions all of the parameters here are also allowed in Targets.
-		 * @param {string} [oOptions.view] The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
-		 * @param {string} [oOptions.viewType] The type of the view that is going to be created. eg: "XML", "JS"</li>
-		 * @param {string} [oOptions.viewPath] A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
-		 * @param {string} [oOptions.targetParent] the id of the parent of the targetControl - This should be the id view your targetControl is located in. By default, this will be the view created by a component, or if the Route is a subroute the view of the parent route is taken. You only need to specify this, if you are not using a router created by a component on your top level routes.</li>
-		 * @param {string} [oOptions.targetControl] Views will be put into a container Control, this might be a {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container. The id of this control has to be put in here.</li>
-		 * @param {string} [oOptions.targetAggregation] The name of an aggregation of the targetControl, that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the {@link sap.ui.ux3.Shell} it has "content".</li>
-		 * @param {boolean} [oOptions.clearTarget] Defines a boolean that can be passed to specify if the aggregation should be cleared before adding the View to it. When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false.</li>
-		 * @param {sap.ui.core.routing.Views} oViews
-		 * @param {sap.ui.core.routing.Target} [oParent]
-		 * @private
+		 * @param {object} oOptions all of the parameters defined in {@link sap.m.routing.Targets#constructor} are accepted here, except for children you need to specify the parent.
+		 * @param {sap.ui.core.routing.Views} oViews All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
+		 * @param {sap.ui.core.routing.Target} [oParent] the parent of this target. Will also get displayed, if you display this target. In the config you have the fill the children property {@link sap.m.routing.Targets#constructor}
+		 * @protected
 		 * @since 1.28
 		 * @alias sap.ui.core.routing.Target
 		 */
@@ -38,9 +32,9 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 			},
 
 			/**
-			 * Destroy the target
+			 * Destroys the target, will be called by {@link sap.m.routing.Targets} don't call this directly.
 			 *
-			 * @public
+			 * @protected
 			 * @returns { sap.ui.core.routing.Target } this for chaining.
 			 */
 			destroy : function () {
@@ -59,19 +53,23 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 			 * @public
 			 */
 			display : function (vData) {
-				this._display(vData);
-			},
-
-			_display : function (vData) {
 				var oParentInfo;
 
 				if (this._oParent) {
-					oParentInfo = this._oParent._display(vData);
+					oParentInfo = this._oParent.display(vData);
 				}
 
 				return this._place(oParentInfo, vData);
 			},
 
+			/**
+			 * Here the magic happens - recursion + placement + view creation needs to be refactored
+			 *
+			 * @param oParentInfo
+			 * @param vData
+			 * @returns {{oTargetParent: *, oTargetControl: (*|oTargetControl|sap.ui.core.routing.Route._routeMatched.oTargetControl)}}
+			 * @private
+			 */
 			_place : function (oParentInfo, vData) {
 				var oOptions = this._oOptions;
 				oParentInfo = oParentInfo || {};
@@ -155,6 +153,7 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 			 * @param {object} oEvent.getParameters
 			 * @param {object} oEvent.getParameters.view The view that got displayed.
 			 * @param {object} oEvent.getParameters.targetControl The control that now contains the view in the targetAggregation
+			 * @param {object} oEvent.getParameters.config The options object passed to the constructor {@link sap.ui.core.routing.Target#constuctor}
 			 * @param {object} oEvent.getParameters.data The data passed into the {@link sap.ui.core.routing.Target#display} function
 			 * @event
 			 * @public
@@ -175,13 +174,14 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 			},
 
 			/**
-			 * Detach event-handler <code>fnFunction</code> from the 'created' event of this <code>sap.ui.core.routing.Views</code>.<br/>
+			 * Detach event-handler <code>fnFunction</code> from the 'display' event of this <code>sap.ui.core.routing.Target</code>.<br/>
 			 *
 			 * The passed function and listener object must match the ones previously used for event registration.
 			 *
 			 * @param {function} fnFunction The function to call, when the event occurs.
 			 * @param {object} oListener Object on which the given function had to be called.
 			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @public
 			 */
 			detachDisplay : function(fnFunction, oListener) {
 				return this.detachEvent(this.M_EVENTS.DISPLAY, fnFunction, oListener);
@@ -192,6 +192,7 @@ sap.ui.define(['sap/ui/base/EventProvider'],
 			 *
 			 * @param {object} [mArguments] the arguments to pass along with the event.
 			 * @return {sap.ui.core.routing.Target} <code>this</code> to allow method chaining
+			 * @protected
 			 */
 			fireDisplay : function(mArguments) {
 				return this.fireEvent(this.M_EVENTS.DISPLAY, mArguments);

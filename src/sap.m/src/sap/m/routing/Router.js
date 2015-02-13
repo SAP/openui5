@@ -7,9 +7,10 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 		/**
 		 * Instantiates a SAPUI5 mobile Router see {@link sap.ui.core.routing.Router} for the constructor arguments
+		 * The difference to the {@link sap.ui.core.routing.Router} are the properties viewLevel, transition and transitionParameters you can specify in every Route or Target created by this router.
 		 *
 		 * @class
-		 * @extends sap.ui.core.Router
+		 * @extends sap.ui.core.routing.Router
 		 *
 		 * @param {object|object[]} [oRoutes] may contain many Route configurations as @see sap.ui.core.routing.Route#constructor.<br/>
 		 * Each of the routes contained in the array/object will be added to the router.<br/>
@@ -27,7 +28,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
 		 *
 		 * @param {sap.ui.core.UIComponent} [oOwner] the owner of all the views that will be created by this Router.
-		 * @param {object} [oTargetsConfig] {@link sap.ui.core.routing.Targets} @since 1.28 the target configuration, see Targets documentation. You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.
+		 * @param {object} [oTargetsConfig] {@link sap.m.routing.Targets} @since 1.28 the target configuration, see Targets documentation. You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.
 		 * @public
 		 * @alias sap.m.routing.Router
 		 */
@@ -36,6 +37,24 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 			constructor : function() {
 				this._oTargetHandler = new TargetHandler();
 				Router.prototype.constructor.apply(this, arguments);
+			},
+
+			destroy: function () {
+				Router.prototype.destroy.apply(this, arguments);
+
+				this._oTargetHandler.destroy();
+
+				this._oTargetHandler = null;
+			},
+
+			/**
+			 * Returns the TargetHandler instance.
+			 *
+			 * @return {sap.m.routing.TargetHandler} the TargetHandler instance
+			 * @public
+			 */
+			getTargetHandler : function () {
+				return this._oTargetHandler;
 			},
 
 			_createTargets : function (oConfig, oTargetsConfig) {
@@ -72,11 +91,12 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 			},
 
 			fireRoutePatternMatched : function (mArguments) {
-				var oRoute = this.getRoute(mArguments.name),
+				var sRouteName = mArguments.name,
+					oRoute = this.getRoute(sRouteName),
 					oTargetConfig = oRoute._getTarget()._oOptions;
 
 				this._oTargetHandler.navigate({
-					navigationIdentifier : mArguments.name,
+					navigationIdentifier : sRouteName,
 					viewLevel: oTargetConfig.viewLevel,
 					askHistory: true
 				});

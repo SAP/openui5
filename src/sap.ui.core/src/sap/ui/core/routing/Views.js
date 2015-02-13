@@ -5,16 +5,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	function($, EventProvider) {
 		"use strict";
 
-		//TODO: make public or protected later
 		/**
 		 * Instantiates a view repository that creates and caches views. If it is destroyed, all the Views it created are destroyed.
+		 * Usually you do not have to create instances of this class, it is used by the {@link sap.ui.core.routing.Router}.
+		 * If you are using {@link sap.ui.core.routing.Targets} without using a {@link sap.ui.core.UIComponent} you have to create an instance of this class.
+		 * They will create an instance on their own, or if they are used with a {@link sap.ui.core.UIComponent} they will share the same instance of Views.
 		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider
-		 * @private
+		 * @public
 		 * @since 1.28
 		 * @param {object} oOptions
-		 * @param {sap.ui.core.UIComponent} [oOptions.component] the owner of all the views that will be created by this Router.
+		 * @param {sap.ui.core.UIComponent} [oOptions.component] the owner of all the views that will be created by this Instance.
 		 * @alias sap.ui.core.routing.Views
 		 */
 		return EventProvider.extend("sap.ui.core.routing.Views", {
@@ -36,11 +38,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			},
 
 			/**
-			 * Returns a cached view for a given name or creates it if it does not yet exists
+			 * Returns a cached view, for a given name. If it does not exist yet, it will create the view with the provided options.
 			 *
 			 * @param {object} oOptions see {@link sap.ui.view} for the documentation
-			 * @param {string} oOptions.viewName If you do not use setView please see {@link sap.ui.view} for the documentation. This is used as a key in the cache of the Views instance. If you want to retrieve a view that has been given an alternative name in {@link setView} you need to provide the same name here and you can skip all the other viewOptions.
-			 * @return {sap.ui.core.mvc.View} the view instance
+			 * @param {string} oOptions.viewName If you do not use setView please see {@link sap.ui.view} for the documentation. This is used as a key in the cache of the Views instance. If you want to retrieve a view that has been given an alternative name in {@link #setView} you need to provide the same name here and you can skip all the other viewOptions.
+			 * @return {sap.ui.core.mvc.View} the created or cached view instance
 			 */
 			getView : function (oOptions) {
 				function fnCreateView () {
@@ -78,10 +80,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			},
 
 			/**
-			 * Adds or overwrites a view in the viewcache of the router, the viewname serves as a key
+			 * Adds or overwrites a view in the cache of the Views instance. The viewName serves as a key for caching.
 			 *
-			 * @param {string} sViewName Name of the view, may differ from the actual viewname of the oView parameter provided, since you can retrieve this view per {@link getView}.
+			 * @param {string} sViewName Name of the view, may differ from the actual viewName of the oView parameter provided, since you can retrieve this view per {@link getView}.
 			 * @param {sap.ui.core.mvc.View} oView the view instance
+			 * @returns {sap.ui.core.routing.Views} this for chaining.
 			 */
 			setView : function (sViewName, oView) {
 				this._checkViewName(sViewName);
@@ -93,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			/**
 			 * Destroys all the views created by this instance.
 			 *
-			 * @returns { sap.ui.core.routing.Views } this for chaining.
+			 * @returns {sap.ui.core.routing.Views} this for chaining.
 			 */
 			destroy : function () {
 				var sProperty;
@@ -111,6 +114,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				return this;
 			},
 
+			/**
+			 * @param {string} sViewName logs an error if it is empty or undefined
+			 * @private
+			 */
 			_checkViewName : function (sViewName) {
 
 				if (!sViewName) {
@@ -129,8 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			 * @param {sap.ui.base.EventProvider} oEvent.getSource
 			 * @param {object} oEvent.getParameters
 			 * @param {sap.ui.core.mvc.View} oEvent.getParameters.view the instance of the created view.
-			 * @param {string} oEvent.getParameters.type The type of the created view (XML, JS ....)
-			 * @param {string} oEvent.getParameters.viewName The full name (including namespace) of the created view
+			 * @param {string} oEvent.getParameters.viewOptions The view options passed to {@link sap.ui.view}
 			*/
 
 			/**
@@ -155,6 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			 * @param {function} fnFunction The function to call, when the event occurs.
 			 * @param {object} oListener Object on which the given function had to be called.
 			 * @return {sap.ui.core.routing.Views} <code>this</code> to allow method chaining
+			 * @public
 			 */
 			detachCreated : function(fnFunction, oListener) {
 				return this.detachEvent("created", fnFunction, oListener);
@@ -165,6 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			 *
 			 * @param {object} [mArguments] the arguments to pass along with the event.
 			 * @return {sap.ui.core.routing.Views} <code>this</code> to allow method chaining
+			 * @protected
 			 */
 			fireCreated : function(mArguments) {
 				return this.fireEvent("created", mArguments);
