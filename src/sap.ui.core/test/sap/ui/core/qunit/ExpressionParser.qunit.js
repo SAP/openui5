@@ -157,8 +157,6 @@
 
 	//*********************************************************************************************
 	jQuery.each([
-			//tokenizer error
-			{binding: "{='foo' ==! 'bar'}", message: "Expected '=' instead of '!'", at: 11},
 			//parser error
 			{binding: "{='foo' 'bar'}", message: "Unexpected CONSTANT: 'bar'", at: 9},
 			{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4},
