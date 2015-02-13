@@ -138,6 +138,14 @@
 				ok(oMessageBox.$().hasClass(sClassName));
 				oMessageBox.destroy();
 			});
+
+			test("alert with message which contains curly bracket", function(){
+				sap.m.MessageBox.alert("I have {abc}");
+				this.clock.tick(500);
+				equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
+				jQuery.sap.require("sap.m.InstanceManager");
+				sap.m.InstanceManager.getOpenDialogs()[0].destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
