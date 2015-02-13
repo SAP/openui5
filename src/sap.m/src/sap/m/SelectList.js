@@ -188,7 +188,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.updateItems = function(sReason) {
-			this._bDataAvailable = false;
 			this.updateAggregation("items");
 			this._bDataAvailable = true;
 		};
@@ -205,6 +204,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.refreshItems = function() {
+			this._bDataAvailable = false;
 			this.refreshAggregation("items");
 		};
 
