@@ -998,7 +998,7 @@
 			{
 				"id": "sap.m.sample.Text",
 				"name": "Text",
-				"description": "With the Text control you can embed longer paragraphs of text into your application that need text wrapping."
+				"description": "The text control can be used for embedding longer paragraphs of text into your application, that need text wrapping."
 			},
 			{
 				"id": "sap.m.sample.TextMaxLines",
