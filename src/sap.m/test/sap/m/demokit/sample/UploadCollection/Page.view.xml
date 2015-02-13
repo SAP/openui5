@@ -15,7 +15,6 @@
 				</Label>
 				<Select
 					id="tbSelect"
-					autoAdjustWidth="true"
 					items="{/items}"
 					selectedKey="{/selectedKey}"
 					change="onSelectChange" >
