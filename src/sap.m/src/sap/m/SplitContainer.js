@@ -1662,6 +1662,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					oReturn = aContent[0];
 					continue;
 				}
+			} else if (oReturn instanceof sap.m.NavContainer) {
+				oReturn = oReturn.getCurrentPage();
+				continue;
 			}
 			oReturn = null;
 		}
