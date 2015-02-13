@@ -317,21 +317,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		var that = this;
 		this.oPopup._applyPosition = function(oPosition, bFromResize){
-			var eOpenState = this.getOpenState();
+			var eOpenState = this.getOpenState(),
+					oOf;
 			// avoid calling on being closed or closed instances
 			if (eOpenState === sap.ui.core.OpenState.CLOSING || eOpenState === sap.ui.core.OpenState.CLOSED) {
 				return;
 			}
-			//set flag to avoid double calculation
-			if (!that._bCalSize) {
-				that._bCalSize = true;
-				if (bFromResize) {
-					// Save the current scroll position only when this method is called from resize handler
-					// otherwise it messes the initial scrolling setting of scrollenablement in RTL mode
-					that._storeScrollPosition();
-				}
-				that._clearCSSStyles();
+
+			if (bFromResize) {
+				// Save the current scroll position only when this method is called from resize handler
+				// otherwise it messes the initial scrolling setting of scrollenablement in RTL mode
+				that._storeScrollPosition();
 			}
+			that._clearCSSStyles();
+
 			//calculate the best placement of the popover if placementType is horizontal,  vertical or auto
 			var iPlacePos = jQuery.inArray(that.getPlacement(), that._placements);
 			if (iPlacePos > 3 && !that._bPosCalced) {
@@ -339,16 +338,28 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				return;
 			}
 
+			that._bPosCalced = false;
+
 			// update the "of" property on oPosition because parent can be already rerendered
 			if (that._oOpenBy instanceof sap.ui.core.Element) {
 				oPosition.of = that._getOpenByDomRef();
 			}
 
-			// if the openBy dom reference is null or already detached from the dom tree because of rerendering
-			// there's no need to reposition the popover again
-			if (!oPosition.of || !jQuery.sap.containsOrEquals(document.documentElement, oPosition.of)) {
-				jQuery.sap.log.warning("sap.m.Popover: in function applyPosition, the openBy element doesn't have any DOM output or the DOM is already detached from DOM tree" + that);
+			// if the openBy dom reference is null there's no need to continue the reposition the popover
+			if (!oPosition.of) {
+				jQuery.sap.log.warning("sap.m.Popover: in function applyPosition, the openBy element doesn't have any DOM output. " + that);
 				return;
+			}
+
+			// if the openBy dom reference is already detached from the document, try to get the dom reference with the same id from dom tree again
+			if (!jQuery.sap.containsOrEquals(document.documentElement, oPosition.of) && oPosition.of.id) {
+				oOf = jQuery.sap.byId(oPosition.of.id);
+				if (oOf) {
+					oPosition.of = oOf;
+				} else {
+					jQuery.sap.log.warning("sap.m.Popover: in function applyPosition, the openBy element's DOM is already detached from DOM tree and can't be found again by the same id. " + that);
+					return;
+				}
 			}
 
 			var oRect = jQuery(oPosition.of).rect();
@@ -369,10 +380,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			Popup.prototype._applyPosition.call(this, oPosition);
 			that._fnSetArrowPosition();
 			that._restoreScrollPosition();
-
-			//reset the flags
-			that._bCalSize = false;
-			that._bPosCalced = false;
 
 			//register the content resize handler
 			that._registerContentResizeHandler();
@@ -626,7 +633,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/**
 	 * Closes the popover when it's already opened.
 	 *
-	 * @type sap.m.Popover
+	 * @return {sap.m.Popover} The popover itself for method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -662,7 +669,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/**
 	 * The method checks if the Popover is open. It returns true when the Popover is currently open (this includes opening and closing animations), otherwise it returns false.
 	 *
-	 * @type boolean
+	 * @return {boolean} whether the Popover is currently opened
 	 * @public
 	 * @since 1.9.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -757,10 +764,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 
 	Popover.prototype._onOrientationChange = function(){
-		if (this._bCalSize) {
-			return;
-		}
-
 		var ePopupState = this.oPopup.getOpenState();
 		if (!(ePopupState === sap.ui.core.OpenState.OPEN || ePopupState === sap.ui.core.OpenState.OPENING)) {
 			return;

@@ -1100,6 +1100,39 @@
 				oButton.destroy();
 			});
 
+			test("openBy is set to dom reference and popover should be positioned correctly after the dom is created in dom tree again", function() {
+				var oButton = new sap.m.Button({
+					text: "Open Popover"
+				}).addStyleClass("positioned2");
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oPopover = new sap.m.Popover({
+					contentWidth: "200px",
+					contentHeight: "200px",
+					placement: sap.m.PlacementType.Vertical
+				});
+				oPopover.openBy(oButton.getDomRef());
+				this.clock.tick(400);
+				ok(oPopover.isOpen(), "Popover should be opened");
+				ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button");
+
+				oButton.rerender();
+				// simulate a content resize
+				oPopover._onOrientationChange();
+				oPopover.close();
+				this.clock.tick(400);
+				ok(!oPopover.isOpen(), "Popover is closed");
+
+				oPopover.openBy(oButton.getDomRef());
+				this.clock.tick(400);
+				ok(oPopover.isOpen(), "Popover should be opened again");
+				ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button again");
+
+				oPopover.destroy();
+				oButton.destroy();
+			});
+
 			module("Screen Reader");
 
 			test("ARIA role", function() {
