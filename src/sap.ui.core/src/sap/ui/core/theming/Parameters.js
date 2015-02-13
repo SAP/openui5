@@ -52,37 +52,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 			return mParams;
 		}
 
+		function forEachStyleSheet(fnCallback) {
+			jQuery("link[id^=sap-ui-theme-]").each(function() {
+				fnCallback(this.getAttribute("id"), this.href);
+			});
+			// also check for additional imported stylesheets (IE9 limit, see jQuery.sap.includeStyleSheet)
+			if (jQuery.sap._mIEStyleSheets) {
+				for (var sId in jQuery.sap._mIEStyleSheets) {
+					if (sId.indexOf("sap-ui-theme-") === 0) {
+						var oStyleSheet = jQuery.sap._mIEStyleSheets[sId];
+						if (typeof oStyleSheet.href === "string") {
+							fnCallback(sId, oStyleSheet.href);
+						}
+					}
+				}
+			}
+		}
+
 		/*
 		 * Load parameters for a library/theme combination as identified by the URL of the library.css
 		 */
-		function loadParameters() {
+		function loadParameters(sId, sUrl) {
 
 			// read inline parameters from css style rule
-			var sUrl = jQuery(this).css("background-image");
-			var aParams = /\(["']data:text\/plain;utf-8,(.*)["']\)$/i.exec(sUrl);
-			if (aParams && aParams.length >= 2) {
-				var sParams = aParams[1];
+			var $link = jQuery.sap.byId(sId);
+			if ($link.length > 0) {
+				var sDataUri = $link.css("background-image");
+				var aParams = /\(["']data:text\/plain;utf-8,(.*)["']\)$/i.exec(sDataUri);
+				if (aParams && aParams.length >= 2) {
+					var sParams = aParams[1];
 
-				// decode only if necessary
-				if (sParams.charAt(0) !== "{" && sParams.charAt(sParams.length - 1) !== "}") {
-					try {
-						sParams = decodeURI(sParams);
-					} catch (ex) {
-						jQuery.sap.log.warning("Could not decode theme parameters URI from library.css.");
+					// decode only if necessary
+					if (sParams.charAt(0) !== "{" && sParams.charAt(sParams.length - 1) !== "}") {
+						try {
+							sParams = decodeURI(sParams);
+						} catch (ex) {
+							jQuery.sap.log.warning("Could not decode theme parameters URI from " + sUrl);
+						}
 					}
-				}
-				try {
-					var oParams = jQuery.parseJSON(sParams);
-					jQuery.extend(mParameters, oParams);
-					return;
-				} catch (ex) {
-					jQuery.sap.log.warning("Could not parse theme parameters from library.css. Loading library-parameters.json as fallback solution.");
+					try {
+						var oParams = jQuery.parseJSON(sParams);
+						jQuery.extend(mParameters, oParams);
+						return;
+					} catch (ex) {
+						jQuery.sap.log.warning("Could not parse theme parameters from " + sUrl + ". Loading library-parameters.json as fallback solution.");
+					}
 				}
 			}
 
 			// load library-parameters.json (as fallback solution)
-			var sUrl = this.href,
-					oResponse,
+			var oResponse,
 					oResult;
 
 			// derive parameter file URL from CSS file URL
@@ -119,8 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 				mParameters = {};
 				sTheme = sap.ui.getCore().getConfiguration().getTheme();
 
-				jQuery("link[id^=sap-ui-theme-]").each(loadParameters);
-
+				forEachStyleSheet(loadParameters);
 			}
 			return mParameters;
 		}
@@ -128,14 +146,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 		/**
 		 * Called by the Core when a new library and its stylesheet have been loaded.
 		 * Must be called AFTER a link-tag (with id: "sap-ui-theme" + sLibName) for the theme has been created.
-		 * @param {string} sLibName name of the theme library.
+		 * @param {string} sThemeId id of theme link-tag
+		 * @param {string} sCssUrl href of css file
 		 * @private
 		 */
-		Parameters._addLibraryTheme = function(sLibName) {
+		Parameters._addLibraryTheme = function(sThemeId, sCssUrl) {
 			// only load parameters if someone had requested them before
-			if ( mParameters ) {
-				var oLink = jQuery.sap.domById("sap-ui-theme-" + sLibName);
-				loadParameters.apply(oLink);
+			// otherwise they will be loaded from getParameters function
+			if (mParameters) {
+				loadParameters(sThemeId, sCssUrl);
 			}
 		};
 
@@ -182,17 +201,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI']
 		 * @private
 		 */
 		Parameters._setOrLoadParameters = function(mLibraryParameters) {
-			mParameters = {};
+			mParameters = {}; // don't use this.reset(), as it will set the variable to null
 			sTheme = sap.ui.getCore().getConfiguration().getTheme();
-			jQuery("link[id^=sap-ui-theme-]").each(function() {
-				var $this = jQuery(this);
-				var sLibname = $this.attr("id").substr(13);
+			forEachStyleSheet(function(sId, sHref) {
+				var sLibname = sId.substr(13); // length of sap-ui-theme-
 				if (mLibraryParameters[sLibname]) {
 					// if parameters are already provided for this lib, use them (e.g. from LessSupport)
 					jQuery.extend(mParameters, mLibraryParameters[sLibname]);
 				} else {
 					// otherwise use inline-parameters or library-parameters.json
-					loadParameters.apply(this);
+					loadParameters(sId, sHref);
 				}
 			});
 		};
