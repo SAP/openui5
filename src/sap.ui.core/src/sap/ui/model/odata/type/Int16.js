@@ -26,8 +26,8 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int16
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
+	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
 	 * @param {object} oConstraints
 	 *   constraints; {@link sap.ui.model.odata.type.Int#validateValue validateValue} throws an
 	 *   error if any constraint is violated

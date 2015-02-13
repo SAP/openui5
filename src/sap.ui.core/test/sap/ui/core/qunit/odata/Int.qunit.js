@@ -12,6 +12,10 @@
 	function anyInt(sName, iMin, iMax) {
 		var oType;
 
+		function createType(oFormatOptions, oConstraints) {
+			return new (jQuery.sap.getObject(sName))(oFormatOptions, oConstraints);
+		}
+
 		function testRange(iValue, sExpectedMessage) {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				try {
@@ -29,7 +33,7 @@
 		module(sName, {
 			setup: function () {
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
-				oType = new (jQuery.sap.getObject(sName))();
+				oType = createType();
 			},
 			teardown: function () {
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
@@ -199,7 +203,7 @@
 			strictEqual(oType.oConstraints, undefined);
 
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
-				oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
+				oType = createType({}, {nullable: false});
 				try {
 					oType.validateValue(null);
 					ok(false);
@@ -207,6 +211,25 @@
 					ok(e instanceof sap.ui.model.ValidateException)
 					equal(e.message, "EnterInt");
 				}
+			});
+		});
+
+		jQuery.each([{
+			set: {foo: "bar"},
+			expect: {foo: "bar", groupingEnabled: true}
+		}, {
+			set: {decimals: 7, groupingEnabled: false},
+			expect: {decimals: 7, groupingEnabled: false}
+		}], function (i, oFixture) {
+			test("formatOptions: " + JSON.stringify(oFixture.set), function () {
+				var oSpy,
+					oType = createType(oFixture.set);
+
+				deepEqual(oType.oFormatOptions, oFixture.set);
+
+				oSpy = this.spy(sap.ui.core.format.NumberFormat, "getIntegerInstance");
+				oType.formatValue(42, "string");
+				sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 			});
 		});
 	}

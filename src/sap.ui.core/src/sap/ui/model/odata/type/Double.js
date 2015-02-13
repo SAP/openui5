@@ -28,8 +28,11 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
+		var oFormatOptions;
+
 		if (!oType.oFormat) {
-			oType.oFormat = NumberFormat.getFloatInstance({groupingEnabled: true});
+			oFormatOptions = jQuery.extend({groupingEnabled: true}, oType.oFormatOptions);
+			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 		return oType.oFormat;
 	}
@@ -84,8 +87,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @alias sap.ui.model.odata.type.Double
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
+	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -99,6 +102,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			{
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
+					this.oFormatOptions = oFormatOptions;
 					setConstraints(this, oConstraints);
 				}
 			}

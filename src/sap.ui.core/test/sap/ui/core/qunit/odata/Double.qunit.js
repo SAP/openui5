@@ -30,32 +30,12 @@
 		ok(oType instanceof sap.ui.model.odata.type.Double, "is a Double");
 		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Double", "type name");
+		strictEqual(oType.oFormatOptions, undefined, "default format options");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
 		strictEqual(oType.oFormat, null, "no formatter preload");
 	});
 
 	//*********************************************************************************************
-	test("w/ float format options", function () {
-		var oType = new sap.ui.model.odata.type.Double({
-				minIntegerDigits: 5,
-				maxIntegerDigits: 5,
-				minFractionDigits: 5,
-				maxFractionDigits: 5,
-				pattern: "",
-				groupingEnabled: false,
-				groupingSeparator: "'",
-				decimalSeparator: ",",
-				plusSign: '+',
-				minusSign: '-',
-				showMeasure: true,
-				style: 'short',
-				roundingMode: 'floor'
-			});
-
-		strictEqual(oType.oFormatOptions, undefined, "float format options are ignored");
-	});
-
-//*********************************************************************************************
 	jQuery.each([
 		{i: {}, o: undefined},
 		{i: {nullable: true}, o: undefined},
@@ -111,23 +91,12 @@
 
 	//*********************************************************************************************
 	test("format: modified Swedish", function () {
-		var oType,
-			fnLocaleData = sap.ui.core.LocaleData.getInstance;
-
-		sinon.stub(sap.ui.core.LocaleData, "getInstance", function () {
-			var oLocaleData = fnLocaleData.apply(this, arguments);
-			oLocaleData.mData["symbols-latn-plusSign"] = ">";
-			oLocaleData.mData["symbols-latn-minusSign"] = "<";
-			return oLocaleData;
-		});
+		var oType = new sap.ui.model.odata.type.Double({plusSign: ">", minusSign: "<"});
 
 		// Swedish is interesting because it uses a different decimal separator, non-breaking
-		// space as grouping separator and _not_ the 'E' for the exponential format. We did not
-		// find any locale using different characters for plus or minus sign, so we modify the
-		// LocaleData here.
+		// space as grouping separator and _not_ the 'E' for the exponential format.
 		// TODO The 'e' is not replaced because NumberFormat doesn't care either (esp. in parse).
 		sap.ui.getCore().getConfiguration().setLanguage("sv");
-		oType = new sap.ui.model.odata.type.Double();
 
 		strictEqual(oType.formatValue("-1.234e+3", "string"), "<1\u00a0234", "check modification");
 		strictEqual(oType.formatValue("-1.234e+15", "string"), "<1,234\u00a0E>15",
@@ -215,6 +184,26 @@
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
 		strictEqual(oType.formatValue("1.234e3", "string"), "1'234",
 			"adjusted to changed language");
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		set: {foo: "bar"},
+		expect: {foo: "bar", groupingEnabled: true}
+	}, {
+		set: {decimals: 7, groupingEnabled: false},
+		expect: {decimals: 7, groupingEnabled: false}
+	}], function (i, oFixture) {
+		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
+			var oSpy,
+				oType = new sap.ui.model.odata.type.Double(oFixture.set);
+
+			deepEqual(oType.oFormatOptions, oFixture.set);
+
+			oSpy = this.spy(sap.ui.core.format.NumberFormat, "getFloatInstance");
+			oType.formatValue(42, "string");
+			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
+		});
 	});
 
 	// TODO precision (max 15 according to spec)

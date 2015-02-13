@@ -57,8 +57,11 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 *   the formatter
 	 */
 	function getFormatter(oType) {
+		var oFormatOptions;
+
 		if (!oType.oFormat) {
-			oType.oFormat = NumberFormat.getIntegerInstance({groupingEnabled: true});
+			oFormatOptions = jQuery.extend({groupingEnabled: true}, oType.oFormatOptions);
+			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
 		}
 		return oType.oFormat;
 	}
@@ -127,8 +130,8 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int64
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
+	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
 	 * @param {object} oConstraints
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -142,6 +145,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		{
 			constructor : function (oFormatOptions, oConstraints) {
 				ODataType.apply(this, arguments);
+				this.oFormatOptions = oFormatOptions;
 				setConstraints(this, oConstraints);
 			}
 		});

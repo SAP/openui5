@@ -58,6 +58,8 @@
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
 				<Label text="scale: &quot;variable&quot;, nullable: false"/>
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}}"/>
+				<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
+				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Double" />
 				<Label text="no constraints"/>
@@ -88,6 +90,8 @@
 				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64'}"/>
 				<Label text="sap.ui.model.odata.type.Int64, nullable=false"/>
 				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}}"/>
+				<Label text="sap.ui.model.odata.type.Int64, style: &quot;short&quot;"/>
+				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {style: 'short'}}"/>
 				<Label text="sap.ui.model.odata.type.SByte"/>
 				<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}"/>
 				<Label text="sap.ui.model.odata.type.SByte, nullable=false"/>

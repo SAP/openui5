@@ -32,25 +32,9 @@
 		ok(oType instanceof sap.ui.model.odata.type.Int64, "is a Int64");
 		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
 		strictEqual(oType.getName(), "sap.ui.model.odata.type.Int64", "type name");
+		strictEqual(oType.oFormatOptions, undefined, "default format options");
 		strictEqual(oType.oConstraints, undefined, "default constraints");
 		strictEqual(oType.oFormat, null, "no formatter preload");
-	});
-
-	//*********************************************************************************************
-	test("w/ format options", function () {
-		var oType = new sap.ui.model.odata.type.Int64({
-				minIntegerDigits: 5,
-				maxIntegerDigits: 5,
-				pattern: "",
-				groupingEnabled: false,
-				groupingSeparator: "'",
-				plusSign: '+',
-				minusSign: '-',
-				showMeasure: true,
-				style: 'short'
-			});
-
-		strictEqual(oType.oFormatOptions, undefined, "format options are ignored");
 	});
 
 	//*********************************************************************************************
@@ -270,6 +254,26 @@
 		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
 		strictEqual(oType.formatValue("1234", "string"), "1'234", "adjusted to changed language");
+	});
+
+	//*********************************************************************************************
+	jQuery.each([{
+		set: {foo: "bar"},
+		expect: {foo: "bar", groupingEnabled: true}
+	}, {
+		set: {minIntegerDigits: 17, groupingEnabled: false},
+		expect: {minIntegerDigits: 17, groupingEnabled: false}
+	}], function (i, oFixture) {
+		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
+			var oSpy,
+				oType = new sap.ui.model.odata.type.Int64(oFixture.set);
+
+			deepEqual(oType.oFormatOptions, oFixture.set);
+
+			oSpy = this.spy(sap.ui.core.format.NumberFormat, "getIntegerInstance");
+			oType.formatValue(42, "string");
+			sinon.assert.calledWithExactly(oSpy, oFixture.expect);
+		});
 	});
 
 } ());
