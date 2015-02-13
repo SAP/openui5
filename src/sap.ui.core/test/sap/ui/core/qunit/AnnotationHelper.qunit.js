@@ -36,8 +36,10 @@
 			constraints : {"nullable": false, "precision" : 13, "scale" : 3}
 		},
 		oDouble = {
-			name : "sap.ui.model.odata.type.Double",
-			constraints : {"nullable": false}
+			name : "sap.ui.model.odata.type.Double"
+		},
+		oFloat = {
+			name : "sap.ui.model.odata.type.Single"
 		},
 		oGuid = {
 			name : "sap.ui.model.odata.type.Guid",
@@ -58,6 +60,9 @@
 		oSByte = {
 			name : "sap.ui.model.odata.type.SByte",
 			constraints : {"nullable" : false}
+		},
+		oSingle = {
+			name : "sap.ui.model.odata.type.Single"
 		},
 		oString10 = {
 			name : "sap.ui.model.odata.type.String",
@@ -105,6 +110,10 @@
 							"type" : "Edm.Double",
 							"nullable" : "false"
 						}, {
+							"name" : "_Float",
+							"type" : "Edm.Float",
+							"nullable" : "false"
+						}, {
 							"name" : "_Guid",
 							"type" : "Edm.Guid",
 							"nullable" : "false"
@@ -123,6 +132,10 @@
 						}, {
 							"name" : "_SByte",
 							"type" : "Edm.SByte",
+							"nullable" : "false"
+						}, {
+							"name" : "_Single",
+							"type" : "Edm.Single",
 							"nullable" : "false"
 						}, {
 							"name" : "_String10",
@@ -151,6 +164,8 @@
 						}, {
 							"Value" : {"Path" : "_Double"}
 						}, {
+							"Value" : {"Path" : "_Float"}
+						}, {
 							"Value" : {"Path" : "_Guid"}
 						}, {
 							"Value" : {"Path" : "_Int16"}
@@ -160,6 +175,8 @@
 							"Value" : {"Path" : "_Int64"}
 						}, {
 							"Value" : {"Path" : "_SByte"}
+						}, {
+							"Value" : {"Path" : "_Single"}
 						}, {
 							"Value" : {"Path" : "_String10"}
 						}, {
@@ -548,27 +565,33 @@
 		type : oDouble
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/6/Value",
-		type : oGuid
+		type : oFloat
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/7/Value",
-		type : oInt16
+		type : oGuid
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/8/Value",
-		type : oInt32
+		type : oInt16
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/9/Value",
-		type : oInt64
+		type : oInt32
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/10/Value",
-		type : oSByte
+		type : oInt64
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/11/Value",
-		type : oString10
+		type : oSByte
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/12/Value",
-		type : oString80
+		type : oSingle
 	}, {
 		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/13/Value",
+		type : oString10
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/14/Value",
+		type : oString80
+	}, {
+		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/15/Value",
 		type : oTime
 	}], function (i, oFixture) {
 		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
