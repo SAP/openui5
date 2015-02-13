@@ -16,14 +16,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		/**
 		 * Handling of "14.5.3.1.1 Function odata.concat".
 		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @param {object[]} aParameters
 		 *   the parameters
-		 * @param {object} oInterface
-		 *   the callback interface related to the current formatter call
 		 * @returns {string}
 		 *   the resulting string value to write into the processed XML
 		 */
-		function concat(aParameters, oInterface) {
+		function concat(oInterface, aParameters) {
 			var aParts = [],
 				i, oParameter;
 
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				if (oParameter) {
 					switch (oParameter.Type) {
 					case "Path":
-						aParts.push(formatPath(oParameter.Value, oInterface, true).value);
+						aParts.push(formatPath(oInterface, oParameter.Value, true).value);
 						break;
 					case "String":
 						aParts.push(escapedString(oParameter.Value));
@@ -63,10 +63,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		/**
 		 * Calculates a dynamic expression.
 		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @param {object} oRawValue
 		 *   the raw value from the meta model
-		 * @param {object} oInterface
-		 *   the callback interface related to the current formatter call
 		 * @returns {object}
 		 *   the evaluated expression with the following parameters:
 		 *   result: "constant", "binding" or "expression"
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *     expressions are not wrapped (no "{=" and "}")
 		 *   type: the EDM data type (like "Edm.String") if it could be determined
 		 */
-		function dynamicExpression(oRawValue, oInterface) {
+		function dynamicExpression(oInterface, oRawValue) {
 			var sResult;
 
 			if (!oRawValue) {
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 			switch (oRawValue.Type) {
 			case "Path": // 14.5.12 Expression edm:Path
-				return formatPath(oRawValue.Value, oInterface, false);
+				return formatPath(oInterface, oRawValue.Value, false);
 			case "String": // 14.4.11 Expression edm:String
 				return {
 					result: "constant",
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			if (oRawValue.Apply && typeof oRawValue.Apply === "object") {
 				switch (oRawValue.Apply.Name) {
 				case "odata.uriEncode": // 14.5.3.1.3 Function odata.uriEncode
-					sResult = uriEncode(oRawValue.Apply.Parameters, oInterface);
+					sResult = uriEncode(oInterface, oRawValue.Apply.Parameters);
 					if (sResult) {
 						return {
 							result: "expression",
@@ -127,16 +127,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		/**
 		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
 		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @param {object[]} aParameters
 		 *   the parameters
-		 * @param {object} oInterface
-		 *   the callback interface related to the current formatter call
 		 * @returns {string}
 		 *   an expression binding in the format "{= odata.fillUriTemplate('template',
 		 *   {'param1': ${path1}, 'param2': ${path2}, ...}" or <code>undefined</code>
 		 *   if the parameters could not be processed
 		 */
-		function fillUriTemplate(aParameters, oInterface) {
+		function fillUriTemplate(oInterface, aParameters) {
 			var i,
 				aParts = [],
 				sPrefix,
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				aParts.push(sPrefix);
 				aParts.push(stringify(aParameters[i].Name));
 				aParts.push(": ");
-				oParameter = dynamicExpression(aParameters[i].Value, oInterface);
+				oParameter = dynamicExpression(oInterface, aParameters[i].Value);
 				switch (oParameter.result) {
 				case "binding":
 					aParts.push("$" + oParameter.value);
@@ -216,10 +216,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		/**
 		 * Handling of "14.5.12 Expression edm:Path".
 		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @param {string} sPath
 		 *   the string path value from the meta model
-		 * @param {object} oInterface
-		 *   the callback interface related to the current formatter call
 		 * @param {boolean} bWithType
 		 *   if <code>true</code> the type is included into the binding
 		 * @returns {object}
@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 *   value to write into the processed XML and <code>type</code> the property type (like
 		 *   "Edm.String")
 		 */
-		function formatPath(sPath, oInterface, bWithType) {
+		function formatPath(oInterface, sPath, bWithType) {
 			var oConstraints = {},
 				oModel = oInterface.getModel(),
 				sContextPath = oInterface.getPath(),
@@ -477,15 +477,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		/**
 		 * Handling of "14.5.3.1.3 Function odata.uriEncode".
 		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
 		 * @param {object[]} aParameters
 		 *   the parameters
-		 * @param {object} oInterface
-		 *   the callback interface related to the current formatter call
 		 * @returns {string}
 		 *   an expression binding in the format "{= odata.uriEncode(${path})}" or
 		 *   <code>undefined</code> if the parameters could not be processed
 		 */
-		function uriEncode(aParameters, oInterface) {
+		function uriEncode(oInterface, aParameters) {
 			var aParts = [],
 				oParameter = aParameters && aParameters[0],
 				oPathInfo;
@@ -497,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			switch (oParameter.Type) {
 				case "Path":
 					aParts.push('$');
-					oPathInfo = formatPath(oParameter.Value, oInterface, false);
+					oPathInfo = formatPath(oInterface, oParameter.Value, false);
 					aParts.push(oPathInfo.value);
 					aParts.push(", '");
 					aParts.push(oPathInfo.type);
@@ -586,8 +586,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.4.11 Expression edm:String
 				if (vRawValue && vRawValue.hasOwnProperty("String")) {
 					if (typeof vRawValue.String === "string") {
-						return formatPath("/##" + oInterface.getPath() + "/String",
-							oInterface, false).value;
+						sResult = "/##" + oInterface.getPath() + "/String";
+						return formatPath(oInterface, sResult, false).value;
 //						return fnEscape(vRawValue.String);
 					}
 					return illegalValue(vRawValue, "String");
@@ -596,7 +596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.5.12 Expression edm:Path
 				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
 					if (typeof vRawValue.Path === "string") {
-						return formatPath(vRawValue.Path, oInterface, true).value;
+						return formatPath(oInterface, vRawValue.Path, true).value;
 					}
 					return illegalValue(vRawValue, "Path");
 				}
@@ -606,17 +606,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 					switch (vRawValue.Apply.Name) {
 					case "odata.concat": // 14.5.3.1.1 Function odata.concat
 						if (jQuery.isArray(vRawValue.Apply.Parameters)) {
-							return concat(vRawValue.Apply.Parameters, oInterface);
+							return concat(oInterface, vRawValue.Apply.Parameters);
 						}
 						break;
 					case "odata.fillUriTemplate": // 14.5.3.1.2 Function odata.fillUriTemplate
-						sResult = fillUriTemplate(vRawValue.Apply.Parameters, oInterface);
+						sResult = fillUriTemplate(oInterface, vRawValue.Apply.Parameters);
 						if (sResult) {
 							return sResult;
 						}
 						break;
 					case "odata.uriEncode": // 14.5.3.1.3 Function odata.uriEncode
-						sResult = uriEncode(vRawValue.Apply.Parameters, oInterface);
+						sResult = uriEncode(oInterface, vRawValue.Apply.Parameters);
 						if (sResult) {
 							return sResult;
 						}
@@ -786,8 +786,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.5.12 Expression edm:Path
 				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
 					if (typeof vRawValue.Path === "string") {
-						//TODO oInterface should be 1st, consistently!
-						return formatPath(vRawValue.Path, oInterface, false).value;
+						return formatPath(oInterface, vRawValue.Path, false).value;
 					}
 					return illegalValue(vRawValue, "Path");
 				}
