@@ -144,6 +144,7 @@
 			// single interval selection
 			oCal = new sap.ui.unified.Calendar("Cal2",{
 				intervalSelection: true,
+				ariaLabelledBy: ["H-C2"],
 				select: function(oEvent){
 					var oTF1 = sap.ui.getCore().byId("TF2-start");
 					var oTF2 = sap.ui.getCore().byId("TF2-end");
@@ -307,7 +308,7 @@
 			<div id="event1" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 		<br>
-		<div>Single interval Selection Calendar</div>
+		<div id="H-C2">Single interval Selection Calendar</div>
 		<br>
 		<div>
 			<div id="sample2" style="display:inline-block;" class="sapUiSizeCompact"></div>
