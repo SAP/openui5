@@ -646,7 +646,8 @@
 		'</mvc:View>'
 	]], function (i, aViewContent) {
 		test("Expected <template:else>, but instead saw... (" + i + ")", function () {
-			unexpected(aViewContent, "Expected <template:else>, but instead saw {0}");
+			unexpected(aViewContent,
+				"Expected <template:elseif> or <template:else>, but instead saw {0}");
 		});
 	});
 
@@ -671,6 +672,83 @@
 		test("Expected </t:if>, but instead saw... (" + i + ")", function () {
 			unexpected(aViewContent, "Expected </t:if>, but instead saw {0}");
 		});
+	});
+
+	//*********************************************************************************************
+	test('<template:elseif>: if is true', function () {
+		check([
+			mvcView(),
+			'<template:if test="true">',
+			'<template:then>',
+			'<In id="true"/>',
+			'</template:then>',
+			'<template:elseif test="true">',
+			'<Out/>',
+			'</template:elseif>',
+			'<template:else>',
+			'<Out/>',
+			'</template:else>',
+			'</template:if>',
+			'</mvc:View>'
+		]);
+	});
+
+	//*********************************************************************************************
+	test('<template:elseif>: all false, w/ else', function () {
+		check([
+			mvcView(),
+			'<template:if test="false">',
+			'<template:then>',
+			'<Out/>',
+			'</template:then>',
+			'<template:elseif test="false">',
+			'<Out/>',
+			'</template:elseif>',
+			'<template:else>',
+			'<In id="true"/>',
+			'</template:else>',
+			'</template:if>',
+			'</mvc:View>'
+		]);
+	});
+
+	//*********************************************************************************************
+	test('<template:elseif>: all false, w/o else', function () {
+		check([
+			mvcView(),
+			'<template:if test="false">',
+			'<template:then>',
+			'<Out/>',
+			'</template:then>',
+			'<template:elseif test="false">',
+			'<Out/>',
+			'</template:elseif>',
+			'</template:if>',
+			'<!-- prevent empty tag -->',
+			'</mvc:View>'
+		]);
+	});
+
+	//*********************************************************************************************
+	test('<template:elseif>: elseif is true', function () {
+		check([
+			mvcView(),
+			'<template:if test="false">',
+			'<template:then>',
+			'<Out/>',
+			'</template:then>',
+			'<template:elseif test="false">',
+			'<Out/>',
+			'</template:elseif>',
+			'<template:elseif test="true">',
+			'<In id="true"/>',
+			'</template:elseif>',
+			'<template:else>',
+			'<Out/>',
+			'</template:else>',
+			'</template:if>',
+			'</mvc:View>'
+		]);
 	});
 
 	//*********************************************************************************************

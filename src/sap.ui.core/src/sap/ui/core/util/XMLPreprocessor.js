@@ -172,29 +172,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		}
 
 		/**
-		 * Returns the index of the next child element in the given parent element after the given
-		 * index (not a text or comment node).
-		 *
-		 * @param {Element} oParent
-		 *   The parent DOM node
-		 * @param {int} i
-		 *   The child node index to start search
-		 * @returns {int}
-		 *   The index of the next DOM Element or -1 if not found
-		 */
-		function getNextChildElementIndex(oParent, i) {
-			var oNodeList = oParent.childNodes;
-
-			while (i < oNodeList.length) {
-				if (oNodeList.item(i).nodeType === 1 /*ELEMENT_NODE*/) {
-					return i;
-				}
-				i += 1;
-			}
-			return -1;
-		}
-
-		/**
 		 * Returns <code>true</code> if the given element has the template namespace and the
 		 * given local name.
 		 *
@@ -277,50 +254,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				}
 
 				/**
-				 * Get the XML element for given <template:if> element which has to be part of the
-				 * output.
+				 * Determines the relevant children for the <template:if> element.
 				 *
 				 * @param {Element} oIfElement
-				 *   <template:if> element
-				 * @param {boolean} bCondition
-				 *   the evaluated condition of the <template:if>
-				 * @returns {Element}
-				 *   the DOM element whose children will be part of the output, or
-				 *   <code>undefined</code> in case there is no such element (i.e. <template:else>
-				 *   is missing)
-				 * @throws Error if the syntax of <template:if> element is not valid.
+				 *   the <template:if> element
+				 * @returns {Element[]}
+				 *   the children (a <then>, zero or more <elseif> and poss. an <else>) or null if
+				 *   there is no <then>
+				 * @throws Error
+				 *   if there is an unexpected child element
 				 */
-				function getThenOrElse(oIfElement, bCondition) {
-					var oChildNodeList = oIfElement.childNodes,
-						oElement,
-						oThenElement = oIfElement,
-						oElseElement,
-						iElementIndex = getNextChildElementIndex(oIfElement, 0);
+				function getIfChildren(oIfElement) {
+					var oNodeList = oIfElement.childNodes,
+						oChild,
+						aChildren = [],
+						i,
+						bFoundElse = false;
 
-					if (iElementIndex >= 0) {
-						oElement = oChildNodeList.item(iElementIndex);
-						if (isTemplateElement(oElement, "then")) {
-							// <then> found, look for <else> and expect nothing else
-							oThenElement = oElement;
-							iElementIndex
-								= getNextChildElementIndex(oIfElement, iElementIndex + 1);
-							if (iElementIndex > 0) {
-								oElseElement = oChildNodeList.item(iElementIndex);
-								if (!isTemplateElement(oElseElement, "else")) {
-									error("Expected <" + oIfElement.prefix
-										+ ":else>, but instead saw ", oElseElement);
-								}
-								iElementIndex
-									= getNextChildElementIndex(oIfElement, iElementIndex + 1);
-								if (iElementIndex > 0) {
-									error("Expected </" + oIfElement.prefix
-										+ ":if>, but instead saw ",
-										oChildNodeList.item(iElementIndex));
-								}
-							}
+					for (i = 0; i < oNodeList.length; i += 1) {
+						oChild = oNodeList.item(i);
+						if (oChild.nodeType === 1 /*ELEMENT_NODE*/) {
+							aChildren.push(oChild);
 						}
 					}
-					return bCondition ? oThenElement : oElseElement;
+					if (!aChildren.length || !isTemplateElement(aChildren[0], "then")) {
+						return null;
+					}
+					for (i = 1; i < aChildren.length; i += 1) {
+						oChild = aChildren[i];
+						if (bFoundElse) {
+							error("Expected </" + oIfElement.prefix + ":if>, but instead saw ",
+								oChild);
+						}
+						if (isTemplateElement(oChild, "else")) {
+							bFoundElse = true;
+						} else if (!isTemplateElement(oChild, "elseif")) {
+							error("Expected <" + oIfElement.prefix + ":elseif> or <"
+								+ oIfElement.prefix + ":else>, but instead saw ", aChildren[i]);
+						}
+					}
+					return aChildren;
 				}
 
 				/**
@@ -337,6 +310,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					while (oParent.firstChild) {
 						oTarget.parentNode.insertBefore(oParent.firstChild, oTarget);
 					}
+				}
+
+				/**
+				 * Performs the test in the given element.
+				 *
+				 * @param {Element} oElement
+				 *   the test element (either <if> or <elseif>)
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the "with" control
+				 * @returns {boolean}
+				 *   the test result
+				 */
+				function performTest(oElement, oWithControl) {
+					var vTest = oElement.getAttribute("test"),
+						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest);
+
+					/**
+					 * Outputs a warning; takes care not to serialize XML in vain.
+					 *
+					 * @param {string} sText
+					 *   the main text of the warning
+					 * @param {string} sDetails
+					 *   the details of the warning
+					 */
+					function warn(sText, sDetails) {
+						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+							jQuery.sap.log.warning(
+								sCaller + sText + serializeSingleElement(oElement),
+								sDetails, "sap.ui.core.util.XMLPreprocessor");
+						}
+					}
+
+					if (oBindingInfo) {
+						try {
+							vTest = getAny(oWithControl, oBindingInfo);
+							if (vTest === oUNBOUND) {
+								warn(': Binding not ready in ', null);
+								vTest = false;
+							}
+						} catch (ex) {
+							warn(': Error in formatter of ', ex);
+							vTest = false;
+						}
+					} else {
+						// constant test conditions are suspicious, but useful during development
+						warn(': Constant test condition in ', null);
+					}
+					return vTest && vTest !== "false";
 				}
 
 				/**
@@ -411,52 +432,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				/**
 				 * Processes a <template:if> instruction.
 				 *
-				 * @param {Element} oElement
+				 * @param {Element} oIfElement
 				 *   the <template:if> element
 				 * @param {sap.ui.core.util._with} oWithControl
 				 *   the "with" control
 				 */
-				function templateIf(oElement, oWithControl) {
-					var vTest = oElement.getAttribute("test"),
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest),
-						oChild;
+				function templateIf(oIfElement, oWithControl) {
+					var aChildren = getIfChildren(oIfElement),
+						// the selected element; iterates over aChildren; it is chosen if
+						// oTestElement evaluates to true or if the <else> has been reached
+						oSelectedElement,
+						// the element to run the test on (may be <if> or <elseif>)
+						oTestElement;
 
-					/**
-					 * Outputs a warning; takes care not to serialize XML in vain.
-					 *
-					 * @param {string} sText
-					 *   the main text of the warning
-					 * @param {string} sDetails
-					 *   the details of the warning
-					 */
-					function warn(sText, sDetails) {
-						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-							jQuery.sap.log.warning(
-								sCaller + sText + serializeSingleElement(oElement),
-								sDetails, "sap.ui.core.util.XMLPreprocessor");
-						}
-					}
-
-					if (oBindingInfo) {
-						try {
-							vTest = getAny(oWithControl, oBindingInfo);
-							if (vTest === oUNBOUND) {
-								warn(': Binding not ready in ', null);
-								vTest = false;
+					if (aChildren) {
+						oTestElement = oIfElement; // initially the <if>
+						oSelectedElement = aChildren.shift(); // initially the <then>
+						do {
+							if (performTest(oTestElement, oWithControl)) {
+								break;
 							}
-						} catch (ex) {
-							warn(': Error in formatter of ', ex);
-							vTest = false;
-						}
-					} else {
-						// constant test conditions are suspicious, but useful during development
-						warn(': Constant test condition in ', null);
+							oTestElement = oSelectedElement = aChildren.shift();
+							// repeat as long as we're on an <elseif>
+						} while (oTestElement && localName(oTestElement) === "elseif");
+					} else if (performTest(oIfElement, oWithControl)) {
+						// no <if>-specific children and <if> test is true -> select the <if>
+						oSelectedElement = oIfElement;
 					}
-					oChild = getThenOrElse(oElement, vTest && vTest !== "false");
-					if (oChild) {
-						liftChildNodes(oChild, oWithControl, oElement);
+					if (oSelectedElement) {
+						liftChildNodes(oSelectedElement, oWithControl, oIfElement);
 					}
-					oElement.parentNode.removeChild(oElement);
+					oIfElement.parentNode.removeChild(oIfElement);
 				}
 
 				/**
