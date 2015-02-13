@@ -285,12 +285,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		var $text = jQuery.sap.byId(this.getId() + "-realtext");
 		var $threeDots = jQuery.sap.byId(this.getId() + "-threeDots");
 		if (this._bTextExpanded) {
-			$text.text(this._sShortText);
+			$text.html(jQuery.sap.encodeHTML(this._sShortText).replace(/&#xa;/g, "<br>"));
 			$threeDots.text(" ... ");
 			this._oLinkExpandCollapse.setText(FeedListItem._sTextShowMore);
 			this._bTextExpanded = false;
 		} else {
-			$text.text(this._sFullText);
+			$text.html(jQuery.sap.encodeHTML(this._sFullText).replace(/&#xa;/g, "<br>"));
 			$threeDots.text("  ");
 			this._oLinkExpandCollapse.setText(FeedListItem._sTextShowLess);
 			this._bTextExpanded = true;
@@ -335,7 +335,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 				this._nMaxCollapsedLength = FeedListItem._nMaxCharactersDesktop;
 			}
 		}
-	
 		this._sFullText = this.getText();
 		var bTextIsExpandable = false;
 		if (this._sFullText.length > this._nMaxCollapsedLength) {
