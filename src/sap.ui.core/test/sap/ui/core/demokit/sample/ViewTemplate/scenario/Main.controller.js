@@ -101,7 +101,8 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 	_getSelectedType: function () {
 		var oView = this.getView(),
-			aTypes = oView.getModel("ui").getProperty("/types");
+			aTypes = oView.getModel("ui").getProperty("/types"),
+			i;
 
 		for (i = 0; i < aTypes.length; i += 1) {
 			if (aTypes[i].type === oView.getModel("ui").getProperty("/selectedType")) {
