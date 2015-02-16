@@ -56,8 +56,7 @@
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"
-						text="{ProductId}"
-						class="sapMTableContentMargin"  />
+						text="{ProductId}" />
 					<Text
 						text="{SupplierName}" />
 					<Text

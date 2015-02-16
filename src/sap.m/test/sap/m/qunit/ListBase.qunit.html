@@ -1233,6 +1233,7 @@
 				}));
 			}
 			
+			this.clock.tick(1);
 			strictEqual(oList.getItemNavigation().getFocusedIndex(), 1, "Focus index is set correctly");
 
 			// cleanup
@@ -1252,19 +1253,24 @@
 			sap.ui.getCore().applyChanges();
 			
 			// act
-			oList.onItemVisibleChange = fnSpy;
+			oList.onItemDOMUpdate = fnSpy;
 			
 			oListItem.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			
 			strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
 			strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
-			strictEqual(fnSpy.args[0][1], false, "Correct visible parameter is informed");
 			fnSpy.reset();
 			
 			oListItem.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			
 			strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
 			fnSpy.reset();
 			
 			oListItem.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			
 			strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
 			strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
 			strictEqual(fnSpy.args[0][1], true, "Correct visible parameter item is informed");

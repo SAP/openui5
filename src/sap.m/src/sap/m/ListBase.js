@@ -375,10 +375,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aSelectedPaths = [];
 		this._aNavSections = [];
 		this._bUpdating = false;
+		this._bRendering = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	ListBase.prototype.onBeforeRendering = function() {
+		this._bRendering = true;
 		this._aNavSections.length = 0;
 		if (this.hasOwnProperty("_$touchBlocker")) {
 			this._removeSwipeContent();	// remove the swipe content from screen immediately
@@ -387,8 +389,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	ListBase.prototype.onAfterRendering = function() {
-		this._startItemNavigation();
+		this._bRendering = false;
 		this._sLastMode = this.getMode();
+		this._bItemNavigationInvalidated = true;
 		if (!this._oGrowingDelegate && this.isBound("items")) {
 			this._updateFinished();
 		}
@@ -884,9 +887,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	
-	// this gets called when visible property of the ListItem is changed
-	ListBase.prototype.onItemVisibleChange = function(oListItem, bVisible) {
-		this._bItemNavigationInvalidated = true;
+	// this gets called when items DOM is changed
+	ListBase.prototype.onItemDOMUpdate = function(oListItem) {
+		if (!this._bRendering) {
+			this._startItemNavigation(true);
+		}
 	};
 	
 	// this gets called when selected property of the ListItem is changed
@@ -935,9 +940,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		if (this.getShowNoData() && oGrowingInfo.total) {
 			this.$("nodata").remove();
 		}
-	
-		// refresh item navigation
-		this._startItemNavigation();
 	
 		// fire events
 		this._fireUpdateFinished(oGrowingInfo);
@@ -988,7 +990,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeSelections(true);
 			this._hideBusyIndicator();
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
-			this._oItemNavigation && this._oItemNavigation.setFocusedIndex(-1);
+			this._oItemNavigation && this._oItemNavigation.destroy();
 		}
 	};
 	
@@ -1023,6 +1025,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
 		jQuery.sap.delayedCall(0, this, function() {
+			this._startItemNavigation(true);
 			this._hideBusyIndicator();
 			this.fireUpdateFinished({
 				reason : this._sUpdateReason,
@@ -1448,7 +1451,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
-	ListBase.prototype._startItemNavigation = function() {
+	ListBase.prototype._startItemNavigation = function(bIfNeeded) {
+		// if focus is not on the list then only invalidate the item navigation
+		if (bIfNeeded) {
+			var oNavigationRoot = this.getNavigationRoot();
+			if (!oNavigationRoot || !oNavigationRoot.contains(document.activeElement)) {
+				this._bItemNavigationInvalidated = true;
+				return;
+			}
+		}
+		
 		// clear invalidation
 		this._bItemNavigationInvalidated = false;
 	
@@ -1485,13 +1497,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		
 		// configure navigatable items
 		this.setNavigationItems(this._oItemNavigation, oNavigationRoot);
-		
-		// configure invalid focus index incase of item remove
-		var iFocusIndex = this._oItemNavigation.getFocusedIndex();
-		var iNavigationItemsLength = this._oItemNavigation.getItemDomRefs().length;
-		if (iFocusIndex > iNavigationItemsLength - 1) {
-			this._oItemNavigation.setFocusedIndex(iNavigationItemsLength - 1);
-		}
 	};
 	
 	/*
@@ -1561,8 +1566,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// move focus out of the table for nodata row
 	ListBase.prototype.onsaptabprevious = function(oEvent) {
-		if (oEvent.target.id == this.getId("nodata")) {
+		var sTargetId = oEvent.target.id;
+		if (sTargetId == this.getId("nodata")) {
 			this.forwardTab(false);
+		} else if (sTargetId == this.getId("trigger")) {
+			this.focusPrevious();
+			oEvent.preventDefault();
 		}
 	};
 	
@@ -1649,7 +1658,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Ctrl + A to switch select all/none
 	ListBase.prototype.onkeydown = function(oEvent) {
-		
+
 		var bCtrlA = (oEvent.which == jQuery.sap.KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
 		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
@@ -1668,6 +1677,29 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 		
 		oEvent.setMarked();
+	};
+	
+	ListBase.prototype.onmousedown = function(oEvent) {
+		// check whether item navigation should be reapplied from scratch
+		if (this._bItemNavigationInvalidated) {
+			this._startItemNavigation();
+		}
+	};
+	
+	// focus to previously focused element known in item navigation
+	ListBase.prototype.focusPrevious = function() {
+		// get the last focused element from the ItemNavigation
+		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
+		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
+		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
+
+		// find related item control to get tabbables
+		var oRelatedControl = $LastFocused.control(0) || {};
+		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
+		
+		// get the last tabbable item or itself and focus
+		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
+		$FocusElement.focus();
 	};
 	
 	// Handles focus to reposition the focus to correct place
@@ -1692,18 +1724,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 	
-		// get the last focused element from the ItemNavigation
-		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
-		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
-		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
-
-		// find related item control to get tabbables
-		var oRelatedControl = $LastFocused.control(0) || {};
-		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
-		
-		// get the last tabbable item or itself and focus
-		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
-		$FocusElement.focus();
+		this.focusPrevious();
 		oEvent.setMarked();
 	};
 

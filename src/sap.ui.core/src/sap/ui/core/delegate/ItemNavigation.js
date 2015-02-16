@@ -263,6 +263,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ItemNavigation.prototype.setItemDomRefs = function(aItemDomRefs) {
 		this.aItemDomRefs = aItemDomRefs;
 
+		if (this.iFocusedIndex > aItemDomRefs.length - 1) {
+			this.iFocusedIndex = aItemDomRefs.length - 1;
+		}
+
 		// in nested ItemNavigation the tabindex must only be set if it's the focused item of the parent ItemNavigation
 		for (var i = 0; i < this.aItemDomRefs.length; i++) {
 			if (this.aItemDomRefs[i]) { // separators return null here
@@ -366,6 +370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		this._bItemTabIndex = undefined;
+		this.iFocusedIndex = -1;
 	};
 
 	/**

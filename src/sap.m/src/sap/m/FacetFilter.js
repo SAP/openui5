@@ -1051,7 +1051,10 @@ oPopover.setContentWidth("30%");
 			var oFromPage = oEvent.getParameters()['from'];
 			//keyboard acc - focus on 1st item of 2nd page
 			if (oFromPage === oFacetPage) {
-				jQuery.sap.focus(oToPage.getContent(0)[1].getItemNavigation().getItemDomRefs()[0]);
+				var oFirstItem = oToPage.getContent(0)[1].getItems()[0];
+				if (oFirstItem) {
+					oFirstItem.focus();
+				}
 			}
 			if (oToPage === oFacetPage) {
 				// Destroy the search field bar

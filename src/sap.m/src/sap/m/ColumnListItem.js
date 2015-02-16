@@ -114,11 +114,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * Remove pop-in from DOM when setVisible false is called
 	 * @overwite
 	 */
-	ColumnListItem.prototype.setVisible = function() {
-		ListItemBase.prototype.setVisible.apply(this, arguments);
-		if (!this.getVisible()) {
+	ColumnListItem.prototype.setVisible = function(bVisible) {
+		ListItemBase.prototype.setVisible.call(this, bVisible);
+		if (!bVisible) {
 			this.removePopin();
 		}
+		
 		return this;
 	};
 	
