@@ -172,35 +172,89 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
-		 * Follows the given path in the given model, starting at the given absolute path,
-		 * and returns the resulting absolute path.
+		 * Follows the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
+		 * the given raw value, starting the absolute path identified by the given interface, and
+		 * returns the resulting absolute path as well as some other aspects about the path.
 		 *
-		 * @param {sap.ui.model.odata.ODataMetaModel} oModel
-		 *   the current model
-		 * @param {string} sContextPath
-		 *   an absolute path to start from
-		 * @param {string} sPath
-		 *   the value of the dynamic "14.5.12 Expression edm:Path" (or variant thereof)
-		 * @returns {string}
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call; the path must be within
+		 *   an entity type!
+		 * @param {any} vRawValue
+		 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
+		 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
+		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
+		 * @returns {object}
+		 *   - {object} [associationSetEnd=undefined]
+		 *   association set end corresponding to the last navigation property
+		 *   - {boolean} [navigationAfterMultiple=false]
+		 *   if the navigation path has an association end with multiplicity "*" which is not
+		 *   the last one
+		 *   - {boolean} [isMultiple=false]
+		 *   whether the navigation path ends with an association end with multiplicity "*"
+		 *   - {string[]} [navigationProperties=[]]
+		 *   all navigation property names
+		 *   - {string} [resolvedPath=undefined]
 		 *   the resulting absolute path
+		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
 		 */
-		function follow(oModel, sContextPath, sPath) {
+		function followPath(oInterface, vRawValue) {
 			var oAssociationEnd,
+				sContextPath,
 				oEntity,
-				aParts = sPath.split("/");
+				iIndexOfAt,
+				aMatches,
+				oModel = oInterface.getModel(),
+				aParts,
+				sPath,
+				oResult = {
+					associationSetEnd : undefined,
+					navigationAfterMultiple : false,
+					isMultiple : false,
+					navigationProperties : [],
+					resolvedPath : undefined
+				},
+				sSegment;
+
+			if (vRawValue && vRawValue.hasOwnProperty("AnnotationPath")) {
+				sPath = vRawValue.AnnotationPath;
+			} else if (vRawValue && vRawValue.hasOwnProperty("Path")) {
+				sPath = vRawValue.Path;
+			} else {
+				return undefined; // some unsupported case
+			}
+
+			aMatches = rEntityTypePath.exec(oInterface.getPath());
+			if (!aMatches) {
+				return undefined;
+			}
+
+			// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
+			sContextPath = aMatches[1];
+			aParts = sPath.split("/");
 
 			while (sPath && aParts.length && sContextPath) {
-				if (aParts[0].charAt(0) === "@") {
+				sSegment = aParts[0];
+				iIndexOfAt = sSegment.indexOf("@");
+				if (iIndexOfAt === 0) {
 					// term cast
-					sContextPath += "/" + aParts[0].slice(1);
+					sContextPath += "/" + sSegment.slice(1);
 					aParts.shift();
 					continue;
+//				} else if (iIndexOfAt > 0) { // annotation of a navigation property
+//					sSegment = sSegment.slice(0, iIndexOfAt);
 				}
 
 				oEntity = oModel.getObject(sContextPath);
-				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, aParts[0]);
+				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
 				if (oAssociationEnd) {
 					// navigation property
+					oResult.associationSetEnd
+						= oModel.getODataAssociationSetEnd(oEntity, sSegment);
+					oResult.navigationProperties.push(sSegment);
+					if (oResult.isMultiple) {
+						oResult.navigationAfterMultiple = true;
+					}
+					oResult.isMultiple = oAssociationEnd.multiplicity === "*";
 					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
 					aParts.shift();
 					continue;
@@ -210,7 +264,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
 			}
 
-			return sContextPath;
+			oResult.resolvedPath = sContextPath;
+			return oResult;
 		}
 
 		/**
@@ -345,67 +400,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			jQuery.sap.log.warning("Illegal value for " + sName + ": "
 					+ vRawValue[sName], null, "sap.ui.model.odata.AnnotationHelper");
 			return escapedString(vRawValue[sName]);
-		}
-
-		/**
-		 * Follows the given path in the given model, starting at the given absolute path, and
-		 * returns whether the navigation path ends with an association end with multiplicity "*".
-		 *
-		 * @param {sap.ui.model.odata.ODataMetaModel} oModel
-		 *   the current model
-		 * @param {string} sContextPath
-		 *   an absolute path to start from
-		 * @param {string} sPath
-		 *   the value of the dynamic "14.5.12 Expression edm:Path" (or variant thereof)
-		 * @returns {boolean}
-		 *    whether the navigation path ends with an association end with multiplicity "*";
-		 *    returns <code>undefined</code> in case the navigation path cannot be determined
-		 *    (this is treated as falsy in <code>template:if</code> statements!)
-		 * @throws {Error}
-		 *   if the navigation path has an association end with multiplicity "*" which is not
-		 *   the last one
-		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
-		 */
-		function isMultiple(oModel, sContextPath, sPath) {
-			var oAssociationEnd,
-				oEntity,
-				iIndexOfAt,
-				bMultiplicity = false,
-				aParts = sPath.split("/"),
-				sSegment;
-
-			while (sPath && aParts.length && sContextPath) {
-				sSegment = aParts[0];
-				iIndexOfAt = sSegment.indexOf("@");
-				if (iIndexOfAt === 0) {
-					// term cast
-					sContextPath += "/" + sSegment.slice(1);
-					aParts.shift();
-					continue;
-				} else if (iIndexOfAt > 0) { // annotation of a navigation property
-					sSegment = sSegment.slice(0, iIndexOfAt);
-				}
-
-				oEntity = oModel.getObject(sContextPath);
-				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
-//TODO				if (oAssociationEnd) {
-					// navigation property
-					if (bMultiplicity) {
-						throw new Error(
-							'Association end with multiplicity "*" is not the last one: '
-							+ sPath);
-					}
-					bMultiplicity = oAssociationEnd.multiplicity === "*";
-					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
-					aParts.shift();
-					continue;
-//				}
-//
-//				// structural properties or some unsupported case
-//TODO				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
-			}
-
-			return bMultiplicity;
 		}
 
 		/**
@@ -652,7 +646,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @param {any} vRawValue
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
-			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
+			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
+			 *   embedded within an entity type
 			 * @returns {string}
 			 *   the resulting string value to write into the processed XML, e.g. "{ToSupplier}"
 			 *   or "{}" (in case no navigation is needed); returns "" in case the navigation path
@@ -661,25 +656,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			getNavigationPath : function (oInterface, vRawValue) {
-				var aParts = [];
+				var oResult = followPath(oInterface, vRawValue);
 
-				if (!vRawValue.AnnotationPath) {
-					return "";
-				}
+				return oResult
+					? "{" + oResult.navigationProperties.join("/") + "}"
+					: "";
+			},
 
-				jQuery.each(vRawValue.AnnotationPath.split("/"), function (iUnused, sSegment) {
-					var i = sSegment.indexOf("@");
+			/**
+			 * Helper function for a <code>template:with</code> instruction that goes to the
+			 * entity set determined by the last navigation property of a dynamic
+			 * "14.5.2 Expression edm:AnnotationPath".
+			 *
+			 * Example:
+			 * <pre>
+			 *   &lt;template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.gotoEntitySet" var="entitySet">
+			 * </pre>
+			 *
+			 * @param {sap.ui.model.Context} oContext
+			 *   a context which must point to an annotation or annotation property of type
+			 *   <code>Edm.AnnotationPath</code>, embedded within an entity type;
+			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
+			 * @returns {string}
+			 *   the path to the entity set determined by the last navigation property,
+			 *   or <code>undefined</code> if no such set is found
+			 * @public
+			 */
+			gotoEntitySet : function (oContext) {
+				var oResult = followPath(oContext, oContext.getObject());
 
-					if (i === 0) { // term cast
-						return false; // break
-					} else if (i > 0) { // annotation of a navigation property
-						aParts.push(sSegment.slice(0, i));
-						return false; // break
-					}
-					// navigation property
-					aParts.push(sSegment);
-				});
-				return "{" + aParts.join("/") + "}";
+				return oResult && oResult.associationSetEnd
+					? oContext.getModel()
+							.getODataEntitySet(oResult.associationSetEnd.entitySet, true)
+					: undefined;
 			},
 
 			/**
@@ -728,28 +737,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
 			 *   embedded within an entity type
-			 * @returns {boolean}
-			 *    whether the navigation path ends with an association end with multiplicity "*";
-			 *    returns <code>undefined</code> in case the navigation path cannot be determined
-			 *    (this is treated as falsy in <code>template:if</code> statements!)
+			 * @returns {string}
+			 *    <code>"true"</code> if the navigation path ends with an association end with
+			 *    multiplicity "*", <code>""</code> in case the navigation path cannot be
+			 *    determined, <code>"false"</code> otherwise (the latter are both treated as falsy
+			 *    in <code>template:if</code> statements!)
 			 * @throws {Error}
 			 *   if the navigation path has an association end with multiplicity "*" which is not
 			 *   the last one
 			 * @public
 			 */
 			isMultiple : function (oInterface, vRawValue) {
-				var aMatches,
-					oModel = oInterface.getModel(),
-					sContextPath = oInterface.getPath(),
-					aMatches = rEntityTypePath.exec(sContextPath);
+				var oResult = followPath(oInterface, vRawValue);
 
-//TODO				if (aMatches) {
-					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
-//					if (vRawValue.hasOwnProperty("AnnotationPath")) {
-						return isMultiple(oModel, aMatches[1], vRawValue.AnnotationPath);
-//					}
-//					return undefined; // some unsupported case
-//				}
+				if (oResult) {
+					if (oResult.navigationAfterMultiple) {
+						throw new Error(
+							'Association end with multiplicity "*" is not the last one: '
+							+ vRawValue.AnnotationPath);
+					}
+					return String(oResult.isMultiple);
+				}
+				return "";
 			},
 
 			/**
@@ -773,19 +782,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			resolvePath : function (oContext) {
-				var aMatches = rEntityTypePath.exec(oContext.getPath()),
-					vRawValue = oContext.getObject();
+				var oResult = followPath(oContext, oContext.getObject());
 
-				if (aMatches) {
-					// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
-					if (vRawValue.hasOwnProperty("AnnotationPath")) {
-						return follow(oContext.getModel(), aMatches[1], vRawValue.AnnotationPath);
-					}
-					if (vRawValue.hasOwnProperty("Path")) {
-						return follow(oContext.getModel(), aMatches[1], vRawValue.Path);
-					}
-					return undefined; // some unsupported case
-				}
+				return oResult
+					? oResult.resolvedPath
+					: undefined;
 			},
 
 			/**
