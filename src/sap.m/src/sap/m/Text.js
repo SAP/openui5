@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The Text control is used to display some continuous text.
+	 * The text control can be used for embedding longer paragraphs of text into your application, that need text wrapping.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 *
