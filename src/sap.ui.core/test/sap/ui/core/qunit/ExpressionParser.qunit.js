@@ -361,4 +361,9 @@
 		{ expression: "{=typeof 42}", result: "number" },
 		{ expression: "{=typeof42}", result: "undefined" } // typeof is no fix length token
 	]);
+
+	//*********************************************************************************************
+	checkFixtures("RegExp", [
+		{ expression: "{=RegExp('foo','i').test('FooBar')}", result: "true" }
+	]);
 } ());
