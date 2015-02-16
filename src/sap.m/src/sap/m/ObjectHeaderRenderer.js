@@ -411,8 +411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var oObjectNumber = oOH.getAggregation("_objectNumber");
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
-			// adjust alignment according the design specification
-			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End);
+			oObjectNumber.setTextDirection(oOH.getNumberTextDirection());
 			this._renderChildControl(oRM, oOH, oObjectNumber);
 		}
 
@@ -1140,8 +1139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var oObjectNumber = oControl.getAggregation("_objectNumber");
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
-			// adjust alignment according the design specification
-			oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End);
+			oObjectNumber.setTextDirection(oControl.getNumberTextDirection());
 			this._renderChildControl(oRM, oControl, oObjectNumber);
 		}
 	};
