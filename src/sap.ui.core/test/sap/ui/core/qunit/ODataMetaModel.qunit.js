@@ -110,8 +110,41 @@
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
 <edmx:DataServices>\
 <Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm">\
-<Annotations Target="GWSAMPLE_BASIC.BusinessPartner">\
-	<Annotation Term="com.sap.vocabularies.Common.v1.Foo" String="foo" />\
+<Annotations Target="GWSAMPLE_BASIC">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.Assoc_Foo">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.Assoc_Foo" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.Assoc_Foo/FromRole_Foo">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.Assoc_Foo/FromRole_Foo" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/ToFoo">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.BusinessPartner/ToFoo" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.CT_Address">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.CT_Address" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.CT_Address/City">\
+	<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="GWSAMPLE_BASIC.CT_Address/City" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet/FromRole_Foo">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet/FromRole_Foo" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo" />\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID">\
+	<Annotation Term="acme.Foo.v1.Foo" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID" />\
 </Annotations>\
 </Schema>\
 </edmx:DataServices>\
@@ -504,6 +537,7 @@
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
 					oEntityContainer = oGWSampleBasic.entityContainer[0],
 					oAssociation = oGWSampleBasic.association[0],
+					oAssociationEnd = oAssociation.end[0],
 					oAssociationSet = oEntityContainer.associationSet[0],
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
@@ -523,8 +557,7 @@
 				deepEqual(arguments[0], undefined, "almost no args");
 				ok(oMetadata, "metadata is loaded");
 
-				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0",
-					"$path");
+				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0");
 				delete oBusinessPartner.$path;
 
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
@@ -549,6 +582,9 @@
 				deepEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
 
+				strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
+				delete oAssociation.$path;
+
 				deepEqual(oAssociationSet["sap:creatable"], "false");
 				delete oAssociationSet["sap:creatable"];
 
@@ -557,6 +593,9 @@
 
 				deepEqual(oEntityContainer["sap:use-batch"], "false");
 				delete oEntityContainer["sap:use-batch"];
+
+				strictEqual(oEntityContainer.$path, "/dataServices/schema/0/entityContainer/0");
+				delete oEntityContainer.$path;
 
 				deepEqual(oFunctionImport["sap:action-for"], "GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
@@ -610,10 +649,63 @@
 					delete oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"];
 
 					if (i > 1) { // additional tests for 2nd annotations file
-						deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"], {
-							"String" : "foo"
+						// schema
+						deepEqual(oGWSampleBasic["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC"
 						});
-						delete oBusinessPartner["com.sap.vocabularies.Common.v1.Foo"];
+						delete oGWSampleBasic["acme.Foo.v1.Foo"];
+						// entity type: navigation property
+						deepEqual(oNavigationProperty["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.BusinessPartner/ToFoo"
+						});
+						delete oNavigationProperty["acme.Foo.v1.Foo"];
+						// complex type
+						deepEqual(oCTAddress["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.CT_Address"
+						});
+						delete oCTAddress["acme.Foo.v1.Foo"];
+						// complex type: property
+						deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
+							"String" : "GWSAMPLE_BASIC.CT_Address/City"
+						});
+						delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
+						// association
+						deepEqual(oAssociation["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.Assoc_Foo"
+						});
+						delete oAssociation["acme.Foo.v1.Foo"];
+						// association: end
+						deepEqual(oAssociationEnd["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.Assoc_Foo/FromRole_Foo"
+						});
+						delete oAssociationEnd["acme.Foo.v1.Foo"];
+						// entity container
+						deepEqual(oEntityContainer["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"
+						});
+						delete oEntityContainer["acme.Foo.v1.Foo"];
+						// entity container: association set
+						deepEqual(oAssociationSet["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet"
+						});
+						delete oAssociationSet["acme.Foo.v1.Foo"];
+						// Note: "entity container: association set: end" is not needed!
+						// entity container: entity set
+						deepEqual(oBusinessPartnerSet["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet"
+						});
+						delete oBusinessPartnerSet["acme.Foo.v1.Foo"];
+						// entity container: function import
+						deepEqual(oFunctionImport["acme.Foo.v1.Foo"], {
+							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo"
+						});
+						delete oFunctionImport["acme.Foo.v1.Foo"];
+						// entity container: function import: parameter
+						deepEqual(oParameter["acme.Foo.v1.Foo"], {
+							"String"
+								: "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID"
+						});
+						delete oParameter["acme.Foo.v1.Foo"];
 					}
 				}
 
