@@ -23,14 +23,11 @@
 				<Property Name="Attribute2" Type="Edm.String" Nullable="false"
 					MaxLength="40" sap:label="Attribute2" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" />
-				<Property Name="ShortDescription" Type="Edm.String"
-					Nullable="false" MaxLength="255" sap:label="ShortDescription"
-					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
 				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false"
 					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
-				<Property Name="UnitQuantity" Type="Edm.Decimal" Nullable="false"
-					Precision="23" Scale="4" sap:label="Unit Quantity" sap:creatable="false"
+				<Property Name="UnitNumber" Type="Edm.Decimal" Nullable="false"
+					Precision="23" Scale="4" sap:label="Unit Number" sap:creatable="false"
 					sap:updatable="false" sap:filterable="false" />
 					<NavigationProperty Name="LineItems" Relationship="MD_TEMPLATE.FK_Object_LineItems" FromRole="Objects" ToRole="LineItems" />
 			</EntityType>
@@ -49,17 +46,14 @@
 				<Property Name="Name" Type="Edm.String" Nullable="false"
 					sap:creatable="false" sap:updatable="false" sap:sortable="false"
 					sap:filterable="false" />
-				<Property Name="LineItemText" Type="Edm.String" Nullable="false"
-					MaxLength="40" sap:creatable="false" sap:updatable="false"
-					sap:sortable="false" sap:filterable="false" />
 				<Property Name="Attribute" Type="Edm.String"  Nullable="false"
 					MaxLength="40" sap:creatable="false" sap:updatable="false"
 					sap:sortable="false" sap:filterable="false" />
 				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false"
 					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
-				<Property Name="UnitQuantity" Type="Edm.Decimal" Nullable="false"
-					Precision="23" Scale="4" sap:label="Unit Quantity" sap:creatable="false"
+				<Property Name="UnitNumber" Type="Edm.Decimal" Nullable="false"
+					Precision="23" Scale="4" sap:label="Unit Number" sap:creatable="false"
 					sap:updatable="false" sap:filterable="false" />
 				<NavigationProperty Name="Object" Relationship="MD_TEMPLATE.FK_Object_LineItems" FromRole="LineItems" ToRole="Objects" />
 			</EntityType>

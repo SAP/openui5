@@ -27,7 +27,7 @@ sap.ui.require(
 			var sModelPath = "modelPath",
 				oModelStub = {
 					//Provide data in the model
-					getData : this.stub().withArgs().returns({})
+					getProperty : this.stub().withArgs().returns({})
 				},
 				oElementBindingStub = {
 					isInitial : this.stub().returns(false),
@@ -55,10 +55,9 @@ sap.ui.require(
 				}),
 				oModelStub = {
 					//Don't provide data
-					getData : this.stub().withArgs(sModelPath).returns()
+					getProperty : this.stub().withArgs(sModelPath).returns()
 				},
 				oElementBindingStub = {
-					isInitial : this.stub().returns(true),
 					getPath : this.stub().returns(sModelPath),
 					getModel : this.stub().returns(oModelStub),
 					attachEventOnce : fnAttachDataReceived
@@ -85,16 +84,23 @@ sap.ui.require(
 			// Arrange
 			var sModelPath = "modelPath",
 				fnDataReceivedCallback,
+				bIsFirstGetPropertyCall = true,
 				fnAttachDataReceived = this.spy(function (sEventName, fnCallback) {
 					fnDataReceivedCallback = fnCallback;
 					assert.strictEqual(sEventName, "dataReceived", "Did attach on data received");
 				}),
 				oModelStub = {
 					//Provide data in the model
-					getData : this.stub().withArgs().returns({})
+					getProperty : function () {
+						if (bIsFirstGetPropertyCall) {
+							bIsFirstGetPropertyCall = false;
+							return;
+						}
+						// Second time this is called simulate data came from the server.
+						return {};
+					}
 				},
 				oElementBindingStub = {
-					isInitial : this.stub().returns(true),
 					getPath : this.stub().returns(sModelPath),
 					getModel : this.stub().returns(oModelStub),
 					attachEventOnce : fnAttachDataReceived
@@ -103,7 +109,7 @@ sap.ui.require(
 				fnResolveSpy = this.spy(function (sPath) {
 					// Assert
 					assert.strictEqual(fnRejectSpy.callCount, 0, "Did not reject");
-					assert.strictEqual(sPath, sModelPath, "Dis pass the correct path");
+					assert.strictEqual(sPath, sModelPath, "Did pass the correct path");
 					QUnit.start();
 				});
 
