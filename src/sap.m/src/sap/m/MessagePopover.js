@@ -205,29 +205,26 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 */
 		MessagePopover.prototype.exit = function () {
 			this._oResourceBundle = null;
-
-			if (this._oPopover) {
-				this._oPopover.destroy();
-				this._oPopover = null;
-			}
-
-			if (this._oListHeader) {
-				this._oListHeader.destroy();
-				this._oListHeader = null;
-			}
-
-			if (this._oDetailsHeader) {
-				this._oDetailsHeader.destroy();
-				this._oDetailsHeader = null;
-			}
-
-			if (this._oSegmentedButton) {
-				this._oSegmentedButton.destroy();
-				this._oSegmentedButton = null;
-			}
+			this._oListHeader = null;
+			this._oDetailsHeader = null;
+			this._oSegmentedButton = null;
+			this._oBackButton = null;
+			this._navContainer = null;
+			this._listPage = null;
+			this._detailsPage = null;
+			this._sCurrentList = null;
 
 			if (this._oLists) {
 				this._destroyLists();
+			}
+
+			// Destroys ResponsivePopover control, used in the MessagePopover.
+			// This will walk through all aggregations in the Popover and destroys them (in our case this is NavContainer).
+			// After that this will wal through all aggregation in the NavContainer etc.. down to the last control we used
+			// in the Messagepopover.
+			if (this._oPopover) {
+				this._oPopover.destroy();
+				this._oPopover = null;
 			}
 		};
 
@@ -444,10 +441,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			var that = this;
 
 			LISTTYPES.forEach(function (sListName) {
-				if (that._oLists[sListName]) {
-					that._oLists[sListName].destroy();
-					that._oLists[sListName] = null;
-				}
+				that._oLists[sListName] = null;
 			});
 
 			this._oLists = null;
