@@ -367,7 +367,17 @@
 				{ "name" : "expand-group" },
 				{ "name" : "collapse-group" },
 				{ "name" : "sort-descending" },
-				{ "name" : "sort-ascending" }
+				{ "name" : "sort-ascending" },
+				{ "name" : "restart" },
+				{ "name" : "stop" },
+				{ "name" : "add-process" },
+				{ "name" : "cancel-maintenance" },
+				{ "name" : "activate" },
+				{ "name" : "resize-horizontal" },
+				{ "name" : "resize-vertical" },
+				{ "name" : "edit-outside" },
+				{ "name" : "minimize" },
+				{ "name" : "back-to-top" }
 			]
 		},
 		
@@ -455,7 +465,9 @@
 				{ "name" : "sys-enter" },
 				{ "name" : "sys-help-2" },
 				{ "name" : "sys-help" },
-				{ "name" : "sys-cancel" }
+				{ "name" : "sys-cancel" },
+				{ "name" : "connected" },
+				{ "name" : "disconnected" }
 			]
 		},
 		
@@ -500,7 +512,8 @@
 				{ "name" : "sales-notification" },
 				{ "name" : "discussion-2" },
 				{ "name" : "discussion" },
-				{ "name" : "tag-cloud-chart" }
+				{ "name" : "tag-cloud-chart" },
+				{ "name" : "hello-world" }
 			]
 		},
 		
@@ -559,7 +572,8 @@
 				{ "name" : "explorer" },
 				{ "name" : "sys-monitor" },
 				{ "name" : "sys-find" },
-				{ "name" : "display" }
+				{ "name" : "display" },
+				{ "name" : "key" }
 			]
 		},
 		
