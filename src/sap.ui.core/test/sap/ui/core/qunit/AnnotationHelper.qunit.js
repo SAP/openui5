@@ -665,13 +665,7 @@
 	//*********************************************************************************************
 	test("14.5.3.1.2 Function odata.fillUriTemplate: test data", function () {
 		withTestModel(function (oTestModel) {
-			var oCurrentContext = oTestModel.getContext(sPathPrefix +
-				"/com.sap.vocabularies.UI.v1.Identification/3/Url/UrlRef"),
-				oInvalid = {
-					Type: "Path",
-					Value: "{with:invalid:chars}"
-				},
-				oUnsupported = {
+			var oUnsupported = {
 					Type: "Unsupported",
 					Value: "foo"
 				},
@@ -710,7 +704,7 @@
 					}
 				};
 
-			testBinding(oRawValue, oCurrentContext, "http://www.foo.com/\"/1234.56,,"
+			testBinding(oRawValue, undefined, "http://www.foo.com/\"/1234.56,,"
 					+ encodeURIComponent("Unsupported: "
 					+ JSON.stringify(oUnsupported) .replace(/"/g, "'")).replace(/'/g, "%27")
 					+ ",Unsupported%3A%20null,%7B%27%5C%27%7D,bar%3Fbaz",
@@ -728,9 +722,7 @@
 			+ "{''Type'':''Unsupported'',''Value'':''foo\\\\bar''}]'"}
 	], function (iUnused, oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
-			var oCurrentContext = oTestModel.getContext(sPathPrefix +
-					"/com.sap.vocabularies.UI.v1.Identification/3/Url/UrlRef"),
-				oRawValue = {
+			var oRawValue = {
 					Apply: {
 						Name: "odata.uriEncode",
 						Parameters: [{
@@ -740,7 +732,7 @@
 					}
 				};
 
-			strictEqual(formatAndParseNoWarning(oRawValue, oCurrentContext), oFixture.result);
+			strictEqual(formatAndParseNoWarning(oRawValue, undefined), oFixture.result);
 		});
 	});
 
