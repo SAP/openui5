@@ -18,7 +18,27 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 	//nud = "null denotation"
 	//rbp = "right binding power"
-	var mSymbols = { //symbol table
+	var mDefaultGlobals = {
+			encodeURIComponent: encodeURIComponent,
+			Math: Math,
+			odata: {
+				fillUriTemplate: function () {
+					if (!URI.expand) {
+						jQuery.sap.require("sap.ui.thirdparty.URITemplate");
+					}
+					return URI.expand.apply(URI, arguments).toString();
+				},
+				uriEncode: function () {
+					var ODataUtils;
+
+					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
+					ODataUtils = sap.ui.model.odata.ODataUtils;
+					return ODataUtils.formatValue.apply(ODataUtils, arguments);
+				}
+			},
+			RegExp: RegExp
+		},
+		mSymbols = { //symbol table
 			"BINDING": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
@@ -553,10 +573,19 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 		 * The following expression constructs are supported: <ul>
 		 * <li> String literal enclosed in single or double quotes, e.g. 'foo' </li>
 		 * <li> Null and Boolean literals: null, true, false </li>
-		 * <li> Embedded binding to refer to model contents, e.g. ${myModel>/Address/city} </li>
-		 * <li> Infix operators ===,  &&, || </li>
+		 * <li> Object and number literals, e.g. {foo:'bar'} and 3.141 </li>
+		 * <li> Grouping, e.g. a * (b + c)</li>
+		 * <li> Unary operators !,  +, -, typeof </li>
+		 * <li> Multiplicative Operators: *, /, % </li>
+		 * <li> Additive Operators: +, - </li>
+		 * <li> Relational Operators: <, >, <=, >= </li>
+		 * <li> Strict Equality Operators: ===, !== </li>
+		 * <li> Binary Logical Operators: &&, || </li>
+		 * <li> Conditional Operator: ? : </li>
 		 * <li> Member access via . operator </li>
 		 * <li> Function call </li>
+		 * <li> Embedded binding to refer to model contents, e.g. ${myModel>/Address/city} </li>
+		 * <li> Global functions and objects: encodeURIComponent, Math, RegExp </li>
 		 * </ul>
 		 *
 		 * @param {function} fnResolveBinding - the function to resolve embedded bindings
@@ -580,25 +609,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			var oResult, oTokens;
 
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
-			oResult = parse(oTokens.tokens, sInput, mGlobals || {
-				encodeURIComponent: encodeURIComponent,
-				Math: Math,
-				odata: {
-					fillUriTemplate: function () {
-						if (!URI.expand) {
-							jQuery.sap.require("sap.ui.thirdparty.URITemplate");
-						}
-						return URI.expand.apply(URI, arguments).toString();
-					},
-					uriEncode: function () {
-						var ODataUtils;
-
-						jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-						ODataUtils = sap.ui.model.odata.ODataUtils;
-						return ODataUtils.formatValue.apply(ODataUtils, arguments);
-					}
-				}
-			});
+			oResult = parse(oTokens.tokens, sInput, mGlobals || mDefaultGlobals);
 
 			//TODO TDD replace !iStart by iStart === undefined
 			if (!iStart && oTokens.at < sInput.length) {
