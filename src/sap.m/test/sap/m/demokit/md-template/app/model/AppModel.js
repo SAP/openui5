@@ -19,10 +19,10 @@ sap.ui.define(
 
 			return new Promise(function (fnSuccess, fnReject) {
 				//Check if the data is already on the client
-				if (oElementBinding.isInitial() || !oModel.getData(sPath)) {
+				if (!oModel.getProperty(sPath)) {
 					// Check that the object specified actually was found.
 					oElementBinding.attachEventOnce("dataReceived", function () {
-						var oData = oModel.getData(sPath);
+						var oData = oModel.getProperty(sPath);
 						if (!oData) {
 							fnReject();
 						} else {
