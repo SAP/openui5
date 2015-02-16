@@ -432,6 +432,15 @@
 				"samples" : [ "sap.m.sample.ObjectListItem",  "sap.m.sample.ObjectListItemMarkLocked"]
 			},
 			{
+				"id" : "sap.m.OverflowToolbarButton",
+				"name" : "Overflow Toolbar Button",
+				"category" : "Action",
+				"since" : "1.28",
+				"samples" : [
+					"sap.m.sample.OverflowToolbarButton"
+				]
+			},
+			{
 				"id" : "sap.m.Page",
 				"name" : "Page",
 				"category" : "Container",
@@ -1609,6 +1618,11 @@
 				"id": "sap.m.sample.ContainerPaddingAndMargin",
 				"name": "Container Content Padding and Margins",
 				"description": "By combining the margin and padding concepts you can flexibly design your application layout without having to write any custom CSS. This example shows a HorizontalLayout that is layouted with the standard margin and padding classes provided by UI5."
+			},
+			{
+				"id": "sap.m.sample.OverflowToolbarButton",
+				"name": "Overflow Toolbar Button",
+				"description": "Buttons show only an icon in the toolbar and icon and text in the overflow."
 			}
 		]
 	}
