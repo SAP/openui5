@@ -124,6 +124,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			oButton.setProperty("type", sap.m.ButtonType.Transparent, true); // Do not invalidate
 		}
 		oButton.addStyleClass("sapMBtnInverted"); // dark background
+		
+		// If the button is of type sap.m.OverflowToolbarButton, tell it to start showing its text since it's in the overflow now
+		if (oButton.getMetadata().getName() === "sap.m.OverflowToolbarButton") {
+			oButton._bInOverflow = true;
+		}
+
 		return this;
 	};
 
@@ -155,6 +161,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		// Remove the button from the DOM, because the toolbar will try to create another one with the same ID
 		oButton.$().remove();
 
+		// If the button is of type sap.m.OverflowToolbarButton, tell it to stop showing its text since it's not in the overflow any more
+		if (oButton.getMetadata().getName() === "sap.m.OverflowToolbarButton") {
+			delete oButton._bInOverflow;
+		}
+
 		return this;
 	};
 
@@ -180,7 +191,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	OverflowToolbarAssociativeActionSheet._acceptsControl = function(oControl) {
 		var sControlName = oControl.getMetadata().getName();
 
-		return sControlName === "sap.m.Button";
+		return ["sap.m.Button", "sap.m.OverflowToolbarButton"].indexOf(sControlName) !== -1;
 	};
 
 	return OverflowToolbarAssociativeActionSheet;

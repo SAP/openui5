@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMBtn");
 
 			// extend  minimum button size if icon is set without text for button types back and up
-			if ((sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) && oButton.getIcon() && !oButton.getText()) {
+			if ((sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) && oButton.getIcon() && !oButton._getText()) {
 				oRm.addClass("sapMBtnBack");
 			}
 		}
@@ -122,14 +122,14 @@ sap.ui.define(['jquery.sap.global'],
 				if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
 					oRm.addClass("sapMBtnPaddingLeft");
 				}
-				if (oButton.getText()) {
+				if (oButton._getText()) {
 					oRm.addClass("sapMBtnPaddingRight");
 				}
 			} else {
-				if (oButton.getIcon() && oButton.getText() && oButton.getIconFirst()) {
+				if (oButton.getIcon() && oButton._getText() && oButton.getIconFirst()) {
 					oRm.addClass("sapMBtnPaddingRight");
 				}
-				if (oButton.getIcon() && oButton.getText() && !oButton.getIconFirst()) {
+				if (oButton.getIcon() && oButton._getText() && !oButton.getIconFirst()) {
 					if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
 						oRm.addClass("sapMBtnPaddingLeft");
 					}
@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		// write button text
-		if (oButton.getText()) {
+		if (oButton._getText()) {
 			oRm.write("<span");
 			oRm.addClass("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oButton.getId() + "-content");
 			oRm.write(">");
-			oRm.writeEscaped(oButton.getText());
+			oRm.writeEscaped(oButton._getText());
 			oRm.write("</span>");
 		}
 
