@@ -3137,6 +3137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {object} [mParameters] a map which contains the following parameter properties:
 	 * @param {string} [mParameters.batchGroupId] defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
+	 * @param {array} [mParameters.keys] an array of entity keys. If not specified, changes are considered regardless of their associated entity key.
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *            					 been successfully updated. The handler can have the
 	 *            	                 following parameters: oData
@@ -3151,8 +3152,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var bMerge = true, oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
-			that = this;
+		var bMerge = true, oRequest, sBatchGroupId, oGroupInfo, fnSuccess, fnError, aKeys, bByKeys = false,
+			that = this,
+			mDeferredRequests = jQuery.extend(true, {}, this.mDeferredRequests);
 
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
@@ -3160,20 +3162,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnError = mParameters.error;
 			sBatchGroupId = mParameters.batchGroupId;
 			bMerge = mParameters.merge !== false;
+			aKeys = mParameters.keys;
+			bByKeys = aKeys.length > 0
 		}
 
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
 			oGroupInfo = that._resolveGroup(sKey);
-			if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
-				oRequest = that._processChange(sKey, oData, bMerge);
-				oRequest.key = sKey;
-				if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
-					that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
+			if (!bByKeys || jQuery.inArray(sKey, aKeys) > -1) {
+				if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
+					oRequest = that._processChange(sKey, oData, bMerge);
+					oRequest.key = sKey;
+					if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
+						that._pushToRequestQueue(mDeferredRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
+					}
 				}
+			} else {
+				jQuery.each(mDeferredRequests[oGroupInfo.batchGroupId].changes[oGroupInfo.changeSetId], function(i, mChange) {
+					if (mChange.request.requestID === mDeferredRequests[oGroupInfo.batchGroupId].map[sKey].requestID) {
+						mDeferredRequests[oGroupInfo.batchGroupId].changes[oGroupInfo.changeSetId].splice(i, 1);
+						return false;
+					}
+				});
+				delete mDeferredRequests[oGroupInfo.batchGroupId].map[sKey];
 			}
 		});
 
-		return this._processRequestQueue(this.mDeferredRequests, sBatchGroupId, fnSuccess, fnError);
+		return this._processRequestQueue(mDeferredRequests, sBatchGroupId, fnSuccess, fnError);
 	};
 
 

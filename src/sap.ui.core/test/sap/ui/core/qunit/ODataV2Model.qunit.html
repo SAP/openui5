@@ -1458,6 +1458,107 @@
 		
 	});*/
 
+	QUnit.module("submitChanges() - Given I have a model with pending changes", {
+		givenIHaveAModelWithData : function() {
+			var defer = jQuery.Deferred(),
+				done = QUnit.start;
+
+			// Given
+			removeSharedMetadata(sURI);
+
+			var oModel = initModel(sURI, {
+				json: true,
+				useBatch: true
+			});
+
+			// Retrieve some data
+			var oBinding = oModel.bindList("/Categories").initialize();	
+			var handler = function() { // delay the following test
+				oBinding.detachChange(handler);
+				defer.resolveWith(this, [oModel, oBinding]);
+			}
+			oBinding.attachRefresh(function() {oBinding.getContexts();});
+			oBinding.attachChange(handler);
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+			oBinding.getContexts();
+
+			return defer;
+		},
+		givenIHaveAModelWithPendingChanges : function() {
+			var defer = jQuery.Deferred()
+			jQuery.when(this.givenIHaveAModelWithData()).then(function(oModel, oListBinding) {
+				var aContexts = oListBinding.getContexts();
+				jQuery.each(aContexts, function(i, oContext) {
+					var sPath = "Description",
+						sOldValue = oContext.getProperty(sPath),
+						sNewValue = sOldValue + "-" + i + "-changed";
+					oModel.setProperty(sPath, sNewValue, oContext);
+				});
+				defer.resolveWith(this, [oModel, aContexts]);
+			});
+			return defer;
+		}
+	});
+
+	QUnit.asyncTest("submitChanges() should submit all changes", function(assert){
+		var done = QUnit.start;
+
+		jQuery.when(this.givenIHaveAModelWithPendingChanges()).then(function(oModel, aChangedContexts) {
+			if (!oModel.hasPendingChanges()) {
+				assert.ok(false, "Test setup: the model should have pending changes by now");
+			}
+			if (aChangedContexts.length < 2) {
+				assert.ok(false, "Test setup: there should be more than one context");
+			}
+
+			// attach event handlers
+			var iRequestCounter = 0;
+			oModel.attachRequestSent(function() {
+				iRequestCounter++;
+			});
+
+			oModel.attachBatchRequestSent(function() {
+				assert.strictEqual(iRequestCounter, aChangedContexts.length, "number of requests");
+				done();
+			});
+
+			// execute method under test
+			oModel.submitChanges();
+		});
+	});	
+
+	QUnit.asyncTest("submitChanges() should submit a subset if called with key parameter", function(assert){
+		var done = QUnit.start;
+
+		jQuery.when(this.givenIHaveAModelWithPendingChanges()).then(function(oModel, aChangedContexts) {
+			if (!oModel.hasPendingChanges()) {
+				assert.ok(false, "Test setup: the model should have pending changes by now");
+			}
+			if (aChangedContexts.length < 2) {
+				assert.ok(false, "Test setup: there should be more than one context");
+			}
+
+			var aKeysToSubmit = [];
+			aKeysToSubmit.push(oModel.getKey(aChangedContexts[0]));
+
+			// attach event handlers
+			var iRequestCounter = 0;
+			oModel.attachRequestSent(function() {
+				iRequestCounter++;
+			});
+
+			oModel.attachBatchRequestSent(function() {
+				assert.strictEqual(iRequestCounter, aKeysToSubmit.length, "number of requests");
+				done();
+			});
+
+			// execute method under test
+			oModel.submitChanges({
+				keys : aKeysToSubmit
+			});
+		});
+	});	
+
 	module("ODataModel.read", {
 		setup: function() {
 			this.oModel = initModel(sURI, {json:false});
