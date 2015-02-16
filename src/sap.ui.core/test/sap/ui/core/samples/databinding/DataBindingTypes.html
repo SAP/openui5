@@ -70,7 +70,9 @@
 	sap.ui.getCore().setModel(oModel);
 
 	// Integer
-	var oInteger = new sap.ui.model.type.Integer();
+	var oInteger = new sap.ui.model.type.Integer(null, {
+		maximum: 7
+	});
 	var oInput = new sap.ui.commons.TextField({
 		value : {
 			path : "/visibleItems",
@@ -152,10 +154,9 @@
 				var oValue = oEvent.getParameter('newValue');
 				var oType = oEvent.getParameter('type');
 				var oOldValue = oEvent.getParameter('oldValue');
+				var sMessage = oEvent.getParameter('message');
 
-				var sMsg = oElement.getId() + " value: " + oValue
-						+ " is a valid value for property: " + sProperty
-						+ " of type: " + oType.getName();
+				var sMsg = oElement.getId() + ": Validated successfully";
 				var msg = new sap.ui.commons.Message({
 					type : sap.ui.commons.MessageType.Success,
 					text : sMsg
@@ -173,15 +174,9 @@
 				var oValue = oEvent.getParameter('newValue');
 				var oType = oEvent.getParameter('type');
 				var oOldValue = oEvent.getParameter('oldValue');
+				var sMessage = oEvent.getParameter('message');
 
-				var sMsg = oElement.getId() + " value: " + oValue
-						+ " is not a valid value for property: " + sProperty
-						+ " of type: " + oType.getName();
-				jQuery.each(
-						oEvent.getParameter("exception").violatedConstraints,
-						function(i, constraint) {
-							sMsg += " violated constraint: " + constraint;
-						});
+				var sMsg = oElement.getId() + ": " + sMessage;
 				var msg = new sap.ui.commons.Message({
 					type : sap.ui.commons.MessageType.Warning,
 					text : sMsg
@@ -202,10 +197,9 @@
 				var oValue = oEvent.getParameter('newValue');
 				var oType = oEvent.getParameter('type');
 				var oOldValue = oEvent.getParameter('oldValue');
+				var sMessage = oEvent.getParameter('message');
 
-				var sMsg = oElement.getId() + " value: " + oValue
-						+ " could not be parsed for property: " + sProperty
-						+ " of type: " + oType.getName();
+				var sMsg = oElement.getId() + ": " + sMessage;
 				var msg = new sap.ui.commons.Message({
 					type : sap.ui.commons.MessageType.Error,
 					text : sMsg
@@ -223,10 +217,9 @@
 				var oValue = oEvent.getParameter('newValue');
 				var oType = oEvent.getParameter('type');
 				var oOldValue = oEvent.getParameter('oldValue');
+				var sMessage = oEvent.getParameter('message');
 
-				var sMsg = oElement.getId() + " value: " + oValue
-						+ " could not be formatted to a value for property: "
-						+ sProperty + " of type: " + oType.getName();
+				var sMsg = oElement.getId() + ": " + sMessage;
 				var msg = new sap.ui.commons.Message({
 					type : sap.ui.commons.MessageType.Error,
 					text : sMsg

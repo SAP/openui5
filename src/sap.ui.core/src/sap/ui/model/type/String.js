@@ -102,58 +102,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	StringType.prototype.validateValue = function(sValue) {
 		if (this.oConstraints) {
-			var aViolatedConstraints = [];
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [];
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "maxLength":  // expects int
 						if (sValue.length > oContent) {
 							aViolatedConstraints.push("maxLength");
+							aMessages.push(oBundle.getText("String.MaxLength", [oContent]));
 						}
 						break;
 					case "minLength":  // expects int
 						if (sValue.length < oContent) {
 							aViolatedConstraints.push("minLength");
+							aMessages.push(oBundle.getText("String.MinLength", [oContent]));
 						}
 						break;
 					case "startsWith":  // expects string
 						if (!jQuery.sap.startsWith(sValue,oContent)) {
 							aViolatedConstraints.push("startsWith");
+							aMessages.push(oBundle.getText("String.StartsWith", [oContent]));
 						}
 						break;
 					case "startsWithIgnoreCase":  // expects string
 						if (!jQuery.sap.startsWithIgnoreCase(sValue,oContent)) {
 							aViolatedConstraints.push("startsWithIgnoreCase");
+							aMessages.push(oBundle.getText("String.StartsWith", [oContent]));
 						}
 						break;
 					case "endsWith":  // expects string
 						if (!jQuery.sap.endsWith(sValue,oContent)) {
 							aViolatedConstraints.push("endsWith");
+							aMessages.push(oBundle.getText("String.EndsWith", [oContent]));
 						}
 						break;
 					case "endsWithIgnoreCase": // expects string
 						if (!jQuery.sap.endsWithIgnoreCase(sValue,oContent)) {
 							aViolatedConstraints.push("endsWithIgnoreCase");
+							aMessages.push(oBundle.getText("String.EndsWith", [oContent]));
 						}
 						break;
 					case "contains": // expects string
 						if (sValue.indexOf(oContent) == -1) {
 							aViolatedConstraints.push("contains");
+							aMessages.push(oBundle.getText("String.Contains", [oContent]));
 						}
 						break;
 					case "equals": // expects string
 						if (sValue != oContent) {
 							aViolatedConstraints.push("equals");
+							aMessages.push(oBundle.getText("String.Equals", [oContent]));
 						}
 						break;
 					case "search": // expects regex
 						if (sValue.search(oContent) == -1) {
 							aViolatedConstraints.push("search");
+							aMessages.push(oBundle.getText("String.Search", [oContent]));
 						}
 						break;
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};

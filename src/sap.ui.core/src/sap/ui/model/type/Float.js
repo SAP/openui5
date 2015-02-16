@@ -69,12 +69,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	Float.prototype.parseValue = function(vValue, sInternalType) {
-		var fResult;
+		var fResult, oBundle;
 		switch (sInternalType) {
 			case "string":
 				fResult = this.oOutputFormat.parse(vValue);
 				if (isNaN(fResult)) {
-					throw new sap.ui.model.ParseException(vValue + " is not a valid Float value");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new sap.ui.model.ParseException(oBundle.getText("Float.Invalid"));
 				}
 				break;
 			case "int":
@@ -95,22 +96,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	Float.prototype.validateValue = function(iValue) {
 		if (this.oConstraints) {
-			var aViolatedConstraints = [];
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [];
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
 						if (iValue < oContent) {
 							aViolatedConstraints.push("minimum");
+							aMessages.push(oBundle.getText("Float.Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
 						if (iValue > oContent) {
 							aViolatedConstraints.push("maximum");
+							aMessages.push(oBundle.getText("Float.Maximum", [oContent]));
 						}
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};

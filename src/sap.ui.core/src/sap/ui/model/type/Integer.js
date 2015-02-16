@@ -68,18 +68,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	Integer.prototype.parseValue = function(vValue, sInternalType) {
-		var iResult;
+		var iResult, oBundle;
 		switch (sInternalType) {
 			case "string":
 				iResult = this.oOutputFormat.parse(String(vValue));
 				if (isNaN(iResult)) {
-					throw new sap.ui.model.ParseException(vValue + " is not a valid Integer value");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new sap.ui.model.ParseException(oBundle.getText("Integer.Invalid"));
 				}
 				break;
 			case "float":
 				iResult = Math.floor(vValue);
 				if (iResult != vValue) {
-					throw new sap.ui.model.ParseException(vValue + " is not a valid Integer value");
+					oBundle = sap.ui.getCore().getLibraryResourceBundle();
+					throw new sap.ui.model.ParseException(oBundle.getText("Integer.Invalid"));
 				}
 				break;
 			case "int":
@@ -99,22 +101,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	Integer.prototype.validateValue = function(iValue) {
 		if (this.oConstraints) {
-			var aViolatedConstraints = [];
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				aViolatedConstraints = [],
+				aMessages = [];
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
 						if (iValue < oContent) {
 							aViolatedConstraints.push("minimum");
+							aMessages.push(oBundle.getText("Integer.Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
 						if (iValue > oContent) {
 							aViolatedConstraints.push("maximum");
+							aMessages.push(oBundle.getText("Integer.Maximum", [oContent]));
 						}
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new sap.ui.model.ValidateException("Validation of type constraints failed", aViolatedConstraints);
+				throw new sap.ui.model.ValidateException(aMessages.join(" "), aViolatedConstraints);
 			}
 		}
 	};
