@@ -11,7 +11,7 @@
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		oDateOnly = new Date(),
+		oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
@@ -19,14 +19,6 @@
 			"EnterDateTime": "EnterDateTime Nov 27, 2014, 1:47:26 PM",
 			"EnterDate": "EnterDate Nov 27, 2014"
 		};
-
-	oDateOnly.setUTCFullYear(2014);
-	oDateOnly.setUTCDate(27); // make sure that setting the date before month (e.g. in case of today is Jan 31st setting month to Nov will result in Dec!)
-	oDateOnly.setUTCMonth(10);
-	oDateOnly.setUTCHours(0);
-	oDateOnly.setUTCMinutes(0);
-	oDateOnly.setUTCSeconds(0);
-	oDateOnly.setUTCMilliseconds(0);
 
 	function createInstance(sTypeName, oConstraints, oFormatOptions) {
 		return new (jQuery.sap.getObject(sTypeName))(oFormatOptions, oConstraints);
