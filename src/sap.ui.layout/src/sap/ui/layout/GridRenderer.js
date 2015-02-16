@@ -77,6 +77,15 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			oRm.writeAttribute("style", sWidth);
 		}
+
+		var sRole = oControl._getAccessibleRole();
+		var mAriaProps;
+		if (sRole) {
+			mAriaProps = {role: sRole};
+		}
+
+		oRm.writeAccessibilityState(oControl, mAriaProps);
+
 		oRm.write(">");
 	
 		var aItems = oControl.getContent();

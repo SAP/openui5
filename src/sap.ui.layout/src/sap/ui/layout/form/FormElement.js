@@ -245,31 +245,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 				}
 				mAriaProps["labelledby"] = sLabelledBy;
 
-				var oContainer = this.getParent();
-				var aElements = oContainer.getFormElements();
-				if (this == aElements[0]) {
-					// it's the first Element
-					var aControls = this.getFields();
-					if (oElement == aControls[0]) {
-						//it's the first field
-						var oTitle = oContainer.getTitle();
-						if (oTitle) {
-							var sId = "";
-							if (typeof oTitle == "string") {
-								sId = oContainer.getId() + "--title";
-							} else {
-								sId = oTitle.getId();
-							}
-							var sDescribedBy = mAriaProps["describedby"];
-							if (sDescribedBy) {
-								sDescribedBy = sDescribedBy + " " + sId;
-							} else {
-								sDescribedBy = sId;
-							}
-							mAriaProps["describedby"] = sDescribedBy;
-						}
-					}
-				}
 			}
 
 			return mAriaProps;

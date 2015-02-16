@@ -13,8 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var FormRenderer = {
 	};
-	
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -25,23 +24,23 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var oLayout = oForm.getLayout();
-	
+
 		// write only a DIV for the form and let the layout render the rest
 		rm.write("<div");
 		rm.writeControlData(oForm);
 		rm.addClass("sapUiForm");
 		rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
-	
+
 		var sClass = sap.ui.layout.form.FormHelper.addFormClass();
 		if (sClass) {
 			rm.addClass(sClass);
 		}
-	
+
 		if (oForm.getEditable()) {
 			rm.addClass("sapUiFormEdit");
 			rm.addClass("sapUiFormEdit-CTX");
 		}
-	
+
 		if (oForm.getWidth()) {
 			rm.addStyle("width", oForm.getWidth());
 		}
@@ -50,7 +49,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeClasses();
 		rm.writeStyles();
-	
+
 		var mAriaProps = {role: "form"};
 		var oTitle = oForm.getTitle();
 		if (oTitle) {
@@ -60,20 +59,20 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				sId = oTitle.getId();
 			}
-			mAriaProps["describedby"] = sId;
+			mAriaProps["labelledby"] = {value: sId, append: true};
 		}
-	
+
 		rm.writeAccessibilityState(oForm, mAriaProps);
-	
+
 		rm.write(">");
-	
+
 		if (oLayout) {
 			// render the layout with the content of this form control
 			rm.renderControl(oLayout);
 		} else {
 			jQuery.sap.log.warning("Form \"" + oForm.getId() + "\" - Layout missing!", "Renderer", "Form");
 		}
-	
+
 		rm.write("</div>");
 	};
 

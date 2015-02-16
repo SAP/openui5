@@ -6,7 +6,7 @@
 		<title>GridLayout - sap.ui.layout.form</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.GridLayout.gif">
 		<script id="sap-ui-bootstrap" type="text/javascript"
-				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.layout, sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js"></script>
 
@@ -42,6 +42,7 @@
 
 			var oForm1 = new sap.ui.layout.form.Form("F1",{
 				title: new sap.ui.core.Title({text: "Form Title", icon: "../../commons/images/help.gif", tooltip: "Title tooltip", emphasized: true}),
+				editable: true,
 				layout: oLayout1,
 				formContainers: [
 					new sap.ui.layout.form.FormContainer("C1",{
@@ -243,6 +244,7 @@
 
 			var oForm2 = new sap.ui.layout.form.Form("F2",{
 				title: new sap.ui.core.Title({text: "Form: One Column (Fixed Width)"}),
+				editable: true,
 				layout: oLayout2,
 				formContainers: [
 					new sap.ui.layout.form.FormContainer("C9",{
@@ -276,6 +278,7 @@
 
 			var oForm3 = new sap.ui.layout.form.Form("F3",{
 				title: new sap.ui.core.Title({text: "Form: One Column A (Responsive)"}),
+				editable: true,
 				layout: oLayout3,
 				formContainers: [
 					new sap.ui.layout.form.FormContainer("C10",{
@@ -308,6 +311,7 @@
 
 			var oForm4 = new sap.ui.layout.form.Form("F4",{
 				title: new sap.ui.core.Title({text: "Form: One Column B (Responsive)"}),
+				editable: true,
 				layout: oLayout4,
 				formContainers: [
 					new sap.ui.layout.form.FormContainer("C11",{
