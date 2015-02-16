@@ -15,28 +15,24 @@
 					</template:with>
 				</form:SimpleForm>
 			</template:then>
-			<template:else>
-				<template:if test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.ReferenceFacet'}">
+			<template:elseif test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.ReferenceFacet'}">
+				<template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'}">
 					<template:then>
-						<template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'}">
-							<template:then>
-								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.TableFacet" type="XML"/>
-							</template:then>
-							<template:else>
-								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.FormFacet" type="XML"/>
-							</template:else>
-						</template:if>
+						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.TableFacet" type="XML"/>
 					</template:then>
 					<template:else>
-						<form:SimpleForm>
-							<form:title>
-								<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-							</form:title>
-							<Label text="Unsupported RecordType"/>
-							<Text text="{facet>RecordType}"/>
-						</form:SimpleForm>
+						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.FormFacet" type="XML"/>
 					</template:else>
 				</template:if>
+			</template:elseif>
+			<template:else>
+				<form:SimpleForm>
+					<form:title>
+						<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					</form:title>
+					<Label text="Unsupported RecordType"/>
+					<Text text="{facet>RecordType}"/>
+				</form:SimpleForm>
 			</template:else>
 		</template:if>
 	</template:repeat>
