@@ -1076,7 +1076,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					if (aMimeTypes && aMimeTypes.length > 0) {
 						var bWrongMime = true;
 						for (var j = 0; j < aMimeTypes.length; j++) {
-							if (sType.match(aMimeTypes[j])) {
+							if (sType == aMimeTypes[j]) {
 								bWrongMime = false;
 							}
 						}
