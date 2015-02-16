@@ -12,7 +12,6 @@
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Select
-					autoAdjustWidth="true"
 					items="{
 						path: '/ProductCollection',
 						sorter: { path: 'Name' }
