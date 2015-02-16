@@ -5,16 +5,14 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.arrangement.NavigationArrangement", {
 			_getFrameUrl : function (sHash, bAddPhone) {
 				sHash = sHash || "";
-				var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/app/index", ".html"),
-					sUrlParameters = "?responderOn=true";
+				var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/app/test", ".html"),
+					sUrlParameters = "";
 
 				if (bAddPhone) {
-					sUrlParameters = sUrlParameters + "&sap-ui-xx-fakeOS=ios";
+					sUrlParameters = "?sap-ui-xx-fakeOS=ios";
 				}
 
-				sUrl = sUrl + sUrlParameters + sHash;
-
-				return sUrl;
+				return sUrl + sUrlParameters + sHash;
 			},
 
 			GivenIStartTheAppOnADesktopDevice : function (sHash) {
