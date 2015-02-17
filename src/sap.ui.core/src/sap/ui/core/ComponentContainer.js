@@ -39,6 +39,12 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			 * The URL of the component. The property can only be applied initially.
 			 */
 			url : {type : "sap.ui.core.URI", defaultValue : null},
+			
+			/**
+			 * Enable/disable validation handling by MessageManager for this component.
+			 * The resulting Messages will be propagated to the controls.
+			 */
+			handleValidation : {type : "boolean", defaultValue : false},
 	
 			/**
 			 * The settings object passed to the component when created. The property can only be applied initially.
@@ -124,6 +130,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 				oComponent = sap.ui.component({
 					name: sName,
 					url: this.getUrl(),
+					handleValidation: this.getHandleValidation(),
 					settings: this.getSettings()
 				});
 				this.setComponent(oComponent, true);

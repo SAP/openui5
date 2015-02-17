@@ -15,6 +15,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * are one way, two way and one time. The default binding mode can be changed by the application for each model instance.
 	 * A model implementation should specify its supported binding modes and set the default binding mode accordingly
 	 * (e.g. if the model supports only one way binding the default binding mode should also be set to one way).
+	 * 
+	 * This MessageProcessor is able to handle Messages with the normal binding syntax as target.
 	 *
 	 * @namespace
 	 * @name sap.ui.model
@@ -797,6 +799,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @public
 	 */
 	Model.prototype.destroy = function() {
+		MessageProcessor.prototype.destroy.apply(this, arguments);
+
 		this.oData = {};
 		this.aBindings = [];
 		this.mContexts = {};
@@ -804,7 +808,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 			jQuery.sap.clearDelayedCall(this.sUpdateTimer);
 		}
 		this.bDestroyed = true;
-		MessageProcessor.prototype.destroy.apply(this, arguments);
 	};
 
 	/**

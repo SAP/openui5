@@ -260,8 +260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			vMessages = this.oModel.getMessagesByPath(sResolvedPath);
 			if (!jQuery.sap.equal(vMessages, this.vMessages)) {
 				//this.vMessages = vMessages;
-				this.vMessages = vMessages; // ? [].concat(vMessages) : vMessages;
-				this._fireMessageChange({messages: vMessages});
+				this.vMessages = vMessages ? [].concat(vMessages) : []; 
+				this._fireMessageChange({messages: this.vMessages});
 			}
 		}
 	};

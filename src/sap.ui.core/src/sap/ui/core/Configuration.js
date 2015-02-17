@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"application"           : { type : "string",   defaultValue : "" },
 					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
-
+					
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "allow",   noUrl: true }, // allow/deny/trusted
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
@@ -112,6 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"xx-bootTask"           : { type : "function", defaultValue : undefined, noUrl:true },
 					"xx-suppressDeactivationOfControllerCode" : { type : "boolean",  defaultValue : false }, //temporarily to suppress the deactivation of controller code in design mode
 					"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
+					"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -910,8 +911,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		 */
 		getNoNativeScroll : function() {
 			return false;
+		},
+		
+		/**
+		 * Return whether type validation is handled by core
+		 *
+		 * @returns {boolean} whether whether type validation is handled by core
+		 * @since 1.28.0
+		 * @private
+		 */
+		getHandleValidation : function() {
+			return this["xx-handleValidation"];
 		}
-
 	});
 
 	var M_ABAP_LANGUAGE_TO_LOCALE = {

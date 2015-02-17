@@ -3747,6 +3747,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.destroy = function() {
+		Model.prototype.destroy.apply(this, arguments);
 
 		// Abort pending requests
 		if (this.aPendingRequestHandles) {
@@ -3777,7 +3778,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			delete this.oAnnotations;
 		}
 
-		Model.prototype.destroy.apply(this, arguments);
 	};
 
 	/**

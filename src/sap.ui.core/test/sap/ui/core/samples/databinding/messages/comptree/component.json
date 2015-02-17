@@ -1,0 +1,12 @@
+{
+	"name": "messages",
+	"version": "0.1.0",
+	"description": "Message component",
+	"keywords": [
+		"orders",
+		"table",
+		"example" 
+	],
+	"dependencies": {
+	}
+}

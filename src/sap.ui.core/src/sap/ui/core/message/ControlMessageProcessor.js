@@ -19,8 +19,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * Constructor for a new ControlMessageProcessor
 	 *
 	 * @class
-	 * This is an abstract base class for ControlMessageProcessor objects.
-	 * @abstract
+	 * The ControlMessageProcessor implementation.
+	 * This MessageProcessor is able to handle Messages with the following target syntax:
+	 * 		'ControlID/PropertyName'
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 *
@@ -66,7 +67,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @protected
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {
-		jQuery.each(this.mOldMessages, function(sTarget, aMessages) {
+		var aMessages,
+			that = this;
+		
+		jQuery.each(this.mOldMessages, function(sTarget, aOldMessages) {
 			var oBinding;
 			var aParts = sTarget.split('/');
 			var oControl = sap.ui.getCore().byId(aParts[0]);
@@ -78,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			
 			oBinding = oControl.getBinding(aParts[1]);
 			
-			aMessages = aMessages ? aMessages : [];
+			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
 			
 			if (oBinding) {
 				oBinding._fireMessageChange({type: 'control', messages:aMessages});

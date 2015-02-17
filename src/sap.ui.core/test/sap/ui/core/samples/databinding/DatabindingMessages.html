@@ -14,13 +14,13 @@
         type="text/javascript"
         src="../../../../../../resources/sap-ui-core.js"
         data-sap-ui-theme="sap_bluecrystal"
-        data-sap-ui-libs="sap.ui.layout,sap.m">
+        data-sap-ui-libs="sap.ui.layout,sap.m"
+        data-sap-ui-messaging="false">
     </script>
 	
 	<script>
+		sap.ui.localResources("messages");
 		// Model
-		jQuery.sap.require("sap.ui.core.message.MessageManager");
-		
 		var oModel = new sap.ui.model.json.JSONModel({
 			form: {
 				name: "Max",
@@ -34,18 +34,15 @@
 			}
 		});
 		
+		/*
 		oDate = new sap.ui.model.type.Date();
 		oZip = new sap.ui.model.type.String(null,{maxLength: 5});
 		oStreet = new sap.ui.model.type.Integer();
 		// UI
 		var oLayout = new sap.ui.layout.form.ResponsiveGridLayout("L4");
 		var oForm = new sap.ui.layout.form.Form("F1",{
-			models: {
-				undefined: oModel
-			},
-			objectBindings: {
-				undefined: {path: "/form"}
-			},
+			models: oModel,
+			objectBindings:{path: "/form"},
 			//title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
 			editable: true,
@@ -126,6 +123,7 @@
 				})
 			]
 		});
+*/
 
 		var oButton1 = new sap.m.Button({
 			text: "add Warning",
@@ -185,6 +183,7 @@
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
+
 		
 		var oMessagePopoverButton = new sap.m.Button({
 			text: 'Show MessagePopover',
@@ -193,7 +192,7 @@
 				oMP.openBy(this);
 			}
 		});
-		
+
 		var oMP = new sap.m.MessagePopover({
 			items: {
 					path:"message>/", 
@@ -201,11 +200,31 @@
 			}
 		});
 		
-		oMessagePopoverButton.addDependent(oMP);
-			
+		oMP.setModel(oMP.getMessageManager().getMessageModel(),"message");
+		
+		var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
+			name: "messages",
+			id: "myMessageTest1",
+		});
+		var oCompCont2 = new sap.ui.core.ComponentContainer("CompCont2", {
+			name: "messages",
+			id: "myMessageTest2",
+			handleValidation: true
+		});
+		var oCompCont3 = new sap.ui.core.ComponentContainer("CompCont3", {
+			name: "messages.disabled",
+			id: "myMessageTest3",
+			handleValidation: true
+		});
+		var oCompCont4 = new sap.ui.core.ComponentContainer("CompCont4", {
+			name: "messages.enabled",
+			id: "myMessageTest4",
+			handleValidation: true
+		});
+		
 		var oPage = new sap.m.Page({
 			title: 'DataBinding Messages',
-			content: [ oForm , oButton1, oButton2, oButton3, oButton4, oButton5],
+			content: [ oCompCont , oCompCont2, oCompCont3, oCompCont4, oButton1, oButton2, oButton3, oButton4, oButton5],
 			footer:	new sap.m.Toolbar({
 				content: [
 					new sap.m.ToolbarSpacer(),
@@ -226,6 +245,18 @@
 
 		app.addPage(oPage).placeAt('content');
 		
+		sap.ui.getCore().attachValidationError(function(oEvent) {
+			alert('sap.ui.core: Validation Error');
+		});
+		sap.ui.getCore().attachParseError(function(oEvent) {
+			alert('sap.ui.core: Parse Error');
+		});
+		sap.ui.getCore().attachFormatError(function(oEvent) {
+			alert('sap.ui.core: Format Error');
+		});
+		sap.ui.getCore().attachValidationSuccess(function(oEvent) {
+			alert('sap.ui.core: Validation success');
+		});
 	</script>
 </head>
 <body class="sapUiBody">

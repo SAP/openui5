@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @public
 	 */
 	ClientModel.prototype.destroy = function() {
-	
+		Model.prototype.destroy.apply(this, arguments);
 		// Abort pending requests
 		if (this.aPendingRequestHandles) {
 			for (var i = this.aPendingRequestHandles.length - 1; i >= 0; i--) {
@@ -143,8 +143,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 			}
 			delete this.aPendingRequestHandles;
 		}
-	
-		Model.prototype.destroy.apply(this, arguments);
 	};
 	
 	/**

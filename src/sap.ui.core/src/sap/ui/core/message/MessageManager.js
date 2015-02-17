@@ -34,56 +34,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 		constructor : function () {
 			EventProvider.apply(this, arguments);
 			
-			this.updateTimer;
 			this.mProcessors = {};
+			this.mObjects = {};
 			this.mMessages = {};
-			this.oMessageModel = new MessageModel(this);
 			
-			sap.ui.getCore().attachValidationError(this._handleValidationErrors, this);
-			sap.ui.getCore().attachValidationSuccess(this._handleValidationSuccess, this);
-			
-			//create/register ControlMessageProcessor for validation error handling
-			this.oControlMessageProcessor = new ControlMessageProcessor();
-			this.registerMessageProcessor(this.oControlMessageProcessor);
-			
-			//Model cannot be instantiated directly because set Model creates initially a new MessageManager instance - this is too recusrive
-			jQuery.sap.delayedCall(0, this, function() {
-				sap.ui.getCore().setModel(this.oMessageModel, "message");
-			});
+			var bHandleValidation = sap.ui.getCore().getConfiguration().getHandleValidation(); 
+			if (bHandleValidation) { 
+				sap.ui.getCore().attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
+				sap.ui.getCore().attachValidationError(bHandleValidation, this._handleError, this);
+				sap.ui.getCore().attachParseError(bHandleValidation, this._handleError, this);
+				sap.ui.getCore().attachFormatError(bHandleValidation, this._handleError, this);
+			}
 		},
 
 		metadata : {
 			publicMethods : [
 				// methods
-				"addMessages", "removeMessages", "removeAllMessages", "registerMessageProcessor", "deregisterMessageProcessor", "destroy"
+				"addMessages", "removeMessages", "removeAllMessages", "registerMessageProcessor", "unregisterMessageProcessor", "registerObject", "unregisterObject", "getMessageModel", "destroy"
 			]
 		}
 	});
 	
 	/**
-	 * handle validation errors
+	 * handle validation/parse/format error
 	 * 
 	 * @param {object} oEvent The Event object
 	 * @private
 	 */
-	MessageManager.prototype._handleValidationErrors = function(oEvent) {
-		var oElement = oEvent.getParameter("element");
-		var sProperty = oEvent.getParameter("property");
-		var sTarget = oElement.getId() + '/' + sProperty;
-		var sProcessorId = this.oControlMessageProcessor.getId();
-		
-		if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
-			this.removeMessages(this.mMessages[sProcessorId][sTarget]);
+	MessageManager.prototype._handleError = function(oEvent, bHandleValidation) {
+		if (!this.oControlMessageProcessor) {
+			this.oControlMessageProcessor = new ControlMessageProcessor();
 		}
-		//TODO: we need localized Message texts for validation errors
-		var oMessage = new sap.ui.core.message.Message({
-				type: sap.ui.core.MessageType.Error,
-				message: oEvent.getParameter("exception").message, 
-				description: "violated constraints: " + oEvent.getParameter("exception").violatedConstraints[0],
-				target: sTarget,
-				processor: this.oControlMessageProcessor
-			});
-		this.addMessages(oMessage);
+		if (bHandleValidation) {
+			var oElement = oEvent.getParameter("element");
+			var sProperty = oEvent.getParameter("property");
+			var sTarget = oElement.getId() + '/' + sProperty;
+			var sProcessorId = this.oControlMessageProcessor.getId();
+			var bTechnical = oEvent.sId === "formatError";
+			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
+				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
+			}
+			var oMessage = new sap.ui.core.message.Message({
+					type: sap.ui.core.MessageType.Error,
+					message: oEvent.getParameter("message"), 
+					target: sTarget,
+					processor: this.oControlMessageProcessor,
+					technical: bTechnical
+				});
+			this.addMessages(oMessage);
+		}
+		oEvent.cancelBubble();
 	};
 	
 	/**
@@ -92,15 +92,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @param {object} oEvent The Event object
 	 * @private
 	 */
-	MessageManager.prototype._handleValidationSuccess = function(oEvent) {
-		var oElement = oEvent.getParameter("element");
-		var sProperty = oEvent.getParameter("property");
-		var sTarget = oElement.getId() + '/' + sProperty;
-		var sProcessorId = this.oControlMessageProcessor.getId();
-		
-		if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
-			this.removeMessages(this.mMessages[sProcessorId][sTarget]);
+	MessageManager.prototype._handleSuccess = function(oEvent, bHandleValidation) {
+		if (!this.oControlMessageProcessor) {
+			this.oControlMessageProcessor = new ControlMessageProcessor();
 		}
+		if (bHandleValidation) {
+			var oElement = oEvent.getParameter("element");
+			var sProperty = oEvent.getParameter("property");
+			var sTarget = oElement.getId() + '/' + sProperty;
+			var sProcessorId = this.oControlMessageProcessor.getId();
+			
+			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
+				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
+			}
+		}
+		oEvent.cancelBubble();
 	};
 	
 	/**
@@ -149,6 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 		jQuery.each(this.mProcessors, function(sId, oProcessor) {
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {}; 
 			that._sortMessages(vMessages);
+			//push a copy
 			oProcessor.setMessages(vMessages);
 		});
 	};
@@ -173,24 +180,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @private
 	 */
 	MessageManager.prototype._updateMessageModel = function() {
-		var that = this,
-			aMessages = [];
+		var aMessages = [];
 		
-		var update = function() {
-			jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
-				jQuery.each(mMessages, function(sKey, vMessages){
-					aMessages = jQuery.merge(aMessages, vMessages);
-				});
-			});
-			this.oMessageModel.setData(aMessages);
-			this._pushMessages();
-			jQuery.sap.clearDelayedCall(that.updateTimer);
-			delete that.updateTimer;
-		};
-		
-		if (!this.updateTimer) {
-			this.updateTimer = jQuery.sap.delayedCall(0,this, update);
+		if (!this.oMessageModel) {
+			this.oMessageModel = new MessageModel(this);
 		}
+		jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
+			jQuery.each(mMessages, function(sKey, vMessages){
+				aMessages = jQuery.merge(aMessages, vMessages);
+			});
+		});
+		this.oMessageModel.setData(aMessages);
+		this._pushMessages();
 	};
 	
 	/**
@@ -260,7 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * message change handler
 	 * @private
 	 */
-	MessageManager.prototype.messageChange = function(oEvent) {
+	MessageManager.prototype.onMessageChange = function(oEvent) {
 		var aOldMessages = oEvent.getParameter('oldMessages');
 		var aNewMessages = oEvent.getParameter('newMessages');
 		this.removeMessages(aOldMessages);
@@ -276,7 +277,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	MessageManager.prototype.registerMessageProcessor = function(oProcessor) {
 		if (!this.mProcessors[oProcessor.getId()]) {
 			this.mProcessors[oProcessor.getId()] = oProcessor;
-			oProcessor.attachMessageChange(this.messageChange, this);
+			oProcessor.attachMessageChange(this.onMessageChange, this);
 		}
 	};
 	
@@ -285,9 +286,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @param {sap.ui.core.message.MessageProcessor} oProcessor The MessageProcessor
 	 * @public
 	 */
-	MessageManager.prototype.deregisterMessageProcessor = function(oProcessor) {
+	MessageManager.prototype.unregisterMessageProcessor = function(oProcessor) {
+		this.removeMessages(this.mMessages[oProcessor.getId()]);
 		delete this.mProcessors[oProcessor.getId()];
-		oProcessor.detachMessageChange(this.messageChange);
+		oProcessor.detachMessageChange(this.onMessageChange);
+	};
+	
+	/**
+	 * Register ManagedObject: Validation and Parse errors are handled by the MessageManager for this object
+	 * 
+	 * @param {sap.ui.base.ManageObject} oObject The sap.ui.base.ManageObject
+	 * @param {boolean} bHandleValidation Handle validation for this object. If set to true validation/parse events creates Messages and cancel event. 
+	 * 					If set to false only the event will be canceled, but no messages will be created
+	 * @public
+	 */
+	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
+		if (!oObject instanceof sap.ui.base.ManagedObject) {
+			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+			return;
+		}
+		oObject.attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
+		oObject.attachValidationError(bHandleValidation, this._handleError, this);
+		oObject.attachParseError(bHandleValidation, this._handleError, this);
+		oObject.attachFormatError(bHandleValidation, this._handleError, this);
+	};
+	
+	/**
+	 * Unregister ManagedObject
+	 * 
+	 * @param {sap.ui.base.ManageObject} oObject The sap.ui.base.ManageObject
+	 * @public
+	 */
+	MessageManager.prototype.unregisterObject = function(oObject) {
+		if (!oObject instanceof sap.ui.base.ManagedObject) {
+			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+			return;
+		}
+		//oObject.getMetadata().getStereoType() + getId()
+		oObject.detachValidationSuccess(this._handleSuccess);
+		oObject.detachValidationError(this._handleError);
+		oObject.detachParseError(this._handleError);
+		oObject.detachFormatError(this._handleError);
 	};
 	
 	/**
@@ -295,18 +334,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {
+		var that = this;
+		//Detach handler
+		jQuery.each(this.mProcessors, function(sId, oProcessor) {
+			oProcessor.detachMessageChange(this.onMessageChange);
+		});
+		jQuery.each(this.mObjects, function(sId, oObject) {
+			oObject.detachValidationSuccess(that._handleSuccess);
+			oObject.detachValidationError(that._handleError);
+			oObject.detachParseError(that._handleError);
+			oObject.detachFormatError(that._handleError);
+			//TODO: delete Messages for Objects
+		});
+		if (sap.ui.getCore().getConfiguration().getHandleValidation()) { 
+			sap.ui.getCore().detachValidationSuccess(this._handleSuccess);
+			sap.ui.getCore().detachValidationError(this._handleError);
+			sap.ui.getCore().detachParseError(this._handleError);
+			sap.ui.getCore().detachFormatError(this._handleError);
+		}
 		this.mProcessors = undefined;
 		this.mMessages = undefined;
+		this.mObjects = undefined;
 		this.oMessageModel.destroy();
-		//TODO: detach all handlers
 	};
 	
 	/**
-	 * No Interface needed - return instance 
-	 * @private
+	 * Get the MessageModel
+	 * @return {sap.ui.core.message.MessageModel} oMessageModel The Message Model 
+	 * @public
 	 */
-	MessageManager.prototype.getInterface = function() {
-		return this;
+	MessageManager.prototype.getMessageModel = function() {
+		if (!this.oMessageModel) {
+			this.oMessageModel = new MessageModel(this);
+		}
+		return this.oMessageModel;
 	};
 	
 	return MessageManager;

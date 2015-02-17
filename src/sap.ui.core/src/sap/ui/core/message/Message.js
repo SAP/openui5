@@ -3,8 +3,8 @@
  */
 
 // Provides the implementation for a Message
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
+	function(jQuery, Object) {
 	"use strict";
 
 
@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Constructor for a new Message.
 	 * @class
-	 * @extends sap.ui.base.EventProvider
+	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -32,17 +32,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * {sap.ui.core.MessageType} [mParameters.type] The message type
 	 * {string} [mParameters.code] The message code
 	 * {sap.ui.core.message.Messageprocessor} [mParameters.processor]
-	 * {string} [mParameters.target] The message target
-	 * {boolean} [mParameters.persistent] Sets message persistent: If persisten is set true the message 
+	 * {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
+	 * {boolean} [mParameters.persistent] Sets message persistent: If persistent is set true the message 
 	 * lifecycle controlled by Application
 	 * 
 	 * @public
 	 * @alias sap.ui.core.message.Message
 	 */
-	var Message = EventProvider.extend("sap.ui.core.message.Message", /** @lends sap.ui.core.message.Message.prototype */ {
+	var Message = Object.extend("sap.ui.core.message.Message", /** @lends sap.ui.core.message.Message.prototype */ {
 
 		constructor : function (mParameters) {
-			EventProvider.apply(this, arguments);
+			Object.apply(this, arguments);
 			
 			this.id = mParameters.id ? mParameters.id : jQuery.sap.uid();
 			this.message = mParameters.message;
@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			this.target = mParameters.target;
 			this.processor = mParameters.processor;
 			this.persistent = mParameters.persistent || false;
+			this.technical = mParameters.technical || false;
 		}
 	});
 	
@@ -106,7 +107,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {sap.ui.core.MessageType} sType The Message type 
 	 */
 	Message.prototype.setType = function(sType) {
-		this.type = sType;
+		if (sType in sap.ui.core.MessageType) {
+			this.type = sType;
+		} else {
+			jQuery.sap.log.error("MessageType must be of type sap.ui.core.MessageType");
+		}
 	};
 	
 	/**
@@ -119,7 +124,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 	
 	/**
-	 * Set message target
+	 * Set message target: The syntax MessageProcessor dependent. See the documentation of the
+	 * respective MessageProcessor.
 	 * 
 	 * @param {string} sTarget The Message target 
 	 */
@@ -142,7 +148,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {sap.ui.core.message.MessageProcessor} oMessageProcessor The Message processor 
 	 */
 	Message.prototype.setMessageProcessor = function(oMessageProcessor) {
-		this.processor = oMessageProcessor;
+		if (oMessageProcessor instanceof sap.ui.core.message.MessageProcessor) {
+			this.processor = oMessageProcessor;
+		} else {
+			jQuery.sap.log.error("MessageProcessor must be an instance of sap.ui.core.message.MessageProcessor");
+		}
 	};
 	
 	/**
@@ -185,10 +195,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Returns the if Message is persistent
 	 * 
-	 *  @returns {boolean} persistent
+	 *  @returns {boolean} bPersistent
 	 */
 	Message.prototype.getPersistent = function() {
 		return this.persistent;
+	};
+	
+	/**
+	 * Set message as technical message
+	 * 
+	 * @param {boolean} bTechnical Set Message as technical message
+	 * lifecycle controlled by Application
+	 */
+	Message.prototype.setTechnical = function(bTechnical) {
+		this.technical = bTechnical;
+	};
+	
+	/**
+	 * Returns the if Message set as technical message
+	 * 
+	 *  @returns {boolean} bTechnical 
+	 */
+	Message.prototype.getTechnical = function() {
+		return this.technical;
 	};
 	
 	return Message;

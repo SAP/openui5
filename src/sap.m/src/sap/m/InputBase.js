@@ -931,6 +931,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setValueStateText(aMessages[0].message);
 		} else {
 			this.setValueState(sap.ui.core.ValueState.None);
+			this.setValueStateText('');
 		}
 	};
 

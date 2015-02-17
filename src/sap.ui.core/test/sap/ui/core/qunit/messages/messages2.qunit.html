@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m,sap.ui.layout"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-bindingSyntax='complex'>
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+	
+	var oModel;
+	
+	//create some components for testing 
+	sap.ui.localResources("components");
+	var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
+		name: "components",
+		id: "myMessageTest1",
+	});
+	var oCompCont2 = new sap.ui.core.ComponentContainer("CompCont2", {
+		name: "components.enabled",
+		id: "myMessageTest2",
+		handleValidation: true
+	});
+	var oCompCont3 = new sap.ui.core.ComponentContainer("CompCont3", {
+		name: "components.disabled",
+		id: "myMessageTest3",
+		handleValidation: true
+	});
+	
+	oCompCont.placeAt("content");
+	oCompCont2.placeAt("content");
+	oCompCont3.placeAt("content");
+	
+	var initModel = function(sType) {
+		if (sType === "json") {
+			oModel = new sap.ui.model.json.JSONModel();
+			var oData = {
+				form: {
+					firstname: "Fritz",
+					lastname: "Heiner",
+					street: "im",
+					nr: 1,
+					zip: "12345"
+				}
+			}
+			oModel.setData(oData);
+		}
+		sap.ui.getCore().setModel(oModel);
+	}
+	module("MessageManager components", {
+		setup : function() {
+			initModel("json");	
+		},
+		
+		teardown : function() {
+			oModel.destroy();
+		}
+	});
+
+	test("componentEnabled", function() {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+		var oCompZip = sap.ui.getCore().byId("zip_enabled");
+		
+		var oChangeHandler = function(oEvent) {
+			ok(oEvent.getParameters('messages').messages.length == 1, 'Format Message created');
+			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+			oCompZip.getBinding("value").detachMessageChange(oChangeHandler);
+		};
+		var oChangeHandler2 = function(oEvent) {
+			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
+			ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+			ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
+			oCompZip.getBinding("value").detachMessageChange(oChangeHandler);
+		};
+		oCompZip.getBinding("value").attachMessageChange(oChangeHandler);
+		var oCoreValHandler = function(oEvent) {
+			ok(false,"should never be called");
+		};
+		sap.ui.getCore().attachValidationError(oCoreValHandler);
+		oCompZip.setValue('123456');
+		oCompZip.getBinding("value").attachMessageChange(oChangeHandler2);
+		oCompZip.setValue('12345');
+		sap.ui.getCore().detachValidationError(oCoreValHandler);
+	});
+	
+	test("componentDisabled", function() {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+		var oCompZip = sap.ui.getCore().byId("zip_disabled");
+		
+		var oValHandler = function(oEvent) {
+			ok(false,"should never be called");
+		};
+		oCompZip.getBinding("value").attachMessageChange(oValHandler);
+		sap.ui.getCore().attachValidationError(oValHandler);
+		oCompZip.setValue('123456');
+		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		sap.ui.getCore().detachValidationError(oValHandler);
+	});
+	
+	test("component handle validation undefined", function() {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+		var oCompZip = sap.ui.getCore().byId("zip");
+		var oChangeHandler = function(oEvent) {
+			ok(false,"should never be called");
+		};
+		var oValHandler = function(oEvent) {
+			ok(true,oEvent.sId);
+			sap.ui.getCore().detachValidationError(oValHandler);
+		};
+		oCompZip.getBinding("value").attachMessageChange(oChangeHandler);
+		sap.ui.getCore().attachValidationError(oValHandler);
+		oCompZip.setValue('123456');
+		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+	});
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Messaging</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="content"></div>
+</body>
+</html>

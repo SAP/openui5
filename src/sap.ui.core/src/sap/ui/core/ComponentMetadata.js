@@ -206,6 +206,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 								}
 							}
 							break;
+						case "handleValidation":
+							oAppManifest[sName] = oValue;
+							break;
 						case "models":
 							var oModels = {};
 							for (var sModel in oValue) {
@@ -621,6 +624,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			this._oLegacyModels = mModels;
 		}
 		return this._oLegacyModels;
+	};
+	
+	/**
+	 * Returns messaging flag
+	 *  
+	 * @return {boolean} bMessaging Messaging enabled/disabled
+	 * @private
+	 * @since 1.28 
+	 */
+	ComponentMetadata.prototype.handleValidation = function() {
+		return this._oStaticInfo.handleValidation;
 	};
 	
 	/**

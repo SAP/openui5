@@ -2220,7 +2220,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		
 		// make visible that it's been destroyed.
 		this.bIsDestroyed = true;
-
 	};
 
 
@@ -2603,11 +2602,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					that.aControlMessages = aMessages;
 				}
 				//merge control/model messages
-				if (oBinding.getMessages()) {
-					aAllMessages = aAllMessages.concat(oBinding.getMessages());
-				}
 				if (that.aControlMessages.length > 0) {
 					aAllMessages = aAllMessages.concat(that.aControlMessages);
+				}
+				if (oBinding.getMessages()) {
+					aAllMessages = aAllMessages.concat(oBinding.getMessages());
 				}
 				that.updateMessages(sName, aAllMessages);
 			};
@@ -2730,7 +2729,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					type : oBinding.getType(),
 					newValue : oBinding.getValue(),
 					oldValue : this[oPropertyInfo._sGetter](),
-					exception: oException
+					exception: oException,
+					message: oException.message
 				}, false, true); // bAllowPreventDefault, bEnableEventBubbling
 				oBindingInfo.skipModelUpdate = true;
 				this[oPropertyInfo._sMutator](null);
@@ -3451,9 +3451,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		jQuery.sap.assert(oModel == null || oModel instanceof Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
-			if (this.getMessageManager()) {
-				this.getMessageManager().deregisterMessageProcessor(this.oModels[sName]);
-			}
 			delete this.oModels[sName];
 			// propagate Models to children
 			// model changes are propagated until (including) the first descendant that has its own model with the same name
@@ -3470,9 +3467,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this.updateBindingContext(false, true, sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
-			if (this.getMessageManager()) {
-				this.getMessageManager().registerMessageProcessor(oModel);
-			}
 		} // else nothing to do
 		return this;
 	};

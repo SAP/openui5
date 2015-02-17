@@ -2337,9 +2337,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		jQuery.sap.assert(oModel == null || oModel instanceof sap.ui.model.Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
-			if (this.getMessageManager()) {
-				this.getMessageManager().deregisterMessageProcessor(this.oModels[sName]);
-			}
 			delete this.oModels[sName];
 			// propagate Models to all UI areas
 			jQuery.each(this.mUIAreas, function (i, oUIArea){
@@ -2353,9 +2350,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				oUIArea.oPropagatedProperties.oModels[sName] = oModel;
 				oUIArea.propagateProperties(sName);
 			});
-			if (this.getMessageManager()) {
-				this.getMessageManager().registerMessageProcessor(oModel);
-			}
 		} //else nothing to do
 		return this;
 	};
@@ -2415,7 +2409,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Attach event-handler <code>fnFunction</code> to the 'validationError' event of <code>sap.ui.core.Core</code>.<br/>
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
 	 *
-	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
@@ -2425,8 +2420,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	Core.prototype.attachValidationError = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.ValidationError, fnFunction, oListener);
+	Core.prototype.attachValidationError = function(oData, fnFunction, oListener) {
+		if (typeof (oData) === "function") {
+			oListener = fnFunction;
+			fnFunction = oData;
+			oData = undefined;
+		}
+		this.attachEvent(Core.M_EVENTS.ValidationError, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2451,6 +2451,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Attach event-handler <code>fnFunction</code> to the 'parseError' event of <code>sap.ui.core.Core</code>.<br/>
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
 	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
@@ -2460,8 +2462,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	Core.prototype.attachParseError = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.ParseError, fnFunction, oListener);
+	Core.prototype.attachParseError = function(oData, fnFunction, oListener) {
+		if (typeof (oData) === "function") {
+			oListener = fnFunction;
+			fnFunction = oData;
+			oData = undefined;
+		}
+		this.attachEvent(Core.M_EVENTS.ParseError, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2495,8 +2502,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	Core.prototype.attachFormatError = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.FormatError, fnFunction, oListener);
+	Core.prototype.attachFormatError = function(oData, fnFunction, oListener) {
+		if (typeof (oData) === "function") {
+			oListener = fnFunction;
+			fnFunction = oData;
+			oData = undefined;
+		}
+		this.attachEvent(Core.M_EVENTS.FormatError, oData, fnFunction, oListener);
 		return this;
 	};
 
@@ -2521,6 +2533,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Attach event-handler <code>fnFunction</code> to the 'validationSuccess' event of <code>sap.ui.core.Core</code>.<br/>
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
 	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
@@ -2530,8 +2544,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	Core.prototype.attachValidationSuccess = function(fnFunction, oListener) {
-		this.attachEvent(Core.M_EVENTS.ValidationSuccess, fnFunction, oListener);
+	Core.prototype.attachValidationSuccess = function(oData, fnFunction, oListener) {
+		if (typeof (oData) === "function") {
+			oListener = fnFunction;
+			fnFunction = oData;
+			oData = undefined;
+		}
+		this.attachEvent(Core.M_EVENTS.ValidationSuccess, oData, fnFunction, oListener);
 		return this;
 	};
 
