@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 		oFormat.oNumberFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions, oLocale);
 		oFormat.oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", oLocale.toString());
 		
-		oFormat.bBinary = !!oFormatOptions.binaryFilesize;
+		oFormat.bBinary = oFormatOptions ? !!oFormatOptions.binaryFilesize : false;
 		
 		return oFormat;
 	};

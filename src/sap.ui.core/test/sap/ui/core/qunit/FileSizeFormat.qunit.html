@@ -195,7 +195,12 @@
 		checkParse("default", "1 Byte", 1);
 		checkParse("default", "888", 888);
 	});
-	
+
+	test("create format instance without giving any option", function() {
+		var oFormat = sap.ui.core.format.FileSizeFormat.getInstance();
+		equal(oFormat.format(100000), "100 KB", "BinarySize is set to false by default");
+	});
+
 </script>
 
 </head>
