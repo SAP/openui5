@@ -106,6 +106,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 				//if there is tab text
 				if (oItem) {
+					var sIconColor = oItem.getIconColor();
+					var bReadIconColor = sIconColor === 'Positive' || sIconColor === 'Critical' || sIconColor === 'Negative';
+
 					if (oItem.getText().length || oItem.getCount() !== "" || oItem.getIcon()) {
 						sTabParams += 'aria-labelledby="';
 						var aIds = [];
@@ -118,6 +121,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 						}
 						if (oItem.getIcon()) {
 							aIds.push(oItem.getId() + '-icon');
+						}
+						if (bReadIconColor) {
+							aIds.push(oItem.getId() + '-iconColor');
 						}
 
 						sTabParams += aIds.join(' ');
@@ -160,6 +166,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				oRM.write("<div id='" + oItem.getId() + "-tab' class='sapMITBTab'>");
 
 				if (!oItem.getShowAll() || !oItem.getIcon()) {
+					if (bReadIconColor) {
+						var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
+							sIconColorText = oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase());
+
+						oRM.write('<div id="' + oItem.getId() + '-iconColor" style="display: none;">' + sIconColorText + '</div>');
+					}
+
 					oRM.renderControl(oItem._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oItem.getIconColor()], oControl, IconTabHeaderRenderer._aAllIconColors));
 				}
 
