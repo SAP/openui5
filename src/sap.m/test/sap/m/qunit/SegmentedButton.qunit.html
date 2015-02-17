@@ -1430,19 +1430,24 @@
 	}
 
 	test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function() {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_LEFT});
+		// Flip the arrow keys in RTL mode
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
 	test('Left Arrow when the first button has the focus', function() {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_LEFT});
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
 	});
 
 	test('Right Arrow', function() {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_RIGHT});
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
 	test('Right Arrow when the last button has the focus', function() {
-		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_RIGHT});
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
 	});
 
 	test('Up Arrow', function() {
