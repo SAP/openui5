@@ -56,8 +56,8 @@
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, precision: 10, scale: 'variable'}}"/>
 				<Label text="precision:10, scale: 3"/>
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
-				<Label text="scale: &quot;variable&quot;, nullable: false"/>
-				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}}"/>
+				<Label text="scale: default (0), nullable: false"/>
+				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
 				<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 
