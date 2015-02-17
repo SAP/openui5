@@ -333,15 +333,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 		return this._oLockIcon;
 	};
-	
+
 	/**
 	 * @private
 	 * @returns Favorite icon control
 	 */
 	ObjectListItem.prototype._getFavoriteIcon = function() {
-		
+
 		if (!this._oFavIcon) {
-	
+
 		    var oFavIconUri = IconPool.getIconURI("favorite");
 		    this._oFavIcon = IconPool.createControlByURI({
 		           id: this.getId() + "-favorite",
@@ -350,13 +350,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 		return this._oFavIcon;
 	};
-	
+
 	/**
 	 * @private
 	 * @returns title text control
 	 */
 	ObjectListItem.prototype._getTitleText = function() {
-		
+
 		if (!this._oTitleText) {
 			this._oTitleText = new sap.m.Text(this.getId() + "-titleText", {
 				maxLines: 2
