@@ -52,7 +52,7 @@
 			warning: "Illegal precision: 0"},
 		{i: {precision: 2, scale: 3}, o: {precision: 2, scale: Infinity},
 			warning: "Illegal scale: must be less than precision (precision=2, scale=3)"}
-    ], function (i, oFixture) {
+	], function (i, oFixture) {
 		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function () {
 			var oType = new sap.ui.model.odata.type.Decimal();
 
@@ -162,24 +162,32 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
-		{constraints: {scale: 1}, error: "EnterNumberScale 1"},
-		{constraints: {precision: 10, scale: 3}, error: "EnterNumberPrecisionScale 10 3"},
-		{constraints: {precision: 1, scale: "variable"}, error: "EnterNumberPrecision 1"},
-		{constraints: {scale: "variable"}, error: "EnterNumber"}
-	], function (i, oFixture) {
-		test("parse: user error: " + JSON.stringify(oFixture.constraints), function () {
-			sap.ui.test.TestUtils.withNormalizedMessages(function () {
-				var oType = new sap.ui.model.odata.type.Decimal({}, oFixture.constraints);
+	test("parse: user error: not a number", function () {
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.Decimal({}, {scale: 3});
 
-				try {
-					oType.parseValue("foo", "string");
-					ok(false);
-				} catch (e) {
-					ok(e instanceof sap.ui.model.ParseException);
-					strictEqual(e.message, oFixture.error);
-				}
-			});
+			try {
+				oType.parseValue("foo", "string");
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, "EnterNumber");
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	test("validate: user error: {scale: 1}", function () {
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			var oType = new sap.ui.model.odata.type.Decimal({}, {scale: 1});
+
+			try {
+				oType.validateValue(oType.parseValue("1.234", "string"));
+				ok(false);
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ValidateException);
+				strictEqual(e.message, "EnterNumberScale 1");
+			}
 		});
 	});
 
@@ -205,7 +213,7 @@
 		var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 6, scale: 3});
 
 		jQuery.each(["+1.1", "+123.123", "-123.1", "+123.1", "1.123", "-1.123", "123.1", "1",
-		            "-123"],
+					"-123"],
 			function (i, sValue) {
 				oType.validateValue(sValue);
 			}

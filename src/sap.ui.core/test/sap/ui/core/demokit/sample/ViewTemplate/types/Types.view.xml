@@ -86,6 +86,8 @@
 				<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32'}"/>
 				<Label text="sap.ui.model.odata.type.Int32, nullable=false"/>
 				<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}"/>
+				<Label text="sap.ui.model.odata.type.Int32, style: &quot;short&quot;"/>
+				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}, formatOptions: {style: 'short'}}"/>
 				<Label text="sap.ui.model.odata.type.Int64"/>
 				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64'}"/>
 				<Label text="sap.ui.model.odata.type.Int64, nullable=false"/>
