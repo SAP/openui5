@@ -109,34 +109,26 @@
 	outline: 1px dotted @sapUiFocus;
 }
 
-.sapMOHTitle.sapMOHTitleActive:focus {
-	outline: 1px dotted @sapUiFocus;
-	outline-offset: -1px;
+.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
+	background-color: @sapUiLightBG;
 }
 
-html[data-sap-ui-browser ^= "ff"] {
-	.sapMOH {
-		.sapMOHTitleArrow .sapUiIcon {
-			border: 1px solid transparent;
-
-			&:active , &:focus {
-				border: 1px dotted @sapUiFocus;
-				outline: none;
-			}
-		}
-	}
+.sapMOHC .sapMOHTitleArrow .sapUiIcon:active,
+.sapMOH .sapMOHTitleArrow .sapUiIcon:active {
+	background-color: @sapUiAccent5;
+	color: @sapUiTextInverted;
 }
 
 html[data-sap-ui-browser ^= "ie"] {
 	.sapMOH {
-		.sapMOHTitleArrow .sapUiIcon , .sapMOHTitleActive, .sapMOHTitle {
+		.sapMOHTitleActive, .sapMOHTitle {
 			border: 1px solid transparent;
 			margin-top: 0.125rem;
 			padding-top: 0.125rem;
 			padding-left: 0.125rem;
 		}
 
-		.sapMOHTitleArrow .sapUiIcon:focus , .sapMOHTitleActive:focus {
+		.sapMOHTitleActive:focus {
 			outline: none;
 			border: 1px dotted @sapUiFocus;
 		}

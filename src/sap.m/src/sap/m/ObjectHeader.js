@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			src: IconPool.getIconURI("arrow-down"),
 			decorative: false,
 			visible : false,
-			size: (this.getCondensed() ? "1.125rem" : "1.375rem"),
+			size: "1.375rem",
 			press : function(oEvent) {
 				that.fireTitleSelectorPress({
 					domRef : this.getDomRef()
@@ -338,11 +338,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype.setCondensed = function (bCondensed) {
 		this.setProperty("condensed", bCondensed);
-		if (this.getCondensed()) {
-			this._oTitleArrowIcon.setSize("1.125rem");
-		} else {
-			this._oTitleArrowIcon.setSize("1.375rem");
-		}
+
 		return this;
 	};
 
@@ -368,7 +364,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype.setNumberUnit = function (sUnit) {
 		this.setProperty("numberUnit", sUnit);
-		this._getObjectNumber().setNumberUnit(sUnit);
+		this._getObjectNumber().setUnit(sUnit);
 		return this;
 	};
 
