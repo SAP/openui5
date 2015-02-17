@@ -1092,9 +1092,9 @@
 						viewType: "XML",
 						// we stub the view creation
 						viewPath: "bar",
-						view: "foo",
+						viewName: "foo",
 						// only shells will be used
-						targetAggregation: "content"
+						controlAggregation: "content"
 					};
 
 					this.oRouterConfig = {
@@ -1113,7 +1113,7 @@
 
 		test("Should display a target referenced by a route", function () {
 			// Arrange
-			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+			this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 				return createXmlView();
 			});
 
@@ -1121,7 +1121,7 @@
 
 			var oTargetConfig = {
 				myTarget : {
-					targetControl: this.oShell.getId()
+					controlId: this.oShell.getId()
 				}
 			};
 			this.oRouterConfig.routeName.target = "myTarget";
@@ -1144,7 +1144,7 @@
 
 		test("Should display multiple targets referenced by a route", function () {
 			// Arrange
-			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+			this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 				return createXmlView();
 			});
 
@@ -1152,10 +1152,10 @@
 
 			var oTargetConfig = {
 				myTarget : {
-					targetControl: this.oShell.getId()
+					controlId: this.oShell.getId()
 				},
 				secondTarget: {
-					targetControl: this.oSecondShell.getId()
+					controlId: this.oSecondShell.getId()
 				}
 			};
 			this.oRouterConfig.routeName.target = ["myTarget", "secondTarget"];
@@ -1178,19 +1178,18 @@
 
 		test("Should display child targets referenced by a route", function () {
 			// Arrange
-			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+			this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 				return createXmlView();
 			});
 
 			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
 			var oTargetConfig = {
 				myTarget : {
-					targetControl: this.oShell.getId(),
-					children : {
-						myChild : {
-							targetControl: this.oSecondShell.getId()
-						}
-					}
+					controlId: this.oShell.getId()
+				},
+				myChild : {
+					parent: "myTarget",
+					controlId: this.oSecondShell.getId()
 				}
 			};
 			this.oRouterConfig.routeName.target = ["myChild"];

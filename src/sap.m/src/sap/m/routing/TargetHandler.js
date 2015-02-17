@@ -2,13 +2,15 @@
  * ${copyright}
  */
 sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router'],
-	function(jQuery, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router) {
+	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router) {
 		"use strict";
 
 
 		/**
 		 * Instantiates a TargetHandler.
-		 * This is used for closing dialogs when targets are displayed. You should not create an own instance of this, it will be created when using {@link sap.m.routing.Router} or {@link sap.m.routing.Targets}
+		 * This is used for closing dialogs when targets are displayed.
+		 * You should not create an own instance of this, it will be created when using {@link sap.m.routing.Router} or {@link sap.m.routing.Targets}.
+		 * You may use the {@link #setCloseDialogs} function to specify if dialogs should be closed on displaying other views.
 		 *
 		 * @class
 		 * @param {boolean} closeDialogs - the default is true - will close all open dialogs before navigating, if set to true. If set to false it will just navigate without closing dialogs.
@@ -214,11 +216,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 
 			//It is already the current page, no need to navigate
 			if (oTargetControl.getCurrentPage(bNextPageIsMaster).getId() === sViewId) {
-				jQuery.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl");
+				$.sap.log.info("navigation to view with id: " + sViewId + " is skipped since it already is displayed by its targetControl", "sap.m.routing.TargetHandler");
 				return;
 			}
 
-			jQuery.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
+			$.sap.log.info("navigation to view with id: " + sViewId + " the targetControl is " + oTargetControl.getId() + " backwards is " + bBack);
 
 			if (bBack) {
 				// insert previous page if not in nav container yet

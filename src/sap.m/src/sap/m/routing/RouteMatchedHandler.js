@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			this._oTargets = oRouter.getTargets();
 
 			if (this._oTargets) {
-				this._oTargets.attachDisplay(this._onHandleRouteMatched, this);
+				this._oTargets.attachDisplay(this._onHandleDisplay, this);
 			}
 
 			this._oRouter = oRouter;
@@ -150,9 +150,34 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		var oParameters = oEvent.getParameters(),
 			oConfig = oParameters.config;
 
+		// Route is using targets so the display event will handle this navigation
+		if (!this._oRouter.getRoute(oParameters.name)._oTarget) {
+			return;
+		}
+
 		this._oTargetHandler.addNavigation({
 			targetControl : oParameters.targetControl,
 			eventData : oParameters.arguments,
+			view : oParameters.view,
+			navigationIdentifier : oParameters.name,
+			transition: oConfig.transition,
+			transitionParameters: oConfig.transitionParameters,
+			preservePageInSplitContainer: oConfig.preservePageInSplitContainer
+		});
+	};
+
+	/**
+	 * queues up calls
+	 * @param {object} oEvent The routeMatched event
+	 * @private
+	 */
+	RouteMatchedHandler.prototype._onHandleDisplay = function(oEvent) {
+		var oParameters = oEvent.getParameters(),
+			oConfig = oParameters.config;
+
+		this._oTargetHandler.addNavigation({
+			targetControl : oParameters.control,
+			eventData : oParameters.data,
 			view : oParameters.view,
 			navigationIdentifier : oParameters.name,
 			transition: oConfig.transition,

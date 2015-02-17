@@ -45,7 +45,7 @@
 
 				HashChanger.getInstance().init();
 
-				module("initialization");
+				QUnit.module("initialization");
 
 				function createViewAndController(sName) {
 					sap.ui.controller(sName, {});
@@ -64,13 +64,15 @@
 					//Arrange
 					var oRouteMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_onHandleRouteMatched"),
 							oRoutePatternMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_handleRoutePatternMatched"),
-							oRouter = new Router(),
+							oRouter = new Router({
+								myRoute : {}
+							}),
 					//System under Test
 							oRouteMatchedHandler = new RouteMatchedHandler(oRouter, false);
 
 
 					//Fire once to make sure we registered
-					oRouter.fireRouteMatched({config: {}});
+					oRouter.fireRouteMatched({config: {}, name: "myRoute"});
 					oRouter.fireRoutePatternMatched({config: {}});
 
 					strictEqual(oRouteMatchedSpy.callCount, 1, "did fire the event");
@@ -90,17 +92,20 @@
 					strictEqual(oRouteMatchedHandler.getCloseDialogs(), false, "close dialogs was set to false");
 				});
 
-				module("Transition Directions");
+				QUnit.module("Transition Directions");
 
 				test("Should forward the Direction info to the TargetHandler", function () {
 					//Arrange
 					var view = createViewAndController("dummy"),
-							oRouter = new Router(),
+							oRouter = new Router({
+								myRoute : {}
+							}),
 							oNavContainer = new NavContainer(),
 							oEvent = {
 								config: {
 									viewLevel: 1
 								},
+								name: "myRoute",
 								view: "foo",
 								targetControl: oNavContainer
 							},
@@ -122,12 +127,20 @@
 					oRouter.destroy();
 				});
 
-				module("Managing Containers");
+				QUnit.module("Managing Containers", {
+					setup: function () {
+						this.oRouter = new Router({
+							myRoute: {}
+						});
+					},
+					teardown: function () {
+						this.oRouter.destroy();
+					}
+				});
 
-				test("Should do a forward navigation", function () {
+				QUnit.test("Should do a forward navigation", function (assert) {
 					//Arrange
 					var view = createViewAndController("dummy"),
-							oRouter = new Router(),
 							oNavContainer = new NavContainer({
 								pages: [ createViewAndController("initial"), view]
 							}),
@@ -138,30 +151,29 @@
 									transition: "flip",
 									transitionParameters: { testie: "test"}
 								},
-								view: view
+								view: view,
+								name: "myRoute"
 							},
 							oToSpy = this.spy(NavContainer.prototype, "to");
 
 					//System under Test
-					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
 
 					//Act
-					oRouter.fireRouteMatched(oEvent);
-					oRouter.fireRoutePatternMatched(oEvent);
+					this.oRouter.fireRouteMatched(oEvent);
+					this.oRouter.fireRoutePatternMatched(oEvent);
 
 					//Assert
-					strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+					assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
 					var oFirstCall = oToSpy.firstCall;
 
-					strictEqual(oFirstCall.args[0], oEvent.view.getId(), "did navigate to the correct view");
-					strictEqual(oFirstCall.args[1], oEvent.config.transition, "did show the correct transition");
-					strictEqual(oFirstCall.args[2], oEvent.arguments, "did pass the correct arguments");
-					strictEqual(oFirstCall.args[3], oEvent.config.transitionParameters, "did pass the transition parameters");
-
-					oRouter.destroy();
+					assert.strictEqual(oFirstCall.args[0], oEvent.view.getId(), "did navigate to the correct view");
+					assert.strictEqual(oFirstCall.args[1], oEvent.config.transition, "did show the correct transition");
+					assert.strictEqual(oFirstCall.args[2], oEvent.arguments, "did pass the correct arguments");
+					assert.strictEqual(oFirstCall.args[3], oEvent.config.transitionParameters, "did pass the transition parameters");
 				});
 
-				test("Should do a backwards navigation", function () {
+			QUnit.test("Should do a backwards navigation", function (assert) {
 					//Arrange
 					var view = createViewAndController("dummy"),
 							oRouter = new Router(),
@@ -175,7 +187,8 @@
 									transition: "flip",
 									transitionParameters: { testie: "test"}
 								},
-								view: view
+								view: view,
+								name: "myRoute"
 							},
 							oInsertPreviousPageSpy = this.spy(NavContainer.prototype, "insertPreviousPage"),
 							oBackToPageSpy = this.spy(NavContainer.prototype, "backToPage");
@@ -186,53 +199,53 @@
 					});
 
 					//System under Test
-					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
 
 					//Act
-					oRouter.fireRouteMatched(oEvent);
-					oRouter.fireRoutePatternMatched(oEvent);
+					this.oRouter.fireRouteMatched(oEvent);
+					this.oRouter.fireRoutePatternMatched(oEvent);
 
 					//Assert
-					strictEqual(oInsertPreviousPageSpy.callCount, 1, "did insert the page in the navigation stack");
-					strictEqual(oBackToPageSpy.callCount, 1, "did a backwards navigation to the page");
+					assert.strictEqual(oInsertPreviousPageSpy.callCount, 1, "did insert the page in the navigation stack");
+					assert.strictEqual(oBackToPageSpy.callCount, 1, "did a backwards navigation to the page");
 
 					var oInsertCall = oInsertPreviousPageSpy.firstCall;
 					var oBackCall = oBackToPageSpy.firstCall;
 
-					strictEqual(oInsertCall.args[0], oEvent.view.getId(), "did insert the correct view");
-					strictEqual(oInsertCall.args[1], oEvent.config.transition, "did show the correct transition");
-					strictEqual(oInsertCall.args[2], oEvent.arguments, "did pass the correct arguments");
+					assert.strictEqual(oInsertCall.args[0], oEvent.view.getId(), "did insert the correct view");
+					assert.strictEqual(oInsertCall.args[1], oEvent.config.transition, "did show the correct transition");
+					assert.strictEqual(oInsertCall.args[2], oEvent.arguments, "did pass the correct arguments");
 
-					strictEqual(oBackCall.args[0], oEvent.view.getId(), "did a back to the correct view");
-					strictEqual(oBackCall.args[1], oEvent.arguments, "did pass the correct arguments");
-					strictEqual(oBackCall.args[2], oEvent.config.transitionParameters, "did pass the transition parameters");
+					assert.strictEqual(oBackCall.args[0], oEvent.view.getId(), "did a back to the correct view");
+					assert.strictEqual(oBackCall.args[1], oEvent.arguments, "did pass the correct arguments");
+					assert.strictEqual(oBackCall.args[2], oEvent.config.transitionParameters, "did pass the transition parameters");
 				});
 
-				test("Should not navigate if the currentPage is already displayed", function () {
+				QUnit.test("Should not navigate if the currentPage is already displayed", function (assert) {
 					//Arrange
 					var view = createViewAndController("dummy"),
-							oRouter = new Router(),
-							oNavContainer = new NavContainer({
-								pages: [ view]
-							}),
-							oEvent = {
-								targetControl: oNavContainer,
-								config: {},
-								view: view
-							},
-							oToSpy = this.spy(NavContainer.prototype, "to"),
-							oNavigateSpy = this.spy(TargetHandler.prototype, "navigate");
+						oNavContainer = new NavContainer({
+							pages: [ view]
+						}),
+						oEvent = {
+							targetControl: oNavContainer,
+							config: {},
+							view: view,
+							name: "myRoute"
+						},
+						oToSpy = this.spy(NavContainer.prototype, "to"),
+						oNavigateSpy = this.spy(TargetHandler.prototype, "navigate");
 
 					//System under Test
-					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
 
 					//Act
-					oRouter.fireRouteMatched(oEvent);
-					oRouter.fireRoutePatternMatched(oEvent);
+					this.oRouter.fireRouteMatched(oEvent);
+					this.oRouter.fireRoutePatternMatched(oEvent);
 
 					//Assert
-					strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
-					strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
+					assert.strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
+					assert.strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
 				});
 
 				module("Dialog closing");
@@ -309,18 +322,18 @@
 										}
 									},
 									{
-										targetControl: this.oSplitContainer.getId(),
+										controlId: this.oSplitContainer.getId(),
 										viewType: "JS"
 									},
 									null,
 									{
 										master: {
-											view: "Master",
-											targetAggregation: "masterPages"
+											viewName: "Master",
+											controlAggregation: "masterPages"
 										},
 										detail: {
-											view: "Detail",
-											targetAggregation: "detailPages"
+											viewName: "Detail",
+											controlAggregation: "detailPages"
 										}
 									});
 
@@ -342,7 +355,7 @@
 					oRouteMatchedHandler.destroy();
 				});
 
-				test("Should work with routes without targets mixed with routes with targets", function () {
+				test("Should work with routes without targets mixed with routes with targets", function (assert) {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
 							oDetailView = createViewAndController("Detail"),
@@ -350,6 +363,7 @@
 							oRouter =  new Router({
 										master: {
 											view: "Master",
+											targetControl: this.oSplitContainer.getId(),
 											targetAggregation: "masterPages",
 											subroutes: {
 												detail: {
@@ -360,14 +374,14 @@
 										}
 									},
 									{
-										targetControl: this.oSplitContainer.getId(),
 										viewType: "JS"
 									},
 									null,
 									{
 										detail: {
-											view: "Detail",
-											targetAggregation: "detailPages"
+											viewName: "Detail",
+											controlAggregation: "detailPages",
+											controlId: this.oSplitContainer.getId()
 										}
 									});
 
@@ -375,13 +389,15 @@
 
 					// System under test
 					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+					var fnAddNavigationSpy = this.spy(oRouteMatchedHandler._oTargetHandler, "addNavigation");
 
 					// Act
 					oRouter.parse(sPattern);
 
 					//Assert
-					strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-					strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+					assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+					assert.strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+					assert.strictEqual(fnAddNavigationSpy.callCount, 2, "did add exactly 2 navigations");
 
 					oMasterView.destroy();
 					oDetailView.destroy();

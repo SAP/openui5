@@ -1541,7 +1541,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
-	
+
+	// requires for routing
+	sap.ui.lazyRequire("sap.m.routing.RouteMatchedHandler");
+	sap.ui.lazyRequire("sap.m.routing.Router");
+	sap.ui.lazyRequire("sap.m.routing.Target");
+	sap.ui.lazyRequire("sap.m.routing.TargetHandler");
+	sap.ui.lazyRequire("sap.m.routing.Targets");
+
 	//enable ios7 support
 	if (Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf") {
 		jQuery.sap.require("sap.m.ios7");

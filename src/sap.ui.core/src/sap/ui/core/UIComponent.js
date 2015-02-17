@@ -126,6 +126,9 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 			var fnRouterConstructor = oRoutingConfig.routerClass || sap.ui.core.routing.Router;
 			if (typeof fnRouterConstructor === "string") {
 				fnRouterConstructor = jQuery.sap.getObject(fnRouterConstructor);
+				if (!fnRouterConstructor) {
+					jQuery.sap.log.error("The specified routerClass '" + oRoutingConfig.routerClass + "' is undefined.", this);
+				}
 			}
 			
 			this._oRouter = new fnRouterConstructor(aRoutes, oRoutingConfig, this, oMetadata.getTargetsConfig());
@@ -144,6 +147,9 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 		if (oRootControl instanceof View) {
 			if (oRoutingConfig.targetParent === undefined) {
 				oRoutingConfig.targetParent = oRootControl.getId();
+			}
+			if (oRoutingConfig.rootView === undefined) {
+				oRoutingConfig.rootView = oRootControl.getId();
 			}
 		}
 	};

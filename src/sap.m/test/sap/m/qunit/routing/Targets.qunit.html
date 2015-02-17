@@ -31,9 +31,10 @@
 					"sap/m/NavContainer",
 					"sap/m/Page",
 					"sap/ui/core/routing/Views",
-					"test/commonIntegrationTests"
+					"test/commonIntegrationTests",
+					"sap/ui/core/routing/Route"
 				],
-				function (Targets, NavContainer, Page, Views, integrationTests) {
+				function (Targets, NavContainer, Page, Views, integrationTests, Route) {
 					"use strict";
 
 					module = original;
@@ -47,7 +48,7 @@
 							this.sPattern = "some/{eventData}";
 							this.oToPage = new Page();
 							this.oTargetConfiguration = {
-								targetControl: this.oNavContainer.getId(),
+								controlId: this.oNavContainer.getId(),
 								transition: "flip",
 								viewLevel: 5,
 								transitionParameters: { some: "parameter"}
@@ -59,7 +60,7 @@
 									myTarget: this.oTargetConfiguration
 								},
 								config: {
-									targetAggregation: "pages"
+									controlAggregation: "pages"
 								},
 								views: this.oViews
 							});
@@ -80,7 +81,7 @@
 								oNavigateSpy = this.spy(this.oTargets._oTargetHandler, "navigate"),
 								oEventData = { eventData: "myData"};
 
-						this.stub(Views.prototype, "getView", function () {
+						this.stub(Views.prototype, "_getView", function () {
 							return that.oToPage;
 						});
 
@@ -104,29 +105,41 @@
 					QUnit.module("Integration tests");
 
 					/**
-					 * renames subroutes into children
+					 * renames subroutes into parent
+					 * and renames routes params to target params
 					 *
 					 * @private
 					 * @param oConfig
+					 * @param oOriginalConfig
 					 */
-					function modifyConfig (oConfig) {
-						var sPropertyName,
-							oRoute;
+					function modifyConfig (oConfig, oOriginalConfig) {
+						var sRouteName,
+							sSubrouteName,
+							oRouteConfig;
 
-						for(sPropertyName in oConfig) {
+						for(sRouteName in oConfig) {
 							// only check own properties
-							if(oConfig.hasOwnProperty(sPropertyName)) {
-								oRoute = oConfig[sPropertyName];
+							if(oConfig.hasOwnProperty(sRouteName)) {
+								oRouteConfig = oConfig[sRouteName];
+
+								oRouteConfig = Route.prototype._convertToTargetOptions(oRouteConfig);
+								oOriginalConfig[sRouteName] = oRouteConfig;
 
 								// end recursion
-								if (!oRoute.subroutes) {
-									return;
+								if (!oRouteConfig.subroutes) {
+									continue;
 								}
 
-								oRoute.children = oRoute.subroutes;
-								oRoute.subroutes = null;
+								oRouteConfig.children = oRouteConfig.subroutes;
+								for(sSubrouteName in oRouteConfig.subroutes) {
+									if(oRouteConfig.subroutes.hasOwnProperty(sSubrouteName)) {
+										oOriginalConfig[sSubrouteName] = oRouteConfig.subroutes[sSubrouteName];
+										oOriginalConfig[sSubrouteName].parent = sRouteName;
 
-								modifyConfig(oRoute.children);
+										modifyConfig(oRouteConfig.subroutes, oOriginalConfig);
+									}
+								}
+
 							}
 						}
 					}
@@ -134,7 +147,7 @@
 					integrationTests.start({
 						setup: function (oConfig) {
 
-							modifyConfig(oConfig);
+							modifyConfig(oConfig, oConfig);
 							this.oViews = new Views();
 
 							var oTargets = new Targets({ targets: oConfig, views : this.oViews });

@@ -36,15 +36,14 @@
 				this.oTargets = new sap.ui.core.routing.Targets({
 					targets: {
 						myTarget: {
-							view: "myView"
+							viewName: "myView"
 						},
 						myParent : {
-							view: "myParentView",
-							children : {
-								myChild : {
-									view: "myChildView"
-								}
-							}
+							viewName: "myParentView"
+						},
+						myChild : {
+							parent: "myParent",
+							viewName: "myChildView"
 						}
 					},
 					views: this.oViews
@@ -60,7 +59,7 @@
 			var oTarget = this.oTargets.getTarget("myTarget");
 
 			// Assert
-			strictEqual(oTarget._oOptions.view, "myView", "Did retrieve the correct Target");
+			strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
 			strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
 		});
 
@@ -77,7 +76,7 @@
 			var oChild = this.oTargets.getTarget("myChild");
 
 			// Assert
-			strictEqual(oChild._oOptions.view, "myChildView", "Did retrieve the correct Target");
+			strictEqual(oChild._oOptions.viewName, "myChildView", "Did retrieve the correct Target");
 			strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
 		});
 
@@ -93,7 +92,7 @@
 			strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
 			strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
 			// check if error for non-existing target "foo" is thrown
-			sinon.assert.calledWith(oSpy, sinon.match(/foo/), sinon.match("sap.ui.core.routing.Targets"));
+			sinon.assert.calledWith(oSpy, sinon.match(/foo/), sinon.match(this.oTargets));
 		});
 
 
@@ -108,7 +107,7 @@
 						}
 					},
 					config: {
-						targetAggregation: "foo",
+						controlAggregation: "foo",
 						someThingCustom: "bar",
 						someThingToBeReplaced: "baz"
 					}
@@ -125,8 +124,32 @@
 
 			// Assert
 			strictEqual(oOptions.viewLevel, 5, "Did use the view level");
-			strictEqual(oOptions.targetAggregation, "foo", "Did pass one of the routing api values from the config");
+			strictEqual(oOptions.controlAggregation, "foo", "Did pass one of the routing api values from the config");
 			strictEqual(oOptions.someThingToBeReplaced, "replaced", "Did overwrite ");
+		});
+
+		module("config - invalid parent", {
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		test("Should complain about an non existing parent", function () {
+			// Arrange
+			var oIncorrectConfig = {
+						targets: {
+						myChildWithoutParent: {
+							parent:"foo"
+						}
+					}
+				},
+				oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+
+			// System under test + Act
+			this.oTargets = new sap.ui.core.routing.Targets(oIncorrectConfig);
+
+			// Assert
+			sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(this.oTargets));
 		});
 
 		module("display", {
@@ -182,7 +205,7 @@
 			this.oTargets.display("foo");
 
 			// Assert
-			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match("sap.ui.core.routing.Targets"));
+			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match(this.oTargets));
 		});
 
 		test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
@@ -195,7 +218,7 @@
 
 			// Assert
 			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match("sap.ui.core.routing.Targets"));
+			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match(this.oTargets));
 		});
 
 		function createView (aContent, sId) {
@@ -218,21 +241,19 @@
 
 				this.oDefaultConfig = {
 					viewPath: "bar",
-					view: "foo",
-					targetAggregation: "content",
+					viewName: "foo",
+					controlAggregation: "content",
 					viewType: "XML",
-					targetControl: this.oShell.getId()
+					controlId: this.oShell.getId()
 				};
 
 				this.oTargetsCofig = {
 					myTarget: {
-						parent : "parent",
-						children: {
-							myChild: { child : "child"}
-						}
 					},
 					mySecondTarget: {
-						second: "second"
+					},
+					myChild: {
+						parent : "myTarget"
 					}
 				};
 
@@ -302,51 +323,56 @@
 			}
 		}
 
-		test("Should fire the display event", function () {
+	QUnit.test("Should fire the display event", function (assert) {
 			// Arrange
 			var that = this,
-					oParameters = null,
-					fnEventSpy = this.spy(function (oEvent) {
-						oParameters = oEvent.getParameters();
-					});
+				oParameters = null,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				}),
+				oData = {some : "data"};
 
-			var oStub = this.stub(this.oViews, "getView", function () {
+			var oStub = this.stub(this.oViews, "_getView", function () {
 				return that.oView;
 			});
 
 			this.oTargets.attachDisplay(fnEventSpy);
 
 			// Act
-			this.oTargets.display("myTarget");
+			this.oTargets.display("myTarget", oData);
 
 			// Assert
-			strictEqual(fnEventSpy.callCount, 1, "the event got fired");
-			strictEqual(oParameters.view, this.oView, "view got passed to the event");
-			strictEqual(oParameters.targetControl, this.oShell, "view got passed to the event");
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+			assert.strictEqual(oParameters.view, this.oView, "view got passed to the event");
+			assert.strictEqual(oParameters.control, this.oShell, "control was the shell");
+			assert.strictEqual(oParameters.data, oData, "data was passed");
+			assert.strictEqual(oParameters.name, "myTarget", "name was passed");
 			allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, { name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig));
 		});
 
-		test("Should fire the display event for multiple targets and childs", function () {
+		test("Should fire the display event for multiple targets and children", function () {
 			// Arrange
 			var aTargetNames = [],
 				that = this,
 				oParameters = null,
+				oData = {some : "data"},
 				fnEventSpy = this.spy(function (oEvent) {
 					oParameters = oEvent.getParameters();
 					aTargetNames.push(oParameters.name);
 					allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig));
 					strictEqual(oParameters.view, that.oView, "view got passed to the event");
-					strictEqual(oParameters.targetControl, that.oShell, "view got passed to the event");
+					strictEqual(oParameters.control, that.oShell, "control got passed to the event");
+					assert.strictEqual(oParameters.data, oData, "data was passed");
 				});
 
-			var oStub = this.stub(this.oViews, "getView", function () {
+			var oStub = this.stub(this.oViews, "_getView", function () {
 				return that.oView;
 			});
 
 			this.oTargets.attachDisplay(fnEventSpy);
 
 			// Act
-			this.oTargets.display(["myChild", "mySecondTarget"]);
+			this.oTargets.display(["myChild", "mySecondTarget"], oData);
 
 			// Assert
 			strictEqual(fnEventSpy.callCount, 3, "the event got fired");

@@ -8,6 +8,7 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 				viewType: "XML",
 				viewPath: "view",
 				targetControl: "splitApp",
+				controlId: "splitApp",
 				transition: "slide"
 			},
 			routes: [
@@ -27,7 +28,8 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 					view: "Cart",
 					targetAggregation: "masterPages"
 				},
-				{    pattern: "",
+				{
+					pattern: "",
 					name: "home",
 					view: "Home",
 					viewLevel: 1,
@@ -50,14 +52,14 @@ sap.ui.core.UIComponent.extend("sap.ui.demo.cart.Component", {
 			],
 			targets: {
 				productView: {
-					view: "Product",
+					viewName: "Product",
 					viewLevel: 3,
-					targetAggregation: "detailPages"
+					controlAggregation: "detailPages"
 				},
 				categoryView: {
-					view: "Category",
+					viewName: "Category",
 					viewLevel: 2,
-					targetAggregation: "masterPages"
+					controlAggregation: "masterPages"
 				}
 			}
 		}

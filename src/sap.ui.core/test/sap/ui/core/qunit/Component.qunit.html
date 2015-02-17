@@ -173,46 +173,41 @@
 		equal(sNestedComponentId, oNestedControl._sOwnerId /* INTERNAL ONLY! */, "The nested control has the correct component context");
 	});
 
-	module("Routing");
-
-	test("Should create a custom router class", function() {
-		//Arrange + System under test 
-		var oComponent = sap.ui.getCore().createComponent({
-			name: "samples.components.routing"
-		});
-
-
-		//Act - initialize the component to create the router
-		oComponent.init();
-		var oRouter = oComponent.getRouter();
-
-		//Assert
-		ok(oRouter instanceof samples.components.routing.RouterExtension, "the created router was an extension");
-
-		//Cleanup
-		oComponent.destroy();
-		ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
+	module("Routing", {
+		setup : function () {
+			// System under test
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "samples.components.routing"
+			});
+			this.oComponent.init();
+		}
 	});
 
-	test("Should create the targets instance", function () {
-		//Arrange + System under test
-		var oComponent = sap.ui.getCore().createComponent({
-			name: "samples.components.routing"
-		});
-
-
+	test("Should create a custom router class", function(assert) {
 		//Act - initialize the component to create the router
-		oComponent.init();
-		var oTargets = oComponent.getTargets();
+		var oRouter = this.oComponent.getRouter();
 
 		//Assert
-		ok(oTargets, "the component created targets");
-		ok(oTargets.getTarget("myTarget"), "the component created a target instance");
+		assert.ok(oRouter instanceof samples.components.routing.RouterExtension, "the created router was an extension");
+		assert.strictEqual(oRouter._oConfig.targetParent, this.oComponent.oView.getId(), "the viewid is the targetParent");
 
 		//Cleanup
-		oComponent.destroy();
+		this.oComponent.destroy();
+		assert.ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
+	});
 
-		ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
+	test("Should create the targets instance", function (assert) {
+		//Act - initialize the component to create the router
+		var oTargets = this.oComponent.getTargets();
+
+		//Assert
+		assert.ok(oTargets, "the component created targets");
+		assert.ok(oTargets.getTarget("myTarget"), "the component created a target instance");
+		assert.strictEqual(oTargets._oConfig.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
+
+		//Cleanup
+		this.oComponent.destroy();
+		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
 	});
 
 	</script>

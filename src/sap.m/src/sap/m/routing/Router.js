@@ -92,14 +92,18 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 			fireRoutePatternMatched : function (mArguments) {
 				var sRouteName = mArguments.name,
-					oRoute = this.getRoute(sRouteName),
-					oTargetConfig = oRoute._getTarget()._oOptions;
+					iViewLevel;
+
+				if (this._oTargets && this._oTargets._oLastDisplayedTarget) {
+					iViewLevel = this._oTargets._oLastDisplayedTarget._oOptions.viewLevel;
+				}
 
 				this._oTargetHandler.navigate({
-					navigationIdentifier : sRouteName,
-					viewLevel: oTargetConfig.viewLevel,
+					navigationIdentifier: sRouteName,
+					viewLevel: iViewLevel,
 					askHistory: true
 				});
+
 
 				return Router.prototype.fireRoutePatternMatched.apply(this, arguments);
 			}

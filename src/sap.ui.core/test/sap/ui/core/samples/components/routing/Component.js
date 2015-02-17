@@ -31,7 +31,7 @@ sap.ui.core.UIComponent.extend("samples.components.routing.Component", {
 
 	createContent : function () {
 		sap.ui.controller("samples.components.routing.TestController", {});
-		return sap.ui.jsview("samples.components.routing.TestView", {
+		sap.ui.jsview("samples.components.routing.TestView", {
 			createContent : function() {
 				return new sap.ui.commons.Button();
 			},
@@ -39,5 +39,8 @@ sap.ui.core.UIComponent.extend("samples.components.routing.Component", {
 				return sap.ui.controller("samples.components.routing.TestController");
 			}
 		});
+
+		this.oView = sap.ui.jsview("samples.components.routing.TestView");
+		return this.oView;
 	}
 });
