@@ -11,9 +11,9 @@
 		</l:content>
 	</l:VerticalLayout>
 	<IconTabBar
-		class="sapUiContentPadding"
 		id="idIconTabBarSeparatorNoIcon"
-		expanded="false">
+		expanded="false"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				icon="sap-icon://hint"
@@ -48,9 +48,9 @@
 		</l:content>
 	</l:VerticalLayout>
 	<IconTabBar
-		class="sapUiContentPadding"
 		id="idIconTabBarSeparatorIcon"
-		expanded="false">
+		expanded="false"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				icon="sap-icon://hint"
@@ -86,9 +86,9 @@
 		</l:content>
 	</l:VerticalLayout>
 	<IconTabBar
-		class="sapUiContentPadding"
 		id="idIconTabBarSeparatorMixed"
-		expanded="false">
+		expanded="false"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				icon="sap-icon://hint"

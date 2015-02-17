@@ -4,12 +4,12 @@
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<IconTabBar
-		class="sapUiContentPadding"
 		id="idIconTabBarStretchContent"
 		stretchContentHeight="true"
 		backgroundDesign="Transparent"
 		applyContentPadding="false"
-		expanded="{device>/isNoPhone}">
+		expanded="{device>/isNoPhone}"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				text="Info">

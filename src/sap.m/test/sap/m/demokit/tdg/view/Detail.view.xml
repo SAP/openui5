@@ -38,7 +38,8 @@
 			<IconTabBar
 				select="onDetailSelect"
 				expandable="false"
-				id="idIconTabBar">
+				id="idIconTabBar"
+				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						binding="{Supplier}"

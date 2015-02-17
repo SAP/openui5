@@ -25,7 +25,8 @@
 				</statuses>
 			</ObjectHeader>
 			<IconTabBar
-				expanded="{device>/isNoPhone}">
+				expanded="{device>/isNoPhone}"
+				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						text="Info">

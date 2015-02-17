@@ -60,7 +60,8 @@
 					id="tabBar"
 					expanded="{device>/isNoPhone}"
 					select="onTabSelect"
-					upperCase="true" >
+					upperCase="true" 
+					class="sapUiResponsiveContentPadding">
 					<items>
 			
 						<IconTabFilter
