@@ -96,12 +96,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		// remove cloned headers
 		oLI.destroyClonedHeaders();
 	
-		// remove pop-in if list is not in rendering phase
-		// in rendering phase all pop-ins are already removed
-		if (!oTable._bRendering) {
-			oLI.removePopin();
-		}
-	
 		aColumns.forEach(function(oColumn, i) {
 			var cls,
 				bRenderCell = true,

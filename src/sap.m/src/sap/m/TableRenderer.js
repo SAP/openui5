@@ -157,7 +157,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 * add table container class name
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
-		oControl._bRendering = true;
 		rm.addClass("sapMListTblCnt");
 	};
 	
@@ -196,7 +195,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListEndAttributes = function(rm, oControl) {
 		rm.write("</tbody>");	// items should be rendered before foot
 		oControl._hasFooter && this.renderColumns(rm, oControl, "Foot");
-		oControl._bRendering = false;
 		rm.write("</table>");
 	};
 	

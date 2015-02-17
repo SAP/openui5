@@ -99,6 +99,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._active = false;
 	};
 	
+	ListItemBase.prototype.onAfterRendering = function() {
+		this.informList("DOMUpdate", true);
+	};
+	
 	/*
 	 * Returns the binding context path via checking the named model of parent
 	 *
@@ -121,21 +125,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*
 	 * Returns the responsible list control
 	 * 
-	 * @param {function} [fnCallback] callback method
 	 * @returns {sap.m.ListBase|undefined} 
 	 * @protected
 	 */
 	ListItemBase.prototype.getList = function(fnCallback) {
 		var oParent = this.getParent();
-		if (!(oParent instanceof sap.m.ListBase)) {
-			return;
+		if (oParent instanceof sap.m.ListBase) {
+			return oParent;
 		}
-		
-		if (fnCallback) {
-			fnCallback.call(this, oParent);
-		}
-		
-		return oParent;
 	};
 	
 	/*
@@ -165,12 +162,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @protected
 	 */
 	ListItemBase.prototype.informList = function(sEvent, vParam1, vParam2) {
-		this.getList(function(oList) {
+		var oList = this.getList();
+		if (oList) {
 			var sMethod = "onItem" + sEvent;
 			if (oList[sMethod]) {
 				oList[sMethod](this, vParam1, vParam2);
 			}
-		});
+		}
 	};
 	
 	/*
@@ -414,17 +412,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	ListItemBase.prototype.getSelected = function() {
 		return this.isSelected();
-	};
-	
-	ListItemBase.prototype.setVisible = function(bVisible) {
-		bVisible = this.validateProperty("visible", bVisible);
-		if (this.getVisible() == bVisible) {
-			return this;
-		}
-	
-		this.setProperty("visible", bVisible);
-		this.informList("VisibleChange", bVisible);
-		return this;
 	};
 	
 	ListItemBase.prototype.setSelected = function(bSelected, bDontNotifyParent) {
@@ -789,8 +776,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return;
 		}
 	
-		// inform the list that this item should be focusable
-		oList.setItemFocusable(this);
+		// inform the list async that this item should be focusable
+		jQuery.sap.delayedCall(0, oList, "setItemFocusable", [this]);
 		oEvent.setMarked();
 	};
 

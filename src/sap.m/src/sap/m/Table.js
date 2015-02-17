@@ -510,11 +510,15 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	// Handle shift-tab key 
 	Table.prototype.onsaptabprevious = function(oEvent) {
+		ListBase.prototype.onsaptabprevious.call(this, oEvent);
 		var sTargetId = oEvent.target.id;
 		if (sTargetId == this.getId("nodata") ||
 			sTargetId == this.getId("tblHeader") || 
 			sTargetId == this.getId("tblFooter")) {
 			this.forwardTab(false);
+		} else if (sTargetId == this.getId("trigger")) {
+			this.focusPrevious();
+			oEvent.preventDefault();
 		} else {
 			this._handlePopinEvent(oEvent);
 		}
