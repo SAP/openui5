@@ -3228,6 +3228,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			if (this.getFixedColumnCount() > 0 && iColIndex >= this.getFixedColumnCount()) {
 				var iFixedColumnsWidth = $this.find(".sapUiTableColHdrFixed").width();
 				iColLeft = iColLeft + iFixedColumnsWidth;
+				
+				// Consider scroll offset of non fixed area.
+				iColLeft = iColLeft - $this.find(".sapUiTableCtrlScr").scrollLeft();
 			}
 
 			// find the total left offset from the document (required for pageX info)
