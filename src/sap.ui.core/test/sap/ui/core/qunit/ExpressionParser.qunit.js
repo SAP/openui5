@@ -345,7 +345,6 @@
 	checkFixtures("Math", [
 		{ expression: "Math.max(5, ${/3})", result: "5" },
 		{ expression: "Math.max(5, ${/3}, '42')", result: "42" },
-		{ expression: "Math.round(Math.log10(10))", result: "1" },
 		{ expression: "Math.SQRT1_2 < 1", result: "true" }
 	]);
 
