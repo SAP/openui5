@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 * @overwrite
 	 */
 	ActionListItem.prototype.getMode = function() {
-		return sap.m.ListType.None;
+		return sap.m.ListMode.None;
 	};
 	
 	/**
