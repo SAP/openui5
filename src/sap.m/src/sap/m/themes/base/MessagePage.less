@@ -21,19 +21,19 @@
 	display: inline-block;
 }
 
-.sapMMessagePage > .sapMPage > section {
-	width: 100%;
-	max-width: 30rem;
-	box-sizing: border-box;
-	text-align: center;
-	padding: 1rem;
-	margin-left: auto;
-	margin-right: auto;
+.sapMMessagePage > .sapMPage {
+	section {
+		max-width: 30rem;
+		box-sizing: border-box;
+		text-align: center;
+		margin: -5% auto 0;
+		top: 30%;
+	}
+	> .sapMPageHeader + section {
+		top: 30%;
+	}
 }
 
-.sapMMessagePage > .sapMPage > section > .sapMMessagePageIcon {
-	margin-top: 14%;
-}
 
 .sapMMessagePage > .sapMPage > section > .sapUiIcon::before {
 	font-size: 6rem;

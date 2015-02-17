@@ -743,8 +743,7 @@
 				"category" : "Display",
 				"since" : "1.28",
 				"samples" : [
-					"sap.m.sample.MessagePage",
-					"sap.m.sample.MessagePageCustom"
+					"sap.m.sample.MessagePage"
 				]
 			}
 		],
@@ -753,11 +752,6 @@
 				"id": "sap.m.sample.MessagePage",
 				"name": "Message Page",
 				"description": "This sample displays the MessagePage with basic information."
-			},
-			{
-				"id": "sap.m.sample.MessagePageCustom",
-				"name": " MessagePage - Custom",
-				"description": "This sample displays the MessagePage with custom icon, cutsomText and customFilterText."
 			},
 			{
 				"id": "sap.m.sample.ComboBox",

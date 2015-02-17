@@ -3,6 +3,6 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
-	<MessagePage title="Product">
+	<MessagePage showHeader="false">
 	</MessagePage>
 </mvc:View>
