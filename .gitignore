@@ -22,3 +22,6 @@ npm-debug.log
 
 # Ignore bower folder
 bower_components
+
+# Ignore Mac files
+.DS_Store
