@@ -1,6 +1,11 @@
 {
 	"tests" : [
 		{
+		  "control": "sap.m.Bar",
+		  "url": "../Bar.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 		  "control": "sap.m.Carousel",
 		  "url": "../Carousel.html",
 		  "appComponent": "CA-UI5-CTR-SOF"
@@ -25,7 +30,7 @@
 			"url": "../FeedInput.html",
 			"appComponent": "CA-UI5-BS-FCW"
 		},
-		{
+	  	{
 		  "control": "sap.m.MessageBox",
 		  "url": "../MessageBox.html",
 		  "appComponent": "CA-UI5-CTR-SOF"
@@ -46,6 +51,11 @@
 		  "appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+		  "control": "sap.m.ProgressIndicator",
+		  "url": "../ProgressIndicator.html",
+		  "appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 		  "control": "sap.m.RadioButton",
 		  "url": "../RadioButton.html",
 		  "appComponent": "CA-UI5-CTR-SOF"
@@ -53,6 +63,16 @@
 		{
 		  "control": "sap.m.RadioButtonGroup",
 		  "url": "../RadioButtonGroup.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+		  "control": "sap.m.RatingIndicator",
+		  "url": "../RatingIndicator.html",
+		  "appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+		  "control": "sap.m.ResponsivePopover",
+		  "url": "../ResponsivePopover.html",
 		  "appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
@@ -79,6 +99,11 @@
 			"control": "sap.m.Title",
 			"url": "Title.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+		  "control": "sap.m.Toolbar",
+		  "url": "../Toolbar.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
 		}
 	]
 }
