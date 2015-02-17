@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	
 	// GroupHeaderListItem does not respect the list mode
 	GroupHeaderListItem.prototype.getMode = function() {
-		return sap.m.ListType.None;
+		return sap.m.ListMode.None;
 	};
 	
 	GroupHeaderListItem.prototype.shouldClearLastValue = function() {
