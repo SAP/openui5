@@ -1451,30 +1451,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (!!sap.ui.Device.browser.safari) {
 			iColsWidth = Math.max(iColsWidth, this._getColumnsWidth(this.getFixedColumnCount()));
 		}
+
 		// add the horizontal scrollbar
 		if (iColsWidth > $this.find(".sapUiTableCtrlScr").width()) {
 			// show the scrollbar
 			if (!$this.hasClass("sapUiTableHScr")) {
 				$this.addClass("sapUiTableHScr");
+
 				if (!!sap.ui.Device.browser.safari) {
+					var $sapUiTableColHdr = $this.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
 					// min-width on table elements does not work for safari
 					if (this._bjQueryLess18) {
-						$this.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr").width(iColsWidth);
+						$sapUiTableColHdr.width(iColsWidth);
 					} else {
-						$this.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr").outerWidth(iColsWidth);
+						$sapUiTableColHdr.outerWidth(iColsWidth);
 					}
 				}
 			}
+
 			var iScrollPadding = $this.find(".sapUiTableCtrlFixed").width();
+
 			if ($this.find(".sapUiTableRowHdrScr:visible").length > 0) {
 				iScrollPadding += $this.find(".sapUiTableRowHdrScr").width();
 			}
+
+			var $sapUiTableHSb = $this.find(".sapUiTableHSb");
 			if (this._bRtlMode) {
-				$this.find(".sapUiTableHSb").css('padding-right', iScrollPadding + 'px');
+				$sapUiTableHSb.css('padding-right', iScrollPadding + 'px');
 			} else {
-				$this.find(".sapUiTableHSb").css('padding-left', iScrollPadding + 'px');
+				$sapUiTableHSb.css('padding-left', iScrollPadding + 'px');
 			}
-			this._oHSb.setContentSize(iColsWidth + "px");
+
+			this._oHSb.setContentSize(iColsWidth - iScrollPadding + "px");
+
 			if (this._oHSb.getDomRef()) {
 				this._oHSb.rerender();
 			}
