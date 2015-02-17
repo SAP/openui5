@@ -270,7 +270,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 			sResult = ODataType.normalizeNumber(getFormatter(this).oFormatOptions, vValue,
 				/^0*(\d*)(?:\.(\d*?)0*)?$/);
 			if (!sResult) {
-				throw new ParseException(getErrorMessage(this));
+				throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
+					.getText("EnterNumber"));
 			}
 			break;
 		case "int":
