@@ -377,6 +377,30 @@
 				});
 			};
 
+			QUnit.asyncTest("Mousedown on SVG element should not throw exception", function (assert) {
+				var oSvgCircle = new sap.ui.core.HTML({
+					content: '<svg id="svg-circle" height="100" width="100">' +
+								'<circle cx="50" cy="50" r="40" fill="red"></circle>' +
+							'</svg>'
+				});
+
+				oPage.addContent(oSvgCircle);
+				sap.ui.getCore().applyChanges();
+
+				sap.m.MessageToast.show("test", {
+					onClose: function () {
+						assert.ok(true, "Message toast closed with no error thrown");
+						QUnit.start();
+					}
+				});
+
+				sap.m.MessageToast._handleMouseDownEvent(jQuery.Event("mousedown", {
+					target: document.getElementById("svg-circle")
+				}));
+
+				oSvgCircle.destroy();
+			});
+
 			asyncTest("Callback", function() {
 				setTimeout(function() {
 
