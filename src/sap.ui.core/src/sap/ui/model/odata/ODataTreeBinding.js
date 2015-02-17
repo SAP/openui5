@@ -44,6 +44,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 				} else {
 					this.oNavigationPaths = mParameters.navigation;
 				}
+			} else {
+				jQuery.sap.log.warning("Tree hierarchy annotations are deprecated and may not work correctly with the sap.ui.model.odata.ODataModel." +
+						" Please use the sap.ui.model.odata.v2.ODataModel (since version 1.28) instead which fully supports hierarchy annotations.");
 			}
 		}
 	
