@@ -542,11 +542,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * in order to interpret OData v4 annotations. It knows about
 			 * <ul>
 			 *   <li> the constant "14.4.11 Expression edm:String", which is turned into a data
-			 *   binding expression relative to an entity (e.g. <code>
-			 *   "{##com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String}"</code>,
-			 *   which is the preferred way in order to reference translatable texts from OData v4
-			 *   annotations) or into a fixed text (e.g. <code>"Width"</code>, in case the original
-			 *   annotation was not embedded into an entity type);
+			 *   binding expression (e.g. <code>
+			 *   "{/##/dataServices/schema/0/entityType/1/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String}"
+			 *   </code>);
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply"
 			 *   <ul>
 			 *     <li> "14.5.3.1.1 Function odata.concat" is turned into a data binding
