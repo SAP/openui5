@@ -12,11 +12,12 @@
 	 *
 	 * @param {string} sExpression - the expression or the expression binding in {=... syntax
 	 * @param {string} sResult - the expected result as string
+	 * @param {object} [oScope] - the object to resolve formatter functions in the control
 	 */
-	function check(sExpression, sResult) {
+	function check(sExpression, sResult, oScope) {
 		var oIcon = new sap.ui.core.Icon({
 				color: sExpression.indexOf("{=") === 0 ? sExpression : "{=" + sExpression + "}"
-			});
+			}, oScope);
 
 		oIcon.setModel(new sap.ui.model.json.JSONModel(
 			{mail: "mail", tel: "tel", tel2: "tel", 3: 3, five: 5, thirteen: 13}
@@ -365,4 +366,18 @@
 	checkFixtures("RegExp", [
 		{ expression: "{=RegExp('foo','i').test('FooBar')}", result: "true" }
 	]);
+
+	//*********************************************************************************************
+	test("Embedded bindings with formatter", function () {
+		var oScope = {
+			myFormatter: function (vValue) {
+				return "~" + String(vValue) + "~";
+			}
+		};
+
+		//two embedded bindings: ManagedObject._bindProperty uses CompositeBinding by default then
+		check("${/mail} + ${path:'/tel', formatter:'.myFormatter'}", "mail~tel~", oScope);
+		//one embedded binding only: need to set flag
+		check("${path:'/mail', formatter:'.myFormatter'}", "~mail~", oScope);
+	});
 } ());
