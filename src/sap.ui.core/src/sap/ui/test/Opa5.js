@@ -532,17 +532,37 @@ sap.ui.define(['jquery.sap.global',
 			oHashChanger.init();
 
 			function goBack () {
+				var sCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition];
 				oHashChanger._sCurrentHash = oHistory.getPreviousHash();
-				oHashChanger.fireEvent("hashChanged", { newHash : oHistory.getPreviousHash(), oldHash : oHashChanger.getHash() });
+				oHashChanger.fireEvent("hashChanged", { newHash : oHistory.getPreviousHash(), oldHash : sCurrentHash });
+			}
+
+			function goForward () {
+				var sNextHash = oHistory.aHistory[oHistory.iHistoryPosition + 1],
+					sCurrentHash = oHistory.aHistory[oHistory.iHistoryPosition];
+
+				if (sNextHash === undefined) {
+					jQuery.sap.log.info("Could not navigate forwards, there is no history entry in the forwards direction", this);
+					return;
+				}
+
+				oHashChanger._sCurrentHash = sNextHash;
+				oHashChanger.fireEvent("hashChanged", { newHash : sNextHash, oldHash : sCurrentHash });
 			}
 
 			oFrameWindow.history.back = goBack;
+			oFrameWindow.history.forward = goForward;
 
 			oFrameWindow.history.go = function (iSteps) {
 				if (iSteps === -1) {
 					goBack();
 					return;
+				} else if (iSteps === 1) {
+					goForward();
+					return;
 				}
+
+				jQuery.sap.log.warning("Using history.go with a number greater than 1 is not supported by OPA5", this);
 				return fnOriginalGo.apply(this, arguments);
 			};
 
