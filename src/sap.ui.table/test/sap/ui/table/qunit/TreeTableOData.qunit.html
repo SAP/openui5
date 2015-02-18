@@ -31,12 +31,6 @@
 
 	//Initialize mock servers
 
-	//Mock server for use with navigation properties
-	var oNavPropMockServer = new sap.ui.core.util.MockServer({
-		rootUri: '/navprop/'
-	});
-	oNavPropMockServer.simulate("../../core/qunit/model/metadata_odtb.xml", "../../core/qunit/model/odtb/");
-
 	//MockServer for use with annotated tree
 	var oAnnotationMockServer = new sap.ui.core.util.MockServer({
 		rootUri: '/metadata/'
@@ -59,15 +53,13 @@
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
-	var oModel, oBinding, oTable;
-
-	function attachEventHandler(oControl, iSkipCalls, fnHandler) {
+	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		var iCalled = 0;
 		var fnEventHandler = function() {
 			iCalled++;
 			if(iSkipCalls === iCalled) {
 				oControl.detachEvent("_rowsUpdated", fnEventHandler);
-				oControl.attachEventOnce("_rowsUpdated", fnHandler);
+				oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
 			}
 		};
 
@@ -90,31 +82,39 @@
 			mParams[key] = mSettings[key];
 		}
 
-		oTable = new sap.ui.table.TreeTable("table0", mParams);
-
-		oTable.setModel(oModel);
+		var oTable = new sap.ui.table.TreeTable("table0", mParams);
+		oTable.setModel(this.oModel);
 		oTable.placeAt("target1");
+		sap.ui.getCore().applyChanges();
+		return oTable;
 	}
 
 	module("TreeTable with Anotations, starting level 1", {
 		setup: function() {
 			oAnnotationMockServer.start();
-			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:true});
+			this.oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:true});
 		},
 		teardown: function() {
 			oAnnotationMockServer.stop();
-			oTable.destroy();
+			this.oTable.destroy();
 		}
 	});
 
 	asyncTest("Initial Test", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 1});
-			oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 1});
 
 			var fnHandler1 = function() {
-				var aRows = oTable.getRows();
+				var oBinding = this.oTable.getBinding("rows");
+
+				// test some defaults
+				equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
+				equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
+				ok(oBinding.mParameters.collapseRecursive, "Collapse recursive should be false");
+				ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
+				ok(!this.oTable.getUseGroupMode(), "useGroupMode should be false");
+
+				var aRows = this.oTable.getRows();
 				equal(aRows.length, 10, "10 Rows present");
 
 				var iCountContexts = 0;
@@ -124,45 +124,50 @@
 					}
 				}
 
-				equal(iCountContexts, 1, "Only one row should have a context");
-				start();
+				if (!bFirst) {
+					this.oTable.detachEvent("_rowsUpdated", fnHandler1);
+					equal(iCountContexts, 1, "Only one row should have a context");
+					start();
+				} else if (bFirst && iCountContexts > 0) {
+					equal(iCountContexts, 1, "Only one row should have a context");
+					start();
+				}
+
+				bFirst = false;
 			};
 
-			// test some defaults
-			equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
-			equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
-			ok(oBinding.mParameters.collapseRecursive, "Collapse recursive should be false");
-			ok(!oTable.getExpandFirstLevel(), "Expand first Level should be false");
-			ok(!oTable.getUseGroupMode(), "useGroupMode should be false");
+			var bFirst = true;
+			this.oTable.attachEvent("_rowsUpdated", fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 
-			oTable.attachEventOnce("_rowsUpdated", fnHandler1);
-		})
+		}, this);
 	});
 
 	asyncTest("Expand and Collapse", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 1});
-			oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-			oBinding = oTable.getBinding("rows");
-			ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 1});
+			var oBinding;
 
 			// test expand root
 			var fnHandler1 = function() {
+				oBinding = this.oTable.getBinding("rows");
+				ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "Test that only one node is rendered, State: collapsed");
-				ok(oTable.getCollapseRecursive(), "CollapseRecursive is true (default)");
+				ok(this.oTable.getCollapseRecursive(), "CollapseRecursive is true (default)");
 				// expand first node, 2 change events, 1 for expand, 1 when data is loaded
-				attachEventHandler(oTable, 1, fnHandler2);
-				oTable.expand(0);
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.expand(0);
 			};
 
 			// test expand next level
 			var fnHandler2 = function() {
-				equal(oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): Test that first node is expanded");
+				equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): Test that first node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): Test that only one node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0): Test that 9 nodes are collapsed");
 				// expand second node, 2 change events, 1 for expand, 1 when data is loaded
-				attachEventHandler(oTable, 1, fnHandler3);
-				oTable.expand(1);
+				attachEventHandler(this.oTable, 1, fnHandler3, this);
+				this.oTable.expand(1);
 			};
 
 			// collapse to root, collapse recursive true
@@ -170,8 +175,8 @@
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): Test that two nodes are expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): Test that 8 nodes are collapsed");
 				// collapse, only one event for collapse, data is already loaded
-				oTable.attachEventOnce("_rowsUpdated", fnHandler4);
-				oTable.collapse(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler4, this);
+				this.oTable.collapse(0);
 			};
 
 			// expand root
@@ -179,35 +184,35 @@
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "Collapse(0): Test that only one node is rendered, State: collapsed");
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "Collapse(0): There shall be no other rows");
 				// data already loaded, only one change event fired my expand
-				oTable.attachEventOnce("_rowsUpdated", fnHandler5);
-				oTable.expand(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler5, this);
+				this.oTable.expand(0);
 			};
 
 			// check only root is expanded, expand next level
 			var fnHandler5 = function() {
-				equal(oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapse(0): Test that first node is expanded");
+				equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapse(0): Test that first node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapse(0): Test that only one node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0) after collapse(0): Test that 9 nodes are collapsed");
 				// data already loaded, only one change event fired by expand
-				oTable.attachEventOnce("_rowsUpdated", fnHandler6);
-				oTable.expand(1);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler6, this);
+				this.oTable.expand(1);
 			};
 
 			// collapseRecursive=false, collapse to root
 			var fnHandler6 = function() {
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): Test that two nodes are expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): Test that 8 nodes are collapsed");
-				oTable.setCollapseRecursive(false);
-				oTable.attachEventOnce("_rowsUpdated", fnHandler7);
-				oTable.collapse(0);
+				this.oTable.setCollapseRecursive(false);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler7, this);
+				this.oTable.collapse(0);
 			};
 
 			// test root is collapsed, expand root
 			var fnHandler7 = function() {
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "Collapse(0) recursive false: Test that only one node is rendered, State: collapsed");
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "Collapse(0) recursive false: There shall be no other rows");
-				oTable.attachEventOnce("_rowsUpdated", fnHandler8);
-				oTable.expand(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler8, this);
+				this.oTable.expand(0);
 			};
 
 			// check subsequent nodes of root are still expanded,
@@ -219,12 +224,12 @@
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(0) after Collapse recursive: Test that 8 nodes are collapsed");
 
 				// check margins of levels
-				var iLevel0a = parseInt(oTable.getRows()[0].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
-				var iLevel1a = parseInt(oTable.getRows()[1].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
-				var iLevel2a = parseInt(oTable.getRows()[2].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
-				var iLevel2b = parseInt(oTable.getRows()[3].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
-				var iLevel2c = parseInt(oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
-				var iLevel1b = parseInt(oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
+				var iLevel0a = parseInt(this.oTable.getRows()[0].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
+				var iLevel1a = parseInt(this.oTable.getRows()[1].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
+				var iLevel2a = parseInt(this.oTable.getRows()[2].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
+				var iLevel2b = parseInt(this.oTable.getRows()[3].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
+				var iLevel2c = parseInt(this.oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
+				var iLevel1b = parseInt(this.oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"), 10);
 
 				ok(iLevel0a < iLevel1a, "Margin-left: Level 0 smaller Level 1");
 				ok(iLevel1a < iLevel2a, "Margin-left: Level 1 smaller Level 2");
@@ -233,93 +238,101 @@
 				ok(iLevel1b < iLevel2c, "Margin-left: Level 1 smaller Level 2");
 
 				// check isExpanded
-				ok(oTable.isExpanded(0), "Root expanded");
-				ok(oTable.isExpanded(1), "First child of Root expanded");
-				ok(!oTable.isExpanded(2), "1st grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(3), "2nd grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(4), "3rd grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(5), "4th grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(6), "5th grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(7), "6th grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(8), "7th grand child of Root NOT expanded");
-				ok(!oTable.isExpanded(9), "2nd child of Root NOT expanded");
+				ok(this.oTable.isExpanded(0), "Root expanded");
+				ok(this.oTable.isExpanded(1), "First child of Root expanded");
+				ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(3), "2nd grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(4), "3rd grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(5), "4th grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(6), "5th grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(7), "6th grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(8), "7th grand child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(9), "2nd child of Root NOT expanded");
 				// also check a node which is not in the visible area of the table
-				ok(!oTable.isExpanded(12), "5th child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(12), "5th child of Root NOT expanded");
 
-				oTable.setCollapseRecursive(true);
-				oTable.attachEventOnce("_rowsUpdated", fnHandler9);
-				oTable.collapseAll();
+				this.oTable.setCollapseRecursive(true);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler9, this);
+				this.oTable.collapseAll();
 			};
 
 			// Check all nodes are collapsed, expand root
 			var fnHandler9 = function() {
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "CollapseAll: Test that only one node is rendered, State: collapsed");
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "CollapseAll: There shall be no other rows");
-				oTable.attachEventOnce("_rowsUpdated", fnHandler10);
-				oTable.expand(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler10, this);
+				this.oTable.expand(0);
 			};
 
 			// Test all nodes got collapsed
 			// expand to level 2
 			var fnHandler10 = function() {
-				equal(oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapseAll recursive: Test that first node is expanded");
+				equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapseAll recursive: Test that first node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapseAll recursive: Test that only one node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0) after collapseAll recursive: Test that 9 nodes are collapsed");
 				// one event for expandToLevel, one event for change
-				attachEventHandler(oTable, 1, fnHandler11);
-				oTable.expandToLevel(2);
+				attachEventHandler(this.oTable, 1, fnHandler11, this);
+				this.oTable.expandToLevel(2);
 			};
 
 			var fnHandler11 = function() {
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 3, "ExpandToLevel(2): Test that 3 nodes are expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 7, "ExpandToLevel(2): Test that 7 nodes are collapsed");
-				ok(oTable.isExpanded(0), "Root expanded");
-				ok(oTable.isExpanded(1), "First child of root expanded");
-				ok(!oTable.isExpanded(2), "1st grand child of Root NOT expanded");
+				ok(this.oTable.isExpanded(0), "Root expanded");
+				ok(this.oTable.isExpanded(1), "First child of root expanded");
+				ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
 
-				ok(!oTable.isExpanded(8), "Node 000360 NOT expanded");
-				ok(oTable.isExpanded(9), "Node 000362 expanded");
-				ok(!oTable.isExpanded(10), "Node 000363 NOT expanded");
+				ok(!this.oTable.isExpanded(8), "Node 000360 NOT expanded");
+				ok(this.oTable.isExpanded(9), "Node 000362 expanded");
+				ok(!this.oTable.isExpanded(10), "Node 000363 NOT expanded");
 
-				ok(!oTable.isExpanded(14), "Node 000680 NOT expanded");
-				ok(oTable.isExpanded(15), "Node 000682 expanded");
-				ok(!oTable.isExpanded(16), "Node 000683 NOT expanded");
+				ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
+				ok(this.oTable.isExpanded(15), "Node 000682 expanded");
+				ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-				ok(!oTable.isExpanded(14), "Node 000680 NOT expanded");
-				ok(oTable.isExpanded(15), "Node 000682 expanded");
-				ok(!oTable.isExpanded(16), "Node 000683 NOT expanded");
+				ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
+				ok(this.oTable.isExpanded(15), "Node 000682 expanded");
+				ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-				ok(!oTable.isExpanded(219), "Node 001179 NOT expanded");
-				ok(oTable.isExpanded(220), "Node 001180 expanded");
-				ok(!oTable.isExpanded(221), "Node 001181 NOT expanded");
+				ok(!this.oTable.isExpanded(219), "Node 001179 NOT expanded");
+				ok(this.oTable.isExpanded(220), "Node 001180 expanded");
+				ok(!this.oTable.isExpanded(221), "Node 001181 NOT expanded");
 
 				// scroll the table, should trigger a request
-				attachEventHandler(oTable, 1, fnHandler12);
+				attachEventHandler(this.oTable, 1, fnHandler12, this);
 				// do a delayed call of 400ms, the scrollbar updates with da delay of 250ms, the binding time has a delay of 50ms, plus some buffer
-				jQuery.sap.delayedCall(400, this, function() {oTable.setFirstVisibleRow(219)});
+				jQuery.sap.delayedCall(400, this, function() {this.oTable.setFirstVisibleRow(219)});
 			};
 
 			var fnHandler12 = function() {
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "After Scrolling: Test that only one node is expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "After Scrolling: Test that 9 nodes are collapsed");
-				ok(!oTable.isExpanded(219), "Node 001179 NOT expanded");
-				ok(oTable.isExpanded(220), "Node 001180 expanded");
-				ok(!oTable.isExpanded(221), "Node 001181 NOT expanded");
+				ok(!this.oTable.isExpanded(219), "Node 001179 NOT expanded");
+				ok(this.oTable.isExpanded(220), "Node 001180 expanded");
+				ok(!this.oTable.isExpanded(221), "Node 001181 NOT expanded");
 				start();
 			};
 
-			oTable.attachEventOnce("_rowsUpdated", fnHandler1);
-		});
+			this.oTable.attachEventOnce("_rowsUpdated", fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+
+		}, this);
 	});
 
 	asyncTest("Expand First Level", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 1, expandFirstLevel: true, visibleRowCount:15});
-			oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount:15});
+
+			var oBinding;
 
 			var fnHandler1 = function() {
-				var aRows = oTable.getRows();
+				oBinding = this.oTable.getBinding("rows");
+				// test some defaults
+				equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels should be 1");
+				equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
+				ok(this.oTable.getExpandFirstLevel(), "Expand first Level should be true");
+
+				var aRows = this.oTable.getRows();
 				equal(aRows.length, 15, "15 Rows present");
 
 				var iCountContexts = 0;
@@ -333,34 +346,34 @@
 
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "ExpandToLevel(2): Test that 3 nodes are expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "ExpandToLevel(2): Test that 7 nodes are collapsed");
-				ok(oTable.isExpanded(0), "Root expanded");
-				ok(!oTable.isExpanded(1), "First child of Root NOT expanded");
-				ok(!oTable.isExpanded(2), "Second child of Root NOT expanded");
+				ok(this.oTable.isExpanded(0), "Root expanded");
+				ok(!this.oTable.isExpanded(1), "First child of Root NOT expanded");
+				ok(!this.oTable.isExpanded(2), "Second child of Root NOT expanded");
 
-				equal(oTable.getContextByIndex(0).getProperty("HierarchyNode"), "000001", "Root Node is 000001");
-				equal(oTable.getContextByIndex(1).getProperty("HierarchyNode"), "000002", "First child of Root Node is 000002");
-				equal(oTable.getContextByIndex(9).getProperty("HierarchyNode"), "001180", "Last child of Root Node is 001180");
+				equal(this.oTable.getContextByIndex(0).getProperty("HierarchyNode"), "000001", "Root Node is 000001");
+				equal(this.oTable.getContextByIndex(1).getProperty("HierarchyNode"), "000002", "First child of Root Node is 000002");
+				equal(this.oTable.getContextByIndex(9).getProperty("HierarchyNode"), "001180", "Last child of Root Node is 001180");
 
 				start();
 			};
 
-			// test some defaults
-			equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels should be 1");
-			equal(oBinding.mParameters.rootLevel, 1, "RootLevel should be one");
-			ok(oTable.getExpandFirstLevel(), "Expand first Level should be true");
-
-			attachEventHandler(oTable, 1, fnHandler1);
-		})
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		}, this);
 	});
 
 	asyncTest("Root Level 2", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 2});
-			oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 2});
+			var oBinding;
 
 			var fnHandler1 = function() {
-				var aRows = oTable.getRows();
+				// test some defaults
+				oBinding = this.oTable.getBinding("rows");
+				equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
+				equal(oBinding.mParameters.rootLevel, 2, "RootLevel should be 2");
+				ok(!this.oTable.getExpandFirstLevel(), "Expand first Level should be false");
+				var aRows = this.oTable.getRows();
 				equal(aRows.length, 10, "10 Rows present");
 
 				var iCountContexts = 0;
@@ -375,204 +388,203 @@
 				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "rootLevel 2: Test that 0 nodes are expanded");
 				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "rootLevel 2: Test that 9 nodes are collapsed");
 
-				equal(oTable.getContextByIndex(0).getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
-				equal(oTable.getContextByIndex(8).getProperty("HierarchyNode"), "001180", "Last  Root Node is 001180");
-				equal(oTable.getContextByIndex(9), undefined, "There should only be 9 Rows");
+				equal(this.oTable.getContextByIndex(0).getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
+				equal(this.oTable.getContextByIndex(8).getProperty("HierarchyNode"), "001180", "Last  Root Node is 001180");
+				equal(this.oTable.getContextByIndex(9), undefined, "There should only be 9 Rows");
 
 				start();
 			};
 
-			// test some defaults
-			equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels should be 0");
-			equal(oBinding.mParameters.rootLevel, 2, "RootLevel should be 2");
-			ok(!oTable.getExpandFirstLevel(), "Expand first Level should be false");
-
-			oTable.attachEventOnce("_rowsUpdated", fnHandler1);
-		})
+			this.oTable.attachEventOnce("_rowsUpdated", fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		}, this);
 	});
 
 	asyncTest("Selection", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 1, expandFirstLevel: true, visibleRowCount:15});
-			oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 1, expandFirstLevel: true, visibleRowCount:15});
+			var oBinding;
 
 			var fnHandler1 = function() {
+				oBinding = this.oTable.getBinding("rows");
 				// the selection is already handled by the ODataTreeBindingAdapter.qunit.html
 				// just do some basic check to ensure the API is called correctly
-				oTable.setSelectedIndex(1);
-				equal(oBinding.getSelectedIndex(), oTable.getSelectedIndex(), "SelectedIndex OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				this.oTable.setSelectedIndex(1);
+				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectedIndex OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
 
-				oTable.setSelectionInterval(2, 4);
-				equal(oBinding.getSelectedIndex(), oTable.getSelectedIndex(), "Selection Interval: SelectedIndex OK");
-				equal(oTable.getSelectedIndex(), 4, "Selection Interval: SelectedIndex 4");
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 3, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader should be selected");
+				this.oTable.setSelectionInterval(2, 4);
+				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Selection Interval: SelectedIndex OK");
+				equal(this.oTable.getSelectedIndex(), 4, "Selection Interval: SelectedIndex 4");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 3, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader should be selected");
 
-				oTable.addSelectionInterval(5, 0);
-				equal(oBinding.getSelectedIndex(), oTable.getSelectedIndex(), "Add Selection Interval: SelectedIndex OK");
-				equal(oTable.getSelectedIndex(), 5, "Add Selection Interval: SelectedIndex 5");
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 6, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader should be selected");
+				this.oTable.addSelectionInterval(5, 0);
+				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Add Selection Interval: SelectedIndex OK");
+				equal(this.oTable.getSelectedIndex(), 5, "Add Selection Interval: SelectedIndex 5");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 6, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader should be selected");
 
-				oTable.removeSelectionInterval(1, 1);
-				equal(oBinding.getSelectedIndex(), oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
-				equal(oTable.getSelectedIndex(), 5, "Remove Selection Interval: SelectedIndex 5");
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 5, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 10, "Row and RowHeader should be selected");
+				this.oTable.removeSelectionInterval(1, 1);
+				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
+				equal(this.oTable.getSelectedIndex(), 5, "Remove Selection Interval: SelectedIndex 5");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 5, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 10, "Row and RowHeader should be selected");
 
-				ok(oTable.isIndexSelected(0), "Index 0 selected");
-				ok(!oTable.isIndexSelected(1), "Index 1 selected");
-				ok(oTable.isIndexSelected(5), "Index 5 selected");
-				ok(!oTable.isIndexSelected(6), "Index 6 NOT selected");
-				ok(!oTable.isIndexSelected(16), "Index 16 NOT selected");
+				ok(this.oTable.isIndexSelected(0), "Index 0 selected");
+				ok(!this.oTable.isIndexSelected(1), "Index 1 selected");
+				ok(this.oTable.isIndexSelected(5), "Index 5 selected");
+				ok(!this.oTable.isIndexSelected(6), "Index 6 NOT selected");
+				ok(!this.oTable.isIndexSelected(16), "Index 16 NOT selected");
 
 				// remove leadSelection
-				oTable.removeSelectionInterval(5, 5);
-				equal(oBinding.getSelectedIndex(), oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
-				equal(oTable.getSelectedIndex(), -1, "Remove Selection Interval: SelectedIndex -1");
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 4, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 8, "Row and RowHeader should be selected");
+				this.oTable.removeSelectionInterval(5, 5);
+				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
+				equal(this.oTable.getSelectedIndex(), -1, "Remove Selection Interval: SelectedIndex -1");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 4, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 8, "Row and RowHeader should be selected");
 
-				oTable.attachEventOnce("_rowsUpdated", fnHandler2);
-				oTable.addSelectionInterval(5, 5);
-				oTable.collapse(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler2, this);
+				this.oTable.addSelectionInterval(5, 5);
+				this.oTable.collapse(0);
 			};
 
 			fnHandler2 = function() {
-				oTable.attachEventOnce("_rowsUpdated", fnHandler3);
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Collapse(0): SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0], "Collapse(0): SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
-				oTable.expand(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler3, this);
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0): SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0): SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				this.oTable.expand(0);
 			};
 
 			// collapseRecursive=false
 			// collapse(0)
 			fnHandler3 = function() {
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Expand(0): SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0], "Expand(0): SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0): SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0], "Expand(0): SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
 
-				oTable.selectAll();
-				equal(oBinding.getSelectedIndex(), oTable.getSelectedIndex(), "SelectAll: SelectedIndex OK");
-				equal(oTable.getSelectedIndex(), 9, "SelectAll: SelectedIndex 9");
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "SelectAll: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "SelectAll: SelectedIndices Values OK");
+				this.oTable.selectAll();
+				equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectAll: SelectedIndex OK");
+				equal(this.oTable.getSelectedIndex(), 9, "SelectAll: SelectedIndex 9");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "SelectAll: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "SelectAll: SelectedIndices Values OK");
 
-				oTable.setCollapseRecursive(false);
-				oTable.attachEventOnce("_rowsUpdated", fnHandler4);
-				oTable.collapse(0);
+				this.oTable.setCollapseRecursive(false);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler4, this);
+				this.oTable.collapse(0);
 			};
 
 			// expand(0)
 			fnHandler4 = function() {
-				oTable.attachEventOnce("_rowsUpdated", fnHandler5);
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Collapse(0), CollapseRecursive=false: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
-				oTable.expand(0);
+				this.oTable.attachEventOnce("_rowsUpdated", fnHandler5, this);
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0), CollapseRecursive=false: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
+				this.oTable.expand(0);
 			}
 
 			fnHandler5 = function() {
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "Expand(0), CollapseRecursive=false: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Expand(0), CollapseRecursive=false: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 10, "Only one row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 20, "Row and RowHeader should be selected");
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0), CollapseRecursive=false: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Expand(0), CollapseRecursive=false: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 10, "Only one row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 20, "Row and RowHeader should be selected");
 
-				oTable.clearSelection();
-				deepEqual(oBinding.getSelectedIndices(), oTable.getSelectedIndices(), "clearSelection: SelectedIndices OK");
-				deepEqual(oTable.getSelectedIndices(), [], "clearSelection: SelectedIndices Values OK");
-				equal(oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 0, "No row selected");
-				equal(oTable.$().find(".sapUiTableRowSel").length, 0, "No Row and RowHeader should be selected");
+				this.oTable.clearSelection();
+				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "clearSelection: SelectedIndices OK");
+				deepEqual(this.oTable.getSelectedIndices(), [], "clearSelection: SelectedIndices Values OK");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 0, "No row selected");
+				equal(this.oTable.$().find(".sapUiTableRowSel").length, 0, "No Row and RowHeader should be selected");
 
 				start();
 			}
 
-			attachEventHandler(oTable, 1, fnHandler1);
-		})
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		}, this);
 	});
 
 	asyncTest("SelectAll with scrolling and paging", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 2, expandFirstLevel:true});
-			oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel:true});
+			var oBinding;
 
 			var fnHandler1 = function() {
-				oTable.selectAll();
-				equal(oTable.getSelectedIndices().length, 65, "65 Nodes in Tree");
+				oBinding = this.oTable.getBinding("rows");
+				this.oTable.selectAll();
+				equal(this.oTable.getSelectedIndices().length, 65, "65 Nodes in Tree");
 				equal(oBinding.getLength(), 228, "Binding length should be 228");
 
 				var i = 1;
 				var fnVisibleRowHandler = function() {
-					oTable.setFirstVisibleRow(i);
+					this.oTable.setFirstVisibleRow(i);
 					if(i >= oBinding.getLength() - 1) {
-						oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
-						equal(oTable.getSelectedIndices().length, 228, "228 Nodes in Tree, all selected");
+						this.oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
+						equal(this.oTable.getSelectedIndices().length, 228, "228 Nodes in Tree, all selected");
 						start();
 					}
 					// section length is visibleRowCount, make sure to scroll to all the sections/nodes
-					i += oTable.getVisibleRowCount();
+					i += this.oTable.getVisibleRowCount();
 				};
 
-				oTable.attachEvent("_rowsUpdated", fnVisibleRowHandler);
-				oTable.setFirstVisibleRow(i);
+				this.oTable.attachEvent("_rowsUpdated", fnVisibleRowHandler, this);
+				this.oTable.setFirstVisibleRow(i);
 			};
 
-			attachEventHandler(oTable, 1, fnHandler1);
-		})
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		}, this);
 	});
 
 	// test experimental API of providing rootNodeID
 	asyncTest("Experimental Test with rootNodeID", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 2, expandFirstLevel: false});
-			oTable.bindRows({path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", parameters: {rootNodeID: "000000", displayRootNode: false}});
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel: false});
+			var oBinding;
 
 			var fnHandler1 = function() {
-				var oContext = oTable.getContextByIndex(0);
+				oBinding = this.oTable.getBinding("rows");
+				var oContext = this.oTable.getContextByIndex(0);
 				equal(oContext.getProperty("HierarchyNode"), "000001", "Index 0 is 000001");
-				oContext = oTable.getContextByIndex(1);
+				oContext = this.oTable.getContextByIndex(1);
 				equal(oContext, undefined, "Index 1 is undefined");
 				start();
 			};
 
-			oTable.attachEvent("_rowsUpdated", fnHandler1);
-		})
+			this.oTable.attachEvent("_rowsUpdated", fnHandler1, this);
+			this.oTable.bindRows({path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", parameters: {rootNodeID: "000000", displayRootNode: false}});
+		}, this);
 	});
 
 	// test experimental API of providing rootNodeID
 	asyncTest("Experimental Test with rootNodeID, displayRootNode = true", function () {
-		oModel.attachMetadataLoaded(function() {
-			createTable({rootLevel: 2, expandFirstLevel: false});
-			oTable.bindRows({path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", parameters: {rootNodeID: "000002", displayRootNode: true}});
-			oBinding = oTable.getBinding("rows");
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel: false});
 
 			var fnHandler1 = function() {
-				var oContext = oTable.getContextByIndex(0);
+				var oContext = this.oTable.getContextByIndex(0);
 				equal(oContext.getProperty("HierarchyNode"), "000002", "Index 0 is 000002");
-				oContext = oTable.getContextByIndex(1);
+				oContext = this.oTable.getContextByIndex(1);
 				equal(oContext, undefined, "Index 1 is undefined");
 				start();
 			};
 
-			oTable.attachEvent("_rowsUpdated", fnHandler1);
-		})
+			this.oTable.attachEvent("_rowsUpdated", fnHandler1, this);
+			this.oTable.bindRows({path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", parameters: {rootNodeID: "000002", displayRootNode: true}});
+
+		}, this);
 	});
 
 </script>
