@@ -647,6 +647,29 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		return this._sAutoDesign || sDesign;
 	};
 	
+	/**
+	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
+	 * 
+	 * @returns {String}
+	 * @since 1.28
+	 * @protected
+	 */
+	Toolbar.prototype.getTitleId = function() {
+		if (!sap.m.Title) {
+			return "";
+		}
+		
+		var aContent = this.getContent();
+		for (var i = 0; i < aContent.length; i++) {
+			var oContent = aContent[i];
+			if (oContent instanceof sap.m.Title) {
+				return oContent.getId();
+			}
+		}
+		
+		return "";
+	};
+	
 	///////////////////////////
 	// Bar in page delegation
 	///////////////////////////
