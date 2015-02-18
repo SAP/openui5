@@ -346,8 +346,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		// remove or show column header row(thead) according to column visibility value
 		if (!bColVisible && bHeaderVisible) {
 			$headRow[0].className = "sapMListTblRow sapMListTblHeader";
+			this._headerHidden = false;
 		} else if (bColVisible && !bHeaderVisible && !aVisibleColumns.length) {
 			$headRow[0].className = "sapMListTblHeaderNone";
+			this._headerHidden = true;
 		}
 	};
 	
@@ -452,12 +454,17 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		return !!jQuery(oEvent.target).closest($Footer, this.getTableDomRef()).length;
 	};
 	
-	/*
-	 * Returns whether table has column footer row
-	 * @protected
-	 */
-	Table.prototype.hasFooterRow = function() {
-		return !!this._hasFooter;
+	// this gets called after navigation items are focused
+	Table.prototype.onNavigationItemFocus = function(oEvent) {
+		var iIndex = oEvent.getParameter("index"),
+			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
+			oItemDomRef = aItemDomRefs[iIndex];
+		
+		if (this.getItemsContainerDomRef().contains(oItemDomRef)) {
+			ListBase.prototype.onNavigationItemFocus.call(this, oEvent, !this._headerHidden, this._hasFooter);
+		} else {
+			this.getNavigationRoot().removeAttribute("aria-activedescendant");
+		}
 	};
 	
 	// keyboard handling
@@ -510,7 +517,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	// Handle shift-tab key 
 	Table.prototype.onsaptabprevious = function(oEvent) {
-		ListBase.prototype.onsaptabprevious.call(this, oEvent);
 		var sTargetId = oEvent.target.id;
 		if (sTargetId == this.getId("nodata") ||
 			sTargetId == this.getId("tblHeader") || 

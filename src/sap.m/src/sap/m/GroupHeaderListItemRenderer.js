@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var oTable = oLI.getTable();
 		
 		// for table render navigation column always
-		oTable && rm.write('<td class="sapMListTblNavCol">');
+		oTable && rm.write('<td role="gridcell" class="sapMListTblNavCol">');
 		ListItemBaseRenderer.renderType.apply(this, arguments);
 		oTable && rm.write('</td>');
 	};
@@ -38,6 +38,24 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	GroupHeaderListItemRenderer.renderCounter = function(rm, oLI) {
 	};
 	
+	// Returns aria accessibility role
+	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {
+		return oLI.getTable() ? "row" : "option";
+	};
+	
+	// Returns the inner aria labelledby ids for the accessibility
+	GroupHeaderListItemRenderer.getAriaLabelledBy = function(oLI) {
+		return oLI.getId();
+	};
+	
+	// Returns the inner aria labelledby ids for the accessibility
+	GroupHeaderListItemRenderer.getAriaDescribedBy = function(oLI) {
+		// announce group header first
+		var sDescribedBy = this.getAriaAnnouncement("group_header"),
+			sBaseDescribedBy = ListItemBaseRenderer.getAriaDescribedBy.call(this, oLI) || "";
+
+		return sDescribedBy + " " + sBaseDescribedBy;
+	};
 	
 	/**
 	 * Renders the attributes for the given list item, using the provided
@@ -72,7 +90,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var oTable = oLI.getTable();
 		
 		if (oTable) {
-			rm.write("<td class='sapMGHLICell' colspan='" + (oTable.getColSpan()) + "'>");
+			rm.write('<td class="sapMGHLICell" role="gridcell"');
+			rm.writeAttribute("colspan", oTable.getColSpan());
+			rm.write(">");
 		}
 	
 		ListItemBaseRenderer.renderLIContentWrapper.apply(this, arguments);
@@ -84,7 +104,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	
 	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
 		var sTextDir = oLI.getTitleTextDirection();
-		rm.write("<label for='" + oLI.getId() + "-value' class='sapMGHLITitle'");
+		rm.write("<label class='sapMGHLITitle'");
 		
 		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
 			rm.writeAttribute("dir", sTextDir.toLowerCase());

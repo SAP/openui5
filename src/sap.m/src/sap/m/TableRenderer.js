@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			clsPrefix = "sapMListTbl",
 			idPrefix = oTable.getId("tbl"),
 			cellTag = (type == "Head") ? "th" : "td",
+			cellRole = (type == "Head") ? "columnheader" : "gridcell",
 			groupTag = "t" + type.toLowerCase(),
 			aColumns = oTable.getColumns(),
 			isHeaderHidden = (type == "Head") && aColumns.every(function(oColumn) {
@@ -51,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			createBlankCell = function(cls, id) {
 				rm.write("<");
 				rm.write(cellTag);
+				rm.writeAttribute("role", cellRole);
 				id && rm.writeAttribute("id", idPrefix + id);
 				rm.addClass(clsPrefix + cls);
 				rm.writeClasses();
@@ -63,6 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.write("<" + groupTag + ">");
 		rm.write("<tr");
 		rm.writeAttribute("tabindex", -1);
+		rm.writeAttribute("role", "rowheader");
 		rm.writeAttribute("id", oTable.addNavSection(idPrefix + type + "er" ));
 	
 		if (isHeaderHidden) {
@@ -76,7 +79,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
-				rm.write("<th class='" + clsPrefix + "SelCol'><div class='sapMLIBSelectM'>");
+				rm.write("<th role='columnheader' class='" + clsPrefix + "SelCol'>");
+				rm.write("<div class='sapMLIBSelectM'>");
 				rm.renderControl(oTable._getSelectAllCheckbox());
 				rm.write("</div></th>");
 				index++;
@@ -116,6 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			rm.addClass(clsPrefix + type + "erCell");
 			rm.writeAttribute("id", idPrefix + type + index);
 			rm.writeAttribute("data-sap-width", oColumn.getWidth());
+			rm.writeAttribute("role", cellRole);
 			width && rm.addStyle("width", width);
 			
 			if (align) {
@@ -170,13 +175,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	};
 	
 	/**
-	 * Writes the accessibility state of the table
-	 *
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * returns aria accessibility role
 	 */
-	TableRenderer.writeAccessibilityState = function(rm, oList) {
-		// TODO
+	TableRenderer.getAriaRole = function(oControl) {
+		return "grid";
 	};
 	
 	/**
@@ -203,6 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 */
 	TableRenderer.renderNoData = function(rm, oControl) {
 		rm.write("<tr");
+		rm.writeAttribute("role", "row");
 		rm.writeAttribute("tabindex", "-1");
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListTblRow sapMLIBTypeInactive");
@@ -213,6 +216,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.write(">");
 		
 		rm.write("<td");
+		rm.writeAttribute("role", "gridcell");
 		rm.writeAttribute("id", oControl.getId("nodata-text"));
 		rm.writeAttribute("colspan", oControl.getColCount());
 		rm.addClass("sapMListTblCell sapMListTblCellNoData");

@@ -46,6 +46,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.addClass("sapMList");
 		rm.writeControlData(oControl);
 		rm.writeAttribute("tabindex", "-1");
+		rm.writeAttribute("role", "presentation");
+		
 		if (oControl.getInset()) {
 			rm.addClass("sapMListInsetBG");
 		}
@@ -79,7 +81,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			oHeaderTBar.addStyleClass("sapMListHdrTBar");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
-			rm.write("<div class='sapMListHdr'>");
+			rm.write("<div class='sapMListHdr'");
+			rm.writeAttribute("id", oControl.getId("header"));
+			rm.write(">");
 			rm.writeEscaped(sHeaderText);
 			rm.write("</div>");
 		}
@@ -95,8 +99,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
 		
-		// accessibility state
-		this.writeAccessibilityState(rm, oControl);
+		// write accessibility state
+		rm.writeAccessibilityState(oControl, this.getAccessibilityState(oControl));
 	
 		// list attributes
 		rm.addClass("sapMListUl");
@@ -150,7 +154,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 		// footer
 		if (oControl.getFooterText()) {
-			rm.write("<footer class='sapMListFtr'>");
+			rm.write("<footer class='sapMListFtr'");
+			rm.writeAttribute("id", oControl.getId("footer"));
+			rm.write(">");
 			rm.writeEscaped(oControl.getFooterText());
 			rm.write("</footer>");
 		}
@@ -189,13 +195,71 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	};
 	
 	/**
-	 * Writes the accessibility state
+	 * Returns aria accessibility role
 	 *
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String}
 	 */
-	ListBaseRenderer.writeAccessibilityState = function(rm, oControl) {
-		// TODO
+	ListBaseRenderer.getAriaRole = function(oControl) {
+		return "listbox";
+	};
+	
+	/**
+	 * Returns the inner aria labelledby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control 
+	 * @returns {String|undefined} 
+	 */
+	ListBaseRenderer.getAriaLabelledBy = function(oControl) {
+		var oHeaderTBar = oControl.getHeaderToolbar();
+		if (oHeaderTBar) {
+			return oHeaderTBar.getTitleId();
+		} else if (oControl.getHeaderText()) {
+			return oControl.getId("header");
+		}
+	};
+	
+	/**
+	 * Returns the inner aria describedby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String|undefined} 
+	 */
+	ListBaseRenderer.getAriaDescribedBy = function(oControl) {
+		if (oControl.getFooterText()) {
+			return oControl.getId("footer");
+		}
+	};
+	
+	/**
+	 * Returns the accessibility state of the control
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 */
+	ListBaseRenderer.getAccessibilityState = function(oControl) {
+		
+		var mMode = sap.m.ListMode,
+			sMode = oControl.getMode(),
+			bMultiSelectable;
+		
+		if (sMode == mMode.MultiSelect) {
+			bMultiSelectable = true;
+		} else if (sMode != mMode.None && sMode != mMode.Delete) {
+			bMultiSelectable = false;
+		}
+		
+		return {
+			role : this.getAriaRole(oControl),
+			multiselectable : bMultiSelectable,
+			labelledby : {
+				value : this.getAriaLabelledBy(oControl),
+				append : true
+			}, 
+			describedby : {
+				value : this.getAriaDescribedBy(oControl),
+				append : true
+			}
+		};
 	};
 	
 	/**

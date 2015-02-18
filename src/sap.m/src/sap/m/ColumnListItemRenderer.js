@@ -39,20 +39,30 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 
 	// wrap type content with a cell always
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
-		rm.write('<td class="sapMListTblNavCol">');
+		rm.write('<td role="gridcell" class="sapMListTblNavCol">');
 		ListItemBaseRenderer.renderType.apply(this, arguments);
 		rm.write('</td>');
 	};
 
 	// wrap mode content with a cell
 	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
-		rm.write('<td class="sapMListTblSelCol">');
+		rm.write('<td role="gridcell" class="sapMListTblSelCol">');
 		ListItemBaseRenderer.renderModeContent.apply(this, arguments);
 		rm.write('</td>');
 	};
 
 	// ColumnListItem does not respect counter property of the LIB
 	ColumnListItemRenderer.renderCounter = function(rm, oLI) {
+	};
+	
+	// Returns aria accessibility role
+	ColumnListItemRenderer.getAriaRole = function(oLI) {
+		return "row";
+	};
+	
+	// Returns the inner aria labelledby ids for the accessibility
+	ColumnListItemRenderer.getAriaLabelledBy = function(oLI) {
+		return oLI.getId();
 	};
 	
 	
@@ -98,6 +108,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	
 		aColumns.forEach(function(oColumn, i) {
 			var cls,
+				oHeader,
 				bRenderCell = true,
 				oCell = aCells[oColumn.getInitialOrder()];
 	
@@ -108,12 +119,19 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			rm.write("<td");
 			rm.addClass("sapMListTblCell");
 			rm.writeAttribute("id", oLI.getId() + "_cell" + i);
+			rm.writeAttribute("role", "gridcell");
 	
 			// check column properties
 			if (oColumn) {
 				cls = oColumn.getStyleClass(true);
 				cls && rm.addClass(cls);
-	
+				
+				// aria for virtual keyboard mode
+				oHeader = oColumn.getHeader();
+				if (oHeader) {
+					rm.writeAttribute("aria-describedby", oHeader.getId());
+				}
+				
 				// merge duplicate cells
 				if (!oTable.hasPopin() && oColumn.getMergeDuplicates()) {
 					var sFuncWithParam = oColumn.getMergeFunctionName(),
@@ -168,7 +186,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		oLI._popinId = oLI.getId() + "-sub";
 		rm.write("<tr class='sapMListTblSubRow'");
 		rm.writeAttribute("id", oLI._popinId);
+		rm.writeAttribute("role", "row");
+		
+		// logical parent of the popin is the base row
+		rm.writeAttribute("aria-owns", oLI.getId());
+		
 		rm.write("><td");
+		rm.writeAttribute("role", "gridcell");
 		rm.writeAttribute("colspan", oTable.getColCount());
 		rm.write("><div class='sapMListTblSubCnt'>");
 	

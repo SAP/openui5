@@ -172,6 +172,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			 */
 			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
 		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.28.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
 		events : {
 	
 			/**
@@ -1434,6 +1442,35 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 	
+	// returns accessibility role
+	ListBase.prototype.getRole = function() {
+		var sMode = this.getMode(),
+			mMode = sap.m.ListMode;
+		
+		return (sMode == mMode.None || sMode == mMode.Delete) ? "list" : "listbox";
+	};
+	
+	// this gets called after navigation items are focused
+	ListBase.prototype.onNavigationItemFocus = function(oEvent, bHasHeader, bHasFooter) {
+		var iIndex = oEvent.getParameter("index"),
+			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
+			oItemDomRef = aItemDomRefs[iIndex],
+			iSetSize = aItemDomRefs.length,
+			oBinding = this.getBinding("items");
+		
+		// use binding length if list is in scroll to load growing mode
+		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
+			iSetSize = oBinding.getLength();
+		} else {
+			bHasHeader && iSetSize--;
+			bHasFooter && iSetSize--;
+		}
+
+		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
+		oItemDomRef.setAttribute("aria-posinset", bHasHeader ? iIndex : iIndex + 1);
+		oItemDomRef.setAttribute("aria-setsize", iSetSize);
+	};
+	
 	/* Keyboard Handling */
 	ListBase.prototype.getNavigationRoot = function() {
 		return this.getDomRef("listUl");
@@ -1490,6 +1527,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				sapnext : ["alt"],
 				sapprevious : ["alt"]
 			});
+			
+			// attach to the focus event of the navigation items
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this.onNavigationItemFocus, this);
+			
 		}
 		// configure navigation root
 		var oNavigationRoot = this.getNavigationRoot();

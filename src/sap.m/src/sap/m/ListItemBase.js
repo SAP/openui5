@@ -59,6 +59,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 */
 			counter : {type : "int", group : "Misc", defaultValue : null}
 		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.28.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
 		events : {
 	
 			/**
@@ -393,6 +401,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return !(sMode == sap.m.ListMode.None || sMode == sap.m.ListMode.Delete);
 	};
 	
+	ListItemBase.prototype.getSelected = function() {
+		if (this.isSelectable()) {
+			return this.getProperty("selected");
+		}
+		return false;
+	};
 
 	/**
 	 * Returns the state of the item selection as a boolean
@@ -403,16 +417,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * API Change makes this method unnecessary. Use getSelected method instead.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ListItemBase.prototype.isSelected = function() {
-		if (this.isSelectable()) {
-			return this.getProperty("selected");
-		}
-		return false;
-	};
-	
-	ListItemBase.prototype.getSelected = function() {
-		return this.isSelected();
-	};
+	ListItemBase.prototype.isSelected = ListItemBase.prototype.getSelected;
 	
 	ListItemBase.prototype.setSelected = function(bSelected, bDontNotifyParent) {
 		// do not handle when item is not selectable or in same status
@@ -432,8 +437,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			oSelectionControl.setSelected(bSelected);
 		}
 	
-		// update DOM
-		this.$().toggleClass("sapMLIBSelected", bSelected);
+		// update DOM for class and aria
+		this.$().toggleClass("sapMLIBSelected", bSelected).attr("aria-selected", bSelected);
 	
 		// set the property and do not invalidate
 		this.setProperty("selected", bSelected, true);

@@ -14,6 +14,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 */
 	var ListItemBaseRenderer = {};
 	
+	// create ARIA announcements 
+	var mAriaAnnouncements = {};
+	
 	/**
 	 * Writes necessary invisible placeholder HTML attributes and styles.
 	 * TODO: Why this functionality does not come from RenderManager
@@ -26,6 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oLI.getId();
 		var sPlaceholderHtml = ' ' +
 			'id="' + sPlaceholderId + '" ' + 
+			'class="sapUiHiddenPlaceholder" ' + 
 			'data-sap-ui="' + sPlaceholderId + '" ' + 
 			'style="display: none;"' + 
 			'aria-hidden="true"';
@@ -201,8 +205,105 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		}
 	};
 	
-	ListItemBaseRenderer.writeAccessibilityState = function(rm, oLI) {
-		// TODO
+	/**
+	 * Creates an invisible aria node for the given message bundle text  
+	 * in the static UIArea and returns its id for ARIA announcements
+	 * 
+	 * This method should be used when text is reached frequently.
+	 * 
+	 * @param {String} sKey key of the announcement
+	 * @param {String} [sBundleText] key of the announcement
+	 * @returns {String} id of the generated invisible aria node
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
+		if (mAriaAnnouncements[sKey]) {
+			return mAriaAnnouncements[sKey];
+		}
+		
+		sBundleText = sBundleText || "LIST_ITEM_" + sKey.toUpperCase();
+		mAriaAnnouncements[sKey] = new sap.ui.core.InvisibleText({
+			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
+		}).toStatic().getId();
+		
+		return mAriaAnnouncements[sKey];
+	};
+
+	
+	/**
+	 * Returns aria accessibility role
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @returns {String}
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaRole = function(oLI) {
+		return "option";
+	};
+	
+	/**
+	 * Returns the inner aria labelledby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control 
+	 * @returns {String|undefined}
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaLabelledBy = function(oLI) {
+		return oLI.getId() + "-content";
+	};
+	
+	/**
+	 * Returns the inner aria describedby ids for the accessibility
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @returns {String|undefined} 
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAriaDescribedBy = function(oLI) {
+		var aDescribedBy = [],
+			sType = oLI.getType(),
+			mType = sap.m.ListType;
+		
+		if (oLI.getListProperty("showUnread") && oLI.getUnread()) {
+			aDescribedBy.push(this.getAriaAnnouncement("unread"));
+		}
+		
+		if (oLI.getMode() == sap.m.ListMode.Delete) {
+			aDescribedBy.push(this.getAriaAnnouncement("deletable"));
+		}
+		
+		if (sType == mType.Navigation) {
+			aDescribedBy.push(this.getAriaAnnouncement("navigation"));
+		} else {
+			if (sType == mType.Active || sType == mType.DetailAndActive) {
+				aDescribedBy.push(this.getAriaAnnouncement("active"));
+			}
+			if (sType == mType.Detail || sType == mType.DetailAndActive) {
+				aDescribedBy.push(this.getAriaAnnouncement("detail"));
+			}
+		}
+		
+		return aDescribedBy.join(" ");
+	};
+	
+	/**
+	 * Returns the accessibility state of the control
+	 *
+	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @protected
+	 */
+	ListItemBaseRenderer.getAccessibilityState = function(oLI) {
+		return {
+			role : this.getAriaRole(oLI),
+			labelledby : {
+				value : this.getAriaLabelledBy(oLI),
+				append : true
+			},
+			describedby : {
+				value : this.getAriaDescribedBy(oLI),
+				append : true
+			}
+		};
 	};
 	
 	/**
@@ -227,8 +328,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 
 	
 	ListItemBaseRenderer.renderLIContentWrapper = function(rm, oLI) {
-		rm.write('<div class="sapMLIBContent">');
-
+		rm.write('<div class="sapMLIBContent"');
+		rm.writeAttribute("id", oLI.getId() + "-content");
+		rm.write(">");
+		
 		// additional content with class for no-flex case
 		if (this.handleNoFlex()) {
 			rm.write('<div class="sapMLIBContentNF">');
@@ -263,7 +366,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 
 		// start
 		this.openItemTag(rm, oLI);
-		this.renderTabIndex(rm, oLI);
 		rm.writeControlData(oLI);
 
 		// classes
@@ -291,7 +393,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		// attributes
 		this.renderTooltip(rm, oLI);
 		this.renderTabIndex(rm, oLI);
-		this.writeAccessibilityState(rm, oLI);
+		
+		// handle accessibility states
+		rm.writeAccessibilityState(oLI, this.getAccessibilityState(oLI));
 
 		// item attributes hook
 		this.renderLIAttributes(rm, oLI);
