@@ -35,7 +35,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		var aItems = oControl.getItems(),
 			bTextOnly = oControl._checkTextOnly(aItems),
-			bNoText = oControl._checkNoText(aItems);
+			bNoText = oControl._checkNoText(aItems),
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		var oIconTabBar = oControl.getParent();
 		var bUpperCase = oIconTabBar && oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getUpperCase();
@@ -97,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 			if (oItem instanceof sap.m.IconTabSeparator) {
 				if (oItem.getIcon()) {
-					sTabParams += 'role="img" aria-label="Next Step"';
+					sTabParams += 'role="img" aria-label="' + oResourceBundle.getText("ICONTABBAR_NEXTSTEP") + '"';
 				} else {
 					sTabParams += 'role="separator"';
 				}
@@ -167,10 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 				if (!oItem.getShowAll() || !oItem.getIcon()) {
 					if (bReadIconColor) {
-						var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
-							sIconColorText = oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase());
-
-						oRM.write('<div id="' + oItem.getId() + '-iconColor" style="display: none;">' + sIconColorText + '</div>');
+						oRM.write('<div id="' + oItem.getId() + '-iconColor" style="display: none;">' + oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase()) + '</div>');
 					}
 
 					oRM.renderControl(oItem._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oItem.getIconColor()], oControl, IconTabHeaderRenderer._aAllIconColors));
