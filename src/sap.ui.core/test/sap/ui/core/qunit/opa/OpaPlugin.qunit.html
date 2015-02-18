@@ -265,6 +265,18 @@ test("Should retrieve multiple controls by global id's with regexp and control t
 	strictEqual(aRetrievedControls.length, 0);
 });
 
+test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
+	assert.ok(sap.ui.commons.ComboBox._sapUiLazyLoader, "Combo box is still a stub");
+
+	// Act - combo box is a lazy stub
+	var aRetrievedControls = this.oPlugin.getMatchingControls({
+		controlType : sap.ui.commons.ComboBox
+	});
+
+	// Assert
+	strictEqual(aRetrievedControls.length, 0);
+});
+
 module("Controls in a view", {
 	setup: function () {
 		var sView = [
