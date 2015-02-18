@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.m.sample.ViewSettingsDialogCustomTabs.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<Button
+				text="Open View Settings Dialog with several tabs"
+				press="handleOpenDialog" />
+
+			<Button
+					text="Open View Settings Dialog with single custom tab"
+					press="handleOpenDialogSingleCustomTab" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

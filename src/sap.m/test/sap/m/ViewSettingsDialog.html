@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>ViewSettingsDialog - sap.m</title>
-		
+
 		<script src="../../../resources/sap-ui-core.js" type="text/javascript"
 			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.commons" data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-xx-bindingSyntax="complex">
@@ -92,7 +92,7 @@
 			mode: "MultiSelect",
 			showUnread: true,
 			scrollToLoad: true,
-			infoToolbar: 
+			infoToolbar:
 				new sap.m.Toolbar({
 				visible: false,
 				active: true,
@@ -205,12 +205,12 @@
 				price: 55.99
 			}]
 		};
-		
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(data);
 		table.setModel(oModel);
 		table.bindAggregation("items", "/navigation", template);
-		
+
 		/* sort item text model (CSN issue)*/
 		var dataI18n = {
 			I18N_NAME: "Name Sorter",
@@ -239,7 +239,7 @@
 				var price = parseInt(oContext.getProperty("price"), 10),
 					key,
 					text;
-				
+
 				if (price < 20) {
 					key = "cheap";
 					text = "Really cheap (<20)";
@@ -250,7 +250,7 @@
 					key = "expensive";
 					text = "Totally overpriced (other)";
 				}
-				
+
 				return {
 					key: key,
 					text: text
@@ -277,7 +277,7 @@
 						// we use some internal logic to get the dialog instance and the filter instance from within the control
 						// if the control is not cloned, access the dialog and the filter by id directly
 						var source = oEvent.getSource(),
-							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substr(0,4)),	
+							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substr(0,4)),
 							filters = vsd.getFilterItems(),
 							customFilter,
 							i = 0;
@@ -321,7 +321,7 @@
 						// we use some internal logic to get the dialog instance and the filter instance from within the control
 						// if the control is not cloned, access the dialog and the filter by id directly
 						var source = oEvent.getSource(),
-							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substr(0,4)),	
+							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substr(0,4)),
 							filters = vsd.getFilterItems(),
 							customFilter,
 							i = 0;
@@ -355,7 +355,7 @@
 		var customPriceCallback = function (oControl) {
 			var aFilters = [],
 				aItems = oControl.getItems();
-			
+
 			aFilters.push(new sap.ui.model.Filter('price', sap.ui.model.FilterOperator.BT, aItems[1].getValue(), aItems[3].getValue()));
 			return aFilters;
 		};
@@ -364,7 +364,7 @@
 				filters = source.getFilterItems(),
 				customControl,
 				customFilter,
-				i = 0; 
+				i = 0;
 
 			// this functionality only needed because custom control is cloned for this test page
 			// if you don't have cloned controls you can directly access them by id and set/reset the values
@@ -479,7 +479,7 @@
 				// apply sorters & filters to the table binding
 				table.getBinding("items").sort(aTableSorters);
 				table.getBinding("items").filter(aTableFilters);
-				
+
 				// update table info bar text (show only if we have a text & set text to label)
 				table.getInfoToolbar().setVisible(!!p.filterString);
 				table.getInfoToolbar().getContent()[0].setText(p.filterString);
@@ -810,7 +810,7 @@
 						case "myPriceSorter": sSortPath = "price"; break;
 					}
 					// create sorter
-					if (sSortPath) {					
+					if (sSortPath) {
 						oSorter = new sap.ui.model.Sorter(sSortPath, p.sortDescending);
 						aTableSorters.push(oSorter);
 					}
@@ -1098,7 +1098,7 @@
 		}));
 		vsd3.addSortItem(new sap.m.ViewSettingsItem({
 			key: "myStatusSorter",
-			text: "Status",
+			text: "Status"
 		}));
 		vsd3.addSortItem(new sap.m.ViewSettingsItem({
 			key: "myValueSorter",
@@ -1389,10 +1389,10 @@
 						aTableFilters = aTableFilters.concat(aFilters);
 					}
 				}
-				
+
 				// apply filters to the table binding
 				table.getBinding("items").filter(aTableFilters);
-				
+
 				// update table info bar text (show only if we have a text & set text to label)
 				table.getInfoToolbar().setVisible(!!p.filterString);
 				table.getInfoToolbar().getContent()[0].setText(p.filterString);
