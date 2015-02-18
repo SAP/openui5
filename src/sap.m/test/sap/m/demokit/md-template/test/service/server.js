@@ -9,23 +9,23 @@ sap.ui.define([
 		_sModulePath : "sap.ui.demo.mdtemplate.service",
 
 		/**
-		 * Initializes the mock server (typically when the app is called with the URL parameter "responderOn=true").
+		 * Initializes the mock server. You can configure the delay with the URL parameter "serverDelay"
 		 * The local mock data in this folder is returned instead of the real data for testing.
 		 *
 		 * @public
 		 */
 
-		init : function (s) {
-			// create server
-			var oMockServer = new MockServer({
-				rootUri: this._sServiceUrl
-			}),
-			sPath = jQuery.sap.getModulePath(this._sModulePath);
+		init : function () {
+			var oUriParameters = jQuery.sap.getUriParameters(),
+				oMockServer = new MockServer({
+					rootUri: this._sServiceUrl
+				}),
+				sPath = jQuery.sap.getModulePath(this._sModulePath);
 
-			// config mock server with a delay of 1s
+			// configure mock server with a delay of 1s
 			MockServer.config({
 				autoRespond : true,
-				autoRespondAfter : 1000
+				autoRespondAfter : (oUriParameters.get("serverDelay") || 1000)
 			});
 
 			// load local mock data
