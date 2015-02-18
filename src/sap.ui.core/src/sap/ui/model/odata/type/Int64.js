@@ -153,6 +153,13 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	/**
 	 * Formats the given value to the given target type.
 	 *
+	 * If the type uses certain format options, parsing from a <code>String</code> uses floating
+	 * point numbers internally. This may cause a loss of precision (e.g.
+	 * "1,234,567,890,123,456,789" will be parsed to "1234567890123456800"). The following options
+	 * do not cause this effect: decimals, decimalSeparator, groupingEnabled, groupingSeparator,
+	 * maxFractionDigits, maxIntegerDigits, minFractionDigits, minIntegerDigits, minusSign and
+	 * plusSign.
+	 *
 	 * @param {string} sValue
 	 *   the value to be formatted, which is represented as a string in the model
 	 * @param {string} sTargetType
@@ -236,7 +243,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		}
 		switch (sSourceType) {
 		case "string":
-			sResult = ODataType.normalizeNumber(getFormatter(this).oFormatOptions, vValue,
+			sResult = ODataType.normalizeNumber(this.oFormatOptions, getFormatter(this), vValue,
 				/^0*(\d+)$/ );
 			if (!sResult) {
 				throw new ParseException(getText("EnterInt"));

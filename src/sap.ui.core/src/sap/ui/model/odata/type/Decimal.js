@@ -245,6 +245,13 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * Parses the given value, which is expected to be of the given type, to a decimal in
 	 * <code>string</code> representation.
 	 *
+	 * If the type uses certain format options, parsing from a <code>String</code> uses floating
+	 * point numbers internally. This may cause a loss of precision (e.g.
+	 * "1,234,567,890,123,456,789" will be parsed to "1234567890123456800"). The following options
+	 * do not cause this effect: decimals, decimalSeparator, groupingEnabled, groupingSeparator,
+	 * maxFractionDigits, maxIntegerDigits, minFractionDigits, minIntegerDigits, minusSign and
+	 * plusSign.
+	 *
 	 * @param {string|number} vValue
 	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
 	 *   <code>null</code>
@@ -267,7 +274,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		}
 		switch (sSourceType) {
 		case "string":
-			sResult = ODataType.normalizeNumber(getFormatter(this).oFormatOptions, vValue,
+			sResult = ODataType.normalizeNumber(this.oFormatOptions, getFormatter(this), vValue,
 				/^0*(\d*)(?:\.(\d*?)0*)?$/);
 			if (!sResult) {
 				throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()

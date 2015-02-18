@@ -174,6 +174,51 @@
 	}));
 
 	//*********************************************************************************************
+	test("parse large numbers w/ format options", function () {
+		var oFormatOptions = {
+				plusSign: '+',
+				minusSign: '-',
+				minFractionDigits: 5,
+				maxFractionDigits: 10,
+				minIntegerDigits: 5,
+				maxIntegerDigits: 10,
+				decimals: 10,
+				groupingEnabled: false,
+				groupingSeparator: "'",
+				decimalSeparator: '.'
+			}, oType;
+
+		oType = new sap.ui.model.odata.type.Int64();
+		strictEqual(oType.parseValue("1 234 567 890 123 456789", "string"),
+				"1234567890123456789", "no format options -> full precision");
+
+		oType = new sap.ui.model.odata.type.Int64(oFormatOptions);
+		strictEqual(oType.parseValue("1 234 567 890 123 456789", "string"),
+				"1234567890123456789", "only safe format options -> full precision");
+
+		// random format option considered "unsafe" --> use NumberFormat losing precision
+		oFormatOptions.foo = "bar";
+		oType = new sap.ui.model.odata.type.Int64(oFormatOptions);
+		strictEqual(oType.parseValue("1 234 567 890 123 456789", "string"),
+			"1234567890123456800", "random format option -> losing precision");
+
+		// check that short style works
+		oType = new sap.ui.model.odata.type.Int64({style: "short"});
+		strictEqual(oType.parseValue("1K", "string"), "1000", 'style: "short"');
+
+		// error handling with short style
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			try {
+				oType.parseValue("no number", "string");
+				ok(false, "no error");
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, "EnterInt");
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	test("validate success", 0, function () {
 		var oType = new sap.ui.model.odata.type.Int64();
 
@@ -195,7 +240,7 @@
 					ok(false, "Expected ValidateException not thrown");
 				}
 				catch (e) {
-					ok(e instanceof sap.ui.model.ValidateException)
+					ok(e instanceof sap.ui.model.ValidateException);
 					strictEqual(e.message, "EnterInt");
 				}
 			});

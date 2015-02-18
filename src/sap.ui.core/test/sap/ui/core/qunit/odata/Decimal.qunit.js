@@ -132,8 +132,7 @@
 
 	//*********************************************************************************************
 	test("large numbers, modified Swedish", function () {
-		var fnLocaleData = sap.ui.core.LocaleData.getInstance,
-			oType = new sap.ui.model.odata.type.Decimal({plusSign: ">", minusSign: "<"},
+		var oType = new sap.ui.model.odata.type.Decimal({plusSign: ">", minusSign: "<"},
 				{scale: "variable"}),
 			oValue = "-1",
 			oExpected = "<1";
@@ -159,6 +158,51 @@
 			"-1234567890123456789012", "minus sign, tab, non-breaking spaces");
 		strictEqual(oType.parseValue(" 1 234\u00a0567 890,123456789012", "string"),
 			"1234567890.123456789012", "many decimals");
+	});
+
+	//*********************************************************************************************
+	test("parse large numbers w/ format options", function () {
+		var oFormatOptions = {
+				plusSign: '+',
+				minusSign: '-',
+				minFractionDigits: 5,
+				maxFractionDigits: 10,
+				minIntegerDigits: 5,
+				maxIntegerDigits: 10,
+				decimals: 10,
+				groupingEnabled: false,
+				groupingSeparator: "'",
+				decimalSeparator: '.'
+			}, oType;
+
+		oType = new sap.ui.model.odata.type.Decimal();
+		strictEqual(oType.parseValue("1 234 567 890 123 456.789012", "string"),
+				"1234567890123456.789012", "no format options -> full precision");
+
+		oType = new sap.ui.model.odata.type.Decimal(oFormatOptions);
+		strictEqual(oType.parseValue("1 234 567 890 123 456.789012", "string"),
+				"1234567890123456.789012", "only safe format options -> full precision");
+
+		// random format option considered "unsafe" --> use NumberFormat losing precision
+		oFormatOptions.foo = "bar";
+		oType = new sap.ui.model.odata.type.Decimal(oFormatOptions);
+		strictEqual(oType.parseValue("1 234 567 890 123 456.789012", "string"),
+			"1234567890123456.8", "random format option -> losing precision");
+
+		// check that short style works
+		oType = new sap.ui.model.odata.type.Decimal({style: "short"});
+		strictEqual(oType.parseValue("1K", "string"), "1000", 'style: "short"');
+
+		// error handling with short style
+		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+			try {
+				oType.parseValue("no number", "string");
+				ok(false, "no error");
+			} catch (e) {
+				ok(e instanceof sap.ui.model.ParseException);
+				strictEqual(e.message, "EnterNumber");
+			}
+		});
 	});
 
 	//*********************************************************************************************
