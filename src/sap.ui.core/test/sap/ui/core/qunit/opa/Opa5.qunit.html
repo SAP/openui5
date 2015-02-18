@@ -170,6 +170,37 @@
 		});
 	});
 
+	asyncTest("Should Navigate forwards in an Iframe", function(assert) {
+		// System under Test
+		var oOpa5 = new Opa5();
+
+		// Act
+		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
+			// Act + Assert
+			var oHashChanger = Opa5.getHashChanger();
+
+			assert.strictEqual(oHashChanger.getHash(), "");
+			oHashChanger.setHash("buz");
+			oHashChanger.setHash("foo");
+			oHashChanger.replaceHash("baz");
+			assert.strictEqual(oHashChanger.getHash(), "baz");
+			Opa5.getWindow().history.go(-1);
+			Opa5.getWindow().history.go(1);
+			assert.strictEqual(oHashChanger.getHash(), "baz");
+
+			oHashChanger.setHash("bar");
+			Opa5.getWindow().history.go(-1);
+			Opa5.getWindow().history.forward();
+
+		});
+
+		oOpa5.iTeardownMyAppFrame();
+
+		oOpa5.emptyQueue().done(function () {
+			start();
+		});
+	});
+
 	//Sinon timers do not work in IE8 -.-
 	if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
 		return;
