@@ -81,6 +81,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.Select",
+			"url": "Select.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.SelectList",
 			"url": "../SelectList.html",
 			"appComponent": "CA-UI5-CTR-WDF"
