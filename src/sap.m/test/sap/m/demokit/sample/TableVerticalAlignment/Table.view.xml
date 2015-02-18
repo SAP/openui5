@@ -44,8 +44,7 @@
 				<cells>
 					<ObjectIdentifier
 						title="{Name}"
-						text="{ProductId}"
-						class="sapMTableContentMargin" />
+						text="{ProductId}" />
 					
 					<Input value="{Quantity}" type="{Text}" description="{UoM}" fieldWidth="{60%}"/>
 

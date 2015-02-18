@@ -26,7 +26,7 @@
 		<items>
 			<ColumnListItem>
 				<cells>
-					<ObjectIdentifier title="{Name}" text="{ProductId}" class="sapMTableContentMargin" />
+					<ObjectIdentifier title="{Name}" text="{ProductId}" />
 					<Text text="{SupplierName}" />
 					<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
 					<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}"
