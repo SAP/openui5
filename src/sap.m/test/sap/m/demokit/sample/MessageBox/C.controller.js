@@ -15,11 +15,8 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 
 	handleConfirmationMessageBoxPress: function(oEvent) {
 		var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-		sap.m.MessageBox.show(
+		sap.m.MessageBox.confirm(
 			"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod.", {
-				icon: sap.m.MessageBox.Icon.QUESTION,
-				title: "Really Do This?",
-				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
 				styleClass: bCompact? "sapUiSizeCompact" : ""
 			}
 		);
@@ -41,7 +38,7 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 				"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
 				{
 					icon: sap.m.MessageBox.Icon.INFORMATION,
-					title: "Set initial button focus",
+					title: "Set initial focus on a button",
 					styleClass: bCompact? "sapUiSizeCompact" : "",
 					initialFocus: sap.m.MessageBox.Action.CANCEL
 				}
@@ -54,7 +51,7 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 				'Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive',
 				{
 					icon: sap.m.MessageBox.Icon.INFORMATION,
-					title: "Set initial button focus",
+					title: "Set initial focus on a button",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
 					styleClass: bCompact? "sapUiSizeCompact" : "",
 					initialFocus: "Custom button text"
@@ -74,12 +71,14 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 
 		sap.m.MessageBox.show(oLayout, {
 			icon: sap.m.MessageBox.Icon.WARNING,
-			title: "Title of first MessageBox",
+			title: "Set initial focus on a control",
 			actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 			onClose: function (oAction) {
 				if (oAction === sap.m.MessageBox.Action.YES) {
 					var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-					sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+					sap.m.MessageBox.alert(sText, {
+						title: "Result of CheckBox"
+					});
 				}
 			},
 			dialogId: "messageBoxId1",
@@ -115,7 +114,7 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 				oLayout,
 				{
 					icon: sap.m.MessageBox.Icon.INFORMATION,
-					title: "Set initial button focus",
+					title: "Information",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
 					onClose: function(oAction) {
 						if ( oAction === sap.m.MessageBox.Action.YES ) {
@@ -123,13 +122,15 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 							var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
 
 							// alert(sMessage, fnCallBack, sTitle)
-							sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+							sap.m.MessageBox.alert(sText, {
+								title: "Result of CheckBox"
+							});
 						}
 					},
 					styleClass: bCompact ? "sapUiSizeCompact" : "",
 					initialFocus: "Custom button text",
 					verticalScrolling: true,
-					horizontalScrolling: false
+					horizontalScrolling: true
 				}
 		);
 	}

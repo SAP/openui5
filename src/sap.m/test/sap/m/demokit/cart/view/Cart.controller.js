@@ -21,7 +21,7 @@ sap.ui.controller("view.Cart", {
 			this._orderBusyDialog.destroy();
 		}
 	},
-	
+
 	_routePatternMatched : function(oEvent) {
 		//set selection of list back
 		var oEntryList = this.getView().byId("entryList");
@@ -58,7 +58,7 @@ sap.ui.controller("view.Cart", {
 	handleEntryListSelect : function (oEvent) {
 		this._showProduct(oEvent.getParameter("listItem"));
 	},
-	
+
 	_showProduct : function (item) {
 		// send event to refresh
 		var sPath = item.getBindingContext("cartProducts").getPath();
@@ -72,33 +72,32 @@ sap.ui.controller("view.Cart", {
 			this._router.navTo("cartProduct", {productId: sId});
 		}
 	},
-	
+
 	handleEntryListDelete : function (oEvent) {
 		// show confirmation dialog
 		var sEntryId = oEvent.getParameter("listItem").getBindingContext("cartProducts").getObject().Id;
 		var oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
 		sap.m.MessageBox.show(
-				oBundle.getText("CART_DELETE_DIALOG_MSG"),
-				null,
-				oBundle.getText("CART_DELETE_DIALOG_TITLE"),
-				[sap.m.MessageBox.Action.DELETE, sap.m.MessageBox.Action.CANCEL],
-				jQuery.proxy(function (oAction) {
-					if (sap.m.MessageBox.Action.DELETE === oAction) {
-						var oModel = this.getView().getModel("cartProducts");
-						var oData = oModel.getData();
-						var aNewEntries = jQuery.grep(oData.entries, function (oEntry) {
-							var keep = (oEntry.Id !== sEntryId);
-							if (!keep) {
-								oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
-							}
-							return keep;
-						});
-						oData.entries = aNewEntries;
-						oData.showEditAndProceedButton = aNewEntries.length > 0;
-						oModel.setData(oData);
-					}
-				}, this)
-		);
+				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
+					title: oBundle.getText("CART_DELETE_DIALOG_TITLE"),
+					actions: [sap.m.MessageBox.Action.DELETE, sap.m.MessageBox.Action.CANCEL],
+					onClose: jQuery.proxy(function (oAction) {
+						if (sap.m.MessageBox.Action.DELETE === oAction) {
+							var oModel = this.getView().getModel("cartProducts");
+							var oData = oModel.getData();
+							var aNewEntries = jQuery.grep(oData.entries, function (oEntry) {
+								var keep = (oEntry.Id !== sEntryId);
+								if (!keep) {
+									oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
+								}
+								return keep;
+							});
+							oData.entries = aNewEntries;
+							oData.showEditAndProceedButton = aNewEntries.length > 0;
+							oModel.setData(oData);
+						}
+					}, this)
+				});
 	},
 
 	handleProceedButtonPress : function (oEvent) {
@@ -113,10 +112,9 @@ sap.ui.controller("view.Cart", {
 				showCancelButton : false,
 				close : function () {
 					sap.m.MessageBox.show(
-						oBundle.getText("CART_ORDER_SUCCESS_MSG"),
-						null,
-						oBundle.getText("CART_ORDER_SUCCESS_TITLE")
-					);
+						oBundle.getText("CART_ORDER_SUCCESS_MSG"), {
+							title: oBundle.getText("CART_ORDER_SUCCESS_TITLE")
+					});
 				}
 			});
 
@@ -157,7 +155,7 @@ sap.ui.controller("view.Cart", {
 		// open order dialog
 		this._orderDialog.open();
 	},
-	
+
 	_resetCart: function() {
 		//delete cart content
 		var oCartProductsModel = this.getView().getModel("cartProducts");

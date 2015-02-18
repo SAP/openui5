@@ -15,7 +15,7 @@ sap.ui.controller("sap.m.sample.MessageBoxCustom.C", {
 
 	showCustomContent: function(oEvent) {
 		var oLayout = sap.ui.xmlfragment("sap.m.sample.MessageBoxCustom.Layout", this);
-		
+
 		// get the view and add the layout as a dependent. Since the layout is being put
 		// into an aggregation any possible binding will be 'forwarded' to the layout.
 		var oView = this.getView();
@@ -26,15 +26,17 @@ sap.ui.controller("sap.m.sample.MessageBoxCustom.C", {
 			icon : sap.m.MessageBox.Icon.WARNING,
 			title : "Title of first MessageBox",
 			actions : [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-			onClose : function(oAction) { 
+			onClose : function(oAction) {
 				if ( oAction === sap.m.MessageBox.Action.YES ) {
 					var oCheck = sap.ui.getCore().byId("checkBoxId");
 					var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
 
-					sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+					sap.m.MessageBox.alert(sText, {
+						title: "Result of CheckBox"
+					});
 				}
 			},
-			dialogId : "messageBoxId" 
+			dialogId : "messageBoxId"
 		});
 	}
 });

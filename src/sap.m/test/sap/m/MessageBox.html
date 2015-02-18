@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<title>MessageBox - sap.m</title>
 	<style>
 		#heading {
@@ -18,12 +18,12 @@
 	<script type="text/javascript">
 		jQuery.sap.require("sap.m.MessageBox");
 
-		var app = new sap.m.App("myApp", {initialPage:"page1"}),
+		var app = new sap.m.App("myApp", {initialPage: "page1"}),
 				sMessage = "MessageBox opened!",
 				sTitle = "MessageBox";
 
 		var page1 = new sap.m.Page("page1", {
-			title:"sap.m.MessageBox"
+			title: "sap.m.MessageBox"
 		});
 
 		var oHL = new sap.ui.layout.HorizontalLayout();
@@ -36,7 +36,7 @@
 
 		var aItems = [];
 
-		jQuery.map(sap.m.MessageBox.Icon, function(value, key){
+		jQuery.map(sap.m.MessageBox.Icon, function (value, key) {
 			var item = new sap.ui.core.Item({
 				key: key,
 				text: value
@@ -54,10 +54,10 @@
 			customTextOff: "CZY"
 		});
 
-		jQuery.map(sap.m.MessageBox.Action, function(value, key){
+		jQuery.map(sap.m.MessageBox.Action, function (value, key) {
 			oHL.addContent(new sap.m.Button({
 				text: value + "(Action)",
-				press: function(){
+				press: function () {
 					sap.m.MessageBox.show(sMessage, {
 						icon: oSelect.getSelectedItem().getProperty("key"),
 						title: sTitle,
@@ -70,9 +70,9 @@
 
 		oHL.addContent(new sap.m.Button({
 			text: "Confirm",
-			press: function(){
+			press: function () {
 				sap.m.MessageBox.confirm("Confirmation dialog is opened?", {
-					onClose: function(bConfirmed){
+					onClose: function (bConfirmed) {
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
 					},
 					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
@@ -82,7 +82,7 @@
 
 		oHL.addContent(new sap.m.Button({
 			text: "Alert",
-			press: function(){
+			press: function () {
 				sap.m.MessageBox.alert("Alert some message", {
 					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
 				});
@@ -94,7 +94,7 @@
 
 		oVL.addContent(new sap.m.Button({
 			text: "MessageBox with Layout",
-			press: function(){
+			press: function () {
 				var oCheck;
 				var oLayout = new sap.ui.layout.VerticalLayout({
 					width: "100%",
@@ -103,26 +103,27 @@
 							text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
 						}),
 						oCheck = new sap.m.CheckBox("checkBoxId", {
-						text: "The CheckBox this checked",
-						checked: false
-					})
+							text: "The CheckBox this checked",
+							checked: false
+						})
 					]
 				});
 
-				sap.m.MessageBox.show(oLayout,{
-							sIcon: sap.m.MessageBox.Icon.WARNING,
+				sap.m.MessageBox.show(oLayout, {
+							icon: sap.m.MessageBox.Icon.WARNING,
 							title: "Title of first MessageBox",
-							actions:	[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+							actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 							onClose: function (oAction) {
-									if (oAction === sap.m.MessageBox.Action.YES) {
-										var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-										// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
-										sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
-									}
-								},
+								if (oAction === sap.m.MessageBox.Action.YES) {
+									var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+									sap.m.MessageBox.alert(sText, {title: "Result of CheckBox"});
+								}
+							},
 							dialogId: "messageBoxId",
-							initialFocus: sap.m.MessageBox.Action.NO
-							}
+							initialFocus: sap.m.MessageBox.Action.NO,
+							styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+
+						}
 				);
 			}
 		}));
@@ -134,10 +135,10 @@
 
 		oVL.addContent(new sap.m.Button({
 			text: "Action",
-			width: "250px",
-			press: function(){
-				sap.m.MessageBox.confirm("Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL" , {
-					onClose: function(bConfirmed){
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.confirm("Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL", {
+					onClose: function (bConfirmed) {
 						jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
 					},
 					icon: sap.m.MessageBox.Icon.INFORMATION,
@@ -149,24 +150,25 @@
 		}));
 
 		oVL.addContent(new sap.m.Button({
-			text: 'Button text',
-			width: "250px",
+			text: "Custom button text",
+			width: "270px",
 			press: function () {
-				sap.m.MessageBox.show('Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive', {
+				sap.m.MessageBox.show("Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive", {
 					icon: sap.m.MessageBox.Icon.INFORMATION,
 					title: "Set initial button focus",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
 					id: "messageBoxId1",
 					defaultAction: sap.m.MessageBox.Action.NO,
-					initialFocus: "Custom button text"
+					initialFocus: "Custom button text",
+					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
 				});
 			}
 		}));
 
 		oVL.addContent(new sap.m.Button({
 			text: "Control",
-			width: "250px",
-			press: function(){
+			width: "270px",
+			press: function () {
 				var oCheck1 = new sap.m.CheckBox("checkBoxId1", {
 					text: "The CheckBox this checked",
 					selected: false
@@ -189,17 +191,17 @@
 				sap.m.MessageBox.show(oLayout, {
 							icon: sap.m.MessageBox.Icon.WARNING,
 							title: "Title of first MessageBox",
-							actions:	[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Do something"],
+							actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Do something"],
 							onClose: function (oAction) {
 								if (oAction === "Do something") {
 									var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-									// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
-									sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+									sap.m.MessageBox.alert(sText, {title: "Result of CheckBox"});
 								}
 							},
 							dialogId: "messageBoxId",
 							class: "",
-							initialFocus: oCheck2
+							initialFocus: oCheck2,
+							styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
 						}
 				);
 			}
@@ -213,59 +215,104 @@
 
 		var sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus.";
 
+
 		oVL.addContent(new sap.m.Button({
-			text: "List with long text",
-			width: "250px",
-			press: function(){
+			text: "List as content with scrolling enabled",
+			width: "270px",
+			press: function () {
 				var oLayout = new sap.ui.layout.VerticalLayout({
-					width: "100%",
 					content: [
 						new sap.m.List({
-							inset : false,
-							width : "100%",
-							items : [
+							inset: false,
+							width: "100%",
+							items: [
 								new sap.m.InputListItem({
-									label : sLongText
+									label: sLongText
 								}), new sap.m.InputListItem({
-									label : sLongText
+									label: sLongText
 								}), new sap.m.InputListItem({
-									label : sLongText
+									label: sLongText
+								}), new sap.m.InputListItem({
+									label: sLongText
+								}), new sap.m.InputListItem({
+									label: sLongText
 								})
 							]
 						})
 					]
 				});
 
-
-				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
-				sap.m.MessageBox.show(oLayout,
-						sap.m.MessageBox.Icon.WARNING,
-						"Title of first MessageBox",
-						[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						function(oAction) {
-							if ( oAction === sap.m.MessageBox.Action.YES ) {
-								var oCheck = sap.ui.getCore().byId("checkBoxId");
-								var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-
-								// alert(sMessage, fnCallBack, sTitle)
-								sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
-							}
-						},
-						"messageBoxId",
-						"",
-						"",
-						true,
-						false
-				);
+				sap.m.MessageBox.show(oLayout, {
+					icon: sap.m.MessageBox.Icon.WARNING,
+					title: "MessageBox title",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oAction) {
+						if (oAction === sap.m.MessageBox.Action.YES) {
+							var oCheck = sap.ui.getCore().byId("checkBoxId");
+							var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+							sap.m.MessageBox.alert(sText, {title: "Result of CheckBox"});
+						}
+					},
+					id: "messageBoxId",
+					verticalScrolling: false,
+					horizontalScrolling: true,
+					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+				});
 			}
 		}));
 
 
+		oVL.addContent(new sap.m.Button({
+			text: "List as content with scrolling disabled",
+			width: "270px",
+			press: function () {
+				var oLayout = new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.m.List({
+							inset: false,
+							width: "100%",
+							items: [
+								new sap.m.InputListItem({
+									label: sLongText
+								}), new sap.m.InputListItem({
+									label: sLongText
+								}), new sap.m.InputListItem({
+									label: sLongText
+								}), new sap.m.InputListItem({
+									label: sLongText
+								}), new sap.m.InputListItem({
+									label: sLongText
+								})
+							]
+						})
+					]
+				});
+
+				sap.m.MessageBox.show(oLayout, {
+					icon: sap.m.MessageBox.Icon.WARNING,
+					title: "MessageBox title",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oAction) {
+						if (oAction === sap.m.MessageBox.Action.YES) {
+							var oCheck = sap.ui.getCore().byId("checkBoxId");
+							var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+							sap.m.MessageBox.alert(sText, {title: "Result of CheckBox"});
+						}
+					},
+					id: "messageBoxId",
+					verticalScrolling: false,
+					horizontalScrolling: false,
+					styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+
+				});
+			}
+		}));
 
 		oVL.addContent(new sap.m.Button({
 			text: "Long text",
-			width: "250px",
-			press: function(){
+			width: "270px",
+			press: function () {
 				var oLayout = new sap.ui.layout.VerticalLayout({
 					width: "100%",
 					content: [
@@ -276,38 +323,35 @@
 					]
 				});
 
-				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
-				sap.m.MessageBox.show(oLayout,
-						sap.m.MessageBox.Icon.WARNING,
-						"Title of first MessageBox",
-						[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						function(oAction) {
-							if ( oAction === sap.m.MessageBox.Action.YES ) {
-								var oCheck = sap.ui.getCore().byId("checkBoxId");
-								var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-
-								// alert(sMessage, fnCallBack, sTitle)
-								sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
-							}
-						},
-						"messageBoxId",
-						"",
-						""
-				);
+				sap.m.MessageBox.show(oLayout, {
+					icon: sap.m.MessageBox.Icon.WARNING,
+					title: "MessageBox title",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oAction) {
+						if (oAction === sap.m.MessageBox.Action.YES) {
+							var oCheck = sap.ui.getCore().byId("checkBoxId");
+							var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+							sap.m.MessageBox.alert(sText, {title: "Result of CheckBox"});
+						}
+					},
+					id: "messageBoxId",
+					verticalScrolling: true,
+					horizontalScrolling: true
+				});
 			}
 		}));
 
 
 		oVL.addContent(new sap.m.Text("text3", {
-					text: "\n Show info in MessageBox content"
+					text: "\n Show details in MessageBox content"
 				})
 		);
 
 		oVL.addContent(new sap.m.Button({
-			text: 'Show Info',
-			width: "250px",
+			text: "Show details",
+			width: "270px",
 			press: function () {
-				sap.m.MessageBox.show('Ask for more...', {
+				sap.m.MessageBox.show("Ask for more...", {
 					icon: sap.m.MessageBox.Icon.INFORMATION,
 					title: "Info MessageBox",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Test Callback"],
@@ -315,8 +359,8 @@
 					initialFocus: "Test Callback",
 					linkTitle: "Link",
 					details: "message1:1\nmessage2:2",
-					onClose: function(oAction) {
-						if ( oAction === "Test Callback") {
+					onClose: function (oAction) {
+						if (oAction === "Test Callback") {
 							sap.m.MessageBox.alert("Callback is working", {title: "Result of CheckBox"});
 						}
 					}
@@ -325,8 +369,8 @@
 		}));
 
 		oVL.addContent(new sap.m.Button({
-			text: 'Show Info in control',
-			width: "250px",
+			text: "Show details in control",
+			width: "270px",
 			press: function () {
 				var oCheck3 = new sap.m.CheckBox("checkBoxId4", {
 					text: "The CheckBox this checked",
@@ -355,8 +399,8 @@
 					initialFocus: "Test Callback",
 					linkTitle: "Link",
 					details: "message1:1\nmessage2:2",
-					onClose: function(oAction) {
-						if ( oAction === "Test Callback") {
+					onClose: function (oAction) {
+						if (oAction === "Test Callback") {
 							sap.m.MessageBox.alert("Callback is working", {title: "Result of CheckBox"});
 						}
 					}
@@ -364,9 +408,59 @@
 			}
 		}));
 
+		oVL.addContent(new sap.m.Text("text4", {
+					text: "\n Deprecated syntax"
+				})
+		);
+
+		// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAction, sDialogId)
+		oVL.addContent(new sap.m.Button({
+			text: "Show",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.show("MessageBox dialog is opened?",
+						sap.m.MessageBox.Icon.INFORMATION,
+						"Info MessageBox",
+						[sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						function (bConfirmed) {
+							jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
+						})
+			}
+		}));
+
+		// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAction, sDialogId)
+		oVL.addContent(new sap.m.Button({
+			text: "Alert",
+			width: "270px",
+			press: function () {
+				// fnCallback, sTitle, sDialogId, sStyleClass
+				sap.m.MessageBox.alert("Alert dialog is opened?",
+						function (bConfirmed) {
+							jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
+						}),
+						"Info MessageBox",
+						sap.m.MessageBox.Icon.INFORMATION
+			}
+		}));
+
+		// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAction, sDialogId)
+		oVL.addContent(new sap.m.Button({
+			text: "Confirm",
+			width: "270px",
+			press: function () {
+				// fnCallback, sTitle, sDialogId, sStyleClass
+				sap.m.MessageBox.confirm("Confirmation dialog is opened?",
+						function (bConfirmed) {
+							jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
+						}),
+						"Info MessageBox",
+						sap.m.MessageBox.Icon.INFORMATION
+			}
+		}));
+
 
 		oVL.addContent(new sap.m.Text("heading", {
-			text: '\n Below are examples for testing the right-to-left special cases such as numerals, phone numbers, etc. To switch the page direction to right-to-left, please paste the following parameter at the end of the URL -> &sap-ui-rtl=true'
+			text: "\n Below are examples for testing the right-to-left special cases such as numerals, phone numbers, etc. To switch the page direction to right-to-left, please paste the following parameter at the end of the URL -> &sap-ui-rtl=true"
 		}));
 
 		oVL.addContent(new sap.m.Button({

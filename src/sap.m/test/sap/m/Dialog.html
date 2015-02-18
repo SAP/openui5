@@ -407,11 +407,10 @@
 						text: "Open with MessageBox",
 						press : function() {
 							jQuery.sap.require("sap.m.MessageBox");
-// 							sap.m.MessageBox.confirm("Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened? Dialog is opened?", function(bConfirmed){
-// 								jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
-// 							}, "Confirmation");
-
-							sap.m.MessageBox.show("Do you really want to order this?", null, "Message", ["Order this", sap.m.MessageBox.Action.CANCEL]);
+							sap.m.MessageBox.show("Do you really want to order this?", {
+								title: "Message",
+								actions: ["Order this", sap.m.MessageBox.Action.CANCEL]
+							});
 						}
 					}),
 					new sap.ui.core.HTML({content:"<br>"}),

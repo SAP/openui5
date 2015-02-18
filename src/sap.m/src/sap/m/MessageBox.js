@@ -305,7 +305,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							visible: false
 						});
 						var oLink = new sap.m.Link({
-							text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LINK_TITLE"),
+							text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MSGBOX_LINK_TITLE"),
 							press: function () {
 								oTextArea.setVisible(true);
 								this.setVisible(false);
