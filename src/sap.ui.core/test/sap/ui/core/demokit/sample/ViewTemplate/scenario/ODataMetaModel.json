@@ -3921,7 +3921,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/0"
 			}, {
 				"name" : "Assoc_VH_Country_BusinessPartners",
 				"end" : [{
@@ -3938,7 +3939,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/1"
 			}, {
 				"name" : "Assoc_VH_UnitQuantity_Products",
 				"end" : [{
@@ -3969,7 +3971,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/2"
 			}, {
 				"name" : "Assoc_VH_UnitQuantity_SalesOrderLineItem",
 				"end" : [{
@@ -4000,7 +4003,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/3"
 			}, {
 				"name" : "Assoc_BusinessPartner_Contacts",
 				"end" : [{
@@ -4031,7 +4035,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/4"
 			}, {
 				"name" : "Assoc_BusinessPartner_Products",
 				"end" : [{
@@ -4062,7 +4067,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/5"
 			}, {
 				"name" : "Assoc_BusinessPartner_SalesOrders",
 				"end" : [{
@@ -4093,7 +4099,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/6"
 			}, {
 				"name" : "Assoc_VH_UnitWeight_Products",
 				"end" : [{
@@ -4124,7 +4131,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/7"
 			}, {
 				"name" : "Assoc_SalesOrder_SalesOrderLineItems",
 				"end" : [{
@@ -4155,7 +4163,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/8"
 			}, {
 				"name" : "Assoc_VH_Currency_BusinessPartners",
 				"end" : [{
@@ -4186,7 +4195,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/9"
 			}, {
 				"name" : "Assoc_VH_Currency_Products",
 				"end" : [{
@@ -4217,7 +4227,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/10"
 			}, {
 				"name" : "Assoc_VH_Currency_SalesOrders",
 				"end" : [{
@@ -4248,7 +4259,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/11"
 			}, {
 				"name" : "Assoc_VH_Currency_SalesOrderLineItems",
 				"end" : [{
@@ -4279,7 +4291,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/12"
 			}, {
 				"name" : "Assoc_Product_SalesOrderLineItems",
 				"end" : [{
@@ -4310,7 +4323,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/13"
 			}, {
 				"name" : "Assoc_VH_Language_Contacts",
 				"end" : [{
@@ -4341,7 +4355,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/14"
 			}, {
 				"name" : "Assoc_VH_Category_Products",
 				"end" : [{
@@ -4372,7 +4387,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/15"
 			}, {
 				"name" : "Assoc_VH_Sex_Contacts",
 				"end" : [{
@@ -4403,7 +4419,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/16"
 			}, {
 				"name" : "Assoc_VH_ProductTypeCode_Products",
 				"end" : [{
@@ -4434,7 +4451,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/17"
 			}, {
 				"name" : "Assoc_VH_BPRole_BusinessPartners",
 				"end" : [{
@@ -4465,7 +4483,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/18"
 			}, {
 				"name" : "Assoc_VH_UnitLength_Products",
 				"end" : [{
@@ -4496,7 +4515,8 @@
 					"value" : "1",
 					"namespace" : "http://www.sap.com/Protocols/SAPData"
 				}],
-				"sap:content-version" : "1"
+				"sap:content-version" : "1",
+				"$path" : "/dataServices/schema/0/association/19"
 			}],
 			"entityContainer" : [{
 				"name" : "GWSAMPLE_BASIC_Entities",
@@ -5569,7 +5589,8 @@
 						"namespace" : "http://www.sap.com/Protocols/SAPData"
 					}],
 					"sap:action-for" : "GWSAMPLE_BASIC.SalesOrder"
-				}]
+				}],
+				"$path" : "/dataServices/schema/0/entityContainer/0"
 			}],
 			"extensions" : [{
 						"name" : "lang",
