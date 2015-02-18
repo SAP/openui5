@@ -8,7 +8,7 @@
 
 .sapMOH {
 	margin: 1rem;
-	padding: 1rem;
+	padding: 0.625rem;
 }
 
 .sap-phone .sapMOH {
@@ -43,12 +43,17 @@
 	padding: 1.125rem 0 1rem 0;
 }
 
+.sapUiIcon:focus {
+	outline:none;
+}
+
 .sapMOHIntro {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-size: .875rem;
-	margin-bottom: 1rem;
+	margin-top: 0.375rem;
+	margin-bottom: 0.625rem;
 }
 
 .sapMOHIntroActive > a:active,
@@ -90,10 +95,13 @@
 
 .sapMOHIcon {
 	position: absolute;
+	margin-top: 0.375rem;
 	width: 3rem;
+	
 }
 
 .sapMOHTitle {
+	margin-top: 0.375rem;
 	display: inline-block;
 	position: relative;
 }
@@ -133,21 +141,32 @@
 }
 
 .sapMOHTitleArrow {
-	width: 3.25rem;
 	display: inline-block;
+	vertical-align: top;
+	min-height: 2.56rem;
 	position: absolute;
 	right: 0;
+}
+
+.sapMOHTitleArrow .sapUiIcon {
+	margin-top: 1px;
+	vertical-align: top;
+	
+	display: inline-block;
+	padding: 0.4rem 0.5rem 0.4rem 0.5rem;
+}
+
+.sap-desktop.sapUiMedia-Std-Phone .sapMOHTitleArrow .sapUiIcon,
+.sap-phone .sapMOHTitleArrow .sapUiIcon {
+	padding: 0.3rem 0.4rem 0.3rem 0.4rem;
 }
 
 .sapMOHTitle+.sapMOHTitleArrow {
 	margin-left: 0.5rem;
 }
 
-.sapMOHTitleArrow > .sapUiIcon:before{
-	padding: 0.8125rem;
-}
-
 .sapMOHNumberDiv {
+	margin-top: 0.375rem;
 	display: inline-block;
 	float: right;
 	text-align: end;
@@ -157,6 +176,12 @@
 
 .sapMOHC > .sapMOHNumberDiv {
 	padding-left:.5rem;
+}
+
+.sapMOHC .sapMOHTitle h1 >.sapMText,
+.sap-phone .sapMOHC .sapMOHTitle h1 >.sapMText {
+	line-height: 1.8rem;
+	font-size: 1.125rem;
 }
 
 html[data-sap-ui-browser^=ie] .sapMOHNumberDiv {
@@ -201,7 +226,7 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHNumberDiv {
 	margin-top: 0;
 }
 
-.sapMOHC>.sapMOHAttr{
+.sapMOHC>.sapMOHAttr {
 	margin-top: 0.125rem;
 }
 
