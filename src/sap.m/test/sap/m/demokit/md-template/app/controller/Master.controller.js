@@ -15,41 +15,44 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			this.oList = this.byId("list");
-			// keeps the filter and search state
+			this.oPullToRefresh = this.byId("pullToRefresh");
+			// keeps the filter and search state 
 			this.oListFilterState = {
-				filter : [],
-				search : []
+				aFilter : [],
+				aSearch : []
 			};
 			// keeps the group and sort state
 			this.oListSorterState = {
-				group : [],
-				sort : []
+				aGroup : [],
+				aSort : []
 			};
 
 			// Control state model
-			// TODO: needs a better naming!?
-			this.oViewModel = new sap.ui.model.json.JSONModel({
+			this.oControlStateModel = new sap.ui.model.json.JSONModel({
 				isFilterBarVisible : false,
 				filterBarLabel : "",
-				masterListTitle : this.getResourceBundle().getText("masterTitle") // do we want to put this in here as well? To be consistent: YES
+				masterListTitle : this.getResourceBundle().getText("masterTitle")
 			});
-			this.getView().setModel(this.oViewModel, 'controlStates');
-
-			var oListSelector = this.getOwnerComponent().oListSelector;
-
-			// reset busyIndicatorDelay to default, which is 1 second
-			oListSelector.oWhenListLoadingIsDone.then(function () {
-					this.byId("list").setBusyIndicatorDelay(null);
-				}.bind(this),
-				function () {
-					this.byId("list").setBusyIndicatorDelay(null);
-				}.bind(this)
-			);
+			this.getView().setModel(this.oControlStateModel, 'controlStates');
 
 			// update the master list object counter after new data is loaded
 			this.oList.attachEvent("updateFinished", function (oData) {
 				this._updateListItemCount(oData.getParameter("total"));
 			}, this);
+			
+			// master view has set the delay to 0, to make sure that busy
+			// indication is dosplayed immediately after app has been started.
+			// need to reset the display to default value after the app
+			// and the list has been loaded for the first time.
+			// this is done by setting the 'null' value
+			var oListSelector = this.getOwnerComponent().oListSelector;
+			oListSelector.oWhenListLoadingIsDone.then(function (mParams) {
+					mParams.list.setBusyIndicatorDelay(null);
+				},
+				function (mParams) {
+					mParams.list.setBusyIndicatorDelay(null);
+				}
+			);
 
 			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectAndScrollToFirstItem, oListSelector);
 			this.getOwnerComponent().oListSelector.setBoundMasterList(this.oList);
@@ -59,21 +62,61 @@ sap.ui.define([
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
+		
+		/**
+		 * After list data is available, this handler method updates the
+		 * master list counter and hides the pull to refresh control, if
+		 * necessary.
+		 * 
+		 * @param {sap.ui.base.Event} oEvent the update finished event
+		 * @public 
+		 */
+		onUpdateFinished : function (oEvent) {
+			// update the master list object counter after new data is loaded
+			this._updateListItemCount(oEvent.getParameter("total"));
+			// hide pull to refresh if necessary
+			this.oPullToRefresh.hide();
+		},
 
 		/**
-		 * Event handler for the master search field.
+		 * Event handler for the master search field. Applies current
+		 * filter value and triggers a new search. If the search field's
+		 * 'refresh' button has been pressed, no new search is triggered
+		 * and the list binding is refresh instead.
+		 * 
 		 * @param {sap.ui.base.Event} oEvent the search event
 		 * @public
 		 */
 		onSearch : function (oEvent) {
+			if (oEvent.getParameters().refreshButtonPressed) {
+				// Search field's 'refresh' button has been pressed.
+				// This is visible if you select any master list item.
+				// In this case no new search is triggered, we only
+				// refresh the list binding.
+				this.onRefresh();
+				return;
+			} 
+
+		
 			var sQuery = oEvent.getParameter("query");
 
 			if (sQuery && sQuery.length > 0) {
-				this.oListFilterState.search = [new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery)];
+				this.oListFilterState.aSearch  = [new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery)];
 			} else {
-				this.oListFilterState.search = [];
+				this.oListFilterState.aSearch  = [];
 			}
 			this._applyFilterSearch();
+			
+		},
+		
+		/**
+		 * Event handler for refresh event. Keeps filter, sort
+		 * and group settings and refreshes the list binding.
+		 * 
+		 * @public 
+		 */
+		onRefresh : function () {
+			this.oList.getBinding("items").refresh();
 		},
 
 		/**
@@ -84,35 +127,11 @@ sap.ui.define([
 		onSort : function (oEvent) {
 			var sPath = oEvent.getParameter("selectedItem").getKey();
 
-			this.oListSorterState.sort  = new sap.ui.model.Sorter(sPath, false);
+			this.oListSorterState.aSort   = new sap.ui.model.Sorter(sPath, false);
 			this._applyGroupSort();
 		},
 
-		/**
-		 * Event handler for the filter selection.
-		 * @param {sap.ui.base.Event} oEvent the select event
-		 * @public
-		 */
-		onFilter : function (oEvent) {
-			var sKey = oEvent.getParameter("selectedItem").getKey(),
-				sValue = oEvent.getParameter("selectedItem").getText();
-
-			switch (sKey) {
-			case "Filter1":
-				this.oListFilterState.filter = [new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100)];
-				break;
-			case "Filter2":
-				this.oListFilterState.filter = [new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100)];
-				break;
-			default:
-				this.oListFilterState.filter = [];
-			}
-
-			this._updateFilterBar(sValue);
-
-			this._applyFilterSearch();
-		},
-
+		
 		/**
 		 * Event handler for the grouper selection.
 		 * @param {sap.ui.base.Event} oEvent the search field event
@@ -127,103 +146,63 @@ sap.ui.define([
 				};
 
 			if (sKey !== "None") {
-				this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], false, jQuery.proxy(sap.ui.demo.mdtemplate.model.grouper[sKey], oEvent.getSource()))];
+				this.oListSorterState.aGroup = [new sap.ui.model.Sorter(oGroups[sKey], false, 
+						sap.ui.demo.mdtemplate.model.grouper[sKey].bind(oEvent.getSource()))];
 			} else {
-				this.oListSorterState.group = [];
+				this.oListSorterState.aGroup = [];
 			}
 			this._applyGroupSort();
 		},
 
-		/**
-		 * Event handler for the master list filter bar.
-		 * @param {sap.ui.base.Event} oEvent the filter bar event
-		 * @public
-		 */
-		onFilterBarPressed : function () {
-			this.onOpenViewSettings(); // TODO: is re-use of this event handler allowed or should we create an internal _openViewSettings method
-			// TODO: missing functionality, ViewSettingsDialog should open with the filter page directly
-		},
 
 		/**
-		 * Event handler for the sort/group/filter button to open the ViewSettingsDialog.
+		 * Event handler for the filter button to open the ViewSettingsDialog.
+		 * which is used to add or remove filters to the master list. This 
+		 * handler method is also called when the filter bar is pressed,
+		 * which is added to the beginning of the master list when a filter is applied.
+		 *
 		 * @param {sap.ui.base.Event} oEvent the press event
 		 * @public
 		 */
 		onOpenViewSettings : function (oEvent) {
-			var sTab = "filter";
-
-			// extract the tab to open the view settings dialog from the button id
-			if (oEvent.getSource() instanceof sap.m.Button) {
-				sTab = oEvent.getSource().getId().split("--")[1];
-			}
-
 			if (!this.oViewSettingsDialog) {
 				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog", this);
+				this.getView().addDependent(this.oViewSettingsDialog);
 			}
-			this.getView().addDependent(this.oViewSettingsDialog);
-			this.oViewSettingsDialog.open(sTab);
+			this.oViewSettingsDialog.open();
 		},
 
 		/**
-		 * Event handler for the ViewSettingsDialog cofirmation.
+		 * Event handler called when ViewSettingsDialog has been confirmed, i.e.
+		 * has been closed with 'OK'. In the case, the currently chosen filters
+		 * are applied to the master list, which can also mean that the currently 
+		 * applied filters are removed from the master list, in case the filter
+		 * settings are removed in the ViewSettingsDialog.
+		 * 
 		 * @param {sap.ui.base.Event} oEvent the confirm event
 		 * @public
 		 */
-		//TODO: i am too long and i do too much am i tested? please refacor me!
 		onConfirmViewSettingsDialog : function (oEvent) {
-			var mParams = oEvent.getParameters(),
-				sKey,
-				sPath,
-				bDescending,
-				oGroups,
+			var aFilterItems = oEvent.getParameters().filterItems,
 				aFilters = [],
-				aValues = [];
-
-			if (mParams.groupItem || mParams.sortItem) {
-				// update grouping state
-				if (mParams.groupItem) {
-					sKey = mParams.groupItem.getKey();
-					bDescending = mParams.groupDescending;
-					oGroups = {
-						Group1 : "UnitNumber",
-						Group2 : "Name"
-					};
-					this.oListSorterState.group = [new sap.ui.model.Sorter(oGroups[sKey], bDescending, sap.ui.demo.mdtemplate.model.grouper[sKey])];
-				} else {
-					this.oListSorterState.group = [];
+				aCaptions = [];
+			
+			// update filter state:
+			// combine the filter array and the filter string
+			aFilterItems.forEach(function (oItem) {
+				switch (oItem.getKey()) {
+				case "Filter1":
+					aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100));
+					break;
+				case "Filter2":
+					aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100));
+					break;
 				}
-
-				// update sorting state
-				if (mParams.sortItem) {
-					sPath = mParams.sortItem.getKey();
-					bDescending = mParams.sortDescending;
-
-					this.oListSorterState.sort = [new sap.ui.model.Sorter(sPath, bDescending)];
-				}
-
-				this._applyGroupSort();
-			}
-
-			// update filter state
-			if (mParams.filterItems) {
-				// combine the filter array and the filter string
-				jQuery.each(mParams.filterItems, function (i, oItem) {
-					var sKey = oItem.getKey(),
-						sValue = oItem.getText();
-
-					switch (sKey) {
-					case "Filter1":
-						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100));
-						break;
-					case "Filter2":
-						aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100));
-						break;
-					}
-					aValues.push(sValue);
-				});
-				this.oListFilterState.filter = aFilters;
-			}
-			this._updateFilterBar(aValues.join(", "));
+				aCaptions.push(oItem.getText());
+			});
+			this.oListFilterState.aFilter = aFilters;
+			
+			this._updateFilterBar(aCaptions.join(", "));
 			this._applyFilterSearch();
 		},
 
@@ -239,9 +218,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for the bypassed event
-		 * When no pattern matches, the bypassed event will be fired.
-		 * If there was a selection on the master list, it will be removed as this object is not longer selected.
+		 * Event handler for the bypassed event, which is fired when no routing pattern matched.
+		 * If there was an object selected in the master list, that selection is removed.
+		 * 
 		 * @param {sap.ui.base.Event} oEvent the bypassed event
 		 * @public
 		 */
@@ -273,11 +252,10 @@ sap.ui.define([
 		 */
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
-
-			// only update the counter if the length is final
+			// only update the counter if the length is final 
 			if (this.oList.getBinding('items').isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
-				this.oViewModel.setProperty("/masterListTitle", sTitle);
+				this.oControlStateModel.setProperty("/masterListTitle", sTitle);
 			}
 		},
 
@@ -286,7 +264,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_applyFilterSearch : function () {
-			var aFilters = this.oListFilterState.search.concat(this.oListFilterState.filter);
+			var aFilters = this.oListFilterState.aSearch.concat(this.oListFilterState.aFilter);
 			this.oList.getBinding("items").filter(aFilters, "Application");
 			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
@@ -301,18 +279,18 @@ sap.ui.define([
 		 * @private
 		 */
 		_applyGroupSort : function () {
-			var aSorters = this.oListSorterState.group.concat(this.oListSorterState.sort);
+			var aSorters = this.oListSorterState.aGroup.concat(this.oListSorterState.aSort);
 			this.oList.getBinding("items").sort(aSorters);
 		},
 
 		/**
-		 * Internal helper methos that sets the filter bar visibility property and the lablel-text to be shown
+		 * Internal helper method that sets the filter bar visibility property and the label's caption to be shown
 		 * @param String the selected filter value
 		 * @private
 		 */
 		_updateFilterBar : function (sValue) {
-			this.oViewModel.setProperty("/isFilterBarVisible", (this.oListFilterState.filter.length > 0));
-			this.oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
+			this.oControlStateModel.setProperty("/isFilterBarVisible", (this.oListFilterState.aFilter.length > 0));
+			this.oControlStateModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
 		}
 
 	});
