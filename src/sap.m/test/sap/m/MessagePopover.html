@@ -95,9 +95,9 @@
 		core.setModel(oModel);
 
 		var oMessagePopoverButton = new sap.m.Button({
-			icon: sap.ui.core.IconPool.getIconURI("message-warning"),
+			icon: sap.ui.core.IconPool.getIconURI("alert"),
 			text: "{/count}",
-			type: "Accept",
+			type: sap.m.ButtonType.Emphasized,
 			press: function () {
 				oMessagePopover.toggle(this);
 			}
@@ -131,7 +131,6 @@
 
 		var oSimpleForm = new sap.ui.layout.form.SimpleForm({
 			editable: true,
-			// layout: sap.ui.layout.form.SimpleFormLayout.GridLayout,
 			content: [
 				new sap.ui.core.Title({ text: "Add/Remove message" }),
 				new sap.m.Label({ text: "Title" }),
@@ -233,24 +232,7 @@
 						updateSelect(core.byId("msg-position-select"));
 						updateSelect(core.byId("msg-position-remove-select"));
 					}
-				}),
-
-				new sap.ui.core.Title({ text: "Update model" }),
-				new sap.m.TextArea("msg-model-input", {
-					value: JSON.stringify(core.getModel().getData()),//.replace("[\n","").replace("\n]",""),
-					height:"400px"
-				}),
-				new sap.m.Button({
-					text: "Set  Model",
-					type: "Accept",
-					width: "230px",
-					press: function () {
-						aMockMessages = JSON.parse(core.byId("msg-model-input").getValue());
-						oModel.setData(aMockMessages);
-						oMessagePopover.setModel(oModel);
-					}
 				})
-
 			]
 		});
 
