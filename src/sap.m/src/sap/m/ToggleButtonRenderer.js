@@ -12,9 +12,9 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 	 * ToggleButton renderer.
 	 * @namespace
 	 */
-	
+
 	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
-	
+
 	/**
 	 * Callback for specific rendering of accessibility attributes.
 	 *
@@ -22,12 +22,12 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 	 *            oRm the RenderManager currently rendering this control
 	 * @param {sap.m.ToggleButton}
 	 *            oToggleButton the ToggleButton that should be rendered
+	 * @param {object} mAccProps Accessibillity properties
 	 * @private
 	 */
-	ToggleButtonRenderer.renderAccessibilityAttributes = function(oRm, oToggleButton) {
-		oRm.writeAccessibilityState(oToggleButton, {
-			pressed: oToggleButton.getPressed()
-		});
+	ToggleButtonRenderer.renderAccessibilityAttributes = function(oRm, oToggleButton, mAccProps) {
+
+		mAccProps["pressed"] = oToggleButton.getPressed();
 
 	};
 
@@ -45,7 +45,6 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 			oRm.addClass("sapMToggleBtnPressed");
 		}
 	};
-	
 
 	return ToggleButtonRenderer;
 

@@ -28,20 +28,24 @@
 
 <script type="text/javascript">
 
-	var oToggleButton1,
-		oToggleButton2;
-
-	oToggleButton1 = new sap.m.ToggleButton("testToggleButton_1", {
+	var oToggleButton1 = new sap.m.ToggleButton("testToggleButton_1", {
 		text : "TestButton 1",
 		pressed : true
 	});
 	oToggleButton1.placeAt("uiArea1");
 
-	oToggleButton2 = new sap.m.ToggleButton("testToggleButton_2", {
+	var oToggleButton2 = new sap.m.ToggleButton("testToggleButton_2", {
 		text : "TestButton 2",
 		pressed : false
 	});
 	oToggleButton2.placeAt("uiArea2");
+
+	var oToggleButton3 = new sap.m.ToggleButton("testToggleButton_3", {
+		text : "TestButton 3",
+		pressed : true,
+		enabled : false
+	});
+	oToggleButton3.placeAt("uiArea3");
 
 	module("pressed state");
 
@@ -49,13 +53,13 @@
 		equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
 		equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
 	});
-	
+
 	test("Check Accessibility States", function() {
 		strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
 		strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
-		strictEqual(oToggleButton1.$().attr("aria-disabled"), "false", "aria-disabled status is set");
+		strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
 	});
-	
+
 	test("TestPressedToUnpressedOK", function() {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
 		sap.ui.getCore().applyChanges();
@@ -185,5 +189,6 @@
 
 	<div id="uiArea1"></div>
 	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
 </body>
 </html>
