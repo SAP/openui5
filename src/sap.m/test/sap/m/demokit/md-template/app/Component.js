@@ -172,7 +172,7 @@ sap.ui.define([
 				oModel.attachEventOnce("metadataFailed", function() {
 					fnReject();
 				});
-			}.bind(this));
+			});
 		}
 
 	});
