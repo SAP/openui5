@@ -14,9 +14,8 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 	metadata : "json", //TODO Use component metadata from manifest file
 
 	createContent : function () {
-		var sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
-				+ "/Annotations(TechnicalName='ZANNO4SAMPLE_ANNO_MDL',Version='0001')/$value",
-			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
+		var sAnnotationUri,
+			sServiceUri,
 			sMockServerBaseUri
 				= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
 			oLayout = new sap.m.HBox(),
@@ -27,6 +26,11 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 				: sap.ui.model.odata.v2.ODataModel,
 			oModel,
 			oMetaModel;
+
+		// GWSAMPLE_BASIC with external annotations
+		sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
+			+ "/Annotations(TechnicalName='ZANNO4SAMPLE_ANNO_MDL',Version='0001')/$value";
+		sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
 		if (oUriParameters.get("realOData") !== "true") {
 			jQuery.sap.require("sap.ui.core.util.MockServer");

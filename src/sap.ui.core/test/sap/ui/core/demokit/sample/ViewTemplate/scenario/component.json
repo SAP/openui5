@@ -3,21 +3,21 @@
 		"sample": {
 			"files": [
 				"Component.js",
+				"Detail.controller.js",
 				"Detail.view.xml",
 				"Facets.fragment.xml",
 				"Field.fragment.xml",
 				"FormFacet.fragment.xml",
-				"ODataMetaModel.json",
-				"data/annotations.xml",
-				"data/metadata.xml",
-				"data/ProductSet.json",
 				"Main.controller.js",
-				"Main.view.xml"
+				"Main.view.xml",
+				"ODataMetaModel.json",
+				"Table.fragment.xml",
+				"TableFacet.fragment.xml"
 			]
 		}
 	},
 	"dependencies": [],
 	"description": "Component for XMLView template sample scenario",
 	"name": "sap.ui.core.demokit.sample.ViewTemplate.scenario",
-	"version": "1.25.0-SNAPSHOT"
+	"version": "1.27.1-SNAPSHOT"
 }

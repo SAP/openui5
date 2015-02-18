@@ -30,7 +30,7 @@
 					<form:title>
 						<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 					</form:title>
-					<Label text="Unsupported RecordType"/>
+					<Label text="Unsupported Facet Type"/>
 					<Text text="{facet>RecordType}"/>
 				</form:SimpleForm>
 			</template:else>
