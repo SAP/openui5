@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 				 * Dependents are not rendered, but their databinding context and lifecycle are bound to the aggregating Element.
 				 * @since 1.19
 				 */
-				dependents : {name : "dependents", type : "sap.ui.core.Control", multiple : true}
+				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true}
 			}
 		},
 	
