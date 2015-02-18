@@ -265,6 +265,8 @@
 	// set the model to the core
 	sap.ui.getCore().setModel(oModel);
 
+	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
+
 	// get current date
 	var fnCurrentDate = function() {
 		var date = new Date();
@@ -376,6 +378,7 @@
 	var oUploadCollection = new sap.m.UploadCollection({
 		maximumFilenameLength : 35,
 		multiple : true,
+		fileType : aFileTypes,
 		items : {
 			path : "/items",
 			template : oItemTemplate
