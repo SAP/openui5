@@ -297,6 +297,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 						sType = 'sap.ui.model.odata.type.SByte';
 						break;
 
+					case "Edm.Single":
+					case "Edm.Float":
+						sType = 'sap.ui.model.odata.type.Single';
+						break;
+
 					case "Edm.String":
 						sType = 'sap.ui.model.odata.type.String';
 						oConstraints.maxLength = oProperty.maxLength;

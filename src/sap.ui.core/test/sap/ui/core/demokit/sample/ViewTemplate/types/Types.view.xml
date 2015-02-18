@@ -62,10 +62,10 @@
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Double" />
-				<Label text="no constraints"/>
-				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
-				<Label text="nullable: false"/>
-				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
+				<Text text="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
+
+				<core:Title text="sap.ui.model.odata.type.Single" />
+				<Text text="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Guid" />
 				<Label text="no constraints"/>
@@ -98,12 +98,6 @@
 				<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}"/>
 				<Label text="sap.ui.model.odata.type.SByte, nullable=false"/>
 				<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}"/>
-				<!--TODO: sap.ui.model.odata.type.Byte missing
-				<Label text="sap.ui.model.odata.type.Byte"/>
-				<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.Byte'}"/>
-				<Label text="sap.ui.model.odata.type.Byte, nullable=false"/>
-				<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte', constraints: {nullable: false}}"/>
-				-->
 
 				<core:Title text="sap.ui.model.odata.type.String" />
 				<Label text="maxLength: 10"/>

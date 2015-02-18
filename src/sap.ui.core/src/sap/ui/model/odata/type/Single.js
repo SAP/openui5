@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 	/**
 	 * Returns the formatter. Creates it lazily.
-	 * @param {sap.ui.model.odata.type.Double} oType
+	 * @param {sap.ui.model.odata.type.Single} oType
 	 *   the type instance
 	 * @returns {sap.ui.core.format.NumberFormat}
 	 *   the formatter
@@ -26,11 +26,11 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	}
 
 	/**
-	 * Constructor for a primitive type <code>Edm.Double</code>.
+	 * Constructor for a primitive type <code>Edm.Single</code>.
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
-	 * <code>Edm.Double</code></a>. <b>This data type is read-only</b>. {@link #parseValue} and
+	 * <code>Edm.Single</code></a>. This data type is read-only. {@link #parseValue} and
 	 * {@link #validateValue} throw exceptions.
 	 *
 	 * @extends sap.ui.model.odata.type.ODataType
@@ -38,15 +38,15 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @alias sap.ui.model.odata.type.Double
+	 * @alias sap.ui.model.odata.type.Single
 	 * @param {object} [oFormatOptions]
 	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
 	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
 	 * @public
-	 * @since 1.27.0
+	 * @since 1.27.1
 	 */
-	var Double = ODataType.extend("sap.ui.model.odata.type.Double",
-			/** @lends sap.ui.model.odata.type.Double.prototype */
+	var Single = ODataType.extend("sap.ui.model.odata.type.Single",
+			/** @lends sap.ui.model.odata.type.Single.prototype */
 			{
 				constructor : function (oFormatOptions) {
 					ODataType.apply(this, arguments);
@@ -57,8 +57,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		);
 
 	/**
-	 * Formats the given value to the given target type. When formatting to "string", very large
-	 * or very small values are formatted to the exponential format (e.g. "-3.14 E+15").
+	 * Formats the given value to the given target type.
 	 *
 	 * @param {string} sValue
 	 *   the value to be formatted, which is represented as a string in the model
@@ -72,10 +71,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	Double.prototype.formatValue = function(sValue, sTargetType) {
-		var oFormatOptions,
-			fValue;
-
+	Single.prototype.formatValue = function(sValue, sTargetType) {
 		if (sValue === null || sValue === undefined) {
 			return null;
 		}
@@ -85,18 +81,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		case "float":
 			return parseFloat(sValue);
 		case "int":
-			return Math.floor(parseFloat(sValue));
+			return parseInt(sValue, 10);
 		case "string":
-			fValue = parseFloat(sValue);
-			if (fValue && (Math.abs(fValue) >= 1e15 || Math.abs(fValue) < 1e-4)) {
-				oFormatOptions = getFormatter(this).oFormatOptions;
-				return fValue.toExponential()
-					.replace("e", "\u00a0E") // non-breaking space
-					.replace(".", oFormatOptions.decimalSeparator)
-					.replace("+", oFormatOptions.plusSign)
-					.replace("-", oFormatOptions.minusSign);
-			}
-			return getFormatter(this).format(sValue);
+			return getFormatter(this).format(parseFloat(sValue));
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -109,7 +96,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @throws {sap.ui.model.ParseException}
 	 * @public
 	 */
-	Double.prototype.parseValue = function() {
+	Single.prototype.parseValue = function() {
 		throw new ParseException("Unsupported operation: data type " + this.getName()
 			+ " is read-only.");
 	};
@@ -118,7 +105,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * Called by the framework when any localization setting changed.
 	 * @private
 	 */
-	Double.prototype._handleLocalizationChange = function () {
+	Single.prototype._handleLocalizationChange = function () {
 		this.oFormat = null;
 	};
 
@@ -128,7 +115,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @throws {sap.ui.model.ValidateException}
 	 * @public
 	 */
-	Double.prototype.validateValue = function () {
+	Single.prototype.validateValue = function () {
 		throw new ValidateException("Unsupported operation: data type " + this.getName()
 			+ " is read-only.");
 	};
@@ -140,9 +127,9 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *   the type's name
 	 * @public
 	 */
-	Double.prototype.getName = function () {
-		return "sap.ui.model.odata.type.Double";
+	Single.prototype.getName = function () {
+		return "sap.ui.model.odata.type.Single";
 	};
 
-	return Double;
+	return Single;
 });
