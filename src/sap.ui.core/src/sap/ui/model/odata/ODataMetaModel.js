@@ -531,6 +531,37 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
+	 * Returns the OData association <b>set</b> end corresponding to the given entity type's
+	 * navigation property of given name.
+	 *
+	 * @param {object} oEntityType
+	 *   an entity type as returned by {@link #getODataEntityType getODataEntityType}
+	 * @param {string} sName
+	 *   the name of a navigation property within this entity type
+	 * @returns {object}
+	 *   the OData association set end or <code>null</code> if no such association set end is found
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataAssociationSetEnd = function (oEntityType, sName) {
+		var oAssociationSet,
+			oAssociationSetEnd = null,
+			oEntityContainer = this.getODataEntityContainer(),
+			oNavigationProperty = oEntityType
+				? findObject(oEntityType.navigationProperty, sName)
+				: null;
+
+		if (oEntityContainer && oNavigationProperty) {
+			oAssociationSet = findObject(oEntityContainer.associationSet,
+				oNavigationProperty.relationship, "association");
+			oAssociationSetEnd = oAssociationSet
+				? findObject(oAssociationSet.end, oNavigationProperty.toRole, "role")
+				: null;
+		}
+
+		return oAssociationSetEnd;
+	};
+
+	/**
 	 * Returns the OData complex type with the given qualified name, either as a path or as an
 	 * object, as indicated.
 	 *
@@ -548,27 +579,59 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
-	 * Returns the OData entity set with the given simple name from the default entity container.
+	 * Returns the OData default entity container.
 	 *
-	 * @param {string} sName
-	 *   a simple name, e.g. "ProductSet"
-	 * @returns {object}
-	 *   the entity set with the given simple name; or <code>null</code> if no such set is found
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the entity container is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the default entity container; <code>undefined</code> (for a path) or
+	 *   <code>null</code> (for an object) if no such container is found
 	 * @public
 	 */
-	ODataMetaModel.prototype.getODataEntitySet = function (sName) {
-		var oEntitySet = null;
+	ODataMetaModel.prototype.getODataEntityContainer = function (bAsPath) {
+		var vResult = bAsPath ? undefined : null;
 
 		jQuery.each(this.oModel.getObject("/dataServices/schema") || [], function (i, oSchema) {
-			var oEntityContainer
-				= findObject(oSchema.entityContainer, "true", "isDefaultEntityContainer");
-			if (oEntityContainer) {
-				oEntitySet = findObject(oEntityContainer.entitySet, sName);
+			var j = findIndex(oSchema.entityContainer, "true", "isDefaultEntityContainer");
+
+			if (j >= 0) {
+				vResult = bAsPath
+					? "/dataServices/schema/" + i + "/entityContainer/" + j
+					: oSchema.entityContainer[j];
 				return false; //break
 			}
 		});
 
-		return oEntitySet;
+		return vResult;
+	};
+
+	/**
+	 * Returns the OData entity set with the given simple name from the default entity container.
+	 *
+	 * @param {string} sName
+	 *   a simple name, e.g. "ProductSet"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the entity type is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the entity set with the given simple name; <code>undefined</code> (for a
+	 *   path) or <code>null</code> (for an object) if no such set is found
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataEntitySet = function (sName, bAsPath) {
+		var k,
+			oEntityContainer = this.getODataEntityContainer(),
+			vResult = bAsPath ? undefined : null;
+
+		if (oEntityContainer) {
+			k = findIndex(oEntityContainer.entitySet, sName);
+			if (k >= 0) {
+				vResult = bAsPath
+					? oEntityContainer.$path + "/entitySet/" + k
+					: oEntityContainer.entitySet[k];
+			}
+		}
+
+		return vResult;
 	};
 
 	/**

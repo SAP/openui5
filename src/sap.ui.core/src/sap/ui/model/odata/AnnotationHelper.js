@@ -678,6 +678,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			},
 
 			/**
+			 * Helper function for a <code>template:with</code> instruction that goes to the
+			 * entity type with the qualified name which <code>oContext</code> points at.
+			 *
+			 * Example: Assume that "entitySet" refers to an entity set within an OData meta model;
+			 * the helper function is then called on the "entityType" property of that entity set
+			 * (which holds the qualified name of the entity type) and in turn the path of that
+			 * entity type is assigned to the variable "entityType".
+			 * <pre>
+			 *   &lt;template:with path="entitySet>entityType" helper="sap.ui.model.odata.AnnotationHelper.gotoEntityType" var="entityType">
+			 * </pre>
+			 *
+			 * @param {sap.ui.model.Context} oContext
+			 *   a context which must point to the qualified name of an entity type;
+			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
+			 * @returns {string}
+			 *   the path to the entity type with the given qualified name,
+			 *   or <code>undefined</code> if no such type is found
+			 * @public
+			 */
+			gotoEntityType : function (oContext) {
+				return oContext.getModel().getODataEntityType(oContext.getProperty(""), true);
+			},
+
+			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about the dynamic
 			 * "14.5.2 Expression edm:AnnotationPath" and returns whether the navigation path
