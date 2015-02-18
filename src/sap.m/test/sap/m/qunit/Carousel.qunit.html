@@ -2,8 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
 <title>Test Page for sap.m.Carousel</title>
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
        type="text/javascript"
        src="../../../../resources/sap-ui-core.js"
        data-sap-ui-theme="sap_bluecrystal"
@@ -22,7 +24,7 @@
 <script>
 module("Properties");
 
-var oEmptyCarousel = new sap.m.Carousel("empty_carousel"); 
+var oEmptyCarousel = new sap.m.Carousel("empty_carousel");
 
 test("Default Values", function() {
        // without parameter
@@ -36,42 +38,42 @@ test("Default Values", function() {
 module("Methods");
 //images for first carousel
 var img1 = new sap.m.Image("myPage1", {
-              src: "../images/demo/nature/desert.jpg",
-              
+              src: "../images/demo/nature/desert.jpg"
+
        }),
        img2 = new sap.m.Image("myPage2", {
-              src: "../images/demo/nature/elephant.jpg",
+              src: "../images/demo/nature/elephant.jpg"
        }),
        img3 = new sap.m.Image("myPage3", {
-              src: "../images/demo/nature/fish.jpg",
+              src: "../images/demo/nature/fish.jpg"
        }),
        img4 = new sap.m.Image("myPage4", {
-              src: "../images/demo/nature/forest.jpg",
+              src: "../images/demo/nature/forest.jpg"
        }),
        img5 = new sap.m.Image("myPage5", {
-              src: "../images/demo/nature/huntingLeopard.jpg",
+              src: "../images/demo/nature/huntingLeopard.jpg"
        }),
        img6 = new sap.m.Image("myPage6", {
-              src: "../images/demo/nature/prairie.jpg",
+              src: "../images/demo/nature/prairie.jpg"
        });
 //images for second carousel
 var img11 = new sap.m.Image("myPage11", {
-              src: "../images/demo/nature/desert.jpg",
+              src: "../images/demo/nature/desert.jpg"
        }),
        img21 = new sap.m.Image("myPage21", {
-              src: "../images/demo/nature/elephant.jpg",
+              src: "../images/demo/nature/elephant.jpg"
        }),
        img31 = new sap.m.Image("myPage31", {
-              src: "../images/demo/nature/fish.jpg",
+              src: "../images/demo/nature/fish.jpg"
        }),
        img41 = new sap.m.Image("myPage41", {
-              src: "../images/demo/nature/forest.jpg",
+              src: "../images/demo/nature/forest.jpg"
        }),
        img51 = new sap.m.Image("myPage51", {
-              src: "../images/demo/nature/huntingLeopard.jpg",
+              src: "../images/demo/nature/huntingLeopard.jpg"
        }),
        img61 = new sap.m.Image("myPage61", {
-              src: "../images/demo/nature/prairie.jpg",
+              src: "../images/demo/nature/prairie.jpg"
        });
 //the first pucture carousel
 var oPictureCarousel = new sap.m.Carousel("picture_carousel", {
@@ -82,7 +84,7 @@ var oPictureCarousel = new sap.m.Carousel("picture_carousel", {
        }),
        oApp = new sap.m.App("testCarouselApp", {initialPage:"myPageApp"}),
        oPageApp = new sap.m.Page("myPageApp", {title: "Carousel Test Page", enableScrolling: false});
-       
+
 
 var fnTestMove = function(iIndex, iIndicator) {
 	var actIndicator = iIndicator ? iIndicator : iIndex;
@@ -92,8 +94,8 @@ var fnTestMove = function(iIndex, iIndicator) {
 	} else {
 		ok(this.$().find('.sapMCrslBulleted').length == 0, "Page Indicator should be hidden");
 	}
-       
-}
+
+};
 
 oPageApp.addContent(oPictureCarousel);
 oApp.addPage(oPageApp);
@@ -104,88 +106,88 @@ sap.ui.getCore().applyChanges();
 test("Move active page", function() {
        equal( oPictureCarousel.getActivePage(), "myPage1", "Default 'activePage' value is wrong");
        oPictureCarousel.setActivePage("myPage6");
-       
+
        this.clock.tick(600);
-       
-       fnTestMove.call(oPictureCarousel, 6);    
+
+       fnTestMove.call(oPictureCarousel, 6);
        oPictureCarousel.setActivePage("myPage1");
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 1);
        oPictureCarousel.setActivePage("myPage3");
 
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 3);
-});    
+});
 
 test("Next, Previous", function() {
        oPictureCarousel.previous();
        oPictureCarousel.previous();
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 1);
        oPictureCarousel.previous();
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 1);
-       for(var i=0; i<5; i++) { 
-              oPictureCarousel.next(); 
+       for(var i=0; i<5; i++) {
+              oPictureCarousel.next();
        };
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 6);
        oPictureCarousel.next();
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 6);
-});    
+});
 
 test("Loop", function() {
        oPictureCarousel.setLoop(true);
        oPictureCarousel.next();
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 1);
        oPictureCarousel.previous();
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 6);
-});    
+});
 
 
 test("Carousel Visibility", function() {
        oPictureCarousel.setVisible(false);
-       
+
        this.clock.tick(600);
-       
+
        ok(oPictureCarousel.$().length === 0, "Carousel should deleted from DOM");
        oPictureCarousel.setVisible(true);
-              
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 6);
-});    
+});
 
 
 test("Page Indicator Visibility", function() {
        var originalDisplayValue = oPictureCarousel.$().find(".sapMCrslBulleted").css('display');
        oPictureCarousel.setShowPageIndicator(false);
-       
+
        this.clock.tick(600);
-       
+
        ok(oPictureCarousel.$().find(".sapMCrslBulleted").css('display') == 'none', "Page Indicator should be invisible");
        oPictureCarousel.setShowPageIndicator(true);
-       
+
        this.clock.tick(600);
-       
+
        ok(oPictureCarousel.$().find(".sapMCrslBulleted").css('display') == originalDisplayValue, "Page Indicator should be visible again");
 });
 
@@ -194,40 +196,40 @@ test("Page Indicator Position", function() {
        ok(oPictureCarousel.$().children().first().hasClass('sapMCrslBulleted'), "Page Indicator should be on top");
        oPictureCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
        ok(oPictureCarousel.$().children().last().hasClass('sapMCrslBulleted'), "Page Indicator should be at bottom");
-});    
+});
 
 test("Removing Pages", function() {
        var oRemovedPage = oPictureCarousel.removePage(img6);
        ok(oRemovedPage.getId() === 'myPage6', "'removePage' does not return correct page");
-       
+
        oPictureCarousel.removePage(img5);
        oPictureCarousel.removePage(img4);
        oPictureCarousel.removePage(img3);
        oPictureCarousel.removePage(img2);
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 1);
        oPictureCarousel.addPage(img5);
-       
+
        this.clock.tick(600);
-       
+
        oPictureCarousel.next();
-       
+
        this.clock.tick(600);
-       
+
        fnTestMove.call(oPictureCarousel, 5, 2);
        oPictureCarousel.addPage(img6);
-       
+
        this.clock.tick(600);
-       
+
        oPictureCarousel.next();
-       
+
        this.clock.tick(600);
-                                         
+
        fnTestMove.call(oPictureCarousel, 6, 3);
        oPictureCarousel.removePage(img1);
-});    
+});
 
 test("Add a second carousel", function() {
        oEmptyCarousel.addPage(img11);
@@ -245,46 +247,46 @@ test("Add a second carousel", function() {
 });
 
 test("Remove all pages from carousel and add pages which were used in other carousel. AddCustom style", function() {
-       //Arrange     
+       //Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page(),
-                           new sap.m.Page() 
+                           new sap.m.Page()
                      ]
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        var allPages = oCarousel.removeAllPages();
        ok(allPages.length === 2, "'removeAllPages' does not return correct page array");
-       
+
        this.clock.tick(800);
-       
+
        ok(oCarousel.$().find('.sapMCrslInner').children().length === 0, "Second Carousel should deleted from DOM");
-       
+
        oCarousel.addPage(img11);
        oCarousel.addStyleClass('TestClass');
-       
+
        this.clock.tick(600);
-       
+
        ok(oCarousel.$().find("#myPage11").parents('.sapMCrslActive').length == 1, "Page 11 should be active");
        ok(oCarousel.$().find('.sapMCrslBulleted').length == 0, "Page Indicator should be hidden");
        ok(oCarousel.$().hasClass("TestClass"), "Carousel has custom style class");
        var whoAmI = oCarousel.destroyPages();
        ok(whoAmI === oCarousel, "'destroyPages' does not return carousel");
-       
+
        //Cleanup
        oCarousel.destroy();
-});  
+});
 
-module("Events"); 
+module("Events");
 
 test("Listen to 'pageChanged' event" , function() {
-       //Arrange     
+       //Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage_1"),
                            new sap.m.Page("keyTestPage_2"),
                            new sap.m.Page("keyTestPage_3"),
@@ -292,28 +294,28 @@ test("Listen to 'pageChanged' event" , function() {
                      ],
                      activePage: "keyTestPage_1"
        });
-       
+
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        var bPageNewOK = false,
               bPageOldOK = false;
 
        oCarousel.attachPageChanged(function(oControlEvent) {
               bPageNewOK = oControlEvent.getParameters().oldActivePageId == 'keyTestPage_1';
               bPageOldOK = oControlEvent.getParameters().newActivePageId == 'keyTestPage_2';
-       }); 
+       });
 
        oCarousel.next();
-       
+
        this.clock.tick(600);
-       
+
        ok(bPageNewOK, "Old active page should be 'keyTestPage_1'");
        ok(bPageOldOK, "New active page should be 'keyTestPage_2'");
-       
+
        //Clean up
        oCarousel.destroy();
-}); 
+});
 
 test("Should fire pageChanged only once when using 'setActivePage' (CSN 0120061532 0001323934 2014)", function() {
        //Arrange
@@ -322,17 +324,17 @@ test("Should fire pageChanged only once when using 'setActivePage' (CSN 01200615
                      pages : [ new sap.m.Page('firePage1'), new sap.m.Page('firePage2') ]
               }),
               oChangePageSpy = this.spy(sut, "_changePage");
-       
+
        sut.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
        sut.setActivePage('firePage2');
 
        //Act
        this.clock.tick(600);
-       
-       //Assert 
+
+       //Assert
        ok(oChangePageSpy.calledOnce, "PageChanged fired once");
-       
+
        //Clean up
        sut.destroy();
 });
@@ -344,13 +346,13 @@ test("Active page should be set when specified in constructor'", function() {
                      activePage: 'activePage2',
                      pages : [ new sap.m.Page('activePage1'), new sap.m.Page('activePage2') ]
               });
-       
+
        sut.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
-       //Assert 
+
+       //Assert
        ok(sut.getActivePage() == 'activePage2', "Active page should be 'activePage2'");
-       
+
        //Clean up
        sut.destroy();
 });
@@ -412,103 +414,103 @@ test("Destroy both carousels" , function() {
 module("Keyboard");
 
 test("Arrow Right", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ]
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow Right on carousel should go to second page
-       
+
        this.clock.tick(600);
-              
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-              
+
        // Cleanup
-       oCarousel.destroy(); 
+       oCarousel.destroy();
 });
 
 test("Arrow Right on the last page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ],
                      activePage : "keyTestPage2"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow Right, shoud do nothing
-       
+
        this.clock.tick(600);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page stays keyTestPage2");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("Arrow Up", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ]
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
-       oCarousel.$().focus();     
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow Up on carousel should go to second page
-       
+
        this.clock.tick(600);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-       
+
        // Clean up
        oCarousel.destroy();
 });
 
 test("Arrow Up last page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ],
                      activePage : "keyTestPage2"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow Up, shoud do nothing
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page stays keyTestPage2");
-                     
+
        // Cleanup
        oCarousel.destroy();
 });
@@ -516,71 +518,71 @@ test("Arrow Up last page", function() {
 test("Arrow Left", function() {
        // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ],
                      activePage : "keyTestPage2"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
-       oCarousel.$().focus();     
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow Left on carousel should go on first page
-       
+
        this.clock.tick(500);
-       
+
        // Assert
-       equal(oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");  
-                     
+       equal(oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+
        // Cleanup
-       oCarousel.destroy(); 
+       oCarousel.destroy();
 });
 
 test("Arrow Left on first page", function() {
        // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ]
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
-       oCarousel.$().focus();     
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow Left , shoud do nothing
-       
+
        this.clock.tick(500);
 
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage1", "active page stays keyTestPage1");
-                     
+
        //Cleanup
        oCarousel.destroy();
 });
 
 test("Arrow Down", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ],
                      activePage : "keyTestPage2"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
-       oCarousel.$().focus();     
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow Down on carousel should stay on first page
-       
+
        this.clock.tick(500);
 
        // Assert
@@ -591,23 +593,23 @@ test("Arrow Down", function() {
 });
 
 test("Arrow Down on first page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ]
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow Down again, shoud do nothing
-              
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage1", "active page stays keyTestPage1");
 
@@ -616,93 +618,93 @@ test("Arrow Down on first page", function() {
 });
 
 test("HOME", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-                     pages : [ 
+                     pages : [
                            new sap.m.Page("keyTestPage1"),
-                           new sap.m.Page("keyTestPage2") 
+                           new sap.m.Page("keyTestPage2")
                      ],
                      activePage : "keyTestPage2"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
-       oCarousel.$().focus();     
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.HOME); // trigger Home on carousel, should go to first page
 
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("END", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [ 
+              pages : [
                      new sap.m.Page("keyTestPage1"),
-                     new sap.m.Page("keyTestPage2") 
+                     new sap.m.Page("keyTestPage2")
               ]
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
 
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.END); // trigger End on carousel, should go to last page
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("ESCAPE", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
-                     new sap.m.Page("keyTestPage3") 
+                     new sap.m.Page("keyTestPage3")
               ],
               activePage : "keyTestPage2"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
-       
+
        // go to next page
        oCarousel.next();
-       
+
        this.clock.tick(500);
-       
+
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ESCAPE); // trigger Escape, should return to the default active page - 2
-       
+
        this.clock.tick(700);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("CTRL + ARROW_RIGHT", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -718,29 +720,29 @@ test("CTRL + ARROW_RIGHT", function() {
               ],
               activePage : "keyTestPage1"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
-       oCarousel.$().focus();     
-       
+
+       oCarousel.$().focus();
+
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, true); // trigger Right arrow key + Control key, should go to page 11
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 
 test("CTRL + ARROW_RIGHT less than 10 go to last page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -756,28 +758,28 @@ test("CTRL + ARROW_RIGHT less than 10 go to last page", function() {
               ],
               activePage : "keyTestPage9"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
-       oCarousel.$().focus();     
-                     
+
+       oCarousel.$().focus();
+
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, true); // trigger Right arrow key + Control key, should go to the last page - 12
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("CTRL + ARROW_UP", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -792,28 +794,28 @@ test("CTRL + ARROW_UP", function() {
               ],
               activePage : "keyTestPage1"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
-       
+
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true); // trigger Up arrow key + Control key
-       
-       this.clock.tick(500);      
-       
+
+       this.clock.tick(500);
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-       
+
        // Cleanup
-       oCarousel.destroy();       
+       oCarousel.destroy();
 });
 
 test("CTRL + ARROW_UP less than 10 go to last page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -828,27 +830,27 @@ test("CTRL + ARROW_UP less than 10 go to last page", function() {
               ],
               activePage : "keyTestPage9"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true); // trigger Up arrow key + Control key
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("PAGE_UP", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -864,27 +866,27 @@ test("PAGE_UP", function() {
               ],
               activePage : "keyTestPage1"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
-       oCarousel.$().focus();     
+
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.PAGE_UP); // trigger PAGE_UP key and navigate 10 pages forward - page 11
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage11", "active page is keyTestPage11");
-                     
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("PAGE_UP on less than 10 go to last page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -900,27 +902,27 @@ test("PAGE_UP on less than 10 go to last page", function() {
               ],
               activePage : "keyTestPage9"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.PAGE_UP); // trigger PAGE_UP key
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("CTRL + ARROW_LEFT", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -936,27 +938,27 @@ test("CTRL + ARROW_LEFT", function() {
               ],
               activePage : "keyTestPage12"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, true); // trigger Left arrow key + Control key to go 10 pages backward
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-              
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("CTRL + ARROW_LEFT less than 10 goes to first page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -965,27 +967,27 @@ test("CTRL + ARROW_LEFT less than 10 goes to first page", function() {
               ],
               activePage : "keyTestPage3"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, true); // trigger Left arrow key + Control key
-                     
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("CTRL + ARROW_DOWN", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -1001,27 +1003,27 @@ test("CTRL + ARROW_DOWN", function() {
               ],
               activePage : "keyTestPage12"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true); // trigger Down arrow key + Control key to go 10 pages backward
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-       
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("CTRL + ARROW_DOWN less than 10 goes to first page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -1030,27 +1032,27 @@ test("CTRL + ARROW_DOWN less than 10 goes to first page", function() {
               ],
               activePage : "keyTestPage3"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true); // trigger Down arrow key + Control key
-                     
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-                     
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("PAGE_DOWN", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -1066,27 +1068,27 @@ test("PAGE_DOWN", function() {
               ],
               activePage : "keyTestPage12"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
-       oCarousel.$().focus();     
+
+       oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.PAGE_DOWN); // trigger PAGE_DOWN key
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-              
+
        // Cleanup
        oCarousel.destroy();
 });
 
 test("PAGE_DOWN less than 10 goes to first page", function() {
-       // Arrange    
+       // Arrange
        var oCarousel = new sap.m.Carousel({
-              pages : [     
+              pages : [
                      new sap.m.Page("keyTestPage1"),
                      new sap.m.Page("keyTestPage2"),
                      new sap.m.Page("keyTestPage3"),
@@ -1095,19 +1097,19 @@ test("PAGE_DOWN less than 10 goes to first page", function() {
               ],
               activePage : "keyTestPage3"
        });
-       
+
        // System under Test
        oCarousel.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-       
+
        oCarousel.$().focus();
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.PAGE_DOWN); // trigger PAGE_DOWN key
-       
+
        this.clock.tick(500);
-       
+
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
-                     
+
        // Cleanup
        oCarousel.destroy();
 });
@@ -1177,7 +1179,7 @@ test("Container Padding Classes", function () {
        <h2 id="qunit-userAgent"></h2>
        <div id="qunit-testrunner-toolbar"></div>
        <ol id="qunit-tests"></ol>
-       <div id="carousel-test-content"></div>   
+       <div id="carousel-test-content"></div>
        <div id="qunit-fixture"></div>
 </body>
 </html>
