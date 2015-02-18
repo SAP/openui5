@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global'],
 					"'>");
 			for ( var i = 1; i <= iPageCount; i++) {
 				//item span
-				rm.write("<span data-slide=" + i + ">" + i + "</span>");
+				rm.write("<span role='img' data-slide=" + i + ">" + i + "</span>");
 			}
 			rm.write("</div>");
 		}
