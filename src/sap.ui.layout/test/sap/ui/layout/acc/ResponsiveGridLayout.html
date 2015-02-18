@@ -66,8 +66,7 @@
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: new sap.m.Label({text: "Post code"}),
-							fields: [new sap.m.Input({layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
-												})]
+							fields: [new sap.m.Input({layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})})]
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Country",
@@ -77,14 +76,52 @@
 								        new sap.ui.core.Item({text: "England"})]
 							})]
 						})
-					],
-					layoutData: new sap.ui.core.VariantLayoutData({
-						multipleLayoutData: [new sap.ui.layout.form.GridContainerData({halfGrid: true})]})
+					]
 				})]
-		});
+		}).placeAt("content1");
 
-		oForm.placeAt("content");
-
+		var oForm = new sap.ui.layout.form.Form("F2",{
+			title: new sap.ui.core.Title({text: "Employee"}),
+			editable: false,
+			layout: new sap.ui.layout.form.ResponsiveGridLayout("L2"),
+			formContainers: [
+				new sap.ui.layout.form.FormContainer({
+					title: "contact data",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Name",
+							fields: [new sap.m.Text({text: "Mustermann"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "First name",
+							fields: [new sap.m.Text({text: "Max"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Info",
+							fields: [new sap.m.Text({text:"additional information"})]
+						})
+						]
+				}),
+				new sap.ui.layout.form.FormContainer({
+					title: new sap.ui.core.Title({text: "Address"}),
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text:"Street / Housenumber"}),
+							fields: [new sap.m.Text({text: "Main street"}),
+							         new sap.m.Text({text: "1", layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
+							         })]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "City",
+							fields: [new sap.m.Text({text: "Main city"})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text: "Post code"}),
+							fields: [new sap.m.Text({text: "12345", layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})})]
+						})
+					]
+				})]
+		}).placeAt("content2");
 	</script>
 
 </head>
@@ -94,7 +131,9 @@
 
 	<div id="button"></div>
 	<br>
-	<div id="content"></div>
+	<div id="content1"></div>
+	<br>
+	<div id="content2"></div>
 
 </body>
 </html>

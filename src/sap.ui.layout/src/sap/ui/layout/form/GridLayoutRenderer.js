@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			if (bSeparatorColumn) {
 				iTitleCells++;
 			}
-			rm.write("<tr><th colspan=" + iTitleCells + ">");
+			rm.write("<tr class=\"sapUiGridTitle\"><th colspan=" + iTitleCells + ">");
 			var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
 			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
 			rm.write("</th></tr>");
