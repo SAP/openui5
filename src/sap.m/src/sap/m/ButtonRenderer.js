@@ -49,14 +49,19 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		//ARIA attributes
-		oRm.writeAccessibilityState(oButton, {
-			disabled: !oButton.getEnabled()
-		});
+		var rb;
+		var mAccProps = {};
+		if (sType == sap.m.ButtonType.Accept || sType == sap.m.ButtonType.Reject || sType == sap.m.ButtonType.Emphasized) {
+			rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			mAccProps["describedby"] = {value: oButton.getId() + "-Type", append: true};
+		}
+
 
 		//descendants (e.g. ToggleButton) callback
 		if (this.renderAccessibilityAttributes) {
-			this.renderAccessibilityAttributes(oRm, oButton);
+			this.renderAccessibilityAttributes(oRm, oButton, mAccProps);
 		}
+		oRm.writeAccessibilityState(oButton, mAccProps);
 
 		// check if the button is disabled
 		if (!bEnabled) {
@@ -189,6 +194,27 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(">");
 			oRm.writeEscaped(oButton._getText());
 			oRm.write("</span>");
+		}
+
+		// Aria desciption for type
+		var sTypeText = "";
+
+		switch (sType) {
+		case sap.m.ButtonType.Accept:
+			sTypeText = rb.getText("BUTTON_ARIA_TYPE_ACCEPT");
+			break;
+		case sap.m.ButtonType.Reject:
+			sTypeText = rb.getText("BUTTON_ARIA_TYPE_REJECT");
+			break;
+		case sap.m.ButtonType.Emphasized:
+			sTypeText = rb.getText("BUTTON_ARIA_TYPE_EMPHASIZED");
+			break;
+		default: // No need to do anything for other button types
+			break;
+		}
+
+		if (sTypeText) {
+			oRm.write("<span id=\"" + oButton.getId() +  "-Type\" style=\"display: none;\" aria-hidden=\"true\">" + sTypeText + "</span>");
 		}
 
 		// end inner button tag
