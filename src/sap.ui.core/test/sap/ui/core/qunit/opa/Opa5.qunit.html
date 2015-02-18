@@ -617,6 +617,38 @@
 		// Cleanup
 		oButton.destroy();
 	});
+
+	QUnit.module("ControlType", {
+		setup: function () {
+			this.oOpa5 = new Opa5();
+			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+		},
+		teardown: function () {
+		}
+	});
+
+	QUnit.asyncTest("Should wait for lazy stubs", function (assert) {
+
+		this.oOpa5.waitFor({
+			success: function () {
+				setTimeout(function () {
+					new Opa5.getWindow().sap.ui.commons.Button().placeAt("body");
+				}, 1000);
+			}
+		});
+
+		this.oOpa5.waitFor({
+			controlType: "sap.ui.commons.Button",
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 1, "Did find the button after a while");
+			}
+		});
+
+		this.oOpa5.iTeardownMyAppFrame();
+		Opa5.emptyQueue().done(function () {
+			QUnit.start();
+		});
+	});
 })();
 
 </script>
