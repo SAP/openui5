@@ -65,12 +65,17 @@
 
 .sapMCbBg:focus,
 .sapMCbBg:active,
-.sap-desktop .sapMCbBg.sapMCbBgDis:focus, {
+.sap-desktop .sapMCbBg.sapMCbBgDis:focus {
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	outline: none;
 }
 
-.sap-desktop .sapMCbBg:focus{
+.sapMCb:focus {
+	outline: none;
+}
+
+.sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
+.sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
 	outline-color: @sapUiCheckBoxFocusColor;
 	outline-width: 1px;
 	outline-style: dotted;
