@@ -239,9 +239,10 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		};
 
 		MessageToast._handleMouseDownEvent = function(oEvent) {
-			if (oEvent.isMarked("delayedMouseEvent") ||
-				oEvent.target.className.indexOf(CSSCLASS) !== -1) {
+			var bIsMessageToast = oEvent.target.hasAttribute("class") &&
+				oEvent.target.getAttribute("class").indexOf(CSSCLASS) !== -1;
 
+			if (bIsMessageToast || oEvent.isMarked("delayedMouseEvent")) {
 				return;
 			}
 
