@@ -27,14 +27,19 @@
 				new sap.m.Label({text:"Date of birth"}),
 				new sap.m.DatePicker(),
 				new sap.m.Label({text: "Gender"}),
-				new sap.m.RadioButton({text: "male", selected: true, groupName: "MyTest"}),
-				new sap.m.RadioButton({text: "female", selected: false, groupName: "MyTest"}),
+				new sap.m.RadioButtonGroup({
+					columns: 2,
+					buttons: [
+						new sap.m.RadioButton({text: "male", selected: true}),
+						new sap.m.RadioButton({text: "female", selected: false})
+						]
+					}),
 				new sap.m.Label({text: "Info"}),
 				new sap.m.Text({text:"additional information"}),
 				new sap.ui.core.Title({text: "Address"}),
 				new sap.m.Label({text: "Street / Housenumber"}),
-				new sap.m.Input(),
-				new sap.m.Input(),
+				new sap.m.Input({placeholder: "Street"}),
+				new sap.m.Input({placeholder: "Number"}),
 				new sap.m.Label({text: "City"}),
 				new sap.m.Input(),
 				new sap.m.Label({text: "Post code"}),

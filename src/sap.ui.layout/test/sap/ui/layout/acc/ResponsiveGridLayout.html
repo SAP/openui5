@@ -37,8 +37,13 @@
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Gender",
-							fields: [new sap.m.RadioButton({text: "male", selected: true, groupName: "MyTest"}),
-							         new sap.m.RadioButton({text: "female", selected: false, groupName: "MyTest"})]
+							fields: [new sap.m.RadioButtonGroup({
+								columns: 2,
+								buttons: [
+									new sap.m.RadioButton({text: "male", selected: true}),
+									new sap.m.RadioButton({text: "female", selected: false})
+									]
+								})]
 						}),
 						new sap.ui.layout.form.FormElement({
 							label: "Info",
@@ -51,8 +56,8 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement({
 							label: new sap.m.Label({text:"Street / Housenumber"}),
-							fields: [new sap.m.Input(),
-							         new sap.m.Input({layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
+							fields: [new sap.m.Input({placeholder: "Street"}),
+							         new sap.m.Input({placeholder: "Number", layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
 							         })]
 						}),
 						new sap.ui.layout.form.FormElement({
