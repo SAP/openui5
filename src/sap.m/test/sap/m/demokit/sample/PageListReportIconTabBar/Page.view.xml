@@ -57,7 +57,7 @@
 						<FlexItemData shrinkFactor="0"/>
 					</fb:layoutData>
 				</fb:FilterBar>
-				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true">
+				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true" class="sapUiResponsiveContentPadding">
 					<items>
 						<IconTabFilter text="Balances" />
 						<IconTabFilter text="Compare" />

@@ -57,7 +57,8 @@
 			</ObjectHeader>
 			<IconTabBar
 				expanded="{device>/isNoPhone}"
-				select="handleTabSelect" >
+				select="handleTabSelect"
+				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						key="Info"

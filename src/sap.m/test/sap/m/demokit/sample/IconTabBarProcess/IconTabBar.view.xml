@@ -6,7 +6,8 @@
 	<IconTabBar
 		expanded="false"
 		id="idIconTabBar"
-		select="handleIconTabBarSelect">
+		select="handleIconTabBarSelect"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				icon="sap-icon://begin"

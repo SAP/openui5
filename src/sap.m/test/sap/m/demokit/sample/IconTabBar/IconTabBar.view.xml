@@ -4,7 +4,8 @@
 	xmlns="sap.m">
 	<IconTabBar
 		id="idIconTabBar"
-		select="handleIconTabBarSelect">
+		select="handleIconTabBarSelect"
+		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
 				showAll="true"

@@ -23,10 +23,10 @@
 		</headerContent>
 		<content>
 			<IconTabBar
-				class="sapUiContentPadding"
 				expandable="false"
 				selectedKey="{/selectedTab}"
-				items="{/files}" >
+				items="{/files}"
+				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						key="{name}"
