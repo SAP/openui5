@@ -505,16 +505,16 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	background-color: @sapUiLightBG;
 }
 
-.sapUiSizeCompact .sapUiTableCtrl tr.sapUiTableGroupHeader,
-.sapUiSizeCompact .sapUiTableRowHdr.sapUiTableGroupHeader,
-.sapUiSizeCompact .sapUiTableRowHdr .sapUiTableGroupIcon {
+.sapUiTableCtrl tr.sapUiTableGroupHeader,
+.sapUiTableRowHdr.sapUiTableGroupHeader,
+.sapUiTableRowHdr .sapUiTableGroupIcon {
 	background-color: lighten(@sapUiExtraLightBG, 2);
 }
 
-.sapUiSizeCompact tr.sapUiTableGroupHeader.sapUiTableRowHvr,
-.sapUiSizeCompact .sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
-.sapUiSizeCompact .sapUiTableRowHdr.sapUiTableRowHvr .sapUiTableGroupIcon,
-.sapUiSizeCompact .sapUiTableCtrl .sapUiTableRowHvr > td {
+tr.sapUiTableGroupHeader.sapUiTableRowHvr,
+.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
+.sapUiTableRowHdr.sapUiTableRowHvr .sapUiTableGroupIcon,
+.sapUiTableCtrl .sapUiTableRowHvr > td {
 	background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6)) !important;
 }
 
@@ -524,8 +524,8 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	background-color: @sapUiLightestBG;
 }
 
-.sapUiSizeCompact .sapUiTableGroupIcon::before,
-.sapUiSizeCompact .sapUiTableTreeIcon::before {
+.sapUiTableGroupIcon::before,
+.sapUiTableTreeIcon::before {
 	color: @sapUiElement;
 }
 
