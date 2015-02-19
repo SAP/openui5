@@ -42,16 +42,11 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.DateTime</code></a>.
 	 *
-	 * <b>Note</b>: In OData version 4 this type has been deprecated and replaced by types which
-	 * cover the various aspects of date and time better.
-	 *
 	 * If you want to display a date and a time, prefer {@link
-	 * sap.ui.model.odata.type.DateTimeOffset}, specifically designed for this purpose and already
-	 * available in version 2.
+	 * sap.ui.model.odata.type.DateTimeOffset}, specifically designed for this purpose.
 	 *
 	 * Use <code>DateTime</code> with the SAP-specific annotation <code>display-format=Date</code>
-	 * (resp. the constraint <code>displayFormat: "Date"</code>) to display only a date. When
-	 * upgrading to version 4, consider switching to <code>Edm.Date</code>.
+	 * (resp. the constraint <code>displayFormat: "Date"</code>) to display only a date.
 	 *
 	 * In {@link sap.ui.model.odata.v2.ODataModel ODataModel} this type is represented as a
 	 * <code>Date</code>. With the constraint <code>displayFormat: "Date"</code>, the timezone is
