@@ -187,7 +187,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			oPopupControl.oPopup.setAutoClose(false);
 			oPopupControl.addEventDelegate({
 				onBeforeRendering: this.onBeforeRenderingPopover,
-				onkeyup: this._onkeyup
+				onkeypress: this._onkeypress
 			}, this);
 
 			if (sap.ui.Device.system.phone) {
@@ -252,7 +252,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @param {jQuery.Event} oEvent keyup event object
 		 * @private
 		 */
-		MessagePopover.prototype._onkeyup = function (oEvent) {
+		MessagePopover.prototype._onkeypress = function (oEvent) {
 			if (oEvent.shiftKey && oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
 				this._fnHandleBackPress();
 			}
