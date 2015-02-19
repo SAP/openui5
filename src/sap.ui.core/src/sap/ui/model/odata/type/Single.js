@@ -30,8 +30,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 *
 	 * @class This class represents the OData primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
-	 * <code>Edm.Single</code></a>. This data type is read-only. {@link #parseValue} and
-	 * {@link #validateValue} throw exceptions.
+	 * <code>Edm.Single</code></a>. <b>This data type is read-only</b>. The functions
+	 * {@link #parseValue parseValue} and {@link #validateValue validateValue} throw exceptions.
 	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
