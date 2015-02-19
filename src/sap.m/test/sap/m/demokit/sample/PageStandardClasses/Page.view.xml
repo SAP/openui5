@@ -25,8 +25,7 @@
 			</ObjectHeader>
 			<IconTabBar
 				expanded="{device>/isNoPhone}"
-				class="sapUiSmallMarginBottom"
-				class="sapUiResponsiveContentPadding">
+				class="sapUiSmallMarginBottom sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						text="Info">
