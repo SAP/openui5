@@ -16,8 +16,8 @@ sap.ui.controller("sap.m.sample.Feed.C", {
 		// create new entry
 		var sValue = oEvent.getParameter("value");
 		var oEntry = {
-			Author : "Sara O'Connors",
-			AuthorPicUrl : "test-resources/sap/ui/demokit/explored/img/Woman_10.png",
+			Author : "Alexandrina Victoria",
+			AuthorPicUrl : "http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg",
 			Type : "Reply",
 			Date : "" + sDate,
 			Text : sValue
