@@ -191,7 +191,11 @@
 		oDataMetaModel, // single cached instance, see withMetaModel()
 		oTestModel = new sap.ui.model.json.JSONModel(oTestData),
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
-		sPathPrefix = "/dataServices/schema/0/entityType/1", // GWSAMPLE_BASIC.Product
+		sPath2BusinessPartner = "/dataServices/schema/0/entityType/0",
+		sPath2Product = "/dataServices/schema/0/entityType/1",
+		sPath2SalesOrder = "/dataServices/schema/0/entityType/2",
+		sPath2SalesOrderLineItem = "/dataServices/schema/0/entityType/3",
+		sPath2Contact = "/dataServices/schema/0/entityType/4",
 		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
 		fnGetNavigationPath = AnnotationHelper.getNavigationPath,
 		fnIsMultiple = AnnotationHelper.isMultiple,
@@ -234,7 +238,7 @@
 		}
 		fnMethod = fnMethod || AnnotationHelper.format;
 		sResult = fnMethod.requiresIContext === true
-			? fnMethod(getInterface(oCurrentContext), vValue)
+			? fnMethod(oCurrentContext, vValue)
 			: fnMethod(vValue);
 
 		// @see applySettings: complex parser returns undefined if there is nothing to unescape
@@ -264,23 +268,6 @@
 			oLogMock.verify();
 			oSandbox.restore();
 		}
-	}
-
-	/**
-	 * Returns the callback interface related to the given context.
-	 *
-	 * @param {sap.ui.model.Context} oCurrentContext
-	 * @returns {object}
-	 */
-	function getInterface(oCurrentContext) {
-		return {
-			getModel : function () {
-				return oCurrentContext ? oCurrentContext.getModel() : null;
-			},
-			getPath : function () {
-				return oCurrentContext ? oCurrentContext.getPath() : undefined;
-			}
-		};
 	}
 
 	/**
@@ -493,7 +480,7 @@
 	//*********************************************************************************************
 	test("14.4.11 Expression edm:String: references", function () {
 		withMetaModel(function (oMetaModel) {
-			var sMetaPath = sPathPrefix
+			var sMetaPath = sPath2Product
 					+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oEntityTypeBP,
@@ -505,14 +492,14 @@
 			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
 
 			// ensure that the formatted value does not contain double quotes
-			ok(sap.ui.model.odata.AnnotationHelper.format(getInterface(oCurrentContext),
-				oRawValue).indexOf('"') < 0);
+			ok(sap.ui.model.odata.AnnotationHelper.format(oCurrentContext, oRawValue)
+				.indexOf('"') < 0);
 
 			// check escaping via fake annotation
-			oEntityTypeBP = oMetaModel.getObject(sPathPrefix);
+			oEntityTypeBP = oMetaModel.getObject(sPath2Product);
 			oEntityTypeBP["foo{Dimensions}"]
 				= oEntityTypeBP["com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"];
-			sMetaPath = sPathPrefix + "/foo{Dimensions}/Data/0/Label";
+			sMetaPath = sPath2Product + "/foo{Dimensions}/Data/0/Label";
 			oCurrentContext = oMetaModel.getContext(sMetaPath);
 			oRawValue = oMetaModel.getProperty(sMetaPath);
 
@@ -545,74 +532,45 @@
 	testIllegalValues(aNonStrings, "14.5.12 Expression edm:Path", "Path", true);
 
 	//*********************************************************************************************
-	jQuery.each([{
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/0/Value",
-		type : oBoolean
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/1/Value",
-		type : oByte
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/2/Value",
-		type : oDateTime
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/3/Value",
-		type : oDateTimeOffset
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/4/Value",
-		type : oDecimal
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/5/Value",
-		type : oDouble
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/6/Value",
-		type : oFloat
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/7/Value",
-		type : oGuid
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/8/Value",
-		type : oInt16
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/9/Value",
-		type : oInt32
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/10/Value",
-		type : oInt64
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/11/Value",
-		type : oSByte
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/12/Value",
-		type : oSingle
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/13/Value",
-		type : oString10
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/14/Value",
-		type : oString80
-	}, {
-		path : sPathPrefix + "/com.sap.vocabularies.UI.v1.Identification/15/Value",
-		type : oTime
-	}], function (i, oFixture) {
-		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
-				+ ", type = " + oFixture.type.name, function () {
-			withTestModel(function (oMetaModel) {
-				var oCurrentContext = oMetaModel.getContext(oFixture.path),
-					oRawValue = oTestModel.getObject(oFixture.path),
-					oSingleBindingInfo;
+	jQuery.each([
+			oBoolean,
+			oByte,
+			oDateTime,
+			oDateTimeOffset,
+			oDecimal,
+			oDouble,
+			oFloat,
+			oGuid,
+			oInt16,
+			oInt32,
+			oInt64,
+			oSByte,
+			oSingle,
+			oString10,
+			oString80,
+			oTime
+		], function(i, oType) {
+		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i + "/Value";
 
-				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
+		test("14.5.12 Expression edm:Path w/ type, path = " + sPath + ", type = " + oType.name,
+			function () {
+				withTestModel(function (oMetaModel) {
+					var oCurrentContext = oMetaModel.getContext(sPath),
+						oRawValue = oTestModel.getObject(sPath),
+						oSingleBindingInfo;
 
-				strictEqual(oSingleBindingInfo.path, oRawValue.Path);
-				ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oFixture.type.name),
-					"type is " + oFixture.type.name);
-				deepEqual(oSingleBindingInfo.type.oConstraints, oFixture.type.constraints);
+					oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
-				// ensure that the formatted value does not contain double quotes
-				ok(AnnotationHelper.format(getInterface(oCurrentContext), oRawValue)
-					.indexOf('"') < 0);
-			});
-		});
+					strictEqual(oSingleBindingInfo.path, oRawValue.Path);
+					ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oType.name),
+						"type is " + oType.name);
+					deepEqual(oSingleBindingInfo.type.oConstraints, oType.constraints);
+
+					// ensure that the formatted value does not contain double quotes
+					ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
+				});
+			}
+		);
 	});
 	// Q: output simple binding expression in case application has not opted-in to complex ones?
 	//    /* if (ManagedObject.bindingParser === sap.ui.base.BindingParser.simpleParser) {} */
@@ -647,8 +605,7 @@
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat", function () {
 		withMetaModel(function (oMetaModel) {
-			var sPath = "/dataServices/schema/0/entityType/4/"
-					+ "com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oRawValue = oMetaModel.getObject(sPath);
 
@@ -685,10 +642,14 @@
 		}), "*foo*[Unsupported: null]");
 	});
 
+
 	//*********************************************************************************************
 	test("14.5.3.1.2 Function odata.fillUriTemplate: test data", function () {
-		withTestModel(function (oTestModel) {
-			var oUnsupported = {
+		withMetaModel(function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oUnsupported = {
 					Type: "Unsupported",
 					Value: "foo"
 				},
@@ -727,14 +688,16 @@
 					}
 				};
 
-			testBinding(oRawValue, undefined, "http://www.foo.com/\"/1234.56,,"
-					+ encodeURIComponent("Unsupported: "
-					+ JSON.stringify(oUnsupported) .replace(/"/g, "'")).replace(/'/g, "%27")
-					+ ",Unsupported%3A%20null,%7B%27%5C%27%7D,bar%3Fbaz",
-				{
-					_Decimal: 1234.56,
-					_String: "bar?baz"
-				});
+			// evil, test code only: write into ODataMetaModel
+			oCurrentContext.getObject("").Apply = oRawValue.Apply;
+
+			testBinding(oRawValue, oCurrentContext, "http://www.foo.com/\"/1234.56,,"
+				+ encodeURIComponent("Unsupported: "
+				+ JSON.stringify(oUnsupported).replace(/"/g, "'")).replace(/'/g, "%27")
+				+ ",Unsupported%3A%20null,%7B%27%5C%27%7D,bar%3Fbaz", {
+				_Decimal: 1234.56,
+				_String: "bar?baz"
+			});
 		});
 	});
 
@@ -762,9 +725,8 @@
 	//*********************************************************************************************
 	test("14.5.3.1.3 Function odata.uriEncode", function () {
 		withMetaModel(function (oMetaModel) {
-			var sMetaPath = "/dataServices/schema/0/entityType/0/" +
-					"com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef/Apply/Parameters/1/" +
-					"Value",
+			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
+					+ "/Url/UrlRef/Apply/Parameters/1/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath),
 				oSingleBindingInfo;
@@ -781,8 +743,8 @@
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (odata.fillUriTemplate & uriEncode)", function () {
 		withMetaModel(function (oMetaModel) {
-			var sMetaPath = "/dataServices/schema/0/entityType/0/" +
-					"com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef",
+			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
+					+ "/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
@@ -835,298 +797,233 @@
 	});
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.AnnotationHelper.resolvePath");
+	module("sap.ui.model.odata.AnnotationHelper.followPath");
 
 	//*********************************************************************************************
-	jQuery.each(["", "@com.sap.vocabularies.UI.v1.Identification",
-		"@invalid.term" // decision: invalid path is usually OK for data binding
-	], function (i, sPath) {
-		test("14.5.2 Expression edm:AnnotationPath: " + sPath, function () {
+	jQuery.each([{
+		// empty (annotation) path
+		AnnotationPath : "",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		navigationPath : "",
+		resolvedPath : sPath2Product
+	}, {
+		// one navigation property, multiplicity "1"
+		AnnotationPath : "ToSupplier",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		entitySet : "BusinessPartnerSet",
+		isMultiple : false,
+		navigationPath : "ToSupplier",
+		resolvedPath : sPath2BusinessPartner
+	}, {
+		// navigation property and term cast (typical use case!)
+		AnnotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		entitySet : "BusinessPartnerSet",
+		isMultiple : false,
+		navigationPath : "ToSupplier",
+		resolvedPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address"
+//	}, {
+//		// annotation at navigation property itself
+//TODO what exactly should happen in this case, can the path continue after this?
+//		AnnotationPath : "ToSupplier@some.annotation.for.Navigation.Property",
+//		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+//		entitySet : "BusinessPartnerSet",
+//		isMultiple : false,
+//		navigationPath : "ToSupplier",
+//		resolvedPath :
+//			sPath2Product + "/navigationProperty/1/some.annotation.for.Navigation.Property"
+	}, {
+		// many navigation properties, ToLineItems has multiplicity "*" but is not last!
+		AnnotationPath
+			: "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
+		metaPath : sPath2SalesOrder + "/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		entitySet : "ContactSet",
+		isMultiple : Error,
+		navigationPath : "ToLineItems/ToProduct/ToSupplier/ToContacts",
+		resolvedPath : sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo"
+	}, {
+		// single navigation property with multiplicity "*" and fantasy term cast
+		AnnotationPath : "ToLineItems/@foo.Bar",
+		metaPath : sPath2SalesOrder + "/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		entitySet : "SalesOrderLineItemSet",
+		isMultiple : true,
+		navigationPath : "ToLineItems",
+		// decision: invalid path is usually OK for data binding
+		resolvedPath : sPath2SalesOrderLineItem + "/foo.Bar"
+	}, {
+		// many navigation properties, multiplicity "*" as last one
+		AnnotationPath : "ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
+		metaPath : sPath2SalesOrderLineItem + "/com.sap.vocabularies.UI.v1.Facets/0/Target",
+		entitySet : "ContactSet",
+		isMultiple : true,
+		navigationPath : "ToProduct/ToSupplier/ToContacts",
+		resolvedPath : sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo"
+	}, {
+		// just a term cast with a qualifier
+		AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		navigationPath : "",
+		resolvedPath : sPath2Product + "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"
+	}, {
+		// type cast syntax, not yet supported
+		AnnotationPath : "unsupported.type.cast",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		navigationPath : "",
+		resolvedPath : undefined
+	}, {
+		// some invalid property
+		AnnotationPath : "invalid_property",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		navigationPath : "",
+		resolvedPath : undefined
+	}, {
+		// Note: suffix after unsupported path is ignored
+		AnnotationPath : "invalid_property/@some.Annotation",
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		navigationPath : "",
+		resolvedPath : undefined
+	}, {
+		// structural property
+		Path : "Address",
+		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
+		navigationPath : "",
+		resolvedPath : sPath2BusinessPartner + "/property/0"
+	}, {
+		// structural property of complex type
+		Path : "Address/Street",
+		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
+		navigationPath : "",
+		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
+	}], function (i, oFixture) {
+		var sPath, sTitle;
+
+		if (oFixture.hasOwnProperty("AnnotationPath")) {
+			sPath = oFixture.AnnotationPath;
+			sTitle = "14.5.2 Expression edm:AnnotationPath: " + sPath;
+		} else if (oFixture.hasOwnProperty("Path")) {
+			sPath = oFixture.Path;
+			sTitle = "14.5.12 Expression edm:Path: " + sPath;
+		}
+
+		if (oFixture.navigationPath === "") {
+			// w/o a navigation path, these cannot have a different value
+			oFixture.entitySet = undefined;
+			oFixture.isMultiple = false;
+		}
+
+		test(sTitle, function () {
 			withMetaModel(function (oMetaModel) {
-				// path to some ReferenceFacet
-				var sMetaPath = sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/1/Target",
-					oContext = oMetaModel.createBindingContext(sMetaPath),
-					sResult;
+				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
+					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
+					oSingleBindingInfo;
 
-				// evil, test code only: write into ODataMetaModel
-				oMetaModel.getProperty(sMetaPath).AnnotationPath = sPath;
+				if (oRawValue) {
+					// evil, test code only: write into ODataMetaModel
+					delete oRawValue.AnnotationPath;
+					delete oRawValue.Path;
+					if (oFixture.hasOwnProperty("AnnotationPath")) {
+						oRawValue.AnnotationPath = oFixture.AnnotationPath;
+					} else if (oFixture.hasOwnProperty("Path")) {
+						oRawValue.Path = oFixture.Path;
+					}
+				}
 
-				sResult = AnnotationHelper.resolvePath(oContext);
+				// getNavigationPath
+				oSingleBindingInfo
+					= formatAndParseNoWarning(oRawValue, oContext, fnGetNavigationPath);
 
-				strictEqual(sResult, sPathPrefix + sPath.replace('@', '/'));
+				strictEqual(typeof oSingleBindingInfo, "object",
+					"getNavigationPath: got a binding info");
+				strictEqual(oSingleBindingInfo.path, oFixture.navigationPath, "getNavigationPath");
+				strictEqual(oSingleBindingInfo.type, undefined, "getNavigationPath: no type");
+
+				// gotoEntitySet
+				strictEqual(AnnotationHelper.gotoEntitySet(oContext),
+					oFixture.entitySet
+						? oMetaModel.getODataEntitySet(oFixture.entitySet, true)
+						: undefined,
+					"gotoEntitySet");
+
+				// isMultiple
+				if (oFixture.isMultiple === Error) {
+					try {
+						formatAndParseNoWarning(oRawValue, oContext, fnIsMultiple);
+						ok(false, "Exception expected");
+					} catch (e) {
+						strictEqual(e.message,
+							'Association end with multiplicity "*" is not the last one: ' + sPath);
+					}
+				} else {
+					strictEqual(formatAndParseNoWarning(oRawValue, oContext, fnIsMultiple),
+						String(oFixture.isMultiple), "isMultiple");
+				}
+
+				// resolvePath
+				strictEqual(AnnotationHelper.resolvePath(oContext), oFixture.resolvedPath,
+					"resolvePath");
 			});
 		});
 	});
 
 	//*********************************************************************************************
+	jQuery.each([{
+		// invalid meta path
+		metaPath : "/foo",
+		isMultiple : "",
+		navigationPath : undefined,
+		resolvedPath : undefined
+	}, {
+		// valid meta path, but raw value will be empty
+		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
+		isMultiple : "",
+		navigationPath : undefined,
+		resolvedPath : undefined
+	}, {
+		// valid meta path, but outside of entity type
+		metaPath : "/dataServices/schema/0/@foo.Bar",
+		isMultiple : "",
+		navigationPath : undefined,
+		resolvedPath : undefined
+	}], function (i, oFixture) {
+		test("Missing path expression, context: " + oFixture.metaPath, function () {
+			withMetaModel(function (oMetaModel) {
+				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
+					oRawValue = oMetaModel.getProperty(oFixture.metaPath);
+
+				if (oRawValue) {
+					// evil, test code only: write into ODataMetaModel
+					delete oRawValue.AnnotationPath;
+				} else if (oFixture.metaPath = "/dataServices/schema/0/@foo.Bar") {
+					oRawValue = {
+						"AnnotationPath" : "n/a"
+					};
+					oMetaModel.getProperty("/dataServices/schema/0")["foo.Bar"] = oRawValue;
+				}
+
+				// getNavigationPath
+				strictEqual(AnnotationHelper.getNavigationPath(oContext, oRawValue), "",
+					"getNavigationPath");
+
+				// gotoEntitySet
+				strictEqual(AnnotationHelper.gotoEntitySet(oContext), undefined, "gotoEntitySet");
+
+				// isMultiple
+				strictEqual(formatAndParseNoWarning(oRawValue, oContext, fnIsMultiple), "",
+					"isMultiple");
+
+				// resolvePath
+				strictEqual(AnnotationHelper.resolvePath(oContext), undefined, "resolvePath");
+			});
+		});
+	});
+
 	//TODO support type cast
 	//TODO support term casts to odata.mediaEditLink, odata.mediaReadLink, odata.mediaContentType?
 	//TODO support $count
-	//TODO support "navigationProperty@Annotation"
-	jQuery.each([undefined, // means "delete property" here to check for maximum robustness
-		"unsupported.type.cast",
-		"unsupported_property",
-		"unsupported_property/@some.Annotation",
-		"navigationProperty@unsupported.Annotation" // annotation at nav.property itself!
-	], function (i, sPath) {
-		test("14.5.2 Expression edm:AnnotationPath: " + sPath, function () {
-			withMetaModel(function (oMetaModel) {
-				// path to some ReferenceFacet
-				var sMetaPath = sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/1/Target",
-					oContext = oMetaModel.createBindingContext(sMetaPath),
-					sResult;
-
-				// evil, test code only: write into ODataMetaModel
-				oMetaModel.getProperty(sMetaPath).AnnotationPath = sPath;
-				if (sPath === undefined) {
-					delete oMetaModel.getProperty(sMetaPath).AnnotationPath;
-				}
-
-				sResult = AnnotationHelper.resolvePath(oContext);
-
-				strictEqual(sResult, undefined, "unsupported path");
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	jQuery.each(["",
-		"foo/dataServices/schema/0/entityType/0",
-		"/foo/schema/0/entityType/0",
-		"/dataServices/foo/0/entityType/0",
-		"/dataServices/schema/foo/entityType/0",
-		"/dataServices/schema/0/foo/0",
-		"/dataServices/schema/0/entityType/foo"
-	], function (i, sMetaPath) {
-		test("14.5.2 Expression edm:AnnotationPath: unsupported origin " + sMetaPath, function () {
-			withMetaModel(function (oMetaModel) {
-				var oContext = oMetaModel.createBindingContext(sMetaPath)
-					// needed if initial "/" is missing:
-					|| new sap.ui.model.Context(oMetaModel, sMetaPath),
-					sResult;
-
-				sResult = AnnotationHelper.resolvePath(oContext);
-
-				strictEqual(sResult, undefined, "unsupported origin");
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	jQuery.each([{
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier",
-		expectedResult : "/dataServices/schema/0/entityType/0"
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
-		expectedResult
-			: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.Communication.v1.Address"
-	}, {
-		metaPath
-			: "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
-		annotationPath
-			: "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
-		expectedResult
-			: "/dataServices/schema/0/entityType/4/com.sap.vocabularies.UI.v1.HeaderInfo"
-	}], function (i, oFixture) {
-		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
-			withMetaModel(function (oMetaModel) {
-				var sMetaPath = oFixture.metaPath,
-					oContext = oMetaModel.createBindingContext(sMetaPath),
-					oRawValue = oMetaModel.getProperty(sMetaPath),
-					sResult;
-
-				// evil, test code only: write into ODataMetaModel
-				oRawValue.AnnotationPath = oFixture.annotationPath;
-
-				sResult = AnnotationHelper.resolvePath(oContext);
-
-				strictEqual(sResult, oFixture.expectedResult);
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	jQuery.each([{
-		metaPath : "/dataServices/schema/0/entityType/0" // GWSAMPLE_BASIC.BusinessPartner
-			+ "/com.sap.vocabularies.Communication.v1.Address/street",
-		path : "Address",
-		expectedResult : "/dataServices/schema/0/entityType/0/property/0"
-	}, {
-		metaPath : "/dataServices/schema/0/entityType/0" // GWSAMPLE_BASIC.BusinessPartner
-			+ "/com.sap.vocabularies.Communication.v1.Address/street",
-		path : "Address/Street",
-		expectedResult : "/dataServices/schema/0/complexType/0/property/2"
-	}], function (i, oFixture) {
-		test("14.5.12 Expression edm:Path: " + oFixture.path, function () {
-			withMetaModel(function (oMetaModel) {
-				var sMetaPath = oFixture.metaPath,
-					oContext = oMetaModel.createBindingContext(sMetaPath),
-					oRawValue = oMetaModel.getProperty(sMetaPath),
-					sResult;
-
-				// evil, test code only: write into ODataMetaModel
-				oRawValue.Path = oFixture.path;
-
-				sResult = AnnotationHelper.resolvePath(oContext);
-
-				strictEqual(sResult, oFixture.expectedResult);
-			});
-		});
-	});
 
 	//TODO support annotations embedded within entity container, entity set (or singleton?),
 	// complex type, property of entity or complex type
 
-	//TODO annotationPath : "ToSupplier@some.annotation.for.Navigation.Property" like
-	// getNavigationPath!
-
-	//*********************************************************************************************
-	module("sap.ui.model.odata.AnnotationHelper.getNavigationPath");
-
-	//*********************************************************************************************
-	test("14.5.2 Expression edm:AnnotationPath: undefined, empty", function () {
-		strictEqual(formatAndParseNoWarning({}, null, fnGetNavigationPath), "");
-		strictEqual(
-			formatAndParseNoWarning({AnnotationPath : undefined}, null, fnGetNavigationPath), "");
-		strictEqual(formatAndParseNoWarning({AnnotationPath : ""}, null, fnGetNavigationPath), "");
-	});
-
-	//*********************************************************************************************
-	jQuery.each([{
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions",
-		expectedPath : ""
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier",
-		expectedPath : "ToSupplier"
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier@some.annotation.for.Navigation.Property",
-		expectedPath : "ToSupplier"
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
-		expectedPath : "ToSupplier"
-	}, {
-		metaPath
-			: "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
-		annotationPath
-			: "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
-		expectedPath : "ToLineItems/ToProduct/ToSupplier/ToContacts"
-	}], function (i, oFixture) {
-		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
-			withMetaModel(function (oMetaModel) {
-				var oCurrentContext = oMetaModel.getContext(oFixture.metaPath),
-					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
-					oSingleBindingInfo;
-
-				// evil, test code only: write into ODataMetaModel
-				oRawValue.AnnotationPath = oFixture.annotationPath;
-
-				oSingleBindingInfo
-					= formatAndParseNoWarning(oRawValue, oCurrentContext, fnGetNavigationPath);
-
-				strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
-				strictEqual(oSingleBindingInfo.path, oFixture.expectedPath);
-				strictEqual(oSingleBindingInfo.type, undefined);
-			});
-		});
-	});
-	//TODO structural properties, type casts, $count
-
-	//*********************************************************************************************
-	module("sap.ui.model.odata.AnnotationHelper.isMultiple");
-	//TODO strongly integrate tests for resolvePath, isMultiple, and getNavigationPath!
-
-	//*********************************************************************************************
-	jQuery.each([{
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "",
-		expectedResult : false
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions",
-		expectedResult : false
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier",
-		expectedResult : false
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier@some.annotation.for.Navigation.Property",
-		expectedResult : false
-	}, {
-		metaPath : sPathPrefix + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
-		annotationPath : "ToSupplier/@com.sap.vocabularies.Communication.v1.Address", // original
-		expectedResult : false
-	}, {
-		metaPath
-			: "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
-		annotationPath : "ToLineItems/@foo.Bar",
-		expectedResult : true
-	}, {
-		metaPath
-			: "/dataServices/schema/0/entityType/3/com.sap.vocabularies.UI.v1.Facets/0/Target",
-		annotationPath
-			: "ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo",
-		expectedResult : true
-	}], function (i, oFixture) {
-		test("14.5.2 Expression edm:AnnotationPath: " + oFixture.annotationPath, function () {
-			withMetaModel(function (oMetaModel) {
-				var oCurrentContext = oMetaModel.getContext(oFixture.metaPath),
-					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
-					sOriginalAnnotationPath = oRawValue.AnnotationPath,
-					vResult;
-
-				try {
-					// evil, test code only: write into ODataMetaModel
-					oRawValue.AnnotationPath = oFixture.annotationPath;
-
-					vResult = formatAndParseNoWarning(oRawValue, oCurrentContext, fnIsMultiple);
-
-					strictEqual(vResult, oFixture.expectedResult);
-				} finally {
-					oRawValue.AnnotationPath = sOriginalAnnotationPath;
-				}
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	jQuery.each([{
-		metaPath
-			: "/dataServices/schema/0/entityType/2/com.sap.vocabularies.UI.v1.Facets/0/Target",
-		annotationPath
-			: "ToLineItems/ToProduct/ToSupplier/ToContacts/@com.sap.vocabularies.UI.v1.HeaderInfo"
-	}], function (i, oFixture) {
-		test("14.5.2 Expression edm:AnnotationPath: illegal " + oFixture.annotationPath,
-			function () {
-				withMetaModel(function (oMetaModel) {
-					var oCurrentContext = oMetaModel.getContext(oFixture.metaPath),
-						oRawValue = oMetaModel.getProperty(oFixture.metaPath),
-						sOriginalAnnotationPath = oRawValue.AnnotationPath,
-						vResult;
-
-					try {
-						// evil, test code only: write into ODataMetaModel
-						oRawValue.AnnotationPath = oFixture.annotationPath;
-
-						formatAndParseNoWarning(oRawValue, oCurrentContext, fnIsMultiple);
-						ok(false, "Exception expected");
-					} catch (e) {
-						strictEqual(e.message,
-							'Association end with multiplicity "*" is not the last one: '
-							+ oFixture.annotationPath);
-					} finally {
-						oRawValue.AnnotationPath = sOriginalAnnotationPath;
-					}
-				});
-			}
-		);
-	});
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
 
