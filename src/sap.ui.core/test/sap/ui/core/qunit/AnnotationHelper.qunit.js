@@ -76,6 +76,35 @@
 			name : "sap.ui.model.odata.type.Time",
 			constraints : {"nullable" : false}
 		},
+		sFakeAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="4.0"\
+	xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+<edmx:DataServices>\
+<Schema Namespace="zanno4sample_anno_mdl.v1">\
+	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner">\
+		<Annotation Term="com.sap.vocabularies.UI.v1.Identification">\
+			<Collection>\
+				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+					<PropertyValue Property="Url">\
+						<UrlRef>\
+							<Apply Function="odata.fillUriTemplate">\
+                  				<String><![CDATA[#BusinessPartner-displayFactSheet?BusinessPartnerID={ID1}]]></String>\
+								<LabeledElement Name="ID1">\
+									<Path>BusinessPartnerID</Path>\
+                  				</LabeledElement>\
+							</Apply>\
+						</UrlRef>\
+					</PropertyValue>\
+				</Record>\
+			</Collection>\
+		</Annotation>\
+	</Annotations>\
+</Schema>\
+</edmx:DataServices>\
+</edmx:Edmx>\
+		',
 		oTestData = {
 			"dataServices" : {
 				"schema" : [{
@@ -188,7 +217,7 @@
 				}]
 			}
 		},
-		oDataMetaModel, // single cached instance, see withMetaModel()
+		mDataMetaModel = {}, // cached instances, see withMetaModel()
 		oTestModel = new sap.ui.model.json.JSONModel(oTestData),
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
 		sPath2BusinessPartner = "/dataServices/schema/0/entityType/0",
@@ -213,7 +242,8 @@
 		mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
 			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sMetadata],
-			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sAnnotations]
+			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sAnnotations],
+			"/fake/annotations" : [200, mHeaders, sFakeAnnotations]
 		};
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
@@ -366,9 +396,10 @@
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code>.
 	 *
+	 * @param {string} [sAnnotationUrl="/GWSAMPLE_BASIC/annotations"]
 	 * @param {function} fnCodeUnderTest
 	 */
-	function withMetaModel(fnCodeUnderTest) {
+	function withMetaModel(sAnnotationUrl, fnCodeUnderTest) {
 		var oMetaModel,
 			oModel,
 			oSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
@@ -402,8 +433,13 @@
 			}
 		}
 
-		if (oDataMetaModel) {
-			call(fnCodeUnderTest, oDataMetaModel);
+		if (typeof sAnnotationUrl === "function") {
+			fnCodeUnderTest = sAnnotationUrl;
+			sAnnotationUrl = "/GWSAMPLE_BASIC/annotations";
+		}
+
+		if (mDataMetaModel[sAnnotationUrl]) {
+			call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
 			return;
 		}
 
@@ -427,18 +463,18 @@
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
 			oModel = new sap.ui.model.odata.v2.ODataModel("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				annotationURI : sAnnotationUrl,
 				json : true,
 				loadMetadataAsync : true
 			});
 			oModel.attachMetadataFailed(onFailed);
 			oModel.attachAnnotationsFailed(onFailed);
-			oDataMetaModel = oModel.getMetaModel();
+			mDataMetaModel[sAnnotationUrl] = oModel.getMetaModel();
 
 			// calls the code under test once the meta model has loaded
 			stop();
-			oDataMetaModel.loaded().then(function() {
-				call(fnCodeUnderTest, oDataMetaModel);
+			mDataMetaModel[sAnnotationUrl].loaded().then(function() {
+				call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
 				start();
 			}, onError)["catch"](onError);
 		} finally {
@@ -697,6 +733,21 @@
 				+ ",Unsupported%3A%20null,%7B%27%5C%27%7D,bar%3Fbaz", {
 				_Decimal: 1234.56,
 				_String: "bar?baz"
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
+		withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			testBinding(oRawValue, oCurrentContext,
+				"#BusinessPartner-displayFactSheet?BusinessPartnerID=0815", {
+				BusinessPartnerID: "0815"
 			});
 		});
 	});

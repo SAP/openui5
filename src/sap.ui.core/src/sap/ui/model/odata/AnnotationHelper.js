@@ -94,6 +94,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 					value: oRawValue.Value,
 					type: "Edm.String"
 				};
+			case undefined:
+				if (oRawValue.Path) { // 14.5.12 Expression edm:Path
+					return formatPath(oInterface, oRawValue.Path, false);
+				}
+				break;
 			// fall through to the global "unsupported"
 			// no default
 			}
