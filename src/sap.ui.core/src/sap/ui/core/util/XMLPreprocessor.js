@@ -48,11 +48,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 *
 		 * @param {sap.ui.core.util._with} oWithControl
 		 *   the "with" control
+		 * @param {object} mSettings
+		 *   map/JSON-object with initial property values, etc.
 		 * @param {number} [i]
 		 *   index of part in case of a composite binding
 		 * @returns {object}
 		 */
-		function getInterface(oWithControl, i) {
+		function getInterface(oWithControl, mSettings, i) {
 			/*
 			 * Returns the binding related to the current formatter call.
 			 * @returns {sap.ui.model.PropertyBinding}
@@ -123,6 +125,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				getPath : function () {
 					var oBinding = getBinding();
 					return oBinding.getModel().resolve(oBinding.getPath(), oBinding.getContext());
+				},
+
+				/**
+				 * Returns the value of the setting with the given name which was provided to the
+				 * XML template processing.
+				 *
+				 * @param {string} sName
+				 *   the name of the setting
+				 * @returns {any}
+				 *   the value of the setting
+				 * @throws {Error}
+				 *   if the name is one of the reserved names: "bindingContexts", "models"
+				 * @public
+				 */
+				getSetting : function (sName) {
+					if (sName === "bindingContexts" || sName === "models") {
+						throw new Error("Illegal argument: " + sName);
+					}
+					return mSettings[sName];
 				}
 			};
 		}
@@ -134,12 +155,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 *   the "with" control
 		 * @param {object} oBindingInfo
 		 *   the binding info
+		 * @param {object} mSettings
+		 *   map/JSON-object with initial property values, etc.
 		 * @returns {any}
 		 *   the property value or <code>oUNBOUND</code> in case the binding is not ready (because
 		 *   it refers to a model which is not available)
 		 * @throws Error
 		 */
-		function getAny(oWithControl, oBindingInfo) {
+		function getAny(oWithControl, oBindingInfo, mSettings) {
 			/*
 			 * Prepares the given binding info or part of it; makes it "one time" and binds its
 			 * formatter function (if opted in) to an interface object.
@@ -155,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				oInfo.mode = sap.ui.model.BindingMode.OneTime;
 				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
-						= jQuery.proxy(fnFormatter, null, getInterface(oWithControl, i));
+					= jQuery.proxy(fnFormatter, null, getInterface(oWithControl, mSettings, i));
 				}
 			}
 
@@ -346,7 +369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 
 					if (oBindingInfo) {
 						try {
-							vTest = getAny(oWithControl, oBindingInfo);
+							vTest = getAny(oWithControl, oBindingInfo, mSettings);
 							if (vTest === oUNBOUND) {
 								warn(': Binding not ready in ', null);
 								vTest = false;
@@ -379,7 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 
 					if (oBindingInfo) {
 						try {
-							vAny = getAny(oWithControl, oBindingInfo);
+							vAny = getAny(oWithControl, oBindingInfo, mSettings);
 							if (vAny !== oUNBOUND) {
 								oAttribute.value = vAny;
 							}

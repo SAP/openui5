@@ -827,6 +827,13 @@
 
 			strictEqual(oInterface.getModel(), oModel);
 			strictEqual(oInterface.getPath(), sExpectedPath);
+			strictEqual(oInterface.getSetting("bindTexts"), true, "settings");
+			throws(function () {
+				oInterface.getSetting("bindingContexts");
+			}, /Illegal argument: bindingContexts/);
+			throws(function () {
+				oInterface.getSetting("models");
+			}, /Illegal argument: models/);
 
 			return vRawValue.String || "{" + vRawValue.Path + "}";
 		}
@@ -863,7 +870,8 @@
 			'</template:with>',
 			'</mvc:View>'
 		], {
-			models: oModel
+			models: oModel,
+			bindTexts: true
 		}, [
 			'<Text text="undefined"/>',
 			'<Text text="Customer"/>',

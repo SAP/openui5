@@ -546,21 +546,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
 			 * <ul>
-			 *   <li> the constant "14.4.11 Expression edm:String", which is turned into a data
-			 *   binding expression (e.g. <code>
+			 *   <li> the constant "14.4.11 Expression edm:String": This is turned into a fixed
+			 *   text (e.g. <code>"Width"</code>) or into a data binding expression (e.g. <code>
 			 *   "{/##/dataServices/schema/0/entityType/1/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label/String}"
-			 *   </code>);
-			 *   <li> the dynamic "14.5.3 Expression edm:Apply"
+			 *   </code>). Data binding expressions are used in case XML template processing has
+			 *   been started with the setting <code>bindTexts : true</code>. The purpose is to
+			 *   reference translatable texts from OData v4 annotations, especially for XML
+			 *   template processing at design time.
+			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
 			 *   <ul>
-			 *     <li> "14.5.3.1.1 Function odata.concat" is turned into a data binding
-			 *     expression relative to an entity;
-			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate" is turned into an expression
-			 *     binding to fill the template at run-time;
-			 *     <li> "14.5.3.1.3 Function odata.uriEncode" is turned into an expression
+			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding
+			 *     expression relative to an entity.
+			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
+			 *     expression binding to fill the template at run-time.
+			 *     <li> "14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
 			 *     binding to encode the parameter at run-time (it is possible to embed
-			 *     <code>odata.uriEncode</code> into <code>odata.fillUriTemplate</code>);
+			 *     <code>odata.uriEncode</code> into <code>odata.fillUriTemplate</code>).
 			 *   </ul>
-			 *   <li> the dynamic "14.5.12 Expression edm:Path", which is turned into a data
+			 *   <li> the dynamic "14.5.12 Expression edm:Path": This is turned into a data
 			 *   binding relative to an entity, including type information and constraints as
 			 *   available from meta data, e.g. <code>"{path : 'Name',
 			 *   type : 'sap.ui.model.odata.type.String', constraints : {'maxLength':'255'}}"
@@ -589,9 +592,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 				// 14.4.11 Expression edm:String
 				if (vRawValue && vRawValue.hasOwnProperty("String")) {
 					if (typeof vRawValue.String === "string") {
-						sResult = "/##" + oInterface.getPath() + "/String";
-						return formatPath(oInterface, sResult, false).value;
-//						return fnEscape(vRawValue.String);
+						if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
+							sResult = "/##" + oInterface.getPath() + "/String";
+							return formatPath(oInterface, sResult, false).value;
+						}
+						return fnEscape(vRawValue.String);
 					}
 					return illegalValue(vRawValue, "String");
 				}
@@ -682,7 +687,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * </pre>
 			 *
 			 * @param {sap.ui.model.Context} oContext
-			 *   a context which must point to simple string or to an annotation (or annotation
+			 *   a context which must point to a simple string or to an annotation (or annotation
 			 *   property) of type <code>Edm.AnnotationPath</code>, embedded within an entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}

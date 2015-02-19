@@ -90,10 +90,10 @@
 					<PropertyValue Property="Url">\
 						<UrlRef>\
 							<Apply Function="odata.fillUriTemplate">\
-                  				<String><![CDATA[#BusinessPartner-displayFactSheet?BusinessPartnerID={ID1}]]></String>\
+								<String><![CDATA[#BusinessPartner-displayFactSheet?BusinessPartnerID={ID1}]]></String>\
 								<LabeledElement Name="ID1">\
 									<Path>BusinessPartnerID</Path>\
-                  				</LabeledElement>\
+								</LabeledElement>\
 							</Apply>\
 						</UrlRef>\
 					</PropertyValue>\
@@ -504,11 +504,21 @@
 	unsupported();
 
 	//*********************************************************************************************
-//	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
-//		test("14.4.11 Expression edm:String: " + sString, function () {
-//			strictEqual(formatAndParseNoWarning({"String" : sString}), sString);
-//		});
-//	});
+	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
+		test("14.4.11 Expression edm:String: " + sString, function () {
+			withMetaModel(function (oMetaModel) {
+				var sMetaPath = sPath2Product
+						+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
+					oCurrentContext = oMetaModel.getContext(sMetaPath),
+					oRawValue = oMetaModel.getProperty(sMetaPath);
+
+				// evil, test code only: write into ODataMetaModel
+				oRawValue.String = sString;
+
+				strictEqual(formatAndParseNoWarning(oRawValue, oCurrentContext), sString);
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	testIllegalValues(aNonStrings, "14.4.11 Expression edm:String", "String", true);
@@ -523,6 +533,13 @@
 				oRawValue = oMetaModel.getProperty(sMetaPath),
 				oSingleBindingInfo;
 
+			function getSetting(sName) {
+				strictEqual(sName, "bindTexts");
+				return true;
+			}
+
+			oCurrentContext.getSetting = getSetting;
+
 			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
 			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
@@ -531,6 +548,7 @@
 			ok(sap.ui.model.odata.AnnotationHelper.format(oCurrentContext, oRawValue)
 				.indexOf('"') < 0);
 
+
 			// check escaping via fake annotation
 			oEntityTypeBP = oMetaModel.getObject(sPath2Product);
 			oEntityTypeBP["foo{Dimensions}"]
@@ -538,6 +556,7 @@
 			sMetaPath = sPath2Product + "/foo{Dimensions}/Data/0/Label";
 			oCurrentContext = oMetaModel.getContext(sMetaPath);
 			oRawValue = oMetaModel.getProperty(sMetaPath);
+			oCurrentContext.getSetting = getSetting;
 
 			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
 
