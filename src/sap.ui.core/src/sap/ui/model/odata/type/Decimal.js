@@ -11,35 +11,6 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
 
 	/**
-	 * Returns the matching error key for the type based on the constraints.
-	 *
-	 * @param {sap.ui.model.odata.type.Decimal} oType
-	 *   the type
-	 * @returns {string}
-	 *   the key
-	 */
-	function getErrorKey(oType) {
-		if (getScale(oType) === Infinity) {
-			return getPrecision(oType) === Infinity ? "EnterNumber" : "EnterNumberPrecision";
-		}
-		return getPrecision(oType) === Infinity ?
-			"EnterNumberScale" : "EnterNumberPrecisionScale";
-	}
-
-	/**
-	 * Returns the matching error message for the type based on the constraints.
-	 *
-	 * @param {sap.ui.model.odata.type.Decimal} oType
-	 *   the type
-	 * @returns {string}
-	 *   the message
-	 */
-	function getErrorMessage(oType) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(getErrorKey(oType),
-			[getPrecision(oType), getScale(oType)]);
-	}
-
-	/**
 	 * Returns the formatter. Creates it lazily.
 	 * @param {sap.ui.model.odata.type.Decimal} oType
 	 *   the type instance
@@ -86,6 +57,20 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 */
 	function getScale(oType) {
 		return (oType.oConstraints && oType.oConstraints.scale) || 0;
+	}
+
+	/**
+	 * Fetches a text from the message bundle and formats it using the parameters.
+	 *
+	 * @param {string} sKey
+	 *   the message key
+	 * @param {any[]} aParams
+	 *   the message parameters
+	 * @returns {string}
+	 *   the message
+	 */
+	function getText(sKey, aParams) {
+		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
 	}
 
 	/**
@@ -308,23 +293,39 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 */
 	Decimal.prototype.validateValue = function (sValue) {
-		var iFractionDigits, iIntegerDigits, aMatches;
+		var iFractionDigits, iIntegerDigits, aMatches, iPrecision, iScale;
 
 		if (sValue === null && isNullable(this)) {
 			return;
 		}
-		if (typeof sValue === "string") {
-			aMatches = rDecimal.exec(sValue);
-			if (aMatches) {
-				iIntegerDigits = aMatches[1].length;
-				iFractionDigits = (aMatches[2] || "").length;
-				if (iFractionDigits <= getScale(this)
-					&& iIntegerDigits + iFractionDigits <= getPrecision(this)) {
-					return;
-				}
-			}
+		if (typeof sValue !== "string") {
+			throw new ValidateException(getText("EnterNumber"));
 		}
-		throw new ValidateException(getErrorMessage(this));
+		aMatches = rDecimal.exec(sValue);
+		if (!aMatches) {
+			throw new ValidateException(getText("EnterNumber"));
+		}
+		iIntegerDigits = aMatches[1].length;
+		iFractionDigits = (aMatches[2] || "").length;
+		iScale = getScale(this);
+		iPrecision = getPrecision(this);
+		if (iFractionDigits > iScale) {
+			if (iScale === 0) {
+				throw new ValidateException(getText("EnterInt"));
+			} else if (iIntegerDigits + iScale > iPrecision) {
+				throw new ValidateException(getText("EnterNumberIntegerFraction",
+					[iPrecision - iScale, iScale]));
+			}
+			throw new ValidateException(getText("EnterNumberFraction", [iScale]));
+		}
+		if (iScale === Infinity) {
+			if (iIntegerDigits + iFractionDigits > iPrecision) {
+				throw new ValidateException(getText("EnterNumberPrecision", [iPrecision]));
+			}
+		} else if (iIntegerDigits > iPrecision - iScale) {
+			throw new ValidateException(getText("EnterNumberInteger",
+				[iPrecision - iScale]));
+		}
 	};
 
 	/**

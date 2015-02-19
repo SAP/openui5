@@ -177,36 +177,38 @@
 	});
 
 	//*********************************************************************************************
-	test("validate: user error: {scale: 1}", function () {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			var oType = new sap.ui.model.odata.type.Decimal({}, {scale: 1});
-
-			try {
-				oType.validateValue(oType.parseValue("1.234", "string"));
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "EnterNumberScale 1");
-			}
-		});
-	});
-
-	//*********************************************************************************************
-	jQuery.each([false, 1, "foo", "1.1", "1234", "1.234E-32"], function (i, sValue) {
-		test("validate errors: " + JSON.stringify(sValue), function () {
+	jQuery.each([
+		{value: false, error: "EnterNumber"},
+		{value: 42, error: "EnterNumber"},
+		{value: "a", error: "EnterNumber"},
+		{value: "1.234E-32", error: "EnterNumber"},
+		{value: "1.23", constraints: {precision: 2, scale: 1},
+			error: "EnterNumberFraction 1"},
+		{value: "12.3", constraints: {precision: 3, scale: 2},
+			error: "EnterNumberInteger 1"},
+		{value: "12.34", constraints: {precision: 3, scale: "variable"},
+			error: "EnterNumberPrecision 3"},
+		{value: "1.2", error: "EnterInt"},
+		{value: "123.45", constraints: {precision: 3, scale: 1},
+			error: "EnterNumberIntegerFraction 2 1"},
+		// excess zeros are treated as error (parseValue removes them)
+		{value: "1.0", error: "EnterInt"},
+		{value: "012", constraints: {precision: 2}, error: "EnterNumberInteger 2"},
+	], function (i, oFixture) {
+		test("validate: " + oFixture.value, function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
-				var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 3});
+				var oType = new sap.ui.model.odata.type.Decimal({}, oFixture.constraints);
 
 				try {
-					oType.validateValue(sValue);
+					oType.validateValue(oFixture.value);
 					ok(false);
 				} catch (e) {
 					ok(e instanceof sap.ui.model.ValidateException);
-					strictEqual(e.message, "EnterNumberPrecisionScale 3 0");
+					strictEqual(e.message, oFixture.error);
 				}
 			});
 		});
-	});
+	}),
 
 	//*********************************************************************************************
 	test("validate success", 0, function () {
@@ -218,22 +220,6 @@
 				oType.validateValue(sValue);
 			}
 		);
-	});
-
-	//*********************************************************************************************
-	test("integer + fraction", function () {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 6, scale: 3}),
-				sValue = "-1234.567";
-
-			try {
-				oType.validateValue(sValue);
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "EnterNumberPrecisionScale 6 3");
-			}
-		});
 	});
 
 	//*********************************************************************************************
@@ -259,18 +245,6 @@
 				oType.validateValue(sValue);
 			}
 		);
-
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			jQuery.each(["1234", "123.4", "1.234"], function (i, sValue) {
-				try {
-					oType.validateValue(sValue);
-					ok(false);
-				} catch (e) {
-					ok(e instanceof sap.ui.model.ValidateException);
-					strictEqual(e.message, "EnterNumberPrecision 3");
-				}
-			});
-		});
 	});
 
 	//*********************************************************************************************
