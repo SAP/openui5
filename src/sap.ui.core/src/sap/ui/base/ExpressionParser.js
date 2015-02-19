@@ -621,13 +621,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					at: oResult.at || oTokens.at
 				};
 			}
+
+			function formatter() {
+				//make separate parameters for parts one (array like) parameter
+				// TODO stringify the result?
+				return oResult.formatter(arguments);
+			}
+			formatter.textFragments = true; //use CompositeBinding even if there is only one part
 			return {
 				result: {
-					formatter: function() {
-						//make separate parameters for parts one (array like) parameter
-						// TODO stringify the result?
-						return oResult.formatter(arguments);
-					},
+					formatter: formatter,
 					parts: oTokens.parts
 					//TODO useRawValues: true --> use JS object instead of formatted String
 				},
