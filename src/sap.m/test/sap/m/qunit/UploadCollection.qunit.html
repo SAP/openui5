@@ -533,6 +533,12 @@
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 
 		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
+
+		var sFileTypesExpected = aFileTypes.toString();
+		var aFileTypesMix = ["JpG", "png", "bMp", "uniTTest"];
+		this.oUploadCollection.setFileType(aFileTypesMix);
+		var sFileTypes = this.oUploadCollection.getFileType().toString();
+		equal(sFileTypes, sFileTypesExpected, "Property 'fileType': Conversion to lower case");
 	});
 
 	test("maximumFilenameLength", function() {
