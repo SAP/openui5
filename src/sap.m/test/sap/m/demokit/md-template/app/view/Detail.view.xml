@@ -50,7 +50,7 @@
 								title="{Name}"
 								text="{LineItemID}"/>
 							<Text text="{Attribute}"/>
-							<ObjectNumber 
+							<ObjectNumber
 								number="{UnitNumber}"
 								unit="{UnitOfMeasure}"/>
 						</cells>

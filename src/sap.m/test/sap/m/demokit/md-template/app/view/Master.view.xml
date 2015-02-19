@@ -17,7 +17,7 @@
 						search="onSearch">
 					</SearchField>
 				</contentMiddle>
-				
+
 			</Bar>
 		</subHeader>
 		<content>
@@ -36,6 +36,7 @@
 						}
 					}"
 				noDataText="{i18n>masterListNoDataText}"
+				busyIndicatorDelay="0"
 				mode="{
 					path: 'device>/isPhone',
 					formatter: 'sap.ui.demo.mdtemplate.model.formatter.listMode'
@@ -47,7 +48,7 @@
 						id="filterBar"
 						visible="{controlStates>/isFilterBarVisible}"
 						press="onOpenViewSettings">
-						<Label 
+						<Label
 							id="filterBarLabel"
 							text="{controlStates>/filterBarLabel}" />
 					</Toolbar>

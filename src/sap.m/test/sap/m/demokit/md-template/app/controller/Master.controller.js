@@ -15,7 +15,7 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			this.oList = this.byId("list");
-			// keeps the filter and search state 
+			// keeps the filter and search state
 			this.oListFilterState = {
 				filter : [],
 				search : []
@@ -25,7 +25,7 @@ sap.ui.define([
 				group : [],
 				sort : []
 			};
-			
+
 			// Control state model
 			// TODO: needs a better naming!?
 			this.oViewModel = new sap.ui.model.json.JSONModel({
@@ -34,14 +34,23 @@ sap.ui.define([
 				masterListTitle : this.getResourceBundle().getText("masterTitle") // do we want to put this in here as well? To be consistent: YES
 			});
 			this.getView().setModel(this.oViewModel, 'controlStates');
-			
+
+			var oListSelector = this.getOwnerComponent().oListSelector;
+
+			// reset busyIndicatorDelay to default, which is 1 second
+			oListSelector.oWhenListLoadingIsDone.then(function () {
+					this.byId("list").setBusyIndicatorDelay(null);
+				}.bind(this),
+				function () {
+					this.byId("list").setBusyIndicatorDelay(null);
+				}.bind(this)
+			);
 
 			// update the master list object counter after new data is loaded
 			this.oList.attachEvent("updateFinished", function (oData) {
 				this._updateListItemCount(oData.getParameter("total"));
 			}, this);
 
-			var oListSelector = this.getOwnerComponent().oListSelector;
 			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectAndScrollToFirstItem, oListSelector);
 			this.getOwnerComponent().oListSelector.setBoundMasterList(this.oList);
 			this.getRouter().attachBypassed(this.onBypassed, this);
@@ -54,7 +63,7 @@ sap.ui.define([
 		/**
 		 * Event handler for the master search field.
 		 * @param {sap.ui.base.Event} oEvent the search event
-		 * @public 
+		 * @public
 		 */
 		onSearch : function (oEvent) {
 			var sQuery = oEvent.getParameter("query");
@@ -183,12 +192,12 @@ sap.ui.define([
 				} else {
 					this.oListSorterState.group = [];
 				}
-	
+
 				// update sorting state
 				if (mParams.sortItem) {
 					sPath = mParams.sortItem.getKey();
 					bDescending = mParams.sortDescending;
-	
+
 					this.oListSorterState.sort = [new sap.ui.model.Sorter(sPath, bDescending)];
 				}
 
@@ -228,7 +237,7 @@ sap.ui.define([
 			// TODO: is this distinction really necessary anymore???
 			this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
 		},
-		
+
 		/**
 		 * Event handler for the bypassed event
 		 * When no pattern matches, the bypassed event will be fired.
@@ -246,7 +255,7 @@ sap.ui.define([
 
 		/**
 		 * Shows the selected item on the detail page
-		 * On phones a additional history entry is created 
+		 * On phones a additional history entry is created
 		 * @param {sap.m.ObjectListItem} oItem selected Item
 		 * @private
 		 */
@@ -265,7 +274,7 @@ sap.ui.define([
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
 
-			// only update the counter if the length is final 
+			// only update the counter if the length is final
 			if (this.oList.getBinding('items').isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
 				this.oViewModel.setProperty("/masterListTitle", sTitle);
@@ -290,12 +299,12 @@ sap.ui.define([
 		/**
 		 * Internal helper method to apply both group and sort state together on the list binding
 		 * @private
-		 */ 
+		 */
 		_applyGroupSort : function () {
 			var aSorters = this.oListSorterState.group.concat(this.oListSorterState.sort);
 			this.oList.getBinding("items").sort(aSorters);
 		},
-		
+
 		/**
 		 * Internal helper methos that sets the filter bar visibility property and the lablel-text to be shown
 		 * @param String the selected filter value
