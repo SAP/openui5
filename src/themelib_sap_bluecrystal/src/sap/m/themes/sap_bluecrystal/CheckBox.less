@@ -74,7 +74,8 @@
 	outline: none;
 }
 
-.sapMCb:focus > .sapMCbBg {
+.sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
+.sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus, { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
 	outline-color: @sapUiCheckBoxFocusColor;
 	outline-width: 1px;
 	outline-style: dotted;
