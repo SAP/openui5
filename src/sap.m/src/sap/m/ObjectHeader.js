@@ -338,7 +338,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype.setCondensed = function (bCondensed) {
 		this.setProperty("condensed", bCondensed);
-
+		if (this.getCondensed()) {
+			this._oTitleArrowIcon.setSize("1rem");
+		} else {
+			this._oTitleArrowIcon.setSize("1.375rem");
+		}
+		
 		return this;
 	};
 
@@ -648,15 +653,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype._getImageControl = function() {
 		var sImgId = this.getId() + "-img";
-		var sSize = sap.ui.Device.system.phone ? "2.5rem" : "3rem";
-		var sHeight = sSize;
-		var sWidth = sSize;
-
-		if (this.getResponsive()) {
-			sSize = "2.5rem";
-			sHeight = "3rem";
-			sWidth = "3rem";
-		}
+		var sSize = "2.5rem";
+		var sHeight = "3rem";
+		var sWidth = "3rem";
 
 		var mProperties = {
 			src : this.getIcon(),
@@ -695,7 +694,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oObjectNumber = this.getAggregation("_objectNumber");
 		
 		if (this.getResponsive()) {
-			this._adjustNumberDiv();
 			this._adjustIntroDiv();
 
 			if (oObjectNumber && oObjectNumber.getNumber()) {// adjust alignment according the design specification
@@ -705,7 +703,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End, true);
 				}
 			}
-
+			// adjust number div after initial alignment
+			this._adjustNumberDiv();
+			
 			// watch for orientation change only on tablet and phone
 			if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 				sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);

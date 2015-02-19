@@ -37,7 +37,6 @@
 	
 	.sapMOHTitle h1 .sapMText {
 		color: @sapHCStandardFG;
-		font-size: @sapMFontHeader2Size;
 	}
 	
 	.sap-phone .sapMOHTitle h1 > .sapMText {
@@ -77,12 +76,6 @@
 	}
 }
 
-.sapMOHC .sapMOHTitle h1 >.sapMText,
-.sap-phone .sapMOHC .sapMOHTitle h1 >.sapMText {
-	line-height: 1.313rem;
-	font-size: 1rem;
-}
-	
 .sapMOHIntroActive,.sapMOHTitleActive {
 	color: @sapHCStandardFG;
 }
@@ -95,15 +88,18 @@
 	color: @sapHCStandardFG;
 }
 
-.sapMOHTitleAndArrow {
-	/* Fix for Android 4.3 when you have a short title hiding part of the icon in it */
-	min-height: 2rem;
+.sapMOHTitleArrow {
+	margin-top: 0.05rem;
 }
 
-.sapMOHTitleArrow {
-	.sapUiIcon {
-		outline-offset: -0.125rem;
-	}
+.sapMOHTitleIcon > .sapMOHIcon:focus,
+.sapMOHTitleArrow .sapUiIcon:focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+}
+
+.sapMOHC .sapMOHTitleArrow .sapUiIcon:active,
+.sapMOH .sapMOHTitleArrow .sapUiIcon:active {
+	color: @sapHCStandardFG;
 }
 
 .sapMOHNumberDiv .sapMObjectNumberText {
@@ -117,7 +113,6 @@
 }
 
 .sapMOHC .sapMOHNumberDiv .sapMObjectNumberText {
-
 	font-size: 1.375rem;
 }
 
@@ -125,24 +120,9 @@
 	font-size: @sapMFontMediumSize;
 }
 
-/* Fix firefox title icon outline */
-html[data-sap-ui-browser^="ff"] {
-	.sapMOH {
-		.sapMOHTitleArrow .sapUiIcon {
-			border: 0.125rem solid transparent;
-			&:active,
-			&:focus {
-				border: 0.125rem dotted @sapHCStandardFG;
-				outline: none;
-			}
-		}
-	}
-}
-
 /* Fix ie outlines */
 html[data-sap-ui-browser^="ie"] {
 	.sapMOH {
-		.sapMOHTitleArrow .sapUiIcon,
 		.sapMOHTitleActive {
 			margin-top: 0.125rem;
 			padding-top: 0.125rem;
@@ -152,9 +132,7 @@ html[data-sap-ui-browser^="ie"] {
 				margin-right: 0.125rem;
 			}
 		}
-		.sapMOHTitleAndArrow {
-			padding-top: 0.125rem;
-		}
+
 		.sapMOHTitleActive:focus .sapMOHTitle > span {
 			outline: none;
 			border: 0.125rem dotted @sapHCStandardFG;
