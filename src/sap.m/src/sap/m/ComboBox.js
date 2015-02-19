@@ -907,13 +907,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
 			var oDomRef = this.getFocusDomRef(),
-				oItem = this.getSelectedItem();
+				oListItem = this.getListItem(this.getSelectedItem());
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "true");
 
 				// note: the "aria-activedescendant" attribute is set when the currently active descendant is visible and in view
-				oItem && oDomRef.setAttribute("aria-activedescendant", this.getListItem(oItem).getId());
+				oListItem && oDomRef.setAttribute("aria-activedescendant", oListItem.getId());
 			}
 		};
 
