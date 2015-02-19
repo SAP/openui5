@@ -56,6 +56,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @alias sap.ui.model.odata.ODataMetaModel
 	 * @extends sap.ui.model.MetaModel
 	 * @public
+	 * @since 1.27.0
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
 			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {

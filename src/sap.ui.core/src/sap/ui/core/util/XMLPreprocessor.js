@@ -99,6 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * @interface
 			 * @name sap.ui.core.util.XMLPreprocessor.IContext
 			 * @public
+			 * @since 1.27.1
 			 */
 			return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
 				/**
@@ -216,6 +217,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 *
 		 * @namespace sap.ui.core.util.XMLPreprocessor
 		 * @public
+		 * @since 1.27.1
 		 */
 		return {
 			/**
