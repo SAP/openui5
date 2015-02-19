@@ -111,6 +111,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.TextArea",
+			"url": "../TextArea.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
 			"appComponent": "CA-UI5-CTR-WDF"
