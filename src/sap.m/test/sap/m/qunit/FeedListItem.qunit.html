@@ -297,7 +297,7 @@
 				ok(!!oFeedList.getItems()[0]._oImageControl.$(), "Image rendered");
 				ok(oFeedList.getItems()[0]._oImageControl.getSrc() === oFeedList.getItems()[0].getIcon(), "Image rendered (icon <> initial)");
 				ok(oFeedList.getItems()[0]._oImageControl.$().hasClass("sapMImg"), "property icon set: image should have class sapMImg ");
-				ok(oFeedList.getItems()[0]._oLinkControl.getText() === "Jeremy Dash", "Sender name rendered" );
+				ok(oFeedList.getItems()[0]._oLinkControl.getText() === "Jeremy Dash:", "Sender name rendered" );
 				ok(oFeedList.getItems()[0]._oLinkControl.getEnabled(), "Sender link enabled (senderActive = true)" );
 				ok(!!oFeedList.getItems()[0]._oLinkControl.$(), "Name Link rendered");
 				ok($('#__item1-oFeedItemList-0 .sapMFeedListItemFooter').length === 1, "Footer displayed");

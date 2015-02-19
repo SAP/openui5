@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
 				rm.renderControl(oFeedListItem._getLinkSender());
-				rm.write(': ');
+				rm.write(' ');
 				rm.write('</span>');
 			}
 			rm.write('<span id="' + sMyId + '-realtext" class="sapMFeedListItemTextString">');
