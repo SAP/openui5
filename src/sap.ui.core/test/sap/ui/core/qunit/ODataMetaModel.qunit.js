@@ -771,10 +771,28 @@
 							undefined, "getODataEntityType as path");
 						strictEqual(oMetaModel.getODataEntitySet("ProductSet"), null,
 							"getODataEntitySet");
+						strictEqual(oMetaModel.getODataEntitySet("ProductSet", true), undefined,
+							"getODataEntitySet as path");
 					}, onError)["catch"](onError);
 				});
 			}
 		);
+	});
+
+	//*********************************************************************************************
+	test("getODataEntityContainer", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataEntityContainer(),
+				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0"));
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataEntityContainer as path", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataEntityContainer(true),
+				"/dataServices/schema/0/entityContainer/0");
+		});
 	});
 
 	//*********************************************************************************************
@@ -784,6 +802,16 @@
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/entitySet/1"));
 			strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
 			strictEqual(oMetaModel.getODataEntitySet(), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataEntitySet as path", function() {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
+				"/dataServices/schema/0/entityContainer/0/entitySet/1");
+			strictEqual(oMetaModel.getODataEntitySet("FooSet", true), undefined);
+			strictEqual(oMetaModel.getODataEntitySet(undefined, true), undefined);
 		});
 	});
 	//TODO test with multiple schemas; what if there is no default entity container?
@@ -856,6 +884,20 @@
 			strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToFoo"), null);
 			strictEqual(oMetaModel.getODataAssociationEnd(null, "ToSupplier"), null);
 			strictEqual(oMetaModel.getODataAssociationEnd({}, "ToSupplier"), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataAssociation*Set*End", function() {
+		withMetaModel(function (oMetaModel) {
+			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
+
+			strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToSupplier"),
+				oMetaModel.getObject(
+					"/dataServices/schema/0/entityContainer/0/associationSet/10/end/0"));
+			strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToFoo"), null);
+			strictEqual(oMetaModel.getODataAssociationSetEnd(null, "ToSupplier"), null);
+			strictEqual(oMetaModel.getODataAssociationSetEnd({}, "ToSupplier"), null);
 		});
 	});
 

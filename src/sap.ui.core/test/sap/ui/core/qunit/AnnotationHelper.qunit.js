@@ -1127,4 +1127,20 @@
 			}
 		);
 	});
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
+
+	//*********************************************************************************************
+	test("basics", function () {
+		withMetaModel(function (oMetaModel) {
+			var sMetaPath = "/dataServices/schema/0/entityContainer/0/entitySet/0/entityType",
+				sQualifiedName = oMetaModel.getProperty(sMetaPath),
+				oContext = oMetaModel.createBindingContext(sMetaPath),
+				sResult;
+
+			sResult = AnnotationHelper.gotoEntityType(oContext);
+
+			strictEqual(sResult, oMetaModel.getODataEntityType(sQualifiedName, true));
+		});
+	});
 } ());
