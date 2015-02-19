@@ -17,6 +17,18 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 	module("Mobile navigation");
 
+	opaTest("Should see a busy indication while loading the metadata", function (Given, When, Then) {
+		// Arrangements
+		Given.iStartTheAppOnAPhoneWithDelay("", 10000);
+
+		//Actions
+		When.iLookAtTheScreen();
+
+		// Assertions
+		Then.iShouldSeeTheBusyIndicator().
+			and.iTeardownMyAppFrame();;
+	});
+
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnAPhone();
@@ -92,7 +104,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 			and.theNextButtonIsEnabled();
 
 	});
-	
+
 	opaTest("Line Item Page: after several 'Next' and 'Previous' navigation, going back in browser history should take us back to Detail Page for Object 1", function (Given, When, Then) {
 
 		// Actions
