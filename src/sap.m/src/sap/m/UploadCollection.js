@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					}
 				}
 			}
-			if (this.getItems() && this.getItems().length > 0 ) {
+			if (this.getItems()) {
 				this.aItems.length = 0;
 				this.aItems = this.getItems();
 				for (i = 0; i < aUploadingItems.length; i++ ) {
