@@ -70,6 +70,90 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	"use strict";
 
 	/**
+	 * Normalizes the given number to the fixed format.
+	 *
+	 * @param {object} oFormatOptions
+	 *   the format options
+	 * @param {string} sText
+	 *   the number entered by a user with sign, decimal and grouping separator according to given
+	 *   format options
+	 * @param {string} rNumber
+	 *   the regular expression to check the normalized <code>sText</code>
+	 * @returns {string}
+	 *   the normalized number consisting of an optional "-", at least one digit and an optional
+	 *   "." followed by more digits (<code>/-?\d+(\.\d+)?/</code>) or <code>undefined</code> if
+	 *   the given text is in the wrong format
+	 * @private
+	 */
+	function doNormalizeNumber(oFormatOptions, sText, rNumber) {
+		var aMatches,
+			sNewText,
+			sSign = "";
+
+		// remove all whitespace
+		sText = sText.replace(/\s/g, "");
+
+		// determine the sign
+		switch (sText.charAt(0)) {
+		case oFormatOptions.minusSign:
+			sSign = "-";
+			// falls through
+		case oFormatOptions.plusSign:
+			sText = sText.slice(1);
+			break;
+		// no default
+		}
+
+		// remove all grouping separators
+		while ((sNewText = sText.replace(oFormatOptions.groupingSeparator, "")) !== sText) {
+			sText = sNewText;
+		}
+
+		// replace one decimal separator by the dot
+		sText = sText.replace(oFormatOptions.decimalSeparator, ".");
+
+		// check validity and normalize
+		aMatches = rNumber.exec(sText);
+		if (aMatches) {
+			return sSign
+				+ (aMatches[1] || "0")
+				+ (aMatches[2] ? "." + aMatches[2] : "");
+		}
+	}
+
+	/**
+	 * Returns true if given formatOptions are safe regarding our own parseValue.
+	 *
+	 * @param {object} oFormatOptions
+	 *   the format options
+	 * @returns {boolean}
+	 *   true if given formatOptions are safe regarding our own parseValue.
+	 */
+	function isSafeFormatOptions(oFormatOptions) {
+		var bSafe = true;
+
+		jQuery.each(oFormatOptions || {}, function(sKey) {
+			switch (sKey) {
+				case "decimalSeparator":
+				case "decimals":
+				case "groupingEnabled":
+				case "groupingSeparator":
+				case "maxFractionDigits":
+				case "maxIntegerDigits":
+				case "minFractionDigits":
+				case "minIntegerDigits":
+				case "minusSign":
+				case "plusSign":
+					break;
+				default:
+					bSafe = false;
+					return false; //break
+			}
+		});
+		return bSafe;
+	}
+
+	/**
 	 * Constructor for a new <code>ODataType</code>.
 	 *
 	 * @class This class is an abstract base class for all OData primitive types (see <a
@@ -147,8 +231,10 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	/**
 	 * Normalizes the given number to the fixed format.
 	 *
-	 * @param {object} oFormatOptions
-	 *   the format options
+	 * @param {object} oTypeFormatOptions
+	 *   the type's format options
+	 * @param {sap.ui.core.format.NumberFormat} oNumberFormat
+	 *   the type's NumberFormat instance
 	 * @param {string} sText
 	 *   the number entered by a user with sign, decimal and grouping separator according to given
 	 *   format options
@@ -160,40 +246,17 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *   the given text is in the wrong format
 	 * @private
 	 */
-	ODataType.normalizeNumber = function normalizeNumber(oFormatOptions, sText, rNumber) {
-		var aMatches,
-			sNewText,
-			sSign = "";
+	ODataType.normalizeNumber = function normalizeNumber(oTypeFormatOptions, oNumberFormat,
+			sText, rNumber) {
+		var fResult;
 
-		// remove all whitespace
-		sText = sText.replace(/\s/g, "");
-
-		// determine the sign
-		switch (sText.charAt(0)) {
-		case oFormatOptions.minusSign:
-			sSign = "-";
-			// falls through
-		case oFormatOptions.plusSign:
-			sText = sText.slice(1);
-			break;
-		// no default
+		// oTypeFormatOptions contains only the options which have been explicitly set
+		if (isSafeFormatOptions(oTypeFormatOptions)) {
+			// oNumberFormat has _all_ options, language-dependent,  poss. with defaults
+			return doNormalizeNumber(oNumberFormat.oFormatOptions, sText, rNumber);
 		}
-
-		// remove all grouping separators
-		while ((sNewText = sText.replace(oFormatOptions.groupingSeparator, "")) !== sText) {
-			sText = sNewText;
-		}
-
-		// replace one decimal separator by the dot
-		sText = sText.replace(oFormatOptions.decimalSeparator, ".");
-
-		// check validity and normalize
-		aMatches = rNumber.exec(sText);
-		if (aMatches) {
-			return sSign
-				+ (aMatches[1] || "0")
-				+ (aMatches[2] ? "." + aMatches[2] : "");
-		}
+		fResult = oNumberFormat.parse(sText);
+		return isNaN(fResult) ? undefined : String(fResult);
 	};
 
 	return ODataType;
