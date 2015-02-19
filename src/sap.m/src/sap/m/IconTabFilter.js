@@ -130,25 +130,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 
 	
 	IconTabFilter.prototype.invalidate = function() {
-		var oIconTabBar,
-			oIconTabHeader;
-	
-		// the iconTabHeader is rendered by the IconTabBar or standalone, we treat these cases here
-		if (this.getParent() instanceof sap.m.IconTabHeader && this.getParent().getParent() instanceof sap.m.IconTabBar) {
-			oIconTabHeader = this.getParent(); 
-			oIconTabBar = oIconTabHeader.getParent();
+		var oIconTabHeader = this.getParent(),
+			oIconTabBar;
+
+		sap.ui.core.Element.prototype.invalidate.apply(this, arguments);
+
+		// invalidate the header or the whole IconTabBar
+		if (oIconTabHeader instanceof sap.m.IconTabHeader && oIconTabHeader.getParent() instanceof sap.m.IconTabBar) {
 			if (!arguments.length) {
 				// only invalidate the header if invalidate was not called from a child control (content)
-				// by default the IconTabHeader.invalidate() method invalidates the whole IconTabBar
-				// here the IconTabHeader is invalidated with the standard Control.invalidate functionality 
-				sap.ui.core.Control.prototype.invalidate.apply(oIconTabHeader, arguments);
+				oIconTabHeader.invalidate(arguments);
 			} else {
-				// invalidate the IconTabBar
-				oIconTabBar.invalidate();
+				// invalidate the whole IconTabBar
+				oIconTabBar = oIconTabHeader.getParent();
+				oIconTabBar.invalidate(arguments);
 			}
-		} else {
-			// if used standalone just invalidate this filter element
-			sap.ui.core.Element.prototype.invalidate.apply(this, arguments);
 		}
 	};
 	

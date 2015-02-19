@@ -209,16 +209,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	IconTabHeader.prototype.invalidate = function() {
-		if (this.getParent() instanceof sap.m.IconTabBar && !this.getParent()._bHideHeader) {
-			// invalidate IconTabBar when the header is attached to it
-			this.getParent().invalidate();
-		} else {
-			// invalidate just the header when it is detached (IconTabFilter will do the magic for content invalidation)
-			Control.prototype.invalidate.apply(this, arguments);
-		}
-	};
-
 	/**
 	 * Sets the selected item based on key
 	 * @overwrite
