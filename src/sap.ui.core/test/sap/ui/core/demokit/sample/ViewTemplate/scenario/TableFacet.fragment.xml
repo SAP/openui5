@@ -4,52 +4,15 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
-	<template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
-		<template:then>
-			<form:SimpleForm>
-				<form:title>
-					<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-				</form:title>
+	<form:SimpleForm>
+		<form:title>
+			<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+		</form:title>
 
-				<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
-					<template:if test="{= ${target>RecordType} === 'com.sap.vocabularies.UI.v1.BadgeType'}">
-						<template:then>
-							<Label text="Unsupported RecordType"/>
-							<Text text="{target>RecordType}"/>
-						</template:then>
-						<template:else><!-- e.g. com.sap.vocabularies.UI.v1.LineItem -->
-							<Table items="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
-								<columns>
-									<template:repeat list="{target>}" var="field">
-										<Column>
-											<Text text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-										</Column>
-									</template:repeat>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<cells>
-											<template:repeat list="{target>}" var="field">
-												<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
-											</template:repeat>
-										</cells>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</template:else>
-					</template:if>
-				</template:with>
-			</form:SimpleForm>
-		</template:then>
-		<template:else><!-- TODO resolvePath has failed -->
-			<form:SimpleForm>
-				<form:title>
-					<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-				</form:title>
-
-				<Label text="AnnotationPath"/>
-				<Text text="{facet>Target/AnnotationPath}"/>
-			</form:SimpleForm>
-		</template:else>
-	</template:if>
+		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+			<Table items="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
+			</Table>
+		</template:with>
+	</form:SimpleForm>
 </core:FragmentDefinition>

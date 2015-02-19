@@ -7,8 +7,8 @@
 	>
 	<VBox>
 		<HBox>
-			<Select id="selectType" change="onChangeType" items="{ui>/types}" selectedKey="{ui>/selectedType}">
-				<core:ListItem text="{ui>type}" key="{ui>type}"/>
+			<Select change="onChangeType" items="{ui>/entitySet}" selectedKey="{ui>/selectedEntitySet}">
+				<core:ListItem text="{ui>name}" key="{ui>name}"/>
 			</Select>
 			<Select id="selectInstance" change="onChangeInstance" selectedKey="{ui>/selectedInstance}">
 				<!-- aggregation items is bound in controller  -->
@@ -21,6 +21,6 @@
 			<core:HTML content="{ui>/code}" preferDOM="false"/>
 		</VBox>
 		<commons:HorizontalDivider/>
-		<HBox id="detail"/>
+		<HBox id="detailBox"/>
 	</VBox>
 </mvc:View>
