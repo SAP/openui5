@@ -1028,16 +1028,33 @@
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
 
 	//*********************************************************************************************
-	test("basics", function () {
+	test("gotoEntityType called directly on the entity type's qualified name", function () {
 		withMetaModel(function (oMetaModel) {
 			var sMetaPath = "/dataServices/schema/0/entityContainer/0/entitySet/0/entityType",
-				sQualifiedName = oMetaModel.getProperty(sMetaPath),
-				oContext = oMetaModel.createBindingContext(sMetaPath),
-				sResult;
+				sQualifiedName = "GWSAMPLE_BASIC.BusinessPartner",
+				oContext = oMetaModel.createBindingContext(sMetaPath);
 
-			sResult = AnnotationHelper.gotoEntityType(oContext);
+			strictEqual(oMetaModel.getProperty(sMetaPath), sQualifiedName);
 
-			strictEqual(sResult, oMetaModel.getODataEntityType(sQualifiedName, true));
+			strictEqual(AnnotationHelper.gotoEntityType(oContext),
+				oMetaModel.getODataEntityType(sQualifiedName, true));
+		});
+	});
+
+	//*********************************************************************************************
+	module("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
+
+	//*********************************************************************************************
+	test("gotoEntitySet called directly on the entity set's name", function () {
+		withMetaModel(function (oMetaModel) {
+			var sMetaPath
+					= "/dataServices/schema/0/entityContainer/0/associationSet/1/end/1/entitySet",
+				oContext = oMetaModel.createBindingContext(sMetaPath);
+
+			strictEqual(oMetaModel.getProperty(sMetaPath), "ProductSet");
+
+			strictEqual(AnnotationHelper.gotoEntitySet(oContext),
+				oMetaModel.getODataEntitySet("ProductSet", true));
 		});
 	});
 } ());
