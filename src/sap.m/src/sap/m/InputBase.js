@@ -719,6 +719,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._popup) {
 			this._popup.close();
 		}
+		
+		//remove aria property "aria-haspopup"
+		var $Input = jQuery(this.getFocusDomRef());
+		$Input[0].removeAttribute("aria-haspopup");
+		$Input[0].removeAttribute("aria-describedby");
 	};
 
 	/**
@@ -780,7 +785,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				jQuery("<span>",{
 					"id": sMessageId + "-text",
 					"class": sTextClass,
-					"text": sText
+					"text": sText,
+					"role": "tooltip"
 			}));
 
 			this._popup.setContent($Content[0]);
@@ -805,6 +811,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else {
 				this._popup._$().addClass("sapMInputBaseMessageTop");
 			}
+			
+			// add aria property "aria-haspopup"
+			$Input[0].setAttribute("aria-haspopup", "true");
+			$Input[0].setAttribute("aria-describedby", sMessageId + "-text");
 		}
 	};
 
