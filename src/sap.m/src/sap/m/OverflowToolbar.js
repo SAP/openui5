@@ -75,6 +75,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 
 			// When set to true, the recalculation algorithm will bypass an optimization to determine if anything moved from/to the action sheet
 			this._bSkipOptimization = false;
+
+			// Load the resources, needed for the text of the overflow button
+			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		};
 
 		/**
@@ -93,7 +96,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 				this.$().lastFocusableDomRef().focus();
 				this._bOverflowButtonWasFocused = false;
 			}
-			
+
+			// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
+			this._getOverflowButton().$().attr("aria-haspopup", "true");
 			this._getOverflowButtonLabel().$().attr("aria-hidden", "true");
 			
 			// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
@@ -404,7 +409,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 				oOverflowButton = new Button({
 					icon: "sap-icon://overflow",
 					press: this._overflowButtonPressed.bind(this),
-					ariaLabelledBy: this._getOverflowButtonLabel()
+					ariaLabelledBy: this._getOverflowButtonLabel(),
+					tooltip: this._oResourceBundle.getText("LOAD_MORE_DATA")
 				});
 
 				this.setAggregation("_overflowButton", oOverflowButton, true);
@@ -418,10 +424,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 			var oOverflowButtonLabel;
 
 			if (!this.getAggregation("_overflowButtonLabel")) {
-
-				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				
 				oOverflowButtonLabel = new Label({
-					text: oResourceBundle.getText("LOAD_MORE_DATA"),
+					text: this._oResourceBundle.getText("LOAD_MORE_DATA"),
 					width: "0px"
 				});
 				oOverflowButtonLabel.addStyleClass("sapUiHidden");
