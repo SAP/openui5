@@ -111,10 +111,12 @@
 			test("Set color with values in sap.ui.core.IconColor enum", function() {
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("manager"),
+					color: sap.ui.core.IconColor.Critical
 				});
-				
+
 				oIcon.placeAt("uiAreaA");
 				sap.ui.getCore().applyChanges();
+				ok(oIcon.$().hasClass("sapUiIconColorCritical"), "The color property set in instantiation is applied");
 				oIcon.setColor(sap.ui.core.IconColor.Positive);
 				ok(oIcon.$().hasClass("sapUiIconColorPositive"), "Positive class is set");
 				oIcon.setColor(sap.ui.core.IconColor.Negative);
@@ -125,14 +127,16 @@
 
 				oIcon.destroy();
 			});
-			
+
 			test("Set background-color with values in sap.ui.core.IconColor enum", function() {
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("manager"),
+					backgroundColor: sap.ui.core.IconColor.Critical
 				});
-				
+
 				oIcon.placeAt("uiAreaA");
 				sap.ui.getCore().applyChanges();
+				ok(oIcon.$().hasClass("sapUiIconBGColorCritical"), "The backgroundColor property set in instantiation is applied");
 				oIcon.setBackgroundColor(sap.ui.core.IconColor.Positive);
 				ok(oIcon.$().hasClass("sapUiIconBGColorPositive"), "Positive class is set");
 				oIcon.setBackgroundColor(sap.ui.core.IconColor.Negative);
