@@ -539,6 +539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 * You need to {@link jQuery.sap.require} this module before use!
 		 *
 		 * @public
+		 * @since 1.27.0
 		 * @namespace sap.ui.model.odata.AnnotationHelper
 		 */
 		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
