@@ -671,29 +671,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 			/**
 			 * Helper function for a <code>template:with</code> instruction that goes to the
-			 * entity set determined by the last navigation property of a dynamic
-			 * "14.5.2 Expression edm:AnnotationPath".
+			 * entity set with the given name or to the one determined by the last navigation
+			 * property of a dynamic "14.5.2 Expression edm:AnnotationPath", depending on how it
+			 * is called.
 			 *
 			 * Example:
 			 * <pre>
-			 *   &lt;template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.gotoEntitySet" var="entitySet">
+			 *   &lt;template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.gotoEntitySet" var="entitySet"/>
+			 *   &lt;template:with path="associationSetEnd>entitySet" helper="sap.ui.model.odata.AnnotationHelper.gotoEntitySet" var="entitySet"/>
 			 * </pre>
 			 *
 			 * @param {sap.ui.model.Context} oContext
-			 *   a context which must point to an annotation or annotation property of type
-			 *   <code>Edm.AnnotationPath</code>, embedded within an entity type;
+			 *   a context which must point to simple string or to an annotation (or annotation
+			 *   property) of type <code>Edm.AnnotationPath</code>, embedded within an entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
-			 *   the path to the entity set determined by the last navigation property,
-			 *   or <code>undefined</code> if no such set is found
+			 *   the path to the entity set, or <code>undefined</code> if no such set is found
 			 * @public
 			 */
 			gotoEntitySet : function (oContext) {
-				var oResult = followPath(oContext, oContext.getObject());
+				var sEntitySet,
+					vRawValue = oContext.getObject(),
+					oResult;
 
-				return oResult && oResult.associationSetEnd
-					? oContext.getModel()
-							.getODataEntitySet(oResult.associationSetEnd.entitySet, true)
+				if (typeof vRawValue === "string") {
+					sEntitySet = vRawValue;
+				} else {
+					oResult = followPath(oContext, vRawValue);
+					sEntitySet = oResult
+						&& oResult.associationSetEnd
+						&& oResult.associationSetEnd.entitySet;
+				}
+
+				return sEntitySet
+					? oContext.getModel().getODataEntitySet(sEntitySet, true)
 					: undefined;
 			},
 
