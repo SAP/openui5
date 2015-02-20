@@ -7,353 +7,367 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-
 </script>
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript">
-	QUnit.test("Check that basic css classes are set", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header",
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})],
-			width: "200px",
-			height: "300px"
-		});
+	QUnit.module("API", {
+		setup: function () {
+			this.oPanel = new sap.m.Panel({
+				headerText: "Panel Header",
+				content: [
+					new sap.m.Text({text: "This is a Text control"}),
+					new sap.m.Button({text: "Click me"})
+				]
+			});
 
-		oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var $panel = oPanel.$();
-		assert.ok($panel.hasClass("sapMPanel"), "sapMPanel class present");
-		assert.ok(jQuery("div:first-of-type", $panel).hasClass("sapMPanelHdr"), "sapMPanelHdr class present");
-
-		oPanel.destroy();
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oPanel.destroy();
+			this.oPanel = null;
+		}
 	});
 
-	QUnit.test("Check that css classes for header and info toolbar are set", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerToolbar: new sap.m.Toolbar({
-				design: sap.m.ToolbarDesign.Transparent,
-				content: [new sap.m.Label({
-					text: "Panel header"
-				})],
-				height: "50px"
-			}),
-			infoToolbar: new sap.m.Toolbar({
-				design: sap.m.ToolbarDesign.Info,
-				active: true,
-				content: [new sap.m.Label({
-					text: "The quick brown fox jumps over the lazy dog."
-				})],
-				height: "50px"
-			}),
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})],
-			expandable: true,
-			expanded: true,
-			expandAnimation: false,
-			width: "200px",
-			height: "300px"
-		});
-
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Call to setWidth() with string value 100px", function (assert) {
+		this.oPanel.setWidth("100px");
 		sap.ui.getCore().applyChanges();
 
-		var $panel = oPanel.$();
-		assert.strictEqual($panel.find(".sapMPanelWrappingDivTb").length, 1, "Wrapping div with sapMPanelWrappingDivTb class should be present.");
-		assert.strictEqual($panel.find(".sapMPanelHdrExpandable").length, 1, "Header toolbar should have sapMPanelHdrExpandable class.");
-		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 2, "Info toolbar and content area should have sapMPanelExpandablePart class.");
-
-		oPanel.destroy();
+		assert.strictEqual(this.oPanel.getWidth(), "100px", "should set the size to 100px");
 	});
 
-	QUnit.test("Sizes should be equal to the ones set in the constructor", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header",
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})],
-			width: "400px",
-			height: "300px"
-		});
-
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Call to setWidth() with string value 59%", function (assert) {
+		this.oPanel.setWidth("59%");
 		sap.ui.getCore().applyChanges();
 
-		var $panel = oPanel.$();
-		assert.equal($panel.width(), 400, "Width is 400px");
-		assert.equal($panel.height(), 300, "Height is 300px");
-
-		oPanel.destroy();
+		assert.strictEqual(this.oPanel.getWidth(), "59%", "should set the size to 59%");
 	});
 
-	QUnit.test("Sizes can be changed after the control is rendered", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header",
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})],
-			width: "400px",
-			height: "300px"
-		});
-
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Call to setWidth() with string value 10em", function (assert) {
+		this.oPanel.setWidth("10em");
 		sap.ui.getCore().applyChanges();
 
-		oPanel.setHeight("200px");
-		oPanel.setWidth("200px");
-
-		var $panel = oPanel.$();
-		assert.equal($panel.width(), 200, "Width should be 200px");
-		assert.equal($panel.height(), 200, "Height should be 200px");
-
-		oPanel.destroy();
+		assert.strictEqual(this.oPanel.getWidth(), "10em", "should set the size to 10em");
 	});
 
-	QUnit.test("Heigh for the panel content should be calculated properly when header and info toolbar are present", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerToolbar: new sap.m.Toolbar({
-				design: sap.m.ToolbarDesign.Transparent,
-				content: [new sap.m.Label({
-					text: "Panel header"
-				})],
-				height: "50px"
-			}),
-			infoToolbar: new sap.m.Toolbar({
-				design: sap.m.ToolbarDesign.Info,
-				active: true,
-				content: [new sap.m.Label({
-					text: "The quick brown fox jumps over the lazy dog."
-				})],
-				height: "50px"
-			}),
-			content: [new sap.m.Text({
-				text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
-			})],
-			width: "250px",
-			height: "250px"
-		});
-
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Call to setWidth() with string value 10rem", function (assert) {
+		this.oPanel.setWidth("10rem");
 		sap.ui.getCore().applyChanges();
 
-		var $content = oPanel.$().find(".sapMPanelContent");
-		assert.equal($content.outerHeight(), 150, "Height should be 150px");
-
-		oPanel.destroy();
+		assert.strictEqual(this.oPanel.getWidth(), "10rem", "should set the size to 10rem");
 	});
 
-	QUnit.test("Line heigh should equal the height of the header when header toolbar is not present", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header",
-			content: [new sap.m.Text({
-				text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
-			})]
-		});
-
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Call to setWidth() with string value auto", function (assert) {
+		this.oPanel.setWidth("auto");
 		sap.ui.getCore().applyChanges();
 
-		var $header = oPanel.$().find(".sapMPanelHdr");
-		assert.strictEqual($header.css("height"), $header.css("lineHeight"), "Height and line height should be equal");
-
-		oPanel.destroy();
+		assert.strictEqual(this.oPanel.getWidth(), "auto", "should set the size to auto");
 	});
 
-	QUnit.test("Header toolbar should override header text", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header",
-			headerToolbar : new sap.m.Toolbar({
-				design : sap.m.ToolbarDesign.Transparent,
+	QUnit.test("Call to setHeight() with string value 100px", function (assert) {
+		this.oPanel.setHeight("100px");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getHeight(), "100px", "should set the size to 100px");
+	});
+
+	QUnit.test("Call to setHeight() with string value 59%", function (assert) {
+		this.oPanel.setHeight("59%");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getHeight(), "59%", "should set the size to 59%");
+	});
+
+	QUnit.test("Call to setHeight() with string value 10em", function (assert) {
+		this.oPanel.setHeight("10em");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getHeight(), "10em", "should set the size to 10em");
+	});
+
+	QUnit.test("Call to setHeight() with string value 10rem", function (assert) {
+		this.oPanel.setHeight("10rem");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getHeight(), "10rem", "should set the size to 10rem");
+	});
+
+	QUnit.test("Call to setHeight() with string value auto", function (assert) {
+		this.oPanel.setHeight("auto");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getHeight(), "auto", "should set the size to auto");
+	});
+
+	QUnit.test("Call to setExpandable() with boolean value true", function (assert) {
+		this.oPanel.setExpandable(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getExpandable(), true, "should set the expandable property to true");
+		assert.notStrictEqual(this.oPanel.oIconCollapsed, undefined, "should create an icon");
+	});
+
+	QUnit.module("Events", {
+		createPanel: function (options) {
+			this.oPanel = new sap.m.Panel({
+				headerText: "Panel Header",
+				content: [
+					new sap.m.Text({text: "This is a Text control"}),
+					new sap.m.Button({text: "Click me"})
+				],
+				expandable: true,
+				expanded: options.expanded
+			});
+
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oPanel.destroy();
+			this.oPanel = null;
+		}
+	});
+
+	QUnit.test("Changing the expand property from true to false", function(assert) {
+		var bPassedArg,
+			fnEventSpy = sinon.spy(function (oEvent) {
+				bPassedArg = oEvent.getParameter('expand');
+			});
+
+		this.createPanel({ expanded: true });
+		this.oPanel.attachExpand(fnEventSpy);
+		this.oPanel.setExpanded(false);
+
+		assert.strictEqual(fnEventSpy.callCount, 1, "should fire expand event once");
+		assert.strictEqual(bPassedArg, false, "should pass false as argument");
+	});
+
+	QUnit.test("Changing the expand property from false to true", function(assert) {
+		var bPassedArg,
+			fnEventSpy = sinon.spy(function (oEvent) {
+				bPassedArg = oEvent.getParameter('expand');
+			});
+
+		this.createPanel({ expanded: false });
+		this.oPanel.attachExpand(fnEventSpy);
+		this.oPanel.setExpanded(true);
+
+		assert.strictEqual(fnEventSpy.callCount, 1, "should fire expand event once");
+		assert.strictEqual(bPassedArg, true, "should pass true as argument");
+	});
+
+	QUnit.module("Rendering", {
+		setup: function () {
+			this.oPanel = new sap.m.Panel({
+				headerText: "Panel Header",
+				content: [
+					new sap.m.Text({text: "This is a Text control"}),
+					new sap.m.Button({text: "Click me"})
+				]
+			});
+
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oPanel.destroy();
+			this.oPanel = null;
+		},
+		createToolbar: function () {
+			return new sap.m.Toolbar({
 				content : [new sap.m.Label({
 					text : "Panel header"
 				})]
-			}),
-			content: [new sap.m.Text({
-				text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
-			})],
-			width: "250px",
-			height: "250px"
-		});
+			});
+		}
+	});
 
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Changing the width after the control is rendered", function(assert) {
+		var fnRenderingSpy = sinon.spy();
+
+		this.oPanel.addDelegate({ onAfterRendering: fnRenderingSpy });
+		this.oPanel.setWidth("200px");
 		sap.ui.getCore().applyChanges();
 
-		var $header = oPanel.$().find(".sapMPanelHdr");
+		assert.strictEqual(fnRenderingSpy.callCount, 0, "should not rerender the control");
+	});
+
+	QUnit.test("Changing the height after the control is rendered", function(assert) {
+		var fnRenderingSpy = sinon.spy();
+
+		this.oPanel.addDelegate({ onAfterRendering: fnRenderingSpy });
+		this.oPanel.setHeight("200px");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(fnRenderingSpy.callCount, 0, "should not rerender the control");
+	});
+
+	QUnit.test("Header toolbar should override header text", function(assert) {
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		sap.ui.getCore().applyChanges();
+
+		var $header = this.oPanel.$().find(".sapMPanelHdr");
+
 		assert.equal($header.length, 0, "Header text should not be rendered.");
-
-		oPanel.destroy();
 	});
 
-	QUnit.test("Basic checks for expandable Panel - expanded", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header of expandable Panel",
-			expandable: true,
-			expanded: true,
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})]
-		});
+	QUnit.module("CSS classes", {
+		setup: function () {
+			this.oPanel = new sap.m.Panel({
+				headerText: "Panel Header",
+				content: [
+					new sap.m.Text({text: "This is a Text control"}),
+					new sap.m.Button({text: "Click me"})
+				]
+			});
 
-		oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var $icon = oPanel.$().find(".sapMPanelExpandableIcon");
-		assert.ok(($icon.length === 1), "sapMPanelExpandableIcon class present once");
-		assert.ok($icon.hasClass("sapMPanelExpandableIconExpanded"), "sapMPanelExpandableIconExpanded class present");
-
-		oPanel.destroy();
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oPanel.destroy();
+			this.oPanel = null;
+		},
+		createToolbar: function () {
+			return new sap.m.Toolbar({
+				content: [
+					new sap.m.Label({text: "Panel header"})
+				],
+				height: "50px"
+			});
+		}
 	});
 
-	QUnit.test("Basic checks for expanded when Panel is expandable", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header of expandable Panel",
-			expandable: true,
-			expanded: true,
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})]
-		});
+	QUnit.test("Panel with header text and content", function(assert) {
+		var $panel = this.oPanel.$();
 
-		oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		var $panel = oPanel.$();
-		assert.ok($panel.find(".sapMPanelWrappingDivExpanded").hasClass("sapMPanelWrappingDivExpanded"), "sapMPanelWrappingDivExpanded class present");
-		assert.ok($panel.find(".sapMPanelContent ").css("display") === "block", "Content is visible");
-
-		oPanel.destroy();
+		assert.ok($panel.hasClass("sapMPanel"), "should have sapMPanel class on root element");
+		assert.ok(jQuery("div:first-of-type", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first div");
 	});
 
-	QUnit.test("Basic checks for expandable Panel - collapsed", function(assert) {
-		var oPanel = new sap.m.Panel({
-			headerText: "This is the Panel header of expandable Panel",
-			expandable: true,
-			expanded: false,
-			content: [new sap.m.Text({
-				text: "This is a Text control"
-			})]
-		});
+	QUnit.test("Expandable panel with headerToolbar and infoToolbar", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
+		this.oPanel.setAggregation("infoToolbar", this.createToolbar());
 
-		oPanel.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var $icon = oPanel.$().find(".sapMPanelExpandableIcon");
-		assert.ok(($icon.length === 1), "sapMPanelExpandableIcon class present once");
-		assert.ok(!$icon.hasClass("sapMPanelExpandableIconExpanded"), "sapMPanelExpandableIconExpanded class not present");
+		var $panel = this.oPanel.$();
 
-		oPanel.destroy();
+		assert.strictEqual($panel.find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
+		assert.strictEqual($panel.find(".sapMPanelHdrExpandable").length, 1, "should have headerToolbar with sapMPanelHdrExpandable class");
+		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 2, "should have infoToolbar and content area with sapMPanelExpandablePart class");
 	});
 
-	QUnit.test("Toggle/expand", function(assert) {
-		expect(4);
+	QUnit.test("Expandable Panel when expanded", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setExpanded(true);
 
-		var oPanel = new sap.m.Panel({
-			expandable: true,
-			expanded: true,
-			headerText: "headerText",
-			content: new sap.m.Label({
-				text: "label"
-			})
-		});
-
-		oPanel.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var $icon = jQuery.sap.byId(oPanel.getId() + "-CollapsedImg");
-		var $content = oPanel.$().find(".sapMPanelContent");
+		var $panel = this.oPanel.$();
 
-		assert.ok($content.css("display") !== "none", "content should be visible");
-		assert.ok($icon.hasClass("sapMPanelExpandableIconExpanded"), "icon should be expanded");
-
-		sap.ui.test.qunit.triggerEvent("tap", $icon[0]);
-		assert.ok(!$icon.hasClass("sapMPanelExpandableIconExpanded"), "icon should not be expanded");
-
-		this.clock.tick(500);
-		assert.ok($content.css("display") === "none", "content should not visible");
-
-		oPanel.destroy();
+		assert.strictEqual($panel.find(".sapMPanelExpandableIcon").length, 1, "should have sapMPanelExpandableIcon class present once");
+		assert.strictEqual($panel.find(".sapMPanelExpandableIconExpanded").length, 1, "should have sapMPanelExpandableIconExpanded class present once");
+		assert.strictEqual($panel.find(".sapMPanelWrappingDivExpanded").length, 1, "should have sapMPanelWrappingDivExpanded class present once");
 	});
 
-	QUnit.test("Toggle/expand - api", function(assert) {
-		expect(2);
+	QUnit.test("Expandable Panel when collapsed", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setExpanded(false);
 
-		var oPanel = new sap.m.Panel({
-			expandable: true,
-			expanded: true,
-			headerText: "headerText",
-			content: new sap.m.Label({
-				text: "label"
-			})
-		});
-
-		oPanel.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var $icon = jQuery.sap.byId(oPanel.getId() + "-CollapsedImg");
-		var $content = oPanel.$().find(".sapMPanelContent");
+		var $panel = this.oPanel.$();
 
-		//do it twice !
-		oPanel.setExpanded(false);
-		oPanel.setExpanded(false);
-
-		assert.ok(!$icon.hasClass("sapMPanelExpandableIconExpanded"), "icon should not be expanded");
-
-		this.clock.tick(500);
-		assert.ok($content.css("display") === "none", "content should not visible");
-
-		oPanel.destroy();
+		assert.strictEqual($panel.find(".sapMPanelExpandableIcon").length, 1, "should have sapMPanelExpandableIcon class present once");
+		assert.strictEqual($panel.find(".sapMPanelExpandableIconExpanded").length, 0, "should NOT have sapMPanelExpandableIconExpanded class present");
+		assert.strictEqual($panel.find(".sapMPanelWrappingDivExpanded").length, 0, "should NOT have sapMPanelWrappingDivExpanded class present");
 	});
 
-	QUnit.test("Toggle/expand - event", function(assert) {
-		expect(2);
+	QUnit.module("Computed styles", {
+		setup: function () {
+			this.oPanel = new sap.m.Panel({
+				headerText: "Panel Header",
+				content: [
+					new sap.m.Text({text: "This is a Text control"}),
+					new sap.m.Button({text: "Click me"})
+				]
+			});
 
-		var that = this;
-		var oPanel = new sap.m.Panel({
-			expandable: true,
-			expanded: true,
-			headerText: "headerText",
-			content: new sap.m.Label({
-				text: "label"
-			}),
-			expand: function(eExpand) {
-				if (eExpand.getParameter("expand")) {
-					that.clock.tick(500);
-					assert.ok($content.css("display") !== "none", "event handler: content should be visible");
-				} else {
-					that.clock.tick(500);
-					assert.ok($content.css("display") === "none", "event handler: content should not be visible");
-				}
-			}
-		});
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			this.oPanel.destroy();
+			this.oPanel = null;
+		},
+		createToolbar: function (sHeight) {
+			return new sap.m.Toolbar({
+				content: [
+					new sap.m.Label({text: "Panel header"})
+				],
+				height: sHeight
+			});
+		}
+	});
 
-		oPanel.placeAt("qunit-fixture");
+	QUnit.test("Sizes should be equal to the ones set through the setters", function(assert) {
+		this.oPanel.setWidth("400px");
+		this.oPanel.setHeight("300px");
+
 		sap.ui.getCore().applyChanges();
 
-		var $content = oPanel.$().find(".sapMPanelContent");
+		var $panel = this.oPanel.$();
 
-		oPanel.setExpanded(false);
-		oPanel.setExpanded(true);
-		//should not trigger event
-		oPanel.setExpanded(true);
+		assert.strictEqual($panel.width(), 400, "width === 400");
+		assert.strictEqual($panel.height(), 300, "Height === 300");
+	});
 
-		oPanel.destroy();
+	QUnit.test("Content for panel with 200px height when headerToolbar and infoToolbar are 100px", function(assert) {
+		this.oPanel.setHeight("200px");
+		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
+		this.oPanel.setAggregation("infoToolbar", this.createToolbar("50px"));
+
+		sap.ui.getCore().applyChanges();
+
+		var $content = this.oPanel.$().find(".sapMPanelContent");
+
+		assert.equal($content.outerHeight(), 100, "should be 100px");
+	});
+
+	QUnit.test("Line heigh should equal the height of the header when header toolbar is not present", function(assert) {
+		var $header = this.oPanel.$().find(".sapMPanelHdr");
+
+		assert.strictEqual($header.css("height"), $header.css("lineHeight"), "Height and line height should be equal");
+	});
+
+	QUnit.test("Content of expandable Panel when expanded", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setExpanded(true);
+
+		sap.ui.getCore().applyChanges();
+
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelContent").css("display"), "block", "should have display:block style present");
+	});
+
+	QUnit.test("Content of expandable Panel when collapsed", function(assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setExpanded(false);
+
+		sap.ui.getCore().applyChanges();
+
+		var $panel = this.oPanel.$();
+
+		assert.strictEqual($panel.find(".sapMPanelContent").css("display"), "none", "should have display:none style present");
 	});
 
 	QUnit.test("Container Padding Classes", function (assert) {
@@ -401,7 +415,6 @@
 		oContainer.destroy();
 	});
 </script>
-
 </head>
 <body class="sapUiBody">
 	<div id="qunit"></div>
