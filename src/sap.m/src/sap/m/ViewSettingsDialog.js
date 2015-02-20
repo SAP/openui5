@@ -619,6 +619,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._bAppendedToUIArea = true;
 		}
 
+		// if there is a default tab and the user has been at filter details view on page2, go back to page1
+		if (sCurrentPage && this._iContentPage === 3) {
+			jQuery.sap.delayedCall(0, this._getNavContainer(), "to", [
+				this._getPage1().getId(), "show" ]);
+		}
+
 		// init the dialog content based on the aggregations
 		this._initDialogContent();
 
