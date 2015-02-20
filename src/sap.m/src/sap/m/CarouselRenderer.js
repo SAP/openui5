@@ -126,6 +126,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	CarouselRenderer._renderPageIndicator = function(rm, iPageCount, bBottom){
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+
 		//page indicator div
 		if (iPageCount > 1) {
 			rm.write("<div class='sapMCrslControls sapMCrslBulleted" +
@@ -133,7 +135,7 @@ sap.ui.define(['jquery.sap.global'],
 					"'>");
 			for ( var i = 1; i <= iPageCount; i++) {
 				//item span
-				rm.write("<span role='img' data-slide=" + i + ">" + i + "</span>");
+				rm.write("<span role='img' data-slide=" + i + " aria-label='" + oResourceBundle.getText('CAROUSEL_POSITION', [i, iPageCount]) + "'>" + i + "</span>");
 			}
 			rm.write("</div>");
 		}
