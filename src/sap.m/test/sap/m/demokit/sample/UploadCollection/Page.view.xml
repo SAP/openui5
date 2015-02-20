@@ -27,6 +27,7 @@
 				multiple="true"
 				items="{/items}"
 				showSeparators="None"
+				change="onChange"
 				fileDeleted="onFileDeleted"
 				fileRenamed="onFileRenamed"
 				uploadComplete="onUploadComplete" >

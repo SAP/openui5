@@ -111,15 +111,23 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		events : {
 
 			/**
-			 * The event is triggered when files are selected.
+			 * The event is triggered when files are selected. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
+			 * Parameters and headerParameters are not supported by Internet Explorer 9.
 			 */
 			change : {
 				parameters : {
-
 					/**
 					 * An unique Id of the attached document.
+					 * @deprecated Since version 1.28.
+					 * This event is deprecated, use parameter files instead.
 					 */
-					documentId : {type : "string"}
+					documentId : {type : "string"},
+					/**
+					 * A FileList of individually selected files from the underlying system. See {@link http://www.w3.org/TR/FileAPI/#dfn-filelist|FileList} for the interface definition.
+					 * Limitation: Internet Explorer 9 supports only single file with property file.name.
+					 * Since version 1.28.
+					 */
+					files : {type : "object[]"}
 				}
 			},
 
@@ -1127,10 +1135,48 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			this._oFileUploader.removeAllParameters();
 			this.removeAllParameters();
 
-			this.fireChange(oEvent);
+			// IE9
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+				var oFile = {
+						name : oEvent.getParameter("newValue")
+					};
+				var oParameters = {
+						files : [oFile]
+					};
+				this.fireChange({
+					// deprecated
+					getParameter : function(sParameter) {
+						if (sParameter === "files") {
+							return [oFile];
+						}
+					},
+					getParameters : function() {
+						return oParameters;
+					},
+					mParameters : oParameters,
+					// new
+					files : [oFile]
+				});
+
+			} else {
+				this.fireChange({
+					// deprecated
+					getParameter : function(sParameter) {
+						if (sParameter) {
+							return oEvent.getParameter(sParameter);
+						}
+					},
+					getParameters : function() {
+						return oEvent.getParameters();
+					},
+					mParameters : oEvent.getParameters(),
+					// new
+					files : oEvent.getParameter("files")
+				});
+			}
 
 			var aParametersAfter = this.getAggregation("parameters");
-			//parameters
+			// parameters
 			if (aParametersAfter) {
 				jQuery.each(aParametersAfter, function (iIndex, parameter) {
 					var oParameter = new sap.ui.unified.FileUploaderParameter({
