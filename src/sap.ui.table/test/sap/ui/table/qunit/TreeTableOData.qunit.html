@@ -572,6 +572,30 @@
 		}, this);
 	});
 
+	asyncTest("Change rootLevel", function () {
+		this.oModel.attachMetadataLoaded(function() {
+			this.oTable = createTable.call(this, {rootLevel: 2});
+			var oBinding;
+
+			var fnHandler1 = function() {
+				oBinding = this.oTable.getBinding("rows");
+				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
+				equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.setRootLevel(1);
+			};
+
+			var fnHandler2 = function() {
+				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
+				equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
+				start();
+			};
+
+			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+		}, this);
+	});
+
 	// test experimental API of providing rootNodeID
 	asyncTest("Experimental Test with rootNodeID", function () {
 		this.oModel.attachMetadataLoaded(function() {
