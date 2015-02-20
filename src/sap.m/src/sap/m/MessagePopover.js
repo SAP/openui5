@@ -614,6 +614,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				this._detailsPage.addAggregation("content", this._oMessageDescriptionText);
 			}
 
+			this._listPage.$().attr("aria-hidden", "true");
 			this._navContainer.to(this._detailsPage);
 		};
 
@@ -623,6 +624,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._fnHandleBackPress = function () {
+			this._listPage.$().removeAttr("aria-hidden");
 			this._navContainer.back();
 		};
 
