@@ -16,6 +16,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.CheckBox",
+			"url": "../CheckBox.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.ComboBox",
 			"url": "../ComboBox.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -41,6 +46,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.Link",
+			"url": "../Link.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.MessageBox",
 			"url": "../MessageBox.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -48,6 +58,26 @@
 		{
 			"control": "sap.m.MessageToast",
 			"url": "../MessageToast.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.ObjectAttribute",
+			"url": "../ObjectHeader.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.ObjectHeader",
+			"url": "../ObjectHeader.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.ObjectIdentifier",
+			"url": "../ObjectIdentifier.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.ObjectStatus",
+			"url": "../ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
@@ -86,6 +116,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.SegmentedButton",
+			"url": "../SegmentedButton.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.Select",
 			"url": "Select.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -114,6 +149,16 @@
 			"control": "sap.m.TextArea",
 			"url": "../TextArea.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Tile",
+			"url": "../TileContainer.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.TileContainer",
+			"url": "../TileContainer.html",
+			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
 			"control": "sap.m.Title",
