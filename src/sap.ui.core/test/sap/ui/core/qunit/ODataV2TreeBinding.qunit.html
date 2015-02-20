@@ -915,6 +915,30 @@
 			start();
 		});
 	});
+	
+	asyncTest("getDownload URL ", function() {
+		var that = this;
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2,
+				rootLevel: 1
+			});
+			
+			var oContext;
+			
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+
+				equal(oBinding.getDownloadUrl(), "/metadata/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "check download URL");
+				equal(oBinding.getDownloadUrl("json"), "/metadata/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result?$format=json", "check download URL JSON");
+				start();
+			};
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
 
 	</script>
 
