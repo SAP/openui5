@@ -87,7 +87,7 @@ function testDirectUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		var oFramingControl = new jQuery.sap.FrameOptions({
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
-			callback: fnCallback 
+			callback: fnCallback
 		});
 
 		// assertions
@@ -208,7 +208,7 @@ function testPostMessageWhitelistServiceUnlock(sName, sEnvMode, sMode, bAllowSam
 		});
 
 		var oServer = this.sandbox.useFakeServer();
-		oServer.respondWith("GET", /\/whitelist\.json\?parentOrigin=http%3A%2F%2Fsome.other.origin.local&appl=.*/, [
+		oServer.respondWith("GET", /\/whitelist\.json\?parentOrigin=http%3A%2F%2Fsome.other.origin.local/, [
 			200,
 			{
 				"Content-Type": "application/json"

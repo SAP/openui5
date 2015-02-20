@@ -1335,7 +1335,7 @@
 
 		/**
 		 * A map of URL prefixes keyed by the corresponding module name prefix.
-		 * URL prefix can either be given as string or as object with properties url and final. 
+		 * URL prefix can either be given as string or as object with properties url and final.
 		 * When final is set to true, module name prefix cannot be overwritten.
 		 * @see jQuery.sap.registerModulePath
 		 *
@@ -1699,13 +1699,13 @@
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
-				// check whether the module is known to use an existing AMD loader, remember the AMD flag  
+				// check whether the module is known to use an existing AMD loader, remember the AMD flag
 				vAMD = mAMDShim[sModuleName] && typeof window.define === "function" && window.define.amd;
-				
+
 				try {
 
 					if ( vAMD ) {
-						// temp. remove the AMD Flag from the loader 
+						// temp. remove the AMD Flag from the loader
 						delete window.define.amd;
 					}
 
@@ -1772,10 +1772,10 @@
 						jQuery.sap.includeScript(oModule.url);
 						return;
 					}
-					
+
 				} finally {
-					
-					// restore AMD flag 
+
+					// restore AMD flag
 					if ( vAMD ) {
 						window.define.amd = vAMD;
 					}
@@ -1827,50 +1827,50 @@
 
 		/**
 		 * Determines the URL for a resource given its unified resource name.
-		 * 
+		 *
 		 * Searches the longest prefix of the given resource name for which a registration
 		 * exists (see {@link jQuery.sap.registerResourcePath}) and replaces that prefix
 		 * by the registered URL prefix.
-		 *    
+		 *
 		 * The remainder of the resource name is appended to the URL.
 		 *
 		 * <b>Unified Resource Names</b>
-		 * Several UI5 APIs use <i>Unified Resource Names (URNs)</i> as naming scheme for resources that 
-		 * they deal with (e.h. Javascript, CSS, JSON, XML, ...). URNs are similar to the path 
-		 * component of an URL: 
+		 * Several UI5 APIs use <i>Unified Resource Names (URNs)</i> as naming scheme for resources that
+		 * they deal with (e.h. Javascript, CSS, JSON, XML, ...). URNs are similar to the path
+		 * component of an URL:
 		 * <ul>
 		 * <li>they consist of a non-empty sequence of name segments</li>
-		 * <li>segments are separated by a forward slash '/'</li> 
-		 * <li>name segments consist of URL path segment characters only. It is recommened to use only ASCII 
+		 * <li>segments are separated by a forward slash '/'</li>
+		 * <li>name segments consist of URL path segment characters only. It is recommened to use only ASCII
 		 * letters (upper or lower case), digits and the special characters '$', '_', '-', '.')</li>
-		 * <li>the empty name segment is not supported</li> 
-		 * <li>names consisting of dots only, are reserved and must not be used for resources</li> 
+		 * <li>the empty name segment is not supported</li>
+		 * <li>names consisting of dots only, are reserved and must not be used for resources</li>
 		 * <li>names are case sensitive although the underlying server might be case-insensitive</li>
-		 * <li>the behavior with regard to URL encoded characters is not specified, %ddd notation should be avoided</li> 
-		 * <li>the meaning of a leading slash is undefined, but might be defined in future. It therefore should be avoided</li> 
+		 * <li>the behavior with regard to URL encoded characters is not specified, %ddd notation should be avoided</li>
+		 * <li>the meaning of a leading slash is undefined, but might be defined in future. It therefore should be avoided</li>
 		 * </ul>
-		 * 
-		 * UI5 APIs that only deal with Javascript resources, use a slight variation of this scheme, 
+		 *
+		 * UI5 APIs that only deal with Javascript resources, use a slight variation of this scheme,
 		 * where the extension '.js' is always omitted (see {@link sap.ui.define}, {@link sap.ui.require}).
-		 * 
-		 * 
+		 *
+		 *
 		 * <b>Relationship to old Module Name Syntax</b>
-		 * 
-		 * Older UI5 APIs that deal with resources (like {@link jQuery.sap.registerModulePath}, 
+		 *
+		 * Older UI5 APIs that deal with resources (like {@link jQuery.sap.registerModulePath},
 		 * {@link jQuery.sap.require} and {@link jQuery.sap.declare}) used a dot-separated naming scheme
-		 * (called 'module names') which was motivated by object names in the global namespace in 
+		 * (called 'module names') which was motivated by object names in the global namespace in
 		 * Javascript.
-		 * 
-		 * The new URN scheme better matches the names of the corresponding resources (files) as stored 
-		 * in a server and the dot ('.') is no longer a forbidden character in a resource name. This finally 
+		 *
+		 * The new URN scheme better matches the names of the corresponding resources (files) as stored
+		 * in a server and the dot ('.') is no longer a forbidden character in a resource name. This finally
 		 * allows to handle resources with different types (extensions) with the same API, not only JS files.
-		 * 
-		 * Last but not least does the URN scheme better match the naming conventions used by AMD loaders 
+		 *
+		 * Last but not least does the URN scheme better match the naming conventions used by AMD loaders
 		 * (like <code>requireJS</code>).
-		 * 
+		 *
 		 * @experimental Since 1.27.0
 		 * @param {string} sResourceName unified resource name of the resource
-		 * @returns {string} URL to load the resource from 
+		 * @returns {string} URL to load the resource from
 		 * @public
 		 */
 		jQuery.sap.getResourcePath = getResourcePath;
@@ -1897,15 +1897,15 @@
 		 *
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback for
 		 * any search.
-		 * 
-		 * The prefix can either be given as string or as object which contains the url and a final property. 
-		 * If final is set to true, overwriting a module prefix is not possible anymore. 
+		 *
+		 * The prefix can either be given as string or as object which contains the url and a final property.
+		 * If final is set to true, overwriting a module prefix is not possible anymore.
 		 *
 		 * @param {string} sModuleName module name to register a path for
 		 * @param {string | object} vUrlPrefix path prefix to register, either a string literal or an object (e.g. {url : 'url/to/res', 'final': true})
 		 * @param {string} [vUrlPrefix.url] path prefix to register
 		 * @param {boolean} [vUrlPrefix.final] flag to avoid overwriting the url path prefix for the given module name at a later point of time
-		 * 
+		 *
 		 * @public
 		 * @static
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
@@ -1940,14 +1940,14 @@
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback for
 		 * any search.
 		 *
-		 * The url prefix can either be given as string or as object which contains the url and a final flag. 
-		 * If final is set to true, overwriting a resource name prefix is not possible anymore. 
+		 * The url prefix can either be given as string or as object which contains the url and a final flag.
+		 * If final is set to true, overwriting a resource name prefix is not possible anymore.
 		 *
 		 * @param {string} sResourceNamePrefix in unified resource name syntax
 		 * @param {string | object} vUrlPrefix prefix to use instead of the sResourceNamePrefix, either a string literal or an object (e.g. {url : 'url/to/res', 'final': true})
 		 * @param {string} [vUrlPrefix.url] path prefix to register
 		 * @param {boolean} [vUrlPrefix.final] flag to avoid overwriting the url path prefix for the given module name at a later point of time
-		 * 
+		 *
 		 * @public
 		 * @static
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
@@ -1959,15 +1959,15 @@
 			if (mUrlPrefixes[sResourceNamePrefix] && mUrlPrefixes[sResourceNamePrefix]["final"] == true) {
 				log.warning( "registerResourcePath with prefix " + sResourceNamePrefix + " already set as final to '" + mUrlPrefixes[sResourceNamePrefix].url + "'. This call is ignored." );
 				return;
-			}	
-			
+			}
+
 			if ( typeof vUrlPrefix === 'string' || vUrlPrefix instanceof String ) {
 				vUrlPrefix = { 'url' : vUrlPrefix };
 			}
-			
+
 			if ( !vUrlPrefix || vUrlPrefix.url == null ) {
 				delete mUrlPrefixes[sResourceNamePrefix];
-				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");				
+				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
 				// ensure that the prefix ends with a '/'
@@ -2151,206 +2151,206 @@
 
 		/**
 		 * Defines a Javascript module with its name, its dependencies and a module value or factory.
-		 * 
-		 * The typical and only suggested usage of this method is to have one single, top level call to 
-		 * <code>sap.ui.define</code> in one Javascript resource (file). When a module is requested by its 
-		 * name for the first time, the corresponding resource is determined from the name and the current 
-		 * {@link jQuery.sap.registerResourcePath configuration}. The resource will be loaded and executed 
+		 *
+		 * The typical and only suggested usage of this method is to have one single, top level call to
+		 * <code>sap.ui.define</code> in one Javascript resource (file). When a module is requested by its
+		 * name for the first time, the corresponding resource is determined from the name and the current
+		 * {@link jQuery.sap.registerResourcePath configuration}. The resource will be loaded and executed
 		 * which in turn will execute the top level <code>sap.ui.define</code> call.
-		 * 
-		 * If the module name was omitted from that call, it will be substituted by the name that was used to 
-		 * request the module. As a preparation step, the dependencies as well as their transitive dependencies, 
-		 * will be loaded. Then, the module value will be determined: if a static value (object, literal) was 
-		 * given, that value will be the module value. If a function was given, that function will be called 
-		 * (providing the module values of the declared dependencies as parameters to the function) and its 
-		 * return value will be used as module value. The framework internally associates the resulting value 
-		 * with the module name and provides it to the original requestor of the module. Whenever the module 
-		 * is requested again, the same value will be returned (modules are executed only once). 
-		 * 
+		 *
+		 * If the module name was omitted from that call, it will be substituted by the name that was used to
+		 * request the module. As a preparation step, the dependencies as well as their transitive dependencies,
+		 * will be loaded. Then, the module value will be determined: if a static value (object, literal) was
+		 * given, that value will be the module value. If a function was given, that function will be called
+		 * (providing the module values of the declared dependencies as parameters to the function) and its
+		 * return value will be used as module value. The framework internally associates the resulting value
+		 * with the module name and provides it to the original requestor of the module. Whenever the module
+		 * is requested again, the same value will be returned (modules are executed only once).
+		 *
 		 * <i>Example:</i><br>
 		 * The following example defines a module "SomeClass", but doesn't hard code the module name.
 		 * If stored in a file 'sap/mylib/SomeClass.js', it can be requested as 'sap/mylib/SomeClass'.
 		 * <pre>
-		 *   sap.ui.define(['./Helper', 'sap/m/Bar'], function(Helper,Bar) { 
-		 *     
+		 *   sap.ui.define(['./Helper', 'sap/m/Bar'], function(Helper,Bar) {
+		 *
 		 *     // create a new class
 		 *     var SomeClass = function();
-		 *     
+		 *
 		 *     // add methods to its prototype
 		 *     SomeClass.prototype.foo = function() {
-		 *         
-		 *         // use a function from the dependency 'Helper' in the same package (e.g. 'sap/mylib/Helper' ) 
+		 *
+		 *         // use a function from the dependency 'Helper' in the same package (e.g. 'sap/mylib/Helper' )
 		 *         var mSettings = Helper.foo();
-		 *         
+		 *
 		 *         // create and return a sap.m.Bar (using its local name 'Bar')
 		 *         return new Bar(mSettings);
-		 *          
+		 *
 		 *     }
-		 *     
-		 *     // return the class as module value 
+		 *
+		 *     // return the class as module value
 		 *     return SomeClass;
-		 *     
+		 *
 		 *   });
 		 * </pre>
 		 *
 		 *
 		 * <b>Module Name Syntax</b><br>
-		 * <code>sap.ui.define</code> uses a simplified variant of the {@link jQuery.sap.getResourcePath 
+		 * <code>sap.ui.define</code> uses a simplified variant of the {@link jQuery.sap.getResourcePath
 		 * unified resource name} syntax for the module's own name as well as for its dependencies.
-		 * The only difference to that syntax is, that for <code>sap.ui.define</code> and 
-		 * <code>sap.ui.require</code>, the extension (which always would be '.js') has to be omitted. 
+		 * The only difference to that syntax is, that for <code>sap.ui.define</code> and
+		 * <code>sap.ui.require</code>, the extension (which always would be '.js') has to be omitted.
 		 * Both methods always add this extension internally.
-		 *  
-		 * As a convenience, the name of a dependency can start with the segment './' which will be 
+		 *
+		 * As a convenience, the name of a dependency can start with the segment './' which will be
 		 * replaced by the name of the package that contains the currently defined module (relative name).
-		 * 
-		 * It is best practice to omit the name of the defined module (first parameter) and to use 
-		 * relative names for the dependencies whenever possible. This reduces the necessary configuration, 
+		 *
+		 * It is best practice to omit the name of the defined module (first parameter) and to use
+		 * relative names for the dependencies whenever possible. This reduces the necessary configuration,
 		 * simplifies renaming of packages and allows to map them to a different namespace.
-		 *  
-		 *  
+		 *
+		 *
 		 * <b>Dependency to Modules</b><br>
 		 * If a dependencies array is given, each entry represents the name of another module that
-		 * the currently defined module depends on. All dependency modules are loaded before the value 
-		 * of the currently defined module is determined. The module value of each dependency module 
-		 * will be provided as a parameter to a factory function, the order of the parameters will match 
-		 * the order of the modules in the dependencies array.  
-		 * 
-		 * <b>Note:</b> the order in which the dependency modules are <i>executed</i> is <b>not</b> 
-		 * defined by the order in the dependencies array! The execution order is affected by dependencies 
-		 * <i>between</i> the dependency modules as well as by their current state (whether a module 
-		 * already has been loaded or not). Neither module implementations nor dependants that require 
-		 * a module set must make any assumption about the execution order (other than expressed by 
-		 * their dependencies). There is, however, one exception with regard to third party libraries, 
+		 * the currently defined module depends on. All dependency modules are loaded before the value
+		 * of the currently defined module is determined. The module value of each dependency module
+		 * will be provided as a parameter to a factory function, the order of the parameters will match
+		 * the order of the modules in the dependencies array.
+		 *
+		 * <b>Note:</b> the order in which the dependency modules are <i>executed</i> is <b>not</b>
+		 * defined by the order in the dependencies array! The execution order is affected by dependencies
+		 * <i>between</i> the dependency modules as well as by their current state (whether a module
+		 * already has been loaded or not). Neither module implementations nor dependants that require
+		 * a module set must make any assumption about the execution order (other than expressed by
+		 * their dependencies). There is, however, one exception with regard to third party libraries,
 		 * see the list of limitations further down below.
 		 *
-		 * <b>Note:</b>a static module value (a literal provided to <code>sap.ui.define</code>) cannot 
+		 * <b>Note:</b>a static module value (a literal provided to <code>sap.ui.define</code>) cannot
 		 * depend on the module values of the depency modules. Instead, modules can use a factory function,
-		 * calculate the static value in that function, potentially based on the dependencies, and return 
-		 * the result as module value. The same approach must be taken when the module value is supposed 
-		 * to be a function.  
+		 * calculate the static value in that function, potentially based on the dependencies, and return
+		 * the result as module value. The same approach must be taken when the module value is supposed
+		 * to be a function.
 		 *
-		 * 
+		 *
 		 * <b>Asynchronous Contract</b><br>
 		 * <code>sap.ui.define</code> is designed to support real Asynchronous Module Definitions (AMD)
-		 * in future, although it internally still uses the the old synchronous module loading of UI5. 
-		 * Callers of <code>sap.ui.define</code> therefore must not rely on any synchronous behavior 
+		 * in future, although it internally still uses the the old synchronous module loading of UI5.
+		 * Callers of <code>sap.ui.define</code> therefore must not rely on any synchronous behavior
 		 * that they might observe with the current implementation.
-		 * 
-		 * For example, callers of <code>sap.ui.define</code> must not use the module value immediately 
+		 *
+		 * For example, callers of <code>sap.ui.define</code> must not use the module value immediately
 		 * after invoking <code>sap.ui.define</code>:
-		 *  
+		 *
 		 * <pre>
 		 *   // COUNTER EXAMPLE HOW __NOT__ TO DO IT
-		 *    
+		 *
 		 *   // define a class Something as AMD module
-		 *   sap.ui.define('Something', [], function() { 
+		 *   sap.ui.define('Something', [], function() {
 		 *     var Something = function();
 		 *     return Something;
 		 *   });
-		 *   
+		 *
 		 *   // DON'T DO THAT!
 		 *   // accessing the class _synchronously_ after sap.ui.define was called
 		 *   new Something();
 		 * </pre>
 		 *
-		 * Applications that need to ensure synchronous module definition or synchronous loading of dependencies 
+		 * Applications that need to ensure synchronous module definition or synchronous loading of dependencies
 		 * <b>MUST</b> use the old {@link jQuery.sap.declare} and {@link jQuery.sap.require} APIs.
 		 *
 		 *
 		 * <b>(No) Global References</b><br>
 		 * To be in line with AMD best practices, modules defined with <code>sap.ui.define</code>
-		 * should not make any use of global variables if those variables are also available as module 
+		 * should not make any use of global variables if those variables are also available as module
 		 * values. Instead, they should add dependencies to those modules and use the corresponding parameter
 		 * of the factory function to access the module value.
-		 * 
+		 *
 		 * As the current programming model and the documentation of UI5 heavily rely on global names,
-		 * there will be a transition phase where UI5 enables AMD modules and local references to module 
-		 * values in parallel to the old global names. The forth parameter of <code>sap.ui.define</code> 
-		 * has been added to support that transition phase. When this parameter is set to true, the framework 
+		 * there will be a transition phase where UI5 enables AMD modules and local references to module
+		 * values in parallel to the old global names. The forth parameter of <code>sap.ui.define</code>
+		 * has been added to support that transition phase. When this parameter is set to true, the framework
 		 * provides two additional functionalities
-		 * 
+		 *
 		 * <ol>
-		 * <li>before the factory function is called, the existence of the global parent namespace for 
+		 * <li>before the factory function is called, the existence of the global parent namespace for
 		 *     the current module is ensured</li>
-		 * <li>the module value will be automatically exported under a global name which is derived from 
+		 * <li>the module value will be automatically exported under a global name which is derived from
 		 *     the name of the module</li>
 		 * </ol>
-		 *   
-		 * The parameter lets the framework know whether any of those two operations is needed or not. 
+		 *
+		 * The parameter lets the framework know whether any of those two operations is needed or not.
 		 * In future versions of UI5, a central configuration option is planned to suppress those 'exports'.
-		 *    
-		 * 
+		 *
+		 *
 		 * <b>Third Party Modules</b><br>
-		 * Although third party modules don't use UI5 APIs, they still can be listed as dependencies in 
-		 * a <code>sap.ui.define</code> call. They will be requested and executed like UI5 modules, but their 
+		 * Although third party modules don't use UI5 APIs, they still can be listed as dependencies in
+		 * a <code>sap.ui.define</code> call. They will be requested and executed like UI5 modules, but their
 		 * module value will be <code>undefined</code>.
-		 * 
-		 * If the currently defined module needs to access the module value of such a third party module, 
-		 * it can access the value via its global name (if the module supports such a usage). 
-		 * 
-		 * Note that UI5 temporarily deactivates an existing AMD loader while it executes third party modules 
-		 * known to support AMD. This sounds contradictarily at a first glance as UI5 wants to support AMD, 
-		 * but for now it is necessary to fully support UI5 apps that rely on global names for such modules. 
-		 *  
+		 *
+		 * If the currently defined module needs to access the module value of such a third party module,
+		 * it can access the value via its global name (if the module supports such a usage).
+		 *
+		 * Note that UI5 temporarily deactivates an existing AMD loader while it executes third party modules
+		 * known to support AMD. This sounds contradictarily at a first glance as UI5 wants to support AMD,
+		 * but for now it is necessary to fully support UI5 apps that rely on global names for such modules.
+		 *
 		 * Example:
 		 * <pre>
 		 *   // module 'Something' wants to use third party library 'URI.js'
 		 *   // It is packaged by UI5 as non-UI5-module 'sap/ui/thirdparty/URI'
-		 *   
+		 *
 		 *   sap.ui.define('Something', ['sap/ui/thirdparty/URI'], function(URIModuleValue) {
-		 *    
+		 *
 		 *     new URIModuleValue(); // fails as module value is undefined
-		 *   
-		 *     //global URI // (optional) declare usage of global name so that static code checks don't complain 
+		 *
+		 *     //global URI // (optional) declare usage of global name so that static code checks don't complain
 		 *     new URI(); // access to global name 'URI' works
-		 *     
+		 *
 		 *     ...
 		 *   });
-		 * </pre> 
-		 * 
-		 * 
+		 * </pre>
+		 *
+		 *
 		 * <b>Differences to requireJS</b><br>
 		 * The current implementation of <code>sap.ui.define</code> differs from <code>requireJS</code>
 		 * or other AMD loaders in several aspects:
 		 * <ul>
-		 * <li>the name <code>sap.ui.define</code> is different from the plain <code>define</code>. 
-		 * This has two reasons: first, it avoids the impression that <code>sap.ui.define</code> is 
-		 * an exact implementation of an AMD loader. And second, it allows the coexistence of an AMD 
-		 * loader (requireJS) and <code>sap.ui.define</code> in one application as long as UI5 or 
-		 * apps using UI5 are not fully prepared to run with an AMD loader</li> 
-		 * <li><code>sap.ui.define</code> currently loads modules with synchronous XHR calls. This is 
-		 * basically a tribute to the synchronous history of UI5. 
-		 * <b>BUT:</b> synchronous dependency loading and factory execution explicitly it not part of 
-		 * contract of <code>sap.ui.define</code>. To the contrary, it is already clear and planned 
+		 * <li>the name <code>sap.ui.define</code> is different from the plain <code>define</code>.
+		 * This has two reasons: first, it avoids the impression that <code>sap.ui.define</code> is
+		 * an exact implementation of an AMD loader. And second, it allows the coexistence of an AMD
+		 * loader (requireJS) and <code>sap.ui.define</code> in one application as long as UI5 or
+		 * apps using UI5 are not fully prepared to run with an AMD loader</li>
+		 * <li><code>sap.ui.define</code> currently loads modules with synchronous XHR calls. This is
+		 * basically a tribute to the synchronous history of UI5.
+		 * <b>BUT:</b> synchronous dependency loading and factory execution explicitly it not part of
+		 * contract of <code>sap.ui.define</code>. To the contrary, it is already clear and planned
 		 * that asynchronous loading will be implemented, at least as an alternative if not as the only
 		 * implementation. Also check section <b>Asynchronous Contract</b> above.<br>
-		 * Applications that need to ensure synchronous loading of dependencies <b>MUST</b> use the old 
+		 * Applications that need to ensure synchronous loading of dependencies <b>MUST</b> use the old
 		 * {@link jQuery.sap.require} API.</li>
-		 * <li><code>sap.ui.define</code> does not support plugins to use other file types, formats or 
+		 * <li><code>sap.ui.define</code> does not support plugins to use other file types, formats or
 		 * protocols. It is not planned to support this in future</li>
-		 * <li><code>sap.ui.define</code> does <b>not</b> support the 'sugar' of requireJS where CommonJS 
+		 * <li><code>sap.ui.define</code> does <b>not</b> support the 'sugar' of requireJS where CommonJS
 		 * style dependency declarations using <code>sap.ui.require("something")</code> are automagically
 		 * converted into <code>sap.ui.define</code> dependencies before executing the factory function.</li>
-		 * <li><code>sap.ui.define</code> does not support the '../' prefix for module names. Only 
+		 * <li><code>sap.ui.define</code> does not support the '../' prefix for module names. Only
 		 * relative names in the same package or in subpackages thereof are supported.</li>
-		 * </ul> 
-		 * 
-		 * 
+		 * </ul>
+		 *
+		 *
 		 * <b>Limitations, Design Considerations</b><br>
 		 * <ul>
-		 * <li><b>Limitation</b>As dependency management is not supported for Non-UI5 modules, the only way 
-		 *     to ensure proper execution order for such modules currently is to rely on the order in the 
+		 * <li><b>Limitation</b>As dependency management is not supported for Non-UI5 modules, the only way
+		 *     to ensure proper execution order for such modules currently is to rely on the order in the
 		 *     dependency array. Obviously, this only works as long as <code>sap.ui.define</code> uses
-		 *     synchronous loading. It will be enhanced when asynchronous loading is implemented.</li>   
-		 * <li>it was discussed to enfore asynchronous execution of the module factory function (e.g. with a 
-		 *     timeout of 0). But this would have invalidated the current migration scenario where a 
+		 *     synchronous loading. It will be enhanced when asynchronous loading is implemented.</li>
+		 * <li>it was discussed to enfore asynchronous execution of the module factory function (e.g. with a
+		 *     timeout of 0). But this would have invalidated the current migration scenario where a
 		 *     sync <code>jQuery.sap.require</code> call can load a <code>sap.ui.define</code>'ed module.
-		 *     If the module definition would not execute synchronously, the synchronous contract of the 
+		 *     If the module definition would not execute synchronously, the synchronous contract of the
 		 *     require call would be broken (default behavior in existing UI5 apps)</li>
-		 * <li>a single file must not contain multiple calls to <code>sap.ui.define</code>. Multiple calls 
-		 *     currently are only supported in the so called 'preload' files that the UI5 merge tooling produces. 
-		 *     The exact details of how this works might be changed in future implementations and are not 
+		 * <li>a single file must not contain multiple calls to <code>sap.ui.define</code>. Multiple calls
+		 *     currently are only supported in the so called 'preload' files that the UI5 merge tooling produces.
+		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
 		 * @param {string} [sId] name of the module. When omitted, the loader determines the name from the request
@@ -2358,10 +2358,10 @@
 		 * @param {function|any} vFactory the module value or a function that calculates the value
 		 * @param {boolean} [bExport] whether an export to global names is required - should be used by SAP-owned code only
 		 * @since 1.27.0
-		 * @public 
-		 * @experimental Since 1.27.0 - not all aspects of sap.ui.define are settled yet. If the documented 
-		 *        constraints and limitations are obeyed, SAP-owned code might use it. If the forth parameter 
-		 *        is not used and if the asynchronous contract is respected, even Non-SAP might use it.   
+		 * @public
+		 * @experimental Since 1.27.0 - not all aspects of sap.ui.define are settled yet. If the documented
+		 *        constraints and limitations are obeyed, SAP-owned code might use it. If the forth parameter
+		 *        is not used and if the asynchronous contract is respected, even Non-SAP might use it.
 		 */
 		sap.ui.define = function(sId, aDependencies, vFactory, bExport) {
 			var sModuleName, i;
@@ -2437,53 +2437,53 @@
 
 		/**
 		 * Resolves one or more module dependencies.
-		 * 
+		 *
 		 * <b>Synchronous Retrieval of a Single Module Value</b>
-		 * 
-		 * When called with a single string, that string is assumed to be the name of an already loaded 
+		 *
+		 * When called with a single string, that string is assumed to be the name of an already loaded
 		 * module and the value of that module is returned. If the module has not been loaded yet,
-		 * or if it is a Non-UI5 module (e.g. third party module), <code>undefined</code> is returned.  
+		 * or if it is a Non-UI5 module (e.g. third party module), <code>undefined</code> is returned.
 		 * This signature variant allows synchronous access to module values without initiating module loading.
-		 * 
+		 *
 		 * Sample:
 		 * <pre>
 		 *   var JSONModel = sap.ui.require("sap/ui/model/json/JSONModel");
  		 * </pre>
- 		 * 
+ 		 *
  		 * For modules that are known to be UI5 modules, this signature variant can be used to check whether
- 		 * the module has been loaded. 
- 		 * 
+ 		 * the module has been loaded.
+ 		 *
 		 * <b>Asynchronous Loading of Multiple Modules</b>
-		 * 
+		 *
 		 * If an array of strings is given and (optionally) a callback function, then the strings
-		 * are interpreted as module names and the corresponding modules (and their transitive 
+		 * are interpreted as module names and the corresponding modules (and their transitive
 		 * dependencies) are loaded. Then the callback function will be called asynchronously.
 		 * The module values of the specified modules will be provided as parameters to the callback
-		 * function in the same order in which they appeared in the dependencies array. 
-		 * 
-		 * The return value for the asynchronous use case is <code>undefined</code>.  
+		 * function in the same order in which they appeared in the dependencies array.
+		 *
+		 * The return value for the asynchronous use case is <code>undefined</code>.
 		 *
 		 * <pre>
 		 *   sap.ui.require(['sap/ui/model/json/JSONModel', 'sap/ui/core/UIComponent'], function(JSONModel,UIComponent) {
-		 *     
+		 *
 		 *     var MyComponent = UIComponent.extend('MyComponent', {
 		 *       ...
 		 *     });
 		 *     ...
-		 *     
+		 *
 		 *   });
  		 * </pre>
  		 *
-		 * This method uses the same variation of the {@link jQuery.sap.getResourcePath unified resource name} 
+		 * This method uses the same variation of the {@link jQuery.sap.getResourcePath unified resource name}
 		 * syntax that {@link sap.ui.define} uses: module names are specified without the implicit extension '.js'.
-		 * Relative module names are not supported. 
-		 * 
+		 * Relative module names are not supported.
+		 *
 		 * @param {string|string[]} vDependencies dependency (dependencies) to resolve
 		 * @param {function} [fnCallback] callback function to execute after resolving an array of dependencies
 		 * @returns {any|undefined} a single module value or undefined
 		 * @public
-		 * @experimental Since 1.27.0 - not all aspects of sap.ui.require are settled yet. E.g. the return value 
-		 * of the asynchronous use case might change (currently it is undefined). 
+		 * @experimental Since 1.27.0 - not all aspects of sap.ui.require are settled yet. E.g. the return value
+		 * of the asynchronous use case might change (currently it is undefined).
 		 */
 		sap.ui.require = function(vDependencies, fnCallback) {
 			jQuery.sap.assert(typeof vDependencies === 'string' || jQuery.isArray(vDependencies), "dependency param either must be a single string or an array of strings");
@@ -2493,25 +2493,25 @@
 
 				var sModuleName = vDependencies + '.js',
 					oModule = mModules[sModuleName];
-				
+
 				return oModule ? (oModule.content || jQuery.sap.getObject(urnToUI5(sModuleName))) : undefined;
-				
+
 			}
 
 			requireAll(vDependencies, function(aModules) {
 
 				if ( typeof fnCallback === 'function' ) {
 					// enforce asynchronous execution of callback
-					setTimeout(function() { 
+					setTimeout(function() {
 						fnCallback.apply(window, aModules);
 					},0);
 				}
-				
+
 			});
 
 			// return undefined;
 		};
-		
+
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
 
 			var sURL, iTask;
@@ -2627,9 +2627,9 @@
 
 		/**
 		 * Converts a UI5 module name to a unified resource name.
-		 * 
+		 *
 		 * Used by View and Fragment APIs to convert a given module name into an URN.
-		 * 
+		 *
 		 * @experimental Since 1.16.0, not for public usage yet.
 		 * @private
 		 */
@@ -2790,31 +2790,31 @@
 			}
 		});
 		*/
-		
+
 		/**
 		 * Loads the given Javascript resource (URN) asynchronously via as script tag.
 		 * Returns a promise that will be resolved when the load event is fired or reject
-		 * when the error event is fired. 
-		 * 
+		 * when the error event is fired.
+		 *
 		 * Note: execution errors of the script are not reported as 'error'.
-		 * 
-		 * This method is not a full implementation of require. It is intended only for 
+		 *
+		 * This method is not a full implementation of require. It is intended only for
 		 * loading "preload" files that do not define an own module / module value.
-		 * 
-		 * Functionality might be removed/renamed in future, so no code outside the 
-		 * sap.ui.core library must use it. 
-		 * 
+		 *
+		 * Functionality might be removed/renamed in future, so no code outside the
+		 * sap.ui.core library must use it.
+		 *
 		 * @experimental
 		 * @private
 		 */
 		jQuery.sap._loadJSResourceAsync = function(sResource, bIgnoreErrors) {
-			
+
 			return new Promise(function(resolve,reject) {
-				
+
 				var oModule = mModules[sResource] || (mModules[sResource] = { state : INITIAL });
 				var sUrl = oModule.url = getResourcePath(sResource);
 				oModule.state = LOADING;
-				
+
 				var oScript = window.document.createElement('SCRIPT');
 				oScript.src = sUrl;
 				oScript.dataset.sapUiModule = sResource;
@@ -2828,7 +2828,7 @@
 //						oModule.error = JSON.parse(error);
 //						jQuery.sap.log.error("failed to load Javascript resource: " + sResource + ":" + error);
 //						reject(oModule.error);
-//					} 
+//					}
 					oModule.state = READY;
 					// TODO oModule.data = ?
 					resolve();
@@ -2847,16 +2847,16 @@
 			});
 
 		};
-		
+
 		return function() {
-			
-			//remove final information in mUrlPrefixes 
+
+			//remove final information in mUrlPrefixes
 			var mFlatUrlPrefixes = {};
 				jQuery.each(mUrlPrefixes, function(sKey,oUrlPrefix) {
 				mFlatUrlPrefixes[sKey] = oUrlPrefix.url;
 			});
 
-			
+
 			return { modules : mModules, prefixes : mFlatUrlPrefixes };
 		};
 
@@ -3652,7 +3652,7 @@
 			this._applyState(true, true);
 		} else {
 			// framed page
-			
+
 			this._lock();
 
 			// "deny" mode blocks embedding page from all origins
@@ -3660,7 +3660,7 @@
 				this._callback(false);
 				return;
 			}
-			
+
 			if (this.bAllowSameOrigin) {
 
 				try {
@@ -3686,11 +3686,11 @@
 				}
 
 			} else {
-				// same origin not allowed 				
+				// same origin not allowed
 				FrameOptions.__parent.postMessage('SAPFrameProtection*require-origin', '*');
 			}
 
-		} 
+		}
 
 	};
 
@@ -3710,11 +3710,11 @@
 	FrameOptions.__parent = parent;
 	FrameOptions.__self = self;
 	FrameOptions.__top = top;
-	
+
 	// List of events to block while framing is unconfirmed
 	FrameOptions._events = [
 		"mousedown", "mouseup", "click", "dblclick", "mouseover", "mouseout",
-		"touchstart", "touchend", "touchmove", "touchcancel", 
+		"touchstart", "touchend", "touchmove", "touchcancel",
 		"keydown", "keypress", "keyup"
 	];
 
@@ -3740,12 +3740,12 @@
 			return r.test(sProbe);
 		}
 	};
-	
+
 	FrameOptions._lockHandler = function(oEvent) {
 		oEvent.stopPropagation();
 		oEvent.preventDefault();
 	};
-	
+
 	FrameOptions.prototype._createBlockLayer = function() {
 		if (document.readyState == "complete") {
 			var lockDiv = document.createElement("div");
@@ -3761,7 +3761,7 @@
 			this._lockDiv = lockDiv;
 		}
 	};
-	
+
 	FrameOptions.prototype._setCursor = function() {
 		if (this._lockDiv) {
 			this._lockDiv.style.cursor = this.sStatus == "denied" ? "not-allowed" : "wait";
@@ -3789,7 +3789,7 @@
 			for (var i = 0; i < FrameOptions._events.length; i++) {
 				document.removeEventListener(FrameOptions._events[i], FrameOptions._lockHandler, true);
 			}
-		}	
+		}
 		if (this.bShowBlockLayer) {
 			document.removeEventListener("readystatechange", this._blockLayer);
 			if (this._lockDiv) {
@@ -3855,8 +3855,7 @@
 		} else if (this.mSettings.whitelistService) {
 			var that = this;
 			var xmlhttp = new XMLHttpRequest();
-			var url = this.mSettings.whitelistService + '?parentOrigin=' + encodeURIComponent(this.sParentOrigin)
-			+ '&appl=' + encodeURIComponent(location.pathname);
+			var url = this.mSettings.whitelistService + '?parentOrigin=' + encodeURIComponent(this.sParentOrigin);
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == 4) {
 					that._handleXmlHttpResponse(xmlhttp);
@@ -3895,13 +3894,13 @@
 	FrameOptions.prototype._handlePostMessage = function(oEvent) {
 		var oSource = oEvent.source,
 			sData = oEvent.data;
-		
+
 		// For compatibility with previous version empty message from parent means parent-unlocked
 		// if (oSource === FrameOptions.__parent && sData == "") {
 		//	sData = "SAPFrameProtection*parent-unlocked";
 		// }
-		
-		if (oSource === FrameOptions.__self || oSource == null || 
+
+		if (oSource === FrameOptions.__self || oSource == null ||
 			typeof sData !== "string" || sData.indexOf("SAPFrameProtection*") === -1) {
 			return;
 		}
