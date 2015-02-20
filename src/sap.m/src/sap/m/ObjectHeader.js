@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype.setNumberUnit = function (sUnit) {
 		this.setProperty("numberUnit", sUnit);
-		this._getObjectNumber().setNumberUnit(sUnit);
+		this._getObjectNumber().setUnit(sUnit);
 		return this;
 	};
 	
