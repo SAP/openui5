@@ -218,45 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		
 		return oNodeState.sections;
 	};
-	
-	/**
-	 * Merges together oNewSection into a set of other sections (aSections)
-	 * The array/objects are not modified, the function returns a new section array.
-	 */
-	ODataTreeBindingAdapter.prototype._mergeSections = function (aSections, oNewSection) {
 
-		// Iterate over all known/loaded sections of the node
-		var aNewSections = [];
-		for (var i = 0; i < aSections.length; i++) {
-			
-			var oCurrentSection = aSections[i];
-			var iCurrentSectionEndIndex = oCurrentSection.startIndex + oCurrentSection.length;
-			var iNewSectionEndIndex = oNewSection.startIndex + oNewSection.length;
-			
-			if (oNewSection.startIndex <= iCurrentSectionEndIndex && iNewSectionEndIndex >= iCurrentSectionEndIndex 
-					&& oNewSection.startIndex >= oCurrentSection.startIndex) {
-				//new section expands to the left
-				oNewSection.startIndex = oCurrentSection.startIndex; 
-				oNewSection.length = iNewSectionEndIndex - oCurrentSection.startIndex;
-			} else if (oNewSection.startIndex <= oCurrentSection.startIndex && iNewSectionEndIndex >= oCurrentSection.startIndex
-					&& iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section expands to the right 
-				oNewSection.length = iCurrentSectionEndIndex - oNewSection.startIndex;
-			} else if (oNewSection.startIndex >= oCurrentSection.startIndex && iNewSectionEndIndex <= iCurrentSectionEndIndex) {
-				//new section is contained in old one
-				oNewSection.startIndex = oCurrentSection.startIndex;
-				oNewSection.length = oCurrentSection.length;
-			} else if (iNewSectionEndIndex < oCurrentSection.startIndex || oNewSection.startIndex > iCurrentSectionEndIndex) {
-				//old and new sections do not overlap, either the new section is completely left or right from the old one
-				aNewSections.push(oCurrentSection);
-			}
-		}
-		
-		aNewSections.push(oNewSection);
-		
-		return aNewSections;
-	};
-	
 	/**
 	 * Increases the section length of all sections of all nodes in the tree. This is necessary in case the page size increases between requests.
 	 * Otherwise unnecessary requests would be performed, because the section length does not match the requested page size.
@@ -309,10 +271,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
+
 		if (!iThreshold) {
 			iThreshold = 0;
 		}
-		
+
 		// test if the pagesize has increased -> used to optimise "too small" node sections, see _loadChildContexts
 		if (iLength > this._iPageSize) {
 			this._iPageSize = iLength;
@@ -514,7 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 				iRequestedLength = oCurrentSection.length;
 			} else {
 				//the maximum entries we can request is the groupSize
-				iRequestedLength = Math.min(oCurrentSection.length, iMaxGroupSize - oCurrentSection.startIndex);
+				iRequestedLength = Math.max(Math.min(oCurrentSection.length, iMaxGroupSize - oCurrentSection.startIndex), 0);
 			}
 			
 			//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
@@ -534,6 +497,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			//for each child context we create a new node
 			for (var j = 0; j < aChildContexts.length; j++) {
 				var oChildContext = aChildContexts[j];
+				
+				// in case the binding does return a gap in the data (a.k.a. undefined) we skip this child
+				// it will be collected as a missing section later in getContexts()
+				if (!oChildContext) {
+					continue;
+				}
 				
 				// calculate the index of the child node in the children array
 				// the offset in the children array is the section start index
