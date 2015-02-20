@@ -19,75 +19,45 @@ sap.ui.define(["jquery.sap.global"],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	IconRenderer.render = function(oRm, oControl) {
-		// write the HTML into the render manager
-		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getSrc()),
-			sWidth = oControl.getWidth(),
+
+		var sWidth = oControl.getWidth(),
 			sHeight = oControl.getHeight(),
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
-			tooltip = oControl.getTooltip_AsString(),
+			sTooltip = oControl.getTooltip_AsString();
 
-			//in IE8 :before is not supported, text needs to be rendered in span
-			bTextNeeded = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9);
-
-		oRm.write("<span");
-		oRm.writeControlData(oControl);
+		var mAttributes = {}, mStyles = {};
 
 		if (!oControl.getDecorative()) {
-			oRm.writeAttribute("tabindex", 0);
+			mAttributes["tabindex"] = 0;
 		}
 
-		if (tooltip) {
-			oRm.writeAttributeEscaped("title", tooltip);
-		}
-
-		if (oIconInfo) {
-
-			if (!bTextNeeded) {
-				oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
-			}
-
-			oRm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
+		if (sTooltip) {
+			mAttributes["title"] = sTooltip;
 		}
 
 		if (sWidth) {
-			oRm.addStyle("width", sWidth);
+			mStyles["width"] = sWidth;
 		}
 
 		if (sHeight) {
-			oRm.addStyle("height", sHeight);
-			oRm.addStyle("line-height", sHeight);
+			mStyles["height"] = mStyles["line-height"] = sHeight;
 		}
 
 		if (sColor) {
-			oRm.addStyle("color", sColor);
+			mStyles["color"] = sColor;
 		}
 
 		if (sBackgroundColor) {
-			oRm.addStyle("background-color", sBackgroundColor);
+			mStyles["background-color"] = sBackgroundColor;
 		}
 
 		if (sSize) {
-			oRm.addStyle("font-size", sSize);
+			mStyles["font-size"] = sSize;
 		}
 
-		oRm.addClass("sapUiIcon");
-
-		if (oIconInfo && !oIconInfo.suppressMirroring) {
-			oRm.addClass("sapUiIconMirrorInRTL");
-		}
-
-		oRm.writeClasses();
-		oRm.writeStyles();
-
-		oRm.write(">"); // span element
-
-		if (oIconInfo && bTextNeeded) {
-			oRm.write(oIconInfo.content);
-		}
-
-		oRm.write("</span>");
+		oRm.writeIcon(oControl.getSrc(), [], mAttributes, mStyles, oControl);
 	};
 
 	return IconRenderer;
