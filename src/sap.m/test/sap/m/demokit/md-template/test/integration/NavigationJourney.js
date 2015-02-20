@@ -19,7 +19,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.GivenIStartTheAppOnADesktopDevice();
+		Given.iStartTheAppOnADesktopDevice();
 
 		//Actions
 		When.iLookAtTheScreen();

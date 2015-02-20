@@ -33,62 +33,72 @@ sap.ui.define([
 	
 			routing : {
 				config : {
+					// bugfix: right now there is a bug in the routing/targets, the prefixing for xml views is not working
+					// therefore the controlId "idAppControl" cannot be found
+					// Tobias is fixing this at the moment
+					rootView : "__xmlview0",
+					// end bugfix
 					routerClass : Router,
 					viewType : "XML",
 					viewPath : "sap.ui.demo.mdtemplate.view",
-					targetAggregation : "detailPages",
-					clearTarget : false
+					controlId: "idAppControl",
+					controlAggregation: "detailPages",
+					bypassed: {
+						target: ["master", "notFound"]
+					}
 				},
 				routes : [
 					{
-						name : "masterParent",
-						view : "Master",
-						targetAggregation : "masterPages",
-						targetControl : "idAppControl",
-						subroutes : [
-							{
-								pattern : "objects/{objectId}",
-								name : "object",
-								view : "Detail"
-							},
-							{
-								pattern : "object/{objectId}/lineitem/{lineItemId}",
-								name: "lineItem",
-								view: "LineItem"
-							}
-						]
+						pattern: "",
+						name: "master",
+						target: ["object", "master"]
 					},
 					{
-						name : "detailParent",
-						view : "Detail",
-						targetControl : "idAppControl",
-						subroutes: [
-							{
-								pattern : "",
-								name : "main",
-								view : "Master",
-								targetAggregation : "masterPages"
-							}
-						]
+						pattern : "object/{objectId}",
+						name : "object",
+						target: ["master", "object"]
 					},
 					{
-						name : "catchallMaster",
-						view : "Master",
-						targetAggregation : "masterPages",
-						targetControl : "idAppControl",
-						subroutes : [
-							{
-								pattern : ":all*:",
-								name : "catchallDetail",
-								view : "NotFound",
-								transition : "show"
-							}
-						]
+						pattern : "object/{objectId}/lineitem/{lineItemId}",
+						name: "lineItem",
+						target: ["master", "lineItem"]
 					}
-				]
+				],
+				targets: {
+					master : {
+						viewName: "Master",
+						viewLevel: 1,
+						controlAggregation: "masterPages"
+					},
+					object : {
+						viewName: "Detail",
+						viewLevel: 2
+					},
+					lineItem : {
+						viewName: "LineItem",
+						viewLevel: 3
+					},
+					// not found targets
+					detailObjectNotFound : {
+						viewName: "DetailObjectNotFound",
+						viewLevel: 3
+					},
+					detailNoObjectsAvailable: {
+						viewName: "DetailNoObjectsAvailable",
+						viewLevel: 3
+					},
+					lineItemNotFound : {
+						viewName: "LineItemNotFound",
+						viewLevel: 3
+					},
+					notFound : {
+						viewName: "NotFound",
+						viewLevel: 3
+					}
+				}
 			}
 		},
-	
+
 		/** 
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.  
 		 * In this method, the resource and application models are set and the router is initialized.
@@ -96,23 +106,23 @@ sap.ui.define([
 		 */
 		init : function () {
 			var mConfig = this.getMetadata().getConfig();
-	
+
 			// call the base component's init function
 			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
-	
+
 			// set the internationalization model
 			this.setModel(new ResourceModel({
 				bundleName : mConfig.messageBundle
 			}), "i18n");
-	
+
 			this.oListSelector = new ListSelector();
-	
+
 			// set the app data model
 			this.setModel(new AppModel(mConfig.serviceUrl));
-	
+
 			// set the device model
 			this.setModel(new DeviceModel(), "device");
-	
+
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 		}

@@ -19,11 +19,11 @@ sap.ui.require(
 
 		function opaTestPhoneAndDesktop (sTestName, sHash , fnTest) {
 			opaTest("Phone: " + sTestName, function (Given, When, Then) {
-				Given.GivenIStartTheAppOnAPhone(sHash);
+				Given.iStartTheAppOnAPhone(sHash);
 				fnTest.call(this, Given, When, Then);
 			});
 			opaTest("Desktop: " + sTestName, function (Given, When, Then) {
-				Given.GivenIStartTheAppOnADesktopDevice(sHash);
+				Given.iStartTheAppOnADesktopDevice(sHash);
 				fnTest.call(this, Given, When, Then);
 			});
 		}
@@ -33,19 +33,57 @@ sap.ui.require(
 			When.iLookAtTheScreen();
 
 			// Assertions
-			Then.iShouldSeeTheEmptyPage().
-				and.theTextShouldSayResourceNotFound().
+			Then.iShouldSeeTheNotFoundPage().
+				//and.theListShouldSayResourceNotFound().
+				and.theNotFoundPageShouldSayResourceNotFound().
+				and.iTeardownMyAppFrame();
+		});
+		
+		opaTest("Should see the resource not found page and no selection in the master list when navigating to an invalid hash", function (Given, When, Then) {
+			//Actions
+			Given.iStartTheAppOnADesktopDevice();
+			When.iLookAtTheScreen().
+				and.iChangeTheHashToSomethingInvalid();
+
+			// Assertions
+			Then.iShouldSeeTheNotFoundPage().
+				and.theListShouldHaveNoSelection().
+				and.theNotFoundPageShouldSayResourceNotFound().
 				and.iTeardownMyAppFrame();
 		});
 
-		opaTestPhoneAndDesktop("Should see the not found list", "#/objects/SomeInvalidObjectId", function (Given, When, Then) {
+
+		opaTestPhoneAndDesktop("Should see the not found master and detail page if an invalid object id has been called", "#/object/SomeInvalidObjectId", function (Given, When, Then) {
 			//Actions
 			When.iLookAtTheScreen();
 
-			//TODO: this test must be updated to show a more meaningful error message
 			// Assertions
-			Then.iShouldSeeTheEmptyPage().
-				and.theTextShouldSayResourceNotFound().
+			Then.iShouldSeeTheObjectNotFoundPage().
+				and.theNotFoundPageShouldSayObjectNotFound().
+				and.iTeardownMyAppFrame();
+		});
+
+		opaTestPhoneAndDesktop("Should see the not found master and detail page if an invalid line item id has been called", "#/object/ObjectID_3/lineitem/SomeInvalidLineItemId", function (Given, When, Then) {
+			//Actions
+			When.iLookAtTheScreen();
+
+			// Assertions
+			Then.iShouldSeeTheLineItemNotFoundPage().
+				and.theNotFoundPageShouldSayLineItemNotFound().
+				and.iTeardownMyAppFrame();
+		});
+		
+		opaTestPhoneAndDesktop("Should see the not found text for no search results", "", function (Given, When, Then) {
+			//Actions
+			When.iLookAtTheScreen();
+
+			// Assertions
+			Then.iShouldSeeTheObjectList().
+				and.theObjectListShouldHave9Entries();
+			
+			When.iSearchForSomethingWithNoResults();
+
+			Then.iShouldSeeTheNoDataTextForNoSearchResults().
 				and.iTeardownMyAppFrame();
 		});
 

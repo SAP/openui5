@@ -15,11 +15,11 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				return sUrl + sUrlParameters + sHash;
 			},
 
-			GivenIStartTheAppOnADesktopDevice : function (sHash) {
+			iStartTheAppOnADesktopDevice : function (sHash) {
 				this.iStartMyAppInAFrame(this._getFrameUrl(sHash));
 			},
 
-			GivenIStartTheAppOnAPhone : function (sHash) {
+			iStartTheAppOnAPhone : function (sHash) {
 				this.iStartMyAppInAFrame(this._getFrameUrl(sHash, true));
 			}
 		});

@@ -10,7 +10,7 @@ sap.ui.define([
 			
 			// When there is a list displayed, bind to the first item.
 			if (!sap.ui.Device.system.phone) {
-				this.getRouter().getRoute("main").attachPatternMatched(this._onMasterMatched, this);
+				this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
 			}
 		},
 
@@ -45,8 +45,8 @@ sap.ui.define([
 				}
 			}.bind(this),
 			function () {
-				//TODO: display the 'No Items' view
-			});
+				this.getRouter().getTargets().display("detailNoObjectsAvailable");
+			}.bind(this));
 		},
 
 		
@@ -81,7 +81,7 @@ sap.ui.define([
 				}.bind(this),
 				function () {
 					this.getView().setBusy(false);
-					this.showEmptyView();
+					this.getRouter().getTargets().display("detailObjectNotFound");
 				}.bind(this));
 		},
 
