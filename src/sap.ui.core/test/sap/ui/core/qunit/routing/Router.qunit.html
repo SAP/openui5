@@ -1092,9 +1092,9 @@
 						viewType: "XML",
 						// we stub the view creation
 						viewPath: "bar",
-						view: "foo",
+						viewName: "foo",
 						// only shells will be used
-						targetAggregation: "content"
+						controlAggregation: "content"
 					};
 
 					this.oRouterConfig = {
@@ -1113,7 +1113,7 @@
 
 		test("Should display a target referenced by a route", function () {
 			// Arrange
-			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+			this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 				return createXmlView();
 			});
 
@@ -1121,7 +1121,7 @@
 
 			var oTargetConfig = {
 				myTarget : {
-					targetControl: this.oShell.getId()
+					controlId: this.oShell.getId()
 				}
 			};
 			this.oRouterConfig.routeName.target = "myTarget";
@@ -1144,7 +1144,7 @@
 
 		test("Should display multiple targets referenced by a route", function () {
 			// Arrange
-			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+			this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 				return createXmlView();
 			});
 
@@ -1152,10 +1152,10 @@
 
 			var oTargetConfig = {
 				myTarget : {
-					targetControl: this.oShell.getId()
+					controlId: this.oShell.getId()
 				},
 				secondTarget: {
-					targetControl: this.oSecondShell.getId()
+					controlId: this.oSecondShell.getId()
 				}
 			};
 			this.oRouterConfig.routeName.target = ["myTarget", "secondTarget"];
@@ -1178,19 +1178,18 @@
 
 		test("Should display child targets referenced by a route", function () {
 			// Arrange
-			this.stub(sap.ui.core.routing.Views.prototype, "getView", function () {
+			this.stub(sap.ui.core.routing.Views.prototype, "_getView", function () {
 				return createXmlView();
 			});
 
 			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
 			var oTargetConfig = {
 				myTarget : {
-					targetControl: this.oShell.getId(),
-					children : {
-						myChild : {
-							targetControl: this.oSecondShell.getId()
-						}
-					}
+					controlId: this.oShell.getId()
+				},
+				myChild : {
+					parent: "myTarget",
+					controlId: this.oSecondShell.getId()
 				}
 			};
 			this.oRouterConfig.routeName.target = ["myChild"];
@@ -1225,7 +1224,87 @@
 			var oRouter = new sap.ui.core.routing.Router();
 
 			strictEqual(oRouter.getTargets(), undefined, "Did not create a Targets instance");
-		})
+		});
+
+		QUnit.module("bypassed", {
+			setup: function () {
+				sap.ui.core.routing.HashChanger.getInstance().replaceHash("test");
+			},
+			teardown: function () {
+				this.oRouter.destroy();
+				sap.ui.core.routing.HashChanger.getInstance().replaceHash("");
+			}
+		});
+
+		QUnit.test("Should attach and detach the bypassed event", function (assert) {
+			// Arrange + System under test
+			var oListener = {},
+				oData = {},
+				fnBypassed = this.spy(function (oEvent, oDataInner) {
+					var oParameters = oEvent.getParameters();
+
+					assert.strictEqual(this, oListener, "this pointer is correct");
+					assert.strictEqual(oData, oDataInner, "the data was passed");
+					assert.strictEqual(oParameters.hash, "test","the hash was passed");
+				});
+
+			this.oRouter = new sap.ui.core.routing.Router([
+				{
+					name: "bar",
+					pattern: "bar"
+				}
+			]);
+
+			// Act router does not have a route that matches the pattern set in the setup
+			var oReturnValue = this.oRouter.attachBypassed(oData, fnBypassed, oListener);
+			this.oRouter.initialize();
+
+			//Assert
+			assert.strictEqual(fnBypassed.callCount, 1, "Did call the callback function once");
+			assert.strictEqual(this.oRouter, oReturnValue, "Able to chain attach");
+
+			// Act no bypass
+			this.oRouter.parse("bar");
+			assert.strictEqual(fnBypassed.callCount, 1, "Did not call the callback function for no bypass");
+
+			// Act detach
+			oReturnValue = this.oRouter.detachBypassed(fnBypassed, oListener);
+			this.oRouter.parse("foo");
+
+			// Assert detach
+			assert.strictEqual(fnBypassed.callCount, 1, "The function is still invoked once");
+			assert.strictEqual(this.oRouter, oReturnValue, "Able to chain detach");
+		});
+
+		QUnit.test("Should create targets in the bypassed event", function (assert) {
+			// Arrange
+			this.oRouter = new sap.ui.core.routing.Router([], {
+					viewType: "JS",
+					view : "nonExistingView",
+					bypassed : {
+						target: ["foo", "bar"]
+					}
+				},
+				null,
+				{
+					foo: {
+					},
+					bar: {
+					}
+				});
+
+			var fnDisplayFooStub = this.stub(this.oRouter.getTargets().getTarget("foo"), "display", jQuery.noop),
+				fnDisplayBarStub = this.stub(this.oRouter.getTargets().getTarget("bar"), "display", jQuery.noop);
+
+			// Act
+			this.oRouter.initialize();
+
+			// Assert
+			assert.strictEqual(fnDisplayFooStub.callCount, 1, "The foo target is displayed");
+			assert.strictEqual(fnDisplayBarStub.callCount, 1, "The bar target is displayed");
+			sinon.assert.calledWith(fnDisplayFooStub, sinon.match({ hash: "test"}));
+			sinon.assert.calledWith(fnDisplayBarStub, sinon.match({ hash: "test"}));
+		});
 	})();
 </script>
 </head>

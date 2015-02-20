@@ -1,15 +1,17 @@
-// Copyright (c) 2013 SAP SE, All Rights Reserved
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
-	function($, EventProvider, Target) {
+/*!
+ * ${copyright}
+ */
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
+	function(Targets, TargetHandler, Target) {
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application.
-		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.
-		 * If you are using the mobile library, please use {@link sap.m.routing.Targets} instead of this class.
+		 * Provides a convenient way for placing views into the correct containers of your application
+		 * The mobile extension for targets that target the controls {@link sap.m.SplitContainer} or a {@link sap.m.NavContainer} and all controls extending these.
+		 * Other controls are also allowed, but the extra parameters viewLevel, transition and transitionParameters are ignored and it will behave like {@link sap.ui.core.routing.Targets}.
 		 *
 		 * @class
-		 * @extends sap.ui.base.EventProvider
+		 * @extends sap.ui.core.routing.Targets
 		 * @param {object} oOptions
 		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the views of all the targets defined, so if 2 targets have the same viewName, the same instance of the view will be displayed.
 		 * @param {object} [oOptions.config] this config allows all the values oOptions.targets.anyName allows, these will be the default values for properties used in the target.<br/>
@@ -239,253 +241,125 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 		 * The 'Detail' view will be put into the pages aggregation of the App. And afterwards the 'SecondTabContent' view will be put into the content Aggregation of the second IconTabFilter.
 		 * So a parent will always be created before the target referencing it.
 		 *
+		 *
+		 * @param {integer} [oOptions.targets.anyName.viewLevel]
+		 * If you are having an application that has a logical order of views (eg: a create account process, first provide user data, then review and confirm them).
+		 * You always want to always show a backwards transition if a navigation from the confirm to the userData page takes place.
+		 * Therefore you may use the viewLevel. The viewLevel has to be an integer. The user data page should have a lower number than the confirm page.
+		 * These levels should represent the user process of your application and they do not have to match the container structure of your Targets.
+		 * If the user navigates between views with the same viewLevel, a forward transition is taken. If you pass a direction into the display function, the viewLevel will be ignored.<br/>
+		 * <b>Example:</b></br>
+		 * <pre>
+		 * <code>
+		 *     {
+		 *         targets: {
+		 *             startPage: {
+		 *                 viewLevel: 0
+		 *                 // more properties
+		 *             },
+		 *             userData: {
+		 *                 viewLevel: 1
+		 *                 // more properties
+		 *             },
+		 *             confirmRegistration: {
+		 *                 viewLevel: 2
+		 *                 // more properties
+		 *             },
+		 *             settings: {
+		 *                 //no view level here
+		 *             }
+		 *         }
+		 *     }
+		 * </code>
+		 * </pre>
+		 *
+		 * Currently the 'userData' target is displayed.
+		 * <ul>
+		 *     <li>
+		 *         If we navigate to 'startPage' the navContainer will show a backwards navigation, since the viewLevel is lower.
+		 *     </li>
+		 *     <li>
+		 *         If we navigate to 'userData' the navContainer will show a forwards navigation, since the viewLevel is higher.
+		 *     </li>
+		 *     <li>
+		 *         If we navigate to 'settings' the navContainer will show a forwards navigation, since the viewLevel is not defined and cannot be compared.
+		 *     </li>
+		 * </ul>
+		 *
+		 * @param {string} [oOptions.targets.anyName.transition] define which transition of the {@link sap.m.NavContainer} will be applied when navigating. If it is not defined, the nav container will take its default transition.
+		 * @param {string} [oOptions.targets.anyName.transitionParameters] define the transitionParameters of the {@link sap.m.NavContainer}
+		 *
 		 * @since 1.28
-		 * @public
-		 * @alias sap.ui.core.routing.Targets
+		 * @private
+		 * @alias sap.m.routing.Targets
 		 */
-		return EventProvider.extend("sap.ui.core.routing.Targets", {
-
-			constructor : function(oOptions) {
-				var sTargetOptions,
-					sTargetName;
-
-				EventProvider.apply(this);
-				this._mTargets = {};
-				this._oConfig = oOptions.config;
-				this._oViews = oOptions.views;
-
-				for (sTargetOptions in oOptions.targets) {
-					if (oOptions.targets.hasOwnProperty(sTargetOptions)) {
-						this._createTarget(sTargetOptions, oOptions.targets[sTargetOptions]);
-					}
+		return Targets.extend("sap.m.routing.Targets", {
+			constructor: function(oOptions) {
+				if (oOptions.targetHandler) {
+					this._oTargetHandler = oOptions.targetHandler;
+				} else {
+					this._oTargetHandler = new TargetHandler();
+					this._bHasOwnTargetHandler = true;
 				}
 
-				for (sTargetName in this._mTargets) {
-					if (oOptions.targets.hasOwnProperty(sTargetName)) {
-						this._addParentTo(this._mTargets[sTargetName]);
-					}
+				Targets.prototype.constructor.apply(this, arguments);
+			},
+
+			destroy: function () {
+				Targets.prototype.destroy.apply(this, arguments);
+
+				if (this._bHasOwnTargetHandler) {
+					this._oTargetHandler.destroy();
 				}
 
+				this._oTargetHandler = null;
 			},
 
 			/**
-			 * Destroys the targets instance an all created targets. Does not destroy the views instance passed to the constructor. It has to be destroyed separately.
-			 * @public
-			 * @returns { sap.ui.core.routing.Targets } this for chaining.
-			 */
-			destroy : function () {
-				var sTargetName;
-				EventProvider.prototype.destroy.apply(this);
-
-				for (sTargetName in this._mTargets) {
-					if (this._mTargets.hasOwnProperty(sTargetName)) {
-						this._mTargets[sTargetName].destroy();
-					}
-				}
-
-				this._mTargets = null;
-				this._oViews = null;
-				this._oConfig = null;
-				this.bIsDestroyed = true;
-
-				return this;
-			},
-
-			/**
-			 * Creates a view and puts it in an aggregation of the specified control.
+			 * Returns the TargetHandler instance.
 			 *
-			 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
-			 * @param {any} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-			 * @public
-			 * @returns {sap.ui.core.routing.Targets} this pointer for chaining
-			 */
-			display : function (vTargets, vData) {
-				this._display(vTargets, vData);
-			},
-
-			/**
-			 * Returns the views instance passed to the constructor
-			 *
-			 * @return {sap.ui.core.routing.Views} the views instance
-			 */
-			getViews : function () {
-				return this._oViews;
-			},
-
-			/**
-			 * Returns a target by its name (if you pass myTarget: { view: "myView" }) in the config myTarget is the name.
-			 *
-			 * @param {string|string[]} vName the name of a single target or the name of multiple targets
-			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the coresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
-			 */
-			getTarget : function (vName) {
-				var that = this,
-					aResult = [];
-
-				if ($.isArray(vName)) {
-					$.each(vName, function (i, sName) {
-						var oTarget = that._mTargets[sName];
-
-						if (oTarget) {
-							aResult.push(oTarget);
-						} else {
-							$.sap.log.error("The target you tried to get \"" + sName + "\" does not exist!", that);
-						}
-					});
-					return aResult;
-				}
-
-				return this._mTargets[vName];
-			},
-
-			/**
-			 * Will be fired when a target is displayed
-			 *
-			 * Could be triggered by calling the display function or by the {@link sap.ui.core.routing.Router} when a target is referenced in a matching route.
-			 *
-			 * @param {object} oEvent
-			 * @param {object} oEvent.getParameters
-			 * @param {object} oEvent.getParameters.view The view that got displayed.
-			 * @param {object} oEvent.getParameters.control The control that now contains the view in the controlAggregation
-			 * @param {object} oEvent.getParameters.config The options object passed to the constructor {@link sap.ui.core.routing.Targets#constuctor}
-			 * @param {object} oEvent.getParameters.name The name of the target firing the event
-			 * @param {object} oEvent.getParameters.data The data passed into the {@link sap.ui.core.routing.Targets#display} function
-			 * @event
+			 * @return {sap.m.routing.TargetHandler} the TargetHandler instance
 			 * @public
 			 */
-
-			/**
-			 * Attach event-handler <code>fnFunction</code> to the 'display' event of this <code>sap.ui.core.routing.Targets</code>.<br/>
-			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
-			 * oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function.
-			 *
-			 * @return {sap.ui.core.routing.Targets} <code>this</code> to allow method chaining
-			 * @public
-			 */
-			attachDisplay : function(oData, fnFunction, oListener) {
-				return this.attachEvent(this.M_EVENTS.DISPLAY, oData, fnFunction, oListener);
+			getTargetHandler : function () {
+				return this._oTargetHandler;
 			},
 
-			/**
-			 * Detach event-handler <code>fnFunction</code> from the 'display' event of this <code>sap.ui.core.routing.Targets</code>.<br/>
-			 *
-			 * The passed function and listener object must match the ones previously used for event registration.
-			 *
-			 * @param {function} fnFunction The function to call, when the event occurs.
-			 * @param {object} oListener Object on which the given function had to be called.
-			 * @return {sap.ui.core.routing.Targets} <code>this</code> to allow method chaining
-			 */
-			detachDisplay : function(fnFunction, oListener) {
-				return this.detachEvent(this.M_EVENTS.DISPLAY, fnFunction, oListener);
-			},
+			display: function () {
+				var iViewLevel,
+					sName;
 
-			/**
-			 * Fire event created to attached listeners.
-			 *
-			 * @param {object} [mArguments] the arguments to pass along with the event.
-			 * @return {sap.ui.core.routing.Targets} <code>this</code> to allow method chaining
-			 */
-			fireDisplay : function(mArguments) {
-				return this.fireEvent(this.M_EVENTS.DISPLAY, mArguments);
-			},
+				// don't remember previous displays
+				this._oLastDisplayedTarget = null;
 
-			M_EVENTS : {
-				DISPLAY : "display"
-			},
+				var oReturnValue = Targets.prototype.display.apply(this, arguments);
 
-			/**
-			 * created all targets
-			 *
-			 * @param {string} sName
-			 * @param {object} oTargetOptions
-			 * @private
-			 */
-			_createTarget : function (sName, oTargetOptions) {
-				var oTarget,
-					oOptions;
-
-				oOptions = $.extend(true, { name: sName }, this._oConfig, oTargetOptions);
-				oTarget = this._constructTarget(oOptions);
-				oTarget.attachDisplay(function (oEvent) {
-					var oParameters = oEvent.getParameters();
-
-					this.fireDisplay({
-						name : sName,
-						view : oParameters.view,
-						control : oParameters.control,
-						config : oParameters.config,
-						data: oParameters.data
-					});
-				}, this);
-				this._mTargets[sName] = oTarget;
-			},
-
-			/**
-			 * @param oTarget
-			 * @private
-			 */
-			_addParentTo : function (oTarget) {
-				var oParentTarget,
-					sParent = oTarget._oOptions.parent;
-
-				if (!sParent) {
-					return;
+				// maybe a wrong name was provided then there is no last displayed target
+				if (this._oLastDisplayedTarget) {
+					iViewLevel = this._oLastDisplayedTarget._oOptions.viewLevel;
+					sName = this._oLastDisplayedTarget._oOptions.name;
 				}
 
-				oParentTarget = this._mTargets[sParent];
+				this._oTargetHandler.navigate({
+					viewLevel: iViewLevel,
+					navigationIdentifier: sName
+				});
 
-				if (!oParentTarget) {
-					$.sap.log.error("The target '" + oTarget._oOptions.name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
-					return;
-				}
-
-				oTarget._oParent = oParentTarget;
+				return oReturnValue;
 			},
 
-			/**
-			 * Hook for the mobile library
-			 * @private
- 			 */
 			_constructTarget : function (oOptions, oParent) {
-				return new Target(oOptions, this._oViews, oParent);
+				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
 			},
 
-			/**
-			 * @private
-			 * hook to distinguish between the router and an application calling this
-			 */
-			_display : function (vTargets, vData) {
-				var that = this;
-
-				if ($.isArray(vTargets)) {
-					$.each(vTargets, function (i, sTarget) {
-						that._displaySingleTarget(sTarget, vData);
-					});
-				} else {
-					this._displaySingleTarget(vTargets, vData);
-				}
-
-				return this;
-			},
-
-			/**
-			 *
-			 * @param sName name of the single target
-			 * @param vData event data
-			 * @private
-			 */
-			_displaySingleTarget : function (sName, vData) {
+			_displaySingleTarget : function (sName) {
 				var oTarget = this.getTarget(sName);
-
-				if (oTarget !== undefined) {
-					oTarget.display(vData);
-				} else {
-					$.sap.log.error("The target with the name \"" + sName + "\" does not exist!", this);
+				if (oTarget) {
+					this._oLastDisplayedTarget = oTarget;
 				}
-			}
 
+				return Targets.prototype._displaySingleTarget.apply(this, arguments);
+			}
 		});
 
 	}, /* bExport= */ true);

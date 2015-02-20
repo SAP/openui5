@@ -41,9 +41,7 @@
 				oRoute.attachPatternMatched(fnPatternMatchedSpy);
 
 				// Act
-				oRoute._routeMatched(
-						oRouterStub,
-						{});
+				oRoute._routeMatched({});
 
 				// Assert
 				strictEqual(fnMatchedSpy.callCount, 1, "did call the attachMatched spy");
@@ -68,9 +66,7 @@
 							oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
 
 					// Act
-					oRoute._routeMatched(
-							oRouterStub,
-							{},
+					oRoute._routeMatched({},
 							true);
 
 					// Assert
@@ -86,9 +82,12 @@
 				test(sTestName, function() {
 					// Arrange
 					var sName = "testRoute",
-						oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : sName }),
-						fnEventSpy = this.spy(),
 						fnRouteMatchedSpy = this.spy(),
+						oRoute = new sap.ui.core.routing.Route({
+							fireRouteMatched : fnRouteMatchedSpy,
+							fireRoutePatternMatched : fnRouteMatchedSpy
+						}, { name : sName }),
+						fnEventSpy = this.spy(),
 						oListener = {};
 
 					oRoute["attach" + sEventName](fnEventSpy, oListener);
@@ -99,10 +98,7 @@
 					oRoute["detach" + sEventName](fnEventSpy);
 
 					// FireEvent to make sure no spy is called
-					oRoute._routeMatched({
-								fireRouteMatched : fnRouteMatchedSpy,
-								fireRoutePatternMatched : fnRouteMatchedSpy
-							},
+					oRoute._routeMatched(
 							{},
 							true);
 

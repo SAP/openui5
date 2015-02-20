@@ -235,6 +235,7 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 		var instance = new History(HashChanger.getInstance());
 	
 		/**
+		 * @alias sap.ui.core.routing.History#getInstance
 		 * @public 
 		 * @returns { sap.ui.core.routing.History } a global singleton that gets created as soon as the sap.ui.core.routing.History is required
 		 */
