@@ -1410,13 +1410,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			aContexts = oBinding.getContexts(iStartIndex, iVisibleRowCount - iFixedBottomRowCount, iThreshold);
 			this._setBusy({
 				requestedLength: iVisibleRowCount - iFixedBottomRowCount,
-				receivedLength: aContexts.length });
+				receivedLength: aContexts.length,
+				contexts: aContexts });
 
 			if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
 				aContexts = aContexts.concat(oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1));
 				this._setBusy({
 					requestedLength: iFixedBottomRowCount,
-					receivedLength: aContexts.length });
+					receivedLength: aContexts.length,
+					contexts: aContexts });
 			}
 		}
 		for (var i = 0; i < iVisibleRowCount; i++) {
@@ -1629,7 +1631,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				aContexts = oBinding.getContexts(this.getFirstVisibleRow() + iFixedRows, aRows.length - iTotalFixedRows, iThreshold);
 				this._setBusy({
 					requestedLength: aRows.length - iTotalFixedRows,
-					receivedLength: aContexts.length});
+					receivedLength: aContexts.length,
+					contexts: aContexts });
 				// static rows: we fetch the contexts without threshold to avoid loading
 				// of unnecessary data. Make sure to fetch after the normal rows to avoid
 				// outgoing double requests for the contexts.
@@ -1637,7 +1640,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					aFixedContexts = oBinding.getContexts(0, iFixedRows);
 					this._setBusy({
 						requestedLength: iFixedRows,
-						receivedLength: aFixedContexts.length});
+						receivedLength: aFixedContexts.length,
+						contexts: aContexts });
 
 					aContexts = aFixedContexts.concat(aContexts);
 				}
@@ -1645,7 +1649,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					aFixedBottomContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRows, iFixedBottomRows);
 					this._setBusy({
 						requestedLength: iFixedBottomRows,
-						receivedLength: aFixedBottomContexts.length});
+						receivedLength: aFixedBottomContexts.length,
+						contexts: aContexts });
 
 					aContexts = aContexts.concat(aFixedBottomContexts);
 				}
@@ -1655,7 +1660,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				aContexts = oBinding.getContexts(this.getFirstVisibleRow(), aRows.length, iThreshold);
 				this._setBusy({
 					requestedLength: aRows.length,
-					receivedLength: aContexts.length});
+					receivedLength: aContexts.length,
+					contexts: aContexts });
 			}
 		}
 
@@ -5397,23 +5403,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	Table.prototype._setBusy = function (mParameters) {
+		var oBinding,
+			i,
+			bSetBusy;
+
 		if (!this.getEnableBusyIndicator() || !this._bBusyIndicatorAllowed) {
 			return;
 		}
 
-		var oBinding = this.getBinding("rows");
+		oBinding = this.getBinding("rows");
 		if (!oBinding) {
 			return;
 		}
 
 		if (mParameters) {
-			if (mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0 && mParameters.receivedLength !== oBinding.getLength()) {
+			if (mParameters.contexts && mParameters.contexts.length !== undefined) {
+				// TreeBinding and AnalyticalBinding always return a contexts array with the
+				// requested length. Both put undefined in it for contexts which need to be loaded
+				// Check for undefined in the contexts array.
+				bSetBusy = false;
+				for (i = 0; i < mParameters.contexts.length; i++) {
+					if (mParameters.contexts[i] === undefined) {
+						bSetBusy = true;
+						break;
+					}
+				}
+			}
+
+			if (bSetBusy || oBinding.isInitial() || oBinding._bInitial ||
+				(mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0 && mParameters.receivedLength !== oBinding.getLength())) {
 				this.setBusy(true);
 			}
 		} else {
 			this.setBusy(false);
 		}
-
 	};
 
 	return Table;
