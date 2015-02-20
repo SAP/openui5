@@ -15,6 +15,7 @@
 			</Select>
 			<core:Icon src="{ui>/icon}" class="sapMBtnIcon"/>
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
+			<CheckBox selected="{ui>/bindTexts}" select="onChangeType" text="bindTexts"/><!-- triggers XML templating! -->
 		</HBox>
 		<VBox visible="{ui>/codeVisible}">
 			<commons:HorizontalDivider/>
