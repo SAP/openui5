@@ -881,7 +881,7 @@
 
 		oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
 
-		equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
+		equal(iWarningCount, 2, "One warning (that filtering is not enabled) should have fired and one warning for hierarchy mode deprecation");
 		equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
 	});
 
