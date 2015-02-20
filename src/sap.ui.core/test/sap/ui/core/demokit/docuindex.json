@@ -88,6 +88,51 @@
 				"sap.ui.core.sample.TypeDateAsDate",
 				"sap.ui.core.sample.TypeDateAsString"
 			  ]
+			},
+			{
+				"id" : "sap.ui.core.type.DateTime",
+				"name" : "DateTime Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeDateTime"
+				]
+			},			
+			{
+				"id" : "sap.ui.core.type.Integer",
+				"name" : "Integer Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeInteger"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.Float",
+				"name" : "Float Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeFloat"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.Currency",
+				"name" : "Currency Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeCurrency"
+				]
+			},
+			{
+				"id" : "sap.ui.core.type.FileSize",
+				"name" : "FileSize Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeFileSize"
+				]
 			}
 		],
 		"samples" : [
@@ -102,6 +147,16 @@
 				"description": "This sample explains the formatting options of the date type with the date being available as string."
 			},
 			{
+				"id": "sap.ui.core.sample.TypeDateTime",
+				"name": "DateTime Type",
+				"description": "This sample explains the formatting options of the datetime type."
+			},	
+			{
+				"id": "sap.ui.core.sample.TypeFileSize",
+				"name": "FileSize Type",
+				"description": "This sample explains the formatting options of the filesize type."
+			},			
+			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
 				"description": "A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels."
@@ -115,6 +170,21 @@
 				"id": "sap.ui.core.sample.Icon",
 				"name": "Icon",
 				"description": "Built with an embedded font, icons scale well, and can be altered with CSS. They can also fire a press event. See the Icon Explorer for more icons."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeInteger",
+				"name": "Integer Format",
+				"description": "Formats and parses only the integer digits. The decimal digits are ignored."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeFloat",
+				"name": "Float Format",
+				"description": "Formats and parses both integer and decimal digits."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeCurrency",
+				"name": "Currency Format",
+				"description": "Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string. It parses the given string into an array which contains both the currency number and currency code."
 			},
 			{
 				"id" : "sap.ui.core.sample.InvisibleText",
