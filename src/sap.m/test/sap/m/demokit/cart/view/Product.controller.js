@@ -78,26 +78,26 @@ sap.ui.controller("view.Product", {
 		case "D":
 			//show message dialog
 			sap.m.MessageBox.show(
-				oBundle.getText("PRODUCT_STATUS_DISCONTINUED_MSG"),
-				sap.m.MessageBox.Icon.ERROR,
-				oBundle.getText("PRODUCT_STATUS_DISCONTINUED_TITLE"),
-				[sap.m.MessageBox.Action.CLOSE]
-			);
+				oBundle.getText("PRODUCT_STATUS_DISCONTINUED_MSG"),{
+				icon: sap.m.MessageBox.Icon.ERROR,
+				titles: oBundle.getText("PRODUCT_STATUS_DISCONTINUED_TITLE"),
+				actions: [sap.m.MessageBox.Action.CLOSE]
+		});
 			break;
 		case "O":
-			// show mesage dialog
+			// show message dialog
 			sap.m.MessageBox.show(
-				oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_MSG"),
-				sap.m.MessageBox.Icon.QUESTION,
-				oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_TITLE"),
-				[sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-				function (oAction) {
-					// order
-					if (sap.m.MessageBox.Action.OK === oAction) {
-						that._addProduct(oProduct);
+				oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_MSG"), {
+					icon: sap.m.MessageBox.Icon.QUESTION,
+					title: oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_TITLE"),
+					actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+					onClose: function (oAction) {
+						// order
+						if (sap.m.MessageBox.Action.OK === oAction) {
+							that._addProduct(oProduct);
+						}
 					}
-				}
-			);
+				});
 			break;
 		case "A":
 			this._addProduct(oProduct);
@@ -112,7 +112,7 @@ sap.ui.controller("view.Product", {
 			break;
 		}
 	},
-	
+
 	_addProduct: function(oProduct) {
 		var oCartModel = this.getView().getModel("cartProducts");
 		var oCartData = oCartModel.getData();
@@ -153,13 +153,13 @@ sap.ui.controller("view.Product", {
 		for (var j = 0 ; j < oCartData.entries.length ; j ++) {
 			oCartData.totalPrice += parseFloat(oCartData.entries[j].Price) * oCartData.entries[j].Quantity;
 		}
-		
+
 		//if there is at least one entry, the edit button is shown
 		oCartData.showEditAndProceedButton = true;
 
 		// update model
 		oCartModel.setData(oCartData);
-		
+
 		var oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
 		sap.m.MessageToast.show(oBundle.getText("PRODUCT_MSG_ADDED_TO_CART"));
 	},
@@ -167,7 +167,7 @@ sap.ui.controller("view.Product", {
 	handleCartButtonPress :  function (oEvent) {
 		this._router.navTo("cart");
 	},
-	
+
 	handleNavButtonPress : function (oEvent) {
 		this._router._myNavBack();
 	}

@@ -8,12 +8,12 @@
 		width="100%">
 		<l:content>
 			<Button
-				text="Show Confirmation"
+				text="Confirm"
 				class="sapUiSmallMarginBottom"
 				press="handleConfirmationMessageBoxPress"
 				width="250px"/>
 			<Button
-				text="Show Alert"
+				text="Alert"
 				class="sapUiSmallMarginBottom"
 				press="handleAlertMessageBoxPress"
 				width="250px"/>
@@ -25,7 +25,7 @@
 					press="handleConfirmMessageBoxPress_InitialFocus"
 					width="250px"/>
 			<Button
-					text="Button text"
+					text="Custom button text"
 					class="sapUiSmallMarginBottom"
 					press="handleShowMessageBoxPress_InitialFocus"
 					width="250px"/>
@@ -35,7 +35,7 @@
 					press="handleShowMessageBoxPress_InitialFocus_Control"
 					width="250px"/>
 			<Text
-					text="Set horizontal and vertical scrolling"/>
+					text="Disabled horizontal and vertical scrolling"/>
 			<Button
 					text="Show big content"
 					class="sapUiSmallMarginBottom"

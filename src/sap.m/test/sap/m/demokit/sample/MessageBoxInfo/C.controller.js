@@ -51,14 +51,6 @@ sap.ui.controller("sap.m.sample.MessageBoxInfo.C", {
 			actions : [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 			details: oModelTemp.details,
 			styleClass: bCompact? "sapUiSizeCompact" : "",
-			onClose : function(oAction) {
-				if ( oAction === sap.m.MessageBox.Action.YES ) {
-					var oCheck = sap.ui.getCore().byId("checkBoxId");
-					var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-
-					sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
-				}
-			},
 			dialogId : "messageBoxId"
 		});
 	}

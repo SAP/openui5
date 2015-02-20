@@ -1465,12 +1465,12 @@
 			{
 				"id": "sap.m.sample.MessageBox",
 				"name": "Message Box",
-				"description": "MessageBox is an easier way of showing a message type dialog. You only need to provide the message that you want to show to the user."
+				"description": "MessageBox is an easy way of displaying a message-type dialog to the user. You can display different types of dialogs:\n- Types of message (Alert, Confirmation, etc.)\n- Initial focus can be set to the buttons or the controls used in the message\n- Horizontal and vertical scrolling can be enabled/disabled when displaying large content"
 			},
 			{
 				"id": "sap.m.sample.MessageBoxInfo",
 				"name": "Message Box with Info",
-				"description": "Display detail information in MessageBox and is compatible with some adaptations to sap.ca.ui.MessageDialog syntax"
+				"description": "MessageBox with the option to display detailed information"
 			},
 			{
 				"id": "sap.m.sample.MessageBoxTypes",
@@ -1480,7 +1480,7 @@
 			{
 				"id": "sap.m.sample.MessageBoxCustom",
 				"name": "Message Box with Custom Content",
-				"description": "Here a MessageBox is described how it can be used with custom content - a layout e.g. Additionally it is show how any binding can be used within the custom content."
+				"description": "MessageBox with custom content (e.g. a layout). In addition it is displayed how binding can be used within the custom content."
 			},
 			{
 				"id": "sap.m.sample.MessagePopover",

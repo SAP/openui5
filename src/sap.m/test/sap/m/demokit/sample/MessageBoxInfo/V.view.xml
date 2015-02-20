@@ -8,14 +8,14 @@
 		width="100%">
 		<l:content>
 			<Text
-					text="Show MessageBox with Info:"/>
+					text="Show details in MessageBox content:"/>
 			<Button
-					text="Show Info"
+					text="Show details"
 					class="sapUiSmallMarginBottom"
 					press="showInfo"
 					width="250px"/>
 			<Button
-					text="Show Info in Control"
+					text="Show details in control"
 					class="sapUiSmallMarginBottom"
 					press="showCustomContentWithInfo"
 					width="250px"/>
