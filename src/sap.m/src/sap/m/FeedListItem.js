@@ -227,7 +227,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			// Necessary so this gets garbage collected
 			this._oLinkControl.setParent(this, null, true);
 		}
-		this._oLinkControl.setProperty("text", this.getSender(), true);
+		
+		this._oLinkControl.setProperty("text", this.getSender() + FeedListItem._oRb.getText("COLON"), true);
 		this._oLinkControl.setProperty("enabled", this.getSenderActive(), true);
 	
 		return this._oLinkControl;
