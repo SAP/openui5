@@ -98,6 +98,11 @@
 
 		module("config - defaults and additional values", {
 			setup: function () {
+				var oTargetConfig = {
+					controlAggregation: "foo",
+					someThingCustom: "bar",
+					someThingToBeReplaced: "baz"
+				};
 				// System under test + Arrange
 				this.oTargets = new sap.ui.core.routing.Targets({
 					targets: {
@@ -106,11 +111,7 @@
 							viewLevel: 5
 						}
 					},
-					config: {
-						controlAggregation: "foo",
-						someThingCustom: "bar",
-						someThingToBeReplaced: "baz"
-					}
+					config: oTargetConfig
 				});
 			},
 			teardown: function () {
@@ -118,14 +119,24 @@
 			}
 		});
 
-		test("Should be able to get an existing target if no key was specified - view should be the key", function () {
+		QUnit.test("Should be able to get an existing target if no key was specified - view should be the key", function (assert) {
 			// Act
 			var oOptions = this.oTargets.getTarget("myView")._oOptions;
 
 			// Assert
-			strictEqual(oOptions.viewLevel, 5, "Did use the view level");
-			strictEqual(oOptions.controlAggregation, "foo", "Did pass one of the routing api values from the config");
-			strictEqual(oOptions.someThingToBeReplaced, "replaced", "Did overwrite ");
+			assert.strictEqual(oOptions.viewLevel, 5, "Did use the view level");
+			assert.strictEqual(oOptions.controlAggregation, "foo", "Did pass one of the routing api values from the config");
+			assert.strictEqual(oOptions.someThingToBeReplaced, "replaced", "Did overwrite ");
+		});
+
+		QUnit.test("Should propergate changes in the rootView to the targets", function (assert) {
+			// Arrange
+			this.oTargets._setRootViewId("changed");
+
+			// Act
+			var oOptions = this.oTargets.getTarget("myView")._oOptions;
+
+			assert.strictEqual(oOptions.rootView, "changed", "Did pass one of the routing api values from the config");
 		});
 
 		module("config - invalid parent", {
