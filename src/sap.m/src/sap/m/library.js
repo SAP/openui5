@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
+			"sap.m.ImageMode",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
@@ -811,6 +812,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
+	/**
+	* Determines how the source image is used on the output DOM element.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.30.0
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	sap.m.ImageMode = {
+
+		/**
+		* The image is rendered with 'img' tag and the 'src' property is set to the src attribute on the output DOM element.
+		* @public
+		*/
+		Image: "Image",
+
+		/**
+		* The image is rendered with 'span' tag and the 'src' property is set to the 'background-image' CSS style on the output DOM element
+		* @public
+		*/
+		Background: "Background"
+
+	};
 
 	/**
 	 * A subset of input types that fit to a simple API returning one string.
