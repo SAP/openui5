@@ -1,114 +1,152 @@
 sap.ui.controller("sap.m.sample.DialogConfirm.C", {
 
-	/**
-	 * Open a dialog ot the passed type
-	 * @param {string} sType - The type of dialog window to be opened
-	 */
-	openDialog: function (sType) {
-		if (!this[sType]) {
-			this[sType] = sap.ui.xmlfragment(
-				'sap.m.sample.DialogConfirm.' + sType + 'Dialog',
-				this // associate controller with the fragment
-			);
-			this.getView().addDependent(this[sType]);
-		}
-		this[sType].open();
-	},
-
-	/**
-	 * Opens the approve dialog
-	 */
 	onApproveDialog: function () {
-		this.openDialog('Approve');
+		var dialog = new sap.m.Dialog({
+			title: 'Confirm',
+			type: 'Message',
+			content: new sap.m.Text({ text: 'Are you sure you want to submit your shopping cart?' }),
+			beginButton: new sap.m.Button({
+				text: 'Submit',
+				press: function () {
+					sap.m.MessageToast.show('Submit pressed!');
+					dialog.close();
+				}
+			}),
+			endButton: new sap.m.Button({
+				text: 'Cancel',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
+
+		dialog.open();
 	},
 
-	/**
-	 * Opens the reject dialog
-	 */
 	onRejectDialog: function () {
-		this.openDialog('Reject');
+		var dialog = new sap.m.Dialog({
+			title: 'Reject',
+			type: 'Message',
+			content: [
+				new sap.m.Text({ text: 'Are you sure you want to reject your shopping cart?' }),
+				new sap.m.TextArea('rejectDialogTextarea', {
+					width: '100%',
+					placeholder: 'Add note (optional)'
+				})
+			],
+			beginButton: new sap.m.Button({
+				text: 'Reject',
+				press: function () {
+					var sText = sap.ui.getCore().byId('rejectDialogTextarea').getValue();
+					sap.m.MessageToast.show('Note is: ' + sText);
+					dialog.close();
+				}
+			}),
+			endButton: new sap.m.Button({
+				text: 'Cancel',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
+
+		dialog.open();
 	},
 
-	/**
-	 * Opens the submit dialog
-	 */
 	onSubmitDialog: function () {
-		this.openDialog('Submit');
+		var dialog = new sap.m.Dialog({
+			title: 'Confirm',
+			type: 'Message',
+			content: [
+				new sap.m.Text({ text: 'Are you sure you want to submit your shopping cart?' }),
+				new sap.m.TextArea('submitDialogTextarea', {
+					liveChange: function(oEvent) {
+						var sText = oEvent.getParameter('value');
+						parent = oEvent.getSource().getParent();
+
+						parent.getBeginButton().setEnabled(sText.length > 0);
+					},
+					width: '100%',
+					placeholder: 'Add note (required)'
+				})
+			],
+			beginButton: new sap.m.Button({
+				text: 'Submit',
+				enabled: false,
+				press: function () {
+					var sText = sap.ui.getCore().byId('submitDialogTextarea').getValue();
+					sap.m.MessageToast.show('Note is: ' + sText);
+					dialog.close();
+				}
+			}),
+			endButton: new sap.m.Button({
+				text: 'Cancel',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
+
+		dialog.open();
 	},
 
-	/**
-	 * Opens the confirm dialog
-	 */
 	onConfirmDialog: function () {
-		this.openDialog('Confirm');
-	},
+		var dialog = new sap.m.Dialog({
+			title: 'Confirm',
+			type: 'Message',
+			content: [
+				new sap.ui.layout.HorizontalLayout({
+					content: [
+						new sap.ui.layout.VerticalLayout({
+							width: '120px',
+							content: [
+								new sap.m.Text({ text: 'Type: ' }),
+								new sap.m.Text({ text: 'Delivery:' }),
+								new sap.m.Text({ text: 'Items count: ' })
+							]
+						}),
+						new sap.ui.layout.VerticalLayout({
+							content: [
+								new sap.m.Text({ text: 'Shopping Cart' }),
+								new sap.m.Text({ text: 'Jun 26, 2013' }),
+								new sap.m.Text({ text: '2' })
+							]
+						})
+					]
+				}),
+				new sap.m.TextArea('confirmDialogTextarea', {
+					width: '100%',
+					placeholder: 'Add note (optional)'
+				})
+			],
+			beginButton: new sap.m.Button({
+				text: 'Submit',
+				press: function () {
+					var sText = sap.ui.getCore().byId('confirmDialogTextarea').getValue();
+					sap.m.MessageToast.show('Note is: ' + sText);
+					dialog.close();
+				}
+			}),
+			endButton: new sap.m.Button({
+				text: 'Cancel',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
 
-	/**
-	 * Fired when pressed "Submit" on approve dialog
-	 * @param {sap.ui.base.Event} oEvent - the passed event arguments
-	 */
-	onApproveSubmitPressed: function (oEvent) {
-		var sType = oEvent.getSource().data('dialogType');
-
-		sap.m.MessageToast.show('Submit pressed!');
-		this[sType].close();
-	},
-
-	/**
-	 * Event fired when pressed "Reject" on reject dialog
-	 * @param {sap.ui.base.Event} oEvent - the passed event arguments
-	 */
-	onRejectPressed: function (oEvent) {
-		var sType = oEvent.getSource().data('dialogType');
-		var sText = sap.ui.getCore().byId('rejectDialogTextarea').getValue();
-
-		sap.m.MessageToast.show('Note is: ' + sText);
-		this[sType].close();
-	},
-
-	/**
-	 * Event fired when pressed "Submit" on submit dialog
-	 * @param {sap.ui.base.Event} oEvent - the passed event arguments
-	 */
-	onSubmitPressed: function (oEvent) {
-		var sType = oEvent.getSource().data('dialogType');
-		var sText = sap.ui.getCore().byId('submitDialogTextarea').getValue();
-
-		sap.m.MessageToast.show('Note is: ' + sText);
-		this[sType].close();
-	},
-
-	/**
-	 * Event fired when pressed "Confirm" on confirm dialog
-	 * @param {sap.ui.base.Event} oEvent - the passed event arguments
-	 */
-	onConfirmPressed: function (oEvent) {
-		var sType = oEvent.getSource().data('dialogType');
-		var sText = sap.ui.getCore().byId('confirmDialogTextarea').getValue();
-
-		sap.m.MessageToast.show('Note is: ' + sText);
-		this[sType].close();
-	},
-
-	/**
-	 * Triggered when writing in the textarea of the Submit dialog with mandatory description
-	 * @param {sap.ui.base.Event} oEvent - the passed event arguments
-	 */
-	onSubmitNoteAdded: function (oEvent) {
-		var sText = oEvent.getParameter('value');
-		parent = oEvent.getSource().getParent();
-
-		parent.getBeginButton().setEnabled(sText.length > 0);
-	},
-
-	/**
-	 * Event fired when pressed "Cancel"
-	 * @param {sap.ui.base.Event} oEvent - the event arguments passed
-	 */
-	onDialogCloseButton: function (oEvent) {
-		var sType = oEvent.getSource().data('dialogType');
-
-		sap.m.MessageToast.show('Close button pressed!');
-		this[sType].close();
+		dialog.open();
 	}
 });
