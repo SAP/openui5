@@ -66,7 +66,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			}
 			//this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			this.bInitial = true;
-			
+			this._mLoadedSections = {};
+			this._iPageSize = 0;
 		}
 	
 	});
@@ -198,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		// node ID for the root context(s) ~> null
 		// startindex/length may differ due to paging
 		// same node id + different paging sections are treated as different requests and will not abort each other
-		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + iLength + "-" + iThreshold;
+		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + this._iPageSize + "-" + iThreshold;
 		
 		if (this.bHasTreeAnnotations) {
 			
@@ -408,6 +409,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			return this.oLengths[oContext.getPath() + "/" + this._getNavPath(oContext.getPath())];
 		}
 	};
+
+	/**
+	 * Merges together oNewSection into a set of other sections (aSections)
+	 * The array/objects are not modified, the function returns a new section array.
+	 */
+	ODataTreeBinding.prototype._mergeSections = function (aSections, oNewSection) {
+
+		// Iterate over all known/loaded sections of the node
+		var aNewSections = [];
+		for (var i = 0; i < aSections.length; i++) {
+
+			var oCurrentSection = aSections[i];
+			var iCurrentSectionEndIndex = oCurrentSection.startIndex + oCurrentSection.length;
+			var iNewSectionEndIndex = oNewSection.startIndex + oNewSection.length;
+
+			if (oNewSection.startIndex <= iCurrentSectionEndIndex && iNewSectionEndIndex >= iCurrentSectionEndIndex
+				&& oNewSection.startIndex >= oCurrentSection.startIndex) {
+				//new section expands to the left
+				oNewSection.startIndex = oCurrentSection.startIndex;
+				oNewSection.length = iNewSectionEndIndex - oCurrentSection.startIndex;
+			} else if (oNewSection.startIndex <= oCurrentSection.startIndex && iNewSectionEndIndex >= oCurrentSection.startIndex
+				&& iNewSectionEndIndex <= iCurrentSectionEndIndex) {
+				//new section expands to the right
+				oNewSection.length = iCurrentSectionEndIndex - oNewSection.startIndex;
+			} else if (oNewSection.startIndex >= oCurrentSection.startIndex && iNewSectionEndIndex <= iCurrentSectionEndIndex) {
+				//new section is contained in old one
+				oNewSection.startIndex = oCurrentSection.startIndex;
+				oNewSection.length = oCurrentSection.length;
+			} else if (iNewSectionEndIndex < oCurrentSection.startIndex || oNewSection.startIndex > iCurrentSectionEndIndex) {
+				//old and new sections do not overlap, either the new section is completely left or right from the old one
+				aNewSections.push(oCurrentSection);
+			}
+		}
+
+		aNewSections.push(oNewSection);
+
+		return aNewSections;
+	};
 	
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
@@ -424,7 +463,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 */
 	ODataTreeBinding.prototype._getContextsForNodeId = function(sNodeId, iStartIndex, iLength, iThreshold, mRequestParameters) {
 		var aContexts = [],
-			bLoadContexts,
 			sKey,
 			iRootLevel;
 		
@@ -432,44 +470,105 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		iStartIndex = iStartIndex || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		iThreshold = iThreshold || 0;
-		
+
+		if (!this._mLoadedSections[sNodeId]) {
+			this._mLoadedSections[sNodeId] = [];
+		}
+
 		if (this.bHasTreeAnnotations) {
 			//the ID of the root node must be defined via parameters in case we use an annotated service
 			if (sNodeId == null) {
-				iRootLevel = this.mParameters.rootLevel;
+				iRootLevel = this.iRootLevel;
 			}
 		}
 	
 		// make sure we only request the maximum length available (length is known and final)
-		if (this.oFinalLengths[sNodeId] && this.oLengths[sNodeId] < iLength) {
-			iLength = this.oLengths[sNodeId];
+		if (this.oFinalLengths[sNodeId] && this.oLengths[sNodeId] < iStartIndex + iLength) {
+			iLength = Math.max(this.oLengths[sNodeId] - iStartIndex, 0);
 		}
-	
-		// Loop through known data and check whether we already have all rows loaded
-		if (this.oKeys[sNodeId]) {
-			for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
-				sKey = this.oKeys[sNodeId][i];
-				//break the loop if we find a missing key -> "i" will be the adapted startindex
-				if (!sKey) {
-					break;
+
+		var that = this;
+		// check whether a start index was already requested
+		var fnFindInLoadedSections = function(iStartIndex) {
+			// check in the sections which where loaded
+			for (var i = 0; i < that._mLoadedSections[sNodeId].length; i++) {
+				var oSection = that._mLoadedSections[sNodeId][i];
+				// try to find i in the loaded sections. If i is within one of the sections it needs not to be loaded again
+				if (iStartIndex >= oSection.startIndex && iStartIndex < oSection.startIndex + oSection.length) {
+					return true;
 				}
-				aContexts.push(this.oModel.getContext('/' + sKey));
 			}
-			
-			// adapt the startindex to the first hole in the oKeys map
-			iStartIndex = i;
+
+			// check requested sections where we still wait for an answer
+		};
+
+		var aMissingSections = [];
+		// Loop through known data and check whether we already have all rows loaded
+		// make sure to also check that the entities before the requested start index can be served
+		var i = Math.max((iStartIndex - iThreshold - this._iPageSize), 0);
+		if (this.oKeys[sNodeId]) {
+			for (i; i < iStartIndex + iLength + (iThreshold); i++) {
+				sKey = this.oKeys[sNodeId][i];
+				if (!sKey) {
+					if (!fnFindInLoadedSections(i)) {
+						aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: 1});
+					}
+				}
+
+				// collect requested contexts if loaded
+				if (i >= iStartIndex && i < iStartIndex + iLength) {
+					if (sKey) {
+						aContexts.push(this.oModel.getContext('/' + sKey));
+					} else {
+						aContexts.push(undefined);
+					}
+				}
+			}
+
+			// check whether the missing section already spans the complete page. If this is the case, we don't need to request an additional page
+			var iBegin = Math.max((iStartIndex - iThreshold - this._iPageSize), 0);
+			var iEnd = iStartIndex + iLength + (iThreshold);
+			var bExpandThreshold = aMissingSections[0] && aMissingSections[0].startIndex === iBegin && aMissingSections[0].startIndex + aMissingSections[0].length === iEnd;
+
+			if (aMissingSections.length > 0 && !bExpandThreshold) {
+				//first missing section will be prepended with additional threshold ("negative")
+				i = Math.max((aMissingSections[0].startIndex - iThreshold - this._iPageSize), 0);
+				var iFirstStartIndex = aMissingSections[0].startIndex;
+				for (i; i < iFirstStartIndex; i++) {
+					var sKey = this.oKeys[sNodeId][i];
+					if (!sKey) {
+						if (!fnFindInLoadedSections(i)) {
+							aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: 1});
+						}
+					}
+				}
+
+				//last missing section will be appended with additional threshold ("positive")
+				i = aMissingSections[aMissingSections.length - 1].startIndex + aMissingSections[aMissingSections.length - 1].length;
+				var iEndIndex = i + iThreshold + this._iPageSize;
+				for (i; i < iEndIndex; i++) {
+					var sKey = this.oKeys[sNodeId][i];
+					if (!sKey) {
+						if (!fnFindInLoadedSections(i)) {
+							aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: 1});
+						}
+					}
+				}
+			}
+		} else {
+			// for initial loading of a node use this shortcut.
+			if (!fnFindInLoadedSections(iStartIndex)) {
+				// "i" is our shifted forward startIndex for the "negative" thresholding
+				// in this case i is always smaller than iStartIndex, but minimum is 0
+				var iLengthShift = iStartIndex - i;
+				aMissingSections = this._mergeSections(aMissingSections, {startIndex: i, length: iLength + iLengthShift + iThreshold});
+			}
 		}
-	
-		// figure out if we need to load stuff
-		bLoadContexts = aContexts.length != iLength && !(this.oFinalLengths[sNodeId] && aContexts.length >= this.oLengths[sNodeId]);
-		
-		// make sure we only request the length that is missing
-		iLength = Math.max(iLength - aContexts.length, 0);
-		
+
 		// check if metadata are already available
 		if (this.oModel.getServiceMetadata()) {
 			// If rows are missing send a request
-			if (bLoadContexts) {
+			if (aMissingSections.length > 0) {
 				var aParams = [];
 				if (this.bHasTreeAnnotations) {
 					if (sNodeId) {
@@ -487,7 +586,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				if (this.sCustomParams) {
 					aParams.push(this.sCustomParams);
 				}
-				this._loadSubNodes(sNodeId, iStartIndex, iLength, iThreshold, aParams, mRequestParameters);
+
+				for (i = 0; i < aMissingSections.length; i++) {
+					var oRequestedSection = aMissingSections[i];
+					this._mLoadedSections[sNodeId] = this._mergeSections(this._mLoadedSections[sNodeId], {startIndex: oRequestedSection.startIndex, length: oRequestedSection.length});
+					this._loadSubNodes(sNodeId, oRequestedSection.startIndex, oRequestedSection.length, 0, aParams, mRequestParameters, oRequestedSection);
+				}
 			}
 		}
 	
@@ -550,7 +654,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * 
 	 * @private
 	 */
-	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters) {
+	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters, oRequestedSection) {
 		var that = this,
 			bInlineCountRequested = false;
 
@@ -563,7 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			bInlineCountRequested = true;
 		}
 		
-		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + iLength + "-" + iThreshold;
+		var sRequestKey = "" + sNodeId + "-" + iStartIndex + "-" + this._iPageSize + "-" + iThreshold;
 		
 		function fnSuccess(oData) {
 
@@ -663,6 +767,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			that.oRequestHandle = null;
 			delete that.mRequestHandles[sRequestKey];
 			that.fireDataReceived();
+
+			if (oRequestedSection) {
+			// remove section from loadedSections so the data can be requested again.
+			// this might be required when e.g. when the service was not available for a short time
+			var aLoadedSections = [];
+			for (var i = 0; i < this._mLoadedSections[sNodeId].length; i++) {
+				var oCurrentSection = this._mLoadedSections[sNodeId][i];
+				if (oRequestedSection.startIndex >= oCurrentSection.startIndex && oRequestedSection.startIndex + oRequestedSection.length <= oCurrentSection.startIndex + oCurrentSection.length) {
+					// remove the section interval and maintain adapted sections. If start index and length are the same, ignore the section
+					if (oRequestedSection.startIndex !== oCurrentSection.startIndex && oRequestedSection.length !== oCurrentSection.length) {
+						aLoadedSections = that._mergeSections(aLoadedSections, {startIndex: oCurrentSection.startIndex, length: oRequestedSection.startIndex - oCurrentSection.startIndex});
+						aLoadedSections = that._mergeSections(aLoadedSections, {startIndex: oRequestedSection.startIndex + oRequestedSection.length, length: (oCurrentSection.startIndex + oCurrentSection.length) - (oRequestedSection.startIndex + oRequestedSection.length)});
+					}
+
+				} else {
+					aLoadedSections.push(oCurrentSection);
+				}
+			}
+			this._mLoadedSections[sNodeId] = aLoadedSections;
+			}
 		}
 		
 		// !== because we use "null" as sNodeId in case the user only provided a root level
@@ -701,6 +825,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			delete this.oKeys[sPath];
 			delete this.oLengths[sPath];
 			delete this.oFinalLengths[sPath];
+			delete this._mLoadedSections[sPath];
 		} else {
 			this.oKeys = {};
 			this.oLengths = {};
@@ -708,6 +833,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.oRootContext = null;
 			this._bRootMissing = false;
 			this.mRequestHandles = {};
+			this._mLoadedSections = {};
+			this._iPageSize = 0;
 		}
 	};
 	
