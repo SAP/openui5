@@ -908,7 +908,6 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeClasses();
 			
 			if (oTable.getRowHeight() && oTable.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
-				rm.addStyle("height", oTable.getRowHeight() + "px");
 				rm.addStyle("max-height", oTable.getRowHeight() + "px");
 			}
 			rm.writeStyles();
