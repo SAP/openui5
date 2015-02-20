@@ -52,6 +52,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	StandardListItemRenderer.renderLIContent = function(rm, oLI) {
 
+		var sTextDir = oLI.getTitleTextDirection(),
+			sInfoDir = oLI.getInfoTextDirection();
+		
 		// image
 		if (oLI.getIcon()) {
 			if (oLI.getIconInset()) {
@@ -96,6 +99,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.addClass("sapMSLITitleOnly");
 		}
 		rm.writeClasses();
+		
+		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+			rm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+		
 		rm.write(">");
 		rm.writeEscaped(oLI.getTitle());
 		rm.write("</div>");
@@ -107,6 +115,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.addClass("sapMSLIInfo");
 			rm.addClass("sapMSLIInfo" + oLI.getInfoState());
 			rm.writeClasses();
+			if (sInfoDir !== sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sInfoDir.toLowerCase());
+			}
 			rm.write(">");
 			rm.writeEscaped(isInfo);
 			rm.write("</div>");
@@ -147,6 +158,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.addClass("sapMSLIInfo" + oLI.getInfoState());
 			}
 			rm.writeClasses();
+			if (sInfoDir !== sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sInfoDir.toLowerCase());
+			}
 			rm.write(">");
 			rm.writeEscaped(isInfo);
 			rm.write("</div>");

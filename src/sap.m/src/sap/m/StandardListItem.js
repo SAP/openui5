@@ -78,7 +78,19 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			 * By default the title size adapts to the available space and gets bigger if the description is empty. If you have list items with and without description this results in titles with different sizes. In this cases it can be better to switch the size adaption off with setting this property to "false".
 			 * @since 1.16.3
 			 */
-			adaptTitleSize : {type : "boolean", group : "Appearance", defaultValue : true}
+			adaptTitleSize : {type : "boolean", group : "Appearance", defaultValue : true},
+			
+			/**
+			 * This property specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			
+			/**
+			 * This property specifies the info text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			infoTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
 	
