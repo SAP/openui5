@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.SplitContainer</title>
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -18,7 +18,7 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 		<![endif]-->
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 			sinon.config.useFakeTimers = false;
@@ -32,7 +32,7 @@
 
 				var page = new sap.m.Page("master");
 				var page2 = new sap.m.Page("master2");
-				
+
 				//Act
 				sut.addMasterPage(page);
 				sut.addMasterPage(page);
@@ -191,25 +191,32 @@
 
 			asyncTest("Master button should be hidden in portrait mode with ShowHideMode", function(){
 				var oLandscape = {
-						landscape: true,
-						portrait: false
-					}, oPortrait = {
-						landscape: false,
-						portrait: true
-					}, oSystem = {
-						desktop: true,
-						phone: false,
-						tablet: false
-					}, that = this;
+							landscape: true,
+							portrait: false
+						},
+						oPortrait = {
+							landscape: false,
+							portrait: true
+						},
+						oSystem = {
+							desktop: true,
+							phone: false,
+							tablet: false
+						},
+						oOldSystem = sap.ui.Device.system,
+						oOldOrientation = sap.ui.Device.orientation;
 
-				this.stub(sap.ui.Device, "system", oSystem);
-				this.stub(sap.ui.Device, "orientation", oPortrait);
+				// manually stub the system object on sap.ui.Device
+				sap.ui.Device.system = oSystem;
+				// manually stub the orientation object on sap.ui.Device
+				sap.ui.Device.orientation = oPortrait;
+
 
 				var oSplitContainer = new sap.m.SplitContainer({
 					initialDetail: "page1",
 					detailPages: [
 						new sap.m.Page("page1", {
-							
+
 						}),
 						new sap.m.Page("page2", {
 							showNavButton: true
@@ -221,9 +228,13 @@
 						if (toId === "page1" && isBack) {
 							ok(oSplitContainer._oShowMasterBtn.$().hasClass("sapMSplitContainerMasterBtnHidden"), "Master button should be hidden how");
 							oSplitContainer.destroy();
+							// restore the stubs
+							sap.ui.Device.orientation = oOldOrientation;
+							sap.ui.Device.system = oOldSystem;
 							start();
 						} else if (toId === "page2") {
-							that.stub(sap.ui.Device, "orientation", oLandscape);
+							// manually sub the orientation object on sap.ui.Device
+							sap.ui.Device.orientation = oLandscape;
 							oSplitContainer._handleResize();
 							oSplitContainer.backDetail();
 						}
