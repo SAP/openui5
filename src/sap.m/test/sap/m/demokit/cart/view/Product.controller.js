@@ -47,7 +47,7 @@ sap.ui.controller("view.Product", {
 		if (!oData) {
 			this._router.navTo("home", {}, true);
 			if (!sap.ui.Device.system.phone) {
-				this._router._myNavToWithoutHash("view.Welcome", "XML", false);
+				this._router.getTargets().display("welcome");
 			}
 		}
 	},
@@ -64,7 +64,7 @@ sap.ui.controller("view.Product", {
 
 		// show not found page
 		if (!oData) {
-			this._router._myNavToWithoutHash("view.NotFound", "XML", false, {path: sId});
+			this._router.getTargets().display("notFound", sId);
 		}
 	},
 
@@ -169,7 +169,7 @@ sap.ui.controller("view.Product", {
 	},
 
 	handleNavButtonPress : function (oEvent) {
-		this._router._myNavBack();
+		this.getOwnerComponent().myNavBack();
 	}
 
 });
