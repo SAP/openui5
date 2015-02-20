@@ -49,12 +49,14 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			
 			/**
 			 * Setting collapseRecursive to true means, that when collapsing a node all subsequent child nodes will also be collapsed.
+			 * This property is only supported with sap.ui.model.odata.v2.ODataModel
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true},
 			
 			/**
 			 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
 			 * This property is only supported when the TreeTable uses an underlying odata services with hierarchy annotations.
+			 * This property is only supported with sap.ui.model.odata.v2.ODataModel
 			 * The hierarchy annotations may also be provided locally as a parameter for the ODataTreeBinding.
 			 */
 			rootLevel : {type: "int", group: "Data", defaultValue: 0}
