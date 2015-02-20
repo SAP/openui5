@@ -153,7 +153,13 @@ sap.ui.define([
 			text: this._oResourceBundle.getText("P13NDIALOG_RESET"),
 			visible: this.getShowReset(),
 			press: function() {
-				that.fireReset({});
+				var oPayload = {};
+				that.getPanels().forEach(function(oPanel) {
+					oPayload[oPanel.getType()] = oPanel.getResetPayload();
+				});
+				that.fireReset({
+					payload: oPayload
+				});
 			}
 		});
 		this.addButton(this._oResetButton);
