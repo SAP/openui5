@@ -16,6 +16,7 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 	onBeforeRendering: function () {
 		var oUiModel = new sap.ui.model.json.JSONModel({
+				bindTexts : false,
 				icon: jQuery.sap.getUriParameters().get("realOData") === "true" ?
 						"sap-icon://building" : "sap-icon://record"
 			}),
@@ -99,7 +100,8 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 					},
 					models: {
 						meta: oMetaModel
-					}
+					},
+					bindTexts: this.getView().getModel("ui").getProperty("/bindTexts")
 				}
 			},
 			type: sap.ui.core.mvc.ViewType.XML,
