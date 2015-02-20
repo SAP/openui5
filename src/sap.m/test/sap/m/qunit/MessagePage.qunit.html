@@ -32,7 +32,7 @@
 				title: "messagePage Title",
 				text: "One Line Text",
 				showHeader: true,
-				filterText: "Filter text",
+				description: "Description",
 				icon: sap.ui.core.IconPool.getIconURI("documents")
 			});
 		}
@@ -85,26 +85,26 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			$oMessagePageInnerPageText = jQuery(".sapMMessagePageFilterText").length;
+			$oMessagePageInnerPageText = jQuery(".sapMMessagePageDescription").length;
 			ok($oMessagePageInnerPageText, "Inner text is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
 		});
 
-		test("The control inner filter should be rendered", function(){
+		test("The description control should be rendered", function(){
 			// Arrange
 			var oMessagePage = createMessagePage(),
-				$oMessagePageInnerFilterText;
+					$oMessagePageInnerDescription;
 
 			// System under test
 			oMessagePage.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			$oMessagePageInnerFilterText = jQuery(".sapMMessagePageFilterText").length;
+			$oMessagePageInnerDescription = jQuery(".sapMMessagePageDescription").length;
 
-			ok($oMessagePageInnerFilterText, "Inner filter text is rendered.");
+			ok($oMessagePageInnerDescription, "Inner Description is rendered.");
 
 			// Clean up
 			oMessagePage.destroy();
@@ -132,7 +132,7 @@
 			// Arrange
 			var oMessagePage = new sap.m.MessagePage(messagePageId,{
 				text: "One Line Text",
-				filterText: "Filter text",
+				description: "Description",
 				icon: "documents"
 			}), $oMessagePageInnerIcon;
 
@@ -232,7 +232,7 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control getFilterText should return default value", function(){
+		test("The control getDescription should return default value", function(){
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue;
@@ -242,15 +242,15 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			sExpectedValue = "Filter text";
+			sExpectedValue = "Description";
 
-			equal(oMessagePage.getFilterText(), sExpectedValue, "The text is correct");
+			equal(oMessagePage.getDescription(), sExpectedValue, "The text is correct");
 
 			// Clean up
 			oMessagePage.destroy();
 		});
 
-		test("The control setFilterText should return new value", function(){
+		test("The control setDescription should return new value", function(){
 			// Arrange
 			var oMessagePage = createMessagePage(),
 				sExpectedValue = "Not default text",
@@ -261,11 +261,12 @@
 			sap.ui.getCore().applyChanges();
 
 			// System under test
-			oMessagePage.setFilterText(sExpectedValue);
+			oMessagePage.setDescription(sExpectedValue);
+
 
 			// Assert
 
-			sActualValue =  jQuery(".sapMMessagePageFilterText").text();
+			sActualValue =  jQuery(".sapMMessagePageDescription").text();
 
 			equal(sActualValue, sExpectedValue, "The text is correct");
 
@@ -315,9 +316,9 @@
 			ok(!iActualResult, "The text is destroyed");
 			equal(oMessagePage._oText, null, "The main text should be null");
 
-			iActualResult = jQuery(".sapMMessagePageFilterText").length;
-			ok(!iActualResult, "The filter text is destroyed");
-			equal(oMessagePage._oFilterText, null, "The filter text should be null");
+			iActualResult = jQuery(".sapMMessagePageDescription").length;
+			ok(!iActualResult, "The description  is destroyed");
+			equal(oMessagePage._oDescription, null, "The description should be null");
 
 			iActualResult = jQuery(".sapMMessagePage").children(0).length;
 			ok(!iActualResult, "The inner page is destroyed");
@@ -335,9 +336,9 @@
 				title: "Title",
 				text: "One Line Text",
 				showHeader: true,
-				filterText: "Filter text",
+				description: "Description",
 				icon: "documents",
-				customText: new sap.m.Link({text: "Custom Filter Text", href: "/testsuite/test-resources/sap/m/qunit/MessagePage.qunit.html"})
+				customText: new sap.m.Link({text: "Custom description", href: "/testsuite/test-resources/sap/m/qunit/MessagePage.qunit.html"})
 			});
 
 			// System under test
@@ -351,23 +352,23 @@
 			oMessagePage.destroy();
 		});
 
-		test("The control is set with customFilterText", function(){
+		test("The control is set with customDescription", function(){
 			// Arrange
 			var oMessagePage = new sap.m.MessagePage(messagePageId,{
 				title: "messagePage Title",
 				text: "One Line Text",
 				showHeader: true,
-				filterText: "Filter text",
+				description: "Description",
 				icon: "documents",
-				customFilterText: new sap.m.Link({text: "Custom Filter Text", href: "/testsuite/test-resources/sap/m/qunit/MessagePage.qunit.html"})
+				customDescription: new sap.m.Link({text: "Custom Description", href: "/testsuite/test-resources/sap/m/qunit/MessagePage.qunit.html"})
 			});
 
 			// System under test
 			oMessagePage.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			var iCustomFilterText = jQuery('.sapMMessagePage .sapMLnk.sapMMessagePageFilterText').length;
-			ok(iCustomFilterText, "customFilterText is rendered");
+			var iCustomDescription = jQuery('.sapMMessagePage .sapMLnk.sapMMessagePageDescription').length;
+			ok(iCustomDescription, "customDescription is rendered");
 
 			// Clean up
 			oMessagePage.destroy();

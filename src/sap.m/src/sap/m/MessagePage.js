@@ -37,9 +37,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 */
 				text : {type : "string", group : "Misc", defaultValue : "No matching items found."},
 				/**
-				 * MessagePage filter text
+				 * MessagePage description
 				 */
-				filterText : {type : "string", group : "Misc", defaultValue : "Check the filter settings."},
+				description : {type : "string", group : "Misc", defaultValue : "Check the filter settings."},
 				/**
 				 * MessagePage title
 				 */
@@ -65,11 +65,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 */
 				customText : {type : "sap.m.Link", multiple : false},
 				/**
-				 * The (optional) custom filterText control of this page.
-				 * Use this aggregation when the "filterText" (sap.m.filterText) control needs to be replaced with a sap.m.Link control.
-				 * "filterText" and "textDirection" setters can be used for this aggregation.
+				 * The (optional) custom description control of this page.
+				 * Use this aggregation when the "description" (sap.m.Text) control needs to be replaced with a sap.m.Link control.
+				 * "description" and "textDirection" setters can be used for this aggregation.
 				 */
-				customFilterText : {type : "sap.m.Link", multiple : false},
+				customDescription : {type : "sap.m.Link", multiple : false},
 				/**
 				 * A Page control which is managed internally by the MessagePage control
 				 */
@@ -96,12 +96,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				showHeader: this.getShowHeader()
 			}));
 			this.setProperty("text", oBundle.getText("MESSAGE_PAGE_TEXT"), true);
-			this.setProperty("filterText", oBundle.getText("MESSAGE_PAGE_FILTER_TEXT"), true);
+			this.setProperty("description", oBundle.getText("MESSAGE_PAGE_DESCRIPTION"), true);
 		};
 
 		MessagePage.prototype.onBeforeRendering = function() {
 			// Don't want controls to be added again on re-rendering
-			if (!(this._oText && this._oFilterText)) {
+			if (!(this._oText && this._oDescription)) {
 				this._addPageContent();
 			}
 		};
@@ -118,8 +118,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oText = null;
 			}
 
-			if (this._oFilterText) {
-				this._oFilterText = null;
+			if (this._oDescription) {
+				this._oDescription = null;
 			}
 
 			if (this._oIconControl) {
@@ -137,9 +137,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oText && this._oText.setText(sText);
 		};
 
-		MessagePage.prototype.setFilterText = function(sText) {
-			this.setProperty("filterText", sText, true); // no re-rendering
-			this._oFilterText && this._oFilterText.setText(sText);
+		MessagePage.prototype.setDescription = function(sDescription) {
+			this.setProperty("description", sDescription, true); // no re-rendering
+			this._oDescription && this._oDescription.setText(sDescription);
 		};
 
 		MessagePage.prototype.setShowHeader = function(bShowHeader) {
@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		MessagePage.prototype.setTextDirection = function(sTextDirection) {
 			this.setProperty("textDirection", sTextDirection, true); // no re-rendering
 			this._oText && this._oText.setTextDirection(sTextDirection);
-			this._oFilterText && this._oFilterText.setTextDirection(sTextDirection);
+			this._oDescription && this._oDescription.setTextDirection(sTextDirection);
 		};
 
 		MessagePage.prototype.setIcon = function(sIconUri) {
@@ -184,11 +184,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				});
 			}
 
-			if (this.getAggregation("customFilterText")) {
-				this._oFilterText = this.getAggregation("customFilterText");
+			if (this.getAggregation("customDescription")) {
+				this._oDescription = this.getAggregation("customDescription");
 			} else {
-				this._oFilterText = new sap.m.Text({
-					text: this.getFilterText(),
+				this._oDescription = new sap.m.Text({
+					text: this.getDescription(),
 					textAlign: sap.ui.core.TextAlign.Center,
 					textDirection: this.getTextDirection()
 				});
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			oPage.addContent(this._getIconControl());
 			oPage.addContent(this._oText.addStyleClass("sapMMessagePageMainText"));
-			oPage.addContent(this._oFilterText.addStyleClass("sapMMessagePageFilterText"));
+			oPage.addContent(this._oDescription.addStyleClass("sapMMessagePageDescription"));
 		};
 
 		MessagePage.prototype._getIconControl = function() {
