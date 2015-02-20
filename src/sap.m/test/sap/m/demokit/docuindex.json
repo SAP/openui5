@@ -17,12 +17,6 @@
 		},
 		"links": [
 			{
-				"text": "Approve Purchase Orders",
-				"ref": "test-resources/sap/m/demokit/poa/index.html",
-				"icon": "sapmdemo/poa",
-				"desc": "A real world example of an approval process app"
-			},
-			{
 				"text": "Shopping Cart",
 				"ref": "test-resources/sap/m/demokit/cart/index.html?responderOn=true",
 				"icon": "sapmdemo/cart",
@@ -35,17 +29,17 @@
 				"desc": "This is where it all starts when developing with sap.m"
 			},
 			{
-				"text": "Split App Demo",
-				"ref": "test-resources/sap/m/demokit/splitapp/index.html",
-				"icon": "sapmdemo/splitapp",
-				"desc": "The SplitApp control adapts between phone and tablet devices"
-			},
-			{
 				"text" : "Application Best Practices",
 				"ref": "test-resources/sap/m/demokit/tdg/index.html?responderOn=true",
 				"icon": "sapmdemo/tdg",
 				"desc": "The reference app \"Application Best Practices\" of the developer guide"
-			}
+			},
+			{
+				"text": "Master Detail",
+				"ref": "test-resources/sap/m/demokit/md-template/demokit.html",
+				"icon": "sapmdemo/splitapp",
+				"desc": "A best practice implementation of the Master-Detail design pattern"
+			} 
 		]
 	},
 
