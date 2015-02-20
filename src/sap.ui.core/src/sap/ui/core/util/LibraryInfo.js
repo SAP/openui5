@@ -83,6 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				result.version = $data.find("version").text();
 				result.documentation = $data.find("documentation").text();
 				result.releasenotes = $data.find("releasenotes").attr("url"); // in the appdata section
+				result.componentInfo = LibraryInfo.prototype._getLibraryComponentInfo($data);
 			}
 			
 			fnCallback(result);
@@ -221,6 +222,103 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			});
 			
 		});
+	};
+
+	/**
+	*Collect components from .library file
+	*@param {object} oData xml formatted object of .library file
+	*@return {array.<Object>} library component info or empty string
+	*/
+
+	LibraryInfo.prototype._getLibraryComponentInfo = function(oData) {
+		var oAllLibComponents = {};
+		var aComponentModules = [];
+		var sDefaultComponent = "";
+
+		oData.find("ownership > component").each(function(index, oCurrentComponent) {
+			if (oCurrentComponent.childElementCount === 0) {
+				sDefaultComponent = oCurrentComponent.textContent;
+			} else {
+				var vCurrentComponentName = oCurrentComponent.getElementsByTagName("name");
+				if (vCurrentComponentName && vCurrentComponentName.length > 0) {
+					vCurrentComponentName = vCurrentComponentName[0].textContent;
+					var vCurrentModules = oCurrentComponent.getElementsByTagName("module");
+					if (vCurrentComponentName && vCurrentModules && vCurrentModules.length > 0) {
+						var sConcatenatedModules = "";
+						for (var i = 0; i < vCurrentModules.length; i++) {
+							var sModule = vCurrentModules[i].textContent.replace(/\//g, ".");
+							if (sModule) {
+								sConcatenatedModules = sConcatenatedModules + "," + sModule;
+							}
+						}
+
+						if (sConcatenatedModules) {
+							sConcatenatedModules = sConcatenatedModules.replace(/^,/, ''); // remove first comma
+							var oTemp = { "component" : vCurrentComponentName, "modules" : sConcatenatedModules };
+							aComponentModules.push(oTemp);
+						}
+					}
+				}
+			}
+		});
+
+		oAllLibComponents["defaultComponent"] = sDefaultComponent;
+		if (aComponentModules && aComponentModules.length > 0) {
+			oAllLibComponents["specialCases"] = aComponentModules;
+		}
+
+		return oAllLibComponents;
+	};
+
+	/**
+	*Return the control's component for Ownership app (TeamApp) & Explored app (Demokit)
+	*@param {array.<Object>} oComponentInfos object for each library with the default component and special cases
+	*@param {string} sModuleName control name, e.g. sap.m.Button
+	*@return {string} component
+	*/
+
+	LibraryInfo.prototype._getActualComponent = function(oComponentInfos, sModuleName) {
+		if (sModuleName) {
+			for (var key in oComponentInfos) {
+				if (key && sModuleName.indexOf(key) === 0) {
+					//check for special modules
+					var bSpecialModule = false;
+					var oSpecCases = oComponentInfos[key].specialCases;
+					var sSpecComponent = "";
+					var aSpecModules = [];
+
+					if (oSpecCases) {
+						for (var i = 0; i < oSpecCases.length; i++) {
+							aSpecModules = oSpecCases[i].modules.split(",");
+
+							for (var j = 0; j < aSpecModules.length; j++) {
+								if (sModuleName === aSpecModules[j]) {
+									sSpecComponent = oSpecCases[i].component;
+									bSpecialModule = true;
+									break;
+								}
+							}
+						}
+					}
+
+					if (bSpecialModule) {
+						return sSpecComponent;
+					} else {
+						return oComponentInfos[key].defaultComponent;
+					}
+				}
+			}
+		}
+	};
+
+	/**
+	*Return the default library's component for Version Info (Demokit)
+	*@param {array.<Object>} oLibraryInfo array with all library information, e.g componentInfo, releasenotes and etc
+	*@return {string} component
+	*/
+
+	LibraryInfo.prototype._getDefaultComponent = function(oLibraryInfo) {
+		return oLibraryInfo.componentInfo.defaultComponent;
 	};
 
 	return LibraryInfo;
