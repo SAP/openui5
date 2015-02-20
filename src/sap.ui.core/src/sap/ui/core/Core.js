@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	"use strict";
 
 	/*global Promise */
-	
+
 	/**
 	 * Set of libraries that have been loaded and initialized already.
 	 * This is maintained separately from Core.mLibraries to protect it against
@@ -807,7 +807,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			}
 
 		}
-		
+
 		//Add ARIA role 'application'
 		var $body = jQuery("body");
 		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !$body.attr("role")) {
@@ -1056,28 +1056,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 	/**
 	 * Loads a set of libraries, preferably asynchronously.
-	 * 
-	 * The module loading is still synchronous, so if a library loads additional modules besides 
+	 *
+	 * The module loading is still synchronous, so if a library loads additional modules besides
 	 * its library.js file, those modules might be loaded synchronously by the library.js
-	 * The async loading is only supported by the means of the library-preload.json files, so if a 
+	 * The async loading is only supported by the means of the library-preload.json files, so if a
 	 * library doesn't provide a preload or when the preload is deactivated (configuration, debug mode)
-	 * then this API falls back to synchronous loading. However, the contract (Promise) remains valid 
-	 * and a Promise will be returned if async is specified - even when the real loading 
+	 * then this API falls back to synchronous loading. However, the contract (Promise) remains valid
+	 * and a Promise will be returned if async is specified - even when the real loading
 	 * is done synchronously.
-	 * 
-	 * @param {string[]} aLibraries set of libraries that should be loaded 
+	 *
+	 * @param {string[]} aLibraries set of libraries that should be loaded
 	 * @param {object} [mOptions] configuration options
 	 * @param {boolean} [mOptions.async=true] whether to load the libraries async (default)
 	 * @returns {Promise|undefined} returns an Ecmascript 6 promise for async, otherwise <code>undefined</code>
-	 *  
+	 *
 	 * @experimental Since 1.27.0 This API is not mature yet and might be changed or removed completely.
-	 * Productive code should not use it, except code that is delivered as part of UI5.  
-	 * @private 
+	 * Productive code should not use it, except code that is delivered as part of UI5.
+	 * @private
 	 */
 	Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 
 		mOptions = jQuery.extend({ async : true }, mOptions);
-		
+
 		var that = this,
 			bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
 			bAsync = mOptions.async;
@@ -1089,7 +1089,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				});
 			}
 		}
-		
+
 		function requireLibs() {
 			jQuery.each(aLibraries, function(i,sLibraryName) {
 				jQuery.sap.require(sLibraryName + ".library");
@@ -1098,11 +1098,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				that.oThemeCheck.fireThemeChangedEvent(true);
 			}
 		}
-		
+
 		if ( bAsync && bPreload ) {
-			
+
 			return new Promise(function(resolve, reject) {
-				
+
 				// TODO we urgently need to get rid of our syncPoints, but jQuery.sap.preloadModules still uses them
 				var oSyncPoint = jQuery.sap.syncPoint("Load Libraries", function(iOpenTasks, iFailures) {
 					if ( !iFailures ) {
@@ -1116,19 +1116,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				// create an artifical task to trigger the callback if no other tasks have been created
 				var iTask = oSyncPoint.startTask("load libraries");
 				preloadLibs(oSyncPoint);
-				oSyncPoint.finishTask(iTask);  
-				
+				oSyncPoint.finishTask(iTask);
+
 			});
-			
+
 		} else {
 
 			preloadLibs(null);
 			requireLibs();
-			
+
 		}
-		
+
 	};
-	
+
 	/**
 	 * Creates a component with the provided id and settings.
 	 *
@@ -1379,7 +1379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 			// if parameters have been used, update them with the new style sheet
 			if (sap.ui.core.theming && sap.ui.core.theming.Parameters) {
-				sap.ui.core.theming.Parameters._addLibraryTheme(sLibId);
+				sap.ui.core.theming.Parameters._addLibraryTheme(sLibId, cssPathAndName);
 			}
 		}
 
@@ -2067,9 +2067,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			if (!this.bDomReady) {
 				throw new Error("DOM is not ready yet. Static UIArea cannot be created.");
 			}
-			
+
 			var oAttributes = {id:STATIC_UIAREA_ID};
-			
+
 			if (jQuery("body").attr("role") != "application") {
 				// Only set ARIA application role if not available on html body (see configuration entry "autoAriaBodyRole")
 				oAttributes.role = "application";
@@ -2359,18 +2359,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		} //else nothing to do
 		return this;
 	};
-	
+
 	Core.prototype.setMessageManager = function(oMessageManager) {
 		this.oMessageManager = oMessageManager;
 	};
-	
+
 	Core.prototype.getMessageManager = function() {
 		if (!this.oMessageManager) {
 			this.oMessageManager = new MessageManager();
 		}
 		return this.oMessageManager;
 	};
-	
+
 	/**
 	 * Get the model with the given model name.
 	 *

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.theming.Parameters
   Author: d046011
 -->
@@ -17,28 +17,28 @@
 				}
 			};
 		</script>
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_hcb"
 			data-sap-ui-noConflict="true" >
 		</script>
-    
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 
 		<script language="javascript">
 
 		jQuery.sap.require("sap.ui.core.theming.Parameters");
-    	
+
 
    	test("InitialCheck", function() {
    		ok(sap.ui.core.theming.Parameters, "sap.ui.core.theming.Parameters must exist");
    		ok(sap.ui.core.theming.Parameters.get, "sap.ui.core.theming.Parameters.get() must exist");
    	});
-   	
+
    	test("Read single parameters", function() {
    		/* HCB theme was chosen because:
    		 *  1. it should be quite stable in general
@@ -49,15 +49,15 @@
    		equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
    		equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as 'black - #000000'");
    	});
-   	
+
    	test("Undefined parameter", function() {
    		equal(sap.ui.core.theming.Parameters.get("thisParameterNameMayNeverExist"), undefined, "'undefined' should be returned for unknown parameter names");
    	});
-   	
+
    	test("Invalid parameter", function() {
    		equal(sap.ui.core.theming.Parameters.get(null), undefined, "'undefined' should be returned for 'null' parameter name");
    	});
-   	
+
    	test("All parameters", function() {
    		var mAllParams = sap.ui.core.theming.Parameters.get();
    		ok(mAllParams, "A map of parameters should be returned when get is called without parameter name");
@@ -72,21 +72,47 @@
    	test("Parameter from Unknown Library", function() {
    		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
    	});
-   	
+
+		asyncTest("After Theme Change", function() {
+			var fnContinue = function() {
+				sap.ui.getCore().detachThemeChanged(fnContinue);
+				start();
+			}
+			var fnAssertThemeChanged = function() {
+
+				// parameters of base theme should now be present
+				equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#000000", "sapUiText must be defined as 'black - #000000'");
+				equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#ffffff", "sapUiExtraLightBG must be defined as 'white - #ffffff'");
+
+				sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
+				sap.ui.getCore().attachThemeChanged(fnContinue);
+				sap.ui.getCore().applyTheme("sap_hcb");
+			}
+
+			sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+			sap.ui.getCore().applyTheme("base");
+		});
+
    	test("Dynamically Loaded Library", function() {
-   		sap.ui.getCore().loadLibrary("sap.ui.testlib")
+
+			function getStyleId(i) {
+				return "style" + (i + 1);
+			}
+
+			// include 40 stylesheets to test IE9 stylesheet limit
+			var iNewStylesheets = 40;
+			var sStyleBaseUrl = "testdata/stylesheets/";
+			var aPromises = [];
+			var i;
+			for (i = 0; i < iNewStylesheets; i++) {
+				var sStyleId = getStyleId(i);
+				jQuery.sap.includeStyleSheet(sStyleBaseUrl + sStyleId + '.css', sStyleId);
+			}
+
+			sap.ui.getCore().loadLibrary("sap.ui.testlib");
    		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
    	});
-   	
-	test("After Theme Change", function() {
-		sap.ui.getCore().attachThemeChanged(function() {
-   			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#bcbcbc", "parameter value should have changed after theme change");
-   			start();
-		})
-		stop();
-		sap.ui.getCore().applyTheme("test_theme");
-	});
-	
+
     </script>
 	</head>
 	<body>
