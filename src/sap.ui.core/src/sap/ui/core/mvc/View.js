@@ -146,6 +146,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		} 
 	}});
 	
+	/**
+	 * preprocess view content
+	 * 
+	 * @private
+	 */
+	View.prototype._preprocessViewContent = function(){
+		if ( View._sContentPreprocessor ){
+			jQuery.sap.require(View._sContentPreprocessor);
+			var ContentPreprocessor = jQuery.sap.getObject(View._sContentPreprocessor);
+			if ( ContentPreprocessor && ContentPreprocessor.process ){
+				ContentPreprocessor.process(this);
+			}
+		}
+	};
 	
 	/**
 	 * initialize the View and connect (create if no instance is given) the Controller
@@ -191,6 +205,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (this.onControllerConnected) {
 			this.onControllerConnected(this.oController);
 		}
+		
+		this._preprocessViewContent();
 
 		// notifies the listeners that the View is initialized
 		this.fireAfterInit();
