@@ -3968,6 +3968,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 				sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
 					touches: {
@@ -4396,6 +4397,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 
 				// act
@@ -4842,6 +4844,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
@@ -4888,6 +4891,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5029,6 +5033,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5069,6 +5074,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.attachSelectionChange(function(oControlEvent) {
 					this.setValue(sExpectedValue);
 				}, oComboBox);
@@ -5114,6 +5120,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 					which: jQuery.sap.KeyCodes.A
 				});
@@ -5160,6 +5167,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 					which: jQuery.sap.KeyCodes.A
 				});
@@ -5441,6 +5449,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.attachSelectionChange(function(oControlEvent) {
 					this.setValue(sExpectedValue);
 				}, oComboBox);
@@ -5487,6 +5496,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 					which: jQuery.sap.KeyCodes.A
 				});
@@ -5535,6 +5545,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 					which: jQuery.sap.KeyCodes.A
 				});
@@ -5576,6 +5587,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
 				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
@@ -5636,6 +5648,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5733,6 +5746,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5797,6 +5811,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.attachSelectionChange(function(oControlEvent) {
 					this.setValue(sExpectedValue);
 				}, oComboBox);
@@ -5850,6 +5865,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
 				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
@@ -5906,6 +5922,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				var fnKeyEndSpy = this.spy(oComboBox, "onsapend");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5967,6 +5984,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.attachSelectionChange(function(oControlEvent) {
 					this.setValue(sExpectedValue);
 				}, oComboBox);
@@ -6083,6 +6101,7 @@
 					oComboBox.placeAt("content");
 					sap.ui.getCore().applyChanges();
 					oComboBox.focus();
+					this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 					var fnPageDownSpy = this.spy(oComboBox, "onsappagedown");
 					var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6267,6 +6286,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.attachSelectionChange(function(oControlEvent) {
 					this.setValue(sExpectedValue);
 				}, oComboBox);
@@ -6403,6 +6423,7 @@
 					oComboBox.placeAt("content");
 					sap.ui.getCore().applyChanges();
 					oComboBox.focus();
+					this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 					var fnPageUpSpy = this.spy(oComboBox, "onsappageup");
 					var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6591,6 +6612,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.attachSelectionChange(function(oControlEvent) {
 					this.setValue(sExpectedValue);
 				}, oComboBox);
@@ -6921,7 +6943,7 @@
 
 				// act
 				oComboBox.focus();
-				this.clock.tick(0);
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 				// assert
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
