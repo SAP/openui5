@@ -887,6 +887,25 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 
 	/**
+	 * Set the rootLevel for the hierarchy
+	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
+	 * This setting has only effect when the binding is already initialized.
+	 * @param {int} iRootLevel
+	 * @returns {TreeTable}
+	 */
+	TreeTable.prototype.setRootLevel = function(iRootLevel) {
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			jQuery.sap.assert(oBinding.setRootLevel, "rootLevel is not supported by the used binding");
+			if (oBinding.setRootLevel) {
+				oBinding.setRootLevel(iRootLevel);
+			}
+		}
+		this.setProperty("rootLevel", iRootLevel, true);
+		return this;
+	};
+
+	/**
 	 * Sets the node hierarchy to collapse recursive. When set to true, all child nodes will get collapsed as well.
 	 * This setting has only effect when the binding is already initialized.
 	 * @param {boolean} bCollapseRecursive
@@ -897,9 +916,9 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			jQuery.sap.assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
 			if (oBinding.setCollapseRecursive) {
 				oBinding.setCollapseRecursive(bCollapseRecursive);
-				this.setProperty("collapseRecursive", !!bCollapseRecursive, true);
 			}
 		}
+		this.setProperty("collapseRecursive", !!bCollapseRecursive, true);
 		return this;
 	};
 
