@@ -80,7 +80,27 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		iChangeTheHashToObject3 : function () {
 			return this.waitFor({
 				success : function () {
-					sap.ui.test.Opa5.getWindow().location.hash = "#/Objects/ObjectID_3";
+					sap.ui.test.Opa5.getWindow().location.hash = "#/object/ObjectID_3";
+				}
+			});
+		},
+		
+		iChangeTheHashToSomethingInvalid : function () {
+			return this.waitFor({
+				success : function () {
+					sap.ui.test.Opa5.getWindow().location.hash = "#/somethingInvalid";
+				}
+			});
+		},
+		
+		iSearchForSomethingWithNoResults : function () {
+			return this.waitFor({
+				id : "searchField",
+				viewName: "Master",
+				success : function (oSearchField) {
+					oSearchField.$("I").focus().val("abc").trigger("input");
+					// there is no easy way to simulate a search, we fire the event directly
+					oSearchField.fireSearch({query: "abc"});
 				}
 			});
 		},

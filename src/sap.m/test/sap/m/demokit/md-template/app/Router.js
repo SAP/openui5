@@ -1,5 +1,5 @@
 sap.ui.define([
-		"sap/ui/core/routing/Router",
+		"sap/m/routing/Router",
 		"sap/m/routing/RouteMatchedHandler"
 	], function (Router, RouteMatchedHandler) {
 	"use strict";
@@ -7,10 +7,9 @@ sap.ui.define([
 	return Router.extend("sap.ui.demo.mdtemplate.Router", {
 
 		constructor : function() {
-			sap.ui.core.routing.Router.apply(this, arguments);
-			this._oRouteMatchedHandler = new RouteMatchedHandler(this);
+			sap.m.routing.Router.apply(this, arguments);
 		},
-	
+		
 		myNavBack : function(sRoute, mData) {
 			var oHistory = sap.ui.core.routing.History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
@@ -23,40 +22,12 @@ sap.ui.define([
 				this.navTo(sRoute, mData, bReplace);
 			}
 		},
-	
-		/**
-		 * Changes the view without changing the hash
-		 * 
-		 * @param {object} oOptions must have the following properties
-		 * <ul>
-		 * 	<li> currentView : the view you start the navigation from.</li>
-		 * 	<li> targetViewName : the fully qualified name of the view you want to navigate to.</li>
-		 * 	<li> targetViewType : the viewtype eg: XML</li>
-		 * 	<li> isMaster : default is false, true if the view should be put in the master</li>
-		 * 	<li> transition : default is "show", the navigation transition</li>
-		 * 	<li> data : the data passed to the navContainers livecycle events</li>
-		 * </ul>
-		 * @public
-		 */
-		myNavToWithoutHash : function (oOptions) {
-			var oSplitApp = this._findSplitApp(oOptions.currentView);
-	
-			// Load view, add it to the page aggregation, and navigate to it
-			var oView = this.getView(oOptions.targetViewName, oOptions.targetViewType);
-			oSplitApp.addPage(oView, oOptions.isMaster);
-			oSplitApp.to(oView.getId(), oOptions.transition || "show", oOptions.data);
-		},
-	
+
 		backWithoutHash : function (oCurrentView, bIsMaster) {
 			var sBackMethod = bIsMaster ? "backMaster" : "backDetail";
 			this._findSplitApp(oCurrentView)[sBackMethod]();
 		},
-	
-		destroy : function() {
-			sap.ui.core.routing.Router.prototype.destroy.apply(this, arguments);
-			this._oRouteMatchedHandler.destroy();
-		},
-	
+
 		_findSplitApp : function(oControl) {
 			var sAncestorControlName = "idAppControl";
 	

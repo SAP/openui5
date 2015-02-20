@@ -72,7 +72,7 @@ sap.ui.define([
 				}.bind(this),
 				function () {
 					this.getView().setBusy(false);
-					this.showEmptyView();
+					this.getRouter().getTargets().display("detailObjectNotFound");
 				}.bind(this));
 		},
 	
@@ -102,10 +102,8 @@ sap.ui.define([
 					this._toggleButtonState();
 				}.bind(this),
 				function () {
-	
 					this.getView().setBusy(false);
-					this.showEmptyView();
-	
+					this.getRouter().getTargets().display("lineItemNotFound");
 				}.bind(this));
 		},
 		

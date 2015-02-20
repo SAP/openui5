@@ -26,7 +26,11 @@ sap.ui.define([
 		getModel : function (sName) {
 			return this.getView().getModel(sName);
 		},
-		
+
+		setModel : function (oModel, sName) {
+			return this.getView().setModel(oModel, sName);
+		},
+
 		/**
 		 * Convenience method for getting the resource bundle.
 		 * @public
@@ -34,22 +38,6 @@ sap.ui.define([
 		 */
 		getResourceBundle : function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
-		},
-		
-		/**
-		 * Invoked when the selected line item (e.g. wrong parameter in URL) is not found in the model.
-		 * Navigation to the corresponding view is triggered.
-		 * 
-		 * Will be removed, once router targets are available
-		 * 
-		 * @function
-		 */
-		showEmptyView : function () {
-			this.getRouter().myNavToWithoutHash({ 
-				currentView : this.getView(),
-				targetViewName : "sap.ui.demo.mdtemplate.view.NotFound",
-				targetViewType : "XML"
-			});
 		}
 
 	});

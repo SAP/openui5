@@ -42,8 +42,9 @@ sap.ui.define([
 			}, this);
 
 			var oListSelector = this.getOwnerComponent().oListSelector;
-			this.getRouter().getRoute("main").attachPatternMatched(oListSelector.selectAndScrollToFirstItem, oListSelector);
+			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectAndScrollToFirstItem, oListSelector);
 			this.getOwnerComponent().oListSelector.setBoundMasterList(this.oList);
+			this.getRouter().attachBypassed(this.onBypassed, this);
 		},
 
 		/* =========================================================== */
@@ -140,11 +141,18 @@ sap.ui.define([
 		 * @public
 		 */
 		onOpenViewSettings : function (oEvent) {
+			var sTab = "filter";
+
+			// extract the tab to open the view settings dialog from the button id
+			if (oEvent.getSource() instanceof sap.m.Button) {
+				sTab = oEvent.getSource().getId().split("--")[1];
+			}
+
 			if (!this.oViewSettingsDialog) {
 				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog", this);
 			}
 			this.getView().addDependent(this.oViewSettingsDialog);
-			this.oViewSettingsDialog.open();
+			this.oViewSettingsDialog.open(sTab);
 		},
 
 		/**
@@ -220,6 +228,17 @@ sap.ui.define([
 			// TODO: is this distinction really necessary anymore???
 			this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
 		},
+		
+		/**
+		 * Event handler for the bypassed event
+		 * When no pattern matches, the bypassed event will be fired.
+		 * If there was a selection on the master list, it will be removed as this object is not longer selected.
+		 * @param {sap.ui.base.Event} oEvent the bypassed event
+		 * @public
+		 */
+		onBypassed : function (oEvent) {
+			this.oList.removeSelections(true);
+		},
 
 		/* =========================================================== */
 		/* begin: internal methods                                     */
@@ -260,6 +279,12 @@ sap.ui.define([
 		_applyFilterSearch : function () {
 			var aFilters = this.oListFilterState.search.concat(this.oListFilterState.filter);
 			this.oList.getBinding("items").filter(aFilters, "Application");
+			// changes the noDataText of the list in case there are no filter results
+			if (aFilters.length !== 0) {
+				this.oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
+			} else  {
+				this.oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataText"));
+			}
 		},
 
 		/**

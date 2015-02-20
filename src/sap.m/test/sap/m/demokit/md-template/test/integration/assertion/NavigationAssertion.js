@@ -56,7 +56,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		iShouldBeOnTheObject1Page : function () {
 			return this.iShouldBeOnPage("Detail", "Object 1");
 		},
-		
+
 		iShouldSeeTheObjectLineItemsList : function () {
 			return this.waitFor({
 				id : "lineItemsList",
@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				}
 			});
 		},
-		
+
 		theLineItemsListShouldHave4Entries : function () {
 			return this.waitFor({
 				id : "lineItemsList",
@@ -78,7 +78,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "The list does not have 4 items."
 			});
 		},
-		
+
 		theFirstLineItemHasIDLineItemID_1 : function () {
 			return this.waitFor({
 				id : "lineItemsList",
@@ -91,7 +91,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "The first line item does not have Id 'LineItemID_1'."
 			});
 		},
-		
+
 		theObject3ShouldBeSelectedInTheMasterList : function() {
 			return this.waitFor({
 				id : "list",
@@ -103,11 +103,11 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Object 3 is not selected."
 			});
 		},
-		
+
 		iShouldBeOnTheLineItem1Page : function() {
 			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_1");
 		},
-		
+
 		theLineItemNavigationButtonHasCorrectEnabledState : function( sName, sIcon, bEnabled) {
 			var sSuccessMessage = bEnabled ? "' button is enabled." : "' button is disabled.",
 				sErrorMessage = bEnabled ? "' button is disabled." : "' button is enabled.";
@@ -122,44 +122,129 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "'" + sName + sErrorMessage
 			});
 		},
-		
+
 		thePreviousButtonIsDisabled : function() {
 			return this.theLineItemNavigationButtonHasCorrectEnabledState('Previous', 'sap-icon://up', false );
 		},
-		
+
 		thePreviousButtonIsEnabled : function() {
 			return this.theLineItemNavigationButtonHasCorrectEnabledState('Previous', 'sap-icon://up', true );
 		},
-		
+
 		theNextButtonIsEnabled : function() {
 			return this.theLineItemNavigationButtonHasCorrectEnabledState('Next', 'sap-icon://down', true );
 		},
-		
+
 		iShouldBeOnTheLineItem2Page : function() {
 			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_2");
 		},
 
-		iShouldSeeTheEmptyPage : function () {
+		iShouldSeeTheNotFoundPage : function () {
 			return this.waitFor({
-				viewName : "NotFound",
+				//controlType : "sap.m.MessagePage" 
 				id : "notFoundPage",
+				viewName : "NotFound",
 				success : function (oPage) {
-					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getResourceBundle().getText("notFoundTitle"), "was on the empty page");
+					// workaround, we currently cannot test not loaded controls in Opa, awaiting fix
+					strictEqual(oPage.getMetadata().getName(), "sap.m.MessagePage", "shows the message page");
 				},
 				errorMessage: "did not reach the empty page"
 			});
 		},
 
-		theTextShouldSayResourceNotFound : function () {
+		theNotFoundPageShouldSayResourceNotFound : function () {
 			return this.waitFor({
-				viewName: "NotFound",
-				id: "notFoundText",
-				success: function (oText) {
-					strictEqual(oText.getText(), oText.getModel("i18n").getResourceBundle().getText("notFoundText"), "did show the correct not found text");
+				id : "notFoundPage",
+				viewName : "NotFound",
+				success: function (oPage) {
+					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("notFoundTitle"), "the not found text is shown as title");
+					strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("notFoundText"), "the resource not found text is shown");
 				},
 				errorMessage: "did not display the resource not found text"
 			});
-		}
+		},
+
+		iShouldSeeTheObjectNotFoundPage : function () {
+			return this.waitFor({
+				//controlType : "sap.m.MessagePage" 
+				id : "detailObjectNotFoundPage",
+				viewName : "DetailObjectNotFound",
+				success : function (oPage) {
+					// workaround, we currently cannot test not loaded controls in Opa, awaiting fix
+					strictEqual(oPage.getMetadata().getName(), "sap.m.MessagePage", "shows the message page");
+				},
+				errorMessage: "did not reach the empty page"
+			});
+		},
+
+		theNotFoundPageShouldSayObjectNotFound : function () {
+			return this.waitFor({
+				id : "detailObjectNotFoundPage",
+				viewName : "DetailObjectNotFound",
+				success: function (oPage) {
+					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("detailTitle"), "the object text is shown as title");
+					strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("noObjectFoundText"), "the object not found text is shown");
+				},
+				errorMessage: "did not display the object not found text"
+			});
+		},
+
+		iShouldSeeTheLineItemNotFoundPage : function () {
+			return this.waitFor({
+				//controlType : "sap.m.MessagePage" 
+				id : "lineItemNotFoundPage",
+				viewName : "LineItemNotFound",
+				success : function (oPage) {
+					// workaround, we currently cannot test not loaded controls in Opa, awaiting fix
+					strictEqual(oPage.getMetadata().getName(), "sap.m.MessagePage", "shows the message page");
+				},
+				errorMessage: "did not reach the empty page"
+			});
+		},
 		
+		theListShouldHaveNoSelection : function () {
+			return this.waitFor({
+				id : "list",
+				viewName : "Master",
+				success: function (oList) {
+					strictEqual(oList.getSelectedItems().length, 0, "the list selection is removed");
+				},
+				errorMessage: "list selection was not removed"
+			});
+		},
+
+		theNotFoundPageShouldSayLineItemNotFound : function () {
+			return this.waitFor({
+				id : "lineItemNotFoundPage",
+				viewName : "LineItemNotFound",
+				success: function (oPage) {
+					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("lineItemTitle"), "the line item text is shown as title");
+					strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("noLineItemFoundText"), "the line item not found text is shown");
+				},
+				errorMessage: "did not display the object not found text"
+			});
+		},
+		
+		theListShouldSayResourceNotFound : function () {
+			return this.waitFor({
+				id : "list",
+				viewName : "Master",
+				success: function (oList) {
+					strictEqual(oList.getNoDataText(), oList.getModel("i18n").getProperty("masterListNoDataText"), "the list should show the no objects available text");
+				},
+				errorMessage: "list does not show the no objects available text"
+			});
+		},
+
+		iShouldSeeTheNoDataTextForNoSearchResults : function () {
+			return this.waitFor({
+				id : "list",
+				viewName : "Master",
+				success: function (oList) {
+					strictEqual(oList.getNoDataText(), oList.getModel("i18n").getProperty("masterListNoDataWithFilterOrSearchText"), "the list should show the no data text for search and filter");
+				},
+				errorMessage: "list does not show the no data text for search and filter"
+			});
+		}
 	});
 }, /* bExport= */ true);

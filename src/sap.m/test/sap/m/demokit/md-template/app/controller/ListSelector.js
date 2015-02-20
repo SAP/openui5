@@ -97,6 +97,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 				oList.getItems().some(function (oItem) {
 					if (oItem.getBindingContext().getPath() === sBindingPath) {
 						oList.setSelectedItem(oItem);
+						// TODO: scroll to selected item
 						return true;
 					}
 				});
