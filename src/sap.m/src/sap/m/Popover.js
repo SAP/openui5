@@ -374,12 +374,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		// popup's close method has been inherited here in order to fire the beforeClose event for calling close on
 		// autoclose.
 		this.oPopup.close = function(bBeforeCloseFired){
-			if (!bBeforeCloseFired) {
+			var bBooleanParam = typeof bBeforeCloseFired === "boolean";
+
+			// Only when the given parameter is "true", the beforeClose event isn't fired here.
+			// Because it's already fired in the sap.m.Popover.prototype.close function.
+			if (bBeforeCloseFired !== true) {
 				that.fireBeforeClose({openBy: that._oOpenBy});
 			}
-	
+
 			that._deregisterContentResizeHandler();
-			Popup.prototype.close.apply(this, Array.prototype.slice.call(arguments, 1));
+			Popup.prototype.close.apply(this, bBooleanParam ? [] : arguments);
 			that.removeDelegate(that._oRestoreFocusDelegate);
 		};
 	};
