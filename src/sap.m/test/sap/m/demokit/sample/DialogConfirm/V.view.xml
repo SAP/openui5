@@ -4,21 +4,32 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		width="100%"
-		class="sapUiContentPadding">
+		class="sapUiContentPadding"
+		width="100%">
 		<l:content>
 			<Button
 				text="Approve"
-				press="onApproveDialog" />
+				width="250px"
+				press="onApproveDialog"
+				class="sapUiSmallMarginBottom" />
+
 			<Button
 				text="Reject"
-				press="onRejectDialog" />
+				width="250px"
+				press="onRejectDialog"
+				class="sapUiSmallMarginBottom" />
+
 			<Button
-				text="Submit (note is mandatory)"
-				press="onSubmitDialog" />
+				text="Submit (mandatory note)"
+				width="250px"
+				press="onSubmitDialog"
+				class="sapUiSmallMarginBottom" />
+
 			<Button
-				text="Confirm (with additional information)"
-				press="onConfirmDialog" />
+				text="Confirm (optional note)"
+				width="250px"
+				press="onConfirmDialog"
+				class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
