@@ -2804,6 +2804,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			return;
 		}
 
+		// Make sure that group headers, which represents a tree node in AnalyticalTable, are not selectable.
+		if (oBinding.getContextInfo && 
+			this._aGroupedColumns.length > 0 && 
+			this._aGroupedColumns.length !== oBinding.getContextInfo(iRowIndex).level) {
+			return;
+		}
+
 		this._iSourceRowIndex = iRowIndex;
 
 		var oSelMode = this.getSelectionMode();
