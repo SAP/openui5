@@ -250,6 +250,9 @@
 				
 				<!-- fail on eslint error -->
 				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
+				
+				<!-- only validate the changed files -->
+				<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
 
 			</properties>
 
@@ -294,6 +297,7 @@
 							<version>0.13.0</version>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
+							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
 							<quiet>true</quiet>
 							<includes>
 								<include>src/**</include>
@@ -310,6 +314,19 @@
 					</plugin>
 				</plugins>
 			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>nightly.build</id>
+
+			<properties>
+
+				<!-- validate all files for the nightly build (attention: profile nightly.build must stay after eslint.build!) -->
+				<sap.ui5.eslint.onlyChangedFiles>false</sap.ui5.eslint.onlyChangedFiles>
+
+			</properties>
 
 		</profile>
 
