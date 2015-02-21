@@ -1868,10 +1868,11 @@
 		 * Last but not least does the URN scheme better match the naming conventions used by AMD loaders
 		 * (like <code>requireJS</code>).
 		 *
-		 * @experimental Since 1.27.0
 		 * @param {string} sResourceName unified resource name of the resource
 		 * @returns {string} URL to load the resource from
 		 * @public
+		 * @experimental Since 1.27.0
+		 * @function
 		 */
 		jQuery.sap.getResourcePath = getResourcePath;
 
@@ -1898,8 +1899,8 @@
 		 * Note that the empty prefix ('') will always match and thus serves as a fallback for
 		 * any search.
 		 *
-		 * The prefix can either be given as string or as object which contains the url and a final property.
-		 * If final is set to true, overwriting a module prefix is not possible anymore.
+		 * The prefix can either be given as string or as object which contains the url and a 'final' property.
+		 * If 'final' is set to true, overwriting a module prefix is not possible anymore.
 		 *
 		 * @param {string} sModuleName module name to register a path for
 		 * @param {string | object} vUrlPrefix path prefix to register, either a string literal or an object (e.g. {url : 'url/to/res', 'final': true})
@@ -2192,7 +2193,18 @@
 		 *
 		 *   });
 		 * </pre>
-		 *
+		 * 
+		 * In another module or in an application HTML page, the {@link sap.ui.require} API can be used
+		 * to load the Something module and to work with it:
+		 * 
+		 * <pre>
+		 * sap.ui.require(['sap/mylib/Something'], function(Something) {
+		 * 
+		 *   // instantiate a Something and call foo() on it 
+		 *   new Something().foo();
+		 *   
+		 * });
+		 * </pre>
 		 *
 		 * <b>Module Name Syntax</b><br>
 		 * <code>sap.ui.define</code> uses a simplified variant of the {@link jQuery.sap.getResourcePath
@@ -2266,7 +2278,7 @@
 		 *
 		 * As the current programming model and the documentation of UI5 heavily rely on global names,
 		 * there will be a transition phase where UI5 enables AMD modules and local references to module
-		 * values in parallel to the old global names. The forth parameter of <code>sap.ui.define</code>
+		 * values in parallel to the old global names. The fourth parameter of <code>sap.ui.define</code>
 		 * has been added to support that transition phase. When this parameter is set to true, the framework
 		 * provides two additional functionalities
 		 *
@@ -2339,7 +2351,7 @@
 		 *
 		 * <b>Limitations, Design Considerations</b><br>
 		 * <ul>
-		 * <li><b>Limitation</b>As dependency management is not supported for Non-UI5 modules, the only way
+		 * <li><b>Limitation</b>: as dependency management is not supported for Non-UI5 modules, the only way
 		 *     to ensure proper execution order for such modules currently is to rely on the order in the
 		 *     dependency array. Obviously, this only works as long as <code>sap.ui.define</code> uses
 		 *     synchronous loading. It will be enhanced when asynchronous loading is implemented.</li>
@@ -2353,30 +2365,33 @@
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
-		 * @param {string} [sId] name of the module. When omitted, the loader determines the name from the request
+		 * @param {string} [sModuleName] name of the module in simplified resource name syntax. 
+		 *        When omitted, the loader determines the name from the request.
 		 * @param {string[]} [aDependencies] list of dependencies of the module
 		 * @param {function|any} vFactory the module value or a function that calculates the value
 		 * @param {boolean} [bExport] whether an export to global names is required - should be used by SAP-owned code only
 		 * @since 1.27.0
 		 * @public
 		 * @experimental Since 1.27.0 - not all aspects of sap.ui.define are settled yet. If the documented
-		 *        constraints and limitations are obeyed, SAP-owned code might use it. If the forth parameter
-		 *        is not used and if the asynchronous contract is respected, even Non-SAP might use it.
+		 *        constraints and limitations are obeyed, SAP-owned code might use it. If the fourth parameter
+		 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
 		 */
-		sap.ui.define = function(sId, aDependencies, vFactory, bExport) {
-			var sModuleName, i;
+		sap.ui.define = function(sModuleName, aDependencies, vFactory, bExport) {
+			var sResourceName, i;
 
 			// optional id
-			if ( typeof sId === "string" ) {
-				sModuleName = sId + ".js";
+			if ( typeof sModuleName === 'string' ) {
+				sResourceName = sModuleName + '.js';
 			} else {
 				// shift parameters
 				bExport = vFactory;
 				vFactory = aDependencies;
-				aDependencies = sId;
-				sModuleName = _execStack[_execStack.length - 1];
+				aDependencies = sModuleName;
+				sResourceName = _execStack[_execStack.length - 1];
 			}
-			sId = urnToUI5(sModuleName);
+			
+			// convert module name to UI5 module name syntax (might fail!)
+			sModuleName = urnToUI5(sResourceName);
 
 			// optional array of dependencies
 			if ( !jQuery.isArray(aDependencies) ) {
@@ -2386,34 +2401,34 @@
 				aDependencies = [];
 			} else {
 				// resolve relative module names
-				var sPackage = sModuleName.slice(0,1 + sModuleName.lastIndexOf('/'));
+				var sPackage = sResourceName.slice(0,1 + sResourceName.lastIndexOf('/'));
 				for (i = 0; i < aDependencies.length; i++) {
 					if ( /^\.\//.test(aDependencies[i]) ) {
-						aDependencies[i] = sPackage + aDependencies[i].slice(2);
+						aDependencies[i] = sPackage + aDependencies[i].slice(2); // 2 == length of './' prefix
 					}
 				}
 			}
 
 			if ( log.isLoggable() ) {
-				log.debug("define(" + sModuleName + ", " + "['" + aDependencies.join("','") + "']" + ")");
+				log.debug("define(" + sResourceName + ", " + "['" + aDependencies.join("','") + "']" + ")");
 			}
 
-			var oModule = declareModule(sModuleName);
+			var oModule = declareModule(sResourceName);
 
 			// note: dependencies will be converted from RJS to URN inside requireAll
 			requireAll(aDependencies, function(aModules) {
 
 				// factory
 				if ( log.isLoggable() ) {
-					log.debug("define(" + sModuleName + "): calling factory " + typeof vFactory);
+					log.debug("define(" + sResourceName + "): calling factory " + typeof vFactory);
 				}
 
 				if ( bExport ) {
 					// ensure parent namespace
-					jQuery.sap.getObject(sId, 1);
+					jQuery.sap.getObject(sModuleName, 1);
 				}
 
-				if ( typeof vFactory === "function" ) {
+				if ( typeof vFactory === 'function' ) {
 					oModule.content = vFactory.apply(window, aModules);
 				} else {
 					oModule.content = vFactory;
@@ -2422,12 +2437,12 @@
 				// HACK: global export
 				if ( bExport ) {
 					if ( oModule.content == null ) {
-						log.error("module '" + sModuleName + "' returned no content, but should be exported");
+						log.error("module '" + sResourceName + "' returned no content, but should be exported");
 					} else {
 						if ( log.isLoggable() ) {
-							log.debug("exporting content of '" + sModuleName + "': as global object");
+							log.debug("exporting content of '" + sResourceName + "': as global object");
 						}
-						jQuery.sap.setObject(sId, oModule.content);
+						jQuery.sap.setObject(sModuleName, oModule.content);
 					}
 				}
 

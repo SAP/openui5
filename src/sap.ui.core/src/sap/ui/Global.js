@@ -24,13 +24,13 @@
 /*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Register to the OpenAjax Hub if it exists
-if (window.OpenAjax && window.OpenAjax.hub) {
-	OpenAjax.hub.registerLibrary("sap", "http://www.sap.com/", "0.1", {});
-}
-
 sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	function(jQuery/* , jQuerySap */) {
 	"use strict";
+
+	if (window.OpenAjax && window.OpenAjax.hub) {
+		OpenAjax.hub.registerLibrary("sap", "http://www.sap.com/", "0.1", {});
+	}
 
 	/**
 	 * Root namespace for JavaScript functionality provided by SAP SE.
