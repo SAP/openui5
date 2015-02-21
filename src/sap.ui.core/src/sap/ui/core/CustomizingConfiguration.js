@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 		 * @param {function} fnCheck check function
 		 */
 		function findConfig(sType, vObject, fnCheck) {
-			var sComponentId = vObject && typeof vObject === "string" ? vObject : Component.getOwnerIdFor(vObject);
+			var sComponentId = vObject && typeof vObject === "string" ? vObject : (vObject && Component.getOwnerIdFor(vObject));
 			if (sComponentId) {
 				// if a component name is given only the component customizing
 				// configuration is checked - the customizing configuration is

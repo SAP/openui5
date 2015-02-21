@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	"use strict";
 
 
-	
 	/**
 	 * Creates a new metadata object for a UIComponent subclass.
 	 *
@@ -48,26 +47,39 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	
 		ComponentMetadata.prototype.applySettings.call(this, oClassInfo);
 	
-		var oStaticInfo = oClassInfo.metadata;
-	
+		var oStaticInfo = oClassInfo.metadata, 
+		    oManifest = oStaticInfo.manifest,
+		    oUI5Manifest = oManifest["sap.ui5"];
+		
+		// add the old information on component metadata to the manifest info
+		for (var sName in oStaticInfo) {
+			var oValue = oStaticInfo[sName];
+			switch (sName) {
+				case "rootView":
+				case "routing":
+					oUI5Manifest[sName] = oValue;
+					break;
+				// no default
+			}
+		}
+		
 		// if the root view is a string we convert it into a view 
 		// configuration object and assume that it is a XML view
-		this._mRootView = oStaticInfo.rootView;
-		if (typeof this._mRootView === "string") {
-			this._mRootView = {
-					viewName: this._mRootView,
+		if (oUI5Manifest && typeof oUI5Manifest.rootView === "string") {
+			oUI5Manifest.rootView = {
+					viewName: oUI5Manifest.rootView,
 					type: sap.ui.core.mvc.ViewType.XML
 			};
 		}
-		this._mRouting = oStaticInfo.routing;
 	
 		// some metadata needs to be merged with the metadata for the parent component
 		var oParent = this.getParent();
-		if (oParent instanceof UIComponentMetadata) {
-			if (oParent._mRootView) {
-				this._mRootView = jQuery.extend(true, {}, oParent._mRootView, this._mRootView);
+		if (oParent instanceof ComponentMetadata) {
+			var oParentUI5Manifest = oParent.getManifestEntry("sap.ui5");
+			if (oParentUI5Manifest.rootView) {
+				oUI5Manifest.rootView = jQuery.extend(true, {}, oParentUI5Manifest.rootView, oUI5Manifest.rootView);
 			}
-			this._mRouting = jQuery.extend(true, {}, oParent._mRouting, this._mRouting);
+			oUI5Manifest.routing = jQuery.extend(true, {}, oParentUI5Manifest.routing, oUI5Manifest.routing);
 		}
 		
 	};
@@ -79,9 +91,12 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @protected
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change. 
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	UIComponentMetadata.prototype.getRootView = function() {
-		return this._mRootView;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRootView is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		return oUI5Manifest && oUI5Manifest.rootView;
 	};
 	
 	/**
@@ -90,9 +105,12 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @private
 	 * @since 1.16.1 
 	 * @experimental Since 1.16.1. Implementation might change. 
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	UIComponentMetadata.prototype.getRoutingConfig = function() {
-		return this._mRouting && this._mRouting.config;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutingConfig is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		return oUI5Manifest && oUI5Manifest.routing && oUI5Manifest.routing.config;
 	};
 	
 	/**
@@ -101,20 +119,25 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @private
 	 * @since 1.16.1 
 	 * @experimental Since 1.16.1. Implementation might change. 
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	UIComponentMetadata.prototype.getRoutes = function() {
-		return this._mRouting && this._mRouting.routes;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutes is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		return oUI5Manifest && oUI5Manifest.routing && oUI5Manifest.routing.routes;
 	};
 
 	/**
 	 * Returns the targets configuration.
 	 * @return {object} targets configuration
 	 * @private
-	 * @since 1.28
-	 * @experimental Since 1.28 Implementation might change.
+	 * @since 1.27.1
+	 * @experimental Since 1.27.1. Implementation might change.
 	 */
 	UIComponentMetadata.prototype.getTargetsConfig = function() {
-		return this._mRouting && this._mRouting.targets;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getTargetsConfig is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		return oUI5Manifest && oUI5Manifest.routing && oUI5Manifest.routing.targets;
 	};
 
 	return UIComponentMetadata;
