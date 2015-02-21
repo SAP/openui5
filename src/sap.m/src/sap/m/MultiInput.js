@@ -299,8 +299,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var aTokens = this.getTokens();
 
 		if (aTokens.length > 1) {
-			var sText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MULTIINPUT_SHOW_MORE_TOKENS");
-			this.setValue(aTokens.length - 1 + " " + sText);
+			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.setValue(oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", aTokens.length - 1));
 			var i = 0;
 			for ( i = 0; i < aTokens.length - 1; i++ ) {
 				aTokens[i].setVisible(false);
