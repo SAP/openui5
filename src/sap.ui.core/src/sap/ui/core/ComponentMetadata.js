@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			}
 			
 			// ensure property name incl. sap.app and sap.ui5 namespace
-			oManifest["name"] = oManifest["name"] || this.getName();
+			oManifest["name"] = oManifest["name"] || sName;
 			oManifest["sap.app"] = oManifest["sap.app"] || {};
 			oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
 			
@@ -136,8 +136,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			
 			// create the manifest object
 			var oManifest = {
-				"name": this.getName(),
-				"sap.app": {},
+				"name": sName,
+				"sap.app": {
+					"id": sName
+				},
 				"sap.ui5": {}
 			};
 			
@@ -160,71 +162,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			var oUI5Manifest = oManifest["sap.ui5"];
 			for (var sName in oStaticInfo) {
 				var oValue = oStaticInfo[sName];
-				switch (sName) {
-					case "name":
-						oAppManifest["id"] = oValue;
-						break;
-					case "description":
-					case "keywords":
-						oAppManifest[sName] = oValue;
-						break;
-					case "version":
-						oAppManifest.applicationVersion = {
-							version: oValue
-						};
-						break;
-					case "config":
-						oUI5Manifest[sName] = oValue;
-						break;
-					case "customizing":
-						oUI5Manifest["extends"] = {
-							component: oParent ? oParent.getName() : undefined,
-							extensions: oValue
-						};
-						break;
-					case "dependencies":
-						oUI5Manifest[sName] = {};
-						oUI5Manifest[sName].minUI5Version = oValue.ui5version;
-						oUI5Manifest[sName].libs = fnCreateObject(oValue.libs);
-						oUI5Manifest[sName].components = fnCreateObject(oValue.components);
-						break;
-					case "includes":
-						oUI5Manifest["resources"] = {};
-						if (oValue && oValue.length > 0) {
-							for (var i = 0, l = oValue.length; i < l; i++) {
-								var sResource = oValue[i];
-								var m = sResource.match(/\.(css|js)$/i);
-								if (m) {
-									oUI5Manifest["resources"][m[1]] = oUI5Manifest["resources"][m[1]] || [];
-									oUI5Manifest["resources"][m[1]].push({
-										"uri": sResource
-									});
-								}
-							}
-						}
-						break;
-					case "models":
-						var oModels = {};
-						for (var sModel in oValue) {
-							var oDS = oValue[sModel];
-							var oModel = {
-								settings: {}
+				if (oValue) {
+					switch (sName) {
+						case "name":
+							oManifest[sName] = oValue;
+							break;
+						case "description":
+						case "keywords":
+							oAppManifest[sName] = oValue;
+							break;
+						case "version":
+							oAppManifest.applicationVersion = {
+								version: oValue
 							};
-							for (var sDSSetting in oDS) {
-								var oDSSetting = oDS[sDSSetting];
-								switch (sDSSetting) {
-									case "type":
-										oModel[sDSSetting] = oDSSetting;
-										break;
-									default: 
-										oModel.settings[sDSSetting] = oDSSetting;
+							break;
+						case "config":
+							oUI5Manifest[sName] = oValue;
+							break;
+						case "customizing":
+							oUI5Manifest["extends"] = {
+								component: oParent ? oParent.getName() : undefined,
+								extensions: oValue
+							};
+							break;
+						case "dependencies":
+							oUI5Manifest[sName] = {};
+							oUI5Manifest[sName].minUI5Version = oValue.ui5version;
+							oUI5Manifest[sName].libs = fnCreateObject(oValue.libs);
+							oUI5Manifest[sName].components = fnCreateObject(oValue.components);
+							break;
+						case "includes":
+							oUI5Manifest["resources"] = {};
+							if (oValue && oValue.length > 0) {
+								for (var i = 0, l = oValue.length; i < l; i++) {
+									var sResource = oValue[i];
+									var m = sResource.match(/\.(css|js)$/i);
+									if (m) {
+										oUI5Manifest["resources"][m[1]] = oUI5Manifest["resources"][m[1]] || [];
+										oUI5Manifest["resources"][m[1]].push({
+											"uri": sResource
+										});
+									}
 								}
 							}
-							oModels[sModel] = oModel;
-						}
-						oUI5Manifest["models"] = oModels;
-						break;
-					// no default
+							break;
+						case "models":
+							var oModels = {};
+							for (var sModel in oValue) {
+								var oDS = oValue[sModel];
+								var oModel = {
+									settings: {}
+								};
+								for (var sDSSetting in oDS) {
+									var oDSSetting = oDS[sDSSetting];
+									switch (sDSSetting) {
+										case "type":
+											oModel[sDSSetting] = oDSSetting;
+											break;
+										default: 
+											oModel.settings[sDSSetting] = oDSSetting;
+									}
+								}
+								oModels[sModel] = oModel;
+							}
+							oUI5Manifest["models"] = oModels;
+							break;
+						// no default
+					}
 				}
 			}
 			
