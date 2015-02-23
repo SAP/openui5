@@ -99,7 +99,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Whether this page shall have a footer
 			 * @since 1.13.1
 			 */
-			showFooter : {type : "boolean", group : "Appearance", defaultValue : true}
+			showFooter : {type : "boolean", group : "Appearance", defaultValue : true},
+			
+			/**
+			 * Decides which area is covered by the local BusyIndicator when <code>page.setBusy()</code> is called. By default the entire page is covered, including headers and footer. When this property is set to "true", only the content area is covered (not header/sub header and footer), which is useful e.g. when there is a SearchField in the sub header and live search continuously updates the content area while the user is still able to type.
+			 * @since 1.29.0
+			 */
+			contentOnlyBusy : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -410,6 +416,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
+	Page.prototype.setContentOnlyBusy = function(bContentOnly) {
+		this.setProperty("contentOnlyBusy", bContentOnly, true); // no rerendering
+		this.$().toggleClass("sapMPageBusyCoversAll", !bContentOnly);
+		return this;
+	};
 
 	//*** Methods forwarding the "headerContent" pseudo-aggregation calls ***
 
