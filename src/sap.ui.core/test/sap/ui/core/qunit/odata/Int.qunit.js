@@ -118,7 +118,7 @@
 					}
 					catch (e) {
 						ok(e instanceof sap.ui.model.ParseException)
-						equal(e.message, "Enter a number with no decimals");
+						equal(e.message, "Enter a number with no decimal places.");
 					}
 				});
 		});
@@ -161,7 +161,7 @@
 			}
 			catch (e) {
 				ok(e instanceof sap.ui.model.ValidateException)
-				equal(e.message, "Enter a number with no decimals");
+				equal(e.message, "Enter a number with no decimal places.");
 			}
 		});
 
