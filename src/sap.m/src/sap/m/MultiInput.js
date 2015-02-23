@@ -247,8 +247,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var oNewTokenInPopup = oToken.clone();
 		oNewTokenInPopup.attachDelete(this._tokenizerInPopup._onDeleteToken, this._tokenizerInPopup);
 		oNewTokenInPopup.attachPress(this._tokenizerInPopup._onTokenPress, this._tokenizerInPopup);
-		var iLength = this._tokenizerInPopup.getTokens().length;
-		this._tokenizerInPopup.insertToken(oNewTokenInPopup, iLength);
+		this._tokenizerInPopup.insertToken(oNewTokenInPopup, 0);
 	};
 	
 	/**
@@ -869,16 +868,17 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype.cloneTokenizer = function(oTokenizer) {
 		var oClone = new sap.m.Tokenizer();
 
-        var aTokens = oTokenizer.getTokens();
-        for (var i = 0; i < aTokens.length; i++){
-              var newToken = aTokens[i].clone();
-              oClone.addToken(newToken);
-        }
-        
-        return oClone;
-		
+		var aTokens = oTokenizer.getTokens();
+		if (aTokens.length > 0) {
+			for (var i = aTokens.length - 1; i >= 0; i--){
+				var newToken = aTokens[i].clone();
+				oClone.addToken(newToken);
+			}
+		}
+
+		return oClone;
 	};
-	
+
 	/**
 	 * when tap on text field, deselect all tokens
 	 * @public
