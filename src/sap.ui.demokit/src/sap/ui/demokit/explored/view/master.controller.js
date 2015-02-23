@@ -28,7 +28,6 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		},
 		"namespace" : true,
 		"category" : true,
-		"appComponent" : true,
 		"since" : true,
 		"formFactors" : true
 	},

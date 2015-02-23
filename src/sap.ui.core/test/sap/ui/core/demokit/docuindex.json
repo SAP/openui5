@@ -1,7 +1,6 @@
 {
 	"explored" : {
 		"entitiesDefaults" : {
-			"appComponent" : "CA-UI5-COR",
 			"formFactors" : "-"
 		},
 		"samplesRef" : {
@@ -35,7 +34,6 @@
 				"name" : "InvisibleText",
 				"category" : "Display",
 				"since" : "1.28",
-				"appComponent" : "CA-UI5-CTR",
 				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
 			},
 			{

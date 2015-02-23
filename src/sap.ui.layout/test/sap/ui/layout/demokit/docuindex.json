@@ -1,7 +1,6 @@
 {
 	"explored" : {
 		"entitiesDefaults" : {
-			"appComponent" : "CA-UI5-CTR"
 		},
 		"samplesRef" : {
 			"namespace" : "sap.ui.layout.sample",

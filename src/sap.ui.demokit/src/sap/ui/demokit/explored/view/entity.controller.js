@@ -254,7 +254,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				methods : 0,
 				aggregations : 0,
 				associations : 0
-			}
+			},
+			appComponent : this._takeControlComponent(name)
 		};
 
 		// no documentation !
@@ -462,5 +463,18 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 	],
 	_formatTypeNav : function (sType) {
 		return this._baseTypes.indexOf(sType) === -1;
+	},
+
+	/**
+	 * The the actual component for the control
+	 * @param {string} controlName
+	 * @return {string} sActualControlComponent
+	 */
+	_takeControlComponent : function (controlName) {
+		var oLibComponentModel = sap.ui.demokit.explored.data.libComponentInfos;
+		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
+		var oLibInfo = new sap.ui.core.util.LibraryInfo();
+		var sActualControlComponent = oLibInfo._getActualComponent(oLibComponentModel, controlName);
+		return sActualControlComponent;
 	}
 });

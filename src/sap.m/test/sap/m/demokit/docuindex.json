@@ -45,7 +45,6 @@
 
 	"explored" : {
 		"entitiesDefaults" : {
-			"appComponent" : "CA-UI5-CTR",
 			"formFactors" : "ML"
 		},
 		"samplesRef" : {
@@ -198,7 +197,6 @@
 				"category" : "User Input",
 				"since" : "1.12",
 				"formFactors" : "L",
-				"appComponent" : "CA-UI5-BS-FCP",
 				"samples" : [ "sap.m.sample.FacetFilterLight", "sap.m.sample.FacetFilterSimple" ]
 			},
 			{
@@ -206,7 +204,6 @@
 				"name" : "Feed Input",
 				"category" : "Display",
 				"since" : "1.22",
-				"appComponent" : "CA-UI5-BS-FCW",
 				"samples" : [ "sap.m.sample.FeedInput", "sap.m.sample.Feed" ]
 			},
 			{
@@ -214,7 +211,6 @@
 				"name" : "Feed List Item",
 				"category" : "List",
 				"since" : "1.12",
-				"appComponent" : "CA-UI5-BS-FCW",
 				"samples" : [ "sap.m.sample.FeedListItem", "sap.m.sample.Feed" ]
 			},
 			{
@@ -238,7 +234,6 @@
 				"name" : "Upload Collection",
 				"category" : "Action",
 				"since" : "1.26",
-				"appComponent" : "CA-UI5-BS-FCW",
 				"samples" : [ "sap.m.sample.UploadCollection" ]
 			},
 			{
@@ -719,7 +714,6 @@
 			{
 				"id" : "sap.ui.core.StandardMargins",
 				"name" : "Standard Margins",
-				"appComponent" : "CA-UI5-COR",
 				"category" : "Layout",
 				"since" : "1.28",
 				"formFactors" : "-",
@@ -728,7 +722,6 @@
 			{
 				"id" : "sap.ui.core.ContainerPadding",
 				"name" : "Standard Paddings",
-				"appComponent" : "CA-UI5-COR",
 				"category" : "Layout",
 				"since" : "1.28",
 				"formFactors" : "-",

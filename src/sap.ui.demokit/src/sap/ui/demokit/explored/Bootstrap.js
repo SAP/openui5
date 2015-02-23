@@ -14,12 +14,12 @@ sap.ui.define(['jquery.sap.global'],
 			sap.ui.demokit._loadAllLibInfo(
 				"", "_getDocuIndex",
 				function (aLibs, oDocIndicies) {
-					Bootstrap._processAndStoreIndices(oDocIndicies);
+					Bootstrap._processAndStoreIndices(aLibs, oDocIndicies);
 					Bootstrap._loadUi();
 				});
 		},
 
-		_processAndStoreIndices : function (oDocIndicies) {
+		_processAndStoreIndices : function (aLibs, oDocIndicies) {
 
 			var aCategoryWhiteList = [
 				"Action",
@@ -38,12 +38,11 @@ sap.ui.define(['jquery.sap.global'],
 				"Data Binding",
 				"Map"
 			];
-			var afilterProps = [ "namespace", "since", "category", "appComponent"]; // form factors are set manually
+			var afilterProps = [ "namespace", "since", "category"]; // form factors are set manually
 			var oFilterSets = {
 				namespace : {},
 				since : {},
 				category : {},
-				appComponent : {},
 				formFactors : { // form factors are set manually
 					"Independent" : true,
 					"Condensed" : true,
@@ -217,6 +216,18 @@ sap.ui.define(['jquery.sap.global'],
 					sap.ui.demokit.explored.data.filter[setKey].push({ id: key });
 				});
 			});
+
+			// call LibraryInfo API method for collecting all component info from the .library files
+			jQuery.sap.require("sap.ui.core.util.LibraryInfo");
+			var oLibInfo = new sap.ui.core.util.LibraryInfo();
+			var oLibComponents = {};
+			var oLibraryComponentInfo = function(oComponent) {
+				oLibComponents[oComponent.library] = oComponent.componentInfo;
+			};
+			for (var i = 0; i < aLibs.length; i++) {
+				oLibInfo._getLibraryInfo(aLibs[i], oLibraryComponentInfo);
+			}
+			sap.ui.demokit.explored.data.libComponentInfos = oLibComponents;
 		},
 
 		_loadUi : function () {
