@@ -758,7 +758,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.resetData();
 			this.bNeedsUpdate = false;
 			this.bRefresh = true;
-			this._fireChange();
+			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
 		}
 	};
 	
@@ -1059,6 +1059,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		if (sPath) {
 			return this.oModel._createRequestUrl(sPath, null, aParams);
 		}
+	};
+	
+	/**
+	 * Setting the number of expanded levels leads to different requests.
+	 * This function is used by the TreeTable for the ungroup/ungroup-all feature.
+	 * @see sap.ui.table.TreeTable#_getGroupHeaderMenu
+	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
+	 * @protected
+	 * @name sap.ui.model.odata.ODataTreeBinding#setNumberOfExpandedLevels
+	 * @function
+	 */
+	ODataTreeBinding.prototype.setNumberOfExpandedLevels = function(iLevels) {
+		iLevels = iLevels || 0;
+		if (iLevels < 0) {
+			jQuery.sap.log.warning("ODataTreeBinding: numberOfExpandedLevels was set to 0. Negative values are prohibited.");
+			iLevels = 0;
+		}
+		// set the numberOfExpandedLevels on the binding directly
+		// this.mParameters is inherited from the Binding super class
+		this.iNumberOfExpandedLevels = iLevels;
+		this._fireChange();
+	};
+	
+	/**
+	 * Retrieves the currently set number of expanded levels from the Binding (commonly an ODataTreeBinding).
+	 * @protected
+	 * @name sap.ui.model.odata.ODataTreeBinding#getNumberOfExpandedLevels
+	 * @function
+	 * @returns {int} the number of expanded levels
+	 */
+	ODataTreeBinding.prototype.getNumberOfExpandedLevels = function() {
+		return this.iNumberOfExpandedLevels;
+	};
+	
+	/**
+	 * Sets the rootLevel
+	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
+	 * @param {int} iRootLevel
+	 */
+	ODataTreeBinding.prototype.setRootLevel = function(iRootLevel) {
+		iRootLevel = parseInt(iRootLevel || 0, 10);
+		if (iRootLevel < 0) {
+			jQuery.sap.log.warning("ODataTreeBinding: rootLevels was set to 0. Negative values are prohibited.");
+			iRootLevel = 0;
+		}
+		// set the rootLevel on the binding directly
+		// this.mParameters is inherited from the Binding super class
+		this.iRootLevel = iRootLevel;
+		this.refresh();
+	};
+
+	/**
+	 * Returns the rootLevel
+	 * @returns {int}
+	 */
+	ODataTreeBinding.prototype.getRootLevel = function() {
+		return this.iRootLevel;
 	};
 	
 	return ODataTreeBinding;

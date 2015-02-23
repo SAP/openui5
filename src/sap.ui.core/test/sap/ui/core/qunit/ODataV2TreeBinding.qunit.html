@@ -421,7 +421,7 @@
 	
 				oBinding.detachChange(handler1);
 	
-				oBinding.attachChange(handler2);
+				oBinding.attachRefresh(handler2);
 				oBinding.refresh();
 				deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
 				deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
