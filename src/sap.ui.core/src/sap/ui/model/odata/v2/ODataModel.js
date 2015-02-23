@@ -3160,7 +3160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnSuccess =	mParameters.success;
 			fnError = mParameters.error;
 			sBatchGroupId = mParameters.batchGroupId;
-			bMerge = mParameters.merge === false;
+			bMerge = mParameters.merge !== false;
 		}
 
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
