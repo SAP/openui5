@@ -132,7 +132,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 						oSearchField.setValue(oSearchParams.sSearchValue);
 					}
 					
-					if( oSearchParams.bTriggerSearch ) {
+					if ( oSearchParams.bTriggerSearch ) {
 						var oEvent = jQuery.Event("touchend");
 						oEvent.originalEvent = {query: oSearchParams.sSearchValue, refreshButtonPressed: oSearchParams.bRefreshButtonPressed, id: oSearchField.getId()};
 						oEvent.target = oSearchField;

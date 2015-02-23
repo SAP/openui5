@@ -38,18 +38,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		theObjectListShouldHave9Entries : function () {
-			return this.waitFor({
-				id : "list",
-				viewName : "Master",
-				matchers : [ new AggregationLengthEquals({name : "items", length : 9}) ],
-				success : function (oList) {
-					strictEqual(oList.getItems().length, 9, "The list has 9 items");
-				},
-				errorMessage : "List does not have 9 entries."
-			});
-		},
-
 		iShouldBeOnPage : function (sViewName, sTitleName) {
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
@@ -63,12 +51,8 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		iShouldBeOnTheObject3Page : function () {
-			return this.iShouldBeOnPage("Detail", "Object 3");
-		},
-
-		iShouldBeOnTheObject1Page : function () {
-			return this.iShouldBeOnPage("Detail", "Object 1");
+		iShouldBeOnTheObjectNPage : function (iObjIndex) {
+			return this.iShouldBeOnPage("Detail", "Object " + iObjIndex);
 		},
 
 		iShouldSeeTheObjectLineItemsList : function () {
@@ -106,18 +90,18 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		theObject3ShouldBeSelectedInTheMasterList : function() {
+		theObjectNShouldBeSelectedInTheMasterList : function(iObjIndex) {
 			return this.waitFor({
 				id : "list",
 				viewName : "Master",
-				matchers : [ new AggregationLengthEquals({name : "items", length : 9}) ],
+				matchers : [ new AggregationLengthEquals({name : "items", length : 10}) ],
 				success : function (oList) {
-					strictEqual(oList.getSelectedItem().getTitle(), "Object 3", "Object 3 is selected");
+					strictEqual(oList.getSelectedItem().getTitle(), "Object " + iObjIndex, "Object 3 is selected");
 				},
 				errorMessage : "Object 3 is not selected."
 			});
 		},
-
+		
 		iShouldBeOnTheLineItem1Page : function() {
 			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_1");
 		},

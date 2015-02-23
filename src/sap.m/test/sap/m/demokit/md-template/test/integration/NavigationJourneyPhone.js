@@ -38,16 +38,15 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		When.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheObjectList().
-			and.theObjectListShouldHave9Entries();
+		Then.iShouldSeeTheObjectList();
 	});
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
 		// Actions
-		When.iChangeTheHashToObject3();
+		When.iChangeTheHashToObjectN(3);
 
 		// Assertions
-		Then.iShouldBeOnTheObject3Page();
+		Then.iShouldBeOnTheObjectNPage(3);
 	});
 
 
@@ -56,7 +55,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		When.iPressTheBackButton().and.iPressOnTheObject1InMasterList();
 
 		// Assertions
-		Then.iShouldBeOnTheObject1Page();
+		Then.iShouldBeOnTheObjectNPage(1);
 	});
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
@@ -112,7 +111,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		When.iGoBackInBrowserHistory();
 
 		// Assertions
-		Then.iShouldBeOnTheObject1Page().
+		Then.iShouldBeOnTheObjectNPage(1).
 			and.iTeardownMyAppFrame();
 
 	});
