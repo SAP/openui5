@@ -724,7 +724,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.fireDetailPress();
 			oEvent.preventDefault();
 			oEvent.setMarked();
-			return;
 		}
 	};
 	
