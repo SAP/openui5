@@ -29,3 +29,17 @@
 .sapMInputSuggestionTableHidden {
 	visibility: hidden;
 }
+
+
+/* valueHelpOnly overwrites text cursor for input */
+.sapMInputVHO,
+.sapMInput.sapMInputVHO > input {
+	cursor: pointer;
+}
+
+/* if ValueHalp and Description, place icon left to description */
+.sapMInputDescription.sapMInputVH > span{
+	position: relative;
+	display: inline-Block;
+	height: 100%;
+}
