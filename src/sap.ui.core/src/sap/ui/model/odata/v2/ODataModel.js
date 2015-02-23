@@ -3145,6 +3145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
 	 *
+	 * @param {boolean} [mParameters.merge=true] trigger a MERGE request instead of a PUT request to perform a differential update
 	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry.
 	 * @return {objec|array} an object which has an <code>abort</code> function to abort the current request: returns an array if multiple requests will be sent.
 	 *
@@ -3159,7 +3160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnSuccess =	mParameters.success;
 			fnError = mParameters.error;
 			sBatchGroupId = mParameters.batchGroupId;
-			bMerge = mParameters.merge !== false;
+			bMerge = mParameters.merge === false;
 		}
 
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
