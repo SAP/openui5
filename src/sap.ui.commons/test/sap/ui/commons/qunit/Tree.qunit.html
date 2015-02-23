@@ -23,7 +23,7 @@
 		var sTransparentTreeId 	= "tree2";
 		
 		function createStandardTree () {
-			var oTree1 = new sap.ui.commons.Tree(sStandardTreeId, {title:"Tree with Header", width:"90%",height:"300px",showHearderIcons:true, showHorizontalScrollbar:false});		
+			var oTree1 = new sap.ui.commons.Tree(sStandardTreeId, {title:"Tree with Header", width:"90%",height:"300px",showHeader:true, showHorizontalScrollbar:false});		
 			
 			var oNode11 = new sap.ui.commons.TreeNode("node11", {text:"Root 1",icon:"../images/tree/library.gif"});
 			
@@ -90,11 +90,62 @@
 		return oTree2;
 		}
 		
+		function createBoundTree () {
+			var oModel = new sap.ui.model.json.JSONModel({
+				tree: {
+					title: "Root",
+					children: [
+						{
+							title: "Node 1",
+							children: [
+								{
+									title: "Node 1.1"
+								},
+								{
+									title: "Node 1.2"
+								},
+								{
+									title: "Node 1.3"
+								}
+							]
+						},
+						{
+							title: "Node 2"
+						},
+						{
+							title: "Node 3"
+						}
+					]
+				}
+			})
+			var oTree = new sap.ui.commons.Tree("tree3", {
+				title:"Tree with data binding", 
+				width:"200px",
+				height:"300px", 
+				showHorizontalScrollbar:false, 
+				showHeader:false,
+				nodes: {
+					path: "/tree",
+					template: new sap.ui.commons.TreeNode({
+						text: "{title}"
+					}),
+					parameters: {
+						arrayNames: ["children"]
+					}
+				},
+				models: oModel
+			});		
+			return oTree;
+		}
+			
 		var oStandardTree = createStandardTree();
 		oStandardTree.placeAt("target1");
 		
 		var oTransparentTree = createTransparentTree();
 		oTransparentTree.placeAt("target2");
+		
+		var oBoundTree = createBoundTree();
+		oBoundTree.placeAt("target3");
 		
 		function checkSelectedNodes(aNodes, aExpectedIds) {
 			var iIndex;
@@ -215,6 +266,54 @@
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
+		});
+		
+		test("Node selection single databinding", function() {
+			oBoundTree.expandAll();
+			oBoundTree.setSelectionMode("Single");
+			
+			var initialSelection = oBoundTree.getNodes()[0];
+			initialSelection.select();
+			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			
+			var newSelection = oBoundTree.getNodes()[1];
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
+			ok( initialSelection.getIsSelected(), "Node 1 is selected again");
+			
+			oBoundTree.getBinding("nodes").refresh();
+			initialSelection = oBoundTree.getNodes()[0];
+			newSelection = oBoundTree.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			ok( !newSelection.getIsSelected(), "Node 2 is not selected after refresh");
+		});
+		
+		test("Node selection multi databinding", function() {
+			oBoundTree.expandAll();
+			oBoundTree.setSelectionMode("Multi");
+			var initialSelection = oBoundTree.getNodes()[0];
+			initialSelection.select();
+			ok( initialSelection.getIsSelected(), "Node 1 is selected");
+			
+			var newSelection = oBoundTree.getNodes()[1];
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 2 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
+			
+			initialSelection.setIsSelected(true);
+			ok( newSelection.getIsSelected(), "Node 1 is now selected");
+			ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
+
+			oBoundTree.getBinding("nodes").refresh();
+			initialSelection = oBoundTree.getNodes()[0];
+			newSelection = oBoundTree.getNodes()[1];
+			ok( initialSelection.getIsSelected(), "Node 1 is selected after refresh");
+			ok( newSelection.getIsSelected(), "Node 2 is selected after refresh");
+		
 		});
 		
 		test("Node selection events single", function() {
@@ -499,5 +598,6 @@
 		<div id="qunit-fixture"></div>
 		<div id="target1"></div>
 		<div id="target2"></div>
+		<div id="target3"></div>
 	</body>
 </html>
