@@ -1346,6 +1346,36 @@ sap.ui
 						}
 
 					};
+					
+					/**
+					 * This method returns true if the value is a falsey value
+					 * (Falsey: Something which evaluates to FALSE.)
+					 * @param {vKeyValue}
+					 *            vKeyValue the key value
+					 * @param {sKey}
+					 *            sKey is the key name
+					 * @param {sKeyType}
+					 *            sKeyType the edm type of the property
+					 */
+					MockServer.prototype._isFalseyValue = function(vKeyValue, sKey, sKeyType) {
+						switch (sKeyType) {
+						case "Edm.String":
+							return vKeyValue === "";
+						case "Edm.Boolean":
+							return vKeyValue === false;
+						case "Edm.Int16":
+						case "Edm.Int32":
+						case "Edm.Int64":
+						case "Edm.Decimal":
+						case "Edm.Byte":
+						case "Edm.Double":
+						case "Edm.Single":
+						case "Edm.SByte":
+							return vKeyValue === 0 || isNaN(vKeyValue);
+						default:
+							return false;
+						}
+					};
 
 					/**
 					 * This method takes over the already existing key values from oKeys and
@@ -1359,25 +1389,27 @@ sap.ui
 					 * @param {oEntity}
 					 *            oEntity the result object, where the key property/value pairs merged into
 					 */
-					MockServer.prototype._completeKey = function(oEntitySet, oKeys, oEntity) {
+					 MockServer.prototype._completeKey = function(oEntitySet, oKeys, oEntity) {
 						if (oEntity) {
-							for ( var i = 0; i < oEntitySet.keys.length; i++) {
+							for (var i = 0; i < oEntitySet.keys.length; i++) {
 								var sKey = oEntitySet.keys[i];
-								if (oKeys[sKey]) {
+								// if the key has value, just use it
+								if (oKeys[sKey] || this._isFalseyValue(oKeys[sKey], sKey, oEntitySet.keysType[sKey])) { 
 									if (!oEntity[sKey]) {
 										// take over the specified key value
 										switch (oEntitySet.keysType[sKey]) {
 										case "Edm.DateTime":
-											oEntity[sKey]  = this._getJsonDate(oKeys[sKey]);
+											oEntity[sKey] = this._getJsonDate(oKeys[sKey]);
 											break;
 										case "Edm.Guid":
-											oEntity[sKey]  = oKeys[sKey].substring(5, oKeys[sKey].length - 1);
+											oEntity[sKey] = oKeys[sKey].substring(5, oKeys[sKey].length - 1);
 											break;
 										default:
 											oEntity[sKey] = oKeys[sKey];
 										}
 									}
 								} else {
+									//the key has no value, generate value
 									if (!oEntity[sKey]) {
 										// take over the specified key value
 										oEntity[sKey] = this._generatePropertyValue(sKey, oEntitySet.keysType[sKey]
@@ -1387,6 +1419,7 @@ sap.ui
 							}
 						}
 					};
+
 
 					/**
 					 * Generate some mock data for a specific entityType. String value will be
@@ -1661,7 +1694,7 @@ sap.ui
 								if (sKeys) {
 									oKeys = that._parseKeys(sKeys, that._mEntitySets[sTargetEntityName]);
 								}
-								that._completeKey(that._mEntitySets[sTargetEntityName], oKeys, oEntity);
+								 that._completeKey(that._mEntitySets[sTargetEntityName], oKeys, oEntity);
 								that._enhanceWithMetadata(that._mEntitySets[sTargetEntityName], [ oEntity ]);
 								return oEntity;
 							}
