@@ -7,15 +7,30 @@ var oMessageTemplate = new sap.m.MessagePopoverItem({
 });
 
 
-var oMessagePopover = new sap.m.MessagePopover({
+var oMessagePopover1 = new sap.m.MessagePopover({
 	items: {
 		path: '/',
 		template: oMessageTemplate
 	}
 });
 
+var oMessagePopover2 = new sap.m.MessagePopover({
+	items: {
+		path: '/',
+		template: oMessageTemplate
+	}
+});
+
+var oMessagePopover3 = new sap.m.MessagePopover({
+	items: {
+		path: '/',
+		template: oMessageTemplate
+	},
+	initiallyExpanded: false
+});
+
 sap.ui.controller("sap.m.sample.MessagePopover.C", {
-	onInit : function() {
+	onInit: function () {
 		// create any data and a model and set it to the view
 
 		var aMockMessages = [{
@@ -43,11 +58,27 @@ sap.ui.controller("sap.m.sample.MessagePopover.C", {
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(aMockMessages);
 
-		oMessagePopover.setModel(oModel);
+		var viewModel = new sap.ui.model.json.JSONModel()
+		viewModel.setData({
+			messagesLength: aMockMessages.length + ''
+		});
 
+		this.getView().setModel(viewModel);
+
+		oMessagePopover1.setModel(oModel);
+		oMessagePopover2.setModel(oModel);
+		oMessagePopover3.setModel(oModel);
 	},
 
-	handleMessagePopoverPress: function(oEvent) {
-		oMessagePopover.openBy(oEvent.getSource());
+	handleMessagePopoverPress1: function (oEvent) {
+		oMessagePopover1.openBy(oEvent.getSource());
+	},
+
+	handleMessagePopoverPress2: function (oEvent) {
+		oMessagePopover2.openBy(oEvent.getSource());
+	},
+
+	handleMessagePopoverPress3: function (oEvent) {
+		oMessagePopover3.openBy(oEvent.getSource());
 	}
 });

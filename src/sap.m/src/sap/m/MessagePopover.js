@@ -35,9 +35,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				library: "sap.m",
 				properties: {
 					/**
-					 * Determines the position, where the control will appear on the screen. Possible values are: Top, Bottom and Vertical.
-					 * The default value is sap.m.VerticalPlacementType.Vertical. Setting this property while the control is open,
-					 * will not cause any re-rendering and changing of the position. Changes will be applied with the next interaction.
+					 * Determines the position, where the control will appear on the screen. Possible values are: Top, Bottom and Vertical. The default value is sap.m.VerticalPlacementType.Vertical. Setting this property while the control is open, will not cause any re-rendering and changing of the position. Changes will be applied with the next interaction.
 					 */
 					placement: { type: "sap.m.VerticalPlacementType", group: "Behavior", defaultValue: "Vertical" },
 

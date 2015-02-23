@@ -12,6 +12,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.MessagePopover.Component", {
 		},
 		config : {
 			sample : {
+				stretch : true,
 				files : [
 					"V.view.xml",
 					"C.controller.js"
