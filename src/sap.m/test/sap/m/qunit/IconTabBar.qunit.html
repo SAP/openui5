@@ -1425,6 +1425,11 @@
 				}));
 
 				sap.ui.getCore().applyChanges();
+
+				// wait 500ms
+				// we need to call this when the iScroll is used
+				this.clock.tick(500);
+
 				var $itbh = oIconTabBar.$("-header");
 
 				// Assert
