@@ -6748,7 +6748,9 @@
 
 				// act
 				oSelect.close();
-				this.clock.tick(1000);
+				if (jQuery.support.cssAnimations) {	// no animation on ie9
+					this.clock.tick(1000);
+				}
 
 				// assert
 				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
