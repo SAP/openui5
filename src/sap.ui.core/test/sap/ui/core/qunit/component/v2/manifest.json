@@ -4,8 +4,6 @@
 	
 	"sap.app": {
 		"id": "sap.ui.test.v2.Component",
-		"description": "This is the Component: sap.ui.test.v2.Component",
-		"keywords": ["foo", "bar"],
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
