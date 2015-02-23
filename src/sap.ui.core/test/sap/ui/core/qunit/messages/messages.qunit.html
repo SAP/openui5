@@ -206,7 +206,7 @@
 		var oChangeHandler = function(oEvent) {
 			ok(oEvent.getParameters('messages').messages.length == 1, 'Validation Message propagated to control');
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oStreet.getValueStateText() === 'Enter a value with at least 5 characters.', 'Input: ValueStateText set correctly')
+			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
 			oStreet.getBinding("value").detachMessageChange(oChangeHandler);
 		};
 		var oChangeHandler2 = function(oEvent) {
