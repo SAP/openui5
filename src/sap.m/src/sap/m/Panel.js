@@ -49,19 +49,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : 'auto'},
 
 			/**
-			 * Specifies whether the control is expandable. Per default the control is rendered as expanded.
+			 * Specifies whether the control is expandable.
+			 * If expandable is set to false, the expanded property is always set to true, if expandable is set to false, then the expanded property can be set either true or false.
 			 * @since 1.22
 			 */
 			expandable : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * If expandable, this property indicates is the state is expanded or not. If expanded, then infoToolbar (if available) and content is rendered; if expanded is false, then only the headerText/headerToolbar is rendered.
+			 * Indicates whether the state of the sap.m.Panel is expanded or not, if the expandable property is set to true.
+			 * If expanded is set to true, then both the infoToolbar (if available) and the content are rendered.
+			 * If expanded is set to false, then only the headerText/headerToolbar is rendered.
 			 * @since 1.22
 			 */
 			expanded : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Indicates whether the transition between the expanded and the hidden state of the control is animated. By default the animation is enabled.
+			 * Indicates whether the transition between the expanded and the hidden state of the control is animated.
+			 * By default the animation is enabled.
 			 * @since 1.26
 			 */
 			expandAnimation : {type : "boolean", group : "Behavior", defaultValue : true}
