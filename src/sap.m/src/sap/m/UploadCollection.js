@@ -449,7 +449,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				var $oEditBox = jQuery.sap.byId(this.editModeItem + "-ta_editFileName-inner");
 				if ($oEditBox) {
 					var sId = this.editModeItem;
-					if (!(sap.ui.Device.os.ios && (sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari))) {
+					if (!sap.ui.Device.os.ios) {
 						$oEditBox.focus(function() {
 							$oEditBox.selectText(0, $oEditBox.val().length);
 						});
@@ -631,6 +631,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			// filename
 			oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
 				type : sap.m.InputType.Text,
+				fieldWidth: "80%",
 				valueState : sValueState,
 				valueStateText : this._oRb.getText("UPLOADCOLLECTION_EXISTS"),
 				showValueStateMessage: bShowValueStateMessage,
@@ -1340,6 +1341,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					that._onUploadProgress(oEvent);
 				}
 			});
+			var sTooltip = this._oFileUploader.getTooltip();
+			if (!sTooltip) {
+				// in case the tooltip is NOT overwritten, the default tooltip should NOT be chosen!
+				this._oFileUploader.setTooltip(" ");
+			}
 		}
 		return this._oFileUploader;
 	};
