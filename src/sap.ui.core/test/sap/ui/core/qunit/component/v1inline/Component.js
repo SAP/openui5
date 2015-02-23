@@ -7,8 +7,6 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 
 		"name": "sap.ui.test.v1inline.Component",
 		
-		"description": "This is the Component: sap.ui.test.v1inline.Component",
-		"keywords": ["foo", "bar"],
 		"version": "1.0.0",
 
 		"includes" : [

@@ -2,8 +2,6 @@
 
 	"name": "sap.ui.test.v1.Component",
 	
-	"description": "This is the Component: sap.ui.test.v1.Component",
-	"keywords": ["foo", "bar"],
 	"version": "1.0.0",
 
 	"includes" : [

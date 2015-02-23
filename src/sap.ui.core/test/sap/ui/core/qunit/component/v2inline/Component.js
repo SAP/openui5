@@ -11,8 +11,6 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 			
 			"sap.app": {
 				"id": "sap.ui.test.v2inline.Component",
-				"description": "This is the Component: sap.ui.test.v2inline.Component",
-				"keywords": ["foo", "bar"],
 				"applicationVersion": {
 					"version": "1.0.0"
 				}
