@@ -758,33 +758,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	};
 
-	/*
-	 * Returns the Id of the Component in whose context the given ManagedObject has been created.
-	 *
-	 * Might return <code>undefined</code> or <code>null</code> when no owner
-	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor}
-	 * for detailed constraints.
-	 *
-	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.getOwnerIdFor or sap.ui.core.Component.getOwnerComponentFor instead.
-	 */
-	ManagedObject.getOwnerIdFor = function(oObject) {
-		jQuery.sap.log.error("[Deprecated] The private method sap.ui.base.ManagedObject.getOwnerIdFor must no longer be used. Use the public sap.ui.core.Component.getOwnerForId instead.");
-		return oObject && oObject._sOwnerId;
-	};
-
-	/*
-	 * Redirect to new functionality
-	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.runAsOwner instead.
-	 */
-	ManagedObject.runWithOwner = function(fn, oOwner) {
-		jQuery.sap.log.error("[Deprecated] The private method sap.ui.base.ManagedObject.runWithOwner must no longer be used. Use the public sap.ui.core.Component.runAsOwner instead.");
-		if ( oOwner && typeof oOwner.runAsOwner === "function" ) {
-			oOwner.runAsOwner(fn);
-		} else {
-			throw new Error("trying to execute a function with a non-suitable owner " + oOwner + ". See the deprecation hint in the console.");
-		}
-	};
-
 	/**
 	 * Sets all the properties, aggregations, associations and event handlers as given in
 	 * the object literal <code>mSettings</code>. If a property, aggregation, etc.
@@ -1467,27 +1440,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			oAggregation = oMetadata.getManagedAggregation(sAggregationName), // public or private
 			aAltTypes,
 			oType,
-			i,
+			i, 
 			msg;
 
-		// undeclared aggregation
 		if (!oAggregation) {
-			if (sAggregationName && oMetadata._mHiddenAggregations && oMetadata._mHiddenAggregations[sAggregationName]) {
-				oAggregation = oMetadata._mHiddenAggregations[sAggregationName];
-				jQuery.sap.log.error("Support for '_mHiddenAggregations' is about to be removed (with 1.12 latest). Hidden aggregations like '" + oMetadata.getName() + "." + sAggregationName + "' instead can be declared like normal aggregations but with visibility:'hidden'.");
-			} else {
-				msg = "Aggregation \"" + sAggregationName + "\" does not exist in " + this;
-
-				if ( /^sap\.(ui\.core|ui\.commons|ui\.table|ui\.ux3|m|makit|viz|uiext\.inbox)$/.test(oMetadata.getLibraryName() || "") ) {
-					throw new Error(msg);
-				} else {
-					// TODO throw for any lib as soon as "hidden" aggregations are a public feature.
-					// Otherwise, composite controls currently would have no legal way to react
-					jQuery.sap.log.error("Support for undeclared aggregations is about to be removed (with 1.12 latest). Hidden aggregations like '" + oMetadata.getName() + "." + sAggregationName + "' can be declared like normal aggregations but with visibility:'hidden'.");
-					jQuery.sap.assert(false, msg);
-					return oObject;
-				}
-			}
+			throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
 		}
 
 		if (oAggregation.multiple !== bMultiple ) {
@@ -3843,51 +3800,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		}
 	};
 
-	/**
-	 * Maps the given aggregation with name <code>sOldAggrName</code>
-	 * on aggregation <code>sNewAggrName</code> (When calling an accessor function
-	 * of the old aggregation the call is forwarded to the corresponding accessor
-	 * function of the new aggregation).
-	 *
-	 * This function should help to perform a smooth transition for users of a managed object
-	 * when an aggregation must be renamed.
-	 *
-	 * Both aggregations must have a mutiple cardinality (0..n) and must have the same
-	 * aggregated type!
-	 *
-	 * @param {object} oPrototype prototype of the ManagedObject class for which a mapping should be defined
-	 * @param {string} sOldAggrName Name of the old deprecated aggregation
-	 * @param {string} sNewAggrName Name of the new aggregation
-	 * @deprecated
-	 */
-	ManagedObject._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
-		var mKeys = oPrototype.getMetadata().getAllSettings(); 
-		var oOldAggrInfo = mKeys[sOldAggrName];
-		var oNewAggrInfo = mKeys[sNewAggrName];
-
-		//Check whether aggregations exist and are multiple.
-		if (!oOldAggrInfo || !oNewAggrInfo || oOldAggrInfo._iKind != 2 || oNewAggrInfo._iKind != 2) {
-			return;
-		}
-
-		var mFunc = {"insert" : true, "add" : true, "remove" : true, "removeAll" : false, "indexOf" : true, "destroy" : false, "get" : false};
-
-		function method(sPrefix, sName) {
-			return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-		}
-
-		function fAggrDelegator(sFuncName){
-			return function() {
-				return this[sFuncName].apply(this, arguments);
-			};
-		}
-
-		for (var sPrefix in mFunc) {
-			var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo.name);
-			var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo.name);
-			oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
-		}
-	};
 
 	/**
 	 * Searches and returns an array of child elements and controls which are
