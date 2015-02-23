@@ -5,7 +5,7 @@
 		title="{i18n>lineItemTitle}"
 		text="{i18n>noLineItemFoundText}"
 		icon="{sap-icon://product}"
-		filterText=""
+		description=""
 		id="lineItemNotFoundPage">
 	</MessagePage>
 </mvc:View>
