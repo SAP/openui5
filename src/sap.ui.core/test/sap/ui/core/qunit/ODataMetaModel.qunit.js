@@ -244,8 +244,10 @@
 	 * Runs the given code under test with an <code>ODataMetaModel</code>.
 	 *
 	 * @param {function} fnCodeUnderTest
+	 * @param {boolean} bImmediately
+	 *   whether to run the test immediately instead of waiting for the meta model to be loaded
 	 */
-	function withMetaModel(fnCodeUnderTest) {
+	function withMetaModel(fnCodeUnderTest, bImmediately) {
 		var oMetaModel,
 			oModel,
 			oSandbox; // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
@@ -255,16 +257,17 @@
 		 * no changes to the model are kept in the cached singleton.
 		 */
 		function call(fnCodeUnderTest, oDataMetaModel) {
-			var sCopy = JSON.stringify(oDataMetaModel.getObject("/"));
+			var sCopy = oDataMetaModel.oModel.getJSON();
 
 			try {
 				fnCodeUnderTest(oDataMetaModel);
 			} finally {
-				oDataMetaModel.getObject("/").dataServices = JSON.parse(sCopy).dataServices;
+				oDataMetaModel.oModel.setJSON(sCopy);
 			}
 		}
 
-		if (oDataMetaModel) {
+		// Note: bImmediately requires a fresh instance
+		if (oDataMetaModel && !bImmediately) {
 			call(fnCodeUnderTest, oDataMetaModel);
 			return;
 		}
@@ -281,14 +284,19 @@
 			});
 			oModel.attachMetadataFailed(onFailed);
 			oModel.attachAnnotationsFailed(onFailed);
-			oDataMetaModel = oModel.getMetaModel();
 
-			// calls the code under test once the meta model has loaded
-			stop();
-			oDataMetaModel.loaded().then(function() {
-				call(fnCodeUnderTest, oDataMetaModel);
-				start();
-			}, onError)["catch"](onError);
+			if (bImmediately) {
+				// no caching, no undo of modifications!
+				fnCodeUnderTest(oModel.getMetaModel());
+			} else {
+				// calls the code under test once the meta model has loaded
+				oDataMetaModel = oModel.getMetaModel();
+				stop();
+				oDataMetaModel.loaded().then(function() {
+					call(fnCodeUnderTest, oDataMetaModel);
+					start();
+				}, onError)["catch"](onError);
+			}
 		} finally {
 			oSandbox.restore();
 		}
@@ -302,51 +310,94 @@
 	});
 
 	//*********************************************************************************************
-	test("basics", function() {
+	asyncTest("functions using 'this.oModel' directly", function() {
+		withMetaModel(function (oMetaModel) {
+			// call functions before loaded() promise has been resolved
+			throws(function () {
+				oMetaModel._getObject("/");
+			}, "_getObject")
+			throws(function () {
+				oMetaModel.destroy();
+			}, "destroy")
+			throws(function () {
+				oMetaModel.getODataAssociationEnd({
+					"navigationProperty" : [{
+						"name" : "ToSalesOrders",
+						"relationship" : "GWSAMPLE_BASIC.Assoc_BusinessPartner_SalesOrders",
+						"fromRole" : "FromRole_Assoc_BusinessPartner_SalesOrders",
+						"toRole" : "ToRole_Assoc_BusinessPartner_SalesOrders"
+					}]
+				}, "ToSalesOrders");
+			}, "getODataAssociationEnd")
+			throws(function () {
+				oMetaModel.getODataComplexType("don't care");
+			}, "getODataComplexType")
+			throws(function () {
+				oMetaModel.getODataEntityContainer();
+			}, "getODataEntityContainer")
+			throws(function () {
+				oMetaModel.getODataEntityType("don't care");
+			}, "getODataEntityType")
+			throws(function () {
+				oMetaModel.isList();
+			}, "isList")
+
+			oMetaModel.loaded().then(function() {
+				start();
+			}, onError)["catch"](onError);
+		}, true);
+	});
+
+	//*********************************************************************************************
+	asyncTest("basics", function() {
 		var oMetaModel = new sap.ui.model.odata.ODataMetaModel({
-				getServiceMetadata : function () { return {}; },
+				getServiceMetadata : function () { return {dataServices : {}}; },
 				isLoaded : function () { return true; }
-			}),
-			oMetaModelMock = this.mock(oMetaModel),
-			oModelMock = this.mock(oMetaModel.oModel),
-			oResult = {};
+			});
 
-		this.mock(sap.ui.model.Model.prototype).expects("destroy").once();
-		// do not mock/stub this or else "destroy" will not bubble up!
-		this.spy(sap.ui.model.MetaModel.prototype, "destroy");
+		oMetaModel.loaded().then(sinon.test(function() {
+			var oMetaModelMock = this.mock(oMetaModel),
+				oModelMock = this.mock(oMetaModel.oModel),
+				oResult = {};
 
-		// generic dispatching
-		jQuery.each(["destroy", "isList"], function (i, sName) {
-			oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
+			start();
+			this.mock(sap.ui.model.Model.prototype).expects("destroy").once();
+			// do not mock/stub this or else "destroy" will not bubble up!
+			this.spy(sap.ui.model.MetaModel.prototype, "destroy");
 
-			strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
-		});
+			// generic dispatching
+			jQuery.each(["destroy", "isList"], function (i, sName) {
+				oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
 
-		// getProperty dispatches to _getObject
-		oMetaModelMock.expects("_getObject").once().withExactArgs("foo", 0, false)
-			.returns(oResult);
-		strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
+				strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
+			});
 
-		ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
+			// getProperty dispatches to _getObject
+			oMetaModelMock.expects("_getObject").once().withExactArgs("foo", 0, false)
+				.returns(oResult);
+			strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
 
-		raises(function () {
-			oMetaModel.refresh();
-		}, /Unsupported operation: ODataMetaModel#refresh/);
+			ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
 
-		oMetaModel.setLegacySyntax(); // allowed
-		oMetaModel.setLegacySyntax(false); // allowed
-		raises(function () {
-			oMetaModel.setLegacySyntax(true);
-		}, /Legacy syntax not supported by ODataMetaModel/);
+			raises(function () {
+				oMetaModel.refresh();
+			}, /Unsupported operation: ODataMetaModel#refresh/);
 
-		strictEqual(oMetaModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
-		strictEqual(oMetaModel.oModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
-		raises(function () {
-			oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
-		});
-		raises(function () {
-			oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-		});
+			oMetaModel.setLegacySyntax(); // allowed
+			oMetaModel.setLegacySyntax(false); // allowed
+			raises(function () {
+				oMetaModel.setLegacySyntax(true);
+			}, /Legacy syntax not supported by ODataMetaModel/);
+
+			strictEqual(oMetaModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
+			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
+			raises(function () {
+				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+			});
+			raises(function () {
+				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			});
+		}).apply({/*give Sinon a "this" to enrich*/}), onError)["catch"](onError);
 	});
 
 	//*********************************************************************************************
