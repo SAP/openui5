@@ -81,9 +81,7 @@ public class ReleaseNotes {
       }
     });
 
-    version = context.version;
-    version = new Version(version.major, (version.minor % 2) == 0 ? version.minor : version.minor + 1, version.patch, null);  
-    
+    version = adjustDevVersion(context.version);
     relNotesPerLibrary();
     
     relNotes = new ArrayList<String>(512);
@@ -111,6 +109,14 @@ public class ReleaseNotes {
     Log.println("");
     Log.println("---- 8< --------------------------------------------------------------------------");
     Log.println("");
+  }
+
+  private Version adjustDevVersion(Version version) {
+    if ((version.minor % 2) == 0) {
+      return new Version(version.major,  version.minor , version.patch, null);  
+    }else{
+      return new Version(version.major,  version.minor + 1, 0, null);
+    }
   }
   
   private void relNotesPerLibrary() throws IOException {
