@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		theMasterListShouldNotContainGroupHeaders : function (sField) {
 			function fnContainsGroupHeader (oList){
 				var fnIsGroupHeader = function (oElement) {
-						if(oElement.getMetadata().getName() === 'sap.m.GroupHeaderListItem') {
+						if (oElement.getMetadata().getName() === 'sap.m.GroupHeaderListItem') {
 							return true;
 						}
 						return false;
@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 					oResult = null,
 					fnIsOrdered = function (oElement) {
 						var oCurrentValue = oElement.getBindingContext().getProperty(sField);
-						if(!oLastValue || oCurrentValue >= oLastValue){
+						if (!oLastValue || oCurrentValue >= oLastValue){
 							oLastValue = oCurrentValue;
 						} else {
 							return false;
@@ -151,27 +151,30 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 		
-		theMasterListShouldHave1Entry : function () {
+		theMasterListShouldHaveNEntries : function (iObjIndex) {
 			return this.waitFor({
 				id : "list",
 				viewName : "Master",
-				matchers : [ new AggregationLengthEquals({name : "items", length : 1}) ],
+				matchers : [ new AggregationLengthEquals({name : "items", length : iObjIndex}) ],
 				success : function (oList) {
-					strictEqual(oList.getItems().length, 1, "The list has 1 item");
+					strictEqual(oList.getItems().length, iObjIndex, "The list has x items");
 				},
-				errorMessage : "List does not have 1 entry."
+				errorMessage : "List does not have " + iObjIndex + " entries."
 			});
 		},
 		
-		theMasterListShouldHave9Entries : function () {
+		theMasterListShouldHaveAllEntries : function () {	
 			return this.waitFor({
 				id : "list",
 				viewName : "Master",
-				matchers : [ new AggregationLengthEquals({name : "items", length : 9}) ],
-				success : function (oList) {
-					strictEqual(oList.getItems().length, 9, "The list has 9 items");
+				matchers : function (oList) {
+					var iThreshold = oList.getGrowingThreshold();
+					return new AggregationLengthEquals({name : "items", length : iThreshold}).isMatching(oList);
 				},
-				errorMessage : "List does not have 9 entries."
+				success : function (oList) {
+					strictEqual(oList.getItems().length, oList.getGrowingThreshold(), "The growing list has 10 items");
+				},
+				errorMessage : "List does not have all entries."
 			});
 		}
 	});

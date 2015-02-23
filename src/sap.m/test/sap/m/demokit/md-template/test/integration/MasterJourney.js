@@ -18,7 +18,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		});
 	}});
 
-	opaTest("Should see the master list with 9 entries", function (Given, When, Then) {
+	opaTest("Should see the master list with all entries", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnADesktopDevice();
 
@@ -27,17 +27,17 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 
 		// Assertions
 		Then.iShouldSeeTheMasterList().
-			and.theMasterListShouldHave9Entries();
+			and.theMasterListShouldHaveAllEntries();
 	});
 	
-	opaTest("Search for 'Object 2' should deliver exactly one result", function (Given, When, Then) {
+	opaTest("Search for 'Object 2' should deliver exactly two results", function (Given, When, Then) {
 
 		//Actions
 		When.iSearchForObject2();
 
 		// Assertions
 		Then.theMasterListShowsObject2().
-			and.theMasterListShouldHave1Entry();
+			and.theMasterListShouldHaveNEntries(2);
 	});
 	
 	opaTest("Entering 'Object 3' into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
@@ -47,7 +47,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 
 		// Assertions
 		Then.theMasterListShowsObject2().
-			and.theMasterListShouldHave1Entry();
+			and.theMasterListShouldHaveNEntries(2);
 	});
 	
 	opaTest("MasterList Sorting on UnitNumber", function(Given, When, Then) {
@@ -97,7 +97,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 			and.iPressResetInViewSelectionDialog().
 			and.iPressOKInViewSelectionDialog();
 		// Assertion
-		Then.theMasterListShouldHave9Entries();
+		Then.theMasterListShouldHaveAllEntries();
 	});
 	
 	opaTest("MasterList grouping delivers a group with one member and a group with 8 members", function(Given, When, Then) {
@@ -116,7 +116,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 			When.iRemoveListGrouping();
 			// Assertion
 			Then.theMasterListShouldNotContainGroupHeaders().
-				and.theMasterListShouldHave9Entries().
+				and.theMasterListShouldHaveAllEntries().
 				and.iTeardownMyAppFrame();
 		});
 	});

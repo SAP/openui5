@@ -64,7 +64,7 @@ sap.ui.require(
 				and.theNotFoundPageShouldSayObjectNotFound();
 		});
 
-		opaTestPhoneAndDesktop("Should see the not found master and detail page if an invalid line item id has been called", "#/object/ObjectID_3/lineitem/SomeInvalidLineItemId", function (Given, When, Then) {
+		opaTestPhoneAndDesktop("Should see the not found master and detail page if an invalid line item id has been called", "#/object/ObjectID_10/lineitem/SomeInvalidLineItemId", function (Given, When, Then) {
 			//Actions
 			When.iLookAtTheScreen();
 
@@ -78,8 +78,7 @@ sap.ui.require(
 			When.iLookAtTheScreen();
 
 			// Assertions
-			Then.iShouldSeeTheObjectList().
-				and.theObjectListShouldHave9Entries();
+			Then.iShouldSeeTheObjectList();
 			
 			When.iSearchForSomethingWithNoResults();
 

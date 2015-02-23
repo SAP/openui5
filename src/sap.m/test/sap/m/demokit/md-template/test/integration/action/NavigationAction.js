@@ -77,10 +77,10 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.iPressTheNavigationButton("Previous", "sap-icon://up");
 		},
 
-		iChangeTheHashToObject3 : function () {
+		iChangeTheHashToObjectN : function (iObjIndex) {
 			return this.waitFor({
 				success : function () {
-					sap.ui.test.Opa5.getWindow().location.hash = "#/object/ObjectID_3";
+					sap.ui.test.Opa5.getWindow().location.hash = "#/object/ObjectID_" + iObjIndex;
 				}
 			});
 		},
@@ -153,7 +153,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				id : "list",
 				viewName : "Master",
-				matchers : [ new AggregationLengthEquals({name : "items", length : 9}) ],
+				matchers : [ new AggregationLengthEquals({name : "items", length : 10}) ],
 				errorMessage : "The master list has not been loaded"
 			});
 		},
