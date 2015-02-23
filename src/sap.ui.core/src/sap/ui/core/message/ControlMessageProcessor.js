@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
 			
 			if (oBinding) {
-				oBinding._fireMessageChange({type: 'control', messages:aMessages});
+				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
 			} else {
 				oControl.updateMessages(aParts[1], aMessages);
 			}
