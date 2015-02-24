@@ -924,7 +924,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			return;
 		}
 	
-		var aSelectedKeys = this.getSelectedKeys();
+		var aSelectedKeys = this.getSelectedKeys() || this._aCustomerKeys;
+		
 		var aKeyOfSelectedItems = this.getKeys(this.getSelectedItems());
 	
 		// the "selectedKey" property is not synchronized
@@ -1838,19 +1839,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	MultiComboBox.prototype.addSelectedKeys = function(aKeys) {
-		if (!aKeys || !aKeys.length || !jQuery.isArray(aKeys)) {
-			return this;
-		}
-		if (!jQuery.isArray(aKeys) || typeof aKeys[0] !== "string") {
-			jQuery.sap.log.warning('Warning: addSelectedKeys() "aKeys" has to be an array of string', this);
-			return this;
-		}
+	MultiComboBox.prototype.addSelectedKeys = function(aKeys) {	
+		aKeys = this.validateProperty("selectedKeys", aKeys);
+		
 		aKeys.forEach(function(sKey) {
 			var oItem = this.getItemByKey(sKey);
 			if (oItem) {
 				this.addSelectedItem(oItem);
-			} else if (sKey) {
+			} else if (sKey != null) {
 				// If at this point of time aggregation 'items' does not exist we
 				// have save provided key.
 				this._aCustomerKeys.push(sKey);
