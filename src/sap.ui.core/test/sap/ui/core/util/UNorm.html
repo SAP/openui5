@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>String.prototype.normalize() - sap.ui.core.util</title>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="base">
+	</script>
+	<style>
+	table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+	table, th, td {
+		border: 1px solid black;
+		padding: 5px;
+	}
+	</style>
+	<script type="text/javascript">
+		jQuery.sap.require("sap.ui.model.Filter");
+
+		// apply the internal function of filter
+		function applyFilter() {
+			var param =jQuery.sap.byId("param").val(),
+				result = sap.ui.model.Filter.prototype._normalizeValue(param);
+			jQuery.sap.byId("actual").text(printCharCodes(param));
+			jQuery.sap.byId("code").text(printCharCodes(result));
+			jQuery.sap.byId("char").text(result);
+
+		};
+
+		// helper function for printing char codes
+		function printCharCodes(s) {
+			var chars = "";
+			for (var i = 0; i < s.length; i++) {
+				chars += "\\u" + s.charCodeAt(i).toString(16);
+			}
+			return chars;
+		}
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content">
+	<div id="table">
+		<h1>String.prototype.normalize() with Filters</h1>
+		<table>
+			<tr>
+				<td>Description</td>
+				<td colspan="2">Latin small letter s with dot below and dot above in long and normal version</td>
+			</tr>
+			<tr>
+				<th colspan="1">Form</th>
+				<th colspan="1">Representation</th>
+				<th colspan="1">Code</th>
+			</tr>
+			<tr>
+				<td>Original form</td>
+				<td>ẛ̣</td>
+				<td>\u1E9B\u0323</td>
+			</tr>
+			<tr>
+				<td>Canonically-composed form (NFC)</td>
+				<td>ẛ̣</td>
+				<td>\u1E9B\u0323</td>
+			</tr>
+			<tr>
+				<td>Canonically-decomposed form (NFD)</td>
+				<td>ẛ̣</td>
+				<td>\u017F\u0323\u0307</td>
+			</tr>
+			<tr>
+				<td>Compatibly-composed (NFKC)</td>
+				<td>ṩ</td>
+				<td>\u1E69</td>
+			</tr>
+			<tr>
+				<td>Compatibly-decomposed (NFKD)</td>
+				<td>ṩ</td>
+				<td>\u0073\u0323\u0307</td>
+			</tr>
+		</table>
+	</div>
+	<div id="filter">
+		<h3>Application in filters</h3>
+		<p>
+			<input id="param" style="font-weight: bold;"></input>
+			<button onclick="applyFilter()">Apply</button>
+		<p>
+		<p>
+			Actual code: 	<span style="font-weight: bold" id="actual"></span><br>
+			Resulting code: <span style="font-weight: bold"  id="code"></span><br>
+			Resulting char:	<span style="font-weight: bold"  id="char"></span><br>
+		</p>
+	</div>
+</div>
+</body>
+</html>
