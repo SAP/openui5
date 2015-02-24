@@ -220,50 +220,63 @@
 				ok(!jQuery.sap.domById("popover"), "Popover is not rendered in the beginning.");
 			});	
 
-			module("Open and Close");
+			module("Open and Close", {
+				setup: function() {
+					this.oButton = new sap.m.Button().addStyleClass("positioned");
+					this.oPopover = new sap.m.Popover({
+						contentWidth: "400px",
+						contentHeight: "300px"
+					});
+					page.addContent(this.oButton);
+					sap.ui.getCore().applyChanges();
+				},
+				teardown: function() {
+					this.oPopover.destroy();
+					this.oButton.destroy();
+				}
+			});
 
-			test("Open with placement: Bottom", function(){
-				oPopover.setPlacement(sap.m.PlacementType.Bottom);
+			test("Open with placement: Bottom, and then close", function(){
+				this.oPopover.setPlacement(sap.m.PlacementType.Bottom);
+
 				var fnBeforeOpen = this.spy(),
 					fnAfterOpen = this.spy(),
-					fnSetArrowPosition = this.spy(oPopover, "_fnSetArrowPosition"),
-					$Button = jQuery(oButton.getDomRef("inner"));
-				
-				oPopover.attachBeforeOpen(fnBeforeOpen);
-				oPopover.attachAfterOpen(fnAfterOpen);
+					fnSetArrowPosition = this.spy(this.oPopover, "_fnSetArrowPosition"),
+					$Button = jQuery(this.oButton.getDomRef("inner"));
 
-				oButton.firePress();
-				ok(oPopover.isOpen(), "Popover is already open");
+				this.oPopover.attachBeforeOpen(fnBeforeOpen);
+				this.oPopover.attachAfterOpen(fnAfterOpen);
+
+				this.oPopover.openBy(this.oButton);
+
+				ok(this.oPopover.isOpen(), "Popover is already open");
+
 				this.clock.tick(500);
-				var $popover = jQuery.sap.byId("popover");
-				ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
+
+				var $popover = this.oPopover.$();
+				ok($popover.length, "Popover is rendered after it's opened.");
 				ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 				ok(Math.ceil($popover.offset().top - iArrowOffset) >= Math.floor($Button.offset().top + $Button.outerHeight()), "Popover should be opened at the bottom of the button");
 				if(!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop){
-					ok(jQuery.sap.containsOrEquals(oPopover.$()[0], document.activeElement), "Popover should have the focus")
+					ok(jQuery.sap.containsOrEquals($popover[0], document.activeElement), "Popover should have the focus")
 				}
 				equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
 				equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
 				equal(fnSetArrowPosition.callCount, 1, "Popover is only positioned once");
-				oPopover.detachBeforeOpen(fnBeforeOpen);
-				oPopover.detachAfterOpen(fnAfterOpen);
-// 				ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-// 				ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
-			});
 
-			test("Close", function(){
+				// ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
+				// ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+
 				var fnBeforeClose = this.spy(),
 					fnAfterClose = this.spy();
-				oPopover.attachBeforeClose(fnBeforeClose);
-				oPopover.attachAfterClose(fnAfterClose);
-				oPopover.close();
+				this.oPopover.attachBeforeClose(fnBeforeClose);
+				this.oPopover.attachAfterClose(fnAfterClose);
+				this.oPopover.close();
 				this.clock.tick(500);
-				equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
-				ok(!oPopover.isOpen(), "Popover is already closed");
+				equal(this.oPopover.$().css("visibility"), "hidden", "popover should be hidden after it's closed");
+				ok(!this.oPopover.isOpen(), "Popover is already closed");
 				ok(fnBeforeClose.calledOnce, "beforeClose event is fired");
 				ok(fnAfterClose.calledOnce, "afterClose event is fired");
-				oPopover.detachBeforeClose(fnBeforeClose);
-				oPopover.detachAfterClose(fnAfterClose);
 			});
 
 			test("Open with placement: Right", function(){
