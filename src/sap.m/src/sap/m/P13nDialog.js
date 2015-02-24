@@ -377,7 +377,7 @@ sap.ui.define([
 	/**
 	 * Returns visible panel.
 	 * 
-	 * @returns {sap.m.P13nPanel || null}
+	 * @returns {sap.m.P13nPanel | null}
 	 * @public
 	 * @since 1.26.0
 	 */

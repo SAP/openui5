@@ -376,7 +376,7 @@ sap.ui.define(['jquery.sap.global'],
 			/**
 			 * Returns if event is registered or not.
 			 *
-			 * @returns {true/false}
+			 * @returns {boolean}
 			 * @protected
 			 * @name sap.m.Support.isEventRegistered
 			 * @function

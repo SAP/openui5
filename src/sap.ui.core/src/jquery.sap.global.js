@@ -2096,7 +2096,7 @@
 		 * Any required and not yet loaded script will be loaded and execute synchronously.
 		 * Already loaded modules will be skipped.
 		 *
-		 * @param {string... | object}  vModuleName one or more names of modules to be loaded
+		 * @param {...string | object}  vModuleName one or more names of modules to be loaded
 		 *                              or in case of an object {modName: "...", type: "..."}
 		 *                              where modName is the name of the module and the type
 		 *                              could be a specific dot separated extension e.g.

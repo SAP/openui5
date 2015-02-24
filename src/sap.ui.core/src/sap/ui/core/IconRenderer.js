@@ -6,8 +6,8 @@ sap.ui.define(["jquery.sap.global"],
 	"use strict";
 
 	/**
-	 * @class FontIcon renderer.
-	 * @static
+	 * Font-Icon renderer.
+	 * @namespace
 	 * @alias sap.ui.core.IconRenderer
 	 */
 	var IconRenderer = {};

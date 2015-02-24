@@ -1700,7 +1700,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	 * @param {object} [oSettings] further options in case the handler is called manually.
 	 * @param {boolean} [oSettings.skip=false] whether the event should be ignored by the central handler (see above)
 	 * @param {Element} [oSettings.target=document.activeElement] the DOMNode which should be used as starting point to find the next DOMNode in the F6 chain.
-	 * @param {[Element]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
+	 * @param {Element[]} [oSettings.scope=[document]] the DOMNodes(s) which are used for the F6 chain search
 	 * @static
 	 * @private
 	 * @since 1.25.0

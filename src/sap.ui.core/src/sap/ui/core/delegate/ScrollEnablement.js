@@ -14,46 +14,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	"use strict";
 
 
+	var $ = jQuery;
+
+		/**
+		 * Creates a ScrollEnablement delegate that can be attached to Controls requiring
+		 * capabilities for scrolling of a certain part of their DOM on mobile devices.
+		 *
+		 * @class Delegate for touch scrolling on mobile devices
+		 *
+		 * This delegate uses CSS (-webkit-overflow-scrolling) only if supported. Otherwise the desired
+		 * scrolling library is used. Please also consider the documentation
+		 * of the library for a proper usage.
+		 *
+		 * Controls that implement ScrollEnablement should additionally provide the getScrollDelegate method that returns
+		 * the current instance of this delegate object
+		 *
+		 * @extends sap.ui.base.Object
+		 * @experimental Since 1.5.2. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+		 *
+		 * @param {sap.ui.core.Control} oControl the Control of which this Scroller is the delegate
+		 * @param {string} sScrollContentDom the Id of the element within the DOM of the Control which should be scrollable
+		 * @param {object} oConfig the configuration of the scroll delegate
+		 * @param {boolean} [oConfig.horizontal=false] Whether the element should be scrollable horizontally
+		 * @param {boolean} [oConfig.vertical=false] Whether the element should be scrollable vertically
+		 * @param {boolean} [oConfig.zynga=false] If set, then the Zynga scroller (http://zynga.github.com/scroller/) is used
+		 * @param {boolean} [oConfig.iscroll=false] If set, then iScroll (http://cubiq.org/iscroll-4) is used
+		 * @param {boolean} [oConfig.preventDefault=false] If set, the default of touchmove is prevented
+		 * @param {boolean} [oConfig.nonTouchScrolling=false] If true, the delegate will also be active to allow touch like scrolling with the mouse on non-touch platforms.
+		 * @param {string} [oConfig.scrollContainerId=""] Native scrolling does not need content wrapper. In this case, ID of the container element should be provided.
+		 *
+		 * @constructor
+		 * @protected
+		 * @alias sap.ui.core.delegate.ScrollEnablement
+		 * @version ${version}
+		 * @author SAP SE
+		 */
+		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /** @lends sap.ui.core.delegate.ScrollEnablement.prototype */ {
 	
-	
-	
-		var $ = jQuery;
-		var ScrollEnablement = BaseObject.extend("sap.ui.core.delegate.ScrollEnablement", /* @lends sap.ui.core.delegate.ScrollEnablement */ {
-	
-			/**
-			 * Creates a ScrollEnablement delegate that can be attached to Controls requiring
-			 * capabilities for scrolling of a certain part of their DOM on mobile devices.
-			 *
-			 * @class Delegate for touch scrolling on mobile devices
-			 *
-			 * @author SAP SE
-			 *
-			 * This delegate uses CSS (-webkit-overflow-scrolling) only if supported. Otherwise the desired
-			 * scrolling library is used. Please also consider the documentation
-			 * of the library for a proper usage.
-			 *
-			 * Controls that implement ScrollEnablement should additionally provide the getScrollDelegate method that returns
-			 * the current instance of this delegate object
-			 *
-			 * @extends sap.ui.base.Object
-			 * @name sap.ui.core.delegate.ScrollEnablement
-			 * @experimental Since 1.5.2. This class is experimental and provides only limited functionality. Also the API might be changed in future.
-			 *
-			 * @param {sap.ui.core.Control} oControl the Control of which this Scroller is the delegate
-			 * @param {string} sScrollContentDom the Id of the element within the DOM of the Control which should be scrollable
-			 * @param {object} oConfig the configuration of the scroll delegate
-			 * @param {boolean} [oConfig.horizontal=false] Whether the element should be scrollable horizontally
-			 * @param {boolean} [oConfig.vertical=false] Whether the element should be scrollable vertically
-			 * @param {boolean} [oConfig.zynga=false] If set, then the Zynga scroller (http://zynga.github.com/scroller/) is used
-			 * @param {boolean} [oConfig.iscroll=false] If set, then iScroll (http://cubiq.org/iscroll-4) is used
-			 * @param {boolean} [oConfig.preventDefault=false] If set, the default of touchmove is prevented
-			 * @param {boolean} [oConfig.nonTouchScrolling=false] If true, the delegate will also be active to allow touch like scrolling with the mouse on non-touch platforms.
-			 * @param {string} [oConfig.scrollContainerId=""] Native scrolling does not need content wrapper. In this case, ID of the container element should be provided.
-			 *
-			 * @version ${version}
-			 * @constructor
-			 * @protected
-			 */
 			constructor : function(oControl, sScrollContentDom, oConfig) {
 	
 				BaseObject.apply(this);
@@ -1144,9 +1141,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			// Copy over members to prototype
 			$.extend(oScrollerInstance, oDelegateMembers);
 		}
-	
-	
-	
 
 	return ScrollEnablement;
 
