@@ -197,10 +197,12 @@
 				"1234567890123456789", "only safe format options -> full precision");
 
 		// random format option considered "unsafe" --> use NumberFormat losing precision
+		// Do not check the last 3 characters to see that we are near, but avoid rounding
+		// effects in different browsers
 		oFormatOptions.foo = "bar";
 		oType = new sap.ui.model.odata.type.Int64(oFormatOptions);
-		strictEqual(oType.parseValue("1 234 567 890 123 456789", "string"),
-			"1234567890123456800", "random format option -> losing precision");
+		strictEqual(oType.parseValue("1 234 567 890 123 456 789", "string").slice(0, -3),
+			"1234567890123456", "random format option -> losing precision");
 
 		// check that short style works
 		oType = new sap.ui.model.odata.type.Int64({style: "short"});
