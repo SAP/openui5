@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ComponentContainer renderer.
-	 * @static
+	 * ComponentContainer renderer.
+	 * @namespace
 	 * @alias sap.ui.core.ComponentContainerRenderer
 	 */
 	var ComponentContainerRenderer = {

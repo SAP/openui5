@@ -160,19 +160,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	}});
 
 
-	/**
-	 * Opens the table select dialog.
-	 *
-	 * @name sap.m.TableSelectDialog#open
-	 * @function
-	 * @param {string} sSearchValue
-	 *         Value for the search. The table will be automatically trigger the search event if value if this parameter is set.
-	 * @type sap.m.TableSelectDialog
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
 	/* =========================================================== */
 	/*           begin: API methods                                */
 	/* =========================================================== */
@@ -344,7 +331,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	* Is called after renderer is finished to show the busy state
 	* @overwrite
 	* @protected
-	* @returns {this} this pointer for chaining
+	* @returns {sap.m.TableSelectDialog} this pointer for chaining
 	*/
 	TableSelectDialog.prototype.onAfterRendering = function () {
 		if (this._bInitBusy && this._bFirstRender) {
@@ -360,7 +347,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	* Invalidates the dialog instead of this control (we don't have a renderer)
 	* @overwrite
 	* @protected
-	* @returns {this} this pointer for chaining
+	* @returns {sap.m.TableSelectDialog} this pointer for chaining
 	*/
 	TableSelectDialog.prototype.invalidate = function () {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside
@@ -374,11 +361,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	* Opens the internal dialog with a searchfield and a table.
-	* @public
-	* @param {string} sSearchValue Value for the table search.
-	* @returns {this} <code>this</code> to allow method chaining
-	*/
+	 * Opens the internal dialog with a searchfield and a table.
+	 * @public
+	 * @param {string} sSearchValue
+	 *         Value for the search. The table will be automatically trigger the search event if this parameter is set.
+	 * @returns {sap.m.TableSelectDialog} <code>this</code> to allow method chaining
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	TableSelectDialog.prototype.open = function (sSearchValue) {
 		if (!this.getParent() && !this._bAppendedToUIArea) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
@@ -417,7 +406,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	* Sets the growing threshold to the internal table
 	* @public
 	* @param {int} iValue Value for the table's growing threshold.
-	* @returns {this} this pointer for chaining
+	* @returns {sap.m.TableSelectDialog} this pointer for chaining
 	*/
 	TableSelectDialog.prototype.setGrowingThreshold = function (iValue) {
 		this._oTable.setGrowingThreshold(iValue);
@@ -431,7 +420,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @overwrite
 	 * @public
 	 * @param {boolean} bMulti flag for multi selection mode
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setMultiSelect = function (bMulti) {
 		this.setProperty("multiSelect", bMulti, true);
@@ -453,7 +442,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @overwrite
 	 * @public
 	 * @param {string} sTitle the title text for the dialog
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setTitle = function (sTitle) {
 		this.setProperty("title", sTitle, true);
@@ -499,7 +488,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @param {sap.ui.core.CSSSize} sWidth the new content width value for the dialog
 	 * @public
 	 * @overwrite
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setContentWidth = function (sWidth) {
 		this._oDialog.setContentWidth(sWidth);
@@ -522,7 +511,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @param {sap.ui.core.CSSSize} sHeight the new content height value for the dialog
 	 * @public
 	 * @overwrite
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setContentHeight = function (sHeight) {
 		this._oDialog.setContentHeight(sHeight);
@@ -534,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Forward method to the inner dialog: addStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.addStyleClass = function () {
 		this._oDialog.addStyleClass.apply(this._oDialog, arguments);
@@ -545,7 +534,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Forward method to the inner dialog: removeStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.removeStyleClass = function () {
 		this._oDialog.removeStyleClass.apply(this._oDialog, arguments);
@@ -556,7 +545,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Forward method to the inner dialog: toggleStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.toggleStyleClass = function () {
 		this._oDialog.toggleStyleClass.apply(this._oDialog, arguments);
@@ -598,7 +587,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @public
 	 * @param {sap.ui.Model} oModel the model that holds the data for the table
 	 * @param {string} sName the optional model name
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype._setModel = TableSelectDialog.prototype.setModel;
 	TableSelectDialog.prototype.setModel = function (oModel, sModelName) {
@@ -654,7 +643,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @protected
 	 * @param {string} sAggregationName the name for the binding
 	 * @param {object} oBindingInfo the configuration parameters for the binding
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.bindAggregation = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -728,7 +717,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @public
 	 * @param {sap.ui.model.Context} oContext the new context
 	 * @param {string} sModelName the optional model name
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype._setBindingContext = TableSelectDialog.prototype.setBindingContext;
 	TableSelectDialog.prototype.setBindingContext = function (oContext, sModelName) {
@@ -755,7 +744,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @private
 	 * @param {string} sValue the new Search value or undefined if called by management functions
 	 * @param {string} sEventType the search field event type that has been called (liveChange / search)
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
 	TableSelectDialog.prototype._executeSearch = function (sValue, sEventType) {
 		var oTable = this._oTable,

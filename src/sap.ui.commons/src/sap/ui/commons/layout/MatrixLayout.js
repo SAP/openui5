@@ -92,30 +92,19 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	}});
 	
 	
-	/**
-	 * Creates a new matrix layout row and appends it to this matrix layout.
-	 *
-	 * @name sap.ui.commons.layout.MatrixLayout#createRow
-	 * @function
-	 * @param {sap.ui.core.Control} oControls
-	 *         Each argument must be either a matrix layout cell, which is added to the row "as is", or an arbitrary content control, which is wrapped with a new (default) matrix layout cell first and then added to the row.
-	 *         Supports a variable number of arguments!
-	 * @type sap.ui.commons.layout.MatrixLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	EnabledPropagator.call(MatrixLayout.prototype, true, /* legacy mode */ true);
 	
 	/**
 	 * Creates a new matrix layout row and appends it to this matrix layout.
+	 * 
 	 * Each argument must be either a matrix layout cell, which is added to the row
 	 * "as is", or an arbitrary content control, which is wrapped with a new
 	 * (default) matrix layout cell first and then added to the row.
-	 * @param {sap.ui.commons.layout.MatrixLayoutCell|sap.ui.core.Control|string} rowContent to add
+	 * 
+	 * @param {sap.ui.core.Control|sap.ui.commons.layout.MatrixLayoutCell|string} rowContent to add
 	 * @return {sap.ui.commons.layout.MatrixLayout} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MatrixLayout.prototype.createRow = function() {
 		var oRow = new MatrixLayoutRow();

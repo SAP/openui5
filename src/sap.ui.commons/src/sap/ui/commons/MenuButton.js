@@ -215,15 +215,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		this.firePress({itemId: oItem.getId(), item: oItem});
 	};
 	
-	// to overwrite JS doc for inherited press event
+	// Overwrite JSDoc for inherited press event to make clear that 'press' === 'itemSelected'
 	
 	/**
 	 * Fired when an item from the menu was selected.
 	 *
 	 * @see sap.ui.commons.MenuButton#itemSelected
 	 *
-	 * @name sap.ui.commons.MenuButton#press
-	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
@@ -231,6 +229,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 * @param {string} oControlEvent.getParameters.itemId The id of the selected item
 	 * @param {sap.ui.commons.MenuItemBase} oControlEvent.getParameters.item The selected item
 	 * @public
+	 * @name sap.ui.commons.MenuButton#press
+	 * @event
 	 */
 	
 	/**
@@ -250,6 +250,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 *
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @public
+	 * @name sap.ui.commons.MenuButton#attachPress
+	 * @function
 	 */
 	
 	/**
@@ -265,6 +267,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @public
+	 * @name sap.ui.commons.MenuButton#detachPress
+	 * @function
 	 */
 	
 	/**
@@ -275,6 +279,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @protected
+	 * @name sap.ui.commons.MenuButton#firePress
+	 * @function
 	 */
 
 	return MenuButton;

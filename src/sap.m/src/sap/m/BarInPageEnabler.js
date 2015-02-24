@@ -33,7 +33,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @protected
 	 * @alias sap.m.IBarInPageEnabler
 	 */
-	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", {
+	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", /** @lends sap.m.BarInPageEnabler.prototype */ {
 		/**
 		 * Determines whether the bar is sensitive to the container context.
 		 *

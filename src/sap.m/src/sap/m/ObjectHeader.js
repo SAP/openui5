@@ -334,7 +334,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 * @public
 	 * @param {boolean} bCondensed the new value
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setCondensed = function (bCondensed) {
 		this.setProperty("condensed", bCondensed);
@@ -352,7 +352,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 * @public
 	 * @param {string} sNumber the new value
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumber = function (sNumber) {
 		this.setProperty("number", sNumber);
@@ -365,7 +365,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 * @public
 	 * @param {string} sUnit the new value
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberUnit = function (sUnit) {
 		this.setProperty("numberUnit", sUnit);
@@ -378,7 +378,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 * @public
 	 * @param {sap.ui.core.ValueState} sState the new value
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberState = function (sState) {
 		this.setProperty("numberState", sState,true);

@@ -42,10 +42,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	
 	/**
 	 * Set Messages to check
-	 * @abstract
-	 *
-	 * @name sap.ui.core.message.MessageProcessor.prototype.setMessages
-	 * @function
 	 * @param {map}
 	 *         vMessages map of messages: {'target': [array of messages],...}
 	 * @protected
@@ -59,11 +55,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	
 	/**
 	 * Check Messages and update controls with messages
-	 * @abstract
-	 *
-	 * @name sap.ui.core.message.MessageProcessor.prototype.checkMessage
-	 * @function
-	 * @return {sap.ui.model.ListBinding}
 	 * @protected
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {

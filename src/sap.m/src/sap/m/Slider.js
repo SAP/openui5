@@ -115,34 +115,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			}
 		}});
 
-		/**
-		 * Increments the slider value by multiplying the step with the given parameter.
-		 *
-		 * The default value for the step is 1.
-		 *
-		 * @name sap.m.Slider#stepUp
-		 * @function
-		 * @param {int} iIStep
-		 *         The number of steps the slider goes up.
-		 * @type sap.m.Slider
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Decrements the slider value by multiplying the step with the given parameter.
-		 *
-		 * The default value for the step is 1.
-		 *
-		 * @name sap.m.Slider#stepDown
-		 * @function
-		 * @param {int} iIStep
-		 *         The number of steps the slider goes down.
-		 * @type sap.m.Slider
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
 		EnabledPropagator.apply(Slider.prototype, [true]);
 
 		/* =========================================================== */
@@ -889,6 +861,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
 		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Slider.prototype.stepUp = function(iStep) {
 			return this.setValue(this.getValue() + (this._validateStep(iStep) * this.getStep()));
@@ -901,6 +874,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
 		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Slider.prototype.stepDown = function(iStep) {
 			return this.setValue(this.getValue() - (this._validateStep(iStep) * this.getStep()));

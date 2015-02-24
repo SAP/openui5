@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns the buttons from the aggregation and association combined
-	 * @returns {Array.<T>|string|*|!Array}
+	 * @returns {(Array.<T>|string|*|!Array)}
 	 * @private
 	 */
 	OverflowToolbarAssociativeActionSheet.prototype._getAllButtons = function () {
