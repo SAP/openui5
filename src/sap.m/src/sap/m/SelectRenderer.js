@@ -71,10 +71,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			}
 
 			oRm.write(">");
+			this.renderLabel(oRm, oSelect);
 
 			switch (sType) {
 				case sap.m.SelectType.Default:
-					this.renderLabel(oRm, oSelect);
 					this.renderArrow(oRm, oSelect);
 					break;
 
