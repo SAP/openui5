@@ -266,12 +266,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 
 					/** creates a button for the given action */
 					function button(sAction) {
-						var sKey = "MSGBOX_" + sAction,
-								sText = that._rb.getText(sKey);
+						var sText;
 
-						//not from defined actions
-						if (sKey === sText) {
-							sText = sAction;
+						// Don't check in ResourceBundle library if the button is with custom text
+						if (MessageBox.Action.hasOwnProperty(sAction)) {
+							sText = that._rb.getText("MSGBOX_" + sAction);
 						}
 
 						var oButton = new Button({
@@ -305,7 +304,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							visible: false
 						});
 						var oLink = new sap.m.Link({
-							text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MSGBOX_LINK_TITLE"),
+							text: that._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
 								oTextArea.setVisible(true);
 								this.setVisible(false);
@@ -343,9 +342,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							}
 							if (typeof mOptions.initialFocus === "string") {//covers string and MessageBox.Action cases
 								for (i = 0; i < aButtons.length; i++) {
-									if (mOptions.initialFocus.toLowerCase() === aButtons[i].getText().toLowerCase()) {
-										oInitialFocusControl = aButtons[i];
-										break;
+									if (MessageBox.Action.hasOwnProperty(mOptions.initialFocus)) {
+										if (that._rb.getText("MSGBOX_" + mOptions.initialFocus).toLowerCase() === aButtons[i].getText().toLowerCase()) {
+											oInitialFocusControl = aButtons[i];
+											break;
+										}
+									} else {
+										if (mOptions.initialFocus.toLowerCase() === aButtons[i].getText().toLowerCase()) {
+											oInitialFocusControl = aButtons[i];
+											break;
+										}
 									}
 								}
 							}
