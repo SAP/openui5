@@ -4,7 +4,7 @@
     "notes": [
       {
         "id": "0fb5ed495267fb1648d545148555fe1e369b8e8f",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FEATURE",
         "text": "NotificationBar: Provided Property for Toggler",
         "references": [
@@ -16,63 +16,63 @@
       },
       {
         "id": "67786cd8ba9c238f94dc46951901e10f95e37adb",
-        "author": "Jan Mummenthaler <jan.mummenthaler@sap.com>",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FEATURE",
         "text": "ux3.Overlay: new closed Event",
         "references": []
       },
       {
         "id": "54d15647ae6f9261f2ece5fb07f0ec93ae7c66ad",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "ux3/ExactArea: Visible property moved to Control",
         "references": []
       },
       {
         "id": "b35a16efdd307caf4c1e61b5d153ceb1a715d28f",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "ux3/ExactBrowser: Visible property moved to Control",
         "references": []
       },
       {
         "id": "e14ff460b6398d08cee4580f2deab8565b46b9e4",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "ux3/FacetFilter: Visible property moved to Control",
         "references": []
       },
       {
         "id": "bf7623561d1a74afe7cd6f69769b91f86772c001",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "ux3/NavigationBar: Visible property moved to Control",
         "references": []
       },
       {
         "id": "e5f3fc0ad4f49f20aea57ab01a2408e5b0bb7115",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "FeedChunk: Fixed tooltip for flag-button",
         "references": []
       },
       {
         "id": "30231d4398033d24e662742d665f05333fb31d8e",
-        "author": "Frank Weigel <frank.weigel@sap.com>",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "Fixed copyright headers in LESS/CSS resources",
         "references": []
       },
       {
         "id": "db72e0dd5e923179afdfbd1acb1780b62e19395e",
-        "author": "Thilo Seidel <thilo.seidel@sap.com>",
+        "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
         "type": "FIX",
         "text": "HCB Parameters added to ToolPopup.less",
         "references": []
       },
       {
         "id": "76c4a26c611a82b53ccc6762e3817d187e67a0c4",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "ToolPopup: Fixed ListBox focus on auto-close",
         "references": [
@@ -84,14 +84,14 @@
       },
       {
         "id": "599c39eadec89779d103fca6d02837e761b3210e",
-        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.unified.Menu: Fixed positioning in NavigationBar",
         "references": []
       },
       {
         "id": "c283fe8170d2a1433fac2f3637dcfc9f60d8f927",
-        "author": "Jan Mummenthaler <jan.mummenthaler@sap.com>",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FIX",
         "text": "ux3.ActionBar: Update action highlighted",
         "references": [
@@ -103,7 +103,7 @@
       },
       {
         "id": "f6fede3e90b5aa09ab2b23c1216314780c83ba17",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "ux3.NotificationBar: Severity of messages ie recalculated when NotificationBar is opening",
         "references": [
@@ -115,7 +115,7 @@
       },
       {
         "id": "7c88cdc53deb4042927ba8349e8cb1faf8273c38",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "ux3/ToolPopup: Fixed Calculation for Arrow",
         "references": [
@@ -124,6 +124,41 @@
             "reference": "787648"
           }
         ]
+      },
+      {
+        "id": "f132bca0c70116cf21a27d7cb165585ffff3f508",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip\"",
+        "references": []
+      },
+      {
+        "id": "9d9ac011f77ca866340d28000db98afa378d8375",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Overflow is not checked if in inactive state",
+        "references": []
+      },
+      {
+        "id": "3355034ef9193fd69fa4f67789fa42a2b4bc37ad",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Remove overflow check on exit",
+        "references": []
+      },
+      {
+        "id": "66b38c46797897d8443811b3466e0cab628a0aba",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip",
+        "references": []
+      },
+      {
+        "id": "d87055dd5b94f8264d84b7b26316235e2f089220",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip",
+        "references": []
       }
     ]
   }

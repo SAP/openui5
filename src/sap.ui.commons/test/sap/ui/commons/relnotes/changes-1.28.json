@@ -4,308 +4,308 @@
     "notes": [
       {
         "id": "768cbaa57e79114aae500021260123f59ebf38ca",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/BorderLayoutArea: Visible property moved to Control\"",
         "references": []
       },
       {
         "id": "235d8a89419f0a25532dbcb59b6e33b0b276d496",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "DropdownBox: Error on blur when selected item doesn't exist\"",
+        "text": "DropdownBox: Error on blur when selected item doesn\u0027t exist\"",
         "references": []
       },
       {
         "id": "79f822e3ae64341aff91d6a6a8e1867485da9945",
-        "author": "Michael Graf <mi.graf@sap.com>",
+        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
         "type": "FEATURE",
         "text": "CSS classes implementation for Container Padding Concept",
         "references": []
       },
       {
         "id": "d155d504c5446f22cf36a318626345db4936c618",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/AbsoluteLayout: Visible property moved to Control",
         "references": []
       },
       {
         "id": "1643fcdbcbd08a92350e4ffa8a5e7ee6d8a07528",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/BorderLayoutArea: Visible property moved to Control",
         "references": []
       },
       {
         "id": "38b0a822936d1112db9b8eff88516bb418773bc8",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Button: Visible property moved to Control",
         "references": []
       },
       {
         "id": "3e1faa15ec792070d9340683e30b96062bcaa160",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/CheckBox: Visible property moved to Control",
         "references": []
       },
       {
         "id": "189ec291c19e60ba583d91d2b7e978094fef641e",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/FormattedTextView: Visible property moved to Control",
         "references": []
       },
       {
         "id": "95c86ce0f2448973eb997185ccfcae1df6ab93ae",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/HorizontalDivider: Visible property moved to Control",
         "references": []
       },
       {
         "id": "f897b3a8fe2fdb4a7c24f95053b50c703b3d2db6",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Image: Visible property moved to Control",
         "references": []
       },
       {
         "id": "3666592f7439940fbe7a0492aa9959db28b5e2f9",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Label: Visible property moved to Control",
         "references": []
       },
       {
         "id": "f1bc101f030f8ea8b69e8003d02499143c3a1cbf",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/ListBox: Invisible property moved to Control",
         "references": []
       },
       {
         "id": "30de642a812936592b9e0f06b55b97972ea82336",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/MatrixLayout: Visible property moved to Control",
         "references": []
       },
       {
         "id": "4858f38530e0578fbe47f61baa407f491287f9ec",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/MenuBar: Visible property moved to Control",
         "references": []
       },
       {
         "id": "667073dad521507eb264cc96174ca340f4f16365",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Panel: Visible property moved to Control",
         "references": []
       },
       {
         "id": "7d8975ba55913a0ad4b3476e601b42d27950f5e6",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/ProgressIndicator: Visible property moved to Control",
         "references": []
       },
       {
         "id": "9eb48107bc5b061765169a11d8eca369d3d5e02e",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/RadioButton: Visible property moved to Control",
         "references": []
       },
       {
         "id": "1590baa030a4f7da2cad910f7b6981458b26c61a",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/RadioButtonGroup: Visible property moved to Control",
         "references": []
       },
       {
         "id": "a9bd189baa0473c90836e0f73c9631fb557bb791",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/RatingIndicator: Visible property moved to Control",
         "references": []
       },
       {
         "id": "769ee5c3b3b5a566b8f1037d32546ce4cc5fdb3b",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/RoadMap: Visible property moved to Control",
         "references": []
       },
       {
         "id": "695b48e53ae959a398349dd76edf66f855998a4e",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/RowRepeater: Visible property moved to Control",
         "references": []
       },
       {
         "id": "f5287a160b49163bc645790e699fa851ba381263",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/SearchField: Visible property moved to Control",
         "references": []
       },
       {
         "id": "713b653d88d7b542c2f42768947dd7c97f0c3be0",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/SegmentedButton: Visible property moved to Control",
         "references": []
       },
       {
         "id": "671e8770401ce7b8b9f140e4df4548f134e708c6",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Slider: Visible property moved to Control",
         "references": []
       },
       {
         "id": "824f6c37b140f63aae854a6dfe3a8176114c633f",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Splitter: Visible property moved to Control",
         "references": []
       },
       {
         "id": "d7b634b6745cb3c376ace906ba7e8c1a43f1e4cb",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/TextField: Visible property moved to Control",
         "references": []
       },
       {
         "id": "348f4080f19e837407875b941b549a6d1a767bd8",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/TextView: Visible property moved to Control",
         "references": []
       },
       {
         "id": "ead17b50f5a8ec26bb0349e666f3c1d38cf82b4c",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/Toolbar: Visible property moved to Control",
         "references": []
       },
       {
         "id": "0ecddf2f7304724963f102a60fc3f9103839949e",
-        "author": "Jens Himmelrath <jens.himmelrath@sap.com>",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
         "type": "FEATURE",
         "text": "commons/TriStateCheckBox: Visible property moved to Control",
         "references": []
       },
       {
         "id": "c3750d45938c28b82efa608c38bc42af6300af0c",
-        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.ui.core.LabelEnablement: Provide common functionality for labels",
         "references": []
       },
       {
         "id": "1cd6a73ad8d529b00bca80c121224659d23b26b1",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "ComboBox on IE fires change event while opening",
         "references": []
       },
       {
         "id": "7e98f14b9401b2c89656b4e6592f11ac7551817c",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "DatePicker / DateRangeSelection - several issues",
         "references": []
       },
       {
         "id": "9c5d48190592ac04b6579ac4bf868cb114484eea",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "DropdownBox: Error on blur when selected item doesn't exist",
+        "text": "DropdownBox: Error on blur when selected item doesn\u0027t exist",
         "references": []
       },
       {
         "id": "3ecda50f1c433f03da16e17dccab47c3c6eabe08",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "DropdownBox: select text on mouseup event",
         "references": []
       },
       {
         "id": "30231d4398033d24e662742d665f05333fb31d8e",
-        "author": "Frank Weigel <frank.weigel@sap.com>",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
         "text": "Fix copyright headers LESS/CSS resources",
         "references": []
       },
       {
         "id": "b426e42648571f632b171e1f0bbe887c387d0acb",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "FormContainer: JSDoc",
         "references": []
       },
       {
         "id": "a2383336b4d0b54d781772dcf666c11a281d484c",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "InPlaceEdit undo button not removes on Esc",
         "references": []
       },
       {
         "id": "a031490d51e9118fd6aa0215891659cdf86516c9",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "ListBox / DropdownBox: scrollTop issue (zoom != 100% in Chrome)",
+        "text": "ListBox / DropdownBox: scrollTop issue (zoom !\u003d 100% in Chrome)",
         "references": []
       },
       {
         "id": "cfbadbec2a1168f31e1751141c33cee560bb2135",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "ListBox in ComboBox within Popup (Chrome)",
         "references": []
       },
       {
         "id": "4c5944529f116f625b17a23710c1a7f515fca112",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "ListBox: Issue with DropdownBox inside Popup",
         "references": []
       },
       {
         "id": "a453b89fcfff3caa78cae096a339f82a18a206f5",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "RadioButton in HCB theme in IE11 checked only on second click",
         "references": []
       },
       {
         "id": "ac2fc7def9f0894b46ba5b03efaf5c7830e6c1b0",
-        "author": "Malte Wedel <malte.wedel@sap.com>",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
         "text": "RowRepeater: Implement refreshRows to avoid unnecessary rendering",
         "references": []
       },
       {
         "id": "976b4905e1ffda1c648eafb3c95fdb10c86eb88a",
-        "author": "Sebastian Allmann <sebastian.allmann@sap.com>",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "TexField no change and liveChange event",
         "references": []
       },
       {
         "id": "6595a8364d446492916cfa963f2d9c7069bc73c6",
-        "author": "Irina Goetzenberger <irina.goetzenberger@sap.com>",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
         "type": "FIX",
         "text": "Toolbar: Opened overflow popup is not closed on overflow-button click.",
         "references": [
@@ -317,7 +317,7 @@
       },
       {
         "id": "4b1b1e2bc5f4552b362277284b7b9ad55a82d322",
-        "author": "Stefan Scherer <stefan.scherer@sap.com>",
+        "author": "Stefan Scherer \u003cstefan.scherer@sap.com\u003e",
         "type": "FIX",
         "text": "Tree: Behavior extended to select and deselect notes via API",
         "references": [
@@ -329,51 +329,100 @@
       },
       {
         "id": "94a3f803b6107601003ed33adc9006a26b3c33c1",
-        "author": "Malte Wedel <malte.wedel@sap.com>",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
         "text": "Tree: Fix selectionChange event parameter and single selection",
         "references": []
       },
       {
         "id": "f0a484efed0949aa040e001a5cad55265bebdba1",
-        "author": "Malte Wedel <malte.wedel@sap.com>",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
         "text": "Tree: Improve performance",
         "references": []
       },
       {
         "id": "a445c6c0c09ff662b0504611ce3e58d0e8384168",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "commons.Dialog: Fixed Docu for Closed-Event",
         "references": []
       },
       {
         "id": "8f324d02dd1541c30eff7d91a1cf64d87629a9fd",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "commons.Dialog: Removed Overflow at Root-Element",
         "references": []
       },
       {
         "id": "9ebe19a1a11602f645b85e66bd49299b0caf86f0",
-        "author": "Ruben Tuider <ruben.tuider@sap.com>",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "commons.SearchField: Close Popup When Clicked on Search Icon",
         "references": []
       },
       {
         "id": "fde293568fb72cfd4402f14df935f27ae6de3228",
-        "author": "Matthias Osswald <mat.osswald@sap.com>",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.commons.ColorPicker: Accessability (added tooltips)",
         "references": []
       },
       {
         "id": "e25d1dcae109bdc351d5a9c2cd80fe333a5f379a",
-        "author": "Jens Pflueger <jens.pflueger@sap.com>",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.commons.SearchField: Fix Screenreader Announcement",
+        "references": []
+      },
+      {
+        "id": "f132bca0c70116cf21a27d7cb165585ffff3f508",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip\"",
+        "references": []
+      },
+      {
+        "id": "ba39374233379e03b22750cfb92e22724e83cdfd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "RangeSlider: Issues with vertical slider and RTL fixed",
+        "references": []
+      },
+      {
+        "id": "82a0eee708a582c1edf3d34b181ababc7dfbb96b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Slider: Corrected aria-orientation for vertical slider",
+        "references": []
+      },
+      {
+        "id": "8d9aa761da91d56e75547ea94e675c68a86b3a33",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Removed unnecessary CSS-class",
+        "references": []
+      },
+      {
+        "id": "5b02dfea5a1050a2ba7860752135f4e66b0e5e2f",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ValueHelpField: Fixed hover for disabled/readonly Icon in HCB theme",
+        "references": []
+      },
+      {
+        "id": "66b38c46797897d8443811b3466e0cab628a0aba",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip",
+        "references": []
+      },
+      {
+        "id": "d87055dd5b94f8264d84b7b26316235e2f089220",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip",
         "references": []
       }
     ]
