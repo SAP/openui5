@@ -18,13 +18,13 @@ sap.ui.controller("view.Category", {
 		var oFilter = new sap.ui.model.Filter("Category", sap.ui.model.FilterOperator.EQ, sId);
 		oBinding.filter([ oFilter ]);
 	},
-	
+
 	_changeNoDataTextToIndicateLoading: function (oList) {
 		var sOldNoDataText = oList.getNoDataText();
 		oList.setNoDataText("Loading...");
 		oList.attachEventOnce("updateFinished", function() {oList.setNoDataText(sOldNoDataText);});
 	},
-	
+
 	fnDataReceived: function(oEvent) {
 		var that = this,
 			oList = this.getView().byId("productList");
@@ -57,12 +57,12 @@ sap.ui.controller("view.Category", {
 		var sProductId = oModel.getData(oBindContext.getPath()).ProductId;
 		this._router.navTo("product", {id: sCategoryId, productId: sProductId}, !sap.ui.Device.system.phone);
 	},
-	
+
 	handleNavButtonPress : function (oEvent) {
-		this._router._myNavBack();
+		this.getOwnerComponent().myNavBack();
 	},
-	
+
 	handleCartButtonPress :  function (oEvent) {
 		this._router.navTo("cart");
 	}
-}); 
+});

@@ -8,7 +8,7 @@ sap.ui.controller("view.Cart", {
 		this._router.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
 
 		// set initial ui configuration model
-		oCfgModel = new sap.ui.model.json.JSONModel({});
+		var oCfgModel = new sap.ui.model.json.JSONModel({});
 		this.getView().setModel(oCfgModel, "cfg");
 		this._toggleCfgModel();
 	},
@@ -41,14 +41,14 @@ sap.ui.controller("view.Cart", {
 		oCfgModel.setData({
 			inDelete : !bInDelete,
 			notInDelete : bInDelete,
-			listMode : (!bInDelete) ? "Delete" : (sap.ui.Device.system.phone) ? "None": "SingleSelectMaster",
-			listItemType : (!bInDelete) ? "Inactive" : (sap.ui.Device.system.phone) ? "Active": "Inactive",
+			listMode: bInDelete ? sap.ui.Device.system.phone ? "None" : "SingleSelectMaster" : "Delete",
+			listItemType: bInDelete ? sap.ui.Device.system.phone ? "Active" : "Inactive" : "Inactive",
 			pageTitle : (bInDelete) ? oBundle.getText("CART_TITLE_DISPLAY") : oBundle.getText("CART_TITLE_EDIT")
 		});
 	},
 
 	handleNavButtonPress : function (oEvent) {
-		this._router._myNavBack();
+		this.getOwnerComponent().myNavBack();
 	},
 
 	handleEntryListPress : function (oEvent) {
@@ -65,7 +65,7 @@ sap.ui.controller("view.Cart", {
 		var oEntry = this.getView().getModel("cartProducts").getProperty(sPath);
 		var sId = oEntry.ProductId;
 		if (!sap.ui.Device.system.phone) {
-			this._router._myNavToWithoutHash("view.Product", "XML", false,  {productId: sId});
+			this._router.getTargets().display("product");
 			var bus = sap.ui.getCore().getEventBus();
 			bus.publish("shoppingCart", "updateProduct", {productId: sId});
 		} else {
@@ -166,7 +166,7 @@ sap.ui.controller("view.Cart", {
 		oCartProductsModel.setData(oCartProductsModelData);
 		this._router.navTo("Home");
 		if (!sap.ui.Device.system.phone) {
-			this._router._myNavToWithoutHash("view.Welcome", "XML", false);
+			this._router.getTargets().display("welcome");
 		}
 	}
 });
