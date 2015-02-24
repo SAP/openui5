@@ -46,15 +46,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.addClass(oON._sCSSPrefixObjNumberStatus + oON.getState());
 
 		sTextDir && oRm.writeAttribute("dir", sTextDir.toLowerCase());
-		
 		if (sTextAlign) {
-			oRm.addStyle("text-align", sTextAlign); // set given text-align, later it will be changed if needed
-			oRm.writeStyles();
-			
-			oON.setTextAlign(sTextAlign);
+			sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
+			if (sTextAlign) {
+				oRm.addStyle("text-align", sTextAlign);
+			}
 		}
 
 		oRm.writeClasses();
+		oRm.writeStyles();
 
 		// ARIA
 		oRm.writeAccessibilityState({

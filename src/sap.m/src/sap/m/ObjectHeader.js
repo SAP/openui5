@@ -692,15 +692,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ObjectHeader.prototype.onAfterRendering = function() {
 		var oObjectNumber = this.getAggregation("_objectNumber");
-		
+		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+
 		if (this.getResponsive()) {
 			this._adjustIntroDiv();
 
 			if (oObjectNumber && oObjectNumber.getNumber()) {// adjust alignment according the design specification
 				if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && this.getFullScreenOptimized() && this._iCountVisAttrStat >= 1 && this._iCountVisAttrStat <= 3) {
-					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Begin, true);
+					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Right : sap.ui.core.TextAlign.Left);
 				} else {
-					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End, true);
+					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
 				}
 			}
 			// adjust number div after initial alignment
@@ -717,7 +718,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		} else {
 			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification
-				oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End, true);
+				oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
 			}
 		}
 	};
@@ -739,6 +740,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._adjustNumberDiv = function() {
 		var sId = this.getId();
 		var oObjectNumber = this.getAggregation("_objectNumber");
+		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
 			var $numberDiv = jQuery.sap.byId(sId + "-number");
@@ -747,7 +749,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (sap.ui.Device.system.phone || (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Phone"))) {
 				if ($numberDiv.hasClass("sapMObjectNumberBelowTitle")) {
 					// change alignment to fit the design depending
-					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.End, true);
+					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
 					$numberDiv.removeClass("sapMObjectNumberBelowTitle");
 					$titleDiv.removeClass("sapMOHRTitleDivFull");
 				}
@@ -756,7 +758,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				if ($numberDiv.outerWidth() > nParentWidth40) {
 					// change alignment to fit the design
-					oObjectNumber.setTextAlign(sap.ui.core.TextAlign.Begin, true);
+					oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Right : sap.ui.core.TextAlign.Left);
 					$numberDiv.addClass("sapMObjectNumberBelowTitle");
 					$titleDiv.addClass("sapMOHRTitleDivFull");
 				}

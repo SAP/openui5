@@ -106,31 +106,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {sap.ui.core.TextAlign} sAlign the new value
 	 * @param suppressTextDirection if true the text direction doesn't influence to the text alignment
 	 */
-	ObjectNumber.prototype.setTextAlign = function(sAlign, suppressTextDirection) {
+	ObjectNumber.prototype.setTextAlign = function(sAlign) {
 		var sAlignVal;
-		
-		//do suppress rerendering
+
+		//do suppress re-rendering
 		this.setProperty("textAlign", sAlign, true);
-		
-		if (suppressTextDirection) {
-			
-			var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-			
-			if (bPageRTL) {
-				sAlignVal = this.getRenderer()._getTextAlignment(sAlign, sap.ui.core.TextDirection.RTL);
-			} else {
-				sAlignVal = this.getRenderer()._getTextAlignment(sAlign, sap.ui.core.TextDirection.LTR);
-			}
-			this.$().css("text-align", sAlignVal); 
+
+		sAlignVal = this.getRenderer()._getTextAlignment(sAlign, this.getTextDirection());
+		if (sAlignVal) {
+			//change the inline style
+			this.$().css("text-align", sAlignVal);
 		} else {
-			sAlignVal = this.getRenderer()._getTextAlignment(sAlign, this.getTextDirection());
-			if (sAlignVal) {
-				//change the inline style
-				this.$().css("text-align", sAlignVal);
-			} else {
-				// if empty set what was given by the user
-				this.$().css("text-align", sAlign); 
-			}
+			// if empty set what was given by the user
+			this.$().css("text-align", sAlign);
 		}
 	};
 
