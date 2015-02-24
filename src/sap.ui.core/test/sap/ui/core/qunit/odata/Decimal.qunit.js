@@ -184,10 +184,12 @@
 				"1234567890123456.789012", "only safe format options -> full precision");
 
 		// random format option considered "unsafe" --> use NumberFormat losing precision
+		// Check only 17 characters incl. the dot to see that we are near, but avoid rounding
+		// effects in different browsers
 		oFormatOptions.foo = "bar";
 		oType = new sap.ui.model.odata.type.Decimal(oFormatOptions);
-		strictEqual(oType.parseValue("1 234 567 890 123 456.789012", "string"),
-			"1234567890123456.8", "random format option -> losing precision");
+		strictEqual(oType.parseValue("123 456 789 012 345.6789012", "string").slice(0, 17),
+			"123456789012345.6", "random format option -> losing precision");
 
 		// check that short style works
 		oType = new sap.ui.model.odata.type.Decimal({style: "short"});
