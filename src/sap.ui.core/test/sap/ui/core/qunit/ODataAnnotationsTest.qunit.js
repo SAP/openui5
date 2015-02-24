@@ -142,6 +142,12 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/sapdata01/$metadata",
 			serviceValid     : true,
 			annotationsValid : true
+		},
+		"Simple Values": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/simple-values.xml",
+			serviceValid     : true,
+			annotationsValid : true
 		}
 	};
 
@@ -1470,5 +1476,34 @@ function runODataAnnotationTests() {
 			"SalesOrderItemID",
 			"Entity in namespace exists"
 		);
+	});
+	
+	
+	test("Simple Values", function() {
+		expect(3);
+
+		var mTest = mAdditionalTestsServices["Simple Values"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+
+		ok(!!oAnnotations, "Annotations are available.");
+		
+		deepEqual(
+			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name1"],
+			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name2"],
+			"Simple value attributes have the meaning as child elements"
+		);
+		
 	});
 }

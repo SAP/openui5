@@ -95,6 +95,10 @@ xhr.onCreate = function(request) {
 				sAnswer = sOtherPropertyTextNodes;
 				break;
 
+			case "fakeService://testdata/odata/simple-values.xml":
+				sAnswer = sSimpleValues;
+				break;
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -3610,3 +3614,36 @@ var sMetadataWithEntityContainers = '\
 	</edmx:DataServices>\
 </edmx:Edmx>';
 
+
+var sSimpleValues = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edmx:Reference>\
+	<edmx:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="SimpleValues.Test">\
+				<Annotation Term="UI.Name1">\
+					<PropertyValue Property="Url">\
+						<Apply Function="odata.fillUriTemplate">\
+							<String><![CDATA[#Supplier-displayFactSheet?Supplier={ID1}]]></String>\
+							<LabeledElement Name="ID1">\
+								<Path>Supplier</Path>\
+							</LabeledElement>\
+						</Apply>\
+					</PropertyValue>\
+				</Annotation>\
+		\
+				<Annotation Term="UI.Name2">\
+					<PropertyValue Property="Url">\
+						<Apply Function="odata.fillUriTemplate">\
+							<String><![CDATA[#Supplier-displayFactSheet?Supplier={ID1}]]></String>\
+							<LabeledElement Name="ID1" Path="Supplier" />\
+						</Apply>\
+					</PropertyValue>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>';
