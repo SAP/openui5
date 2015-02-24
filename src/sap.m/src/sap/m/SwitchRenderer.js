@@ -210,6 +210,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAccessibilityState(oSwitch, {
 				role: "checkbox",
 				checked: oSwitch.getState(),
+				live: "assertive",
 				labelledby: {
 					value: sLabelledbyId,
 					append: true
