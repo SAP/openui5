@@ -539,6 +539,16 @@
 		this.oUploadCollection.setFileType(aFileTypesMix);
 		var sFileTypes = this.oUploadCollection.getFileType().toString();
 		equal(sFileTypes, sFileTypesExpected, "Property 'fileType': Conversion to lower case");
+
+		//Initialization
+		aFileTypes = [];
+		this.oUploadCollection.setFileType(aFileTypes);
+		//Test with an empty array/string
+		var sFileTypesUndefined;
+		this.oUploadCollection.setFileType(sFileTypesUndefined);
+		sFileTypesExpected = "";
+		var sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
+		equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Conversion to lower case with empty array!");
 	});
 
 	test("maximumFilenameLength", function() {

@@ -265,6 +265,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 
 	UploadCollection.prototype.setFileType = function(aFileTypes) {
+		if (!aFileTypes) {
+			return this;
+		}
 		var cLength = aFileTypes.length;
 		for (var i = 0; i < cLength; i++) {
 			aFileTypes[i] = aFileTypes[i].toLowerCase();
