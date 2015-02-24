@@ -5149,7 +5149,8 @@
 					}
 
 					if (oSelect._isRequiredSelectElement() && oSelect.getItems().length) {
-						ok(oSelect.$().children("select").length, "The select html element exists");
+						ok(oSelect.$("select").length, "The select html element exists");
+						ok(oSelect.getDomRef("select").getAttribute("aria-hidden"), "true", "The shadow DOM is hidden to assistive technologies")
 					}
 
 					if (oSelect.getType() === sap.m.SelectType.Default) {
