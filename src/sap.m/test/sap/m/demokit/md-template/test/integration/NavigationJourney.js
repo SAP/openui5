@@ -17,6 +17,18 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 
 	module("Desktop navigation");
 
+	opaTest("Should see a busy indication while loading the metadata", function (Given, When, Then) {
+		// Arrangements
+		Given.iStartTheAppOnADesktopDeviceWithDelay("", 10000);
+
+		//Actions
+		When.iLookAtTheScreen();
+
+		// Assertions
+		Then.iShouldSeeTheBusyIndicator().
+			and.iTeardownMyAppFrame();;
+	});
+
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnADesktopDevice();
@@ -96,7 +108,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 			and.theNextButtonIsEnabled();
 
 	});
-	
+
 	opaTest("Line Item Page: after several 'Next' and 'Previous' navigation, going back in browser history should take us back to Detail Page for Object 1", function (Given, When, Then) {
 
 		// Actions
@@ -106,8 +118,8 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 		Then.iShouldBeOnTheObject1Page().
 			and.iTeardownMyAppFrame();
 	});
-	
-//TODO activate the following tests after 'sap.ui.test.Opa5.getWindow().history.forward' is fixed	
+
+//TODO activate the following tests after 'sap.ui.test.Opa5.getWindow().history.forward' is fixed
 //	opaTest("Line Item Page: going forward in browser history should take us back to Line Item 1 a", function (Given, When, Then) {
 //
 //		// Actions
@@ -116,8 +128,8 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 //		// Assertions
 //		Then.iShouldBeOnTheLineItem1Page();
 //	});
-//	
-//	
+//
+//
 //	opaTest("Line Item Page: pressing 'Back' Button on Line Item 1 page navigates back to Detail Page for Object 1", function (Given, When, Then) {
 //
 //		// Actions
@@ -128,7 +140,7 @@ function (Opa5, NavigationAction, NavigationArrangement, NavigationAssertion) {
 //			and.iTeardownMyAppFrame();
 //
 //	});
-	
-	
-	
+
+
+
 });

@@ -4,10 +4,11 @@ sap.ui.define([
 		"sap/ui/demo/mdtemplate/model/Device",
 		"sap/ui/demo/mdtemplate/model/AppModel",
 		"sap/ui/demo/mdtemplate/controller/ListSelector",
+		"sap/ui/demo/mdtemplate/controller/BusyHandler",
 		"sap/ui/demo/mdtemplate/Router",
 		"sap/ui/demo/mdtemplate/model/formatter",
 		"sap/ui/demo/mdtemplate/model/grouper"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, Router) {
+	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, BusyHandler, Router) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
@@ -20,9 +21,9 @@ sap.ui.define([
 					"sap.ui.layout"
 				]
 			},
-	
+
 			rootView : "sap.ui.demo.mdtemplate.view.App",
-	
+
 			config : {
 				messageBundle : "sap.ui.demo.mdtemplate.i18n.messageBundle",
 				// always use absolute paths relative to our own component
@@ -30,7 +31,7 @@ sap.ui.define([
 				rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdtemplate"),
 				serviceUrl: "here/goes/your/serviceUrl/"
 			},
-	
+
 			routing : {
 				config : {
 					// bugfix: right now there is a bug in the routing/targets, the prefixing for xml views is not working
@@ -99,10 +100,11 @@ sap.ui.define([
 			}
 		},
 
-		/** 
-		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.  
+		/**
+		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
 		 * In this method, the resource and application models are set and the router is initialized.
-		 * @public 
+		 * @public
+		 * @override
 		 */
 		init : function () {
 			var mConfig = this.getMetadata().getConfig();
@@ -119,14 +121,60 @@ sap.ui.define([
 
 			// set the app data model
 			this.setModel(new AppModel(mConfig.serviceUrl));
+			this._createMetadataPromise(this.getModel());
+
+			// initialize the busy handler with the component
+			this._oBusyHandler = new BusyHandler(this);
 
 			// set the device model
 			this.setModel(new DeviceModel(), "device");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
+		},
+
+		/**
+		 * The component is destroyed by UI5 automatically.
+		 * In this method, the ListSelector and BusyHandler are destroyed.
+		 * @public
+		 * @override
+		 */
+		destroy : function () {
+			this.oListSelector.destroy();
+			this._oBusyHandler.destroy();
+
+			// call the base component's destroy function
+			sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);
+		},
+
+		/**
+		 * In this method, the rootView is initialized and stored.
+		 * @public
+		 * @override
+		 */
+		createContent : function() {
+			// call the base component's createContent function
+			this._oRootView = sap.ui.core.UIComponent.prototype.createContent.apply(this, arguments);
+
+			return this._oRootView;
+		},
+
+		/**
+		 * Creates a promise which is resolved when the metadata is loaded.
+		 * @param {sap.ui.core.Model} oModel the app model
+		 * @private
+		 */
+		_createMetadataPromise : function(oModel) {
+			this.oWhenMetadataIsLoaded = new Promise(function (fnResolve, fnReject) {
+				oModel.attachEventOnce("metadataLoaded", function() {
+					fnResolve();
+				});
+				oModel.attachEventOnce("metadataFailed", function() {
+					fnReject();
+				});
+			}.bind(this));
 		}
-	
+
 	});
 
 }, /* bExport= */ true);
