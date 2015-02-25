@@ -4,25 +4,22 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
+		showNavButton="{/showNavButton}"
 		navButtonPress="onNavBack" >
 		<headerContent>
 			<Button
-				class="sapUiHideOnPhone"
-				text="{i18n>sampleShowCode}"
-				tooltip="{i18n>sampleShowCodeTooltip}"
-				icon="sap-icon://syntax"
-				press="onNavToCode" />
-			<Button
-			    id="toggleFullScreenBtn"
-				class="sapUiHideOnPhone"
-				text="{i18n>sampleFullScreen}"
 				icon="sap-icon://full-screen"
+				class="sapUiHideOnPhone"
 				tooltip="{i18n>sampleFullScreenTooltip}"
 				press="onToggleFullScreen" />
 			<Button
-				class="sapUiVisibleOnlyOnPhone"
 				icon="sap-icon://syntax"
+				tooltip="{i18n>sampleShowCodeTooltip}"
 				press="onNavToCode" />
+			<Button visible="{/showNewTab}"
+					tooltip="{i18n>sampleNewTabTooltip}"
+					icon="sap-icon://inspect"
+					press="onNewTab" />
 		</headerContent>
 	</Page>
 </mvc:View>
