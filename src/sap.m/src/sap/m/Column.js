@@ -399,10 +399,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			cells = oTableDomRef.querySelectorAll("tr > td:nth-child(" + i + ")"),
 			length = cells.length;
 	
-		// set display
+		// set display and aria
 		header.style.display = display;
+		header.setAttribute("aria-hidden", !bDisplay);
 		for (i = 0; i < length; i++) {
 			cells[i].style.display = display;
+			cells[i].setAttribute("aria-hidden", !bDisplay);
 		}
 	
 		// let the parent know the visibility change
@@ -439,10 +441,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.setVisible = function(bVisible) {
 		var oParent = this.getParent(),
 			oTableDomRef = oParent && oParent.getTableDomRef && oParent.getTableDomRef(),
-			bInvalidate = oTableDomRef && this._index >= 0;
+			bSupressInvalidate = oTableDomRef && this._index >= 0;
 	
-		this.setProperty("visible", bVisible, bInvalidate);
-		if (bInvalidate) {
+		this.setProperty("visible", bVisible, bSupressInvalidate);
+		if (bSupressInvalidate) {
 			this.setDisplay(oTableDomRef, bVisible);
 		}
 	
