@@ -1,39 +1,66 @@
 sap.ui.controller("sap.m.sample.Dialog.C", {
 
-	stdDialog: null,
-	msgDialog: null,
-
 	onInit: function () {
 		// set explored app's demo model on this sample
 		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
 	},
 
-	openDialog: function (sType) {
-		if (!this[sType]) {
-			this[sType] = sap.ui.xmlfragment(
-				"sap.m.sample.Dialog." + sType + "Dialog",
-				this // associate controller with the fragment
-			);
-			this.getView().addDependent(this[sType]);
-		}
+	onDialogPress: function (oEvent) {
+		var dialog = new sap.m.Dialog({
+			title: 'Available Products',
+			content: new sap.m.List({
+				items: {
+					path: '/ProductCollection',
+					template: new sap.m.StandardListItem({
+						title: "{Name}",
+						counter: "{Quantity}"
+					})
+				}
+			}),
+			beginButton: new sap.m.Button({
+				text: 'Close',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
 
-		this[sType].bindElement("/ProductCollection/0");
-		// toggle compact style
-		jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this[sType]);
-		this[sType].open();
+		//to get access to the global model
+		this.getView().addDependent(dialog);
+		dialog.open();
 	},
 
-	onStdDialogPress: function (oEvent) {
-		this.openDialog('Std');
-	},
+	onDialogWithSizePress: function (oEvent) {
+		var dialog = new sap.m.Dialog({
+			title: 'Available Products',
+			contentWidth: "550px",
+			contentHeight: "300px",
+			content: new sap.m.List({
+				items: {
+					path: '/ProductCollection',
+					template: new sap.m.StandardListItem({
+						title: "{Name}",
+						counter: "{Quantity}"
+					})
+				}
+			}),
+			beginButton: new sap.m.Button({
+				text: 'Close',
+				press: function () {
+					dialog.close();
+				}
+			}),
+			afterClose: function() {
+				dialog.destroy();
+			}
+		});
 
-	onMsgDialogPress: function (oEvent) {
-		this.openDialog('Msg');
-	},
-
-	onDialogCloseButton: function (oEvent) {
-		var sType = oEvent.getSource().data("dialogType");
-		this[sType].close();
+		//to get access to the global model
+		this.getView().addDependent(dialog);
+		dialog.open();
 	}
 });

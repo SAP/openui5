@@ -182,7 +182,7 @@
 				"name" : "Dialog",
 				"category" : "Popup",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.Dialog", "sap.m.sample.DialogSearch", "sap.m.sample.DialogConfirm" ]
+				"samples" : [ "sap.m.sample.Dialog", "sap.m.sample.DialogMessage", "sap.m.sample.DialogConfirm" ]
 			},
 			{
 				"id" : "sap.m.DisplayListItem",
@@ -1197,14 +1197,9 @@
 				"description": "Use the Search Field to let the user enter a search string and trigger the search process."
 			},
 			{
-				"id": "sap.m.sample.DialogSearch",
-				"name": "Dialog with Search",
-				"description": "When using a Search Field in a Dialog it is best to put it to the dialog's sub header to have it visible all the time."
-			},
-			{
 			  "id": "sap.m.sample.DialogConfirm",
-			  "name": "Dialog with confirm options",
-			  "description": "Creating a dialog with confirm and reject options that replaces the forwardingDialog functionality."
+			  "name": "Dialog With Confirm Options",
+			  "description": "Creating a dialog with confirm and reject options that replaces the confirmDialog functionality."
 			},
 			{
 				"id": "sap.m.sample.ListSelectionSearch",
@@ -1510,6 +1505,16 @@
 				"id": "sap.m.sample.Dialog",
 				"name": "Dialog",
 				"description": "Typically a Dialog prompts the user for decisions or additional information required by the application. The content of a dialog is fully customizable. If you want to highlight important information you should use the special type of 'Message Dialog'."
+			},
+			{
+			  "id": "sap.m.sample.DialogMessage",
+			  "name": "Message Dialog",
+			  "description": "Creating a dialog for showing UI messages. The possible messages types are: 'None', 'Success', 'Warning' and 'Error'."
+			},
+			{
+			  "id": "sap.m.sample.DialogConfirm",
+			  "name": "Dialog With Confirm Options",
+			  "description": "Creating a dialog with confirm and reject options that replaces the confirmDialog functionality."
 			},
 			{
 				"id": "sap.m.sample.ViewSettingsDialog",
