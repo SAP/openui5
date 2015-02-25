@@ -909,11 +909,10 @@
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
 	asyncTest("Collapse in auto expand", function(){
-		var that = this;
 		prebuildTree(function () {
 			var oContext;
 			
-			var changeHandlerSpy = that.spy(oBinding, "_fireChange");
+			var changeHandlerSpy = sinon.spy(oBinding, "_fireChange");
 			
 			//activate the recursive collapsing
 			oBinding.mParameters.collapseRecursive = true;
@@ -1080,7 +1079,6 @@
 	});
 	
 	asyncTest("Check Filtering not supported", function() {
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 1
@@ -1088,7 +1086,7 @@
 			var iWarningCount = 0,
 				sMessage = "";
 			
-			that.stub(jQuery.sap.log, "warning", function(sMsg) {
+			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});
@@ -1102,8 +1100,6 @@
 	});
 
 	asyncTest("RootNodeID - displayRootNode = true", function () {
-		
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 5,
@@ -1131,8 +1127,6 @@
 	});
 	
 	asyncTest("RootNodeID - displayRootNode = false, with (backend side) missing root node", function () {
-		
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 5,
@@ -1163,8 +1157,6 @@
 	 * When the backend returns no data for the given root node id, it should not break.
 	 */
 	asyncTest("RootNodeID - displayRootNode = true, with (backend side) missing root node", function () {
-		
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 5,
@@ -1190,8 +1182,6 @@
 	});
 	
 	asyncTest("RootNodeID - displayRootNode = false, root nodes exists", function () {
-		
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 5,
@@ -1222,8 +1212,6 @@
 	});
 	
 	asyncTest("RootNodeID - displayRootNode = true, numberOfExpandedLevels = 1", function () {
-		
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 5,
@@ -1267,7 +1255,6 @@
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
 	asyncTest("SelectAll, Deselect All", function(){
-		var that = this;
 		prebuildTree(function () {
 			var oContext;
 			
@@ -1323,7 +1310,6 @@
 	 * Data should already be present, since prebuildTree already requested a big set
 	 */
 	asyncTest("Select single nodes", function(){
-		var that = this;
 		prebuildTree(function () {
 			var oContext;
 			
@@ -1383,7 +1369,6 @@
 	});
 	
 	asyncTest("Add Selection Interval", function(){
-		var that = this;
 		prebuildTree(function () {
 			var oContext;
 			
@@ -1440,7 +1425,6 @@
 	});
 	
 	asyncTest("Set Selection Interval", function(){
-		var that = this;
 		prebuildTree(function () {
 			var oContext;
 			
@@ -1495,7 +1479,6 @@
 	});
 	
 	asyncTest("SelectAll with Paging and Expand", function(){
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 				rootLevel: 2
