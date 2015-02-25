@@ -33,97 +33,6 @@
 				country: "DE"
 			}
 		});
-		
-		/*
-		oDate = new sap.ui.model.type.Date();
-		oZip = new sap.ui.model.type.String(null,{maxLength: 5});
-		oStreet = new sap.ui.model.type.Integer();
-		// UI
-		var oLayout = new sap.ui.layout.form.ResponsiveGridLayout("L4");
-		var oForm = new sap.ui.layout.form.Form("F1",{
-			models: oModel,
-			objectBindings:{path: "/form"},
-			//title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
-			tooltip: "Form tooltip",
-			editable: true,
-			layout: oLayout,
-			formContainers: [
-				new sap.ui.layout.form.FormContainer("C1",{
-					title: "Contact Data",
-					formElements: [
-						new sap.ui.layout.form.FormElement({
-							label: "Name",
-							fields: [
-								new sap.m.Input({value: "{surname}"})
-							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: "First name",
-							fields: [
-								new sap.m.Input({value: "{name}"})
-							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: "Date of birth",
-							fields: [
-								new sap.m.DateTimeInput({value: {path:"birthdate", type: oDate}})
-							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: "Gender",
-							fields: [
-								new sap.m.RadioButton({text: "male", selected: true, groupName: "MyTest"}),
-							    new sap.m.RadioButton({text: "female", selected: false, groupName: "MyTest"})
-							]
-						})
-					]
-				}),
-				new sap.ui.layout.form.FormContainer("C2",{
-					title: new sap.ui.core.Title({text: "Address", tooltip: "Title tooltip"}),
-					formElements: [
-						new sap.ui.layout.form.FormElement({
-							label: new sap.m.Label({text:"Street"}),
-							fields: [
-								new sap.m.Input({value: "{street}"}),
-								new sap.m.Input({
-									value: {path: "streetnr", type: oStreet},
-									layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
-								})
-							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: "City",
-							fields: [
-								new sap.m.Input({value: "{city}"})
-							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: new sap.m.Label({text: "Post code"}),
-							fields: [
-								new sap.m.Input({
-									value: {path: "zip", type: oZip},
-									layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
-								})
-							]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: "Country",
-							fields: [
-								new sap.m.Select({
-									selectedKey: "{country}",
-									items: [
-										new sap.ui.core.Item({key: "DE", text: "Germany"}),
-								        new sap.ui.core.Item({key: "US", text: "USA"}),
-								        new sap.ui.core.Item({key: "UK", text: "England"})
-									]
-								})
-							]
-						})
-					]
-				})
-			]
-		});
-*/
 
 		var oButton1 = new sap.m.Button({
 			text: "add Warning",
@@ -200,7 +109,7 @@
 			}
 		});
 		
-		oMP.setModel(oMP.getMessageManager().getMessageModel(),"message");
+		oMP.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),"message");
 		
 		var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
 			name: "messages",

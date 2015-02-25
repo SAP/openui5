@@ -373,7 +373,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this.mAggregations = {};
 			this.mAssociations = {};
 			this.mMethods = {};
-			this.aControlMessages = [];
 			
 			// private properties
 			this.oParent = null;
@@ -2209,7 +2208,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			this.iSuppressInvalidate--;
 		}
 		
-		this.aControlMessages = undefined;
+		sap.ui.getCore().getMessageManager().removeMessages(this._aMessages);
+		this._aMessages = undefined;
 		
 		EventProvider.prototype.destroy.apply(this, arguments);
 
@@ -2577,12 +2577,12 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			that = this,
 			aBindings = [],
 			fModelChangeHandler = function(oEvent){
-				var oMessageManager = that.getMessageManager();
+				var oMessageManager = sap.ui.getCore().getMessageManager();
 				that.updateProperty(sName);
 				//clear Messages from messageManager
-				if (oMessageManager && that.aControlMessages.length > 0) {
-					that.getMessageManager().removeMessages(that.aControlMessages);
-					that.aControlMessages = [];	
+				if (oMessageManager && that._aMessages && that._aMessages.length > 0) {
+					sap.ui.getCore().getMessageManager().removeMessages(that._aMessages);
+					that._aMessages = [];	
 				}
 				//delete control Messages (value is updated from model) and update control with model messages
 				if (oBinding.getMessages()) {
@@ -2595,15 +2595,16 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			},
 			fMessageChangeHandler = function(oEvent){
 				var aAllMessages = [];
-				var sMessageType = oEvent.getParameter("type");
+			
+				var sMessageSource = oEvent.getParameter("messageSource");
 				var aMessages = oEvent.getParameter("messages");
 		
-				if (sMessageType == "control") {
-					that.aControlMessages = aMessages;
+				if (sMessageSource == "control") {
+					that._aMessages = that._aMessages ? that._aMessages.concat(aMessages) : aMessages;
 				}
-				//merge control/model messages
-				if (that.aControlMessages.length > 0) {
-					aAllMessages = aAllMessages.concat(that.aControlMessages);
+				//merge object/model messages
+				if (that._aMessages && that._aMessages.length > 0) {
+					aAllMessages = aAllMessages.concat(that._aMessages);
 				}
 				if (oBinding.getMessages()) {
 					aAllMessages = aAllMessages.concat(oBinding.getMessages());
@@ -3067,13 +3068,14 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/**
-	* Generic method which is called, whenever an property binding is changed.
-	* This method gets the external format from the property binding and applies
-	* it to the setter.
-	*
-	* @private
+	* Generic method which is called, whenever messages for this object exists.
+	* 
+	* @param {string} sName The property name
+	* @param {array} aMessages The messages
+	* @protected
+	* @since 1.28
 	*/
-	ManagedObject.prototype.updateMessages = function(sName, vMessages) {
+	ManagedObject.prototype.updateMessages = function(sName, aMessages) {
 		jQuery.sap.log.warning("Message for " + this + ", Property " + sName);
 	};
 
@@ -3881,10 +3883,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		fFindObjects(this);
 		return aAggregatedObjects;
 
-	};
-
-	ManagedObject.prototype.getMessageManager = function() {
-		return sap.ui.getCore().getMessageManager();
 	};
 	
 	return ManagedObject;
