@@ -623,9 +623,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	SegmentedButton.prototype.removeButton = function (oButton) {
-		if (oButton) {
-			delete oButton.setEnabled;
-			this.removeAggregation("buttons", oButton);
+		var oRemovedButton = this.removeAggregation("buttons", oButton);
+		if (oRemovedButton) {
+			delete oRemovedButton.setEnabled;
 		}
 	};
 
