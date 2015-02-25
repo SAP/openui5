@@ -3031,7 +3031,7 @@
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9 && document.styleSheets.length >= 28) {
 				// in IE9 only 30 links are alowed, so use stylesheet object insted
 				var sRootUrl = URI.parse(document.URL).path;
-				var sAbsoluteUrl = new URI(sUrl).absoluteTo(sRootUrl);
+				var sAbsoluteUrl = new URI(sUrl).absoluteTo(sRootUrl).toString();
 
 				if (sId) {
 					var oIEStyleSheet = mIEStyleSheets[sId];
