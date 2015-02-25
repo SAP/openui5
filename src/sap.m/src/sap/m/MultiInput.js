@@ -490,6 +490,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 		var $this = this.$();
 
+		if (this.getTokens().length > 0) {
+			$this.find(".sapMMultiInputBorder").addClass("sapMMultiInputNarrowBorder");
+		} else {
+			$this.find(".sapMMultiInputBorder").removeClass("sapMMultiInputNarrowBorder");
+		}
+			
+			
 		jQuery($this.find(".sapMInputBaseInner")[0]).removeAttr("style");
 		
 		// we go to the sapMMultiInputBorder child elements, this makes the computations easier
