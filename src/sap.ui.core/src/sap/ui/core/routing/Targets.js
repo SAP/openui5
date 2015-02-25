@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 				}
 
 				for (sTargetName in this._mTargets) {
-					if (oOptions.targets.hasOwnProperty(sTargetName)) {
+					if (this._mTargets.hasOwnProperty(sTargetName)) {
 						this._addParentTo(this._mTargets[sTargetName]);
 					}
 				}
@@ -483,6 +483,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 					oTarget.display(vData);
 				} else {
 					$.sap.log.error("The target with the name \"" + sName + "\" does not exist!", this);
+				}
+			},
+
+			/**
+			 * Called by the UIComponent since the rootView id is not known in the constructor
+			 *
+			 * @param sId
+			 * @private
+			 */
+			_setRootViewId: function (sId) {
+				var sTargetName,
+					oTargetOptions;
+
+				for (sTargetName in this._mTargets) {
+					if (this._mTargets.hasOwnProperty(sTargetName)) {
+						oTargetOptions = this._mTargets[sTargetName]._oOptions;
+						if (oTargetOptions.rootView === undefined) {
+							oTargetOptions.rootView = sId;
+						}
+					}
 				}
 			}
 

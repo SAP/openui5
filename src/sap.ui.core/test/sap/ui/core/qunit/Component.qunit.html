@@ -196,14 +196,15 @@
 		assert.ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
 	});
 
-	test("Should create the targets instance", function (assert) {
+	QUnit.test("Should create the targets instance", function (assert) {
 		//Act - initialize the component to create the router
 		var oTargets = this.oComponent.getTargets();
 
 		//Assert
 		assert.ok(oTargets, "the component created targets");
-		assert.ok(oTargets.getTarget("myTarget"), "the component created a target instance");
-		assert.strictEqual(oTargets._oConfig.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
+		var oTarget = oTargets.getTarget("myTarget");
+		assert.ok(oTarget, "the component created a target instance");
+		assert.strictEqual(oTarget._oOptions.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
 
 		//Cleanup
 		this.oComponent.destroy();
