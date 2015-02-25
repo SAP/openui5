@@ -33,12 +33,6 @@
 				"ref": "test-resources/sap/m/demokit/tdg/index.html?responderOn=true",
 				"icon": "sapmdemo/tdg",
 				"desc": "The reference app \"Application Best Practices\" of the developer guide"
-			},
-			{
-				"text": "Master Detail",
-				"ref": "test-resources/sap/m/demokit/md-template/demokit.html",
-				"icon": "sapmdemo/splitapp",
-				"desc": "A best practice implementation of the Master-Detail design pattern"
 			} 
 		]
 	},
