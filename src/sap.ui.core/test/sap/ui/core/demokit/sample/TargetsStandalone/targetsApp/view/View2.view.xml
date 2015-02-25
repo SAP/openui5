@@ -1,0 +1,7 @@
+<View xmlns="sap.m" controllerName="sap.ui.core.sample.TargetsStandalone.targetsApp.controller.View2">
+	<Page
+		title="Second Page"
+		showNavButton="true"
+		navButtonPress="onBack">
+	</Page>
+</View>
