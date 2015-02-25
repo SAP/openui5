@@ -119,6 +119,31 @@ By giving parameters you can change this default behavior:
 grunt test --browsers="safari,firefox"   # run tests of all libraries on Safari and Firefox
 ```
 
+#### Running the Visual Tests
+
+__visualtesjs testing framework is not yet open source and is currently available only inside SAP__
+The UI5 visual tests are implemented using visualtestjs testing framework and run by a Selenium-based infrastructure.
+
+Please install visualtesjs by following the installation instructions at "ui5delivery/visualtestjs" project on the SAP GitHub
+
+To execute all available visual tests, navigate to the root of the repository and execute:
+
+```
+grunt visualtest
+```
+
+NOTE: by default this command executes all available visual tests for all libraries in Chrome browser. 
+
+By giving parameters you can change this default behavior:
+
+```
+grunt test --browsers="firefox"   # run tests of all libraries on Firefox
+```
+
+##### Limitations
+--browsers="" command with multiple browsers is not fully supported yet
+
+
 #### Troubleshooting proxy issues
 ```grunt test``` will download the "selenium-server-standalone" when run for the first time. If you are working behind a proxy and have no environment variables set for the proxy, this will fail for the first time:
 
@@ -162,3 +187,7 @@ For Internet Explorer (browser type "ie"), the download location is <http://sele
 #### Troubleshooting undeletable folders
 
 If you encounter source folders that cannot be deleted because a process is locking them, one possible cause are the Chrome/IE web drivers. Check whether they are among the active processes.
+
+#### Troubleshooting selenium server not starting issues
+
+If selenium server is reported to be started but tests could not connect to it, to you could try to directly provide the local host or IP to bind to with the --seleniumHost argument. By default selenium binds to port 4444 but you could supply another one with --seleniumPort argument.   

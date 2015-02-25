@@ -55,6 +55,9 @@ some.lib/
                 qunit/
                 +---testsuite.qunit.html
                     SomeControl.qunit.html
+                visual/
+                +---visual.suite.js
+                    SomeControl.spec.js
 ```
 
 At runtime (and after the Grunt build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
@@ -574,3 +577,7 @@ Any HTML pages placed into the *test*\<libraryname\> folder (or below) will be l
 ### QUnit Tests
 
 To provide automated unit tests for a control, create the file: `/test/<libraryname>/qunit/<controlname>.qunit.hml` and add it to the list of test pages in the `testsuite.qunit.html` file in the same directory. For the implementation of these tests, please refer to the [QUnit documentation](http://qunitjs.com/) or existing unit tests.
+
+### Visual Tests
+
+To provide automated visual tests for a control, create the file: `/test/<libraryname>/visual/<controlname>.spec.js` and add it to the list of test pages in the `visual.suite.js` file in the same directory. For the implementation of these tests, please refer to the "ui5delivery/visualtestjs" project on the SAP GitHub or existing visual tests.
