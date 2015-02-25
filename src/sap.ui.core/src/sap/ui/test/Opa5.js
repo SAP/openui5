@@ -170,24 +170,19 @@ sap.ui.define(['jquery.sap.global',
 				vResult;
 
 			oOptions.check = function () {
-				var vControlType = oOptions.controlType,
-					sOriginalControlType = null;
-
 				//retrieve the constructor instance
-				if (typeof oOptions.controlType === "string") {
+				if (!this._modifyControlType(oOptions)) {
 
-					sOriginalControlType = vControlType;
-					var oWindow = oFrameWindow || window;
-					oOptions.controlType = oWindow.jQuery.sap.getObject(vControlType);
-				} else if (vControlType) {
-					sOriginalControlType = vControlType.prototype.getMetadata()._sClassName;
+					// skip - control type resulted in undefined or lazy stub
+					return false;
+
 				}
 
 				vControl = Opa5.getPlugin().getMatchingControls(oOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
-					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + sOriginalControlType, "", "Opa");
+					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
 
@@ -216,8 +211,8 @@ sap.ui.define(['jquery.sap.global',
 					return false;
 				}
 
-				if (sOriginalControlType && !vControl.length) {
-					jQuery.sap.log.debug("found no controls with the type  " + sOriginalControlType, "", "Opa");
+				if (oOptions.sOriginalControlType && !vControl.length) {
+					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
 
@@ -454,6 +449,36 @@ sap.ui.define(['jquery.sap.global',
 			});
 
 			return aMatchers;
+		};
+
+		/**
+		 * logs and executes the check function
+		 * @private
+		 * @returns {boolean} true if check should continue false if it should not
+		 */
+		Opa5.prototype._modifyControlType = function (oOptions) {
+			var vControlType = oOptions.controlType;
+			//retrieve the constructor instance
+			if (typeof vControlType !== "string") {
+				return true;
+			}
+
+			oOptions.sOriginalControlType = vControlType;
+			var oWindow = oFrameWindow || window;
+			var fnControlType = oWindow.jQuery.sap.getObject(vControlType);
+
+			// no control type
+			if (!fnControlType) {
+				jQuery.sap.log.debug("The control type " + vControlType + " is undefined. Skipped check and will wait until it is required", this);
+				return false;
+			}
+			if (fnControlType._sapUiLazyLoader) {
+				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
+				return false;
+			}
+
+			oOptions.controlType = fnControlType;
+			return true;
 		};
 
 		/**
