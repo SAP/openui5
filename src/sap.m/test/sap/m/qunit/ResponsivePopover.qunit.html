@@ -201,34 +201,37 @@
 		});
 
 
-		QUnit.test("Phone mode with NavContainer content", function(assert) {
+		if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
+			// Don't need to consider IE9 because it's a test for mobile device
+			QUnit.test("Phone mode with NavContainer content", function(assert) {
 
-			// Arrange and Act
-			this.stub(sap.ui.Device, "system", {phone: true});
-			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
-			var oNavContainer = new sap.m.NavContainer({
-				pages: [
-						new sap.m.Page("page1", {
-							title: "page1"
-						}),
-						new sap.m.Page("page2", {
-							title: "page2"
-						})
-					]
+				// Arrange and Act
+				this.stub(sap.ui.Device, "system", {phone: true});
+				this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
+				var oNavContainer = new sap.m.NavContainer({
+					pages: [
+							new sap.m.Page("page1", {
+								title: "page1"
+							}),
+							new sap.m.Page("page2", {
+								title: "page2"
+							})
+						]
+				});
+
+				this.oResponsivePopover.addContent(oNavContainer);
+				sap.ui.getCore().applyChanges();
+
+				this.oResponsivePopover.openBy(this.oButton);
+				this.clock.tick(500);
+
+				// Assert
+				assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("#page1-intHeader")[0], "CloseButton should be rendered in page1");
+				oNavContainer.to("page2");
+				this.clock.tick(500);
+				assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("#page2-intHeader")[0], "CloseButton should be rendered in page2");
 			});
-
-			this.oResponsivePopover.addContent(oNavContainer);
-			sap.ui.getCore().applyChanges();
-
-			this.oResponsivePopover.openBy(this.oButton);
-			this.clock.tick(500);
-
-			// Assert
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("#page1-intHeader")[0], "CloseButton should be rendered in page1");
-			oNavContainer.to("page2");
-			this.clock.tick(500);
-			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").closest("#page2-intHeader")[0], "CloseButton should be rendered in page2");
-		});
+		}
 
 
 		QUnit.test("ResponsivepPopover should return the same domref as the internal popup control", function(assert) {
