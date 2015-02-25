@@ -32,6 +32,7 @@ sap.m.sample.InputSuggestionsOpenSearch.MockServer = {
 									return mProduct.Name
 								});
 							oXhr.respondJSON(200, null, [sTerm, aResults]);
+							return true;
 						}
 					}
 				]
