@@ -244,9 +244,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	Dialog._mStateClasses[ValueState.Error] = "sapMDialogError";
 
 	Dialog._mIcons = {};
-	Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("accept");
-	Dialog._mIcons[ValueState.Warning] = IconPool.getIconURI("warning2");
-	Dialog._mIcons[ValueState.Error] = IconPool.getIconURI("alert");
+	Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
+	Dialog._mIcons[ValueState.Warning] = IconPool.getIconURI("message-warning");
+	Dialog._mIcons[ValueState.Error] = IconPool.getIconURI("message-error");
 
 	/* =========================================================== */
 	/*                  begin: Lifecycle functions                 */
