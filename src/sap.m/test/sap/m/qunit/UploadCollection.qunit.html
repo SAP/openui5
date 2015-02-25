@@ -134,17 +134,7 @@
 			this.oUploadCollection.destroy();
 		}
 	});
-// 	test("Get uploaded files from an FileUploader event", function() {
-// 		var oEvent = new jQuery.Event("someEvent", {
-// 				oSource : {
-// 					mProperties : {
-// 						value: "'file_1.ext' 'file_2.ext' 'file_3.ext' "
-// 					}
-// 				}
-// 		});
-// 		equal(this.oUploadCollection._getUploadedFilesFromUploaderEvent(oEvent), ["file_1.ext", "file_2.ext", "file_3.ext"], "Correct files determined from the FileUploader event");
-// 	});
-	
+
 	test("Get number of attachments label", function() {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
@@ -223,15 +213,49 @@
 					equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided")
 				},
 				change : function(oEvent) {
+					var oFile1 = {
+							name: "file1",
+							size: 1,
+							type: "type1"
+						};
+					var oFile2 = {
+							name: "file2",
+							size: 2,
+							type: "type2"
+						};
 					ok(true, "Event change fired");
 					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
-						equal(oEvent.getParameters().getParameter("newValue"), "file1", "correct file1 name in change event ");
+						// deprecated
+						equal(oEvent.getParameters().getParameter("files")[0].name, "file1", "Correct file name in change event provided by oEvent.getParameters().getParameter('files').name.");
+						equal(oEvent.getParameters().getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters().getParameters()['files']['name'].");
+						equal(oEvent.getParameter("mParameters")["files"][0]["name"], "file1", "Correct file 1 in change event provided by oEvent.getParameter('mParameters')['files'][0]['name'].");
+						
+						// check for properly provided parameters
+						equal(oEvent.getParameter("files")[0].name, "file1", "Correct file name 1 in change event provided byoEvent.getParameter('files')[0].name.");
+						equal(oEvent.getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters()['files'][0]['name'].");
 					}
 					else {
-						equal(oEvent.getParameters().getParameter("files")[0], "file1", "correct file1 name in change event ");
-						equal(oEvent.getParameters().getParameter("files")[1], "file2", "correct file1 name in change event ");
+						// deprecated
+						deepEqual(oEvent.getParameters().getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameter('files').");
+						deepEqual(oEvent.getParameters().getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameter('files').");
+						
+						deepEqual(oEvent.getParameters().getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameters()['files'].");
+						deepEqual(oEvent.getParameters().getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameters()['files'].");
+						
+						deepEqual(oEvent.getParameter("mParameters").files[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('mParameters').files[0].");
+						deepEqual(oEvent.getParameter("mParameters").files[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('mParameters').files[1].");
+
+						// checks for properly provided parameters
+						deepEqual(oEvent.getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('files').");
+						deepEqual(oEvent.getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('files').");
+						deepEqual(oEvent.getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters()['files'].");
+						deepEqual(oEvent.getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters()['files'].");
 					}
 				},
+				fileDeleted : function(oEvent) {
+					var aContexts = this.getBinding("items").getContexts();
+					var sDocumentId = oEvent.getParameter("documentId");
+				},				
 				uploadComplete : function(oEvent) {
 					ok(true, "Event uploadComplete fired");
 					equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event ");
@@ -276,27 +300,41 @@
 	});
 
 	test("Event change", function() {
+		var oFile1 = {
+				name: "file1",
+				size: 1,
+				type: "type1"
+			};
+		var oFile2 = {
+				name: "file2",
+				size: 2,
+				type: "type2"
+			};
 		var aFiles = [];
-		aFiles.push("file1");
-		aFiles.push("file2");
+		aFiles.push(oFile1);
+		aFiles.push(oFile2);
 		var oFileUploader = this.oUploadCollection._getFileUploader();
+		
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 			// at present FileUploader does not set the parameter files for IE9
-			expect(2);
+			expect(6);
 			oFileUploader.fireChange({
 				newValue : "file1"
 			});
 		}
 		else {
-			expect(3); // verifies the event handler was executed
+			expect(11); // verifies the event handler was executed
 			oFileUploader.fireChange({
 				files : aFiles
 			});
 		}
 	});
 
+// 	test("Event fileDeleted", function() {
+// 	});
+
 	test("Event complete", function() {
-		sFileName = "file1";
+		var sFileName = "file1";
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		expect(2); // verifies the event handler was executed
 		oFileUploader.fireUploadComplete({
@@ -305,7 +343,7 @@
 	});
 
 	test("Event terminate", function() {
-		sFileName = "file1";
+		var sFileName = "file1";
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		expect(1); // verifies the event handler was executed
 		oFileUploader.fireUploadAborted({
@@ -469,7 +507,7 @@
 			// set default value
 			bPropagate = false;
 		}
-
+		var sPropertyFileUploader;
 		var sSetterMethod = "set" + sProperty[0].toUpperCase() + sProperty.slice(1);
 		var sGetterMethod = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
 		var sGetterMethodFileUploader = "get" + sProperty[0].toUpperCase() + sProperty.slice(1);
