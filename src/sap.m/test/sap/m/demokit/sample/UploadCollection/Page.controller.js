@@ -7,18 +7,15 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 		var oModel = new sap.ui.model.json.JSONModel(sPath);
 		this.getView().setModel(oModel);
 
-		var aDataCB= {
-				"items": [
-				          {
-				          	"key": "All",
-				          	"text": "sap.m.ListSeparators.All"
-									},
-									{
-										"key": "None",
-										"text": "sap.m.ListSeparators.None"
-									}
-				],
-				"selectedKey": "None"
+		var aDataCB = {
+			"items" : [{
+				"key" : "All",
+				"text" : "sap.m.ListSeparators.All"
+			}, {
+				"key" : "None",
+				"text" : "sap.m.ListSeparators.None"
+			}],
+			"selectedKey" : "None"
 		};
 
 		var oModelCB = new sap.ui.model.json.JSONModel();
@@ -45,6 +42,23 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 		};
 	},
 
+	onChange: function(oEvent) {
+		var oUploadCollection = oEvent.getSource();
+		// Header Token
+		var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
+			name : "x-csrf-token",
+			value : "securityTokenFromModel"
+		});
+		// Header Slug
+		var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+			name : "slug",
+			value : oEvent.getParameter("files")[0].name
+		});
+
+		oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
+		oUploadCollection.addHeaderParameter(oCustomerHeaderSlug);
+		sap.m.MessageToast.show("Change event triggered");
+	},
 
 	onFileRenamed: function(oEvent) {
 		var oData = this.oView.getModel().getData();
@@ -98,7 +112,10 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 			};
 			oData.items.unshift(oItem);
 			this.oView.getModel().setData(oData);
-			sap.m.MessageToast.show("Upload successful");
+			// delay the success message for to notice onChange message
+			setTimeout(function() {
+				sap.m.MessageToast.show("Upload successful")
+			}, 4000);
 		}
 	},
 
