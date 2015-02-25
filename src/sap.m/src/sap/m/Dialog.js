@@ -168,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			 * LeftButton is shown at the left edge of the bar in iOS, and at the right side of the bar for the other platforms. Please set this to null if you want to remove the left button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored. Setting leftButton will also set the beginButton internally.
 			 * @deprecated Since version 1.15.1.
 			 *
-			 * LeftButton has benn deprecated since 1.15.1. Please use the beginButton instead which is more RTL friendly.
+			 * LeftButton has been deprecated since 1.15.1. Please use the beginButton instead which is more RTL friendly.
 			 */
 			leftButton : {type : "sap.m.Button", multiple : false, deprecated: true},
 
