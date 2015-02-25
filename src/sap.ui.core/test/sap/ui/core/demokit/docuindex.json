@@ -71,9 +71,18 @@
 					"sap.ui.core.sample.BasicThemeParameters"
 				]
 			},
+		 	{
+				"id" : "sap.ui.core.routing.Targets",
+				"name" : "Targets",
+				"category" : "Routing",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TargetsStandalone"
+				]
+			},
 			{
 				"id" : "sap.ui.core.routing.Route",
-				"name" : "PatternMatching",
+				"name" : "Route",
 				"category" : "Routing",
 				"since" : "1.16",
 				"samples" : [
@@ -98,7 +107,7 @@
 				"samples" : [
 					"sap.ui.core.sample.TypeDateTime"
 				]
-			},			
+			},
 			{
 				"id" : "sap.ui.core.type.Integer",
 				"name" : "Integer Type",
@@ -151,12 +160,12 @@
 				"id": "sap.ui.core.sample.TypeDateTime",
 				"name": "DateTime Type",
 				"description": "This sample explains the formatting options of the datetime type."
-			},	
+			},
 			{
 				"id": "sap.ui.core.sample.TypeFileSize",
 				"name": "FileSize Type",
 				"description": "This sample explains the formatting options of the filesize type."
-			},			
+			},
 			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
@@ -241,6 +250,11 @@
 				"id" : "sap.ui.core.sample.PatternMatching",
 				"name" : "Route Patterns",
 				"description" : "Syntax for the Route pattern property."
+			},
+			{
+				"id" : "sap.ui.core.sample.TargetsStandalone",
+				"name" : "Targets without a Router",
+				"description" : "If you do not need bookmarks, a router is too complicated you can use Targets to lazy load your views and navigate through your application."
 			}
 		]
 	}

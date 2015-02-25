@@ -1,26 +1,32 @@
-jQuery.sap.declare("sap.ui.core.sample.PatternMatching.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.core.sample.PatternMatching.Component", {
+	var Component = UIComponent.extend("sap.ui.core.sample.PatternMatching.Component", {
 
-	metadata : {
-		dependencies : {
-			libs : [
-				"sap.m"
-			]
-		},
-		config : {
-			sample : {
-				iframe : "Patterns.html",
-				stretch : true,
-				files : [
-					"patternApp/view/PatternTable.controller.js",
-					"patternApp/model/Pattern.js",
-					"patternApp/view/PatternTable.view.xml",
-					"patternApp/Component.js",
-					"Patterns.html"
+		metadata : {
+			dependencies : {
+				libs : [
+					"sap.m"
 				]
+			},
+			config : {
+				sample : {
+					iframe : "Patterns.html",
+					stretch : true,
+					files : [
+						"patternApp/view/PatternTable.controller.js",
+						"patternApp/view/PatternTable.view.xml",
+						"patternApp/view/Dialog.fragment.xml",
+						"patternApp/model/Pattern.js",
+						"patternApp/Component.js",
+						"Patterns.html"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
 
 });
