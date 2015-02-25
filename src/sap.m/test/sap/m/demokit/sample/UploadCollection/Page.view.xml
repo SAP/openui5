@@ -24,7 +24,7 @@
 			</Toolbar>
 			<UploadCollection
 				id="UploadCollection"
-				maximumFilenameLength="35"
+				maximumFilenameLength="55"
 				multiple="true"
 				items="{/items}"
 				showSeparators="None"
