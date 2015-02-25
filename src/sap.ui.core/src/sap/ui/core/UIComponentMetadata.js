@@ -72,30 +72,31 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 			};
 		}
 
-		// some metadata needs to be merged with the metadata for the parent component
-		var oParent = this.getParent();
-		if (oParent instanceof ComponentMetadata) {
-			var oParentUI5Manifest = oParent.getManifestEntry("sap.ui5");
-			if (oParentUI5Manifest.rootView) {
-				oUI5Manifest.rootView = jQuery.extend(true, {}, oParentUI5Manifest.rootView, oUI5Manifest.rootView);
-			}
-		}
-
 	};
 
 
 	/**
 	 * Returns the root view of the component.
-	 * @return {string|object} root view as string or as configuration object ({@link sap.ui.view})
+	 * @param {boolean} [bDoNotMerge] true, to return only the local root view config
+	 * @return {object} root view as configuration object or null ({@link sap.ui.view})
 	 * @protected
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change.
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
-	UIComponentMetadata.prototype.getRootView = function() {
-		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRootView is deprecated!");
-		var oUI5Manifest = this.getManifestEntry("sap.ui5");
-		return oUI5Manifest && oUI5Manifest.rootView;
+	UIComponentMetadata.prototype.getRootView = function(bDoNotMerge) {
+		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRootView is deprecated!");
+		var oParent,
+		    oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		    mRootView = jQuery.extend(true, {}, oUI5Manifest && oUI5Manifest.rootView);
+	
+		if (!bDoNotMerge && (oParent = this.getParent()) instanceof UIComponentMetadata) {
+			// merge the root view object if defined via parameter
+			mRootView = jQuery.extend(true, {}, oParent.getRootView(bDoNotMerge), mRootView);
+		}
+		
+		// in case of no root view is defined the object is empty
+		return jQuery.isEmptyObject(mRootView) ? null : mRootView;
 	};
 
 	/**
@@ -107,7 +108,7 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	UIComponentMetadata.prototype.getRoutingConfig = function() {
-		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutingConfig is deprecated!");
+		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutingConfig is deprecated!");
 		var oUI5Manifest = this.getManifestEntry("sap.ui5");
 		return oUI5Manifest && oUI5Manifest.routing && oUI5Manifest.routing.config;
 	};
@@ -121,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	UIComponentMetadata.prototype.getRoutes = function() {
-		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutes is deprecated!");
+		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutes is deprecated!");
 		var oUI5Manifest = this.getManifestEntry("sap.ui5");
 		return oUI5Manifest && oUI5Manifest.routing && oUI5Manifest.routing.routes;
 	};
