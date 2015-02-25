@@ -121,7 +121,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				
 				that._setContainerSizes();
 				
-				if (args.getParameter("type") === "tokensChanged" && args.getParameter("removedTokens").length > 0) {
+				// check if active element is part of MultiInput
+				var bFocusOnMultiInput = jQuery.sap.containsOrEquals(that.getDomRef(), document.activeElement);
+				if (args.getParameter("type") === "tokensChanged" && args.getParameter("removedTokens").length > 0 && bFocusOnMultiInput) {
 					that.focus();
 				}
 				
