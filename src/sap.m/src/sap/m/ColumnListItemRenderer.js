@@ -60,11 +60,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		return "row";
 	};
 	
-	// Returns the inner aria labelledby ids for the accessibility
-	ColumnListItemRenderer.getAriaLabelledBy = function(oLI) {
-		return oLI.getId();
-	};
-	
 	
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -146,7 +141,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 							cellValue = oCell[sFuncName](sFuncParam);
 	
 						if (lastColumnValue === cellValue) {
-							bRenderCell = false;
+							// it is not necessary to render cell content but
+							// screen readers need content to announce it
+							bRenderCell = sap.ui.getCore().getConfiguration().getAccessibility();
+							oCell.addStyleClass("sapMListTblCellDupCnt");
 							rm.addClass("sapMListTblCellDup");
 						} else {
 							oColumn.setLastValue(cellValue);
