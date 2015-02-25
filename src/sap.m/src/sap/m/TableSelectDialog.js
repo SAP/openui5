@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 		events : {
 
 			/**
-			 * This event will be fired when the dialog is confirmed by selecting an item in single selection mode or by pressing the confirmation button in multi selection mode . The items being selected are returned as event parameters.
+			 * This event will be fired when the dialog is confirmed by selecting an item in single selection mode or by pressing the confirmation button in multi selection mode. The items being selected are returned as event parameters.
 			 */
 			confirm : {
 				parameters : {
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 			},
 
 			/**
-			 * This event will be fired when the cancel button is clicked
+			 * This event will be fired when the cancel button is clicked.
 			 */
 			cancel : {}
 		}
