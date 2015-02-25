@@ -183,17 +183,19 @@
 
 /* Compact size */
 .sapUiSizeCompact {
-	.sapMSegB.sapMSegBIcons:not(.sapMBarChild) .sapMSegBBtn {
-		padding-left: 0;
-		padding-right: 0;
-	}
-	.sapMBtnIconLeft {
-		margin-left: 0;
-	}
-	&.sapMSegBIcons .sapMSegBBtnMixed {
-		padding-left: 0;
-		img {
-			padding: 0;
+	.sapMSegB {
+		&.sapMSegBIcons:not(.sapMBarChild) .sapMSegBBtn {
+			padding-left: 0;
+			padding-right: 0;
+		}
+		.sapMBtnIconLeft {
+			margin-left: 0;
+		}
+		&.sapMSegBIcons .sapMSegBBtnMixed {
+			padding-left: 0;
+			img {
+				padding: 0;
+			}
 		}
 	}
 }
