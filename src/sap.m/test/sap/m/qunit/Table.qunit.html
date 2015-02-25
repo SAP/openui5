@@ -254,6 +254,59 @@
 			// Cleanup
 			oContainer.destroy();
 		});
+		
+		module("TypeColumn");
+		
+		test("TypeColumn visibility should updated correctly", function() {
+			var oTable = createSUT('idTypeTable', true);
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			strictEqual(oTable.$().find("th").last().width(), 0, "Type column is not visible by default");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden set correctly");
+			
+			oTable.getItems()[0].setType("Navigation");
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(oTable.$().find("th").last().width(), 0, "Type column is visible when an item type is Navigation");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "false", "Aria hidden updated correctly");
+			
+			oTable.getItems()[0].setType("Active");
+			sap.ui.getCore().applyChanges();
+			strictEqual(oTable.$().find("th").last().width(), 0, "Type column is not visible since Active type does not need column");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden updated correctly");
+
+			oTable.getItems()[0].setType("Detail");
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(oTable.$().find("th").last().width(), 0, "Type column is visible when an item type is Detail");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "false", "Aria hidden updated correctly");
+			
+			oTable.getItems()[0].setVisible(false);
+			sap.ui.getCore().applyChanges();
+			strictEqual(oTable.$().find("th").last().width(), 0, "Type column is not visible since item is not visible");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden updated correctly");
+
+			var oClone = oTable.getItems()[1].clone().setType("DetailAndActive");
+			oTable.addItem(oClone);
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(oTable.$().find("th").last().width(), 0, "Type column is visible because new type is DetailAndActive");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "false", "Aria hidden updated correctly");
+
+			oClone.destroy();
+			sap.ui.getCore().applyChanges();
+			strictEqual(oTable.$().find("th").last().width(), 0, "Type column is not visible since new item is destroyed");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden updated correctly");
+			
+			oTable.getItems()[0].setVisible(true);
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(oTable.$().find("th").last().width(), 0, "Type column is visible because first item with type detail is visible again");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "false", "Aria hidden updated correctly");
+			
+			oTable.rerender();
+			notStrictEqual(oTable.$().find("th").last().width(), 0, "Type column is visible rerender did not change the visibility of the type column");
+			strictEqual(oTable.$().find("th").last().attr("aria-hidden"), undefined, "Aria hidden cleared because of the rendering");
+			
+			oTable.destroy();
+		});
 
 		</script>
 	</head>
