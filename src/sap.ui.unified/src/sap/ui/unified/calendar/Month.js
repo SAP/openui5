@@ -1032,8 +1032,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
 							if (iSelected > 0) {
 								$DomRef.removeClass("sapUiCalDaySel");
+								$DomRef.attr("aria-selected", "false");
 							} else {
 								$DomRef.addClass("sapUiCalDaySel");
+								$DomRef.attr("aria-selected", "true");
 							}
 						}
 					}
