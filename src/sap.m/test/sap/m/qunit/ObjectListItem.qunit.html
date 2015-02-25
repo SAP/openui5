@@ -52,10 +52,10 @@
 			press: handlePress,
 			showMarkers: true,
 			markFlagged: true,
-			markFavorite: true			
+			markFavorite: true	
 		});
 		list.addItem(listItem);
-		
+
 		var showMarkers = new sap.m.ObjectListItem({
 			id: "showMarkers",
 			title: "Test empty marker row",
@@ -63,8 +63,8 @@
 			firstStatus: new sap.m.ObjectStatus({text: "First status info"}),
 			secondStatus: new sap.m.ObjectStatus({text: "Second status info"})
 		});
-		list.addItem(showMarkers);		
-		
+		list.addItem(showMarkers);
+
 		list.placeAt("list");
 		
 		module("Rendering");
@@ -156,6 +156,98 @@
             lockedOlI.destroy();
         });
 
+		/************* ARIA Rendering *******************/
+
+		test("ARIA attribute 'aria-labelledby' ID Refs list", function() {
+			// create ObjectListItem
+			var oAttrsAndStatuseListItem = new sap.m.ObjectListItem({
+				id: 'oAttrsAndStatuseListItemId',
+				intro: "Intro",
+				title: "Title",
+				number: "3",
+				numberUnit: "EUR",
+				markFlagged: true,
+				attributes: [new sap.m.ObjectAttribute({id: "oAttrsAndStatuseListItemId-firstAttr", text: "First attribute text"})],
+				firstStatus: new sap.m.ObjectStatus({id: "oAttrsAndStatuseListItemId-status1", text: "First status info"}),
+				secondStatus: new sap.m.ObjectStatus({id: "oAttrsAndStatuseListItemId-status2", text: "Second status info"}),
+			});
+			list.addItem(oAttrsAndStatuseListItem);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert ObjectListItem inner nodes ids are added to aria-labelledby attribute
+			var sAriaLabelledByValue = oAttrsAndStatuseListItem.$().attr("aria-labelledby");
+			ok(sAriaLabelledByValue, "ARIA 'aria-labelledby' is added");
+
+			var sListItemId = oAttrsAndStatuseListItem.getId();
+			var sFirstStatusId = oAttrsAndStatuseListItem.getFirstStatus().getId();
+			var sSecondStatusId = oAttrsAndStatuseListItem.getSecondStatus().getId();
+
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-intro") !== -1, "ObjectListItem introId: '" + sListItemId + "-intro" + "' is added to aria-labelledby attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-number") !== -1, "ObjectListItem numberId: '" + sListItemId + "-number" + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-titleText") !== -1, "ObjectListItem titleId: '" + sListItemId + "-numberUnit" + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-numberUnit") !== -1, "ObjectListItem numberUnitId: '" + sListItemId + "-titleText" + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-aria") !== -1, "ObjectListItem ARIA description nodeId: '" + sListItemId + "-aria" + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sFirstStatusId) !== -1, "ObjectListItem firstStatusId: '" + sFirstStatusId + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sSecondStatusId) !== -1, "ObjectListItem secondStatusId: '" + sSecondStatusId + "' is added to 'aria-labelledby' attribute");
+
+			oAttrsAndStatuseListItem.getAttributes().forEach(function(attribute) {
+				ok(sAriaLabelledByValue.indexOf(attribute.getId()) !== -1, "ObjectListItem attributeId: '" + attribute.getId() + "' is added to 'aria-labelledby' attribute");
+			});
+
+			// destroy ObjectListItem
+	        oAttrsAndStatuseListItem.destroy();
+        });
+
+		test("ARIA description node should render", function() {
+			// create ObjectListItem with flag, favorite or lock marks
+			var oMarkersListItem = new sap.m.ObjectListItem({
+				id: 'oMarkersListItemId',
+				showMarkers: true,
+				markFlagged: true,
+				markFavorite: true,
+				markedLocked: true
+			});
+			list.addItem(oMarkersListItem);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert ARIA description node is rendered
+			var oAriaDesciptionNode = $('#' + oMarkersListItem.getId() + "-aria");
+			ok(oAriaDesciptionNode.length > 0, "ARIA description node is rendered");
+
+			// Assert ARIA description node has the proper class: 'sapUiHidden'
+			equal(oAriaDesciptionNode.attr("class"), "sapUiHidden", "ARIA description node has class: " + oAriaDesciptionNode.attr("class"));
+
+			// Assert ARIA description node has the aria attribute 'aria-hidden' and its value is: 'true'
+			equal(oAriaDesciptionNode.attr("aria-hidden"), "true", "ARIA description node has attribute aria-hidden: " + oAriaDesciptionNode.attr("aria-hidden"));
+
+			// destroy ObjectListItem
+	        oMarkersListItem.destroy();
+        });
+
+		test("ARIA description node should not render", function() {
+			// create ObjectListItem without flag, favorite or lock marks
+			var oNoMarkersListItem = new sap.m.ObjectListItem({
+				id: "oNoMarkersListItemId",
+				showMarkers: true,
+				markFlagged: false,
+				markFavorite: false,
+				markLocked: false
+			});
+			list.addItem(oNoMarkersListItem);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert ARIA description node is rendered
+			var oAriaDesciptionNode = $('#' + oNoMarkersListItem.getId() + "-aria");
+			ok(oAriaDesciptionNode.length === 0, "ARIA description node is not rendered");
+
+			// destroy ObjectListItem
+	        oNoMarkersListItem.destroy();
+        });
+
+		/*********************************************/
 
         var showTextDir = new sap.m.ObjectListItem({
             id: "showTextDir",
