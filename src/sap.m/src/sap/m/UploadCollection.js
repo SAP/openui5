@@ -266,6 +266,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 
 	UploadCollection.prototype.setFileType = function(aFileTypes) {
+		if (!aFileTypes) {
+			return this;
+		}
 		var cLength = aFileTypes.length;
 		for (var i = 0; i < cLength; i++) {
 			aFileTypes[i] = aFileTypes[i].toLowerCase();
@@ -485,7 +488,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				var $oEditBox = jQuery.sap.byId(this.editModeItem + "-ta_editFileName-inner");
 				if ($oEditBox) {
 					var sId = this.editModeItem;
-					if (!(sap.ui.Device.os.ios && (sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari))) {
+					if (!sap.ui.Device.os.ios) {
 						$oEditBox.focus(function() {
 							$oEditBox.selectText(0, $oEditBox.val().length);
 						});
@@ -1381,6 +1384,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					that._onUploadProgress(oEvent);
 				}
 			});
+			var sTooltip = this._oFileUploader.getTooltip();
+			if (!sTooltip) {
+			// in case the tooltip is NOT overwritten, the default tooltip should NOT be chosen!
+				this._oFileUploader.setTooltip(" ");
+			}
 		}
 		return this._oFileUploader;
 	};

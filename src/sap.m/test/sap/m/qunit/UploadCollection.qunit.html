@@ -527,12 +527,31 @@
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 
 		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
+	});
 
-		var aFileTypesExpected = aFileTypes.toString();
+	test("fileType conversion", function() {
+		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
+		var sFileTypesExpected = aFileTypes.toString();
 		var aFileTypesMix = ["JpG", "png", "bMp", "uniTTest"];
 		this.oUploadCollection.setFileType(aFileTypesMix);
-		var aFileTypes = this.oUploadCollection.getFileType().toString();
-		equal(aFileTypes, aFileTypesExpected, "Property 'fileType': Conversion to lower case");
+		var sFileTypes = this.oUploadCollection.getFileType().toString();
+		equal(sFileTypes, sFileTypesExpected, "Property 'fileType': Conversion to lower case");
+	});
+
+	test("fileType empty", function() {
+		//undefined
+		var aFileTypesEmpty;
+		this.oUploadCollection.setFileType(aFileTypesEmpty);
+		var FileTypesEmpty = this.oUploadCollection.getFileType();
+		var FileTypesExpected;
+		equal(FileTypesEmpty, FileTypesExpected, "Property 'fileType': Call with undefined!");
+
+		//empty array
+		aFileTypesEmpty = [];
+		this.oUploadCollection.setFileType(aFileTypesEmpty);
+		sFileTypesExpected = "";
+		sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
+		equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
 	});
 
 	test("maximumFilenameLength", function() {
