@@ -88,6 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 				}
 
 				this._oViews = undefined;
+				this.bIsDestroyed = true;
 
 				return this;
 			},
