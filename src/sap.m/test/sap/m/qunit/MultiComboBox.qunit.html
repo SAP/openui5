@@ -307,7 +307,8 @@
 		// system under test
 		var oItem0, oItem1, oItem2;
 		var oMultiComboBox = new sap.m.MultiComboBox({
-			items : [oItem0 = new sap.ui.core.Item({
+			items : [
+			oItem0 = new sap.ui.core.Item({
 				key : "0",
 				text : "item 0"
 			}),
@@ -320,7 +321,13 @@
 			oItem2 = new sap.ui.core.Item({
 				key : "2",
 				text : "item 2"
-			})]
+			}),
+			
+			oItem3 = new sap.ui.core.Item({
+				key : "",
+				text : "item 3"
+			})
+			]
 		});
 
 		// assertions
@@ -365,8 +372,8 @@
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		oMultiComboBox.setSelectedKeys([""]);
-		deepEqual(oMultiComboBox.getSelectedKeys(), []);
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
+		deepEqual(oMultiComboBox.getSelectedItems(), [oItem3]);
 		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
 		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
 		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
@@ -1474,7 +1481,6 @@
 		oMultiComboBox.setSelectedKeys([null]);
 
 		// assertions
-		strictEqual(fnErrorSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 		strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
 		strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
