@@ -116,16 +116,16 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.string
 		jQuery.sap.log.warning("Aggregation tooltip is not supported by control sap.ui.core.InvisibleText.");
 		return this;
 	};
-	
+
 	InvisibleText.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true);
 		this.$().html(jQuery.sap.encodeHTML(this.getText() || ""));
 		return this;
 	};
-	
+
 	/**
 	 * Adds <code>this</code> control into the static, hidden area UI area container.
-	 * 
+	 *
 	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @see sap.ui.core.Control#placeAt
@@ -133,7 +133,18 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.string
 	 * @function
 	 */
 	InvisibleText.prototype.toStatic = function() {
-		return this.placeAt("sap-ui-static");
+		var oCore = sap.ui.getCore();
+		
+		try {
+			var oStatic = oCore.getStaticAreaRef();
+			var oRM = oCore.createRenderManager();
+			oRM.render(this, oStatic);
+			oRM.destroy();
+		} catch(e) {
+			this.placeAt("sap-ui-static");
+		}
+		
+		return this;
 	};
 
 	return InvisibleText;
