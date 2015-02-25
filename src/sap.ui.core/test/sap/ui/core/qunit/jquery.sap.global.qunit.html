@@ -133,19 +133,100 @@
 			});
 			
 			test("don't load twice", function(){
+				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css";
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
 				equal($link.length, 1, "initially, there should be exactly one matching link)");
 				equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
-				jQuery.sap.includeStyleSheet("../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css", "sap-ui-theme-sap.ui.layout");
+
+				jQuery.sap.includeStyleSheet(sStyleSheetUrl, "sap-ui-theme-sap.ui.layout");
+
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
 				equal($link.length, 1, "after includeStylesheet, there still should be exactly one matching link");
 				equal($link.attr("data-marker"), "42", "after includeStylesheet, the link object still should be the old one");
+
+				// use link node to make URL absolute
+				var oLink = document.createElement('link');
+				oLink.href = sStyleSheetUrl;
+				var sAbsoluteStylesheetUrl = oLink.href;
+
+				jQuery.sap.includeStyleSheet(sAbsoluteStylesheetUrl, "sap-ui-theme-sap.ui.layout");
+
+				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+				equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
+				equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
+
 				sap.ui.getCore().loadLibrary("sap.ui.layout");
+
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
 				equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
 				equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 			});
-			
+
+			asyncTest("stylesheet count", function() {
+
+				function getStyleId(i) {
+					return "style" + (i + 1);
+				}
+
+				function includeStyleSheet(i, fnResolve, fnReject) {
+					var sStyleId = getStyleId(i);
+					jQuery.sap.includeStyleSheet(sStyleBaseUrl + sStyleId + '.css', sStyleId, fnResolve, fnReject);
+				}
+
+				// remember initial stylesheet count
+				var iInitialStylesheets = document.styleSheets.length;
+
+				// include 40 stylesheets
+				var iNewStylesheets = 40;
+				var sStyleBaseUrl = "testdata/stylesheets/";
+				var aPromises = [];
+				var i;
+				for (i = 0; i < iNewStylesheets; i++) {
+
+					// success / error callback will only be called for real link tags
+					// in IE < 9 there will be a @import statement in a inline style after the 28th stylesheet
+					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9 && document.styleSheets.length >= 28) {
+						includeStyleSheet(i);
+					} else {
+						// create promise to keep track of loading state
+						var oPromise = new Promise(function(fnResolve, fnReject) {
+							includeStyleSheet(i, fnResolve, fnReject);
+						});
+						aPromises.push(oPromise);
+					}
+
+				}
+
+				var iExpectedStylesheets;
+				if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9) {
+					// in IE < 9 there is a technical stylesheet link limit
+					// jQuery.sap.includeStyleSheet should not produce more than 29 link tags
+					iExpectedStylesheets = 29;
+				} else {
+					// in all other browsers, all new stylesheets should be added
+					iExpectedStylesheets = iInitialStylesheets + iNewStylesheets;
+				}
+
+				// wait until all stylesheets are loaded
+				Promise.all(aPromises).then(function() {
+					equal(document.styleSheets.length, iExpectedStylesheets, "Overall stylesheet count should be like expected");
+
+					// remove all added stylesheets again
+					for (i = 0; i < iNewStylesheets; i++) {
+						var sStyleId = getStyleId(i);
+						var oLink = jQuery("#" + sStyleId);
+						oLink.remove();
+					}
+
+					start();
+
+				}, function(e) {
+					ok(false, e);
+					start();
+				});
+
+			});
+
 			//****************************************************
 			// loadResource tests
 			//****************************************************
