@@ -96,7 +96,7 @@
 			sap.m.MessageBox.show(oLayout, {
 						icon: sap.m.MessageBox.Icon.WARNING,
 						title: "Title of first MessageBox",
-						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, sap.m.MessageBox.Action.Cancel],
 						onClose: null,
 						id: "messageBoxScrolling",
 						verticalScrolling: false,
@@ -109,9 +109,9 @@
 			var oMessageBox = sap.ui.getCore().byId("messageBoxScrolling");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			equal(oMessageBox.getButtons().length, 2, "All three buttons are added to dialog");
-			equal(oMessageBox.getHorizontalScrolling(), false, "The horizontal scrolling is disables");
-			equal(oMessageBox.getVerticalScrolling(), false, "The vertical scrolling is disables");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getHorizontalScrolling(), false, "The horizontal scrolling is disabled");
+			equal(oMessageBox.getVerticalScrolling(), false, "The vertical scrolling is disabled");
 			oMessageBox.destroy();
 		});
 
@@ -346,7 +346,12 @@
 			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
-			sLinkText.click();
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
 			sap.ui.getCore().applyChanges();
 			ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
 			ok(oMessageBox.$().hasClass(sClassName));
@@ -355,14 +360,13 @@
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
 		test("add details within control content", function () {
-			var oCheck;
 			var oLayout = new sap.ui.layout.VerticalLayout({
 				width: "100%",
 				content: [
 					new sap.m.Text({
 						text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
 					}),
-					oCheck = new sap.m.CheckBox("checkBoxId", {
+					new sap.m.CheckBox("checkBoxId", {
 						text: "The CheckBox this checked",
 						checked: false
 					})
@@ -386,6 +390,30 @@
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
 			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		// When the message box is used on phone device and contains exactly 2 buttons it should use internally beginButton and endButton aggregations instead of buttons.
+		test("When the message box is used on phone device and contains exactly 2 buttons:", function () {
+			this.stub(sap.ui.Device, "system", {
+				phone: true,
+				tablet: false,
+				desktop: false
+			});
+
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO],
+				onClose: callback,
+				id: "messagebox5",
+				styleClass: sClassName
+			});
+
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagebox5");
+			ok(oMessageBox.getLeftButton(), "Left button is created and leftButton aggregation is used.");
+			ok(oMessageBox.getRightButton(), "Right button is created and rightButton aggregation is used.");
+			equal(oMessageBox.getButtons().length, 0, "Buttons aggregation is empty and not used.");
 			oMessageBox.destroy();
 		});
 
