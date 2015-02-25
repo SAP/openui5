@@ -512,6 +512,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oButtons = this.getButtons(),
 			oItems = null,
+			bUpdate = false,
 			i = 0;
 
 		/* Update aggregation only if a update reason is available */
@@ -524,11 +525,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/* If the buttons are already rendered and items are initiated remove all created buttons */
 		if (oItems && oButtons.length !== 0) {
 			this.removeAllButtons();
+			bUpdate = true;
 		}
 
 		/* Create buttons */
 		for (; i < oItems.length; i++) {
 			this.createButton(oItems[i].getText(), oItems[i].getIcon(), oItems[i].getEnabled(), oItems[i].getTextDirection());
+		}
+
+		// on update: recalculate width
+		if (bUpdate) {
+			this._fCalcBtnWidth();
 		}
 
 	};
