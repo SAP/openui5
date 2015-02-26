@@ -9,6 +9,11 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 
 
 	/**
+	 * Base Class for UI Component.
+	 *
+	 * If you are extending an UI Component make sure you read the {@link #.extend} documentation since the metadata is special.
+	 *
+	 * @class
 	 * Creates and initializes a new UI component with the given <code>sId</code> and
 	 * settings.
 	 *
@@ -25,7 +30,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 *            new component instance
 	 * @public
 	 *
-	 * @class Base Class for UI Component.
 	 * @extends sap.ui.core.Component
 	 * @abstract
 	 * @author SAP SE
@@ -61,32 +65,118 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 				"rootControl": { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			},
 			routing: {
-				/*
-				config: { // default values for routing
-					routerClass : myAppNamespace.MyRouterClass
-					viewType : "XML",
-					viewPath: "NavigationWithoutMasterDetailPattern.view",
-					targetParent: "myViewId",
-					targetControl: "app",
-					targetAggregation: "pages",
-					clearTarget: false
-				},
-				*/
-				/*
-				routes: [ // contains routing configuration objects
-					{
-						name : "myRouteName1",
-						pattern : "FirstView/{from}",
-						view : "myViewId"
-					},
-				],
-				targets: {}
-				*/
 			}
 			//autoDestroy: false // TODO: destroy component when view should be destroyed (not implemented yet!)
 		}
 
 	}, /* Metadata constructor */ UIComponentMetadata);
+
+	/**
+	 * Creates a new subclass of class sap.ui.core.UIComponent with name sClassName and enriches it with the information contained in oClassInfo.
+	 * oClassInfo might contain the same kind of information as described in {@link sap.ui.core.Element.html#.extend}.
+	 *
+	 * @alias {sap.ui.core.UIComponent.extend}
+	 * @public
+	 * @param {string} sClassName name of the class to be created
+	 *
+	 * @param {object} [oClassInfo] object literal with information about the class
+	 *
+	 * @param {object} [oClassInfo.metadata] see {@link sap.ui.core.Element.html#.extend} for the values allowed in every extend.
+	 *
+	 * @param {object} [oClassInfo.metadata.routing]
+	 * @since 1.16
+	 * If you are using a version before UI5 1.28 you may put the same
+	 * An object containing he routing relevant configurations, routes, targets, config
+	 * <b>Example for a config:</b><br/>
+	 * <pre>
+	 * <code>
+	 * metadata : {
+	 *     "routing": {
+	 *         "routes": {
+	 *             "welcome": {
+	 *                 // If the url has no hash eg: index.html or index.html# , this route will be matched.
+	 *                 "pattern": "",
+	 *                 // Displays the target called welcome specified in metadata.routing.targets.welcome.
+	 *                 "target": "welcome"
+	 *             }
+	 *             "product": {
+	 *                 "pattern": "Product/{id}",
+	 *                 "target": "product"
+	 *             }
+	 *         }
+	 *         // Default values for targets
+	 *         "config": {
+	 *             // For a detailed documentation of these parameters have a look at the sap.ui.core.routing.Targets documentation
+	 *             "viewType": "XML",
+	 *             "controlId": "App",
+	 *             "controlAggregation": "pages",
+	 *             "viewNamespace": "myApplication.namespace",
+	 *             // If you are using the mobile library, you have to use a sap.m.Router, to get support for the controls App, SplitApp, NavContainer and SplitContainer.
+	 *             "routerClass": "sap.m.routing.Router"
+	 *             // What happens if no route matches the hash?
+	 *             "bypassed": {
+	 *                 // the not found target gets displayed
+	 *                 "target": "notFound"
+	 *             }
+	 *         }
+	 *         "targets": {
+	 *             "welcome": {
+	 *                 // Referenced by the route "welcome"
+	 *                 "viewName": "Welcome",
+	 *                 "viewLevel": 0
+	 *             },
+	 *             "product": {
+	 *                 // Referenced by the route "Product"
+	 *                 "viewName": "Product",
+	 *                 "viewLevel": 1
+	 *             }
+	 *             "notFound": {
+	 *                 // Referenced by the bypassed section of the config
+	 *                 "viewName": "NotFound"
+	 *             }
+	 *         }
+	 *     }
+	 * }
+	 * </code>
+	 * </pre>
+	 *
+	 * Later you can retrieve the Router with {@link #getRouter} to register on callbacks when routes have matched. You can also retrieve Targets with {@link #getTargets} to display views without changing the hash.
+	 *
+	 * @param {object} [oClassInfo.metadata.routing.routes]
+	 * @since 1.16
+	 * An object containing the routes that should be added to the Router. See {@link sap.ui.core.routing.Route} for the allowed properties.
+	 *
+	 * @param {object} [oClassInfo.metadata.routing.targets]
+	 * @since 1.28.1
+	 * An object containing the targets that will be available for the router and the Targets instance.
+	 * Read {@link sap.ui.core.routing.Targets} for the allowed values.
+	 *
+	 * @param {object} [oClassInfo.metadata.routing.config]
+	 * @since 1.16
+	 * An object containing default values used for routes and targets.
+	 * See {@link sap.ui.core.routing.Router#constructor} and {@link sap.ui.core.routing.Targets} for mor documentation.
+	 *
+	 * @param {string|function} [oClassInfo.metadata.routing.config.routerClass] default: "sap.ui.core.routing.Router".
+	 * @since 1.20
+	 * The namespace of the router that should be used.
+	 * If you are using an own router extension, it has to be required before the contructor of the component is invoked.
+	 * If you use "sap.m.routing.Router" the component will automatically create a {@link sap.m.routing.Targets} instance.
+	 * If you pass a function it has to be a constructor function extending a router.
+	 *
+	 * @param {string|function} [oClassInfo.metadata.routing.config.targetsClass]
+	 * @since 1.28.1
+	 * default: "sap.ui.core.routing.Targets".
+	 * The namespace of the targets that should be used.
+	 * If you are using an own Targets extension, it has to be required before the contructor of the component is invoked.
+	 * If you define routes in your routing section, this parameter will be ignored and the Targets instance of the router will be taken see {@lint #sap.ui.core.routing.Router#getTargets}.
+	 *
+	 *
+	 * @param {string} [oClassInfo.metadata.routing.config.rootView]
+	 * By default the rootView will be set to the id of the view returned by the {@link #getRootView} function.
+	 * You should not set this parameter if you create a view with the UIComponent.
+	 *
+	 * @param {function} [FNMetaImpl} constructor function for the metadata object. If not given, it defaults to {@link sap.ui.core.ElementMetadata}.
+	 */
 
 	/**
 	 * Initializes the Component instance after creation.
