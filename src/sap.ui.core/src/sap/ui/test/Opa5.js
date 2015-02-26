@@ -68,7 +68,11 @@ sap.ui.define(['jquery.sap.global',
 
 			}
 
-			$Frame.on("load", handleFrameLoad);
+			if ($Frame[0].contentDocument && $Frame[0].contentDocument.readyState === "complete") {
+				handleFrameLoad();
+			} else {
+				$Frame.on("load", handleFrameLoad);
+			}
 
 			return this.waitFor({
 				check : function () {
@@ -522,6 +526,16 @@ sap.ui.define(['jquery.sap.global',
 
 		function handleFrameLoad () {
 			oFrameWindow = $Frame[0].contentWindow;
+
+			var fnFrameOnError = oFrameWindow.onerror;
+
+			oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {
+				if (fnFrameOnError) {
+					fnFrameOnError.apply(this, arguments);
+				}
+				throw "OpaFrame error message: " + sErrorMsg + " url: " + sUrl + " line: " + iLine;
+			};
+
 			bFrameLoaded = true;
 			//immediately check for UI5 to be loaded, to intercept any hashchanges
 			checkForUI5ScriptLoaded();
