@@ -3,13 +3,26 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.assertion.NavigationAssertion", {
+		iShouldSeeTheBusyIndicator: function () {
+			return this.waitFor({
+				id : "idAppControl",
+				viewName : "App",
+				success : function (oRootView) {
+					// we set the view busy, so we need to query the parent of the app
+					ok(oRootView.getParent().getBusy(), "The app is busy");
+				},
+				errorMessage : "The app is not busy."
+			});
+		},
+
 		iShouldSeeTheObjectList : function () {
 			return this.waitFor({
 				id : "list",
 				viewName : "Master",
 				success : function (oList) {
 					ok(oList, "Found the object List");
-				}
+				},
+				errorMessage : "Object list was not found."
 			});
 		},
 
@@ -20,7 +33,8 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				matchers : [ new PropertyStrictEquals({name : "title", value : "Object 1"}) ],
 				success : function () {
 					ok(true, "was on the first object page");
-				}
+				},
+				errorMessage : "First object is not shown"
 			});
 		},
 
@@ -111,7 +125,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		theLineItemNavigationButtonHasCorrectEnabledState : function( sName, sIcon, bEnabled) {
 			var sSuccessMessage = bEnabled ? "' button is enabled." : "' button is disabled.",
 				sErrorMessage = bEnabled ? "' button is disabled." : "' button is enabled.";
-			
+
 			return this.waitFor({
 				controlType : "sap.m.Button",
 				viewName : "LineItem",
@@ -141,7 +155,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 
 		iShouldSeeTheNotFoundPage : function () {
 			return this.waitFor({
-				//controlType : "sap.m.MessagePage" 
+				//controlType : "sap.m.MessagePage"
 				id : "notFoundPage",
 				viewName : "NotFound",
 				success : function (oPage) {
@@ -166,7 +180,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 
 		iShouldSeeTheObjectNotFoundPage : function () {
 			return this.waitFor({
-				//controlType : "sap.m.MessagePage" 
+				//controlType : "sap.m.MessagePage"
 				id : "detailObjectNotFoundPage",
 				viewName : "DetailObjectNotFound",
 				success : function (oPage) {
@@ -191,7 +205,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 
 		iShouldSeeTheLineItemNotFoundPage : function () {
 			return this.waitFor({
-				//controlType : "sap.m.MessagePage" 
+				//controlType : "sap.m.MessagePage"
 				id : "lineItemNotFoundPage",
 				viewName : "LineItemNotFound",
 				success : function (oPage) {
@@ -201,7 +215,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage: "did not reach the empty page"
 			});
 		},
-		
+
 		theListShouldHaveNoSelection : function () {
 			return this.waitFor({
 				id : "list",
@@ -224,7 +238,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage: "did not display the object not found text"
 			});
 		},
-		
+
 		theListShouldSayResourceNotFound : function () {
 			return this.waitFor({
 				id : "list",
