@@ -144,7 +144,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		var oTypeControl = oLI.getTypeControl();
 		if (oTypeControl) {
 			this.renderTypeContent(rm, oLI, oTypeControl);
-			oLI.informList("TypeRender");
 		}
 	};
 
