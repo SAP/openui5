@@ -60,9 +60,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Aggregation of items to be displayed. The items set in this aggregation are used as an interface for the buttons displayed by the control.
-			 * @since 1.28.0
+			 * The "items" and "buttons" aggregations should NOT be used simultaneously as it causes the control to work incorrectly.
+			 * @since 1.28
 			 */
-			items : { type: "sap.ui.core.ListItem", multiple: true, singularName: "item", bindable: "bindable" }
+			items : { type : "sap.m.SegmentedButtonItem", multiple : true, singularName : "item", bindable : "bindable" }
 		},
 		associations : {
 
@@ -258,7 +259,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		//get the size of each button
 		this._getButtonWidths();
-
 
 		//Flag if control is inside a popup
 		this._bInsidePopup = (this.$().closest(".sapMPopup-CTX").length > 0);
@@ -462,6 +462,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oButton;
 	};
 
+	/**
+	 * Private method to create a button from item
+	 *
+	 * @param {sap.m.SegmentedButtonItem} oItem item from the items aggregation
+	 * @private
+	 * @since 1.28
+	 */
+	SegmentedButton.prototype._createButtonFromItem = function (oItem) {
+		var oButton = new sap.m.Button({
+			text: oItem.getText(),
+			icon: oItem.getIcon(),
+			enabled: oItem.getEnabled(),
+			textDirection: oItem.getTextDirection(),
+			width: oItem.getWidth(),
+			press: function () {
+				oItem.firePress();
+			}
+		});
+
+		this.addButton(oButton);
+	};
+
 	(function (){
 		SegmentedButton.prototype.addButton = function (oButton) {
 			if (oButton) {
@@ -530,7 +552,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/* Create buttons */
 		for (; i < oItems.length; i++) {
-			this.createButton(oItems[i].getText(), oItems[i].getIcon(), oItems[i].getEnabled(), oItems[i].getTextDirection());
+			this._createButtonFromItem(oItems[i]);
 		}
 
 		// on update: recalculate width
