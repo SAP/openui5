@@ -149,6 +149,27 @@
 			oMessagePage.destroy();
 		});
 
+		test("The control inner nav button should be rendered", function(){
+			// Arrange
+			var oMessagePage = new sap.m.MessagePage(messagePageId,{
+				text: "One Line Text",
+				filterText: "Filter text",
+				icon: "documents",
+				showNavButton: true
+			}), $oMessagePageInnerButton;
+
+			// System under test
+			oMessagePage.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			$oMessagePageInnerButton = jQuery(".sapMMessagePage .sapMBarLeft .sapMBtn").length;
+
+			ok($oMessagePageInnerButton, "Inner nav button is rendered");
+
+			// Clean up
+			oMessagePage.destroy();
+		});
 
 		module("Api tests");
 
