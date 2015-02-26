@@ -29,6 +29,11 @@ sap.ui.core.UIComponent.extend("samples.components.routing.Component", {
 		}
 	},
 
+	init: function () {
+		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+		this._oViewWhileInit = this.getAggregation("rootControl");
+	},
+
 	createContent : function () {
 		sap.ui.controller("samples.components.routing.TestController", {});
 		sap.ui.jsview("samples.components.routing.TestView", {
@@ -40,6 +45,7 @@ sap.ui.core.UIComponent.extend("samples.components.routing.Component", {
 			}
 		});
 
+		this._oViewWhileCeateContent = this.getAggregation("rootControl");
 		this.oView = sap.ui.jsview("samples.components.routing.TestView");
 		return this.oView;
 	}
