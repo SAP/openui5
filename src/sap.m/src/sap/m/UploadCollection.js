@@ -118,14 +118,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				parameters : {
 					/**
 					 * An unique Id of the attached document.
-					 * @deprecated Since version 1.28.
+					 * @deprecated Since version 1.28.0.
 					 * This event is deprecated, use parameter files instead.
 					 */
 					documentId : {type : "string"},
 					/**
 					 * A FileList of individually selected files from the underlying system. See www.w3.org for the FileList Interface definition.
 					 * Limitation: Internet Explorer 9 supports only single file with property file.name.
-					 * Since version 1.28.
+					 * Since version 1.28.0.
 					 */
 					files : {type : "object[]"}
 				}
@@ -139,13 +139,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 					/**
 					 * An unique Id of the attached document.
-					 * @deprecated Since version 1.28.
+					 * @deprecated Since version 1.28.0.
 					 * This event is deprecated, use parameter item instead. 
 					 */
 					documentId : {type : "string"},
 					/**
 					 * An item to be deleted from the collection.
-					 * Since version 1.28.
+					 * Since version 1.28.0.
 					 */
 					item : {type : "sap.m.UploadCollectionItem"}
 				}
@@ -156,11 +156,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			filenameLengthExceed : {
 				parameters : {
-
 					/**
-					 * An unique Id of the attached document.
-					 */
-					documentId : {type : "string"}
+					* An unique Id of the attached document.
+					* @deprecated Since version 1.28.0.
+					* This event is deprecated, use parameter files instead.
+					*/
+					documentId : {type : "string"},
+					/**
+					* A FileList of individually selected files from the underlying system. See www.w3.org for the FileList Interface definition.
+					* Limitation: Internet Explorer 9 supports only single file with property file.name.
+					* Since version 1.28.0.
+					*/
+					files : {type : "object[]"}
 				}
 			},
 
@@ -1259,12 +1266,27 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 
 	/**
-	 * @description Handling of the Event fileRenamed of the fileUploader
+	 * @description Handling of the Event filenameLengthExceed of the fileUploader
 	 * @param {object} oEvent Event of the fileUploader
 	 * @private
 	 */
-	UploadCollection.prototype._onFilenameLengthExceed = function(oEvent){
-		this.fireFilenameLengthExceed(oEvent);
+	UploadCollection.prototype._onFilenameLengthExceed = function(oEvent) {
+		var oFile = {name: oEvent.getParameter("fileName")};
+		var aFiles = [oFile];
+		this.fireFilenameLengthExceed({
+			// deprecated
+			getParameter : function(sParameter) {
+				if (sParameter) {
+					return oEvent.getParameter(sParameter);
+				}
+			},
+			getParameters : function() {
+				return oEvent.getParameters();
+			},
+			mParameters : oEvent.getParameters(),
+			// new
+			files : aFiles
+		});
 	};
 
 	/**
