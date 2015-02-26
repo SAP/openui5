@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			 * So you can retrieve the view later by calling the {@link sap.ui.core.UIComponent#byId} function of the UIComponent.
 			 *
 			 * @param {string} oOptions.viewName If you do not use setView please see {@link sap.ui.view} for the documentation. This is used as a key in the cache of the Views instance. If you want to retrieve a view that has been given an alternative name in {@link #setView} you need to provide the same name here and you can skip all the other viewOptions.
-			 * @return {Promise} A promise that is resolved when the view is loaded. The view instance will be passed to the promise.
+			 * @return {Window.Promise} A promise that is resolved when the view is loaded. The view instance will be passed to the promise.
 			 */
 			getView : function (oOptions) {
 				return new Promise(function (fnSuccess) {
