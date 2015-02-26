@@ -86,21 +86,23 @@
 			errorText:"Don't know how to format sap.ui.model.odata.type.Int64 to boolean"},
 		{test:"format to int with overflow error", value: "9007199254740992",
 			targetType: "int",
-			errorText:"Enter a number with a maximum value of 9,007,199,254,740,991."},
+			errorText:"EnterIntMax 9,007,199,254,740,991"},
 		{test:"format to int with overflow error", value: "-9007199254740992",
 			targetType: "int",
-			errorText:"Enter a number with a minimum value of -9,007,199,254,740,991."}],
+			errorText:"EnterIntMin -9,007,199,254,740,991"}],
 			function (i, oFixture) {
 		test(oFixture.test, function () {
-			var oType = new sap.ui.model.odata.type.Int64();
+			sap.ui.test.TestUtils.withNormalizedMessages(function () {
+				var oType = new sap.ui.model.odata.type.Int64();
 
-			try {
-				oType.formatValue(oFixture.value, oFixture.targetType);
-				ok(false);
-			} catch (e) {
-				ok(e instanceof sap.ui.model.FormatException);
-				strictEqual(e.message, oFixture.errorText);
-			}
+				try {
+					oType.formatValue(oFixture.value, oFixture.targetType);
+					ok(false);
+				} catch (e) {
+					ok(e instanceof sap.ui.model.FormatException);
+					strictEqual(e.message, oFixture.errorText);
+				}
+			});
 		});
 	});
 
