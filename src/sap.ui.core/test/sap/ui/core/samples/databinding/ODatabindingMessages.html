@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_bluecrystal"
+        data-sap-ui-libs="sap.ui.layout,sap.m">
+    </script>
+	<script type="text/javascript" src="/testsuite/resources/sap/ui/thirdparty/sinon.js"></script>
+    
+    <script src="/testsuite/test-resources/sap/ui/core/qunit/ODataMessagesFakeService.js"></script>
+
+	<script>
+		// Model
+		jQuery.sap.require("sap.ui.core.message.ModelMessage");
+		jQuery.sap.require("sap.ui.core.message.MessageManager");
+		jQuery.sap.require("sap.ui.model.odata.ODataMessageParser");
+		var oMM = new sap.ui.core.message.MessageManager();
+		
+		sap.ui.getCore().setMessageManager(oMM);
+
+		var sServiceURI = "fakeService://testdata/odata/northwind/";
+		var mModelOptions = {
+			json: true,
+			async: true,
+			useBatch: false
+		};
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		var oParser = new sap.ui.model.odata.ODataMessageParser();
+		oModel.setMessageParser(oParser);
+		// sap.ui.getCore().setModel(oModel);
+	
+		oDate = new sap.ui.model.type.Date();
+		oZip = new sap.ui.model.type.String(null,{maxLength: 5});
+		oStreet = new sap.ui.model.type.Integer();
+		// UI
+		var oLayout = new sap.ui.layout.form.ResponsiveGridLayout("L4");
+		var oForm = new sap.ui.layout.form.Form("F1",{
+			models: {
+				undefined: oModel
+			},
+			objectBindings: {
+				undefined: {path: "/Products(1)"}
+			},
+			title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
+			tooltip: "Form tooltip",
+			editable: true,
+			layout: oLayout,
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("C1",{
+					title: "Contact Data",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Name",
+							fields: [
+								new sap.m.Input({value: "{ProductName}"})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "First name",
+							fields: [
+								new sap.m.Input({value: "{name}"})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Date of birth",
+							fields: [
+								new sap.m.DateTimeInput({value: {path:"birthdate", type: oDate}})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Gender",
+							fields: [
+								new sap.m.RadioButton({text: "male", selected: true, groupName: "MyTest"}),
+							    new sap.m.RadioButton({text: "female", selected: false, groupName: "MyTest"})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Info",
+							fields: [
+								new sap.m.Text({text:"{info}"})
+							]
+						})
+						]
+				}),
+				new sap.ui.layout.form.FormContainer("C2",{
+					title: new sap.ui.core.Title({text: "Address", tooltip: "Title tooltip"}),
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text:"Street"}),
+							fields: [
+								new sap.m.Input({value: "{street}"}),
+							  	new sap.m.Input({
+							  		value: {path: "streetnr", type: oStreet},
+							  		width: "5em",
+									layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
+								})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "City",
+							fields: [
+								new sap.m.Input({value: "{city}"})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: new sap.m.Label({text: "Post code"}),
+							fields: [
+								new sap.m.Input({
+									value: {path: "zip", type: oZip},
+									layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
+								})
+							]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: "Country",
+							fields: [
+								new sap.m.Select({
+									selectedKey: "{country}",
+									items: [
+										new sap.ui.core.Item({key: "DE", text: "Germany"}),
+								        new sap.ui.core.Item({key: "US", text: "USA"}),
+								        new sap.ui.core.Item({key: "UK", text: "England"})
+									]
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+		oForm.placeAt("content");
+
+		var oButton1 = new sap.m.Button({
+			text: "Set messages",
+			press: function() {
+				oModel.setMessages({
+					"/form/name" : {
+						state: "Error",
+						text: "Invalid order of characters in this name!"
+					}
+				});
+			}
+		});
+		//oButton1.placeAt("buttons");
+
+		var oButton2 = new sap.m.Button({
+			text: "Set other messages",
+			press: function() {
+				oModel.setMessages({
+					"/form/zip" : {
+						state: "Error",
+						text: "ZIP and City do not match!"
+					},
+					"/form/city" : {
+						state: "Warning",
+						text: "ZIP and City do not match!"
+					}
+				});
+			}
+		});
+		//oButton2.placeAt("buttons");
+
+		var oButton3 = new sap.m.Button({
+			text: "Clear messages",
+			press: function() {
+				oModel.setMessages({});
+			}
+		});
+		//oButton3.placeAt("buttons");
+	
+		var oButton4 = new sap.m.Button({
+			text: "Set message to MM",
+			press: function() {
+				oMM.addMessages(
+					new sap.ui.core.message.ModelMessage({
+						message: "Invalid order of characters in this name!",
+						severity: sap.ui.core.MessageType.Error,
+						target: "/form/name",
+						processor: oModel
+					})
+				)
+			}
+		});
+		oButton4.placeAt("buttons");
+		
+		var oButton5 = new sap.m.Button({
+			text: "clear messages of MM",
+			press: function() {
+				oMM.removeAllMessages();
+			}
+		});
+		oButton5.placeAt("buttons");
+		
+		var oLItem = new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Text({
+					text: "{message>severity}"
+				}),
+				new sap.m.Text({
+					text: "{message>message}"
+				}),
+				new sap.m.Text({
+					text: "{message>target}"
+				})
+			]
+		});
+		
+		var oMList = new sap.m.Table({
+			headerText: "Messages",
+			columns: [
+				new sap.m.Column({
+					header: new sap.m.Text({
+						text: "Severity"
+					})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Text({
+						text: "Message"
+					})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Text({
+						text: "Target"
+					})
+				})
+			]
+		});
+		oMList.bindItems({path:"message>/", template:oLItem});
+		
+		oMList.placeAt("messages");
+	</script>
+</head>
+<body class="sapUiBody">
+	<div id="content"></div>
+	<div id="buttons"></div>
+	<div id="messages"></div>
+</body>
+</html>

@@ -11,8 +11,8 @@
  */
 
 //Provides class sap.ui.model.odata.v2.ODataModel
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/OperationMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-		function(jQuery, Model, ODataUtils, CountMode, OperationMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI1, datajs) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/OperationMode', './ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
+		function(jQuery, Model, ODataUtils, CountMode, OperationMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, URI1, datajs) {
 	"use strict";
 
 
@@ -65,7 +65,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			bWithCredentials, sMaxDataServiceVersion,
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
-			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, that = this;
+			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
+			that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -90,6 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				mServiceUrlParams = mParameters.serviceUrlParams;
 				mMetadataUrlParams = mParameters.metadataUrlParams;
 				bJSON = mParameters.json;
+				oMessageParser = mParameters.messageParser;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || sap.ui.model.BindingMode.OneWay;
@@ -117,6 +119,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
+
+			if (oMessageParser) {
+				oMessageParser.setProcessor(this);
+			}
+			this.oMessageParser = oMessageParser;
 
 			//collect internal changes in a deferred batchgroup as default
 			this.sDefaultChangeBatchGroup = "changes";
@@ -2287,9 +2294,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
 
+
 		// no data available
 		if (bContent && !oResultData && oResponse) {
-			jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + +"'");
+			// Parse error messages from the back-end
+			this._parseResponse(oResponse, oRequest, mGetEntities, mChangeEntities);
+
+			jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + "'");
 			that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async,
 				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 			return false;
@@ -2343,6 +2354,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oRequest.context.sPath = '/' + sKey;
 			}
 		}
+
+		// Parse messages from the back-end
+		this._parseResponse(oResponse, oRequest, mGetEntities, mChangeEntities);
 
 		this._updateETag(oRequest, oResponse);
 
@@ -2509,8 +2523,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var mParameters = {}, /* fnHandler, */ sToken;
 		var sErrorMsg = "The following problem occurred: " + oError.message;
 
+		
 		mParameters.message = oError.message;
 		if (oError.response){
+			// Parse messages from the back-end
+			this._parseResponse(oError.response);
+			
 			if (this.bTokenHandling) {
 				// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
 				// a new token will be fetched in the refresh afterwards.
@@ -3841,6 +3859,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
 		return this.mChangeBatchGroups;
+	};
+	
+	/**
+	 * Sets the MessageParser that is invoked upon every back-end request. This message parser
+	 * analyzes the response and notifies the MessageManager about added and deleted messages.
+	 * 
+	 * @param {object|null} [oParser] The MessageParser instance that parses the responses and adds messages to the MessageManager
+	 * @return {ODataModel} Model instance for method chaining
+	 */
+	ODataModel.prototype.setMessageParser = function(oParser) {
+		if (!(oParser instanceof MessageParser)) {
+			jQuery.sap.log.error("Given MessageParser is not of type sap.ui.core.message.MessageParser");
+			return;
+		}
+		oParser.setProcessor(this);
+		this.oMessageParser = oParser;
+		return this;
+	};
+	
+	/**
+	 * Gives the back-end response to the MessageParser in case there is one attached
+	 * 
+	 * @return {void}
+	 * @private
+	 */
+	ODataModel.prototype._parseResponse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
+		try {
+			if (!this.oMessageParser) {
+				this.oMessageParser = new ODataMessageParser(this.sServiceUrl, this.oMetadata);
+				this.oMessageParser.setProcessor(this);
+			}
+			// Parse response and delegate messages to the set message parser
+			return this.oMessageParser.parse(oResponse, oRequest, mGetEntities, mChangeEntities);
+		} catch (ex) {
+			jQuery.sap.log.error("Error parsing OData messages: " + ex);
+		}
 	};
 
 	/**
