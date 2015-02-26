@@ -868,6 +868,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("<td");
 			var sId = oRow.getId() + "-col" + iCellIndex;
 			rm.writeAttribute("id", sId);
+			rm.writeAttribute("tabindex", "-1");
 			if (oTable._bAccMode) {
 				// correct would be aria-labelledby but doesn't work for JAWS
 				rm.writeAttribute("headers", oTable.getId() + "_col" + iColIndex);
@@ -883,7 +884,6 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttribute("aria-labelledby", sLabelledBy);
 				rm.writeAttribute("aria-describedby", oTable.getId() + "-toggleedit");
 				rm.writeAttribute("aria-activedescendant", oCell.getId());
-				rm.writeAttribute("tabindex", "-1");
 				if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
 					rm.writeAttribute("aria-selected", "false");
 				}
