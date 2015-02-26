@@ -70,7 +70,7 @@
 		<deployable.groupId>com.sap.openui5.dist</deployable.groupId>
 		<deployable.artifactId>sdk</deployable.artifactId>
 		<deployable.version>${version}</deployable.version>
-		<deployable.classifier>static</deployable.classifier>
+		<deployable.classifier>opt-static</deployable.classifier>
 		<deployable.type>zip</deployable.type>
 		
 	</properties>
