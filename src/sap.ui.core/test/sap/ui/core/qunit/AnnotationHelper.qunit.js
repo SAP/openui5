@@ -830,6 +830,25 @@
 	});
 
 	//*********************************************************************************************
+	test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
+		strictEqual(formatAndParseNoWarning({
+			Apply : {
+				Name : "odata.fillUriTemplate",
+				Parameters : [{
+					Type: "String",
+					Value: "http://foo.bar/{x}"
+				}, {
+					Name: "x",
+					Value: {
+						Apply: {Name: "odata.uriEncode"}
+					}
+				}]
+			}
+		}), "http://foo.bar/Unsupported%3A%20%7B%27Apply%27%3A%7B%"
+				+ "27Name%27%3A%27odata.uriEncode%27%7D%7D");
+	});
+
+	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.simplePath");
 
 	//*********************************************************************************************
@@ -1093,6 +1112,10 @@
 
 	//TODO support annotations embedded within entity container, entity set (or singleton?),
 	// complex type, property of entity or complex type
+
+	// TODO improve error handling: unsupported within apply function gives unreadable result and
+	// should be avoided, illegalValue should report the full binding path and not only the last
+	// property which is most probably "String", "Path" or "Value"
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
