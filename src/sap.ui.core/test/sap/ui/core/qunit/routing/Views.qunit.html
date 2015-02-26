@@ -10,7 +10,7 @@
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
-	
+
 </script>
 
 <script>
@@ -22,6 +22,7 @@
 		}
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		sinon.config.useFakeTimers = false;
 
 
 		sap.ui.require(['sap/ui/core/routing/Views', 'sap/ui/core/UIComponent'], function (Views, UIComponent) {
