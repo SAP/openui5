@@ -23,7 +23,7 @@
 
 		var oPageWithMessagePage = new sap.m.Page("pageWithMessagePage", {
 			title: "Detail",
-			content: new sap.m.MessagePage({title: "Opportunity"})
+			content: new sap.m.MessagePage({title: "Opportunity",showNavButton: true})
 		});
 
 		var oCarousel = new sap.m.Carousel("carousel", {
@@ -32,14 +32,17 @@
 			pages: [
 				new sap.m.MessagePage({
 					title: "Opportunity1",
+					showNavButton: true,
 					text: "MessagePage 1"
 				}),
 				new sap.m.MessagePage({
 					title: "Opportunity2",
+					showNavButton: true,
 					text: "MessagePage 2"
 				}),
 				new sap.m.MessagePage({
 					title: "Opportunity3",
+					showNavButton: true,
 					text: "MessagePage 3"
 			})]
 		});
@@ -48,6 +51,7 @@
 			pages: [
 				new sap.m.MessagePage({
 				title: "Opportunity1",
+				showNavButton: true,
 				customText: new sap.m.Link({text: "MessagePage insight NavContainer", href: "http://go.sap.com/index.html"})
 			})]
 		});
