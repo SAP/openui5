@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 		/**
 		 * Instantiates a SAPUI5 Router
-		 * 
+		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider
 		 *
@@ -34,7 +34,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * ]
 		 * </pre>
 		 *
-		 * When you pass an object, the name attribute is the name of the proerty.
+		 * The alternative way of defining routes is an Object.
+		 * If you choose this way, the name attribute is the name of the property.
 		 * <pre>
 		 * {
 		 *     //Will create a route called 'firstRouter' you can later use this name in navTo to navigate to this route
@@ -48,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * }
 		 * </pre>
 		 * The values that may be provided are the same as in {@link sap.ui.core.routing.Route#constructor}
-		 * 
+		 *
 		 * @param {object} [oConfig] Default values for route configuration - also takes the same parameters as {@link sap.ui.core.routing.Target#constructor}.<br/>
 		 * This config will be used for routes and for targets, used in the router<br/>
 		 * Eg: if the config object specifies :
@@ -85,13 +86,75 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
 		 * @param {string|string[]} [oConfig.bypassed.target] Since 1.28. One or multiple names of targets that will be displayed, if no route of the router is matched.
-		 * A typical usecase is a not found page.
+		 * A typical use case is a not found page.
 		 * The current hash will be passed to the display event of the target.
-		 * @param {sap.ui.core.UIComponent} [oOwner] the owner of all the views that will be created by this Router,
-		 * will get forwarded to the {@link sap.ui.core.routing.Views}, created by the router.
-		 * @param {object} [oTargetsConfig] {@link sap.ui.core.routing.Targets} @since 1.28 the target configuration, see {@link sap.ui.core.routing.Targets#constructor}
-		 * documentation (the options object).<br>
-		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.
+		 * <b>Example:</b>
+		 * <pre>
+		 * <code>
+		 *     new Router(
+		 *     // Routes
+		 *     [
+		 *         // Any route here
+		 *     ],
+		 *     {
+		 *         bypassed: {
+		 *             // you will find this name in the target config
+		 *             target: "notFound"
+		 *         }
+		 *     },
+		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     null,
+		 *     // Target config
+		 *     {
+		 *          //same name as in the config.bypassed.target
+		 *          notFound: {
+		 *              viewName: "notFound",
+		 *              ...
+		 *              // more properties to place the view in the correct container
+		 *          }
+		 *     })
+		 * </code>
+		 * </pre>
+		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,
+		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.
+		 * If you are using the componentMetadata to define your routes you should skip this parameter.
+		 * @param {object} [oTargetsConfig]
+		 * @since 1.28 the target configuration, see {@link m.Targets#constructor} documentation (the options object).<br/>
+		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.<br/>
+		 * <b>Example:</b>
+		 * <pre>
+		 * <code>
+		 *     new Router(
+		 *     // Routes
+		 *     [
+		 *         {
+		 *             // no view creation related properties are in the route
+		 *             name: "startRoute",
+		 *             //no hash
+		 *             pattern: "",
+		 *             // you can find this target in the targetConfig
+		 *             target: "welcome"
+		 *         }
+		 *     ],
+		 *     // Default values shared by routes and Targets
+		 *     {
+		 *         viewNamespace: "my.application.namespace",
+		 *         viewType: "XML"
+		 *     },
+		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     null,
+		 *     // Target config
+		 *     {
+		 *          //same name as in the route called 'startRoute'
+		 *          welcome: {
+		 *              // All properties for creating and placing a view go here or in the config
+		 *              viewName: "Welcome",
+		 *              controlId: "app",
+		 *              controlAggregation: "pages"
+		 *          }
+		 *     })
+		 * </code>
+		 * </pre>
 		 * @public
 		 * @alias sap.ui.core.routing.Router
 		 */
@@ -603,7 +666,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			}
 
 		});
-		
+
 		Router.M_EVENTS = {
 			RouteMatched : "routeMatched",
 			RoutePatternMatched : "routePatternMatched",
@@ -613,7 +676,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 		/**
 		 * Get a registered router
-		 * 
+		 *
 		 * @param {string} sName Name of the router
 		 * @return {sap.ui.core.routing.Router} The router with the specified name, else undefined
 		 * @public
