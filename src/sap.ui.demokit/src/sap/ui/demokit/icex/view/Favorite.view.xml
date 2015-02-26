@@ -19,7 +19,8 @@
 			</Button>
 		</headerContent>
 		<footer>
-			<Toolbar>
+			<Toolbar
+				visible="{ui>/showToolbar}">
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://accept"
