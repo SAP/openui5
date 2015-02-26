@@ -42,9 +42,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 			try {
 				Component.apply(this, arguments);
 			} catch (e) {
-				if (this._oRouter) {
-					this._oRouter.destroy();
-				}
+				this._destroyCreatedInstances();
 				throw e;
 			}
 
@@ -115,24 +113,30 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 		}
 
 		// create the routing
-		var oMetadata = this.getMetadata();
-		// extend the metadata config, so that the metadata object cannot be modified afterwards
-		var oRoutingConfig = jQuery.extend({}, oMetadata.getRoutingConfig());
-		var aRoutes = oMetadata.getRoutes();
+		var oMetadata = this.getMetadata(),
+			// extend the metadata config, so that the metadata object cannot be modified afterwards
+			oManifest = oMetadata.getManifestEntry("sap.ui5"),
+			oRoutingManifestEntry = oManifest.routing || {},
+			oRoutingConfig = oRoutingManifestEntry.config || {},
+			vRoutes = oRoutingManifestEntry.routes;
 
 		// create the router for the component instance
-		if (aRoutes) {
+		if (vRoutes) {
 			jQuery.sap.require("sap.ui.core.routing.Router");
-			var fnRouterConstructor = oRoutingConfig.routerClass || sap.ui.core.routing.Router;
-			if (typeof fnRouterConstructor === "string") {
-				fnRouterConstructor = jQuery.sap.getObject(fnRouterConstructor);
-				if (!fnRouterConstructor) {
-					jQuery.sap.log.error("The specified routerClass '" + oRoutingConfig.routerClass + "' is undefined.", this);
-				}
-			}
-
-			this._oRouter = new fnRouterConstructor(aRoutes, oRoutingConfig, this, oMetadata.getTargetsConfig());
+			var fnRouterConstructor = getConstructorFunctionFor(oRoutingConfig.routerClass || sap.ui.core.routing.Router);
+			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets);
 			this._oTargets = this._oRouter.getTargets();
+			this._oViews = this._oRouter.getViews();
+		} else if (oRoutingManifestEntry.targets) {
+			jQuery.sap.require("sap.ui.core.routing.Targets");
+			jQuery.sap.require("sap.ui.core.routing.Views");
+			this._oViews = new sap.ui.core.routing.Views();
+			var fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass || sap.ui.core.routing.Targets);
+			this._oTargets = new fnTargetsConstructor({
+				targets: oRoutingManifestEntry.targets,
+				config: oRoutingConfig,
+				views: this._oViews
+			});
 		}
 
 		// create the content
@@ -154,17 +158,46 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 		}
 	};
 
+	function getConstructorFunctionFor (vRoutingObjectConstructor) {
+		var fnConstructor;
+		if (typeof vRoutingObjectConstructor === "string") {
+			fnConstructor = jQuery.sap.getObject(vRoutingObjectConstructor);
+			if (!fnConstructor) {
+				jQuery.sap.log.error("The specified class for router or targets '" + vRoutingObjectConstructor + "' is undefined.", this);
+			}
+		} else {
+			fnConstructor = vRoutingObjectConstructor;
+		}
+
+		return fnConstructor;
+	}
+
 	/*
 	 * Destruction of the UIComponent
 	 */
 	UIComponent.prototype.destroy = function() {
 		// destroy the router
+		this._destroyCreatedInstances();
+		// make sure that the component is destroyed properly
+		Component.prototype.destroy.apply(this, arguments);
+	};
+
+	UIComponent.prototype._destroyCreatedInstances = function () {
+		// destroy the router
 		if (this._oRouter) {
 			this._oRouter.destroy();
 			delete this._oRouter;
 		}
-		// make sure that the component is destroyed properly
-		Component.prototype.destroy.apply(this, arguments);
+
+		if (this._oTargets) {
+			this._oTargets.destroy();
+			this._oTargets = null;
+		}
+
+		if (this._oViews) {
+			this._oViews.destroy();
+			this._oViews = null;
+		}
 	};
 
 	/**
@@ -215,6 +248,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	/**
 	 * Returns the reference to the targets instance which has been created by
 	 * the UIComponent once the targets in the routing metadata has been defined.
+	 * If routes have been defined, it will be the targets instance created and used by the router.
 	 * @since 1.28
 	 * @return {sap.ui.core.routing.Targets} the targets instance
 	 * @public
