@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * @callback createDefaultContent
-	 * @return {sap.ui.core.Control|[sap.ui.core.Control]} a control or an array with 0..n controls
+	 * @return {sap.ui.core.Control|sap.ui.core.Control[]} a control or an array with 0..n controls
 	 */
 
 	/**

@@ -236,7 +236,7 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	sap.ui.commons.MenuButton.prototype.onmouseout = function(oEvent) {
+	MenuBar.prototype.onmouseout = function(oEvent) {
 		var oMenuItem = _getMenuItem(this, oEvent);
 		if (oMenuItem === "ovrflw") {
 			var jRef = get$Item(this, oEvent);

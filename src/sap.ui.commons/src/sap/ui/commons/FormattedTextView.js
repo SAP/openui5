@@ -137,8 +137,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 		 * @private
 		 * @param {string}
 		 *            tagName An HTML tag name in lowercase.
-		 * @param {Array.
-		 *            <?string>} attribs An array of alternating names and values.
+		 * @param {Array.<?string>} attribs An array of alternating names and values.
 		 * @return {Array.<?string>} The sanitized attributes as a list of
 		 *         alternating names and values, where a null value means to omit
 		 *         the attribute.

@@ -8,20 +8,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	"use strict";
 
 
-	var GrowingEnablement = BaseObject.extend("sap.m.GrowingEnablement", {
+	/**
+	 * Creates a GrowingEnablement delegate that can be attached to ListBase Controls requiring capabilities for growing
+	 *
+	 * @extends sap.ui.base.Object
+	 * @alias sap.m.GrowingEnablement
+	 * @experimental Since 1.16. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 *
+	 * @param {sap.m.ListBase} oControl the ListBase control of which this Growing is the delegate
+	 *
+	 * @constructor
+	 * @protected
+	 */
+	var GrowingEnablement = BaseObject.extend("sap.m.GrowingEnablement", /** @lends sap.m.GrowingEnablement.prototype */ {
 
-		/**
-		 * Creates a GrowingEnablement delegate that can be attached to ListBase Controls requiring capabilities for growing
-		 *
-		 * @extends sap.ui.base.Object
-		 * @name sap.m.GrowingEnablement
-		 * @experimental Since 1.16. This class is experimental and provides only limited functionality. Also the API might be changed in future.
-		 *
-		 * @param {sap.m.ListBase} oControl the ListBase control of which this Growing is the delegate
-		 *
-		 * @constructor
-		 * @protected
-		 */
 		constructor : function(oControl) {
 			BaseObject.apply(this);
 			this._oControl = oControl;

@@ -315,6 +315,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				 * It can be configured option 'autoIDPrefix', see {@link sap.ui.core.Configuration}.	
 				 */
 				id : true,
+				//id : {type : "string", group : "Identification", defaultValue : '', readOnly : true}
 
 				/**
 				 * A map of model instances to which the object should be attached.
