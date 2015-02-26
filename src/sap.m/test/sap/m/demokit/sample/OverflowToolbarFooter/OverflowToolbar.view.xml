@@ -9,18 +9,6 @@
         showHeader="false"
 		class="sapUiContentPadding"
 		showNavButton="false" >
-
-        <subHeader>
-            <OverflowToolbar id="otbSubheader">
-                <ToolbarSpacer/>
-                <Button text="Reset" type="Transparent" press="onReset"/>
-                <SearchField id="maxPrice" liveChange="onFilter">
-                    <layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
-                </SearchField>
-                <OverflowToolbarButton text="Sort" icon="sap-icon://sort" press="onSort"/>
-                <OverflowToolbarButton text="Group" icon="sap-icon://group-2" press="onGroup"/>
-            </OverflowToolbar>
-        </subHeader>
         
 		<content>
 			<VBox>
@@ -32,6 +20,17 @@
 
             <Table id="idProductsTable"
                    items="{/ProductCollection}">
+                <headerToolbar>
+                    <OverflowToolbar id="otbSubheader">
+                        <ToolbarSpacer/>
+                        <SearchField id="maxPrice" liveChange="onFilter">
+                            <layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="true"/></layoutData>
+                        </SearchField>
+                        <Button text="Reset" type="Transparent" press="onReset"/>
+                        <OverflowToolbarButton text="Sort" icon="sap-icon://sort" press="onSort"/>
+                        <OverflowToolbarButton text="Group" icon="sap-icon://group-2" press="onGroup"/>
+                    </OverflowToolbar>
+                </headerToolbar>
                 <columns>
                     <Column width="12em"><Text text="Product" /></Column>
                     <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
@@ -65,8 +64,8 @@
                 <OverflowToolbarButton text="Delete" icon="sap-icon://delete"/>
                 <OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
                 <OverflowToolbarButton text="Add" icon="sap-icon://add"/>
+                <OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>                
                 <OverflowToolbarButton text="Flag" icon="sap-icon://flag"/>
-                <OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>
 
             </OverflowToolbar>
 		</footer>

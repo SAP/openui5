@@ -10,55 +10,55 @@
 
 	<Label text="When buttons have no special layout, they are all moved to the action sheet."/>
 
-	<OverflowToolbar id="otb1" design="Transparent">
+	<OverflowToolbar id="otb1">
 		<Label text="Buttons:"/>
 		<ToolbarSpacer/>
-		<Button text="New"></Button>
-		<Button text="Open"></Button>
-		<Button text="Save"></Button>
-		<Button text="Save as"></Button>
-		<Button text="Cut"></Button>
-		<Button text="Copy"></Button>
-		<Button text="Paste"></Button>
-		<Button text="Undo"></Button>
-		<Button text="Redo"></Button>
+		<Button text="New" type="Transparent"></Button>
+		<Button text="Open" type="Transparent"></Button>
+		<Button text="Save" type="Transparent"></Button>
+		<Button text="Save as" type="Transparent"></Button>
+		<Button text="Cut" type="Transparent"></Button>
+		<Button text="Copy" type="Transparent"></Button>
+		<Button text="Paste" type="Transparent"></Button>
+		<Button text="Undo" type="Transparent"></Button>
+		<Button text="Redo" type="Transparent"></Button>
 	</OverflowToolbar>
 
 	<Label text="The buttons &quot;Cut, Copy and Paste&quot; have a special layout to never move to the action sheet."/>
 
-	<OverflowToolbar id="otb2" design="Transparent">
+	<OverflowToolbar id="otb2">
 		<Label text="Buttons:"/>
 		<ToolbarSpacer/>
-		<Button text="New"></Button>
-		<Button text="Open"></Button>
-		<Button text="Save"></Button>
-		<Button text="Save as"></Button>
-		<Button text="Cut">
+		<Button text="New" type="Transparent"></Button>
+		<Button text="Open" type="Transparent"></Button>
+		<Button text="Save" type="Transparent"></Button>
+		<Button text="Save as" type="Transparent"></Button>
+		<Button text="Cut" type="Transparent">
 			<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
 		</Button>
-		<Button text="Copy">
+		<Button text="Copy" type="Transparent">
 			<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
 		</Button>
-		<Button text="Paste">
+		<Button text="Paste" type="Transparent">
 			<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
 		</Button>
-		<Button text="Undo"></Button>
-		<Button text="Redo"></Button>
+		<Button text="Undo" type="Transparent"></Button>
+		<Button text="Redo" type="Transparent"></Button>
 	</OverflowToolbar>
 
 	<Label text="The last two buttons have a special layout to always stay in the action sheet. Even if there is enough space for them, they will not be displayed."/>
 
-	<OverflowToolbar id="otb3" design="Transparent">
+	<OverflowToolbar id="otb3">
 		<Label text="Buttons:"/>
 		<ToolbarSpacer/>
-		<Button text="New"></Button>
-		<Button text="Open"></Button>
-		<Button text="Save"></Button>
-		<Button text="Save as"></Button>
-		<Button text="Cut"></Button>
-		<Button text="Copy"></Button>
-		<Button text="Paste"></Button>
-		<Button text="Undo">
+		<Button text="New" type="Transparent"></Button>
+		<Button text="Open" type="Transparent"></Button>
+		<Button text="Save" type="Transparent"></Button>
+		<Button text="Save as" type="Transparent"></Button>
+		<Button text="Cut" type="Transparent"></Button>
+		<Button text="Copy" type="Transparent"></Button>
+		<Button text="Paste" type="Transparent"></Button>
+		<Button text="Undo" type="Transparent">
 			<layoutData><OverflowToolbarLayoutData stayInOverflow="true" /></layoutData>
 		</Button>
 		<Button text="Redo">
@@ -68,17 +68,17 @@
 
 	<Label text="Only regular buttons can go to the action sheet. Labels, toggle buttons, segmented buttons, input controls, etc... are always visible."/>
 
-	<OverflowToolbar id="otb4" design="Transparent">
+	<OverflowToolbar id="otb4">
 		<ToolbarSpacer/>
-		<Button text="Button 1"></Button>
-		<Button text="Button 2"></Button>
-		<ToggleButton text="Toggle Button"></ToggleButton>
-		<Button text="Button 3"></Button>
+		<Button text="Button 1" type="Transparent"></Button>
+		<Button text="Button 2" type="Transparent"></Button>
+		<ToggleButton text="Toggle Button" type="Transparent"></ToggleButton>
+		<Button text="Button 3" type="Transparent"></Button>
 		<SegmentedButton>
-			<Button text="Segmented"></Button>
-			<Button text="Button"></Button>
+			<Button text="Segmented" type="Transparent"></Button>
+			<Button text="Button" type="Transparent"></Button>
 		</SegmentedButton>
-		<Button text="Button 4"></Button>
+		<Button text="Button 4" type="Transparent"></Button>
 	</OverflowToolbar>
 
 </mvc:View>
