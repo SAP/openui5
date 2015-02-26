@@ -41,6 +41,11 @@
 			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
+		  "control": "sap.m.IconTabBar",
+		  "url": "../IconTabBar.html",
+		  "appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.Label",
 			"url": "../Label.html",
 			"appComponent": "CA-UI5-CTR-SOF"
