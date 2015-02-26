@@ -45,11 +45,11 @@ sap.ui.define(["jquery.sap.global"],
 			mStyles["height"] = mStyles["line-height"] = sHeight;
 		}
 
-		if (sColor) {
+		if (!(sColor in sap.ui.core.IconColor)) {
 			mStyles["color"] = sColor;
 		}
 
-		if (sBackgroundColor) {
+		if (!(sBackgroundColor in sap.ui.core.IconColor)) {
 			mStyles["background-color"] = sBackgroundColor;
 		}
 
