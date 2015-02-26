@@ -396,18 +396,17 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._createLists = function () {
-			var that = this;
 			this._oLists = {};
 
 			LISTTYPES.forEach(function (sListName) {
-				that._oLists[sListName] = new List({
-					itemPress: that._fnHandleItemPress.bind(that),
+				this._oLists[sListName] = new List({
+					itemPress: this._fnHandleItemPress.bind(this),
 					visible: false
 				});
 
 				// no re-rendering
-				that._listPage.addAggregation("content", that._oLists[sListName], true);
-			});
+				this._listPage.addAggregation("content", this._oLists[sListName], true);
+			}, this);
 
 			return this;
 		};
@@ -419,13 +418,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._clearLists = function () {
-			var that = this;
-
 			LISTTYPES.forEach(function (sListName) {
-				if (that._oLists[sListName]) {
-					that._oLists[sListName].destroyAggregation("items", true); // no re-rendering
+				if (this._oLists[sListName]) {
+					this._oLists[sListName].destroyAggregation("items", true); // no re-rendering
 				}
-			});
+			}, this);
 
 			return this;
 		};
@@ -436,11 +433,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._destroyLists = function () {
-			var that = this;
-
 			LISTTYPES.forEach(function (sListName) {
-				that._oLists[sListName] = null;
-			});
+				this._oLists[sListName] = null;
+			}, this);
 
 			this._oLists = null;
 		};
@@ -452,16 +447,14 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._fillLists = function (aItems) {
-			var that = this;
-
 			aItems.forEach(function (oMessagePopoverItem) {
-				var oListItem = that._mapItemToListItem(oMessagePopoverItem),
-					oCloneListItem = that._mapItemToListItem(oMessagePopoverItem);
+				var oListItem = this._mapItemToListItem(oMessagePopoverItem),
+					oCloneListItem = this._mapItemToListItem(oMessagePopoverItem);
 
 				// add the mapped item to the List
-				that._oLists["all"].addAggregation("items", oListItem, true); // no re-rendering
-				that._oLists[oMessagePopoverItem.getType().toLowerCase()].addAggregation("items", oCloneListItem, true); // no re-rendering
-			});
+				this._oLists["all"].addAggregation("items", oListItem, true); // no re-rendering
+				this._oLists[oMessagePopoverItem.getType().toLowerCase()].addAggregation("items", oCloneListItem, true); // no re-rendering
+			}, this);
 		};
 
 		/**
@@ -531,22 +524,21 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 				};
 			};
 
-			for (var i = 0; i < LISTTYPES.length; i++) {
-				var sListName = LISTTYPES[i],
-					oList = that._oLists[sListName],
+			LISTTYPES.forEach(function (sListName) {
+				var oList = this._oLists[sListName],
 					iCount = oList.getItems().length,
 					oButton;
 
 				if (iCount > 0) {
 					oButton =  new Button(this.getId() + "-" + sListName, {
-						text: sListName == "all" ? that._oResourceBundle.getText("MESSAGEPOPOVER_ALL") : iCount,
+						text: sListName == "all" ? this._oResourceBundle.getText("MESSAGEPOPOVER_ALL") : iCount,
 						icon: ICONS[sListName],
 						press: pressClosure(sListName)
 					}).addStyleClass(CSSCLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
 
-					that._oSegmentedButton.addButton(oButton, true); // no re-rendering
+					this._oSegmentedButton.addButton(oButton, true); // no re-rendering
 				}
-			}
+			}, this);
 
 			if (sap.ui.Device.system.phone) {
 				this._fnFilterList("all");
@@ -633,17 +625,15 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		 * @private
 		 */
 		MessagePopover.prototype._fnFilterList = function (sCurrentListName) {
-			var that = this;
-
 			LISTTYPES.forEach(function (sListIterName) {
-				if (sListIterName != sCurrentListName && that._oLists[sListIterName].getVisible()) {
+				if (sListIterName != sCurrentListName && this._oLists[sListIterName].getVisible()) {
 					// Hide Lists if they are visible and their name is not the same as current list name
-					that._oLists[sListIterName].setVisible(false);
+					this._oLists[sListIterName].setVisible(false);
 				}
-			});
+			}, this);
 
-			that._sCurrentList = sCurrentListName;
-			that._oLists[sCurrentListName].setVisible(true);
+			this._sCurrentList = sCurrentListName;
+			this._oLists[sCurrentListName].setVisible(true);
 
 			this._oPopover
 				.setContentHeight(this._oPopover.getContentWidth())
