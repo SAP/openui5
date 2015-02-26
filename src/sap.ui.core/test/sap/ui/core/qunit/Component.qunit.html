@@ -232,6 +232,7 @@
 		var oTarget = oTargets.getTarget("myTarget");
 		assert.ok(oTarget, "the component created a target instance");
 		assert.strictEqual(oTarget._oOptions.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
+		assert.strictEqual(oViews._oComponent, this.oComponent, "the views instance knows its component");
 
 		//Cleanup
 		this.oComponent.destroy();
