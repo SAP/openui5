@@ -43,12 +43,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		return oLI.getTable() ? "row" : "option";
 	};
 	
-	// Returns the inner aria labelledby ids for the accessibility
-	GroupHeaderListItemRenderer.getAriaLabelledBy = function(oLI) {
-		return oLI.getId();
-	};
-	
-	// Returns the inner aria labelledby ids for the accessibility
+	// Returns the inner aria describedby ids for the accessibility
 	GroupHeaderListItemRenderer.getAriaDescribedBy = function(oLI) {
 		// announce group header first
 		var sDescribedBy = this.getAriaAnnouncement("group_header"),
