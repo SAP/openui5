@@ -34,11 +34,6 @@ sap.ui.define([
 
 			routing : {
 				config : {
-					// bugfix: right now there is a bug in the routing/targets, the prefixing for xml views is not working
-					// therefore the controlId "idAppControl" cannot be found
-					// Tobias is fixing this at the moment
-					rootView : "__xmlview0",
-					// end bugfix
 					routerClass : Router,
 					viewType : "XML",
 					viewPath : "sap.ui.demo.mdtemplate.view",
