@@ -140,5 +140,19 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 
 	});
 	
+	opaTest("Navigate directly to Line Item 7 of object 3 with hash: press back should navigate to object 3 and select it in the master list", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartTheAppOnADesktopDevice("#/object/ObjectID_3/lineitem/LineItemID_7");
+		
+		//Actions
+		When.iWaitUntilTheMasterListIsLoaded().
+			and.iPressTheBackButtonOnLineItemPage();
+
+		// Assertions
+		Then.iShouldBeOnTheObject3Page().
+			and.theObject3ShouldBeSelectedInTheMasterList().
+			and.iTeardownMyAppFrame();
+	});
+	
 	
 });
