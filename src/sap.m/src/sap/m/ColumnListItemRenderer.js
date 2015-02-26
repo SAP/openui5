@@ -78,6 +78,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		return "row";
 	};
 	
+	// Returns the inner aria labelledby ids for the accessibility
+	ColumnListItemRenderer.getAriaLabelledBy = function(oLI) {
+		var oTable = oLI.getTable(); 
+		if (!oTable || !oTable.hasPopin()) {
+			return;
+		}
+		
+		// when table has pop-in let the screen readers announce it
+		return oLI.getId() + " " + oLI.getId() + "-sub";
+	};
 	
 	/**
 	 * Renders the HTML for the given control, using the provided
