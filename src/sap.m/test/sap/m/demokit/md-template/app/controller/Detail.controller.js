@@ -46,9 +46,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_onMasterMatched : function () {
-			this.getOwnerComponent().oListSelector.oWhenListLoadingIsDone.then(function (sPathToFirstItem) {
-				if (sPathToFirstItem) {
-					this._bindView(sPathToFirstItem);
+			this.getOwnerComponent().oListSelector.oWhenListLoadingIsDone.then(function (mParams) {
+				if (mParams.path) {
+					this._bindView(mParams.path);
 				}
 			}.bind(this),
 			function () {
@@ -89,8 +89,12 @@ sap.ui.define([
 					this.getView().setBusyIndicatorDelay(null);
 					this.getView().setBusy(false);
 					this.getRouter().getTargets().display("detailObjectNotFound");
+					// if object could not be found, the selection in the master list
+					// does not make sense anymore. 
+					this.getOwnerComponent().oListSelector.clearMasterListSelection();
 				}.bind(this)
 			);
+
 		},
 
 		/**
