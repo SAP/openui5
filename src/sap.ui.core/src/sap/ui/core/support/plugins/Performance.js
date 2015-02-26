@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 	*/
 			this.$("active").click(jQuery.proxy(function(oEvent) {
 				var bActive = false;
-				if (this.$("active").attr("checked")) {
+				if (this.$("active").prop("checked")) {
 					bActive = true;
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
