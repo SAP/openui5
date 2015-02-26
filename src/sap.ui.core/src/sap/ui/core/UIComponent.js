@@ -130,7 +130,9 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 		} else if (oRoutingManifestEntry.targets) {
 			jQuery.sap.require("sap.ui.core.routing.Targets");
 			jQuery.sap.require("sap.ui.core.routing.Views");
-			this._oViews = new sap.ui.core.routing.Views();
+			this._oViews = new sap.ui.core.routing.Views({
+				component: this
+			});
 			var fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass || sap.ui.core.routing.Targets);
 			this._oTargets = new fnTargetsConstructor({
 				targets: oRoutingManifestEntry.targets,
