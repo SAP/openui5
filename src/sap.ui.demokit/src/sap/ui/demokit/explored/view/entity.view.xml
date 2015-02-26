@@ -77,7 +77,7 @@
 								items="{/values}" >
 								<columns>
 									<Column><Label text="Name" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>
@@ -136,7 +136,7 @@
 									<Column><Label text="Name" /></Column>
 									<Column><Label text="Type" /></Column>
 									<Column><Label text="Default" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
 								</columns>
 								<items>
@@ -186,7 +186,7 @@
 									<Column><Label text="Name" /></Column>
 									<Column><Label text="Cardinality" /></Column>
 									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
 								</columns>
 								<items>
@@ -237,7 +237,7 @@
 									<Column><Label text="Name" /></Column>
 									<Column><Label text="Cardinality" /></Column>
 									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
 								</columns>
 								<items>
@@ -281,7 +281,7 @@
 									<Column><Label text="Name" /></Column>
 									<Column><Label text="Param" /></Column>
 									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
 								</columns>
 								<items>
@@ -325,7 +325,7 @@
 									<Column><Label text="Name" /></Column>
 									<Column><Label text="Param" /></Column>
 									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
 								</columns>
 								<items>

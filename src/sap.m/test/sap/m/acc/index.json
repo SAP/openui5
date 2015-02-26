@@ -56,6 +56,12 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.List",
+			"url": "../List.html",
+			"desc" : "Including StandardListItem, DisplayListItem, InputListItem, CustomListItem",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.MessageBox",
 			"url": "../MessageBox.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -143,6 +149,11 @@
 		{
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Table",
+			"url": "../Table.html",
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{

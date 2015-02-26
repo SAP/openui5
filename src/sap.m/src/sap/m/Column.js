@@ -88,10 +88,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			popinHAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin, deprecated: true},
 	
 			/**
-			 * Defines the display options of pop-in.
-			 * Possible values are
-			 * 1 - "Block"(Header is displayed in first line and value field in next line.)
-			 * 2 - "Inline" (Value field is displayed next to the header in same line.)
+			 * Defines enumerated display options for the pop-in.
 			 * @since 1.13.2
 			 */
 			popinDisplay : {type : "sap.m.PopinDisplay", group : "Appearance", defaultValue : sap.m.PopinDisplay.Block},
