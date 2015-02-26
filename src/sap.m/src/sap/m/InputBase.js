@@ -833,37 +833,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.setValueState = function(sValueState) {
 		var sOldValueState = this.getValueState();
-		sValueState = this.validateProperty("valueState", sValueState);
-
+		this.setProperty("valueState", sValueState, true);
+		
+		// get the value back in case of invalid value 
+		sValueState = this.getValueState();
 		if (sValueState === sOldValueState) {
 			return this;
 		}
 
-		if (!this.isActive()) {
-			return this.setProperty("valueState", sValueState);
+		var oDomRef = this.getDomRef();
+		if (!oDomRef) {
+			return this;
 		}
 
-		var $container = this.$();
-		this.setProperty("valueState", sValueState, true);
+		var $This = jQuery(oDomRef),
+			$Input = jQuery(this.getFocusDomRef()),
+			mValueState = sap.ui.core.ValueState;
 
-		if (sOldValueState !== sap.ui.core.ValueState.None) {
-			$container.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
-			this._$input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
+		if (sValueState === mValueState.Error) {
+			$Input.attr("aria-invalid", "true");
+		} else {
+			$Input.removeAttr("aria-invalid");
 		}
 
-		if (sValueState  !== sap.ui.core.ValueState.None) {
-			$container.addClass("sapMInputBaseState sapMInputBase" + sValueState);
-			this._$input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
+		if (sOldValueState !== mValueState.None) {
+			$This.removeClass("sapMInputBaseState sapMInputBase" + sOldValueState);
+			$Input.removeClass("sapMInputBaseStateInner sapMInputBase" + sOldValueState + "Inner");
+		}
+
+		if (sValueState !== mValueState.None) {
+			$This.addClass("sapMInputBaseState sapMInputBase" + sValueState);
+			$Input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
 		}
 
 		// set tooltip based on state (will be undefined when state is None)
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
-		this.$().attr("title", sTooltip || "");
+		$This.attr("title", sTooltip || "");
 
-		if (this.getFocusDomRef() === document.activeElement) {
+		if ($Input[0] === document.activeElement) {
 			switch (sValueState) {
-				case sap.ui.core.ValueState.Error:
-				case sap.ui.core.ValueState.Warning:
+				case mValueState.Error:
+				case mValueState.Warning:
 					this.openValueStateMessage();
 					break;
 				default:
