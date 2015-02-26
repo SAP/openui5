@@ -847,8 +847,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				this._validateCurrentText(true);
 		}
 
-			
-		
 		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator) {
 			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			if (oRelatedControl) {
