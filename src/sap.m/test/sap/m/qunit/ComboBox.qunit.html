@@ -7113,7 +7113,10 @@
 
 				// act
 				oComboBox.close();
-				this.clock.tick(1000);
+
+				if (jQuery.support.cssAnimations) {	// no animation on IE9
+					this.clock.tick(1000);
+				}
 
 				// assert
 				strictEqual(fnOnAfterCloseSpy.callCount, 1, "onAfterClose() called exactly once");
