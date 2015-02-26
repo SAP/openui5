@@ -101,16 +101,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.writeInnerContent = function(oRm, oControl) {
+
+		if (!oControl.getDescription()) {
+			this.writeValueHelpIcon(oRm, oControl);
+		}else {
+			var sDescription = oControl.getDescription();
+			oRm.write("<span>");
+			this.writeValueHelpIcon(oRm, oControl);
+			oRm.writeEscaped(sDescription);
+			oRm.write("</span>");
+		}
+
+	};
+
+	InputRenderer.writeValueHelpIcon = function(oRm, oControl) {
+
 		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
 			oRm.write('<div class="sapMInputValHelp">');
 			oRm.renderControl(oControl._getValueHelpIcon());
 			oRm.write("</div>");
 		}
-		if (oControl.getDescription()) {
-			var sDescription = oControl.getDescription();
-			var sSpan = "<span>" + sDescription + "</span>";
-			oRm.write(sSpan);
-		}
+
 	};
 
 	/**
