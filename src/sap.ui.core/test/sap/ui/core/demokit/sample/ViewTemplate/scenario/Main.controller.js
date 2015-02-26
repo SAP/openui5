@@ -80,7 +80,7 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 	},
 
 	_getDetailView: function () {
-		return this.getView().byId("detailBox").getItems()[0];
+		return this.getView().byId("detailBox").getContent()[0];
 	},
 
 	_getSelectedSet: function () {
@@ -109,7 +109,7 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 		});
 
 		oDetailView.bindElement(sPath);
-		this.getView().byId("detailBox").destroyItems().addItem(oDetailView);
+		this.getView().byId("detailBox").destroyContent().addContent(oDetailView);
 		this.onSourceCode();
 	}
 });
