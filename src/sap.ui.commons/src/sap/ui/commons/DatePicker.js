@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 			//increase by one day
 			var that = this;
-			_incraseDate(that, 1, "day");
+			_increaseDate(that, 1, "day");
 
 			oEvent.preventDefault(); // do not move cursor
 
@@ -134,10 +134,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 			var that = this;
 			if (!oEvent.ctrlKey && oEvent.shiftKey) {
 				// increase by one month
-				_incraseDate(that, 1, "month");
+				_increaseDate(that, 1, "month");
 			} else {
 				// increase by one year
-				_incraseDate(that, 1, "year");
+				_increaseDate(that, 1, "year");
 			}
 
 			oEvent.preventDefault(); // do not move cursor
@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 			//decrease by one day
 			var that = this;
-			_incraseDate(that, -1, "day");
+			_increaseDate(that, -1, "day");
 
 			oEvent.preventDefault(); // do not move cursor
 
@@ -159,10 +159,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 			var that = this;
 			if (!oEvent.ctrlKey && oEvent.shiftKey) {
 				// decrease by one month
-				_incraseDate(that, -1, "month");
+				_increaseDate(that, -1, "month");
 			} else {
 				// decrease by one year
-				_incraseDate(that, -1, "year");
+				_increaseDate(that, -1, "year");
 			}
 
 			oEvent.preventDefault(); // do not move cursor
@@ -659,7 +659,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 		}
 
-		function _incraseDate(oThis, iNumber, sUnit) {
+		function _increaseDate(oThis, iNumber, sUnit) {
 
 			var oOldDate = oThis._oDate;
 
@@ -675,9 +675,21 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 					break;
 				case "month":
 					oDate.setMonth(oDate.getMonth() + iNumber);
+					var iMonth = (oOldDate.getMonth() + iNumber) % 12;
+					if (iMonth < 0) {
+						iMonth = 12 + iMonth;
+					}
+					while (oDate.getMonth() != iMonth) {
+						// day don't exist in this month (e.g. 31th)
+						oDate.setDate(oDate.getDate() - 1);
+					}
 					break;
 				case "year":
 					oDate.setFullYear(oDate.getFullYear() + iNumber);
+					while (oDate.getMonth() != oOldDate.getMonth()) {
+						// day don't exist in this month (February 28th)
+						oDate.setDate(oDate.getDate() - 1);
+					}
 					break;
 
 				default:
