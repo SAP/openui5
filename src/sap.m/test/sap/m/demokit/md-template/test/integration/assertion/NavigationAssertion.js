@@ -38,6 +38,30 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
+		theObjectListShouldHave10Entries : function () {
+			return this.waitFor({
+				id : "list",
+				viewName : "Master",
+				matchers : [ new AggregationLengthEquals({name : "items", length : 10}) ],
+				success : function (oList) {
+					strictEqual(oList.getItems().length, 10, "The list has 10 items");
+				},
+				errorMessage : "List does not have 10 entries."
+			});
+		},
+		
+		theMasterPageHeaderShouldDisplay20Entries : function () {
+			return this.waitFor({
+				id : "page",
+				viewName : "Master",
+				matchers : [ new PropertyStrictEquals({name : "title", value : "Objects (20)"}) ],
+				success : function (oList) {
+					ok(true, "The master page header displays 20 items");
+				},
+				errorMessage : "The  master page header does not display 20 items."
+			});
+		},
+
 		iShouldBeOnPage : function (sViewName, sTitleName) {
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
@@ -74,6 +98,18 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 					ok(true, "The list has 4 items");
 				},
 				errorMessage : "The list does not have 4 items."
+			});
+		},
+		
+		theLineItemsHeaderShouldDisplay4Entries : function () {
+			return this.waitFor({
+				id : "lineItemsHeader",
+				viewName : "Detail",
+				matchers : [ new PropertyStrictEquals({name : "text", value : "Line Items (4)"}) ],
+				success : function (oList) {
+					ok(true, "The line item list displays 4 items");
+				},
+				errorMessage : "The line item list does not display 4 items."
 			});
 		},
 
