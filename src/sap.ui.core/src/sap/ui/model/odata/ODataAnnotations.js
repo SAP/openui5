@@ -138,16 +138,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Fire event loaded to attached listeners.
-	 *
-	 * @public
-	 * @returns {boolean} whether annotations request has failed
-	 */
-	ODataAnnotations.prototype.isFailed = function() {
-		return this.error !== null;
-	};
-
-	/**
-	 * Fire event loaded to attached listeners.
 	 * 
 	 * @param {map} [mArguments] Map of arguments that will be given as parameters to teh event handler
 	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining

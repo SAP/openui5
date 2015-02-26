@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				}
 			},
 			associations: {
-				"persoDialogFor": sap.m.Table
+				"persoDialogFor": "sap.m.Table"
 			},
 			events: {
 				confirm: {},

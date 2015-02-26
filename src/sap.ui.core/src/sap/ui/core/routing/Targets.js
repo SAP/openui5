@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 		 * @public
 		 * @alias sap.ui.core.routing.Targets
 		 */
-		return EventProvider.extend("sap.ui.core.routing.Targets", {
+		return EventProvider.extend("sap.ui.core.routing.Targets", /** @lends sap.ui.core.routing.Targets.prototype */ {
 
 			constructor : function(oOptions) {
 				var sTargetOptions,
@@ -453,8 +453,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 			},
 
 			/**
-			 * @private
 			 * hook to distinguish between the router and an application calling this
+			 * @private
 			 */
 			_display : function (vTargets, vData) {
 				var that = this;

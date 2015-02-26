@@ -341,7 +341,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	* Is called after renderer is finished to show the busy state
 	* @override
 	* @protected
-	* @returns {this} this pointer for chaining
+	* @returns {sap.m.SelectDialog} this pointer for chaining
 	*/
 	SelectDialog.prototype.onAfterRendering = function () {
 		if (this._bInitBusy && this._bFirstRender) {
@@ -356,7 +356,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	* Invalidates the dialog instead of this control (we don't have a renderer)
 	* @override
 	* @protected
-	* @returns {this} this pointer for chaining
+	* @returns {sap.m.SelectDialog} this pointer for chaining
 	*/
 	SelectDialog.prototype.invalidate = function () {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside
@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	* Sets the growing threshold to the internal list
 	* @public
 	* @param {int} iValue Value for the list's growing threshold.
-	* @returns {this} this pointer for chaining
+	* @returns {sap.m.SelectDialog} this pointer for chaining
 	*/
 	SelectDialog.prototype.setGrowingThreshold = function (iValue) {
 		this._oList.setGrowingThreshold(iValue);
@@ -433,7 +433,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @override
 	 * @public
 	 * @param {boolean} bMulti flag for multi selection mode
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.setMultiSelect = function (bMulti) {
 		this.setProperty("multiSelect", bMulti, true);
@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @override
 	 * @public
 	 * @param {string} sTitle the title text for the dialog
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.setTitle = function (sTitle) {
 		this._oDialog.setTitle(sTitle);
@@ -469,7 +469,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @override
 	 * @public
 	 * @param {string} sNoDataText the no data text for the list
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.setNoDataText = function (sNoDataText) {
 		this._oList.setNoDataText(sNoDataText);
@@ -502,7 +502,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @param {sap.ui.core.CSSSize} sWidth the new content width value for the dialog
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.setContentWidth = function (sWidth) {
 		this._oDialog.setContentWidth(sWidth);
@@ -525,7 +525,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @param {sap.ui.core.CSSSize} sHeight the new content width value for the dialog
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.setContentHeight = function (sHeight) {
 		this._oDialog.setContentHeight(sHeight);
@@ -538,7 +538,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Forward method to the inner dialog: addStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.addStyleClass = function () {
 		this._oDialog.addStyleClass.apply(this._oDialog, arguments);
@@ -549,7 +549,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Forward method to the inner dialog: removeStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.removeStyleClass = function () {
 		this._oDialog.removeStyleClass.apply(this._oDialog, arguments);
@@ -560,7 +560,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Forward method to the inner dialog: toggleStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.toggleStyleClass = function () {
 		this._oDialog.toggleStyleClass.apply(this._oDialog, arguments);
@@ -602,7 +602,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @public
 	 * @param {sap.ui.Model} oModel the model that holds the data for the list
 	 * @param {string} sModelName the optional model name
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype._setModel = SelectDialog.prototype.setModel;
 	SelectDialog.prototype.setModel = function (oModel, sModelName) {
@@ -651,7 +651,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @protected
 	 * @param {string} sAggregationName the name for the binding
 	 * @param {object} oBindingInfo the configuration parameters for the binding
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype.bindAggregation = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -725,7 +725,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @public
 	 * @param {sap.ui.model.Context} oContext the new context
 	 * @param {string} sModelName the optional model name
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 
 	SelectDialog.prototype._setBindingContext = SelectDialog.prototype.setBindingContext;
@@ -752,7 +752,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @private
 	 * @param {string} sValue the new filter value or undefined if called by management functions
 	 * @param {string} sEventType the search field event type that has been called (liveChange / search)
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} this pointer for chaining
 	 */
 	SelectDialog.prototype._executeSearch = function (sValue, sEventType) {
 

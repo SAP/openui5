@@ -290,12 +290,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			BatchRequestCompleted : "batchRequestCompleted"
 	};
 
+	// document event again, as parameters differ from sap.ui.model.Model#event:requestFailed
 	/**
 	 * The 'requestFailed' event is fired, when data retrieval from a backend failed.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
-	 * @name sap.ui.model.Model#requestFailed
+	 * @name sap.ui.model.odata.v2.ODataModel#requestFailed
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
@@ -312,12 +313,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 
-	 /**
+	// document event again, as parameters differ from sap.ui.model.Model#event:requestSent
+	/**
 	 * The 'requestSent' event is fired, after a request has been sent to a backend.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
-	 * @name sap.ui.model.Model#requestSent
+	 * @name sap.ui.model.odata.v2.ODataModel#requestSent
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
@@ -331,13 +333,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 
-	 /**
+	// document event again, as parameters differ from sap.ui.model.Model#event:requestCompleted
+	/**
 	 * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response),
 	 * no matter whether the request succeeded or not.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
-	 * @name sap.ui.model.Model#requestCompleted
+	 * @name sap.ui.model.odata.v2.ODataModel#requestCompleted
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource

@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @author SAP SE
 		 * @since 1.22
 		 */
-		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", {
+		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
 			constructor : function() {
 				var that = this;

@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 		 * @param {sap.ui.core.UIComponent} [oOptions.component] the owner of all the views that will be created by this Instance.
 		 * @alias sap.ui.core.routing.Views
 		 */
-		return EventProvider.extend("sap.ui.core.routing.Views", {
+		return EventProvider.extend("sap.ui.core.routing.Views", /** @lends sap.ui.core.routing.Views.prototype */ {
 
 			constructor : function (oOptions) {
 				if (!oOptions) {

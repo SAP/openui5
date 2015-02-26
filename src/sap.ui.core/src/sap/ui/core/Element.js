@@ -64,16 +64,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 			"abstract" : true,
 			publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindElement", "unbindElement", "getElementBinding", "prop", "getLayoutData", "setLayoutData" ],
 			library : "sap.ui.core",
-			properties : {
-				/*
-				 * TODO model id as a property as soon as write-once-during-init properties become available
-				 * can't yet declare it as a property: would show up in ControlTree and applySettings would allow to modify id
-				 * 
-				 * The unique identifier within a page, either configured or automatically generated.
-				 *
-				id : {name : "id", type : "string", group : "Identification", defaultValue : '', readOnly : true}
-				*/
-			},
 			aggregations : {
 				
 				/**

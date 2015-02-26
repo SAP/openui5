@@ -150,65 +150,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 
-	/**
-	 * Open the dialog.
-	 *
-	 * @name sap.m.ViewSettingsDialog#open
-	 * @function
-	 * @param {object} oControl
-	 *         This is the control to which the dialog will be placed. It can be not only a UI5 control, but also an existing dom reference.
-	 * @type sap.m.ViewSettingsDialog
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Returns the selected filters as an array of ViewSettingsItems. It can be used to create matching sorters and filters to apply the selected settings to the data.
-	 *
-	 * @name sap.m.ViewSettingsDialog#getSelectedFilters
-	 * @function
-	 * @type sap.m.ViewSettingsItem[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Returns the filter string in the format "filter name (subfilter1 name, subfilter2 name, ...), ..." to be displayed in table/list headers. For custom filters and preset filters it will only add the filter name to the resulting string.
-	 *
-	 * @name sap.m.ViewSettingsDialog#getSelectedFilterString
-	 * @function
-	 * @type string
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Returns the filter state of the dialog based on filter keys 8the following format: { key: boolean }. It can be used to create matching sorters and filters to apply the selected settings to the data.
-	 *
-	 * @name sap.m.ViewSettingsDialog#getSelectedFilterKeys
-	 * @function
-	 * @type object
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Sets the filter state of the dialog based on filter keys.
-	 *
-	 * @name sap.m.ViewSettingsDialog#setSelectedFilterKeys
-	 * @function
-	 * @param {object} oFilters
-	 *         Configuration object to set the dialogs filter state with the following format: { key: boolean }. Setting boolean to true will set the filter to true, false or ommiting an entry will set the filter to false. It can be used to set the dialog state based on presets.
-	 * @type sap.m.ViewSettingsDialog
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
 	/* =========================================================== */
 	/* begin: API methods */
 	/* =========================================================== */
@@ -359,7 +300,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Forward method to the inner dialog: addStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.addStyleClass = function () {
 		var oDialog = this._getDialog();
@@ -372,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Forward method to the inner dialog: removeStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.removeStyleClass = function () {
 		var oDialog = this._getDialog();
@@ -385,7 +326,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Forward method to the inner dialog: toggleStyleClass
 	 * @public
 	 * @override
-	 * @returns {this} this pointer for chaining
+	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.toggleStyleClass = function () {
 		var oDialog = this._getDialog();
@@ -604,11 +545,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Opens the view settings dialog relative to the parent control
 	 *
-	 * @public
-	 * @param {String} the initial page to be opened in the dialog
-	 *	available values: "sort", "group", "filter"
-	 *
+	 * @param {string} the initial page to be opened in the dialog. 
+	 *                 available values: "sort", "group", "filter"
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.open = function(sCurrentPage) {
 		// add to static UI area manually because we don't have a renderer
@@ -665,11 +606,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the selected filters in an array of ViewSettingsItem.
-	 *
+	 * Returns the selected filters as an array of ViewSettingsItems. 
+	 * 
+	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
 	 * @overwrite
 	 * @public
 	 * @return {sap.m.ViewSettingsItem[]} an array of selected filter items
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterItems = function() {
 		var aSelectedFilterItems = [], aFilterItems = this.getFilterItems(), aSubFilterItems, bMultiSelect = true, i = 0, j;
@@ -704,6 +647,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @public
 	 * @return {string} the selected filter string
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterString = function() {
 		var sFilterString = "", sSubfilterString, oPresetFilterItem = this
@@ -762,10 +706,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Get the selected filter object in format {key: boolean}
+	 * Get the selected filter object in format {key: boolean}.
+	 * 
+	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
 	 *
 	 * @public
 	 * @return {object} an object with item and subitem keys
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterKeys = function() {
 		var oSelectedFilterKeys = {}, aSelectedFilterItems = this
@@ -783,9 +730,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Set the selected filter object in format {key: boolean}
 	 *
 	 * @public
-	 * @param {object}
-	 *            oSelectedFilterKeys an object with filter item and sub keys
+	 * @param {object} oSelectedFilterKeys 
+	 *         A configuration object with filter item and sub item keys in the format: { key: boolean }. 
+	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false. 
+	 *         It can be used to set the dialog state based on presets.
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterKeys = function(
 			oSelectedFilterKeys) {
