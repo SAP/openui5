@@ -346,6 +346,7 @@
 					ok(mDomRefs.$SwtTextOff.length, "The switch html div text element exists");
 					ok(mDomRefs.$SwtSpanOn.length, "The switch html span inner element exists");
 					ok(mDomRefs.$SwtSpanOff.length, "The switch html span inner element exists");
+					strictEqual(oSwitch.getDomRef().getAttribute("aria-live"), "assertive", "The switch is a live region");
 
 					if (mDomRefs.oSwitch.getName()) {
 						ok(mDomRefs.$Checkbox.length, 'The checkbox html input element exists');
