@@ -6720,6 +6720,7 @@
 
 				// assert
 				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
+				strictEqual(oSelect.getDomRef().getAttribute("aria-owns"), oSelect.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
 
 				// cleanup
 				oSelect.destroy();
@@ -6755,7 +6756,7 @@
 
 				// assert
 				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
-				strictEqual(oSelect.$("inner").attr("aria-activedescendant"), undefined, 'The attribute "aria-activedescendant" is not set because it is invisible');
+				strictEqual(oSelect.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
