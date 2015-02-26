@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					 */
 					documentId : {type : "string"},
 					/**
-					 * A FileList of individually selected files from the underlying system. See {@link http://www.w3.org/TR/FileAPI/#dfn-filelist|FileList} for the interface definition.
+					 * A FileList of individually selected files from the underlying system. See www.w3.org for the FileList Interface definition.
 					 * Limitation: Internet Explorer 9 supports only single file with property file.name.
 					 * Since version 1.28.
 					 */
@@ -132,15 +132,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			},
 
 			/**
-			 * The event is triggered when a fileDeleted event occurs, typically by choosing the Delete pushbutton.
+			 * The event is triggered when the Delete pushbutton is pressed.
 			 */
 			fileDeleted : {
 				parameters : {
-
 					/**
 					 * An unique Id of the attached document.
+					 * This event is deprecated since version 1.28.0, use parameter item instead.
+					 * @deprecated Since version 1.28.0. This event is deprecated, use parameter item instead.
 					 */
-					documentId : {type : "string"}
+					documentId : {type : "string"},
+					/**
+					 * An item to be deleted from the collection.
+					 * Since version 1.28.
+					 */
+					item : {type : "sap.m.UploadCollectionItem"}
 				}
 			},
 
@@ -895,22 +901,29 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			} else {
 				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", sFileName);
 			}
+			oContext._oItemForDelete = aItems[index];
 			sap.m.MessageBox.show(sMessageText, {
 				title : this._oRb.getText("UPLOADCOLLECTION_DELETE_TITLE"),
 				actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-				onClose : function(oAction) {
-					if (oAction === sap.m.MessageBox.Action.OK) {
-						// fire event
-						oContext.fireFileDeleted({
-							documentId : aItems[index].getDocumentId()
-						});
-						aItems[index]._status = UploadCollection._toBeDeletedStatus;
-					}
-				},
+				onClose : oContext._onCloseMessageBoxDeleteItem.bind(oContext),
 				dialogId : "messageBoxDeleteFile",
 				styleClass : sCompact
 			});
 		}
+	};
+
+	UploadCollection.prototype._onCloseMessageBoxDeleteItem = function (oAction) {
+		if (oAction === sap.m.MessageBox.Action.OK) {
+			// fire event
+			this.fireFileDeleted({
+				// deprecated
+				documentId : this._oItemForDelete.getDocumentId(),
+				// new
+				item : this._oItemForDelete
+			});
+			this._oItemForDelete._status = UploadCollection._toBeDeletedStatus;
+		} 
+		delete this._oItemForDelete;
 	};
 
 	/**
