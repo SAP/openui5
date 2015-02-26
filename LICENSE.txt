@@ -449,13 +449,13 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2011
 
-Component: Sinon.JS 1.5.2
+Component: Sinon.JS 1.10.3
 Licensor: Christian Johansen
 Website: http://github.com/cjohansen/Sinon.JS/
 License: BSD 3-clause "New" or "Revised" License
 <OWNER> = Christian Johansen
 <ORGANIZATION> = Christian Johansen
-<YEAR> = 2010-2012
+<YEAR> = 2010-2014
 
 Component: SwipeView
 Licensor: Matteo Spinelli
