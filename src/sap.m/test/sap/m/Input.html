@@ -900,6 +900,15 @@
 						value: "This is the end",
 						placeholder: "placeholder",
 						textAlign: sap.ui.core.TextAlign.End
+					}),
+					new sap.m.Input({
+						placeholder: "placeholder",
+						description: "Test",
+						fieldWidth: "30%",
+						showValueHelp: true,
+						valueHelpRequest: function(oEvent) {
+							sap.m.MessageBox.alert("Value help requested");
+						}
 					})
 			],
 			footer: createFooter()
