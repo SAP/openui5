@@ -229,7 +229,7 @@
 						equal(oEvent.getParameters().getParameter("files")[0].name, "file1", "Correct file name in change event provided by oEvent.getParameters().getParameter('files').name.");
 						equal(oEvent.getParameters().getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters().getParameters()['files']['name'].");
 						equal(oEvent.getParameter("mParameters")["files"][0]["name"], "file1", "Correct file 1 in change event provided by oEvent.getParameter('mParameters')['files'][0]['name'].");
-						
+
 						// check for properly provided parameters
 						equal(oEvent.getParameter("files")[0].name, "file1", "Correct file name 1 in change event provided byoEvent.getParameter('files')[0].name.");
 						equal(oEvent.getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters()['files'][0]['name'].");
@@ -238,10 +238,10 @@
 						// deprecated
 						deepEqual(oEvent.getParameters().getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameter('files').");
 						deepEqual(oEvent.getParameters().getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameter('files').");
-						
+
 						deepEqual(oEvent.getParameters().getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameters()['files'].");
 						deepEqual(oEvent.getParameters().getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameters()['files'].");
-						
+
 						deepEqual(oEvent.getParameter("mParameters").files[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('mParameters').files[0].");
 						deepEqual(oEvent.getParameter("mParameters").files[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('mParameters').files[1].");
 
@@ -253,9 +253,12 @@
 					}
 				},
 				fileDeleted : function(oEvent) {
-					var aContexts = this.getBinding("items").getContexts();
-					var sDocumentId = oEvent.getParameter("documentId");
-				},				
+					ok(true, "Event fileDeleted fired");
+					// deprecated
+			 		equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete.");
+					// new
+			 		equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete.");
+				},
 				uploadComplete : function(oEvent) {
 					ok(true, "Event uploadComplete fired");
 					equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event ");
@@ -314,7 +317,7 @@
 		aFiles.push(oFile1);
 		aFiles.push(oFile2);
 		var oFileUploader = this.oUploadCollection._getFileUploader();
-		
+
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 			// at present FileUploader does not set the parameter files for IE9
 			expect(6);
@@ -330,8 +333,11 @@
 		}
 	});
 
-// 	test("Event fileDeleted", function() {
-// 	});
+	test("Event fileDeleted", function() {
+		expect(3);
+		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[1]; //documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcde" 
+		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+	});
 
 	test("Event complete", function() {
 		var sFileName = "file1";
