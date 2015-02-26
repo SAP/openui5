@@ -4062,7 +4062,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			oEvent.preventDefault();
 		} else {
 			var oIN = this._oItemNavigation;
-			if (jQuery.contains($this.find('.sapUiTableCCnt')[0], oEvent.target)) {
+			if (jQuery.contains($this.find('.sapUiTableCCnt')[0], oEvent.target) && this.getColumnHeaderVisible()) {
 				var iColumn = oIN.getFocusedIndex() % oIN.iColumns;
 				oIN.focusItem(iColumn, oEvent);
 				oEvent.preventDefault();
