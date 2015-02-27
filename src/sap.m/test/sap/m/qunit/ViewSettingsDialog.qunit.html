@@ -498,7 +498,7 @@
 
 					this.clock.tick(1000);
 
-					if (!sap.ui.Device.system.phone) {
+					if (!sap.ui.Device.system.phone && vsd5._filterDetailList) {
 						strictEqual(document.activeElement, vsd5._filterDetailList.getItems()[0].getFocusDomRef(), "The first item should get the focus");
 					}
 					vsd5._dialog.getEndButton().firePress();
