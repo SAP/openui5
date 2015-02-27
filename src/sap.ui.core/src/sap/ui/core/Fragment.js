@@ -57,7 +57,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				/*
 				 * An enclosing view that contains this instance of the fragment (optional)
 				 */
-				containingView : true
+				containingView : true,
+				/*
+				 * A controller of a containing View that should be used by this fragment (optional)
+				 */
+				oController : true,
+				/*
+				 * The ID of this fragment (optional)
+				 */
+				sId : true
 			}
 		},
 		
