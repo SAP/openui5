@@ -134,7 +134,7 @@ sap.ui.require(
 			};
 
 			// Act
-			this.oListSelector.selectAndScrollToAListItem(sBindingPath);
+			this.oListSelector.selectAListItem(sBindingPath);
 			// Resolve list loading
 			this.fnAct();
 		});
@@ -150,7 +150,7 @@ sap.ui.require(
 			};
 
 			// Act
-			this.oListSelector.selectAndScrollToAListItem(sBindingPath);
+			this.oListSelector.selectAListItem(sBindingPath);
 			// Resolve list loading
 			this.fnAct();
 
@@ -167,7 +167,7 @@ sap.ui.require(
 			};
 
 			// Act
-			this.oListSelector.selectAndScrollToAListItem(sBindingPath);
+			this.oListSelector.selectAListItem(sBindingPath);
 			// Resolve list loading
 			this.fnAct();
 
@@ -178,14 +178,14 @@ sap.ui.require(
 		QUnit.test("Should select the first item of the list", function (assert) {
 			// Arrange
 			var sBindingPath = "a binding path",
-				fnSelectAndScrollToAListItemStub = this.stub(this.oListSelector, "selectAndScrollToAListItem", jQuery.noop);
+				fnSelectAListItemStub = this.stub(this.oListSelector, "selectAListItem", jQuery.noop);
 
 			// Act
-			this.oListSelector.selectAndScrollToFirstItem();
+			this.oListSelector.selectFirstItem();
 			// Resolve list loading
 			this.fnAct(sBindingPath);
 
-			ok(fnSelectAndScrollToAListItemStub.calledWithExactly(sBindingPath), "Did select the first item");
+			ok(fnSelectAListItemStub.calledWithExactly(sBindingPath), "Did select the first item");
 		});
 	}
 
