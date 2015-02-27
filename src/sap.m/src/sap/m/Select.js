@@ -356,6 +356,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "true");
+
+				// expose a parent/child contextual relationship to assistive technologies
+				// note: the "aria-owns" attribute is set when the list is visible and in view
+				oDomRef.setAttribute("aria-owns", this.getList().getId());
 			}
 		};
 
@@ -380,6 +384,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
+
+				// note: the "aria-owns" attribute is removed when the list is not visible and in view
+				oDomRef.removeAttribute("aria-owns");
 			}
 		};
 
