@@ -3,9 +3,10 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
+	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<VBox>
+	<layout:VerticalLayout>
 		<!-- Note: "meta>" MUST point to an entity set! -->
 		<template:with path="meta>entityType" helper="sap.ui.model.odata.AnnotationHelper.gotoEntityType" var="entityType">
 
@@ -64,5 +65,5 @@
 				</template:with>
 			</form:SimpleForm>
 		</template:with>
-	</VBox>
+	</layout:VerticalLayout>
 </mvc:View>
