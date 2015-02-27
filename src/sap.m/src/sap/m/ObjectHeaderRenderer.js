@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		} else {
 			oOH._introText = new sap.m.Text(oOH.getId() + "-intro");
 			oOH._introText.setText(oOH.getIntro());
-			oOH._introText.setMaxLines(1);
+			oOH._introText.setMaxLines(3);
 		}
 		// set text direction of the intro
 		oOH._introText.setTextDirection(oOH.getIntroTextDirection());
