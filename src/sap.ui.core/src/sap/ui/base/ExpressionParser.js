@@ -405,8 +405,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					oTokenizer.setIndex(iIndex + aMatches[0].length);
 				}
 			} else if (/\d/.test(ch)
-					|| (ch === "." || ch === "-")
-						&& /\d/.test(sInput.charAt(oTokenizer.getIndex() + 1))) {
+					|| ch === "." && /\d/.test(sInput.charAt(oTokenizer.getIndex() + 1))) {
 				oToken = {id: "CONSTANT", value: oTokenizer.number()};
 			} else if (ch === "'" || ch === '"') {
 				oToken = {id: "CONSTANT", value: oTokenizer.string()};
