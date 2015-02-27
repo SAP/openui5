@@ -56,17 +56,17 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 		 * After the list is loaded, the first item will be selected, if there are items and if the ListMode is not None.
 		 * @public
 		 */
-		selectAndScrollToFirstItem : function () {
-			this.oWhenListLoadingIsDone.then(this._selectAndScrollToFirstItem.bind(this));
+		selectFirstItem : function () {
+			this.oWhenListLoadingIsDone.then(this._selectFirstItem.bind(this));
 		},
 
 		/**
 		 * Searches for the first item of the list then
 		 * @private
 		 */
-		_selectAndScrollToFirstItem : function(sPath) {
+		_selectFirstItem : function(sPath) {
 			if (sPath) {
-				this.selectAndScrollToAListItem(sPath);
+				this.selectAListItem(sPath);
 			}
 		},
 
@@ -77,7 +77,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 		 * @param sBindingPath the binding path matching the binding path of a list item
 		 * @public
 		 */
-		selectAndScrollToAListItem : function (sBindingPath) {
+		selectAListItem : function (sBindingPath) {
 
 			this.oWhenListLoadingIsDone.then(function () {
 				var oList = this._oList,
