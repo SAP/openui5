@@ -1188,34 +1188,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		}
 	};
 
-
-	/*
-	 * store reference to original preventDefault method
-	 */
-	var _preventDefault = jQuery.Event.prototype.preventDefault;
-	/*
-	 * and introduce some keyCode fixing for IE...
-	 * this e.g. suppresses the address-field drop down opening in case of sapshow (i.e. F4) in ComboBoxes
-	 */
-	jQuery.Event.prototype.preventDefault = function() {
-		_preventDefault.apply(this, arguments);
-
-		var e = this.originalEvent;
-
-		if ( !e ) {
-			return;
-		}
-
-		if ( e.keyCode != 0 ) {
-			try { // Sometimes setting keycode results in "Access Denied"
-				if (!sap.ui.Device.browser.firefox) {
-					e.keyCode = 0;
-				}
-			} catch (ex) {}
-		}
-
-	};
-
 	/**
 	 * Binds all events for listening with the given callback function.
 	 *
