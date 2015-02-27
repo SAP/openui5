@@ -44,16 +44,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			return;
 		}
 		
-		var sUrl = jQuery.sap.getModulePath(sLibraryName, '/'),
-			that = this;
-			
-		var sLibraryType = ".library"; 
-		
-		var aParts = /themelib_(.*)/i.exec(sLibraryName);
-		if (aParts != null) {
+		var that = this, 
+		    sUrl, 
+		    sLibraryType,
+		    aParts = /themelib_(.*)/i.exec(sLibraryName);
+		if (!aParts) {
+			// UI library
+			sLibraryType = ".library";
+			sUrl = jQuery.sap.getModulePath(sLibraryName, '/');
+		} else {
+			// theme library
 			sLibraryType = ".theme";
-			var sThemeName = aParts[1];
-			sUrl = "sap/ui/core/themes/" + sThemeName + "/";	
+			sUrl = jQuery.sap.getModulePath("sap.ui.core", '/themes/' + aParts[1] + "/");	
 		}
 		
 		jQuery.ajax({
@@ -318,7 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 	*/
 
 	LibraryInfo.prototype._getDefaultComponent = function(oLibraryInfo) {
-		return oLibraryInfo.componentInfo.defaultComponent;
+		return oLibraryInfo && oLibraryInfo.componentInfo && oLibraryInfo.componentInfo.defaultComponent;
 	};
 
 	return LibraryInfo;
