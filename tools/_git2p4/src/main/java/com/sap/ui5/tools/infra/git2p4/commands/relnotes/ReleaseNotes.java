@@ -227,11 +227,20 @@ public class ReleaseNotes {
       }
       //special case for platform library
       if (!relNotesFile.contains("/sap/ui/server/java/")){
-        Map<String, String> resourcesMap = currentRepository.getResourcesMap();
+        Map<String, String> resourcesMap = new HashMap<String, String>();
+        String addToRelNotesPath = ""; 
+        if (file.getAbsolutePath().contains(File.separator+"main"+File.separator+"uilib"+File.separator)){
+          resourcesMap.put("/test-resources/", "/src/test/uilib/");
+          resourcesMap.put("/resources/", "/src/main/uilib/");
+          addToRelNotesPath = "../../";
+        } else {
+          resourcesMap.put("/resources/", "/src/");
+          resourcesMap.put("/test-resources/", "/test/");
+        }
         for (String key: resourcesMap.keySet()){
           relNotesFile = relNotesFile.replace(key, resourcesMap.get(key));
         }
-        relNotesFile = currentRepository.addToRelNotesPath + relNotesFile;
+        relNotesFile = addToRelNotesPath + relNotesFile;
       }
       notesFile = new File(file.getParentFile(), relNotesFile.replace("{major}", version.major+"").replace("{minor}", version.minor+"").replace("{patch}", version.patch+""));
       return notesFile.exists() ? readUILibNotes() : createNewUILibNotes();

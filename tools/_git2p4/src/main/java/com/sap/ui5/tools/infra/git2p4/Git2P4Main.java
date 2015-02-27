@@ -390,7 +390,6 @@ public class Git2P4Main {
     String p4path;
     String targetIncludes;
     String targetExcludes;
-    Map<String, String> resourcesMap = new HashMap<String, String>();
     public String addToRelNotesPath = "";
     public String range;
     
@@ -441,9 +440,6 @@ public class Git2P4Main {
       return new POMAnalyzer().info;
     }
     
-    public Map<String, String> getResourcesMap() {
-      return this.resourcesMap;
-    }
   }
 
   private static List<Mapping> mappings = new ArrayList<Mapping>();
@@ -457,9 +453,6 @@ public class Git2P4Main {
         "pom.xml,src/,test/",
         "src/dist/_osgi/,src/dist/_osgi_tools/,src/dist/_osgi_gwt,src/platforms/,test/_selenium_tests_lsf/"
         );
-    sapui5Runtime.resourcesMap.put("/test-resources/", "/src/test/uilib/");
-    sapui5Runtime.resourcesMap.put("/resources/", "/src/main/uilib/");
-    sapui5Runtime.addToRelNotesPath = "../../";
     mappings.add(sapui5Runtime);
     if (getMinorVersion(branch) > 24) {
       Mapping openui5 = new Mapping(
@@ -469,8 +462,6 @@ public class Git2P4Main {
           null,
           null
           );
-      openui5.resourcesMap.put("/resources/", "/src/");
-      openui5.resourcesMap.put("/test-resources/", "/test/");
       mappings.add(openui5);
     }
     /*
