@@ -654,7 +654,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	Carousel.prototype.getFocusDomRef = function() {
-		return this.oContentArea;
+		return this.$("scrolllist");
 	};
 	
 	/**
