@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/base/Object'], function (Object) {
 	"use strict";
 
-	return Object.extend("sap.ui.demo.mdtemplate.model.BusyHandler", {
+	return Object.extend("sap.ui.demo.mdtemplate.controller.BusyHandler", {
 
 		/**
 		 * Provides a convenience API for managing the busy indications.
