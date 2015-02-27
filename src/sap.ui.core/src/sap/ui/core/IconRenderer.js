@@ -19,45 +19,64 @@ sap.ui.define(["jquery.sap.global"],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	IconRenderer.render = function(oRm, oControl) {
-
-		var sWidth = oControl.getWidth(),
+		// write the HTML into the render manager
+		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getSrc()),
+			sWidth = oControl.getWidth(),
 			sHeight = oControl.getHeight(),
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
 			sTooltip = oControl.getTooltip_AsString();
 
-		var mAttributes = {}, mStyles = {};
+		oRm.write("<span");
+		oRm.writeControlData(oControl);
 
 		if (!oControl.getDecorative()) {
-			mAttributes["tabindex"] = 0;
+			oRm.writeAttribute("tabindex", 0);
 		}
 
 		if (sTooltip) {
-			mAttributes["title"] = sTooltip;
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
+		if (oIconInfo) {
+			oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
+			oRm.writeAttribute("role", "img");
+			oRm.writeAttributeEscaped("aria-label", sTooltip || oIconInfo.name);
+			oRm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
 		}
 
 		if (sWidth) {
-			mStyles["width"] = sWidth;
+			oRm.addStyle("width", sWidth);
 		}
 
 		if (sHeight) {
-			mStyles["height"] = mStyles["line-height"] = sHeight;
+			oRm.addStyle("height", sHeight);
+			oRm.addStyle("line-height", sHeight);
 		}
 
 		if (!(sColor in sap.ui.core.IconColor)) {
-			mStyles["color"] = sColor;
+			oRm.addStyle("color", sColor);
 		}
 
 		if (!(sBackgroundColor in sap.ui.core.IconColor)) {
-			mStyles["background-color"] = sBackgroundColor;
+			oRm.addStyle("background-color", sBackgroundColor);
 		}
 
 		if (sSize) {
-			mStyles["font-size"] = sSize;
+			oRm.addStyle("font-size", sSize);
 		}
 
-		oRm.writeIcon(oControl.getSrc(), [], mAttributes, mStyles, oControl);
+		oRm.addClass("sapUiIcon");
+
+		if (oIconInfo && !oIconInfo.suppressMirroring) {
+			oRm.addClass("sapUiIconMirrorInRTL");
+		}
+
+		oRm.writeClasses();
+		oRm.writeStyles();
+
+		oRm.write("></span>");
 	};
 
 	return IconRenderer;
