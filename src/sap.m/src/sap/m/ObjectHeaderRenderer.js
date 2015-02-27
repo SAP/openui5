@@ -1001,10 +1001,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			iRenderCols = 1; // render one column
 			sClassColCount = 'sapMOHROneCols';
 		}
-
-		for (var i = 0; i < iRenderCols; i++) {
-			this._renderResponsiveStatesColumn(oRM, oOH, i, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
-		}
+		
+		this._renderResponsiveStatesColumn(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
 	};
 
 	/**
@@ -1014,8 +1012,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *            oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.Control}
 	 *            oOH an object representation of the control that should be rendered
-	 * @param {iColumnIndex}
-	 *            number of the column in which the element should be rendered
 	 * @param {iRenderCols}
 	 *            number of columns that should be rendered
 	 * @param {aVisibleAttrAndStat}
@@ -1026,22 +1022,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 *            the name of the appropriate css class that should be set
 	 * @private
 	 */
-	ObjectHeaderRenderer._renderResponsiveStatesColumn = function(oRM, oOH, iColumnIndex, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount) {
-		oRM.write("<div"); // Start first container
-		oRM.addClass("sapMOHRStatesCont" + ( iColumnIndex + 1) );
-		oRM.addClass(sClassColCount);
-		oRM.writeClasses();
-		oRM.write(">");
-
-		for (var i = iColumnIndex; i < aVisibleAttrAndStat.length; i += iRenderCols) {
+	ObjectHeaderRenderer._renderResponsiveStatesColumn = function(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount) {
+		var iCountInCols = Math.floor( aVisibleAttrAndStat.length / iRenderCols ); // number of attributes and states in each column
+		var iCountInBigCols = aVisibleAttrAndStat.length % iRenderCols;
+		var iCurrentCountInCol = 0; // contains current number of attributes and statuses in the column (will be reset to zero when it becames equal to iCountInCols)
+		var iContNum = 1; // container number (start from the first one)
+		for (var i = 0; i < aVisibleAttrAndStat.length; i++) {
+			if (iCurrentCountInCol == 0) {
+				oRM.write("<div"); // Start container
+				oRM.addClass("sapMOHRStatesCont" + iContNum);
+				oRM.addClass(sClassColCount);
+				oRM.writeClasses();
+				oRM.write(">");
+			}
+		
 			if (i < iCountVisibleAttr) {
 				this._renderResponsiveAttribute(oRM, oOH, aVisibleAttrAndStat[i]);
 			} else {
 				this._renderResponsiveStatus(oRM, oOH, aVisibleAttrAndStat[i]);
 			}
+			iCurrentCountInCol++;
+			if ((iCurrentCountInCol == iCountInCols && iContNum > iCountInBigCols) || (iCurrentCountInCol == (iCountInCols + 1) && iContNum <= iCountInBigCols) || i == aVisibleAttrAndStat.length - 1) {
+				oRM.write("</div>"); // end container
+				iCurrentCountInCol = 0;
+				iContNum++;
+			}
 		}
-
-		oRM.write("</div>");
 	};
 
 	/**
@@ -1457,9 +1463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		for (var i = 0; i < iRenderCols; i++) {
-			this._renderResponsiveStatesColumn(oRM, oOH, i, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
-		}
+		this._renderResponsiveStatesColumn(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
 
 		oRM.flush(jQuery.sap.byId(sId + "-states")[0]);
 	};
