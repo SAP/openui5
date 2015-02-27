@@ -49,7 +49,9 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * {@link sap.ui.model.Model#event:requestCompleted requestCompleted},
 	 * {@link sap.ui.model.Model#event:requestFailed requestFailed},
 	 * {@link sap.ui.model.Model#event:requestSent requestSent}) are fired!
-	 * For asynchronous loading use {@link #loaded loaded} instead, which is based on promises.
+	 *
+	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by
+	 * {@link #loaded loaded} has been resolved!
 	 *
 	 * @author SAP SE
 	 * @version ${version}
