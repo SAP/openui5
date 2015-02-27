@@ -14,8 +14,10 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit : function () {
+			var oListSelector = this.getOwnerComponent().oListSelector;
+
 			this._oList = this.byId("list");
-			this.oPullToRefresh = this.byId("pullToRefresh");
+			this._oPullToRefresh = this.byId("pullToRefresh");
 			// keeps the filter and search state
 			this._oListFilterState = {
 				aFilter : [],
@@ -35,22 +37,25 @@ sap.ui.define([
 			});
 			this.setModel(this._oControlStateModel, 'controlStates');
 
-			// master view has set the delay to 0, to make sure that busy
-			// indication is displayed immediately after app has been started.
-			// need to reset the display to default value after the app
-			// and the list has been loaded for the first time.
-			// this is done by setting the 'null' value
-			var oListSelector = this.getOwnerComponent().oListSelector;
-			oListSelector.oWhenListLoadingIsDone.then(function (mParams) {
-					mParams.list.setBusyIndicatorDelay(null);
-				},
-				function (mParams) {
-					mParams.list.setBusyIndicatorDelay(null);
-				}
-			);
+			// instead of relying on the master list's automatic busy indication
+			// we attach to the dataRequested and dataReceived events on the list
+			// binding to set the content of the master page busy. Otherwise only
+			// the list is busy while loading the data. Additionally, we set the
+			// delay to 0 to set the view busy initially and reset it to the
+			// default after the first data was loaded.
+			this.getRouter().getTargets().getTarget("master").attachEventOnce("display", function () {
+				this.getView().setBusyIndicatorDelay(0);
+				this._oList.getBinding("items").attachDataRequested(function () {
+					this.getView().setBusy(true);
+				}.bind(this));
+				this._oList.getBinding("items").attachDataReceived(function () {
+					this.getView().setBusy(false);
+					this.getView().setBusyIndicatorDelay(null);
+				}.bind(this));
+			}.bind(this));
 
+			oListSelector.setBoundMasterList(this._oList);
 			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectFirstItem, oListSelector);
-			this.getOwnerComponent().oListSelector.setBoundMasterList(this._oList);
 			this.getRouter().attachBypassed(this.onBypassed, this);
 		},
 
@@ -70,7 +75,7 @@ sap.ui.define([
 			// update the master list object counter after new data is loaded
 			this._updateListItemCount(oEvent.getParameter("total"));
 			// hide pull to refresh if necessary
-			this.oPullToRefresh.hide();
+			this._oPullToRefresh.hide();
 		},
 
 		/**

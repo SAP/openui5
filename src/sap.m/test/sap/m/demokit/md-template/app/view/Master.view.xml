@@ -17,7 +17,7 @@
 						search="onSearch">
 					</SearchField>
 				</contentMiddle>
-				
+
 			</Bar>
 		</subHeader>
 		<content>
@@ -37,7 +37,7 @@
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				noDataText="{i18n>masterListNoDataText}"
-				busyIndicatorDelay="0"
+				enableBusyIndicator="false"
 				mode="{
 					path: 'device>/isPhone',
 					formatter: 'sap.ui.demo.mdtemplate.model.formatter.listMode'
@@ -53,7 +53,7 @@
 						id="filterBar"
 						visible="{controlStates>/isFilterBarVisible}"
 						press="onOpenViewSettings">
-						<Label 
+						<Label
 							id="filterBarLabel"
 							text="{controlStates>/filterBarLabel}" />
 					</Toolbar>
@@ -94,14 +94,14 @@
 						key="UnitNumber"
 						text="{i18n>masterSort2}"/>
 				</Select>
-				
+
 				<!-- complex sort/group/filter with ViewSettingsDialog -->
 				<OverflowToolbarButton
 					text="{i18n>MasterListFilterButtonOverflowText}"
 					id="filter"
 					icon="sap-icon://filter"
 					press="onOpenViewSettings"/>
-				
+
 				<Select
 					id="groupSelect"
 					type="IconOnly"
