@@ -329,7 +329,8 @@
 	checkFixtures("Additive operators", [
 		{ expression: "${/3} + ${/five}", result: "8" },
 		{ expression: "'foo' + 'bar'", result: "foobar" },
-		{ expression: "42 - ${/thirteen}", result: "29" }
+		{ expression: "42 - ${/thirteen}", result: "29" },
+		{ expression: "3-2", result: "1" }
 	]);
 
 	//*********************************************************************************************
