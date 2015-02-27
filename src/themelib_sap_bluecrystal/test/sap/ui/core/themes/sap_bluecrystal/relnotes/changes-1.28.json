@@ -121,7 +121,7 @@
         "id": "908aeeb01968fe861620d763f66d64a4b47538d0",
         "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ActionSelect: disabled items are now displayed correctly",
+        "text": "sap.m.ActionSelect: Disabled items are now displayed correctly",
         "references": []
       },
       {
@@ -142,18 +142,6 @@
         "type": "FIX",
         "text": "sap.m.Input: Corrected width of the value state message",
         "references": []
-      },
-      {
-        "id": "8cb329631dc7dc355b3bf917c3ef0c60816f2f96",
-        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.Link: Cleanup and minor fixes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "683459"
-          }
-        ]
       },
       {
         "id": "28699a06294fe1772424dd3bcfeb8df809487fb3",
@@ -185,7 +173,7 @@
         "id": "c829bd3027f67d6c2ee141f0552d74ec9a27b976",
         "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ObjectHeader: Fixed alignment issue in IE that displayed ObjectNumber incorrectly",
+        "text": "sap.m.ObjectHeader: Fixed alignment issue in Internet Explorer that displayed ObjectNumber incorrectly",
         "references": []
       },
       {
@@ -193,13 +181,6 @@
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.Page: Fixed content position when subheader not visible",
-        "references": []
-      },
-      {
-        "id": "f0b5652c2e461bb2fab39397ce0b50473297d00c",
-        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.SearchField: Minor fixes",
         "references": []
       },
       {
@@ -342,21 +323,21 @@
         "id": "1a19dbcd21b1d89794c28798f5d5fdc8e9f66ab2",
         "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Bar+Shell: add marker CSS class to suppress branding bar",
+        "text": "sap.m.Bar+Shell: Marker CSS class to suppress branding bar added",
         "references": []
       },
       {
         "id": "b656f448c27da15d64ba53b7189a84a556743271",
         "author": "Frank Otto \u003cfrank.otto@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.FeedListItem: adapted link color for sender\u0027s name (including \u0027:\u0027)",
+        "text": "sap.m.FeedListItem: Adapted link color for sender\u0027s name (including \u0027:\u0027)",
         "references": []
       },
       {
         "id": "9ccd7e14029189f120893c5a4a2934acb8f0311c",
         "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.MultiComboBox: IE - fixed Placeholder overlay",
+        "text": "sap.m.MultiComboBox: Fixed Placeholder overlay in Internet Explorer",
         "references": []
       },
       {
@@ -391,7 +372,7 @@
         "id": "58f96fea10fd0cfa458f3696d6415112670c96a2",
         "author": "Srujani Rondla \u003csrujani.rondla@sap.com\u003e",
         "type": "FIX",
-        "text": "FacetFilter: reset button CSS for summary bar",
+        "text": "FacetFilter: Reset button CSS for summary bar",
         "references": []
       }
     ]

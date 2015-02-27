@@ -20,7 +20,7 @@
         "id": "dbc9cb595b434e62d3f33cd2afe3f875e86c5cbb",
         "author": "Dimo Uzunov \u003cdimo.uzunov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.ui.table implemented High-Contrast-Black Theme",
+        "text": "sap.ui.table: HCB (High-Contrast-Black) Theme implemented",
         "references": []
       },
       {

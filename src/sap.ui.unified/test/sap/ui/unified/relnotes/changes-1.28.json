@@ -55,7 +55,7 @@
         "id": "11f08b217449e36750a42add6e4a148d885b889a",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "Popup: Fixed accidential auto-close of DatePicker",
+        "text": "Popup: Fixed accidental auto-close of DatePicker",
         "references": [
           {
             "type": "BCP",
@@ -95,7 +95,7 @@
         "id": "5a1f951be40b3dce60b3e20a5a62d8c4b473c461",
         "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.unified.ShellOverlay: Enable cycling Tab-chain",
+        "text": "sap.ui.unified.ShellOverlay: Cycling Tab-chain enabled",
         "references": []
       },
       {
@@ -109,7 +109,7 @@
         "id": "2ec2ca0dd98938b8089f42515620dddddc25bae0",
         "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.unified.FileUploader: Content-Type for IE header added",
+        "text": "sap.ui.unified.FileUploader: Content-Type for Internet Explorer header added",
         "references": []
       },
       {
@@ -123,7 +123,7 @@
         "id": "1c3fb849a12fcc201d94321aa04c080ed5510f3a",
         "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.unified.FileUploader: mime type check fixed",
+        "text": "sap.ui.unified.FileUploader: Mime type check fixed",
         "references": []
       }
     ]

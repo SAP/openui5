@@ -18,7 +18,7 @@
         "id": "67786cd8ba9c238f94dc46951901e10f95e37adb",
         "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FEATURE",
-        "text": "ux3.Overlay: new closed Event",
+        "text": "ux3.Overlay: New closed Event",
         "references": []
       },
       {
@@ -67,7 +67,7 @@
         "id": "db72e0dd5e923179afdfbd1acb1780b62e19395e",
         "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
         "type": "FIX",
-        "text": "HCB Parameters added to ToolPopup.less",
+        "text": "HCB (High-Contrast-Black) Parameters added to ToolPopup.less",
         "references": []
       },
       {
@@ -148,13 +148,6 @@
       },
       {
         "id": "66b38c46797897d8443811b3466e0cab628a0aba",
-        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
-        "type": "FIX",
-        "text": "ux3.ToolPopup: TabChaining with TabStrip",
-        "references": []
-      },
-      {
-        "id": "d87055dd5b94f8264d84b7b26316235e2f089220",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "ux3.ToolPopup: TabChaining with TabStrip",
