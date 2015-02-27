@@ -110,17 +110,18 @@
 		});
 
 		jQuery.each(["foo", "123.809"], function (i, oValue) {
-			test("parse invalid value from string: " + oValue,
-				function () {
+			test("parse invalid value from string: " + oValue, function () {
+				sap.ui.test.TestUtils.withNormalizedMessages(function () {
 					try {
 						oType.parseValue(oValue, "string");
 						ok(false, "Expected ParseException not thrown");
 					}
 					catch (e) {
-						ok(e instanceof sap.ui.model.ParseException)
-						equal(e.message, "Enter a number with no decimal places.");
+						ok(e instanceof sap.ui.model.ParseException);
+						strictEqual(e.message, "EnterInt");
 					}
 				});
+			});
 		});
 
 		jQuery.each(["123", undefined, false], function (i, iValue) {
