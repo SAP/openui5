@@ -209,21 +209,14 @@
         "id": "c3750d45938c28b82efa608c38bc42af6300af0c",
         "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.ui.core.LabelEnablement: Provide common functionality for labels",
+        "text": "sap.ui.core.LabelEnablement: Provided common functionality for labels",
         "references": []
       },
       {
         "id": "1cd6a73ad8d529b00bca80c121224659d23b26b1",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "ComboBox on IE fires change event while opening",
-        "references": []
-      },
-      {
-        "id": "7e98f14b9401b2c89656b4e6592f11ac7551817c",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
-        "type": "FIX",
-        "text": "DatePicker / DateRangeSelection - several issues",
+        "text": "ComboBox on Internet Explorer fires change event while opening",
         "references": []
       },
       {
@@ -237,7 +230,7 @@
         "id": "3ecda50f1c433f03da16e17dccab47c3c6eabe08",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "DropdownBox: select text on mouseup event",
+        "text": "DropdownBox: Select text on mouseup event",
         "references": []
       },
       {
@@ -286,7 +279,7 @@
         "id": "a453b89fcfff3caa78cae096a339f82a18a206f5",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "RadioButton in HCB theme in IE11 checked only on second click",
+        "text": "RadioButton in HCB (High-Contrast-Black) theme in Internet Explorer 11 checked only on second click",
         "references": []
       },
       {
@@ -338,7 +331,7 @@
         "id": "f0a484efed0949aa040e001a5cad55265bebdba1",
         "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
-        "text": "Tree: Improve performance",
+        "text": "Tree: Improved performance",
         "references": []
       },
       {
@@ -387,7 +380,7 @@
         "id": "ba39374233379e03b22750cfb92e22724e83cdfd",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "RangeSlider: Issues with vertical slider and RTL fixed",
+        "text": "RangeSlider: Issues with vertical slider and RTL (Right-To-Left) fixed",
         "references": []
       },
       {
@@ -408,18 +401,11 @@
         "id": "5b02dfea5a1050a2ba7860752135f4e66b0e5e2f",
         "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.commons.ValueHelpField: Fixed hover for disabled/readonly Icon in HCB theme",
+        "text": "sap.ui.commons.ValueHelpField: Fixed hover for disabled/readonly Icon in HCB (High-Contrast-Black) theme",
         "references": []
       },
       {
         "id": "66b38c46797897d8443811b3466e0cab628a0aba",
-        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
-        "type": "FIX",
-        "text": "ux3.ToolPopup: TabChaining with TabStrip",
-        "references": []
-      },
-      {
-        "id": "d87055dd5b94f8264d84b7b26316235e2f089220",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
         "text": "ux3.ToolPopup: TabChaining with TabStrip",

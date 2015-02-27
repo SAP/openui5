@@ -97,7 +97,7 @@
         "id": "0f6191942c82f9ff1f5f19f39de2d051f1153003",
         "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
         "type": "FEATURE",
-        "text": "Glob-184 - String.prototype.normalize() for Filter",
+        "text": "Glob-184: String.prototype.normalize() for Filter",
         "references": []
       },
       {
@@ -146,7 +146,7 @@
         "id": "6c332337f0350acbcd04b5246cd9e6d979cf32d8",
         "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
         "type": "FEATURE",
-        "text": "Templating: updated to handlebars v2.0",
+        "text": "Templating: Updated to handlebars v2.0",
         "references": []
       },
       {
@@ -160,7 +160,7 @@
         "id": "016f5dbfac0464678b92fde2df27173573bdf877",
         "author": "Butz, Tino \u003ctino.butz@sap.com\u003e",
         "type": "FEATURE",
-        "text": "View controller code is not loaded anymore when design time mode is on",
+        "text": "View controller code is not loaded any more when design time mode is on",
         "references": []
       },
       {
@@ -216,14 +216,14 @@
         "id": "dbe806c8b19e2b78d1840cba7dca9dc018ccbe4b",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.ui.core.format.NumberFormat: decimals and shortDecimals options created",
+        "text": "sap.ui.core.format.NumberFormat: Decimals and shortDecimals options created",
         "references": []
       },
       {
         "id": "38ab764601c061d5fbf256f8bb4703cd4ec89022",
         "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.ui.model.json.JSONListBinding: iterate over maps",
+        "text": "sap.ui.model.json.JSONListBinding: Iterate over maps",
         "references": []
       },
       {
@@ -335,7 +335,7 @@
         "id": "0127b9e359a2bc2c4589c94d59ef95a8270cd8d8",
         "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
         "type": "FIX",
-        "text": "JSONModel JSDoc: inheritance information corrected",
+        "text": "JSONModel JSDoc: Inheritance information corrected",
         "references": []
       },
       {
@@ -515,7 +515,7 @@
         "id": "11f08b217449e36750a42add6e4a148d885b889a",
         "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
         "type": "FIX",
-        "text": "Popup: Accidential auto-close of DatePicker fixed",
+        "text": "Popup: Accidental auto-close of DatePicker fixed",
         "references": [
           {
             "type": "BCP",
@@ -581,7 +581,7 @@
         "id": "e9ccf7c57898dd8409e2f231943d913ba9fae9fc",
         "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
         "type": "FIX",
-        "text": "Templating: enabled support for if and unless helpers",
+        "text": "Templating: Enabled support for if and unless helpers",
         "references": []
       },
       {
@@ -675,7 +675,7 @@
         "id": "c7d84fc81212f83fb1cc819c4e42a9562adbd125",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "jquery-mobile-custom: always enable the mouse event tracking",
+        "text": "jquery-mobile-custom: Always enable the mouse event tracking",
         "references": [
           {
             "type": "BCP",
@@ -694,7 +694,7 @@
         "id": "a4d3b786bd4db70f390a9c88c5a873b3e6b41869",
         "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ScrollContainer: fix scrollTo across browsers in RTL mode",
+        "text": "sap.m.ScrollContainer: Fix scrollTo across browsers in RTL mode",
         "references": [
           {
             "type": "BCP",
@@ -748,7 +748,7 @@
         "id": "5c0d2a8da7fc0a8424ba0222af531a847926b26c",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.model.Filter: wrong error log produced when filter is assigned with test function",
+        "text": "sap.ui.model.Filter: Wrong error log produced when filter is assigned with test function",
         "references": []
       },
       {
@@ -774,7 +774,7 @@
         "id": "a51c29042f7d7ee8b782f5da211c2894be63c40d",
         "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FIX",
-        "text": "Update of relative elementBindings: wrong context resolved",
+        "text": "Update of relative elementBindings: Wrong context resolved",
         "references": []
       },
       {
@@ -828,7 +828,7 @@
         "id": "a79fed2aafe5f5077553f8ff7d0af929df76e1f1",
         "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FIX",
-        "text": "v2.ODataModel: Corrected entityset path on second submitChanges",
+        "text": "v2.ODataModel: Corrected entity set path on second submitChanges",
         "references": []
       },
       {
@@ -954,7 +954,7 @@
         "id": "a09842a7bc4a2b20ea77e3ffba562aeac8a6a108",
         "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
         "type": "FEATURE",
-        "text": "Templating: enabled aggregation helpers in controls helpers",
+        "text": "Templating: Enabled aggregation helpers in controls helpers",
         "references": []
       },
       {
@@ -1017,7 +1017,7 @@
         "id": "77ebf33e610dd0e91f0aceee137345fdcd5406a9",
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "Icon-Font: screen reader description corrected",
+        "text": "Icon-Font: Screen reader description corrected",
         "references": []
       },
       {
@@ -1066,7 +1066,7 @@
         "id": "591f215f45f82bcb2d44df2c97bf5428b4ac53d8",
         "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
         "type": "FIX",
-        "text": "QUnit error reporting: add source info",
+        "text": "QUnit error reporting: Add source info",
         "references": []
       },
       {
@@ -1086,13 +1086,6 @@
         "author": "stefan hipfel \u003cstefan.hipfel@sap.com\u003e",
         "type": "FIX",
         "text": "View controller code is not loaded anymore when design time mode is on",
-        "references": []
-      },
-      {
-        "id": "63a7838a9bed814e505d8565c45035508952a1df",
-        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
-        "type": "INTERNAL",
-        "text": "core.Popup: Removal of the Old DOM-Ref",
         "references": []
       },
       {
@@ -1117,24 +1110,10 @@
         "references": []
       },
       {
-        "id": "3b94ce4f74a15455598ca906428711d9b6dce65b",
-        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
-        "type": "INTERNAL",
-        "text": "sap.ui.core.LabelEnablement: Fix JSDoc",
-        "references": []
-      },
-      {
         "id": "d34dc42ca7c47e84f6793908d13aee5b5582c349",
         "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.core.ScrollEnablement: Deregister resize listener during cleanup",
-        "references": []
-      },
-      {
-        "id": "05eb15c594f2eb32216d0a94507a1851a7574006",
-        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
-        "type": "INTERNAL",
-        "text": "sap.ui.core.ValueStateSupport/LabelEnablement: Fix JSDoc",
+        "text": "sap.ui.core.ScrollEnablement: De-register resize listener during cleanup",
         "references": []
       },
       {
