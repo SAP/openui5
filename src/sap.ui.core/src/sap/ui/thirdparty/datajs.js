@@ -2539,13 +2539,14 @@
                 };
 
                 // ##### BEGIN: MODIFIED BY SAP
-                if (request.withCredentials) {
-                    xhr.withCredentials = true;
-                }
                 if (request.user && request.password) {
                 	xhr.open(request.method || "GET", url, request.async, request.user, request.password);
                 } else {
                 	xhr.open(request.method || "GET", url, request.async);
+                }
+                // do it after open call because IE 10 may throw InvalidStateError exception.
+                if (request.withCredentials) {
+                  xhr.withCredentials = true;
                 }
                 // ##### END: MODIFIED BY SAP
 
