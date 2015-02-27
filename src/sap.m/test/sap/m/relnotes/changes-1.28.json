@@ -62,7 +62,7 @@
         "id": "7d6904ad40a426da4834c3e4913c64691cda504a",
         "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.NavContainer: improved logging for better nav analysis",
+        "text": "sap.m.NavContainer: Improved logging for better nav analysis",
         "references": []
       },
       {
@@ -349,7 +349,7 @@
         "id": "d956616bbdd3863e59f15df663e05f5d80c33336",
         "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.DisplayListItem: RTL (right-to-left) support added",
+        "text": "sap.m.DisplayListItem: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -370,7 +370,7 @@
         "id": "9bb3ec99b4c8ab621ae596fec84d8515bcdd73d5",
         "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.InputBase: RTL (right-to-left) support added",
+        "text": "sap.m.InputBase: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -384,7 +384,7 @@
         "id": "6e1a14e49702ee05805970d337b565b56420c92d",
         "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.Link: RTL (right-to-left) support added",
+        "text": "sap.m.Link: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -419,7 +419,7 @@
         "id": "fe3b95318459a1e0d8945432d6758cd80e0968f8",
         "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.ObjectAttribute: RTL (right-to-left) support added",
+        "text": "sap.m.ObjectAttribute: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -447,7 +447,7 @@
         "id": "836709e6832fef0cdb6cf6d060c256180d543523",
         "author": "Petyo Kostakov \u003cpetyo.kostakov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.ObjectIdentifier: RTL (right-to-left) support added",
+        "text": "sap.m.ObjectIdentifier: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -461,14 +461,14 @@
         "id": "7244afe122e17694a20dbe26b1d969cd61fed257",
         "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.ObjectNumber: RTL (right-to-left) support added",
+        "text": "sap.m.ObjectNumber: RTL (Right-To-Left) support added",
         "references": []
       },
       {
         "id": "1bd76924d814651d5c4fa035666b81fb3abcbe87",
         "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.ObjectStatus: RTL (right-to-left) support added",
+        "text": "sap.m.ObjectStatus: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -503,7 +503,7 @@
         "id": "71d89d1157d794084c1b5f28be0d9e9adfba7a03",
         "author": "Petyo Kostakov \u003cpetyo.kostakov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.RadioButtonGroup: RTL (right-to-left) support added",
+        "text": "sap.m.RadioButtonGroup: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -588,13 +588,6 @@
         "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
         "type": "FIX",
         "text": "Core: Restoring focus after rendering in databinding scenario corrected",
-        "references": []
-      },
-      {
-        "id": "7e98f14b9401b2c89656b4e6592f11ac7551817c",
-        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
-        "type": "FIX",
-        "text": "DatePicker / DateRangeSelection: Several issues",
         "references": []
       },
       {
@@ -707,7 +700,7 @@
         "id": "97ea30c27b9f273e22954d17150b4ff8a1f09a60",
         "author": "Peter Harbusch \u003cpeter.harbusch@sap.com\u003e",
         "type": "FIX",
-        "text": "fixing issues on P13nConditionPanel",
+        "text": "Issues on P13nConditionPanel fixed",
         "references": []
       },
       {
@@ -920,7 +913,7 @@
         "id": "d9a519af21f50c9523303ccaf2ef693b74a782bb",
         "author": "Martin Wittmann \u003cmartin.wittmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Carousel: Issue in RTL (right-to-left) mode corrected",
+        "text": "sap.m.Carousel: Issue in RTL (Right-To-Left) mode corrected",
         "references": [
           {
             "type": "BCP",
@@ -946,7 +939,7 @@
         "id": "6588cde213c189336060deaa1c45cdf82e0717e8",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Dialog: Dialog no longer displayed in a blury state in browser Internet Explorer 10 on Windows 8.1 device",
+        "text": "sap.m.Dialog: Dialog no longer displayed in a blurry state in browser Internet Explorer 10 on Windows 8.1 device",
         "references": [
           {
             "type": "BCP",
@@ -1101,7 +1094,7 @@
         "id": "a568dbf54ee181c42041927bb9e6ec6105049796",
         "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Link: mark events as handled, fix typo, improve performance",
+        "text": "sap.m.Link: Mark events as handled, fix typo, improve performance",
         "references": []
       },
       {
@@ -1167,7 +1160,7 @@
         "id": "c829bd3027f67d6c2ee141f0552d74ec9a27b976",
         "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ObjectHeader: Alignment issue in IE. ObjectNumber displayed incorrectly.",
+        "text": "sap.m.ObjectHeader: Alignment issue in Internet Explorer. ObjectNumber displayed incorrectly.",
         "references": []
       },
       {
@@ -1195,7 +1188,7 @@
         "id": "38c84d6b6cfd412f629d992ddbb96012f1652025",
         "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nDialog - explored example fixed",
+        "text": "sap.m.P13nDialog: Explored example fixed",
         "references": [
           {
             "type": "BCP",
@@ -1207,35 +1200,35 @@
         "id": "78b54a4c98c5209857f33567b9833bc7cc3d4c1b",
         "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nDialog - padding in explored example fixed",
+        "text": "sap.m.P13nDialog: Padding in explored example fixed",
         "references": []
       },
       {
         "id": "2d4dc6eca1db790dd85ea59fe67e248d2082d129",
         "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nDialog - vertical scrolling in columns panel",
+        "text": "sap.m.P13nDialog: Vertical scrolling in columns panel",
         "references": []
       },
       {
         "id": "ae6a59b9dcc4ab9aa44045bbb1fd6ba866bb62d8",
         "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nDialog - veto",
+        "text": "sap.m.P13nDialog: Veto",
         "references": []
       },
       {
         "id": "50e4da3c3b5d5ce98628ec393ccafc95dfef968a",
         "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Panel height and expanded properties",
+        "text": "sap.m.Panel: Height and expanded properties",
         "references": []
       },
       {
         "id": "162c131a771086bb23197c1baa55613533ed9cea",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Popover/Dialog: scrolling doesn\u0027t work property on Android stock browser",
+        "text": "sap.m.Popover/Dialog: Fixed scrolling on Android stock browser",
         "references": [
           {
             "type": "BCP",
@@ -1273,7 +1266,7 @@
         "id": "be465c9d79c9763efd23a07e6d583a03a13d1f48",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Popover: horizontal scroll position is wrongly restored in RTL mode",
+        "text": "sap.m.Popover: Horizontal scroll position is wrongly restored in RTL mode",
         "references": [
           {
             "type": "BCP",
@@ -1285,21 +1278,21 @@
         "id": "0be41978a1d80b048198f7ed49fb6e2360ce7ede",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Popover: no error should be logged when popover is autoclosed",
+        "text": "sap.m.Popover: No error should be logged when popover is autoclosed",
         "references": []
       },
       {
         "id": "d3cdeee07bd79baec03e9082e0894d35ea9df92c",
         "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.RatingIndicator fixed value setter for null/undefined values",
+        "text": "sap.m.RatingIndicator: Fixed value setter for null/undefined values",
         "references": []
       },
       {
         "id": "a4d3b786bd4db70f390a9c88c5a873b3e6b41869",
         "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ScrollContainer: fix scrollTo across browsers in RTL mode",
+        "text": "sap.m.ScrollContainer: Fix scrollTo across browsers in RTL (Right-To-Left) mode",
         "references": [
           {
             "type": "BCP",
@@ -1308,24 +1301,17 @@
         ]
       },
       {
-        "id": "f0b5652c2e461bb2fab39397ce0b50473297d00c",
-        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.SearchField: minor fixes",
-        "references": []
-      },
-      {
         "id": "0aae463005491d9c67f9b9550e77ca1d06e803b2",
         "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.SearchField: unexpected native edit menu on Blackberry",
+        "text": "sap.m.SearchField: Unexpected native edit menu on Blackberry",
         "references": []
       },
       {
         "id": "23d89be33415263639acaaebf8ce14ad77774a7c",
         "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: Bluecrystal mixed content padding",
+        "text": "sap.m.SegmentedButton: Blue-crystal mixed content padding",
         "references": []
       },
       {
@@ -1346,7 +1332,7 @@
         "id": "b54dd1831cd37a74d8021f04b9a576ff5706764a",
         "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.SelectDialog update of selection with rememberSelection mode",
+        "text": "sap.m.SelectDialog: Update of selection with rememberSelection mode",
         "references": []
       },
       {
@@ -1360,7 +1346,7 @@
         "id": "05f2c34cf276d0bb258bcdc157f321f232d1f9e2",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.TextArea should scroll into view when window is resized.",
+        "text": "sap.m.TextArea: should scroll into view when window is resized.",
         "references": [
           {
             "type": "BCP",
@@ -1372,28 +1358,21 @@
         "id": "5f3205528a76aa4acce301a214ea90878059840a",
         "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Tokenizer, MultiInput, MultiComboBox - fix IOS8 scrolling",
+        "text": "sap.m.Tokenizer, MultiInput, MultiComboBox: Fixed IOS8 scrolling",
         "references": []
       },
       {
         "id": "ac0e0be5b430e4b62a026dd7bf82becb66408df1",
         "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection  select, focus, ESC",
+        "text": "sap.m.UploadCollection:  Select, focus, ESC improved",
         "references": []
       },
       {
         "id": "e5bd43f95f330edab9a08dcb59df9d51e3d2bca4",
         "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection change event",
-        "references": []
-      },
-      {
-        "id": "35fa86ed461578ed898a89f1a1c5108e178278d7",
-        "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.UploadCollection:",
+        "text": "sap.m.UploadCollection: Change event",
         "references": []
       },
       {
@@ -1442,14 +1421,14 @@
         "id": "506a6f2760506d2816df4a2c85c7be6e2e9d5d64",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: fix for CSS in Firefox",
+        "text": "sap.m.UploadCollection: Fix for CSS in Firefox",
         "references": []
       },
       {
         "id": "7cd67d4dda6864a639c88ada8655009b0668e4c4",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: fix for qunit",
+        "text": "sap.m.UploadCollection: Fix for qunit",
         "references": []
       },
       {
@@ -1463,84 +1442,84 @@
         "id": "5e7c744c5d781e64e8d3709b48ffb5e7be09d89b",
         "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: incorrect display of list with list separator \u0027None\u0027",
+        "text": "sap.m.UploadCollection: Incorrect display of list with list separator \u0027None\u0027",
         "references": []
       },
       {
         "id": "fe11a28cc1a634718ad9308be06c4687d931659a",
         "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: keyboard support",
+        "text": "sap.m.UploadCollection: Keyboard support",
         "references": []
       },
       {
         "id": "14b2f3e320484aea37b29757d630df5f96f7174a",
         "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: link behind the icon/image does not work correct",
+        "text": "sap.m.UploadCollection: Link behind the icon/image does not work correct",
         "references": []
       },
       {
         "id": "e3a26276e927d59a469769a0974acbbe67cb15ef",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: no scrolling in explored",
+        "text": "sap.m.UploadCollection: No scrolling in explored",
         "references": []
       },
       {
         "id": "8107a7bc42af883aa45b4154f7bbb06b8f9b00e5",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: replace string with file name",
+        "text": "sap.m.UploadCollection: Replace string with file name",
         "references": []
       },
       {
         "id": "1ee386477f456920e0798d5234fb42c4052ed3d0",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: restrictions for IE9",
+        "text": "sap.m.UploadCollection: Restrictions for Internet Explorer 9",
         "references": []
       },
       {
         "id": "d952ef0d1a26d56fc006d0405bfb01c94333d762",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: support of parallel uploads",
+        "text": "sap.m.UploadCollection: Support of parallel uploads",
         "references": []
       },
       {
         "id": "e1b0d016c97ab8c53af28a82b8d433b1bb336a9c",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: terminate file upload",
+        "text": "sap.m.UploadCollection: Terminate file upload",
         "references": []
       },
       {
         "id": "a2eb1d674e389b1b4f3bc70717faa26c6fff1452",
         "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ViewSettingsDialog fixed multiple selection with ctrl + a",
+        "text": "sap.m.ViewSettingsDialog: Fixed multiple selection with ctrl+a",
         "references": []
       },
       {
         "id": "83a483bcd208af67aa43f831819e509b6d7d18ad",
         "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ViewSettingsDialog: dynamic model update not working fixed",
+        "text": "sap.m.ViewSettingsDialog: Dynamic model update not working fixed",
         "references": []
       },
       {
         "id": "1fc326a03756fe92210846faf648f1a8ca0f85bf",
         "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.ViewSettingsDialog: remove from static UIArea before destroying dialog",
+        "text": "sap.m.ViewSettingsDialog: Remove from static UIArea before destroying dialog",
         "references": []
       },
       {
         "id": "0c719fd6a0b6058fef1c6d7352bd808555899156",
         "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
         "type": "FIX",
-        "text": "sapMFlexBox container inside a sap.ui.table.Table cell should have padding in condensed mode.",
+        "text": "sapMFlexBox: Container inside a sap.ui.table.Table cell should have padding in condensed mode.",
         "references": [
           {
             "type": "BCP",
@@ -1566,7 +1545,7 @@
         "id": "abeb724c805401570873ef2f3775aa2d30665a48",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.GrowingDelegate: should respect growing threshold.",
+        "text": "m.GrowingDelegate: Should respect growing threshold.",
         "references": []
       },
       {
@@ -1587,7 +1566,7 @@
         "id": "1ffa526530318f24196a4bab1b3fc97256123df6",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.ListItemBase: visibility changes should not invalidate parent.",
+        "text": "m.ListItemBase: Visibility changes should not invalidate parent.",
         "references": []
       },
       {
@@ -1608,21 +1587,14 @@
         "id": "4f3277c855ecf0d9a5b25fcba79fadcc7338308e",
         "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.ViewSettingsDialog Previously selected filter item should get focus on navigating back",
+        "text": "sap.m.ViewSettingsDialog: Previously selected filter item should get focus on navigating back",
         "references": []
       },
       {
         "id": "c672e7272d1183ff85d7adb4a9cb0c74b8829228",
         "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.ui.core.routing.Route - greedy routes match with greed",
-        "references": []
-      },
-      {
-        "id": "18d00345d0a28614d952214729808d85c491641d",
-        "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
-        "type": "FIX",
-        "text": "sap.m.UploadCollectionItem",
+        "text": "sap.ui.core.routing.Route: Greedy routes match with greed",
         "references": []
       },
       {
@@ -1636,7 +1608,7 @@
         "id": "f5662a164cb429eb3c7676c9a58d9ed8aabdf656",
         "author": "Srujani Rondla \u003csrujani.rondla@sap.com\u003e",
         "type": "FIX",
-        "text": "FacetFilter :Translation-Facet Filter Reset Button",
+        "text": "FacetFilter: Translation-Facet Filter Reset Button",
         "references": []
       },
       {
@@ -1720,7 +1692,7 @@
         "id": "998398b138ef3d2aa4815f2e1629a05c4a80d49e",
         "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.MessageBox: RTL (right-to-left) support added",
+        "text": "sap.m.MessageBox: RTL (Right-To-Left) support added",
         "references": []
       },
       {
@@ -1818,7 +1790,7 @@
         "id": "104a680dafafccb8d132f0238605ff9d474b1aa7",
         "author": "Axel Warner \u003caxel.warner@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nColumnsPanel.qunit.html: Stubed timer functionality reset",
+        "text": "sap.m.P13nColumnsPanel.qunit.html: Stubbed timer functionality reset",
         "references": []
       },
       {
@@ -1853,7 +1825,7 @@
         "id": "eea01d6f25810e2121f24a869303c0a37b48c62d",
         "author": "Lidiya Bobeva \u003clidiya.bobeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Button: In HCB theme and Compact mode, line height is now correct",
+        "text": "sap.m.Button: In HCB (High-Contrast-Black) theme and Compact mode, line height is now correct",
         "references": []
       },
       {
@@ -1937,14 +1909,14 @@
         "id": "0a1271a2ba2ec80299b257911ba826c9452cf8aa",
         "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.MessageToast: Css class checking corrected",
+        "text": "sap.m.MessageToast: CSS class checking corrected",
         "references": []
       },
       {
         "id": "9ccd7e14029189f120893c5a4a2934acb8f0311c",
         "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.MultiComboBox: IE - Placeholder overlays token corrected",
+        "text": "sap.m.MultiComboBox: Placeholder overlays token corrected in Internet Explorer",
         "references": []
       },
       {
@@ -1958,7 +1930,7 @@
         "id": "a5a07ead28b9bb50009093612d4df7de01d205aa",
         "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Popover: Update the openBy dom ref after it\u0027s regenerated",
+        "text": "sap.m.Popover: Update the openBy DOM ref after it\u0027s regenerated",
         "references": []
       },
       {
