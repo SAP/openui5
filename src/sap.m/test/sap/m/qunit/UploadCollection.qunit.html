@@ -209,8 +209,17 @@
 					equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided")
 				},
 				filenameLengthExceed : function(oEvent) {
+					var oFile = { name: "tooLongFileName" };
 					ok(true, "Event filenameLengthExceed fired");
-					equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided")
+					equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided");
+					// deprecated
+					equal(oEvent.getParameters().getParameter("fileName"), "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameters().getParameter('fileName')");
+					equal(oEvent.getParameters().getParameters()["fileName"], "tooLongFileName",  "Correct file name in filenameLengthExceed event provided by oEvent.getParameters().getParameters()['fileName']");
+					equal(oEvent.getParameter("mParameters")["fileName"], "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameter('mParameters')['fileName']");
+					// new
+					equal(oEvent.getParameter("files")[0].name, "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameter('files')[0].name.");
+					equal(oEvent.getParameters()["files"][0]["name"], "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameters()['files'][0]['name'].");
+					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file in filenameLengthExceed event provided by oEvent.getParameter('files')[0].");
 				},
 				change : function(oEvent) {
 					var oFile1 = {
@@ -296,9 +305,9 @@
 	
 	test("Event filenameLengthExceed", function() {
 		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(2); // verifies the event handler was executed
+		expect(8);
 		oFileUploader.fireFilenameLengthExceed({
-			fileName : "someFileName"
+			fileName : "tooLongFileName"
 		});
 	});
 
