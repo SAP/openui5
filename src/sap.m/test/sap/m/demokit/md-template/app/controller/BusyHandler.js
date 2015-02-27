@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 		 *
 		 * @class
 		 * @public
-		 * @alias sap.ui.demo.mdtemplate.model.BusyHandler
+		 * @alias sap.ui.demo.mdtemplate.controller.BusyHandler
 		 */
 		constructor : function ( oComponent) {
 			this._oComponent = oComponent;
