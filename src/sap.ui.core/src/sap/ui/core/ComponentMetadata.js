@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 
 		ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
 
-		// keep the infor about the component name (for customizing)
+		// keep the information about the component name (for customizing)
 		this._sComponentName = sPackage;
 
 		// static initialization flag & instance count
@@ -81,7 +81,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		this._iInstanceCount = 0;
 
 		// get the parent component
-		var oParent = this.getParent();
+		var oParent = this.getParent(),
+		    bIsComponentBaseClass = /^sap\.ui\.core\.(UI)?Component$/.test(sName),
+		    sParentName = bIsComponentBaseClass && oParent && oParent._sComponentName;
 
 		// extract the manifest
 		var oManifest = oStaticInfo["manifest"];
@@ -118,124 +120,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 
 			}
 
-			// ensure property name incl. sap.app and sap.ui5 namespace
-			oManifest["name"] = oManifest["name"] || sName;
-			oManifest["sap.app"] = oManifest["sap.app"] || {};
-			oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
-
 		} else {
 
-			// else branch can be outsourced in future when the ComponentMetadata
-			// is not used anymore and the new Application manifest is used -
-			// but for now we keep it as it will be one of the common use cases
-			// to have the classical ComponentMetadata and this should be
-			// transformed into the new manifest structure for compatibility
-
 			// set the version of the metadata
+			// no manifest => metadata version 1
 			oStaticInfo.__metadataVersion = 1;
-
-			// create the manifest object
-			var oManifest = {
-				"name": sName,
-				"sap.app": {
-					"id": sName
-				},
-				"sap.ui5": {}
-			};
-
-			// converter for array with string values to object
-			var fnCreateObject = function(a, fnCallback) {
-				var o = {};
-				if (a) {
-					for (var i = 0, l = a.length; i < l; i++) {
-						var oValue = a[i];
-						if (typeof oValue === "string") {
-							o[oValue] = typeof fnCallback === "function" && fnCallback(oValue) || {};
-						}
-					}
-				}
-				return o;
-			};
-
-			// add the old information on component metadata to the manifest info
-			var oAppManifest = oManifest["sap.app"];
-			var oUI5Manifest = oManifest["sap.ui5"];
-			for (var sName in oStaticInfo) {
-				var oValue = oStaticInfo[sName];
-				if (oValue) {
-					switch (sName) {
-						case "name":
-							oManifest[sName] = oValue;
-							break;
-						case "description":
-						case "keywords":
-							oAppManifest[sName] = oValue;
-							break;
-						case "version":
-							oAppManifest.applicationVersion = {
-								version: oValue
-							};
-							break;
-						case "config":
-							oUI5Manifest[sName] = oValue;
-							break;
-						case "customizing":
-							oUI5Manifest["extends"] = {
-								component: oParent ? oParent.getName() : undefined,
-								extensions: oValue
-							};
-							break;
-						case "dependencies":
-							oUI5Manifest[sName] = {};
-							oUI5Manifest[sName].minUI5Version = oValue.ui5version;
-							oUI5Manifest[sName].libs = fnCreateObject(oValue.libs);
-							oUI5Manifest[sName].components = fnCreateObject(oValue.components);
-							break;
-						case "includes":
-							oUI5Manifest["resources"] = {};
-							if (oValue && oValue.length > 0) {
-								for (var i = 0, l = oValue.length; i < l; i++) {
-									var sResource = oValue[i];
-									var m = sResource.match(/\.(css|js)$/i);
-									if (m) {
-										oUI5Manifest["resources"][m[1]] = oUI5Manifest["resources"][m[1]] || [];
-										oUI5Manifest["resources"][m[1]].push({
-											"uri": sResource
-										});
-									}
-								}
-							}
-							break;
-						case "handleValidation":
-							oAppManifest[sName] = oValue;
-							break;
-						case "models":
-							var oModels = {};
-							for (var sModel in oValue) {
-								var oDS = oValue[sModel];
-								var oModel = {
-									settings: {}
-								};
-								for (var sDSSetting in oDS) {
-									var oDSSetting = oDS[sDSSetting];
-									switch (sDSSetting) {
-										case "type":
-											oModel[sDSSetting] = oDSSetting;
-											break;
-										default:
-											oModel.settings[sDSSetting] = oDSSetting;
-									}
-								}
-								oModels[sModel] = oModel;
-							}
-							oUI5Manifest["models"] = oModels;
-							break;
-						// no default
-					}
-				}
-			}
+			oManifest = {};
 
 		}
+		
+		// ensure the general property name, the namespace sap.app with the id,
+		// the namespace sap.ui5 and eventually the extends property
+		oManifest["name"] = oManifest["name"] || sName;
+		oManifest["sap.app"] = oManifest["sap.app"] || {
+			"id": sName
+		};
+		oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
+		if (sParentName) {
+			oManifest["sap.ui5"]["extends"] = oManifest["sap.ui5"]["extends"] || {};
+			oManifest["sap.ui5"]["extends"].component = oManifest["sap.ui5"]["extends"].component || sParentName;
+		}
+
+		// convert the old legacy metadata and merge with the new manifest
+		this._convertLegacyMetadata(oStaticInfo, oManifest);
 
 		// apply the manifest to the static info and store the static info for
 		// later access to specific custom entries of the manifest itself
@@ -296,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 */
 	ComponentMetadata.prototype.onInitComponent = function() {
-		var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
 		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
 			jQuery.sap.require("sap.ui.core.CustomizingConfiguration");
@@ -313,7 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
 		this._iInstanceCount--;
-		var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
 		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
 			if (sap.ui.core.CustomizingConfiguration) {
@@ -417,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @public
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifestEntry
 	 */
-	ComponentMetadata.prototype.getCustomEntry = function(sKey, bMerged){
+	ComponentMetadata.prototype.getCustomEntry = function(sKey, bMerged) {
 		if (!sKey || sKey.indexOf(".") <= 0) {
 			jQuery.sap.log.warning("Component Metadata entries with keys without namespace prefix can not be read via getCustomEntry. Key: " + sKey + ", Component: " + this.getName());
 			return null;
@@ -514,7 +421,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype.getUI5Version = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getUI5Version is deprecated!");
-		return this.getDependencies().ui5version;
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		return oUI5Manifest && oUI5Manifest.dependencies && oUI5Manifest.dependencies.minUI5Version;
 	};
 
 	/**
@@ -562,20 +470,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype.getConfig = function(sKey, bDoNotMerge) {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getConfig is deprecated!");
-		var oParent,
-		    oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		var oUI5Manifest = this.getManifestEntry("sap.ui5", !bDoNotMerge),
 		    mConfig = oUI5Manifest && oUI5Manifest.config;
 		
-		// either use the complete config or the specific one
-		mConfig = jQuery.extend(true, {}, mConfig && sKey ? mConfig[sKey] : mConfig);
-		
-		if (!bDoNotMerge && (oParent = this.getParent()) instanceof ComponentMetadata) {
-			// merge the config object if defined via parameter
-			mConfig = jQuery.extend(true, {}, oParent.getConfig(sKey, bDoNotMerge), mConfig);
-		}
-		
 		// return the configuration
-		return mConfig;
+		return jQuery.extend(true, {}, mConfig && sKey ? mConfig[sKey] : mConfig);
 	};
 
 
@@ -590,14 +489,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype.getCustomizing = function(bDoNotMerge) {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getCustomizing is deprecated!");
-		var oParent,
-		    oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		var  oUI5Manifest = this.getManifestEntry("sap.ui5", !bDoNotMerge),
 		    mExtensions = jQuery.extend(true, {}, oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions);
-		
-		if (!bDoNotMerge && (oParent = this.getParent()) instanceof ComponentMetadata) {
-			// merge the extensions object if defined via parameter
-			mExtensions = jQuery.extend(true, {}, oParent.getCustomizing(bDoNotMerge), mExtensions);
-		}
 		
 		// return the exensions object
 		return mExtensions;
@@ -644,10 +537,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 *
 	 * @return {boolean} bMessaging Messaging enabled/disabled
 	 * @private
-	 * @since 1.28
+	 * @since 1.28.0
+	 * @deprecated Since 1.28.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.handleValidation = function() {
-		return this._oStaticInfo.handleValidation;
+		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.handleValidation is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		return oUI5Manifest && oUI5Manifest.handleValidation;
 	};
 
 	/**
@@ -739,6 +635,123 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	};
 
 
+	/**
+	 * Converts the legacy metadata into the new manifest format
+	 * 
+	 * @private
+	 */
+	ComponentMetadata.prototype._convertLegacyMetadata = function(oStaticInfo, oManifest) {
+		
+		// this function can be outsourced in future when the ComponentMetadata
+		// is not used anymore and the new Application manifest is used -
+		// but for now we keep it as it will be one of the common use cases
+		// to have the classical ComponentMetadata and this should be
+		// transformed into the new manifest structure for compatibility
+
+		// converter for array with string values to object
+		var fnCreateObject = function(a, fnCallback) {
+			var o = {};
+			if (a) {
+				for (var i = 0, l = a.length; i < l; i++) {
+					var oValue = a[i];
+					if (typeof oValue === "string") {
+						o[oValue] = typeof fnCallback === "function" && fnCallback(oValue) || {};
+					}
+				}
+			}
+			return o;
+		};
+
+		// add the old information on component metadata to the manifest info
+		var oAppManifest = oManifest["sap.app"];
+		var oUI5Manifest = oManifest["sap.ui5"];
+		
+		// we do not merge the manifest and the metadata - once a manifest 
+		// entry exists, the metadata entries will be ignored and the specific
+		// metadata entry needs to be migrated into the manifest.
+		for (var sName in oStaticInfo) {
+			var oValue = oStaticInfo[sName];
+			if (oValue !== undefined) {
+				switch (sName) {
+					case "name":
+						oManifest[sName] = oManifest[sName] || oValue;
+						oAppManifest["id"] = oAppManifest["id"] || oValue;
+						break;
+					case "description":
+					case "keywords":
+						oAppManifest[sName] = oAppManifest[sName] || oValue;
+						break;
+					case "version":
+						var mAppVersion = oAppManifest.applicationVersion = oAppManifest.applicationVersion || {};
+						mAppVersion.version = mAppVersion.version || oValue;
+						break;
+					case "config":
+						oUI5Manifest[sName] = oUI5Manifest[sName] || oValue;
+						break;
+					case "customizing":
+						var mExtends = oUI5Manifest["extends"] = oUI5Manifest["extends"] || {};
+						mExtends.extensions = mExtends.extensions || oValue;
+						break;
+					case "dependencies":
+						if (!oUI5Manifest[sName]) {
+							oUI5Manifest[sName] = {};
+							oUI5Manifest[sName].minUI5Version = oValue.ui5version;
+							oUI5Manifest[sName].libs = fnCreateObject(oValue.libs);
+							oUI5Manifest[sName].components = fnCreateObject(oValue.components);
+						}
+						break;
+					case "includes":
+						if (!oUI5Manifest["resources"]) {
+							oUI5Manifest["resources"] = {};
+							if (oValue && oValue.length > 0) {
+								for (var i = 0, l = oValue.length; i < l; i++) {
+									var sResource = oValue[i];
+									var m = sResource.match(/\.(css|js)$/i);
+									if (m) {
+										oUI5Manifest["resources"][m[1]] = oUI5Manifest["resources"][m[1]] || [];
+										oUI5Manifest["resources"][m[1]].push({
+											"uri": sResource
+										});
+									}
+								}
+							}
+						}
+						break;
+					case "handleValidation":
+						if (oUI5Manifest[sName] === undefined) {
+							oUI5Manifest[sName] = oValue;
+						}
+						break;
+					case "models":
+						if (!oUI5Manifest["models"]) {
+							var oModels = {};
+							for (var sModel in oValue) {
+								var oDS = oValue[sModel];
+								var oModel = {
+									settings: {}
+								};
+								for (var sDSSetting in oDS) {
+									var oDSSetting = oDS[sDSSetting];
+									switch (sDSSetting) {
+										case "type":
+											oModel[sDSSetting] = oDSSetting;
+											break;
+										default:
+											oModel.settings[sDSSetting] = oDSSetting;
+									}
+								}
+								oModels[sModel] = oModel;
+							}
+							oUI5Manifest["models"] = oModels;
+						}
+						break;
+					// no default
+				}
+			}
+		}
+		
+	};
+	
 	return ComponentMetadata;
 
 }, /* bExport= */ true);

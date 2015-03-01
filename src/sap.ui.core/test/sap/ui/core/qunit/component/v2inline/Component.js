@@ -92,7 +92,6 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 				},
 				
 				"extends": {
-					"component": "sap.ui.core.UIComponent",
 					"extensions": {
 						"sap.ui.viewReplacements": {
 							"sap.ui.test.view.Main": {
