@@ -1531,49 +1531,49 @@
         "id": "797b45c29f8b6c7086a4a4a91fbe05f6ad3e705f",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.Column: box-sizing must be content-box",
+        "text": "sap.m.Column: box-sizing must be content-box",
         "references": []
       },
       {
         "id": "fecc653553edcc20534118e78776c7af12d5b6c8",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.DateTimeInput: Day/Month names do not need encoding.",
+        "text": "sap.m.DateTimeInput: Day/Month names do not need encoding.",
         "references": []
       },
       {
         "id": "abeb724c805401570873ef2f3775aa2d30665a48",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.GrowingDelegate: Should respect growing threshold.",
+        "text": "sap.m.GrowingDelegate: Should respect growing threshold.",
         "references": []
       },
       {
         "id": "cf562683bbbffd0cc9dc6019e6a5c8e9bf5c1a7f",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.List: Long no data text should show ellipsis.",
+        "text": "sap.m.List: Long no data text should show ellipsis.",
         "references": []
       },
       {
         "id": "56483dc1e809f04b6630a19043693e1caaf3110f",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.ListBase: qUnit for focus retain after.",
+        "text": "sap.m.ListBase: qUnit for focus retain after.",
         "references": []
       },
       {
         "id": "1ffa526530318f24196a4bab1b3fc97256123df6",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.ListItemBase: Visibility changes should not invalidate parent.",
+        "text": "sap.m.ListItemBase: Visibility changes should not invalidate parent.",
         "references": []
       },
       {
         "id": "403a42f7dad7aaf1b73706b8bca27c2f831c38c4",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "m.Toolbar: Float should have no effect on a flex item.",
+        "text": "sap.m.Toolbar: Float should have no effect on a flex item.",
         "references": []
       },
       {
@@ -1804,7 +1804,7 @@
         "id": "c42e6d1f9ca2e6e2800deee0d742f5d36d5bda96",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "INTERNAL",
-        "text": "m.GroupHeaderListItem: Typo fix for modes",
+        "text": "sap.m.GroupHeaderListItem: Typo fix for modes",
         "references": []
       },
       {
@@ -1888,7 +1888,7 @@
         "id": "6ce91fc2be7501613886a88902c937340312a59e",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Input: Suggestion item can't be used when selected corrected",
+        "text": "sap.m.Input: Suggestion item can\u0027t be used when selected corrected",
         "references": []
       },
       {
@@ -2069,6 +2069,128 @@
         "author": "Srujani Rondla \u003csrujani.rondla@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.FacetFilter: Popover width issue solved",
+        "references": []
+      }
+    ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "360d0d3a8da2d16f5ae8823075ae18a51642275b",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Dialog: improving explore app samples",
+        "references": []
+      },
+      {
+        "id": "212ca713cf922a890cedf522dd851da51c53b517",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: API fix for change",
+        "references": []
+      },
+      {
+        "id": "64119149879a7059fefdf3761b1b28876df5414d",
+        "author": "Dimo Uzunov \u003cdimo.uzunov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePage: Added showNavButton property and navButtonPress event",
+        "references": []
+      },
+      {
+        "id": "470f235dce80777cdd6800676f1cc9750bc54cd1",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix JSDoc issues as reported during nightly build",
+        "references": []
+      },
+      {
+        "id": "dc48542bb249d5c3d3057153eed9c675d0e096c6",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CustomListItem: Should allow text selection",
+        "references": []
+      },
+      {
+        "id": "76bb7e173e7fa9060294e111f7eb8e0c5bcad9c2",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Popin content should be announced by screen readers.",
+        "references": []
+      },
+      {
+        "id": "3723b6cd7943cf22aa76e98c7afa253e0e621392",
+        "author": "I057508 \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar issue when used in the context of sap.m.Dialog solved.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "122597"
+          }
+        ]
+      },
+      {
+        "id": "57ffaa03d91c5a06750b03e436212c982184105e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: keyboard navigation issues",
+        "references": []
+      },
+      {
+        "id": "e4d23ffdcb48b7892ab8ad2c63b4b57038ccfc41",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: ValueHelp icon on wrong position if description used",
+        "references": []
+      },
+      {
+        "id": "ac22d1d59e57279c36ddfd622feffbd595f455f2",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: don\u0027t use suggestion popup on tablets",
+        "references": []
+      },
+      {
+        "id": "43f80bff99935e1a4af9fd4f21c43cc41778a15c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Duplicate icon in compact mode corrected",
+        "references": []
+      },
+      {
+        "id": "65d0d2a86271e8fd97148d96d295faefbc1ac3f5",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Allow usage of empty strings as selected key",
+        "references": []
+      },
+      {
+        "id": "a8b09df5e1898b46cc6bec283667c7e1b04b4442",
+        "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance focus setting for tokenChange event",
+        "references": []
+      },
+      {
+        "id": "318e63fd718c1b732faf6c9dfb11380ac042cddf",
+        "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: CSS adaptation for the first and last list item in the way that the space between the items fits",
+        "references": []
+      },
+      {
+        "id": "3f387a58df72174171ae2855bd137076b8f6dccf",
+        "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Call of Method setFileType with undefined parameter has triggered an error.",
+        "references": []
+      },
+      {
+        "id": "7a974ca8e7e0b9b3a5b4db479014961ff81be925",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: buttons lie over text at resizing",
         "references": []
       }
     ]
