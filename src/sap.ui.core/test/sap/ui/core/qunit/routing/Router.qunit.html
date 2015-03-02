@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
 	  Tested classes: sap.ui.core.routing.Router
 	-->
 
@@ -14,7 +14,7 @@
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
-	
+
 </script>
 
 <script>
@@ -287,6 +287,28 @@
 			strictEqual(route3._oConfig.name, "subsubpage", "Route has correct name");
 			strictEqual(route3._oParent, route2, "Route has correct parent");
 
+		});
+
+		test("Should not crash if viewName is not defined, but controlId and aggregation are defaulted but no view is given", function () {
+			var oNavContainer = new sap.m.NavContainer();
+
+			//Arrange System under Test
+			var oRouter = new sap.ui.core.routing.Router({
+				routeWithoutView: {
+					pattern : "view1"
+				}
+			},
+			{
+				targetControl: oNavContainer.getId(),
+				targetAggregation: "pages"
+			});
+
+			oRouter.parse("view1");
+
+			ok(true, "Did not crash");
+
+			oNavContainer.destroy();
+			oRouter.destroy();
 		});
 
 		module("greedy");
