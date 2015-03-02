@@ -1,24 +1,15 @@
 {
 
-	"name": "sap.ui.test.v2.Component",
+	"name": "sap.ui.test.inherit.parent.Component",
 	
 	"sap.app": {
-		"id": "sap.ui.test.v2.Component",
+		"id": "sap.ui.test.inherit.parent.Component",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	
 	"sap.ui5": {
-		
-		"resources": {
-			"js": [{
-				"uri": "script.js"
-			}],
-			"css": [{
-				"uri": "style.css"
-			}]
-		},
 		
 		"dependencies": {
 			"minUI5Version": "1.22.5",
@@ -36,13 +27,13 @@
 		},
 		
 		"models": {
-			"i18n": {
+			"i18n_1": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
 					"uri": "i18n/i18n.properties"
 				}
 			},
-			"sfapi": {
+			"sfapi_1": {
 				"type": "sap.ui.model.odata.ODataModel",
 				"settings": {
 					"uri": "/sap/opu/odata/snce/PO_S_SRV/"
@@ -50,39 +41,13 @@
 			}
 		},
 		
-		"rootView": "sap.ui.test.view.Main",
-		
 		"config": {
-			"any1": {
-				"entry": "configuration"
-			},
-			"any2": {
-				"anyobject": {
-					"key1": "value1"
-				}
-			},
-			"any3": {
+			"any9": {
 				"anyarray": [1, 2, 3]
 			}
 		},
 		
-		"routing": {
-			"config": {
-				"viewType" : "XML",
-				"viewPath": "NavigationWithoutMasterDetailPattern.view",
-				"targetParent": "myViewId",
-				"targetControl": "app",
-				"targetAggregation": "pages",
-				"clearTarget": false
-			},
-			"routes": [
-				{
-					"name" : "myRouteName1",
-					"pattern" : "FirstView/{from}",
-					"view" : "myViewId"
-				}
-			]
-		},
+		"rootView": "sap.ui.test.view.Main",
 		
 		"extends": {
 			"extensions": {
