@@ -239,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 		 * The 'Detail' view will be put into the pages aggregation of the App. And afterwards the 'SecondTabContent' view will be put into the content Aggregation of the second IconTabFilter.
 		 * So a parent will always be created before the target referencing it.
 		 *
-		 * @since 1.28
+		 * @since 1.28.1
 		 * @public
 		 * @alias sap.ui.core.routing.Targets
 		 */

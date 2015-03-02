@@ -6,18 +6,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application.
-		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.
-		 * Don't call this constructor directly, use {@link sap.ui.core.routing.Targets} instead, it will create instances of a Target
-		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor, please read the documentation there. Additional parameters are allowed in the mobile library, and the default of clearTaget will be false instead of true.
+		 * Provides a convenient way for placing views into the correct containers of your application.<br/>
+		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.<br/>
+		 * <b>Don't call this constructor directly</b>, use {@link sap.ui.core.routing.Targets} instead, it will create instances of a Target.<br/>
+		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor, please read the documentation there.<br/>
 		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider
 		 * @param {object} oOptions all of the parameters defined in {@link sap.m.routing.Targets#constructor} are accepted here, except for children you need to specify the parent.
 		 * @param {sap.ui.core.routing.Views} oViews All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
 		 * @param {sap.ui.core.routing.Target} [oParent] the parent of this target. Will also get displayed, if you display this target. In the config you have the fill the children property {@link sap.m.routing.Targets#constructor}
-		 * @protected
-		 * @since 1.28
+		 * @public
+		 * @since 1.28.1
 		 * @alias sap.ui.core.routing.Target
 		 */
 		return EventProvider.extend("sap.ui.core.routing.Target", {
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				return this;
 			},
 
-			/***
+			/**
 			 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
 			 *
 			 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.

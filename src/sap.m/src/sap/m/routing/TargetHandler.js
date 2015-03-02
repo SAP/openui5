@@ -7,14 +7,14 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 
 
 		/**
-		 * Instantiates a TargetHandler.
-		 * This is used for closing dialogs when targets are displayed.
-		 * You should not create an own instance of this, it will be created when using {@link sap.m.routing.Router} or {@link sap.m.routing.Targets}.
+		 * Instantiates a TargetHandler, a class used for closing dialogs and showing transitions in NavContainers when targets are displayed.<br/>
+		 * <b>You should not create an own instance of this class.</b> It will be created when using {@link sap.m.routing.Router} or {@link sap.m.routing.Targets}.
 		 * You may use the {@link #setCloseDialogs} function to specify if dialogs should be closed on displaying other views.
 		 *
 		 * @class
 		 * @param {boolean} closeDialogs - the default is true - will close all open dialogs before navigating, if set to true. If set to false it will just navigate without closing dialogs.
-		 * @protected
+		 * @public
+		 * @since 1.28.1
 		 * @alias sap.m.routing.TargetHandler
 		 */
 		var TargetHandler = BaseObject.extend("sap.m.routing.TargetHandler", {
