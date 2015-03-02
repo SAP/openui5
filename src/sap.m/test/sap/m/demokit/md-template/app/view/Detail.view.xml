@@ -36,11 +36,11 @@
 					<Column>
 						<Label text="{i18n>detailLineItemTableIDColumn}" />
 					</Column>
-					<Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
 						<Label text="{i18n>detailLineItemTableAttributeColumn}"/>
 					</Column>
-					<Column hAlign="Right">
-						<Label text="{i18n>detailLineItemTableUoMColumn}" />
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Right">
+						<Label text="{i18n>detailLineItemTableUnitNumberColumn}" />
 					</Column>
 				</columns>
 				<items>

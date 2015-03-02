@@ -102,13 +102,13 @@ sap.ui.define([
 		 * running on phone devices. On larger screens, the detail
 		 * view has no other view to go back to.
 		 * If running on phone though, the app
-		 * will navigate back to the 'main' view.
+		 * will navigate back to the 'master' view.
 		 *
 		 * @function
 		 */
 		onNavBack : function () {
 			// This is only relevant when running on phone devices
-			this.getRouter().myNavBack("main");
+			this.getRouter().myNavBack("master");
 		},
 
 		/**
