@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.type = info.type || 'string';
 		this.group = info.group || 'Misc';
 		this.defaultValue = info.defaultValue !== null ? info.defaultValue : null;
-		this.bindable = info.bindable === 'bindable' ? info.bindable : undefined;
+		this.bindable = !!info.bindable;
 		this.deprecated = !!info.deprecated || false;
 		this.visibility = 'public';
 		this.appData = remainder(this, info);
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		var N = capitalize(name);
 		this._sMutator = 'set' + N;
 		this._sGetter = 'get' + N;
-		if ( this.bindable === 'bindable' ) {
+		if ( this.bindable ) {
 			this._sBind =  'bind' + N;
 			this._sUnbind = 'unbind' + N;
 		} else {
@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 		add(that._sGetter, function() { return this.getProperty(n); });
 		add(that._sMutator, function(v) { this.setProperty(n,v); return this; }, that);
-		if ( that.bindable === 'bindable' ) {
+		if ( that.bindable ) {
 			add(that._sBind, function(p,fn,m) { this.bindProperty(n,p,fn,m); return this; }, that);
 			add(that._sUnbind, function(p) { this.unbindProperty(n,p); return this; });
 		}
@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.altTypes = info.altTypes || undefined;
 		this.multiple = typeof info.multiple === 'boolean' ? info.multiple : true;
 		this.singularName = this.multiple ? info.singularName || guessSingularName(name) : undefined;
-		this.bindable = info.bindable === 'bindable' ? info.bindable : undefined;
+		this.bindable = !!info.bindable;
 		this.deprecated = info.deprecated || false;
 		this.visibility = info.visibility || 'public';
 		this._doesNotRequireFactory = !!info._doesNotRequireFactory; // TODO clarify if public
@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			this._sIndexGetter = undefined;
 		}
 		this._sDestructor = 'destroy' + N;
-		if ( this.bindable === 'bindable' ) {
+		if ( this.bindable ) {
 			this._sBind = 'bind' + N;
 			this._sUnbind = 'unbind' + N;
 		} else {
@@ -255,7 +255,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			add(that._sIndexGetter, function(a) { return this.indexOfAggregation(n,a); });
 		}
 		add(that._sDestructor, function() { this.destroyAggregation(n); return this; });
-		if ( that.bindable === 'bindable' ) {
+		if ( that.bindable ) {
 			add(that._sBind, function(p,t,s,f) { this.bindAggregation(n,p,t,s,f); return this; }, that);
 			add(that._sUnbind, function(p) { this.unbindAggregation(n,p); return this; });
 		}

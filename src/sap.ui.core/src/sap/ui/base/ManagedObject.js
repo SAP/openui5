@@ -523,9 +523,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *     type created and registered with {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li> 
 	 * <li><code>group: ...</li>
 	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
-	 * <li><code>bindable: <i>string</i></code> (either can be omitted or set to the magic value 'bindable') If set to 'bindable', additional named <code>bind<i>Name</i>
-	 *     and <code>unbind<i>Name</i></code> methods are generated as convenience. Despite its name, setting this flag is not mandatory to make 
-	 *     the managed property bindable. The generic methods bindProperty and unbindProperty can always be used. </li>
+	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable') 
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i> and <code>unbind<i>Name</i></code> are generated as convenience. 
+	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and 
+	 *     {@link #unbindProperty} can always be used. </li>
 	 * </ul>
 	 * Property names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
@@ -554,9 +555,10 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property. </li>
 	 * <li>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas 
 	 *     'hidden' aggregations typically are used for the implementation of composite classes (e.g. composite controls) </li>
-	 * <li><code>bindable: <i>string</i></code> (either can be omitted or set to the magic value 'bindable') If set to 'bindable', additional named <code>bind<i>Name</i>
-	 *     and <code>unbind<i>Name</i></code> methods are generated as convenience. Despite its name, setting this flag is not mandatory to make 
-	 *     the managed aggregation bindable. The generic methods bindAggregation and unbindAggregation can always be used. </li>
+	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable') 
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i> and <code>unbind<i>Name</i></code> are generated as convenience. 
+	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and 
+	 *     {@link #unbindAggregation} can always be used. </li>
 	 * </ul>
 	 * Aggregation names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * The name for a hidden aggregations might start with an underscore.
