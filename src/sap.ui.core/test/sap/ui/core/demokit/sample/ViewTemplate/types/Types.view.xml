@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.types.Types"
 	xmlns="sap.m"
+	xmlns:commons="sap.ui.commons"
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -10,7 +11,13 @@
 		<HBox>
 			<Button text="Save" press="onSave" visible="{ui>/realOData}"/>
 			<Button text="Reset" press="onReset" visible="{ui>/realOData}" />
+			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 		</HBox>
+		<VBox visible="{ui>/codeVisible}">
+			<commons:HorizontalDivider/>
+			<core:HTML content="{ui>/code}" preferDOM="false"/>
+		</VBox>
+		<commons:HorizontalDivider/>
 		<HBox width="100%">
 			<form:SimpleForm>
 				<!--TODO: sap.ui.model.odata.type.Binary not yet available

@@ -37,6 +37,22 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.types.Types", {
 		});
 	},
 
+	onSourceCode: function (oEvent) {
+		var oView = this.getView(),
+			sSource,
+			bVisible = oView.byId("toggleSourceCode").getPressed();
+
+		oView.getModel("ui").setProperty("/codeVisible", bVisible);
+		if (bVisible) {
+			sSource = jQuery.sap.serializeXML(oView._xContent)
+				.replace(/<!--.*-->/g, "") // remove comments
+				.replace(/\t/g, "  ") // indent by just 2 spaces
+				.replace(/\n\s*\n/g, "\n"); // remove empty lines
+			oView.getModel("ui").setProperty("/code",
+				"<pre><code>" + jQuery.sap.encodeHTML(sSource) + "</code></pre>");
+		}
+	},
+
 	showError: function(sTitle, oError) {
 		jQuery.sap.log.error(sTitle + ": " + oError.message, oError.stack,
 			"sap.ui.core.sample.ViewTemplate.types.Types");
