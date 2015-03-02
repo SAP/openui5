@@ -169,5 +169,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "d0c6a06debbfd1a5a7481d9c8982af498f76b368",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable.js - Removed \"undefined\" function call",
+        "references": []
+      },
+      {
+        "id": "50986f18bba3195ec2754090e4c68dba33e4d6f6",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Table: GroupHeader label had a wrong positioning",
+        "references": []
+      },
+      {
+        "id": "7e11ce4f51155090f2144b61674bbf4e80db048b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes that SHIFT+TAB w/o column header does not work",
+        "references": []
+      },
+      {
+        "id": "7a2e4ce0d2f83f2a051a7d4238584e1f65e25710",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes the issue that in non-accessibility mode the table can\u0027t tabbed",
+        "references": []
+      },
+      {
+        "id": "02305f6f679c1f72ada5052f2ca0bdfc8e4c38f5",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fixes issues with expand and collapse of group headers",
+        "references": []
+      }
+    ]
   }
 }

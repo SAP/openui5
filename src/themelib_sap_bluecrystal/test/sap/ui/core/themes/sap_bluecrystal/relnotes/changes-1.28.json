@@ -395,5 +395,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "e4d23ffdcb48b7892ab8ad2c63b4b57038ccfc41",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: ValueHelp icon on wrong position if description used",
+        "references": []
+      },
+      {
+        "id": "43f80bff99935e1a4af9fd4f21c43cc41778a15c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Duplicate icon in compact mode corrected",
+        "references": []
+      }
+    ]
   }
 }

@@ -1187,5 +1187,115 @@
         "references": []
       }
     ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "f26dcbb50e1394aa44dfe507775b5cb9e3605c9e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "OData Message Parser",
+        "references": []
+      },
+      {
+        "id": "4855cc1684645e9388bfa60d219fc18f0e112445",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.routing.Targets may be used with UIComponents",
+        "references": []
+      },
+      {
+        "id": "51b6ff7f75c69791b48fd145d425ca525534fc51",
+        "author": "Patric Ksinsik \u003cp.ksinsik@sap.com\u003e",
+        "type": "FIX",
+        "text": "ExpressionBinding operator -",
+        "references": []
+      },
+      {
+        "id": "470f235dce80777cdd6800676f1cc9750bc54cd1",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix JSDoc issues as reported during nightly build",
+        "references": []
+      },
+      {
+        "id": "cefeaa27482db6b8866a4b4059939d5a2a7545c0",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "IE9: Load Theme-Parameters when stylesheet limit reached",
+        "references": []
+      },
+      {
+        "id": "27f6e9d30f1f8fdc2b3e638f6dd980d652543a7d",
+        "author": "Patric Ksinsik \u003cp.ksinsik@sap.com\u003e",
+        "type": "FIX",
+        "text": "Layout issue in XMLView scenario in Explored app with IE",
+        "references": []
+      },
+      {
+        "id": "34bd690bfc364bc4013b27c58d96daa369c4884e",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: support value \u0027true\u0027 for option \u0027bindable\u0027",
+        "references": []
+      },
+      {
+        "id": "d54d9f670f992f92cfd9531b35984862be51d9f0",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "TechnicalInfo: limit disp. size of config, no re-opening",
+        "references": []
+      },
+      {
+        "id": "6f4c90018020d6462362b39476e422ada303af03",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.InvisibleText: Should not invalidate static UIArea.",
+        "references": []
+      },
+      {
+        "id": "bb8a6e1f9b637e7f128889b6eabdcb7a8b2be3a7",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "datajs: set withCredentials flag after xhr.open call",
+        "references": []
+      },
+      {
+        "id": "8bbf4c28ebeb4e06eced5c423262dad6c92286b7",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: rendering issue with \"src\" values without protocol",
+        "references": []
+      },
+      {
+        "id": "6425e41658c209ec4d47665bb14688864447eda3",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: JsDoc of errors before loading",
+        "references": []
+      },
+      {
+        "id": "261df5ce6bcdc121ff025591e9e5d54b750203a8",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: errors before loading",
+        "references": []
+      },
+      {
+        "id": "02305f6f679c1f72ada5052f2ca0bdfc8e4c38f5",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fixes issues with expand and collapse of group headers",
+        "references": []
+      },
+      {
+        "id": "31ee7dfda3aefc2e172fd4aac153e8893925fd45",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5#waitFor.controlType now also works if the type is still a lazy stub of UI5",
+        "references": []
+      }
+    ]
   }
 }
