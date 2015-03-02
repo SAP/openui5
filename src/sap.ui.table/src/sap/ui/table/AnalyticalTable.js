@@ -304,7 +304,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
 			aCols = this.getColumns();
-
+		
+		//check if the table has columns
 		if (!oBinding) {
 			return;
 		}
@@ -317,7 +318,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 			if (bHasRowHeader) {
 				$ths = $ths.not(":nth-child(1)");
 			}
-			var iOffset = $ths.get(0).getBoundingClientRect().left;
+			var $firstTh = $ths.get(0);
+			if (!$firstTh) {
+				//it might happen, that the first TH is not defined, because the table did not yet render any columns
+				//columns can be added asynchronously after the table was instantiated
+				return;
+			}
+			var iOffset = $firstTh.getBoundingClientRect().left;
 			var $FirstMeasureColumn = $ths.get(this._getFirstMeasureColumnIndex());
 			if ($FirstMeasureColumn) {
 				var iMaxGroupHeaderWidth = 32 + $FirstMeasureColumn.getBoundingClientRect().left - iOffset;
@@ -758,7 +765,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		if (oColumn.getGrouped()) {
 			this._addGroupedColumn(oColumn.getId());
 		}
-		return Table.prototype.addColumn.call(this, oColumn, bSuppressInvalidate);
+		Table.prototype.addColumn.call(this, oColumn, bSuppressInvalidate);
+		this._updateTableColumnDetails();
+		this.updateAnalyticalInfo(bSuppressInvalidate);
+		return this;
 	};
 
 	AnalyticalTable.prototype.insertColumn = function(vColumn, iIndex, bSuppressInvalidate) {
@@ -766,22 +776,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		if (oColumn.getGrouped()) {
 			this._addGroupedColumn(oColumn.getId());
 		}
-		return Table.prototype.insertColumn.call(this, oColumn, iIndex, bSuppressInvalidate);
+		Table.prototype.insertColumn.call(this, oColumn, iIndex, bSuppressInvalidate);
+		this._updateTableColumnDetails();
+		this.updateAnalyticalInfo(bSuppressInvalidate);
+		return this;
 	};
 
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
-		var oColumn = Table.prototype.removeColumn.apply(this, arguments);
-		if (oColumn) {
-			this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(value) {
-				return value != oColumn.getId();
-			});
-		}
-		return oColumn;
+		Table.prototype.removeColumn.apply(this, arguments);
+		
+		//TODO: Make sure vColumn is really an AnalyticalColumn instance
+		this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
+			//check if vColum is an object with getId function
+			if (vColumn.getId) {
+				return sValue != vColumn.getId();
+			} else {
+				return sValue == vColumn;
+			}
+		});
+		
+		this.updateAnalyticalInfo(bSuppressInvalidate);
+
+		return this;
 	};
 
 	AnalyticalTable.prototype.removeAllColumns = function(bSuppressInvalidate) {
 		this._aGroupedColumns = [];
-		return Table.prototype.removeColumn.apply(this, arguments);
+		Table.prototype.removeColumn.apply(this, arguments);
+		
+		this._updateTableColumnDetails();
+		this.updateAnalyticalInfo(bSuppressInvalidate);
+
+		return this;
 	};
 
 	AnalyticalTable.prototype._getColumn = function(vColumn) {

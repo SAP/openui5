@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- Fake Service Implementaton -->
+<script src="analytics/o4aFakeService.js"></script>
+<!-- The metadata Fake Content -->
+<script src="analytics/o4aMetadata.js"></script>
+<!-- Fake Service Document -->
+<script src="analytics/TBA_ServiceDocument.js"></script>
+<!-- Fake Service Content for NO batch Tests -->
+<script src="analytics/TBA_NoBatch.js"></script>
+<!-- Fake Data for the BATCH Tests -->
+<script src="analytics/TBA_Batch_Contexts.js"></script>
+<script src="analytics/TBA_Batch_ExpandCollapseToggle.js"></script>
+<script src="analytics/TBA_Batch_Filter.js"></script>
+<script src="analytics/TBA_Batch_Sort.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	jQuery.sap.require("sap.ui.model.odata.ODataModel");
+	jQuery.sap.require("sap.ui.model.analytics.ODataModelAdapter");
+	jQuery.sap.require("sap.ui.model.analytics.TreeBindingAdapter");
+
+	//start the fake service
+	var sServiceURI = "http://o4aFakeService:8080/";
+	o4aFakeService.fake({
+		baseURI: sServiceURI
+	});
+
+	var oModel,
+		oBinding;
+
+	var setupAnalyticalBinding = function(iVersion, fnODataV2Callback) {
+		if (iVersion === 1) {
+			oModel = new sap.ui.model.odata.ODataModel(sServiceURI, {
+				json: true, 
+				tokenHandling: false
+			});
+		} else {
+			oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {
+				tokenHandling: false,
+				json: true
+			});
+		}
+		
+		sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
+		oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results", null, [], [], {
+			analyticalInfo: [{
+				name: "CostCenter",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+			}, {
+				name: "CostElement",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+			}, {
+				name: "Currency",
+				grouped: true,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: false,
+				visible: true
+			}, {
+				name: "ActualCosts",
+				grouped: false,
+				inResult: false,
+				sortOrder: "Ascending",
+				sorted: false,
+				total: true,
+				visible: true
+			}],
+			useBatchRequests: true,
+			numberOfExpandedLevels: 0
+		});
+		sap.ui.model.analytics.TreeBindingAdapter.apply(oBinding);
+		
+		//V1 => synchronous metadata, initialize the binding directly
+		if (iVersion === 1) {
+			oBinding.initialize();
+		} else {
+			oModel.attachMetadataLoaded(function () {
+				oBinding.initialize();
+				fnODataV2Callback();
+			});
+		}
+	};
+
+	asyncTest("Eventing - ODataModel V1 - DataRequested and DataReceived", function() {
+		setupAnalyticalBinding(1);
+
+		var oRequestedSpy = sinon.spy(oBinding, 'fireDataRequested');
+		var oReceivedSpy = sinon.spy(oBinding, 'fireDataReceived');
+		
+		var oRequestSentSpy = sinon.spy(oModel, 'fireRequestSent');
+		var oRequestCompletedSpy = sinon.spy(oModel, 'fireRequestCompleted');
+		
+		oBinding.attachChange(fnChangeHandler1);
+		var aContexts = oBinding.getContexts(0, 20, 100);
+		
+		// trigger timer (AB uses delayedCall to process batch request queue)
+		this.clock.tick(1000);
+		
+		function fnChangeHandler1() {
+			oBinding.detachChange(fnChangeHandler1);
+			aContexts = oBinding.getContexts(0, 20, 100);
+			
+			equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
+			equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
+			
+			equal(oRequestSentSpy.callCount, 1, "After Initial Loading: Number of requestSent Events = 1");
+			equal(oRequestCompletedSpy.callCount, 1, "After Initial Loading: Number of requestCompleted Events = 1")
+		
+			oBinding.attachChange(fnChangeHandler2);
+			oBinding.expand(0);
+		}
+		
+		function fnChangeHandler2() {
+			oBinding.detachChange(fnChangeHandler2);
+			
+			// register for completed event on the model
+			// change event will be raised BEFORE the completed event
+			oModel.attachRequestCompleted(fnCompletedHandler)
+			
+			oBinding.attachChange(fnChangeHandler3);
+			oBinding.getContexts(0, 20, 100);
+		}
+		
+		function fnChangeHandler3() {
+			oBinding.detachChange(fnChangeHandler3);
+			//oBinding.getContexts(0, 20, 100);
+			
+			equal(oRequestedSpy.callCount, 2, "After Expand: Number of dataRequested Events = 2");
+			
+			equal(oRequestSentSpy.callCount, 2, "After Expand: Number of requestSent Events = 2");
+			
+		}
+		
+		function fnCompletedHandler() {
+			oModel.detachRequestCompleted(fnCompletedHandler);
+			equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
+			equal(oRequestCompletedSpy.callCount, 2, "After Expand: Number of requestCompleted Events = 2")
+			start();
+		}
+	});
+	
+	asyncTest("Eventing - ODataModel V2 - DataRequested and DataReceived", function() {
+		var that = this;
+		
+		setupAnalyticalBinding(2, function () {
+			var oRequestedSpy = sinon.spy(oBinding, 'fireDataRequested');
+			var oReceivedSpy = sinon.spy(oBinding, 'fireDataReceived');
+			
+			var oRequestSentSpy = sinon.spy(oModel, 'fireRequestSent');
+			var oRequestCompletedSpy = sinon.spy(oModel, 'fireRequestCompleted');
+			
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 100);
+			
+			var iChangeHandlerCounter = 0;
+			function fnChangeHandler1() {
+				iChangeHandlerCounter++;
+				if (iChangeHandlerCounter == 2) {
+					equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
+					equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
+					
+					equal(oRequestSentSpy.callCount, 3, "After Initial Loading: Number of requestSent Events = 3");
+					equal(oRequestCompletedSpy.callCount, 3, "After Initial Loading: Number of requestCompleted Events = 3")
+					
+					oBinding.detachChange(fnChangeHandler1);
+					
+					oBinding.getContexts(0, 20, 100);
+					
+					oBinding.attachChange(fnExpandChangeHandler);
+					oBinding.expand(0);
+				}
+			}
+			
+			function fnExpandChangeHandler() {
+				oBinding.detachChange(fnExpandChangeHandler);
+				
+				oBinding.attachChange(fnChangeHandler2);
+				oBinding.getContexts(0, 20, 100);
+			}
+			
+			function fnChangeHandler2() {
+				oBinding.detachChange(fnChangeHandler2);
+				
+				equal(oRequestedSpy.callCount, 2, "After Expand: Number of dataRequested Events = 2");
+				equal(oReceivedSpy.callCount, 2, "After Expand: Number of dataReceived Events = 2");
+				
+				equal(oRequestSentSpy.callCount, 4, "After Expand: Number of requestSent Events = 4");
+				equal(oRequestCompletedSpy.callCount, 4, "After Expand: Number of requestCompleted Events = 4")
+				
+				start();
+			}
+		});
+	});
+
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: sap.ui.model.analytics.TreeBindingAdapter</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>
