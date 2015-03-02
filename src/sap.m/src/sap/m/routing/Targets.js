@@ -290,8 +290,8 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 * @param {string} [oOptions.targets.anyName.transition] define which transition of the {@link sap.m.NavContainer} will be applied when navigating. If it is not defined, the nav container will take its default transition.
 		 * @param {string} [oOptions.targets.anyName.transitionParameters] define the transitionParameters of the {@link sap.m.NavContainer}
 		 *
-		 * @since 1.28
-		 * @private
+		 * @since 1.28.1
+		 * @public
 		 * @alias sap.m.routing.Targets
 		 */
 		return Targets.extend("sap.m.routing.Targets", {

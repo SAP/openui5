@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 		 * @class
 		 * @extends sap.ui.base.EventProvider
 		 * @public
-		 * @since 1.28
+		 * @since 1.28.1
 		 * @param {object} oOptions
 		 * @param {sap.ui.core.UIComponent} [oOptions.component] the owner of all the views that will be created by this Instance.
 		 * @alias sap.ui.core.routing.Views
