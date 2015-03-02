@@ -205,8 +205,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 		// create the routing
 		var oMetadata = this.getMetadata(),
 			// extend the metadata config, so that the metadata object cannot be modified afterwards
-			oManifest = oMetadata.getManifestEntry("sap.ui5"),
-			oRoutingManifestEntry = oManifest.routing || {},
+			oRoutingManifestEntry = oMetadata._getRoutingSection() || {},
 			oRoutingConfig = oRoutingManifestEntry.config || {},
 			vRoutes = oRoutingManifestEntry.routes;
 

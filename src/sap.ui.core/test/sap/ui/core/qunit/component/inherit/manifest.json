@@ -1,16 +1,16 @@
 {
 
 	"name": "sap.ui.test.inherit.Component",
-	
+
 	"sap.app": {
 		"id": "sap.ui.test.inherit.Component",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
-	
+
 	"sap.ui5": {
-		
+
 		"resources": {
 			"js": [{
 				"uri": "script.js"
@@ -19,14 +19,14 @@
 				"uri": "style.css"
 			}]
 		},
-		
+
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
 				"sap.ui.commons": {
 					"minVersion": "1.22.0"
 				}
-			}, 
+			},
 			"components": {
 				"sap.ui.test.other": {
 					"optional": true,
@@ -34,7 +34,7 @@
 				}
 			}
 		},
-		
+
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -49,7 +49,7 @@
 				}
 			}
 		},
-		
+
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -63,16 +63,8 @@
 				"anyarray": [1, 2, 3]
 			}
 		},
-		
+
 		"routing": {
-			"config": {
-				"viewType" : "XML",
-				"viewPath": "NavigationWithoutMasterDetailPattern.view",
-				"targetParent": "myViewId",
-				"targetControl": "app",
-				"targetAggregation": "pages",
-				"clearTarget": false
-			},
 			"routes": [
 				{
 					"name" : "myRouteName1",
@@ -81,7 +73,7 @@
 				}
 			]
 		},
-		
+
 		"extends": {
 			"component": "sap.ui.test.inherit.parent",
 			"extensions": {
@@ -111,7 +103,7 @@
 				}
 			}
 		}
-	
+
 	}
 
 }
