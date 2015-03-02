@@ -1,9 +1,9 @@
 {
 
-	"name": "sap.ui.test.v2.Component",
+	"name": "sap.ui.test.inherit.Component",
 	
 	"sap.app": {
-		"id": "sap.ui.test.v2.Component",
+		"id": "sap.ui.test.inherit.Component",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -50,8 +50,6 @@
 			}
 		},
 		
-		"rootView": "sap.ui.test.view.Main",
-		
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -85,6 +83,7 @@
 		},
 		
 		"extends": {
+			"component": "sap.ui.test.inherit.parent",
 			"extensions": {
 				"sap.ui.viewReplacements": {
 					"sap.ui.test.view.Main": {

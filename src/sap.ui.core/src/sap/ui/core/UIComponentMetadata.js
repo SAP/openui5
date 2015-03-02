@@ -47,24 +47,9 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 
 		ComponentMetadata.prototype.applySettings.call(this, oClassInfo);
 
-		var oStaticInfo = oClassInfo.metadata,
-		    oManifest = oStaticInfo.manifest,
-		    oUI5Manifest = oManifest["sap.ui5"];
-
-		// add the old information on component metadata to the manifest info
-		for (var sName in oStaticInfo) {
-			var oValue = oStaticInfo[sName];
-			switch (sName) {
-				case "rootView":
-				case "routing":
-					oUI5Manifest[sName] = oValue;
-					break;
-				// no default
-			}
-		}
-
 		// if the root view is a string we convert it into a view
 		// configuration object and assume that it is a XML view
+		var oUI5Manifest = this._oStaticInfo.manifest["sap.ui5"];
 		if (oUI5Manifest && typeof oUI5Manifest.rootView === "string") {
 			oUI5Manifest.rootView = {
 					viewName: oUI5Manifest.rootView,
@@ -125,6 +110,23 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getRoutes is deprecated!");
 		var oUI5Manifest = this.getManifestEntry("sap.ui5");
 		return oUI5Manifest && oUI5Manifest.routing && oUI5Manifest.routing.routes;
+	};
+
+	/**
+	 * Converts the legacy metadata into the new manifest format
+	 * 
+	 * @private
+	 */
+	UIComponentMetadata.prototype._convertLegacyMetadata = function(oStaticInfo, oManifest) {
+		ComponentMetadata.prototype._convertLegacyMetadata.call(this, oStaticInfo, oManifest);
+		
+		// add the old information on component metadata to the manifest info
+		// if no manifest entry exists otherwise the metadata entry will be 
+		// ignored by the converter
+		var oUI5Manifest = oManifest["sap.ui5"];
+		oUI5Manifest["rootView"] = oUI5Manifest["rootView"] || oStaticInfo["rootView"];
+		oUI5Manifest["routing"] = oUI5Manifest["routing"] || oStaticInfo["routing"];
+		
 	};
 
 	return UIComponentMetadata;

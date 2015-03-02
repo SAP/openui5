@@ -208,7 +208,6 @@
 					}
 				},
 				"extends": {
-					"component": "sap.ui.core.UIComponent",
 					"extensions": {
 						"sap.ui.controllerReplacements": {
 							"sap.ui.test.view.Main": "sap.ui.test.view.Main"
@@ -311,7 +310,7 @@
 			// fix the specials in the metadata for the v1
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
-		}, 
+		},
 		teardown: function() {
 			moduleTeardown.call(this);
 		}
@@ -346,7 +345,7 @@
 			// fix the specials in the metadata for the v1
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
-		}, 
+		},
 		teardown: function() {
 			moduleTeardown.call(this);
 		}
@@ -362,7 +361,7 @@
 	module("Component Metadata v2 (inline)", {
 		setup: function() {
 			moduleSetup.call(this, "v2inline");
-		}, 
+		},
 		teardown: function() {
 			moduleTeardown.call(this);
 		}
@@ -444,6 +443,95 @@
 	test("Manifest Validation", function() {
 		
 		equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
+		
+	});
+	
+	/*
+	 * TEST CODE: Component Metadata v1 & v2 (mixed)
+	 */
+	
+	module("Component Metadata v1 & v2 (mixed)", {
+		setup: function() {
+			moduleSetup.call(this, "mixed");
+		}, 
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+	
+	test("Metadata API", function() {
+		
+		equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
+		equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+		deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
+		deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
+		deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
+		deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
+		equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
+		deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
+		deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
+		deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
+		deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
+		deepEqual(this.oMetadata.getModels(), this.oExpectedMetadata.models, "Models are correct!");
+		deepEqual(this.oMetadata.getCustomizing(), this.oExpectedMetadata.customizing, "Customizing is correct!");
+		deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
+		deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
+		deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
+		deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
+		
+	});
+	
+	test("Manifest Validation", function() {
+		
+		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
+		
+	});
+	
+	/*
+	 * TEST CODE: Component Metadata v1 & v2 (mixed/inheritance)
+	 */
+	
+	module("Component Metadata v1 & v2 (mixed/inheritance)", {
+		setup: function() {
+			moduleSetup.call(this, "inherit");
+			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
+			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
+			this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
+			this.oExpectedMetadata.models.sfapi_1 = this.oExpectedMetadata.models.sfapi;
+			this.oExpectedManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
+			delete this.oExpectedManifest["sap.ui5"].rootView;
+		}, 
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+	
+	test("Metadata API", function() {
+		
+		equal(this.oMetadata.getName(), this.oExpectedMetadata.name, "Name is correct!");
+		equal(this.oMetadata.getVersion(), this.oExpectedMetadata.version, "Version is correct!");
+		deepEqual(this.oMetadata.getIncludes(), this.oExpectedMetadata.includes, "Includes are correct!");
+		deepEqual(this.oMetadata.getDependencies(), this.oExpectedMetadata.dependencies, "Dependencies are correct!");
+		deepEqual(this.oMetadata.getLibs(), this.oExpectedMetadata.dependencies.libs, "Libraries are correct!");
+		deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
+		equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
+		deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
+		deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
+		deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
+		deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
+		deepEqual(this.oMetadata.getConfig("any9"), this.oExpectedMetadata.config.any9, "Config 'any9' is correct!");
+		deepEqual(this.oMetadata.getModels(), this.oExpectedMetadata.models, "Models are correct!");
+		deepEqual(this.oMetadata.getCustomizing(), this.oExpectedMetadata.customizing, "Customizing is correct!");
+		deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
+		deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
+		deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
+		deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
+		
+	});
+	
+	test("Manifest Validation", function() {
+		
+		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		
 	});
 	

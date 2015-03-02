@@ -1,0 +1,33 @@
+{
+
+	"name": "sap.ui.test.inherit.Component",
+	
+	"version": "1.0.0",
+	
+	"manifest": "json",
+
+	"config": {
+		"any4": {
+			"entry": "configuration"
+		},
+		"any5": {
+			"anyobject": {
+				"key1": "value1"
+			}
+		},
+		"any6": {
+			"anyarray": [1, 2, 3]
+		}
+	},
+	
+	"custom.entry": {
+		"key1": "value1",
+		"key2": "value2",
+		"key3": {
+			"subkey1": "subvalue1",
+			"subkey2": "subvalue2"
+		},
+		"key4": ["value1", "value2"]
+	}
+
+}
