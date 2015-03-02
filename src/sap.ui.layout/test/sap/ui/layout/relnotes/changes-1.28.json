@@ -101,5 +101,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "31759d9c7863905c9c97fe8be6ba9c15e7792a43",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: keyboard navigation issues",
+        "references": []
+      }
+    ]
   }
 }
