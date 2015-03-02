@@ -245,6 +245,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					bIsValid = false;
 				}
 
+				if (!oOptions.viewName) {
+					sLogMessage = "The target " + oOptions.name + " no viewName defined.";
+					bIsValid = false;
+				}
+
 				if (bLog && sLogMessage) {
 					$.sap.log.error(sLogMessage, this);
 				}
