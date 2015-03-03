@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals'],
-	function(Opa5, AggregationLengthEquals) {
+sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals', 'sap/ui/test/matchers/PropertyStrictEquals'],
+	function(Opa5, AggregationLengthEquals, PropertyStrictEquals) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.action.NavigationAction", {
@@ -61,7 +61,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				controlType : "sap.m.Button",
 				viewName : "LineItem",
-				matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "icon", value : sIcon}) ],
+				matchers : [ new PropertyStrictEquals({name : "icon", value : sIcon}) ],
 				success : function (aButtons) {
 					aButtons[0].$().trigger("tap");
 				},
@@ -106,7 +106,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		iPressTheBackButton : function () {
+		iPressTheBackButtonOnDetailPage : function () {
 			return this.waitFor({
 				id : "detailPage",
 				viewName : "Detail",
@@ -156,6 +156,24 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				matchers : [ new AggregationLengthEquals({name : "items", length : 9}) ],
 				errorMessage : "The master list has not been loaded"
 			});
+		},
+		
+		iWaitUntilISeePage : function (sViewName, sTitleName) {
+			return this.waitFor({
+				controlType : "sap.m.ObjectHeader",
+				viewName : sViewName,
+				matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName}) ],
+				success : function (aControls) {
+					strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
+					ok(true, "was on the " + sTitleName + " " + sViewName + " page");
+				},
+				errorMessage : "We are not on " + sTitleName
+			});
+		},
+		
+		iWaitUntilISeePageForLineItem7 : function() {
+			return this.iWaitUntilISeePage("LineItem", "Line Item: LineItemID_7");
 		}
+	
 	});
 });
