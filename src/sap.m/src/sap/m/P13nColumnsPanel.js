@@ -339,7 +339,13 @@ sap.ui.define([
 		// Get search filter value
 		if (this._bSearchFilterActive) {
 			sSearchText = this._oSearchField.getValue();
-			if (sSearchText !== null) {
+
+			// replace white-spaces at BEGIN & END of the searchText, NOT IN BETWEEN!!
+			if (sSearchText) {
+				sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
+			}
+			// create RegEx for search only if a searchText exist!!
+			if (sSearchText !== null && sSearchText !== undefined) { // " " is a VALID value!!!
 				regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
 			}
 		}
