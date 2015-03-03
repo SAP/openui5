@@ -290,7 +290,7 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 		if (oColData.itemMessages) {
 			for (var n = 0; n < oColData.itemMessages.length; ++n) {
 				var mMessage = jQuery.extend({}, oColData.itemMessages[n]);
-				mMessage.target = "/" + sColName + "(" + (i + 1) + ")";
+				mMessage.target = "(" + (i + 1) + ")";
 				aMessages.push(mMessage);
 			}
 		}
