@@ -42,8 +42,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * !!! EXPERIMENTAL !!!
-	 *
 	 * @param {string|string[]} aAnnotationURI The annotation-URL or an array of URLS that should be parsed and merged
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 * @param {object} mParams
@@ -58,7 +56,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @public
 	 * @alias sap.ui.model.odata.ODataAnnotations
 	 * @extends sap.ui.base.Object
-	 * @experimental This feature has not been tested due to the lack of OData testing infrastructure. The API is NOT stable yet. Use at your own risk.
 	 */
 	var ODataAnnotations = sap.ui.base.EventProvider.extend("sap.ui.model.odata.ODataAnnotations", /** @lends sap.ui.model.odata.ODataAnnotations.prototype */
 	{
@@ -76,10 +73,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			this.oRequestHandles = [];
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
-
-			// Whether the xml document is in MS proprietary
-			this.xmlCompatVersion = false;
-
 
 			if (aAnnotationURI) {
 				this.loadXML();
@@ -106,9 +99,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * returns the raw annotation data
-	 * 
+	 *
 	 * @public
-	 * @returns {object} returns annotations data 
+	 * @returns {object} returns annotations data
 	 */
 	ODataAnnotations.prototype.getAnnotationsData = function() {
 		return this.oAnnotations;
@@ -116,7 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Checks whether annotations is available
-	 * 
+	 *
 	 * @public
 	 * @returns {boolean} returns whether annotations is already loaded
 	 */
@@ -138,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Fire event loaded to attached listeners.
-	 * 
+	 *
 	 * @param {map} [mArguments] Map of arguments that will be given as parameters to teh event handler
 	 * @return {sap.ui.model.odata.ODataAnnotations} <code>this</code> to allow method chaining
 	 * @protected
@@ -244,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Parses the alias definitions of the annotation document and fills the internal oAlias object.
-	 * 
+	 *
 	 * @param {object} [oXMLDoc] The document containing the alias definitions
 	 * @param {object} [oAnnotationReferences] The annotation reference object (output)
 	 * @param {object} [oAlias] The alias reference object (output)
@@ -348,9 +341,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			if (annotationTarget.indexOf("/") > 0) {
 				annotation = annotationTarget.split("/")[0];
 				// check sAnnotation is EntityContainer: if yes, something in there is annotated - EntitySet, FunctionImport, ..
-				var bSchemaExists = 
-					this.oServiceMetadata.dataServices && 
-					this.oServiceMetadata.dataServices.schema && 
+				var bSchemaExists =
+					this.oServiceMetadata.dataServices &&
+					this.oServiceMetadata.dataServices.schema &&
 					this.oServiceMetadata.dataServices.schema.length;
 
 				if (bSchemaExists) {
@@ -472,8 +465,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					expandNode = this.xPath.nextNode(expandNodesApplFunc, i);
 					path = this.xPath.getNodeText(expandNode);
 					if (
-						mappingList.propertyAnnotations && 
-						mappingList.propertyAnnotations[annotation] && 
+						mappingList.propertyAnnotations &&
+						mappingList.propertyAnnotations[annotation] &&
 						mappingList.propertyAnnotations[annotation][path]
 					) {
 						continue;
@@ -504,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ODataAnnotations.prototype.getXPath = function() {
 		var xPath = {};
 
-		if (this.xmlCompatVersion) {// old IE
+		if (sap.ui.Device.browser.internet_explorer) {// old IE
 			xPath = {
 				setNameSpace : function(outNode) {
 					outNode.setProperty("SelectionNamespaces",
@@ -553,15 +546,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Sets an XML document
-	 * 
+	 *
 	 * @param {object} oXMLDocument The XML document to parse for annotations
 	 * @param {string} sXMLContent The XML content as string to parse for annotations
 	 * @param {map} mOptions Additional options
-	 * @param {fuction} mOptions.success Success callback gets an objec as argument with the 
+	 * @param {fuction} mOptions.success Success callback gets an objec as argument with the
 	 *                  properties "annotations" containing the parsed annotations and "xmlDoc"
 	 *                  containing the XML-Document that was returned by the request.
-	 * @param {fuction} mOptions.error Error callback gets an objec as argument with the 
-	 *                  property "xmlDoc" containing the XML-Document that was returned by the 
+	 * @param {fuction} mOptions.error Error callback gets an objec as argument with the
+	 *                  property "xmlDoc" containing the XML-Document that was returned by the
 	 *                  request and could not be correctly parsed.
 	 * @returns {bool} Whether or not parsing was successful
 	 * @public
@@ -578,15 +571,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var oXMLDoc = null;
 
 		if (sap.ui.Device.browser.internet_explorer) {
-			// TODO: Check when IE will support evaluate-method
+			// IE creates an XML Document, but we cannot use it since it does not support the
+			// evaluate-method. So we have to create a new document from the XML string every time.
+			// This also leads to using a difference XPath implementation @see getXPath
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
 			oXMLDoc.preserveWhiteSpace = true;
 			oXMLDoc.loadXML(sXMLContent);
-			this.xmlCompatVersion = true;
 		} else if (oXMLDocument) {
 			oXMLDoc = oXMLDocument;
-		} else {
+		} else if (window.DOMParser) {
 			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
+		} else {
+			jQuery.sap.log.fatal("The browser does not support XML parsing. Annotations are not available.");
+			return;
 		}
 
 		if (oXMLDoc.getElementsByTagName("parsererror").length > 0) {
@@ -883,21 +880,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		}
 	};
-	ODataAnnotations.prototype.getPropertyValueAttributes = function(documentNode, oAlias) {
-		var sKey = "", sValue = "", i, propertyValueAttributes = {};
-		for (i = 0; i < documentNode.attributes.length; i += 1) {
-			var sAttrName = documentNode.attributes[i].name;
-			if (sAttrName !== "Property" && sAttrName !== "Term" && sAttrName !== "Qualifier") {
-				sKey = documentNode.attributes[i].name;
-				sValue = documentNode.attributes[i].value;
-			}
-			if (sKey) {
-				propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+
+
+	/**
+	 * Returns a map of key value pairs corresponding to the attributes of the given Node -
+	 * attributes named "Property", "Term" and "Qualifier" are ignored.
+	 *
+	 * @param {Node} oNode - The node with the attributes
+	 * @param {map} mAlias - A map containing aliases that should be replaced in the attribute value
+	 * @return {map} A map containing the attributes as key/value pairs
+	 * @private
+	 */
+	ODataAnnotations.prototype.getPropertyValueAttributes = function(oNode, mAlias) {
+		var mIgnoredAttributes = { "Property" : true, "Term": true, "Qualifier": true };
+		var mAttributes = {};
+
+		for (var i = 0; i < oNode.attributes.length; i += 1) {
+			if (!mIgnoredAttributes[oNode.attributes[i].name]) {
+				mAttributes[oNode.attributes[i].name] = this.replaceWithAlias(oNode.attributes[i].value, mAlias);
 			}
 		}
-		return propertyValueAttributes;
+
+		return mAttributes;
 	};
 
+	/**
+	 * Searches the child nodes of the given node for nodes with the name "String", "Path" or
+	 * "Apply" and returns a map with the found child-name as property and the parsed value(s) as
+	 * value. For "String" and "Path", the text content of the child node is used as value and
+	 * for "Apply" the node is parsed using
+	 * [getApplyFunctions()]{@link sap.ui.model.odata.ODataAnnotations#getApplyFunctions}
+	 *
+	 * @param {Document} xmlDoc - The XML-Document the node belongs to.
+	 * @param {Node} documentNode - The Node that should be searched for fitting child nodes
+	 * @private
+	 */
 	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode) {
 		var oValue = {};
 
@@ -921,106 +938,150 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 		return oValue;
 	};
-	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
-		var propertyValue = {}, recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
-		var xPath = this.getXPath();
 
-		if (documentNode.hasChildNodes()) {
-			recordNodes = this.xPath.selectNodes(xmlDoc, "./d:Record | ./d:Collection/d:Record | ./d:Collection/d:If/d:Record",
-					documentNode);
-			if (recordNodes.length) {
-				recordNodeCnt = 0;
-				for (nodeIndex = 0; nodeIndex < recordNodes.length; nodeIndex += 1) {
-					recordNode = this.xPath.nextNode(recordNodes, nodeIndex);
-					propertyValues = this.getPropertyValues(xmlDoc, recordNode, oAlias);
-					if (recordNode.getAttribute("Type")) {
-						propertyValues["RecordType"] = this.replaceWithAlias(recordNode.getAttribute("Type"), oAlias);
-					}
-					if (recordNodeCnt === 0) {
-						if (recordNode.nextElementSibling || (recordNode.parentNode.nodeName === "Collection")
-								|| (recordNode.parentNode.nodeName === "If")) {
-							propertyValue = [];
-							propertyValue.push(propertyValues);
-						} else {
-							propertyValue = propertyValues;
-						}
-					} else {
-						propertyValue.push(propertyValues);
-					}
-					recordNodeCnt += 1;
+
+	/**
+	 * Returns a property value object for the given nodes
+	 *
+	 * @param {Document} oXmlDoc - The XML document that is parsed
+	 * @param {map} mAlias - Alias map
+	 * @param {XPathResult} oNodeList - As many nodes as should be checked for Record values
+	 * @return {object|object[]} The extracted values
+	 * @private
+	 */
+	ODataAnnotations.prototype._getRecordValues = function(oXmlDoc, mAlias, oNodeList) {
+		var aNodeValues = [];
+
+		for (var i = 0; i < oNodeList.length; ++i) {
+			var oNode = this.xPath.nextNode(oNodeList, i);
+			var vNodeValue = this.getPropertyValues(oXmlDoc, oNode, mAlias);
+
+			var sType = oNode.getAttribute("Type");
+			if (sType) {
+				vNodeValue["RecordType"] = this.replaceWithAlias(sType, mAlias);
+			}
+
+			aNodeValues.push(vNodeValue);
+		}
+
+		return aNodeValues;
+	};
+
+	/**
+	 * Extracts the text value from all nodes in the given NodeList and puts them into an array
+	 *
+	 * @param {Document} oXmlDoc - The XML document that is parsed
+	 * @param {XPathResult} oNodeList - As many nodes as should be checked for Record values
+	 * @return {object[]}
+	 * @private
+	 */
+	ODataAnnotations.prototype._getTextValues = function(oXmlDoc, oNodeList) {
+		var aNodeValues = [];
+
+		for (var i = 0; i < oNodeList.length; i += 1) {
+			var oNode = this.xPath.nextNode(oNodeList, i);
+			var oValue = {};
+			oValue[oNode.nodeName] = this.xPath.getNodeText(oNode); // TODO: Is nodeName correct or should we remove the namespace?
+			aNodeValues.push(oValue);
+		}
+
+		return aNodeValues;
+	};
+
+	/**
+	 * Adds all attribute values from the attributes named sAttributeName for
+	 * the nodes in the given XPathResult as properties to the given mValue map.
+	 *
+	 * @param {map} mValue - The map/object to add the properties to
+	 * @param {map} mAlias - Alias map
+	 * @param {XPathResult} oNodeList -The nodes to be searched for Children with the attribute
+	 * @param {string} sAttributeName - The attribute name which should be used to extract the value
+	 * @private
+	 */
+	ODataAnnotations.prototype._enrichValueFromAttribute = function(/* ref: */ mValue, mAlias, oNodeList, sAttributeName) {
+		for (var i = 0; i < oNodeList.length; i += 1) {
+			var oNode = this.xPath.nextNode(oNodeList, i);
+			if (oNode.hasChildNodes() === false) {
+				var sAttributeValue = this.replaceWithAlias(oNode.getAttribute(sAttributeName), mAlias);
+				mValue[sAttributeValue] = this.getPropertyValueAttributes(oNode, mAlias);
+			}
+		}
+	};
+
+	ODataAnnotations.prototype.getPropertyValue = function(oXmlDocument, oDocumentNode, mAlias) {
+		var vPropertyValue = {};
+
+		if (oDocumentNode.hasChildNodes()) {
+			// This is a complex value, check for child values
+
+			var oRecordNodeList = this.xPath.selectNodes(oXmlDocument, "./d:Record", oDocumentNode);
+			var aRecordValues = this._getRecordValues(oXmlDocument, mAlias, oRecordNodeList);
+
+			var oCollectionRecordNodeList = this.xPath.selectNodes(oXmlDocument, "./d:Collection/d:Record | ./d:Collection/d:If/d:Record", oDocumentNode);
+			var aCollectionRecordValues = this._getRecordValues(oXmlDocument, mAlias, oCollectionRecordNodeList);
+
+			var aPropertyValues = aRecordValues.concat(aCollectionRecordValues);
+			if (aPropertyValues.length > 0) {
+				if (oCollectionRecordNodeList.length === 0 && oRecordNodeList.length > 0) {
+					// Record without a collection, only ise the first one (there should be only one)
+					vPropertyValue = aPropertyValues[0];
+				} else {
+					vPropertyValue = aPropertyValues;
 				}
 			} else {
-				urlValueNodes = this.xPath.selectNodes(xmlDoc, "./d:UrlRef", documentNode);
-				if (urlValueNodes.length > 0) {
-					for (nodeIndex = 0; nodeIndex < urlValueNodes.length; nodeIndex += 1) {
-						urlValueNode = this.xPath.nextNode(urlValueNodes, nodeIndex);
-						propertyValue["UrlRef"] = this.getSimpleNodeValue(xmlDoc, urlValueNode);
-					}
-				} else {
-					urlValueNodes = this.xPath.selectNodes(xmlDoc, "./d:Url", documentNode);
-					if (urlValueNodes.length > 0) {
-						for (nodeIndex = 0; nodeIndex < urlValueNodes.length; nodeIndex += 1) {
-							urlValueNode = this.xPath.nextNode(urlValueNodes, nodeIndex);
-							propertyValue["Url"] = this.getSimpleNodeValue(xmlDoc, urlValueNode);
-						}
-					} else {
-						collectionNodes = this.xPath.selectNodes(xmlDoc,
-								"./d:Collection/d:AnnotationPath | ./d:Collection/d:PropertyPath", documentNode);
-						if (collectionNodes.length > 0) {
-							propertyValue = [];
-							for (nodeIndex = 0; nodeIndex < collectionNodes.length; nodeIndex += 1) {
-								pathNode = this.xPath.nextNode(collectionNodes, nodeIndex);
-								oPath = {};
-								oPath[pathNode.nodeName] = xPath.getNodeText(pathNode);
-								propertyValue.push(oPath);
-							}
-						} else {
-							propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
-							annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
-							annotationNode = {};
-							for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
-								annotationNode = this.xPath.nextNode(annotationNodes, nodeIndexValue);
-								if (annotationNode.hasChildNodes() === false) {
-									termValue = this.replaceWithAlias(annotationNode.getAttribute("Term"), oAlias);
-									propertyValue[termValue] = this.getPropertyValueAttributes(annotationNode, oAlias);
-								}
-							}
+				// Search for UrlRef and Url elements, select the last if there are many (UrlRef is prefered over Url)
+				var oUrlValueNodes = this.xPath.selectNodes(oXmlDocument, "./d:Url[last()] | ./d:UrlRef[last()]", oDocumentNode);
 
-							var aOtherNodes = xPath.selectNodes(xmlDoc, "./d:*", documentNode);
-							if (aOtherNodes.length > 0) {
-								for (var i = 0; i < aOtherNodes.length; i++) {
-									var oOtherNode = xPath.nextNode(aOtherNodes, i);
-									if (oOtherNode.nodeName !== "Annotation") {
-										var vValue;
-										if (oOtherNode.hasChildNodes()) {
-											vValue = this.getPropertyValue(xmlDoc, oOtherNode, oAlias);
-										} else {
-											vValue = this.getPropertyValueAttributes(oOtherNode, oAlias);
-										}
-										propertyValue[oOtherNode.nodeName] = vValue;
-									}
-								}
-							} else if (documentNode.nodeName in mTextNodeWhitelist) {
-								// hasChildNodes, but selectNodes found nothing - it should be a text node
-								if (documentNode.nodeName in mAliasNodeWhitelist) {
-									propertyValue = this.replaceWithAlias(this.xPath.getNodeText(documentNode), oAlias);
-								} else {
-									propertyValue = this.xPath.getNodeText(documentNode);
-								}
-								if (documentNode.nodeName !== "String") {
-									// Trim whitespace if it's not specified as string values
-									propertyValue = propertyValue.replace(/^[ \t\n\r]*(.*?)[ \t\n\r]*$/, "$1");
-								}
+				if (oUrlValueNodes.length > 0) {
+					// Only use the first entry of the result since we only asked for the last entry in the XPath query
+					var oUrlValueNode = this.xPath.nextNode(oUrlValueNodes, 0);
+					vPropertyValue[oUrlValueNode.nodeName] = this.getSimpleNodeValue(oXmlDocument, oUrlValueNode); // TODO: Is nodeName correct or should we remove the namespace?
+				} else {
+					// No Url or UrlRef found, search for Collection with AnnotationPath or PropertyPath
+					var oCollectionNodes = this.xPath.selectNodes(oXmlDocument, "./d:Collection/d:AnnotationPath | ./d:Collection/d:PropertyPath", oDocumentNode);
+
+					if (oCollectionNodes.length > 0) {
+						vPropertyValue = this._getTextValues(oXmlDocument, oCollectionNodes);
+					} else {
+						vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
+
+						var oAnnotationNodes = this.xPath.selectNodes(oXmlDocument, "./d:Annotation", oDocumentNode);
+						this._enrichValueFromAttribute(/* ref: */ vPropertyValue, mAlias, oAnnotationNodes, "Term");
+
+						// Now get all values for child elements
+						var oChildNodes = this.xPath.selectNodes(oXmlDocument, "./d:*[not(local-name() = \"Annotation\")]", oDocumentNode);
+						for (var i = 0; i < oChildNodes.length; i++) {
+							var oChildNode = this.xPath.nextNode(oChildNodes, i);
+							var vValue;
+							if (oChildNode.hasChildNodes()) {
+								vValue = this.getPropertyValue(oXmlDocument, oChildNode, mAlias);
+							} else {
+								vValue = this.getPropertyValueAttributes(oChildNode, mAlias);
+							}
+							vPropertyValue[oChildNode.nodeName] = vValue;
+						}
+
+						if (oChildNodes.length === 0 && oDocumentNode.nodeName in mTextNodeWhitelist) {
+							// hasChildNodes, but selectNodes found nothing - it should be a text node
+							if (oDocumentNode.nodeName in mAliasNodeWhitelist) {
+								vPropertyValue = this.replaceWithAlias(this.xPath.getNodeText(oDocumentNode), mAlias);
+							} else {
+								vPropertyValue = this.xPath.getNodeText(oDocumentNode);
+							}
+							if (oDocumentNode.nodeName !== "String") {
+								// Trim whitespace if it's not specified as string value
+								vPropertyValue = vPropertyValue.replace(/^[ \t\n\r]*(.*?)[ \t\n\r]*$/, "$1");
 							}
 						}
 					}
 				}
 			}
 		} else {
-			propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
+			vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 		}
-		return propertyValue;
+		return vPropertyValue;
 	};
+
 	ODataAnnotations.prototype.getPropertyValues = function(xmlDoc, documentNode, oAlias) {
 		var properties = {}, annotationNode = {}, annotationNodes, nodeIndexValue, termValue, propertyValueNodes, nodeIndex, propertyValueNode, propertyName, applyNodes, applyNode, applyNodeIndex;
 		annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
@@ -1052,46 +1113,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 		return properties;
 	};
+
 	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode) {
-		var apply = {}, parameterNodes, paraNode = null, parameters = [], i;
-		parameterNodes = this.xPath.selectNodes(xmlDoc, "./d:*", applyNode);
-		for (i = 0; i < parameterNodes.length; i += 1) {
-			paraNode = this.xPath.nextNode(parameterNodes, i);
-			switch (paraNode.nodeName) {
+		var mApply = {
+			Name: applyNode.getAttribute('Function'),
+			Parameters: []
+		};
+
+		var oParameterNodes = this.xPath.selectNodes(xmlDoc, "./d:*", applyNode);
+		for (var i = 0; i < oParameterNodes.length; i += 1) {
+			var oParameterNode = this.xPath.nextNode(oParameterNodes, i);
+			var mParameter = {
+				Type:  oParameterNode.nodeName
+			};
+
+			switch (oParameterNode.nodeName) {
 				case "Apply" :
-					parameters.push({
-						"Type" : "Apply",
-						"Value" : this.getApplyFunctions(xmlDoc, paraNode)
-					});
+					mParameter.Value = this.getApplyFunctions(xmlDoc, oParameterNode);
 					break;
 				case "LabeledElement" :
-					parameters.push({
-						"Name" : paraNode.getAttribute("Name"),
-						"Value" : this.getSimpleNodeValue(xmlDoc, paraNode)
-					});
+					mParameter.Name = oParameterNode.getAttribute("Name");
+					mParameter.Value = this.getSimpleNodeValue(xmlDoc, oParameterNode);
 					break;
 				default :
-					parameters.push({
-						"Type" : paraNode.nodeName,
-						"Value" : this.xPath.getNodeText(paraNode)
-					});
+					mParameter.Value = this.xPath.getNodeText(oParameterNode);
 					break;
 			}
+
+			mApply.Parameters.push(mParameter);
 		}
-		apply['Name'] = applyNode.getAttribute('Function');
-		apply['Parameters'] = parameters;
-		return apply;
+
+		return mApply;
 	};
+
+	/**
+	 * Returns true if the given path combined with the given entity-type is found in the
+	 * given metadata
+	 *
+	 * @param {string} sEntityType - The entity type to look for
+	 * @param {string} sPathValue - The path to look for
+	 * @param {object} oMetadata - The service's metadata object to search in
+	 * @return {boolean}
+	 */
 	ODataAnnotations.prototype.isNavProperty = function(sEntityType, sPathValue, oMetadata) {
-		var oMetadataSchema, i, namespace, aEntityTypes, j, k;
-		for (i = oMetadata.dataServices.schema.length - 1; i >= 0; i -= 1) {
-			oMetadataSchema = oMetadata.dataServices.schema[i];
+		for (var i = oMetadata.dataServices.schema.length - 1; i >= 0; i -= 1) {
+			var oMetadataSchema = oMetadata.dataServices.schema[i];
 			if (oMetadataSchema.entityType) {
-				namespace = oMetadataSchema.namespace + ".";
-				aEntityTypes = oMetadataSchema.entityType;
-				for (k = aEntityTypes.length - 1; k >= 0; k -= 1) {
-					if (namespace + aEntityTypes[k].name === sEntityType && aEntityTypes[k].navigationProperty) {
-						for (j = 0; j < aEntityTypes[k].navigationProperty.length; j += 1) {
+				var sNamespace = oMetadataSchema.namespace + ".";
+				var aEntityTypes = oMetadataSchema.entityType;
+				for (var k = aEntityTypes.length - 1; k >= 0; k -= 1) {
+					if (sNamespace + aEntityTypes[k].name === sEntityType && aEntityTypes[k].navigationProperty) {
+						for (var j = 0; j < aEntityTypes[k].navigationProperty.length; j += 1) {
 							if (aEntityTypes[k].navigationProperty[j].name === sPathValue) {
 								return true;
 							}
@@ -1103,18 +1175,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		return false;
 	};
 
-	ODataAnnotations.prototype.replaceWithAlias = function(sValue, oAlias) {
-		for (var sAlias in oAlias) {
+	/**
+	 * Replaces the first alias (existing as key in the map) found in the given string with the
+	 * respective value in the map if it is not directly behind a ".". By default only one
+	 * replacement is done, unless the iReplacements parameter is set to a higher number or 0
+	 *
+	 * @param {string} sValue - The string where the alias should be replaced
+	 * @param {map} mAlias - The alias map with the alias as key and the target value as value
+	 * @param {int} iReplacements - The number of replacements to doo at most or 0 for all
+	 * @return {string} The string with the alias replaced
+	 */
+	ODataAnnotations.prototype.replaceWithAlias = function(sValue, mAlias, iReplacements) {
+		if (iReplacements === undefined) {
+			iReplacements = 1;
+		}
+
+		for (var sAlias in mAlias) {
 			if (sValue.indexOf(sAlias + ".") >= 0 && sValue.indexOf("." + sAlias + ".") < 0) {
-				sValue = sValue.replace(sAlias + ".", oAlias[sAlias] + ".");
-				return sValue;
+				sValue = sValue.replace(sAlias + ".", mAlias[sAlias] + ".");
+
+				iReplacements--;
+				if (iReplacements === 0) {
+					return sValue;
+				}
 			}
 		}
 		return sValue;
 	};
 
 	ODataAnnotations.prototype.destroy = function() {
-
 		// Abort pending xml request
 		for (var i = 0; i < this.oRequestHandles.length; ++i) {
 			if (this.oRequestHandles[i]) {
@@ -1123,7 +1212,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				this.oRequestHandles[i] = null;
 			}
 		}
-
 
 		sap.ui.base.Object.prototype.destroy.apply(this, arguments);
 		if (this.oLoadEvent) {
