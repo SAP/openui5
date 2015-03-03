@@ -456,17 +456,23 @@
 		});
 
 		var oComboBoxWarning = new sap.m.ComboBox({
+			placeholder: "List of countries",
 			valueState: sap.ui.core.ValueState.Warning,
-			valueStateText: "Warnig value state text",
+			valueStateText: "value state text",
 			items: {
 				path: "/items",
 				template: oItemTemplate
 			}
 		});
 
+		var oLabelWarning = new sap.m.Label({
+			text: "Choose your country",
+			labelFor: oComboBoxWarning
+		}).addStyleClass("customLabel");
+
 		var oComboBoxError = new sap.m.ComboBox({
 			valueState: sap.ui.core.ValueState.Error,
-			valueStateText: "Error value state text",
+			valueStateText: "value state text",
 			items: {
 				path: "/items",
 				template: oItemTemplate
@@ -505,9 +511,16 @@
 				oComboBoxReadOnly,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML({ content: "<h3>Warring, error and success states</h3>" }),
-				oComboBoxSuccess,
+				new sap.ui.core.HTML({ content: "<h3>Warring state (with label and placeholder)</h3>" }),
+				oLabelWarning,
 				oComboBoxWarning,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				oComboBoxSuccess,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
