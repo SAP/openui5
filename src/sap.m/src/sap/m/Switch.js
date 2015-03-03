@@ -145,15 +145,16 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby"),
 				$Switch = this.$("switch"),
 				oSwitchInnerDomRef = this.getDomRef("inner"),
+				oHandleDomRef = this.getDomRef("handle"),
 				oCheckboxDomRef = null;
-
-			this.getDomRef("handle").setAttribute("data-sap-ui-swt", sState);
 
 			if (this.getName()) {
 				oCheckboxDomRef = this.getDomRef("input");
 				oCheckboxDomRef.setAttribute("checked", bState);
 				oCheckboxDomRef.setAttribute("value", sState);
 			}
+
+			oHandleDomRef.setAttribute("data-sap-ui-swt", sState);
 
 			if (bState) {
 				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
@@ -247,19 +248,19 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			// track the id of the first active touch point
 			this._iActiveTouchId = oTargetTouch.identifier;
 
-			// note: force ie browsers to set the focus to switch
-			jQuery.sap.delayedCall(0, this, "focus");
-
-			// add active state
-			this.$("switch").addClass(CSS_CLASS + "Pressed")
-							.removeClass(CSS_CLASS + "Trans");
-
 			this._bTempState = this.getState();
 			this._iStartPressPosX = oTargetTouch.pageX;
 			this._iPosition = $SwitchInner.position().left;
 
 			// track movement to determine if the interaction was a click or a tap
 			this._bDragging = false;
+
+			// note: force ie browsers to set the focus to switch
+			jQuery.sap.delayedCall(0, this, "focus");
+
+			// add active state
+			this.$("switch").addClass(CSS_CLASS + "Pressed")
+							.removeClass(CSS_CLASS + "Trans");
 		};
 
 		/**
