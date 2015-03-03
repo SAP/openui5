@@ -8,15 +8,18 @@
 		navButtonPress="onNavBack" >
 		<headerContent>
 			<Button
+				id="toggleFullScreenBtn"
 				icon="sap-icon://full-screen"
 				class="sapUiHideOnPhone"
 				tooltip="{i18n>sampleFullScreenTooltip}"
 				press="onToggleFullScreen" />
 			<Button
+				id="code"
 				icon="sap-icon://syntax"
 				tooltip="{i18n>sampleShowCodeTooltip}"
 				press="onNavToCode" />
 			<Button visible="{/showNewTab}"
+					id="newTab"
 					tooltip="{i18n>sampleNewTabTooltip}"
 					icon="sap-icon://inspect"
 					press="onNewTab" />
