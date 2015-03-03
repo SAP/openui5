@@ -54,7 +54,6 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
-			InputBaseRenderer.writeAccessibilityState.apply(this, arguments);
 			oRm.writeAccessibilityState(oControl, {
 				role: "combobox",
 				expanded: oControl.isOpen(),
