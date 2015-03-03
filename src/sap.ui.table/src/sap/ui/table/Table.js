@@ -856,7 +856,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		// initialization of item navigation for the Table control
 		if (!this._oItemNavigation) {
-			this._iLastSelectedDataRow = 1;
+			this._iLastSelectedDataRow = this._getHeaderRowCount();
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setTableMode(true);
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, function(oEvent) {
@@ -1985,7 +1985,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._getHeaderRowCount = function() {
-		if (!this._useMultiHeader()) {
+		if (!this.getColumnHeaderVisible()) {
+			return 0;
+		} else if (!this._useMultiHeader()) {
 			return 1;
 		}
 		var iHeaderRows = 0;
@@ -5444,6 +5446,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		} else {
 			this.setBusy(false);
 		}
+	};
+
+	Table.prototype.setColumnHeaderVisible = function(bColumnHeaderVisible) {
+		this.setProperty("columnHeaderVisible", bColumnHeaderVisible);
+		// Adapt the item navigation. Since the HeaderRowCount changed, also the lastSelectedDataRow changes.
+		this._iLastSelectedDataRow = this._getHeaderRowCount();
+
 	};
 
 	return Table;
