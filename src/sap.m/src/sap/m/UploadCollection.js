@@ -157,12 +157,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				parameters : {
 					/**
 					* An unique Id of the attached document.
-					* @deprecated Since version 1.28.0.
-					* This parameter is deprecated, use parameter files instead.
+					* This parameter is deprecated since version 1.28.0, use parameter files instead.
+					* @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					*/
 					documentId : {type : "string"},
 					/**
-					* A FileList of individually selected files from the underlying system. See www.w3.org for the FileList Interface definition.
+					* A FileList of individually selected files from the underlying system.
 					* Limitation: Internet Explorer 9 supports only single file with property file.name.
 					* Since version 1.28.0.
 					*/
@@ -1289,7 +1289,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._onFileAllowed = function(oEvent) {
 		// TODO not implemented
 	};
-
 
 	/**
 	 * @description Handling of the Event filenameLengthExceed of the fileUploader
