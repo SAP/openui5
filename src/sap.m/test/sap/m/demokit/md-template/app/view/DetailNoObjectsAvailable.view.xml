@@ -1,11 +1,14 @@
 <mvc:View
+	controllerName="sap.ui.demo.mdtemplate.controller.BaseController"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<MessagePage
+		id="detailNoObjectsAvailablePage"
 		title="{i18n>masterTitle}"
 		text="{i18n>noObjectsAvailableText}"
 		icon="{sap-icon://product}"
 		description=""
-		id="detailNoObjectsAvailablePage">
+		showNavButton="{device>/isPhone}"
+		navButtonPress="onNavBack">
 	</MessagePage>
 </mvc:View>
