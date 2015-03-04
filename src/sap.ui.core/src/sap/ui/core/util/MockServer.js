@@ -2526,6 +2526,9 @@ sap.ui
 							case "$orderby":
 								iOrderbyIndex = jQuery.inArray(sQuery, aUrlParams);
 								break;
+							case "$expand":
+								iExpandIndex = jQuery.inArray(sQuery, aUrlParams);
+								break;
 							case "$filter":
 								iFilterIndex = jQuery.inArray(sQuery, aUrlParams);
 								break;
@@ -2534,9 +2537,6 @@ sap.ui
 								break;
 							case "$inlinecount":
 								iInlinecountIndex = jQuery.inArray(sQuery, aUrlParams);
-								break;
-							case "$expand":
-								iExpandIndex = jQuery.inArray(sQuery, aUrlParams);
 								break;
 							case "$format":
 								iFormatIndex = jQuery.inArray(sQuery, aUrlParams);
