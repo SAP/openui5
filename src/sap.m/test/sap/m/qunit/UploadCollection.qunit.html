@@ -239,9 +239,9 @@
 				fileDeleted : function(oEvent) {
 					ok(true, "Event fileDeleted fired");
 					// deprecated
-			 		equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
+					equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
 					// new
-			 		equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
+					equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
 				},
 				filenameLengthExceed : function(oEvent) {
 					var oFile = { name: "tooLongFileName" };
