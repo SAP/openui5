@@ -272,11 +272,27 @@
 					equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided")
 				},
 				typeMissmatch : function(oEvent) {
-					ok(true, "Event fileSizeExceed fired");
+					var oFile = { name: "someFileName", fileType : "someNotAllowedFileType", mimeType : "someNotAllowedMimeType" };
+					ok(true, "Event typeMissmatch fired");
 					equal(oEvent.getId(), "typeMissmatch", "Event Id 'typeMissmatch' provided");
-					equal(oEvent.mParameters.getParameter("fileName"), "someFileName", "Correct file name provided");
-					equal(oEvent.mParameters.getParameter("fileType"), "someNotAllowedFileType", "Correct file type provided");
-					equal(oEvent.mParameters.getParameter("mimeType"), "someNotAllowedMimeType", "Correct mime type provided")
+					// deprecated
+					equal(oEvent.mParameters.getParameter("fileName"), "someFileName", "Correct file name provided in typeMissmatch by oEvent.mParameters.getParameter('fileName')");
+					equal(oEvent.getParameters().getParameters()["fileName"], "someFileName", "Correct file name provided in typeMissmatch by oEvent.getParameters().getParameters()['fileName']");
+					equal(oEvent.getParameter("mParameters")["fileName"], "someFileName", "Correct file name provided in typeMissmatch by oEvent.getParameter('mParameters')['fileName']");
+					equal(oEvent.mParameters.getParameter("fileType"), "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.mParameters.getParameter('fileType')");
+					equal(oEvent.getParameters().getParameters()["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameters().getParameters()['fileType']");
+					equal(oEvent.getParameter("mParameters")["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('mParameters')['fileType']");
+					equal(oEvent.mParameters.getParameter("mimeType"), "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.mParameters.getParameter('mimeType')");
+					equal(oEvent.getParameters().getParameters()["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameters().getParameters()['mimeType']");
+					equal(oEvent.getParameter("mParameters")["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('mParameters')['mimeType']");
+					//new
+					equal(oEvent.getParameter("files")[0].name, "someFileName", "Correct file name provided in typeMissmatch event by oEvent.getParameter('files')[0].name");
+					equal(oEvent.getParameters()["files"][0]["name"], "someFileName", "Correct file name provided in typeMissmatch event by oEvent.getParameters()['files'][0]['name']");
+					equal(oEvent.getParameter("files")[0].fileType, "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('files')[0].fileType");
+					equal(oEvent.getParameter("files")[0]["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('files')[0]['fileType']");
+					equal(oEvent.getParameter("files")[0].mimeType, "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0].mimeType");
+					equal(oEvent.getParameter("files")[0]["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0]['mimeType']");
+					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file provided in typeMissmatch event by oEvent.getParameter('files')[0].");
 				},
 				uploadComplete : function(oEvent) {
 					ok(true, "Event uploadComplete fired");
@@ -298,7 +314,7 @@
 
 	test("Event typeMissmatch", function() {
 		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(5); // verifies the event handler was executed
+		expect(18); // verifies the event handler was executed
 		oFileUploader.fireTypeMissmatch({
 			fileName : "someFileName",
 			fileType : "someNotAllowedFileType",

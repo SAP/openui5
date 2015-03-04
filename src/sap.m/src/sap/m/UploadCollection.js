@@ -221,19 +221,29 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				parameters : {
 
 					/**
-					 * An unique Id of the attached document.
-					 */
+					* An unique Id of the attached document.
+					* This parameter is deprecated, use parameter files instead.
+					* @deprecated Since version 1.28.0. Use parameter files instead.
+					*/
 					documentId : {type : "string"},
-
 					/**
-					 * File type.
-					 */
+					* File type.
+					* This parameter is deprecated, use parameter files instead.
+					* @deprecated Since version 1.28.0. Use parameter files instead.
+					*/
 					fileType : {type : "string"},
-
 					/**
-					 * MIME type.
-					 */
-					mimeType : {type : "string"}
+					* MIME type.
+					*This parameter is deprecated, use parameter files instead.
+					* @deprecated Since version 1.28.0.  Use parameter files instead.
+					*/
+					mimeType : {type : "string"},
+					/**
+					* A FileList of individually selected files from the underlying system.
+					* Limitation: Internet Explorer 9 supports only single file.
+					* Since version 1.28.0.
+					*/
+					files : {type : "object[]"}
 				}
 			},
 
@@ -1322,7 +1332,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._onTypeMissmatch = function(oEvent) {
-		this.fireTypeMissmatch(oEvent);
+		var oFile = {name: oEvent.getParameter("fileName"),
+					fileType: oEvent.getParameter("fileType"),
+					mimeType: oEvent.getParameter("mimeType")};
+		var aFiles = [oFile];
+		this.fireTypeMissmatch({
+			// deprecated
+			getParameter : function(sParameter) {
+				if (sParameter) {
+					return oEvent.getParameter(sParameter);
+				}
+			},
+			getParameters : function() {
+				return oEvent.getParameters();
+			},
+			mParameters : oEvent.getParameters(),
+			// new
+			files : aFiles
+		});
 	};
 
 	/**
