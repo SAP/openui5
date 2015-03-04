@@ -212,6 +212,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+	NavContainer.prototype.exit = function() {
+		this._mFocusObject = null; // allow partial garbage collection when app code leaks the NavContainer (based on a real scenario)
+	};
 	
 	
 	NavContainer.prototype.onBeforeRendering = function() {
