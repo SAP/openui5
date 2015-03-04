@@ -114,8 +114,19 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxBaseRenderer.writeInnerContent = function(oRm, oControl) {
+			this.renderButton(oRm, oControl.getId() + "-arrow");
+		};
+
+		/**
+		 * Renders the combo box button, using the provided {@link sap.ui.core.RenderManager}.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {string} sId Id for the button.
+		 */
+		ComboBoxBaseRenderer.renderButton = function(oRm, sId) {
 			oRm.write('<button tabindex="-1"');
-			oRm.writeAttribute("id", oControl.getId() + "-arrow");
+			oRm.writeAttribute("id", sId);
 			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS + "Arrow");
 			oRm.writeClasses();
 			oRm.write("></button>");
