@@ -24,6 +24,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeControlData(oControl);
 			oRm.addClass('sapUiFixFlex');
 
+			if (oControl.getMinFlexSize() !== 0) {
+				oRm.addClass('sapUiFixFlexInnerScrolling');
+			}
+
 			// Setting css class for horizontal layout
 			if (!oControl.getVertical()) {
 				oRm.addClass('sapUiFixFlexRow');
@@ -91,7 +95,15 @@ sap.ui.define(['jquery.sap.global'],
 			var oFlexContent = oControl.getFlexContent();
 
 			oRm.write('<div id="' + oControl.getId() + '-Flexible" class="sapUiFixFlexFlexible">');
-			oRm.write('<div class="sapUiFixFlexFlexibleContainer">');
+			oRm.write('<div id="' + oControl.getId() + '-FlexibleContainer" class="sapUiFixFlexFlexibleContainer"');
+			if (oControl.getMinFlexSize() !== 0) {
+				if (oControl.getVertical()) {
+					oRm.write('style="min-height:' + oControl.getMinFlexSize() + 'px"');
+				} else {
+					oRm.write('style="min-width:' + oControl.getMinFlexSize() + 'px"');
+				}
+			}
+			oRm.write('>');
 
 			// Render the child
 			oRm.renderControl(oFlexContent);
