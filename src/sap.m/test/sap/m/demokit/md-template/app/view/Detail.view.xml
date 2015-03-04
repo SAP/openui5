@@ -14,16 +14,15 @@
 				numberUnit="{UnitOfMeasure}">
 			</ObjectHeader>
 			<IconTabBar
-				class="sapUiResponsiveContentPadding"
-				expanded="{device>/isNoPhone}">
+				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
 						icon="sap-icon://hint">
-						<Text text="Info content goes here ..." />
+						<Text width="auto" class="sapUiSmallMargin" text="Info content goes here ..." />
 					</IconTabFilter>
 					<IconTabFilter
 						icon="sap-icon://attachment">
-						<Text text="Attachments go here ..." />
+						<Text width="auto" class="sapUiSmallMargin" text="Attachments go here ..." />
 					</IconTabFilter>
 				</items>
 			</IconTabBar>
