@@ -2,6 +2,9 @@
 /* CSS for control sap.m/Dialog.control          */
 /* ============================================= */
 
+@SapBarHeight: 3rem;
+@SapBarCompactHeight: 2rem;
+
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
 .sapMDialogSection {
@@ -28,6 +31,10 @@
   outline: none;
 }
 
+.sap-phone .sapMDialog {
+  overflow: hidden;
+}
+
 .sap-tablet .sapMDialog,
 .sap-desktop .sapMDialog {
   min-width: 25rem;
@@ -46,7 +53,7 @@
 .sapMDialogScroll {
   display: inline-block; /*this is for horizontal scrolling enablement*/
   min-height: 100%;
-  width: 100%;
+  min-width: 100%;
   vertical-align: middle;
 }
 
@@ -236,9 +243,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMDialog", ~"> section > .sapMDialogScroll > .sapMDialogScrollCont");
 
-
-/* ====================================================== */
-/* CSS for control sap.m/Dialog.control BlueCrystal theme */
 /* ====================================================== */
 
 .sapMDialogPhone {
@@ -320,42 +324,166 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
   border: none;
 }
 
+//for some reason buttons have offset of 1px when focused and not exactly in the verticle middle
+.sapMDialog > footer .sapMBtn {
+  margin-top: -1px;
+}
+
 /* Compact size */
 .sapUiSizeCompact {
-  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg,
-  & .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
 
-  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon,
-  & .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
-    line-height: 1.5rem;
-    height: 1.5rem;
-    width: 1rem;
-    font-size: 1rem;
-  }
+  .sapMDialog {
+    padding-top: @SapBarCompactHeight;
+    padding-bottom: @SapBarCompactHeight;
+    min-height: @SapBarCompactHeight;
 
-  .sapMDialogActions {
-    /* footer with actions buttons */
-    width: auto;
-    height: 1.625rem;
-    line-height: 1.625rem;
-    padding: 0.1875rem 0.25rem;
-  }
-
-  &.sapMDialog > header:first-of-type.sapMHeader-CTX,
-  &.sapMDialog > footer:last-of-type.sapMFooter-CTX,
-  & .sapMDialog > header:first-of-type.sapMHeader-CTX,
-  & .sapMDialog > footer:last-of-type.sapMFooter-CTX {
-    height: 2.5rem;
-
-    .sapMBarLeft,
-    .sapMBarRight,
-    .sapMBarPH {
-      height: 2.5rem;
-      padding-top: 0.25rem;
-      padding-bottom: 0.25rem;
+    &.sapMDialogWithSubHeader {
+      padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
     }
+
+    &.sapMMessageDialog {
+      min-height: @SapBarCompactHeight + 1rem;
+    }
+
+    & > .sapMDialogTitle {
+      height: @SapBarCompactHeight;
+    }
+
+    & > .sapMDialogSection {
+      min-height: @SapBarCompactHeight;
+    }
+
+    & > footer {
+      height: @SapBarCompactHeight;
+    }
+
+    & header.sapMDialogSubHeader {
+      height: @SapBarCompactHeight;
+      top: @SapBarCompactHeight;
+    }
+  }
+
+  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
+    &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg,
+    & .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon,
+    & .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
+      line-height: 1.5rem;
+      height: 1.5rem;
+      width: 1rem;
+      font-size: 1rem;
+    }
+
+    .sapMDialogActions {
+      /* footer with actions buttons */
+      width: auto;
+      height: 1.625rem;
+      line-height: 1.625rem;
+      padding: 0.1875rem 0.25rem;
+    }
+
+    &.sapMDialog > header:first-of-type.sapMHeader-CTX,
+    &.sapMDialog > footer:last-of-type.sapMFooter-CTX,
+    & .sapMDialog > header:first-of-type.sapMHeader-CTX,
+    & .sapMDialog > footer:last-of-type.sapMFooter-CTX {
+      height: 2.5rem;
+
+      .sapMBarLeft,
+      .sapMBarRight,
+      .sapMBarPH {
+        height: 2.5rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+      }
+    }
+  }
+}
+
+.sapMDialogResizing,
+.sapMDialogResizing * {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.sapMDialogResizeHandler {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  bottom: -0.5rem;
+  right: -0.5rem;
+  cursor: se-resize;
+  z-index: 2;
+
+  &:before {
+    content: "";
+    border-style: solid;
+    border-width: 0 0 0.5rem 0.5rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.sapMDialog {
+  padding-top: @SapBarHeight;
+  padding-bottom: @SapBarHeight;
+  min-height: @SapBarHeight;
+  box-sizing: content-box;
+
+  &.sapMDialog-NoFooter {
+    padding-bottom: 0;
+  }
+
+  &.sapMDialog-NoHeader {
+    padding-top: 0;
+  }
+
+  &.sapMDialogWithSubHeader {
+    padding-top: @SapBarHeight + @SapBarHeight;
+  }
+
+  &.sapMMessageDialog {
+    min-height: @SapBarHeight;
+  }
+
+  & > .sapMDialogTitle {
+    height: @SapBarHeight;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
+
+  & > .sapMDialogSection {
+    height: 100%;
+    min-height: @SapBarHeight;
+  }
+
+  & > footer {
+    height: @SapBarHeight;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  &.sapMDialogDraggable header {
+    cursor: move;
+  }
+
+  & header.sapMDialogSubHeader {
+    cursor: default;
+    position: absolute;
+    height: @SapBarHeight;
+    z-index: 2;
+    top: @SapBarHeight;
+    left: 0;
+    right: 0;
   }
 }

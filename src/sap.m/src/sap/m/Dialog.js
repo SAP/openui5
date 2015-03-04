@@ -29,40 +29,40 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 * @alias sap.m.Dialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ { metadata : {
+	var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ { metadata: {
 
-		interfaces : [
+		interfaces: [
 			"sap.ui.core.PopupInterface"
 		],
-		library : "sap.m",
-		properties : {
+		library: "sap.m",
+		properties: {
 
 			/**
 			 * Icon that is displayed in the dialog header. This icon is invisible in iOS platform and it's density aware that you can use the density convention (@2, @1.5, etc.) to provide higher resolution image for higher density screen.
 			 */
-			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+			icon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: null},
 
 			/**
 			 * Title text appears in the dialog header.
 			 */
-			title : {type : "string", group : "Appearance", defaultValue : null},
+			title: {type: "string", group: "Appearance", defaultValue: null},
 
 			/**
 			 * This property decides whether the header is shown inside the dialog. If this property is set to true, the text and icon property are ignored. This property has a default value true.
 			 * @since 1.15.1
 			 */
-			showHeader : {type : "boolean", group : "Appearance", defaultValue : true},
+			showHeader: {type: "boolean", group: "Appearance", defaultValue: true},
 
 			/**
 			 * The type of the dialog. In theme sap_bluecrystal, the type message will limit the dialog's width within 480px when runs on tablet and desktop.
 			 */
-			type : {type : "sap.m.DialogType", group : "Appearance", defaultValue : sap.m.DialogType.Standard},
+			type: {type: "sap.m.DialogType", group: "Appearance", defaultValue: sap.m.DialogType.Standard},
 
 			/**
 			 * State affects the icon and the title color. If other than None is set, a predefined icon will be added to the dialog. Setting icon property will overwrite the predefined icon. The default value is None which doesn't add any icon to the Dialog control. This property is by now only supported by blue crystal theme.
 			 * @since 1.11.2
 			 */
-			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
+			state: {type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None},
 
 			/**
 			 * When it's set to true, the dialog will be full screen when it runs on a phone.
@@ -70,99 +70,111 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			 * @deprecated Since version 1.13.1.
 			 * Please use the new stretch property instead. This enables a stretched dialog even on tablet and desktop. If you want to achieve the same effect as stretchOnPhone, please set the stretch with jQuery.device.is.phone, then dialog is only stretched when runs on phone.
 			 */
-			stretchOnPhone : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
+			stretchOnPhone: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 
 			/**
 			 * When this property is set to true, the dialog is stretched to a full screen display. This property is only applicable to standard dialog and message type dialog ignores this property.
 			 * @since 1.13.1
 			 */
-			stretch : {type : "boolean", group : "Appearance", defaultValue : false},
+			stretch: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * Preferred width of content in Dialog. This property affects the width of dialog on phone in landscape mode, tablet or desktop, because the dialog has a fixed width when runs on phone in portrait mode. If the preferred width is less than the minimum width of dilaog or more than the available width of the screen, it will be overwritten by the min or max value. The current mininum value of dialog width on tablet is 400px.
 			 * @since 1.12.1
 			 */
-			contentWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+			contentWidth: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
 
 			/**
 			 * Preferred height of content in Dialog. If the preferred height is bigger than the available space on screen, it will be overwritten by the maximum available height on screen in order to make sure that dialog isn't cut off.
 			 * @since 1.12.1
 			 */
-			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+			contentHeight: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
 
 			/**
 			 * This property indicates if user can scroll horizontally inside dialog when the content is bigger than the content area. However, when scrollable control (sap.m.ScrollContainer, sap.m.Page) is in the dialog, this property needs to be set to false to disable the scrolling in dialog in order to make the scrolling in the child control work properly.
 			 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, or sap.m.ScrollContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
 			 * @since 1.15.1
 			 */
-			horizontalScrolling : {type : "boolean", group : "Behavior", defaultValue : true},
+			horizontalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 			/**
 			 * This property indicates if user can scroll vertically inside dialog when the content is bigger than the content area. However, when scrollable control (sap.m.ScrollContainer, sap.m.Page) is in the dialog, this property needs to be set to false to disable the scrolling in dialog in order to make the scrolling in the child control work properly.
 			 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, or sap.m.ScrollContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
 			 * @since 1.15.1
 			 */
-			verticalScrolling : {type : "boolean", group : "Behavior", defaultValue : true}
+			verticalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
+
+			/**
+			 * This property decides whether the dialog is resizeable. If this property is set to true, the dialog will have a resize handler in it's bottom right corner. This property has a default value true.
+			 * @since 1.30
+			 */
+			resizeable: {type: "boolean", group: "Behavior", defaultValue: false},
+
+			/**
+			 * This property decides whether the dialog is draggable. If this property is set to true, the dialog will be draggable with it's header. This property has a default value true.
+			 * @since 1.30
+			 */
+			draggable: {type: "boolean", group: "Behavior", defaultValue: false}
 		},
-		defaultAggregation : "content",
-		aggregations : {
+		defaultAggregation: "content",
+		aggregations: {
 
 			/**
 			 * The content inside the dialog.
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+			content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
 
 			/**
 			 * When subHeader is assigned to Dialog, it's rendered directly after the main header in Dialog. SubHeader is out of the content area and won't be scrolled when content's size is bigger than the content area's size.
 			 * @since 1.12.2
 			 */
-			subHeader : {type : "sap.m.IBar", multiple : false},
+			subHeader: {type: "sap.m.IBar", multiple: false},
 
 			/**
 			 * CustomHeader is only supported in theme sap_bluecrystal. When it's set, the icon, title and showHeader are properties ignored. Only the customHeader is shown as the header of the dialog.
 			 * @since 1.15.1
 			 */
-			customHeader : {type : "sap.m.IBar", multiple : false},
+			customHeader: {type: "sap.m.IBar", multiple: false},
 
 			/**
 			 * The button which is rendered to the left side (right side in RTL mode) of the endButton in the footer area inside the dialog. From UI5 version 1.21.1, there's a new aggregation "buttons" created with which more than 2 buttons can be added to the footer area of dialog. If the new "buttons" aggregation is set, any change made to this aggregation has no effect anymore. When runs on the phone, this button (and the endButton together when set) is (are) rendered at the center of the footer area. When runs on the other platforms, this button (and the endButton together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 			 * @since 1.15.1
 			 */
-			beginButton : {type : "sap.m.Button", multiple : false},
+			beginButton: {type: "sap.m.Button", multiple: false},
 
 			/**
 			 * The button which is rendered to the right side (left side in RTL mode) of the beginButton in the footer area inside the dialog. From UI5 version 1.21.1, there's a new aggregation "buttons" created with which more than 2 buttons can be added to the footer area of dialog. If the new "buttons" aggregation is set, any change made to this aggregation has no effect anymore. When runs on the phone, this button (and the beginButton together when set) is (are) rendered at the center of the footer area. When runs on the other platforms, this button (and the beginButton together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 			 * @since 1.15.1
 			 */
-			endButton : {type : "sap.m.Button", multiple : false},
+			endButton: {type: "sap.m.Button", multiple: false},
 
 			/**
 			 * Buttons can be added to the footer area of dialog through this aggregation. When this aggregation is set, any change to beginButton and endButton has no effect anymore. Buttons which are inside this aggregation are aligned at the right side (left side in RTL mode) of the footer instead of in the middle of the footer.
 			 * @since 1.21.1
 			 */
-			buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
+			buttons: {type: "sap.m.Button", multiple: true, singularName: "button"},
 
 			/**
 			 * The hidden aggregation for internal maintained header.
 			 */
-			_header : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			_header: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 			/**
 			 * The hidden aggregation for internal maintained title control.
 			 */
-			_title : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			_title: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 			/**
 			 * The hidden aggregation for internal maintained icon control.
 			 */
-			_icon : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			_icon: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 			/**
 			 * The hidden aggregation for internal maintained toolbar instance
 			 */
-			_toolbar : {type : "sap.m.Toolbar", multiple : false, visibility : "hidden"}
+			_toolbar: {type: "sap.m.Toolbar", multiple: false, visibility: "hidden"}
 		},
-		associations : {
+		associations: {
 
 			/**
 			 * LeftButton is shown at the left edge of the bar in iOS, and at the right side of the bar for the other platforms. Please set this to null if you want to remove the left button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored. Setting leftButton will also set the beginButton internally.
@@ -170,7 +182,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			 *
 			 * LeftButton has been deprecated since 1.15.1. Please use the beginButton instead which is more RTL friendly.
 			 */
-			leftButton : {type : "sap.m.Button", multiple : false, deprecated: true},
+			leftButton: {type: "sap.m.Button", multiple: false, deprecated: true},
 
 			/**
 			 * RightButton is always shown at the right edge of the bar. Please set this to null if you want to remove the right button from the bar. And the button is only removed from the bar, not destroyed. When showHeader is set to false, this property will be ignored. Setting rightButton will also set the endButton internally.
@@ -178,56 +190,56 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			 *
 			 * RightButton has been deprecated since 1.15.1. Please use the endButton instead which is more RTL friendly.
 			 */
-			rightButton : {type : "sap.m.Button", multiple : false, deprecated: true},
+			rightButton: {type: "sap.m.Button", multiple: false, deprecated: true},
 
 			/**
 			 * Focus is set to the dialog in the sequence of leftButton and rightButton when available. But if some other control needs to get the focus other than one of those two buttons, set the initialFocus with the control which should be focused on. Setting initialFocus to input controls doesn't open the on screen keyboard on mobile device, this is due to the browser limitation that the on screen keyboard can't be opened with javascript code. The opening of on screen keyboard must be triggered by real user action.
 			 * @since 1.15.0
 			 */
-			initialFocus : {type : "sap.ui.core.Control", multiple : false},
+			initialFocus: {type: "sap.ui.core.Control", multiple: false},
 
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
 		},
-		events : {
+		events: {
 
 			/**
 			 * This event will be fired before the dialog is opened.
 			 */
-			beforeOpen : {},
+			beforeOpen: {},
 
 			/**
 			 * This event will be fired after the dialog is opened.
 			 */
-			afterOpen : {},
+			afterOpen: {},
 
 			/**
 			 * This event will be fired before the dialog is closed.
 			 */
-			beforeClose : {
-				parameters : {
+			beforeClose: {
+				parameters: {
 
 					/**
 					 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
 					 * @since 1.9.2
 					 */
-					origin : {type : "sap.m.Button"}
+					origin: {type: "sap.m.Button"}
 				}
 			},
 
 			/**
 			 * This event will be fired after the dialog is closed.
 			 */
-			afterClose : {
-				parameters : {
+			afterClose: {
+				parameters: {
 
 					/**
 					 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
 					 * @since 1.9.2
 					 */
-					origin : {type : "sap.m.Button"}
+					origin: {type: "sap.m.Button"}
 				}
 			}
 		}
@@ -256,6 +268,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		this._externalIcon = undefined;
 		this._sResizeListenerId = null;
 		this._$Window = jQuery(window);
+		this._oManuallySetSize = null;
 
 		this._aButtons = [];
 
@@ -357,7 +370,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 	Dialog.prototype.onAfterRendering = function(){
 		this._$scrollPane = this.$("scroll");
+		//this is not used in the control itself but is used in test and may me used from client's implementations
 		this._$content = this.$("cont");
+		this._$dialog = this.$();
 
 		if (this.isOpen()) {
 			//restore the focus after rendering when dialog is already open
@@ -425,7 +440,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	Dialog.prototype.open = function(){
+	Dialog.prototype.open = function() {
 		var oPopup = this.oPopup;
 
 		if (oPopup.isOpen()) {
@@ -460,7 +475,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	Dialog.prototype.close = function(){
+	Dialog.prototype.close = function() {
 		var oPopup = this.oPopup;
 
 		var eOpenState = this.oPopup.getOpenState();
@@ -483,7 +498,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 * @since 1.9.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	Dialog.prototype.isOpen = function(){
+	Dialog.prototype.isOpen = function() {
 		return this.oPopup && this.oPopup.isOpen();
 	};
 	/* =========================================================== */
@@ -493,13 +508,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	/* =========================================================== */
 	/*                      begin: event handlers                  */
 	/* =========================================================== */
-	Dialog.prototype._handleOpened = function(){
+	Dialog.prototype._handleOpened = function() {
 		this.oPopup.detachOpened(this._handleOpened, this);
 		this._setInitialFocus();
 		this.fireAfterOpen();
 	};
 
-	Dialog.prototype._handleClosed = function(){
+	Dialog.prototype._handleClosed = function() {
 		this.oPopup.detachClosed(this._handleClosed, this);
 		sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
 		InstanceManager.removeDialogInstance(this);
@@ -512,7 +527,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 * @param {jQuery.EventObject} oEvent The event object
 	 * @private
 	 */
-	Dialog.prototype.onfocusin = function(oEvent){
+	Dialog.prototype.onfocusin = function(oEvent) {
 		var oSourceDomRef = oEvent.target;
 
 		//Check if the invisible FIRST focusable element (suffix '-firstfe') has gained focus
@@ -529,7 +544,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			if (oFirstFocusableDomRef) {
 				jQuery.sap.focus(oFirstFocusableDomRef);
 			}
-
 		}
 	};
 
@@ -553,7 +567,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		if ((sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) || sap.ui.Device.os.ios) {
 			$Ref.fadeIn(200, fnOpened);
 		} else {
-			fnEnd = function(){
+			fnEnd = function() {
 				if (bOpenedCalled || !that.oPopup || that.oPopup.getOpenState() !== sap.ui.core.OpenState.OPENING) {
 					return;
 				}
@@ -566,7 +580,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			$Ref.addClass("sapMDialogOpening");
 			//check if the transitionend event isn't fired, if it's not fired due to unexpected rerendering,
 			//fnOpened should be called again.
-			setTimeout(function(){
+			setTimeout(function() {
 				fnEnd();
 			}, 150);
 		}
@@ -579,7 +593,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 			$Ref.fadeOut(200, fnClose);
 		} else {
-			fnEnd = function(){
+			fnEnd = function() {
 				if (bClosedCalled) {
 					return;
 				}
@@ -590,7 +604,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			};
 			$Ref.bind("webkitAnimationEnd animationend", fnEnd);
 			$Ref.addClass("sapMDialogClosing");
-			setTimeout(function(){
+			setTimeout(function() {
 				fnEnd();
 			}, 150);
 		}
@@ -631,168 +645,60 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		var iWindowWidth = this._$Window.width(),
 			iWindowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height(),
 			$this = this.$(),
-			//stretch is ignored for message dialog
-			bStretch = this.getStretch() && !this._bMessageType,
+			bStretch = this.getStretch(),
+			bStretchOnPhone = this.getStretchOnPhone(),
+			bMessageType = this._bMessageType,
 			iHPaddingToScreen = this._getDialogOffset(iWindowWidth).left,
 			iVPaddingToScreen = this._getDialogOffset(iWindowWidth).top,
-			iPaddingLeft = window.parseInt($this.css("padding-left"), 10),
-			iPaddingRight = window.parseInt($this.css("padding-right"), 10),
-			iPaddingTop = window.parseInt($this.css("padding-top"), 10),
-			iPaddingBottom = window.parseInt($this.css("padding-bottom"), 10),
-			$content = this._$content,
-			iBorderLeft = window.parseInt($this.css("border-left-width"), 10),
-			iBorderRight = window.parseInt($this.css("border-right-width"), 10),
-			iBorderTop = window.parseInt($this.css("border-top-width"), 10),
-			iBorderBottom = window.parseInt($this.css("border-bottom-width"), 10),
+			iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10),
 			iMaxWidth = iWindowWidth - iHPaddingToScreen,
-			iMaxHeight = iWindowHeight - iVPaddingToScreen,
+			iMaxHeight = iWindowHeight - iVPaddingToScreen - iContentOffset,
 			sContentWidth = this.getContentWidth(),
 			sContentHeight = this.getContentHeight(),
-			$scrollArea = this._$scrollPane,
-			//this is a fix for setting useTransform false in ScrollEnablement.js line 236
-			bSAreaPosAbs = $scrollArea.css("position") === "absolute",
-			oSubHeader = this.getSubHeader(),
-			sCalcContentWidth = "",
-			iMinWidth = 0,
-			iContentMaxHeight, iHeaderHeight, iSubHeaderHeight, iFooterHeight, iScrollAreaHeight, iCalcContentWidth, bIgnoreContentWidth;
+			oStyles = {};
 
-		//reset
-		$this.css({
-			"width": "",
-			"height": "",
-			"min-width": "",
-			"max-width": "",
-			"max-height": ""
-		});
-
-		$scrollArea.css({
-			"width": "",
-			"display": ""
-		});
-
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.desktop) {
-			if (bStretch) {
-				$this.css({
-					"right": "0px",
-					"bottom": "0px",
-					"width": iWindowWidth + "px",
-					"min-width": iWindowWidth + "px",
-					"max-height": iWindowHeight + "px"
-				});
-			} else {
-				iMinWidth = 400;
-				$this.css({
-					"max-width": (this._bMessageType ? 480 : iMaxWidth) + "px",
-					"max-height": iMaxHeight + "px"
-				});
+		if (!bStretch) {
+			//set the size to the content
+			if (!this._oManuallySetSize) {
+				oStyles.width = sContentWidth ? sContentWidth : this.$('scroll').width() + 'px';
+				oStyles.height = sContentHeight ? sContentHeight : this.$('scroll').height() + 'px';
 			}
-		} else {
-			if (bStretch) {
-				$this.css({
-					"width": iWindowWidth + "px",
-					"height": iWindowHeight + "px",
-					"max-height": iWindowHeight + "px"
-				});
+
+			//set max height and width smaller that the screen
+			oStyles["max-width"] = iMaxWidth + 'px';
+			oStyles["max-height"] = iMaxHeight + 'px';
+
+			if (sap.ui.Device.system.tablet || sap.ui.Device.system.desktop) {
+				if (bMessageType) {
+					oStyles.height = undefined;
+				}
 			} else {
 				if (sap.ui.Device.orientation.portrait) {
-					$this.css({
-						"width": iMaxWidth + "px",
-						"max-height": iMaxHeight + "px"
-					});
+					oStyles.width = iMaxWidth + "px";
 				} else {
-					iMinWidth = iWindowHeight;
-					$this.css({
-						"min-width": iMinWidth + "px",
-						"max-width": iMaxWidth + "px",
-						"max-height": iMaxHeight + "px"
-					});
+					oStyles['min-width'] = iWindowHeight + "px";
 				}
 			}
 		}
 
-		iHeaderHeight = $this.children("header.sapMDialogTitle").outerHeight(true) || 0;
-		iSubHeaderHeight = oSubHeader ? oSubHeader.$().outerHeight(true) : 0;
-		iFooterHeight = $this.children("footer").outerHeight(true) || 0;
-
-		//if stretch is true, paddings to screen are ignored
-		iContentMaxHeight = ((bStretch) ? iWindowHeight : iMaxHeight) - iHeaderHeight - iSubHeaderHeight - iFooterHeight - iPaddingTop - iPaddingBottom - iBorderTop - iBorderBottom;
-		//sContentWidth is ignored under the following conditions, because the width is managed by dialog itself.
-		// 1. when runs on a phone in portrait mode
-		// 2. in landscape mode for iphone (in mvi)
-		// 3. stretch (in bluecrystal) is true
-		// 4. message type dialog
-		bIgnoreContentWidth = (sap.ui.Device.system.phone && sap.ui.Device.orientation.portrait) || bStretch || this._bMessageType;
-
-		if (sContentWidth && !bIgnoreContentWidth) {
-			if (sContentWidth.indexOf("%") > 0) {
-				sContentWidth = sap.m.PopupHelper.calcPercentageSize(sContentWidth, iWindowWidth);
-			}
-
-			// convert the width with unit to calculated value
-			sContentWidth = $content.width(sContentWidth).width() + "px";
-
-			iCalcContentWidth = Math.max(
-					iMinWidth - iPaddingLeft - iPaddingRight - iBorderLeft - iBorderRight,
-					Math.min(
-							window.parseInt(sContentWidth, 10),
-							iMaxWidth - iPaddingLeft - iPaddingRight - iBorderLeft - iBorderRight
-					)
-				);
-
-			sCalcContentWidth = iCalcContentWidth + "px";
-
-			// normally setting the width on content is enough but when display:table dom is put out of the content area in dialog in IE9
-			// the dialog is pushed to max width. Thus the width has to be set on root dom to prevent this.
-			$this.css({
-				"width": iCalcContentWidth + iPaddingLeft + iPaddingRight + iBorderLeft + iBorderRight
-			});
+		if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
+			oStyles.right = oStyles.bottom = oStyles.top = oStyles.left = 0;
 		}
 
-		//height is set later
-		$content.css({
-			"width": sCalcContentWidth,
-			"max-height": ""
-		});
+		$this.css(oStyles);
 
-		if (sContentHeight.indexOf("%") > 0) {
-			sContentHeight = sap.m.PopupHelper.calcPercentageSize(sContentHeight, iWindowHeight);
-		}
-
-		if (sContentHeight) {
-			// convert the height with unit to calculated value
-			sContentHeight = $content.height(sContentHeight).height() + "px";
-		}
-
-		if (bSAreaPosAbs) {
-			//this is a fix for setting useTransform false in ScrollEnablement.js line 236
-			iScrollAreaHeight = $scrollArea.outerHeight(true);
-			if (bStretch) {
-				$content.css("height", iContentMaxHeight);
-			} else {
-				if (sContentHeight) {
-					$content.css("height", Math.min(iContentMaxHeight, window.parseInt(sContentHeight, 10)));
-				} else {
-					$content.css("height", Math.min(iContentMaxHeight, iScrollAreaHeight));
-				}
-			}
-		} else {
-			if (bStretch) {
-				$content.css("height", iContentMaxHeight);
-			} else {
-				if (sContentHeight) {
-					$content.css("height", Math.min(iContentMaxHeight, window.parseInt(sContentHeight, 10)));
-				} else {
-					$content.css("max-height", iContentMaxHeight);
-				}
-			}
+		//In Chrome when the dialog is stretched the footer is not rendered in the right position;
+		if (window.navigator.userAgent.toLowerCase().indexOf("chrome") !== -1 && this.getStretch()) {
+			//forcing repaint
+			$this.find('> footer').css({ bottom: '0.001px' });
 		}
 	};
 
-	Dialog.prototype._adjustScrollingPane = function(){
+	Dialog.prototype._adjustScrollingPane = function() {
 		var	$scrollArea = this._$scrollPane;
 
-		// In Android version less than 4.1, the scrollEnablement needs to set position: absolute to $scrollArea.
-		// Thus the width 100% has to be set in order to make the scrollArea as big as the contentArea
+		//In Android version less than 4.1, the scrollEnablement needs to set position: absolute to $scrollArea.
+		//Thus the width 100% has to be set in order to make the scrollArea as big as the contentArea
 		if ($scrollArea.css("position") === "absolute") {
 			$scrollArea.css("width", "100%");
 		}
@@ -803,6 +709,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	};
 
 	Dialog.prototype._reposition = function() {
+		if (this._bDisableRepositioning) {
+			//on window resize recalculate the max dimentions, to the resizing is not limited by the old max-width and higth
+			this._setDimensions();
+			return;
+		}
+
 		// this method is called within a 0 timeout, and in between the dialog can be already destroyed
 		if (this.bIsDestroyed) {
 			return;
@@ -817,7 +729,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		this._fnRepositionAfterOpen();
 	};
 
-	Dialog.prototype._repositionAfterOpen = function(){
+	Dialog.prototype._repositionAfterOpen = function() {
 		//The dialog might have been destroyed while the timeout was set
 		if (!this.oPopup) {
 			return;
@@ -832,11 +744,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
-	Dialog.prototype._reapplyPosition = function(){
+	Dialog.prototype._reapplyPosition = function() {
 		this.oPopup && this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
 	};
 
-	Dialog.prototype._onResize = function(){
+	Dialog.prototype._onResize = function() {
 		if (!this.getDomRef()) {
 			return;
 		}
@@ -848,7 +760,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		var that = this,
 			oResizeDomRef = this.getDomRef("scroll");
 
-		this._sResizeTimer = window.setTimeout(function(){
+
+		this._sResizeTimer = window.setTimeout(function() {
 			var iNewWidth = oResizeDomRef.offsetWidth,
 				iNewHeight = oResizeDomRef.offsetHeight;
 			if (that._iResizeDomWidth !== iNewWidth || that._iResizeDomHeight !== iNewHeight) {
@@ -858,7 +771,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}, 0);
 	};
 
-	Dialog.prototype._createHeader = function(){
+	Dialog.prototype._createHeader = function() {
 		if (!this._header) {
 			// set parent of header to detect changes on title
 			this._header = new Bar(this.getId() + "-header").addStyleClass("sapMDialogTitle");
@@ -872,7 +785,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 *
 	 * If more than one scrollable control is added to dialog, the scrolling needs to be disabled manually.
 	 */
-	Dialog.prototype._hasSingleScrollableContent = function(){
+	Dialog.prototype._hasSingleScrollableContent = function() {
 		var aContent = this.getContent(), i;
 
 		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
@@ -890,18 +803,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return false;
 	};
 
-	Dialog.prototype._initBlockLayerAnimation = function(){
-		this.oPopup._hideBlockLayer = function(){
+	Dialog.prototype._initBlockLayerAnimation = function() {
+		this.oPopup._hideBlockLayer = function() {
 			var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
 			$blockLayer.removeClass("sapMDialogTransparentBlk");
 			Popup.prototype._hideBlockLayer.call(this);
 		};
 	};
 
-	Dialog.prototype._clearBlockLayerAnimation = function(){
+	Dialog.prototype._clearBlockLayerAnimation = function() {
 		if (jQuery.device.is.iphone && !this._bMessageType) {
 			delete this.oPopup._showBlockLayer;
-			this.oPopup._hideBlockLayer = function(){
+			this.oPopup._hideBlockLayer = function() {
 				var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
 				$blockLayer.removeClass("sapMDialogTransparentBlk");
 				Popup.prototype._hideBlockLayer.call(this);
@@ -909,7 +822,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
-	Dialog.prototype._getFocusId = function(){
+	Dialog.prototype._getFocusId = function() {
 
 		// Left or Right button can be visible false and therefore not rendered.
 		// In such a case, focus should be set somewhere else.
@@ -992,7 +905,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this._oScroller;
 	};
 
-	Dialog.prototype._composeAggreNameInHeader = function(sPos){
+	Dialog.prototype._composeAggreNameInHeader = function(sPos) {
 		var sHeaderAggregationName;
 
 		if (sPos === "Begin") {
@@ -1011,7 +924,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 		if (!this._oButtonDelegate) {
 			this._oButtonDelegate = {
-				ontap: function(){
+				ontap: function() {
 					that._oCloseTrigger = this;
 				}
 			};
@@ -1026,7 +939,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
-	Dialog.prototype._setButton = function(oButton, sPos, bSkipFlag){
+	Dialog.prototype._setButton = function(oButton, sPos, bSkipFlag) {
 		var sPosModified = this._firstLetterUpperCase(sPos),
 			sGetterName = "get" + sPosModified + "Button",
 			sAggregationName = sPos.toLowerCase() + "Button",
@@ -1072,7 +985,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 
-	Dialog.prototype._getButton = function(sPos){
+	Dialog.prototype._getButton = function(sPos) {
 		var sAggregationName = sPos.toLowerCase() + "Button",
 			sButtonName = "_o" + this._firstLetterUpperCase(sPos) + "Button";
 
@@ -1083,7 +996,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
-	Dialog.prototype._getButtonFromHeader = function(sPos){
+	Dialog.prototype._getButtonFromHeader = function(sPos) {
 		if (this._header) {
 			var sHeaderAggregationName = this._composeAggreNameInHeader(this._firstLetterUpperCase(sPos)),
 				aContent = this._header.getAggregation(sHeaderAggregationName);
@@ -1093,7 +1006,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
-	Dialog.prototype._firstLetterUpperCase = function(sValue){
+	Dialog.prototype._firstLetterUpperCase = function(sValue) {
 		return sValue.charAt(0).toUpperCase() + sValue.slice(1);
 	};
 
@@ -1104,7 +1017,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 *
 	 * @protected
 	 */
-	Dialog.prototype._getAnyHeader = function(){
+	Dialog.prototype._getAnyHeader = function() {
 		var oCustomHeader = this.getCustomHeader();
 
 		if (oCustomHeader) {
@@ -1122,14 +1035,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
-	Dialog.prototype._deregisterResizeHandler = function(){
+	Dialog.prototype._deregisterResizeHandler = function() {
 		if (this._sResizeListenerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 	};
 
-	Dialog.prototype._registerResizeHandler = function(){
+	Dialog.prototype._registerResizeHandler = function() {
 		if (!this._sResizeListenerId && this.getDomRef()) {
 			var oResizeDomRef = this.getDomRef("scroll");
 			this._iResizeDomWidth = oResizeDomRef.offsetWidth;
@@ -1191,15 +1104,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	/*                         begin: setters                      */
 	/* =========================================================== */
 
-	Dialog.prototype.setBeginButton = function(oButton){
+	Dialog.prototype.setBeginButton = function(oButton) {
 		return this._setButton(oButton, "begin");
 	};
 
-	Dialog.prototype.setEndButton = function(oButton){
+	Dialog.prototype.setEndButton = function(oButton) {
 		return this._setButton(oButton, "end");
 	};
 
-	Dialog.prototype.setLeftButton = function(vButton){
+	Dialog.prototype.setLeftButton = function(vButton) {
 		if (!(vButton instanceof sap.m.Button)) {
 			vButton = sap.ui.getCore().byId(vButton);
 		}
@@ -1210,7 +1123,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this.setAssociation("leftButton", vButton);
 	};
 
-	Dialog.prototype.setRightButton = function(vButton){
+	Dialog.prototype.setRightButton = function(vButton) {
 		if (!(vButton instanceof sap.m.Button)) {
 			vButton = sap.ui.getCore().byId(vButton);
 		}
@@ -1231,15 +1144,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return oEndButton ? oEndButton.getId() : null;
 	};
 
-	Dialog.prototype.setTitle = function(sTitle){
+	Dialog.prototype.setTitle = function(sTitle) {
 		this.setProperty("title", sTitle, true);
 
 		if (this._headerTitle) {
 			this._headerTitle.setText(sTitle);
 		} else {
 			this._headerTitle = new sap.m.Title(this.getId() + "-title", {
-				text : sTitle,
-				level : "H1"
+				text: sTitle,
+				level: "H1"
 			}).addStyleClass("sapMDialogTitle");
 
 			this._createHeader();
@@ -1248,14 +1161,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 
-	Dialog.prototype.setCustomHeader = function(oCustomHeader){
+	Dialog.prototype.setCustomHeader = function(oCustomHeader) {
 		if (oCustomHeader) {
 			oCustomHeader.addStyleClass("sapMDialogTitle");
 		}
 		this.setAggregation("customHeader", oCustomHeader);
 	};
 
-	Dialog.prototype.setState = function(sState){
+	Dialog.prototype.setState = function(sState) {
 		var mFlags = {},
 			$this = this.$(),
 			sName;
@@ -1269,7 +1182,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		this.setIcon(Dialog._mIcons[sState], true);
 	};
 
-	Dialog.prototype.setIcon = function(sIcon, bInternal){
+	Dialog.prototype.setIcon = function(sIcon, bInternal) {
 		if (!bInternal) {
 			this._externalIcon = sIcon;
 		} else {
@@ -1310,7 +1223,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 
-	Dialog.prototype.setType = function(sType){
+	Dialog.prototype.setType = function(sType) {
 		var sOldType = this.getType();
 		if (sOldType === sType) {
 			return this;
@@ -1319,12 +1232,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this.setProperty("type", sType, false);
 	};
 
-	Dialog.prototype.setStretch = function(bStretch){
+	Dialog.prototype.setStretch = function(bStretch) {
 		this._bStretchSet = true;
 		return this.setProperty("stretch", bStretch);
 	};
 
-	Dialog.prototype.setStretchOnPhone = function(bStretchOnPhone){
+	Dialog.prototype.setStretchOnPhone = function(bStretchOnPhone) {
 		if (this._bStretchSet) {
 			jQuery.sap.log.warning("sap.m.Dialog: stretchOnPhone property is deprecated. Setting stretchOnPhone property is ignored when there's already stretch property set.");
 			return this;
@@ -1347,7 +1260,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 
 		return this;
-
 	};
 
 	Dialog.prototype.setHorizontalScrolling = function(bValue) {
@@ -1510,12 +1422,105 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	// stop propagating the invalidate to static UIArea before dialog is opened.
 	// otherwise the open animation can't be seen
 	// dialog will be rendered directly to static ui area when the open method is called.
-	Dialog.prototype.invalidate = function(oOrigin){
+	Dialog.prototype.invalidate = function(oOrigin) {
 		if (this.isOpen()) {
 			this.forceInvalidate(oOrigin);
 		}
 	};
 
+	/* =========================================================== */
+	/*                     Resize & Drag logic                     */
+	/* =========================================================== */
+
+	function isHeaderClicked(eventTarget) {
+		var $target = jQuery(eventTarget);
+		var isHeader = $target.hasClass('sapMDialogTitle');
+		var isChildOfHeader = $target.parents('header').length;
+		var isHeaderTag = $target.parents('h1').length;
+		var isIcon = $target.hasClass('.sapUiIcon');
+		var isChildOfSubHeader = $target.parents('.sapMDialogSubHeader').length;
+		return ((isHeader || isChildOfHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
+	}
+
+	if (sap.ui.Device.system.desktop) {
+		Dialog.prototype.ondblclick = function(e) {
+			if (isHeaderClicked(e.target)) {
+				this._bDisableRepositioning = false;
+				this._reposition();
+			}
+		};
+
+		Dialog.prototype.onmousedown = function(e) {
+			if (this.getStretch()) {
+				return;
+			}
+
+			var timeout;
+			var that = this;
+			var $w = jQuery(document);
+			var $target = jQuery(e.target);
+			var bResize = $target.hasClass('sapMDialogResizeHandler') && this.getResizeable();
+			var fnMouseMoveHandler = function(action) { timeout = timeout ? clearTimeout(timeout) : setTimeout(function() { action(); }, 0); };
+			var initial = {
+				x: e.pageX,
+				y: e.pageY,
+				width: that._$dialog.width(),
+				height: that._$dialog.height(),
+				offset: {
+					//use e.originalEvent.layerX/Y for Firefox
+					x: e.offsetX ? e.offsetX : e.originalEvent.layerX,
+					y: e.offsetY ? e.offsetY : e.originalEvent.layerY
+				},
+				position: {
+					x: that._$dialog.offset().left,
+					y: that._$dialog.offset().top
+				}
+			};
+
+			if (isHeaderClicked(e.target)) {
+				$w.on("mousemove.sapMDialog", function(e) {
+					fnMouseMoveHandler(function() {
+						that._bDisableRepositioning = true;
+
+						that._$dialog.css({
+							left: e.pageX - initial.offset.x,
+							top: e.pageY - initial.offset.y
+						});
+					});
+				});
+			} else if (bResize) {
+				that._$dialog.addClass('sapMDialogResizing');
+				$w.on("mousemove.sapMDialog", function(e) {
+					fnMouseMoveHandler(function() {
+						that._bDisableRepositioning = true;
+
+						that._oManuallySetSize = {
+							width: initial.width + e.pageX - initial.x,
+							height: initial.height + e.pageY - initial.y
+						};
+
+						that._$dialog.css({
+							width: that._oManuallySetSize.width,
+							height: that._oManuallySetSize.height
+						});
+					});
+				});
+			} else {
+				return;
+			}
+
+			$w.on("mouseup.sapMDialog", function() {
+				$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
+
+				if (bResize) {
+					that._$dialog.removeClass('sapMDialogResizing');
+				}
+			});
+
+			e.preventDefault();
+			e.stopPropagation();
+		};
+	}
 
 	return Dialog;
 

@@ -29,7 +29,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRightButton = oControl.getEndButton(),
 			bHorizontalScrolling = oControl.getHorizontalScrolling(),
 			bVerticalScrolling = oControl.getVerticalScrolling(),
-			sState = oControl.getState();
+			sState = oControl.getState(),
+			bStretch = oControl.getStretch(),
+			bResizeable = oControl.getResizeable(),
+			bDraggable = oControl.getDraggable();
 
 		if (oHeader) {
 			oHeader.applyTagAndContextClassFor("header");
@@ -47,6 +50,15 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		oRm.addClass("sapMPopup-CTX");
 		oRm.addClass(sap.m.Dialog._mStateClasses[sState]);
 
+		// No Footer
+		if (!oControl._oToolbar && !oLeftButton && !oRightButton || (oControl._oToolbar && oControl._oToolbar.getContent().length < 1 && !oLeftButton && !oRightButton)) {
+			oRm.addClass("sapMDialog-NoFooter");
+		}
+
+		if (!oHeader) {
+			oRm.addClass("sapMDialog-NoHeader");
+		}
+
 		// ARIA
 		if (sState === "Error" || sState === "Warning") {
 			oRm.writeAccessibilityState(oControl, {
@@ -58,7 +70,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			});
 		}
 
-		if (oHeader !== null && oHeader !== undefined) {
+		if (oHeader) {
 			oRm.writeAccessibilityState(oControl, {
 				labelledby: oHeader.getId()
 			});
@@ -88,6 +100,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.addClass("sapMDialogPhone");
 		}
 
+		if (bDraggable && !bStretch) {
+			oRm.addClass("sapMDialogDraggable");
+		}
+
 		// test dialog with sap-ui-xx-formfactor=compact
 		if (sap.m._bSizeCompact) {
 			oRm.addClass("sapUiSizeCompact");
@@ -107,6 +123,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 		if (sap.ui.Device.system.desktop) {
 
+			if (bResizeable && !bStretch) {
+				oRm.write('<div class="sapMDialogResizeHandler"></div>');
+			}
+
 			// Invisible element which is used to determine when desktop keyboard navigation
 			// has reached the first focusable element of a dialog and went beyond. In that case, the controller
 			// will focus the last focusable element.
@@ -121,7 +141,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.renderControl(oSubHeader.addStyleClass("sapMDialogSubHeader"));
 		}
 
-		oRm.write('<section id="' + id + '-cont" style="width:' + oControl.getContentWidth() + '" class="sapMDialogSection">');
+		oRm.write('<section id="' + id + '-cont" class="sapMDialogSection">');
 		oRm.write('<div id="' + id + '-scroll" class="sapMDialogScroll">');
 		oRm.write('<div id="' + id + '-scrollCont" class="sapMDialogScrollCont">');
 
@@ -154,7 +174,6 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 			oRm.write("</footer>");
 		}
-
 		if (sap.ui.Device.system.desktop) {
 
 			// Invisible element which is used to determine when desktop keyboard navigation

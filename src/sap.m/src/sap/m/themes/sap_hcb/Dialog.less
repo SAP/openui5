@@ -34,3 +34,13 @@
 .sapMDialog > footer.sapMDialogActions {
   background-color: @sapUiFooterBG;
 }
+
+.sapMDialogResizeHandler {
+  &:before {
+    border-color: transparent transparent @sapHCStandardFG transparent;
+  }
+
+  &:hover:before {
+    border-color: transparent transparent lighten(@sapHCStandardFG, 15%) transparent;
+  }
+}

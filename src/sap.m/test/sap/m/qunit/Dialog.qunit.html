@@ -384,7 +384,11 @@
 
 					var $Dialog = oDialog.$();
 					if(jQuery(window).height() > 500) {
-						iValue = jQuery(window).height() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10);
+						iValue = jQuery(window).height();
+					}
+
+					if(jQuery(window).height() > 500){
+						iValue = jQuery(window).height();
 					}
 
 					equal(oDialog._$content.width(), iValue, "Landscape: contentWidth should be set to content div");
@@ -401,7 +405,7 @@
 					$Dialog = oDialog.$();
 					// when runs on a phone in portrait mode, dialog always has a fixed width which is calculated based on the screen size.
 					// window_width - fixed margin to screen - dialog border
-					iValue = jQuery(window).width() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10) - oDialog._getDialogOffset().top;
+					iValue = jQuery(window).width() - oDialog._getDialogOffset().top;
 
 					equal(oDialog._$content.width(), iValue, "Portrait: contentWidth should be set to content div");
 					equal($Dialog.width(), iValue, "Portrait: dialog should also be as big as content");
