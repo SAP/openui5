@@ -454,8 +454,8 @@
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
 		equals(oMLInput.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator is visible");
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oMLInput._$input[0]);
-		this.clock.tick(10);
+		oMLInput.focus();
+		this.clock.tick(500);
 		var bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, true, "multi-line mode displays");
 		equals(oMLInput.getTokens()[0].getVisible(), true, "token1 can be displayed");
@@ -467,7 +467,7 @@
 		oMLInput._getIsSuggestionPopupOpen = function(){ return true; };
 		oMLInput.onsapenter();
 
-		this.clock.tick(10);
+		this.clock.tick(500);
 		equals(oMLInput.getTokens().length, 4, "new token is added");
 		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, true, "multi-line mode still diaplays after item selected");
@@ -477,7 +477,7 @@
 
 		oMultiInput.focus();
 
-		this.clock.tick(10);
+		this.clock.tick(500);
 		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, false, "multi-line mode is closed");
 		equals(oMLInput.getTokens()[3].getVisible(), true, "last token can be displayed");
@@ -485,6 +485,8 @@
 		equals(oMLInput.getTokens()[2].getVisible(), false, "token3 is not visible");
 		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
+		
+		oMLInput.destroy();
 	});
 
 	test("phone - edit token in multi-line display mode", function() {
@@ -512,7 +514,7 @@
 		equals(oMLInput2.getTokens()[0].getVisible(), false, "token1 is not visible");
 		equals(oMLInput2.getValue(), oMessageBundle.getText(sShowMoreKey, 2), "indicator is visible");
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", oMLInput2._$input[0]);
+		oMLInput2.focus();
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
@@ -524,7 +526,7 @@
 		oMLInput2._oPopupInput.setValue("a");
 		this.clock.tick(500);
 		oMLInput2.onsapenter();
-		this.clock.tick(10);
+		this.clock.tick(500);
 		equals(oMLInput2._oPopupInput.getValue(), "", "no value");
 		equals(oTokenizerInPopup.getTokens().length, 4, "new token is added");
 		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
@@ -540,6 +542,8 @@
 		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
 		equals(oMLInput2.getValue(), oMessageBundle.getText(sShowMoreKey, 3), "indicator is visible");
+		
+		oMLInput2.destroy();
 	});
 
 
