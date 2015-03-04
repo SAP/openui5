@@ -26,10 +26,13 @@ sap.ui.controller("sap.m.sample.MultiInputMultiLine.Page", {
 		var oMultiInput2 = oView.byId("multiInput2");
 		//*** add checkbox validator
 		oMultiInput2.addValidator(function(args){
-			var key = args.suggestionObject.getCells()[0].getText();
-			var text = key + "("+args.suggestionObject.getCells()[3].getText()+")";
-		
-			return new sap.m.Token({key: key, text: text});
+			if (args.suggestionObject){
+				var key = args.suggestionObject.getCells()[0].getText();
+				var text = key + "("+args.suggestionObject.getCells()[3].getText()+")";
+
+				return new sap.m.Token({key: key, text: text});
+			}
+			return null;
 		});
 		
 		var oMultiInput3 = oView.byId("multiInput3");

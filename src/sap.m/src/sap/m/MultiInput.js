@@ -306,6 +306,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			for ( i = 0; i < aTokens.length - 1; i++ ) {
 				aTokens[i].setVisible(false);
 			}
+		} else {
+			this.setValue("");
 		}
 	};
 	
