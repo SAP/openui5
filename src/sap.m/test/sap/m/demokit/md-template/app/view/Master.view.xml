@@ -41,6 +41,9 @@
 					path: 'device>/isPhone',
 					formatter: 'sap.ui.demo.mdtemplate.model.formatter.listMode'
 				}"
+				growing="true"
+				growingThreshold="10"
+				growingScrollToLoad="true"
 				updateFinished="onUpdateFinished"
 				select="onSelect">
 				<infoToolbar>
