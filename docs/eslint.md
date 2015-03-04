@@ -74,7 +74,7 @@ Ruleset
 |[curly](http://eslint.org/docs/rules/curly.html) |error |error | |
 |[default-case](http://eslint.org/docs/rules/default-case.html) |off |**warning** |we regard a missing default case as an error, but first wanted to analyze how common this error is in our code. So we configured it as warning only. Might be raised to level error again in future |
 |[dot-notation](http://eslint.org/docs/rules/dot-notation.html) |error |**off** |Performance considerations suggest to prefer dot notation for accessing properties (Optimizers / JIT compilers are said to produce faster code for dot access). Nevertheless, there are some cases where we think consistency is worth more than ultimately fast property access. E.g. when some properties in an object are invalid as Javascript names while other names in the same object are. Then the code would be less readable when it used dot access for half of the names while using string access for the others (common example: HTTP headers in the Model layer). We plan to check whether locations with a need for string access are isolated enough to enable the rule for the remainder of our code.|
-|[eqeqeq](http://eslint.org/docs/rules/eqeqeq.html) |error |**warning** |Used with option "smart". We don't run this rule with level error as we like the semantic of the “something == null” check and heavily rely on “==” for string comparison (as we by design support string and String wrappers in parallel). We also haven't been able to give a precise, easy to evaluate specification of when to use "===" and when not. So while enhancing the rule would be nice, it currently is not very likely. |
+|[eqeqeq](http://eslint.org/docs/rules/eqeqeq.html) |error |**off** |We don't run this rule as we like the semantic of the “something == null” check and heavily rely on “==” for string comparison (as we by design support string and String wrappers in parallel). We also haven't been able to give a precise, easy to evaluate specification of when to use "===" and when not. So while enhancing the rule would be nice, it currently is not very likely. |
 |[guard-for-in](http://eslint.org/docs/rules/guard-for-in.html) |off |off |From jQuery we inherited the decision not to support scenarios where the Object.prototype has been enhanced with enumerable properties. so we don't activate this rule. |
 |[no-alert](http://eslint.org/docs/rules/no-alert.html) |error |error | |
 |[no-caller](http://eslint.org/docs/rules/no-caller.html) |error |error | |
@@ -160,7 +160,7 @@ Ruleset
 |[new-parens](http://eslint.org/docs/rules/new-parens.html) |error |error | |
 |[no-nested-ternary](http://eslint.org/docs/rules/no-nested-ternary.html) |off |**error** |Again, this rule has been activated to improve code readability - although we would like to support fully parenthesized nested ternaries. But the rule currently doesn’t allow that |
 |[no-array-constructor](http://eslint.org/docs/rules/no-array-constructor.html) |error |error | |
-|[no-lonely-if](http://eslint.org/docs/rules/no-lonely-if.html) |off |**error** |We prefer if else if cascades. |
+|[no-lonely-if](http://eslint.org/docs/rules/no-lonely-if.html) |off |**warning** |We prefer if else if cascades, but there are currently too many findings |
 |[no-new-object](http://eslint.org/docs/rules/no-new-object.html) |error |error | |
 |[no-spaced-func](http://eslint.org/docs/rules/no-spaced-func.html) |error |error | |
 |[no-space-before-semi](http://eslint.org/docs/rules/no-space-before-semi.html) |error |error | |
@@ -197,60 +197,7 @@ Ruleset
 Technical Ruleset
 ----------------
 
-To apply these rules in other projects, you can use the following ESLint settings:
-```
-{
-	"env": {
-		"browser": true
-	},
-	"globals": {
-		"sap": true,
-		"jQuery": true
-	},
-	"rules": {
-		"block-scoped-var": 1,
-		"brace-style": [2, "1tbs", { "allowSingleLine": true }],
-		"consistent-this": 2,
-		"global-strict": 2,
-		"no-div-regex": 2,
-		"no-floating-decimal": 2,
-		"no-self-compare": 2,
-		"no-mixed-spaces-and-tabs": [2, true],
-		"no-nested-ternary": 2,
-		"no-unused-vars": [2, {"vars":"all", "args":"none"}],
-		"radix": 2,
-		"space-after-keywords": [2, "always"],
-		"space-unary-ops": 2,
-		"wrap-iife": [2, "any"],
-
-		"camelcase": 1,
-		"consistent-return": 1,
-		"max-nested-callbacks": [1, 3],
-		"new-cap": 1,
-		"no-extra-boolean-cast": 1,
-		"no-lonely-if": 1,
-		"no-new": 1,
-		"no-new-wrappers": 1,
-		"no-redeclare": 1,
-		"no-unused-expressions": 1,
-		"no-use-before-define": [1, "nofunc"],
-		"no-warning-comments": 1,
-		"strict": 1,
-		"valid-jsdoc": [1, {
-			"requireReturn": false
-		}],
-		"default-case": 1,
-
-		"dot-notation": 0,
-		"eol-last": 0,
-		"eqeqeq": 0,
-		"no-trailing-spaces": 0,
-		"no-underscore-dangle": 0,
-		"quotes": 0
-	}
-}
-```
-
+To apply these rules in other projects, you can use the [.eslintrc](/.eslintrc) file from this repository.
 
 <!-- TODO
 
