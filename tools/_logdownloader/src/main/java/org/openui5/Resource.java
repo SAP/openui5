@@ -6,5 +6,6 @@ public enum Resource {
 	SDK_DOWNLOAD,
 	GITHUB_PAGE,
 	BLOG_PAGE,
+	REFERENCES_PAGE,
 	DEMOKIT_PAGE
 }

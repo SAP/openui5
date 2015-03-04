@@ -16,12 +16,13 @@ class LogFileData {
 	int sdkDownloads;
 	int githubHits;
 	int blogHits;
+	int referencesHits;
 	int demokitHits;
 	int ipCounter;
 
 	public LogFileData(Date date, int runtimeDownloads,
 			int mobileDownloads, int sdkDownloads, int githubHits,
-			int blogHits, int demokitHits, int ipCounter) {
+			int blogHits, int referencesHits, int demokitHits, int ipCounter) {
 		super();
 
 		int day = date.getDate();
@@ -37,6 +38,7 @@ class LogFileData {
 		this.sdkDownloads = sdkDownloads;
 		this.githubHits = githubHits;
 		this.blogHits = blogHits;
+		this.referencesHits = referencesHits;
 		this.demokitHits = demokitHits;
 		this.ipCounter = ipCounter;
 	}
@@ -74,6 +76,9 @@ class LogFileData {
 	public int getBlogHits() {
 		return blogHits;
 	}
+	public int getReferencesHits() {
+		return referencesHits;
+	}
 	public int getDemokitHits() {
 		return demokitHits;
 	}
@@ -84,7 +89,7 @@ class LogFileData {
 	@Override
 	public String toString() {
 		// the result string for a line in the CSV file
-		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter;
+		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits;
 		return csvText;
 	}
 
@@ -98,6 +103,7 @@ class LogFileData {
 		this.sdkDownloads += other.sdkDownloads;
 		this.githubHits += other.githubHits;
 		this.blogHits += other.blogHits;
+		this.referencesHits += other.referencesHits;
 		this.demokitHits += other.demokitHits;
 		this.ipCounter += other.ipCounter;
 	}
