@@ -8,6 +8,13 @@
 	<description>Planet OpenUI5 - http://openui5.org/</description>
 
 <item>
+	<title>Demos: Creating modularized SAPUI5 applications with XML Views, Routing and i18n</title>
+	<guid>http://openui5picks.tumblr.com/post/112684181095</guid>
+	<link>http://openui5picks.tumblr.com/post/112684181095</link>
+	<description>In this tutorial you will learn how to create modularized SAPUI5 applications using XML Views and Routing. We will create a simple Shell application that loads its content from XML Views, uses Routing...</description>
+	<pubDate>Sun, 01 Mar 2015 12:36:00 +0000</pubDate>
+</item>
+<item>
 	<title>Demos: OpenUI5  &amp; JSBin play well together .. but, is there even more?</title>
 	<guid>http://openui5picks.tumblr.com/post/105856062395</guid>
 	<link>http://openui5picks.tumblr.com/post/105856062395</link>

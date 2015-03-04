@@ -13,6 +13,7 @@
 
 	<items>
 		<rdf:Seq>
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/112684181095" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856062395" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856162090" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98297520315" />
@@ -25,6 +26,12 @@
 	</items>
 </channel>
 
+<item rdf:about="http://openui5picks.tumblr.com/post/112684181095">
+	<title>Demos: Creating modularized SAPUI5 applications with XML Views, Routing and i18n</title>
+	<link>http://openui5picks.tumblr.com/post/112684181095</link>
+	<content:encoded>In this tutorial you will learn how to create modularized SAPUI5 applications using XML Views and Routing. We will create a simple Shell application that loads its content from XML Views, uses Routing...</content:encoded>
+	<dc:date>2015-03-01T12:36:00+00:00</dc:date>
+</item>
 <item rdf:about="http://openui5picks.tumblr.com/post/105856062395">
 	<title>Demos: OpenUI5  &amp; JSBin play well together .. but, is there even more?</title>
 	<link>http://openui5picks.tumblr.com/post/105856062395</link>
