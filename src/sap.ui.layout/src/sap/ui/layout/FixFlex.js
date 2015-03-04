@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 
 			// Add handler for FixFlex scrolling option
 			if (this.getMinFlexSize() !== 0) {
-				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.$().find('.sapUiFixFlexFlexible')[0], jQuery.proxy(this._changeScrolling, this));
+				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));
 			}
 		};
 
