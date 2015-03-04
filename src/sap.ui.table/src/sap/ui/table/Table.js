@@ -2782,6 +2782,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	// ROW EVENT HANDLING
 	// =============================================================================
 
+	Table.prototype._isRowSelectable = function(iRowIndex) {
+		return true;
+	};
+
 	/**
 	 * handles the row selection (depending on the mode)
 	 * @private
@@ -2805,9 +2809,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 
 		// Make sure that group headers, which represents a tree node in AnalyticalTable, are not selectable.
-		if (oBinding.getContextInfo && 
-			this._aGroupedColumns.length > 0 && 
-			this._aGroupedColumns.length !== oBinding.getContextInfo(iRowIndex).level) {
+		if (!this._isRowSelectable(iRowIndex)) {
 			return;
 		}
 
