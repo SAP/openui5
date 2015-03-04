@@ -704,24 +704,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 	AnalyticalTable.prototype.expand = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var oContext = this.getContextByIndex(iRowIndex);
-			oBinding.expand(oContext);
+			oBinding.expand(iRowIndex);
 		}
 	};
 
 	AnalyticalTable.prototype.collapse = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var oContext = this.getContextByIndex(iRowIndex);
-			oBinding.collapse(oContext);
+			oBinding.collapse(iRowIndex);
 		}
 	};
 
 	AnalyticalTable.prototype.isExpanded = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var oContext = this.getContextByIndex(iRowIndex);
-			return oBinding.isExpanded(oContext);
+			return oBinding.isExpanded(iRowIndex);
 		}
 		return false;
 	};
