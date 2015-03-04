@@ -75,7 +75,7 @@
 			</List>
 		</content>
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<!-- simple sort/group/filter with Select controls -->
 				<Select
@@ -95,7 +95,8 @@
 				</Select>
 				
 				<!-- complex sort/group/filter with ViewSettingsDialog -->
-				<Button
+				<OverflowToolbarButton
+					text="{i18n>MasterListFilterButtonOverflowText}"
 					id="filter"
 					icon="sap-icon://filter"
 					press="onOpenViewSettings"/>
@@ -115,7 +116,7 @@
 						key="Group1"
 						text="{i18n>masterGroup1}"/>
 				</Select>
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
 	</Page>
 </mvc:View>
