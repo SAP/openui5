@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
-	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
+	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
 						  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
 						  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
 						  "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
@@ -969,6 +969,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	};
 
 	/**
+	 * Writes necessary invisible control/element placeholder data into the HTML.
+	 * 
+	 * Controls should only use this method if they can't live with the standard 'visible=false' implementation of the RenderManager which
+	 * renders dummy HTMLSpanElement for better re-rendering performance. Even though HTML5 error tolerance accepts this for most of the cases and
+	 * these dummy elements are not in the render tree of the Browser, controls may need to generate a valid and semantic HTML output when the
+	 * rendered HTMLSpanElement is not an allowed element(e.g. &lt;span&gt; element within the &lt;tr&gt; or &lt;li&gt; group).
+	 * 
+	 * The caller needs to start an opening HTML tag, then call this method, then complete the opening and closing tag.
+	 * <pre>
+	 * oRenderManager.write("<tr");
+	 * oRenderManager.writeInvisiblePlaceholderData(oControl);
+	 * oRenderManager.write("></tr>");
+	 * </pre>
+	 *
+	 * @param {sap.ui.core.Element} oElement an instance of sap.ui.core.Element
+	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @protected
+	 */
+	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
+		jQuery.sap.assert(oElement instanceof sap.ui.core.Element, "oElement must be an instance of sap.ui.core.Element");
+
+		var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oElement.getId(),
+			sPlaceholderHtml = ' ' +
+				'id="' + sPlaceholderId + '" ' + 
+				'class="sapUiHiddenPlaceholder" ' + 
+				'data-sap-ui="' + sPlaceholderId + '" ' + 
+				'style="display: none;"' + 
+				'aria-hidden="true" ';
+
+		this.write(sPlaceholderHtml);
+		return this;
+	};
+
+	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element
 	 * @param {sap.ui.core.Element} oElement the element whose identifying information should be written to the buffer
@@ -1249,18 +1283,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
 		 */
 		render: function(oRm, oControl) {
-			var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oControl.getId();
-
-			var sPlaceholderHtml =
-				'<span ' +
-					'id="' + sPlaceholderId + '" ' +
-					'class="sapUiHiddenPlaceholder" ' +
-					'data-sap-ui="' + sPlaceholderId + '" ' +
-					'style="display: none;"' +
-					'aria-hidden="true">' +
-				'</span>';
-
-			oRm.write(sPlaceholderHtml);
+			oRm.write("<span");
+			oRm.writeInvisiblePlaceholderData(oControl);
+			oRm.write("></span>");
 		}
 	};
 
