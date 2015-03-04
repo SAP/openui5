@@ -1,51 +1,31 @@
-<!DOCTYPE HTML>
 <html>
+<head>
+	<title>md-template</title>
+	<!--  try to load the basic UI5 styles for standalone and demokit usecase -->
+	<link rel="stylesheet" type="text/css" href="resources/sap/ui/core/themes/sap_bluecrystal/library.css">
+	<link rel="stylesheet" type="text/css" href="../../../../../resources/sap/ui/core/themes/sap_bluecrystal/library.css">
+</head>
+<body class="sapUiBody sapUiMediumMargin sapUiForceWidthAuto">
+	<h1>md-template</h1>
+	<p>This is a best practice implementation of the master detail design pattern in UI5.<br/>	Choose one of the access points below to launch the app.</p>
 
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8">
+	<h2>standalone</h2>
 
-		<title>MD Template</title>
+	<ul>
+		<li><a href="test.html">test.html</a> - start the app with mock data</li>
+		<li><a href="production.html">production.html</a> - start the app in production mode</li>
+		<li><a href="test/unit/unitTests.qunit.html">test/unit/unitTests.qunit.html</a> - run all unit tests</li>
+		<li><a href="test/integration/opaTests.qunit.html">test/integration/opaTests.qunit.html</a> - run all integration tests</li>
+	</ul>
 
-		<script id="sap-ui-bootstrap"
-			src="resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-preload="async"
-			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"sap.ui.demo.mdtemplate": "./app/"}'>
-		</script>
+	<h2>demokit</h2>
 
-		<script>
-			// TODO: do this in the bootstrap when feature is implemented in the UI5 core
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/m/Shell",
-					"sap/ui/core/ComponentContainer"
-				 ], function (Shell, ComponentContainer) {
-					// initialize the UI component
-					new Shell({
-						app: new ComponentContainer({
-							height : "100%",
-							name : "sap.ui.demo.mdtemplate"
-						})
-					}).placeAt("content");
-				});
-			});
-		</script>
-	</head>
+	<ul>
+		<li><a href="demokit.html">demokit.html</a> - start the app with mock data in demokit context</li>
+		<li><a href="test/unit/unitTestsDemokit.qunit.html">test/unit/unitTestsDemokit.qunit.html</a> - run all unit tests in demokit context</li>
+		<li><a href="test/integration/opaTestsDemokit.qunit.html">test/integration/opaTestsDemokit.qunit.html</a> - run all integration tests in demokit context</li>
+	</ul>
 
-	<body class="sapUiBody" id="content"></body>
-
-</html>
-
-	<!-- TODO: remove this block that explains how to use the index.html file for productive apps -->
-	<div style="position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; padding: 1rem; margin-left: -150px; margin-top: -150px; border: 2px solid red; background-color: white; z-index: 1">
-		<h4>Hello!</h4>
-		<p>If you would like to run the template app in test mode with mock data, please start the <a href="test.html">test.html</a> file this folder.</p>
-		<p>This index file may be used as an entry point for standalone apps. You have to add a service definition to show real data in the app.</p>
-		<p>It does not serve any purpose for apps running in a component container like the SAP Fiori launchpad and can be deleted.</p>
-	</div>
-
+	<p>For more documentation please read the <a href="https://openui5.hana.ondemand.com">UI5 Developer Guide</a>.</p>
+</body>
 </html>
