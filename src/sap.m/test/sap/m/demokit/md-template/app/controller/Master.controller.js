@@ -35,11 +35,6 @@ sap.ui.define([
 			});
 			this.getView().setModel(this.oControlStateModel, 'controlStates');
 
-			// update the master list object counter after new data is loaded
-			this.oList.attachEvent("updateFinished", function (oData) {
-				this._updateListItemCount(oData.getParameter("total"));
-			}, this);
-			
 			// master view has set the delay to 0, to make sure that busy
 			// indication is dosplayed immediately after app has been started.
 			// need to reset the display to default value after the app
@@ -54,7 +49,7 @@ sap.ui.define([
 				}
 			);
 
-			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectAndScrollToFirstItem, oListSelector);
+			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectFirstItem, oListSelector);
 			this.getOwnerComponent().oListSelector.setBoundMasterList(this.oList);
 			this.getRouter().attachBypassed(this.onBypassed, this);
 		},

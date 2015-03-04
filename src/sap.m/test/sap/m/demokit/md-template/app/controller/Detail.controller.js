@@ -83,7 +83,7 @@ sap.ui.define([
 				function (sPath) {
 					this.getView().setBusyIndicatorDelay(null);
 					this.getView().setBusy(false);
-					this.getOwnerComponent().oListSelector.selectAndScrollToAListItem(sPath);
+					this.getOwnerComponent().oListSelector.selectAListItem(sPath);
 				}.bind(this),
 				function () {
 					this.getView().setBusyIndicatorDelay(null);
