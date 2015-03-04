@@ -1425,7 +1425,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				}
 			});
 			var sTooltip = this._oFileUploader.getTooltip();
-			if (!sTooltip) {
+			if (!sTooltip && !sap.ui.Device.browser.msie) {
 			// in case the tooltip is NOT overwritten, the default tooltip should NOT be chosen!
 				this._oFileUploader.setTooltip(" ");
 			}
@@ -1733,6 +1733,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._splitFilename = function(sFilename) {
 		var oResult = {};
 		var aNameSplit = sFilename.split(".");
+		if (aNameSplit.length == 1) {
+			oResult.extension = "";
+			oResult.name = aNameSplit.pop();
+			return oResult;
+		}
 		oResult.extension = "." + aNameSplit.pop();
 		oResult.name = aNameSplit.join(".");
 		return oResult;
