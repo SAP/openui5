@@ -1461,7 +1461,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				}
 			});
 			var sTooltip = this._oFileUploader.getTooltip();
-			if (!sTooltip) {
+			if (!sTooltip && !sap.ui.Device.browser.msie) {
 				// in case the tooltip is NOT overwritten, the default tooltip should NOT be chosen!
 				this._oFileUploader.setTooltip(" ");
 			}
