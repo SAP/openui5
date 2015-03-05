@@ -102,7 +102,7 @@ sap.ui.define([
 					this.getView().setBusy(false);
 					this.getRouter().getTargets().display("detailObjectNotFound");
 					// if object could not be found, the selection in the master list
-					// does not make sense anymore. 
+					// does not make sense anymore.
 					this.getOwnerComponent().oListSelector.clearMasterListSelection();
 				}.bind(this)
 			);
@@ -128,19 +128,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * On detail view, 'nav back' is only relevant when
-		 * running on phone devices. On larger screens, the detail
-		 * view has no other view to go back to.
-		 * If running on phone though, the app
-		 * will navigate back to the 'master' view.
-		 *
-		 * @function
-		 */
-		onNavBack : function () {
-			// This is only relevant when running on phone devices
-			this.getRouter().myNavBack("master");
-		},
 
 		/**
 		 * Triggered when an item of the line item table in the detail view is selected.
