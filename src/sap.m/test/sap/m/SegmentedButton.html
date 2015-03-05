@@ -39,6 +39,16 @@
 		enableScrolling : false
 	});
 
+	var page2 = new sap.m.Page("mySecondPage", {
+		backgroundDesign: "Standard",
+		title : "Test",
+		showNavButton: true,
+		enableScrolling : true,
+		navButtonTap: function() {
+			app.to(page);
+		}
+	});
+
 	var button1 = new sap.m.Button('button1', {
 		type: sap.m.ButtonType.Default,
 		text: "to Page 2",
@@ -457,9 +467,9 @@
 					new sap.m.SegmentedButton({
 						width : "100%",
 						items : [
-							new sap.ui.core.ListItem({text: "All"}),
-							new sap.ui.core.ListItem({text: "Drill", icon: sap.ui.core.IconPool.getIconURI("drill-down")}),
-							new sap.ui.core.ListItem({text: "Text", icon: sap.ui.core.IconPool.getIconURI("e-care")})
+							new sap.m.SegmentedButtonItem({text: "All"}),
+							new sap.m.SegmentedButtonItem({text: "Drill", icon: sap.ui.core.IconPool.getIconURI("drill-down")}),
+							new sap.m.SegmentedButtonItem({text: "Text", icon: sap.ui.core.IconPool.getIconURI("e-care")})
 						]
 					})
 				]
@@ -480,10 +490,10 @@
 					new sap.m.SegmentedButton({
 						width : "100%",
 						items : [
-							new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("edit")}),
-							new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("education")}),
-							new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("email-read")}),
-							new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("excel-attachment")})
+							new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("edit")}),
+							new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("education")}),
+							new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("email-read")}),
+							new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("excel-attachment")})
 						]
 					})
 				]
@@ -542,10 +552,10 @@
 				new sap.m.SegmentedButton({
 					width: "100%",
 					items : [
-						new sap.ui.core.ListItem({text: "All"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("synchronize"), text: "Button1"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("add-equipment"), text: "Button2"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("alert"), text: "Button3"})
+						new sap.m.SegmentedButtonItem({text: "All"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("synchronize"), text: "Button1"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("add-equipment"), text: "Button2"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("alert"), text: "Button3"})
 					]
 				})
 			]
@@ -555,10 +565,10 @@
 			contentMiddle : [
 				new sap.m.SegmentedButton({
 					items : [
-						new sap.ui.core.ListItem({text: "All"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("attachment-video"), text: "Button1"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("business-objects-experience"), text: "Button2"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("cart-5"), text: "Button3"})
+						new sap.m.SegmentedButtonItem({text: "All"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("attachment-video"), text: "Button1"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("business-objects-experience"), text: "Button2"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("cart-5"), text: "Button3"})
 					]
 				})
 			]
@@ -568,10 +578,10 @@
 			contentMiddle : [
 				new sap.m.SegmentedButton({
 					items : [
-						new sap.ui.core.ListItem({text: "All"}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("chart-axis")}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("citizen-connect")}),
-						new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("collision")})
+						new sap.m.SegmentedButtonItem({text: "All"}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("chart-axis")}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("citizen-connect")}),
+						new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("collision")})
 					]
 				})
 			]
@@ -583,17 +593,17 @@
 
 		var oSBInToolBar1 = new sap.m.SegmentedButton({
 			items: [
-				new sap.ui.core.ListItem({icon: "sap-icon://home"}),
-				new sap.ui.core.ListItem({icon: "sap-icon://attachment"})
+				new sap.m.SegmentedButtonItem({icon: "sap-icon://home"}),
+				new sap.m.SegmentedButtonItem({icon: "sap-icon://attachment"})
 			]
 		});
 
 		var oSBInToolBar2 = new sap.m.SegmentedButton({
 			items : [
-				new sap.ui.core.ListItem({text: "All"}),
-				new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("comment"), text: "Button1"}),
-				new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("create-leave-request"), text: "Button2"}),
-				new sap.ui.core.ListItem({icon: sap.ui.core.IconPool.getIconURI("database"), text: "Button3"})
+				new sap.m.SegmentedButtonItem({text: "All"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("comment"), text: "Button1"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("create-leave-request"), text: "Button2"}),
+				new sap.m.SegmentedButtonItem({icon: sap.ui.core.IconPool.getIconURI("database"), text: "Button3"})
 			]
 		});
 
@@ -843,7 +853,7 @@
 			selectedKey: "{/selectedKey}",
 			items: {
 				path : "/items",
-				template : new sap.ui.core.ListItem({
+				template : new sap.m.SegmentedButtonItem({
 					key: "{key}",
 					text: "{text}",
 					icon: "{icon}",
@@ -931,9 +941,9 @@
 					content: new sap.m.SegmentedButton({
 						selectedKey: "b2",
 						items: [
-							new sap.ui.core.ListItem({key: "b1", text: "High"}),
-							new sap.ui.core.ListItem({key: "b2", text: "Low"}),
-							new sap.ui.core.ListItem({key: "b3", text: "Mute"})
+							new sap.m.SegmentedButtonItem({key: "b1", text: "High"}),
+							new sap.m.SegmentedButtonItem({key: "b2", text: "Low"}),
+							new sap.m.SegmentedButtonItem({key: "b3", text: "Mute"})
 						]
 					})
 				}),
@@ -942,9 +952,9 @@
 					content: new sap.m.SegmentedButton({
 						selectedKey: "b3",
 						items: [
-							new sap.ui.core.ListItem({key: "b1", text: "High"}),
-							new sap.ui.core.ListItem({key: "b2", text: "Low"}),
-							new sap.ui.core.ListItem({key: "b3", text: "Mute"})
+							new sap.m.SegmentedButtonItem({key: "b1", text: "High"}),
+							new sap.m.SegmentedButtonItem({key: "b2", text: "Low"}),
+							new sap.m.SegmentedButtonItem({key: "b3", text: "Mute"})
 						]
 					})
 				})
@@ -966,9 +976,10 @@
 
 		var oRtlSb = new sap.m.SegmentedButton({
 			items: [
-				new sap.ui.core.ListItem({text: "(+359) 111 222 333", textDirection: sap.ui.core.TextDirection.RTL}),
-				new sap.ui.core.ListItem({text: "(+359) 111 222 333", textDirection: sap.ui.core.TextDirection.LTR})
+				new sap.m.SegmentedButtonItem({text: "(+359) 111 222 333", textDirection: sap.ui.core.TextDirection.RTL}),
+				new sap.m.SegmentedButtonItem({text: "(+359) 111 222 333", textDirection: sap.ui.core.TextDirection.LTR})
 			]
+
 		});
 
 		vBox.addItem(oRtlSb);
@@ -981,17 +992,7 @@
 		 * View                                 *
 		 ****************************************/
 
-		var page2 = new sap.m.Page("mySecondPage", {
-			backgroundDesign: "Standard",
-			title : "Test",
-			content: vBox,
-			showNavButton: true,
-			enableScrolling : true,
-			navButtonTap: function() {
-				app.to(page);
-			}
-		});
-
+		page2.addContent(vBox);
 		app.addPage(page, true).addPage(page2, false);
 
 	}) ();
