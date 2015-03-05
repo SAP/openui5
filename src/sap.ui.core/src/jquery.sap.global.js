@@ -3791,7 +3791,7 @@
 			lockDiv.style.right = "0px";
 			lockDiv.style.opacity = "0";
 			lockDiv.style.backgroundColor = "white";
-			lockDiv.style.zIndex = Number.MAX_VALUE;
+			lockDiv.style.zIndex = 2147483647; // Max value of signed integer (32bit)
 			document.body.appendChild(lockDiv);
 			this._lockDiv = lockDiv;
 		}
@@ -3815,7 +3815,11 @@
 				that._createBlockLayer();
 				that._setCursor();
 			};
-			document.addEventListener("readystatechange", this._blockLayer);
+			if (document.readyState == "complete") {
+				this._blockLayer();
+			} else {
+				document.addEventListener("readystatechange", this._blockLayer);
+			}
 		}
 	};
 

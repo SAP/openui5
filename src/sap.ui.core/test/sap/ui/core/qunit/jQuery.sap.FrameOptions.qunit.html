@@ -84,7 +84,7 @@ function testDirectUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		var fnCallback = this.spy();
 
 		// actions
-		var oFramingControl = new jQuery.sap.FrameOptions({
+		this.oFrameOptions = new jQuery.sap.FrameOptions({
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
 			callback: fnCallback
@@ -112,7 +112,7 @@ function testDirectLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		var fnCallback = this.spy();
 
 		// actions
-		var oFramingControl = new jQuery.sap.FrameOptions({
+		this.oFrameOptions = new jQuery.sap.FrameOptions({
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
 			callback: fnCallback
@@ -128,6 +128,9 @@ function testDirectLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, false);
+
+		ok(document.contains(this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
+		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 	});
 }
 function testPostMessageLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
@@ -140,7 +143,7 @@ function testPostMessageLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		var fnCallback = this.spy();
 
 		// actions
-		var oFramingControl = new jQuery.sap.FrameOptions({
+		this.oFrameOptions = new jQuery.sap.FrameOptions({
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
 			callback: fnCallback
@@ -162,6 +165,9 @@ function testPostMessageLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, false);
+
+		ok(document.contains(this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
+		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 	});
 }
 function testPostMessageWhitelistUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
@@ -174,7 +180,7 @@ function testPostMessageWhitelistUnlock(sName, sEnvMode, sMode, bAllowSameOrigin
 		var fnCallback = this.spy();
 
 		// actions
-		var oFramingControl = new jQuery.sap.FrameOptions({
+		this.oFrameOptions = new jQuery.sap.FrameOptions({
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
 			whitelist: [ 'some.other.origin.local' ],
@@ -219,7 +225,7 @@ function testPostMessageWhitelistServiceUnlock(sName, sEnvMode, sMode, bAllowSam
 		var fnCallback = this.spy();
 
 		// actions
-		var oFramingControl = new jQuery.sap.FrameOptions({
+		this.oFrameOptions = new jQuery.sap.FrameOptions({
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
 			whitelistService: '/whitelist.json',
@@ -248,17 +254,26 @@ function testPostMessageWhitelistServiceUnlock(sName, sEnvMode, sMode, bAllowSam
 	});
 }
 
-module("mode: deny");
+function teardown() {
+	if (this.oFrameOptions && this.oFrameOptions._lockDiv) {
+		document.body.removeChild(this.oFrameOptions._lockDiv);
+	}
+	this.oFrameOptions = null;
+}
+
+sap.ui.test.qunit.delayTestStart();
+
+module("mode: deny", { teardown: teardown });
 testDirectUnlock("no frame",         'NO_FRAME',    'deny');
 testDirectLock(  "same origin",      'SAME_ORIGIN', 'deny');
 testDirectLock(  "different origin", 'DIFF_ORIGIN', 'deny');
 
-module("mode: allow");
+module("mode: allow", { teardown: teardown });
 testDirectUnlock("no frame",         'NO_FRAME',    'allow');
 testDirectUnlock("same origin",      'SAME_ORIGIN', 'allow');
 testDirectUnlock("different origin", 'DIFF_ORIGIN', 'allow');
 
-module("mode: trusted");
+module("mode: trusted", { teardown: teardown });
 testDirectUnlock(                     "no frame",                           		'NO_FRAME',    'trusted');
 testDirectUnlock(                     "same origin",                        		'SAME_ORIGIN', 'trusted');
 testPostMessageLock(                  "same origin not allowed",      	     		'SAME_ORIGIN', 'trusted', false);
