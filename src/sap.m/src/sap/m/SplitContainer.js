@@ -1656,6 +1656,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oReturn instanceof sap.m.Page) {
 				return oReturn;
 			}
+			if (oReturn instanceof sap.m.MessagePage) {
+				return oReturn;
+			}
 			if (oReturn instanceof sap.ui.core.mvc.View) {
 				aContent = oReturn.getContent();
 				if (aContent.length === 1) {
