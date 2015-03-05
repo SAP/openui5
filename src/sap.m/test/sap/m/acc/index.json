@@ -127,6 +127,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.SearchField",
+			"url": "../SearchField.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.SegmentedButton",
 			"url": "../SegmentedButton.html",
 			"appComponent": "CA-UI5-CTR-SOF"
