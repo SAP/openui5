@@ -69,7 +69,10 @@
 				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Double" />
-				<Text text="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
+				<Label text="no constraints"/>
+				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
+				<Label text="nullable: false"/>
+				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Single" />
 				<Text text="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}"/>

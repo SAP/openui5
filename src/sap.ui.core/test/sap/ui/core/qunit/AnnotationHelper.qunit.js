@@ -33,7 +33,8 @@
 			constraints : {"nullable": false, "precision" : 13, "scale" : 3}
 		},
 		oDouble = {
-			name : "sap.ui.model.odata.type.Double"
+			name : "sap.ui.model.odata.type.Double",
+			constraints : {"nullable": false}
 		},
 		oFloat = {
 			name : "sap.ui.model.odata.type.Single"
