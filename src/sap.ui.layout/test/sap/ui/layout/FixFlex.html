@@ -172,54 +172,6 @@
 			 * Page 4!
 			 * ============================================ */
 
-			var oFixFlex4 = new sap.ui.layout.FixFlex({
-				fixContentSize: '50%',
-				minFlexSize: 555,
-
-				fixContent: [new sap.ui.layout.FixFlex({
-					vertical: false,
-					minFlexSize: 555,
-
-					flexContent: new sap.m.Button({
-						text: 'Dummy Button - flexContent in FixFlex in fixContent'
-					}),
-
-					fixContent: [new sap.m.SegmentedButton({
-						buttons: [new sap.m.Button({
-							text: 'Dummy Button - fixContent in FixFlex in fixContent'
-						}), new sap.m.Button({
-							text: 'Dummy Button - fixContent in FixFlex in fixContent'
-						})]
-					})]
-				})],
-
-				flexContent: new sap.ui.layout.FixFlex({
-					minFlexSize: 555,
-					flexContent: new sap.m.Button({
-						text: 'Dummy Button -  flexContent in FixFlex in flexContent'
-					}),
-
-					fixContent: [new sap.m.SegmentedButton({
-						buttons: [new sap.m.Button({
-							text: 'Dummy Button - fixContent in FixFlex in flexContent'
-						}), new sap.m.Button({
-							text: 'Dummy Button - fixContent in FixFlex in flexContent'
-						})]
-					})]
-				})
-			});
-
-			var page4 = new sap.m.Page('page4', {
-				title: 'FixFlex in FixFlex',
-				enableScrolling: false,
-				content: [oFixFlex4],
-				footer: fnCreateNavigation()
-			});
-
-			/* =============================================
-			 * Page 5!
-			 * ============================================ */
-
 			var oFixFlexNoFix = new sap.ui.layout.FixFlex({
 				fixContent: [],
 
@@ -263,7 +215,7 @@
 				})
 			});
 
-			var page5 = new sap.m.Page('page5', {
+			var page4 = new sap.m.Page('page4', {
 				title: 'FixFlex with no Fix content',
 				enableScrolling: false,
 				content: [oFixFlexNoFix],
@@ -437,14 +389,9 @@
 							app.to('page3');
 						}
 					}), new sap.m.Button({
-						text: 'FixFlex in FixFlex',
-						press: function () {
-							app.to('page4');
-						}
-					}), new sap.m.Button({
 						text: 'FixFlex with no Fix content',
 						press: function () {
-							app.to('page5');
+							app.to('page4');
 						}
 					}), new sap.m.Button({
 						text: 'FixFlex Horizontal ITB',
@@ -460,7 +407,7 @@
 				});
 			}
 
-			app.addPage(page1).addPage(page2).addPage(page3).addPage(page4).addPage(page5).addPage(page6).addPage(page7).placeAt('body');
+			app.addPage(page1).addPage(page2).addPage(page3).addPage(page4).addPage(page6).addPage(page7).placeAt('body');
 		</script>
 
 	</head>
