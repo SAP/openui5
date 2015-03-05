@@ -29,7 +29,7 @@
 			<Table id="lineItemsList" width="auto" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiResponsiveMargin">
 				<headerToolbar>
 					<Toolbar>
-						<Label text="{i18n>detailLineItemTableHeading}"/>
+						<Label id="lineItemsHeader" text="{controlStates>/lineItemListTitle}"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>

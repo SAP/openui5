@@ -14,29 +14,30 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit : function () {
-			this.oList = this.byId("list");
+			this._oList = this.byId("list");
 			this.oPullToRefresh = this.byId("pullToRefresh");
 			// keeps the filter and search state 
-			this.oListFilterState = {
+			this._oListFilterState = {
 				aFilter : [],
 				aSearch : []
 			};
 			// keeps the group and sort state
-			this.oListSorterState = {
+			this._oListSorterState = {
 				aGroup : [],
 				aSort : []
 			};
 
 			// Control state model
-			this.oControlStateModel = new sap.ui.model.json.JSONModel({
+			this._oControlStateModel = new sap.ui.model.json.JSONModel({
 				isFilterBarVisible : false,
 				filterBarLabel : "",
 				masterListTitle : this.getResourceBundle().getText("masterTitle")
 			});
-			this.getView().setModel(this.oControlStateModel, 'controlStates');
+			this.setModel(this._oControlStateModel, 'controlStates');
 
+			
 			// master view has set the delay to 0, to make sure that busy
-			// indication is dosplayed immediately after app has been started.
+			// indication is displayed immediately after app has been started.
 			// need to reset the display to default value after the app
 			// and the list has been loaded for the first time.
 			// this is done by setting the 'null' value
@@ -50,7 +51,7 @@ sap.ui.define([
 			);
 
 			this.getRouter().getRoute("master").attachPatternMatched(oListSelector.selectFirstItem, oListSelector);
-			this.getOwnerComponent().oListSelector.setBoundMasterList(this.oList);
+			this.getOwnerComponent().oListSelector.setBoundMasterList(this._oList);
 			this.getRouter().attachBypassed(this.onBypassed, this);
 		},
 
@@ -96,9 +97,9 @@ sap.ui.define([
 			var sQuery = oEvent.getParameter("query");
 
 			if (sQuery && sQuery.length > 0) {
-				this.oListFilterState.aSearch  = [new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery)];
+				this._oListFilterState.aSearch  = [new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery)];
 			} else {
-				this.oListFilterState.aSearch  = [];
+				this._oListFilterState.aSearch  = [];
 			}
 			this._applyFilterSearch();
 			
@@ -111,7 +112,7 @@ sap.ui.define([
 		 * @public 
 		 */
 		onRefresh : function () {
-			this.oList.getBinding("items").refresh();
+			this._oList.getBinding("items").refresh();
 		},
 
 		/**
@@ -122,7 +123,7 @@ sap.ui.define([
 		onSort : function (oEvent) {
 			var sPath = oEvent.getParameter("selectedItem").getKey();
 
-			this.oListSorterState.aSort   = new sap.ui.model.Sorter(sPath, false);
+			this._oListSorterState.aSort   = new sap.ui.model.Sorter(sPath, false);
 			this._applyGroupSort();
 		},
 
@@ -141,10 +142,10 @@ sap.ui.define([
 				};
 
 			if (sKey !== "None") {
-				this.oListSorterState.aGroup = [new sap.ui.model.Sorter(oGroups[sKey], false, 
+				this._oListSorterState.aGroup = [new sap.ui.model.Sorter(oGroups[sKey], false, 
 						sap.ui.demo.mdtemplate.model.grouper[sKey].bind(oEvent.getSource()))];
 			} else {
-				this.oListSorterState.aGroup = [];
+				this._oListSorterState.aGroup = [];
 			}
 			this._applyGroupSort();
 		},
@@ -195,7 +196,7 @@ sap.ui.define([
 				}
 				aCaptions.push(oItem.getText());
 			});
-			this.oListFilterState.aFilter = aFilters;
+			this._oListFilterState.aFilter = aFilters;
 			
 			this._updateFilterBar(aCaptions.join(", "));
 			this._applyFilterSearch();
@@ -220,7 +221,22 @@ sap.ui.define([
 		 * @public
 		 */
 		onBypassed : function (oEvent) {
-			this.oList.removeSelections(true);
+			this._oList.removeSelections(true);
+		},
+		
+		/**
+		 * Used to create GroupHeaders with non-capitalized caption.
+		 * These headers are inserted into the master list to 
+		 * group the master list's items.
+		 * 
+		 * @param {Object} oGroup group whose 
+		 * @public
+		 */
+		createGroupHeader: function (oGroup){
+			return new sap.m.GroupHeaderListItem( {
+				title: oGroup.text,
+				upperCase: false
+			});
 		},
 
 		/* =========================================================== */
@@ -248,9 +264,14 @@ sap.ui.define([
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
 			// only update the counter if the length is final 
-			if (this.oList.getBinding('items').isLengthFinal()) {
-				sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
-				this.oControlStateModel.setProperty("/masterListTitle", sTitle);
+			if (this._oList.getBinding('items').isLengthFinal()) {
+				if (iTotalItems){
+					sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
+				} else {
+					//Display 'Objects' instead of 'Objects (0)'
+					sTitle = this.getResourceBundle().getText("masterTitle");
+				}
+				this._oControlStateModel.setProperty("/masterListTitle", sTitle);
 			}
 		},
 
@@ -259,13 +280,13 @@ sap.ui.define([
 		 * @private
 		 */
 		_applyFilterSearch : function () {
-			var aFilters = this.oListFilterState.aSearch.concat(this.oListFilterState.aFilter);
-			this.oList.getBinding("items").filter(aFilters, "Application");
+			var aFilters = this._oListFilterState.aSearch.concat(this._oListFilterState.aFilter);
+			this._oList.getBinding("items").filter(aFilters, "Application");
 			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
-				this.oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
+				this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
 			} else  {
-				this.oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataText"));
+				this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataText"));
 			}
 		},
 
@@ -274,8 +295,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_applyGroupSort : function () {
-			var aSorters = this.oListSorterState.aGroup.concat(this.oListSorterState.aSort);
-			this.oList.getBinding("items").sort(aSorters);
+			var aSorters = this._oListSorterState.aGroup.concat(this._oListSorterState.aSort);
+			this._oList.getBinding("items").sort(aSorters);
 		},
 
 		/**
@@ -284,8 +305,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_updateFilterBar : function (sValue) {
-			this.oControlStateModel.setProperty("/isFilterBarVisible", (this.oListFilterState.aFilter.length > 0));
-			this.oControlStateModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
+			this._oControlStateModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
+			this._oControlStateModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
 		}
 
 	});

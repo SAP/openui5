@@ -33,8 +33,9 @@
 					sorter: {
 						path: 'Name',
 						descending: false
-						}
-					}"
+						},
+					groupHeaderFactory: '.createGroupHeader'
+				}"
 				noDataText="{i18n>masterListNoDataText}"
 				busyIndicatorDelay="0"
 				mode="{
