@@ -40,8 +40,7 @@
 				"samples" : [
 					"sap.ui.layout.sample.FixFlexVertical",
 					"sap.ui.layout.sample.FixFlexHorizontal",
-					"sap.ui.layout.sample.FixFlexFixedSize",
-					"sap.ui.layout.sample.FixFlexInFixFlex"
+					"sap.ui.layout.sample.FixFlexFixedSize"
 				]
 			},
 			{
@@ -78,7 +77,7 @@
 				"category" : "Layout",
 				"formFactors" : "-",
 				"since" : "1.22",
-				"samples" : [ 
+				"samples" : [
 					"sap.ui.layout.sample.Splitter",
 					"sap.ui.layout.sample.Splitter2",
 					"sap.ui.layout.sample.Splitter3",
@@ -137,11 +136,6 @@
 				"id": "sap.ui.layout.sample.FixFlexFixedSize",
 				"name": "Fix Flex - Fix container size",
 				"description": "Shows a FixFlex control where fixContentSize is set to a specific value(200px) and sap.m.scrollContainer is enabling vertical scrolling."
-			},
-			{
-				"id": "sap.ui.layout.sample.FixFlexInFixFlex",
-				"name": "Fix Flex - Nested",
-				"description": "Shows two FixFlex controls nested in a parent FixFlex control."
 			},
 			{
 				"id": "sap.ui.layout.sample.GridInfo",
