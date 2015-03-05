@@ -1018,6 +1018,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		}
 	};
 
+	AnalyticalTable.prototype._isRowSelectable = function(iRowIndex) {
+		return !this.getBinding("rows").indexHasChildren(iRowIndex);
+	};
 
 	return AnalyticalTable;
 
