@@ -122,7 +122,7 @@ sap.ui.define([
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
 				} else {
 					//Display 'Line Items' instead of 'Line items (0)'
-					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading")
+					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
 				}
 				this._oControlStateModel.setProperty("/lineItemListTitle", sTitle);
 			}
