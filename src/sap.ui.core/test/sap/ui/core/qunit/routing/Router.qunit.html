@@ -1159,7 +1159,7 @@
 			strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
 
 			strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myTarget"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
 
 			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 		});
@@ -1191,8 +1191,8 @@
 			// Assert
 			strictEqual(oPlaceSpy.callCount, 2, "Did place both targets");
 
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myTarget"));
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("secondTarget"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("secondTarget"));
 
 			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
@@ -1224,8 +1224,8 @@
 
 			// Assert
 			strictEqual(oPlaceSpy.callCount, 2, "Did place myTarget");
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myTarget"));
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter._oTargets.getTarget("myChild"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
+			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
 
 			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
@@ -1315,8 +1315,8 @@
 					}
 				});
 
-			var fnDisplayFooStub = this.stub(this.oRouter.getTargets().getTarget("foo"), "display", jQuery.noop),
-				fnDisplayBarStub = this.stub(this.oRouter.getTargets().getTarget("bar"), "display", jQuery.noop);
+			var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "display", jQuery.noop),
+				fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "display", jQuery.noop);
 
 			// Act
 			this.oRouter.initialize();
