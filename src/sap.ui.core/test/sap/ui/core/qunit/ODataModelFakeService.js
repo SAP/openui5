@@ -188,6 +188,8 @@ xhr.onCreate = function(request) {
 				return responses[url] || [404, oJSONHeaders, ""];
 			case "PUT":
 				return [204, oJSONHeaders, ""];
+			case "MERGE":
+				return [204, oJSONHeaders, ""];
 			case "POST":
 				return [201, oJSONHeaders, ""];
 			case "DELETE":
@@ -279,7 +281,7 @@ function parseBatchRequest(body) {
 		} else {
 			request = {};
 			lines = part.split("\r\n");
-			var result = lines[4].match(/(GET|POST|PUT|DELETE) ([^ ]*) HTTP\/1\.1/);
+			var result = lines[4].match(/(GET|POST|MERGE|PUT|DELETE) ([^ ]*) HTTP\/1\.1/);
 			request.method = result[1];
 			request.url = result[2];
 			request.body = "";
