@@ -717,6 +717,7 @@ public class LogDownloader {
 		int sdkDownloads = 0;
 		int githubHits = 0;
 		int blogHits = 0;
+		int referencesHits = 0;
 		int demokitHits = 0;
 		int ipCounter = 0;
 
@@ -746,6 +747,9 @@ public class LogDownloader {
 				case BLOG_PAGE:
 					blogHits++;
 					break;
+				case REFERENCES_PAGE:
+					referencesHits++;
+					break;
 				case DEMOKIT_PAGE:
 					demokitHits++;
 					break;
@@ -769,7 +773,7 @@ public class LogDownloader {
 			}
 		}
 
-		LogFileData data = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, demokitHits, ipCounter);
+		LogFileData data = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, demokitHits, ipCounter);
 
 		return data;
 	}
@@ -924,6 +928,7 @@ public class LogDownloader {
 				o.put("sdk", data.sdkDownloads);
 				o.put("githubHits", data.githubHits);
 				o.put("blogHits", data.blogHits);
+				o.put("referencesHits", data.referencesHits);
 				o.put("demokitHits", data.demokitHits);
 				o.put("ipCounter", data.ipCounter);
 
@@ -959,11 +964,17 @@ public class LogDownloader {
 				int sdkDownloads = dataSet.getInt("sdk");
 				int githubHits = dataSet.getInt("githubHits");
 				int blogHits = dataSet.getInt("blogHits");
+				int referencesHits;
+				try {
+					referencesHits = dataSet.getInt("referencesHits");
+				} catch (JSONException e) {
+					referencesHits = 0;
+				}
 				int demokitHits = dataSet.getInt("demokitHits");
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
-				String outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + "\n";
+				String outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + "\n";
 				bw.write(outFileText);
 			}
 
