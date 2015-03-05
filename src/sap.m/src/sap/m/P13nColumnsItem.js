@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class The ColumnsItem can be used to fill columnsItem aggregation in P13nColumnsPanel
+	 * @class Type for <code>columnsItems</code> aggregation in P13nColumnsPanel control.
 	 * @extends sap.ui.core.Item
 	 * @version ${version}
 	 * @constructor
