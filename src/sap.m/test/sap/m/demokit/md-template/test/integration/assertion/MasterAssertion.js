@@ -13,11 +13,11 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		},
 		
 		theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrLess : function () {
-			return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, false, {iLow: 1, iHigh: 2})
+			return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, false, {iLow: 1, iHigh: 2});
 		},
 		
 		theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrMore : function () {
-			return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, true, {iLow: 3, iHigh: 11})
+			return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, true, {iLow: 3, iHigh: 11});
 		},
 		
 		theMasterListShouldBeGroupedBy : function (sGroupName) {
@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 						return false;
 					};
 				return !oList.getItems().some(fnIsGroupHeader);
-			};
+			}
 			
 			return this.waitFor({
 				viewName : "Master",
@@ -66,7 +66,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		theMasterListShouldBeSortedAscendingOnField : function (sField) {
 			function fnCheckSort (oList){
 				var oLastValue = null,
-					oResult = null,
 					fnIsOrdered = function (oElement) {
 						var oCurrentValue = oElement.getBindingContext().getProperty(sField);
 						if (!oLastValue || oCurrentValue >= oLastValue){
@@ -78,7 +77,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 					};
 				
 				return oList.getItems().every(fnIsOrdered);
-			};
+			}
 			
 			return this.waitFor({
 				viewName : "Master",
@@ -94,8 +93,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		theMasterListShouldBeFilteredOnUnitNumberValue : function(iThreshhold, bGreaterThan, oRange) {
 			
 			function fnCheckFilter (oList){
-				var oResult = null,
-					fnIsGreaterThanMaxValue = function (oElement) {
+				var fnIsGreaterThanMaxValue = function (oElement) {
 						if (bGreaterThan) {
 							return oElement.getBindingContext().getProperty("UnitNumber") < iThreshhold;
 						}
@@ -103,11 +101,11 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 					};
 				var aItems = oList.getItems();
 				if (oRange) {
-					aItems = aItems.slice(oRange.iLow, oRange.iHigh)
+					aItems = aItems.slice(oRange.iLow, oRange.iHigh);
 				}
 				
 				return !aItems.some(fnIsGreaterThanMaxValue);
-			};
+			}
 			
 			return this.waitFor({
 				viewName : "Master",
