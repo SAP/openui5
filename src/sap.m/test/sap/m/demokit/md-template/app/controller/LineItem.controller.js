@@ -166,7 +166,7 @@ sap.ui.define([
 		 *
 		 */ 
 		onNavBack : function () {
-			this.getRouter().navTo("object", {objectId: this._oObject.sObjectId});
+			this.getRouter().myNavBack("object", {objectId: this._oObject.sObjectId});
 		},
 	
 	

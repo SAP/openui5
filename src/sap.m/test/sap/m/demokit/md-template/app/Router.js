@@ -21,21 +21,6 @@ sap.ui.define([
 				var bReplace = true; // otherwise we go backwards with a forward history
 				this.navTo(sRoute, mData, bReplace);
 			}
-		},
-
-		backWithoutHash : function (oCurrentView, bIsMaster) {
-			var sBackMethod = bIsMaster ? "backMaster" : "backDetail";
-			this._findSplitApp(oCurrentView)[sBackMethod]();
-		},
-
-		_findSplitApp : function(oControl) {
-			var sAncestorControlName = "idAppControl";
-	
-			if (oControl instanceof sap.ui.core.mvc.View && oControl.byId(sAncestorControlName)) {
-				return oControl.byId(sAncestorControlName);
-			}
-	
-			return oControl.getParent() ? this._findSplitApp(oControl.getParent(), sAncestorControlName) : null;
 		}
 	
 	});

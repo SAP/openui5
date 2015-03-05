@@ -52,7 +52,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
-		When.iPressTheBackButton().and.iPressOnTheObject1InMasterList();
+		When.iPressTheBackButtonOnDetailPage().and.iPressOnTheObject1InMasterList();
 
 		// Assertions
 		Then.iShouldBeOnTheObjectNPage(1);
@@ -114,6 +114,20 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		Then.iShouldBeOnTheObjectNPage(1).
 			and.iTeardownMyAppFrame();
 
+	});
+	
+	opaTest("Navigate directly to Line Item 7 of object 3 with hash: press back button twice should take me to the master list", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartTheAppOnAPhone("#/object/ObjectID_3/lineitem/LineItemID_7");
+		
+		//Actions
+		When.iWaitUntilISeePageForLineItem7().
+		    and.iPressTheBackButtonOnLineItemPage().
+			and.iPressTheBackButtonOnDetailPage();
+
+		// Assertions
+		Then.iShouldSeeTheObjectList().
+			and.iTeardownMyAppFrame();
 	});
 
 });
