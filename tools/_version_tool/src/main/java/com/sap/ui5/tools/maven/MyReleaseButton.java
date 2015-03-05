@@ -215,9 +215,6 @@ public class MyReleaseButton {
       CharSequence orig = readFile(file, encoding);
       CharSequence s = orig;
 
-      if (processingTypes.contains(ProcessingTypes.ContributorsVersions)) {
-        s = processContributorsVersions(s, file, encoding);
-      }
       // MUST RUN BEFORE VersionWithSnapshot!
       if (processingTypes.contains(ProcessingTypes.RepositoryPaths)) {
         s = fromR.matcher(s).replaceAll(toR);
@@ -238,22 +235,31 @@ public class MyReleaseButton {
       if (processingTypes.contains(ProcessingTypes.Sapui5CoreVersion)) {
         s = CORE_VERSION.matcher(s).replaceAll(coreVersion);
       }
+      // MUST RUN AFTER VersionWithSnapshot!
+      if (processingTypes.contains(ProcessingTypes.ContributorsVersions)) {
+        s = processContributorsVersions(s, file, encoding);
+      }
+
       if (s != orig) {
-        String str = (String) s;
+        String str = s.toString();
         if (!str.contentEquals(orig)) {
           System.out.println("  Processing file: \"" + file + "\" ");
-          if (!file.canWrite()) {
-            System.out.print("    P4 checkout: ");
-            System.out.println(checkOut(file) ? "SUCCESS" : "ERROR");
-          }
-          if (file.canWrite()) {
-            writeFile(file, str, encoding);
-          }
+          saveFile(file, encoding, str);
           countDiffs(path, orig, str);
         }
       }
     }
 
+  }
+
+  private static void saveFile(File file, String encoding, String str) throws IOException {
+    if (!file.canWrite()) {
+      System.out.print("    P4 checkout: ");
+      System.out.println(checkOut(file) ? "SUCCESS" : "ERROR");
+    }
+    if (file.canWrite()) {
+      writeFile(file, str, encoding);
+    }
   }
 
   private static void scan(File dir, String path) throws IOException {
@@ -304,7 +310,7 @@ public class MyReleaseButton {
     //   2.) OSGi version as Project version: <version>_</version><!--OSGiVerion-->
     //       - Special case for OSGi distributions (Maven version should fit OSGi version)
     //       - In this case the .qualifier version needs to be converted to -SNAPSHOT
-    String fromSPattern = "(?<!osgi\\.version>)" + Pattern.quote(oldMavenVersion);
+    String fromSPattern = "(?<!osgi\\.version>|\\.version>\\[)" + Pattern.quote(oldMavenVersion);
     String fromQ_POMPattern = "(?<=osgi\\.version>)" + Pattern.quote(oldOSGiVersion);
 
     if (oldMavenVersion.endsWith("-SNAPSHOT") && newMavenVersion.endsWith("-SNAPSHOT")) {
@@ -388,7 +394,11 @@ public class MyReleaseButton {
         }
         diffdiffs++;
       }
-      System.out.println("The diff summary has changed for " + diffdiffs + " files.");
+      if (diffdiffs > 0){
+        System.out.println("The diff summary has changed for " + diffdiffs + " files.");
+      } else {
+        System.out.println("All files are changed according last diff summary from previous run.");
+      }
     } else {
       System.out.println("No diff summary found from last run");
     }
@@ -406,6 +416,7 @@ public class MyReleaseButton {
     if (contributorsRange != null){
       s = CONTRIBUTOR_VERSION_PATTERN.matcher(s).replaceAll(contributorsRange);
     } else {
+      saveFile(file, encoding, (String) s);
       MvnClient.execute(file.getParentFile(), "versions:resolve-ranges", "-U", "-DgenerateBackupPoms=false");
       s = readFile(file, encoding);
     }
