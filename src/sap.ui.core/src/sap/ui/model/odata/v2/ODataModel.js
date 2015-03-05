@@ -1304,6 +1304,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnCallBack = mParameters;
 			mParameters = null;
 		}
+
+		// if path cannot be resolved, call the callback function and return null
+		if (!sFullPath) {
+			if (fnCallBack) {
+				fnCallBack(null);
+			}
+			return null;
+		}
+		
 		// try to resolve path, send a request to the server if data is not available yet
 		// if we have set forceUpdate in mParameters we send the request even if the data is available
 		var oData = this._getObject(sPath, oContext),
@@ -1380,6 +1389,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var sNavProps, aNavProps = [], //aChainedNavProp,
 		sSelectProps, aSelectProps = [], i;
 
+		// no valid path --> no reload
+		if (!sFullPath) {
+			return false;
+		}
+		
 		// no data --> reload needed
 		if (!oData) {
 			return true;
