@@ -507,13 +507,13 @@
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
 			items: [
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					text: "Button 1"
 				}),
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					text: "Button 2"
 				}),
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					text: "Button 3"
 				})
 			]
@@ -543,9 +543,9 @@
 		id="XMLSegmentedButton"\
 		selectedKey="b2">\
 		<items>\
-		<core:ListItem key="b1" text="Btn 1" />\
-		<core:ListItem key="b2" text="Btn 2" />\
-		<core:ListItem key="b3" text="Btn 3" />\
+		<SegmentedButtonItem key="b1" text="Btn 1" />\
+		<SegmentedButtonItem key="b2" text="Btn 2" />\
+		<SegmentedButtonItem key="b3" text="Btn 3" />\
 		</items>\
 		</SegmentedButton>\
 		</core:FragmentDefinition>';
@@ -641,7 +641,7 @@
 	module("SegmentedButton in Dialog's header", {
 		setup : function () { sinon.config.useFakeTimers = false; },
 		teardown : function () { sinon.config.useFakeTimers = true; }
-	})
+	});
 
 	asyncTest("SegmentedButton in Dialog's header", function() {
 		// Arrange
@@ -671,9 +671,7 @@
 			content : oButton
 		});
 
-		var oApp = new sap.m.App("myApp", {
-			initPage: "myFirstPage"
-		});
+		var oApp = new sap.m.App("myApp");
 
 		oApp.addPage(oPage).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -1009,15 +1007,15 @@
 		var oSegmentedButton = new sap.m.SegmentedButton({
 			selectedKey: "b2",
 			items: [
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					key: "b1",
 					text: "Button 1"
 				}),
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					key: "b2",
 					text: "Button 2"
 				}),
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					key: "b3",
 					text: "Button 3"
 				})
@@ -1041,15 +1039,15 @@
 		// Arrange
 		var oSegmentedButton = new sap.m.SegmentedButton({
 			items: [
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					key: "b1",
 					text: "Button 1"
 				}),
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					key: "b2",
 					text: "Button 2"
 				}),
-				new sap.ui.core.ListItem({
+				new sap.m.SegmentedButtonItem({
 					key: "b3",
 					text: "Button 3"
 				})
@@ -1140,7 +1138,7 @@
 				template : new sap.m.Button({
 					type : sap.m.ButtonType.Default,
 					text : "{text}",
-					enabled : "{enabled}",
+					enabled : "{enabled}"
 				})
 			}
 		});
@@ -1183,9 +1181,9 @@
 				{key: "b2", text: "btn 2", enabled: false},
 				{key: "b3", text: "111 222 333", textDirection: sap.ui.core.TextDirection.RTL},
 				{key: "b4", text: "btn 4", icon: "sap-icon://home"},
-				{key: "b5", text: "btn 4", icon: "images/candy_x_46x46.png"},
-				{key: "b6", text: "btn 4"},
-				{key: "b7", text: "btn 4", icon: "images/candy_star_46x46.png"},
+				{key: "b5", text: "btn 4", icon: "sap-icon://attachment"},
+				{key: "b6", text: "btn 4", width: "100px"},
+				{key: "b7", text: "btn 4", icon: "sap-icon://home"},
 				{key: "b8", text: "btn 4"}
 			]
 		};
@@ -1195,12 +1193,13 @@
 			selectedKey: "{/selectedKey}",
 			items : {
 				path : "/items",
-				template : new sap.ui.core.ListItem({
+				template : new sap.m.SegmentedButtonItem({
 					key: "{key}",
 					text: "{text}",
 					icon: "{icon}",
 					enabled: "{enabled}",
-					textDirection: "{textDirection}"
+					textDirection: "{textDirection}",
+					width: "{width}"
 				})
 			}
 		});
@@ -1226,6 +1225,8 @@
 				"Button enabled property should be equal to Model enabled property");
 		strictEqual(oSegmentedButton.getItems()[2].getTextDirection(), oModel.getData().items[2].textDirection,
 				"Button textDirection should be equal to Model textDirection");
+		strictEqual(oSegmentedButton.getItems()[5].getWidth(), oModel.getData().items[5].width,
+				"Button width should be equal to Model text");
 
 		// Act
 		mData.items[6].enabled = true;
@@ -1262,9 +1263,9 @@
 				{key: "b2", text: "btn 2", enabled: false},
 				{key: "b3", text: "111 222 333", textDirection: sap.ui.core.TextDirection.RTL},
 				{key: "b4", text: "btn 4", icon: "sap-icon://home"},
-				{key: "b5", text: "btn 4", icon: "images/candy_x_46x46.png"},
+				{key: "b5", text: "btn 4", icon: "sap-icon://home"},
 				{key: "b6", text: "btn 4"},
-				{key: "b7", text: "btn 4", icon: "images/candy_star_46x46.png"},
+				{key: "b7", text: "btn 4", icon: "sap-icon://home"},
 				{key: "b8", text: "btn 4"}
 			]
 		};
@@ -1274,7 +1275,7 @@
 			selectedKey: "{/selectedKey}",
 			items : {
 				path : "/items",
-				template : new sap.ui.core.ListItem({
+				template : new sap.m.SegmentedButtonItem({
 					key: "{key}",
 					text: "{text}",
 					icon: "{icon}",
@@ -1382,22 +1383,22 @@
 		var oButton1 = new sap.m.Button('buttonIcon0', {
 			type: sap.m.ButtonType.Default,
 			icon: sAddIconURI,
-			enabled: true,
+			enabled: true
 		});
 		var oButton2 = new sap.m.Button('buttonIcon1', {
 			type: sap.m.ButtonType.Default,
 			icon: sAddIconURI,
-			enabled: true,
+			enabled: true
 		});
 		var oButton3 = new sap.m.Button('buttonIcon2', {
 			type: sap.m.ButtonType.Default,
 			icon: sAddIconURI,
-			enabled: true,
+			enabled: true
 		});
 		var oButton4 = new sap.m.Button('buttonIcon3', {
 			type: sap.m.ButtonType.Default,
 			icon: sAddIconURI,
-			enabled: true,
+			enabled: true
 		});
 
 		//System under test
