@@ -1190,6 +1190,66 @@
 			}, 0);
 		});
 	});	
+
+	asyncTest("async test request events - aborted requests", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oRequest1 = oModel.read("/Categories(1)");
+			oRequest2 = oModel.read("/Categories(1)");
+			oRequest3 = oModel.read("/Categories(1)");
+			oRequest1.abort();
+			oRequest2.abort();
+			setTimeout(function() {
+				equal(oInfo.requestSent, 1, "One requests sent");
+				equal(oInfo.requestFailed, undefined, "No request failed");
+				equal(oInfo.requestCompleted, 1, "One requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
+	
+	asyncTest("async test request events - aborted requests", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest1, oRequest2, oRequest3;
+		attachRequestEvents(oModel, oInfo);
+		oModel.attachMetadataLoaded(function() {
+			oRequest1 = oModel.read("/Categories(1)");
+			oRequest2 = oModel.read("/Categories(1)");
+			oRequest3 = oModel.read("/Categories(1)");
+			oModel.attachBatchRequestSent(function() {
+				oRequest1.abort();
+				oRequest2.abort();
+			});
+			setTimeout(function() {
+				equal(oInfo.requestSent, 3, "Three requests sent");
+				equal(oInfo.requestFailed, undefined, "No request failed");
+				equal(oInfo.requestCompleted, 3, "Three requests completed");
+				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+				start();
+			}, 100);
+		})
+		
+	});	
 	
 	asyncTest("Event order: bindElement", function(){
 		expect(4);

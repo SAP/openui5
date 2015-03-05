@@ -1965,8 +1965,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						if (oResponse.message) {
 							for (j = 0; j < aRequests[i].length; j++) {
 								oRequestObject = aRequests[i][j];
-
-								if (!oRequestObject.request._aborted) {
+								
+								if (oRequestObject.request._aborted) {
+									that._processAborted(oRequestObject.request, oResponse);
+								} else {
 									that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
 								}
 								oRequestObject.response = oResponse;
@@ -1977,25 +1979,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 								var oChangeResponse = aChangeResponses[j];
 								oRequestObject = aRequests[i][j];
 								//check for error
-								if (!oRequestObject.request._aborted) {
-									if (oChangeResponse.message) {
-										that._processError(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
-									} else {
-										that._processSuccess(oRequestObject.request, oChangeResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
-									}
+								if (oRequestObject.request._aborted) {
+									that._processAborted(oRequestObject.request, oChangeResponse);
+								} else if (oChangeResponse.message) {
+									that._processError(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
+								} else {
+									that._processSuccess(oRequestObject.request, oChangeResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 								}
 								oRequestObject.response = oChangeResponse;
 							}
 						}
 					} else {
 						oRequestObject = aRequests[i];
-						if (!oRequestObject.request._aborted) {
-							//check for error
-							if (oResponse.message) {
-								that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
-							} else {
-								that._processSuccess(oRequestObject.request, oResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
-							}
+						if (oRequestObject.request._aborted) {
+							that._processAborted(oRequestObject.request, oResponse);
+						} else if (oResponse.message) {
+							that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
+						} else {
+							that._processSuccess(oRequestObject.request, oResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 						}
 						oRequestObject.response = oResponse;
 					}
@@ -2388,6 +2389,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		this.fireRequestCompleted(oEventInfo);
 		this.fireRequestFailed(oEventInfo);
 
+	};
+	
+	/**
+	 * process request response for aborted requests
+	 *
+	 * @param {object} oRequest The request
+	 * @param {object} oResponse The response
+	 * @private
+	 */
+	ODataModel.prototype._processAborted = function(oRequest, oResponse) {
+		var oEventInfo = this._createEventInfo(oRequest, oResponse);
+		oEventInfo.success = false;
+		this.fireRequestCompleted(oEventInfo);
 	};
 	
 	/**
