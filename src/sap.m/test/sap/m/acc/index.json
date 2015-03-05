@@ -172,6 +172,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.Tokenizer",
+			"url": "../Tokenizer.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Tile",
 			"url": "../TileContainer.html",
 			"appComponent": "CA-UI5-CTR-SOF"

@@ -28,6 +28,14 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMToken");
 		oRm.writeClasses();
+		
+		oRm.writeAttribute("aria-readonly", !oControl.getEditable());
+		oRm.writeAttribute("aria-selected", oControl.getSelected());
+		
+		if (oControl.getSelected()) {
+			oRm.addClass("sapMTokenSelected");
+		}
+		
 		// add tooltip if available
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
@@ -39,6 +47,7 @@ sap.ui.define(['jquery.sap.global'],
 		
 		if (oControl.getEditable()) {
 			oRm.renderControl(oControl._deleteIcon);
+			
 		}
 		
 		oRm.write("</div>");

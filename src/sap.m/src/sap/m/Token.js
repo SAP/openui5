@@ -65,6 +65,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 */
 			deleteIcon : {type : "sap.ui.core.Icon", multiple : false, visibility : "hidden"}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+		},
 		events : {
 
 			/**
@@ -100,8 +112,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setProperty("editable", bEditable);
 		if (bEditable) {
 			this.removeStyleClass("sapMTokenReadOnly");
+			this.$().attr("aria-readonly", "true");
 		} else {
 			this.addStyleClass("sapMTokenReadOnly");
+			this.$().attr("aria-readonly", "false");
+			
 		}
 	};
 
@@ -136,14 +151,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if ($this) {
 			if (bSelected) {
 				$this.addClass("sapMTokenSelected");
+				$this.attr('aria-selected', "true");
 			} else {
 				$this.removeClass("sapMTokenSelected");
+				$this.attr('aria-selected', "false");
 			}
 		} else {
 			if (bSelected) {
 				this.addStyleClass("sapMTokenSelected");
+				this.attr('aria-selected', "true");
 			} else {
 				this.removeStyleClass("sapMTokenSelected");
+				this.attr('aria-selected', "false");
 			}
 
 		}
