@@ -474,8 +474,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
 			};
 
-			oPopover._setArrowPosition = function() {};
-
 			oPopover._setMinWidth = function(sWidth) {
 				this.getDomRef().style.minWidth = sWidth;
 			};
