@@ -38,6 +38,27 @@ sap.ui.define([
 		 */
 		getResourceBundle : function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+		},
+
+		/**
+		 * Event handler  for navigating back.
+		 * It checks if there is a history entry. If yes, history.go(-1) will happen.
+		 * If not, a backward navigation with forward history will take place.
+		 * @param sRoute the route name where you would like to navigate to
+		 * @param mData optional data for the route
+		 * @public
+		 */
+		onNavBack : function(sRoute, mData) {
+			var oHistory = sap.ui.core.routing.History.getInstance();
+			var sPreviousHash = oHistory.getPreviousHash();
+
+			//The history contains a previous entry
+			if (sPreviousHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				var bReplace = true; // otherwise we go backwards with a forward history
+				this.getRouter().navTo(sRoute, mData, bReplace);
+			}
 		}
 
 	});
