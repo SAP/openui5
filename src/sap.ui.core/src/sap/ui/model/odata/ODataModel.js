@@ -619,6 +619,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			var oResultData = oData,
 				mChangedEntities = {};
 
+			// no data response
+			if (oResponse.statusCode == 204) {
+				if (fnSuccess) {
+					fnSuccess(null);
+				}
+				if (fnCompleted) {
+					fnCompleted(null);
+				}
+				that.fireRequestCompleted({url : oRequest.requestUri, type : "GET", async : oRequest.async,
+					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
+				return;
+			}
+			
 			// no data available
 			if (!oResultData) {
 				jQuery.sap.log.fatal("The following problem occurred: No data was retrieved by service: " + oResponse.requestUri);
@@ -978,6 +991,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			fnCallBack = mParameters;
 			mParameters = null;
 		}
+		
+		// if path cannot be resolved, call the callback function and return null
+		if (!sFullPath) {
+			if (fnCallBack) {
+				fnCallBack(null);
+			}
+			return null;
+		}
+		
 		// try to resolve path, send a request to the server if data is not available yet
 		// if we have set forceUpdate in mParameters we send the request even if the data is available
 		var oData = this._getObject(sPath, oContext),
@@ -1036,6 +1058,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		var sNavProps, aNavProps = [],
 			sSelectProps, aSelectProps = [];
 
+		// no valid path --> no reload
+		if (!sFullPath) {
+			return false;
+		}
+		
 		// no data --> reload needed
 		if (!oData) {
 			return true;

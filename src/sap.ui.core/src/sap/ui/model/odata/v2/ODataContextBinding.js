@@ -43,13 +43,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 		// don't fire any requests if metadata is not loaded yet.
 		if (this.oModel.oMetadata.isLoaded()) {
-			if (bReloadNeeded) {
+			if (sResolvedPath && bReloadNeeded) {
 				this.fireDataRequested();
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				that.oElementContext = oContext;
 				that._fireChange();
-				if (bReloadNeeded) {
+				if (sResolvedPath && bReloadNeeded) {
 					if (that.oElementContext) {
 						oData = that.oElementContext.getObject();
 					}
@@ -71,7 +71,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @private
 	 */
 	ODataContextBinding.prototype.refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false;
+		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
@@ -87,7 +88,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		}
 		if (bForceUpdate || bChangeDetected) {
 			//recreate Context: force update
-			this.fireDataRequested();
+			if (sResolvedPath) {
+				this.fireDataRequested();
+			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
 					if (bForceUpdate) {
@@ -101,9 +104,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 					oData = that.oElementContext.getObject();
 				}
 				//register datareceived call as  callAfterUpdate
-				that.oModel.callAfterUpdate(function() {
-					that.fireDataReceived({data: oData});
-				});
+				if (sResolvedPath) {
+					that.oModel.callAfterUpdate(function() {
+						that.fireDataReceived({data: oData});
+					});
+				}
 			}, true);
 		}
 	};
@@ -129,13 +134,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 			// don't fire any requests if metadata is not loaded yet.
 			if (this.oModel.oMetadata.isLoaded()) {
-				if (bReloadNeeded) {
+				if (sResolvedPath && bReloadNeeded) {
 					this.fireDataRequested();
 				}
 				this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 					that.oElementContext = oContext;
 					that._fireChange();
-					if (bReloadNeeded) {
+					if (sResolvedPath && bReloadNeeded) {
 						if (that.oElementContext) {
 							oData = that.oElementContext.getObject();
 						}

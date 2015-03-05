@@ -623,15 +623,12 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
-	asyncTest("test data events for bindElement", 2, function(){
+
+	asyncTest("test data events for bindElement", 3, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
-		oLabel.bindElement("/Categories(2)");
-		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
-		//Currently no event fired on bind element
 		var fnRequestedHandler = function() {
 			equal(true, true, "Data requested event was fired");
 		};
@@ -639,8 +636,36 @@
 			equal(true, true, "Data received event was fired");
 			start();
 		};
-		oLabel.getElementBinding().attachDataRequested(fnRequestedHandler);
-		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
+		oLabel.bindElement({
+			path: "/Categories(2)",
+			events: {
+				dataRequested: fnRequestedHandler,
+				dataReceived: fnRecievedHandler
+			}
+		});
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+	});
+	
+	asyncTest("test data events for bindElement 204", 3, function(){
+		var oModel = initModel(sURI, false, "Categories");
+		sap.ui.getCore().setModel(oModel);
+		var oTestContext = oModel.getContext("/Test");
+		oLabel.setBindingContext(oTestContext);
+		var fnRequestedHandler = function() {
+			equal(true, true, "Data requested event was fired");
+		};
+		var fnRecievedHandler = function() {
+			equal(true, true, "Data received event was fired");
+			start();
+		};
+		oLabel.bindElement({
+			path: "/Employees(2)/Employee1",
+			events: {
+				dataRequested: fnRequestedHandler,
+				dataReceived: fnRecievedHandler
+			}
+		});
+		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
 	
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
