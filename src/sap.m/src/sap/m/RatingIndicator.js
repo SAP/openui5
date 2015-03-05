@@ -155,7 +155,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.allowTextSelection(false);
 		this._iIconCounter = 0;
 		this._fHoverValue = 0;
-		
+
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		if (RatingIndicator._pxCalculations === undefined) {
@@ -168,11 +168,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {float} fValue The rating value to be set.
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setValue = function (fValue) {
-		// validates the property and sets null/undefined values to the default 
+		// validates the property and sets null/undefined values to the default
 		fValue = this.validateProperty("value", fValue);
 
 		// do not set negative values (will be returned by calculation function if there is an error)
@@ -208,7 +208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.ui.core.CSSSize} sIconSize
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSize = function (sIconSize) {
@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.ui.core.URI} sURI
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSelected = function (sURI) {
@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.ui.core.URI} sURI
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconUnselected = function (sURI) {
@@ -291,7 +291,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.ui.core.URI} sURI
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @overwrite
+	 * @override
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconHovered = function (sURI) {
@@ -333,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iPxIconSize = this._toPx(this.getIconSize()) || 16;
 		this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding")) || 4;
 	};
-	
+
 	/**
 	 * Called by the framework when rendering is completed.
 	 *
@@ -417,7 +417,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (iSelectedWidth < 0) {	// width should not be negative
 			iSelectedWidth = 0;
 		}
-		
+
 		this._updateAriaValues(fValue);
 
 		// adjust unselected container with the remaining width
@@ -444,14 +444,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RatingIndicator.prototype._updateAriaValues = function (newValue) {
 		var $this = this.$();
-		
+
 		var fValue;
 		if (newValue === undefined) {
 			fValue = this.getValue();
 		} else {
 			fValue = newValue;
 		}
-		
+
 		var fMaxValue = this.getMaxValue();
 
 		$this.attr("aria-valuenow", fValue);
