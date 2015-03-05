@@ -132,7 +132,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				success : function () {
 					sap.ui.test.Opa5.getWindow().history.back();
-				},
+				}
 			});
 		},
 		
@@ -141,7 +141,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.waitFor({
 				success : function () {
 					sap.ui.test.Opa5.getWindow().history.forward();
-				},
+				}
 			});
 		},
 
