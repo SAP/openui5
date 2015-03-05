@@ -195,6 +195,24 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* =========================================================== */
 
 		/**
+		 * Initialization hook.
+		 *
+		 * @private
+		 */
+		SelectList.prototype.init = function() {
+
+			// timeoutID used to cancel the active state added on touchstart
+			this._iStartTimeout = 0;
+
+			// id of the active touch point during the touch session
+			this._iActiveTouchId = 0;
+
+			// track coordinates of the touch point
+			this._fStartX = 0;
+			this._fStartY = 0;
+		};
+
+		/**
 		 * Required adaptations before rendering.
 		 *
 		 * @private
@@ -224,6 +242,8 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				this._oItemNavigation.destroy();
 				this._oItemNavigation = null;
 			}
+
+			this._$ItemPressed = null;
 		};
 
 		/* =========================================================== */
@@ -231,7 +251,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* =========================================================== */
 
 		/**
-		 * Handle the touch start event on the Select.
+		 * Handle the touch start event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -248,29 +268,91 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			// add the active state to the pressed item
-			oEvent.srcControl.$().addClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
-			this._$ItemPressed = oEvent.srcControl.$();
+			var oTargetTouch = oEvent.targetTouches[0];
+
+			// track the id of the first active touch point
+			this._iActiveTouchId = oTargetTouch.identifier;
+
+			// track coordinates of the touch point relative to the viewport to determine movement/scrolling
+			this._fStartX = oTargetTouch.pageX;
+			this._fStartY = oTargetTouch.pageY;
+
+			// after a delay, set the active state to the pressed item
+			// note: the active state should not be set during scrolling
+			this._iStartTimeout = setTimeout(function() {
+				var oItemDomRef = oEvent.srcControl.$();
+
+				if (oItemDomRef) {
+
+					// add the active state to the pressed item
+					oItemDomRef.addClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+					this._$ItemPressed = oItemDomRef;
+				}
+			}.bind(this), 100);
 		};
 
 		/**
-		 * Handle the touch end event on the Select.
+		 * Handle the touch move event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		SelectList.prototype.ontouchend = function(oEvent) {
+		SelectList.prototype.ontouchmove = function(oEvent) {
+			var oTouch = null;
 
-			if (this.getEnabled()) {
+			if (!this.getEnabled()) {
+				return;
+			}
 
-				// mark the event for components that needs to know if the event was handled
-				oEvent.setMarked();
+			// find the active touch point
+			oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId);
+
+			// only process the active touch
+			if (oTouch && ((Math.abs(oTouch.pageX - this._fStartX) > 10) || (Math.abs(oTouch.pageY - this._fStartY) > 10))) {
+
+				// don't set the active state, there is movement and therefore no click or tap
+				clearTimeout(this._iStartTimeout);
 
 				// remove the active state
 				if (this._$ItemPressed) {
 					this._$ItemPressed.removeClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
 					this._$ItemPressed = null;
 				}
+			}
+		};
+
+		/**
+		 * Handle the touch end event on the select list.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 */
+		SelectList.prototype.ontouchend = function(oEvent) {
+			var oTouch = null;
+
+			if (!this.getEnabled()) {
+				return;
+			}
+
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+
+			// find the active touch point
+			oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId);
+
+			// process this event only if the touch we're tracking has changed
+			if (oTouch) {
+
+				setTimeout(function() {
+
+					// remove the active state
+					if (this._$ItemPressed) {
+						this._$ItemPressed.removeClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+						this._$ItemPressed = null;
+					}
+
+					this._iStartTimeout = null;
+				}.bind(this), 100);
 			}
 		};
 
@@ -283,7 +365,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		SelectList.prototype.ontouchcancel = SelectList.prototype.ontouchend;
 
 		/**
-		 * Handle the tap event on the SelectList.
+		 * Handle the tap event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
