@@ -581,7 +581,7 @@
 				oBinding = this.oTable.getBinding("rows");
 				equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 				equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
-				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
 				this.oTable.setRootLevel(1);
 			};
 
