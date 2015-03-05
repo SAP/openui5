@@ -20,21 +20,21 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.types.Types", {
 				sap.m.MessageToast.show("Data successfully reset");
 			},
 			error: function (oError) {
-				that.showError("Error resetting EDM types", oError);
+				that.showError("Error resetting EDM types");
 			}
 		});
 	},
 
 	onSave: function () {
 		var that = this;
-		this.getView().getModel().submitChanges({
-			success: function () {
+		this.getView().getModel().attachEventOnce("requestCompleted", this, function(oEvent) {
+			if (oEvent.getParameter("success")) {
 				sap.m.MessageToast.show("Data successfully saved");
-			},
-			error: function (oError) {
-				that.showError("Error saving EDM types", oError);
+			} else {
+				that.showError("Error saving EDM types");
 			}
 		});
+		this.getView().getModel().submitChanges();
 	},
 
 	onSourceCode: function (oEvent) {
@@ -53,13 +53,25 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.types.Types", {
 		}
 	},
 
-	showError: function(sTitle, oError) {
-		jQuery.sap.log.error(sTitle + ": " + oError.message, oError.stack,
+	showError: function(sTitle) {
+		var oMessageManager = sap.ui.getCore().getMessageManager(),
+			aData = oMessageManager.getMessageModel().getData() ?
+				oMessageManager.getMessageModel().getData() : [],
+			aMessages = [],
+			sMessage;
+
+		aData.forEach( function (oData) {
+			aMessages.push({type: oData.type,
+				description: oData.description,
+				message: oData.message,
+				code: oData.code
+			});
+		});
+		sMessage = JSON.stringify(aMessages);
+		jQuery.sap.log.error(sTitle + ": " + sMessage,
 			"sap.ui.core.sample.ViewTemplate.types.Types");
 		jQuery.sap.require("sap.m.MessageBox");
-		sap.m.MessageBox.show(oError.message, {
-			icon: sap.m.MessageBox.Icon.ERROR,
-			title: sTitle
-		});
+		sap.m.MessageBox.show(sMessage, {icon: sap.m.MessageBox.Icon.ERROR, title: sTitle});
+		oMessageManager.removeAllMessages();
 	}
 });
