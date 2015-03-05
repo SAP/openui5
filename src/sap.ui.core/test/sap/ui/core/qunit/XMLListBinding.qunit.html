@@ -107,6 +107,48 @@
 
 	});
 
+	test("ListBinding getCurrentContexts", function(){
+		setup();
+		createListBinding("/teamMembers/member");
+		
+		var listBinding = bindings[0],
+			contexts = listBinding.getContexts(0,5),
+			currentContexts = listBinding.getCurrentContexts();
+		
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/member/" + i, "ListBinding context");
+		});
+	});
+	
+	test("ListBinding getCurrentContexts and extended change detection", function(){
+		setup();
+		createListBinding("/teamMembers/member", "");
+		
+		var listBinding = bindings[0];
+		listBinding.enableExtendedChangeDetection();
+		
+		var	contexts = listBinding.getContexts(0,5),
+			currentContexts = listBinding.getCurrentContexts();
+		
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/member/" + i, "ListBinding context");
+		});
+		
+		oModel.getData().firstChild.childNodes[1].childNodes[4].setAttribute("gender", "female");
+		listBinding.checkUpdate();
+
+		currentContexts = listBinding.getCurrentContexts();
+		equal(currentContexts.length, 5, "Current contexts should contain 5 items");
+		jQuery(currentContexts).each(function(i, context){
+			equal(context.getPath(), "/teamMembers/member/" + i, "ListBinding context");
+		});
+		
+		contexts = listBinding.getContexts(0,5);
+		equal(contexts.diff.length, 2, "Delta information is available");
+	});
+	
 	test("ListBinding refresh", 3, function() {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers/member");

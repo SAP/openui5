@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	
 			publicMethods : [
 				// methods
-				"getContexts", "sort", "attachSort", "detachSort", "filter", "attachFilter", "detachFilter", "getDistinctValues", "isGrouped", "getLength", "isLengthFinal"
+				"getContexts", "getCurrentContexts", "sort", "attachSort", "detachSort", "filter", "attachFilter", "detachFilter", "getDistinctValues", "isGrouped", "getLength", "isLengthFinal"
 			]
 		}
 		
@@ -59,6 +59,35 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	
 	
 	// the 'abstract methods' to be implemented by child classes
+	/**
+	 * Returns an array of binding contexts for the bound target list
+	 *
+	 * @function
+	 * @name sap.ui.model.ListBinding.prototype.getContexts
+	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
+	 * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
+	 * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
+	 *
+	 * @public
+	 */
+	
+	/**
+	 * Returns an array of currently used binding contexts of the bound control
+	 * 
+	 * This method does not trigger any data requests from the backend or delta calculation, but just returns the context 
+	 * array as last requested by the control. This can be used by the application to get access to the data currently
+	 * displayed by a list control.
+	 *
+	 * @function
+	 * @name sap.ui.model.ListBinding.prototype.getCurrentContexts
+	 * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
+	 * @since 1.28
+	 * @public
+	 */
+	ListBinding.prototype.getCurrentContexts = function() {
+		return this.getContexts();
+	};
+	
 	/**
 	 * Returns the current value of the bound target
 	 *

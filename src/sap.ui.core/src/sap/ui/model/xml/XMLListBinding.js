@@ -79,6 +79,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		return aContexts;
 	};
 	
+	XMLListBinding.prototype.getCurrentContexts = function() {
+		if (this.bUseExtendedChangeDetection) {
+			return this.aLastContexts || [];
+		} else {
+			return this.getContexts(this.iLastStartIndex, this.iLastLength);
+		}
+	};
+	
 	/**
 	 * Update the list, indices array and apply sorting and filtering
 	 * @private
