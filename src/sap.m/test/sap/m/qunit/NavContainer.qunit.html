@@ -1400,10 +1400,10 @@
 		
 		
 		asyncTest("Should build a navigation stack if there is no page at the moment", function() {
-			var page1 = new sap.m.Page({ // page 2 will be inserted later
+			var page1 = new sap.m.Page({
 				title: "Other Page 1"
 				}),
-				page2 = new sap.m.Page({ // page 2 will be inserted later
+				page2 = new sap.m.Page({
 					title: "Other Page 2"
 				}),
 				localNc = new sap.m.NavContainer({
@@ -1443,7 +1443,7 @@
 			}, 2000);
 		});
 
-		module("event data");
+		module("Event data");
 
 		function beforeRenderingTestCase (sTestName, sEventName) {
 			asyncTest(sTestName, function() {
@@ -1487,6 +1487,39 @@
 		beforeRenderingTestCase("Should pass to data to the page's onBeforeShow when called before rendering", "onBeforeShow");
 		beforeRenderingTestCase("Should pass to data to the page's onBeforeFirstShow when called before rendering", "onBeforeFirstShow");
 		beforeRenderingTestCase("Should pass to data to the page's onAfterShow when called before rendering", "onAfterShow");
+
+		module("Lifecycle");
+
+		asyncTest("Exit/Destruction", function() {
+			var page1 = new sap.m.Page({
+				title: "Page 1"
+				}),
+				page2 = new sap.m.Page({
+					title: "Page 2"
+				}),
+				localNc = new sap.m.NavContainer({
+				initialPage: page1,
+				pages: [
+					page1,
+					page2
+				]
+			});
+			localNc.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Arrange
+			var afterNavigate = function(evt) {
+				ok(localNc._mFocusObject, "_mFocusObject should be set before destroy()");
+				localNc.destroy();
+				strictEqual(localNc._mFocusObject, null, "_mFocusObject should be nulled after destroy()"); // this is nulled for memory reasons
+				// this also checks whether the NavContainer can handle being destroyed within the afterNavigate (because there is further code in afterNavigate, which may not access destroyed parts)
+				start();
+			};
+
+			// Act
+			localNc.attachAfterNavigate(afterNavigate);
+			localNc.to(page2.getId());
+		});
 	</script>
 
 	<style>
