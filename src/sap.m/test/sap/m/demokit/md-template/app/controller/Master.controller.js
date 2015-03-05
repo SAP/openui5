@@ -232,7 +232,7 @@ sap.ui.define([
 		 * @param {Object} oGroup group whose 
 		 * @public
 		 */
-		createGroupHeader: function (oGroup){
+		createGroupHeader: function (oGroup) {
 			return new sap.m.GroupHeaderListItem( {
 				title: oGroup.text,
 				upperCase: false
