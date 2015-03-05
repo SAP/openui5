@@ -7,6 +7,11 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 	onInit : function () {
 		this.router = sap.ui.core.UIComponent.getRouterFor(this);
 		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
+		this._viewModel = new sap.ui.model.json.JSONModel({
+			showNavButton : true,
+			showNewTab: false
+		});
+		this.getView().setModel(this._viewModel);
 	},
 
 	onRouteMatched : function (oEvt) {
@@ -15,6 +20,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 			return;
 		}
 
+		var oModelData = this._viewModel.getData();
 		this._sId = oEvt.getParameter("arguments").id;
 
 		// retrieve sample object
@@ -28,8 +34,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 		var oPage = this.getView().byId("page");
 		var oHistory = sap.ui.core.routing.History.getInstance();
 		var oPrevHash = oHistory.getPreviousHash();
-		var bShowNavButton = sap.ui.Device.system.phone || !!oPrevHash;
-		oPage.setShowNavButton(bShowNavButton);
+		oModelData.showNavButton = sap.ui.Device.system.phone || !!oPrevHash;
 
 		// set page title
 		oPage.setTitle("Sample: " + oSample.name);
@@ -46,8 +51,13 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 		var oConfig = (this._oComp.getMetadata()) ? this._oComp.getMetadata().getConfig() : null;
 		var oSampleConfig = oConfig && oConfig.sample || {};
 
+		// only have the option to run standalone if there is an iframe
+		oModelData.showNewTab = !!oSampleConfig.iframe;
+
 		if (oSampleConfig.iframe) {
 			oContent = this._createIframe(oContent, oSampleConfig.iframe);
+		} else {
+			this.sIFrameUrl = null;
 		}
 
 		// handle stretch content
@@ -57,21 +67,24 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 		if (oContent.setHeight) {
 			oContent.setHeight(sHeight);
 		}
-
 		// add content
 		oPage.removeAllContent();
 		oPage.addContent(oContent);
 
 		// scroll to top of page
 		oPage.scrollTo(0);
+		this._viewModel.setData(oModelData);
+	},
+
+	onNewTab : function () {
+		sap.m.URLHelper.redirect(this.sIFrameUrl, true);
 	},
 
 	_createIframe : function (oIframeContent, vIframe) {
-		var sSrc,
-			sSampleId = this._sId,
+		var sSampleId = this._sId,
 			rNoDot = /[^\.]*/,
 			rStripHtml = /.html$/;
-		
+
 		if (typeof vIframe === "string") {
 
 			var sIframeWithoutHtml = vIframe.replace(rStripHtml, "");
@@ -81,14 +94,14 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 				return;
 			}
 
-			var sSrc = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutHtml, ".html");
+			this.sIFrameUrl = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutHtml, ".html");
 		} else {
 			jQuery.sap.log.error("no iframe source was provided");
 			return;
 		}
 
 		var oHtmlControl = new sap.ui.core.HTML({
-			content : '<iframe src="' + sSrc + '" id="sampleFrame" frameBorder="0"></iframe>'
+			content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
 		}).addEventDelegate({
 			onAfterRendering : function () {
 				oHtmlControl.$().on("load", function () {
@@ -129,10 +142,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 			id : this._sId
 		}, false);
 	},
-	
+
 	onToggleFullScreen : function (oEvt) {
 		sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateMode(oEvt, this.getView());
 	}
-	
-	
+
+
 });

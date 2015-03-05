@@ -14,21 +14,20 @@
 			<Button
 			    id="toggleFullScreenBtn"
 				class="sapUiHideOnPhone"
-				text="{i18n>sampleFullScreen}"
 				icon="sap-icon://full-screen"
 				tooltip="{i18n>sampleFullScreenTooltip}"
 				press="onToggleFullScreen" />
 		</headerContent>
-		
+
 		<ObjectHeader
 			id="entityHeader"
 			title="{/name}"
 			responsive="true"
-			backgroundDesign="Translucent" 
+			backgroundDesign="Translucent"
 			number="{/deprecatedMark}"
 			numberState="Warning"
 			intro="{/deprecatedDescription}">
-			
+
 			<attributes>
 				<ObjectAttribute
 					title="Application Component"
@@ -52,18 +51,18 @@
 					title="Category"
 					text="{entity>category}" />
 			</attributes>
-			
+
 			<headerContainer>
-		
-			
+
+
 				<IconTabBar
 					id="tabBar"
 					expanded="{device>/isNoPhone}"
 					select="onTabSelect"
-					upperCase="true" 
+					upperCase="true"
 					class="sapUiResponsiveContentPadding">
 					<items>
-			
+
 						<IconTabFilter
 							key="about"
 							text="About"
@@ -89,7 +88,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-		
+
 						<IconTabFilter
 							key="samples"
 							count="{/count/samples}"
@@ -114,7 +113,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-		
+
 						<IconTabFilter
 							key="properties"
 							text="Properties"
@@ -165,7 +164,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-			
+
 						<IconTabFilter
 							key="aggregations"
 							text="Aggregations"
@@ -197,7 +196,7 @@
 													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
 												</customData>
 											</Text>
-		
+
 											<Text text="{cardinality}" wrapping="false" />
 											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
 												<customData>
@@ -216,7 +215,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-			
+
 						<IconTabFilter
 							key="associations"
 							text="Associations"
@@ -266,7 +265,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-				
+
 						<IconTabFilter
 							key="events"
 							text="Events"
@@ -310,7 +309,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-				
+
 						<IconTabFilter
 							key="methods"
 							text="Methods"
@@ -354,7 +353,7 @@
 								</items>
 							</Table>
 						</IconTabFilter>
-		
+
 					</items>
 				</IconTabBar>
 			</headerContainer>
