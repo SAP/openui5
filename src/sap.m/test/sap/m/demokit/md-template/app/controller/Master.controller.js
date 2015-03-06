@@ -16,7 +16,7 @@ sap.ui.define([
 		onInit : function () {
 			this._oList = this.byId("list");
 			this.oPullToRefresh = this.byId("pullToRefresh");
-			// keeps the filter and search state 
+			// keeps the filter and search state
 			this._oListFilterState = {
 				aFilter : [],
 				aSearch : []
@@ -35,7 +35,6 @@ sap.ui.define([
 			});
 			this.setModel(this._oControlStateModel, 'controlStates');
 
-			
 			// master view has set the delay to 0, to make sure that busy
 			// indication is displayed immediately after app has been started.
 			// need to reset the display to default value after the app
@@ -58,14 +57,14 @@ sap.ui.define([
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
-		
+
 		/**
 		 * After list data is available, this handler method updates the
 		 * master list counter and hides the pull to refresh control, if
 		 * necessary.
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the update finished event
-		 * @public 
+		 * @public
 		 */
 		onUpdateFinished : function (oEvent) {
 			// update the master list object counter after new data is loaded
@@ -79,7 +78,7 @@ sap.ui.define([
 		 * filter value and triggers a new search. If the search field's
 		 * 'refresh' button has been pressed, no new search is triggered
 		 * and the list binding is refresh instead.
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the search event
 		 * @public
 		 */
@@ -91,9 +90,9 @@ sap.ui.define([
 				// refresh the list binding.
 				this.onRefresh();
 				return;
-			} 
+			}
 
-		
+
 			var sQuery = oEvent.getParameter("query");
 
 			if (sQuery && sQuery.length > 0) {
@@ -102,14 +101,14 @@ sap.ui.define([
 				this._oListFilterState.aSearch  = [];
 			}
 			this._applyFilterSearch();
-			
+
 		},
-		
+
 		/**
 		 * Event handler for refresh event. Keeps filter, sort
 		 * and group settings and refreshes the list binding.
-		 * 
-		 * @public 
+		 *
+		 * @public
 		 */
 		onRefresh : function () {
 			this._oList.getBinding("items").refresh();
@@ -127,7 +126,7 @@ sap.ui.define([
 			this._applyGroupSort();
 		},
 
-		
+
 		/**
 		 * Event handler for the grouper selection.
 		 * @param {sap.ui.base.Event} oEvent the search field event
@@ -142,7 +141,7 @@ sap.ui.define([
 				};
 
 			if (sKey !== "None") {
-				this._oListSorterState.aGroup = [new sap.ui.model.Sorter(oGroups[sKey], false, 
+				this._oListSorterState.aGroup = [new sap.ui.model.Sorter(oGroups[sKey], false,
 						sap.ui.demo.mdtemplate.model.grouper[sKey].bind(oEvent.getSource()))];
 			} else {
 				this._oListSorterState.aGroup = [];
@@ -153,7 +152,7 @@ sap.ui.define([
 
 		/**
 		 * Event handler for the filter button to open the ViewSettingsDialog.
-		 * which is used to add or remove filters to the master list. This 
+		 * which is used to add or remove filters to the master list. This
 		 * handler method is also called when the filter bar is pressed,
 		 * which is added to the beginning of the master list when a filter is applied.
 		 *
@@ -171,10 +170,10 @@ sap.ui.define([
 		/**
 		 * Event handler called when ViewSettingsDialog has been confirmed, i.e.
 		 * has been closed with 'OK'. In the case, the currently chosen filters
-		 * are applied to the master list, which can also mean that the currently 
+		 * are applied to the master list, which can also mean that the currently
 		 * applied filters are removed from the master list, in case the filter
 		 * settings are removed in the ViewSettingsDialog.
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the confirm event
 		 * @public
 		 */
@@ -182,7 +181,7 @@ sap.ui.define([
 			var aFilterItems = oEvent.getParameters().filterItems,
 				aFilters = [],
 				aCaptions = [];
-			
+
 			// update filter state:
 			// combine the filter array and the filter string
 			aFilterItems.forEach(function (oItem) {
@@ -197,7 +196,7 @@ sap.ui.define([
 				aCaptions.push(oItem.getText());
 			});
 			this._oListFilterState.aFilter = aFilters;
-			
+
 			this._updateFilterBar(aCaptions.join(", "));
 			this._applyFilterSearch();
 		},
@@ -216,20 +215,20 @@ sap.ui.define([
 		/**
 		 * Event handler for the bypassed event, which is fired when no routing pattern matched.
 		 * If there was an object selected in the master list, that selection is removed.
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the bypassed event
 		 * @public
 		 */
 		onBypassed : function (oEvent) {
 			this._oList.removeSelections(true);
 		},
-		
+
 		/**
 		 * Used to create GroupHeaders with non-capitalized caption.
-		 * These headers are inserted into the master list to 
+		 * These headers are inserted into the master list to
 		 * group the master list's items.
-		 * 
-		 * @param {Object} oGroup group whose 
+		 *
+		 * @param {Object} oGroup group whose
 		 * @public
 		 */
 		createGroupHeader: function (oGroup) {
@@ -263,7 +262,7 @@ sap.ui.define([
 		 */
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
-			// only update the counter if the length is final 
+			// only update the counter if the length is final
 			if (this._oList.getBinding('items').isLengthFinal()) {
 				if (iTotalItems){
 					sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
@@ -286,7 +285,10 @@ sap.ui.define([
 			if (aFilters.length !== 0) {
 				this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
 			} else  {
-				this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataText"));
+				// only reset the no data text to default when no new search was triggered
+				if (this._oListFilterState.aSearch.length > 0) {
+					this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataText"));
+				}
 			}
 		},
 
