@@ -61,14 +61,14 @@
 					]
 				}),
 				content: [
-					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"}),
+					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"})
 				],
 				icon: "../images/SAPUI5Icon.png",
 				beginButton:
 					new sap.m.Button("leftButton", {
 						text: "Reject",
 						type: sap.m.ButtonType.Reject,
-						press : function() {
+						press: function() {
 							oDialog.close();
 						}
 					}),
@@ -76,7 +76,7 @@
 					new sap.m.Button("rightButton", {
 						text: "Accept",
 						type: sap.m.ButtonType.Accept,
-						press : function() {
+						press: function() {
 							oDialog.close();
 						}
 					}),
@@ -96,17 +96,17 @@
 			});
 
 			var oButton = new sap.m.Button({
-				text : "Open Dialog",
-				press : function() {
+				text: "Open Dialog",
+				press: function() {
 					oDialog.open();
 				}
 			});
 
 			var page = new sap.m.Page("myFirstPage", {
-				title : "Dialog Test",
-				showNavButton : true,
-				enableScrolling : true,
-				content : oButton
+				title: "Dialog Test",
+				showNavButton: true,
+				enableScrolling: true,
+				content: oButton
 			});
 
 			var app = new sap.m.App("myApp", {
@@ -132,8 +132,6 @@
 					oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
 					oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
 					oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
-					oLeftButtonDom = jQuery.sap.domById("leftButton"),
-					oRightButtonDom = jQuery.sap.domById("rightButton"),
 					oLeftButtonFocusDom = sap.ui.getCore().byId("leftButton").getFocusDomRef();
 				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
@@ -235,10 +233,10 @@
 				var resultingContentWidth,
 					resultingScrollPaneWidth,
 					contentWidth = "500px",
-				//System under Test
+				    //System under Test
 					sut = new sap.m.Dialog({
 						contentWidth: contentWidth,
-						content: new sap.ui.core.HTML({content:"<p style='width : 700px'></p>"})
+						content: new sap.ui.core.HTML({content:"<p style='width: 700px'></p>"})
 					});
 
 				//Act
@@ -268,7 +266,7 @@
 					resultingScrollPaneWidth,
 					//System under Test
 					sut = new sap.m.Dialog({
-						content: new sap.ui.core.HTML({content:'<p style="width : 90px"></p>'})
+						content: new sap.ui.core.HTML({content:'<p style="width: 90px"></p>'})
 					});
 
 				//Act
@@ -277,7 +275,7 @@
 
 				resultingScrollPaneWidth = sut._$scrollPane.width();
 				resultingContentWidth =  sut.$("scrollCont").width();
-				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth );
+				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth);
 				ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
 				sut.destroy();
 				jQuery("html").removeClass("sap-desktop");
@@ -335,7 +333,7 @@
 						content: new sap.ui.core.HTML({
 							content: "<div style='width: 1000px; height: 1000px'></div>"
 						}),
-						contentWidth: "500px",
+						contentWidth: "500px"
 					}),
 					iValue = 500;
 
@@ -374,14 +372,14 @@
 						content: new sap.ui.core.HTML({
 							content: "<div style='width: 1000px; height: 1000px'></div>"
 						}),
-						contentWidth: "500px",
+						contentWidth: "500px"
 					}), iValue = 500;
 
 					oDialog.open();
 					this.clock.tick(500);
 
 					var $Dialog = oDialog.$();
-					if(jQuery(window).height() > 500){
+					if(jQuery(window).height() > 500) {
 						iValue = jQuery(window).height() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10);
 					}
 
@@ -399,7 +397,7 @@
 					$Dialog = oDialog.$();
 					// when runs on a phone in portrait mode, dialog always has a fixed width which is calculated based on the screen size.
 					// window_width - fixed margin to screen - dialog border
-					iValue = jQuery(window).width() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10) - 64;
+					iValue = jQuery(window).width() - window.parseInt($Dialog.css("border-left-width"), 10) - window.parseInt($Dialog.css("border-right-width"), 10) - oDialog._iHMargin;
 
 					equal(oDialog._$content.width(), iValue, "Portrait: contentWidth should be set to content div");
 					equal($Dialog.width(), iValue, "Portrait: dialog should also be as big as content");
@@ -421,11 +419,11 @@
 					contentHeight: "50%"
 				});
 
-				oDialog.open();
-				ok((oDialog._$content.width() <= jQuery(window).width() * 0.5) || (oDialog._$content.width() === 398), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5);
-				ok(oDialog._$content.height() <= jQuery(window).height() * 0.5, "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
+                oDialog.open();
+                ok((oDialog._$content.width() <= Math.ceil((jQuery(window).width() * 0.5 || (oDialog._$content.width() === 398)))), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5);
+                ok(oDialog._$content.height() <= Math.ceil(jQuery(window).height() * 0.5), "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
 
-				oDialog.destroy();
+                oDialog.destroy();
 			});
 
 			test("beginButton, endButton, buttons on desktop or tablet", function() {
@@ -600,8 +598,8 @@
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
 				var oDialog = new sap.m.Dialog({
-					content : [ oInput1, oInput2 ],
-					initialFocus : oInput2
+					content: [ oInput1, oInput2 ],
+					initialFocus: oInput2
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -623,7 +621,7 @@
 				var oInput1 = new sap.m.Input();
 				var oInput2 = new sap.m.Input();
 				var oDialog = new sap.m.Dialog({
-					content : [ oInput1, oInput2 ]
+					content: [ oInput1, oInput2 ]
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -645,8 +643,8 @@
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					beginButton : oButton1,
-					endButton : oButton2
+					beginButton: oButton1,
+					endButton: oButton2
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -665,11 +663,11 @@
 
 			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function() {
 				// Arrange
-				var oButton1 = new sap.m.Button({visible : false});
+				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					beginButton : oButton1,
-					endButton : oButton2
+					beginButton: oButton1,
+					endButton: oButton2
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -691,7 +689,7 @@
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					buttons : [oButton1, oButton2]
+					buttons: [oButton1, oButton2]
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -710,10 +708,10 @@
 
 			test("Aggregation \"buttons\" - only second button is visible", function() {
 				// Arrange
-				var oButton1 = new sap.m.Button({visible : false});
+				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();
 				var oDialog = new sap.m.Dialog({
-					buttons : [oButton1, oButton2]
+					buttons: [oButton1, oButton2]
 				});
 
 				overwriteAnimationIE9(oDialog);
@@ -777,7 +775,7 @@
 					initialFocus: "inputWantsFocus"
 				});
 
-				overwriteAnimationIE9(oDialog)
+				overwriteAnimationIE9(oDialog);
 
 				oDialog.open();
 				this.clock.tick(300);
@@ -827,9 +825,8 @@
 				// System under Test + Act
 				var oContainer = new sap.m.Dialog(),
 					sContentSelector = "section > .sapMDialogScroll > .sapMDialogScrollCont",
-					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
+					sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
 					aResponsiveSize = sResponsiveSize.split(" "),
-					$container,
 					$containerContent;
 
 				// Act
