@@ -29,9 +29,10 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 */
 	var TreeBinding = Binding.extend("sap.ui.model.TreeBinding", /** @lends sap.ui.model.TreeBinding.prototype */ {
 		
-		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
+		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
 			Binding.call(this, oModel, sPath, oContext, mParameters);
 			this.aFilters = aFilters;
+			this.aSorters = aSorters;
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
 	
@@ -104,6 +105,16 @@ sap.ui.define(['jquery.sap.global', './Binding'],
 	 * @name sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]} aFilters Array of sap.ui.model.Filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
+	 *
+	 * @public
+	 */
+	
+	/**
+	 * Sorts the tree according to the sorter definitions.
+	 *
+	 * @function
+	 * @name sap.ui.model.TreeBinding.prototype.sort
+	 * @param {sap.ui.model.Sorter[]} aSorters Array of sap.ui.model.Sorter objects
 	 *
 	 * @public
 	 */

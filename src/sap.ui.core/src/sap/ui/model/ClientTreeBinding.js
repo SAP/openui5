@@ -17,13 +17,14 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * @param {string} sPath the path pointing to the tree / array that should be bound
 	 * @param {object} [oContext=null] the context object for this databinding (optional)
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
-	 * @param {object} [mParameters=null] additional model specific parameters (optional) 
+	 * @param {object} [mParameters=null] additional model specific parameters (optional)
+	 * @param {sap.ui.model.Sorter[]} [aSorters=null] predefined sorter/s contained in an array (optional)
 	 * @alias sap.ui.model.ClientTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var ClientTreeBinding = TreeBinding.extend("sap.ui.model.ClientTreeBinding", /** @lends sap.ui.model.ClientTreeBinding.prototype */ {
 	
-		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
+		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
 			TreeBinding.apply(this, arguments);
 			if (!this.oContext) {
 				this.oContext = "";
@@ -168,6 +169,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * 
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	ClientTreeBinding.prototype.filter = function(aFilters){
@@ -187,6 +189,8 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 		this._fireChange({reason: "filter"});
 		// TODO remove this if the filter event is removed
 		this._fireFilter({filters: aFilters});
+		
+		return this;
 	};
 	
 	/**
@@ -373,6 +377,17 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 		return oFilter.fnTest;
 	};
 	
+	/**
+	 * Sorting on ClientTreeBindings is not yet supported.
+	 * Sorting is only possible in the ODataTreeBinding.
+	 * 
+	 * @param {sap.ui.model.Sorter[]} an array of Sorter instances which will be applied
+	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
+	 */
+	ClientTreeBinding.prototype.sort = function (aSorters) {
+		jQuery.sap.log.warning("The ClientTreeBindings (e.g. JSONTreeBinding, XMLTreeBinding) do not yet support sorting.");
+		return this;
+	};
 	
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,

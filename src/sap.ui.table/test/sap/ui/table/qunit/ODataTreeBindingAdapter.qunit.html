@@ -72,7 +72,7 @@
 	module("ODataTreeBindingAdapter with navigation properties", {
 		setup: function() {
 			oNavPropMockServer.start();
-			oModel = new sap.ui.model.odata.v2.ODataModel('/navprop/', {useBatch:false});
+			oModel = new sap.ui.model.odata.v2.ODataModel('/navprop/', { useBatch: true });
 		},
 		teardown: function() {
 			oNavPropMockServer.stop();
@@ -195,9 +195,13 @@
 	
 				function fnExpandHandler () {
 					oBinding.detachChange(fnExpandHandler);
-					oBinding.getContexts(0, 10);
 					
 					//rebuild tree
+					oBinding.attachChange(fnChangeHandlerAfterExpand);
+					oBinding.getContexts(0, 10);
+				}
+				
+				function fnChangeHandlerAfterExpand () {
 					aContexts = oBinding.getContexts(0, 10);
 					
 					equal(aContexts.length, 6, "Length of returned contexts should be 6");
@@ -244,15 +248,28 @@
 				numberOfExpandedLevels: 2
 			});
 			
-			var oContext;
-			var handler1 = function(oEvent) {
+			function fnChangeHandler1 (oEvent) {
+				oBinding.detachChange(fnChangeHandler1);
 				
-				oBinding.detachChange(handler1);
-				
-				var oContext;
-				
-				// contexts should be now loaded
+				oBinding.attachChange(fnChangeHandler2);
 				var aContexts = oBinding.getContexts(0, 10);
+				debugger;
+			}
+			
+			function fnChangeHandler2 () {
+				oBinding.detachChange(fnChangeHandler2);
+				
+				oBinding.attachChange(fnChangeHandler3);
+				var aContexts = oBinding.getContexts(0, 10);
+				debugger;
+			}
+			
+			function fnChangeHandler3 () {
+				oBinding.detachChange(fnChangeHandler3);
+				
+				var aContexts = oBinding.getContexts(0, 10);
+				debugger;
+				var oContext;
 				
 				equal(aContexts.length, 9, "# of contexts after autoExpand = 2 should be 9");
 				
@@ -278,9 +295,9 @@
 				equal(oNode.level, 1, "Laura sits on level 1");
 				
 				start();
-			};
-	
-			oBinding.attachChange(handler1);
+			}
+			
+			oBinding.attachChange(fnChangeHandler1);
 			oBinding.getContexts(0, 10);
 		});
 	});
@@ -313,11 +330,23 @@
 				oContext = aContexts[8];
 				equal(oModel.getProperty("FirstName", oContext), "Anne", "Anne");
 				
-				oContext = oBinding.getContextByIndex(1);
+				//oContext = oBinding.getContextByIndex(1);
 				
 				//expand andrew
+				oBinding.attachChange(handler2);
 				oBinding.expand(1);
-				aContexts = oBinding.getContexts(0, 10);
+			}
+			
+			function handler2 () {
+				oBinding.detachChange(handler2);
+				oBinding.attachChange(handler3);
+				var aContexts = oBinding.getContexts(0, 10);
+			}
+			
+			function handler3 () {
+				oBinding.detachChange(handler3);
+				
+				var aContexts = oBinding.getContexts(0, 10);
 				
 				equal(aContexts.length, 10, "Requested 10 results, even though more data is there");
 				equal(oBinding.getLength(), 14, "Expected Binding length of 14 is correct");
@@ -357,36 +386,52 @@
 			
 			var oContext;
 			
-			var handler1 = function(oEvent) {
+			function handler1 (oEvent) {
 				oBinding.detachChange(handler1);
 				
 				// contexts should be now loaded
 				var aContexts = oBinding.getContexts(0, 10);
 				
 				equal(aContexts.length, 1, "10 requested, only 1 returned");
-				equal(oBinding.oFinalLengths["/Employees(2)/Employees1"], true, "Length is final");
-				
-				oBinding.expand(0); //andrew
-				oBinding.getContexts(0, 10);
 				
 				oBinding.attachChange(handler2);
-				oBinding.setSelectedIndex(4); //select steven
-				oBinding.expand(4); //expand steven
+				oBinding.expand(0); //andrew
 			};
 			
-			var handler2 = function(oEvent) {
+			function handler2 (oEvent) {
 				oBinding.detachChange(handler2);
 				
 				oBinding.attachChange(handler3);
-				oBinding.getContexts(0,10);
+				oBinding.getContexts(0,10); //rebuild tree
 			}
 			
-			var handler3 = function(oEvent) {
+			function handler3 () {
 				oBinding.detachChange(handler3);
+				
+				oBinding.getContexts(0,10); //rebuild tree
+				
+				equal(oBinding.oFinalLengths["/Employees(2)/Employees1"], true, "Length is final");
+				
+				oBinding.attachChange(handler4);
+				oBinding.setSelectedIndex(4); //select steven
+				oBinding.expand(4); //expand steven
+			}
+			
+			function handler4 (oEvent) {
+				oBinding.detachChange(handler4);
+				
+				oBinding.attachChange(handler5);
+				oBinding.getContexts(0, 10);
+			}
+			
+			function handler5 () {
+				oBinding.detachChange(handler5);
+				
+				oBinding.getContexts(0, 10); //rebuild tree
 				
 				//collapse steven again
 				oBinding.collapse(4);
-				oBinding.getContexts(0, 10);
+				oBinding.getContexts(0, 10); //rebuild tree
 				
 				ok(oBinding._mTreeState.expanded["/Employees(2)/"], "Andrew is expanded in Expanded Map");
 				ok(oBinding._mTreeState.collapsed["/Employees(2)/Employees(5)/"], "Steven is collapsed in Collapsed Map");

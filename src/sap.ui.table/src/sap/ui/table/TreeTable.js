@@ -111,12 +111,12 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		}
 	};
 
-	TreeTable.prototype.bindRows = function(oBindingInfo, vTemplate, oSorter, aFilters) {
+	TreeTable.prototype.bindRows = function(oBindingInfo, vTemplate, aSorters, aFilters) {
 		var sPath,
 			oTemplate,
 			aSorters,
 			aFilters;
-
+		
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
 		if (typeof oBindingInfo == "string") {
 			sPath = arguments[0];
@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			oBindingInfo.parameters.rootNodeID = oBindingInfo.parameters.rootNodeID;
 		}
 		
-		//Table.prototype.bindRows.call(this, oBindingInfo, vTemplate, oSorter, aFilters);
+		//return Table.prototype.bindRows.call(this, oBindingInfo, vTemplate, oSorter, aFilters);
 		return this.bindAggregation("rows", oBindingInfo);
 	};
 	
