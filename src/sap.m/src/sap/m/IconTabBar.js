@@ -16,11 +16,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * IconTabBar control is similar to the standard tab bar control. It represents a collection of tabs with associated content. The tabs can have text, count and an icon.
-	 * 
-	 * IconTabBar can have two behaviors:
-	 * - Like a filter – There is only one main content for all tabs. The main content can be filtered, based on the selected tab.
-	 * - Like a normal tab bar - The contents of each tab are independent from each other.
+	 * IconTabBar control represents a collection of tabs with associated content.
+	 *
+	 * IconTabBar covers the following use cases:
+	 * - Filter – There is only one main content for all tabs. The main content can be filtered, based on the selected tab.
+	 * - Normal tab bar - The contents of each tab are independent from each other.
+	 * - Combination of the above - There can be both filtered and independent contents.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.ObjectHeaderContainer
 	 *
