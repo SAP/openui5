@@ -3,21 +3,17 @@
  */
 
 sap.ui.controller("sap.ui.demokit.icex.view.Favorite", {
-
+	
 	onInit : function() {
 		
 		// init UI model
 		this.toggleUiModel();
 		
-		// remove footer on phone
-		if (sap.ui.Device.system.phone) {
-			this.getView().byId("page").destroyFooter();
-		}
+		this.oBus = this.getOwnerComponent().getEventBus();
+
 	},
 	
 	toggleUiModel : function() {
-		
-		//this.getView().setModel(sap.ui.getCore().getModel("fav"), "fav");
 		
 		var model = this.getView().getModel("ui");
 		if (!model) {
@@ -27,7 +23,8 @@ sap.ui.controller("sap.ui.demokit.icex.view.Favorite", {
 				inEdit : false,
 				inDisplay : true,
 				listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-				listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive"
+				listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive",
+				showToolbar : (sap.ui.Device.system.phone) ? false : true
 			});
 			this.getView().setModel(model, "ui");
 		
@@ -37,6 +34,7 @@ sap.ui.controller("sap.ui.demokit.icex.view.Favorite", {
 			var data = model.getData();
 			var _listMode;
 			var _listItemType;
+			var _showToolbar = true;
 			
 			if (data.inDisplay) {
 				_listMode = "Delete";
@@ -44,20 +42,21 @@ sap.ui.controller("sap.ui.demokit.icex.view.Favorite", {
 			} else {
 				_listMode = (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster"; 
 				_listItemType = (sap.ui.Device.system.phone) ? "Active" : "Inactive";
+				_showToolbar = (sap.ui.Device.system.phone) ? false : true;
 			}
 			
 			model.setData({
 				inEdit : data.inDisplay,
 				inDisplay : data.inEdit,
 				listMode : _listMode,
-				listItemType : _listItemType
+				listItemType : _listItemType,
+				showToolbar : _showToolbar
 			});
 		}
 	},
 	
 	navBack : function(evt) {
-		var bus = this.getOwnerComponent().getEventBus();
-		bus.publish("nav", "back");
+		this.oBus.publish("nav", "back");
 	}, 
 	
 	deleteIconList : function(evt) {
@@ -76,13 +75,12 @@ sap.ui.controller("sap.ui.demokit.icex.view.Favorite", {
 	_showDetail : function(item) {
 		
 		// tell app controller to navigate
-		var bus = this.getOwnerComponent().getEventBus();
-		bus.publish("nav", "to", {
+		this.oBus.publish("nav", "to", {
 			id : "Detail"
 		});
 		
 		// tell detail to update
-		bus.publish("app", "RefreshDetail", {
+		this.oBus.publish("app", "RefreshDetail", {
 			name : item.getBindingContext("fav").getObject().name
 		});
 	}
