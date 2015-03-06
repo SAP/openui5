@@ -2570,6 +2570,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oImage.setDensityAware(false); // by default we do not have density aware images in the Table
 			return oImage;
 		},
+		addTableClass: function() { return "sapUiTableM"; },
 		bFinal: true
 	});
 	

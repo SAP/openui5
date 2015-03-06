@@ -52,6 +52,13 @@ sap.ui.define(['jquery.sap.global'],
 				oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
 			rm.addClass("sapUiTableRSel"); // show row selector
 		}
+
+		// This class flags whether the sap.m. library is loaded or not.
+		var sSapMTableClass = sap.ui.table.TableHelper.addTableClass();
+		if (sSapMTableClass) {
+			rm.addClass(sSapMTableClass);
+		}
+
 		rm.addClass("sapUiTableSelMode" + oTable.getSelectionMode()); // row selection mode
 		//rm.addClass("sapUiTableHScr"); // show horizontal scrollbar
 		if (oTable.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {

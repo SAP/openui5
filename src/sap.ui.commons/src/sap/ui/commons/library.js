@@ -1225,6 +1225,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		createImage: function(mConfig){
 			return new sap.ui.commons.Image(mConfig);
 		},
+		addTableClass: function() { return "sapUiTableCommons"; },
 		bFinal: false /* to allow mobile to overwrite  */
 	});
 
