@@ -556,7 +556,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// !!!sap.ui.Device.browser.internet_explorer check: only for non IE browsers since there we need
 		// the button in front of the fileuploader
 		if (this.getWidth()) {
-			if (this.getButtonOnly()) {
+			if (this.getButtonOnly() && this.oBrowse.getDomRef()) {
 				this.oBrowse.getDomRef().style.width = this.getWidth();
 			}
 			// Recalculate the textfield width...
