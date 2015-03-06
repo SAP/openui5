@@ -558,10 +558,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (this.getWidth()) {
 			if (this.getButtonOnly()) {
 				this.oBrowse.getDomRef().style.width = this.getWidth();
-			} else {
-				// Recalculate the textfield width...
-				this._resizeDomElements();
 			}
+			// Recalculate the textfield width...
+			this._resizeDomElements();
 		}
 	};
 
