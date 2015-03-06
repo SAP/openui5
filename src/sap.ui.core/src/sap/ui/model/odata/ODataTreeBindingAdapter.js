@@ -48,7 +48,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		
 		//default value for collapse recursive
 		if (this.mParameters.collapseRecursive === undefined) {
-			this.mParameters.collapseRecursive = true;
+			this.bCollapseRecursive = true;
+		} else {
+			this.bCollapseRecursive = !!this.mParameters.collapseRecursive;
 		}
 	};
 	
@@ -437,7 +439,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		var oRootNodeState = this._getNodeState(sRootGroupID);
 		
 		// create root node state if none exists
-		var iNumberOfExpandedLevels = this.mParameters && this.mParameters.numberOfExpandedLevels;
 		if (!oRootNodeState) {
 			
 			var oRootNodeState = this._createNodeState({
@@ -455,7 +456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			this._updateTreeState({
 				groupID: oRootNodeState.groupID,
 				fallbackNodeState: oRootNodeState,
-				expanded: true //(!this.bDisplayRootNode || iNumberOfExpandedLevels > 0) && !this._mTreeState.collapsed[sRootGroupID],
+				expanded: true
 			});
 
 		}
@@ -467,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			level: this.bDisplayRootNode && !(oRootContext === null) ? 0 : -1,
 			nodeState: oRootNodeState,
 			isLeaf: false,
-			autoExpand: iNumberOfExpandedLevels + 1
+			autoExpand: this.iNumberOfExpandedLevels + 1
 		});
 		//flag the root node as artificial in case we have no real root context (but only children)
 		this._oRootNode.isArtificial = true; 
@@ -758,7 +759,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		// remove selectAllMode if necessary
 		oNodeStateForCollapsingNode.selectAllMode = false;
 		
-		if (this.mParameters.collapseRecursive) {
+		if (this.bCollapseRecursive) {
 			var sGroupIDforCollapsingNode = oNodeStateForCollapsingNode.groupID;
 			
 			// Collapse all subsequent child nodes, this is determined by a common groupID prefix, e.g.: "/A100-50/" is the parent of "/A100-50/Finance/"
@@ -1384,7 +1385,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * @param {boolean} bCollapseRecursive
 	 */
 	ODataTreeBindingAdapter.prototype.setCollapseRecursive = function (bCollapseRecursive) {
-		this.mParameters.collapseRecursive = !!bCollapseRecursive;
+		this.bCollapseRecursive = !!bCollapseRecursive;
 	};
 	
 	//*********************************************
@@ -1478,65 +1479,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		return this;
 	};
 	
-	/**
-	 * Sets the number of expanded levels on the TreeBinding (commonly an ODataTreeBinding).
-	 * This is NOT the same as ODataTreeBindingAdapter#collapse or ODataTreeBindingAdapter#expand.
-	 * Setting the number of expanded levels leads to different requests.
-	 * This function is used by the TreeTable for the ungroup/ungroup-all feature.
-	 * @see sap.ui.table.TreeTable#_getGroupHeaderMenu
-	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
-	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#setNumberOfExpandedLevels
-	 * @function
-	 */
-	ODataTreeBindingAdapter.prototype.setNumberOfExpandedLevels = function(iLevels) {
-		iLevels = iLevels || 0;
-		if (iLevels < 0) {
-			jQuery.sap.log.warning("ODataTreeBindingAdapterdapter: numberOfExpandedLevels was set to 0. Negative values are prohibited.");
-			iLevels = 0;
-		}
-		// set the numberOfExpandedLevels on the binding directly
-		// this.mParameters is inherited from the Binding super class
-		this.mParameters.numberOfExpandedLevels = iLevels;
-		this._fireChange();
-	};
-	
-	/**
-	 * Retrieves the currently set number of expanded levels from the Binding (commonly an ODataTreeBinding).
-	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#getNumberOfExpandedLevels
-	 * @function
-	 * @returns {int} the number of expanded levels
-	 */
-	ODataTreeBindingAdapter.prototype.getNumberOfExpandedLevels = function() {
-		return this.mParameters.numberOfExpandedLevels;
-	};
-
-	/**
-	 * Sets the rootLevel
-	 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
-	 * @param {int} iRootLevel
-	 */
-	ODataTreeBindingAdapter.prototype.setRootLevel = function(iRootLevel) {
-		iRootLevel = parseInt(iRootLevel || 0, 10);
-		if (iRootLevel < 0) {
-			jQuery.sap.log.warning("ODataTreeBindingAdapterdapter: rootLevels was set to 0. Negative values are prohibited.");
-			iRootLevel = 0;
-		}
-		// set the rootLevel on the binding directly
-		// this.mParameters is inherited from the Binding super class
-		this.mParameters.rootLevel = iRootLevel;
-		this.refresh();
-	};
-
-	/**
-	 * Returns the rootLevel
-	 * @returns {int}
-	 */
-	ODataTreeBindingAdapter.prototype.getRootLevel = function() {
-		return this.mParameters.rootLevel;
-	};
-
 	return ODataTreeBindingAdapter;
 	
 }, /* bExport= */ true);

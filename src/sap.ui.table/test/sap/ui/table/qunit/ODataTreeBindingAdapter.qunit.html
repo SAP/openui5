@@ -394,7 +394,7 @@
 				
 				equal(oBinding._iPageSize, 10, "Default page size should be 10");
 				
-				oBinding.attachChange(refreshHandler);
+				oBinding.attachRefresh(refreshHandler);
 				oBinding.refresh();
 			}
 			
@@ -870,7 +870,7 @@
 				ok(oBinding._mTreeState.collapsed["/000001/001180/001181/"], "3rd Level node is still in the collapsed map");
 				
 				// switch on collapseRecursive mode
-				oBinding.mParameters.collapseRecursive = true;
+				oBinding.setCollapseRecursive(true);
 				
 				// re-expand the root node and check if the expanded states are still correct
 				oBinding.expandToLevel(1);
@@ -893,7 +893,7 @@
 				ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
 				ok(oBinding._mTreeState.expanded["/000001/"], "1st Level node should be expanded again");
 				//this node is still expanded, because collapseRecursive is set to false
-				ok(!oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should still be expanded (collapseRecursive = false)");
+				ok(!oBinding._mTreeState.expanded["/000001/001180/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
 				
 				start();
 			};
@@ -916,7 +916,7 @@
 			var changeHandlerSpy = that.spy(oBinding, "_fireChange");
 			
 			//activate the recursive collapsing
-			oBinding.mParameters.collapseRecursive = true;
+			oBinding.setCollapseRecursive(true);
 			
 			// 2nd row
 			oContext = oBinding.getContextByIndex(2);
