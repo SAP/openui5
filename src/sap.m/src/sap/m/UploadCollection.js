@@ -138,8 +138,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				parameters : {
 					/**
 					 * An unique Id of the attached document.
-					 * @deprecated Since version 1.28.0.
-					 * This parameter is deprecated, use parameter item instead.
+					 * This parameter is deprecated since version 1.28.0, use parameter item instead. 
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
 					documentId : {type : "string"},
 					/**
@@ -277,8 +277,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			uploadTerminated : {}
 		}
 	}});
-
-
 
 	UploadCollection._uploadingStatus = "uploading";
 	UploadCollection._displayStatus = "display";
