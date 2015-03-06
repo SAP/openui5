@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SplitContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters', 'sap/m/semantic/SemanticPage'],
+	function(jQuery, library, Control, IconPool, Parameters, SemanticPage) {
 	"use strict";
 
 
@@ -1657,6 +1657,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return oReturn;
 			}
 			if (oReturn instanceof sap.m.MessagePage) {
+				return oReturn;
+			}
+			if (oReturn instanceof SemanticPage) {
 				return oReturn;
 			}
 			if (oReturn instanceof sap.ui.core.mvc.View) {

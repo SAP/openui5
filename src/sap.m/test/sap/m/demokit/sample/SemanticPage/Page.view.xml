@@ -1,0 +1,59 @@
+<mvc:View
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		controllerName="sap.m.sample.SemanticPage.Page"
+		xmlns:semantic="sap.m.semantic"
+		xmlns:ui="sap.ca.ui"
+		displayBlock="true">
+
+	<SplitApp>
+		<masterPages>
+			<semantic:MasterPage title="Master Page Title">
+				<semantic:semanticControls>
+
+					<semantic:SemanticSelect type="Sort"
+					autoAdjustWidth="true"
+					items="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+					}">
+					<core:Item key="{ProductId}" text="{Name}" />
+					</semantic:SemanticSelect>
+
+					<semantic:SemanticButton type="Filter"/>
+					<semantic:SemanticButton type="Group"/>
+					<semantic:SemanticButton type="Add"/>
+
+				</semantic:semanticControls>
+			</semantic:MasterPage>
+		</masterPages>
+		<detailPages>
+
+			<semantic:DetailPage title="Detail Page Title" >
+				<semantic:semanticControls>
+					<semantic:SemanticButton type="Approve"/>
+					<semantic:SemanticButton type="Reject"/>
+					<semantic:SemanticButton type="Cancel"/>
+					<semantic:SemanticButton type="Save"/>
+					<semantic:SemanticButton type="Flag"/>
+					<semantic:SemanticButton type="Favorite"/>
+				</semantic:semanticControls>
+
+				<semantic:customFooterContent>
+					<Button text="BtnRight"/>
+					<Button text="CustomBtn"/>
+				</semantic:customFooterContent>
+
+				<semantic:customShareMenuContent>
+					<Button text="btn1" icon="sap-icon://color-fill"/>
+					<Button text="btn2" icon="sap-icon://crop"/>
+				</semantic:customShareMenuContent>
+
+			</semantic:DetailPage>
+
+		</detailPages>
+
+	</SplitApp>
+
+</mvc:View>
