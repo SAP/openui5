@@ -210,6 +210,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		if (!sResolvedPath) {
 			return false;
 		}
+		
+		// If data is set on root, call setData instead
+		if (sResolvedPath == "/") {
+			this.setData(oValue);
+			return true;
+		}
 
 		iLastSlash = sResolvedPath.lastIndexOf("/");
 		// In case there is only one slash at the beginning, sObjectPath must contain this slash
