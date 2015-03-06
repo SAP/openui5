@@ -1,0 +1,56 @@
+<mvc:View
+	controllerName="sap.ui.demo.fstemplate.controller.Worklist"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<Page
+		id="page"
+		title="{controlStates>/worklistViewTitle}">
+		<content>
+			<Table
+				id="table"
+				items="{
+					path: '/Objects',
+					sorter: {
+						path: 'Name',
+						descending: false
+						}
+					}"
+				noDataText="{i18n>tableNoDataText}"
+				busyIndicatorDelay="0"
+				growing="true"
+				growingThreshold="10"
+				growingScrollToLoad="true"
+				updateFinished="onUpdateFinished">
+				<columns>
+					<Column>
+						<Text text="{i18n>TableNameColumnTitle}"/>
+					</Column>
+					<Column>
+						<Text text="{i18n>TableUnitNumberColumnTitle}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem
+						type="Navigation"
+						press="onPress">
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"/>
+							<ObjectNumber
+									number="{
+										path: 'UnitNumber',
+										formatter: 'sap.ui.demo.fstemplate.model.formatter.numberUnit'
+									}"
+									unit="{UnitOfMeasure}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>
