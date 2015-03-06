@@ -617,12 +617,12 @@
 					sap.ui.getCore().applyChanges();
 
 					this.oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
-						
-						assert.strictEqual(jQuery.sap.domById("selectDialog-dialog-cont").style.height, "150px", "content in Dialog should have height of 150px.");
+
+						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
 
 						that.oSelectDialog.setContentHeight("286px");
 						sap.ui.getCore().applyChanges();
-						assert.strictEqual(jQuery.sap.domById("selectDialog-dialog-cont").style.height, "286px", "content in Dialog should have height of 286px.");
+						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 286, "content in Dialog should have height of 286px.");
 						QUnit.start();
 					});
 					this.oSelectDialog.open();
