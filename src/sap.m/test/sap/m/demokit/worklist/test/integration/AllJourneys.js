@@ -20,6 +20,7 @@ sap.ui.test.Opa5.extendConfig({
 
 // Start the tests
 jQuery.sap.require("sap.ui.demo.worklist.test.integration.WorklistJourney");
+jQuery.sap.require("sap.ui.demo.worklist.test.integration.ObjectJourney");
 jQuery.sap.require("sap.ui.demo.worklist.test.integration.NavigationJourney");
 jQuery.sap.require("sap.ui.demo.worklist.test.integration.NotFoundJourney");
 

@@ -10,9 +10,16 @@ sap.ui.define([
 
 			// Set the detail page busy after the metadata has been loaded successfully
 			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
+					// Store original busy indicator delay, so it can be restored later on
+					this.setOriginalBusyIndicatorDelay(this.getView().getBusyIndicatorDelay());
+					// Make sure, busy indication is showing immediately so there is no
+					// break in between the busy indication for loading the view's meta data
+					// (this is being taken care of by class 'BusyHandler')
 					this.getView().setBusyIndicatorDelay(0)
-						.setBusy(true)
-						.setBusyIndicatorDelay(null);
+						.setBusy(true);
+					// Method chaining not possible, 'setBusy' does not return view
+					// Restore original busy indicator delay for the object view
+					this.getView().setBusyIndicatorDelay(this.getOriginalBusyIndicatorDelay());
 				}.bind(this)
 			);
 		},
@@ -36,13 +43,18 @@ sap.ui.define([
 		 * @private
 		 */
 		_bindView : function (sObjectPath) {
-			var oView = this.getView().bindElement(sObjectPath);
+			var oView = this.getView();
+			// Set busy indicator during view binding
+			oView.setBusy(true);
+			oView.bindElement(sObjectPath);
 
 			this.getModel().whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
+					// Everything went fine.
 					this.getView().setBusy(false);
 				}.bind(this),
 				function () {
+					// Something went wrong. Display an error page.
 					this.getView().setBusy(false);
 					this.getRouter().getTargets().display("objectNotFound");
 				}.bind(this)

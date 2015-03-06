@@ -66,7 +66,7 @@ sap.ui.require([
 							errorMessage : "The Table has not been loaded"
 						});
 					}
-
+					
 				},
 				assertions: {
 
@@ -128,7 +128,7 @@ sap.ui.require([
 						});
 					},
 
-					theTableShouldHaveTheDoupleAmountOfInitialEntries : function () {
+					theTableShouldHaveTheDoubleAmountOfInitialEntries : function () {
 						var iExpectedNumberOfItems;
 
 						return this.waitFor({
@@ -142,6 +142,28 @@ sap.ui.require([
 								ok(true, "The growing Table had the double amount: " + iExpectedNumberOfItems + " of entries");
 							},
 							errorMessage : "Table does not have the double amount of entries."
+						});
+					},
+					
+					iShouldSeeTheWorklistViewsBusyIndicator : function () {
+						return this.waitFor({
+							id : "page",
+							viewName : sViewName,
+							success : function (oPage) {
+								ok(oPage.getParent().getBusy(), "The worklist view is busy");
+							},
+							errorMessage : "The worklist view is not busy"
+						});
+					},
+					
+					theWorkListViewsBusyIndicatorDelayIsZero : function () {
+						return this.waitFor({
+							id : "page",
+							viewName : sViewName,
+							success : function (oPage) {
+								ok(oPage.getParent().getBusyIndicatorDelay() == 0, "The worklist view's busy indicator delay is zero.");
+							},
+							errorMessage : "The worklist view's busy indicator delay is not zero."
 						});
 					}
 
