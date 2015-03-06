@@ -39,6 +39,8 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 
 		// Assertions
 		Then.iShouldSeeTheObjectList().
+			and.theObjectListShouldHave10Entries().
+			and.theMasterPageHeaderShouldDisplay20Entries().
 			and.theObjectPageShowsTheFirstObject();
 	});
 
@@ -68,6 +70,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		Then.iShouldBeOnTheObjectNPage(1).
 			and.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
+			and.theLineItemsHeaderShouldDisplay4Entries().
 			and.theFirstLineItemHasIDLineItemID_1();
 
 	});

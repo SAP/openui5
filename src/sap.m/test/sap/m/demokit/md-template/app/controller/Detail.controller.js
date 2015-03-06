@@ -7,11 +7,17 @@ sap.ui.define([
 
 		onInit : function () {
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
+			this._oLineItemsList = this.byId("lineItemsList");
 
 			// When there is a list displayed, bind to the first item.
 			if (!sap.ui.Device.system.phone) {
 				this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
 			}
+			
+			// Update the line item list counter after data is loaded or updated
+			this._oLineItemsList.attachEvent("updateFinished", function (oData) {
+				this._updateListItemCount(oData.getParameter("total"));
+			}, this);
 
 			// Set the detail page busy after the metadata has been loaded successfully
 			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
@@ -19,6 +25,12 @@ sap.ui.define([
 					this.getView().setBusy(true);
 				}.bind(this)
 			);
+			
+			// Control state model
+			this._oControlStateModel = new sap.ui.model.json.JSONModel({
+				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
+			});
+			this.setModel(this._oControlStateModel, 'controlStates');
 		},
 
 		/**
@@ -95,6 +107,25 @@ sap.ui.define([
 				}.bind(this)
 			);
 
+		},
+		
+		/**
+		 * Sets the item count on the line item list header
+		 * @param {integer} the total number of items in the list
+		 * @private
+		 */
+		_updateListItemCount : function (iTotalItems) {
+			var sTitle;
+			// only update the counter if the length is final 
+			if (this._oLineItemsList.getBinding('items').isLengthFinal()) {
+				if (iTotalItems) {
+					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
+				} else {
+					//Display 'Line Items' instead of 'Line items (0)'
+					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading")
+				}
+				this._oControlStateModel.setProperty("/lineItemListTitle", sTitle);
+			}
 		},
 
 

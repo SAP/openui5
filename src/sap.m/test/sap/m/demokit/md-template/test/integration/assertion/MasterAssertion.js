@@ -5,11 +5,11 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.assertion.MasterAssertion", {
 		
 		theMasterListShouldContainGroup20OrLess : function () {
-			return this.theMasterListShouldBeGroupedBy('Price 20 or less');
+			return this.theMasterListShouldBeGroupedBy('Unit Number 20 or less');
 		},
 		
 		theMasterListShouldContainGroup20OrMore : function () {
-			return this.theMasterListShouldBeGroupedBy('Price higher than 20');
+			return this.theMasterListShouldBeGroupedBy('Unit Number higher than 20');
 		},
 		
 		theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrLess : function () {

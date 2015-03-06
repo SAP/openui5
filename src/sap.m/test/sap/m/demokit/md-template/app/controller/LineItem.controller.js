@@ -14,11 +14,11 @@ sap.ui.define([
 
 			// Introducing a named model to update states of controls within this view
 			// such as en- or disabling next and previous buttons. Advantage of this approach:
-			// we do not need to get those conrols via their id every time their states need
+			// we do not need to get those controls via their id every time their states need
 			// to be updated.
 			var oControlStateModel =
 				new sap.ui.model.json.JSONModel({previousButtonEnabled : false, nextButtonEnabled : false});
-			this.getView().setModel(oControlStateModel, 'controlStates');
+			this.setModel(oControlStateModel, 'controlStates');
 			this.getRouter().getRoute("lineItem").attachPatternMatched(this._onRouteMatched, this);
 		},
 
