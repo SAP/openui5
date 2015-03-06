@@ -5,10 +5,9 @@ sap.ui.define([
 		"sap/ui/demo/mdtemplate/model/AppModel",
 		"sap/ui/demo/mdtemplate/controller/ListSelector",
 		"sap/ui/demo/mdtemplate/controller/BusyHandler",
-		"sap/ui/demo/mdtemplate/Router",
 		"sap/ui/demo/mdtemplate/model/formatter",
 		"sap/ui/demo/mdtemplate/model/grouper"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, BusyHandler, Router) {
+	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, BusyHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
@@ -34,7 +33,7 @@ sap.ui.define([
 
 			routing : {
 				config : {
-					routerClass : Router,
+					routerClass : "sap.m.routing.Router",
 					viewType : "XML",
 					viewPath : "sap.ui.demo.mdtemplate.view",
 					controlId: "idAppControl",
