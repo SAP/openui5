@@ -74,14 +74,14 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *         ...
 		 *     },
 		 *     jsTarget : {
-		 *        viewType : "JS"
-		 *       ...
-		 *   }
+		 *         viewType : "JS"
+		 *         ...
+		 *     }
 		 * }
 		 * </pre>
 		 *
 		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
-		 * @param {string|string[]} [oConfig.bypassed.target] Since 1.28. One or multiple names of targets that will be displayed, if no route of the router is matched.
+		 * @param {string|string[]} [oConfig.bypassed.target] One or multiple names of targets that will be displayed, if no route of the router is matched.
 		 * A typical use case is a not found page.
 		 * The current hash will be passed to the display event of the target.
 		 * <b>Example:</b>
@@ -108,15 +108,15 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *              ...
 		 *              // more properties to place the view in the correct container
 		 *          }
-		 *     })
+		 *     });
 		 * </code>
 		 * </pre>
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
 		 * @param {object} [oTargetsConfig]
-		 * @since 1.28 the target configuration, see {@link sap.m.routing.Targets#constructor} documentation (the options object).<br/>
-		 * You should use Targets to create and display views. Since 1.28 the route should only contain routing relevant properties.<br/>
+		 * the target configuration, see {@link sap.m.routing.Targets#constructor} documentation (the options object).<br/>
+		 * You should use Targets to create and display views. The route should only contain routing relevant properties.<br/>
 		 * <b>Example:</b>
 		 * <pre>
 		 * <code>
@@ -152,9 +152,10 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * </code>
 		 * </pre>
 		 * @public
+		 * @since 1.28.1
 		 * @alias sap.m.routing.Router
 		 */
-		return Router.extend("sap.m.routing.Router", /** @lends sap.m.routing.Router.prototype */ {
+		return Router.extend("sap.m.routing.Router", /** @lends sap.m.Router.prototype */ {
 
 			constructor : function() {
 				this._oTargetHandler = new TargetHandler();
