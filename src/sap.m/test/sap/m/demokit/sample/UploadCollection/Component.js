@@ -15,7 +15,15 @@ sap.ui.core.UIComponent.extend("sap.m.sample.UploadCollection.Component", {
 				stretch : true,
 				files : [
 					"Page.view.xml",
-					"Page.controller.js"
+					"Page.controller.js",
+					"uploadCollection.json",
+					"LinkedDocuments/Business Plan Agenda.doc",
+					"LinkedDocuments/Business Plan Topics.xls",
+					"LinkedDocuments/Document.txt",
+					"LinkedDocuments/Instructions.pdf",
+					"LinkedDocuments/Notes.txt",
+					"LinkedDocuments/Screenshot.jpg",
+					"LinkedDocuments/Third Quarter Results.ppt"
 				]
 			}
 		}
