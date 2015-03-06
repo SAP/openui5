@@ -10,6 +10,21 @@ sap.ui.require([
 			onTheAppPage: {
 				baseClass: Common,
 				actions: {
+					iWaitUntilTheAppBusyIndicatorIsGone: function () {
+						return this.waitFor({
+							id : "app",
+							viewName : "App",
+							// inline-matcher directly as function
+							matchers : function(oAppControl) {
+								// we set the view busy, so we need to query the parent of the app
+								return oAppControl.getParent() && oAppControl.getParent().getBusy() === false;
+							},
+							success : function (oRootView) {
+								ok(true, "The root view is not busy anymore");
+							},
+							errorMessage : "Did not find the App control"
+						});
+					}
 				},
 				assertions: {
 					iShouldSeeTheBusyIndicatorForTheWholeApp: function () {
