@@ -5,6 +5,10 @@ sap.ui.define([
 
 	return BaseController.extend("sap.ui.demo.mdtemplate.controller.LineItem", {
 
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
 		onInit : function() {
 			//used to keep track of the currently
 			//selected parent object and lineItem
@@ -22,6 +26,48 @@ sap.ui.define([
 			this.getRouter().getRoute("lineItem").attachPatternMatched(this._onRouteMatched, this);
 		},
 
+
+
+		/* =========================================================== */
+		/* event handlers                                              */
+		/* =========================================================== */
+
+		/**
+		 * When the 'navigate back' button is pressed on the line item
+		 * the app should always navigate back to the parent object view,
+		 * even if there have been some visits to neighboring line items
+		 * via the 'next' and 'previous' buttons.
+		 *
+		 */
+		onLineItemNavBack : function () {
+			this.onNavBack("object", {objectId: this._oObject.sObjectId});
+		},
+
+
+		/**
+		 * Triggers navigation to the next line item in the list of line items to the current object.
+		 *
+		 * @param {Event} oEvent the event object
+		 */
+		onNavToNextLineItem: function (oEvent) {
+			var iLineItemId = this._oObject.aLineItemIds[this.iCurrentIndex + 1];
+			this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this._oObject.sObjectId}, true);
+		},
+
+
+		/**
+		 * Triggers navigation to the previous line item in the list of line items to the current object.
+		 *
+		 * @param {Event} oEvent the event object
+		 */
+		onNavToPrevLineItem: function (oEvent) {
+			var iLineItemId = this._oObject.aLineItemIds[this.iCurrentIndex - 1];
+			this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this._oObject.sObjectId}, true);
+		},
+
+		/* =========================================================== */
+		/* begin: internal methods                                     */
+		/* =========================================================== */
 
 		/**
 		 * Handler function which is called when a 'lineItem' route is being navigated to. This
@@ -155,40 +201,6 @@ sap.ui.define([
 		 */
 		_itemExists : function(iIndex) {
 			return !!this._oObject.aLineItemIds[iIndex];
-		},
-
-
-		/**
-		 * When the 'navigate back' button is pressed on the line item
-		 * the app should always navigate back to the parent object view,
-		 * even if there have been some visits to neighboring line items
-		 * via the 'next' and 'previous' buttons.
-		 *
-		 */
-		onLineItemNavBack : function () {
-			this.onNavBack("object", {objectId: this._oObject.sObjectId});
-		},
-
-
-		/**
-		 * Triggers navigation to the next line item in the list of line items to the current object.
-		 *
-		 * @param {Event} oEvent the event object
-		 */
-		onNavToNextLineItem: function (oEvent) {
-			var iLineItemId = this._oObject.aLineItemIds[this.iCurrentIndex + 1];
-			this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this._oObject.sObjectId}, true);
-		},
-
-
-		/**
-		 * Triggers navigation to the previous line item in the list of line items to the current object.
-		 *
-		 * @param {Event} oEvent the event object
-		 */
-		onNavToPrevLineItem: function (oEvent) {
-			var iLineItemId = this._oObject.aLineItemIds[this.iCurrentIndex - 1];
-			this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this._oObject.sObjectId}, true);
 		}
 
 	});
