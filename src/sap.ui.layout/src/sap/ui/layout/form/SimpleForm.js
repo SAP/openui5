@@ -605,7 +605,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 						aFormElements = oFormContainer.getFormElements();
 						var iContainerIndex = oForm.indexOfFormContainer(oFormContainer);
 						var oPrevFormContainer = oForm.getFormContainers()[iContainerIndex - 1];
-						if (aFormElements && !aFormElements[0].getLabel()) {
+						if (aFormElements.length > 0 && !aFormElements[0].getLabel()) {
 							// first Form Element has no label -> add its fields to last Form Element of previous container
 							var aPrevFormElements = oPrevFormContainer.getFormElements();
 							var oLastFormElement = aPrevFormElements[aPrevFormElements.length - 1];
