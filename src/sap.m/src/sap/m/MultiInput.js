@@ -889,18 +889,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 
 	/**
-	 * when tap on text field, deselect all tokens
-	 * @public
-	 * @param {jQuery.Event} oEvent
+	 * Process multi-line display in edit mode. This function is used when MultiInput gets focus.
+	 *
+	 * @param {jQuery.Event}
+	 * 			oEvent
+	 * @private
 	 */
-	MultiInput.prototype.ontap = function(oEvent) {	
-		
-		//deselect tokens when focus is on text field
-		if (document.activeElement === this._$input[0]) {
-			this._tokenizer.selectAllTokens(false);
-		}
-		
-		if ( this._isMultiLineMode ) {
+	MultiInput.prototype._processMultiLine = function(oEvent) {
 			if ( this._bUseDialog ) {
 				
 				if ( oEvent.target === this._$input[0] 
@@ -941,12 +936,42 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 							that._setContainerSizes();
 						}, 0);
 					}
-				}
-			
+			}
+	};
+	
+	
+	/**
+	 * when tap on text field, deselect all tokens
+	 * @public
+	 * @param {jQuery.Event} oEvent
+	 */
+	MultiInput.prototype.ontap = function(oEvent) {
+		//deselect tokens when focus is on text field
+		if (document.activeElement === this._$input[0]) {
+			this._tokenizer.selectAllTokens(false);
 		}
 
 		Input.prototype.ontap.apply(this, arguments);
 	};
+	
+	
+	/**
+	 * focus is on MultiInput
+	 * @public
+	 * @param {jQuery.Event} oEvent
+	 */
+	MultiInput.prototype.onfocusin = function(oEvent) {
+		
+		if ( this._isMultiLineMode ) {
+			this._processMultiLine(oEvent);
+		}
+		
+		if ( oEvent.target === this.getFocusDomRef() ){
+			Input.prototype.onfocusin.apply(this, arguments);
+		}
+		
+	};
+	
 	
 	/**
 	 * when press ESC, deselect all tokens and all texts
