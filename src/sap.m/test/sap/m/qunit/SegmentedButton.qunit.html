@@ -569,6 +569,36 @@
 
 	});
 
+	test("All widths in %", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			width: "100%",
+			buttons: [
+				new sap.m.Button({
+					width: "50%",
+					text: "50%"
+				}),
+				new sap.m.Button({
+					width: "50%",
+					text: "50%"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(jQuery(oSegmentedButton.$().find("li")[0]).css("padding"), "0px", "Button one padding must equal to 0px");
+		strictEqual(jQuery(oSegmentedButton.$().find("li")[1]).css("padding"), "0px", "Button two padding must equal to 0px");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
