@@ -1,0 +1,41 @@
+sap.ui.require([
+		'sap/ui/test/Opa5',
+		'sap/ui/demo/worklist/test/integration/pages/Common'
+	],
+	function(Opa5, Common) {
+		"use strict";
+
+		Opa5.createPageObjects({
+			onTheNotFoundPage: {
+				baseClass: Common,
+				actions: {},
+				assertions: {
+
+					iShouldSeeObjectNotFound : function () {
+						return this.waitFor({
+							id : "objectNotFoundPage",
+							viewName : "ObjectNotFound",
+							success: function (oPage) {
+								strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("objectTitle"), "the object text is shown as title");
+								strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("noObjectFoundText"), "the object not found text is shown");
+							},
+							errorMessage: "did not display the object not found text"
+						});
+					},
+
+					iShouldSeeResourceNotFound : function () {
+						return this.waitFor({
+							id : "notFoundPage",
+							viewName : "NotFound",
+							success: function (oPage) {
+								strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("notFoundTitle"), "the not found title is shown as title");
+								strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("notFoundText"), "the not found text is shown");
+							},
+							errorMessage: "did not display the object not found text"
+						});
+					}
+
+				}
+			}
+		});
+	});
