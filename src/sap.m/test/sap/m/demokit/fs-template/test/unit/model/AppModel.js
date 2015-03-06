@@ -1,6 +1,6 @@
 sap.ui.require(
 	[
-		"sap/ui/demo/mdtemplate/model/AppModel",
+		"sap/ui/demo/fstemplate/model/AppModel",
 		"sap/m/List",
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/thirdparty/sinon-qunit"

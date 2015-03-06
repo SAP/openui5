@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="sap.ui.demo.fstemplate.controller.Object"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="objectPage"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		title="{i18n>objectTitle}">
+		<content>
+			<ObjectHeader
+				title="{Name}"
+				number="{UnitNumber}"
+				numberUnit="{UnitOfMeasure}">
+			</ObjectHeader>
+		</content>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>
