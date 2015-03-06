@@ -1,0 +1,14 @@
+{
+	"welcomeFile": "index.html",
+	"routes": [
+		{
+			"path": "/resources",
+			"target": {
+				"type": "service",
+				"name": "sapui5",
+				"entryPath": "/resources"
+			},
+			"description": "SAPUI5 Resources"
+		}
+	]
+}
