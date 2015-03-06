@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global'],
 					bGroupFiltered = false;
 					jQuery.each(aFilterGroup, function(j, oFilter) {
 						var fnTest = that.getFilterFunction(oFilter);
-						if (oValue != undefined && fnTest(oValue)) {
+						if (oValue !== undefined && fnTest(oValue)) {
 							bGroupFiltered = true;
 							return false;
 						}
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global'],
 					var oValue = fnGetValue(vRef, oFilter.sPath);
 					oValue = that.normalizeFilterValue(oValue);
 					var fnTest = that.getFilterFunction(oFilter);
-					if (oValue != undefined && fnTest(oValue)) {
+					if (oValue !== undefined && fnTest(oValue)) {
 						bLocalMatch = true;
 					}
 				}
@@ -167,6 +167,9 @@ sap.ui.define(['jquery.sap.global'],
 				oFilter.fnTest = function(value) { return (value >= oValue1) && (value <= oValue2); }; break;
 			case "Contains":
 				oFilter.fnTest = function(value) {
+					if (value == null) {
+						return false;
+					}
 					if (typeof value != "string") {
 						throw new Error("Only \"String\" values are supported for the FilterOperator: \"Contains\".");
 					}
@@ -175,6 +178,9 @@ sap.ui.define(['jquery.sap.global'],
 				break;
 			case "StartsWith":
 				oFilter.fnTest = function(value) {
+					if (value == null) {
+						return false;
+					}
 					if (typeof value != "string") {
 						throw new Error("Only \"String\" values are supported for the FilterOperator: \"StartsWith\".");
 					}
@@ -183,6 +189,9 @@ sap.ui.define(['jquery.sap.global'],
 				break;
 			case "EndsWith":
 				oFilter.fnTest = function(value) {
+					if (value == null) {
+						return false;
+					}
 					if (typeof value != "string") {
 						throw new Error("Only \"String\" values are supported for the FilterOperator: \"EndsWith\".");
 					}

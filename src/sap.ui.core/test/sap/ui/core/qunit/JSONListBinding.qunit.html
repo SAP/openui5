@@ -33,7 +33,7 @@
 				{firstName:"Steave", lastName:"Ander", gender:"male"},
 				{firstName:"Michael", lastName:"Spring", gender:"male"},
 				{firstName:"Marc", lastName:"Green", gender:"male"},
-				{firstName:"Frank", lastName:"Wallace", gender:"male"}
+				{firstName:"Frank", lastName:"Wallace", gender: null}
 			],
 			teamMembersNew:[
 				{firstName:"Andreas", lastName:"Klark", gender:"male"},
@@ -601,7 +601,7 @@
 		var listBinding = bindings[0];
 
 		//check EQ
-		var oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
+		var oFilter = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, null);
 		listBinding.filter([oFilter]);
 		var filteredContexts = listBinding.getContexts();
 		var filtered = [];
@@ -609,7 +609,7 @@
 			filtered[i] = oModel.getProperty(context.getPath());
 		});
 		equal(filtered.length, 1, "ListBinding filtered length");
-		equal(filtered[0].firstName, "Peter", "ListBinding filter value");
+		equal(filtered[0].gender, null, "ListBinding filter value");
 
 		// NE, contains
 		oFilter = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.NE, "Peter");
@@ -730,14 +730,14 @@
 		
 		var listBinding = bindings[0];		
 		
-		//check (gender=male AND (lastName = Green OR (firstName = Peter OR firstName = Frank OR firstName = Gina)))
+		//check (gender != female AND (lastName = Green OR (firstName = Peter OR firstName = Frank OR firstName = Gina)))
 		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
 		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
 		var oFilter3 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Gina");
 		var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false);
 		var oFilter4 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Green");
 		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter4], false);
-		var oFilter5 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, "male");
+		var oFilter5 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.NE, "female");
 		var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
 		listBinding.filter(oMultiFilter3);
 		var filteredContexts = listBinding.getContexts();
@@ -854,9 +854,10 @@
 
 		distinctValues = binding.getDistinctValues("gender");
 		ok(jQuery.isArray(distinctValues), "Result is an array");
-		equal(distinctValues.length, 2, "Number of distinct values");
+		equal(distinctValues.length, 3, "Number of distinct values");
 		equal(distinctValues[0], "male", "Distinct value content");
 		equal(distinctValues[1], "female", "Distinct value content");
+		equal(distinctValues[2], null, "Distinct value content");
 
 	});
 
