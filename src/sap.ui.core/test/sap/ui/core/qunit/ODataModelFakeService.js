@@ -25,6 +25,8 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sProducts2XML],
 		"Categories(2)":
 			[200, oXMLHeaders, sCategories2XML],
+		"Categories(7)":
+			[200, oXMLHeaders, sCategories7XML],
 		"Categories":
 			[200, oXMLHeaders, sCategoriesXML],
 		"Categories?hubel=dubel":
@@ -4468,6 +4470,28 @@ var sProductsXML = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?
 		;
 	
 var sCategories2XML = "\
+<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\
+<entry xml:base=\"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns=\"http://www.w3.org/2005/Atom\">\
+  <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(2)</id>\
+  <title type=\"text\"></title>\
+  <updated>2013-05-15T12:23:22Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel=\"edit\" title=\"Category\" href=\"Categories(2)\" />\
+  <link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products\" type=\"application/atom+xml;type=feed\" title=\"Products\" href=\"Categories(2)/Products\" />\
+  <category term=\"NorthwindModel.Category\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" />\
+  <content type=\"application/xml\">\
+    <m:properties>\
+      <d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID>\
+      <d:CategoryName>Condiments</d:CategoryName>\
+      <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+    </m:properties>\
+  </content>\
+</entry>\
+	";
+
+var sCategories7XML = "\
 <?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\
 <entry xml:base=\"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns=\"http://www.w3.org/2005/Atom\">\
   <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(2)</id>\
