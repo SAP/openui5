@@ -288,10 +288,14 @@ function runODataAnnotationTests() {
 
 		jQuery.sap.log.debug("testtype: " + sTestType);
 
-		asyncTest(
-			"Asynchronous loading - " + sTestType,
-			fnTest(sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid)
-		);
+		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
+		//  ==> PhantomJS doesn't fail when loading malformed XML!
+		if (!(sap.ui.Device.browser.phantomJS && bServiceValid && !bAnnotationsValid)) {
+			asyncTest(
+				"Asynchronous loading - " + sTestType,
+				fnTest(sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid)
+			);
+		}
 	}
 
 
@@ -432,10 +436,14 @@ function runODataAnnotationTests() {
 			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
-		asyncTest(
-			"Asynchronous loading (joined events) - " + sTestType,
-			fnTest(sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid)
-		); 
+		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
+		//  ==> PhantomJS doesn't fail when loading malformed XML!
+		if (!(sap.ui.Device.browser.phantomJS && bServiceValid && !bAnnotationsValid)) {
+			asyncTest(
+				"Asynchronous loading (joined events) - " + sTestType,
+				fnTest(sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid)
+			);
+		}
 	}
 
 

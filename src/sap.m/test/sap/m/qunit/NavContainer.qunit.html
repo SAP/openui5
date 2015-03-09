@@ -25,6 +25,15 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
+
+		// FIXME: for PhantomJS we need to increase the timouts
+		if (sap.ui.Device.browser.phantomJS) {
+			var fnSetTimeout = setTimeout;
+			setTimeout = function(fn, iDelay) {
+				fnSetTimeout.call(this, fn, iDelay * 3);
+			}
+		}
+
 		jQuery.sap.initMobile();
 
 		window.expectedNav = {};

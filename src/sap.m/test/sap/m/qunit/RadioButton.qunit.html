@@ -397,49 +397,52 @@
 			oRadioButton.destroy();
 		});
 		
-		test("Should apply the focus Info", function() {
-			
-			// arrange
-			var oRadioButton = new sap.m.RadioButton();
-			oRadioButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			var oFocusDomRef = oRadioButton.applyFocusInfo();
-
-			// assertions
-			ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
-
-			// cleanup
-			oRadioButton.destroy();
-		});
-
-		test("Should handle a tap event", function() {
-			
-			// arrange
-			var oSelectSpy = this.spy()
-			var oRadioButton = new sap.m.RadioButton();
-			oRadioButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			
-			// act
-			oRadioButton.attachSelect(oSelectSpy);
-			oRadioButton.ontap();
-
-			// assertions
-			strictEqual(oSelectSpy.callCount, 0, "The select event was not fired yet");
-			ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
-			ok(oRadioButton.getSelected(), "The radio button was selected");
-
-			//trigger timeout
-			this.clock.tick(1);
-
-			// assert
-			strictEqual(oSelectSpy.callCount, 1, "The select event was not fired after 0 ms");
-
-			// cleanup
-			oRadioButton.destroy();
-		});
+		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
+		if (!sap.ui.Device.browser.phantomJS) {
+			test("Should apply the focus Info", function() {
+				
+				// arrange
+				var oRadioButton = new sap.m.RadioButton();
+				oRadioButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+	
+				// act
+				var oFocusDomRef = oRadioButton.applyFocusInfo();
+	
+				// assertions
+				ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+	
+				// cleanup
+				oRadioButton.destroy();
+			});
+	
+			test("Should handle a tap event", function() {
+				
+				// arrange
+				var oSelectSpy = this.spy()
+				var oRadioButton = new sap.m.RadioButton();
+				oRadioButton.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// act
+				oRadioButton.attachSelect(oSelectSpy);
+				oRadioButton.ontap();
+	
+				// assertions
+				strictEqual(oSelectSpy.callCount, 0, "The select event was not fired yet");
+				ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+				ok(oRadioButton.getSelected(), "The radio button was selected");
+	
+				//trigger timeout
+				this.clock.tick(1);
+	
+				// assert
+				strictEqual(oSelectSpy.callCount, 1, "The select event was not fired after 0 ms");
+	
+				// cleanup
+				oRadioButton.destroy();
+			});
+		}
 		
 		test("Not editable radio button does not select/deselect on tap", function() {
 			
@@ -462,31 +465,34 @@
 			oRadioButton.destroy();
 		});
 
-		test("Should keep the focus when rerendering in tap event", function() {
-			
-			// arrange
-			var oRadioButton = new sap.m.RadioButton();
-			oRadioButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			
-			// act
-			oRadioButton.attachSelect(function () {
-				oRadioButton.rerender();
+		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
+		if (!sap.ui.Device.browser.phantomJS) {
+			test("Should keep the focus when rerendering in tap event", function() {
+				
+				// arrange
+				var oRadioButton = new sap.m.RadioButton();
+				oRadioButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-
-				// assertions
-				ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
-
-				// cleanup
-				oRadioButton.destroy();
+				
+				// act
+				oRadioButton.attachSelect(function () {
+					oRadioButton.rerender();
+					sap.ui.getCore().applyChanges();
+	
+					// assertions
+					ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+	
+					// cleanup
+					oRadioButton.destroy();
+				});
+	
+				// act
+				oRadioButton.ontap();
+	
+				// trigger timeout
+				this.clock.tick(1);
 			});
-
-			// act
-			oRadioButton.ontap();
-
-			// trigger timeout
-			this.clock.tick(1);
-		});
+		}
 		
 		test("Should have class sapMRbBTouched when touchstart event is fired", function () {
 			expect(1);
