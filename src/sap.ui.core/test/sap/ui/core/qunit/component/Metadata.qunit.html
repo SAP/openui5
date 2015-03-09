@@ -177,17 +177,13 @@
 					"minUI5Version": "1.22.5"
 				},
 				"models": {
-					"sfapi": {
-						"settings": {
-							"uri": "/sap/opu/odata/snce/PO_S_SRV/"
-						},
-						"type": "sap.ui.model.odata.ODataModel"
-					},
 					"i18n": {
-						"settings": {
-							"uri": "i18n/i18n.properties"
-						},
-						"type": "sap.ui.model.resource.ResourceModel"
+						"type": "sap.ui.model.resource.ResourceModel",
+						"uri": "i18n/i18n.properties"
+					},
+					"sfapi": {
+						"type": "sap.ui.model.odata.ODataModel",
+						"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 					}
 				},
 				"rootView": {

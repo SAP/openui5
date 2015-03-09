@@ -517,6 +517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 				var oDataSource = mDataSources[sDataSource];
 				this._oLegacyModels[sDataSource] = oDataSource.settings || {};
 				this._oLegacyModels[sDataSource].type = oDataSource.type;
+				this._oLegacyModels[sDataSource].uri = oDataSource.uri;
 			}
 		}
 		
@@ -727,16 +728,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 							var oModels = {};
 							for (var sModel in oValue) {
 								var oDS = oValue[sModel];
-								var oModel = {
-									settings: {}
-								};
+								var oModel = {};
 								for (var sDSSetting in oDS) {
 									var oDSSetting = oDS[sDSSetting];
 									switch (sDSSetting) {
 										case "type":
+										case "uri":
 											oModel[sDSSetting] = oDSSetting;
 											break;
 										default:
+											oModel.settings = oModel.settings || {};
 											oModel.settings[sDSSetting] = oDSSetting;
 									}
 								}
