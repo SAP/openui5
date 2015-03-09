@@ -5,7 +5,6 @@
 		title="{i18n>notFoundTitle}"
 		text="{i18n>notFoundText}"
 		icon="{sap-icon://document}"
-		description=""
-		id="notFoundPage">
+		id="page">
 	</MessagePage>
 </mvc:View>

@@ -2,5 +2,5 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
 	xmlns="sap.m">
-	<App id="idAppControl" />
+	<App id="app" />
 </mvc:View>
