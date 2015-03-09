@@ -1035,7 +1035,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					oToPage.$().bind("webkitTransitionEnd transitionend", fAfterTransition);
 					
 					// workaround for bug in current webkit versions: in slided-in elements the z-order may be wrong and will be corrected once a re-layout is enforced 
-					// see http://code.google.com/p/chromium/issues/detail?id=246965
+					// see http://code.google.com/p/chromium/issues/detail?id=246965  - still an issue in iOS 6.1.3 as of 03/2015
 					if (sap.ui.Device.browser.webkit) {
 						window.setTimeout(function(){
 							oToPage.$().css("box-shadow", "0em 1px 0em rgba(128, 128, 1280, 0.1)"); // add box-shadow
