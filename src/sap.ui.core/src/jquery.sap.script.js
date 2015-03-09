@@ -893,12 +893,6 @@ sap.ui.define(['jquery.sap.global'],
 			target = {};
 		}
 
-		// extend jQuery itself if only one argument is passed
-		if ( i === length ) {
-			target = this;
-			i--;
-		}
-
 		for ( ; i < length; i++ ) {
 			
 			options = arguments[ i ];
