@@ -41,8 +41,8 @@ jQuery.sap.declare("foo.bar.MyClass");
  * Note: there MUST BE NO TEXT AFTER PUBLIC/PRIVATE. Not even in the next line. If anything, 
  * another tag must follow.
  * @public|@private
- * @author (optional, multiple) Author is referenced by user Id, not by name. Multiple authors are
- *                              possible, order is significant (first named author is the default contact).
+ * @author (optional, multiple) Multiple authors are possible,
+ *                              order is significant (first named author is the default contact).
  * @since (optional) When the class/function has been introduced.
  * @extends sap.ui.base.Object Documents the inheritance relationship.
  * @alias foo.bar.MyClass (Mandatory when defining a class with extend).
