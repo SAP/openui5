@@ -294,7 +294,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 * @public
 		 * @alias sap.m.routing.Targets
 		 */
-		return Targets.extend("sap.m.routing.Targets", {
+		return Targets.extend("sap.m.routing.Targets", /** @lends sap.m.routing.Targets.prototype */ {
 			constructor: function(oOptions) {
 				if (oOptions.targetHandler) {
 					this._oTargetHandler = oOptions.targetHandler;

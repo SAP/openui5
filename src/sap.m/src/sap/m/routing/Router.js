@@ -155,7 +155,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * @since 1.28.1
 		 * @alias sap.m.routing.Router
 		 */
-		return Router.extend("sap.m.routing.Router", /** @lends sap.m.Router.prototype */ {
+		return Router.extend("sap.m.routing.Router", /** @lends sap.m.routing.Router.prototype */ {
 
 			constructor : function() {
 				this._oTargetHandler = new TargetHandler();

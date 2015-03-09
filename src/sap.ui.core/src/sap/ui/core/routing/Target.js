@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * @since 1.28.1
 		 * @alias sap.ui.core.routing.Target
 		 */
-		return EventProvider.extend("sap.ui.core.routing.Target", {
+		return EventProvider.extend("sap.ui.core.routing.Target", /** @lends sap.ui.core.routing.Target.prototype */ {
 
 			constructor : function(oOptions, oViews) {
 				this._oOptions = oOptions;
