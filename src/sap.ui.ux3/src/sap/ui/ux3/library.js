@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global',
 	 *   		Marker interface for controls which are suitable as view rendering for a DataSet.
 	 *   	
 	 *
-	 * @author d049080
+	 * @author SAP SE
 	 * @name sap.ui.ux3.DataSetView
 	 * @interface
 	 * @public

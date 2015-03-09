@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 
 	/**
 	 * ToggleButton renderer.
-	 * @author D040134
+	 * @author SAP SE
 	 * @namespace
 	 */
 	
