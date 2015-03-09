@@ -108,52 +108,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			parameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "parameter"}
 		},
-		events : {
 
+		events : {
 			/**
 			 * The event is triggered when files are selected. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
-			 * Parameters and headerParameters are not supported by Internet Explorer 9.
+			 * Limitation: parameters and headerParameters are not supported by Internet Explorer 9.
 			 */
 			change : {
-				parameters : {
-					/**
-					 * An unique Id of the attached document.
-					 * @deprecated Since version 1.28.
-					 * This event is deprecated, use parameter files instead.
-					 */
-					documentId : {type : "string"},
-					/**
-					 * A FileList of individually selected files from the underlying system. See www.w3.org for the FileList Interface definition.
-					 * Limitation: Internet Explorer 9 supports only single file with property file.name.
-					 * Since version 1.28.
-					 */
-					files : {type : "object[]"}
-				}
-			},
-
-			/**
-			 * The event is triggered when the Delete pushbutton is pressed.
-			 */
-			fileDeleted : {
-				parameters : {
-					/**
-					 * An unique Id of the attached document.
-					 * This event is deprecated since version 1.28.0, use parameter item instead.
-					 * @deprecated Since version 1.28.0. This event is deprecated, use parameter item instead.
-					 */
-					documentId : {type : "string"},
-					/**
-					 * An item to be deleted from the collection.
-					 * Since version 1.28.
-					 */
-					item : {type : "sap.m.UploadCollectionItem"}
-				}
-			},
-
-			/**
-			 * The event is triggered when the name of a chosen file is longer than the value specified with the maximumFilenameLength property (only if provided by the application).
-			 */
-			filenameLengthExceed : {
 				parameters : {
 					/**
 					 * An unique Id of the attached document.
@@ -171,20 +132,66 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			},
 
 			/**
+			 * The event is triggered when the Delete pushbutton is pressed.
+			 */
+			fileDeleted : {
+				parameters : {
+					/**
+					 * An unique Id of the attached document.
+					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
+					 */
+					documentId : {type : "string"},
+					/**
+					 * An item to be deleted from the collection.
+					 * Since version 1.28.0.
+					 */
+					item : {type : "sap.m.UploadCollectionItem"}
+				}
+			},
+
+			/**
+			 * The event is triggered when the name of a chosen file is longer than the value specified with the maximumFilenameLength property (only if provided by the application).
+			 */
+			filenameLengthExceed : {
+				parameters : {
+					/**
+					 * An unique Id of the attached document.
+					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
+					 */
+					documentId : {type : "string"},
+					/**
+					 * A FileList of individually selected files from the underlying system.
+					 * Limitation: Internet Explorer 9 supports only single file with property file.name.
+					 * Since version 1.28.0.
+					 */
+					files : {type : "object[]"}
+				}
+			},
+
+			/**
 			 * The event is triggered when the file name is changed.
 			 */
 			fileRenamed : {
 				parameters : {
-
 					/**
 					 * An unique Id of the attached document.
+					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
 					documentId : {type : "string"},
-
 					/**
 					 * The new file name
+					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
-					fileName : {type : "string"}
+					fileName : {type : "string"},
+					/**
+					 * An item to be renamed.
+					 * Since version 1.28.0.
+					 */
+					item: {type : "sap.m.UploadCollectionItem"}
 				}
 			},
 
@@ -194,16 +201,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			fileSizeExceed : {
 				parameters : {
-
 					/**
 					 * An unique Id of the attached document.
+					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
+					 *  @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
 					documentId : {type : "string"},
-
 					/**
 					 * The size in MB of a file to be uploaded.
+					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
-					fileSize : {type : "string"}
+					fileSize : {type : "string"},
+					/**
+					 * A FileList of individually selected files from the underlying system.
+					 * Limitation: Internet Explorer 9 supports only single file with property file.name.
+					 * Since version 1.28.0.
+					 */
+					files : {type : "object[]"}
 				}
 			},
 
@@ -212,22 +227,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			typeMissmatch : {
 				parameters : {
-
 					/**
 					* An unique Id of the attached document.
-					* This parameter is deprecated, use parameter files instead.
+					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
 					documentId : {type : "string"},
 					/**
 					* File type.
-					* This parameter is deprecated, use parameter files instead.
+					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
 					fileType : {type : "string"},
 					/**
 					* MIME type.
-					*This parameter is deprecated, use parameter files instead.
+					*This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0.  Use parameter files instead.
 					*/
 					mimeType : {type : "string"},
@@ -245,17 +259,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			uploadComplete : {
 				parameters : {
-
 					/**
 					 * Ready state XHR.
 					 */
 					readyStateXHR : {type : "string"},
-
 					/**
 					 * Response.
 					 */
 					response : {type : "string"},
-
 					/**
 					 * Status.
 					 */
@@ -270,8 +281,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			uploadTerminated : {}
 		}
 	}});
-
-
 
 	UploadCollection._uploadingStatus = "uploading";
 	UploadCollection._displayStatus = "display";
@@ -912,6 +921,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 	};
 
+	/**
+	 * @description Handling of the termination of the uploading file
+	 * @param {sap.m.MessageBox.Action} oAction
+	 * @private
+	 */
 	UploadCollection.prototype._onCloseMessageBoxDeleteItem = function (oAction) {
 		if (oAction === sap.m.MessageBox.Action.OK) {
 			// fire event
@@ -1090,10 +1104,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					}
 				}
 				if (bTriggerOk) {
-					oContext.fireFileRenamed({
-						documentId : oContext.aItems[iSourceLine].getProperty("documentId"),
-						fileName : sNewFileName + oFile.extension
-					});
+						oContext._oItemForRename = oContext.aItems[iSourceLine];
+						oContext._onEditItemOk.bind(oContext);
 				}
 			} else {
 				// nothing changed -> nothing to do!
@@ -1103,6 +1115,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				}
 			}
 		}
+	};
+
+	/**
+	 * @description Handling of edit item
+	 * @private
+	 */
+	UploadCollection.prototype._onEditItemOk = function() {
+		if (this._oItemForRename) {
+		// fire event
+			this.fireFileRenamed({
+				// deprecated
+				documentId : this._oItemForRename.getProperty("documentId"),
+				fileName : this._oItemForRename.getProperty("fileName"),
+				// new
+				item : this._oItemForRename
+			});
+		}
+		delete this._oItemForRename;
 	};
 
 	/**
@@ -1272,7 +1302,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._onFileAllowed = function(oEvent) {
 		// TODO not implemented
 	};
-
 
 	/**
 	 * @description Handling of the Event fileRenamed of the fileUploader
