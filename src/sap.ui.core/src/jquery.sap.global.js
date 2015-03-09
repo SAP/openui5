@@ -272,6 +272,7 @@
 	// simply load our script resources from another domain when using the CDN
 	// variant of SAPUI5. The following fix is also recommended by jQuery:
 	if (!!sap.ui.Device.browser.internet_explorer) {
+		jQuery.support = jQuery.support || {};
 		jQuery.support.cors = true;
 	}
 
@@ -3161,7 +3162,7 @@
 		jQuery.support = {};
 	}
 
-	jQuery.extend(jQuery.support, {touch: "ontouchend" in document}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
+	jQuery.extend(jQuery.support, {touch: sap.ui.Device.support.touch}); // this is also defined by jquery-mobile-custom.js, but this information is needed earlier
 
 	var aPrefixes = ["Webkit", "ms", "Moz"];
 	var oStyle = document.documentElement.style;
