@@ -37,19 +37,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 */
 	ODataContextBinding.prototype.initialize = function() {
 		var that = this,
-		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-		oData = this.oModel._getObject(this.sPath, this.oContext),
-		bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			oData = this.oModel._getObject(this.sPath, this.oContext),
+			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
 
 		// don't fire any requests if metadata is not loaded yet.
 		if (this.oModel.oMetadata.isLoaded()) {
-			if (bReloadNeeded) {
+			if (sResolvedPath && bReloadNeeded) {
 				this.fireDataRequested();
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				that.oElementContext = oContext;
 				that._fireChange();
-				if (bReloadNeeded) {
+				if (sResolvedPath && bReloadNeeded) {
 					that.fireDataReceived();
 				}
 			}, bReloadNeeded);
@@ -65,7 +65,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @private
 	 */
 	ODataContextBinding.prototype.refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, sKey, oStoredEntry, bChangeDetected = false;
+		var that = this, sKey, oStoredEntry, bChangeDetected = false,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
@@ -81,7 +82,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		}
 		if (bForceUpdate || bChangeDetected) {
 			//recreate Context: force update
-			this.fireDataRequested();
+			if (sResolvedPath) {
+				this.fireDataRequested();
+			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
 					if (bForceUpdate) {
@@ -91,7 +94,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 					that.oElementContext = oContext;
 					that._fireChange();
 				}
-				that.fireDataReceived();
+				if (sResolvedPath) {
+					that.fireDataReceived();
+				}
 			}, true);
 		}
 	};
@@ -104,9 +109,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 */
 	ODataContextBinding.prototype.setContext = function(oContext) {
 		var that = this,
-		sResolvedPath,
-		oData,
-		bReloadNeeded;
+			sResolvedPath,
+			oData,
+			bReloadNeeded;
 
 		if (this.oContext !== oContext && this.isRelative()) {
 			this.oContext = oContext;
@@ -114,13 +119,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			oData = this.oModel._getObject(this.sPath, this.oContext);
 			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
 
-			if (bReloadNeeded) {
+			if (sResolvedPath && bReloadNeeded) {
 				this.fireDataRequested();
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 				that.oElementContext = oContext;
 				that._fireChange();
-				if (bReloadNeeded) {
+				if (sResolvedPath && bReloadNeeded) {
 					that.fireDataReceived();
 				}
 			}, bReloadNeeded);
