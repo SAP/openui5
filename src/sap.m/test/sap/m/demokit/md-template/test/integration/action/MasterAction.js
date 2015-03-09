@@ -40,7 +40,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 					oButton.$().trigger("tap");
 				},
 				errorMessage : "Did not find the 'filter' button."
-			})
+			});
 		},
 		
 		iSelectListItemInViewSettingsDialog : function (sListItemTitle) {
@@ -53,7 +53,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 					aListItems[0].$().trigger("tap");
 				},
 				errorMessage : "Did not find list item with title " + sListItemTitle + " in View Settings Dialog."
-			})
+			});
 		},
 		
 		iPressOKInViewSelectionDialog : function () {
@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 					aButtons[0].$().trigger("tap");
 				},
 				errorMessage : "Did not find the ViewSettingDialog's 'OK' button."
-			})
+			});
 		},
 		
 		iPressResetInViewSelectionDialog : function () {
@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 					aButtons[0].$().trigger("tap");
 				},
 				errorMessage : "Did not find the ViewSettingDialog's 'Reset' button."
-			})
+			});
 		},
 		
 		iPressItemInSelectInFooter : function (sSelect, sItem) {
@@ -95,10 +95,10 @@ sap.ui.define(['sap/ui/test/Opa5'],
 							oElem.$().trigger("tap");
 						},
 						errorMessage : "Did not find the " + sItem + " element in select"
-					})
+					});
 				},
 				errorMessage : "Did not find the " + sSelect + " select"
-			})
+			});
 		},
 		
 		iPressAnObjectListItem : function (sObjectTitle) {
@@ -119,7 +119,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				success : function (oList) {
 					oObjectListItem.$().trigger("tap");
 				},
-				errorMessage : "List '" + sListId + "' in view '" + sViewName + "' does not contain an ObjectListItem with title '" + sObjectTitle + "'"
+				errorMessage : "List 'list' in view 'Master' does not contain an ObjectListItem with title '" + sObjectTitle + "'"
 			});
 		},
 		
@@ -128,7 +128,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				id : 'searchField',
 				viewName : 'Master',
 				success : function (oSearchField) {
-					if( oSearchParams.sSearchValue != null ) {
+					if ( oSearchParams.sSearchValue != null ) {
 						oSearchField.setValue(oSearchParams.sSearchValue);
 					}
 					
