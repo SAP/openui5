@@ -108,11 +108,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			parameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "parameter"}
 		},
-		events : {
 
+		events : {
 			/**
 			 * The event is triggered when files are selected. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
-			 * Limitation: Parameters and headerParameters are not supported by Internet Explorer 9.
+			 * Limitation: parameters and headerParameters are not supported by Internet Explorer 9.
 			 */
 			change : {
 				parameters : {
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				parameters : {
 					/**
 					 * An unique Id of the attached document.
-					 * This parameter is deprecated since version 1.28.0, use parameter item instead. 
+					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
 					documentId : {type : "string"},
@@ -201,16 +201,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			fileSizeExceed : {
 				parameters : {
-
 					/**
 					 * An unique Id of the attached document.
+					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
 					documentId : {type : "string"},
-
 					/**
 					 * The size in MB of a file to be uploaded.
+					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
-					fileSize : {type : "string"}
+					fileSize : {type : "string"},
+					/**
+					* A FileList of individually selected files from the underlying system.
+					* Limitation: Internet Explorer 9 supports only single file with property file.name.
+					* Since version 1.28.0.
+					*/
+					files : {type : "object[]"}
 				}
 			},
 
@@ -219,22 +227,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			typeMissmatch : {
 				parameters : {
-
 					/**
 					* An unique Id of the attached document.
-					* This parameter is deprecated, use parameter files instead.
+					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
 					documentId : {type : "string"},
 					/**
 					* File type.
-					* This parameter is deprecated, use parameter files instead.
+					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
 					fileType : {type : "string"},
 					/**
 					* MIME type.
-					*This parameter is deprecated, use parameter files instead.
+					*This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0.  Use parameter files instead.
 					*/
 					mimeType : {type : "string"},
@@ -252,17 +259,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			uploadComplete : {
 				parameters : {
-
 					/**
 					 * Ready state XHR.
 					 */
 					readyStateXHR : {type : "string"},
-
 					/**
 					 * Response.
 					 */
 					response : {type : "string"},
-
 					/**
 					 * Status.
 					 */
@@ -917,6 +921,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 	};
 
+	/**
+	 * @description Handling of the termination of an uploading file
+	 * @param {sap.m.MessageBox.Action} oAction
+	 * @private
+	 */
 	UploadCollection.prototype._onCloseMessageBoxDeleteItem = function (oAction) {
 		if (oAction === sap.m.MessageBox.Action.OK) {
 			// fire event
@@ -1108,6 +1117,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 	};
 
+	/**
+	 * @description Handling of edit item
+	 * @private
+	 */
 	UploadCollection.prototype._onEditItemOk = function () {
 		if (this._oItemForRename) {
 			// fire event
