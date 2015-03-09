@@ -34,7 +34,7 @@ sap.ui.define([
 					routerClass : "sap.m.routing.Router",
 					viewType : "XML",
 					viewPath : "sap.ui.demo.worklist.view",
-					controlId: "idAppControl",
+					controlId: "app",
 					controlAggregation: "pages",
 					bypassed: {
 						target: "notFound"
@@ -55,19 +55,23 @@ sap.ui.define([
 				targets: {
 					worklist : {
 						viewName: "Worklist",
+						viewId: "worklist",
 						viewLevel: 1
 					},
 					object : {
 						viewName: "Object",
+						viewId: "object",
 						viewLevel: 2
 					},
 					// not found targets
 					objectNotFound : {
 						viewName: "ObjectNotFound",
+						viewId: "objectNotFound",
 						viewLevel: 2
 					},
 					notFound : {
 						viewName: "NotFound",
+						viewId: "notFound",
 						viewLevel: 2
 					}
 				}

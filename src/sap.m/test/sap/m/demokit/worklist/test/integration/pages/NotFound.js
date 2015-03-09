@@ -13,7 +13,7 @@ sap.ui.require([
 
 					iShouldSeeObjectNotFound : function () {
 						return this.waitFor({
-							id : "objectNotFoundPage",
+							id : "page",
 							viewName : "ObjectNotFound",
 							success: function (oPage) {
 								strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("objectTitle"), "the object text is shown as title");
@@ -25,7 +25,7 @@ sap.ui.require([
 
 					iShouldSeeResourceNotFound : function () {
 						return this.waitFor({
-							id : "notFoundPage",
+							id : "page",
 							viewName : "NotFound",
 							success: function (oPage) {
 								strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("notFoundTitle"), "the not found title is shown as title");

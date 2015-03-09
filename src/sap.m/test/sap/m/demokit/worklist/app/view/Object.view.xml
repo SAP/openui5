@@ -3,12 +3,13 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
-		id="objectPage"
+		id="page"
 		navButtonPress="onNavBack"
 		showNavButton="true"
 		title="{i18n>objectTitle}">
 		<content>
 			<ObjectHeader
+				id="objectHeader"
 				title="{Name}"
 				number="{UnitNumber}"
 				numberUnit="{UnitOfMeasure}">

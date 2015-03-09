@@ -23,11 +23,11 @@
 				growingScrollToLoad="true"
 				updateFinished="onUpdateFinished">
 				<columns>
-					<Column>
-						<Text text="{i18n>TableNameColumnTitle}"/>
+					<Column id="nameColumn">
+						<Text text="{i18n>TableNameColumnTitle}" id="nameColumnTitle"/>
 					</Column>
-					<Column>
-						<Text text="{i18n>TableUnitNumberColumnTitle}"/>
+					<Column id="unitNumberColumn">
+						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
 					</Column>
 				</columns>
 				<items>
@@ -49,7 +49,7 @@
 			</Table>
 		</content>
 		<footer>
-			<Toolbar>
+			<Toolbar id="footerToolbar">
 			</Toolbar>
 		</footer>
 	</Page>
