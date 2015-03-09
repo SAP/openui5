@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [mSettings] initial settings for the new control
 	 * 
-	 * @class The FilterPanel Control can be used to...
+	 * @class The P13nFilterPanel control is used to define filter-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
 	 * 

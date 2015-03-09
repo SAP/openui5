@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 	 * @param {object}
 	 *          [mSettings] initial settings for the new control
 	 * 
-	 * @class tbd (should enable panels of personalization to have a constistent view of the 'columns' of the table)
+	 * @class Base type for <code>items</code> aggregation in P13nPanel control.
 	 * @extends sap.ui.core.Item
 	 * @version ${version}
 	 * 
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 				},
 
 				/**
-				 * tbd
+				 * Defines visibility of column
 				 * @since 1.26.0
 				 */
 				visible : {
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 				},
 				
 				/**
-				 * tbd
+				 * Defines column width
 				 * @since 1.26.0
 				 */
 				width : {
