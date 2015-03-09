@@ -750,6 +750,13 @@ if (typeof window.sap.ui !== "object") {
 	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
 	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
 
+	// FIXME: PhantomJS doesn't support touch events but exposes itself as touch
+	//        enabled browser. Therfore we manually override that in jQuery.support!
+	//        This has been tested with PhantomJS 1.9.7 and 2.0.0!
+	if (device.browser.phantomJS) {
+		device.support.touch = false;
+	}
+
 	device.support.pointer = !!window.PointerEvent;
 
 	device.support.matchmedia = !!window.matchMedia;

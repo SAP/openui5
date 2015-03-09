@@ -788,6 +788,11 @@ jQuery.mobile.orientationChangeEnabled = true;
 		var support = {
 			touch: "ontouchend" in document
 		};
+		// SAP MODIFICATION
+		// => if the device API is loaded we override the touch detection
+		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support) {
+			support.touch = sap.ui.Device.support.touch
+		}
 
 		$.mobile.support = $.mobile.support || {};
 		$.extend( $.support, support );
