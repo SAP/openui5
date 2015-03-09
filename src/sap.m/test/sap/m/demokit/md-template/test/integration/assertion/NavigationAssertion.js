@@ -3,17 +3,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.assertion.NavigationAssertion", {
-		iShouldSeeTheBusyIndicator: function () {
-			return this.waitFor({
-				id : "idAppControl",
-				viewName : "App",
-				success : function (oRootView) {
-					// we set the view busy, so we need to query the parent of the app
-					ok(oRootView.getParent().getBusy(), "The app is busy");
-				},
-				errorMessage : "The app is not busy."
-			});
-		},
 
 		iShouldSeeTheObjectList : function () {
 			return this.waitFor({
