@@ -66,7 +66,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		// Assertions
 		Then.theMasterListShouldBeSortedAscendingOnName();
 
-	})
+	});
 	
 	opaTest("MasterList Filtering on UnitNumber less than 100", function(Given, When, Then) {
 		
