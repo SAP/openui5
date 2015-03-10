@@ -49,32 +49,6 @@ sap.ui.define([
 				defaultBindingMode: sap.ui.model.BindingMode.TwoWay
 			});
 
-			/**
-			 * Sets the value state of the control if possible.
-			 * @param {sap.ui.core.ValueState} sState state for the InputBase control
-			 * @param {sap.ui.base.Event} oEvent the event to get the control
-			 */
-			function setState(sState, oEvent) {
-				var oControl = oEvent.getSource(),
-					oException;
-
-				if (oControl && oControl.setValueState) {
-					oControl.setValueState(sState);
-					oException = oEvent.getParameter("exception");
-					if (oException) {
-						oControl.setValueStateText(oException.name + ": " + oException.message);
-					}
-				}
-			}
-
-			/**
-			 * Sets the value state of the control to error if possible.
-			 * @param {sap.ui.base.Event} oEvent the event to get the control
-			 */
-			function setErrorState(oEvent) {
-				setState(sap.ui.core.ValueState.Error, oEvent);
-			}
-
 			oModel.getMetaModel().loaded().then(function () {
 				var oMetaModel = oModel.getMetaModel(),
 					oView = sap.ui.view({
@@ -94,12 +68,6 @@ sap.ui.define([
 						viewName: "sap.ui.core.sample.ViewTemplate.types.Types"
 					});
 
-				oView.attachFormatError(setErrorState);
-				oView.attachParseError(setErrorState);
-				oView.attachValidationError(setErrorState);
-				oView.attachValidationSuccess(function (oEvent) {
-					setState(sap.ui.core.ValueState.Success, oEvent);
-				});
 				oView.setLayoutData(new FlexItemData({growFactor: 1.0}));
 				oLayout.addItem(oView);
 			}, function (oError) {

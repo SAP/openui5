@@ -9,8 +9,8 @@
 	width="100%">
 	<VBox binding="{/EdmTypesCollection(ID='1')}" width="100%">
 		<HBox>
-			<Button text="Save" press="onSave" visible="{ui>/realOData}"/>
-			<Button text="Reset" press="onReset" visible="{ui>/realOData}" />
+			<Button id="onSaveID" text="Save" press="onSave" visible="{ui>/realOData}"/>
+			<Button id="onResetID" text="Reset" press="onReset" visible="{ui>/realOData}" />
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 		</HBox>
 		<VBox visible="{ui>/codeVisible}">

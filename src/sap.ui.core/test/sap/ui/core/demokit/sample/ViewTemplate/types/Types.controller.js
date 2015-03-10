@@ -9,10 +9,22 @@ sap.ui.define([
 		'sap/m/MessageToast',
 		'jquery.sap.encoder',
 		'jquery.sap.xml'
-	], function(jQuery, Controller, MessageBox, MessageToast/*, jQuerySapEncoder, jQuerySapXML*/) {
+	], function(jQuery, Controller, MessageBox, MessageToast) {
 	"use strict";
-
 	var TypesController = Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
+		onInit: function () {
+
+			this.messagePopover = new sap.m.MessagePopover({
+				items: {
+					path:"message>/",
+					template: new sap.m.MessagePopoverItem({description: "{message>description}",
+						type: "{message>type}", title:"{message>message}"})
+				}
+			});
+			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
+				"message");
+		},
+
 		onReset: function () {
 			var that = this,
 				aObjects = this.getView().findAggregatedObjects(true),
@@ -30,7 +42,7 @@ sap.ui.define([
 					MessageToast.show("Data successfully reset");
 				},
 				error: function (oError) {
-					that.showError("Error resetting EDM types");
+					that.messagePopover.openBy(that.getView().byId("onResetID"));
 				}
 			});
 		},
@@ -41,7 +53,7 @@ sap.ui.define([
 				if (oEvent.getParameter("success")) {
 					MessageToast.show("Data successfully saved");
 				} else {
-					that.showError("Error saving EDM types");
+					that.messagePopover.openBy(that.getView().byId("onSaveID"));
 				}
 			});
 			this.getView().getModel().submitChanges();
@@ -61,30 +73,8 @@ sap.ui.define([
 				oView.getModel("ui").setProperty("/code",
 					"<pre><code>" + jQuery.sap.encodeHTML(sSource) + "</code></pre>");
 			}
-		},
-
-		showError: function(sTitle) {
-			var oMessageManager = sap.ui.getCore().getMessageManager(),
-				aData = oMessageManager.getMessageModel().getData() ?
-					oMessageManager.getMessageModel().getData() : [],
-				aMessages = [],
-				sMessage;
-
-			aData.forEach( function (oData) {
-				aMessages.push({type: oData.type,
-					description: oData.description,
-					message: oData.message,
-					code: oData.code
-				});
-			});
-			sMessage = JSON.stringify(aMessages);
-			jQuery.sap.log.error(sTitle + ": " + sMessage,
-				"sap.ui.core.sample.ViewTemplate.types.Types");
-			MessageBox.show(sMessage, {icon: MessageBox.Icon.ERROR, title: sTitle});
-			oMessageManager.removeAllMessages();
 		}
 	});
 
 	return TypesController;
-
 });
