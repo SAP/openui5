@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-jQuery.sap.declare("samples.components.routing.Component");
+jQuery.sap.declare("samples.components.targets.Component");
 jQuery.sap.require("sap.ui.core.UIComponent");
 jQuery.sap.require("sap.ui.commons.Button");
 jQuery.sap.require("samples.components.routing.RouterExtension");

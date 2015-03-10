@@ -2426,7 +2426,10 @@
 
 				if ( bExport ) {
 					// ensure parent namespace
-					jQuery.sap.getObject(sModuleName, 1);
+					var sPackage = sResourceName.split('/').slice(0,-1).join('.'); 
+					if ( sPackage ) {
+						jQuery.sap.getObject(sPackage, 0);
+					}
 				}
 
 				if ( typeof vFactory === 'function' ) {
