@@ -120,6 +120,13 @@
 		equal(value, "test2", "model value");
 	});
 
+	test("test model setProperty on root", function(){
+		var oModel = new sap.ui.model.json.JSONModel({a:1}),
+			oTest = {b:2};
+		oModel.setProperty("/", oTest);
+		equal(oModel.getData(), oTest, "model data changed");
+	});
+
 	test("test model setProperty with context", function(){
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oModel.setProperty("4/lastName", "Smith", oContext);
