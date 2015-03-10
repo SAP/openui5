@@ -674,7 +674,10 @@
 		var bSameFilenameAllowed = true;
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed);
-		equal(oFileUploader.getSameFilenameAllowed(), false, "FileUploader uses default value sameFilenameAllowed = false.");
+		equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' is correctly true ");
+		bSameFilenameAllowed = false;
+		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed);
+		equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' should stay 'true' ");
 	});
 
 	test("showSeparators", function() {
