@@ -708,43 +708,73 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 */
 	MultiInput.prototype.onkeydown = function(oEvent) {
 		
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+		if (oEvent.ctrlKey || oEvent.metaKey) {
 
-			if (document.activeElement === this._$input[0]) {
-				
-				// if focus is on text
-				if (this._$input.getSelectedText() !== this.getValue()){
+			if (oEvent.which === jQuery.sap.KeyCodes.A) {
+				if (document.activeElement === this._$input[0]) {
 					
-					// if text are not selected, then selected all text
-					this.selectText(0, this.getValue().length);
-				} else if (this._tokenizer){
+					// if focus is on text
+					if (this._$input.getSelectedText() !== this.getValue()){
+						
+						// if text are not selected, then selected all text
+						this.selectText(0, this.getValue().length);
+					} else if (this._tokenizer){
+						
+						// if text are selected, then selected all tokens
+						this._tokenizer.selectAllTokens(true);
+					}
+				} else if (document.activeElement === this._tokenizer.$()[0]) {
 					
-					// if text are selected, then selected all tokens
-					this._tokenizer.selectAllTokens(true);
-				}
-			} else if (document.activeElement === this._tokenizer.$()[0]) {
-				
-				// if the tokens were not selected before select all in tokenizer was called, then let tokenizer select all tokens.
-				if (this._tokenizer._iSelectedToken === this._tokenizer.getTokens().length) {
+					// if the tokens were not selected before select all in tokenizer was called, then let tokenizer select all tokens.
+					if (this._tokenizer._iSelectedToken === this._tokenizer.getTokens().length) {
 
-					// if tokens are all selected, then select all tokens
-					this.selectText(0, this.getValue().length);
+						// if tokens are all selected, then select all tokens
+						this.selectText(0, this.getValue().length);
+					}
 				}
+				 
+				oEvent.preventDefault();
 			}
-			 
-			oEvent.preventDefault();
-			}
-			
-
-			
 		
+		}
+		
+	};
+	
+	/**
+	 * Handle the paste event
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occurring event
+	 * @private
+	 */
+	MultiInput.prototype.onpaste = function (oEvent) {
+		var sOriginalText;
+		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+		if (window.clipboardData) {
+			//IE
+			sOriginalText = window.clipboardData.getData("Text");
+		} else {
+			// Chrome, Firefox, Safari
+			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
+		}
+
+		var aSeparatedText = this._tokenizer._parseString(sOriginalText);
+		setTimeout(function() {
+			if (aSeparatedText) {
+				var i = 0;
+				for ( i = 0; i < aSeparatedText.length; i++) {
+					this.setValue(aSeparatedText[i]);
+					this._validateCurrentText();
+				}
+			}
+		}.bind(this), 0);
 	};
 	
 	/**
 	 * Handle the backspace button, gives backspace to tokenizer if text cursor was on first character
 	 *
 	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 *            oEvent - the occurring event
 	 * @private
 	 */
 	MultiInput.prototype.onsapprevious = function(oEvent) {
