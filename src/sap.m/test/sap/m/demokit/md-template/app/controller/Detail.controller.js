@@ -5,6 +5,10 @@ sap.ui.define([
 
 	return BaseController.extend("sap.ui.demo.mdtemplate.controller.Detail", {
 
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
 		onInit : function () {
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 			this._oLineItemsList = this.byId("lineItemsList");
@@ -13,7 +17,7 @@ sap.ui.define([
 			if (!sap.ui.Device.system.phone) {
 				this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
 			}
-			
+
 			// Update the line item list counter after data is loaded or updated
 			this._oLineItemsList.attachEvent("updateFinished", function (oData) {
 				this._updateListItemCount(oData.getParameter("total"));
@@ -25,13 +29,40 @@ sap.ui.define([
 					this.getView().setBusy(true);
 				}.bind(this)
 			);
-			
+
 			// Control state model
 			this._oControlStateModel = new sap.ui.model.json.JSONModel({
 				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
 			});
 			this.setModel(this._oControlStateModel, 'controlStates');
 		},
+
+		/* =========================================================== */
+		/* event handlers                                              */
+		/* =========================================================== */
+
+		/**
+		 * Triggered when an item of the line item table in the detail view is selected.
+		 * Collects the needed information ProductID and OrderID for navigation.
+		 * Navigation to the corresponding line item is triggered.
+		 *
+		 * @param oEvent listItem selection event
+		 * @function
+		 */
+		onSelect : function (oEvent) {
+			//We need the 'ObjectID' and 'LineItemID' of the
+			//selected LineItem to navigate to the corresponding
+			//line item view. Here's how this information is extracted:
+			var oContext = oEvent.getSource().getBindingContext();
+
+			jQuery.sap.log.debug(oContext.getProperty("LineItemID") + "' was pressed");
+			this.getRouter().navTo("lineItem", {objectId : oContext.getProperty("ObjectID"),
+				lineItemId: oContext.getProperty("LineItemID")});
+		},
+
+		/* =========================================================== */
+		/* begin: internal methods                                     */
+		/* =========================================================== */
 
 		/**
 		 * This function makes sure that the details of the first item in
@@ -108,7 +139,7 @@ sap.ui.define([
 			);
 
 		},
-		
+
 		/**
 		 * Sets the item count on the line item list header
 		 * @param {integer} the total number of items in the list
@@ -116,7 +147,7 @@ sap.ui.define([
 		 */
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
-			// only update the counter if the length is final 
+			// only update the counter if the length is final
 			if (this._oLineItemsList.getBinding('items').isLengthFinal()) {
 				if (iTotalItems) {
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
@@ -126,26 +157,6 @@ sap.ui.define([
 				}
 				this._oControlStateModel.setProperty("/lineItemListTitle", sTitle);
 			}
-		},
-
-
-		/**
-		 * Triggered when an item of the line item table in the detail view is selected.
-		 * Collects the needed information ProductID and OrderID for navigation.
-		 * Navigation to the corresponding line item is triggered.
-		 *
-		 * @param oEvent listItem selection event
-		 * @function
-		 */
-		onSelect : function (oEvent) {
-			//We need the 'ObjectID' and 'LineItemID' of the
-			//selected LineItem to navigate to the corresponding
-			//line item view. Here's how this information is extracted:
-			var oContext = oEvent.getSource().getBindingContext();
-
-			jQuery.sap.log.debug(oContext.getProperty("LineItemID") + "' was pressed");
-			this.getRouter().navTo("lineItem", {objectId : oContext.getProperty("ObjectID"),
-				lineItemId: oContext.getProperty("LineItemID")});
 		}
 	});
 
