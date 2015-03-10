@@ -26,13 +26,14 @@ var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessagePa
 
 	constructor: function(sServiceUrl, oMetadata) {
 		MessageParser.apply(this);
-		this._serviceUrl = sServiceUrl;
+		this._serviceUrl = stripURI(sServiceUrl);
 		this._metadata = oMetadata;
 		this._processor = null;
 		this._headerField = "sap-message"; // Default header field
 		this._lastMessages = [];
 	}
 });
+
 
 ////////////////////////////////////////// Public Methods //////////////////////////////////////////
 
@@ -76,10 +77,10 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 
 	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
 		// Status is 2XX - parse headers
-		this._parseHeader(/* ref: */ aMessages, oResponse);
+		this._parseHeader(/* ref: */ aMessages, oResponse, oRequest);
 	} else if (oResponse.statusCode >= 400 && oResponse.statusCode < 600) {
 		// Status us 4XX or 5XX - parse body
-		this._parseBody(/* ref: */ aMessages, oResponse);
+		this._parseBody(/* ref: */ aMessages, oResponse, oRequest);
 	} else {
 		// Status neither ok nor error - I don't know what to do
 		// TODO: Maybe this is ok and should be silently ignored...?
@@ -125,7 +126,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, oResponse,
 
 	// Add parent EntitySet to accepted targets
 	sTarget = aMessages[0].getTarget();
-	
+
 	if (sTarget) {
 		var mEntitySet = this._metadata._getEntitySetByPath(sTarget);
 		if (mEntitySet) {
@@ -184,10 +185,11 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, oResponse,
  * Creates a sap.ui.core.message.Message from the given JavaScript object
  * 
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
+ * @param {object} oResponse - The response from the back-end
  * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
  * @return {sap.ui.core.message.Message} The message for the given error
  */
-ODataMessageParser.prototype._createMessage = function(oMessageObject, bIsTechnical) {
+ODataMessageParser.prototype._createMessage = function(oMessageObject, oRequest, bIsTechnical) {
 	var sType = oMessageObject["@sap.severity"] 
 		? oMessageObject["@sap.severity"] 
 		: oMessageObject["severity"];
@@ -200,8 +202,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, bIsTechni
 		? oMessageObject["message"]["value"]
 		: oMessageObject["message"];
 
-	var sTarget = oMessageObject.target ? oMessageObject.target : "";
-	sTarget = sTarget.substr(0, 1) === "/" ? sTarget.substr(1) : sTarget; // Remove leading "/"
+	var sTarget = this._createTarget(oMessageObject, oRequest);
 
 	return new Message({
 		type:      sType,
@@ -215,13 +216,55 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, bIsTechni
 
 
 /**
+ * Creates an absolute target URL (relative to the service URL) from the given message-object and
+ * the Response. It uses the service-URL to extract the base URI of the message from the response-
+ * URI and appends the target if the target was not specified as absolute path (with leading "/")
+ * 
+ * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
+ * @param {object} oResponse - The response from the back-end
+ * @return {string} The actual target string
+ * @private
+ */
+ODataMessageParser.prototype._createTarget = function(oMessageObject, oRequest) {
+	var sTarget = "";
+
+	if (oMessageObject.target) {
+		sTarget = oMessageObject.target;
+	} else if (oMessageObject.propertyref) {
+		sTarget = oMessageObject.propertyref;
+	}
+
+	if (sTarget.substr(0, 1) === "/") {
+		// Absolute target path, do not use base URL
+		sTarget =  sTarget.substr(1); // Remove leading "/"
+	} else {
+		var sRequestTarget = stripURI(oRequest.requestUri).substr(this._serviceUrl.length + 1);
+
+		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
+		// a target would start with the specific product (like "(23)"), but the request itself 
+		// would not have the brackets
+		var iSlashPos = sRequestTarget.lastIndexOf("/");
+		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
+		if (sRequestTargetName.indexOf("(") > -1) {
+			// It is an entity
+			sTarget = sRequestTarget + "/" + sTarget;
+		} else {
+			// It's a collection
+			sTarget = sRequestTarget + sTarget;
+		}
+	}
+
+	return sTarget;
+};
+
+/**
  * Parses the header with the set headerField and tries to extract the messages from it.
  * 
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the headers property map will be used
  * 
  */
-ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse) {
+ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, oRequest) {
 	var sField = this.getHeaderField();
 	if (!oResponse.headers || !oResponse.headers[sField]) {
 		// No header set, nothing to process
@@ -234,11 +277,11 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 	try {
 		oServerMessage = JSON.parse(sMessages);
 
-		aMessages.push(this._createMessage(oServerMessage));
+		aMessages.push(this._createMessage(oServerMessage, oRequest));
 
 		if (oServerMessage.details && jQuery.isArray(oServerMessage.details)) {
 			for (var i = 0; i < oServerMessage.details.length; ++i) {
-				aMessages.push(this._createMessage(oServerMessage.details[i]));
+				aMessages.push(this._createMessage(oServerMessage.details[i], oRequest));
 			}
 		}
 
@@ -254,16 +297,16 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
  */
-ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse) {
+ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse, oRequest) {
 	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
 
 	var sContentType = getContentType(oResponse);
 	if (sContentType.indexOf("xml") > -1) {
 		// XML response
-		this._parseBodyXML(/* ref: */ aMessages, oResponse, sContentType);
+		this._parseBodyXML(/* ref: */ aMessages, oResponse, oRequest, sContentType);
 	} else {
 		// JSON response
-		this._parseBodyJSON(/* ref: */ aMessages, oResponse);
+		this._parseBodyJSON(/* ref: */ aMessages, oResponse, oRequest);
 	}
 };
 
@@ -276,7 +319,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  * @param {string} sContentType - The content type of the response (for the XML parser)
  * @return {void}
  */
-ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, sContentType) {
+ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, oRequest, sContentType) {
 	try {
 		var oDomParser = new DOMParser();
 		var oDoc = oDomParser.parseFromString(oResponse.body, sContentType);
@@ -300,12 +343,12 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 			for (var n = 0; n < oNode.childNodes.length; ++n) {
 				var oChildNode = oNode.childNodes[n];
 				var sChildName = oChildNode.nodeName;
-				
+
 				if (sChildName === "errordetails" || sChildName === "details" || sChildName === "innererror") {
 					// Ignore known children that contain other errors
 					continue;
 				}
-				
+
 				if (sChildName === "message" && oChildNode.hasChildNodes() && oChildNode.firstChild.nodeType !== window.Node.TEXT_NODE) {
 					// Special case for v2 error message - the message is in the child node "value"
 					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
@@ -318,7 +361,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 				}
 			}
 
-			aMessages.push(this._createMessage(oError, true));
+			aMessages.push(this._createMessage(oError, oRequest, true));
 		}
 	} catch (ex) {
 		jQuery.sap.log.error("Error message returned by server could not be parsed");
@@ -332,7 +375,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
  * @param {object} oResponse - The response object from which the body property will be used
  * @return {void}
  */
-ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse) {
+ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, oRequest) {
 	try {
 		var oErrorResponse = JSON.parse(oResponse.body);
 
@@ -353,7 +396,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		// Manually set severity in case we get an error response
 		oError["severity"] = sap.ui.core.MessageType.Error;
 
-		aMessages.push(this._createMessage(oError, true));
+		aMessages.push(this._createMessage(oError, oRequest, true));
 
 		// Check if more than one error has been returned from the back-end
 		var aFurtherErrors = null;
@@ -369,7 +412,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		}
 
 		for (var i = 0; i < aFurtherErrors.length; ++i) {
-			aMessages.push(this._createMessage(aFurtherErrors[i], true));
+			aMessages.push(this._createMessage(aFurtherErrors[i], oRequest, true));
 		}
 	} catch (ex) {
 		jQuery.sap.log.error("Error message returned by server could not be parsed");
@@ -418,6 +461,7 @@ ODataMessageParser.prototype._outputMesages = function(aMessages) {
  * 
  * @param {object} oResponse - The response object from which the body property will be used
  * @return {string|false} Either the content-type header content or false if none is found
+ * @private
  */
 function getContentType(oResponse) {
 	if (oResponse && oResponse.headers) {
@@ -430,6 +474,29 @@ function getContentType(oResponse) {
 	return false;
 }
 
+/**
+ * Strips all parameters from a URI
+ * 
+ * @param {string} sURI - The URI to be stripped
+ * @returns {string} The stripped URI
+ * @private
+ */
+function stripURI(sURI) {
+	var iPos = -1;
+	var sStrippedURI = sURI;
+	
+	iPos = sURI.indexOf("?");
+	if (iPos > -1) {
+		sStrippedURI = sStrippedURI.substr(0, iPos);
+	}
+	
+	iPos = sURI.indexOf("#");
+	if (iPos > -1) {
+		sStrippedURI = sStrippedURI.substr(0, iPos);
+	}
+	
+	return sStrippedURI;
+}
 
 var xPath = null;
 function getXPath() {
