@@ -335,33 +335,30 @@
 			oPopup.open();
 		});
 		
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	if (!sap.ui.Device.browser.phantomJS) {
-			// this test captures the event caused by opening the popup in the last test
-			asyncTest("Event: opened event only AFTER opening, part 2", function() {
-				expect(3);
+		// this test captures the event caused by opening the popup in the last test
+		asyncTest("Event: opened event only AFTER opening, part 2", function() {
+			expect(3);
+			setTimeout(function() {
+				equal(lastEvent, "closed", "the last event should be 'closed' because 'opened' must not be raised yet");
 				setTimeout(function() {
-					equal(lastEvent, "closed", "the last event should be 'closed' because 'opened' must not be raised yet");
-					setTimeout(function() {
-							equal(lastEvent, "opened", "'opened' must have been raised last - coming in from the previous test call");
-							start();
-					}, 120);
-			}, 100);
-			});			
-			
-			asyncTest("Event: closed event only AFTER closing", function() { // kept simpler for closing...
-				expect(3); // including the event handler
-				oPopup.close();
-	
-				setTimeout(function() {
-					equal(lastEvent, "opened", "the last event should still be 'opened' because 'closed' must not be raised yet");
-					setTimeout(function() {
-						equal(lastEvent, "closed", "the last event must now be 'closed' because the popup has closed in the meanwhile");
+						equal(lastEvent, "opened", "'opened' must have been raised last - coming in from the previous test call");
 						start();
-					}, 100);
-			}, 50);
-			});
-	}
+				}, 120);
+		}, 100);
+		});			
+		
+		asyncTest("Event: closed event only AFTER closing", function() { // kept simpler for closing...
+			expect(3); // including the event handler
+			oPopup.close();
+
+			setTimeout(function() {
+				equal(lastEvent, "opened", "the last event should still be 'opened' because 'closed' must not be raised yet");
+				setTimeout(function() {
+					equal(lastEvent, "closed", "the last event must now be 'closed' because the popup has closed in the meanwhile");
+					start();
+				}, 100);
+		}, 50);
+		});
 
 		asyncTest("Autoclose popup opened from another autoclose popup", function() {
 			var oPopup1DomRef = jQuery.sap.domById("popup1"),
