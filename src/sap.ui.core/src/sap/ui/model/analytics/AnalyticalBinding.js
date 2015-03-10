@@ -7,8 +7,8 @@
 /*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/Sorter', 'sap/ui/model/FilterOperator', './odata4analytics'],
-	function(jQuery, TreeBinding, ChangeReason, Sorter, FilterOperator, odata4analytics) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/Sorter', 'sap/ui/model/FilterOperator', './odata4analytics', './BatchResponseCollector', './AnalyticalVersionInfo'],
+	function(jQuery, TreeBinding, ChangeReason, Sorter, FilterOperator, odata4analytics, BatchResponseCollector, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**
@@ -55,78 +55,119 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 */
 	var AnalyticalBinding = TreeBinding.extend("sap.ui.model.analytics.AnalyticalBinding", /** @lends sap.ui.model.analytics.AnalyticalBinding.prototype */ {
 
-			constructor : function(oModel, sPath, oContext, aSorter, aFilters, mParameters) {
-				TreeBinding.call(this, oModel, sPath, oContext, aFilters, mParameters);
+		constructor : function(oModel, sPath, oContext, aSorter, aFilters, mParameters) {
+			TreeBinding.call(this, oModel, sPath, oContext, aFilters, mParameters);
 
-				// attribute members for addressing the requested entity set
-				this.sEntitySetName = (mParameters && mParameters.entitySet) ? mParameters.entitySet : undefined;
-				// attribute members for maintaining aggregated OData requests
-				this.bArtificalRootContext = false;
-				this.aApplicationFilter = this._convertDeprecatedFilterObjects(aFilters);
-				this.aControlFilter = undefined;
-				this.aSorter = aSorter ? aSorter : [];
-				this.aMaxAggregationLevel = [];
-				this.aAggregationLevel = [];
-				this.oPendingRequests = {};
-				this.oPendingRequestHandle = [];
-				this.oGroupedRequests = {};
-				this.bUseBatchRequests = (mParameters && mParameters.useBatchRequests === true) ? true : false;
-				this.bProvideTotalSize = (mParameters && mParameters.provideTotalResultSize === false) ? false : true;
-				this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
-				this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
-				this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
+			// attribute members for addressing the requested entity set
+			this.sEntitySetName = (mParameters && mParameters.entitySet) ? mParameters.entitySet : undefined;
+			// attribute members for maintaining aggregated OData requests
+			this.bArtificalRootContext = false;
+			this.aApplicationFilter = this._convertDeprecatedFilterObjects(aFilters);
+			this.aControlFilter = undefined;
+			this.aSorter = aSorter ? aSorter : [];
+			this.aMaxAggregationLevel = [];
+			this.aAggregationLevel = [];
+			this.oPendingRequests = {};
+			this.oPendingRequestHandle = [];
+			this.oGroupedRequests = {};
+			this.bUseBatchRequests = (mParameters && mParameters.useBatchRequests === true) ? true : false;
+			this.bProvideTotalSize = (mParameters && mParameters.provideTotalResultSize === false) ? false : true;
+			this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
+			this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
+			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
 
-				// attribute members for maintaining loaded data; mapping from groupId to related information
-				this.iTotalSize = -1;
-					/* data loaded from OData service */
-				this.mServiceKey = {}; // keys of loaded entities belonging to group with given ID
-				this.mServiceLength = {}; // number of currently loaded entities
-				this.mServiceFinalLength = {}; // true iff all entities of group with given ID have been loaded (keys in mServiceKey)
-					/* consolidated view on loaded data */
-				this.mKeyIndex = {}; // consumer view: group entries are index positions in mServiceKey
-				this.mFinalLength = this.mServiceFinalLength; // true iff all entities of group with given ID have been loaded (keys in mKey)
-				this.mLength = {}; // number of currently loaded entities
-					/* locally created multi-currency entities */
-				this.mMultiUnitKey = {}; // keys of multi-currency entities
-				this.aMultiUnitLoadFactor = {}; // compensate discarded multi-unit entities by a load factor per aggregation level to increase number of loaded entities
-				this.bNeedsUpdate = false;
-				    /* entity keys of loaded group Id's */
-				this.mEntityKey = {};
-				    /* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
+			// attribute members for maintaining loaded data; mapping from groupId to related information
+			this.iTotalSize = -1;
+				/* data loaded from OData service */
+			this.mServiceKey = {}; // keys of loaded entities belonging to group with given ID
+			this.mServiceLength = {}; // number of currently loaded entities
+			this.mServiceFinalLength = {}; // true iff all entities of group with given ID have been loaded (keys in mServiceKey)
+				/* consolidated view on loaded data */
+			this.mKeyIndex = {}; // consumer view: group entries are index positions in mServiceKey
+			this.mFinalLength = this.mServiceFinalLength; // true iff all entities of group with given ID have been loaded (keys in mKey)
+			this.mLength = {}; // number of currently loaded entities
+				/* locally created multi-currency entities */
+			this.mMultiUnitKey = {}; // keys of multi-currency entities
+			this.aMultiUnitLoadFactor = {}; // compensate discarded multi-unit entities by a load factor per aggregation level to increase number of loaded entities
+			this.bNeedsUpdate = false;
+			    /* entity keys of loaded group Id's */
+			this.mEntityKey = {};
+			    /* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
 
-				// attribute members for maintaining structure details requested by the binding consumer
-				this.oAnalyticalQueryResult = this.oModel.getAnalyticalExtensions().findQueryResultByName(this._getEntitySet());
+			// attribute members for maintaining structure details requested by the binding consumer
+			this.oAnalyticalQueryResult = null; //will be initialized via the "initialize" function of the binding
 
-				// Sanity check: If the AnalyticalQueryResult could not be retrieved, the AnalyticalBinding will not work correctly,
-				// and it will sooner or later break when accessing the AnalyticalQueryResult object.
-				if (!this.oAnalyticalQueryResult) {
-					throw ("Error in AnalyticalBinding - The QueryResult '" + this._getEntitySet() + "' could not be retrieved. Please check your service definition.");
-				}
+			this.aAnalyticalInfo = [];
+			this.mAnalyticalInfoByProperty = {};
 
-				this.aAnalyticalInfo = [];
-				this.mAnalyticalInfoByProperty = {};
+			// maintaining request to be bundled in a single $batch request
+			this.aBatchRequestQueue = [];
 
-				// maintaining request to be bundled in a single $batch request
-				this.aBatchRequestQueue = [];
-
-				// considering different count mode settings
-				if (mParameters && mParameters.countMode == sap.ui.model.odata.CountMode.None) {
-					jQuery.sap.log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
-				} else if (mParameters
-						&& (mParameters.countMode == sap.ui.model.odata.CountMode.Request
-							|| mParameters.countMode == sap.ui.model.odata.CountMode.Both)) {
-					jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
-				} else if (this.oModel.sDefaultCountMode == sap.ui.model.odata.CountMode.Request) {
-					jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
-				}
-
-				// initialize complete list of sorted dimension names as basis for later calculations
-				this.aAllDimensionSortedByName = this.oAnalyticalQueryResult.getAllDimensionNames().concat([]).sort();
-
-				this.updateAnalyticalInfo(mParameters == undefined ? [] : mParameters.analyticalInfo);
+			// considering different count mode settings
+			if (mParameters && mParameters.countMode == sap.ui.model.odata.CountMode.None) {
+				jQuery.sap.log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
+			} else if (mParameters
+					&& (mParameters.countMode == sap.ui.model.odata.CountMode.Request
+						|| mParameters.countMode == sap.ui.model.odata.CountMode.Both)) {
+				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
+			} else if (this.oModel.sDefaultCountMode == sap.ui.model.odata.CountMode.Request) {
+				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
 			}
 
-		});
+			// detect ODataModel version
+			this.iModelVersion = AnalyticalVersionInfo.getVersion(this.oModel);
+			if (this.iModelVersion === null) {
+				jQuery.sap.log.error("The AnalyticalBinding does not support Models other than sap.ui.model.odata.ODataModel version 1 or 2.");
+				return;
+			}
+			
+			// list of sorted dimension names as basis for later calculations, initialized via "initialize" function
+			this.aAllDimensionSortedByName = null;
+
+			//Some setup steps have to be deferred, until the metadata was loaded by the model:
+			// - updateAnalyticalInfo, the parameters given in the constructor are kept though
+			// - fetch the oAnalyticalQueryResult
+			this.aInitialAnalyticalInfo = (mParameters == undefined ? [] : mParameters.analyticalInfo);
+
+			//this flag indicates if the analytical binding was initialized via initialize(), called either via bindAggregation or the Model
+			this.bInitial = true;
+			
+		}
+
+	});
+	
+	/**
+	 * Initialize binding. Fires a change if data is already available ($expand) or a refresh.
+	 * If metadata is not yet available, do nothing, method will be called again when
+	 * metadata is loaded.
+	 * 
+	 * The ODataModel will call this on all bindings as soon as the metadata was loaded
+	 * 
+	 * @public
+	 * @name sap.ui.model.analytics.v2.AnalyticalBinding#initialize
+	 * @function
+	 */
+	AnalyticalBinding.prototype.initialize = function() {
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
+			this.bInitial = false;
+			//first fetch the analyticalQueryResult object from the adapted Model (see ODataModelAdapter.js)
+			this.oAnalyticalQueryResult = this.oModel.getAnalyticalExtensions().findQueryResultByName(this._getEntitySet());
+			
+			// Sanity check: If the AnalyticalQueryResult could not be retrieved, the AnalyticalBinding will not work correctly,
+			// and it will sooner or later break when accessing the AnalyticalQueryResult object.
+			if (!this.oAnalyticalQueryResult) {
+				throw ("Error in AnalyticalBinding - The QueryResult '" + this._getEntitySet() + "' could not be retrieved. Please check your service definition.");
+			}
+			
+			//afterwards update the analyticalInfo with the initial parameters given in the constructor
+			this.updateAnalyticalInfo(this.aInitialAnalyticalInfo);
+			//initialize the list of sorted dimension names
+			this.aAllDimensionSortedByName = this.oAnalyticalQueryResult.getAllDimensionNames().concat([]).sort();
+			
+			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+		}
+		return this;
+	};
 
 	/* *******************************
 	 *** API - Public methods
@@ -159,6 +200,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getRootContexts = function(mParameters) {
+	
+		if (this.bInitial) {
+			return [];
+		}
+	
 		var iAutoExpandGroupsToLevel = (mParameters && mParameters.numberOfExpandedLevels ? mParameters.numberOfExpandedLevels + 1 : 1);
 // 		this._trace_enter("API", "getRootContexts", "", mParameters, ["numberOfExpandedLevels", "startIndex","length","threshold"]); // DISABLED FOR PRODUCTION
 		var aRootContext = null;
@@ -242,6 +288,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getNodeContexts = function(oContext, mParameters) {
+	
+		if (this.bInitial) {
+			return [];
+		}
+		
 // 		this._trace_enter("API", "getNodeContexts", "groupId=" + this._getGroupIdFromContext(oContext, mParameters.level), mParameters,["startIndex","length","threshold"]); // DISABLED FOR PRODUCTION
 		var iStartIndex, iLength, iThreshold, iLevel, iNumberOfExpandedLevels;
 		if (typeof mParameters == "object") {
@@ -1803,7 +1854,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	/**
 	 * @private
 	 */
-	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest) {
+	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest, mParameters) {
+		mParameters = mParameters || {};
 
 		try {
 			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
@@ -1844,6 +1896,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			aParam.push("$inlinecount=" + sInlineCount);
 		}
 
+		//encode if necessary
+		if (mParameters.encode === true) {
+			for (var i = 0; i < aParam.length; i++) {
+				aParam[i] = aParam[i].replace(/\ /g, "%20");
+			}
+		}
+		
 		return aParam;
 	};
 
@@ -1860,7 +1919,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		function triggerDataReceived() {
 			that.fireDataReceived();
 		}
+		
+		// Batch Response Handling for ODataModel V2
+		var oResponseCollector = new BatchResponseCollector();
+		//Sucess handler called by the ODataModel for each batch sub-request
+		function fnSingleBatchSucess(oData, oResponse) {
+			oResponseCollector.success(oResponse);
+		}
+		//same as with success
+		function fnSingleBatchError(oData, oResponse) {
+			oResponseCollector.error(oResponse);
+		}
 
+		//create sub-requests for all defined requestDetails
 		for (var i = -1, oRequestDetails; (oRequestDetails = aRequestDetails[++i]) !== undefined;) {
 			var oAnalyticalQueryRequest = oRequestDetails.oAnalyticalQueryRequest, sGroupId = oRequestDetails.sGroupId;
 
@@ -1883,7 +1954,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				continue;
 			}
 			var sPath = oAnalyticalQueryRequest.getURIToQueryResultEntries();
-			if (sPath.indexOf("/") == 0) {
+			
+			//ensure absolute path if no context is set
+			if (!this.oContext && sPath[0] !== "/") {
+				sPath = "/" + sPath;
+			} else if (this.oContext && sPath[0] === "/") {
 				sPath = sPath.substring(1);
 			}
 			if (!this._isRequestPending(oRequestDetails.sRequestId)) {
@@ -1892,26 +1967,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				   Since _processRequestQueue, and hence also _executeBatchRequest are executed asynchronously, this method is the first place
 				   where the set of all operations included in the batch request becomes known and this condition can be checked. */
 				this._registerNewRequest(oRequestDetails.sRequestId);
-				aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
+				
+				if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+					//V1 - use createBatchOperation
+					aBatchQueryRequest.push(this.oModel.createBatchOperation(sPath.replace(/\ /g, "%20"), "GET"));
+				}else if (this.iModelVersion === AnalyticalVersionInfo.V2) {
+					//V2 - use read()
+					var oRequestHandle = this.oModel.read(sPath.replace(/\ /g, "%20"), {
+						success: fnSingleBatchSucess, // relays the success to the BatchResponseCollector
+						error: fnSingleBatchError,
+						context: this.oContext,
+						urlParameters: this._getQueryODataRequestOptions(oAnalyticalQueryRequest, {encode: true})
+					});
+					aBatchQueryRequest.push(oRequestHandle);
+				}
 				aExecutedRequestDetails.push(oRequestDetails);
 			}
 		}
 
-		var iRequestHandleId = this._getIdForNewRequestHandle();
+		//var iRequestHandleId = this._getIdForNewRequestHandle();
 		if (aBatchQueryRequest.length > 0) {
 			jQuery.sap.log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
 
-			this.oModel.addBatchReadOperations(aBatchQueryRequest);
+			var oBatchRequestHandle;
+			var iRequestHandleId = this._getIdForNewRequestHandle();
+			
+			// fire events to indicate sending of a new request
 			this.fireDataRequested();
-			var oRequestHandle = this.oModel.submitBatch(fnSuccess, fnError, true, true);
+			
+			if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+				this.oModel.addBatchReadOperations(aBatchQueryRequest);
+				oBatchRequestHandle = this.oModel.submitBatch(fnSuccess, fnError, true, true);
+				
+				this.oModel.fireRequestSent({url : this.oModel.sServiceUrl + "/$batch", type : "POST", async : true,
+					info: "",
+					infoObject : {}
+				});
+			} else {
+				// fake a uniform request handle, so the original code works with the v2 ODataModel
+				// the v2 model does not return an overall request handle for the batch request
+				oBatchRequestHandle = {
+					abort: function() {
+						//relay the abort call to all sub-requests created by v2.ODataModel.read()
+						for (var iRequestIndex = 0; iRequestIndex < aExecutedRequestDetails.length; iRequestIndex++) {
+							aExecutedRequestDetails[iRequestIndex].abort();
+						}
+					}
+				};
+				// The response collector keeps track of all returned requests and
+				// calls the original success/error handlers after all batch responses have returned
+				oResponseCollector.setup({
+					executedRequests: aExecutedRequestDetails, 
+					binding: this,
+					success: fnSuccess,
+					error: fnError
+				});
+			}
 
-			// fire event to indicate sending of a new request
-			this.oModel.fireRequestSent({url : this.oModel.sServiceUrl	+ "/$batch", type : "POST", async : true,
-				info: "",
-				infoObject : {}
-			});
-
-			this._registerNewRequestHandle(iRequestHandleId, oRequestHandle);
+			this._registerNewRequestHandle(iRequestHandleId, oBatchRequestHandle);
 		}
 
 		function fnSuccess(oData, response) {
@@ -1957,26 +2070,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			// determine the logical success status: true iff all operations succeeded
 			var bOverallSuccess = true;
-			var aBatchErrors = that.oModel._getBatchErrors(oData);
-			if (aBatchErrors.length > 0) {
-				bOverallSuccess = false;
+			var aBatchErrors;
+			
+			// raise event here since there is no separate fnCompleted handler for batch requests
+			that.fireDataReceived();
+			
+			//check for possible V1 errors
+			var oV1Errors = {};
+			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
+				// retrieve the errors from the model and reset the success flag
+				aBatchErrors = that.oModel._getBatchErrors(oData);
+				if (aBatchErrors.length > 0) {
+					bOverallSuccess = false;
+					oV1Errors = that.oModel._handleError(aBatchErrors[0]);
+				}
+				
+				// fire event to indicate completion of request
+				that.oModel.fireRequestCompleted({url : response.requestUri, type : "POST", async : true,
+					info: "",
+					infoObject : {},
+					success: bOverallSuccess,
+					errorobject: bOverallSuccess ? {} : oV1Errors 
+				});
 			}
-
-			// fire event to indicate completion of request
-			that.oModel.fireRequestCompleted({url : response.requestUri, type : "POST", async : true,
-				info: "",
-				infoObject : {},
-				success: bOverallSuccess,
-				errorobject: bOverallSuccess ? {} : that.oModel._handleError(aBatchErrors[0])});
-
 			// notify all bindings of the model that the data has been changed!
 			// e.g. controls in the rows need to be updated as well
 			// fire only the change event is not sufficient for other bindings
 			if (bOverallSuccess) {
 				that.oModel.checkUpdate();
 			}
-
-			that.fireDataReceived(); // raise event here since there is no separate fnCompleted handler for batch requests
 		}
 
 		function fnError (oError) {
@@ -1989,15 +2111,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				// discard responses for outdated analytical infos
 				return;
 			}
-
+			
+			var oV1Error;
+			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
+				oV1Error = that.oModel._handleError(oError);
+			}
+			
 			// fire event to indicate completion of request
 			that.oModel.fireRequestCompleted({url : "", type : "POST", async : true,
 				info: "",
 				infoObject : {},
 				success: false,
-				errorobject: that.oModel._handleError(oError)});
+				errorobject: oV1Error});
 			// fire event to indicate request failure
-			that.oModel.fireRequestFailed(that.oModel._handleError(oError));
+			that.oModel.fireRequestFailed(oV1Error);
 
 			that.fireDataReceived();
 		}
@@ -2059,7 +2186,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		jQuery.sap.log.debug("AnalyticalBinding: executing query request");
 
 		var iRequestHandleId = this._getIdForNewRequestHandle();
-		this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
+		if (this.iModelVersion === AnalyticalVersionInfo.V1) {
+			//trigger data loading, the request handle is registered during the fnHandleUpdate callback, used by the V1 model
+			this.oModel._loadData(sPath, aParam, fnSuccess, fnError, false, fnUpdateHandle, fnCompleted);
+		} else {
+			var oRequestHandle = this.oModel.read(sPath, {
+				success: fnSuccess,
+				error: fnError,
+				context: this.oContext,
+				urlParameters: aParam
+			});
+			//the handle has to be registered here, because the V2 model does not support an fnHandleUpdate callback anymore
+			that._registerNewRequestHandle(iRequestHandleId, oRequestHandle);
+		}
 
 		function fnSuccess(oData) {
 			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
@@ -2087,6 +2226,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					break;
 			}
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
+			
+			// with ODataModel V2, the completed function is not called by the model anymore
+			// the correct moment to clean up is after the success handler
+			// the error handler takes care of this itself
+			if (that.iModelVersion === AnalyticalVersionInfo.V2) {
+				fnCompleted();
+			}
 		}
 
 		function fnCompleted() {
@@ -2100,7 +2246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		function fnError(oData) {
-
+			
 			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
 			that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId);

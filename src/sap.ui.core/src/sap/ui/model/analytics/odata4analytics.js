@@ -7,8 +7,8 @@
 /*eslint-disable camelcase, valid-jsdoc, no-warning-comments */
 
 // Provides API for analytical extensions in OData service metadata
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
+	function(jQuery, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**
@@ -101,8 +101,13 @@ sap.ui.define(['jquery.sap.global'],
 	 *            ReferenceWithWorkaround for locating the OData service.
 	 * @param {object}
 	 * 	          mParameter? Additional parameters for controlling the model construction. Currently supported are:
-	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the
-	 *                 structure of the given service</li>
+	 *            <li> sAnnotationJSONDoc - A JSON document providing extra annotations to the elements of the 
+	 *                 structure of the given service
+	 *            </li>
+	 *            <li> modelVersion - Parameter to define which ODataModel version should be used, in you use 
+	 *                 'odata4analytics.Model.ReferenceByURI': 1 (default), 2
+	 *                 see also: AnalyticalVersionInfo constants
+	 *            </li>
 	 * @constructor
 	 *
 	 * @class Representation of an OData model with analytical annotations defined
@@ -198,7 +203,8 @@ sap.ui.define(['jquery.sap.global'],
 				throw "Deprecated second argument: Adjust your invocation by passing an object with a property sAnnotationJSONDoc as a second argument instead"
 			}
 			this._mParameter = mParameter;
-
+			
+			var that = this;
 			/*
 			 * get access to OData model
 			 */
@@ -217,23 +223,74 @@ sap.ui.define(['jquery.sap.global'],
 				throw "Usage with oModelReference being an instance of Model.ReferenceByURI or Model.ReferenceByModel";
 			}
 
+			//check if a model is given, or we need to create one from the service URI
 			if (oModelReference.oModel) {
 				this._oModel = oModelReference.oModel;
+				// find out which model version we are running
+				this._iVersion = AnalyticalVersionInfo.getVersion(this._oModel);
+				checkForMetadata();
 			} else {
-				this._oModel = new sap.ui.model.odata.ODataModel(oModelReference.sServiceURI);
+				// Check if the user wants a V2 model
+				if (mParameter && mParameter.modelVersion === AnalyticalVersionInfo.V2) {
+					this._oModel = new sap.ui.model.odata.v2.ODataModel(oModelReference.sServiceURI);
+					this._iVersion = AnalyticalVersionInfo.V2;
+					checkForMetadata();
+				} else {
+					//default is V1 Model
+					this._oModel = new sap.ui.model.odata.ODataModel(oModelReference.sServiceURI);
+					this._iVersion = AnalyticalVersionInfo.V1;
+					checkForMetadata();
+				}
 			}
 
 			if (this._oModel.getServiceMetadata().dataServices == undefined) {
 				throw "Model could not be loaded";
 			}
-
-			/*
-			 * add extra annotations if provided
+	
+			/**
+			 * Check if the metadata is already available, if not defere the interpretation of the Metadata
 			 */
-			if (mParameter && mParameter.sAnnotationJSONDoc) {
-				this.mergeV2Annotations(mParameter.sAnnotationJSONDoc);
+			function checkForMetadata() {
+				// V2 supports asynchronous loading of metadata
+				// we have to register for the MetadataLoaded Event in case, the data is not loaded already
+				if (!that._oModel.getServiceMetadata()) {
+					that._oModel.attachMetadataLoaded(processMetadata);
+				} else {
+					// metadata already loaded
+					processMetadata();
+				}
 			}
 
+			/**
+			 * Kickstart the interpretation of the metadata,
+			 * either called directly if metadata is available, or deferred and then
+			 * executed via callback by the model during the metadata loaded event.
+			 */
+			function processMetadata () {
+				//only interprete the metadata if the analytics model was not initialised yet
+				if (that.bIsInitialized) {
+					return;
+				}
+				
+				//mark analytics model as initialized
+				that.bIsInitialized = true;
+				
+				/*
+				 * add extra annotations if provided
+				 */
+				if (mParameter && mParameter.sAnnotationJSONDoc) {
+					that.mergeV2Annotations(mParameter.sAnnotationJSONDoc);
+				}
+				
+				that._interpreteMetadata(that._oModel.getServiceMetadata().dataServices);
+			}
+
+		},
+		
+		/**
+		 * @private
+		 */
+		_interpreteMetadata: function (oMetadata) {
 			/*
 			 * parse OData model for analytic queries
 			 */
