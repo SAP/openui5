@@ -36,7 +36,7 @@
 						},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
-				noDataText="{i18n>masterListNoDataText}"
+				noDataText="{controlStates>/masterListNoDataText}"
 				enableBusyIndicator="false"
 				mode="{
 					path: 'device>/isPhone',
