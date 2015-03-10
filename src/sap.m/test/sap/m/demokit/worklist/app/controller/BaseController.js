@@ -26,7 +26,7 @@ sap.ui.define([
 		/**
 		 * Convenience method for getting the view model by name.
 		 * @public
-		 * @param {string} sName the model name
+		 * @param {string} [sName] the model name
 		 * @returns {sap.ui.model.Model} the model instance
 		 */
 		getModel : function (sName) {

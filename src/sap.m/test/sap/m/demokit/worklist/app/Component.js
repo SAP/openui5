@@ -3,9 +3,8 @@ sap.ui.define([
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/worklist/model/Device",
 		"sap/ui/demo/worklist/model/AppModel",
-		"sap/ui/demo/worklist/controller/BusyHandler",
 		"sap/ui/demo/worklist/model/formatter"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel, BusyHandler) {
+	], function (UIComponent, ResourceModel, DeviceModel, AppModel) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
@@ -95,12 +94,6 @@ sap.ui.define([
 				bundleName : mConfig.messageBundle
 			}), "i18n");
 
-			// set the app data model
-			this.setModel(new AppModel(mConfig.serviceUrl));
-			this._createMetadataPromise(this.getModel());
-
-			// initialize the busy handler with the component
-			this._oBusyHandler = new BusyHandler(this);
 
 			// set the device model
 			this.setModel(new DeviceModel(), "device");
@@ -110,29 +103,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * The component is destroyed by UI5 automatically.
-		 * In this function the BusyHandler and the Component are destroyed.
-		 * @public
-		 * @override
-		 */
-		destroy : function () {
-			this._oBusyHandler.destroy();
-
-			// call the base component's destroy function
-			UIComponent.prototype.destroy.apply(this, arguments);
-		},
-
-		/**
 		 * In this function, the rootView is initialized and stored.
 		 * @public
 		 * @override
 		 * @returns {sap.ui.mvc.View} the root view of the component
 		 */
 		createContent : function() {
-			// call the base component's createContent function
-			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
+			// set the app data model since the app controller needs it, we create this model very early
+			var oAppModel = new AppModel(this.getMetadata().getConfig().serviceUrl);
+			this.setModel(oAppModel);
+			this._createMetadataPromise(oAppModel);
 
-			return this._oRootView;
+			// call the base component's createContent function
+			return UIComponent.prototype.createContent.apply(this, arguments);
 		},
 
 		/**
@@ -142,12 +125,8 @@ sap.ui.define([
 		 */
 		_createMetadataPromise : function(oModel) {
 			this.oWhenMetadataIsLoaded = new Promise(function (fnResolve, fnReject) {
-				oModel.attachEventOnce("metadataLoaded", function() {
-					fnResolve();
-				});
-				oModel.attachEventOnce("metadataFailed", function() {
-					fnReject();
-				});
+				oModel.attachEventOnce("metadataLoaded", fnResolve);
+				oModel.attachEventOnce("metadataFailed", fnReject);
 			});
 		}
 
