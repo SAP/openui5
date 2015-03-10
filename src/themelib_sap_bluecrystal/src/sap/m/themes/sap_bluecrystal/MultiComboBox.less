@@ -85,8 +85,31 @@
 	height: 1.625rem;
 }
 
+/* Keep placeholder invisible, when at least one token is chosen */
+
+/* Webkit */
+.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-webkit-input-placeholder {
+	color: transparent;
+}
+
+/* Firefox 19+ */
+.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-moz-placeholder {
+	color: transparent;
+}
+
+/* IE */
+.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner:-ms-input-placeholder {
+	color: transparent;
+}
+
+/* Keep placeholder invisible, when at least one token is chosen. IE solution */
+.sapMMultiComboBoxHasToken > .sapMInputBasePlaceholder {
+	color: transparent;
+	max-width: 0;
+}
+
 // If a non-native placeholder is used, make sure that it is in front of children elements.
-.sapMMultiComboBox  > .sapMInputBasePlaceholder {
+.sapMMultiComboBox > .sapMInputBasePlaceholder {
 	z-index: 1;
 }
 
