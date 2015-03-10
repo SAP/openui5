@@ -2608,7 +2608,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				var aMessages = oEvent.getParameter("messages");
 		
 				if (sMessageSource == "control") {
-					that._aMessages = that._aMessages ? that._aMessages.concat(aMessages) : aMessages;
+					that._aMessages = aMessages;
 				}
 				//merge object/model messages
 				if (that._aMessages && that._aMessages.length > 0) {
