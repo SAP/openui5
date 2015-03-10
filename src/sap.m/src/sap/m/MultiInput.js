@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			}
 			
 			//dialog opens
-			if (that._bUseDialog && that._tokenizerInPopup.getParent() instanceof sap.m.Dialog) {
+			if (that._bUseDialog && that._tokenizerInPopup && that._tokenizerInPopup.getParent() instanceof sap.m.Dialog) {
 				//clone newly added token to tokenizerinpopup to display in popup
 				var iNewLength = that._tokenizer.getTokens().length;
 				if ( iOldLength < iNewLength ) {
