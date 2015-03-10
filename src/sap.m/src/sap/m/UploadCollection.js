@@ -45,10 +45,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			maximumFilenameLength : {type : "int", group : "Data", defaultValue : null},
 
 			/**
-			 * Specifies a file size limit in bytes that prevents the upload if at least one file exceeds the limit.
+			 * Specifies a file size limit in megabytes that prevents the upload if at least one file exceeds the limit.
 			 * This property is not supported by Internet Explorer 8 and 9.
 			 */
-			maximumFileSize : {type : "int", group : "Data", defaultValue : null},
+			maximumFileSize : {type : "float", group : "Data", defaultValue : null},
 
 			/**
 			 * Defines the allowed MIME types of files to be uploaded.
