@@ -322,7 +322,8 @@
 		// system under test
 		var sInitValue = "Test";
 		var oTA = new sap.m.TextArea({
-			value : sInitValue
+			value : sInitValue,
+			valueLiveUpdate : true
 		});
 
 		// arrange
@@ -342,6 +343,45 @@
 		strictEqual(fnLiveChangeSpy.args[0][0].value, sInitValue, "Event is fired with correct parameter value");
 		strictEqual(fnLiveChangeSpy.args[0][0].newValue, sInitValue, "Event is fired with correct compatible parameter");
 		strictEqual(oTA.getValue(), sInitValue, "Value is reverted to initial");
+		
+		// cleanup
+		oTA.destroy();
+	});
+	
+	test("valueLiveUpdate", function() {
+
+		var oModel = new sap.ui.model.json.JSONModel({value : ""});
+		var oTA = new sap.m.TextArea({
+			value : "{/value}",
+		});
+		
+		// arrange
+		oTA.setModel(oModel);
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var fnChangeSpy = this.spy(oTA, "fireChange");
+		
+		oTA.focus();
+		oTA.updateDomValue("a");
+		sap.ui.test.qunit.triggerEvent("input", oTA.getFocusDomRef());
+		equals(oModel.getProperty("/value"), "" , "no model value update");
+		equals(oTA.getValue(), "a", "getter still returns the current dom value");
+
+		oTA.getFocusDomRef().blur();
+		equals(oModel.getProperty("/value"), "a", "model value is updated on blur");
+		equals(oTA.getValue(), "a", "getter returns the current dom value");
+		equals(fnChangeSpy.callCount, 1 , "change event is fired on blur");
+
+		oTA.setValueLiveUpdate(true);
+		fnChangeSpy.reset();
+		
+		oTA.focus();
+		oTA.updateDomValue("b");
+		sap.ui.test.qunit.triggerEvent("input", oTA.getFocusDomRef());
+		
+		equals(oModel.getProperty("/value"), "b", "model value is updated with LiveUpdate");
+		equals(oTA.getValue(), "b", "getter returns the current dom value");
+		equals(fnChangeSpy.callCount, 0, "no change event is fired");
 		
 		// cleanup
 		oTA.destroy();
