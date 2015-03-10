@@ -295,10 +295,6 @@
 					equal(oEvent.getParameter("files")[0]["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0]['mimeType']");
 					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file provided in typeMissmatch event by oEvent.getParameter('files')[0].");
 				},
-				uploadComplete : function(oEvent) {
-					ok(true, "Event uploadComplete fired");
-					equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event ");
-				},
 				uploadTerminated : function(oEvent) {
 					ok(true, "Event uploadTerminated fired");
 				}
@@ -375,13 +371,36 @@
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	});
 
-	test("Event complete", function() {
-		var sFileName = "file1";
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(2); // verifies the event handler was executed
-		oFileUploader.fireUploadComplete({
-			fileName : sFileName
-		});
+	test("uploadComplete", function() {
+		var oFileUploaderEventMock = {
+			fileName : "file1",
+			reponse : { "propertyOne" : "ValueOne" },
+			readyStateXHR : 4,
+			status : 200,
+			responseRaw : '{ "propertyOne" : "ValueOne" }',
+			headers : {
+				"headerOne" : "headerValueOne",
+				"headerTwo" : "headerValueTwo",
+			},
+			requestHeaders : {
+				"headerOne" : "headerValueOne",
+				"headerTwo" : "headerValueTwo",
+			} 
+		};
+		function uploadComplete(oEvent) {
+			// Deprecated
+			equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event");
+			equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "correct reponse in complete event");
+			equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "correct readyStateXHR in complete event");
+			equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "correct status in complete event");
+			// check for properly provided parameters
+			equal(oEvent.getParameter("files")[0].fileName, "file1", "correct file1 name in complete event");
+			equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "correct response in complete event");
+			equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "correct raw response in complete event");
+			equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "correct headers in complete event");
+		}
+		this.oUploadCollection.attachUploadComplete(uploadComplete);
+		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	test("Event terminate", function() {

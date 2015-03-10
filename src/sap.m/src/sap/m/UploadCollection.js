@@ -45,10 +45,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			maximumFilenameLength : {type : "int", group : "Data", defaultValue : null},
 
 			/**
-			 * Specifies a file size limit in megabytes that prevents the upload if at least one file exceeds the limit.
+			 * Specifies a file size limit in bytes that prevents the upload if at least one file exceeds the limit.
 			 * This property is not supported by Internet Explorer 8 and 9.
 			 */
-			maximumFileSize : {type : "float", group : "Data", defaultValue : null},
+			maximumFileSize : {type : "int", group : "Data", defaultValue : null},
 
 			/**
 			 * Defines the allowed MIME types of files to be uploaded.
@@ -260,17 +260,32 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			uploadComplete : {
 				parameters : {
 					/**
-					 * Ready state XHR.
+					 * Ready state XHR. This property is deprecated since version 1.28.0., use parameter files instead.
+					 * @deprecated Since version 1.28.0. This property is deprecated, use parameter files instead.
 					 */
 					readyStateXHR : {type : "string"},
+
 					/**
-					 * Response.
+					 * Response of the completed upload request. This property is deprecated since version 1.28.0., use parameter files instead.
+					 * @deprecated Since version 1.28.0. This property is deprecated, use parameter files instead.
 					 */
 					response : {type : "string"},
+
 					/**
-					 * Status.
+					 * Status Code of the completed upload event. This property is deprecated since version 1.28.0., use parameter files instead.
+					 * @deprecated Since version 1.28.0. This property is deprecated, use parameter files instead.
 					 */
-					status : {type : "string"}
+					status : {type : "string"},
+					/**
+					 * A list of uploaded files. Each entry contains the following members. 
+					 * fileName	: The name of a file to be uploaded.
+					 * response	: Response message which comes from the server. On the server side this response has to be put within the "body" tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
+					 * responseRaw : HTTP-Response which comes from the server. This property is not supported by Internet Explorer Versions lower than 9.
+					 * status	: Status of the XHR request. This property is not supported by Internet Explorer 9 and lower.
+					 * headers : HTTP-Response-Headers which come from the server. Provided as a JSON-map, i.e. each header-field is reflected by a property in the header-object, with the property value reflecting the header-field's content. This property is not supported by Internet Explorer 9 and lower.
+					 * Since version 1.28.0.
+					 */
+					files : {type : "object[]"}
 				}
 			},
 
@@ -1415,7 +1430,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					break;
 				}
 			}
-			this.fireUploadComplete(oEvent);
+			this.fireUploadComplete({
+				// deprecated
+				getParameter : oEvent.getParameter,
+				getParameters : oEvent.getParameters,
+				mParameters : oEvent.getParameters(),
+				// new Stuff
+				files : [{
+					fileName : oEvent.getParameter("fileName"),
+					responseRaw : oEvent.getParameter("responseRaw"),
+					reponse : oEvent.getParameter("response"),
+					headers : oEvent.getParameter("headers")
+				}]
+			});
 		}
 	};
 
