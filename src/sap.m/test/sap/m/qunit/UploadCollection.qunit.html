@@ -267,10 +267,6 @@
 					// new
 					equal(oEvent.getParameter("item"), this._oItemForRename, "Correct item in event fileRenamed");
 				},
-				fileSizeExceed : function(oEvent) {
-					ok(true, "Event fileSizeExceed fired");
-					equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided")
-				},
 				typeMissmatch : function(oEvent) {
 					var oFile = { name: "someFileName", fileType : "someNotAllowedFileType", mimeType : "someNotAllowedMimeType" };
 					ok(true, "Event typeMissmatch fired");
@@ -318,13 +314,50 @@
 		});
 	});
 
-	test("Event fileSizeExceed", function() {
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(2); // verifies the event handler was executed
-		oFileUploader.fireFileSizeExceed({
-			fileName : "someFileName",
-			fileSize : "tooBigFileSize"
-		});
+	test("Event fileSizeExceed", function(assert) {
+		var sFileSize = "sizeOfTooBigFile";
+		var sFileName = "nameOfTooBigFile";
+		var oFileUploaderEventMock = {
+				newValue : sFileName,
+				fileSize : sFileSize,
+				fileName : sFileName
+			};
+		function fileSizeExceed(oEvent) {
+			var sFileName = "nameOfTooBigFile";
+			var sDocumentId; // undefined
+			var sFileSize = "sizeOfTooBigFile";
+			var oBigFile = {
+					name: sFileName,
+					fileSize : sFileSize
+				};
+			assert.equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided");
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+				// deprecated
+				assert.equal(oEvent.getParameters().getParameter("newValue"), sFileName, "Correct file name in change event provided by oEvent.getParameters().getParameter('newValue')");
+				assert.equal(oEvent.getParameters().getParameters()["newValue"], sFileName, "Correct file name in change event provided by oEvent.getParameters().getParameters()['newValue']");
+				assert.equal(oEvent.getParameter("mParameters")["newValue"], sFileName, "Correct file name in change event provided by oEvent.getParameter('mParameters')['newValue']");
+				// new
+				assert.equal(oEvent.getParameter("files")[0].name, sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameter('files')[0].name");
+				assert.equal(oEvent.getParameters()["files"][0]["name"], sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['name']");
+			} else {
+				// deprecated
+				assert.equal(oEvent.getParameters().getParameter("documentId"), sDocumentId, "Correct documentId in fileSizeExceed event provided by oEvent.getParameters().getParameter('documentId')");
+				assert.equal(oEvent.getParameters().getParameters()["documentId"], sDocumentId, "Correct documentId in fileSizeExceed event provided by oEvent.getParameters().getParameters()['documentId']");
+				assert.equal(oEvent.getParameter("mParameters")["documentId"], sDocumentId, "Correct documentId in fileSizeExceed event provided by oEvent.getParameter('mParameters')['documentId']");
+				assert.equal(oEvent.getParameters().getParameter("fileSize"), sFileSize, "Correct fileSize in fileSizeExceed event provided by oEvent.getParameters().getParameter('fileSize')");
+				assert.equal(oEvent.getParameters().getParameters()["fileSize"], sFileSize, "Correct fileSize in fileSizeExceed event provided by oEvent.getParameters().getParameters()['fileSize']");
+				assert.equal(oEvent.getParameter("mParameters")["fileSize"], sFileSize, "Correct fileSize in fileSizeExceed event provided by oEvent.getParameter('mParameters')['fileSize']");
+				// new
+				assert.equal(oEvent.getParameter("files")[0].name, sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameter('files')[0].name");
+				assert.equal(oEvent.getParameters()["files"][0]["name"], sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['name']");
+				assert.deepEqual(oEvent.getParameter("files")[0], oBigFile, "Correct file in fileSizeExceed event provided by oEvent.getParameter('files')[0]");
+				assert.equal(oEvent.getParameter("files")[0].fileSize, sFileSize, "Correct file size in fileSizeExceed event provided by oEvent.getParameter('files')[0].fileSize");
+				assert.equal(oEvent.getParameters()["files"][0]["fileSize"], sFileSize, "Correct file size in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['fileSize']");
+				assert.deepEqual(oEvent.getParameter("files")[0], oBigFile, "Correct file in fileSizeExceed event provided by oEvent.getParameter('files')[0]");
+			}
+		};
+		this.oUploadCollection.attachFileSizeExceed(fileSizeExceed);
+		this.oUploadCollection._onFileSizeExceed(new sap.ui.base.Event("fileSizeExceed", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	test("Event change", function() {
