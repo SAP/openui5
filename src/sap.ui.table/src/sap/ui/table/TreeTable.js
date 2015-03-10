@@ -146,6 +146,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 */
 	TreeTable.prototype.refreshRows = function(sReason) {
 		this._bBusyIndicatorAllowed = true;
+		this._attachBindingListener();
 		var oBinding = this.getBinding("rows");
 		if (oBinding && this.isTreeBinding("rows") && !oBinding.hasListeners("selectionChanged")) {
 			oBinding.attachSelectionChanged(this._onSelectionChanged, this);

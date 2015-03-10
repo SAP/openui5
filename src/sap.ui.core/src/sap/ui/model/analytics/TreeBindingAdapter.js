@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBinding'],
-	function(jQuery, TreeBinding, AnalyticalBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBinding', 'sap/ui/model/ChangeReason'],
+	function(jQuery, TreeBinding, AnalyticalBinding, ChangeReason) {
 	"use strict";
 
 	/**
@@ -370,7 +370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		
 		oContextInfo.autoExpand = oContextInfo.autoExpand || 1;
 		if (!bPreventChangeEvent) {
-			this._fireChange();
+			this._fireChange({reason: ChangeReason.Expand});
 		}
 	};
 	
@@ -436,7 +436,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		// node is collapse now => notifiy control
 		oContextInfo.expanded = false;
 		if (!bPreventChangeEvent) {
-			this._fireChange();
+			this._fireChange({reason: ChangeReason.Collapse});
 		}
 	};
 	
@@ -461,7 +461,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			}
 		}
 
-		this._fireChange();
+		this._fireChange({reason: ChangeReason.Collapse});
 	};
 	
 	TreeBindingAdapter.prototype.toggleIndex = function(iIndex) {
