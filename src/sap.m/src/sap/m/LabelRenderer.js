@@ -41,6 +41,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		if (oLabel.getRequired()) {
 			rm.addClass("sapMLabelRequired");
 		}
+		rm.writeAccessibilityState(oLabel, {
+			role: "label",
+			labelledby : {
+				value : oLabel.getLabelFor(),
+				append : true
+			}
+		});
 
 		if (oLabel.getLabelForRendering()) {
 			sap.ui.core.LabelEnablement.writeLabelForAttribute(rm, oLabel);
