@@ -290,6 +290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		 */
 		function formatPath(oInterface, sPath, bWithType) {
 			var oConstraints = {},
+				sConstraints,
 				oModel = oInterface.getModel(),
 				sContextPath = oInterface.getPath(),
 				aMatches = rEntityTypePath.exec(sContextPath),
@@ -380,8 +381,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 
 			// TODO warn if type could not be determined
 			if (bWithType) {
-				oResult.value = "{path : " + stringify(sPath) + ", type : '" + sType
-					+ "', constraints : " + stringify(oConstraints) + "}";
+				sConstraints = stringify(oConstraints);
+				oResult.value = "{path : " + stringify(sPath) + ", type : '" + sType + "'"
+					+ (sConstraints === "{}" ? "" : ", constraints : " + sConstraints)
+					+ "}";
 			} else if (rBadChars.test(sPath)) {
 				oResult.value = "{path : " + stringify(sPath) + "}";
 			} else {

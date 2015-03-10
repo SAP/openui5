@@ -140,8 +140,7 @@
 							"nullable" : "false"
 						}, {
 							"name" : "_Float",
-							"type" : "Edm.Float",
-							"nullable" : "false"
+							"type" : "Edm.Float"
 						}, {
 							"name" : "_Guid",
 							"type" : "Edm.Guid",
@@ -249,6 +248,42 @@
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
 	/**
+	 * Formats the value using the AnnotationHelper. Provides access to the given current context.
+	 *
+	 * @param {any} vValue
+	 * @param {sap.ui.model.Context} [oCurrentContext]
+	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the custom formatter function to call
+	 * @returns {string}
+	 *   a binding string
+	 */
+	function format(vValue, oCurrentContext, fnMethod) {
+		var sResult;
+
+		if (typeof oCurrentContext === "function") { // allow oCurrentContext to be omitted
+			fnMethod = oCurrentContext;
+			oCurrentContext = null;
+		}
+		fnMethod = fnMethod || AnnotationHelper.format;
+		return fnMethod.requiresIContext === true
+			? fnMethod(oCurrentContext, vValue)
+			: fnMethod(vValue);
+	}
+
+	/**
+	 * Parses the value via the complex parser.
+	 *
+	 * @param {string} sBinding
+	 *   a binding string
+	 * @returns {object|string}
+	 *   a binding info or the formatted, unescaped value
+	 */
+	function parse(sBinding) {
+		// @see applySettings: complex parser returns undefined if there is nothing to unescape
+		return sap.ui.base.BindingParser.complexParser(sBinding, undefined, true) || sBinding;
+	}
+
+	/**
 	 * Formats the value using the AnnotationHelper and then parses the result via the complex
 	 * parser. Provides access to the given current context.
 	 *
@@ -260,19 +295,26 @@
 	 *   a binding info or the formatted, unescaped value
 	 */
 	function formatAndParse(vValue, oCurrentContext, fnMethod) {
-		var sResult;
+		return parse(format(vValue, oCurrentContext, fnMethod));
+	}
 
-		if (typeof oCurrentContext === "function") { // allow oCurrentContext to be omitted
-			fnMethod = oCurrentContext;
-			oCurrentContext = null;
-		}
-		fnMethod = fnMethod || AnnotationHelper.format;
-		sResult = fnMethod.requiresIContext === true
-			? fnMethod(oCurrentContext, vValue)
-			: fnMethod(vValue);
+	/**
+	 * Formats the value using the AnnotationHelper. Makes sure no warning is raised. Provides
+	 * access to the given current context.
+	 *
+	 * @param {any} vValue
+	 * @param {sap.ui.model.Context} [oCurrentContext]
+	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
+	 *   the custom formatter function to call
+	 * @returns {object|string}
+	 *   a binding info or the formatted, unescaped value
+	 */
+	function formatNoWarning(vValue, oCurrentContext, fnMethod) {
+		return sinon.test(function() {
+			this.mock(jQuery.sap.log).expects("warning").never();
 
-		// @see applySettings: complex parser returns undefined if there is nothing to unescape
-		return sap.ui.base.BindingParser.complexParser(sResult, undefined, true) || sResult;
+			return format(vValue, oCurrentContext, fnMethod);
+		}).apply({});
 	}
 
 	/**
@@ -287,17 +329,7 @@
 	 *   a binding info or the formatted, unescaped value
 	 */
 	function formatAndParseNoWarning(vValue, oCurrentContext, fnMethod) {
-		var oSandbox = sinon.sandbox.create(),
-			oLogMock = oSandbox.mock(jQuery.sap.log);
-
-		oLogMock.expects("warning").never();
-
-		try {
-			return formatAndParse(vValue, oCurrentContext, fnMethod);
-		} finally {
-			oLogMock.verify();
-			oSandbox.restore();
-		}
+		return parse(formatNoWarning(vValue, oCurrentContext, fnMethod));
 	}
 
 	/**
@@ -612,9 +644,14 @@
 				withTestModel(function (oMetaModel) {
 					var oCurrentContext = oMetaModel.getContext(sPath),
 						oRawValue = oTestModel.getObject(sPath),
+						sBinding,
 						oSingleBindingInfo;
 
-					oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
+					sBinding = formatNoWarning(oRawValue, oCurrentContext);
+
+					ok(!/constraints\s*:\s*{}/.test(sBinding), "No empty constraints in binding");
+
+					oSingleBindingInfo = parse(sBinding);
 
 					strictEqual(oSingleBindingInfo.path, oRawValue.Path);
 					ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oType.name),
