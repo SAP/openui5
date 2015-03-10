@@ -3,8 +3,9 @@ sap.ui.define([
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/worklist/model/Device",
 		"sap/ui/demo/worklist/model/AppModel",
+		"sap/ui/demo/worklist/controller/ErrorHandler",
 		"sap/ui/demo/worklist/model/formatter"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel) {
+	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
@@ -95,6 +96,9 @@ sap.ui.define([
 			}), "i18n");
 
 
+			// initialize the error handler with the component
+			this._oErrorHandler = new ErrorHandler(this);
+			
 			// set the device model
 			this.setModel(new DeviceModel(), "device");
 
