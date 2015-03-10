@@ -26,7 +26,7 @@
 				updateFinished="onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
-						<Label id="tableHeader" text="{controlStates>/worklistTableTitle}"/>
+						<Label id="tableHeader" text="{view>/worklistTableTitle}"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>

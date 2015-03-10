@@ -18,46 +18,46 @@ sap.ui.define([
 			this._oTable = this.byId("table");
 
 			// Control state model
-			this.oControlStateModel = new sap.ui.model.json.JSONModel({
-				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
+			this.oViewModel = new sap.ui.model.json.JSONModel({
+				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle")
 			});
-			
-			oView.setModel(this.oControlStateModel, 'controlStates');
-			
+
+			oView.setModel(this.oViewModel, "view");
+
 			// Use the table's 'updateStarted' event to set the table busy. We can not use
-			// the list bindings's 'dataRequested' because unfortunately is fired BEFORE 
-			// the router fires its 'display' event, if the app has been started with an 
-			// object hash and navigates back to the worklist.	
+			// the list bindings's 'dataRequested' because unfortunately is fired BEFORE
+			// the router fires its 'display' event, if the app has been started with an
+			// object hash and navigates back to the worklist.
 			this._oTable.attachUpdateStarted(function () {
 				this.setBusy(true);
 			}.bind(oView));
-			
+
 			// Have to wait until the worklist view is displayed, before we can attach listeners
 			// to the table's 'items' list binding: the list bindings are not available any earlier.
 			this.getRouter().getTargets().getTarget("worklist").attachEventOnce("display", function () {
-				// Put down worklist view's original value for busy indicator delay, 
+				// Put down worklist view's original value for busy indicator delay,
 				// so it can be restored later on.
-				
+
 				this.setOriginalBusyIndicatorDelay(this.getView().getBusyIndicatorDelay());
 				// Make sure, busy indication is showing immediately so there is no
 				// break in between the busy indication for loading the view's meta data
 				// (this is being taken care of by class 'BusyHandler')
 				this.getView().setBusyIndicatorDelay(0);
-				
+
 				// Using event 'dataReceived' and NOT the table's
 				// own 'updateFinished' event because 'updateFinished'
 				// does not return if the request returns with an error code.
 				this._oTable.getBinding("items").attachDataReceived(function () {
 					this.getView().setBusy(false);
 				}.bind(this));
-				
+
 				// Restore original busy indicator delay for the worklist view
 				this._oTable.getBinding("items").attachEventOnce('dataReceived', function () {
 					this.getView().setBusyIndicatorDelay(this.getOriginalBusyIndicatorDelay());
 				}.bind(this));
 			}.bind(this));
-			
-			
+
+
 		},
 
 		/* =========================================================== */
@@ -65,9 +65,9 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * Triggered by the table's 'updateFinished' event: after new table 
+		 * Triggered by the table's 'updateFinished' event: after new table
 		 * data is available, this handler method updates the table counter.
-		 * This should only happen if the update was successful, which is 
+		 * This should only happen if the update was successful, which is
 		 * why this handler is attached to 'updateFinished' and not to the
 		 * table's list binding's 'dataReceived' method.
 		 *
@@ -115,7 +115,7 @@ sap.ui.define([
 			// only update the counter if the length is final
 			if (this._oTable.getBinding('items').isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-				this.oControlStateModel.setProperty("/worklistTableTitle", sTitle);
+				this.oViewModel.setProperty("/worklistTableTitle", sTitle);
 			}
 		}
 
