@@ -294,10 +294,6 @@
 					equal(oEvent.getParameter("files")[0]["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0]['mimeType']");
 					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file provided in typeMissmatch event by oEvent.getParameter('files')[0].");
 				},
-				uploadComplete : function(oEvent) {
-					ok(true, "Event uploadComplete fired");
-					equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event ");
-				},
 				uploadTerminated : function(oEvent) {
 					ok(true, "Event uploadTerminated fired");
 				}
@@ -383,13 +379,36 @@
 		this.oUploadCollection._onEditItemOk();
 	});
 
-	test("Event complete", function() {
-		var sFileName = "file1";
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(2); // verifies the event handler was executed
-		oFileUploader.fireUploadComplete({
-			fileName : sFileName
-		});
+	test("uploadComplete", function() {
+		var oFileUploaderEventMock = {
+			fileName : "file1",
+			reponse : { "propertyOne" : "ValueOne" },
+			readyStateXHR : 4,
+			status : 200,
+			responseRaw : '{ "propertyOne" : "ValueOne" }',
+			headers : {
+				"headerOne" : "headerValueOne",
+				"headerTwo" : "headerValueTwo",
+			},
+			requestHeaders : {
+				"headerOne" : "headerValueOne",
+				"headerTwo" : "headerValueTwo",
+			} 
+		};
+		function uploadComplete(oEvent) {
+			// Deprecated
+			equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event");
+			equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "correct reponse in complete event");
+			equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "correct readyStateXHR in complete event");
+			equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "correct status in complete event");
+			// check for properly provided parameters
+			equal(oEvent.getParameter("files")[0].fileName, "file1", "correct file1 name in complete event");
+			equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "correct response in complete event");
+			equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "correct raw response in complete event");
+			equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "correct headers in complete event");
+		}
+		this.oUploadCollection.attachUploadComplete(uploadComplete);
+		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	test("Event terminate", function() {
@@ -423,8 +442,8 @@
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2")
-		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct")
+		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 		
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
@@ -470,11 +489,10 @@
 		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
 		oInputField3[0].value = "NewDocument";
 		oData.items[2].fileName = "NewDocument.txt";
-		sap.ui.getCore().applyChanges();
-		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-ta_HL";
+		oObj.target.id =  this.oUploadCollection.aItems[2].sId;
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getProperty("showValueStateMessage");
+		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
 		equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exist");
 		equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
 
@@ -523,6 +541,7 @@
 		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
 			ok(true, "Link is triggered");
 		};
+		expect(8); // verifies the event handler was executed
 		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
@@ -536,11 +555,11 @@
 		equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		equal(oFileName.getEnabled(), true, "File name is enabled");
 
-		expect(8); // verifies the event handler was executed
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
 		sap.ui.getCore().applyChanges();
 		// No Event should be triggered, because there is no url provided at aItems[0] --> no change at expect(8)!
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		sap.ui.getCore().applyChanges();
 	});
 
 	module("Properties", {
@@ -639,8 +658,8 @@
 		//empty array
 		aFileTypesEmpty = [];
 		this.oUploadCollection.setFileType(aFileTypesEmpty);
-		sFileTypesExpected = "";
-		sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
+		var sFileTypesExpected = "";
+		var sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
 		equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
 	});
 

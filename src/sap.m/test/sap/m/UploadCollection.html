@@ -336,7 +336,7 @@
 		if (oEvent) {
 			var oData = oModel.getData();
 			var oItem = {};
-			var sUploadedFile = oEvent.getParameters().getParameter("fileName");
+			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
 			// at the moment parameter fileName is not set in IE9
 			if (!sUploadedFile) {
 				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
