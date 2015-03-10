@@ -9,12 +9,10 @@ sap.ui.define([
 		onInit : function () {
 			var oViewModel;
 
-			this.oModelData = {
+			oViewModel = new JSONModel({
 				busy : true,
 				delay : 0
-			};
-
-			oViewModel = new JSONModel(this.oModelData);
+			});
 
 			this.setModel(oViewModel, "view");
 
@@ -29,9 +27,12 @@ sap.ui.define([
 		 * @private
 		 */
 		_setAppUnbusy : function () {
-			this.oModelData.busy = false;
-			this.oModelData.delay = null;
-			this.getModel("view").setData(this.oModelData);
+			var oModel = this.getModel("view"),
+				oData = oModel.getData();
+
+			oData.busy = false;
+			oData.delay = null;
+			oModel.setData(oData);
 		}
 	});
 
