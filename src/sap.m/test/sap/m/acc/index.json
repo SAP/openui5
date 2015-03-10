@@ -6,6 +6,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.BusyIndicator",
+			"url": "../BusyIndicator.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Button",
 			"url": "Button.html",
 			"appComponent": "CA-UI5-CTR-WDF"
