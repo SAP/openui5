@@ -25,8 +25,8 @@
 			oTextAlignEnd = sap.ui.core.TextAlign.End,
 			oTextAlignCenter = sap.ui.core.TextAlign.Center,
 			bWrapping = false,
-			oTextDirectionDefault = sap.ui.core.TextDirection.LTR, 
-			oTextDirectionRTL = sap.ui.core.TextDirection.RTL, 
+			oTextDirectionDefault = sap.ui.core.TextDirection.LTR,
+			oTextDirectionRTL = sap.ui.core.TextDirection.RTL,
 			oStandardDesign = sap.m.LabelDesign.Standard,
 			oBoldDesign = sap.m.LabelDesign.Bold;
 
@@ -57,7 +57,7 @@
 
 		var l1, l2;
 
-		module("Basic", {		 
+		module("Basic", {
 			setup : function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
@@ -79,7 +79,7 @@
 			}
 		});
 
-		// test property accessor methods 
+		// test property accessor methods
 
 		test("TextOk", function() {
 			strictEqual(l1.getText(), sText, "l1.getText() returns result: " + l1.getText());
@@ -106,12 +106,12 @@
 			strictEqual(l1.getDesign(), oStandardDesign, "l1.getDesign() returns result: " + l1.getDesign());
 			strictEqual(l2.getDesign(), oBoldDesign, "l2.getDesign() returns result: " + l2.getDesign());
 		});
-		
+
 		test("When width is not set max-width should apply to control", function() {
 			var sut = new sap.m.Label({text : "text"}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();			
+			sap.ui.getCore().applyChanges();
 			ok(sut.$().hasClass("sapMLabelMaxWidth"), "Label has max width restriction for the trunctation.");
-			
+
 			sut.setWidth("100%");
 			sap.ui.getCore().applyChanges();
 			ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
@@ -134,7 +134,7 @@
 			oLabel.destroy();
 		});
 
-		//I build this one in because if you bind the tooltip of a label to a json model wich is connected to an input, 
+		//I build this one in because if you bind the tooltip of a label to a json model wich is connected to an input,
 		//blur will be triggered on every keystroke
 		test("Should supress rerendering when tooltip is set", function() {
 			// Arrange
@@ -162,7 +162,7 @@
 			// Cleanup
 			oLabel.destroy();
 		});
-		
+
 		test("Should be able to set the text to 0", function() {
 			// System under Test
 			var oLabel = new sap.m.Label({
@@ -179,10 +179,52 @@
 			// Cleanup
 			oLabel.destroy();
 		});
-		
+
 		test("Label should be shrinkable", function() {
 			var oLabel = new sap.m.Label;
 			ok(oLabel.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Label control implements IShrinkable interface");
+			oLabel.destroy();
+		});
+
+		test("Handling required property and aria support", function() {
+			var oLabel = new sap.m.Label({text: "Alabala"});
+			oLabel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-required"), undefined, "Aria attribute is not defined as required is not set");
+
+			oLabel.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-required"), "true", "Aria attribute is true as required is set");
+
+			// test removal of aria attribute
+			oLabel.setRequired(false);
+			sap.ui.getCore().applyChanges();
+			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-required"), undefined, "Aria attribute is removed as required is set to false");
+
+			oLabel.destroy();
+		});
+		test("Handling labelFor association and aria support", function() {
+			var INPUT_ID = "input1";
+			var input1 = new sap.m.Input({ 	id: INPUT_ID });
+			var oLabel = new sap.m.Label({text: "Alabala", labelFor: INPUT_ID});
+
+			oLabel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-labelledby"), INPUT_ID, "Aria labelledby attribute is set to the labelFor association");
+
+			oLabel.destroy();
+			input1.destroy();
+		});
+		test("Handling missing labelFor association and aria support", function() {
+			var oLabel = new sap.m.Label({text: "Alabala"});
+
+			oLabel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-labelledby"), "null", "Aria labelledby attribute is not set as labelFor association is not set too");
+
 			oLabel.destroy();
 		});
 
@@ -195,7 +237,7 @@
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<div id="qunit-fixture">test markup, will be hidden</div>
-		<ol id="qunit-tests"></ol>	
+		<ol id="qunit-tests"></ol>
 		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
 		<div id="uiArea3"></div>
