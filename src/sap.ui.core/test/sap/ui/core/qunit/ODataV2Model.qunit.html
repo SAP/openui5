@@ -11,7 +11,7 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table">
 	</script>
 
 <link rel="stylesheet"
@@ -50,6 +50,19 @@
 	var oPanel = new sap.ui.commons.Panel();
 	oPanel.addContent(oLabel);
 	oPanel.placeAt("target1");
+	
+	var oPanel2 = new sap.ui.commons.Panel();
+	var oTable = new sap.ui.table.Table({ // create Table UI
+		columns : [
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text:"Product Name"}),
+				template: new sap.ui.commons.TextField({value: "{ProductName}"})
+			})
+		],
+	});
+	oTable.bindRows("Products");
+	oPanel2.addContent(oTable);
+	oPanel2.placeAt("target2");
 	
 	// create a dummy AMD fdefine to check if shim works for datajs
 	window.define = function() {
@@ -652,6 +665,35 @@
 		oLabel.getElementBinding().attachDataReceived(fnRecievedHandler);
 	});
 	
+	asyncTest("test refresh(true) - dependant bindings should reload data",3, function(){
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oPanel2.bindElement("/Categories(7)");
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		
+		var oHandler = function() {
+			equal(spy.callCount, 3, "element binding as well as Table should load data");
+			oTable.getBinding("rows").detachDataReceived(oHandler);
+			oPanel2.getElementBinding().attachDataReceived(oHandler2);
+			oPanel2.getElementBinding().refresh();
+		}
+		
+		var oHandler2 = function() {
+			equal(spy.callCount, 4, "dependant bindings should not refresh");
+			oPanel2.getElementBinding().detachDataReceived(oHandler2);
+			oTable.getBinding("rows").attachDataReceived(oHandler3);
+			oPanel2.getElementBinding().refresh(true);
+		}
+		
+		var oHandler3 = function() {
+			equal(spy.callCount, 7, "element binding as well as Table should refetch data");
+			OData.defaultHttpClient.request.restore();
+			start();
+		}
+		
+		oTable.getBinding("rows").attachDataReceived(oHandler);
+	});
+	
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
 	var oItemTemplate = new sap.ui.core.ListItem();	
 	oLB.placeAt("target2");
@@ -874,6 +916,7 @@
 				equal(spy.args[1][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
 				equal(spy.args[1][0].headers['TesT'], "new Header", "spy check custom header");
 				equal(spy.callCount, 2, "spy read count");
+				OData.defaultHttpClient.request.restore();
 				start();
 			}
 		});
@@ -1344,6 +1387,7 @@
 
 		equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
+		OData.request.restore();
 		
 	});
 	
