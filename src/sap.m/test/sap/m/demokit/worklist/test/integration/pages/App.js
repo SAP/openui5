@@ -13,7 +13,7 @@ sap.ui.require([
 				assertions: {
 					iShouldSeeTheBusyIndicatorForTheWholeApp: function () {
 						return this.waitFor({
-							id : "idAppControl",
+							id : "app",
 							viewName : "App",
 							matchers : function (oAppControl) {
 								return oAppControl.getParent() && oAppControl.getParent().getBusy();

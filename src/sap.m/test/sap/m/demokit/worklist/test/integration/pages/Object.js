@@ -14,7 +14,7 @@ sap.ui.require([
 				actions: {
 					iPressTheBackButton : function () {
 						return this.waitFor({
-							id : "objectPage",
+							id : "page",
 							viewName : sViewName,
 							success: function (oPage) {
 								oPage.$("navButton").trigger("tap");
@@ -28,11 +28,10 @@ sap.ui.require([
 					iShouldSeeTheObject : function (iObjectNumber) {
 						var sTitleName = "Object " + iObjectNumber;
 						return this.waitFor({
-							controlType : "sap.m.ObjectHeader",
+							id : "objectHeader",
 							viewName : sViewName,
 							matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName }) ],
-							success : function (aControls) {
-								strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
+							success : function (oObjectHeader) {
 								ok(true, "was on the " + sTitleName + " page");
 							},
 							errorMessage : "We are not on the " + sTitleName + " page"
