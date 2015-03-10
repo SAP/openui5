@@ -1474,6 +1474,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				multiple : this.getMultiple(),
 				name : "uploadCollection",
 				uploadOnChange : true,
+				sameFilenameAllowed : true,
 				uploadUrl : this.getUploadUrl(),
 				useMultipart : false,
 				sendXHR : bSendXHR, // false for IE8, IE9
