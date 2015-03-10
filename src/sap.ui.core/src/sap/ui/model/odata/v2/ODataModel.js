@@ -3295,7 +3295,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var sProperty, mRequests, oRequest, oEntry = { }, oData = { },
 		sResolvedPath = this.resolve(sPath, oContext),
 		aParts,	sKey, oGroupInfo, oRequestHandle,
-		mChangedEntities = {};
+		mChangedEntities = {},
+		sEntryPath;
 
 		// check if path / context is valid
 		if (!sResolvedPath) {
@@ -3317,7 +3318,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		//check all path segments to find the entity; The last segment can also point to a complex type (ignore property segment)
 		for (var i = aParts.length - 1; i >= 0; i--) {
-			oEntry = this._getObject(aParts.join("/"));
+			sEntryPath = aParts.join("/");
+			oEntry = this._getObject(sEntryPath);
 			if (oEntry) {
 				sKey = this._getKey(oEntry);
 				if (sKey) {
@@ -3331,9 +3333,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oEntry = jQuery.extend(true,{},oEntry);
 		}
 		this.mChangedEntities[sKey] = oEntry;
-
-		oEntry[sProperty] = oValue;
-
+		
+		var oChangeObject = oEntry;
+		// if property is not available check if it is a complex type and update it
+		aParts = sResolvedPath.substr(sEntryPath.length).split("/");
+		for (var i = 1; i < aParts.length - 1; i++) {
+			if (!oChangeObject.hasOwnProperty(aParts[i])) {
+				oChangeObject[aParts[i]] = {};
+			}
+			oChangeObject = oChangeObject[aParts[i]];
+		} 
+		oChangeObject[sProperty] = oValue;
+		
 		oGroupInfo = this._resolveGroup(sKey);
 
 		mRequests = this.mRequests;
