@@ -3632,7 +3632,10 @@ if (typeof sinon == "undefined") {
     FakeXMLHttpRequest.addFilter = function(fn) {
         this.filters.push(fn)
     };
-    var IE6Re = /MSIE 6/;
+    // Fix in SAP internally used sinon.js version:
+    // In the newest Sinon, errors are only suppressed for user agents matching /MSIE 6/, so IE7-IE9 throw an exception
+    // A broader RegExp is used for IE7-IE9
+    var IE6to9Re = /MSIE [6-9]/;
     FakeXMLHttpRequest.defake = function(fakeXhr,xhrArgs) {
         var xhr = new sinon.xhr.workingXHR();
         each(["open","setRequestHeader","send","abort","getResponseHeader",
@@ -3648,7 +3651,7 @@ if (typeof sinon == "undefined") {
               try {
                 fakeXhr[attr] = xhr[attr]
               } catch(e) {
-                if(!IE6Re.test(navigator.userAgent)) throw e;
+                if(!IE6to9Re.test(navigator.userAgent)) throw e;
               }
             });
         };
