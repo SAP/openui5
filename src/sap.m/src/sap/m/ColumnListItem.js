@@ -19,7 +19,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * ColumnListItem can be used with cells aggregation to create rows for the Table control.
 	 * The columns aggregation of the Table should match with the cells aggregation.
 	 * 
-	 * NOTE: This control does not respect the counter property of the ListItemBase.
+	 * NOTE: This control should only be used within the sap.m.Table control.
+	 * Please also note that the counter property of the ListItemBase is not supported by ColumnListItem. 
+	 * 
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
