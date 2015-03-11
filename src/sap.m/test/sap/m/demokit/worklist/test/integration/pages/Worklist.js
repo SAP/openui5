@@ -110,7 +110,7 @@ sap.ui.require([
 						});
 
 						return this.waitFor({
-							id : "page",
+							id : "tableHeader",
 							viewName : sViewName,
 							matchers : function (oPage) {
 								// wait until we know the number of items
@@ -118,8 +118,8 @@ sap.ui.require([
 									return false;
 								}
 
-								var sExpectedText = oPage.getModel("i18n").getResourceBundle().getText("worklistViewTitleCount", [iObjectCount]);
-								return new PropertyStrictEquals({name : "title", value: sExpectedText}).isMatching(oPage);
+								var sExpectedText = oPage.getModel("i18n").getResourceBundle().getText("worklistTableTitleCount", [iObjectCount]);
+								return new PropertyStrictEquals({name : "text", value: sExpectedText}).isMatching(oPage);
 							},
 							success : function (oTable) {
 								ok(true, "The Page has a title containing the number " + iObjectCount);
