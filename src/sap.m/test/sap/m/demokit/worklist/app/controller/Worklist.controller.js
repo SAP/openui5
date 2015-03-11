@@ -19,7 +19,7 @@ sap.ui.define([
 
 			// Control state model
 			this.oControlStateModel = new sap.ui.model.json.JSONModel({
-				worklistViewTitle : this.getResourceBundle().getText("worklistViewTitle")
+				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
 			});
 			
 			oView.setModel(this.oControlStateModel, 'controlStates');
@@ -114,8 +114,8 @@ sap.ui.define([
 			var sTitle;
 			// only update the counter if the length is final
 			if (this._oTable.getBinding('items').isLengthFinal()) {
-				sTitle = this.getResourceBundle().getText("worklistViewTitleCount", [iTotalItems]);
-				this.oControlStateModel.setProperty("/worklistViewTitle", sTitle);
+				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
+				this.oControlStateModel.setProperty("/worklistTableTitle", sTitle);
 			}
 		}
 

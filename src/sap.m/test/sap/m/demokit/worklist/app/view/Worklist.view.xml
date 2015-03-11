@@ -5,10 +5,12 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
-		title="{controlStates>/worklistViewTitle}">
+		title="{i18n>worklistViewTitle}">
 		<content>
 			<Table
 				id="table"
+				width="auto"
+				class="sapUiResponsiveMargin"
 				items="{
 					path: '/Objects',
 					sorter: {
@@ -22,6 +24,11 @@
 				growingScrollToLoad="true"
 				enableBusyIndicator="false"
 				updateFinished="onUpdateFinished">
+				<headerToolbar>
+					<Toolbar>
+						<Label id="tableHeader" text="{controlStates>/worklistTableTitle}"/>
+					</Toolbar>
+				</headerToolbar>
 				<columns>
 					<Column id="nameColumn">
 						<Text text="{i18n>TableNameColumnTitle}" id="nameColumnTitle"/>
