@@ -56,7 +56,7 @@
 		test("show", function () {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
-				actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
 				onClose: callback,
 				id: "messagebox1",
 				styleClass: sClassName
@@ -123,7 +123,7 @@
 
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
-				actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO, oButton],
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text", oButton],
 				onClose: callback,
 				id: "messagebox2",
 				styleClass: sClassName,
@@ -144,11 +144,11 @@
 		test("initial focus with string", function () {
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
-				actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
 				onClose: callback,
 				id: "messagebox3",
 				styleClass: sClassName,
-				initialFocus: 'Cancel'
+				initialFocus: "Custom Text"
 			});
 			this.clock.tick(500);
 
@@ -158,7 +158,7 @@
 			var sInitialFocusControlId = (function () {
 				var result;
 				for (var i = 0; i < aButtons.length; i++) {
-					if (aButtons[i].mProperties.text.toLowerCase() === 'Cancel'.toLowerCase()) {
+					if (aButtons[i].mProperties.text.toLowerCase() === "Custom Text".toLowerCase()) {
 						result = aButtons[i].sId;
 					}
 				}
@@ -175,9 +175,11 @@
 		});
 
 		test("show with set initial focus with sap.m.MessageBox.Action", function () {
+			var oFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			sap.ui.getCore().getConfiguration().setFormatLocale("bg");
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
-				actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, sap.m.MessageBox.Action.Cancel],
 				onClose: callback,
 				id: "messagebox4",
 				styleClass: sClassName,
@@ -185,12 +187,13 @@
 			});
 			this.clock.tick(500);
 
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var oMessageBox = sap.ui.getCore().byId("messagebox4");
 			var aButtons = oMessageBox.getButtons();
 			var getInitialFocusControlId = (function () {
 				var sInitialFocusControlId;
 				for (var i = 0; i < aButtons.length; i++) {
-					if (aButtons[i].mProperties.text.toLowerCase() === 'NO'.toLowerCase()) {
+					if (aButtons[i].mProperties.text.toLowerCase() === oResourceBundle.getText("MSGBOX_NO").toLowerCase()) {
 						sInitialFocusControlId = aButtons[i].sId;
 					}
 				}
@@ -198,12 +201,14 @@
 			})();
 
 			ok(oMessageBox, "Dialog should be created");
+			equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "bg", "locale of page");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			equal(oMessageBox.getInitialFocus(), getInitialFocusControlId, "InitialFocus is set correctly");
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
+			sap.ui.getCore().getConfiguration().setFormatLocale(oFormatLocale);
 		});
 
 
@@ -244,7 +249,7 @@
 		});
 
 		test("show with OLD API", function () {
-			sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
+			sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Custom Text", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
 			this.clock.tick(500);
 			var oMessageBox = sap.ui.getCore().byId("messagebox1");
 			ok(oMessageBox, "Dialog should be created");
@@ -298,7 +303,7 @@
 			// RTL
 			sap.m.MessageBox.confirm(sMessageText, {
 				title: sMessageTitle,
-				actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
 				onClose: callback,
 				id: sMessageBoxId,
 				textDirection: sap.ui.core.TextDirection.RTL
@@ -313,7 +318,7 @@
 			// LTR
 			sap.m.MessageBox.confirm(sMessageText, {
 				title: sMessageTitle,
-				actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
 				onClose: callback,
 				id: sMessageBoxId,
 				textDirection: sap.ui.core.TextDirection.LTR
@@ -368,7 +373,7 @@
 					}),
 					new sap.m.CheckBox("checkBoxId", {
 						text: "The CheckBox this checked",
-						checked: false
+						selected: false
 					})
 				]
 			});
