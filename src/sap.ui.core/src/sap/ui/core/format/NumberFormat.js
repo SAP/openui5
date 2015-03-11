@@ -728,7 +728,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			oRegExp = new RegExp(sRegExpFloat);
 		}
 		if (!oRegExp.test(sValue)) {
-			return NaN;
+			return oOptions.type === mNumberType.CURRENCY ? null : NaN;
 		}
 
 		if (oOptions.type === mNumberType.CURRENCY) {
@@ -737,11 +737,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			if (aParsed[2]) {
 				// currency code is at the begining
 				sValue = aParsed[2];
-				sCurrencyMeasure = aParsed[1];
+				sCurrencyMeasure = aParsed[1] || undefined;
 			} else {
 				// currency code is at the end
 				sValue = aParsed[3];
-				sCurrencyMeasure = aParsed[4];
+				sCurrencyMeasure = aParsed[4] || undefined;
+			}
+			if (sCurrencyMeasure && !oOptions.showMeasure) {
+				return null;
 			}
 		}
 
