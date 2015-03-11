@@ -88,8 +88,8 @@
 	
 	oTable.setWidth("800px");
 	oTable.setEnableGrouping(true);
-	//debugger
-
+	oTable.setFooter("Footer");
+	
 	setTimeout(function() {
 		for (var i = 0; i < oTable.getColumns().length; i++) {
 			oTable.autoResizeColumn(i);
