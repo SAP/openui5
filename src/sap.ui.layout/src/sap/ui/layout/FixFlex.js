@@ -191,6 +191,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			}
 		};
 
+		FixFlex.prototype.ontouchmove = function (oEvent) {
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+		};
 
 		return FixFlex;
 
