@@ -39,7 +39,7 @@
 				"ref": "test-resources/sap/m/demokit/md-template/demokit.html",
 				"icon": "sapmdemo/splitapp",
 				"desc": "A best practice implementation of the Master-Detail design pattern"
-			} 
+			}
 		]
 	},
 
@@ -460,6 +460,7 @@
 				"since" : "1.10",
 				"samples" : [ "sap.m.sample.Popover", "sap.m.sample.PopoverNavCon" ]
 			},
+
 			{
 				"id" : "sap.m.ProgressIndicator",
 				"name" : "Progress Indicator",
@@ -542,6 +543,13 @@
 				"category" : "List",
 				"since" : "1.26",
 				"samples" : [ "sap.m.sample.SelectList" ]
+			},
+			{
+			  "id" : "sap.m.semantic.SemanticPage",
+			  "name" : "Semantic Page",
+			  "category" : "Container",
+			  "since" : "1.30",
+			  "samples" : [ "sap.m.sample.SemanticPage", "sap.m.sample.SemanticPageFullScreen"]
 			},
 			{
 				"id" : "sap.m.MultiComboBox",
@@ -1033,11 +1041,11 @@
 				"name": "Object Header - Condensed",
 				"description": "The Object Header is shown in condensed mode with title, number, number unit and one attribute."
 			},
-			{
-				"id": "sap.m.sample.ObjectHeaderResponsiveI",
-				"name": "Object Header Responsive I",
-				"description": "This is a responsive Object Header with a Title, 2 Statuses/Attributes rendered next to the title in a fullScreenOptimized mode (fullScreenOptimized = true)."
-			},
+		  {
+			"id": "sap.m.sample.ObjectHeaderResponsiveI",
+			"name": "Object Header Responsive I",
+			"description": "This is a responsive Object Header with a Title, 2 Statuses/Attributes rendered next to the title in a fullScreenOptimized mode (fullScreenOptimized = true)."
+		  },
 			{
 				"id": "sap.m.sample.ObjectHeaderResponsiveII",
 				"name": "Object Header Responsive II",
@@ -1132,6 +1140,16 @@
 				"id": "sap.m.sample.SelectList",
 				"name": "SelectList",
 				"description": "A SelectList allows the user to select one item from a list of choices."
+			},
+			{
+			  "id": "sap.m.sample.SemanticPage",
+			  "name": "Semantic Page",
+			  "description": "Semantic Page"
+			},
+			{
+			  "id": "sap.m.sample.SemanticPageFullScreen",
+			  "name": "Semantic Page Full Screen",
+			  "description": "Semantic Page Full Screen"
 			},
 			{
 				"id": "sap.m.sample.ActionSelect",
@@ -1542,6 +1560,11 @@
 				"id": "sap.m.sample.UploadCollection",
 				"name": "Upload Collection",
 				"description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
+			},
+			{
+			  "id": "sap.m.sample.SemanticPage",
+			  "name": "Semantic Page",
+			  "description": "Semantic Page"
 			},
 			{
 				"id": "sap.m.sample.StandardMarginsAbout",

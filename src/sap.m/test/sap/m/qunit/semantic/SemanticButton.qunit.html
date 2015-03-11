@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>Test Page for sap.m.semantic.SemanticButton</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
+	<script>
+
+		jQuery.sap.require("sap.m.semantic.SemanticPage");
+		jQuery.sap.require("sap.m.semantic.SemanticButton");
+		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		function capitalize(sName) {
+			return sName.substring(0, 1).toUpperCase() + sName.substring(1);
+		}
+
+		function testButtonField(oConfig) {
+			var oMetadata = oConfig.oMetadata;
+			var sField = oConfig.sField;
+			var oInitPropertyValue = oConfig.oInitPropertyValue;
+			var oModifiedPropertyValue = oConfig.oModifiedPropertyValue;
+			var sType = oMetadata ? oMetadata.type : undefined;
+			var sTestedPropertyInfo = "[semanticType: " + sType + "]";
+			var sFieldType = oConfig.sFieldType;
+
+			var fnGetter = "get" + capitalize(sField);
+			var fnSetter = "set" + capitalize(sField);
+
+			var fnManagedObjectGetter = "get" + capitalize(sFieldType);
+			var fnManagedObjectSetter = "set" + capitalize(sFieldType);
+
+			test(sTestedPropertyInfo + " correct init value", function () {
+				// Arrange
+				var oButton = new sap.m.semantic.SemanticButton(oMetadata);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oInitPropertyValue, "correct init value " + oInitPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oInitPropertyValue, "correct init value " + oInitPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+
+				// Cleanup
+				oButton.destroy();
+			});
+
+			test(sTestedPropertyInfo + " correct " + fnSetter, function () {
+				// Arrange
+				var oButton = new sap.m.semantic.SemanticButton(oMetadata);
+
+				// Act
+				oButton[fnSetter](oModifiedPropertyValue);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+
+				// Clean up
+				oButton.destroy();
+			});
+
+			test(sTestedPropertyInfo + " correct " + fnManagedObjectSetter, function () {
+				// Arrange
+				var oButton = new sap.m.semantic.SemanticButton(oMetadata);
+
+				// Act
+				oButton[fnManagedObjectSetter](sField, oModifiedPropertyValue);
+
+				// Assert
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+
+				// Clean up
+				oButton.destroy();
+			});
+
+			var oModel = new sap.ui.model.json.JSONModel({modifiedValue: oModifiedPropertyValue});
+			var oBindingInfo = {};
+			oBindingInfo[sField] = "{/modifiedValue}";
+
+			test(sTestedPropertyInfo + " correct binding when bindingInfo and model in metadata", function () {
+				// Arrange
+				var oExtendedMetadata = jQuery.extend({}, oMetadata, oBindingInfo, {models: oModel});
+				var oButton = new sap.m.semantic.SemanticButton(oExtendedMetadata);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+			});
+
+			test(sTestedPropertyInfo + " correct binding when bindingInfo in metadata", function () {
+				// Arrange
+				var oExtendedMetadata = jQuery.extend({}, oMetadata, oBindingInfo);
+				var oButton = new sap.m.semantic.SemanticButton(oExtendedMetadata);
+
+				//Act
+				oButton.setModel(oModel);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+			});
+
+			test(sTestedPropertyInfo + " correct binding when model in metadata", function () {
+				// Arrange
+				var oExtendedMetadata = jQuery.extend({}, oMetadata, {models: oModel});
+				var oButton = new sap.m.semantic.SemanticButton(oExtendedMetadata);
+
+				// Act
+				oButton.bindProperty(sField, "/modifiedValue");
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+			});
+
+			test(sTestedPropertyInfo + " correct binding via bindProperty and setModel", function () {
+				// Arrange
+				var oButton = new sap.m.semantic.SemanticButton(oMetadata);
+
+				// Act
+				oButton.bindProperty(sField, "/modifiedValue");
+				oButton.setModel(oModel);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+			});
+
+			test(sTestedPropertyInfo + " correct binding after unbind", function () {
+
+				var oModel = new sap.ui.model.json.JSONModel({initValue: oInitPropertyValue,
+																modifiedValue: oModifiedPropertyValue});
+				var oBindingInfo = {};
+				oBindingInfo[sField] = "{/initValue}";
+
+
+				// Arrange
+				var oExtendedMetadata = jQuery.extend({}, oMetadata, oBindingInfo, {models: oModel});
+				var oButton = new sap.m.semantic.SemanticButton(oExtendedMetadata);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oInitPropertyValue, "correct value " + oInitPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oInitPropertyValue, "correct value " + oInitPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+
+				// Act
+				oButton.bindProperty(sField, "/modifiedValue");
+				oButton.setModel(oModel);
+
+				// Assert
+				strictEqual(oButton[fnManagedObjectGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnManagedObjectGetter);
+				strictEqual(oButton[fnGetter](sField), oModifiedPropertyValue, "correct value " + oModifiedPropertyValue + " for " + sTestedPropertyInfo + " via " + fnGetter);
+			});
+		}
+
+		module("id");
+
+		test("get byId", function () {
+			// Arrange
+			var oEditButton = new sap.m.semantic.SemanticButton("editBtn", {type: sap.m.semantic.SemanticType.Edit});
+
+			strictEqual(oEditButton.getId(), "editBtn", "Expected id");
+
+			// Act
+			var oRetrievedBtn = sap.ui.getCore().byId("editBtn");
+
+			// Assert
+			notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");
+			strictEqual(oRetrievedBtn.getId(), "editBtn", "Expected id");
+
+			oEditButton.destroy();
+		});
+
+		module("protected properties");
+
+		test("Semantic buttons should not allow setting icon value to them", function () {
+			// Arrange
+			var oEditButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Edit}),
+					oRejectButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Reject}),
+					testIcon = 'sap-icon://settings';
+
+			// Act
+			oRejectButton.setProperty("icon", testIcon);
+
+			// Assert
+			equal(oRejectButton.getProperty("icon"), "", "the reject button icon value is correctly set to an empty value");
+
+			// Act
+			oEditButton.setProperty("icon", testIcon);
+
+			// Assert
+			equal(oEditButton.getProperty("icon"), "", "the edit button icon value is correctly set to an empty value");
+
+			// Clean up
+			oRejectButton.destroy();
+			oEditButton.destroy();
+		});
+
+		test("Semantic buttons should not allow setting text value to them", function () {
+			// Arrange
+			var oEditButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Edit}),
+					oRejectButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Reject}),
+					testText = 'Test';
+
+			// Act
+			oRejectButton.setProperty("text", testText);
+
+			// Assert
+			equal(oRejectButton.getProperty("text"), "Reject", "the reject button text value is nt overwritten");
+
+			// Act
+			oEditButton.setProperty("text", testText);
+
+			// Assert
+			equal(oEditButton.getProperty("text"), "Edit", "the edit button text value is is nt overwritten");
+
+			// Clean up
+			oRejectButton.destroy();
+			oEditButton.destroy();
+		});
+
+		module("buttonType");
+
+		testButtonField({
+			oMetadata: {},
+			sField: "buttonType",
+			sFieldType: "property",
+			oInitPropertyValue: sap.m.ButtonType.Default,
+			oModifiedPropertyValue: sap.m.ButtonType.Emphasized
+		});
+
+		testButtonField({
+			oMetadata: {type: sap.m.semantic.SemanticType.Edit},
+			sField: "buttonType",
+			sFieldType: "property",
+			oInitPropertyValue: sap.m.ButtonType.Emphasized,
+			oModifiedPropertyValue: sap.m.ButtonType.Accept
+		});
+
+		module("enabled");
+
+		testButtonField({
+			oMetadata: {}, //no type
+			sField: "enabled",
+			sFieldType: "property",
+			oInitPropertyValue: true,
+			oModifiedPropertyValue: false
+		});
+
+		testButtonField({
+			oMetadata: {type: sap.m.semantic.SemanticType.Add}, //type assigned
+			sField: "enabled",
+			sFieldType: "property",
+			oInitPropertyValue: true,
+			oModifiedPropertyValue: false
+		});
+
+		module("tooltip");
+
+		testButtonField({
+			oMetadata: {}, //no type
+			sField: "tooltip",
+			sFieldType: "aggregation",
+			oInitPropertyValue: null,
+			oModifiedPropertyValue: "tooltipValue"
+		});
+
+		testButtonField({
+			oMetadata: {type: sap.m.semantic.SemanticType.Add}, //has type
+			sField: "tooltip",
+			sFieldType: "aggregation",
+			oInitPropertyValue: "Add",
+			oModifiedPropertyValue: "tooltipValue"
+		});
+
+		module("type");
+
+		testButtonField({
+			oMetadata: {}, //no type
+			sField: "type",
+			sFieldType: "property",
+			oInitPropertyValue: undefined,
+			oModifiedPropertyValue: sap.m.semantic.SemanticType.Add
+		});
+
+		testButtonField({
+			oMetadata: {type: sap.m.semantic.SemanticType.Edit}, //has type
+			sField: "type",
+			sFieldType: "property",
+			oInitPropertyValue: sap.m.semantic.SemanticType.Edit,
+			oModifiedPropertyValue: sap.m.semantic.SemanticType.Add
+		});
+
+		test("change of semantic type changes all semantic-dependent properties", function () {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel({
+						defaultType: false,
+						specialType: true
+					}),
+					bChangeEventHasFired = false,
+					oSemanticButton = new sap.m.semantic.SemanticButton({
+						type: sap.m.semantic.SemanticType.Approve,
+						enabled: "{/defaultType}"
+					});
+
+			// Act
+			oSemanticButton.setModel(oModel);
+
+			// Assert
+			strictEqual(oSemanticButton.getButtonType(), "Accept", "The property 'buttonType' is correctly set");
+			strictEqual(oSemanticButton.getEnabled(), false, "The property 'enabled' is correctly set");
+
+			// Act
+			oSemanticButton.setType(sap.m.semantic.SemanticType.Reject);
+
+			// Assert
+			strictEqual(oSemanticButton.getButtonType(), "Reject", "The property 'buttonType' is correctly set");
+			strictEqual(oSemanticButton.getEnabled(), false, "The property 'enabled' is correctly set");
+			strictEqual(oSemanticButton._getControl().getText(), "Reject", "The property 'text' is correctly set");
+		});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.semantic.SemanticButton</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+<!--<div id="qunit-testrunner-toolbar"></div>-->
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+<div id="qunit-fixture-visible"></div>
+</body>
+</html>
