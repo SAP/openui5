@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.demo.worklist.controller.Object"
 	xmlns="sap.m"
+	xmlns:footerbar="sap.ushell.ui.footerbar"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
@@ -19,6 +20,25 @@
 		</content>
 		<footer>
 			<Toolbar>
+				<ToolbarSpacer/>
+				<Button id="shareButton" tooltip="{i18n>shareTooltip}" icon="sap-icon://action" press="onSharePress">
+					<dependents>
+						<ActionSheet id="shareSheet" showCancelButton="true" placement="Top">
+							<buttons>
+								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>shareSendEmail}" press="onShareEmailPress" />
+								<!-- we have to comment this out since ushell lib is not available in the openui5 layer currenlty
+								<footerbar:AddBookmarkButton id ="shareTile" appData="{
+									path: 'view>/shareSaveAsTileTitle',
+									formatter: 'sap.ui.demo.worklist.model.formatter.shareTileData'
+								}"/>
+								<footerbar:JamShareButton id ="shareJam" jamData="{
+									path: 'view>/shareOnJamTitle',
+									formatter: 'sap.ui.demo.worklist.model.formatter.shareJamData'
+								}"/> -->
+							</buttons>
+						</ActionSheet>
+					</dependents>
+				</Button>
 			</Toolbar>
 		</footer>
 	</Page>
