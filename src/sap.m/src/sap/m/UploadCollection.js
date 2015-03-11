@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 			/**
 			 * The event is triggered when the file size of an uploaded file is exceeded (only if the maxFileSize property was provided by the application).
-			 * This event is not supported by Internet Explorer 8 and 9.
+			 * This event is not supported by Internet Explorer 9.
 			 */
 			fileSizeExceed : {
 				parameters : {
@@ -1348,7 +1348,50 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._onFileSizeExceed = function(oEvent){
-		this.fireFileSizeExceed(oEvent);
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) { // IE9
+			var sFileName = oEvent.getParameter("newValue");
+			var oFile = {
+					name : sFileName
+				};
+			var oParameters = {
+					newValue : sFileName,
+					files : [oFile]
+				};
+			this.fireFileSizeExceed({
+				// deprecated
+				getParameter : function(sParameter) {
+					if (sParameter === "files") {
+						return [oFile];
+					} else if (sParameter === "newValue") {
+						return sFileName;
+					}
+				},
+				getParameters : function() {
+					return oParameters;
+				},
+				mParameters : oParameters,
+				// new
+				files : [oFile]
+			});
+		} else { // other browsers
+			var oFile = {
+					name: oEvent.getParameter("fileName"),
+					fileSize: oEvent.getParameter("fileSize")};
+			this.fireFileSizeExceed({
+				// deprecated
+				getParameter : function(sParameter) {
+					if (sParameter) {
+						return oEvent.getParameter(sParameter);
+					}
+				},
+				getParameters : function() {
+					return oEvent.getParameters();
+				},
+				mParameters : oEvent.getParameters(),
+				// new
+				files : [oFile]
+			});
+		}
 	};
 
 	/**
