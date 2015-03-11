@@ -442,6 +442,7 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	&  > .sapUiTableFtr {
 		height: 3rem;
 		line-height: 3rem;
+		padding-top: 0;
 	}
 
 	/* Row */
@@ -473,10 +474,9 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	}
 
 	/* Footer Adjustments */
-	.sapUiTableFtr > .sapUiTv {
+	.sapUiTableFtr > .sapMLabel {
 		// Subtract the outer padding of the footer, when it is a table text view
-		margin-top: -4px;
-		min-height: 3rem;
+		height: 3rem;
 		line-height: 3rem;
 	}
 }
