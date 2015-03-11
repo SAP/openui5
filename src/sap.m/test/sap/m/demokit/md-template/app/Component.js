@@ -5,9 +5,10 @@ sap.ui.define([
 		"sap/ui/demo/mdtemplate/model/AppModel",
 		"sap/ui/demo/mdtemplate/controller/ListSelector",
 		"sap/ui/demo/mdtemplate/controller/BusyHandler",
+		"sap/ui/demo/mdtemplate/controller/ErrorHandler",
 		"sap/ui/demo/mdtemplate/model/formatter",
 		"sap/ui/demo/mdtemplate/model/grouper"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, BusyHandler) {
+	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, BusyHandler, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
@@ -117,6 +118,7 @@ sap.ui.define([
 			this.setModel(new AppModel(mConfig.serviceUrl));
 			this._createMetadataPromise(this.getModel());
 
+			this._oErrorHandler = new ErrorHandler(this);
 			// initialize the busy handler with the component
 			this._oBusyHandler = new BusyHandler(this);
 
@@ -136,7 +138,7 @@ sap.ui.define([
 		destroy : function () {
 			this.oListSelector.destroy();
 			this._oBusyHandler.destroy();
-
+			this._oErrorHandler.destroy();
 			// call the base component's destroy function
 			sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);
 		},
