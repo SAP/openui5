@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 */
 				showHeader : { type : "boolean", group : "Appearance", defaultValue : true },
 				/**
-				 * A nav button will be rendered in the header if this property is set to true.
+				 * If this property is set to true, a navigation button will be rendered in the header.
 				 */
 				showNavButton : {type : "boolean", group : "Appearance", defaultValue : false},
 				/**
