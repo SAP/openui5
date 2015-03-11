@@ -269,15 +269,13 @@ sap.ui.define([
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
 			// only update the counter if the length is final
-			if (this._oList.getBinding('items').isLengthFinal()) {
-				if (iTotalItems){
-					sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
-				} else {
-					//Display 'Objects' instead of 'Objects (0)'
-					sTitle = this.getResourceBundle().getText("masterTitle");
-				}
-				this._oControlStateModel.setProperty("/masterListTitle", sTitle);
+			if (this._oList.getBinding('items').isLengthFinal() && iTotalItems) {
+				sTitle = this.getResourceBundle().getText("masterTitleCount", [iTotalItems]);
+			} else {
+				//Display 'Objects' instead of 'Objects (0)'
+				sTitle = this.getResourceBundle().getText("masterTitle");
 			}
+			this._oControlStateModel.setProperty("/masterListTitle", sTitle);
 		},
 
 		/**
