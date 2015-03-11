@@ -192,7 +192,7 @@
 			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
 			ok(oZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 			ok(oZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
-			oZip.getBinding("value").detachMessageChange(oChangeHandler);
+			oZip.getBinding("value").detachMessageChange(oChangeHandler2);
 		};
 		oZip.getBinding("value").attachMessageChange(oChangeHandler);
 		oZip.setValue('bbb');
@@ -214,11 +214,49 @@
 			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 			ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
-			oStreet.getBinding("value").detachMessageChange(oChangeHandler);
+			oStreet.getBinding("value").detachMessageChange(oChangeHandler2);
 		};
 		oStreet.getBinding("value").attachMessageChange(oChangeHandler);
 		oStreet.setValue('am Busche');
 		oStreet.getBinding("value").attachMessageChange(oChangeHandler2);
+		oStreet.setValue('Busch');
+	});
+
+	test("validationError - multiple input", function() {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+		
+		var oChangeHandler = function(oEvent) {
+			ok(oEvent.getParameters('messages').messages.length == 1, 'Validation Message propagated to control');
+			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+			oStreet.getBinding("value").detachMessageChange(oChangeHandler);
+		};
+		var oChangeHandler2 = function(oEvent) {
+			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
+			ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+			ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
+			oStreet.getBinding("value").detachMessageChange(oChangeHandler2);
+		};
+		var oChangeHandler3 = function(oEvent) {
+			ok(oEvent.getParameters('messages').messages.length == 1, 'Validation Message propagated to control');
+			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+			oStreet.getBinding("value").detachMessageChange(oChangeHandler3);
+		};
+		var oChangeHandler4 = function(oEvent) {
+			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
+			ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+			ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
+			oStreet.getBinding("value").detachMessageChange(oChangeHandler4);
+		};
+		oStreet.getBinding("value").attachMessageChange(oChangeHandler);
+		oStreet.setValue('am Busche');
+		oStreet.getBinding("value").attachMessageChange(oChangeHandler2);
+		oStreet.setValue('Busch');
+		oStreet.getBinding("value").attachMessageChange(oChangeHandler3);
+		oStreet.setValue('am Busche');
+		oStreet.getBinding("value").attachMessageChange(oChangeHandler4);
 		oStreet.setValue('Busch');
 	});
 	
