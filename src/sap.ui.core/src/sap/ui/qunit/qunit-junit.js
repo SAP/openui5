@@ -42,12 +42,37 @@
 			return sName.replace(/\./g, "_");
 		};
 
+		// HACK: insert our hook in front of QUnit's own hook so that we execute first
+		QUnit.config.callbacks.begin.unshift(function() {
+			// ensure proper structure of DOM
+			var $qunit = jQuery("#qunit");
+			var $qunitDetails = jQuery('#qunit-header,#qunit-banner,qunit-userAgent,#qunit-testrunner-toolbar,#qunit-tests');
+			var $qunitFixture = jQuery("#qunit-fixture");
+			if ( $qunit.size() === 0 && $qunitDetails.size() > 0 ) {
+				// create a "qunit" section and place it before the existing detail DOM 
+				$qunit = jQuery("<div id='qunit'></div>").insertBefore($qunitDetails[0]);
+				// move the existing DOM into the wrapper
+				$qunit.append($qunitDetails);
+			}
+			if ( $qunitFixture.size === 0 ) {
+				$qunit.after("<div id='qunit-fixture'></div>");
+			}
+		});
+
+		// TODO: Remove deprecated code once all projects adapted
+		QUnit.equals = window.equals = window.equal;
+		QUnit.raises = window.raises = window["throws"];
+
 		// register QUnit event handler to manipulate module names for better reporting in Jenkins
 		QUnit.moduleStart(function(oData) {
 			oData.name = sTestPageName + "." + formatModuleName(oData.name);
 		});
 		QUnit.testStart(function(oData) {
 			oData.module = sTestPageName + "." + formatModuleName(oData.module || 'default');
+			window.assert = QUnit.config.current.assert;
+		});
+		QUnit.testDone(function(assert) {
+			delete window.assert;
 		});
 		QUnit.log(function(data) {
 			// manipulate data.message for failing tests with source info
