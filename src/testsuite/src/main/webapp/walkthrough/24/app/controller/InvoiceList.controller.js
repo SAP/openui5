@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/demo/wt/model/formatter", // this formatter is used in the view only
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (Controller, formatter, Filter, FilterOperator) {
+], function (Controller, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.wt.controller.InvoiceList", {

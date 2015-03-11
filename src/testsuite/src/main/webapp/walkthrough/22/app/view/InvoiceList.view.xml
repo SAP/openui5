@@ -22,10 +22,7 @@
 					type: 'sap.ui.model.type.Currency'
 				}"
 				numberUnit="EUR"
-				numberState="{
-					path : 'invoice>ExtendedPrice',
-					formatter : 'sap.ui.demo.wt.model.formatter.priceState'
-				}" />
+				numberState="{=	${invoice>ExtendedPrice} > 50 ? 'Error' : 'Success' }" />
 		</items>
 	</List>
 </mvc:View>
