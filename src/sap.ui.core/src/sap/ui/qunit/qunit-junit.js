@@ -39,7 +39,7 @@
 
 		// avoid . in module names to avoid displaying issues in Jenkins results
 		var formatModuleName = function(sName) {
-			return sName.replace(/\./g, "_");
+			return String(sName).replace(/\./g, "_");
 		};
 
 		// HACK: insert our hook in front of QUnit's own hook so that we execute first
