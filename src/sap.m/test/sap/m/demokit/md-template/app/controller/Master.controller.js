@@ -33,7 +33,8 @@ sap.ui.define([
 			this._oControlStateModel = new sap.ui.model.json.JSONModel({
 				isFilterBarVisible : false,
 				filterBarLabel : "",
-				masterListTitle : this.getResourceBundle().getText("masterTitle")
+				masterListTitle : this.getResourceBundle().getText("masterTitle"),
+				masterListNoDataText : this.getResourceBundle().getText("masterListNoDataText")
 			});
 			this.setModel(this._oControlStateModel, 'controlStates');
 
@@ -288,11 +289,11 @@ sap.ui.define([
 			this._oList.getBinding("items").filter(aFilters, "Application");
 			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
-				this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
+				this._oControlStateModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
 			} else  {
 				// only reset the no data text to default when no new search was triggered
 				if (this._oListFilterState.aSearch.length > 0) {
-					this._oList.setNoDataText(this.getResourceBundle().getText("masterListNoDataText"));
+					this._oControlStateModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataText"));
 				}
 			}
 		},
