@@ -237,6 +237,22 @@
 		equal(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
+	test("float format with rounding mode: CEILING with decimals set to a string which contains a number", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: "3",
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.CEILING
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.124", ".1234");
+		equal(oFormat.format(.1235), "0.124", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.200", "2.1999");
+		equal(oFormat.format(2.11), "2.110", "2.11");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1236), "-0.123", "-.1236");
+	});
+
 	test("float format with rounding mode: FLOOR", function(){
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,

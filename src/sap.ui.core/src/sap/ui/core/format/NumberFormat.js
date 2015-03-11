@@ -976,15 +976,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			return NaN;
 		}
 
-		var sRoundingMode = oOptions.roundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
+		var sRoundingMode = oOptions.roundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+				iMaxFractionDigits = parseInt(oOptions.maxFractionDigits, 10);
 
 		if (typeof sRoundingMode === "function") {
 			// Support custom function for rounding the number
-			fValue = sRoundingMode(fValue, oOptions.maxFractionDigits);
+			fValue = sRoundingMode(fValue, iMaxFractionDigits);
 		} else {
-			if (!oOptions.maxFractionDigits) {
+			if (!iMaxFractionDigits) {
 				return mRoundingFunction[sRoundingMode](fValue);
 			}
+
 			// First move the decimal point towards right by maxFactionDigits
 			// Then using the rounding function to round the first digit after decimal point
 			// In the end, move the decimal point back to the original position
@@ -993,7 +995,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			// 	1. Move the decimal point to right by 2 digits, result 100.5
 			// 	2. Using the round function, for example, Math.round(100.5) = 101
 			// 	3. Move the decimal point back by 2 digits, result 1.01
-			fValue =  shiftDecimalPoint(mRoundingFunction[sRoundingMode](shiftDecimalPoint(fValue, oOptions.maxFractionDigits)), -oOptions.maxFractionDigits);
+			fValue =  shiftDecimalPoint(mRoundingFunction[sRoundingMode](shiftDecimalPoint(fValue, iMaxFractionDigits)), -iMaxFractionDigits);
 		}
 
 		return fValue;
