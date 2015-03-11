@@ -138,8 +138,11 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 /* COL HEADER */
 .sapUiTableColHdrCnt {
 	display: none;
-	min-height: @sapUiTableColHdrHeight;
 	background-color: @sapUiExtraLightBG;
+}
+
+.sapUiTableColHdrCnt {
+	min-height: @sapUiTableColHdrHeight;
 }
 
 .sapUiTableCHdr .sapUiTableColHdrCnt {
@@ -182,7 +185,7 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	vertical-align: top;
 }
 
-.sapUiTableColCell {
+.sapUiTableColCell, .sapUiTableColRowHdrIco {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	padding: 0 8px;
@@ -425,6 +428,59 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	display: block;
 }
 
+/* Cozy Mode when sap.m. library is loaded */
+.sapUiTableM.sapUiTableCozy {
+	 @sapUiTableCozyColHdrHeight: 3rem;
+	 @sapUiTableCozyRowHeight: 3rem;
+
+	/* Header */
+	& > .sapUiTableCnt > .sapUiTableColHdrCnt {
+		min-height: @sapUiTableCozyColHdrHeight;
+	}
+
+	/* Footer */
+	&  > .sapUiTableFtr {
+		height: 3rem;
+		line-height: 3rem;
+	}
+
+	/* Row */
+	.sapUiTableCtrl tr {
+		height: @sapUiTableCozyRowHeight;
+	}
+
+	/* Cell Adjustments */
+	.sapUiTableColCell, .sapUiTableColRowHdrIco {
+		position: absolute;
+		display: block;
+		left: 0;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+	}
+	
+	.sapUiTableColIcons {
+		padding-top: 0px;
+	} 
+
+	/* Group Header Adjustments */
+	div.sapUiTableGroupHeader div.sapUiTableGroupIcon {
+		height: 3rem;
+		line-height: 3rem;
+		background-color: transparent;
+	}
+
+	/* Footer Adjustments */
+	.sapUiTableFtr > .sapUiTv {
+		// Subtract the outer padding of the footer, when it is a table text view
+		margin-top: -4px;
+		min-height: 3rem;
+		line-height: 3rem;
+	}
+}
+
 
 /*******************************************************************************
  * HORIZONTAL SCROLLBAR
@@ -655,13 +711,13 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	width: 100%;
 }
 
-.sapUiTableHiddenSizeDetector{
+.sapUiTableHiddenSizeDetector {
 	position: absolute;
 	left: -1000px;
 	visibility: hidden;
 	display: inline-block;
 }
 
-.sapUiTable>div.sapUiOverlay.sapUiTableOverlay {
+.sapUiTable > div.sapUiOverlay.sapUiTableOverlay {
 	border: 0; /* Overlay should not have border */
 }

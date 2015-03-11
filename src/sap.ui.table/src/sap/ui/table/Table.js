@@ -612,6 +612,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		var $this = this.$();
 
+		if (!$this.closest('.sapUiSizeCompact,.sapUiSizeCondensed').length) {
+			$this.addClass("sapUiTableCozy");
+
+			if (sap.ui.Device.system.tablet) {
+				$this.addClass("sapUiTableTouch");
+			}
+		}
+
 		this._renderOverlay();
 		this._updateVSb(true);
 		this._updateTableContent();
@@ -639,7 +647,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			this._determineVisibleCols();
 			this._bDetermineVisibleCols = false;
 		}
-
 	};
 
 	Table.prototype._renderOverlay = function() {
@@ -1212,7 +1219,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype.autoResizeColumn = function(iColId) {
 		var oCol = this.getColumns()[iColId];
 		this._iColumnResizeStart = null;
-		oCol._iNewWidth = this._calculateAutomaticColumnWidth(iColId);
+		var iNewWidth = this._calculateAutomaticColumnWidth(iColId);
+		if (iNewWidth == null) {
+			return;
+		}
+
+		oCol._iNewWidth = iNewWidth;
 		this._oCalcColumnWidths[iColId] = oCol._iNewWidth;
 		this._onColumnResized(null, iColId);
 	};
@@ -1489,7 +1501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				$sapUiTableHSb.css('padding-left', iScrollPadding + 'px');
 			}
 
-			this._oHSb.setContentSize(iColsWidth - iScrollPadding + "px");
+			this._oHSb.setContentSize(iColsWidth + "px");
 
 			if (this._oHSb.getDomRef()) {
 				this._oHSb.rerender();
@@ -2877,7 +2889,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._onColumnSelect = function(oColumn) {
-
 		// forward the event
 		var bExecuteDefault = this.fireColumnSelect({
 			column: oColumn
@@ -5280,6 +5291,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var $cols = $this.find('td[headers=\"' + this.getId() + '_col' + iColIndex + '\"]').children("div");
 		var oColumns = this.getColumns();
 		var oCol = oColumns[iColIndex];
+		if (!oCol) {
+			return null;
+		}
 		var aHeaderSpan = oCol.getHeaderSpan();
 		var oColLabel = oCol.getLabel();
 		var that = this;
