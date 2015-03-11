@@ -1,11 +1,10 @@
 sap.ui.define([
 		"sap/ui/core/UIComponent",
 		"sap/ui/model/resource/ResourceModel",
-		"sap/ui/demo/worklist/model/Device",
-		"sap/ui/demo/worklist/model/AppModel",
+		"sap/ui/demo/worklist/model/models",
 		"sap/ui/demo/worklist/controller/ErrorHandler",
 		"sap/ui/demo/worklist/model/formatter"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ErrorHandler) {
+	], function (UIComponent, ResourceModel, models, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
@@ -41,9 +40,9 @@ sap.ui.define([
 
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);
-			
+
 			// set the device model
-			this.setModel(new DeviceModel(), "device");
+			this.setModel(models.createDeviceModel(), "device");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
@@ -57,17 +56,31 @@ sap.ui.define([
 		 */
 		createContent : function() {
 			// set the app data model since the app controller needs it, we create this model very early
-			var oAppModel = new AppModel(this.getMetadata().getConfig().serviceUrl);
+			var oAppModel = models.createODataModel({
+				urlParametersForEveryRequest: [
+					"sap-server",
+					"sap-host",
+					"sap-host-http",
+					"sap-client",
+					"sap-language"
+				],
+				url : this.getMetadata().getConfig().serviceUrl,
+				config: {
+					metadataUrlParams: {
+						"sap-documentation": "heading"
+					}
+				}
+			});
 			this.setModel(oAppModel);
 			this._createMetadataPromise(oAppModel);
 
 			// call the base component's createContent function
 			var oRootView = UIComponent.prototype.createContent.apply(this, arguments);
-			
+
 			if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable on "combi" devices with touch AND mouse
 				oRootView.addStyleClass("sapUiSizeCompact");
 			}
-			
+
 			return oRootView;
 		},
 
