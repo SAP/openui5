@@ -583,8 +583,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			contentItem : this._oContentItem
 		};
 
-		// set initial focus to the segmentedButton if available
-		this._getDialog().setInitialFocus((sap.ui.Device.system.desktop && this._showSubHeader) ? this._segmentedButton : null);
+		//focus the first focusable item in current page's content
+		if (sap.ui.Device.system.desktop) {
+			this._getDialog().attachEventOnce("afterOpen", function () {
+				var oCurrentPage = this._getNavContainer().getCurrentPage(),
+					$firstFocusable;
+				if (oCurrentPage) {
+					$firstFocusable = oCurrentPage.$("cont").firstFocusableDomRef();
+					if ($firstFocusable) {
+						if (jQuery($firstFocusable).hasClass('sapMListUl')) {
+							var $aListItems = jQuery($firstFocusable).find('.sapMLIB');
+							$aListItems.length && $aListItems[0].focus();
+							return;
+						}
+
+						$firstFocusable.focus();
+					}
+				}
+			}, this);
+		}
+
 		// open dialog
 		this._getDialog().open();
 
