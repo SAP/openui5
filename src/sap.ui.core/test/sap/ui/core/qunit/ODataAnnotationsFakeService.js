@@ -98,6 +98,18 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/simple-values.xml":
 				sAnswer = sSimpleValues;
 				break;
+				
+			// Test multiple annotations loaded after each other...
+			case "fakeService://testdata/odata/multiple-annotations-01.xml":
+				sAnswer = sMultipleTest01;
+				break;
+			case "fakeService://testdata/odata/multiple-annotations-02.xml":
+				sAnswer = sMultipleTest02;
+				break;
+			case "fakeService://testdata/odata/multiple-annotations-03.xml":
+				sAnswer = sMultipleTest03;
+				break;
+				
 
 			case "fakeService://testdata/odata/collection-with-namespace.xml":
 				sAnswer = sCollectionWithNamespace;
@@ -3764,6 +3776,114 @@ var sUrlRefTest = '\
 					</Collection>\
 				</Annotation>\
 			</Annotations>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sUrlRefTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">\
+	<edm:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edm:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edm:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="UrlTest">\
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="ID"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAnnotation">\
+							<PropertyValue Property="Label" String="Address"/>\
+							<PropertyValue Property="Target" AnnotationPath="@com.sap.vocabularies.Communication.v1.Address"/>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+							<PropertyValue Property="Label" String="Link to"/>\
+							<PropertyValue Property="Value" String="Google Maps"/>\
+							<PropertyValue Property="Url">\
+								<UrlRef>\
+									<Apply Function="odata.fillUriTemplate">\
+										<String>https://www.google.de/maps/place/{street},{city}</String>\
+										<LabeledElement Name="street">\
+											<Apply Function="odata.uriEncode">\
+												<Path>Address/Street</Path>\
+											</Apply>\
+										</LabeledElement>\
+										<LabeledElement Name="city">\
+											<Apply Function="odata.uriEncode">\
+												<Path>Address/City</Path>\
+											</Apply>\
+										</LabeledElement>\
+									</Apply>\
+								</UrlRef>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sMultipleTest01 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.MultipleAnnotations">\
+				<Annotation Term="Test.FromAll">\
+					<String>First</String>\
+				</Annotation>\
+				<Annotation Term="Test.FromFirst">\
+					<String>First</String>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sMultipleTest02 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.MultipleAnnotations">\
+				<Annotation Term="Test.FromAll">\
+					<String>Second</String>\
+				</Annotation>\
+				<Annotation Term="Test.FromSecond">\
+					<String>Second</String>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sMultipleTest03 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+		<Annotations Target="Test.MultipleAnnotations">\
+			<Annotation Term="Test.FromAll">\
+				<String>Third</String>\
+			</Annotation>\
+			<Annotation Term="Test.FromThird">\
+				<String>Third</String>\
+			</Annotation>\
+		</Annotations>\
 		</Schema>\
 	</edm:DataServices>\
 </edm:Edm>';
