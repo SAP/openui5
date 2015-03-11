@@ -412,19 +412,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					domRef : jQuery.sap.domById(sSourceId)
 				});
 			}
-		} else if (!this.getResponsive() && this.getTitleActive() && oEvent.srcControl === this._titleText) {
+		} else if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
+				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
+				sSourceId === this.getId() + "-titleText-inner" )) {
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
+				sSourceId = this.getId() + "-title";
+
 				this.fireTitlePress({
-					domRef : this._titleText.getFocusDomRef()
+					domRef : jQuery.sap.domById(sSourceId)
 				});
 			}
 		} else if (this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-txt" || jQuery(oEvent.target).parent().attr('id') === this.getId() + "-txt" )) {
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
-				if (!sSourceId) { // if the click is over the span inside the "a" we should get appropriate sourceId (the one of the "a")
-					sSourceId = jQuery(oEvent.target).parent().attr('id');
-				}
+				// The sourceId should be always the id of the "a", even if we click on the inside span element
+				sSourceId = this.getId() + "-txt";
+
 				this.fireTitlePress({
 					domRef : jQuery.sap.domById(sSourceId)
 				});
@@ -443,15 +447,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
 		var sSourceId = oEvent.target.id;
-		if (!this.getResponsive() && this.getTitleActive() && sSourceId === this.getId() + "-title") {
+
+		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" || 
+				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
+				sSourceId === this.getId() + "-titleText-inner" )) {
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
+			sSourceId = this.getId() + "-title";
 
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
 				this.fireTitlePress({
-					domRef : this._titleText.getFocusDomRef()
+					domRef : jQuery.sap.domById(sSourceId)
 				});
 			} else {
 				if (oEvent.type === "sapspace") {
@@ -462,9 +470,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
-			if (!sSourceId) { // if the click is over the span inside the "a" we should get appropriate sourceId (the one of the "a")
-				sSourceId = jQuery(oEvent.target).parent().attr('id');
-			}
+			// The sourceId should be always the id of the "a", even if we click on the inside span element
+			sSourceId = jQuery(oEvent.target).parent().attr('id');
+
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
 				this.fireTitlePress({
