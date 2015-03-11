@@ -23,32 +23,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * The NumberFormat is a static class for formatting and parsing numeric values according
 	 * to a set of format options.
 	 *
-	 * Supported format options:
-	 * <ul>
-	 * <li>minIntegerDigits: minimal number of non-fraction digits</li>
-	 * <li>maxIntegerDigits: maximum number of non-fraction digits</li>
-	 * <li>minFractionDigits: minimal number of fraction digits</li>
-	 * <li>maxFractionDigits: maximum number of fraction digits</li>
-	 * <li>decimals: define the number of decimal in the formatted string</li>
-	 * <li>shortDecimals: define the number of decimal in the shortified format string. If this isn't specified, the decimal options is used</li>
-	 * <li>pattern: CLDR number pattern</li>
-	 * <li>groupingEnabled: enable grouping (show the grouping separators)</li>
-	 * <li>groupingSeparator: the used grouping separator</li>
-	 * <li>decimalSeparator: the used decimal separator</li>
-	 * <li>plusSign: the used plus symbol</li>
-	 * <li>minusSign: the used minus symbol</li>
-	 * <li>showMeasure: show the measure according to the format in the formatted string</li>
-	 * <li>currencyCode: whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there's symbol defined for the given currency code.
-	 * <li>currencyContext: either 'standard' (the default format) or 'accounting' for an accounting specific currency display
-	 * <li>style: either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
-	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by maxFractionDigits.
-	 *  Rounding will only be applied, if the passed value if of type number. This can be assigned by value in
-	 *  {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode} or a function which will be used for rounding the number. The function
-	 *  is called with two parameters: the number and how many decimal digits should be reserved.</li>
-	 * </ul>
-	 * For format options which are not specified default values according to the type and locale settings are used.
-	 *
 	 * @public
+	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
+	 * @param {int} [oFormatOptions.minIntegerDigits] defines minimal number of non-decimal digits
+	 * @param {int} [oFormatOptions.maxIntegerDigits] defines maximum number of non-decimal digits
+	 * @param {int} [oFormatOptions.minFractionDigits] defines minimal number of decimal digits
+	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
+	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
+	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
+	 * @param {boolean} [oFormatOptions.groupingEnabled] defines whether grouping is enabled (show the grouping separators)
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
+	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
+	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
+	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
+	 *  back to the standard notation. For example ".5e-3" is parsed to "0.0005".
+	 * @param {string} [oFormatOptions.style] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms
+	 *  when it's set to 'short' or 'long'.
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode] specifies a rounding behavior for discarding the digits after the maximum fraction digits
+	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
+	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
+	 * @param {boolean} [oFormatOptions.showMeasure] defines whether the measure according to the format is shown in the formatted string
+	 * @param {boolean} [oFormatOptions.currencyCode] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there's symbol defined
+	 *  for the given currency code.
+	 * @param {string} [oFormatOptions.currencyContext] It can be set either with 'standard' (the default value) or with 'accounting' for an accounting specific currency display
+
 	 * @alias sap.ui.core.format.NumberFormat
 	 */
 	var NumberFormat = sap.ui.base.Object.extend("sap.ui.core.format.NumberFormat", /** @lends sap.ui.core.format.NumberFormat.prototype */ {
@@ -168,6 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		type: mNumberType.INTEGER,
 		showMeasure: false,
 		style: "standard",
+		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO
 	};
 
@@ -190,6 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		type: mNumberType.FLOAT,
 		showMeasure: false,
 		style: "standard",
+		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
 	};
 
@@ -213,6 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		type: mNumberType.PERCENT,
 		showMeasure: false,
 		style: "standard",
+		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
 	};
 
@@ -237,6 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		currencyCode: true,
 		currencyContext: 'standard',
 		style: "standard",
+		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
 	};
 
@@ -542,7 +546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		}
 
 		if (oOptions.type == mNumberType.PERCENT) {
-			oValue = shiftDecimalPoint(+oValue, 2);
+			oValue = NumberFormat._shiftDecimalPoint(oValue, 2);
 		}
 
 		//handle measure
@@ -702,7 +706,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sPercentPattern = this.oLocaleData.getPercentPattern(),
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
 			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sCurrencyMeasure,
-			oResult = 0;
+			vResult = 0;
 
 		if (sPercentPattern.charAt(0) === "%") {
 			sRegExpFloat = sRegExpFloat.slice(0, 1) + "%?" + sRegExpFloat.slice(1);
@@ -756,25 +760,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// before calling parseInt/parseFloat
 		sValue = sValue.replace(oGroupingRegExp, "");
 
+		// Remove the leading "+" sign because when "parseAsString" is set to true the "parseInt" or "parseFloat" isn't called and the leading "+" has to be moved manually
+		sValue = sValue.replace(/^\+/, "");
+
 		if (oOptions.isInteger) {
-			oResult = parseInt(sValue, 10);
+			vResult = oOptions.parseAsString ? sValue : parseInt(sValue, 10);
 		} else {
 			sValue = sValue.replace(oDecimalRegExp, ".");
 			if (sValue.indexOf(sPercentSign) !== -1) {
 				bPercent = true;
 				sValue = sValue.replace(sPercentSign, "");
 			}
-			oResult = parseFloat(sValue);
+			vResult = oOptions.parseAsString ? sValue : parseFloat(sValue);
 			if (bPercent) {
-				oResult = shiftDecimalPoint(oResult, -2);
+				vResult = NumberFormat._shiftDecimalPoint(vResult, -2);
 			}
 		}
 
-		if (oShort.factor > 1) {
-			oResult = oResult * oShort.factor;
+		if (oShort.factor > 1 || oOptions.parseAsString) {
+			vResult = NumberFormat._shiftDecimalPoint(vResult, Math.round(Math.log(oShort.factor) / Math.LN10));
 		}
 
-		return oOptions.type === mNumberType.CURRENCY ? [oResult, sCurrencyMeasure] : oResult;
+		return oOptions.type === mNumberType.CURRENCY ? [vResult, sCurrencyMeasure] : vResult;
 	};
 
 	/**
@@ -826,6 +833,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sValue = "-" + sValue;
 		}
 		return sValue;
+	};
+
+	NumberFormat._shiftDecimalPoint = function(vValue, iStep) {
+		if (typeof iStep !== "number") {
+			return NaN;
+		}
+
+		var aExpParts = vValue.toString().toLowerCase().split("e");
+
+		if (typeof vValue === "number") {
+			// Exponential operation is used instead of simply multiply the number by
+			// Math.pow(10, maxFractionDigits) because Exponential operation returns exact float
+			// result but multiply doesn't. For example 1.005*100 = 100.49999999999999.
+
+			iStep = aExpParts[1] ? (+aExpParts[1] + iStep) : iStep;
+
+			return +(aExpParts[0] + "e" + iStep);
+		} else if (typeof vValue === "string") {
+			if (parseInt(vValue, 10) === 0 && iStep >= 0) {
+				return vValue;
+			}
+
+			vValue = aExpParts[0];
+
+			var iDecimalPos = vValue.indexOf("."),
+					// the expected position after move
+					iAfterMovePos,
+					// the integer part in the final result
+					sInt,
+					// the decimal part in the final result
+					sDecimal;
+
+			if (iDecimalPos === -1) {
+				// when there's no decimal point, add one to the end
+				vValue = vValue + ".";
+				iDecimalPos = vValue.length - 1;
+			}
+
+			if (aExpParts[1]) {
+				iDecimalPos += (+aExpParts[1]);
+			}
+
+			iAfterMovePos = iDecimalPos + iStep;
+			if (iAfterMovePos <= 0) {
+				// pad 0 to the left when decimal point should be shifted far left
+				vValue = jQuery.sap.padLeft(vValue, '0', vValue.length - iAfterMovePos + 1);
+				iAfterMovePos = 1;
+			} else if (iAfterMovePos >= vValue.length - 1) {
+				// pad 0 to the right
+				vValue = jQuery.sap.padRight(vValue, '0', iAfterMovePos + 1);
+				iAfterMovePos = vValue.length - 1;
+			}
+
+			vValue = vValue.replace(".", "");
+
+			sInt = vValue.substring(0, iAfterMovePos);
+			sDecimal = vValue.substring(iAfterMovePos);
+
+			return sInt + (sDecimal ? ("." + sDecimal) : "");
+		} else {
+			// can't shift decimal point in this case
+			return null;
+		}
 	};
 
 	function getShortenedFormat(fValue, sStyle, oLocaleData) {
@@ -995,24 +1065,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			// 	1. Move the decimal point to right by 2 digits, result 100.5
 			// 	2. Using the round function, for example, Math.round(100.5) = 101
 			// 	3. Move the decimal point back by 2 digits, result 1.01
-			fValue =  shiftDecimalPoint(mRoundingFunction[sRoundingMode](shiftDecimalPoint(fValue, iMaxFractionDigits)), -iMaxFractionDigits);
+			fValue =  NumberFormat._shiftDecimalPoint(mRoundingFunction[sRoundingMode](NumberFormat._shiftDecimalPoint(fValue, iMaxFractionDigits)), -iMaxFractionDigits);
 		}
 
 		return fValue;
-	}
-
-	function shiftDecimalPoint(fValue, iStep) {
-		if (typeof fValue !== "number" || typeof iStep !== "number") {
-			return NaN;
-		}
-
-		// Exponential operation is used instead of simply multiply the number by
-		// Math.pow(10, maxFractionDigits) because Exponential operation returns exact float
-		// result but multiply doesn't. For example 1.005*100 = 100.49999999999999.
-		var aExpParts = fValue.toString().split("e");
-		iStep = aExpParts[1] ? (+aExpParts[1] + iStep) : iStep;
-
-		return +(aExpParts[0] + "e" + iStep);
 	}
 
 	return NumberFormat;

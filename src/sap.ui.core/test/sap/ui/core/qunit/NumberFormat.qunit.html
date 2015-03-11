@@ -524,6 +524,40 @@
 		equal(oDefaultFloat.parse("5e-3"), 0.005, "5e-3");
 		equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
 		equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
+		
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			parseAsString: true
+		});
+		equal(oFormat.parse("123.23"), "123.23", "Simple number is parsed as string");
+		equal(oFormat.parse("12,345.67"), "12345.67", "Number with grouping is parsed as string");
+		equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78", 
+				"Ridiculously long number is parsed as string");
+	});
+
+	test("parse default format with parameter 'parseAsString' set to true", function() {
+		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			parseAsString: true
+		}), oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			parseAsString: true
+		});
+
+		equal(oIntegerFormat.parse("123"), "123", "123");
+		equal(oIntegerFormat.parse("123,123"), "123123", "123,123");
+		equal(oIntegerFormat.parse("123,123,1234"), "1231231234", "123,123,1234");
+		equal(isNaN(oIntegerFormat.parse("123.00")), true, "123.00");
+		equal(isNaN(oIntegerFormat.parse("5e+3")), true, "5e+3");
+		equal(isNaN(oIntegerFormat.parse("a1b2c3")), true, "a1b2c3");
+
+		equal(oFloatFormat.parse("123.23"), "123.23", "123.23");
+		equal(oFloatFormat.parse("123,123,123.23"), "123123123.23", "123,123,123.23");
+		equal(oFloatFormat.parse("+.23"), "0.23", ".23");
+		equal(oFloatFormat.parse("-123.23"), "-123.23", "-123.23");
+		equal(oFloatFormat.parse("+6.5"), "6.5", "+6.5");
+		equal(oFloatFormat.parse("5e+3"), "5000", "5e+3");
+		equal(oFloatFormat.parse("1E+4"), "10000", "1E+4");
+		equal(oFloatFormat.parse("5e-3"), "0.005", "5e-3");
+		equal(oFloatFormat.parse(".5e-3"), "0.0005", ".5e-3");
+		equal(isNaN(oFloatFormat.parse("123.x5")), true, "123.x5");
 	});
 
 	test("parse custom format", function(){
@@ -544,6 +578,16 @@
 		equal(oCustomFloat.parse("5e-3"), 0.005, "5e-3");
 		equal(oCustomFloat.parse(",5e-3"), 5e-4, ",5e-3");
 		equal(isNaN(oCustomFloat.parse("123,x5")), true, "123,x5");
+
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			parseAsString: true,
+			groupingSeparator: ".",
+			decimalSeparator: ","
+		});
+		equal(oFormat.parse("123,23"), "123.23", "Simple number is parsed as string");
+		equal(oFormat.parse("12.345,67"), "12345.67", "Number with grouping is parsed as string");
+		equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78", 
+				"Ridiculously long number is parsed as string");
 
 	});
 
@@ -585,8 +629,8 @@
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
 		});
-		
-		var aResult = oFormat.parse("-12,345.67 EUR");
+
+		aResult = oFormat.parse("-12,345.67 EUR");
 		equal(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("USD23.4567");
@@ -602,7 +646,25 @@
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
-		
+
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			parseAsString: true
+		});
+
+		aResult = oFormat.parse("-12,345.67 EUR");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], "-12345.67", "Number is parsed correctly");
+		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("-12,345,678,901,123,456.78 EUR");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
+		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78 EUR");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
+		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
 	test("float short style", function() {
@@ -639,6 +701,23 @@
 			oInfo = sValue.originInfo;
 		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
 		equal(oInfo.locale, "en-US", "Origin Info: locale")
+	});
+
+	test("Private method NumberFormat._shiftDecimalPoint", function() {
+		var f = sap.ui.core.format.NumberFormat._shiftDecimalPoint;
+		equal(f("1234.567", 2), "123456.7", "1234.567 -> (2) = 123456.7");
+		equal(f("1234.567", 10), "12345670000000", "1234.567 -> (10) = 12345670000000");
+		equal(f("1234.567", -2), "12.34567", "1234.567 <- (2) = 12.34567");
+		equal(f("1234.567", -10), "0.0000001234567", "1234.567 <- (10) = 0.0000001234567");
+		equal(f("1234.567", 0), "1234.567", "1234.567 = 1234.567");
+		equal(f("1234.567", 3), "1234567", "1234.567 -> (3) = 1234567");
+		equal(f("1234.567", -4), "0.1234567", "1234.567 <- (4) = 0.1234567");
+		equal(f("1234.567", 5), "123456700", "1234.567 -> (5) = 123456700");
+		equal(f("0", 2), "0", "0 -> (2) = 0");
+		equal(f("1", 2), "100", "1 -> (2) = 100");
+		equal(f("0", -2), "0.00", "0 <- (2) = 0.00");
+		equal(f("1e79", -71), "100000000", "1e79 <- (71) = 100000000");
+		equal(f("1e-79", 71), "0.00000001", "1e-79 -> (71) = 0.00000001");
 	});
 
 	</script>
