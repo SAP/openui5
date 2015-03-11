@@ -76,27 +76,27 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment'], funct
 			return aCombined;
 		}
 
-		function addToCompositeSection(oControl, aSegments, oSequenceOrderInfo, bSupressInvalidate) {
+		function addToCompositeSection(oControl, aSegments, oSequenceOrderInfo, bSuppressInvalidate) {
 
 			for (var i = 0; i < aSegments.length; i++) {
 				var oSection = aSegments[i];
 				if (oSection.fIsValidEntry(oControl)) {
-					oSection.addContent(oControl, oSequenceOrderInfo, bSupressInvalidate);
+					oSection.addContent(oControl, oSequenceOrderInfo, bSuppressInvalidate);
 					return oControl;
 				}
 			}
 		}
 
-		function insertToCompositeSection(oControl, iIndex, aSegments, oSequenceOrderInfo, bSupressInvalidate) {
+		function insertToCompositeSection(oControl, iIndex, aSegments, oSequenceOrderInfo, bSuppressInvalidate) {
 
 			for (var i = 0; i < aSegments.length; i++) {
 				var oSection = aSegments[i];
 				var iLength = oSection.getContent().length;
 				if (iIndex < iLength) {//found section
 					if (oSection.fIsValidEntry(oControl)) {
-						return oSection.insertContent(oControl, iIndex, oSequenceOrderInfo, bSupressInvalidate);
+						return oSection.insertContent(oControl, iIndex, oSequenceOrderInfo, bSuppressInvalidate);
 					}
-					return this.addToCompositeSection(oControl, aSegments, oSequenceOrderInfo, bSupressInvalidate);	//add to own section
+					return this.addToCompositeSection(oControl, aSegments, oSequenceOrderInfo, bSuppressInvalidate);	//add to own section
 				}
 				iIndex -= iLength; //continue to next section
 			}
@@ -119,12 +119,12 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment'], funct
 			return -1; // not found
 		}
 
-		function removeFromCompositeSection(oControl, aSegments, bSupressInvalidate) {
+		function removeFromCompositeSection(oControl, aSegments, bSuppressInvalidate) {
 			var oRemoved = null;
 			for (var i = 0; i < aSegments.length; i++) {
 				var oSection = aSegments[i];
 				if (oSection.fIsValidEntry(oControl)) {
-					var oRemoved = oSection.removeContent(oControl, bSupressInvalidate);
+					var oRemoved = oSection.removeContent(oControl, bSuppressInvalidate);
 					if (oRemoved != null) {
 						break;
 					}
@@ -133,18 +133,23 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment'], funct
 			return oRemoved;
 		}
 
-		function removeAllFromCompositeSection(aSegments, bSupressInvalidate) {
+		function removeAllFromCompositeSection(aSegments, bSuppressInvalidate) {
 			var aRemoved = [];
 			for (var i = 0; i < aSegments.length; i++) {
-				aRemoved = jQuery.merge( aRemoved, aSegments[i].removeAllContent(bSupressInvalidate) );
+				aRemoved = jQuery.merge( aRemoved, aSegments[i].removeAllContent(bSuppressInvalidate) );
 			}
 			return aRemoved;
 		}
 
-		function destroyAllFromCompositeSection(aSegments, bSupressInvalidate) {
+		function destroyAllFromCompositeSection(aSegments, bSuppressInvalidate) {
 			for (var i = 0; i < aSegments.length; i++) {
-				aSegments[i].destroy(bSupressInvalidate);
+				aSegments[i].destroy(bSuppressInvalidate);
 			}
+		}
+
+		function destroy(bSuppressInvalidate) {
+			oContainer.destroy(bSuppressInvalidate);
+			this.aSegments = null;
 		}
 
 		function getSectionComposite(sTag) {
@@ -169,28 +174,28 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment'], funct
 					return getAllFromCompositeSection(aSegments);
 				},
 
-				addContent: function(oControl, oSequenceOrderInfo, bSupressInvalidate) {
-					return addToCompositeSection(oControl, aSegments, oSequenceOrderInfo, bSupressInvalidate);
+				addContent: function(oControl, oSequenceOrderInfo, bSuppressInvalidate) {
+					return addToCompositeSection(oControl, aSegments, oSequenceOrderInfo, bSuppressInvalidate);
 				},
 
-				insertContent: function(oControl, iIndex, oSequenceOrderInfo, bSupressInvalidate) {
-					return insertToCompositeSection(oControl, iIndex, aSegments, oSequenceOrderInfo, bSupressInvalidate);
+				insertContent: function(oControl, iIndex, oSequenceOrderInfo, bSuppressInvalidate) {
+					return insertToCompositeSection(oControl, iIndex, aSegments, oSequenceOrderInfo, bSuppressInvalidate);
 				},
 
 				indexOfContent: function(oControl) {
 					return indexInCompositeSection(oControl, aSegments);
 				},
 
-				removeContent: function(oControl, bSupressInvalidate) {
-					return removeFromCompositeSection(oControl, aSegments, bSupressInvalidate);
+				removeContent: function(oControl, bSuppressInvalidate) {
+					return removeFromCompositeSection(oControl, aSegments, bSuppressInvalidate);
 				},
 
-				removeAllContent: function(bSupressInvalidate) {
-					return removeAllFromCompositeSection(aSegments, bSupressInvalidate);
+				removeAllContent: function(bSuppressInvalidate) {
+					return removeAllFromCompositeSection(aSegments, bSuppressInvalidate);
 				},
 
-				destroy: function(bSupressInvalidate) {
-					destroyAllFromCompositeSection(aSegments, bSupressInvalidate);
+				destroy: function(bSuppressInvalidate) {
+					destroyAllFromCompositeSection(aSegments, bSuppressInvalidate);
 				}
 
 			};
@@ -198,7 +203,8 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment'], funct
 
 		return {
 			addSection: addSection,
-			getSectionComposite: getSectionComposite
+			getSectionComposite: getSectionComposite,
+			destroy: destroy
 
 		};
 	};

@@ -65,5 +65,6 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticType", "s
 		SemanticType.MessagesIndicator
 	];
 
+	
 	return FullscreenPage;
 }, /* bExport= */ true);

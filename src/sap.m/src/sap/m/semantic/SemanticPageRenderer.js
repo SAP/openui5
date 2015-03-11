@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+
 sap.ui.define("sap/m/semantic/SemanticPageRenderer", [], function() {
 	"use strict";
 

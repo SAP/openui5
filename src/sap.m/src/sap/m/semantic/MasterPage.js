@@ -57,5 +57,6 @@ sap.ui.define([ "sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticType", "s
 		SemanticType.MessagesIndicator
 	];
 
+	
 	return MasterPage;
 }, /* bExport= */ true);

@@ -25,6 +25,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticButton
 	 */
+	
 	var SemanticButton = SemanticControl.extend("sap.m.semantic.SemanticButton", /** @lends sap.m.semantic.SemanticButton.prototype */ {
 		metadata : {
 

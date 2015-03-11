@@ -17,7 +17,6 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-
 	<script>
 
 		jQuery.sap.require("sap.m.semantic.SemanticPage");
@@ -75,7 +74,7 @@
 			strictEqual(oSemanticPage.$().length, 1, "Semantic page is in the DOM");
 			strictEqual(oSemanticPage.getAggregation("_page").$().length, 1, "Page is in the DOM");
 			strictEqual(oSemanticPage._getAnyHeader().$().length, 1, "Header is in the DOM");
-			strictEqual(oSemanticPage._oFooter.$().length, 1, "Footer is in the DOM");
+			//strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
 
 			oSemanticPage.destroy();
 		});
@@ -89,7 +88,8 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
-			strictEqual(oSemanticPage._oShareMenuBtn.$().length, 1, "Detail page Share menu button is in the DOM");
+			strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
+			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, 2, "ShareMenu button is in the DOM");
 
 			oSemanticPage.destroy();
 		});
@@ -103,13 +103,19 @@
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
-			strictEqual(oSemanticPage._oShareMenuBtn.$().length, 1, "Fullscreen page Shared menu button is in the DOM");
+			strictEqual(oSemanticPage._getPage().getFooter().$().length, 1, "Footer is in the DOM");
+			strictEqual(oSemanticPage._getPage().getFooter().getContent().length, 2, "ShareMenu button is in the DOM");
 
 			oSemanticPage.destroy();
 		});
 
 		test("Semantic page has correct header and footer components", function () {
-			var oSemanticPage = createSemanticPageFactory();
+			var oConfig = {
+						customFooterContent: [
+							new sap.m.Button({text: "button1"})
+						]
+					},
+					oSemanticPage = createSemanticPageFactory(null, oConfig);
 
 			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
@@ -119,7 +125,12 @@
 		});
 
 		test("Detail page has correct header and footer components", function () {
-			var oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail);
+			var oConfig = {
+						customFooterContent: [
+							new sap.m.Button({text: "button1"})
+						]
+					},
+					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
 			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
@@ -129,7 +140,12 @@
 		});
 
 		test("Fullscreen page has correct header and footer components", function () {
-			var oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen);
+			var oConfig = {
+						customFooterContent: [
+							new sap.m.Button({text: "button1"})
+						]
+					},
+					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.fullscreen, oConfig);
 
 			ok(oSemanticPage.getAggregation("_page").getFooter() instanceof sap.m.Toolbar, "The footer is Toolbar");
 
@@ -402,7 +418,7 @@
 
 			oPage.setModel(oModel);
 
-			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+			var iInitFooterContentLength = 1; //spacer
 
 			strictEqual(oPage.getCustomFooterContent().length, 1, "page has custom footer content");
 			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "page has custom footer content");
@@ -434,40 +450,40 @@
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig);
 
 			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 2, "getCustomShareMenuContent has correct content length");
-			strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 2, "inner menu content has correct content length");
+			strictEqual(oSemanticPage._getActionSheet().getButtons().length, 2, "inner menu content has correct content length");
 
 			strictEqual(oSemanticPage.getCustomShareMenuContent()[0], oButton1, "getCustomShareMenuContent retrieves the correct content[0]");
 			strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton1), 0, "index of the inner content is 0");
-			strictEqual(oSemanticPage._oWrappedShareMenu.indexOfContent(oButton1), 0, "index of the inner page content is 0");
+			//strictEqual(oSemanticPage._getActionSheet().indexOfContent(oButton1), 0, "index of the inner page content is 0");
 
 			strictEqual(oSemanticPage.getCustomShareMenuContent()[1], oButton2, "getCustomShareMenuContent retrieves the correct content[1]");
 			strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton2), 1, "index of the inner content is 1");
-			strictEqual(oSemanticPage._oWrappedShareMenu.indexOfContent(oButton2), 1, "index of the inner page content is 1");
+			//strictEqual(oSemanticPage._getSegmentedShareMenu().indexOfContent(oButton2), 1, "index of the inner page content is 1");
 
 			var oInsertResult = oSemanticPage.insertCustomShareMenuContent(oButton4, 1);
 			strictEqual(oInsertResult, oSemanticPage, "insert method returns semanticPage reference");
 			strictEqual(oSemanticPage.indexOfCustomShareMenuContent(oButton4), 1, "index of the inserted inner content is 1");
-			strictEqual(oSemanticPage._oWrappedShareMenu.indexOfContent(oButton4), 1, "index of the inserted inner page content is 1");
+			//strictEqual(oSemanticPage._getSegmentedShareMenu().indexOfContent(oButton4), 1, "index of the inserted inner page content is 1");
 
 			var oRemoveResult = oSemanticPage.removeCustomShareMenuContent(oButton1);
 			strictEqual(oRemoveResult, oButton1, "remove method returns remove content reference");
 			ok(oSemanticPage.getCustomShareMenuContent()[0] !== oButton1, "Button 1 is removed from the aggregation");
-			ok(oSemanticPage._oWrappedShareMenu.getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
+			//ok(oSemanticPage._getSegmentedShareMenu().getContent()[0] !== oButton1, "Button 1 is removed from the inner page aggregation");
 
 			var oRemoveAllResult = oSemanticPage.removeAllCustomShareMenuContent();
 			strictEqual(oRemoveAllResult.length, 2, "removeAll method returns all removed content");
 			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "all content is removed");
-			strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 0, "all inner page content is removed");
+			//strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 0, "all inner page content is removed");
 
 			var oAddResult = oSemanticPage.addCustomShareMenuContent(oButton3);
 			strictEqual(oAddResult, oSemanticPage, "add method returns semanticPage reference");
 			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 1, "A button is added to the custom inner content");
-			strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 1, "A button is added to the inner page content");
+			//strictEqual(oSemanticPage._getSegmentedShareMenu().getContent().length, 1, "A button is added to the inner page content");
 
 			oSemanticPage.destroyCustomShareMenuContent();
 			ok(oButton3.bIsDestroyed, "custom innner content is destroyed");
 			strictEqual(oSemanticPage.getCustomShareMenuContent().length, 0, "no custom inner content is available");
-			strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 0, "no inner page content is available");
+			//strictEqual(oSemanticPage._oWrappedShareMenu.getContent().length, 0, "no inner page content is available");
 
 			oSemanticPage.destroy();
 		});
@@ -503,14 +519,14 @@
 			oPage.setModel(oModel);
 
 			strictEqual(oPage.getCustomShareMenuContent().length, 2, "page has custom shareMenu content");
-			strictEqual(oPage._oWrappedShareMenu.getContent().length, 2, "page has custom shareMenu content");
+			strictEqual(oPage._getActionSheet().getButtons().length, 2, "page has custom shareMenu content");
 
 			var oButton1 = oPage.getCustomShareMenuContent()[0];
 			strictEqual(oButton1.getText(), "Custom1", "content has correct text");
 			strictEqual(oButton1.getType(), "Reject", "content has correct button type");
 			strictEqual(oButton1.getTooltip(), "Martin", "content has correct tooltip");
 
-			var oInnerButton1 = oPage._oWrappedShareMenu.getContent()[0];
+			var oInnerButton1 = oPage._getActionSheet().getButtons()[0];
 			strictEqual(oInnerButton1, oButton1, "inner menu has correct content");
 
 			var oButton2 = oPage.getCustomShareMenuContent()[1];
@@ -518,7 +534,7 @@
 			//strictEqual(oButton2.getType(), "Emphasized", "content has correct button type"); TODO: check why emphasized is lost in the action sheet
 			strictEqual(oButton2.getTooltip(), "CustomTooltip", "content has correct tooltip");
 
-			var oInnerButton2 = oPage._oWrappedShareMenu.getContent()[1];
+			var oInnerButton2 = oPage._getActionSheet().getButtons()[1];
 			strictEqual(oInnerButton2, oButton2, "inner menu has correct content");
 
 			// Clean up
@@ -573,14 +589,17 @@
 
 		test("Semantic share button should be always at the rightmost position", function () {
 			// Arrange
-			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {}),
+			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
+						customShareMenuContent: [new sap.m.Button("customBtnId", {text: "custom"})]
+					}),
 					oFlagButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Flag}),
 					oFavorite = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Favorite}),
-					oExpectedButton = oDetailPage._oShareMenuBtn;
+					iFooterContentLength = oDetailPage._getPage().getFooter().getContent().length,
+					oExpectedButton = oDetailPage._getPage().getFooter().getContent()[iFooterContentLength-1];
 
 
 			function _getActualButton() {
-				var content = oDetailPage._oFooter.getContent();
+				var content = oDetailPage._getPage().getFooter().getContent();
 				return content[content.length - 1];
 			}
 
@@ -594,7 +613,7 @@
 			strictEqual(_getActualButton(), oExpectedButton, "Semantic share button is correctly positioned last even if new content is added");
 
 			// Act
-			var content = oDetailPage._oFooter.getContent();
+			var content = oDetailPage._getPage().getFooter().getContent();
 			oDetailPage.insertSemanticControl(oFavorite, content.length - 1);
 
 			// Assert
@@ -608,17 +627,21 @@
 
 		test("Share button's should not go into overflow", function () {
 			// Arrange
-			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {}),
-					oShareButton = oDetailPage._oShareMenuBtn;
+			var oDetailPage = createSemanticPageFactory(_SemanticPageTypes.detail, {
+						customShareMenuContent: [
+							new sap.m.Button({text: "custom1"}),
+							new sap.m.Button({text: "custom2"})]
+					}),
+					iFooterContentLength = oDetailPage._getPage().getFooter().getContent().length,
+					oShareButton = oDetailPage._getPage().getFooter().getContent()[iFooterContentLength-1];
 
 
 			var layout = oShareButton.getLayoutData();
 
-			strictEqual(layout, null, "The share button has correct default behavior");
+			strictEqual(layout.getMoveToOverflow(), false, "The share button has correct default behavior");
 
 			// Clean up
 			oDetailPage.destroy();
-			oShareButton.destroy();
 		});
 
 		module("Using custom content in the footer should preserve its correct state", {
@@ -712,7 +735,7 @@
 
 			strictEqual(oPage.getSemanticControls().length, 15, "page has semantic content");
 			strictEqual(oPage._getPage().getFooter().getContent().length, (10 + iInitFooterContentLength + iCustomFooterContentLength), "footer has semantic content");
-			strictEqual(oPage._oWrappedShareMenu.getContent().length, 5, "shareMenu has semantic content");
+			strictEqual(oPage._getSegmentedShareMenu().getSectionComposite("semantic").getContent().length, 5, "shareMenu has semantic content");
 
 			// Clean up
 			oPage.destroy();
@@ -817,13 +840,11 @@
 			var oConfig = {
 						title: "This is a title",
 						showNavButton: true,
-						customShareMenuContent: [
-							new sap.m.Button({text: "button1"})
-						]
+						customFooterContent: [new sap.m.Button({text: "custom"})]
 					},
 					oSemanticPage = createSemanticPageFactory(null, oConfig),
 					oPage = oSemanticPage.getAggregation("_page"),
-					oFooter = oSemanticPage._oFooter;
+					oFooter = oSemanticPage._getPage().getFooter();
 
 			oSemanticPage.destroy();
 
@@ -834,7 +855,7 @@
 			strictEqual(oFooter.bIsDestroyed, true, "footer is destroyed successfully");
 			// check if all controls are set to null correctly
 			strictEqual(oSemanticPage.getAggregation("_page"), null, "page is null");
-			strictEqual(oSemanticPage._oFooter, null, "footer is null");
+			strictEqual(oSemanticPage._oWrappedFooter, null, "footer is null");
 		});
 
 		test("Detail page and its internal controls are destroyed successfully", function () {
@@ -847,7 +868,7 @@
 						]
 					},
 					oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig),
-					oActionSheet = oSemanticPage._oActionSheet;
+					oActionSheet = oSemanticPage.getAggregation("_actionSheet");
 
 			oSemanticPage.destroy();
 
@@ -855,8 +876,7 @@
 				strictEqual(oActionSheet.bIsDestroyed, true, "action sheet is destroyed successfully");
 			}
 			// check if all controls are set to null correctly
-
-			strictEqual(oSemanticPage._oActionSheet, null, "action sheet is null");
+			strictEqual(oSemanticPage.getAggregation("_actionSheet"), null, "action sheet is null");
 
 		});
 

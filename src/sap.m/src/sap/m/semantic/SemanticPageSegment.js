@@ -51,31 +51,31 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		return jQuery.inArray( oControl, this._aContent );
 	};
 
-	Segment.prototype.addContent = function (oControl, oSequenceOrderInfo, bSupressInvalidate) {
+	Segment.prototype.addContent = function (oControl, oSequenceOrderInfo, bSuppressInvalidate) {
 
 		// if the oControl to be added belongs to an ordered group,
 		// then add it to its proper index within the ordered group
 		if (oSequenceOrderInfo && oSequenceOrderInfo.sGroup && oSequenceOrderInfo.sGroup.length > 0) {
-			return this._addToGroup(oControl, oSequenceOrderInfo.sGroup, oSequenceOrderInfo.iSequenceIndexInGroup, bSupressInvalidate);
+			return this._addToGroup(oControl, oSequenceOrderInfo.sGroup, oSequenceOrderInfo.iSequenceIndexInGroup, bSuppressInvalidate);
 		}
 
-		this._addContent(oControl, bSupressInvalidate);
+		this._addContent(oControl, bSuppressInvalidate);
 
 		return oControl;
 	};
 
-	Segment.prototype.insertContent = function (oControl, iIndex, oSequenceOrderInfo, bSupressInvalidate) {
+	Segment.prototype.insertContent = function (oControl, iIndex, oSequenceOrderInfo, bSuppressInvalidate) {
 
 		// if the oControl to be added belongs to an ordered group,
 		// then insert it to the ordered group, passing the preferred insert iIndex
 		if (oSequenceOrderInfo && oSequenceOrderInfo.sGroup && oSequenceOrderInfo.sGroup.length > 0) {
-			return this._insertToGroup(oControl, iIndex, oSequenceOrderInfo.sGroup, oSequenceOrderInfo.iSequenceIndexInGroup, bSupressInvalidate);
+			return this._insertToGroup(oControl, iIndex, oSequenceOrderInfo.sGroup, oSequenceOrderInfo.iSequenceIndexInGroup, bSuppressInvalidate);
 		}
 
-		return this._insertContent(oControl, iIndex, bSupressInvalidate);
+		return this._insertContent(oControl, iIndex, bSuppressInvalidate);
 	};
 
-	Segment.prototype.removeContent = function (oControl, bSupressInvalidate) {
+	Segment.prototype.removeContent = function (oControl, bSuppressInvalidate) {
 
 		var iLocalIndex = jQuery.inArray(oControl, this._aContent);
 		if (iLocalIndex > -1) {
@@ -83,11 +83,11 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			this._removeFromGroups(oControl);
 
-			return this._oContainer.removeContent(oControl, bSupressInvalidate);
+			return this._oContainer.removeContent(oControl, bSuppressInvalidate);
 		}
 	};
 
-	Segment.prototype.removeAllContent = function (bSupressInvalidate) {
+	Segment.prototype.removeAllContent = function (bSuppressInvalidate) {
 
 		var aRemovedContent = [],
 			aGlobalContent = this._oContainer.getContent(),
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			iEndIndex = this.getEndIndex();
 
 		for (var i = iStartIndex; i < iEndIndex; i++) {
-			var oItem = this._oContainer.removeContent(aGlobalContent[i], bSupressInvalidate); //TODO: test index consistency upon iteration+removal
+			var oItem = this._oContainer.removeContent(aGlobalContent[i], bSuppressInvalidate); //TODO: test index consistency upon iteration+removal
 			if (oItem) {
 				this._removeFromGroups(oItem);
 				aRemovedContent.push(oItem);
@@ -107,30 +107,30 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		return aRemovedContent;
 	};
 
-	Segment.prototype.destroy = function (bSupressInvalidate) {
-		var aRemovedContent = this.removeAllContent(bSupressInvalidate);
+	Segment.prototype.destroy = function (bSuppressInvalidate) {
+		var aRemovedContent = this.removeAllContent(bSuppressInvalidate);
 		for (var i = 0; i < aRemovedContent.length; i++) {
-			aRemovedContent[i].destroy(bSupressInvalidate);
+			aRemovedContent[i].destroy(bSuppressInvalidate);
 		}
 	};
 
-	Segment.prototype._addContent = function (oControl, bSupressInvalidate) {
+	Segment.prototype._addContent = function (oControl, bSuppressInvalidate) {
 
 		var iContainerInsertIndex = this.getEndIndex();
 		var iLocalInsertIndex = this._aContent.length;
 
-		this._oContainer.insertContent(oControl, iContainerInsertIndex, bSupressInvalidate);
+		this._oContainer.insertContent(oControl, iContainerInsertIndex, bSuppressInvalidate);
 		this._aContent.splice(iLocalInsertIndex, 0, oControl);
 
 		return oControl;
 	};
 
-	Segment.prototype._insertContent = function (oControl, iIndex, bSupressInvalidate) {
+	Segment.prototype._insertContent = function (oControl, iIndex, bSuppressInvalidate) {
 
 		var iInsertIndexInContainer = Math.min(this.getStartIndex() + iIndex, this.getEndIndex());
 		iInsertIndexInContainer = Math.max(iInsertIndexInContainer, 0);
 
-		this._oContainer.insertContent(oControl, iInsertIndexInContainer, bSupressInvalidate);
+		this._oContainer.insertContent(oControl, iInsertIndexInContainer, bSuppressInvalidate);
 		this._aContent.splice(iIndex, 0, oControl);
 
 		return oControl;
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	/*
 	 Positions oControl with respect to the positions of existing sibings from the same ordered froup
 	 */
-	Segment.prototype._addToGroup = function (oControl, sGroup, iSequenceIndexInGroup, bSupressInvalidate) {
+	Segment.prototype._addToGroup = function (oControl, sGroup, iSequenceIndexInGroup, bSuppressInvalidate) {
 
 		this._oOrderedGroups[sGroup] || (this._oOrderedGroups[sGroup] = []);
 		var aGroup = this._oOrderedGroups[sGroup];
@@ -153,19 +153,19 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		aGroup[iSequenceIndexInGroup] = oControl;
 
 		if (iIndexInContent != undefined) {
-			this._insertContent(oControl, iIndexInContent, bSupressInvalidate);
+			this._insertContent(oControl, iIndexInContent, bSuppressInvalidate);
 		} else {//no siblings found so simply add
-			this._addContent(oControl, bSupressInvalidate);
+			this._addContent(oControl, bSuppressInvalidate);
 		}
 	};
 
-	Segment.prototype._insertToGroup = function (oControl, iIndexInContent, sGroup, iSequenceIndexInGroup, bSupressInvalidate) {
+	Segment.prototype._insertToGroup = function (oControl, iIndexInContent, sGroup, iSequenceIndexInGroup, bSuppressInvalidate) {
 
 		if (this._oOrderedGroups[sGroup]) {//existing group
-			return this._addToGroup(oControl, sGroup, iSequenceIndexInGroup, bSupressInvalidate);
+			return this._addToGroup(oControl, sGroup, iSequenceIndexInGroup, bSuppressInvalidate);
 		}
 
-		this._insertContent(oControl, iIndexInContent, bSupressInvalidate);
+		this._insertContent(oControl, iIndexInContent, bSuppressInvalidate);
 
 		this._oOrderedGroups[sGroup] = [];
 		this._oOrderedGroups[sGroup][iSequenceIndexInGroup] = oControl;
