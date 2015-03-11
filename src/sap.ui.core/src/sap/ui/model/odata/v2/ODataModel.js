@@ -119,6 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
+			this.bIncludeInCurrentBatch = false;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -2218,7 +2219,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						var mChangedEntities = {},
 							mEntityTypes = {};
 						that._collectChangedEntities(oGroup, mChangedEntities, mEntityTypes);
+						that.bIncludeInCurrentBatch = true;
 						that._refresh(false, sGroupId, mChangedEntities, mEntityTypes);
+						that.bIncludeInCurrentBatch = false;
 					}
 				});
 			}
@@ -3106,7 +3109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = "GET";
 
-		return this._processRequest(function() {
+		function createReadRequest() {
 			// Add filter/sorter to URL parameters
 			sSorterParams = ODataUtils.createSortParams(aSorters);
 			if (sSorterParams) {
@@ -3132,7 +3135,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			that._pushToRequestQueue(mRequests, sBatchGroupId, null, oRequest, fnSuccess, fnError);
 			
 			return oRequest;
-		});
+		}
+		
+		// In case we are in batch mode and are processing refreshes before sending changes to the server, 
+		// the request must be processed synchronously to be contained in the same batch as the changes
+		if (this.bUseBatch && this.bIncludeInCurrentBatch) {
+			oRequest = createReadRequest();
+			return {
+				abort: function() {
+					if (oRequest) {
+						oRequest._aborted = true;
+					}
+				}
+			};
+		} else {
+			return this._processRequest(createReadRequest);
+		}
 	};
 
 	/**

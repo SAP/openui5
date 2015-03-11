@@ -1053,6 +1053,10 @@
 		oBinding.attachRefresh(handler);
 	});
 
+	var aRequestEvents = [
+			"RequestSent", "RequestFailed", "RequestCompleted",
+			"BatchRequestSent", "BatchRequestFailed", "BatchRequestCompleted"
+		];
 	function attachRequestEvents(oModel, oInfo) {
 		var fnHandler = function(oEvent) {
 			var sId = oEvent.getId();
@@ -1097,12 +1101,15 @@
 					break;
 			}
 		};
-		var aEvents = [
-		    "attachRequestSent", "attachRequestFailed", "attachRequestCompleted",
-		    "attachBatchRequestSent", "attachBatchRequestFailed", "attachBatchRequestCompleted"
-		];
-		jQuery.each(aEvents, function(i, sEvent) {
-			oModel[sEvent](fnHandler);
+		jQuery.each(aRequestEvents, function(i, sEvent) {
+			oModel["attach" + sEvent](fnHandler);
+		});   
+		return fnHandler;
+	}		
+	
+	function detachRequestEvents(oModel, fnHandler) {
+		jQuery.each(aRequestEvents, function(i, sEvent) {
+			oModel["detach" + sEvent](fnHandler);
 		});             
 	}
 	
@@ -1269,15 +1276,17 @@
 			oRequest3 = oModel.read("/Categories(1)");
 			oRequest1.abort();
 			oRequest2.abort();
-			setTimeout(function() {
-				equal(oInfo.requestSent, 1, "One requests sent");
-				equal(oInfo.requestFailed, undefined, "No request failed");
-				equal(oInfo.requestCompleted, 1, "One requests completed");
-				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
-				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
-				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
-			}, 100);
+			oModel.attachBatchRequestCompleted(function() {
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, undefined, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			})
 		})
 		
 	});	
@@ -1300,17 +1309,110 @@
 				oRequest1.abort();
 				oRequest2.abort();
 			});
-			setTimeout(function() {
-				equal(oInfo.requestSent, 3, "Three requests sent");
-				equal(oInfo.requestFailed, undefined, "No request failed");
-				equal(oInfo.requestCompleted, 3, "Three requests completed");
-				equal(oInfo.batchRequestSent, 1, "One batch requests sent");
-				equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
-				equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
-				start();
-			}, 100);
+			oModel.attachBatchRequestCompleted(function() {
+				setTimeout(function() {
+					equal(oInfo.requestSent, 3, "Three requests sent");
+					equal(oInfo.requestFailed, undefined, "No request failed");
+					equal(oInfo.requestCompleted, 3, "Three requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			})
 		})
 		
+	});	
+	
+	asyncTest("async test request events - auto refresh element binding", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, oCount = 0, fnHandler;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindContext("/Categories(1)");
+		oBinding.attachChange(function(){});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;				
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, undefined, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.update("/Categories(1)", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, undefined, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});	
+	
+	asyncTest("async test request events - auto refresh list binding", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oBinding.attachChange(function(){});
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;				
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, undefined, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.update("/Categories(1)", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, undefined, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, undefined, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
 	});	
 	
 	asyncTest("Event order: bindElement", function(){
