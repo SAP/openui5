@@ -565,12 +565,12 @@
 		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR");
-		ok(isNaN(aResult), "String with currency code only can't be parsed");
+		equal(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
-		strictEqual(aResult[1], "", "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		aResult = oFormat.parse(String.fromCharCode(8364) + " 1,234,567.89");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
@@ -581,6 +581,28 @@
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		strictEqual(aResult[1], "$", "Currency Code is parsed correctly: expected $, parsed " + aResult[1]);
+		
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			showMeasure: false
+		});
+		
+		var aResult = oFormat.parse("-12,345.67 EUR");
+		equal(aResult, null, "Currency with measure cannot be parsed");
+
+		aResult = oFormat.parse("USD23.4567");
+		equal(aResult, null, "Currency with measure cannot be parsed");
+
+		aResult = oFormat.parse("EUR-1234567.89");
+		equal(aResult, null, "Currency with measure cannot be parsed");
+
+		aResult = oFormat.parse("EUR");
+		equal(aResult, null, "String with currency code only can't be parsed");
+
+		aResult = oFormat.parse("1234567.89");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
+		
 	});
 
 	test("float short style", function() {

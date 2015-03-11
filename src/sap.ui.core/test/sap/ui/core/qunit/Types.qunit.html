@@ -376,7 +376,7 @@
 	test("currency parseValue", function(){
 		var currencyType = new sap.ui.model.type.Currency();
 	
-		deepEqual(currencyType.parseValue("3333", "string"), [3333, ""], "parse test");
+		deepEqual(currencyType.parseValue("3333", "string"), [3333, undefined], "parse test");
 		deepEqual(currencyType.parseValue("USD3333.555", "string"), [3333.555, "USD"], "parse test");
 		deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
 		deepEqual(currencyType.parseValue("JP¥-3.555", "string"), [-3.555, "JPY"], "parse test");
