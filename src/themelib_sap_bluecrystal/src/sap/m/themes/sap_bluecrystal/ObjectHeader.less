@@ -25,6 +25,10 @@
 	cursor: pointer;
 }
 
+a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText{
+	text-decoration: underline;
+}
+
 .sapMOHTitle h1 .sapMText {
 	color: @sapUiDarkText;
 }
@@ -94,6 +98,7 @@
 	background: none;
 }
 
+a.sapMOHTitleActive:focus,
 .sapMOHTitleIcon > .sapMOHIcon:focus,
 .sapMOHTitleArrow .sapUiIcon:focus {
 	outline: 1px dotted @sapUiFocus;
@@ -118,7 +123,7 @@ html[data-sap-ui-browser ^= "ie"] {
 			padding-left: 0.125rem;
 		}
 
-		.sapMOHTitleActive:focus {
+		a.sapMOHTitleActive:focus {
 			outline: none;
 			border: 1px dotted @sapUiFocus;
 		}
