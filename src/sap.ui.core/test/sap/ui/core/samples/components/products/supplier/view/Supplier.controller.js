@@ -1,18 +1,27 @@
-sap.ui.controller("samples.components.products.supplier.view.Supplier", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onInit: function() {
-		// bind details
-		this.byId("lytSupplier").bindContext("Supplier");
-	},
+	var SupplierController = Controller.extend("samples.components.products.supplier.view.Supplier", {
 
-	onBeforeRendering: function() {},
+		onInit: function() {
+			// bind details
+			this.byId("lytSupplier").bindContext("Supplier");
+		},
 
-	onAfterRendering: function() {},
+		onBeforeRendering: function() {},
 
-	onExit: function() {} ,
+		onAfterRendering: function() {},
 
-	onContextChanged: function(oContext, oView) {
-		oView.setBindingContext(oContext);  
-	} 
+		onExit: function() {} ,
+
+		onContextChanged: function(oContext, oView) {
+			oView.setBindingContext(oContext);  
+		} 
+
+	});
+
+
+	return SupplierController;
 
 });

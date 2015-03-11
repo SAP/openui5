@@ -1,8 +1,15 @@
-jQuery.sap.declare("sap.ui.test.mixed.Component");
-jQuery.sap.require("sap.ui.core.UIComponent");
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
+	function(jQuery, UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.test.mixed.Component", {
+	
+	var Component = UIComponent.extend("sap.ui.test.mixed.Component", {
 
-	metadata: "json"
+		metadata: "json"
+
+	});
+
+
+	return Component;
 
 });

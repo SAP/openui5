@@ -1,28 +1,35 @@
-jQuery.sap.declare("sap.ui.test.v2.Component");
-jQuery.sap.require("sap.ui.core.UIComponent");
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
+	function(jQuery, UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.test.v2.Component", {
+	
+	var Component = UIComponent.extend("sap.ui.test.v2.Component", {
 
-	metadata: {
+		metadata: {
 
-		"properties": {},
-		"aggregations": {},
-		"associations": {},
-		"events": {},
-		"publicMethods": [],
+			"properties": {},
+			"aggregations": {},
+			"associations": {},
+			"events": {},
+			"publicMethods": [],
 
-		"manifest": "json",
+			"manifest": "json",
 		
-		"custom.entry": {
-			"key1": "value1",
-			"key2": "value2",
-			"key3": {
-				"subkey1": "subvalue1",
-				"subkey2": "subvalue2"
-			},
-			"key4": ["value1", "value2"]
+			"custom.entry": {
+				"key1": "value1",
+				"key2": "value2",
+				"key3": {
+					"subkey1": "subvalue1",
+					"subkey2": "subvalue2"
+				},
+				"key4": ["value1", "value2"]
+			}
+
 		}
 
-	}
+	});
+
+
+	return Component;
 
 });

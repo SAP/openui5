@@ -1,8 +1,15 @@
-jQuery.sap.declare("sap.ui.test.inherit.Component");
-jQuery.sap.require("sap.ui.test.inherit.parent.Component");
+sap.ui.define(['jquery.sap.global', './parent/Component'],
+	function(jQuery, Component1) {
+	"use strict";
 
-sap.ui.test.inherit.parent.Component.extend("sap.ui.test.inherit.Component", {
+	
+	var Component = Component1.extend("sap.ui.test.inherit.Component", {
 
-	metadata: "json"
+		metadata: "json"
+
+	});
+
+
+	return Component;
 
 });

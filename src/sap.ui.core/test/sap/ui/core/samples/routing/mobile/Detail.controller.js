@@ -1,18 +1,24 @@
-sap.ui.controller("sap.ui.core.samples.routing.mobile.Detail", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onInit: function() {
-		var oRouter = sap.ui.core.routing.Router.getRouter("app"),
-			that = this;
+	return Controller.extend("sap.ui.core.samples.routing.mobile.Detail", {
 
-		oRouter.attachRouteMatched(function(oEvent) {
-			if (oEvent.getParameter("name") == "_testapp_detail") {
-				var oArguments = oEvent.getParameter("arguments");
+		onInit: function() {
+			var oRouter = sap.ui.core.routing.Router.getRouter("app"),
+				that = this;
+
+			oRouter.attachRouteMatched(function(oEvent) {
+				if (oEvent.getParameter("name") == "_testapp_detail") {
+					var oArguments = oEvent.getParameter("arguments");
 				
-				sap.ui.getCore().getModel().createBindingContext("/" + oArguments.selectedIndex + "/details", function(oBindingContext) {
-					that.getView().setBindingContext(oBindingContext);
-				});
-			}
-		});
-	}
+					sap.ui.getCore().getModel().createBindingContext("/" + oArguments.selectedIndex + "/details", function(oBindingContext) {
+						that.getView().setBindingContext(oBindingContext);
+					});
+				}
+			});
+		}
+
+	});
 
 });
