@@ -70,9 +70,47 @@ sap.ui.define([
 			if (sPreviousHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				var bReplace = true; // otherwise we go backwards with a forward history
-				this.getRouter().navTo(sRoute, mData, bReplace);
+				if (sRoute === "FLPBackToHome") {
+					// navigate back to FLP home
+					// TODO: Test this in a working sandbox, with the current version it is not possible
+					var oCrossAppNavigator = sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("CrossApplicationNavigation");
+					if (oCrossAppNavigator) {
+						oCrossAppNavigator.toExternal({
+							target : { shellHash : "#" }
+						});
+					}
+				} else {
+					var bReplace = true; // otherwise we go backwards with a forward history
+					this.getRouter().navTo(sRoute, mData, bReplace);
+				}
 			}
+		},
+
+		/**
+		 * Event handler when the share button has been clicked
+		 * @param {sap.ui.base.Event} oEvent the butten press event
+		 * @public
+		 * @returns
+		 */
+		onSharePress : function (oEvent) {
+			var oShareSheet = this.getView().byId("shareSheet");
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), oShareSheet);
+			oShareSheet.openBy(this.byId("shareButton"));
+		},
+
+		/**
+		 * Event handler when the share by E-Mail button has been clicked
+		 * @param {sap.ui.base.Event} oEvent the button press event
+		 * @public
+		 * @returns
+		 */
+		onShareEmailPress: function () {
+			var oViewModel = this.getModel("view");
+			sap.m.URLHelper.triggerEmail(
+				null,
+				oViewModel.getProperty("/shareSendEmailSubject"),
+				oViewModel.getProperty("/shareSendEmailMessage")
+			);
 		}
 
 	});

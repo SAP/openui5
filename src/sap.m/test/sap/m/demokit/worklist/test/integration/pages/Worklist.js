@@ -3,9 +3,10 @@ sap.ui.require([
 		'sap/ui/test/matchers/AggregationLengthEquals',
 		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/demo/worklist/test/integration/pages/Common'
+		'sap/ui/demo/worklist/test/integration/pages/Common',
+		'sap/ui/demo/worklist/test/integration/pages/shareOptions'
 	],
-	function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common) {
+	function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 		"use strict";
 
 		var sViewName = "Worklist",
@@ -14,7 +15,7 @@ sap.ui.require([
 		Opa5.createPageObjects({
 			onTheWorklistPage : {
 				baseClass: Common,
-				actions: {
+				actions: jQuery.extend({
 					iPressATableItem : function (sName) {
 
 						return this.waitFor({
@@ -68,8 +69,8 @@ sap.ui.require([
 						});
 					}
 
-				},
-				assertions: {
+				}, shareOptions.createActions(sViewName)),
+				assertions: jQuery.extend({
 
 					iShouldSeeTheTable : function () {
 						return this.waitFor({
@@ -171,7 +172,7 @@ sap.ui.require([
 						});
 					}
 
-				}
+				}, shareOptions.createAssertions(sViewName))
 			}
 		});
 

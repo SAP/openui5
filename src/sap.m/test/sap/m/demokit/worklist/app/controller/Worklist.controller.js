@@ -27,6 +27,10 @@ sap.ui.define([
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
 				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
+				shareSaveAsTileTitle: this.getResourceBundle().getText("worklistViewTitle"),
+				shareOnJamTitle: this.getResourceBundle().getText("worklistViewTitle"),
+				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
+				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage",  [window.location.href]),
 				tableBusyDelay : 0
 			});
 			this.setModel(oViewModel, "view");
@@ -76,8 +80,30 @@ sap.ui.define([
 		 */
 		onPress : function (oEvent) {
 			// The source is the list item that got pressed
+			this._showObject(oEvent.getSource());
+		},
+
+		/**
+		 * Navigates back to the worklist
+		 * @function
+		 */
+		onNavBack : function () {
+			this.myNavBack("FLPBackToHome");
+		},
+
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+
+		/**
+		 * Shows the selected item on the object page
+		 * On phones a additional history entry is created
+		 * @param {sap.m.ObjectListItem} oItem selected Item
+		 * @private
+		 */
+		_showObject : function (oItem) {
 			this.getRouter().navTo("object", {
-				objectId: oEvent.getSource().getBindingContext().getProperty("ObjectID")
+				objectId: oItem.getBindingContext().getProperty("ObjectID")
 			});
 		},
 

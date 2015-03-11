@@ -7,6 +7,14 @@ sap.ui.define([
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.Object", {
 
+		/* =========================================================== */
+		/* lifecycle methods                                           */
+		/* =========================================================== */
+
+		/**
+		 * Called when the worklist controller is instantiated.
+		 * @public
+		 */
 		onInit : function () {
 			// Model used to manipulate control states. The chosen values make sure,
 			// detail page is busy indication immediately so there is no break in
@@ -15,7 +23,11 @@ sap.ui.define([
 			var iOriginalBusyDelay,
 				oViewModel = new JSONModel({
 					busy : true,
-					delay : 0
+					delay : 0,
+					shareSaveAsTileTitle: "",
+					shareOnJamTitle: "",
+					shareSendEmailSubject: "",
+					shareSendEmailMessage: ""
 				});
 
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
@@ -28,6 +40,22 @@ sap.ui.define([
 				}.bind(this)
 			);
 		},
+
+		/* =========================================================== */
+		/* event handlers                                              */
+		/* =========================================================== */
+
+		/**
+		 * Navigates back to the worklist
+		 * @function
+		 */
+		onNavBack : function () {
+			this.myNavBack("worklist");
+		},
+
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
 
 		/**
 		 * Binds the view to the object path.
@@ -56,8 +84,19 @@ sap.ui.define([
 
 			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
+					var oResourceBundle = this.getResourceBundle(),
+						oObject = oView.getBindingContext().getObject(),
+						sObjectId = oObject.ObjectID,
+						sObjectName = oObject.Name;
+
 					// Everything went fine.
 					oViewModel.setProperty("/busy", false);
+					oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
+					oViewModel.setProperty("/shareOnJamTitle", sObjectName);
+					oViewModel.setProperty("/shareSendEmailSubject",
+						oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
+					oViewModel.setProperty("/shareSendEmailMessage",
+						oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
 				}.bind(this),
 				function () {
 					// Something went wrong. Display an error page.
@@ -65,20 +104,7 @@ sap.ui.define([
 					this.getRouter().getTargets().display("objectNotFound");
 				}.bind(this)
 			);
-		},
 
-		/**
-		 * On detail view, 'nav back' is only relevant when
-		 * running on phone devices. On larger screens, the detail
-		 * view has no other view to go back to.
-		 * If running on phone though, the app
-		 * will navigate back to the 'master' view.
-		 *
-		 * @function
-		 */
-		onNavBack : function () {
-			// This is only relevant when running on phone devices
-			this.myNavBack("worklist");
 		}
 
 	});
