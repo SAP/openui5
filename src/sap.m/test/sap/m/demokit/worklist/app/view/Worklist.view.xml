@@ -17,10 +17,10 @@
 						}
 					}"
 				noDataText="{i18n>tableNoDataText}"
-				busyIndicatorDelay="0"
 				growing="true"
 				growingThreshold="10"
 				growingScrollToLoad="true"
+				enableBusyIndicator="false"
 				updateFinished="onUpdateFinished">
 				<columns>
 					<Column id="nameColumn">
