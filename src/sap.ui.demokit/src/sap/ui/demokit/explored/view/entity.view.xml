@@ -31,7 +31,7 @@
 			<attributes>
 				<ObjectAttribute
 					title="Application Component"
-					text="{entity>appComponent}" />
+					text="{/appComponent}" />
 				<ObjectAttribute
 					title="Available Since"
 					text="{entity>since}" />
