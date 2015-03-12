@@ -15,83 +15,14 @@ sap.ui.define([
 
 		metadata : {
 			name : "MD Template",
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout"
-				]
-			},
-
-			rootView : "sap.ui.demo.mdtemplate.view.App",
+			manifest: "json",
 
 			config : {
 				messageBundle : "sap.ui.demo.mdtemplate.i18n.messageBundle",
 				// always use absolute paths relative to our own component
 				// (relative paths will fail if running in the Fiori Launchpad)
 				rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdtemplate"),
-				serviceUrl: "here/goes/your/serviceUrl/"
-			},
-
-			routing : {
-				config : {
-					routerClass : "sap.m.routing.Router",
-					viewType : "XML",
-					viewPath : "sap.ui.demo.mdtemplate.view",
-					controlId: "idAppControl",
-					controlAggregation: "detailPages",
-					bypassed: {
-						target: ["master", "notFound"]
-					}
-				},
-				routes : [
-					{
-						pattern: "",
-						name: "master",
-						target: ["object", "master"]
-					},
-					{
-						pattern : "object/{objectId}",
-						name : "object",
-						target: ["master", "object"]
-					},
-					{
-						pattern : "object/{objectId}/lineitem/{lineItemId}",
-						name: "lineItem",
-						target: ["master", "lineItem"]
-					}
-				],
-				targets: {
-					master : {
-						viewName: "Master",
-						viewLevel: 1,
-						controlAggregation: "masterPages"
-					},
-					object : {
-						viewName: "Detail",
-						viewLevel: 2
-					},
-					lineItem : {
-						viewName: "LineItem",
-						viewLevel: 3
-					},
-					// not found targets
-					detailObjectNotFound : {
-						viewName: "DetailObjectNotFound",
-						viewLevel: 3
-					},
-					detailNoObjectsAvailable: {
-						viewName: "DetailNoObjectsAvailable",
-						viewLevel: 3
-					},
-					lineItemNotFound : {
-						viewName: "LineItemNotFound",
-						viewLevel: 3
-					},
-					notFound : {
-						viewName: "NotFound",
-						viewLevel: 3
-					}
-				}
+				serviceUrl: "here/goes/your/serviceUrl/" // this is currently required, Component breaks when there is no service URL
 			}
 		},
 
