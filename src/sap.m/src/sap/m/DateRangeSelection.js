@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				}
 			}
 
-			if ((sValue !== this._lastValue) || (sValue === "")) {
+			if (sValue !== this._lastValue) {
 				if (this.getDomRef() && (this._$input.val() !== sValue)) {
 					this._$input.val(sValue);
 					this._curpos = this._$input.cursorPos();
