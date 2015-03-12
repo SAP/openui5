@@ -25,7 +25,7 @@ function (Opa5) {
 		When.onTheBrowser.iChangeTheHashToObject(10);
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheObject(10);
+		Then.onTheObjectPage.iShouldSeeTheObject("10");
 	});
 
 	opaTest("Should go back to the TablePage", function (Given, When, Then) {
@@ -38,10 +38,10 @@ function (Opa5) {
 
 	opaTest("Object Page shows the correct object Details", function (Given, When, Then) {
 		// Actions
-		When.onTheWorklistPage.iPressOnTheObject1InTheTable();
+		When.onTheWorklistPage.iPressOnTheObject01InTheTable();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheObject(1);
+		Then.onTheObjectPage.iShouldSeeTheObject("01");
 	});
 
 	opaTest("Should be on the table page again when browser back is pressed", function (Given, When, Then) {
@@ -57,7 +57,7 @@ function (Opa5) {
 		When.onTheBrowser.iPressOnTheForwardsButton();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheObject(1).
+		Then.onTheObjectPage.iShouldSeeTheObject("01").
 			and.iTeardownMyAppFrame();
 	});
 
