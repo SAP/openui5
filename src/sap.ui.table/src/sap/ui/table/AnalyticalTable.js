@@ -209,16 +209,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		return this;
 	};
 
-	AnalyticalTable.prototype.updateRows = function(sReason) {
-		this._attachBindingListener();
-		Table.prototype.updateRows.apply(this, arguments);
-	};
-
-	AnalyticalTable.prototype.refreshRows = function(sReason) {
-		this._attachBindingListener();
-		Table.prototype.refreshRows.apply(this, arguments);
-	};
-
 	AnalyticalTable.prototype._attachBindingListener = function() {
 		if (!this._bBindingAttachedListener) {
 			this._bBindingAttachedListener = true;
@@ -246,6 +236,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				});
 			}
 		}
+
+		Table.prototype._attachDataRequestedListeners.apply(this);
 	};
 
 	AnalyticalTable.prototype._getColumnInformation = function() {

@@ -555,6 +555,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		// determine whether jQuery version is less than 1.8 (height and width behaves different!!)
 		this._bjQueryLess18 = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0;
+		this._iDataRequestedCounter = 0;
+		this._bDataRequestedListenersAttached = false;
 
 		// F6 Handling is done in TableRenderer to make sure the table content gets the focus. The
 		// Toolbar has its own F6 stop.
@@ -1104,6 +1106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(sReason) {
+		this._attachBindingListener();
 		this._bBusyIndicatorAllowed = true;
 		//needs to be called here to reset the firstVisible row so that the correct data is fetched
 		this._bRefreshing = true;
@@ -1118,7 +1121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.updateRows = function(sReason) {
-		this._setBusy(false);
+		this._setBusy(sReason ? {changeReason: sReason} : false);
 
 		// by default the start index is the first visible row
 		var iStartIndex = this.getFirstVisibleRow();
@@ -5441,6 +5444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			return;
 		}
 
+		this.setBusy(false);
 		if (mParameters) {
 			if (mParameters.contexts && mParameters.contexts.length !== undefined) {
 				// TreeBinding and AnalyticalBinding always return a contexts array with the
@@ -5453,14 +5457,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						break;
 					}
 				}
-			}
-
-			if (bSetBusy || oBinding.isInitial() || oBinding._bInitial ||
-				(mParameters.requestedLength !== mParameters.receivedLength && oBinding.getLength() > 0 && mParameters.receivedLength !== oBinding.getLength())) {
+			} else if (mParameters.changeReason === sap.ui.model.ChangeReason.Expand) {
 				this.setBusy(true);
 			}
-		} else {
-			this.setBusy(false);
+
+			if (bSetBusy || (oBinding.isInitial() || oBinding._bInitial) || (mParameters.receivedLength === 0 && this._iDataRequestedCounter !== 0) ||
+				(mParameters.receivedLength < mParameters.requestedLength && mParameters.receivedLength !== oBinding.getLength())) {
+				this.setBusy(true);
+			}
 		}
 	};
 
@@ -5469,6 +5473,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// Adapt the item navigation. Since the HeaderRowCount changed, also the lastSelectedDataRow changes.
 		this._iLastSelectedDataRow = this._getHeaderRowCount();
 
+	};
+
+	Table.prototype._attachDataRequestedListeners = function () {
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			this._iDataRequestedCounter = 0;
+			oBinding.detachDataRequested(this._onBindingDataRequestedListener, this);
+			oBinding.detachDataReceived(this._onBindingDataReceivedListener, this);
+
+			oBinding.attachDataRequested(this._onBindingDataRequestedListener, this);
+			oBinding.attachDataReceived(this._onBindingDataReceivedListener, this);
+		}
+	};
+
+	Table.prototype._onBindingDataRequestedListener = function () {
+		this._iDataRequestedCounter++;
+	};
+
+	Table.prototype._onBindingDataReceivedListener = function () {
+		this._iDataRequestedCounter--;
+	};
+
+	Table.prototype._attachBindingListener = function() {
+		this._attachDataRequestedListeners();
 	};
 
 	return Table;

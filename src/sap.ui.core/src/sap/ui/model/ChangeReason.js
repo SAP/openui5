@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	* @class
-	* Change Reason for ListBindings.
+	* Change Reason for ListBinding/TreeBinding.
 	*
 	* @static
 	* @public
@@ -45,7 +45,17 @@ sap.ui.define(['jquery.sap.global'],
 			 * The list was refreshed
 			 * @public
 			 */
-			Refresh: "refresh"
+			Refresh: "refresh",
+			/**
+			 * The tree node was expanded
+			 * @public
+			 */
+			Expand: "expand",
+			/**
+			 * The tree node was collapsed
+			 * @public
+			 */
+			Collapse: "collapse"
 	};
 
 	return ChangeReason;

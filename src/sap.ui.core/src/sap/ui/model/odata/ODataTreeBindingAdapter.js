@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/table/TreeAutoExpandMode'],
-	function(jQuery, TreeBinding, ODataTreeBinding, TreeAutoExpandMode) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason'],
+	function(jQuery, TreeBinding, ODataTreeBinding, TreeAutoExpandMode, ChangeReason) {
 	"use strict";
 
 	/**
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			this.bCollapseRecursive = !!this.mParameters.collapseRecursive;
 		}
 	};
-	
+
 	/**
 	 * @override
 	 */
@@ -682,9 +682,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		jQuery.sap.assert(oNode, "No node found for index " + iIndex);
 		
 		this._updateTreeState({groupID: oNode.nodeState.groupID, fallbackNodeState: oNode.nodeState, expanded: true});
-		this._fireChange();
+		this._fireChange({reason: ChangeReason.Expand});
 	};
-	
+
 	/**
 	 * Expands the tree to the given level.
 	 * Change-Event is fired.
@@ -693,7 +693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	ODataTreeBindingAdapter.prototype.expandToLevel = function (iLevel) {
 		this._mTreeState.collapsed = {};
 		this.setNumberOfExpandedLevels(iLevel);
-		this._fireChange();
+		this._fireChange({reason: ChangeReason.Expand});
 	};
 	
 	/**
@@ -750,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		});
 		
 		if (!bSuppressChange) {
-			this._fireChange();
+			this._fireChange({changeReason: ChangeReason.Collapse});
 		}
 	};
 	
@@ -774,7 +774,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			}
 		});
 		
-		this._fireChange();
+		this._fireChange({changeReason: ChangeReason.Collapse});
 	};
 	
 	/**
