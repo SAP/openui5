@@ -652,7 +652,7 @@
 				"name" : "Text Area",
 				"category" : "User Input",
 				"since" : "1.10",
-				"samples" : [ "sap.m.sample.TextArea" ]
+				"samples" : [ "sap.m.sample.TextArea", "sap.m.sample.TextAreaValueUpdate" ]
 			},
 			{
 				"id" : "sap.m.TileContainer",
@@ -1200,6 +1200,11 @@
 				"id": "sap.m.sample.TextArea",
 				"name": "Text Area",
 				"description": "The Text Area allows to enter multi-line text and automatically breaks to a new line for overflow text. If the text gets too big to be displayed at once the user can scroll up and down."
+			},
+			{
+				"id": "sap.m.sample.TextAreaValueUpdate",
+				"name": "TextArea - Value Update",
+				"description": "Since 1.30 the value property of sap.m.TextArea is not updated on every keystroke, but first when the user presses Enter or leaves the input. The change was necessary to fully support the standard UI5 data binding with formatters and types. If you still need immediate update you have 2 options: Handle liveChange events or enable the boolean property valueLiveUpdate."
 			},
 			{
 				"id": "sap.m.sample.Switch",

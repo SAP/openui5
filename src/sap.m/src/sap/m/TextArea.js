@@ -56,7 +56,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			/**
 			 * The wrap attribute specifies how the text in a text area is to be wrapped when submitted in a form. Possible values are: Soft, Hard, Off.
 			 */
-			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : null}
+			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : null},
+	
+			/**
+			 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
+			 * @since 1.30
+			 */
+			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		events : {
 	
@@ -118,28 +124,44 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		this._onInput();
 	};
 	
+	/**
+	 * Getter for property <code>value</code>.
+	 * Defines the value of the control's input field.
+	 *
+	 * Default value is <code>undefined</code>
+	 *
+	 * @return {string} the value of property <code>value</code>
+	 * @public
+	 */
+	TextArea.prototype.getValue = function() {
+		var oDomRef = this.getFocusDomRef();
+		return oDomRef ? oDomRef.value : this.getProperty("value");
+	};
+	
 	TextArea.prototype._onInput = function(oEvent) {
-		var value = this._$input.val();
+		var sValue = this._$input.val(),
+			iMaxLength = this.getMaxLength();
 	
-		// some browsers does not respect to maxlength property of textarea
-		if (this.getMaxLength() > 0 && value.length > this.getMaxLength()) {
-			value = value.substring(0, this.getMaxLength());
-			this._$input.val(value);
+		// some browsers do not respect to maxlength property of textarea
+		if (iMaxLength > 0 && sValue.length > iMaxLength) {
+			sValue = sValue.substring(0, iMaxLength);
+			this._$input.val(sValue);
 		}
-	
-		if (value != this.getValue()) {
-			this.setProperty("value", value, true);
+		
+		// update value property if needed
+		if (this.getValueLiveUpdate()) {
+			this.setProperty("value", sValue, true);
 
 			// get the value back maybe there is a formatter
-			value = this.getValue();
-			
-			this.fireLiveChange({
-				value: value,
-	
-				// backwards compatibility
-				newValue: value
-			});
+			sValue = this.getValue();
 		}
+		
+		this.fireLiveChange({
+			value: sValue,
+
+			// backwards compatibility
+			newValue: sValue
+		});
 	};
 	
 	/**
