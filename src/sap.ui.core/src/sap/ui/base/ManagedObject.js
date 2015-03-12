@@ -2383,6 +2383,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			that = this;
 
 		var fChangeHandler = function(oEvent) {
+			/* as we reuse the context objects we need to ensure an update of relative bindings. Therefore we set
+			   the context to null so relative bindings will detect a context change */ 
+			if (oBinding.getBoundContext() === that.getBindingContext(sModelName)) {
+				that.setElementBindingContext(null, sModelName);
+			}
 			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
 		};
 
