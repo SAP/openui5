@@ -5,11 +5,11 @@
 		<script src="../../../../../../resources/sap/ui/Device.js"></script>
 		<script language="javascript">
 
+
 			/**
 			 * Add test pages to this test suite function.
 			 * Please order alphabetically
 			 */
-
 			function suite() {
 				var suite = new parent.jsUnitTestSuite();
 				var contextPath = "/" + window.location.pathname.split("/")[1];
@@ -21,10 +21,6 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.logger.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.promise.qunit.html");
-				if(sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 || sap.ui.Device.browser.chrome && sap.ui.Device.browser.version > 32){
-					//Let the test run against the native browser API to early detect changes
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.promise.qunit.html?native=x");
-				}
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.properties.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.resources.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.script.qunit.html");
