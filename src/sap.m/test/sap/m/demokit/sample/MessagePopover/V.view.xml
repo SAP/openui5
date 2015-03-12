@@ -1,26 +1,35 @@
 <mvc:View
 		controllerName="sap.m.sample.MessagePopover.C"
 		height="100%"
+		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<Page
-			title="Centered Title"
+			showHeader="false"
 			class="sapUiContentPadding"
 			height="100%">
 		<content>
-			<HBox>
-				<Button
-						text="Show MessagePopover"
-						press="handleMessagePopoverPress1"
-						width="250px" />
+			<l:VerticalLayout
+					class="sapUiContentPadding"
+					width="100%">
+				<l:content>
+					<Button
+							text="Show MessagePopover (collapsed)"
+							press="handleMessagePopoverPress3"
+							class="sapUiSmallMarginBottom"/>
 
-				<Button text="Show with initiallyExpanded set to false" press="handleMessagePopoverPress3" />
-			</HBox>
+					<Button
+							text="Show MessagePopover (expanded)"
+							press="handleMessagePopoverPress1"/>
+
+				</l:content>
+			</l:VerticalLayout>
 		</content>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://alert" text="{/messagesLength}" type="Emphasized" press="handleMessagePopoverPress2" />
+				<Button icon="sap-icon://alert" text="{/messagesLength}" type="Emphasized"
+						press="handleMessagePopoverPress2"/>
 				<ToolbarSpacer/>
 			</Toolbar>
 		</footer>
