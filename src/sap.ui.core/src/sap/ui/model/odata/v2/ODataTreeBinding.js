@@ -44,6 +44,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
 			TreeBinding.apply(this, arguments);
 			
+			//make sure we have at least an empty parameter object
+			this.mParameters = this.mParameters || mParameters || {};
+			
 			this.oFinalLengths = {};
 			this.oLengths = {};
 			this.oKeys = {};
@@ -1232,7 +1235,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			iRootLevel = 0;
 		}
 		// set the rootLevel on the binding directly
-		// this.mParameters is inherited from the Binding super class
 		this.iRootLevel = iRootLevel;
 		this.refresh();
 	};
