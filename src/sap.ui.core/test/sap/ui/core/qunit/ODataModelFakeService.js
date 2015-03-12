@@ -105,6 +105,8 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sCategoriesFilter8XML],
 		"Categories(7)/Products?$skip=0&$top=5":
 			[200, oXMLHeaders, sProductsXML],
+		"Categories(7)/Products?$skip=0&$top=100":
+			[200, oXMLHeaders, sProductsXML],
 		"Categories(7)/Products/$count":
 			[200, oCountHeaders, "5"],
 		"Categories(1)":
