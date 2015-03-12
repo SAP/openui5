@@ -429,8 +429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderTitle = function(oRM, oOH) {
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-		
+	
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
@@ -487,26 +486,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		if (oOH.getShowTitleSelector()) {
-			// BEGIN ARIA hidden node
-			oRM.write("<div");
-			oRM.writeAttribute("id", oOH.getId() + "-arrow-aria");
-			oRM.writeAttribute("aria-hidden", "false");
-			oRM.writeAccessibilityState({
-				role: "link",
-				haspopup: true
-			});
-			oRM.addClass("sapUiHidden");
-			oRM.writeClasses();
-			oRM.write(">");
-			oRM.writeEscaped(oLibraryResourceBundle.getText("OH_ARIA_SELECT_ARROW_VALUE"));
-			oRM.write("</div>");
-			// END ARIA hidden node
-			
 			oRM.write("<span"); // Start title arrow container
 			oRM.addClass("sapMOHTitleArrow");
 			oRM.writeClasses();
-			oRM.writeAttribute("aria-describedby", oOH.getId() + "-arrow-aria");
-
 			oRM.write(">");
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
@@ -1315,7 +1297,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
 		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		
 		oRM.write("<h1>");
 		oRM.write("<span");
@@ -1399,26 +1380,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 
 		if (oOH.getShowTitleSelector()) {
-			// BEGIN ARIA hidden node
-			oRM.write("<div");
-			oRM.writeAttribute("id", oOH.getId() + "-arrow-aria");
-			oRM.writeAttribute("aria-hidden", "false");
-			oRM.writeAccessibilityState({
-				role: "link",
-				haspopup: true
-			});
-			oRM.addClass("sapUiHidden");
-			oRM.writeClasses();
-			oRM.write(">");
-			oRM.writeEscaped(oLibraryResourceBundle.getText("OH_ARIA_SELECT_ARROW_VALUE"));
-			oRM.write("</div>");
-			// END ARIA hidden node
-			
 			oRM.write("<span"); // Start title arrow container
 			oRM.addClass("sapMOHRTitleArrow");
 			oRM.writeClasses();
-			oRM.writeAttribute("aria-describedby", oOH.getId() + "-arrow-aria");
-
 			oRM.write(">");
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container

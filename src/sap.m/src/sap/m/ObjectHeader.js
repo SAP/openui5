@@ -701,7 +701,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype.onAfterRendering = function() {
 		var oObjectNumber = this.getAggregation("_objectNumber");
 		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var $titleArrow = jQuery.sap.byId(this.getId() + "-titleArrow");
 
+		$titleArrow.attr("aria-haspopup", "true");
+		$titleArrow.attr("role", "link");
+		$titleArrow.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OH_ARIA_SELECT_ARROW_VALUE")); // set label from resource translation bundle
+		
 		if (this.getResponsive()) {
 			this._adjustIntroDiv();
 
