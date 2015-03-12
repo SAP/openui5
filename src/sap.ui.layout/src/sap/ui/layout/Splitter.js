@@ -507,7 +507,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		document.removeEventListener("touchmove", this._boundBarMove);
 
 		// Enable auto resize after bar move if it was enabled before
-		this.disableAutoResize(/* temporarily: */ true);
+		this.enableAutoResize(/* temporarily: */ true);
 
 		jQuery.sap.focus(this._move.bar);
 	};
