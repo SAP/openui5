@@ -226,7 +226,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			 * @protected
 			 */
 			parse : function (sNewHash) {
-				this._oRouter.parse(sNewHash);
+				if (this._oRouter) {
+					this._oRouter.parse(sNewHash);
+				} else {
+					$.sap.log.warning("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
+				}
 			},
 
 			/**
