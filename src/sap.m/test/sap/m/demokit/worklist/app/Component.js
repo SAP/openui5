@@ -12,13 +12,7 @@ sap.ui.define([
 
 		metadata : {
 			name : "worklist Template",
-			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout"
-				]
-			},
-
+			manifest: "json",
 			rootView : "sap.ui.demo.worklist.view.App",
 
 			config : {
