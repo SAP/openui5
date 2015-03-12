@@ -1,0 +1,95 @@
+{
+	"_version": "1.0.0",
+
+	"sap.app": {
+		"_version": "1.0.0",
+		"id": "sap.ui.demo.mdtemplate",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-DOC"
+	},
+
+
+	"sap.ui": {
+		"_version": "1.0.0",
+		"technology": "UI5"
+	},
+
+
+	"sap.ui5": {
+		"_version": "1.0.0",
+		"rootView": "sap.ui.demo.mdtemplate.view.App",
+
+		"dependencies": {
+			"minUI5Version": "1.28.0",
+			"libs": {  
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.mdtemplate.view",
+				"controlId": "idAppControl",
+				"controlAggregation": "detailPages",
+				"bypassed": {
+					"target": ["master", "notFound"]
+				}
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "master",
+					"target": ["object", "master"]
+				},
+				{
+					"pattern": "object/{objectId}",
+					"name": "object",
+					"target": ["master", "object"]
+				},
+				{
+					"pattern": "object/{objectId}/lineitem/{lineItemId}",
+					"name": "lineItem",
+					"target": ["master", "lineItem"]
+				}
+			],
+			"targets": {
+				"master": {
+					"viewName": "Master",
+					"viewLevel": 1,
+					"controlAggregation": "masterPages"
+				},
+				"object": {
+					"viewName": "Detail",
+					"viewLevel": 2
+				},
+				"lineItem": {
+					"viewName": "LineItem",
+					"viewLevel": 3
+				},
+				"detailObjectNotFound": {
+					"viewName": "DetailObjectNotFound",
+					"viewLevel": 3
+				},
+				"detailNoObjectsAvailable": {
+					"viewName": "DetailNoObjectsAvailable",
+					"viewLevel": 3
+				},
+				"lineItemNotFound": {
+					"viewName": "LineItemNotFound",
+					"viewLevel": 3
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewLevel": 3
+				}
+			}
+		}
+	}
+}
