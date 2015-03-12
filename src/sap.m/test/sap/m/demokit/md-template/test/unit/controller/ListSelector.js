@@ -174,19 +174,6 @@ sap.ui.require(
 			// Assert
 			assert.ok(true, "did not fail");
 		});
-
-		QUnit.test("Should select the first item of the list", function (assert) {
-			// Arrange
-			var sBindingPath = "a binding path",
-				fnSelectAListItemStub = this.stub(this.oListSelector, "selectAListItem", jQuery.noop);
-
-			// Act
-			this.oListSelector.selectFirstItem();
-			// Resolve list loading
-			this.fnAct(sBindingPath);
-
-			ok(fnSelectAListItemStub.calledWithExactly(sBindingPath), "Did select the first item");
-		});
 	}
 
 );
