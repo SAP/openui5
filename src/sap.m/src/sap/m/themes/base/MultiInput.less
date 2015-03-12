@@ -23,6 +23,10 @@
 	position: static;
 }
 
+.sapMMultiInput > .sapMInputBasePlaceholder {
+	width: calc(100% - 2.375rem);
+}
+
 // we need this selector to avoid being overwritten by the input.css
 .sapUiSizeCompact .sapMMultiInput .sapMInputValHelp {
 	display: inline-block;
@@ -49,4 +53,8 @@
 	position: absolute;
 	top: 0rem;
 	left: 0rem;	
+}
+
+.sapUiSizeCompact .sapMMultiInput > .sapMInputBasePlaceholder {
+	width: calc(100% - 1.5rem);
 }
