@@ -11,64 +11,15 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
 
 		metadata : {
-			name : "worklist Template",
+			name : "Worklist Template",
 			manifest: "json",
-			rootView : "sap.ui.demo.worklist.view.App",
 
-			config : {
-				messageBundle : "sap.ui.demo.worklist.i18n.messageBundle",
+			"config": {
+				messageBundle: "sap.ui.demo.worklist.i18n.messageBundle",
 				// always use absolute paths relative to our own component
 				// (relative paths will fail if running in the Fiori Launchpad)
 				rootPath: jQuery.sap.getModulePath("sap.ui.demo.worklist"),
 				serviceUrl: "here/goes/your/serviceUrl/"
-			},
-
-			routing : {
-				config : {
-					routerClass : "sap.m.routing.Router",
-					viewType : "XML",
-					viewPath : "sap.ui.demo.worklist.view",
-					controlId: "app",
-					controlAggregation: "pages",
-					bypassed: {
-						target: "notFound"
-					}
-				},
-				routes : [
-					{
-						pattern: "",
-						name: "worklist",
-						target: "worklist"
-					},
-					{
-						pattern : "object/{objectId}",
-						name : "object",
-						target: "object"
-					}
-				],
-				targets: {
-					worklist : {
-						viewName: "Worklist",
-						viewId: "worklist",
-						viewLevel: 1
-					},
-					object : {
-						viewName: "Object",
-						viewId: "object",
-						viewLevel: 2
-					},
-					// not found targets
-					objectNotFound : {
-						viewName: "ObjectNotFound",
-						viewId: "objectNotFound",
-						viewLevel: 2
-					},
-					notFound : {
-						viewName: "NotFound",
-						viewId: "notFound",
-						viewLevel: 2
-					}
-				}
 			}
 		},
 
