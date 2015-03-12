@@ -7,18 +7,11 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Text
-					text="Show details in MessageBox content:"/>
 			<Button
-					text="Show details"
-					class="sapUiSmallMarginBottom"
-					press="showInfo"
-					width="250px"/>
-			<Button
-					text="Show details in control"
-					class="sapUiSmallMarginBottom"
-					press="showCustomContentWithInfo"
-					width="250px"/>
+				text="Show Details"
+				class="sapUiSmallMarginBottom"
+				press="showInfo"
+				width="250px"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
