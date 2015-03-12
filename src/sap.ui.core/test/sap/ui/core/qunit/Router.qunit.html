@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
 	  Tested classes: sap.ui.core.routing.Router
 	-->
 
@@ -14,7 +14,7 @@
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
-	
+
 </script>
 
 <script>
@@ -40,7 +40,7 @@
 
 		module = original;
 
-		//ie 8 support, since this test uses sap.m controls wich use Array.forEach
+		//ie 8 support, since this test uses sap.m controls which use Array.forEach
 		if (!Array.prototype.forEach) {
 			Array.prototype.forEach = function (fn, scope) {
 				'use strict';
@@ -126,6 +126,36 @@
 			//Assert
 			strictEqual(parseSpy.callCount, 1, "did notify for initial hash but did not dispatch change after destroy");
 
+		});
+
+		test("Should log a warning if a router gets destroyed while the hash changes", function () {
+			// Arrange
+			var oSpy = this.spy(jQuery.sap.log, "warning", jQuery.noop),
+					oFirstRouter = new sap.ui.core.routing.Router({
+						"matchingRoute" : {
+							pattern: "matches"
+						}
+					}),
+					oRouterToBeDestroyed = new sap.ui.core.routing.Router({
+						"matchingRoute" : {
+							pattern: "matches"
+						}
+					});
+
+			oFirstRouter.getRoute("matchingRoute").attachMatched(function () {
+				oRouterToBeDestroyed.destroy();
+			});
+
+			// first router has to init first it is the first registered router on the hashchanger
+			oFirstRouter.initialize();
+			oRouterToBeDestroyed.initialize();
+
+			// Act - trigger both routers
+			hasher.setHash("matches");
+
+			// Assert
+			sinon.assert.calledWith(oSpy, sinon.match(/destroyed/), sinon.match(oRouterToBeDestroyed));
+			oFirstRouter.destroy();
 		});
 
 		module("config", {
