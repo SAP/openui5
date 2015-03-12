@@ -255,7 +255,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				aggregations : 0,
 				associations : 0
 			},
-			appComponent : this._takeControlComponent(name)
+			appComponent : this._takeControlComponent(sId)
 		};
 
 		// no documentation !
