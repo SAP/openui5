@@ -118,8 +118,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				parameters : {
 					/**
 					 * An unique Id of the attached document.
-					 * @deprecated Since version 1.28.0.
-					 * This parameter is deprecated, use parameter files instead.
+					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
 					documentId : {type : "string"},
 					/**
@@ -260,18 +260,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			uploadComplete : {
 				parameters : {
 					/**
-					 * Ready state XHR. This property is deprecated since version 1.28.0., use parameter files instead.
-					 * @deprecated Since version 1.28.0. This property is deprecated, use parameter files instead.
+					 * Ready state XHR. This parameter is deprecated since version 1.28.0., use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
 					readyStateXHR : {type : "string"},
 					/**
-					 * Response of the completed upload request. This property is deprecated since version 1.28.0., use parameter files instead.
-					 * @deprecated Since version 1.28.0. This property is deprecated, use parameter files instead.
+					 * Response of the completed upload request. This parameter is deprecated since version 1.28.0., use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
 					response : {type : "string"},
 					/**
-					 * Status Code of the completed upload event. This property is deprecated since version 1.28.0., use parameter files instead.
-					 * @deprecated Since version 1.28.0. This property is deprecated, use parameter files instead.
+					 * Status Code of the completed upload event. This parameter is deprecated since version 1.28.0., use parameter files instead.
+					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
 					status : {type : "string"},
 					/**
