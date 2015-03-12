@@ -1,7 +1,3 @@
-/**
- * Created by I306504 on 2/10/2015.
- */
-
 sap.ui.controller("sap.m.sample.SemanticPage.Page", {
 
 	onInit: function () {

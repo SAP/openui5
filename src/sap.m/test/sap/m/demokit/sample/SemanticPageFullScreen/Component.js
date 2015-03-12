@@ -1,4 +1,4 @@
-Query.sap.declare("sap.m.sample.SemanticPageFullScreen.Component");
+jQuery.sap.declare("sap.m.sample.SemanticPageFullScreen.Component");
 
 sap.ui.core.UIComponent.extend("sap.m.sample.SemanticPageFullScreen.Component", {
 
