@@ -1,0 +1,32 @@
+{
+	"_version": "1.0.0",
+	
+	"sap.app": {
+		"_version": "1.0.0",
+		"id": "sap.ui.demo.worklist.Component",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-DOC"
+	},
+	
+	
+	"sap.ui": {
+		"_version": "1.0.0",
+		"technology": "UI5" 
+	},
+	
+	"sap.ui5": {
+		"_version": "1.0.0",
+		
+		"dependencies": {
+			"minUI5Version": "1.28.0",
+			"libs": {  
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		}
+	}
+}
