@@ -62,9 +62,24 @@
 		}
 	}
 
-	function initModel(sURI, bJSON){
+	function initModel() {
+		var sURI;
+		if (typeof arguments[0] === 'string') {
+			sURI = arguments[0];
+		} else {
+			sURI = arguments[0].serviceUrl;
+		}
+
 		removeSharedMetadata(sURI);
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
+
+		// create arguments array with leading "null" value so that it can be passed to the apply function
+		var aArgs = [null].concat(Array.prototype.slice.call(arguments, 0));
+
+		// create factory function by calling "bind" with the provided arguments
+		var Factory = sap.ui.model.odata.ODataModel.bind.apply(sap.ui.model.odata.ODataModel, aArgs);
+
+		// the factory will create the model with the arguments above
+		var oModel = new Factory();
 		return oModel;
 	}
 
@@ -93,12 +108,108 @@
 		ok(!!window.OData, "global OData object should exist");
 	});
 
+	// assertion methods for the next 3 constructor tests
+	function assertCommonArguments(oModel) {
+		equal(oModel.sServiceUrl, sURI.substr(0, sURI.length - 1), 'serviceUrl');
+		equal(oModel.bJSON, true, 'json');
+		equal(oModel.sUser, 'user', 'user');
+		equal(oModel.sPassword, 'pa$$w0rd', 'password');
+		deepEqual(oModel.mCustomHeaders, { foo: 'bar' }, 'headers');
+		equal(oModel.bTokenHandling, false, 'tokenHandling');
+		equal(oModel.bWithCredentials, true, 'withCredentials');
+		equal(oModel.bLoadMetadataAsync, true, 'loadMetadataAsync');
+	}
+	function assertLegacyArguments(oModel) {
+		// expect default values as they can't be set with as legacy arguments
+		equal(oModel.bLoadAnnotationsJoined, true, 'loadAnnotationsJoined');
+		deepEqual(oModel.aUrlParams, [], 'serviceUrlParams');
+		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata', 'metadataUrlParams');
+		equal(oModel.sDefaultCountMode, 'Both', 'defaultCountMode');
+		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, {
+			sap:"http://www.sap.com/Protocols/SAPData",
+			m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
+			"":"http://schemas.microsoft.com/ado/2007/06/edmx"
+		}, 'metadataNamespaces');
+	}
+	function assertObjectArguments(oModel) {
+		// can only be set with parameters object => expect different values
+		equal(oModel.bLoadAnnotationsJoined, false, 'loadAnnotationsJoined');
+		deepEqual(oModel.oAnnotations.aAnnotationURI, [ 'foo', 'bar' ], 'annotationURI');
+		deepEqual(oModel.aUrlParams, [ 'foo=bar' ], 'serviceUrlParams');
+		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata?bar=foo', 'metadataUrlParams');
+		equal(oModel.sDefaultCountMode, 'None', 'defaultCountMode');
+		deepEqual(oModel.oServiceData.oMetadata.mNamespaces, { 'foo': 'bar' }, 'metadataNamespaces');
+	}
+
+	test("constructor: legacy arguments", function() {
+		var oModel = initModel(
+			sURI,           /* sServiceUrl */
+			true,           /* bJSON */
+			"user",         /* sUser */
+			"pa$$w0rd",     /* sPassword */
+			{ foo: "bar" }, /* mHeaders */
+			false,          /* bTokenHandling */
+			true,           /* bWithCredentials */
+			true            /* bLoadMetadataAsync */
+		);
+
+		assertCommonArguments(oModel);
+		assertLegacyArguments(oModel);
+
+		oModel.destroy();
+	});
+	test("constructor: parameters in 2nd argument", function() {
+		var oModel = initModel(sURI /* sServiceUrl */, {
+			json: true,
+			user: "user",
+			password: "pa$$w0rd",
+			headers: { foo: "bar" },
+			tokenHandling: false,
+			withCredentials: true,
+			loadMetadataAsync: true,
+			annotationURI: [ 'foo', 'bar' ],
+			loadAnnotationsJoined: false,
+			serviceUrlParams: { 'foo': 'bar' },
+			metadataUrlParams: { 'bar': 'foo' },
+			defaultCountMode: sap.ui.model.odata.CountMode.None,
+			metadataNamespaces: { 'foo': 'bar' }
+		});
+
+		assertCommonArguments(oModel);
+		assertObjectArguments(oModel);
+
+		oModel.destroy();
+	});
+	test("constructor: parameters in 1st argument", function() {
+		var oModel = initModel({
+			serviceUrl: sURI,
+			json: true,
+			user: "user",
+			password: "pa$$w0rd",
+			headers: { foo: "bar" },
+			tokenHandling: false,
+			withCredentials: true,
+			loadMetadataAsync: true,
+			annotationURI: [ 'foo', 'bar' ],
+			loadAnnotationsJoined: false,
+			serviceUrlParams: { 'foo': 'bar' },
+			metadataUrlParams: { 'bar': 'foo' },
+			defaultCountMode: sap.ui.model.odata.CountMode.None,
+			metadataNamespaces: { 'foo': 'bar' }
+		});
+
+		assertCommonArguments(oModel);
+		assertObjectArguments(oModel);
+
+		oModel.destroy();
+	});
+
 	asyncTest("test oDataModel - oMetadata shared across models", function(){
 		var mOptions = {
 				json : true,
 				loadMetadataAsync: true
 			};
-		var oModel = new sap.ui.model.odata.ODataModel(sURI, mOptions);
+		var oModel = initModel(sURI, mOptions);
 		var oModel2 = {};
 
 		oModel.oMetadata.attachLoaded(function() {
