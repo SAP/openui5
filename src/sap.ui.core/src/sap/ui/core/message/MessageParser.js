@@ -7,8 +7,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 	"use strict";
 
 /**
- * Abstract MessageParser class
+ * Abstract MessageParser class to be inherited in back-end specific implementations.
  * 
+ * @public
  * @abstract
  */
 var MessageParser = Object.extend("sap.ui.core.message.MessageParser", {
@@ -47,6 +48,9 @@ MessageParser.prototype.getProcessor = function() {
 
 
 /**
+ * Abstract parse method must be implemented in the inheriting class.
+ *
+ * @public
  * @abstract
  */
 MessageParser.prototype.parse = function(oResponse) {

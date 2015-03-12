@@ -19,6 +19,11 @@ var mSeverityMap = {
 };
 
 
+/**
+ * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * 
+ * @public
+ */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
 	metadata: {
 		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
@@ -69,6 +74,7 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @return {void}
+ * @public
  */
 ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
 	// TODO: Implement filter function
