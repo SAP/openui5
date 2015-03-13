@@ -5,8 +5,8 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 	onInit : function() {
 		// create any data and a model and set it to the view
 		var oData = {
-			checkBox1Text : "This checkBox is not checked",
-			checkBox2Text : "This checkBox is checked"
+			checkBox1Text : "CheckBox",
+			checkBox2Text : "CheckBox - focused"
 		};
 		var oModel = new sap.ui.model.json.JSONModel(oData);
 		var oView = this.getView();
@@ -38,7 +38,7 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 				"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
 				{
 					icon: sap.m.MessageBox.Icon.INFORMATION,
-					title: "Set initial focus on a button",
+					title: "Set Initial Focus on a Button",
 					styleClass: bCompact? "sapUiSizeCompact" : "",
 					initialFocus: sap.m.MessageBox.Action.CANCEL
 				}
@@ -48,13 +48,13 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 	handleShowMessageBoxPress_InitialFocus: function(oEvent) {
 		var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
 		sap.m.MessageBox.show(
-				'Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive',
+				'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive',
 				{
 					icon: sap.m.MessageBox.Icon.INFORMATION,
-					title: "Set initial focus on a button",
-					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
+					title: "Set Initial Focus on a Custom Button",
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom Button"],
 					styleClass: bCompact? "sapUiSizeCompact" : "",
-					initialFocus: "Custom button text"
+					initialFocus: "Custom Button"
 				}
 		);
 	},
@@ -71,7 +71,7 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 
 		sap.m.MessageBox.show(oLayout, {
 			icon: sap.m.MessageBox.Icon.WARNING,
-			title: "Set initial focus on a control",
+			title: "Set Initial Focus on a Control",
 			actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 			onClose: function (oAction) {
 				if (oAction === sap.m.MessageBox.Action.YES) {
@@ -84,54 +84,5 @@ sap.ui.controller("sap.m.sample.MessageBox.C", {
 			dialogId: "messageBoxId1",
 			initialFocus: oCheck
 		});
-	},
-
-	handleShowMessageBoxPress_Scrolling: function(oEvent) {
-		var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-
-		var sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus. Sed gravida sagittis semper. Maecenas non eros arcu. Aenean pharetra faucibus nisl sed cursus. Morbi ultrices lacus et facilisis venenatis. In porta pharetra libero, in maximus turpis semper vitae. Donec lectus mauris, consequat ut tincidunt pharetra, posuere vitae massa. Suspendisse rutrum ipsum dui, pulvinar mollis dolor ullamcorper a. Nam eleifend, neque sit amet dignissim commodo, mi lacus feugiat nunc, in elementum tortor enim congue purus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec volutpat metus neque, ut hendrerit odio gravida hendrerit. Donec pellentesque, sem sed vestibulum tristique, lectus nulla gravida lacus, sed facilisis purus ipsum a odio. Pellentesque nisl nibh, euismod et sapien a, laoreet convallis lectus. Donec sed sollicitudin dolor, at luctus eros. Aliquam varius mauris vitae sapien aliquam sollicitudin. Curabitur auctor mattis enim, eget fermentum augue vehicula in. Mauris tempus magna nec vehicula lobortis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla arcu augue, finibus quis quam nec, sagittis blandit turpis.	Maecenas id nisi molestie, varius lacus vitae, luctus diam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur consequat fringilla faucibus.";
-
-		var oLayout = new sap.ui.layout.VerticalLayout({
-			width: "100%",
-			content: [
-				new sap.m.List({
-					inset : false,
-					width : "100%",
-					items : [
-						new sap.m.InputListItem({
-							label : sLongText
-						}), new sap.m.InputListItem({
-							label : sLongText
-						}), new sap.m.InputListItem({
-							label : sLongText
-						})
-					]
-				})
-			]
-		});
-
-		sap.m.MessageBox.show(
-				oLayout,
-				{
-					icon: sap.m.MessageBox.Icon.INFORMATION,
-					title: "Information",
-					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom button text"],
-					onClose: function(oAction) {
-						if ( oAction === sap.m.MessageBox.Action.YES ) {
-							var oCheck = sap.ui.getCore().byId("checkBoxId");
-							var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
-
-							// alert(sMessage, fnCallBack, sTitle)
-							sap.m.MessageBox.alert(sText, {
-								title: "Result of CheckBox"
-							});
-						}
-					},
-					styleClass: bCompact ? "sapUiSizeCompact" : "",
-					initialFocus: "Custom button text",
-					verticalScrolling: true,
-					horizontalScrolling: true
-				}
-		);
 	}
 });
