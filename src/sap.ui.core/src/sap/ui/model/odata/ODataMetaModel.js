@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		'sap/ui/model/json/JSONListBinding', 'sap/ui/model/json/JSONModel',
 		'sap/ui/model/json/JSONPropertyBinding', 'sap/ui/model/json/JSONTreeBinding',
 		'sap/ui/model/MetaModel'],
-	function(BindingMode, ClientContextBinding, JSONListBinding, JSONModel, JSONPropertyBinding,
+	function (BindingMode, ClientContextBinding, JSONListBinding, JSONModel, JSONPropertyBinding,
 			JSONTreeBinding, MetaModel) {
 	"use strict";
 
@@ -63,7 +63,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
 			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
 
-			constructor : function(oMetadata, oAnnotations) {
+			constructor : function (oMetadata, oAnnotations) {
 				MetaModel.apply(this); // no arguments to pass!
 				this.sDefaultBindingMode = BindingMode.OneTime;
 				this.mSupportedBindingModes = {"OneTime" : true};
@@ -716,7 +716,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @public
 	 * @returns {Promise} a Promise
 	 */
-	ODataMetaModel.prototype.loaded = function(){
+	ODataMetaModel.prototype.loaded = function () {
 		return this.oLoadedPromise;
 	};
 
