@@ -81,6 +81,10 @@ sap.ui.define([
 			// call the base component's createContent function
 			this._oRootView = sap.ui.core.UIComponent.prototype.createContent.apply(this, arguments);
 
+			if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable on "combi" devices with touch AND mouse
+				this._oRootView.addStyleClass("sapUiSizeCompact");
+			}
+			
 			return this._oRootView;
 		},
 
