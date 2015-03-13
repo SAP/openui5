@@ -248,13 +248,13 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Miller Medeiros
 
-Component: d3 2.9.5
+Component: d3 3.4.12
 Licensor: Michael Bostock
 Website: http://github.com/mbostock/d3/
 License: BSD 3-clause "New" or "Revised" License
 <OWNER> = Michael Bostock
 <ORGANIZATION> = Michael Bostock
-<YEAR> = 2013
+<YEAR> = 2010-2014
 
 Component: datajs - JavaScript Library for data-centric web applications 1.1.0
 Licensor: Microsoft
@@ -293,14 +293,14 @@ Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars
+Component: Handlebars 2.0.0
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License
-<year> = 2011
+<year> = 2011-2014
 <copyright holders> = Yehuda Katz
 
-Component: Hasher
+Component: Hasher 1.2.0
 Licensor: Miller Medeiros
 Website: http://github.com/millermedeiros/hasher
 License: MIT License
@@ -340,6 +340,13 @@ Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
 <year> = 2013
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: jQuery 1.11.1
+Licensor: jQuery Foundation and other contributors
+Website: http://jquery.com/
+License: MIT License
+<year> = 2014
 <copyright holders> = jQuery Foundation and other contributors
 
 Component: jQuery-UI 1.10.4
@@ -389,7 +396,7 @@ Licensor: Douglas Crockford
 Website: http://www.json.org/js.html
 License: Public Domain
 
-Component: JSZip 6.3.2
+Component: JSZip 2.2.0
 Licensor: Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso
 Website: https://github.com/Stuk/jszip
 License: MIT License
@@ -406,7 +413,7 @@ Licensor: Alexis Sellier & The Core Less Team
 Website: http://github.com/cloudhead/less.js/
 License: Apache License 2.0
 
-Component: punycode.js
+Component: punycode.js 1.2.3
 Licensor: Acid Media
 Website: http://github.com/bestiejs/punycode.js/
 License: MIT License
@@ -420,7 +427,7 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Mobify R&D Inc
 
-Component: mobiscroll
+Component: mobiscroll 2.9.0
 Licensor: Mathias Bynens
 Website: http://mobiscroll.codeplex.com/
 License: MIT License
@@ -457,7 +464,7 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2012
 
-Component: SwipeView
+Component: SwipeView 1.0
 Licensor: Matteo Spinelli
 Website: http://github.com/cubiq/SwipeView/
 License: MIT License
@@ -481,7 +488,7 @@ License: MIT License
 <copyright holders> = Bjarke Walling
 <year> = 2014
 
-Component: URI.js
+Component: URI.js 1.11.2
 Licensor: Rodney Rehm
 Website: http://github.com/medialize/URI.js/
 License: MIT License
