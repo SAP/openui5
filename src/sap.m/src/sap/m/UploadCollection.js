@@ -1310,15 +1310,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description Handling of the Event fileAllowed of the fileUploader
-	 * @param {object} oEvent Event of the fileUploader
-	 * @private
-	 */
-	UploadCollection.prototype._onFileAllowed = function(oEvent) {
-		// TODO not implemented
-	};
-
-	/**
 	 * @description Handling of the Event filenameLengthExceed of the fileUploader
 	 * @param {object} oEvent Event of the fileUploader
 	 * @private
@@ -1563,9 +1554,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				sendXHR : bSendXHR, // false for IE8, IE9
 				change : function(oEvent) {
 					that._onChange(oEvent);
-				},
-				fileAllowed : function(oEvent) {
-					that._onFileAllowed(oEvent);
 				},
 				filenameLengthExceed : function(oEvent) {
 					that._onFilenameLengthExceed(oEvent);
