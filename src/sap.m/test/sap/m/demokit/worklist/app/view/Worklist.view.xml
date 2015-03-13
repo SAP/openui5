@@ -20,7 +20,6 @@
 					}"
 				noDataText="{i18n>tableNoDataText}"
 				growing="true"
-				growingThreshold="10"
 				growingScrollToLoad="true"
 				enableBusyIndicator="false"
 				updateFinished="onUpdateFinished">

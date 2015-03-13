@@ -1,10 +1,11 @@
 sap.ui.require([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationLengthEquals',
+		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/PropertyStrictEquals',
 		'sap/ui/demo/worklist/test/integration/pages/Common'
 	],
-	function(Opa5, AggregationLengthEquals, PropertyStrictEquals, Common) {
+	function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common) {
 		"use strict";
 
 		var sViewName = "Worklist",
@@ -39,8 +40,8 @@ sap.ui.require([
 						});
 					},
 
-					iPressOnTheObject1InTheTable : function (){
-						return this.iPressATableItem("Object 1");
+					iPressOnTheObject01InTheTable : function (){
+						return this.iPressATableItem("Object 01");
 					},
 
 					iPressOnMoreData : function (){
@@ -62,7 +63,7 @@ sap.ui.require([
 						return this.waitFor({
 							id : sTableId,
 							viewName : sViewName,
-							matchers : [ new AggregationLengthEquals({name : "items", length : 10}) ],
+							matchers : [ new AggregationFilled({name : "items"}) ],
 							errorMessage : "The Table has not been loaded"
 						});
 					}
