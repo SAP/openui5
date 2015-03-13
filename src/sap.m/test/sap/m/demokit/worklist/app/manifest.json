@@ -20,6 +20,7 @@
 	"sap.ui": {
 		"_version": "1.1.0",
 		"technology": "UI5",
+		
 		"icon": "sap-icon://task",
 		"deviceTypes": {
 			"desktop": true,
@@ -45,6 +46,11 @@
 				"sap.ui.layout": {}
 			}
 		},
+		
+		"config": {
+			"messageBundle": "sap.ui.demo.worklist.i18n.messageBundle",
+			"serviceUrl": "here/goes/your/serviceUrl/"
+		},
 
 		"routing": {
 			"config": {
@@ -57,7 +63,7 @@
 					"target": "notFound"
 				}
 			},
-			
+
 			"routes": [
 				{
 					"pattern": "",
@@ -70,7 +76,7 @@
 					"target": "object"
 				}
 			],
-			
+
 			"targets": {
 				"worklist": {
 					"viewName": "Worklist",
