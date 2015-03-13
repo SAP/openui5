@@ -276,7 +276,11 @@
 				token: "'foo'"},
 			{ binding: "{=(1 2)}", message: "Expected ) but instead saw 2", token: "2"},
 			{ binding: "{='foo'[1+]}", message: "Unexpected ]", token: "]"},
-			{ binding: "{='foo'[1}", message: "Expected ] but instead saw }", token: "}"}
+			{ binding: "{='foo'[1}", message: "Expected ] but instead saw }", token: "}"},
+			{ binding: "{=[1}", message: "Expected , but instead saw }", token: "}"},
+			{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
+			{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
+			{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"}
 		], function(iUnused, oFixture) {
 		test("Error handling " + oFixture.binding + " --> " + oFixture.message, function () {
 			checkError(function () {
@@ -385,10 +389,19 @@
 	});
 
 	//*********************************************************************************************
-	checkFixtures("Array access", [
+	checkFixtures("Property and array access", [
 		{ expression: "'foo@bar'.split('@')[0]", result: "foo" },
 		{ expression: "'foo@bar'.split('@')[${/3} - 2]", result: "bar" },
 		{ expression: "'foo@bar'.split('@')[6]", result: "undefined" },
 		{ expression: "${/}['mail']", result: "mail" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("Array literal", [
+		{ expression: "[].length", result: "0" },
+		{ expression: "['foo', 'bar']", result: "foo,bar" },
+		{ expression: "[,'foo',, 'bar'][2]", result: "undefined" },
+		{ expression: "[42][0]", result: "42" },
+		{ expression: "[42 + ${/3}]", result: "45" }
 	]);
 } ());
