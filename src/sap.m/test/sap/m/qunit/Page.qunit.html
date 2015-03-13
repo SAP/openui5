@@ -30,6 +30,9 @@
 		</style>
 		
 		<script>
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sinon.config.useFakeTimers = true;
 
 			var oHtml = new sap.ui.core.HTML({
 				content : '<h1 id="qunit-header">qUnit Page for sap.m.Page</h1><h2 id="qunit-banner"></h2><h2 id="qunit-userAgent"></h2><ol id="qunit-tests"></ol>'
@@ -39,7 +42,7 @@
 				width: "2000px"
 			});
 
-			var page = new sap.m.Page("myFirstPage", {
+			var oPage = new sap.m.Page("myFirstPage", {
 				backgroundDesign: "Standard",
 				title : "Test",
 				showNavButton : true,
@@ -48,10 +51,10 @@
 				content : oHtml,
 				headerContent: [new sap.m.Button("hdrbtn",{text:"HDRBTN"})]
 			}).placeAt("content");
-			page.setSubHeader(new sap.m.Bar("mySubHeader",{contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})]}));
-			page.setFooter(new sap.m.Bar("myFooter", { contentMiddle: [ new sap.m.Button('FooterBtn', {text: "Footer Btn"})]}));
+			oPage.setSubHeader(new sap.m.Bar("mySubHeader",{contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})]}));
+			oPage.setFooter(new sap.m.Bar("myFooter", { contentMiddle: [ new sap.m.Button('FooterBtn', {text: "Footer Btn"})]}));
 			
-			var page2 = new sap.m.Page("mySecondPage", {
+			var oPage2 = new sap.m.Page("mySecondPage", {
 				title : "Test 2",
 				showNavButton : false,
 				content : [new sap.ui.core.HTML({
@@ -59,13 +62,30 @@
 				}), oButton],
 			}).placeAt("content");
 
-			var page3 = new sap.m.Page("myThirdPage", {
+			var oPage3 = new sap.m.Page("myThirdPage", {
 				showHeader : false,
 				enableScrolling : false,
 				content : new sap.ui.core.HTML({
 					content : "<div id='p3content'>another test content</div>"
 				})
 			}).placeAt("content");
+		
+			
+			sap.ui.jsview("busyTestView", {
+				createContent: function() {
+					return new sap.m.Page("busyTestPage1", {
+						title : "TestView",
+						showNavButton : true,
+						headerContent: [new sap.m.Button({text:"HDRBTN"})],
+						content : new sap.ui.core.HTML({
+							content : "<div id='p4content'>yet another test content</div>"
+						})
+					});
+				}
+			});
+
+			var oView = sap.ui.view({id:"testView1", viewName:"busyTestView", type:sap.ui.core.mvc.ViewType.JS});
+			oView.placeAt("content");
 
 			QUnit.config.autostart = false;
 			jQuery(document).ready(function() {
@@ -80,35 +100,35 @@
 				ok(jQuery.sap.domById("hdrbtn"), "header right button should be rendered");
 				ok(jQuery.sap.domById("mySubHeader"), "Sub header should be rendered");
 				ok(jQuery.sap.domById("myFirstPage-navButton"), "nav button should be rendered");
-				ok(jQuery.sap.domById("qunit-header"), "page content should be rendered");
+				ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
 				ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
 				ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
 				equal (jQuery.sap.byId("mySubHeader").position().top, (jQuery.sap.byId("myFirstPage-intHeader").position().top + jQuery.sap.byId("myFirstPage-intHeader").outerHeight()), "subHeader should be directly below header");
 				ok(jQuery.sap.byId("myFirstPage-intHeader").hasClass("sapMHeader-CTX"), "header should contain header context");
 				ok(!jQuery.sap.byId("mySubHeader").hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
 				ok(jQuery.sap.byId("myFooter").hasClass("sapMFooter-CTX"), "footer should contain footer context");
-				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "page content should not have list gray background color");
-				page.setBackgroundDesign("List");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "page content should have list background color");
-				page.setBackgroundDesign("Standard");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgStandard"), "page content should have standard background color");
-				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "page content should not have list background color");
-				page.setBackgroundDesign("Solid");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "page content should have a solid background color");
-				page.setBackgroundDesign("Transparent");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "page content should be transparent");
+				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list gray background color");
+				oPage.setBackgroundDesign("List");
+				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should have list background color");
+				oPage.setBackgroundDesign("Standard");
+				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgStandard"), "Page content should have standard background color");
+				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list background color");
+				oPage.setBackgroundDesign("Solid");
+				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
+				oPage.setBackgroundDesign("Transparent");
+				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "Page content should be transparent");
 				
 				var transparentCssString = (sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer) ? "transparent" : "rgba(0, 0, 0, 0)"
-				equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "page content should be transparent");
+				equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "Page content should be transparent");
 			});
 
 			test("Page 2 rendered", function() {
 				ok(jQuery.sap.domById("mySecondPage"), "Page should be rendered");
 				ok(jQuery.sap.domById("mySecondPage-intHeader"), "header should be rendered");
 				equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "nav button should not be rendered");
-				ok(jQuery.sap.domById("p2content"), "page 2 content should be rendered");
-				page2.setBackgroundDesign("List");
-				ok(jQuery.sap.byId("mySecondPage").hasClass("sapMPageBgList"), "page2 content should have list background color");
+				ok(jQuery.sap.domById("p2content"), "Page 2 content should be rendered");
+				oPage2.setBackgroundDesign("List");
+				ok(jQuery.sap.byId("mySecondPage").hasClass("sapMPageBgList"), "Page 2 content should have list background color");
 			});
 
 			test("Page 3 rendered with no header", function() {
@@ -116,12 +136,12 @@
 				equal(jQuery.sap.domById("myThirdPage-intHeader"), undefined, "header should not be rendered");
 				equal(jQuery.sap.domById("myThirdPage-navButton"), undefined, "nav button should not be rendered");
 				var p3c = jQuery.sap.domById("p3content");
-				ok(p3c, "page 3 content should be rendered");
+				ok(p3c, "Page 3 content should be rendered");
 
 				//var $p3c = jQuery(p3c);
 				var $p3c = jQuery(p3c).parent();
-				equal($p3c.height(), jQuery(window).height(), "page 3 content height should cover the whole screen");
-				equal($p3c.width(), jQuery(window).width(), "page 3 content width should cover the whole screen");
+				equal($p3c.height(), jQuery(window).height(), "Page 3 content height should cover the whole screen");
+				equal($p3c.width(), jQuery(window).width(), "Page 3 content width should cover the whole screen");
 			});
 			
 			test("render once only", function() { // regression test for issue 1570014242
@@ -134,14 +154,14 @@
 
 				var oRenderOncePage = new sap.m.Page();
 				oRenderOncePage.addDelegate(oDelegate);
-				equal(iRenderCounter, 0, "page should not be rendered directly after instantiation");
+				equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 				
 				oRenderOncePage.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				equal(iRenderCounter, 1, "page should be rendered only once");
+				equal(iRenderCounter, 1, "Page should be rendered only once");
 				
 				oRenderOncePage.rerender();
-				equal(iRenderCounter, 2, "page should be rendered twice after another forced rerendering");
+				equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 				
 				oRenderOncePage.destroy();
 			});
@@ -157,14 +177,14 @@
 
 				var oRenderOncePage = new sap.m.Page({showNavButton: true, title: "Test Page"});
 				oRenderOncePage.addDelegate(oDelegate);
-				equal(iRenderCounter, 0, "page should not be rendered directly after instantiation");
+				equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 				
 				oRenderOncePage.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				equal(iRenderCounter, 1, "page should be rendered only once");
+				equal(iRenderCounter, 1, "Page should be rendered only once");
 				
 				oRenderOncePage.rerender();
-				equal(iRenderCounter, 2, "page should be rendered twice after another forced rerendering");
+				equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 				
 				oRenderOncePage.destroy();
 			});
@@ -175,19 +195,19 @@
 				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
 				ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
 
-				page.setShowSubHeader(false);
+				oPage.setShowSubHeader(false);
 				sap.ui.getCore().applyChanges();
 				equal(jQuery.sap.domById("mySubHeader"), undefined, "subHeader should not be rendered when 'showSubHeader' is false");
-				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "48px", "top of page content with subHeader not shown should be 48px (3rem)");
+				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "48px", "top of Page content with subHeader not shown should be 48px (3rem)");
 
-				page.setShowSubHeader(true);
+				oPage.setShowSubHeader(true);
 				sap.ui.getCore().applyChanges();
 				ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
-				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of page content with subHeader shown should be 96px (6rem)");
+				equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 			});
 
 			test("showFooter", function() {
-				page.setShowFooter(false);
+				oPage.setShowFooter(false);
 				sap.ui.getCore().applyChanges();
 				equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
 			});
@@ -198,8 +218,8 @@
 					asyncTest("NavButton", function() {
 						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnBack"), "back button should be rendered");
 						equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
-						page.setShowNavButton(false);
-						page2.setShowNavButton(true);
+						oPage.setShowNavButton(false);
+						oPage2.setShowNavButton(true);
 						setTimeout(function() {
 							equal(jQuery.sap.domById("myFirstPage-navButton"), undefined, "back button should not be rendered");
 							ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
@@ -216,7 +236,7 @@
 					asyncTest("NavButton", function() {
 						ok(jQuery.sap.byId("myFirstPage-navButton").hasClass("sapMBtnUp"), "up button should be rendered");
 						equal(jQuery.sap.domById("mySecondPage-navButton"), undefined, "up button should not be rendered");
-						page2.setShowNavButton(true);
+						oPage2.setShowNavButton(true);
 						setTimeout(function() {
 							ok(jQuery.sap.domById("mySecondPage-navButton"), "up button should be rendered");
 							start();
@@ -235,7 +255,7 @@
 					asyncTest("Icon", function() {
 						ok(jQuery.sap.byId("myFirstPage-navButton").children("myFirstPage-navButton-img"), "up button should be rendered with the icon");
 						equal(jQuery.sap.domById("myFirstPage-icon"), undefined, "app Icon should not be rendered");
-						page.setShowNavButton(false);
+						oPage.setShowNavButton(false);
 						setTimeout(function() {
 							if (sap.ui.core.theming.Parameters.get("sapMPlatformDependent") == "true") {
 								ok(jQuery.sap.domById("myFirstPage-icon"), "app Icon should be rendered");
@@ -256,7 +276,7 @@
 				module("Scrolling");
 
 				function getScrollPos() {
-					var s, scrollEnablement = page2.getScrollDelegate();
+					var s, scrollEnablement = oPage2.getScrollDelegate();
 
 					if (scrollEnablement._scroller) { // iScroll
 						$Scroll = jQuery.sap.byId("mySecondPage-scroll");
@@ -276,21 +296,21 @@
 				}
 
 				test("Scroll area rendered", function() {
-					ok(jQuery.sap.domById("myFirstPage-cont"), "Scroll container should be rendered for page 1");
-					ok(jQuery.sap.domById("mySecondPage-cont"), "Scroll container should be rendered for page 2");
-					ok(jQuery.sap.domById("myThirdPage-cont"), "Scroll container should be rendered for page 3");
+					ok(jQuery.sap.domById("myFirstPage-cont"), "Scroll container should be rendered for Page 1");
+					ok(jQuery.sap.domById("mySecondPage-cont"), "Scroll container should be rendered for Page 2");
+					ok(jQuery.sap.domById("myThirdPage-cont"), "Scroll container should be rendered for Page 3");
 				});
 
 				test("Scrolling", function() {
 					expect(2);
 					equal(getScrollPos(), 0, "Page 2 should be scrolled to position 0");
-					page2.scrollTo(100, 0);
+					oPage2.scrollTo(100, 0);
 					equal(getScrollPos(), -100, "Page 2 should be scrolled to position 100");
 				});
 
 				test("Restoring scrolling state after rendering", function() {
 					expect(1); // event should not be fired after rerendering
-					page2.rerender();
+					oPage2.rerender();
 					equal(getScrollPos(), -100, "Page 2 should be scrolled to position 100");
 				});
 
@@ -354,6 +374,35 @@
 							oContainer.destroy();
 						});
 			} // end of scrolling test "if" which filters out IE8
+			
+			module("Busy Indication");
+			
+			test("Busy Indication within Page (only content area)", function(){
+				var sDesiredZIndex = "3";
+
+				oPage.setBusy(true);
+				
+				this.clock.tick(1200);
+				var $busyIndicator = jQuery('.sapUiLocalBusyIndicator')[0];
+				var sZIndex = jQuery('.sapUiLocalBusyIndicator').css('z-index');
+				strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with header/footer also covered");
+				oPage.setBusy(false);
+			});
+			
+			test("Busy Indication within Page (also covering header/footer)", function(){
+				var sDesiredZIndex = "auto";
+
+				oPage.setContentOnlyBusy(true);
+				oPage.setBusy(true);
+				
+				this.clock.tick(1200);
+				var $busyIndicator = jQuery('.sapUiLocalBusyIndicator')[0];
+				
+				var sZIndex = jQuery('.sapUiLocalBusyIndicator').css('z-index');
+				strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with only content covered");
+				oPage.setBusy(false);
+			});
+
 		</script>
 
 	<style>
@@ -364,7 +413,8 @@
 	
 	html,
 	#content,
-	#p3content {
+	#p3content,
+	#p4content {
 		width: 100%;
 		height: 100%;
 	}

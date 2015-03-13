@@ -54,6 +54,10 @@ sap.ui.define(['jquery.sap.global'],
 			// it is used in the PopOver to remove additional margin bottom for page with footer
 			rm.addClass("sapMPageWithFooter");
 		}
+		
+		if (!oPage.getContentOnlyBusy()) {
+			rm.addClass("sapMPageBusyCoversAll");
+		}
 	
 		rm.writeClasses();
 	
