@@ -2091,11 +2091,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			},
 
 			/**
-			 * Redirects to given URL
-			 * This method fires "redirect" event before open the URL
+			 * Redirects to given URL.
+			 * This method fires "redirect" event before opening the URL.
 			 *
 			 * @param {String} sURL Uniform resource locator.
-			 * @param {boolean} [bNewWindow] Opens URL in a new browser window
+			 * @param {boolean} [bNewWindow] Opens URL in a new browser window or tab. Please note that, opening a new window/tab can be ignored by browsers(e.g. on Windows Phone) or popup blockers.
 			 * @public
 			 * @name sap.m.URLHelper#redirect
 			 * @function
@@ -2107,7 +2107,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
-					window.open(sURL, "_blank");
+					var oWindow = window.open(sURL, "_blank");
+					if (!oWindow) {
+						$.sap.log.error(this + "#redirect: Could not open " + sURL);
+					}
 				}
 			},
 
