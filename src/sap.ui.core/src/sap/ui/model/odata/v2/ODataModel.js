@@ -2996,9 +2996,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var oRequest, sUrl,
 			oFunctionMetadata,
 			mRequests,
-			mUrlParameters, fnSuccess, fnError,
+			mUrlParams,
+			aUrlParams, 
+			fnSuccess, fnError,
 			sMethod = "GET",
-			aUrlParams = [],
+			aUrlParams,
+			mInputParams = {},
 			sBatchGroupId,
 			sChangeSetId,
 			mHeaders,
@@ -3008,7 +3011,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sBatchGroupId 	= mParameters.batchGroupId;
 			sChangeSetId 	= mParameters.changeSetId;
 			sMethod			= mParameters.method ? mParameters.method : sMethod;
-			mUrlParameters	= mParameters.urlParameters;
+			mUrlParams		= mParameters.urlParameters;
 			fnSuccess		= mParameters.success;
 			fnError			= mParameters.error;
 			mHeaders		= mParameters.headers;
@@ -3029,18 +3032,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			
 			if (oFunctionMetadata.parameter != null) {
-				jQuery.each(mUrlParameters, function (sParameterName, oParameterValue) {
-					var matchingParameters = jQuery.grep(oFunctionMetadata.parameter, function (oParameter) {
+				jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
+					var matchingParams = jQuery.grep(oFunctionMetadata.parameter, function (oParameter) {
 						return oParameter.name === sParameterName && oParameter.mode === "In";
 					});
-					if (matchingParameters != null && matchingParameters.length > 0) {
-						var matchingParameter = matchingParameters[0];
-						aUrlParams.push(sParameterName + "=" + ODataUtils.formatValue(oParameterValue, matchingParameter.type));
+					if (matchingParams != null && matchingParams.length > 0) {
+						mInputParams[sParameterName] = ODataUtils.formatValue(oParameterValue, matchingParams[0].type);
 					} else {
 						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
 					}
 				});
 			}
+			aUrlParams = ODataUtils._createUrlParamsArray(mInputParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined);
