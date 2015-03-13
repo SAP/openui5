@@ -884,41 +884,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 	};
 	ODataAnnotations.prototype.getPropertyValueAttributes = function(documentNode, oAlias) {
-		var attrName = "", attrValue = "", i, propertyValueAttributes = {};
+		var sKey = "", sValue = "", i, propertyValueAttributes = {};
 		for (i = 0; i < documentNode.attributes.length; i += 1) {
 			var sAttrName = documentNode.attributes[i].name;
 			if (sAttrName !== "Property" && sAttrName !== "Term" && sAttrName !== "Qualifier") {
-				attrName = documentNode.attributes[i].name;
-				attrValue = documentNode.attributes[i].value;
+				sKey = documentNode.attributes[i].name;
+				sValue = documentNode.attributes[i].value;
 			}
-		}
-		if (attrName.length > 0) {
-			propertyValueAttributes[attrName] = this.replaceWithAlias(attrValue, oAlias);
+			if (sKey) {
+				propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+			}
 		}
 		return propertyValueAttributes;
 	};
 
 	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode) {
-		var oValue = {}, stringValueNodes, stringValueNode, pathValueNodes, pathValueNode, applyValueNodes, applyValueNode;
-		if (documentNode.hasChildNodes()) {
-			stringValueNodes = this.xPath.selectNodes(xmlDoc, "./d:String", documentNode);
-			if (stringValueNodes.length > 0) {
-				stringValueNode = this.xPath.nextNode(stringValueNodes, 0);
-				oValue["String"] = this.xPath.getNodeText(stringValueNode);
-			} else {
-				pathValueNodes = this.xPath.selectNodes(xmlDoc, "./d:Path", documentNode);
-				if (pathValueNodes.length > 0) {
-					pathValueNode = this.xPath.nextNode(pathValueNodes, 0);
-					oValue["Path"] = this.xPath.getNodeText(pathValueNode);
-				} else {
-					applyValueNodes = this.xPath.selectNodes(xmlDoc, "./d:Apply", documentNode);
-					if (applyValueNodes.length > 0) {
-						applyValueNode = this.xPath.nextNode(applyValueNodes, 0);
-						oValue["Apply"] = this.getApplyFunctions(xmlDoc, applyValueNode, this.xPath);
-					}
-				}
+		var oValue = {};
+
+		var oValueNodes = this.xPath.selectNodes(xmlDoc, "./d:String | ./d:Path | ./d:Apply", documentNode);
+		for (var i = 0; i < oValueNodes.length; ++i) {
+			var oValueNode = this.xPath.nextNode(oValueNodes, i);
+			var vValue;
+
+			switch (oValueNode.nodeName) {
+				case "Apply":
+					vValue = this.getApplyFunctions(xmlDoc, oValueNode, this.xPath);
+					break;
+
+				default:
+					vValue = this.xPath.getNodeText(oValueNode);
+					break;
 			}
+
+			oValue[oValueNode.nodeName] = vValue;
 		}
+
 		return oValue;
 	};
 	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
