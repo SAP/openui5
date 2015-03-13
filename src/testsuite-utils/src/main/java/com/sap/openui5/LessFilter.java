@@ -158,13 +158,13 @@ public class LessFilter implements Filter {
       // only process GET or HEAD requests
       if (method.matches("GET|HEAD")) {
         
-        // check for existence of the resource
-        URL url = this.findResource(path);
-        if (url == null) {
+        // compile the less if required (up-to-date check happens in the compile function)
+        Matcher m = PATTERN_THEME_REQUEST.matcher(path);
+        if (m.matches()) {
           
-          // compile the less if required (up-to-date check happens in the compile function)
-          Matcher m = PATTERN_THEME_REQUEST.matcher(path);
-          if (m.matches()) {
+          // check for existence of the resource
+          URL url = this.findResource(path);
+          if (url == null) {
             
             String prefixPath = m.group(1);
             String sourcePath = prefixPath + "/library.source.less";
@@ -191,11 +191,11 @@ public class LessFilter implements Filter {
               
             }
               
+          } else {
+            
+            this.log("The resource " + path + " already exists and will not be compiled on-the-fly.");
+            
           }
-          
-        } else {
-          
-          this.log("The resource " + path + " already exists and will not be compiled on-the-fly.");
           
         }
         
