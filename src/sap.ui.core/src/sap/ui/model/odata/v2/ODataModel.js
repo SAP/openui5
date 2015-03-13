@@ -3194,8 +3194,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sBatchGroupId = mParameters.batchGroupId;
 			fnSuccess =	mParameters.success;
 			fnError = mParameters.error;
-			sBatchGroupId = mParameters.batchGroupId;
 			bMerge = mParameters.merge !== false;
+		}
+		
+		if (sBatchGroupId && !this.mDeferredBatchGroups[sBatchGroupId]) {
+			jQuery.sap.log.fatal(this + " submitChanges: \"" + sBatchGroupId + "\" is not a deferred batch group!");
 		}
 
 		this.oMetadata.loaded().then(function() {
