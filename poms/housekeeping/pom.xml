@@ -625,6 +625,13 @@
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.incubation</groupId>
+                  <artifactId>sapui5-incubation</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>sapui5-incubation-${sap.ui5.version}</contextPath>
+                </deployable>
               </deployables>
             </configuration>
           </plugin>
