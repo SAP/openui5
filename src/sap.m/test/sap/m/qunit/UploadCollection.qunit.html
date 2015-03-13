@@ -188,7 +188,6 @@
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
-
 	module("Event tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -211,38 +210,36 @@
 					ok(true, "Event change fired");
 					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 						// deprecated
-						equal(oEvent.getParameters().getParameter("files")[0].name, "file1", "Correct file name in change event provided by oEvent.getParameters().getParameter('files').name.");
-						equal(oEvent.getParameters().getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters().getParameters()['files']['name'].");
-						equal(oEvent.getParameter("mParameters")["files"][0]["name"], "file1", "Correct file 1 in change event provided by oEvent.getParameter('mParameters')['files'][0]['name'].");
+						equal(oEvent.getParameters().getParameter("files")[0].name, "file1", "Correct file name in change event provided by oEvent.getParameters().getParameter('files').name");
+						equal(oEvent.getParameters().getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters().getParameters()['files']['name']");
+						equal(oEvent.getParameter("mParameters")["files"][0]["name"], "file1", "Correct file 1 in change event provided by oEvent.getParameter('mParameters')['files'][0]['name']");
 
 						// check for properly provided parameters
-						equal(oEvent.getParameter("files")[0].name, "file1", "Correct file name 1 in change event provided byoEvent.getParameter('files')[0].name.");
-						equal(oEvent.getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters()['files'][0]['name'].");
+						equal(oEvent.getParameter("files")[0].name, "file1", "Correct file name 1 in change event provided byoEvent.getParameter('files')[0].name");
+						equal(oEvent.getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters()['files'][0]['name']");
 					}
 					else {
 						// deprecated
-						deepEqual(oEvent.getParameters().getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameter('files').");
+						deepEqual(oEvent.getParameters().getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameter('files')");
 						deepEqual(oEvent.getParameters().getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameter('files').");
-
-						deepEqual(oEvent.getParameters().getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameters()['files'].");
-						deepEqual(oEvent.getParameters().getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameters()['files'].");
-
-						deepEqual(oEvent.getParameter("mParameters").files[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('mParameters').files[0].");
-						deepEqual(oEvent.getParameter("mParameters").files[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('mParameters').files[1].");
+						deepEqual(oEvent.getParameters().getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameters()['files']");
+						deepEqual(oEvent.getParameters().getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameters()['files']");
+						deepEqual(oEvent.getParameter("mParameters").files[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('mParameters').files[0]");
+						deepEqual(oEvent.getParameter("mParameters").files[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('mParameters').files[1]");
 
 						// checks for properly provided parameters
-						deepEqual(oEvent.getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('files').");
-						deepEqual(oEvent.getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('files').");
-						deepEqual(oEvent.getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters()['files'].");
-						deepEqual(oEvent.getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters()['files'].");
+						deepEqual(oEvent.getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('files')");
+						deepEqual(oEvent.getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('files')");
+						deepEqual(oEvent.getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters()['files']");
+						deepEqual(oEvent.getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters()['files']");
 					}
 				},
 				fileDeleted : function(oEvent) {
 					ok(true, "Event fileDeleted fired");
 					// deprecated
-					equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete.");
+					equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
 					// new
-					equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete.");
+					equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
 				},
 				filenameLengthExceed : function(oEvent) {
 					var oFile = { name: "tooLongFileName" };
@@ -267,10 +264,6 @@
 					equal(oEvent.getParameters()["documentId"], "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",  "Correct documentId in event fileRenamed provided by oEvent.getParameters().getParameters()['documentId']");
 					// new
 					equal(oEvent.getParameter("item"), this._oItemForRename, "Correct item in event fileRenamed");
-				},
-				fileSizeExceed : function(oEvent) {
-					ok(true, "Event fileSizeExceed fired");
-					equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided")
 				},
 				typeMissmatch : function(oEvent) {
 					var oFile = { name: "someFileName", fileType : "someNotAllowedFileType", mimeType : "someNotAllowedMimeType" };
@@ -299,14 +292,16 @@
 					ok(true, "Event uploadTerminated fired");
 				}
 			});
+			this.oDataCopy = jQuery.extend(true, {}, oData);
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			oData = this.oDataCopy;
 		}
 	});
-	
+
 	test("Event typeMissmatch", function() {
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		expect(18); // verifies the event handler was executed
@@ -316,22 +311,51 @@
 			mimeType : "someNotAllowedMimeType"
 		});
 	});
-	
-	test("Event fileSizeExceed", function() {
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(2); // verifies the event handler was executed
-		oFileUploader.fireFileSizeExceed({
-			fileName : "someFileName",
-			fileSize : "tooBigFileSize"
-		});
-	});
-	
-	test("Event filenameLengthExceed", function() {
-		var oFileUploader = this.oUploadCollection._getFileUploader();
-		expect(8); // verifies the event handler was executed
-		oFileUploader.fireFilenameLengthExceed({
-			fileName : "tooLongFileName"
-		});
+
+	test("Event fileSizeExceed", function(assert) {
+		var sFileSize = "sizeOfTooBigFile";
+		var sFileName = "nameOfTooBigFile";
+		var oFileUploaderEventMock = {
+				newValue : sFileName,
+				fileSize : sFileSize,
+				fileName : sFileName
+			};
+		function fileSizeExceed(oEvent) {
+			var sFileName = "nameOfTooBigFile";
+			var sDocumentId; // undefined
+			var sFileSize = "sizeOfTooBigFile";
+			var oBigFile = {
+					name: sFileName,
+					fileSize : sFileSize
+				};
+			assert.equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided");
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+				// deprecated
+				assert.equal(oEvent.getParameters().getParameter("newValue"), sFileName, "Correct file name in change event provided by oEvent.getParameters().getParameter('newValue')");
+				assert.equal(oEvent.getParameters().getParameters()["newValue"], sFileName, "Correct file name in change event provided by oEvent.getParameters().getParameters()['newValue']");
+				assert.equal(oEvent.getParameter("mParameters")["newValue"], sFileName, "Correct file name in change event provided by oEvent.getParameter('mParameters')['newValue']");
+				// new
+				assert.equal(oEvent.getParameter("files")[0].name, sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameter('files')[0].name");
+				assert.equal(oEvent.getParameters()["files"][0]["name"], sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['name']");
+			} else {
+				// deprecated
+				assert.equal(oEvent.getParameters().getParameter("documentId"), sDocumentId, "Correct documentId in fileSizeExceed event provided by oEvent.getParameters().getParameter('documentId')");
+				assert.equal(oEvent.getParameters().getParameters()["documentId"], sDocumentId, "Correct documentId in fileSizeExceed event provided by oEvent.getParameters().getParameters()['documentId']");
+				assert.equal(oEvent.getParameter("mParameters")["documentId"], sDocumentId, "Correct documentId in fileSizeExceed event provided by oEvent.getParameter('mParameters')['documentId']");
+				assert.equal(oEvent.getParameters().getParameter("fileSize"), sFileSize, "Correct fileSize in fileSizeExceed event provided by oEvent.getParameters().getParameter('fileSize')");
+				assert.equal(oEvent.getParameters().getParameters()["fileSize"], sFileSize, "Correct fileSize in fileSizeExceed event provided by oEvent.getParameters().getParameters()['fileSize']");
+				assert.equal(oEvent.getParameter("mParameters")["fileSize"], sFileSize, "Correct fileSize in fileSizeExceed event provided by oEvent.getParameter('mParameters')['fileSize']");
+				// new
+				assert.equal(oEvent.getParameter("files")[0].name, sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameter('files')[0].name");
+				assert.equal(oEvent.getParameters()["files"][0]["name"], sFileName, "Correct file name in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['name']");
+				assert.deepEqual(oEvent.getParameter("files")[0], oBigFile, "Correct file in fileSizeExceed event provided by oEvent.getParameter('files')[0]");
+				assert.equal(oEvent.getParameter("files")[0].fileSize, sFileSize, "Correct file size in fileSizeExceed event provided by oEvent.getParameter('files')[0].fileSize");
+				assert.equal(oEvent.getParameters()["files"][0]["fileSize"], sFileSize, "Correct file size in fileSizeExceed event provided by oEvent.getParameters()['files'][0]['fileSize']");
+				assert.deepEqual(oEvent.getParameter("files")[0], oBigFile, "Correct file in fileSizeExceed event provided by oEvent.getParameter('files')[0]");
+			}
+		};
+		this.oUploadCollection.attachFileSizeExceed(fileSizeExceed);
+		this.oUploadCollection._onFileSizeExceed(new sap.ui.base.Event("fileSizeExceed", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
 	test("Event change", function() {
@@ -367,8 +391,23 @@
 
 	test("Event fileDeleted", function() {
 		expect(3);
-		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[1]; // documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcde" 
+		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[1]; // contributor : John Smith, documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcde"
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+	});
+
+	test("Event filenameLengthExceed", function() {
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		expect(8);
+		oFileUploader.fireFilenameLengthExceed({
+			fileName : "tooLongFileName"
+		});
+	});
+
+	test("Event fileRenamed", function() {
+		expect(7);
+		this.oUploadCollection._oItemForRename = this.oUploadCollection.getItems()[2]; // contributor : "J Edgar Hoover", documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf"
+		this.oUploadCollection._oItemForRename.setFileName("renamedFileName");
+		this.oUploadCollection._onEditItemOk();
 	});
 
 	test("uploadComplete", function() {
@@ -411,7 +450,7 @@
 			fileName : sFileName
 		})
 	});
-	
+
 	module("Edit tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -434,8 +473,8 @@
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2")
-		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct")
+		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 		
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
@@ -481,11 +520,10 @@
 		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
 		oInputField3[0].value = "NewDocument";
 		oData.items[2].fileName = "NewDocument.txt";
-		sap.ui.getCore().applyChanges();
-		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-ta_HL";
+		oObj.target.id =  this.oUploadCollection.aItems[2].sId;
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getProperty("showValueStateMessage");
+		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
 		equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exist");
 		equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
 
@@ -515,9 +553,7 @@
 
 	module("Display tests", {
 		setup : function() {
-			sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-				ok(true, "Link is triggered");
-			};
+			this.fnTriggerLink = sap.m.UploadCollection.prototype._triggerLink;
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
@@ -529,9 +565,14 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
 		}
 	});
 	test("Display", function() {
+		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
+			ok(true, "Link is triggered");
+		};
+		expect(8); // verifies the event handler was executed
 		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
@@ -545,11 +586,11 @@
 		equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		equal(oFileName.getEnabled(), true, "File name is enabled");
 
-		expect(8); // verifies the event handler was executed
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
 		sap.ui.getCore().applyChanges();
 		// No Event should be triggered, because there is no url provided at aItems[0] --> no change at expect(8)!
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		sap.ui.getCore().applyChanges();
 	});
 
 	module("Properties", {
@@ -650,6 +691,22 @@
 		this.oUploadCollection.setFileType(aFileTypesEmpty);
 		sFileTypesExpected = "";
 		sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
+		equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
+	});
+
+	test("fileType empty", function() {
+		//undefined
+		var aFileTypesEmpty;
+		this.oUploadCollection.setFileType(aFileTypesEmpty);
+		var FileTypesEmpty = this.oUploadCollection.getFileType();
+		var FileTypesExpected;
+		equal(FileTypesEmpty, FileTypesExpected, "Property 'fileType': Call with undefined!");
+
+		//empty array
+		aFileTypesEmpty = [];
+		this.oUploadCollection.setFileType(aFileTypesEmpty);
+		var sFileTypesExpected = "";
+		var sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
 		equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
 	});
 
