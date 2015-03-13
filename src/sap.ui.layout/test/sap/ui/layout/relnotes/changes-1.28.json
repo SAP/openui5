@@ -109,7 +109,26 @@
         "id": "31759d9c7863905c9c97fe8be6ba9c15e7792a43",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.layout.form.Form: keyboard navigation issues",
+        "text": "sap.ui.layout.form.Form: Keyboard navigation issues",
+        "references": []
+      }
+    ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "1629149fccdeb6a4afc4e47dc83b5b8ed2aeddba",
+        "author": "stefan hipfel \u003cstefan.hipfel@sap.com\u003e",
+        "type": "FIX",
+        "text": "SimpleForm: Fixes problem with empty form containers on removeContent",
+        "references": []
+      },
+      {
+        "id": "33dfd9f1c887d16e777239c52417ed03533146be",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Splitter: Enable autoresize on bar move end",
         "references": []
       }
     ]

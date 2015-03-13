@@ -395,5 +395,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "12096b51a9772d1b31ebbb0b9b3bc96f48772edb",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added cozy mode",
+        "references": []
+      },
+      {
+        "id": "ea387946e3f60ec99512c4f66fb2f43842491490",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: The first text is no longer cliped on mobile devices when the first filter is \"showAll:true\"",
+        "references": []
+      },
+      {
+        "id": "2276b93e3a03b8c0087c8e834fd6ae63892095b7",
+        "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Fix placeholder covering ValueHelp button in IE",
+        "references": []
+      },
+      {
+        "id": "c6d7c561c72c55f6452815ce7febc53a7e9694bb",
+        "author": "Axel Warner \u003caxel.warner@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nColumnsPanel : CSS correction for phone \u0026 tablet",
+        "references": []
+      }
+    ]
   }
 }

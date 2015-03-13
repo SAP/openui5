@@ -209,5 +209,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "12096b51a9772d1b31ebbb0b9b3bc96f48772edb",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added cozy mode",
+        "references": []
+      },
+      {
+        "id": "de6a684bd02c011b93c37359ad76c7748f87b734",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable: Expand/collapse by index",
+        "references": []
+      },
+      {
+        "id": "55d6408e7fc97af76f1b3729772b52526e4305ed",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Table: Row count calculation should be limited to \"this\"",
+        "references": []
+      },
+      {
+        "id": "68801195400e4e348102f19e23197e56b6476b0c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes that SHIFT+TAB w/o column header does not work",
+        "references": []
+      },
+      {
+        "id": "dc37c26d9f18fc51834eb221f144e8f9e95d81ca",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix row selection when grouped columns are invisible",
+        "references": []
+      }
+    ]
   }
 }

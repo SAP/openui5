@@ -127,5 +127,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "efcd2331c54570360b378142a4418d71f3abec71",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Render string tooltip",
+        "references": []
+      },
+      {
+        "id": "22c6c8b1548c6233accf80889c69888f58ddd962",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: ButtonOnly mode fixed when container is invisible",
+        "references": []
+      },
+      {
+        "id": "e120a4ad3e28cc4f96effc9093a9e519c7993fca",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Invisible + % width Bug fixed",
+        "references": []
+      },
+      {
+        "id": "84d6b1b1855a9557d0d7ab388f71a3b4a9527353",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Invisible + % width Bug fixed",
+        "references": []
+      },
+      {
+        "id": "83aaec20d16b23015b136d01744d177fe23c3db3",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Width for buttonOnly mode fixed",
+        "references": []
+      }
+    ]
   }
 }
