@@ -73,5 +73,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "2367381d329171a2d78d35b04684309cf6036493",
+        "author": "Monika Juhasz \u003cmonika.juhasz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Explorer: Favorites list gets a footer in edit mode",
+        "references": []
+      }
+    ]
   }
 }

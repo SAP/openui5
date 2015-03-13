@@ -2073,7 +2073,7 @@
         "id": "360d0d3a8da2d16f5ae8823075ae18a51642275b",
         "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
         "type": "FEATURE",
-        "text": "sap.m.Dialog: improving explore app samples",
+        "text": "sap.m.Dialog: Improving explore app samples",
         "references": []
       },
       {
@@ -2115,7 +2115,7 @@
         "id": "3723b6cd7943cf22aa76e98c7afa253e0e621392",
         "author": "I057508 \u003cvladislav.iliev@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Bar issue when used in the context of sap.m.Dialog solved.",
+        "text": "sap.m.Bar: Issue when used in the context of sap.m.Dialog solved.",
         "references": [
           {
             "type": "BCP",
@@ -2127,7 +2127,7 @@
         "id": "57ffaa03d91c5a06750b03e436212c982184105e",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: keyboard navigation issues",
+        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation issues",
         "references": []
       },
       {
@@ -2141,7 +2141,7 @@
         "id": "ac22d1d59e57279c36ddfd622feffbd595f455f2",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Input: don\u0027t use suggestion popup on tablets",
+        "text": "sap.m.Input: Don\u0027t use suggestion popup on tablets",
         "references": []
       },
       {
@@ -2162,7 +2162,7 @@
         "id": "a8b09df5e1898b46cc6bec283667c7e1b04b4442",
         "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.MultiInput: enhance focus setting for tokenChange event",
+        "text": "sap.m.MultiInput: Enhance focus setting for tokenChange event",
         "references": []
       },
       {
@@ -2183,7 +2183,138 @@
         "id": "7a974ca8e7e0b9b3a5b4db479014961ff81be925",
         "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: buttons lie over text at resizing",
+        "text": "sap.m.UploadCollection: Buttons lie over text at resizing",
+        "references": []
+      }
+    ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "77525a322c5021877a35f1c51489a672e28cf287",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: API fileSizeExceed",
+        "references": []
+      },
+      {
+        "id": "0fcf87c51d2a7b9f415fa88b9444ac77bf1d1016",
+        "author": "Evgeni Katsarski \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: API fix for fileDeleted",
+        "references": []
+      },
+      {
+        "id": "12096b51a9772d1b31ebbb0b9b3bc96f48772edb",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added cozy mode",
+        "references": []
+      },
+      {
+        "id": "40f48489032fd544f6abd0d7145172d65835d35c",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "Routing API Documentation: Fix the missing or wrong @lends tags",
+        "references": []
+      },
+      {
+        "id": "551d37d6d5f440f42b44906e45ffdaf4bd752e54",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateRangeSelection: Don\u0027t fire change if not changed",
+        "references": []
+      },
+      {
+        "id": "03ca285f8de9eddb2ce44ebb8aa270e6d8fa101f",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Correct the invalidation flow.",
+        "references": []
+      },
+      {
+        "id": "ea387946e3f60ec99512c4f66fb2f43842491490",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: The first text is no longer cliped on mobile devices when the first filter is \"showAll:true\"",
+        "references": []
+      },
+      {
+        "id": "51ce1200e3788e78c99d13388c179d2552798288",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Typo fix to disable selection remembering.",
+        "references": []
+      },
+      {
+        "id": "f46da6a3f6e6e89b35f88d091da164d46a44b942",
+        "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Enhance multiinput with suggestion in phone mode.",
+        "references": []
+      },
+      {
+        "id": "2276b93e3a03b8c0087c8e834fd6ae63892095b7",
+        "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Fix placeholder covering ValueHelp button in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "67f16a0e956d874442f4e76f695b354a38afbe4d",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Make the content wrapper have a minimum width of 100%",
+        "references": []
+      },
+      {
+        "id": "fbdb19001993ef8a6bd8c470135136e033d3535c",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: API of typeMissmatch updated",
+        "references": []
+      },
+      {
+        "id": "64520aff55b4f2a3e45e018680de590aa0692f07",
+        "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Adaptation of data type and documentation of maximumFileSize property",
+        "references": []
+      },
+      {
+        "id": "294cf01a3a47d9a5fe117b0442b6efa4db6a0e0f",
+        "author": "Claus Neuwirth \u003cclaus.neuwirth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Default tooltip of the FileUploader suppressed; Filename without any dot now possible",
+        "references": []
+      },
+      {
+        "id": "b287e23d0c9e0304fcafd7695bcd6ac833240ddb",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Files from \u0027linkedDocuments\u0027 folder added to metadata of demokit example",
+        "references": []
+      },
+      {
+        "id": "f427e302f3b552a9907f24e761a2f4ddc77e5165",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Property sameFileNameAllowed corrected",
+        "references": []
+      },
+      {
+        "id": "9d093ab957150b7da5810d62d6ca9145ac8be1cc",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Fixed initial focus in filter details page",
+        "references": []
+      },
+      {
+        "id": "c26c2631d49dbc1aacbb8c5e958242db7f01dbb7",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.uploadCollection: Jsdoc updated",
         "references": []
       }
     ]
