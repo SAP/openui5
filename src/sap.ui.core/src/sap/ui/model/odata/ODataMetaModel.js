@@ -42,6 +42,24 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			"sap:label" : "Bus. Part. ID"
 		}
 	 * </pre>
+	 * Additionally to this transformation corresponding V4 annotations are created for annotations
+	 * from the "http://www.sap.com/Protocols/SAPData" namespace. Supported annotations are:
+	 * <code>label</code>
+	 * For example:
+	 * <pre>
+		{
+			"name" : "BusinessPartnerID",
+			"extensions" : [{
+				"name" : "label",
+				"value" : "Bus. Part. ID",
+				"namespace" : "http://www.sap.com/Protocols/SAPData"
+			}],
+			"sap:label" : "Bus. Part. ID",
+			"com.sap.vocabularies.Common.v1.Label" : {
+				"String" : "Bus. Part. ID"
+			}
+		}
+	 * </pre>
 	 *
 	 * This model is read-only and thus only supports
 	 * {@link sap.ui.model.BindingMode.OneTime OneTime} binding mode. No events
@@ -174,6 +192,25 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 */
 	function load(that, oMetadata, oAnnotations) {
 		/*
+		 * Adds the corresponding V4 annotation to the given object based on the given SAP
+		 * extension.
+		 *
+		 * @param {object} o
+		 *   any object
+		 * @param {object} oExtension
+		 *   The SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added.
+		 */
+		function addV4Annotation(o, oExtension) {
+			switch (oExtension.name) {
+				case "label":
+					o["com.sap.vocabularies.Common.v1.Label"] = {"String": oExtension.value};
+					break;
+				default:
+					// TODO log unsupported annotations
+			}
+		}
+
+		/*
 		 * Lift all extensions from the <a href="http://www.sap.com/Protocols/SAPData">
 		 * SAP Annotations for OData Version 2.0</a> namespace up as attributes with "sap:" prefix.
 		 *
@@ -186,6 +223,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			jQuery.each(o.extensions || [], function (i, oExtension) {
 				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 					o["sap:" + oExtension.name] = oExtension.value;
+					addV4Annotation(o, oExtension);
 				}
 			});
 		}
