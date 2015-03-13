@@ -2397,7 +2397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._processError = function(oRequest, oResponse, fnError) {
-		var oError = this._handleError(oResponse);
+		var oError = this._handleError(oResponse, oRequest);
 		if (fnError) {
 			fnError(oError);
 		}
@@ -2551,7 +2551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {map} mParameters A map of error information
 	 * @private
 	 */
-	ODataModel.prototype._handleError = function(oError) {
+	ODataModel.prototype._handleError = function(oError, oRequest) {
 		var mParameters = {}, /* fnHandler, */ sToken;
 		var sErrorMsg = "The following problem occurred: " + oError.message;
 
@@ -2559,7 +2559,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		mParameters.message = oError.message;
 		if (oError.response){
 			// Parse messages from the back-end
-			this._parseResponse(oError.response);
+			this._parseResponse(oError.response, oRequest);
 			
 			if (this.bTokenHandling) {
 				// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
