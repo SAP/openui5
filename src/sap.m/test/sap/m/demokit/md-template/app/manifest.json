@@ -1,10 +1,15 @@
 {
-	"_version": "1.0.0",
+	"_version": "1.1.0",
 
 	"sap.app": {
-		"_version": "1.0.0",
+		"_version": "1.1.0",
 		"id": "sap.ui.demo.mdtemplate",
 		"type": "application",
+		
+		"i18n": "app/i18n/messageBundle.properties",
+		"title": "{i18n>appTitle}",
+		"description": "{i18n>appDescription}",
+		
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -13,13 +18,24 @@
 
 
 	"sap.ui": {
-		"_version": "1.0.0",
-		"technology": "UI5"
+		"_version": "1.1.0",
+		"technology": "UI5",
+		
+		"icon": "sap-icon://detail-view",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_bluecrystal"
+		]
 	},
 
 
 	"sap.ui5": {
-		"_version": "1.0.0",
+		"_version": "1.1.0",
 		"rootView": "sap.ui.demo.mdtemplate.view.App",
 
 		"dependencies": {
@@ -29,6 +45,11 @@
 				"sap.m": {},
 				"sap.ui.layout": {}
 			}
+		},
+		
+		"config": {
+			"messageBundle": "sap.ui.demo.mdtemplate.i18n.messageBundle",
+			"serviceUrl": "here/goes/your/serviceUrl/"
 		},
 
 		"routing": {
@@ -42,6 +63,7 @@
 					"target": ["master", "notFound"]
 				}
 			},
+
 			"routes": [
 				{
 					"pattern": "",
@@ -59,6 +81,7 @@
 					"target": ["master", "lineItem"]
 				}
 			],
+
 			"targets": {
 				"master": {
 					"viewName": "Master",
