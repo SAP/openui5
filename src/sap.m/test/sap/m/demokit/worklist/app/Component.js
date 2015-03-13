@@ -15,11 +15,9 @@ sap.ui.define([
 			manifest: "json",
 
 			"config": {
-				messageBundle: "sap.ui.demo.worklist.i18n.messageBundle",
 				// always use absolute paths relative to our own component
 				// (relative paths will fail if running in the Fiori Launchpad)
-				rootPath: jQuery.sap.getModulePath("sap.ui.demo.worklist"),
-				serviceUrl: "here/goes/your/serviceUrl/"
+				rootPath: jQuery.sap.getModulePath("sap.ui.demo.worklist")
 			}
 		},
 
