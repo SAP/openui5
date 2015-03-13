@@ -1,31 +1,82 @@
 {
 	"_version": "1.0.0",
-	
+
 	"sap.app": {
 		"_version": "1.0.0",
-		"id": "sap.ui.demo.worklist.Component",
+		"id": "sap.ui.demo.worklist",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
 		"ach": "CA-UI5-DOC"
 	},
-	
-	
+
+
 	"sap.ui": {
 		"_version": "1.0.0",
-		"technology": "UI5" 
+		"technology": "UI5"
 	},
-	
+
+
 	"sap.ui5": {
 		"_version": "1.0.0",
-		
+		"rootView": "sap.ui.demo.worklist.view.App",
+
 		"dependencies": {
 			"minUI5Version": "1.28.0",
 			"libs": {  
 				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.ui.layout": {}
+			}
+		},
+
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.worklist.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": "notFound"
+				}
+			},
+			
+			"routes": [
+				{
+					"pattern": "",
+					"name": "worklist",
+					"target": "worklist"
+				},
+				{
+					"pattern": "object/{objectId}",
+					"name": "object",
+					"target": "object"
+				}
+			],
+			
+			"targets": {
+				"worklist": {
+					"viewName": "Worklist",
+					"viewId": "worklist",
+					"viewLevel": 1
+				},
+				"object": {
+					"viewName": "Object",
+					"viewId": "object",
+					"viewLevel": 2
+				},
+				"objectNotFound": {
+					"viewName": "ObjectNotFound",
+					"viewId": "objectNotFound",
+					"viewLevel": 2
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound",
+					"viewLevel": 2
+				}
 			}
 		}
 	}
