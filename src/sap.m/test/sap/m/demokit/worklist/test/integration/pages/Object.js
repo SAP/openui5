@@ -25,8 +25,8 @@ sap.ui.require([
 				},
 				assertions: {
 
-					iShouldSeeTheObject : function (iObjectNumber) {
-						var sTitleName = "Object " + iObjectNumber;
+					iShouldSeeTheObject : function (sObjectNumber) {
+						var sTitleName = "Object " + sObjectNumber;
 						return this.waitFor({
 							id : "objectHeader",
 							viewName : sViewName,
