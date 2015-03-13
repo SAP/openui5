@@ -30,6 +30,11 @@
 				"sap.ui.layout": {}
 			}
 		},
+		
+		"config": {
+			"messageBundle": "sap.ui.demo.worklist.i18n.messageBundle",
+			"serviceUrl": "here/goes/your/serviceUrl/"
+		},
 
 		"routing": {
 			"config": {

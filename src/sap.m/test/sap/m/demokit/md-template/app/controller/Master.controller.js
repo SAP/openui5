@@ -169,6 +169,8 @@ sap.ui.define([
 			if (!this.oViewSettingsDialog) {
 				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog", this);
 				this.getView().addDependent(this.oViewSettingsDialog);
+				// sync compact style
+				jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oViewSettingsDialog);
 			}
 			this.oViewSettingsDialog.open();
 		},

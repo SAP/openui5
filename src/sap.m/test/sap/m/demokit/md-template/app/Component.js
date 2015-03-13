@@ -18,11 +18,9 @@ sap.ui.define([
 			manifest: "json",
 
 			config : {
-				messageBundle : "sap.ui.demo.mdtemplate.i18n.messageBundle",
 				// always use absolute paths relative to our own component
 				// (relative paths will fail if running in the Fiori Launchpad)
-				rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdtemplate"),
-				serviceUrl: "here/goes/your/serviceUrl/" // this is currently required, Component breaks when there is no service URL
+				rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdtemplate")
 			}
 		},
 
@@ -83,6 +81,10 @@ sap.ui.define([
 			// call the base component's createContent function
 			this._oRootView = sap.ui.core.UIComponent.prototype.createContent.apply(this, arguments);
 
+			if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable on "combi" devices with touch AND mouse
+				this._oRootView.addStyleClass("sapUiSizeCompact");
+			}
+			
 			return this._oRootView;
 		},
 
