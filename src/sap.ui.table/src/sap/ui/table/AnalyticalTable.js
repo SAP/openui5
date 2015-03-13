@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.AnalyticalTable.
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter', './AnalyticalColumn', './Table', './library'],
-	function(jQuery, TreeBindingAdapter, AnalyticalColumn, Table, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter', './AnalyticalColumn', './Table', './library', 'sap/ui/model/analytics/ODataModelAdapter'],
+	function(jQuery, TreeBindingAdapter, AnalyticalColumn, Table, library, ODataModelAdapter) {
 	"use strict";
 
 
@@ -189,6 +189,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
 		oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
 
+		var oModel = this.getModel(oBindingInfo.model);
+		
+		if (oModel) {
+			ODataModelAdapter.apply(oModel);
+		}
+		
 		var vReturn = this.bindAggregation("rows", oBindingInfo);
 		this._bSupressRefresh = true;
 		this._updateColumns();
