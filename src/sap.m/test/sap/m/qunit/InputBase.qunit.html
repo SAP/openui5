@@ -713,6 +713,24 @@
 				input: sap.ui.core.ValueState.Success,
 				output: "sapMInputBaseSuccess"
 			});
+			
+			test("method: setValueState() invalid values", function() {
+				var oInput = new sap.m.InputBase({
+					valueState : null
+				}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+				
+				strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state before rendering is converted to default value.");
+
+				oInput.setValueState(sap.ui.core.ValueState.Error);
+				ok(oInput.$().hasClass("sapMInputBaseState"), "Input has the state class before testing the invalid value.");
+				
+				oInput.setValueState(undefined);
+				strictEqual(oInput.getValueState(), sap.ui.core.ValueState.None, "Invalid value state is converted to default value.");
+				ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
+			
+				oInput.destroy();
+			});
 
 			/* ------------------------------ */
 			/* setName()                      */
@@ -1589,7 +1607,113 @@
 				
 				// cleanup
 				oInput.destroy();
-			});			
+			});
+
+			module("Accessibility");
+			test("DOM aria properties", function() {
+
+				var oInput = new sap.m.InputBase().placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var $Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
+				strictEqual($Input.attr("aria-invalid"), undefined, "No aria-invalid set for valueState=None");
+				strictEqual($Input.attr("aria-readonly"), undefined, "No aria-readonly set for editable=true");
+				strictEqual($Input.attr("aria-disabled"), undefined, "No aria-disabled set for enabled=true");
+				strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
+
+				oInput.setValueState(sap.ui.core.ValueState.Warning);
+				strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
+
+				oInput.setValueState(sap.ui.core.ValueState.Success);
+				strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
+
+				oInput.setValueState(sap.ui.core.ValueState.Error);
+				strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
+
+				oInput.rerender();
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");
+
+				oInput.setEditable(false);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("aria-readonly"), "true", "aria-readonly set for editable=false");
+
+				oInput.setEnabled(false);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("aria-disabled"), "true", "aria-disabled set for enabled=false");
+
+				var oText = new sap.m.Text("text");
+				oInput.addAriaLabelledBy(oText);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
+
+				// cleanup
+				oInput.destroy();
+				oText.destroy();
+			});
+
+			test("Renderer Hooks", function() {
+				sap.m.InputBase.extend("my.TextField", {
+					metadata: {
+						associations: {
+							ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
+						}
+					},
+					renderer: {
+						getAriaRole: function() {
+							return "combobox";
+						},
+						getAriaLabelledBy: function(oControl) {
+							return "internal_labelledby_id";
+						},
+						getAriaDescribedBy: function(oControl) {
+							return "internal_describedby_id";
+						},
+						getAccessibilityState: function(oControl) {
+							var mBaseAccessibilityState = sap.m.InputBaseRenderer.getAccessibilityState.call(this, oControl);
+							return jQuery.extend(mBaseAccessibilityState, {
+								autocomplete : true
+							});
+						}
+					}
+				});
+
+				var oInput = new my.TextField({
+					valueState: sap.ui.core.ValueState.Error
+				}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var $Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("role"), "combobox", "Control role set correctly");
+				strictEqual($Input.attr("aria-invalid"), "true", "Base functionality still works");
+				strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "Internal aria labelledby is set");
+				strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "Internal aria describedby is set");
+				strictEqual($Input.attr("aria-autocomplete"), "true", "autocomplete aria attribute is set");
+
+				var oText = new sap.m.Text("text");
+				oInput.addAriaLabelledBy(oText);
+				oInput.addAriaDescribedBy(oText);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("aria-labelledby"), "text internal_labelledby_id", "aria-labelledby is set for assosiation and internal together");
+				strictEqual($Input.attr("aria-describedby"), "text internal_describedby_id", "aria-describedby is set for assosiation and internal together");
+
+				oInput.removeAriaLabelledBy(oText);
+				oInput.removeAriaDescribedBy(oText);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oInput.getFocusDomRef());
+				strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "aria-labelledby is set only for internal");
+				strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "aria-describedby is set only for internal");
+
+				oInput.destroy();
+				oText.destroy();
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

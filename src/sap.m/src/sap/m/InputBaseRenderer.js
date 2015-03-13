@@ -18,12 +18,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.m.Select} oControl An object representation of the control that should be rendered.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.render = function(oRm, oControl) {
-		var sValueState = oControl.getValueState();
-		var sTextDir = oControl.getTextDirection();
-		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir);
+		var sValueState = oControl.getValueState(),
+			sTextDir = oControl.getTextDirection(),
+			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir);
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -150,42 +150,82 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// finish outer
 		oRm.write("</div>");
 	};
+	
+	/**
+	 * Returns aria accessibility role for the control.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String}
+	 */
+	InputBaseRenderer.getAriaRole = function(oControl) {
+		return "textbox";
+	};
+	
+	/**
+	 * Returns the inner aria labelledby ids for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {String|undefined}
+	 */
+	InputBaseRenderer.getAriaLabelledBy = function(oControl) {
+	};
+	
+	/**
+	 * Returns the inner aria describedby ids for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {String|undefined} 
+	 */
+	InputBaseRenderer.getAriaDescribedBy = function(oControl) {
+	};
+	
+	/**
+	 * Returns the accessibility state of the control.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {Object}
+	 */
+	InputBaseRenderer.getAccessibilityState = function(oControl) {
+		var sAriaLabelledBy = this.getAriaLabelledBy(oControl),
+			sAriaDescribedBy = this.getAriaDescribedBy(oControl),
+			mAccessibilityState = {
+				role: this.getAriaRole(oControl)
+			};
+		
+		if (oControl.getValueState() === sap.ui.core.ValueState.Error) {
+			mAccessibilityState.invalid = true;
+		}
+		
+		if (sAriaLabelledBy) {
+			mAccessibilityState.labelledby = {
+				value: sAriaLabelledBy.trim(),
+				append: true
+			};
+		}
+		
+		if (sAriaDescribedBy) {
+			mAccessibilityState.describedby = {
+				value: sAriaDescribedBy.trim(),
+				append: true
+			};
+		}
+		
+		return mAccessibilityState;
+	};
 
 	/**
-	 * Writes the accessibility state.
-	 * To be overwritten by subclasses.
+	 * Writes the accessibility state of the control.
+	 * Hook for the subclasses.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
-		oRm.writeAccessibilityState(oControl);
-	};
-
-	/**
-	 * This method is reserved for derived classes to add extra attributes to the Input.
-	 *
-	 * @deprecated sap.m.InputBaseRenderer#writeInnerAttributes should be called instead of this method.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 */
-	InputBaseRenderer.writeAttributes = function(oRm, oControl) {
-		jQuery.sap.log.warning("Usage of deprecated function: sap.m.InputBaseRenderer#writeAttributes");
-		this.writeInnerAttributes(oRm, oControl);
-	};
-
-	/**
-	 * Adds extra CSS class.
-	 *
-	 * @deprecated sap.m.InputBaseRenderer#addOuterClasses should be called instead of this method.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 */
-	InputBaseRenderer.addClasses = function(oRm, oControl) {
-		jQuery.sap.log.warning("Usage of deprecated function: sap.m.InputBaseRenderer#addClasses");
-		this.addOuterClasses(oRm, oControl);
+		oRm.writeAccessibilityState(oControl, this.getAccessibilityState(oControl));
 	};
 
 	/**
