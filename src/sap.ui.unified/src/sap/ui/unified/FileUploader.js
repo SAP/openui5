@@ -770,20 +770,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 	};
 
-	FileUploader.prototype.onfocusin = function () {
-		if (!this.bMobileLib) {
-			jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdFocus').attr("tabindex", "-1");
-			jQuery(this.oFilePath.getDomRef()).removeClass('sapUiTfFoc');
-			this.focus();
-		}
-	};
-
-	FileUploader.prototype.onfocusout = function () {
-		if (!this.bMobileLib) {
-			jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdFocus').attr("tabindex", "0");
-		}
-	};
-
 	FileUploader.prototype.setAdditionalData = function(sAdditionalData) {
 		// set the additional data in the hidden input
 		this.setProperty("additionalData", sAdditionalData, true);
