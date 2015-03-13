@@ -428,6 +428,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		if (this._$input) {
 			this._$input.parent().addClass("sapMMultiInputMultiModeInputContainer");
 		}
+
+		// necessary to display expanded MultiInput which is inside SimpleForm
+		if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
+			this.$().parent('[class*="sapUiRespGridSpan"]').css("overflow", "visible");
+		}
+		
 	};
 	
 	/**
@@ -440,6 +446,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this.$("border").removeClass("sapMMultiInputMultiModeBorder");
 			if (this._$input) {
 				this._$input.parent().removeClass("sapMMultiInputMultiModeInputContainer");
+			}
+			
+			// set overflow of sapUiRespGridSpan back to hidden
+			if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
+				this.$().parent('[class*="sapUiRespGridSpan"]').css("overflow", "hidden");
 			}
 	};
 
