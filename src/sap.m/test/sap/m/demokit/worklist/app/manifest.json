@@ -1,10 +1,15 @@
 {
-	"_version": "1.0.0",
+	"_version": "1.1.0",
 
 	"sap.app": {
-		"_version": "1.0.0",
+		"_version": "1.1.0",
 		"id": "sap.ui.demo.worklist",
 		"type": "application",
+		
+		"i18n": "app/i18n/messageBundle.properties",
+		"title": "{i18n>appTitle}",
+		"description": "{i18n>appDescription}",
+		
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -13,13 +18,23 @@
 
 
 	"sap.ui": {
-		"_version": "1.0.0",
-		"technology": "UI5"
+		"_version": "1.1.0",
+		"technology": "UI5",
+		"icon": "sap-icon://task",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_bluecrystal"
+		]
 	},
 
 
 	"sap.ui5": {
-		"_version": "1.0.0",
+		"_version": "1.1.0",
 		"rootView": "sap.ui.demo.worklist.view.App",
 
 		"dependencies": {
