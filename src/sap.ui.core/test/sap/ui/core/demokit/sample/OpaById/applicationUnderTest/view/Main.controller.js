@@ -1,7 +1,15 @@
-sap.ui.controller("view.Main", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onNavButtonPress : function () {
-		this.byId("myApp").to(this.byId("secondPage").getId());
-	}
+	var MainController = Controller.extend("view.Main", {
+
+		onNavButtonPress : function () {
+			this.byId("myApp").to(this.byId("secondPage").getId());
+		}
+
+	});
+
+	return MainController;
 
 });

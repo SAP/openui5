@@ -1,24 +1,30 @@
-sap.ui.controller("testdata.customizing.sap.Sub4", {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
+	function(jQuery, Controller) {
+	"use strict";
+
+	return Controller.extend("testdata.customizing.sap.Sub4", {
 	
-	onInit: function() {
-		jQuery.sap.log.info("Sub4 Controller onInit()");
-	},
+		onInit: function() {
+			jQuery.sap.log.info("Sub4 Controller onInit()");
+		},
 	
-	onExit: function() {
-		jQuery.sap.log.info("Sub4 Controller onExit()");
-	},
+		onExit: function() {
+			jQuery.sap.log.info("Sub4 Controller onExit()");
+		},
 	
-	onBeforeRendering: function() {
-		jQuery.sap.log.info("Sub4 Controller onBeforeRendering()");
-	},
+		onBeforeRendering: function() {
+			jQuery.sap.log.info("Sub4 Controller onBeforeRendering()");
+		},
 	
-	onAfterRendering: function() {
-		jQuery.sap.log.info("Sub4 Controller onAfterRendering()");
-	},
+		onAfterRendering: function() {
+			jQuery.sap.log.info("Sub4 Controller onAfterRendering()");
+		},
 	
 	
-	originalSAPAction: function() {
-		alert("This is an original SAP Action");
-	}
+		originalSAPAction: function() {
+			alert("This is an original SAP Action");
+		}
+
+	});
 
 });

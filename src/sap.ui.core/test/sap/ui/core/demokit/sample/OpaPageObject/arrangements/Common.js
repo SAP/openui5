@@ -1,10 +1,16 @@
-jQuery.sap.declare("myApp.test.arrangement.Common");
-jQuery.sap.require("sap.ui.test.Opa5");
+sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5'],
+	function(jQuery, Opa5) {
+	"use strict";
 
-myApp.test.arrangement.Common = sap.ui.test.Opa5.extend("myApp.test.arrangement.Common", {
+	
+	var Common = Opa5.extend("myApp.test.arrangement.Common", {
 
-	iStartMyApp : function () {
-		return this.iStartMyAppInAFrame("applicationUnderTest/index.html");
-	}
+		iStartMyApp : function () {
+			return this.iStartMyAppInAFrame("applicationUnderTest/index.html");
+		}
+
+	});
+
+	return Common;
 
 });

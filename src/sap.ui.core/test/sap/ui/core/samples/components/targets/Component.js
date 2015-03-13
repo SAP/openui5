@@ -2,39 +2,44 @@
  * ${copyright}
  */
 
-jQuery.sap.declare("samples.components.targets.Component");
-jQuery.sap.require("sap.ui.core.UIComponent");
-jQuery.sap.require("sap.ui.commons.Button");
-jQuery.sap.require("samples.components.routing.RouterExtension");
+sap.ui.define(['jquery.sap.global', 'samples/components/routing/RouterExtension', 'sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/JSView'],
+	function(jQuery, RouterExtension, Button, UIComponent, Controller, JSView) {
+	"use strict";
 
-// new Component
-sap.ui.core.UIComponent.extend("samples.components.targets.Component", {
 
-	metadata : {
-		routing : {
-			config : {
-				targetsClass : "sap.m.routing.Targets"
-			},
-			targets: {
-				myTarget: {
-					viewType : "XML"
+	// new Component
+	var Component = UIComponent.extend("samples.components.targets.Component", {
+
+		metadata : {
+			routing : {
+				config : {
+					targetsClass : "sap.m.routing.Targets"
+				},
+				targets: {
+					myTarget: {
+						viewType : "XML"
+					}
 				}
 			}
+		},
+
+		createContent : function () {
+			Controller.extend("samples.components.routing.TestController", {});
+			sap.ui.jsview("samples.components.routing.TestView", {
+				createContent : function() {
+					return new Button();
+				},
+				getController : function() {
+					return sap.ui.controller("samples.components.routing.TestController");
+				}
+			});
+
+			this.oView = sap.ui.jsview("samples.components.routing.TestView");
+			return this.oView;
 		}
-	},
+	});
 
-	createContent : function () {
-		sap.ui.controller("samples.components.routing.TestController", {});
-		sap.ui.jsview("samples.components.routing.TestView", {
-			createContent : function() {
-				return new sap.ui.commons.Button();
-			},
-			getController : function() {
-				return sap.ui.controller("samples.components.routing.TestController");
-			}
-		});
 
-		this.oView = sap.ui.jsview("samples.components.routing.TestView");
-		return this.oView;
-	}
+	return Component;
+
 });

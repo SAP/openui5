@@ -1,20 +1,28 @@
-sap.ui.controller("view.Main", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	_toPage : function (sId) {
-		var oView = this.getView();
-		oView.byId("app").to(oView.byId(sId));
-	},
+	var MainController = Controller.extend("view.Main", {
 
-	onNavToOverview : function () {
-		this._toPage("overview");
-	},
+		_toPage : function (sId) {
+			var oView = this.getView();
+			oView.byId("app").to(oView.byId(sId));
+		},
 
-	onNavToPage1 : function () {
-		this._toPage("page1");
-	},
+		onNavToOverview : function () {
+			this._toPage("overview");
+		},
 
-	onNavToPage2 : function () {
-		this._toPage("page2");
-	}
+		onNavToPage1 : function () {
+			this._toPage("page1");
+		},
+
+		onNavToPage2 : function () {
+			this._toPage("page2");
+		}
+
+	});
+
+	return MainController;
 
 });

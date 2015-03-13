@@ -1,29 +1,35 @@
-sap.ui.controller("sap.ui.core.samples.routing.mobile.Master", {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
+	"use strict";
 
-	onInit: function() {
-		var oRouter = sap.ui.core.routing.Router.getRouter("app"),
-			that = this;
+	return Controller.extend("sap.ui.core.samples.routing.mobile.Master", {
 
-		oRouter.attachRouteMatched(function(oEvent) {
-			if (oEvent.getParameter("name") == "_testapp_detail") {
-				var oArguments = oEvent.getParameter("arguments"),
-					oItem = that.getView().byId("masterList").getItems()[parseInt(oArguments.selectedIndex,10)];
+		onInit: function() {
+			var oRouter = sap.ui.core.routing.Router.getRouter("app"),
+				that = this;
+
+			oRouter.attachRouteMatched(function(oEvent) {
+				if (oEvent.getParameter("name") == "_testapp_detail") {
+					var oArguments = oEvent.getParameter("arguments"),
+						oItem = that.getView().byId("masterList").getItems()[parseInt(oArguments.selectedIndex,10)];
 				
-				if (oItem) {
-					oItem.setSelected(true);
+					if (oItem) {
+						oItem.setSelected(true);
+					}
 				}
-			}
-		});
-	},
+			});
+		},
 	
-	select: function(oEvent) {
-		var oListItem = oEvent.getParameter("listItem"),
-			oRouter = sap.ui.core.routing.Router.getRouter("app"),
-			oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+		select: function(oEvent) {
+			var oListItem = oEvent.getParameter("listItem"),
+				oRouter = sap.ui.core.routing.Router.getRouter("app"),
+				oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
 		
-		oHashChanger.setHash(oRouter.getURL("_testapp_detail", {
-			selectedIndex: oListItem.getParent().indexOfItem(oListItem)
-		}));
-	}
+			oHashChanger.setHash(oRouter.getURL("_testapp_detail", {
+				selectedIndex: oListItem.getParent().indexOfItem(oListItem)
+			}));
+		}
+
+	});
 
 });

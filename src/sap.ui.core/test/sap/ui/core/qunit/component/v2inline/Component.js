@@ -1,139 +1,146 @@
-jQuery.sap.declare("sap.ui.test.v2inline.Component");
-jQuery.sap.require("sap.ui.core.UIComponent");
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
+	function(jQuery, UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
+	
+	var Component = UIComponent.extend("sap.ui.test.v2inline.Component", {
 
-	metadata: {
+		metadata: {
 
-		"manifest": {
+			"manifest": {
 
-			"name": "sap.ui.test.v2inline.Component",
+				"name": "sap.ui.test.v2inline.Component",
 			
-			"sap.app": {
-				"id": "sap.ui.test.v2inline.Component",
-				"applicationVersion": {
-					"version": "1.0.0"
-				}
-			},
+				"sap.app": {
+					"id": "sap.ui.test.v2inline.Component",
+					"applicationVersion": {
+						"version": "1.0.0"
+					}
+				},
 			
-			"sap.ui5": {
+				"sap.ui5": {
 				
-				"resources": {
-					"js": [{
-						"uri": "script.js"
-					}],
-					"css": [{
-						"uri": "style.css"
-					}]
-				},
+					"resources": {
+						"js": [{
+							"uri": "script.js"
+						}],
+						"css": [{
+							"uri": "style.css"
+						}]
+					},
 				
-				"dependencies": {
-					"minUI5Version": "1.22.5",
-					"libs": {
-						"sap.ui.commons": {
-							"minVersion": "1.22.0"
-						}
-					}, 
-					"components": {
-						"sap.ui.test.other": {
-							"optional": true,
-							"minVersion": "1.0.1"
-						}
-					}
-				},
-				
-				"models": {
-					"i18n": {
-						"type": "sap.ui.model.resource.ResourceModel",
-						"settings": {
-							"uri": "i18n/i18n.properties"
+					"dependencies": {
+						"minUI5Version": "1.22.5",
+						"libs": {
+							"sap.ui.commons": {
+								"minVersion": "1.22.0"
+							}
+						}, 
+						"components": {
+							"sap.ui.test.other": {
+								"optional": true,
+								"minVersion": "1.0.1"
+							}
 						}
 					},
-					"sfapi": {
-						"type": "sap.ui.model.odata.ODataModel",
-						"settings": {
-							"uri": "/sap/opu/odata/snce/PO_S_SRV/"
-						}
-					}
-				},
 				
-				"rootView": "sap.ui.test.view.Main",
-				
-				"config": {
-					"any1": {
-						"entry": "configuration"
-					},
-					"any2": {
-						"anyobject": {
-							"key1": "value1"
+					"models": {
+						"i18n": {
+							"type": "sap.ui.model.resource.ResourceModel",
+							"settings": {
+								"uri": "i18n/i18n.properties"
+							}
+						},
+						"sfapi": {
+							"type": "sap.ui.model.odata.ODataModel",
+							"settings": {
+								"uri": "/sap/opu/odata/snce/PO_S_SRV/"
+							}
 						}
 					},
-					"any3": {
-						"anyarray": [1, 2, 3]
-					}
-				},
 				
-				"routing": {
+					"rootView": "sap.ui.test.view.Main",
+				
 					"config": {
-						"viewType" : "XML",
-						"viewPath": "NavigationWithoutMasterDetailPattern.view",
-						"targetParent": "myViewId",
-						"targetControl": "app",
-						"targetAggregation": "pages",
-						"clearTarget": false
-					},
-					"routes": [
-						{
-							"name" : "myRouteName1",
-							"pattern" : "FirstView/{from}",
-							"view" : "myViewId"
+						"any1": {
+							"entry": "configuration"
+						},
+						"any2": {
+							"anyobject": {
+								"key1": "value1"
+							}
+						},
+						"any3": {
+							"anyarray": [1, 2, 3]
 						}
-					]
-				},
+					},
 				
-				"extends": {
-					"extensions": {
-						"sap.ui.viewReplacements": {
-							"sap.ui.test.view.Main": {
-								"viewName": "sap.ui.test.view.Main",
-								"type": "XML"
+					"routing": {
+						"config": {
+							"viewType" : "XML",
+							"viewPath": "NavigationWithoutMasterDetailPattern.view",
+							"targetParent": "myViewId",
+							"targetControl": "app",
+							"targetAggregation": "pages",
+							"clearTarget": false
+						},
+						"routes": [
+							{
+								"name" : "myRouteName1",
+								"pattern" : "FirstView/{from}",
+								"view" : "myViewId"
 							}
-						},
-						"sap.ui.controllerReplacements": {
-							"sap.ui.test.view.Main": "sap.ui.test.view.Main"
-						},
-						"sap.ui.viewExtensions": {
-							"sap.ui.test.view.Main": {
-								"extension": {
-									"name": "sap.xx.new.Fragment",
-									"type": "sap.ui.core.XMLFragment"
+						]
+					},
+				
+					"extends": {
+						"extensions": {
+							"sap.ui.viewReplacements": {
+								"sap.ui.test.view.Main": {
+									"viewName": "sap.ui.test.view.Main",
+									"type": "XML"
 								}
-							}
-						},
-						"sap.ui.viewModification": {
-							"sap.ui.test.view.Main": {
-								"myControlId": {
-									"text": "{i18n_custom>mytext}"
+							},
+							"sap.ui.controllerReplacements": {
+								"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+							},
+							"sap.ui.viewExtensions": {
+								"sap.ui.test.view.Main": {
+									"extension": {
+										"name": "sap.xx.new.Fragment",
+										"type": "sap.ui.core.XMLFragment"
+									}
+								}
+							},
+							"sap.ui.viewModification": {
+								"sap.ui.test.view.Main": {
+									"myControlId": {
+										"text": "{i18n_custom>mytext}"
+									}
 								}
 							}
 						}
 					}
-				}
 			
+				}
+
+			},
+		
+			"custom.entry": {
+				"key1": "value1",
+				"key2": "value2",
+				"key3": {
+					"subkey1": "subvalue1",
+					"subkey2": "subvalue2"
+				},
+				"key4": ["value1", "value2"]
 			}
 
-		},
-		
-		"custom.entry": {
-			"key1": "value1",
-			"key2": "value2",
-			"key3": {
-				"subkey1": "subvalue1",
-				"subkey2": "subvalue2"
-			},
-			"key4": ["value1", "value2"]
 		}
 
-	}
+	});
+
+
+	return Component;
 
 });

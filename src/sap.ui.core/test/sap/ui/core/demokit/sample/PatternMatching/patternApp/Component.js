@@ -1,12 +1,19 @@
-jQuery.sap.declare("patternApp.Component");
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
+	function(jQuery, UIComponent, View) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("patternApp.Component", {
+	
+	var Component = UIComponent.extend("patternApp.Component", {
 
-	createContent : function () {
-		return sap.ui.view({
-			viewName : "patternApp.view.PatternTable",
-			type : "XML"
-		});
-	}
+		createContent : function () {
+			return sap.ui.view({
+				viewName : "patternApp.view.PatternTable",
+				type : "XML"
+			});
+		}
+
+	});
+
+	return Component;
 
 });

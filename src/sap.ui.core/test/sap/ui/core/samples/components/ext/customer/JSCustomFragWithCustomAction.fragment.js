@@ -1,11 +1,17 @@
-sap.ui.jsfragment("samples.components.ext.customer.JSCustomFragWithCustomAction", {
+sap.ui.define(['sap/ui/commons/Button', 'sap/ui/core/Fragment'],
+	function(Button, Fragment) {
+	"use strict";
 
-	createContent : function(oController) {
-		var oButton = new sap.ui.commons.Button({
-			text : "Hello World",
-			press : oController.customerAction
-		});
-		return oButton;
-	}
+	sap.ui.jsfragment("samples.components.ext.customer.JSCustomFragWithCustomAction", {
+
+		createContent : function(oController) {
+			var oButton = new Button({
+				text : "Hello World",
+				press : oController.customerAction
+			});
+			return oButton;
+		}
+
+	});
 
 });
