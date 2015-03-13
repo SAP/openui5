@@ -7,11 +7,10 @@ sap.ui.define([
 
 		onInit : function () {
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
-
+			// Store original busy indicator delay, so it can be restored later on
+			var iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 			// Set the detail page busy after the metadata has been loaded successfully
 			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
-					// Store original busy indicator delay, so it can be restored later on
-					this.setOriginalBusyIndicatorDelay(this.getView().getBusyIndicatorDelay());
 					// Make sure, busy indication is showing immediately so there is no
 					// break in between the busy indication for loading the view's meta data
 					// (this is being taken care of by class 'BusyHandler')
@@ -19,7 +18,7 @@ sap.ui.define([
 						.setBusy(true);
 					// Method chaining not possible, 'setBusy' does not return view
 					// Restore original busy indicator delay for the object view
-					this.getView().setBusyIndicatorDelay(this.getOriginalBusyIndicatorDelay());
+					this.getView().setBusyIndicatorDelay(iOriginalBusyDelay);
 				}.bind(this)
 			);
 		},

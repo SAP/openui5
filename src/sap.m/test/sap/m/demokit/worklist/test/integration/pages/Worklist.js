@@ -67,7 +67,7 @@ sap.ui.require([
 							errorMessage : "The Table has not been loaded"
 						});
 					}
-
+					
 				},
 				assertions: {
 
@@ -145,7 +145,7 @@ sap.ui.require([
 							errorMessage : "Table does not have the double amount of entries."
 						});
 					},
-
+					
 					iShouldSeeTheWorklistViewsBusyIndicator : function () {
 						return this.waitFor({
 							id : "page",
@@ -156,15 +156,18 @@ sap.ui.require([
 							errorMessage : "The worklist view is not busy"
 						});
 					},
-
-					theWorkListViewsBusyIndicatorDelayIsZero : function () {
+					
+					iShouldSeeTheWorklistTableBusyIndicator : function () {
 						return this.waitFor({
-							id : "page",
+							id : "table",
 							viewName : sViewName,
-							success : function (oPage) {
-								ok(oPage.getParent().getBusyIndicatorDelay() == 0, "The worklist view's busy indicator delay is zero.");
+							matchers : function (oTable) {
+								return new PropertyStrictEquals({name : "busy", value: true}).isMatching(oTable);
 							},
-							errorMessage : "The worklist view's busy indicator delay is not zero."
+							success : function () {
+								ok(true, "The worklist table is busy");
+							},
+							errorMessage : "The worklist table is not busy"
 						});
 					}
 
