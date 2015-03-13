@@ -88,6 +88,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					return fnValue;
 				}
 			},
+			"[": {
+				lbp: 18,
+				led: function (oToken, oParser, fnLeft) {
+					var fnName = oParser.expression(0);
+
+					oParser.advance("]");
+					return jQuery.proxy(PROPERTY_ACCESS, null, fnLeft, fnName);
+				},
+				nud: unexpected
+			},
 			"!": {
 				lbp: 15,
 				led: unexpected,
@@ -117,6 +127,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 				nud: unexpected
 			},
 			")": {
+				led: unexpected,
+				nud: unexpected
+			},
+			"]": {
 				led: unexpected,
 				nud: unexpected
 			},
@@ -164,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 		},
 		//Fix length tokens. A token being a prefix of another must come last, e.g. ! after !==
 		aTokens = ["===", "!==", "!", "||", "&&", ".", "(", ")", "{", "}", ":", ",", "?", "*",
-			"/", "%", "+", "-", "<=", "<", ">=", ">"],
+			"/", "%", "+", "-", "<=", "<", ">=", ">", "[", "]"],
 		rTokens;
 
 	jQuery.each(aTokens, function(i, sToken) {
@@ -287,6 +301,18 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			mResult[sKey] = fnValue(aParts); // evaluate value
 		});
 		return mResult;
+	}
+
+	/**
+	 * Formatter function for a property access.
+	 * @param {function} fnLeft - formatter function for the left operand: the array or object to
+	 *   access
+	 * @param {function} fnName - formatter function for the property name
+	 * @param {any[]} aParts - the array of binding values
+	 * @return {any} - the array element or object property
+	 */
+	function PROPERTY_ACCESS(fnLeft, fnName, aParts) {
+		return fnLeft(aParts)[fnName(aParts)];
 	}
 
 	/**

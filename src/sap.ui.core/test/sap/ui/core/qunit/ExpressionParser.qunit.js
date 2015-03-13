@@ -274,7 +274,9 @@
 			{ binding: "{=true ||", message: "Expected expression but instead saw end of input"},
 			{ binding: "{=odata.'foo'}", message: "Expected IDENTIFIER but instead saw 'foo'",
 				token: "'foo'"},
-			{ binding: "{=(1 2)}", message: "Expected ) but instead saw 2", token: "2"}
+			{ binding: "{=(1 2)}", message: "Expected ) but instead saw 2", token: "2"},
+			{ binding: "{='foo'[1+]}", message: "Unexpected ]", token: "]"},
+			{ binding: "{='foo'[1}", message: "Expected ] but instead saw }", token: "}"}
 		], function(iUnused, oFixture) {
 		test("Error handling " + oFixture.binding + " --> " + oFixture.message, function () {
 			checkError(function () {
@@ -381,4 +383,12 @@
 		//one embedded binding only: need to set flag
 		check("${path:'/mail', formatter:'.myFormatter'}", "~mail~", oScope);
 	});
+
+	//*********************************************************************************************
+	checkFixtures("Array access", [
+		{ expression: "'foo@bar'.split('@')[0]", result: "foo" },
+		{ expression: "'foo@bar'.split('@')[${/3} - 2]", result: "bar" },
+		{ expression: "'foo@bar'.split('@')[6]", result: "undefined" },
+		{ expression: "${/}['mail']", result: "mail" }
+	]);
 } ());
