@@ -56,11 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		oRm.addClass("sapMTextAreaInner");
 	};
 	
-	// Write accessibility attributes
-	TextAreaRenderer.writeAccessibilityState = function(oRm, oControl) {
-		InputBaseRenderer.writeAccessibilityState.apply(this, arguments);
-		oRm.writeAccessibilityState(oControl, {
-			role: "textbox",
+	// Returns the accessibility state of the control.
+	TextAreaRenderer.getAccessibilityState = function(oControl) {
+		var mBaseAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
+		return jQuery.extend(mBaseAccessibilityState, {
 			multiline: true
 		});
 	}; 
