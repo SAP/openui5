@@ -25,6 +25,6 @@ sap.ui.define([
 			// start
 			oMockServer.start();
 		}
-	}
+	};
 
 }, /* bExport= */ true);

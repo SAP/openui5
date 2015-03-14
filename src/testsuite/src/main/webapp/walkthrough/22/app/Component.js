@@ -39,7 +39,7 @@ sap.ui.define([
 			var i18nModel = new ResourceModel({
 				bundleName : config.messageBundle
 			});
-			this.setModel(i18nModel, "i18n")
+			this.setModel(i18nModel, "i18n");
 
 			// set invoice model - local
 			var oInvoiceModel = new JSONModel(config.invoiceLocal);
