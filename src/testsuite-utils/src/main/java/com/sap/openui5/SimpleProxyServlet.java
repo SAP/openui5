@@ -141,7 +141,7 @@ public class SimpleProxyServlet extends HttpServlet {
       List<String> blockedHeaders = Arrays.asList(BLOCKED_REQUEST_HEADERS);
       for (Enumeration e = request.getHeaderNames(); e.hasMoreElements();) {
         String headerName = e.nextElement().toString();
-        if (!blockedHeaders.contains(headerName.toLowerCase())) {
+        if (!blockedHeaders.contains(headerName.toLowerCase())) { // NOSONAR
           conn.setRequestProperty(headerName, request.getHeader(headerName));
           infoLog.append("\n").append("    => ").append(headerName).append(": ").append(request.getHeader(headerName));
         }

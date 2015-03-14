@@ -51,7 +51,7 @@ public class CORSFilter implements Filter {
       // determine the method of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
-      String method = httpRequest.getMethod().toUpperCase();
+      String method = httpRequest.getMethod().toUpperCase(); // NOSONAR
       
       // only process GET or HEAD requests
       if (method.matches("GET|HEAD")) {

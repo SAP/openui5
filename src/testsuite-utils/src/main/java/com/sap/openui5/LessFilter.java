@@ -152,7 +152,7 @@ public class LessFilter implements Filter {
       // determine the path of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
-      String method = httpRequest.getMethod().toUpperCase();
+      String method = httpRequest.getMethod().toUpperCase(); // NOSONAR
       String path = httpRequest.getServletPath() + httpRequest.getPathInfo();
       
       // only process GET or HEAD requests

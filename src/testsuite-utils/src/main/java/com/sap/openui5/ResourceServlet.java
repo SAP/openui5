@@ -55,7 +55,7 @@ public class ResourceServlet extends HttpServlet {
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     
-    String method = request.getMethod().toUpperCase();
+    String method = request.getMethod().toUpperCase(); // NOSONAR
     String path = request.getServletPath() + request.getPathInfo();
     if (path == null || path.endsWith("/")) {
       
@@ -158,7 +158,7 @@ public class ResourceServlet extends HttpServlet {
       } catch (URISyntaxException ex) {
         // we just forward the exception as MalformedURLException 
         // but normally this issue will not happen here!
-        throw new MalformedURLException(ex.getMessage());
+        throw new MalformedURLException(ex.getMessage()); // NOSONAR
       }
     }
     
