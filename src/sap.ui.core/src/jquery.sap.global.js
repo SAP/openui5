@@ -1412,8 +1412,11 @@
 		 * @private
 		 */
 			mAMDShim = {
+				'sap/ui/thirdparty/blanket.js': true,
 				'sap/ui/thirdparty/crossroads.js': true,
+				'sap/ui/thirdparty/d3.js': true,
 				'sap/ui/thirdparty/datajs.js': true,
+				'sap/ui/thirdparty/handlebars.js': true,
 				'sap/ui/thirdparty/hasher.js': true,
 				'sap/ui/thirdparty/IPv6.js': true,
 				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': true,
@@ -1422,6 +1425,7 @@
 				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': true,
 				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': true,
 				'sap/ui/thirdparty/jquery-mobile-custom.js': true,
+				'sap/ui/thirdparty/jszip.js': true,
 				'sap/ui/thirdparty/less.js': true,
 				'sap/ui/thirdparty/punycode.js': true,
 				'sap/ui/thirdparty/require.js': true,
