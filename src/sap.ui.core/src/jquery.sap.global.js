@@ -1430,6 +1430,8 @@
 				'sap/ui/thirdparty/punycode.js': true,
 				'sap/ui/thirdparty/require.js': true,
 				'sap/ui/thirdparty/SecondLevelDomains.js': true,
+				'sap/ui/thirdparty/sinon.js': true,
+				'sap/ui/thirdparty/sinon-server.js': true,
 				'sap/ui/thirdparty/signals.js': true,
 				'sap/ui/thirdparty/URI.js' : true,
 				'sap/ui/thirdparty/URITemplate.js' : true,
