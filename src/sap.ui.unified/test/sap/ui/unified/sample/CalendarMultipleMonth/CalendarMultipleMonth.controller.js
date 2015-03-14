@@ -15,7 +15,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 		},
 
 		_updateText: function(oCalendar) {
-			oText = this.getView().byId("selectedDate");
+			var oText = this.getView().byId("selectedDate");
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {

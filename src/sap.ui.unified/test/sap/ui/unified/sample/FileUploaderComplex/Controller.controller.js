@@ -1,5 +1,5 @@
-sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
-	function(MessageToast, Controller) {
+sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Controller'],
+	function(jQuery, MessageToast, Controller) {
 	"use strict";
 
 	var ControllerController = Controller.extend("sap.ui.unified.sample.FileUploaderComplex.Controller", {
@@ -30,7 +30,7 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 
 		handleTypeMissmatch: function(oEvent) {
 			var aFileTypes = oEvent.getSource().getFileType();
-			$.each(aFileTypes, function(key, value) {aFileTypes[key] = "*." +  value});
+			jQuery.each(aFileTypes, function(key, value) {aFileTypes[key] = "*." +  value});
 			var sSupportedFileTypes = aFileTypes.join(", ");
 			MessageToast.show("The file type *." + oEvent.getParameter("fileType") +
 									" is not supported. Choose one of the following types: " +

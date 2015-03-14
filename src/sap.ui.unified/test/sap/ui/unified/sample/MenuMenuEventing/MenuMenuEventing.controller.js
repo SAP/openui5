@@ -36,14 +36,14 @@ sap.ui.define([
 		
 			var msg = "";
 			if(oEvent.getParameter("item").getMetadata().getName() == "sap.ui.unified.MenuTextFieldItem") {
-				msg = "'" + oEvent.getParameter("item").getValue() + "' entered";			
+				msg = "'" + oEvent.getParameter("item").getValue() + "' entered";
 			}
 			else {
 				msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
-			}	    
+			}
 		
-		    MessageToast.show(msg);
-		}	
+			MessageToast.show(msg);
+		}
 	});
 
 	return MenuMenuEventingController;
