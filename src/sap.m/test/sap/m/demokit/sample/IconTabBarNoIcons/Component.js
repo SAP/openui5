@@ -1,20 +1,26 @@
-jQuery.sap.declare("sap.m.sample.IconTabBarNoIcons.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.IconTabBarNoIcons.Component", {
+	var Component = UIComponent.extend("sap.m.sample.IconTabBarNoIcons.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.IconTabBarNoIcons.IconTabBar",
-		dependencies : {
-			libs : [
-				"sap.m"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"IconTabBar.view.xml"
+		metadata : {
+			rootView : "sap.m.sample.IconTabBarNoIcons.IconTabBar",
+			dependencies : {
+				libs : [
+					"sap.m"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"IconTabBar.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

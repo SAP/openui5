@@ -1,22 +1,28 @@
-jQuery.sap.declare("sap.m.sample.BusyIndicator.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.BusyIndicator.Component", {
+	var Component = UIComponent.extend("sap.m.sample.BusyIndicator.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.BusyIndicator.V",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				stretch : true,
-				files : [
-					"V.view.xml"
+		metadata : {
+			rootView : "sap.m.sample.BusyIndicator.V",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					stretch : true,
+					files : [
+						"V.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

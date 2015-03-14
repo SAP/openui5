@@ -1,21 +1,26 @@
-jQuery.sap.declare("sap.m.sample.TableViewSettingsDialog.Formatter");
+sap.ui.define(function() {
+	"use strict";
 
-sap.m.sample.TableViewSettingsDialog.Formatter = {
+	var Formatter = {
 
-	weightState :  function (fValue) {
-		try {
-			fValue = parseFloat(fValue);
-			if (fValue < 0) {
+		weightState :  function (fValue) {
+			try {
+				fValue = parseFloat(fValue);
+				if (fValue < 0) {
+					return "None";
+				} else if (fValue < 1000) {
+					return "Success";
+				} else if (fValue < 2000) {
+					return "Warning";
+				} else {
+					return "Error";
+				}
+			} catch (err) {
 				return "None";
-			} else if (fValue < 1000) {
-				return "Success";
-			} else if (fValue < 2000) {
-				return "Warning";
-			} else {
-				return "Error";
 			}
-		} catch (err) {
-			return "None";
 		}
-	}
-};
+	};
+
+	return Formatter;
+
+}, /* bExport= */ true);

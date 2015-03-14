@@ -1,7 +1,16 @@
-sap.ui.controller("sap.m.sample.MessageToast.C", {
+sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
+	function(MessageToast, Controller) {
+	"use strict";
 
-	handleMessageToastPress: function(oEvent) {
-		var msg = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod.';
-		sap.m.MessageToast.show(msg);
-	}
+	var CController = Controller.extend("sap.m.sample.MessageToast.C", {
+
+		handleMessageToastPress: function(oEvent) {
+			var msg = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod.';
+			MessageToast.show(msg);
+		}
+	});
+
+
+	return CController;
+
 });
