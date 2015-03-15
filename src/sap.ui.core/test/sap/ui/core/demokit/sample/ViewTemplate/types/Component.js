@@ -5,8 +5,19 @@
  * @fileOverview Application component to test bindings using OData types.
  * @version @version@
  */
-sap.ui.define(['jquery.sap.global', 'sap/m/FlexItemData', 'sap/m/HBox', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/util/MockServer', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/AnnotationHelper', 'sap/ui/model/odata/v2/ODataModel'],
-	function(jQuery, FlexItemData, HBox, UIComponent, View, MockServer, JSONModel, AnnotationHelper, ODataModel) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/m/FlexItemData',
+		'sap/m/HBox',
+		'sap/m/MessageBox',
+		'sap/ui/core/UIComponent',
+		'sap/ui/core/mvc/View',
+		'sap/ui/core/util/MockServer',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/odata/AnnotationHelper',
+		'sap/ui/model/odata/v2/ODataModel',
+		'jquery.sap.script'
+	], function(jQuery, FlexItemData, HBox, MessageBox, UIComponent, View, MockServer, JSONModel, AnnotationHelper, ODataModel/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
@@ -14,8 +25,8 @@ sap.ui.define(['jquery.sap.global', 'sap/m/FlexItemData', 'sap/m/HBox', 'sap/ui/
 		createContent: function () {
 			var sUri = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 				oLayout = new HBox(),
-				sMockServerBaseUri =
-					"test-resources/sap/ui/core/demokit/sample/ViewTemplate/types/data/",
+				sMockServerBaseUri = 
+					jQuery.sap.getModulePath("sap.ui.core.sample.ViewTemplate.types.data", "/"),
 				oMockServer,
 				oModel,
 				bRealOData = (jQuery.sap.getUriParameters().get("realOData") === "true"),
@@ -92,8 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/FlexItemData', 'sap/m/HBox', 'sap/ui/
 				oView.setLayoutData(new FlexItemData({growFactor: 1.0}));
 				oLayout.addItem(oView);
 			}, function (oError) {
-				jQuery.sap.require("sap.m.MessageBox");
-				sap.m.MessageBox.alert(oError.message, {
+				MessageBox.alert(oError.message, {
 					icon: sap.m.MessageBox.Icon.ERROR,
 					title: "Error"});
 			});

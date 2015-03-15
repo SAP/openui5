@@ -1,8 +1,11 @@
 // define a root UIComponent which exposes the main view
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/Router'],
-	function(jQuery, UIComponent, View, Router) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/UIComponent',
+		'sap/ui/core/mvc/View',
+		'sap/ui/core/routing/Router'
+	], function(jQuery, UIComponent, View, Router) {
 	"use strict";
-
 
 	// new Component
 	var Component = UIComponent.extend("NavigationWithoutMasterDetailPattern.Component", {

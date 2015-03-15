@@ -7,8 +7,16 @@
  *   OData service.
  * @version @version@
  */
-sap.ui.define(['jquery.sap.global', 'sap/m/HBox', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/util/MockServer', 'sap/ui/model/odata/AnnotationHelper'],
-	function(jQuery, HBox, UIComponent, View, MockServer, AnnotationHelper) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/UIComponent',
+		'sap/ui/core/mvc/View',
+		'sap/ui/core/util/MockServer',
+		'sap/ui/model/odata/AnnotationHelper',
+		'sap/m/HBox',
+		'sap/m/MessageBox',
+		'jquery.sap.script'
+	], function(jQuery, UIComponent, View, MockServer, AnnotationHelper, HBox, MessageBox/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
@@ -72,8 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/HBox', 'sap/ui/core/UIComponent', 'sa
 					models : oModel
 				}));
 			}, function (oError) {
-				jQuery.sap.require("sap.m.MessageBox");
-				sap.m.MessageBox.alert(oError.message, {
+				MessageBox.alert(oError.message, {
 					icon: sap.m.MessageBox.Icon.ERROR,
 					title: "Error"});
 			});

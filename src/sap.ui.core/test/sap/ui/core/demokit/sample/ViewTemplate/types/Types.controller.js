@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/mvc/Controller',
+		'sap/m/MessageBox',
+		'sap/m/MessageToast',
+		'jquery.sap.encoder',
+		'jquery.sap.xml'
+	], function(jQuery, Controller, MessageBox, MessageToast/*, jQuerySapEncoder, jQuerySapXML*/) {
 	"use strict";
 
 	var TypesController = Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
@@ -21,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 			this.getView().getModel().callFunction("/ResetEdmTypes", {
 				method: "POST",
 				success: function () {
-					sap.m.MessageToast.show("Data successfully reset");
+					MessageToast.show("Data successfully reset");
 				},
 				error: function (oError) {
 					that.showError("Error resetting EDM types");
@@ -33,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 			var that = this;
 			this.getView().getModel().attachEventOnce("requestCompleted", this, function(oEvent) {
 				if (oEvent.getParameter("success")) {
-					sap.m.MessageToast.show("Data successfully saved");
+					MessageToast.show("Data successfully saved");
 				} else {
 					that.showError("Error saving EDM types");
 				}
@@ -74,8 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 			sMessage = JSON.stringify(aMessages);
 			jQuery.sap.log.error(sTitle + ": " + sMessage,
 				"sap.ui.core.sample.ViewTemplate.types.Types");
-			jQuery.sap.require("sap.m.MessageBox");
-			sap.m.MessageBox.show(sMessage, {icon: sap.m.MessageBox.Icon.ERROR, title: sTitle});
+			MessageBox.show(sMessage, {icon: MessageBox.Icon.ERROR, title: sTitle});
 			oMessageManager.removeAllMessages();
 		}
 	});

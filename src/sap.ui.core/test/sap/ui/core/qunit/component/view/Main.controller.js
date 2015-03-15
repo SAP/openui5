@@ -40,7 +40,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 	
 		doIt: function(oEvent) {
 			ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
-			controller = this;
+			var controller = this;
 			ok(controller instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 			if(this.getView().getViewData()) {
 				window.dataEventHandler = this.getView().getViewData().test;

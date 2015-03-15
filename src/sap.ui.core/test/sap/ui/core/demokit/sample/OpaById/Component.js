@@ -1,8 +1,7 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
-	function(jQuery, UIComponent) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
 	"use strict";
 
-	
 	var Component = UIComponent.extend("sap.ui.core.sample.OpaById.Component", {
 
 		metadata : {
