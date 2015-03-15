@@ -448,7 +448,7 @@ License: MIT License
 <year> = 2010-2011
 <copyright holders> = The Dojo Foundation
 
-Component: sinon-qunit 1.0.0
+Component: sinon-qunit 2.0.0
 Licensor: Christian Johansen
 Website: http://github.com/cjohansen/sinon-qunit/
 License: BSD 3-clause "New" or "Revised" License
@@ -456,7 +456,7 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2011
 
-Component: Sinon.JS 1.10.3
+Component: Sinon.JS 1.14.1
 Licensor: Christian Johansen
 Website: http://github.com/cjohansen/Sinon.JS/
 License: BSD 3-clause "New" or "Revised" License

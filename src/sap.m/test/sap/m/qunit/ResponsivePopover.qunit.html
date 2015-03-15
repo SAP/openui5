@@ -21,6 +21,10 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		
+		<!-- use the sinon faketimers for this test -->
+		<script type="text/javascript">
+			sinon.config.useFakeTimers = true;
+		</script>
 
 		<script language="javascript">
 		// this is needed because the loading the input invalidates the static UI area which make the test case fail

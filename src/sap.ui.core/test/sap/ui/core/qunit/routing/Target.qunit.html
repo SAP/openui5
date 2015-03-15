@@ -24,7 +24,7 @@
 		}
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
+		sinon.config.useFakeTimers = true;
 
 		jQuery.sap.require("sap.ui.core.routing.Views");
 		jQuery.sap.require("sap.ui.core.routing.Target");
@@ -153,7 +153,7 @@
 
 		QUnit.test("Should log an error if the target parent is not found", function () {
 			// Arrange
-			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.rootView = "foo";
 
@@ -161,12 +161,12 @@
 			this.oTarget.display();
 
 			// Assert
-			sinon.assert.calledWith(oSpy, sinon.match(/root view/), sinon.match(this.oTarget));
+			sinon.assert.calledWith(oStub, sinon.match(/root view/), sinon.match(this.oTarget));
 		});
 
 		QUnit.test("Should log an error if the target control does not have an nonexistion aggregation specified", function () {
 			// Arrange
-			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.controlAggregation = "foo";
 
@@ -174,12 +174,12 @@
 			this.oTarget.display();
 
 			// Assert
-			sinon.assert.calledWith(oSpy, sinon.match(/aggregation/), sinon.match(this.oTarget));
+			sinon.assert.calledWith(oStub, sinon.match(/aggregation/), sinon.match(this.oTarget));
 		});
 
 		QUnit.test("Should log an error if the target control does not have an aggregation specified", function () {
 			// Arrange
-			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.controlAggregation = undefined;
 
@@ -187,12 +187,12 @@
 			this.oTarget.display();
 
 			// Assert
-			sinon.assert.calledWith(oSpy, sinon.match(/no 'controlAggregation' was set/), sinon.match(this.oTarget));
+			sinon.assert.calledWith(oStub, sinon.match(/no 'controlAggregation' was set/), sinon.match(this.oTarget));
 		});
 
 		QUnit.test("Should log an error if the target control could not be found", function () {
 			// Arrange
-			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
 			this.oTarget._oOptions.controlId = "foo";
 
@@ -200,7 +200,7 @@
 			this.oTarget.display();
 
 			// Assert
-			sinon.assert.calledWith(oSpy, sinon.match(/Control with ID/), sinon.match(this.oTarget));
+			sinon.assert.calledWith(oStub, sinon.match(/Control with ID/), sinon.match(this.oTarget));
 		});
 
 

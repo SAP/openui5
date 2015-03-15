@@ -28,8 +28,12 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-		<script language="javascript">
+		<!-- use the sinon faketimers for this test -->
+		<script type="text/javascript">
 			sinon.config.useFakeTimers = true;
+		</script>
+
+		<script language="javascript">
 
 			sap.ui.test.qunit.delayTestStart();
 

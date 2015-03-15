@@ -28,6 +28,7 @@
 		}
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		sinon.config.useFakeTimers = true;
 
 		//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
 		var original = module;
@@ -151,7 +152,7 @@
 
 		test("Should log a warning if a router gets destroyed while the hash changes", function () {
 			// Arrange
-			var oSpy = this.spy(jQuery.sap.log, "warning", jQuery.noop),
+			var oStub = this.stub(jQuery.sap.log, "warning", jQuery.noop),
 				oFirstRouter = new sap.ui.core.routing.Router({
 					"matchingRoute" : {
 						pattern: "matches"
@@ -175,7 +176,7 @@
 			hasher.setHash("matches");
 
 			// Assert
-			sinon.assert.calledWith(oSpy, sinon.match(/destroyed/), sinon.match(oRouterToBeDestroyed));
+			sinon.assert.calledWith(oStub, sinon.match(/destroyed/), sinon.match(oRouterToBeDestroyed));
 			oFirstRouter.destroy();
 		});
 

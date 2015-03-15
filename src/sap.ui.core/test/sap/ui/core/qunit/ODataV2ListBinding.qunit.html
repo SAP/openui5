@@ -66,6 +66,11 @@
 		});
 	}
 
+	// FIXME: when using the GhostDriver we need to init the model once before!
+	if (sap.ui.Device.browser.phantomJS) {
+		// TODO: analyze why this is needed!
+		initModel(false);
+	}
 	module("v2.ODataListBinding", {
 		setup : function() {
 			oModel = initModel(false);
@@ -75,19 +80,6 @@
 			removeSharedMetadata();
 		}
 	});
-
-	// FIXME: test doesn't work in headless PhantomJS test cycle => using bindList twice!
-	// strange - this works with MacOS PhantomJS - we need to retry with 2.0.1 when available!
-	if (sap.ui.Device.browser.phantomJS) {
-		asyncTest("ListBinding (phantomJS preflight test)", function(){
-			var oBinding = oModel.bindList("/Categories");
-			setTimeout(function() {
-				ok(true, "Preflight test passed!");
-				start();
-			});
-			if (this.clock) this.clock.tick(1);
-		});
-	}
 
 	asyncTest("ListBinding getLength, getContexts", function(){
 		var oBinding = oModel.bindList("/Categories");

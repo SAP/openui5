@@ -1,5 +1,5 @@
 /**
- * Sinon.JS 1.10.3, 2014/07/11
+ * Sinon.JS 1.14.1, 2015/03/16
  *
  * @author Christian Johansen (christian@cjohansen.no)
  * @author Contributors: https://github.com/cjohansen/Sinon.JS/blob/master/AUTHORS
@@ -33,7 +33,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*global sinon, setTimeout, setInterval, clearTimeout, clearInterval, Date*/
 /**
  * Helps IE run the fake timers. By defining global functions, IE allows
  * them to be overwritten at a later point. If these are not defined like
@@ -65,7 +64,6 @@ setInterval = sinon.timers.setInterval;
 clearInterval = sinon.timers.clearInterval;
 Date = sinon.timers.Date;
 
-/*global sinon*/
 /**
  * Helps IE run the fake XMLHttpRequest. By defining global functions, IE allows
  * them to be overwritten at a later point. If these are not defined like
@@ -84,7 +82,6 @@ function XMLHttpRequest() {}
 // Reassign the original function. Now its writable attribute
 // should be true. Hackish, I know, but it works.
 XMLHttpRequest = sinon.xhr.XMLHttpRequest || undefined;
-/*global sinon*/
 /**
  * Helps IE run the fake XDomainRequest. By defining global functions, IE allows
  * them to be overwritten at a later point. If these are not defined like

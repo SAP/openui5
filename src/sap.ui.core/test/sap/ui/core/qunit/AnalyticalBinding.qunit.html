@@ -17,6 +17,11 @@
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
+<!-- use the sinon faketimers for this test -->
+<script type="text/javascript">
+	sinon.config.useFakeTimers = true;
+</script>
+
 <!-- Fake Service Implementaton -->
 <script src="analytics/o4aFakeService.js"></script>
 <!-- The metadata Fake Content -->

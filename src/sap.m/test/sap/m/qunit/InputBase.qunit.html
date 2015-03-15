@@ -17,6 +17,12 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<!-- use the sinon faketimers for this test -->
+		<script type="text/javascript">
+			sinon.config.useFakeTimers = true;
+		</script>
+
 		<script>
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
@@ -1073,7 +1079,6 @@
 			});
 
 			test("value state and value state message", function() {
-				sinon.config.useFakeTimers = true;
 				var oErrorInput = new sap.m.InputBase("errorinput", {
 					value : "Error InputBase Test",
 					valueState: "Error",

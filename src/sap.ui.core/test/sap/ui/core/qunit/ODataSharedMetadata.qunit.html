@@ -23,6 +23,11 @@
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
+<!-- use the sinon faketimers for this test -->
+<script type="text/javascript">
+	sinon.config.useFakeTimers = true;
+</script>
+
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
@@ -46,6 +51,7 @@
 
 	asyncTest("test oDataModel - oMetadata shared across models", function(){
 		expect(1);
+		var clock = this.clock;
 		var mOptions = {
 				json : true,
 				loadMetadataAsync: true
@@ -78,7 +84,7 @@
 					metadataDfd.reject();
 				}
 			});
-			sinon.clock.tick(1);
+			clock.tick(1);
 			jQuery.when(metadataDfd).done(function(e){
 					ok(true, 'Metadata loaded fired at model only');
 					start();
@@ -88,7 +94,7 @@
 					start();
 				});
 		});
-		this.clock.tick(1);
+		clock.tick(1);
 	});
 
 	asyncTest("metadata check", function(){
@@ -107,7 +113,6 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			sinon.restore();
 			start();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -155,7 +160,6 @@
 			equal(oResult.name, "Category", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
-			sinon.restore();
 			start();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -173,7 +177,6 @@
 			equal(oResult.name, "Product", "entity type name check");
 			oResult = {};
 			oBinding.detachChange(handler);
-			sinon.restore();
 			start();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -202,7 +205,6 @@
 			equal(oResult.type, "Edm.String", "Nav Property type name check");
 
 			oBinding.detachChange(handler);
-			sinon.restore();
 			start();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -223,7 +225,6 @@
 			ok(true, "Metadata callback handler called");
 			oModel.detachMetadataLoaded(handler);
 			ok(oModel.getServiceMetadata(), "get metadata check");
-			sinon.restore();
 			start();
 		}
 		oModel.attachMetadataLoaded(handler);
@@ -255,7 +256,6 @@
 				equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 				oBinding.detachChange(handler2);
-				sinon.restore();
 				start();          // resume normal testing
 			};
 			oBinding.attachChange(handler2);
@@ -287,7 +287,6 @@
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			sinon.restore();
 			start();          // resume normal testing
 		};
 		oBinding.attachChange(handler);

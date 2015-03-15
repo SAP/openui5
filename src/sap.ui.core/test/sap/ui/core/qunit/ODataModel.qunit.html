@@ -29,6 +29,11 @@
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
 
+<!-- use the sinon faketimers for this test -->
+<script type="text/javascript">
+	sinon.config.useFakeTimers = true;
+</script>
+
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
@@ -126,17 +131,14 @@
 					metadataDfd.reject();
 				}
 			});
-			sinon.clock.tick(1);
 			jQuery.when(metadataDfd).done(function(e){
 					ok(true, 'Metadata loaded fired at model only');
 					start();
 				}).fail(function(e){
 					jQuery.sap.log.debug("metadata promise failed");
 					ok(false, 'Metadata loaded fired at metadata object')
-					clock.restore();
 				});
 		});
-		sinon.clock.tick(1);
 	});
 	
 	asyncTest("test _isReloadNeeded() - __list check", function(){

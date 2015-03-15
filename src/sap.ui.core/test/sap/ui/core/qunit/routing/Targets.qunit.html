@@ -24,7 +24,7 @@
 		}
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
+		sinon.config.useFakeTimers = true;
 
 		jQuery.sap.require("sap.ui.core.routing.Targets");
 		jQuery.sap.require("sap.ui.core.routing.Views");
@@ -82,7 +82,7 @@
 
 		test("Should be able to get multiple targets", function () {
 			// Arrange
-			var oSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
 			// Act
 			var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
@@ -92,7 +92,7 @@
 			strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
 			strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
 			// check if error for non-existing target "foo" is thrown
-			sinon.assert.calledWith(oSpy, sinon.match(/foo/), sinon.match(this.oTargets));
+			sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
 		});
 
 
@@ -210,18 +210,18 @@
 
 		test("Should log an error if user tries to display a non existing Target", function () {
 			// Assert
-			var oErrorSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
 			// Act
 			this.oTargets.display("foo");
 
 			// Assert
-			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match(this.oTargets));
+			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
 		});
 
 		test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
 			// Assert
-			var oErrorSpy = this.spy(jQuery.sap.log, "error", jQuery.noop);
+			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
 
 			// Act
@@ -229,7 +229,7 @@
 
 			// Assert
 			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-			sinon.assert.calledWith(oErrorSpy, sinon.match(/does not exist/), sinon.match(this.oTargets));
+			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
 		});
 
 		function createView (aContent, sId) {

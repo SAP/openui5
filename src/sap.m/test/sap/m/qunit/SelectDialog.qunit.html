@@ -18,6 +18,7 @@
 				jQuery.sap.require("sap.ui.thirdparty.qunit");
 				jQuery.sap.require("sap.ui.thirdparty.sinon");
 				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+				sinon.config.useFakeTimers = true;
 				jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 
 
@@ -341,14 +342,15 @@
 						// Asert
 						assert.strictEqual(oEvent.getParameter('value'), 'abc');
 					}),
-					that = this;
+					that = this,
+					clock = this.clock;
 					this.oSelectDialog.attachLiveChange(fnFireLiveChangeSpy);
 
 					jQuery.when(this.oSelectDialog.open()).then(function(oEvent) {
 						// Act
 						that.oSelectDialog._oSearchField.$('I').focus().val("abc").trigger("input");
 						// liveChange is triggered after 300ms
-						that.clock.tick(400);
+						clock.tick(400);
 					});
 				});
 
@@ -413,6 +415,7 @@
 				QUnit.asyncTest("Cancel Event with pre-filtered selection", function (assert) {
 
 					var that = this,
+					clock = this.clock,
 					oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -423,7 +426,7 @@
 						assert.ok(true, 'The event "cancel" has been fired');
 
 						// the selection is reset immediately ater the cancel event so we do it with clock.tick
-						sinon.clock.tick(500);
+						clock.tick(500);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 1, 'After cancelling there should be 1 visible item selected again');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 1, 'After cancelling there should be 4 invisible item selected again (prefiltered items are not added to the contexts initially)');
 						QUnit.start();
@@ -444,6 +447,7 @@
 				QUnit.asyncTest("Cancel Event with user-filtered selection", function (assert) {
 
 					var that = this,
+					clock = this.clock,
 					oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -463,7 +467,7 @@
 						assert.ok(true, 'The event "cancel" has been fired');
 
 						// the selection is reset immediately ater the cancel event so we do it with ticks
-						sinon.clock.tick(100);
+						clock.tick(100);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 invisible items selected again');
 						QUnit.start();
 					});
@@ -474,11 +478,12 @@
 
 					this.oSelectDialog.setMultiSelect(true);
 
-					var	that = this,
+					var that = this,
+						clock = this.clock,
 						fnChecks = function () {
 							assert.ok(true, "Event cancel was fired");
 							// the selection is reset immediately ater the cancel event so we do it with ticks
-							sinon.clock.tick(100);
+							clock.tick(100);
 							assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
 							QUnit.start();
 						};
