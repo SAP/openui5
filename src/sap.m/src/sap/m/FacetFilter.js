@@ -778,9 +778,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
 					} else {
-					that._handlePopoverAfterClose(oList);
+					//that._handlePopoverAfterClose(oList);
 //fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
-						//jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
+						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
 						oPopover.destroySubHeader();
 					}
 				},
@@ -926,15 +926,17 @@ oPopover.setContentWidth("30%");
 					var oPopover = that._getPopover();
 					if (oPopover.isOpen()) {
 						// create a deferred that will be triggered after the popover is closed
+						jQuery.sap.delayedCall(100, this, function() {
 						that._oOpenPopoverDeferred = jQuery.Deferred();
 						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
+						});
 					} else {
-						that._openPopover(oPopover, this);
+						//that._openPopover(oPopover, this);
+						jQuery.sap.delayedCall(100, this, fnOpenPopover);
 					}
 				}
 			}
 		});
-
 		this._buttons[oList.getId()] = oButton;
 		this.addAggregation("buttons", oButton); // Insures that the button text is updated if FacetFilterList.setTitle() is called
 		oButton.setAssociation("list", oList.getId(), true);
