@@ -8,25 +8,40 @@
 		xmlns:ui="sap.ca.ui"
 		displayBlock="true">
 
-			<semantic:FullscreenPage title="Full Screen">
+			<semantic:FullscreenPage title="FullScreen Page Title"
+									 showNavButton="true"
+									 navButtonPress="onNavButtonPress">
 
 					<semantic:semanticControls>
 
-						<semantic:SemanticButton type="Filter"/>
 						<semantic:SemanticSelect type="Sort"
-											autoAdjustWidth="true"
-											items="{
-					path: '/ProductCollection',
-					sorter: { path: 'Name' }
-					}">
-							<core:Item key="{ProductId}" text="{Name}" />
+												 change="onSemanticSelectChange"
+												 items="{
+							path: '/ProductCollectionStats/Filters',
+							sorter: { path: 'Name' }
+							}">
+							<core:Item key="{type}" text="{type}" />
 						</semantic:SemanticSelect>
-						<semantic:SemanticButton type="Flag"/>
+
+						<semantic:SemanticButton type="Filter" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="Group" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="Add" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="Multiselect" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="Edit" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="SaveAsTile" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="ShareInJam" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="SendMessage" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="SendEmail" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="DiscussInJam" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="ShareInJam" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="Print" press="onSemanticButtonPress"/>
+						<semantic:SemanticButton type="MessagesIndicator"/>
 
 					</semantic:semanticControls>
 
 					<semantic:customFooterContent>
-						<Button text="BtnRight"/>
+						<Button text="CustomTextBtn" press="onPress"/>
+						<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>
 					</semantic:customFooterContent>
 
 			</semantic:FullscreenPage>
