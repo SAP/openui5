@@ -20,7 +20,13 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		// find out which model is used 
 		getVersion: function (oODataModelInstance) {
 			var iVersion;
-			var sODataModelName = oODataModelInstance.getMetadata().getName();
+			var sODataModelName;
+			
+			// check if the given object has metadata and a class name
+			if (oODataModelInstance && oODataModelInstance.getMetadata) {
+				sODataModelName = oODataModelInstance.getMetadata().getName();
+			}
+			
 			switch (sODataModelName) {
 				case "sap.ui.model.odata.ODataModel": iVersion = this.V1; break;
 				case "sap.ui.model.odata.v2.ODataModel": iVersion = this.V2; break;
