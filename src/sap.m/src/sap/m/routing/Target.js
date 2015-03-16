@@ -18,7 +18,7 @@ sap.ui.define(['sap/ui/core/routing/Target'],
 		 * @private
 		 * @alias sap.m.routing.Target
 		 */
-		return Target.extend("sap.m.routing.Target", /** @lends sap.m.routing.Target.prototype */ {
+		var MobileTarget = Target.extend("sap.m.routing.Target", /** @lends sap.m.routing.Target.prototype */ {
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
 				this._oTargetHandler = oTargetHandler;
 
@@ -43,5 +43,7 @@ sap.ui.define(['sap/ui/core/routing/Target'],
 
 			}
 		});
+
+		return MobileTarget;
 
 	}, /* bExport= */ true);

@@ -12,15 +12,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor, please read the documentation there.<br/>
 		 *
 		 * @class
-		 * @extends sap.ui.base.EventProvider
 		 * @param {object} oOptions all of the parameters defined in {@link sap.m.routing.Targets#constructor} are accepted here, except for children you need to specify the parent.
 		 * @param {sap.ui.core.routing.Views} oViews All views required by this target will get created by the views instance using {@link sap.ui.core.routing.Views#getView}
 		 * @param {sap.ui.core.routing.Target} [oParent] the parent of this target. Will also get displayed, if you display this target. In the config you have the fill the children property {@link sap.m.routing.Targets#constructor}
 		 * @public
 		 * @since 1.28.1
+		 * @extends sap.ui.base.EventProvider
 		 * @alias sap.ui.core.routing.Target
 		 */
-		return EventProvider.extend("sap.ui.core.routing.Target", /** @lends sap.ui.core.routing.Target.prototype */ {
+		var oTarget = EventProvider.extend("sap.ui.core.routing.Target", /** @lends sap.ui.core.routing.Target.prototype */ {
 
 			constructor : function(oOptions, oViews) {
 				this._oOptions = oOptions;
@@ -261,5 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				DISPLAY : "display"
 			}
 		});
+
+		return oTarget;
 
 	}, /* bExport= */ true);

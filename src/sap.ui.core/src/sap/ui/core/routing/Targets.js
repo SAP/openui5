@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 		 * @public
 		 * @alias sap.ui.core.routing.Targets
 		 */
-		return EventProvider.extend("sap.ui.core.routing.Targets", /** @lends sap.ui.core.routing.Targets.prototype */ {
+		var Targets = EventProvider.extend("sap.ui.core.routing.Targets", /** @lends sap.ui.core.routing.Targets.prototype */ {
 
 			constructor : function(oOptions) {
 				var sTargetOptions,
@@ -507,5 +507,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 			}
 
 		});
+
+		return Targets;
 
 	}, /* bExport= */ true);
