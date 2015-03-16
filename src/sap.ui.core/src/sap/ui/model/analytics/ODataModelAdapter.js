@@ -11,13 +11,13 @@
  */
 
 // Provides class ODataModelAdapter
-sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter", 'sap/ui/model/odata/ODataModel', './odata4analytics', './AnalyticalVersionInfo'],
-	function(jQuery, AnalyticalBinding, TreeBindingAdapter, ODataModel, odata4analytics, AnalyticalVersionInfo) {
+sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter", './odata4analytics', './AnalyticalVersionInfo'],
+	function(jQuery, AnalyticalBinding, TreeBindingAdapter, odata4analytics, AnalyticalVersionInfo) {
 	"use strict";
 	
 	
 	/**
-	 * If called on an instance of an ODataModel it will enrich it with analytics capabilities.
+	 * If called on an instance of an (v1/v2) ODataModel it will enrich it with analytics capabilities.
 	 *
 	 * @alias sap.ui.model.analytics.ODataModelAdapter
 	 * @function
@@ -35,6 +35,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 			return;
 		}
 	
+		// Keep a reference on the bindList and bindTree function before applying the Adapter-Functions,
+		// this way the old functions do not get lost and the correct one is used for "prototype" calls.
+		// Previously only the ODataModel V1 prototype functions would get called
+		this._mPreadapterFunctions = {
+			bindList: this.bindList,
+			bindTree: this.bindTree
+		};
+		
 		// apply the methods of the adapters prototype to the ODataModelAdapter instance
 		for (var fn in ODataModelAdapter.prototype) {
 			if (ODataModelAdapter.prototype.hasOwnProperty(fn)) {
@@ -43,13 +51,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 		}
 		
 		//initialise the Analytical Extension during the metadata loaded Event of the v2.ODataModel
-		if (iModelVersion === AnalyticalVersionInfo.V2 && !(this.oMetadata && this.oMetadata.isLoaded())) {
+		/*if (iModelVersion === AnalyticalVersionInfo.V2 && !(this.oMetadata && this.oMetadata.isLoaded())) {
 			var that = this;
 			this.attachMetadataLoaded(function () {
 				jQuery.sap.log.info("ODataModelAdapter: Running on ODataModel V2, Metadata was loaded; initialising analytics model.");
 				that.getAnalyticalExtensions();
 			});
-		}
+		}*/
 		
 		// disable the count support (inline count is required for AnalyticalBinding)
 		if (iModelVersion === AnalyticalVersionInfo.V1 && this.isCountSupported()) {
@@ -61,6 +69,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 	
 	/**
 	 * @see sap.ui.model.odata.ODataModel#bindList
+	 * @see sap.ui.model.odata.v2.ODataModel#bindList
 	 */
 	ODataModelAdapter.prototype.bindList = function(sPath, oContext, aSorters, aFilters, mParameters) {
 		// detection for usage of AnalyticalBinding (aligned with AnalyticalTable#bindRows)
@@ -69,12 +78,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 			TreeBindingAdapter.apply(oBinding); // enhance the TreeBinding wit an adapter for the ListBinding
 			return oBinding;
 		} else {
-			return ODataModel.prototype.bindList.apply(this, arguments);
+			// calling the preadapter functions makes sure, that v1 or v2 ODataListBindings get instantiated, depending on the model
+			return this._mPreadapterFunctions.bindList.apply(this, arguments);
 		}
 	};
 	
 	/**
 	 * @see sap.ui.model.odata.ODataModel#bindTree
+	 * @see sap.ui.model.odata.v2.ODataModel#bindTree
 	 */
 	ODataModelAdapter.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
 		// detection for usage of AnalyticalBinding (aligned with AnalyticalTable#bindRows)
@@ -82,7 +93,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 			var oBinding = new AnalyticalBinding(this, sPath, oContext, [], aFilters, mParameters);
 			return oBinding;
 		} else {
-			return ODataModel.prototype.bindTree.apply(this, arguments);
+			// calling the preadapter functions makes sure, that v1 or v2 ODataTreeBindings get instantiated, depending on the model
+			return this._mPreadapterFunctions.bindTree.apply(this, arguments);
 		}
 	};
 	
