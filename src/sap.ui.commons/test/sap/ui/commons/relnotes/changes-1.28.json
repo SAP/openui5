@@ -427,7 +427,19 @@
         "id": "57ffaa03d91c5a06750b03e436212c982184105e",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: keyboard navigation issues",
+        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation issues",
+        "references": []
+      }
+    ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "12096b51a9772d1b31ebbb0b9b3bc96f48772edb",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added cozy mode",
         "references": []
       }
     ]
