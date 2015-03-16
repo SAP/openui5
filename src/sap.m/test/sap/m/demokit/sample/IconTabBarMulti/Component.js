@@ -1,21 +1,27 @@
-jQuery.sap.declare("sap.m.sample.IconTabBarMulti.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.IconTabBarMulti.Component", {
+	var Component = UIComponent.extend("sap.m.sample.IconTabBarMulti.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.IconTabBarMulti.IconTabBar",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"IconTabBar.view.xml"
+		metadata : {
+			rootView : "sap.m.sample.IconTabBarMulti.IconTabBar",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"IconTabBar.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

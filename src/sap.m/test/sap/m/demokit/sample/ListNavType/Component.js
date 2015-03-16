@@ -1,22 +1,28 @@
-jQuery.sap.declare("sap.m.sample.ListNavType.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.ListNavType.Component", {
+	var Component = UIComponent.extend("sap.m.sample.ListNavType.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.ListNavType.List",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"List.view.xml",
-					"List.controller.js"
+		metadata : {
+			rootView : "sap.m.sample.ListNavType.List",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"List.view.xml",
+						"List.controller.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

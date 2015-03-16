@@ -1,24 +1,30 @@
-jQuery.sap.declare("sap.m.sample.ToolbarResponsive.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.ToolbarResponsive.Component", {
+	var Component = UIComponent.extend("sap.m.sample.ToolbarResponsive.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.ToolbarResponsive.Page",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				stretch : true,
-				files : [
-					"Page.view.xml",
-					"Page.controller.js",
-					"ActionSheet.fragment.xml"
+		metadata : {
+			rootView : "sap.m.sample.ToolbarResponsive.Page",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					stretch : true,
+					files : [
+						"Page.view.xml",
+						"Page.controller.js",
+						"ActionSheet.fragment.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

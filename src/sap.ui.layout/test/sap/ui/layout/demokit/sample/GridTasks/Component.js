@@ -1,21 +1,27 @@
-jQuery.sap.declare("sap.ui.layout.sample.GridTasks.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.ui.layout.sample.GridTasks.Component", {
+	var Component = UIComponent.extend("sap.ui.layout.sample.GridTasks.Component", {
 
-	metadata : {
-		rootView : "sap.ui.layout.sample.GridTasks.Grid",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"Grid.view.xml"
+		metadata : {
+			rootView : "sap.ui.layout.sample.GridTasks.Grid",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"Grid.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

@@ -1,23 +1,29 @@
-jQuery.sap.declare("sap.m.sample.ListLoading.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.ListLoading.Component", {
+	var Component = UIComponent.extend("sap.m.sample.ListLoading.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.ListLoading.List",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"List.view.xml",
-					"List.controller.js",
-					"MockServer.js"
+		metadata : {
+			rootView : "sap.m.sample.ListLoading.List",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"List.view.xml",
+						"List.controller.js",
+						"MockServer.js"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

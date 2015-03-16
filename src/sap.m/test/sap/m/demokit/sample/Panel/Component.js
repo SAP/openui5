@@ -1,21 +1,27 @@
-jQuery.sap.declare("sap.m.sample.Panel.Component");
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
 
-sap.ui.core.UIComponent.extend("sap.m.sample.Panel.Component", {
+	var Component = UIComponent.extend("sap.m.sample.Panel.Component", {
 
-	metadata : {
-		rootView : "sap.m.sample.Panel.Panel",
-		dependencies : {
-			libs : [
-				"sap.m",
-				"sap.ui.layout"
-			]
-		},
-		config : {
-			sample : {
-				files : [
-					"Panel.view.xml"
+		metadata : {
+			rootView : "sap.m.sample.Panel.Panel",
+			dependencies : {
+				libs : [
+					"sap.m",
+					"sap.ui.layout"
 				]
+			},
+			config : {
+				sample : {
+					files : [
+						"Panel.view.xml"
+					]
+				}
 			}
 		}
-	}
+	});
+
+	return Component;
+
 });

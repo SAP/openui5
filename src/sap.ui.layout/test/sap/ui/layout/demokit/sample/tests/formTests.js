@@ -1,6 +1,7 @@
-(function () {
+sap.ui.define(['sap/ui/test/Opa5'],
+	function(Opa5) {
+	"use strict";
 
-	jQuery.sap.declare("sample.tests.formTests");
 	module("EditSave");
 
 	opaTest("Should go to the edit page", function(Given, When, Then) {
@@ -51,9 +52,9 @@
 			and.iTeardownMyAppFrame();
 	});
 
-	sap.ui.test.Opa5.extendConfig({
+	Opa5.extendConfig({
 		viewName : "Page",
-		actions : new sap.ui.test.Opa5({
+		actions : new Opa5({
 			_pressOnButton : function (sId) {
 				return this.waitFor({
 					id : sId,
@@ -105,7 +106,7 @@
 
 			}
 		}),
-		assertions : new sap.ui.test.Opa5({
+		assertions : new Opa5({
 			iShouldBeOnTheEditPage : function () {
 				return this.waitFor({
 					id : "FormChange354",
@@ -145,4 +146,6 @@
 			}
 		})
 	});
-})()
+
+
+}, /* bExport= */ true);

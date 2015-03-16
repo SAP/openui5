@@ -1,8 +1,17 @@
-sap.ui.controller("sap.m.sample.ObjectHeaderResponsiveVI.Page", {
+sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(jQuery, Controller, JSONModel) {
+	"use strict";
 
-	onInit: function() {
-		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
-		this.getView().setModel(oModel);
-	},
+	var PageController = Controller.extend("sap.m.sample.ObjectHeaderResponsiveVI.Page", {
+
+		onInit: function() {
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+		},
+
+	});
+
+
+	return PageController;
 
 });

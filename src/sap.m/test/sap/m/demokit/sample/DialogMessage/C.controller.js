@@ -1,89 +1,102 @@
-sap.ui.controller("sap.m.sample.DialogMessage.C", {
+sap.ui.define([
+		'sap/m/Button',
+		'sap/m/Dialog',
+		'sap/m/Text',
+		'sap/ui/core/mvc/Controller'
+	], function(Button, Dialog, Text, Controller) {
+	"use strict";
 
-	onMessageDialogPress: function (oEvent) {
-		var dialog = new sap.m.Dialog({
-			title: 'Default Message',
-			type: 'Message',
-				content: new sap.m.Text({
-					text: 'Build enterprise-ready web applications, responsive to all devices and running on the browser of your choice. That´s OpenUI5.'
+	var CController = Controller.extend("sap.m.sample.DialogMessage.C", {
+
+		onMessageDialogPress: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Default Message',
+				type: 'Message',
+					content: new Text({
+						text: 'Build enterprise-ready web applications, responsive to all devices and running on the browser of your choice. That´s OpenUI5.'
+					}),
+				beginButton: new Button({
+					text: 'OK',
+					press: function () {
+						dialog.close();
+					}
 				}),
-			beginButton: new sap.m.Button({
-				text: 'OK',
-				press: function () {
-					dialog.close();
+				afterClose: function() {
+					dialog.destroy();
 				}
-			}),
-			afterClose: function() {
-				dialog.destroy();
-			}
-		});
+			});
 
-		dialog.open();
-	},
+			dialog.open();
+		},
 
-	onMessageErrorDialogPress: function (oEvent) {
-		var dialog = new sap.m.Dialog({
-			title: 'Error',
-			type: 'Message',
-			state: 'Error',
-			content: new sap.m.Text({
-				text: 'The only error you can make is not even trying.'
-			}),
-			beginButton: new sap.m.Button({
-				text: 'OK',
-				press: function () {
-					dialog.close();
+		onMessageErrorDialogPress: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Error',
+				type: 'Message',
+				state: 'Error',
+				content: new Text({
+					text: 'The only error you can make is not even trying.'
+				}),
+				beginButton: new Button({
+					text: 'OK',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
 				}
-			}),
-			afterClose: function() {
-				dialog.destroy();
-			}
-		});
+			});
 
-		dialog.open();
-	},
+			dialog.open();
+		},
 
-	onMessageWarningDialogPress: function (oEvent) {
-		var dialog = new sap.m.Dialog({
-			title: 'Warning',
-			type: 'Message',
-			state: 'Warning',
-			content: new sap.m.Text({
-				text: 'Ruling the world is a time-consuming task. You will not have a lot of spare time.'
-			}),
-			beginButton: new sap.m.Button({
-				text: 'OK',
-				press: function () {
-					dialog.close();
+		onMessageWarningDialogPress: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Warning',
+				type: 'Message',
+				state: 'Warning',
+				content: new Text({
+					text: 'Ruling the world is a time-consuming task. You will not have a lot of spare time.'
+				}),
+				beginButton: new Button({
+					text: 'OK',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
 				}
-			}),
-			afterClose: function() {
-				dialog.destroy();
-			}
-		});
+			});
 
-		dialog.open();
-	},
+			dialog.open();
+		},
 
-	onMessageSuccessDialogPress: function (oEvent) {
-		var dialog = new sap.m.Dialog({
-			title: 'Success',
-			type: 'Message',
-			state: 'Success',
-			content: new sap.m.Text({
-				text: 'One of the keys to success is creating realistic goals that can be achieved in a reasonable amount of time.'
-			}),
-			beginButton: new sap.m.Button({
-				text: 'OK',
-				press: function () {
-					dialog.close();
+		onMessageSuccessDialogPress: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Success',
+				type: 'Message',
+				state: 'Success',
+				content: new Text({
+					text: 'One of the keys to success is creating realistic goals that can be achieved in a reasonable amount of time.'
+				}),
+				beginButton: new Button({
+					text: 'OK',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
 				}
-			}),
-			afterClose: function() {
-				dialog.destroy();
-			}
-		});
+			});
 
-		dialog.open();
-	}
+			dialog.open();
+		}
+	});
+
+
+	return CController;
+
 });
