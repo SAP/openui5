@@ -87,9 +87,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * </pre>
 		 *
 		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
-		 * @param {string|string[]} [oConfig.bypassed.target] Since 1.28. One or multiple names of targets that will be displayed, if no route of the router is matched.
-		 * A typical use case is a not found page.
-		 * The current hash will be passed to the display event of the target.
+		 * @param {string|string[]} [oConfig.bypassed.target] Since 1.28. One or multiple names of targets that will be displayed, if no route of the router is matched.<br/>
+		 * A typical use case is a not found page.<br/>
+		 * The current hash will be passed to the display event of the target.<br/>
 		 * <b>Example:</b>
 		 * <pre>
 		 * <code>
@@ -117,8 +117,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *     });
 		 * </code>
 		 * </pre>
-		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,
-		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.
+		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
+		 * will get forwarded to the {@link sap.ui.core.routing.Views#contructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
 		 * @param {object} [oTargetsConfig]
 		 * available @since 1.28 the target configuration, see {@link sap.ui.core.Targets#constructor} documentation (the options object).<br/>
@@ -143,7 +143,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *         viewNamespace: "my.application.namespace",
 		 *         viewType: "XML"
 		 *     },
-		 *     // You should only use this constructor when you are not using a router with a component. Please use the metadata of a component to define your routes and targets. The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
+		 *     // You should only use this constructor when you are not using a router with a component.
+		 *     // Please use the metadata of a component to define your routes and targets.
+		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent#.extend}.
 		 *     null,
 		 *     // Target config
 		 *     {
