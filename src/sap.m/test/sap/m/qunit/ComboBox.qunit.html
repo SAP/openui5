@@ -6893,6 +6893,35 @@
 				oComboBox.destroy();
 			});
 
+			// BCP 1580015527
+			test("it should not open the picker pop-up", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					editable: false,
+					items: [
+						new sap.ui.core.Item({
+							text: "",
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnOpenSpy = this.spy(sap.m.ComboBox.prototype, "open");
+				oComboBox.focus();
+
+				// act
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+
+				// assert
+				strictEqual(fnOpenSpy.callCount, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onfocusin                      */
 			/* ------------------------------ */
