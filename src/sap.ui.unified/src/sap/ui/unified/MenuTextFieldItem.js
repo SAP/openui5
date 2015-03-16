@@ -142,6 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 		
 		var that = this;
 		function focusTF() {
+			oMenu.closeSubmenu(false, true);
 			that.$("tf").focus();
 		}
 		
@@ -219,6 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	
 	
 	MenuTextFieldItem.prototype.onclick = function(oEvent){
+		this.getParent().closeSubmenu(false, true);
 		if (!sap.ui.Device.system.desktop && this.getParent().checkEnabled(this)) {
 			this.focus();
 		}
