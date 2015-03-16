@@ -443,9 +443,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
           this.getButtons()[0].focus(); // TODO is this wanted?
           this._bInitialFocusSet = true;
         } else if (this.getContent().length > 0) {
-          // let's at least focus something in the Dialog
-          this.getContent()[0].focus();
-          this._bInitialFocusSet = true;
+          // let's at least focus something in the Dialog that is TABBABLE
+          var aTabbables = jQuery(":sapTabbable", this.$("cont"));
+          if (aTabbables.length) {
+            aTabbables[0].focus();
+            this._bInitialFocusSet = true;
+          } else {
+            // if there is something in the content but isn't tabbable then
+            // use the first fake element to focus
+            var oFakeDomRef = jQuery.sap.domById(this._mParameters.firstFocusable);
+            jQuery.sap.focus(oFakeDomRef);
+            this._bInitialFocusSet = true;
+          }
         }
       }
     };
@@ -605,8 +614,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
       }
 
       this._mParameters.event = oEvent;
-      this._mParameters.$FocusablesContent = jQuery(":sapFocusable", this.$("cont"));
-      this._mParameters.$FocusablesFooter = jQuery(":sapFocusable", this.$("footer"));
+      this._mParameters.$FocusablesContent = jQuery(":sapTabbable", this.$("cont"));
+      this._mParameters.$FocusablesFooter = jQuery(":sapTabbable", this.$("footer"));
 
       this.oPopup.focusTabChain(this._mParameters);
     };
