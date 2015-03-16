@@ -32,6 +32,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return this.mData[sKey];
 		},
 
+		_getCalendarData :  function(sKey, sCalendarType) {
+			if (!sCalendarType) {
+				sCalendarType = sap.ui.core.CalendarType.Gregorian;
+			}
+
+			return this._get(getCLDRCalendarName(sCalendarType))[sKey];
+		},
+
 		/**
 		 * Get orientation (left-to-right or right-to-left)
 		 *
@@ -76,120 +84,130 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Get month names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the month names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of month names (starting with January)
 		 * @public
 		 */
-		getMonths : function(sWidth) {
+		getMonths : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("months-format-" + sWidth);
+			return this._getCalendarData("months-format-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get stand alone month names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the month names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of month names (starting with January)
 		 * @public
 		 */
-		getMonthsStandAlone : function(sWidth) {
+		getMonthsStandAlone : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("months-standAlone-" + sWidth);
+			return this._getCalendarData("months-standAlone-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get day names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of day names (starting with Sunday)
 		 * @public
 		 */
-		getDays : function(sWidth) {
+		getDays : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("days-format-" + sWidth);
+			return this._getCalendarData("days-format-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get stand alone day names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of day names (starting with Sunday)
 		 * @public
 		 */
-		getDaysStandAlone : function(sWidth) {
+		getDaysStandAlone : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("days-standAlone-" + sWidth);
+			return this._getCalendarData("days-standAlone-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get quarter names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the quarter names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of quarters
 		 * @public
 		 */
-		getQuarters : function(sWidth) {
+		getQuarters : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("quarters-format-" + sWidth);
+			return this._getCalendarData("quarters-format-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get stand alone quarter names in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the quarter names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of quarters
 		 * @public
 		 */
-		getQuartersStandAlone : function(sWidth) {
+		getQuartersStandAlone : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("quarters-standAlone-" + sWidth);
+			return this._getCalendarData("quarters-standAlone-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get day periods in width "narrow", "abbreviated" or "wide"
 		 *
 		 * @param {string} sWidth the required width for the day period names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {array} array of day periods (AM, PM)
 		 * @public
 		 */
-		getDayPeriods : function(sWidth) {
+		getDayPeriods : function(sWidth, sCalendarType) {
 			jQuery.sap.assert(sWidth == "narrow" || sWidth == "abbreviated" || sWidth == "wide", "sWidth must be narrow, abbreviated or wide");
-			return this._get("dayPeriods-format-" + sWidth);
+			return this._getCalendarData("dayPeriods-format-" + sWidth, sCalendarType);
 		},
 
 		/**
 		 * Get date pattern in style "short", "medium", "long" or "full"
 		 *
 		 * @param {string} sStyle the required style for the date pattern
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {string} the selected date pattern
 		 * @public
 		 */
-		getDatePattern : function(sStyle) {
+		getDatePattern : function(sStyle, sCalendarType) {
 			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			return this._get("dateFormat-" + sStyle);
+			return this._getCalendarData("dateFormat-" + sStyle, sCalendarType);
 		},
 
 		/**
 		 * Get time pattern in style "short", "medium", "long" or "full"
 		 *
 		 * @param {string} sStyle the required style for the date pattern
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {string} the selected time pattern
 		 * @public
 		 */
-		getTimePattern : function(sStyle) {
+		getTimePattern : function(sStyle, sCalendarType) {
 			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			return this._get("timeFormat-" + sStyle);
+			return this._getCalendarData("timeFormat-" + sStyle, sCalendarType);
 		},
 
 		/**
 		 * Get datetime pattern in style "short", "medium", "long" or "full"
 		 *
 		 * @param {string} sStyle the required style for the datetime pattern
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {string} the selected datetime pattern
 		 * @public
 		 */
-		getDateTimePattern : function(sStyle) {
+		getDateTimePattern : function(sStyle, sCalendarType) {
 			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			return this._get("dateTimeFormat-" + sStyle);
+			return this._getCalendarData("dateTimeFormat-" + sStyle, sCalendarType);
 		},
 
 		/**
@@ -294,12 +312,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * The empty Id ("") might be used to retrieve the interval format fallback. 
 		 *
 		 * @param {string} sId Id of the interval format, e.g. "d-d"
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
 		 * @returns {string} interval format string with placeholders {0} and {1}
 		 * @public
 		 * @since 1.17.0 
 		 */
-		getIntervalPattern : function(sId) {
-			return (sId && this._get("intervalFormat-" + sId)) || this._get("intervalFormatFallback");
+		getIntervalPattern : function(sId, sCalendarType) {
+			return (sId && this._getCalendarData("intervalFormat-" + sId, sCalendarType)) || this._getCalendarData("intervalFormatFallback", sCalendarType);
 		},
 		
 		/**
@@ -340,7 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Returns the currency code which is corresponded with the given currency symbol.
 		 *
 		 * @param {string} sCurrencySymbol The currency symbol which needs to be converted to currency code
-		 * @return {string} The corresponded currency code defined for the given currency symbol. Null is returned if no currency code can be found by using the given currency symbol.
+		 * @return {string} The corresponded currency code defined for the given currency symbol. The given currency symbol is returned if no currency code can be found by using the given currency symbol.
 		 * @public
 		 * @since 1.27.0
 		 */
@@ -351,7 +370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					return sCurrencyCode;
 				}
 			}
-			return null;
+			return sCurrencySymbol;
 		},
 
 		_getRelative : function(sType, iDiff) {
@@ -450,52 +469,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"languages":{},
 			"scripts":{},
 			"territories":{},
-			"dateFormat-full":"EEEE, MMMM d, y",
-			"dateFormat-long":"MMMM d, y",
-			"dateFormat-medium":"MMM d, y",
-			"dateFormat-short":"M/d/yy",
-			"timeFormat-full":"h:mm:ss a zzzz",
-			"timeFormat-long":"h:mm:ss a z",
-			"timeFormat-medium":"h:mm:ss a",
-			"timeFormat-short":"h:mm a",
-			"dateTimeFormat-full":"{1} 'at' {0}",
-			"dateTimeFormat-long":"{1} 'at' {0}",
-			"dateTimeFormat-medium":"{1}, {0}",
-			"dateTimeFormat-short":"{1}, {0}",
+			"ca-gregorian": {
+				"dateFormat-full":"EEEE, MMMM d, y",
+				"dateFormat-long":"MMMM d, y",
+				"dateFormat-medium":"MMM d, y",
+				"dateFormat-short":"M/d/yy",
+				"timeFormat-full":"h:mm:ss a zzzz",
+				"timeFormat-long":"h:mm:ss a z",
+				"timeFormat-medium":"h:mm:ss a",
+				"timeFormat-short":"h:mm a",
+				"dateTimeFormat-full":"{1} 'at' {0}",
+				"dateTimeFormat-long":"{1} 'at' {0}",
+				"dateTimeFormat-medium":"{1}, {0}",
+				"dateTimeFormat-short":"{1}, {0}",
+				"intervalFormatFallback":"{0} – {1}",
+				"months-format-abbreviated":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+				"months-format-wide":["January","February","March","April","May","June","July","August","September","October","November","December"],
+				"months-format-narrow":["1","2","3","4","5","6","7","8","9","10","11","12"],
+				"months-standAlone-abbreviated":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+				"months-standAlone-wide":["January","February","March","April","May","June","July","August","September","October","November","December"],
+				"months-standAlone-narrow":["1","2","3","4","5","6","7","8","9","10","11","12"],
+				"days-format-abbreviated":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+				"days-format-wide":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+				"days-format-narrow":["S","M","T","W","T","F","S"],
+				"days-standAlone-abbreviated":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+				"days-standAlone-wide":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+				"days-standAlone-narrow":["S","M","T","W","T","F","S"],
+				"quarters-format-narrow":["1","2","3","4"],
+				"quarters-format-abbreviated":["Q1","Q2","Q3","Q4"],
+				"quarters-format-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
+				"quarters-standAlone-narrow":["1","2","3","4"],
+				"quarters-standAlone-abbreviated":["Q1","Q2","Q3","Q4"],
+				"quarters-standAlone-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
+				"dayPeriods-format-narrow":["AM","PM"],
+				"dayPeriods-format-wide":["AM","PM"],
+				"dayPeriods-format-abbreviated":["AM","PM"]
+			},
 			"decimalFormat": { "standard": "#,##0.###" },
 			"currencyFormat": { "standard": "¤#,##0.00"},
 			"percentFormat": { "standard": "#,##0%"},
-			"months-format-abbreviated":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-			"months-format-wide":["January","February","March","April","May","June","July","August","September","October","November","December"],
-			"months-format-narrow":["1","2","3","4","5","6","7","8","9","10","11","12"],
-			"months-standAlone-abbreviated":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-			"months-standAlone-wide":["January","February","March","April","May","June","July","August","September","October","November","December"],
-			"months-standAlone-narrow":["1","2","3","4","5","6","7","8","9","10","11","12"],
-			"days-format-abbreviated":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
-			"days-format-wide":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-			"days-format-narrow":["S","M","T","W","T","F","S"],
-			"days-standAlone-abbreviated":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
-			"days-standAlone-wide":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-			"days-standAlone-narrow":["S","M","T","W","T","F","S"],
-			"quarters-format-narrow":["1","2","3","4"],
-			"quarters-format-abbreviated":["Q1","Q2","Q3","Q4"],
-			"quarters-format-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
-			"quarters-standAlone-narrow":["1","2","3","4"],
-			"quarters-standAlone-abbreviated":["Q1","Q2","Q3","Q4"],
-			"quarters-standAlone-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
 			"symbols-latn-plusSign":"+",
 			"symbols-latn-minusSign":"-",
 			"symbols-latn-percentSign":"%",
-			"dayPeriods-format-narrow":["AM","PM"],
-			"dayPeriods-format-wide":["AM","PM"],
-			"dayPeriods-format-abbreviated":["AM","PM"],
 			"weekData-minDays":4,
 			"weekData-firstDay":1,
 			"weekData-weekendStart":6,
-			"weekData-weekendEnd":0,
-			"intervalFormatFallback":"{0} – {1}"
+			"weekData-weekendEnd":0
 	};
 
 	var M_ISO639_OLD_TO_NEW = {
@@ -532,6 +553,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 * @private
 	 */
 	var mLocaleDatas = {};
+
+	/**
+	 * Mapping bewteen the sap.ui.core.CalendarType and the CLDR calendar name
+	 *
+	 * @private
+	 */
+	var mCLDRCalendarNames = {
+		IslamicCivil: "islamic-civil",
+		IslamicUmalqura: "islamic-umalqura"
+	};
+
+	/**
+	 * Returns the corresponding calendar name in CLDR of the given calendar type
+	 *
+	 * @param {sap.ui.core.CalendarType} sCalendarType the type defined in {@link sap.ui.core.CalendarType}.
+	 * @private
+	 */
+	function getCLDRCalendarName(sCalendarType) {
+		return "ca-" + (mCLDRCalendarNames[sCalendarType] || sCalendarType.toLowerCase());
+	}
 
 	/**
 	 * Load LocaleData data from the CLDR generated files

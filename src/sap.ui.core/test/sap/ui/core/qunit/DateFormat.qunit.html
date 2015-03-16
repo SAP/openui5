@@ -51,7 +51,7 @@
 	test("format date for a specific locale", function(){
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		equal(sap.ui.core.format.DateFormat.getDateInstance(oLocale).format(oDateTime), "11.09.2001", "date with defaults for given locale");
-		equal(sap.ui.core.format.DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "11.09.2001 08:46:13", "datetime with defaults for given locale");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance(oLocale).format(oDateTime), "11.09.2001, 08:46:13", "datetime with defaults for given locale");
 		equal(sap.ui.core.format.DateFormat.getTimeInstance(oLocale).format(oDateTime), "08:46:13", "time with defaults for given locale");
 	});
 
@@ -122,16 +122,16 @@
 
 		switch(iDiff){
 			case 0:
-				return [sLocale == "en" ? "today" : "Heute", sTargetDate];
+				return [sLocale == "en" ? "today" : "heute", sTargetDate];
 			case 1:
-				return [sLocale == "en" ? "tomorrow" : "Morgen", sTargetDate];
+				return [sLocale == "en" ? "tomorrow" : "morgen", sTargetDate];
 			case -1:
-				return [sLocale == "en" ? "yesterday" : "Gestern", sTargetDate];
+				return [sLocale == "en" ? "yesterday" : "gestern", sTargetDate];
 			default:
 				if(iDiff < -1){
-					return [sLocale == "en" ? iDays + " days ago" : "Vor " + iDays + " Tagen", sTargetDate];
+					return [sLocale == "en" ? iDays + " days ago" : "vor " + iDays + " Tagen", sTargetDate];
 				}else{
-					return [sLocale == "en" ? "in " + iDays + " days" : "In " + iDays + " Tagen", sTargetDate];
+					return [sLocale == "en" ? "in " + iDays + " days" : "in " + iDays + " Tagen", sTargetDate];
 				}
 		}
 	}

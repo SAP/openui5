@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			// simple types and enums
 			"sap.ui.core.AccessibleRole",
 			"sap.ui.core.BarColor",
+			"sap.ui.core.CalendarType",
 			"sap.ui.core.CSSColor",
 			"sap.ui.core.CSSSize",
 			"sap.ui.core.CSSSizeShortHand",
@@ -542,8 +543,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		NEGATIVE : "NEGATIVE"
 	
 	};
-	
-	
+
+	/**
+	 * The types of Calendar
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.core.CalendarType = {
+
+		/**
+		 * The Gregorian calendar
+		 * @public
+		 */
+		Gregorian: "Gregorian",
+
+		/**
+		 * The civil variant of Islamic calendar
+		 * @public
+		 */
+		IslamicCivil: "IslamicCivil",
+
+		/**
+		 * The Umm al-Qura variant of Islamic calendar
+		 * @public
+		 */
+		IslamicUmalqura: "IslamicUmalqura"
+	};
+
 	/**
 	 * @class A string type that represents CSS color values. Allowed values are CSS hex colors like "#666666" or
 	 * 	"#fff", RGB/HSL values like "rgb(0,0,0)" or "hsla(50%,10%,30%,0.5)" as well as css color
