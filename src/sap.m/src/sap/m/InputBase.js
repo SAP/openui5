@@ -722,8 +722,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		
 		//remove aria property "aria-haspopup"
 		var $Input = jQuery(this.getFocusDomRef());
-		$Input[0].removeAttribute("aria-haspopup");
-		$Input[0].removeAttribute("aria-describedby");
+		$Input.removeAttr("aria-haspopup");
+		$Input.removeAriaDescribedBy(this.getId() + "-message");
 	};
 
 	/**
@@ -813,8 +813,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			
 			// add aria property "aria-haspopup"
-			$Input[0].setAttribute("aria-haspopup", "true");
-			$Input[0].setAttribute("aria-describedby", sMessageId + "-text");
+			$Input.attr("aria-haspopup", "true");
+			$Input.addAriaDescribedBy(sMessageId);
 		}
 	};
 

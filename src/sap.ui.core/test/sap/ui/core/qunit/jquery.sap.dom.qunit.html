@@ -331,6 +331,48 @@
 			// cleanup
 			document.body.removeChild(oDomRef);
 		});
+		
+		test("jQuery aria extensions", function() {
+			var $El = jQuery("<div>Aria Test</div>");
+			jQuery(document.body).append($El);
+
+			$El.addAriaLabelledBy("test1");
+			strictEqual($El.attr("aria-labelledby"), "test1", "aria-labelledby attribute is added to the DOM");
+			$El.addAriaDescribedBy("test1");
+			strictEqual($El.attr("aria-describedby"), "test1", "aria-describedby attribute is added to the DOM");
+
+			$El.addAriaLabelledBy("test1");
+			strictEqual($El.attr("aria-labelledby"), "test1", "already existing aria-labelledby is ignored");
+			$El.addAriaDescribedBy("test1");
+			strictEqual($El.attr("aria-describedby"), "test1", "already existing aria-describedby is ignored");
+
+			$El.addAriaLabelledBy("test");
+			strictEqual($El.attr("aria-labelledby"), "test1 test", "new aria-labelledby attribute is added with space concating");
+			$El.addAriaDescribedBy("test");
+			strictEqual($El.attr("aria-describedby"), "test1 test", "new aria-describedby attribute is added with space concating");
+
+			$El.removeAriaLabelledBy("t");
+			strictEqual($El.attr("aria-labelledby"), "test1 test", "non-existing aria-labelledby is ignored");
+			$El.removeAriaDescribedBy("t");
+			strictEqual($El.attr("aria-describedby"), "test1 test", "non-existing aria-describedby is ignored");
+
+			$El.removeAriaLabelledBy("test1");
+			strictEqual($El.attr("aria-labelledby"), "test", "existing aria-labelledby is removed from DOM");
+			$El.removeAriaDescribedBy("test1");
+			strictEqual($El.attr("aria-describedby"), "test", "existing aria-describedby is removed from DOM");
+
+			$El.removeAriaLabelledBy("test");
+			strictEqual($El.attr("aria-labelledby"), undefined, "last existing aria-labelledby is removed the attribute");
+			$El.removeAriaDescribedBy("test");
+			strictEqual($El.attr("aria-describedby"), undefined, "last existing aria-describedby is removed the attribute");
+
+			$El.removeAriaLabelledBy("test");
+			strictEqual($El.attr("aria-labelledby"), undefined, "non-existing aria-labelledby is ignored");
+			$El.removeAriaDescribedBy("test");
+			strictEqual($El.attr("aria-describedby"), undefined, "non-existing aria-describedby is ignored");
+
+			$El.remove();
+		});
 		</script>
 	</head>
 	<body>
