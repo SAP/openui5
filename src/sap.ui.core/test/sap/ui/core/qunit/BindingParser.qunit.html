@@ -33,7 +33,8 @@
 		formatter : function($) { return $; },
 		instancedType : new sap.ui.model.type.Date({
 			pattern : "yyyy-MM-dd"
-		})
+		}),
+		eventHandler: function() {}
 	}
 	
 	var oController = {
@@ -41,7 +42,8 @@
 		myformatter : function($) { return $; },
 		myInstancedType : new sap.ui.model.type.Date({
 			pattern : "yyyy-MM-dd"
-		})
+		}),
+		myeventHandler: function() {}
 	}
 	
 	var parse = sap.ui.base.ManagedObject.bindingParser;
@@ -66,6 +68,14 @@
 		equal(o.path, "something", "path should be as specified");
 		ok(o.type instanceof sap.ui.model.type.String, "parse should return the global type");
 		equal(o.formatter, undefined, "parse should return the name of the formatter function");
+	});
+
+	test("Single Binding with event", function(){
+		var o = parse("{path:'something', events: {event: 'Global.eventHandler'}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		equal(o.events.event, Global.eventHandler, "parse should return the global event handler function");
 	});
 
 	test("Single Binding with constraint regex", function(){
@@ -200,9 +210,10 @@
 	});
 	
 	test("Context Object", function(){
-		var o = parse("Some prefix {path:'something', type: '.mytype'}, some other {path:'/lastName', formatter: '.myformatter'}", oController);
+		var o = parse("Some prefix {path:'something', type: '.mytype', events: {event: '.myeventHandler'}}, some other {path:'/lastName', formatter: '.myformatter'}", oController);
 		equal(o.parts.length, 2, "binding info should contain two parts");
 		ok(o.parts[0].type instanceof sap.ui.model.type.String, "parse should return the controller type for part 1");
+		equal(o.parts[0].events.event.guid, oController.myeventHandler.guid, "event handler for part 1 should have been resolved to eventhandler function from controller");
 		equal(o.parts[1].formatter.guid, oController.myformatter.guid, "formatter for part 2 should have been resolved to formatter function from controller");
 	});
 

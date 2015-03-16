@@ -132,6 +132,15 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			}
 		}
 
+		function resolveEvents(o,sProp) {
+			if (!(jQuery.isPlainObject(o[sProp]))) {
+				return;
+			}
+			jQuery.each(o[sProp], function(sName, oObject) {
+				resolveRef(o[sProp], sName);
+			});
+		}
+
 		function resolveObject(o,sProp, sParentProp) {
 			var FNType;
 			if (!(typeof o[sProp] === "object" || jQuery.isArray(o[sProp]))) {
@@ -174,6 +183,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 				resolveType(oParseResult.result,'type');
 				resolveObject(oParseResult.result,'filters');
 				resolveObject(oParseResult.result,'sorter');
+				resolveEvents(oParseResult.result,'events');
 				resolveRef(oParseResult.result,'formatter');
 				resolveRef(oParseResult.result,'factory'); // list binding
 				resolveRef(oParseResult.result,'groupHeaderFactory');
