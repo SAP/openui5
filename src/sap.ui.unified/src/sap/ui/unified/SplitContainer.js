@@ -101,6 +101,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		this._canvasRenderer.destroy();
 		delete this._canvasRenderer;
 	
+		if (this._closeContentDelayId) {
+			jQuery.sap.clearDelayedCall(this._closeContentDelayId);
+			delete this._closeContentDelayId;
+		}
 		delete this._contentContainer;
 		delete this._secondaryContentContainer;
 	};
@@ -183,6 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			
 			if (this._closeContentDelayId) {
 				jQuery.sap.clearDelayedCall(this._closeContentDelayId);
+				delete this._closeContentDelayId;
 			}
 			
 			this._secondaryContentContainer.css(sSize, sSizeValue);
