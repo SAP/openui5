@@ -26,9 +26,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 
 	// create the component content, set the models
 	Component.prototype.createContent = function(){
-		oDate = new TypeDate();
-		oZip = new TypeString(null,{maxLength: 5});
-		oStreet = new Integer();
+		var oDate = new TypeDate();
+		var oZip = new TypeString(null,{maxLength: 5});
+		var oStreet = new Integer();
 		// UI
 		var oLayout = new ResponsiveGridLayout();
 		var oForm = new Form({

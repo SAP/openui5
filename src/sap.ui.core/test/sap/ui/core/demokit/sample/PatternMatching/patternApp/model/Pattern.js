@@ -1,11 +1,15 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/json/JSONModel'],
-	function(jQuery, JSONModel) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/core/routing/HashChanger',
+		'jquery.sap.script'
+	], function(jQuery, JSONModel, HashChanger/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Pattern = JSONModel.extend("patternApp.model.Pattern", {
 
 		constructor: function (oRouter) {
-			var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+			var oHashChanger = HashChanger.getInstance();
 
 			this._oPatternData = {
 				sampleRoutes: [
@@ -67,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/json/JSONModel'],
 
 			this._oRouter.getRoute(sName).attachMatched(function(oEvent) {
 				this._aPatterns[iPosition].matched = true;
-				this._aPatterns[iPosition].parameters = window.JSON.stringify(oEvent.getParameter("arguments"));
+				this._aPatterns[iPosition].parameters = JSON.stringify(oEvent.getParameter("arguments"));
 				this.setData(this._oPatternData);
 			}, this);
 

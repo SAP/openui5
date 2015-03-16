@@ -1,10 +1,18 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ListItem', 'sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/View', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/ODataUtils'],
-	function(jQuery, ListItem, Controller, View, JSONModel, ODataUtils) {
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/ListItem',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/mvc/View',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/odata/ODataUtils',
+		'jquery.sap.encoder',
+		'jquery.sap.script',
+		'jquery.sap.xml'
+	], function(jQuery, ListItem, Controller, View, JSONModel, ODataUtils/*, jQuerySapEncoder, jQuerySapScript, jQuerySapXML */) {
 	"use strict";
-
 
 	var MainController = Controller.extend("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 		// Turns an instance's id (full OData URL) into its path within the OData model

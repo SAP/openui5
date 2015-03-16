@@ -1,5 +1,11 @@
-sap.ui.define(['jquery.sap.global', 'patternApp/model/Pattern', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/core/routing/Router', 'sap/ui/model/Filter'],
-	function(jQuery, Pattern, Fragment, Controller, Router, Filter) {
+sap.ui.define([
+		'patternApp/model/Pattern',
+		'sap/ui/core/Fragment',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/routing/HashChanger',
+		'sap/ui/core/routing/Router',
+		'sap/ui/model/Filter'
+	], function(Pattern, Fragment, Controller, HashChanger, Router, Filter) {
 	"use strict";
 
 	var PatternTableController = Controller.extend("patternApp.view.PatternTable", {
@@ -24,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'patternApp/model/Pattern', 'sap/ui/core/Fra
 			this._sHash = sNewHash;
 
 			// Call replace hash here since setHash add history entries.
-			sap.ui.core.routing.HashChanger.getInstance().replaceHash(sNewHash);
+			HashChanger.getInstance().replaceHash(sNewHash);
 		},
 
 		onAddPattern : function () {

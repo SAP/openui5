@@ -5,5 +5,5 @@ sap.ui.getCore().attachInit(function() {
 	input.placeAt("ui5content");
 	var search = new sap.m.SearchField({value: "Change me!"});
 	search.placeAt("ui5content");
-	jQuery("#htmlcontent").html("<button>Press me!</button><input type=\"text\" value=\"Change me!\">")
+	jQuery("#htmlcontent").html("<button>Press me!</button><input type=\"text\" value=\"Change me!\">");
 })
