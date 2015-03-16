@@ -386,6 +386,18 @@
 		// cleanup
 		oTA.destroy();
 	});
+	
+	module("Accessibility");
+	test("DOM aria properties", function() {
+		var oTA = new sap.m.TextArea().placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var $TA = jQuery(oTA.getFocusDomRef());
+		strictEqual($TA.attr("role"), "textbox", "Control role set correctly");
+		strictEqual($TA.attr("aria-multiline"), "true", "Multiline is set for textarea");
+
+		oTA.destroy();
+	});
 
 })(jQuery, sap.ui.getCore());
 
