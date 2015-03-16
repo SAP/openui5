@@ -31,12 +31,12 @@ sap.ui.define([
 	
 		handleMenuItemPress: function(oEvent) {
 			var msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
-		    MessageToast.show(msg);
+			MessageToast.show(msg);
 		},
 	
 		handleTextFieldItemPress: function(oEvent) {
 			var msg = "'" + oEvent.getParameter("item").getValue() + "' entered";
-		    MessageToast.show(msg);
+			MessageToast.show(msg);
 		}
 	
 	});
