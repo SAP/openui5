@@ -104,6 +104,9 @@
 				// Dialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Dialog.qunit.html");
 
+				// load all explored samples
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ExploredSamples.qunit.html");
+
 				// FacetFilter
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FacetFilter.qunit.html");
 
@@ -339,6 +342,7 @@
 
 				// QUnit Tests for responsive behaviour (for example Responsive Margins)
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QUnitCompositesUsingIFrames.qunit.html");
+
 			}
 
 			return suite;
