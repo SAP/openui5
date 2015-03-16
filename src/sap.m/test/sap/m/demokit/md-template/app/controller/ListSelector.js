@@ -27,7 +27,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 								// Have to make sure that first list Item is selected
 								// and a select event is triggered. Like that, the corresponding
 								// detail page is loaded automatically
-								fnResolve({list: oList, 
+								fnResolve({list: oList,
 									path: oFirstListItem.getBindingContext().getPath()});
 							} else {
 								// No items in the list
@@ -103,11 +103,11 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 				});
 			}.bind(this));
 		},
-		
+
 		/**
-		 * Removes all selections from master list. 
+		 * Removes all selections from master list.
 		 * Does not trigger 'selectionChange' event on master list, though.
-		 * 
+		 *
 		 * @public
 		 */
 		clearMasterListSelection : function () {
@@ -116,8 +116,8 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 				this._oList.removeSelections(true);
 			}.bind(this));
 		}
-		
-		
+
+
 	});
 
 }, /* bExport= */ true);

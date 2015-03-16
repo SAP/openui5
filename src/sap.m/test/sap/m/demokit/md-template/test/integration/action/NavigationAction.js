@@ -3,6 +3,22 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.action.NavigationAction", {
+		iWaitUntilTheAppBusyIndicatorIsGone: function () {
+			return this.waitFor({
+				id : "idAppControl",
+				viewName : "App",
+				// inline-matcher directly as function
+				matchers : function(oRootView) {
+					// we set the view busy, so we need to query the parent of the app
+					return oRootView.getParent().getBusy() === false;
+				},
+				success : function (oRootView) {
+					ok(true, "The app is not busy busy anymore");
+				},
+				errorMessage : "The app is still busy."
+			});
+		},
+
 		iPressAnObjectListItem : function (sViewName, sListId, sObjectTitle) {
 			var oObjectListItem = null;
 
@@ -84,7 +100,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				}
 			});
 		},
-		
+
 		iChangeTheHashToSomethingInvalid : function () {
 			return this.waitFor({
 				success : function () {
@@ -92,7 +108,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				}
 			});
 		},
-		
+
 		iSearchForSomethingWithNoResults : function () {
 			//TODO refactoring of page objects: reuse this from 'MasterAction'
 			return this.waitFor({
@@ -116,7 +132,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Did not find the nav button on detail page"
 			});
 		},
-		
+
 		iPressTheBackButtonOnLineItemPage : function () {
 			return this.waitFor({
 				id : "lineItemPage",
@@ -127,7 +143,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Did not find the nav button on line item page"
 			});
 		},
-		
+
 		iGoBackInBrowserHistory : function () {
 			return this.waitFor({
 				success : function () {
@@ -135,7 +151,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				}
 			});
 		},
-		
+
 
 		iGoForwardInBrowserHistory : function () {
 			return this.waitFor({
@@ -148,7 +164,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		iLookAtTheScreen : function () {
 			return this;
 		},
-		
+
 		iWaitUntilTheMasterListIsLoaded : function () {
 			return this.waitFor({
 				id : "list",

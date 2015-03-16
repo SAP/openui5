@@ -18,18 +18,6 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		});
 	}});
 
-	opaTest("Should see a busy indication while loading the metadata", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartTheAppOnAPhoneWithDelay("", 10000);
-
-		//Actions
-		When.iLookAtTheScreen();
-
-		// Assertions
-		Then.iShouldSeeTheBusyIndicator().
-			and.iTeardownMyAppFrame();
-	});
-
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnAPhone();
