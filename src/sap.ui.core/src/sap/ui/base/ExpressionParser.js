@@ -18,7 +18,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 	//nud = "null denotation"
 	//rbp = "right binding power"
-	var mDefaultGlobals = {
+	var fnUndefined = jQuery.proxy(CONSTANT, null, undefined),
+		mDefaultGlobals = {
 			encodeURIComponent: encodeURIComponent,
 			Math: Math,
 			odata: {
@@ -68,11 +69,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 				lbp: 17,
 				led: function (oToken, oParser, fnLeft) {
 					var aArguments = [],
-						bFirstArgument = true;
+						bFirst = true;
 
 					while (oParser.current().id !== ")") {
-						if (bFirstArgument) {
-							bFirstArgument = false;
+						if (bFirst) {
+							bFirst = false;
 						} else {
 							oParser.advance(","); //consume "," from predecessor argument
 						}
@@ -96,7 +97,22 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					oParser.advance("]");
 					return jQuery.proxy(PROPERTY_ACCESS, null, fnLeft, fnName);
 				},
-				nud: unexpected
+				nud: function (oToken, oParser) {
+					var aElements = [],
+						bFirst = true;
+
+					while (oParser.current().id !== "]") {
+						if (bFirst) {
+							bFirst = false;
+						} else {
+							oParser.advance(","); //consume "," from predecessor element
+						}
+						aElements.push(
+							oParser.current().id === "," ? fnUndefined : oParser.expression(0));
+					}
+					oParser.advance("]");
+					return jQuery.proxy(ARRAY, null, aElements);
+				}
 			},
 			"!": {
 				lbp: 15,
@@ -137,14 +153,14 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			"{": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					var bFirstArgument = true,
+					var bFirst = true,
 						sKey,
 						mMap = {},
 						fnValue;
 
 					while (oParser.current().id !== "}") {
-						if (bFirstArgument) {
-							bFirstArgument = false;
+						if (bFirst) {
+							bFirst = false;
 						} else {
 							oParser.advance(",");
 						}
@@ -207,6 +223,21 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	addInfix("||", 6, function (x, fnY) { return x || fnY(); }, true);
 
 	//Formatter functions to evaluate symbols like literals or operators in the expression grammar
+	/**
+	 * Formatter function for an array literal.
+	 * @param {function[]} aElements - array of formatter functions for the array elements
+	 * @param {any[]} aParts - the array of binding values
+	 * @return {any[]} - the resulting array literal
+	 */
+	function ARRAY(aElements, aParts) {
+		var aResult = [];
+
+		jQuery.each(aElements, function(i, fnArgument) {
+			aResult[i] = fnArgument(aParts);
+		});
+		return aResult;
+	}
+
 	/**
 	 * Formatter function for an embedded binding.
 	 * @param {number} i - the index of the binding as it appears when reading the
@@ -611,6 +642,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 		 * <li> Function call </li>
 		 * <li> Embedded binding to refer to model contents, e.g. ${myModel>/Address/city} </li>
 		 * <li> Global functions and objects: encodeURIComponent, Math, RegExp </li>
+		 * <li> Property Access via [, e.g. ['foo', 'bar'][0] </li>
+		 * <li> Array literal, e.g. ['foo', 'bar'] </li>
 		 * </ul>
 		 *
 		 * @param {function} fnResolveBinding - the function to resolve embedded bindings
