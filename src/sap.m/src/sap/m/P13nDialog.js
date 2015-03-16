@@ -32,12 +32,13 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * This property determines which panel is initially shown when dialog is opened.
+				 * This property determines which panel is initially shown when dialog is opened. Due to extensibility reason the type should be
+				 * "string". So it is feasible to add a custom panel without expanding the type.
 				 * 
 				 * @since 1.26.0
 				 */
 				initialVisiblePanelType: {
-					type: "sap.m.P13nPanelType",
+					type: "string",
 					group: "Misc",
 					defaultValue: null
 				},
@@ -457,14 +458,6 @@ sap.ui.define([
 		}
 	};
 
-	P13nDialog.prototype.onBeforeRendering = function() {
-		Dialog.prototype.onBeforeRendering.apply(this, arguments);
-		if (this.getVisiblePanel()) {
-			this.setInitialVisiblePanelType(this.getVisiblePanel().getType());
-		}
-		Dialog.prototype.onBeforeRendering.apply(this, arguments);
-	};
-
 	P13nDialog.prototype.onAfterRendering = function() {
 		Dialog.prototype.onAfterRendering.apply(this, arguments);
 		var oContent = jQuery(this.getFocusDomRef()).find(".sapMDialogScrollCont");
@@ -508,7 +501,8 @@ sap.ui.define([
 				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS"));
 				break;
 			default:
-				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
+				var sTitle = oPanel.getTitleLarge() || this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
+				this.setTitle(sTitle);
 		}
 	};
 
