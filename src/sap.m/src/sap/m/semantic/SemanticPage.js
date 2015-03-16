@@ -516,7 +516,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 	SemanticPage.prototype._getNavButton = function () {
 		if (!this._oNavButton) {
-			this._oNavButton = new Button({
+			this._oNavButton = new Button(this.getId() + "-navButton", {
 				type: sap.m.ButtonType.Up,
 				press: jQuery.proxy(this.fireNavButtonPress, this)
 			});
