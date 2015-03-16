@@ -95,8 +95,7 @@
 				},
 				"notFound": {
 					"viewName": "NotFound",
-					"viewId": "notFound",
-					"viewLevel": 2
+					"viewId": "notFound"
 				}
 			}
 		}
