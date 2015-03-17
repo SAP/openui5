@@ -161,16 +161,6 @@
 			hasGrouping: false
 		}).activate();
 
-
-		/* var oTablePersoDialog = new sap.m.TablePersoDialog({persoDialogFor: oTable});
-		oTablePersoDialog.attachConfirm(function() {
-			var oPersoData = oTablePersoDialog.retrievePersonalizations();
-			for (var c = 0, cl = oPersoData.aColumns.length; c < cl; c++) {
-				var oCol = oPersoData.aColumns[c];
-				jQuery.sap.log.info("Column '" + oCol.text + "', order " + oCol.order + ", visible: " + oCol.visible);
-			}
-		}); */
-
 		var page = new sap.m.Page("myFirstPage", {
 			title : "TablePersoDialog Test",
 			content : [oTable, oTable1]
@@ -516,7 +506,7 @@
 
 		module("Keyboard handling");
 
-		asyncTest("Test Initial focus", function () {
+		test("Test Initial focus", function () {
 			// arrange
 			var oTable = new sap.m.Table("testInitialFocusTable", {
 				columns: [
@@ -569,15 +559,86 @@
 			sap.ui.getCore().applyChanges();
 
 			// assert
-			setTimeout(function () {
-				var actual = document.activeElement.id;
-				var expected = oTPC.getTablePersoDialog()._oList.getItems()[0].getId();
-				strictEqual(actual, expected, 'The focus should be on the first list item.');
-				oTPC.destroy();
-				oTable.destroy();
-				start();
-			}, 500)
+			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
+			var expected = oTPC.getTablePersoDialog()._oList.getItems()[0].getId();
+			strictEqual(actual, expected, 'The focus should be on the first list item.');
+			oTPC.destroy();
+			oTable.destroy();
+				
 		});
+		
+		test("Test Initial focus with grouping", function () {
+			// arrange
+			var oTable = new sap.m.Table("testInitialFocusTable", {
+				columns: [
+					new sap.m.Column("col0", {
+						header : new sap.m.Label({text : "Column 0"}),
+						visible : true,
+					}),
+					new sap.m.Column("col1", {
+						header: new sap.m.Label({text: "Column 1"}),
+						visible : true,
+					}),
+					new sap.m.Column("col2", {
+						header: new sap.m.Label({text: "Column 2"}),
+						visible : true,
+					})]
+			});
+
+			var oPersoService = {
+				oPersoData : {
+					_persoSchemaVersion: "1.0",
+					aColumns : []
+				},
+				getPersData : function () {
+					var oDeferred = new jQuery.Deferred();
+					if(!this._oBundle) {
+						this._oBundle = this.oPersoData;
+					}
+					var oBundle = this._oBundle;
+					oDeferred.resolve(oBundle);
+					return oDeferred.promise();
+				},
+				setPersData : function (oBundle) {
+					var oDeferred = new jQuery.Deferred();
+					this._oBundle = oBundle;
+					oDeferred.resolve();
+					return oDeferred.promise();
+				},
+				
+				getGroup : function(oColumn) {
+					if(oColumn.getHeader() && oColumn.getHeader().getText) {
+						if( oColumn.getHeader().getText() == "Column 0") {
+							return "Primary Group";
+						}
+					}
+					return "Secondary Group";
+				}
+			};
+
+			var oTPC = new sap.m.TablePersoController({
+				table: oTable,
+				persoService: oPersoService,
+				hasGrouping: true
+			}).activate();
+
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oTPC.openDialog();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var actual = oTPC.getTablePersoDialog()._oList.getSelectedItem().getId();
+			var expected = oTPC.getTablePersoDialog()._oList.getItems()[1].getId();
+			strictEqual(actual, expected, 'The focus should be on the first list item.');
+			oTPC.destroy();
+			oTable.destroy();
+		});
+		
+		
+		
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
