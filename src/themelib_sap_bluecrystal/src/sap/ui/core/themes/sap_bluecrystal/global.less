@@ -495,12 +495,16 @@
 @sapUiChartTitleFontWeight: bold;
 
 @sapUiChartDataPointBorderColor: @sapUiLightestBorder;                                 // #ffffff
-@sapUiChartDataPointBorderHoverSelectedColor: darken(@sapUiChartBackgroundColor, 40%);
-@sapUiChartDataPointNotSelectedBackgroundOpacity: 0.5;
+@sapUiChartDataPointBorderHoverSelectedColor: darken(@sapUiDarkBorder,35);
+@sapUiChartDataPointNotSelectedBackgroundOpacity: 0.6;
 
 @sapUiChartValueAxisLineOpacity: 0;
 @sapUiChartCategoryAxisLabelFontHoverColor: @sapUiDarkText;   // #333333
 @sapUiChartCategoryAxisLabelFontPressedColor: @sapUiDarkText; // #333333
+
+@sapUiChartTargetColor: @sapUiDarkLine;
+@sapUiChartTargetShadowColor: @sapUiLightestBorder;
+@sapUiChartBubbleBGOpacity: 0.8;
 
 // qualitative palette
 
@@ -575,6 +579,15 @@
 @sapUiChartPaletteSequentialNeutral: @sapUiChartSequenceNeutral;
 @sapUiChartPaletteSequentialNeutralDark1: saturate(darken(@sapUiChartSequenceNeutral,10),1);
 @sapUiChartPaletteSequentialNeutralDark2: saturate(darken(@sapUiChartSequenceNeutral,15),1);
+
+@sapUiMapLegendBG: #fff;
+@sapUiMapLegendBorderColor: #ccc;
+
+@sapUiChloroplethBG: lighten(@sapUiChartSequenceNeutral,42);
+@sapUiChloroplethRegionBorder: @sapUiLightestBorder;
+@sapUiChloroplethRegionBG: saturate(lighten(@sapUiChartSequenceNeutral,20),1);
+@sapUiChloroplethLegendBG: @sapUiMapLegendBG;
+@sapUiChloroplethLegendBorderColor: @sapUiMapLegendBorderColor;
 
 
 /* Shell */
