@@ -78,11 +78,9 @@ sap.ui.define([
 			var oData = this.oView.getModel().getData();
 			var aItems = oData.items;
 			var sDocumentId = oEvent.getParameter("documentId");
-			var bSetData = false;
-
 			jQuery.each(aItems, function(index) {
 				if (aItems[index] && aItems[index].documentId === sDocumentId) {
-					aItems[index].fileName = oEvent.getParameter("fileName");
+					aItems[index].fileName = oEvent.getParameter("item").getFileName();
 				};
 			});
 			this.oView.getModel().setData(oData);
