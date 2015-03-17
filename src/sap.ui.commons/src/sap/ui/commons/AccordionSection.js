@@ -267,7 +267,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				}
 	
 				var cont = this.getDomRef("cont");
-				cont.style.display = "none";
+				if (cont) {
+					cont.style.display = "none";
+				}
 				if (accessibility) {
 					cont.setAttribute("aria-expanded", "false");
 					cont.setAttribute("aria-hidden", "true");
