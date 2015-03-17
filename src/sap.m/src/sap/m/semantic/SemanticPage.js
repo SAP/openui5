@@ -509,7 +509,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 	SemanticPage.prototype._getTitle = function () {
 		if (!this._oTitle) {
-			this._oTitle = new Title({text: this.getTitle()});
+			this._oTitle = new Title(this.getId() + "-title", {text: this.getTitle()});
 		}
 		return this._oTitle;
 	};
@@ -671,7 +671,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 		var oPage = this.getAggregation("_page");
 		if (!oPage) {
-			this.setAggregation("_page", new Page());
+			this.setAggregation("_page", new Page(this.getId() + "-page"));
 			oPage = this.getAggregation("_page");
 		}
 
