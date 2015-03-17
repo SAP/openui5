@@ -197,8 +197,8 @@
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.tiny",
-				"name": "XML Templating: tiny sample",
-				"description": "Tiny XML Templating sample based on OData V4 annotations"
+				"name": "XML Templating: minimal sample",
+				"description": "Minimal sample for XML Templating. BEWARE: This is meant to be a pure code sample. (To run it, you would need a proxy which is configured properly.)"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.types",
