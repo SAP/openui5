@@ -201,7 +201,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			if (that._sLastSelectedItemId) {
 				var aItems = that._oList.getItems(),
 					fnItemMatches = function (oListItem) {
-						var bResult = (oListItem.getBindingContext('Personalization').getProperty('id') === that._sLastSelectedItemId);
+						var bResult = (oListItem.getBindingContext('Personalization') && 
+								oListItem.getBindingContext('Personalization').getProperty('id') === that._sLastSelectedItemId);
 						if (bResult) {
 							that._oList.setSelectedItem(oListItem);
 						}
@@ -366,8 +367,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 		if (!this._oList.getSelectedItem()) {
 			// Make sure initial selection is set
-			if (this._oList.getItems().length > 0) {
-				this._sLastSelectedItemId = this._oList.getItems()[0].getBindingContext('Personalization').getProperty('id');
+			var aItems = this._oList.getItems();
+			if (this.getHasGrouping()) {
+				aItems = aItems.filter(function (oItem){
+					return oItem.getMetadata().getName() != "sap.m.GroupHeaderListItem";
+				});
+			}
+			if (aItems.length > 0) {
+				this._sLastSelectedItemId = aItems[0].getBindingContext('Personalization').getProperty('id');
 			}
 		}
 
@@ -462,7 +469,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// Remember last selected row, so it can be selected again after
 			// reset all is done
 			var oLastSelectedItem = this._oList.getSelectedItem();
-			this._sLastSelectedItemId = oLastSelectedItem ? oLastSelectedItem.getBindingContext('Personalization').getProperty('id') : null; 
+			this._sLastSelectedItemId = oLastSelectedItem && 
+				oLastSelectedItem.getBindingContext('Personalization') && 
+				oLastSelectedItem.getBindingContext('Personalization').getProperty('id'); 
 
 			// CSN 0120061532 0001380609 2014
 			// Make sure that captions are not replaced by column id's. This my be the case if
