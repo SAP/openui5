@@ -1667,7 +1667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		// do a value copy or the changes to that value will be modified in the model as well (reference)
-		oValue = jQuery.extend(true, {}, oValue);
+		oValue = jQuery.sap.extend(true, {}, oValue);
 
 		if (bIncludeExpandEntries === true) {
 			// include expand entries
@@ -2330,7 +2330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		// adding the result data to the data object
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 			//need a deep data copy for import
-			oResultData = jQuery.extend(true, {}, oResultData);
+			oResultData = jQuery.sap.extend(true, {}, oResultData);
 			that._importData(oResultData, mGetEntities);
 		}
 
@@ -2449,7 +2449,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		// do a copy of the payload or the changes will be deleted in the model as well (reference)
-		oPayload = jQuery.extend(true, {}, oData);
+		oPayload = jQuery.sap.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
 			sType = oPayload.__metadata.type;
@@ -3273,7 +3273,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				var oChangedEntry = that._getObject('/' + sKey);
 				delete that.mChangedEntities[sKey];
 				var oEntry = that._getObject('/' + sKey);
-				jQuery.extend(true, oEntry, oChangedEntry);
+				jQuery.sap.extend(true, oEntry, oChangedEntry);
 
 			}
 		});
@@ -3364,7 +3364,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		if (!this.mChangedEntities[sKey]) {
-			oEntry = jQuery.extend(true,{},oEntry);
+			oEntry = jQuery.sap.extend(true,{},oEntry);
 		}
 		this.mChangedEntities[sKey] = oEntry;
 		
@@ -3512,7 +3512,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	ODataModel.prototype.getPendingChanges = function() {
-		return jQuery.extend(true, {}, this.mChangedEntities);
+		return jQuery.sap.extend(true, {}, this.mChangedEntities);
 	};
 	/**
 	 * update all bindings
@@ -3613,7 +3613,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, sETag, oContext,
 			sKey, aUrlParams, sBatchGroupId, sChangeSetId, oRequestHandle,
-			mUrlParams, mHeaders, mRequests, vProperties, oEntry, oEntity = {},
+			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated, 
 			sMethod = "POST",
 			that = this;
@@ -3677,11 +3677,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
 			oRequest.context = oCreatedContext;
 			oRequest.key = sKey;
-	
-			if (!that.mChangedEntities[sKey]) {
-				oEntry = jQuery.extend(true,{}, oEntity);
-			}
-			that.mChangedEntities[sKey] = oEntry;
 	
 			mRequests = that.mRequests;
 			if (sBatchGroupId in that.mDeferredBatchGroups) {
