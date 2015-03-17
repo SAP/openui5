@@ -143,35 +143,6 @@
 		};
 		oBtn.press();
 	});
-
-	asyncTest("Focus :sapTabbable elements", function() {
-		expect(1);
-
-		var oDialog = new sap.ui.commons.Dialog({
-			modal: true
-		});
-
-		oDialog.addContent(new sap.ui.commons.Image({
-			decorative: true,
-			src: './Dialog/openUI5_logo.png'
-		}));
-		oDialog.addContent(new sap.ui.commons.TextField("firstFocusText"));
-		oDialog.addContent(new sap.ui.commons.TextField());
-
-		var fnOpened = function() {
-			oDialog.oPopup.detachOpened(fnOpened);
-
-			var bTest = document.activeElement.id == "firstFocusText";
-			ok(bTest, "First text field was focused instead of image");
-
-			oDialog.close();
-			start();
-		};
-		oDialog.oPopup.setDurations(0, 0);
-		oDialog.oPopup.attachOpened(fnOpened);
-
-		oDialog.open();
-	});
 </script>
 
 </head>
