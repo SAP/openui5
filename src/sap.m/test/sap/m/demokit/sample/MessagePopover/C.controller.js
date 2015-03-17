@@ -2,8 +2,8 @@ sap.ui.define([
 		'sap/m/MessagePopover',
 		'sap/m/MessagePopoverItem',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel',
-	], function(Controller, MessagePopover, MessagePopoverItem) {
+		'sap/ui/model/json/JSONModel'
+	], function(MessagePopover, MessagePopoverItem, Controller, JSONModel) {
 
 	var oMessageTemplate = new MessagePopoverItem({
 		type: '{type}',
