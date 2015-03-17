@@ -39,7 +39,9 @@
 
 /* remove user agent pseudo-element clear button (IE specifix) */
 .sapMInputBaseInner::-ms-clear {
-	display: none;
+
+	/* note: don't use display: none; see BCP 1570024996 */
+	height: 0;
 }
 
 .sapMInputBaseInner {
