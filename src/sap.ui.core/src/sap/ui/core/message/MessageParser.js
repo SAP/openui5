@@ -7,10 +7,25 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 	"use strict";
 
 /**
+ * 
+ * @namespace
+ * @name sap.ui.core.message
+ * @public
+ */
+
+/**
  * Abstract MessageParser class to be inherited in back-end specific implementations.
  * 
+ * @class
+ * @classdesc 
+ *   This is an abstract base class for MessageParser objects.
+ * @extends sap.ui.base.Object
+ *
+ * @author SAP SE
+ * @version ${version}
  * @public
  * @abstract
+ * @alias sap.ui.core.message.MessageParser
  */
 var MessageParser = Object.extend("sap.ui.core.message.MessageParser", {
 	metadata: {
