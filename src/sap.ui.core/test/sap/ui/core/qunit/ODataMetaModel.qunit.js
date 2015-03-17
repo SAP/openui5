@@ -46,14 +46,23 @@
 					sap:creatable="false" sap:updatable="false">\
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
-				<Property Name="NakedProperty" Type="Edm.String"/>\
+				<Property Name="AnyProperty" Type="Edm.String" sap:updatable="false"/>\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
+			</EntityType>\
+			<EntityType Name="VH_Sex" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Sex"/>\
+				</Key>\
+				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1" />\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
 				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
 					sap:content-version="1" />\
+				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex" \
+					sap:creatable="false" sap:updatable="false" sap:deletable="false" \
+					sap:searchable="true" sap:content-version="1"/> \
 				<AssociationSet Name="Assoc_FooSet" Association="GWSAMPLE_BASIC.Assoc_Foo" sap:creatable="false">\
 					<End EntitySet="BusinessPartnerSet" Role="FromRole_Foo"/>\
 					<End EntitySet="BusinessPartnerSet" Role="ToRole_Foo"/>\
@@ -101,6 +110,34 @@
 </Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
 		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode"/>\
+		<Annotation Term="Org.OData.Core.V1.Computed" Bool="true"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
+		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
+		<Annotation Term="Org.OData.Capabilities.V1.SearchRestrictions">\
+			<Record>\
+				<PropertyValue Property="Searchable" Bool="false"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet">\
+		<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">\
+			<Record>\
+				<PropertyValue Property="Insertable" Bool="false"/>\
+			</Record>\
+		</Annotation>\
+		<Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">\
+			<Record>\
+				<PropertyValue Property="Updatable" Bool="false"/>\
+			</Record>\
+		</Annotation>\
+		<Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">\
+			<Record>\
+				<PropertyValue Property="Deletable" Bool="false"/>\
+			</Record>\
+		</Annotation>\
 	</Annotations>\
 </Schema>\
 </edmx:DataServices>\
@@ -597,9 +634,38 @@
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
+					oAnyProperty = oBusinessPartner.property[1],
 					oNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oParameter = oFunctionImport.parameter[0],
-					sSAPData = "http://www.sap.com/Protocols/SAPData";
+					sSAPData = "http://www.sap.com/Protocols/SAPData",
+					oVHSex = oGWSampleBasic.entityType[1],
+					oVHSexSet = oEntityContainer.entitySet[1];
+
+				function checkCapabilities(sExtension) {
+					var sCapability, sProperty, oExpected;
+
+					switch (sExtension) {
+						case "updatable":
+							sCapability = "UpdateRestrictions";
+							sProperty = "Updatable";
+							break;
+						case "deletable":
+							sCapability = "DeleteRestrictions";
+							sProperty = "Deletable";
+							break;
+						default:
+							sCapability = "InsertRestrictions";
+							sProperty = "Insertable";
+					}
+
+					deepEqual(oVHSexSet["sap:" + sExtension], "false");
+					delete oVHSexSet["sap:" + sExtension];
+					oExpected = {};
+					oExpected[sProperty] = {"Bool": "false"};
+					deepEqual(oVHSexSet["Org.OData.Capabilities.V1." + sCapability], oExpected,
+						sExtension + " at entity set");
+					delete oVHSexSet["Org.OData.Capabilities.V1." + sCapability];
+				}
 
 				start();
 				strictEqual(oBusinessPartner.name, "BusinessPartner");
@@ -611,6 +677,8 @@
 
 				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0");
 				delete oBusinessPartner.$path;
+				strictEqual(oVHSex.$path, "/dataServices/schema/0/entityType/1");
+				delete oVHSex.$path;
 
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
@@ -618,18 +686,8 @@
 				deepEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
 
-				deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
-				delete oBusinessPartnerId["sap:label"];
-				deepEqual(oBusinessPartnerId["sap:creatable"], "false");
-				delete oBusinessPartnerId["sap:creatable"];
-				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
-				delete oBusinessPartnerId["sap:updatable"];
-
 				strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0", "$path");
 				delete oCTAddress.$path;
-
-				deepEqual(oCTAddressCity["sap:label"], "City");
-				delete oCTAddressCity["sap:label"];
 
 				deepEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
@@ -652,11 +710,13 @@
 				deepEqual(oFunctionImport["sap:action-for"], "GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
 
-				deepEqual(oParameter["sap:label"], "ID");
-				delete oParameter["sap:label"];
-
 				deepEqual(oNavigationProperty["sap:filterable"], "true");
 				delete oNavigationProperty["sap:filterable"];
+
+				deepEqual(oVHSex["sap:content-version"], "1");
+				delete oVHSex["sap:content-version"];
+				deepEqual(oVHSexSet["sap:content-version"], "1");
+				delete oVHSexSet["sap:content-version"];
 
 				if (i > 0) {
 					ok(oAnnotations, "annotations are also loaded");
@@ -757,20 +817,65 @@
 				}
 
 				// check SAP V2 annotations as V4 annotations
+				// sap:label
+				deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
+				delete oBusinessPartnerId["sap:label"];
 				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "Bus. Part. ID"
 				}, "Label derived from sap:label");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"];
+
 				// in case of i > 1 property has been overwritten by annotation file
 				// complex type: property
+				deepEqual(oCTAddressCity["sap:label"], "City");
+				delete oCTAddressCity["sap:label"];
 				deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
 				}, "Label derived from sap:label");
 				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
+
+				deepEqual(oParameter["sap:label"], "ID");
+				delete oParameter["sap:label"];
 				deepEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "ID"
 				}, "Label derived from sap:label");
 				delete oParameter["com.sap.vocabularies.Common.v1.Label"];
+
+				// sap:creatable
+				checkCapabilities("creatable");
+
+				// sap:updatable
+				checkCapabilities("updatable");
+
+				// sap:deletable
+				checkCapabilities("deletable");
+
+				// sap:creatable=false and sap:updatable=false on property level
+				deepEqual(oBusinessPartnerId["sap:creatable"], "false");
+				delete oBusinessPartnerId["sap:creatable"];
+				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
+				delete oBusinessPartnerId["sap:updatable"];
+				deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
+					"Bool" : "true"
+				}, "sap:creatable=false and sap:updatable=false on property level");
+				delete oBusinessPartnerId["Org.OData.Core.V1.Computed"];
+
+				// sap:creatable=true and sap:updatable=false on property level
+				// sap:creatable=true is the default and thus no SAP V2 annotation is added
+				deepEqual(oAnyProperty["sap:updatable"], "false");
+				delete oAnyProperty["sap:updatable"];
+				deepEqual(oAnyProperty["Org.OData.Core.V1.Immutable"], {
+					"Bool" : "true"
+				}, "sap:creatable=true and sap:updatable=false on property level");
+				delete oAnyProperty["Org.OData.Core.V1.Immutable"];
+
+				// sap:searchable
+				deepEqual(oVHSexSet["sap:searchable"], "true");
+				delete oVHSexSet["sap:searchable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
+					"Searchable": {"Bool" : "false"}
+				}, "BusinessPartnerSet not searchable");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			}, onError)["catch"](onError);

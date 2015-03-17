@@ -92,7 +92,20 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			metadata : {
 				publicMethods : ["loaded"]
 			}
-		});
+		}),
+		oBoolFalse = { "Bool" : "false" },
+		oBoolTrue = { "Bool" : "true" },
+		mV2ToV4 = {
+			creatable : {
+				"Org.OData.Capabilities.V1.InsertRestrictions" : { "Insertable" : oBoolFalse }
+			},
+			deletable : {
+				"Org.OData.Capabilities.V1.DeleteRestrictions" : { "Deletable" : oBoolFalse }
+			},
+			updatable : {
+				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
+			}
+		};
 
 	/*
 	 * Returns the index of the object inside the given array, where the property with the given
@@ -147,7 +160,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @param {sap.ui.model.Model} oModel
 	 *   any model
 	 * @param {string} sArrayName
-	 *  name of array within schema which will be searched
+	 *   name of array within schema which will be searched
 	 * @param {string} sQualifiedName
 	 *   a qualified name, e.g. "ACME.Foo"
 	 * @param {boolean} [bAsPath=false]
@@ -198,15 +211,26 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 * @param {object} o
 		 *   any object
 		 * @param {object} oExtension
-		 *   The SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added.
+		 *   the SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added
+		 * @param {string} sTypeClass
+		 *   the type class of the given object; supported type classes are "Property" and
+		 *   "EntitySet"
 		 */
-		function addV4Annotation(o, oExtension) {
+		function addV4Annotation(o, oExtension, sTypeClass) {
 			switch (oExtension.name) {
+				case "creatable":
+				case "deletable":
+				case "updatable":
+					// true is the default in V4 so add annotation only in case of false
+					if (sTypeClass === "EntitySet" && oExtension.value === "false") {
+						jQuery.extend(o, mV2ToV4[oExtension.name]);
+					}
+					break;
 				case "label":
-					o["com.sap.vocabularies.Common.v1.Label"] = {"String": oExtension.value};
+					o["com.sap.vocabularies.Common.v1.Label"] = {"String" : oExtension.value};
 					break;
 				default:
-					// TODO log unsupported annotations
+					// no transformation for V2 annotation supported or necessary
 			}
 		}
 
@@ -214,18 +238,40 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 * Lift all extensions from the <a href="http://www.sap.com/Protocols/SAPData">
 		 * SAP Annotations for OData Version 2.0</a> namespace up as attributes with "sap:" prefix.
 		 *
-		 * @param {number} iUnused
-		 *   unused index so that the function can be used directly in jQuery.each
 		 * @param {object} o
 		 *   any object
+		 * @param {string} sTypeClass
+		 *   the type class of the given object; supported type classes are "Property" and
+		 *   "EntitySet"
 		 */
-		function liftSAPData(iUnused, o) {
+		function liftSAPData(o, sTypeClass) {
 			jQuery.each(o.extensions || [], function (i, oExtension) {
 				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 					o["sap:" + oExtension.name] = oExtension.value;
-					addV4Annotation(o, oExtension);
+					addV4Annotation(o, oExtension, sTypeClass);
 				}
 			});
+			// after all SAP V2 annotations are lifted up add V4 annotations that are calculated
+			// by multiple V2 annotations or that have a different default value
+			switch (sTypeClass) {
+				case "Property":
+					if (o["sap:updatable"] === "false") {
+						if (o["sap:creatable"] === "false") {
+							o["Org.OData.Core.V1.Computed"] = oBoolTrue;
+						} else {
+							o["Org.OData.Core.V1.Immutable"] = oBoolTrue;
+						}
+					}
+					break;
+				case "EntitySet":
+					if (o["sap:searchable"] !== "true") {
+						o["Org.OData.Capabilities.V1.SearchRestrictions"] =
+							{ "Searchable" : oBoolFalse };
+					}
+					break;
+				default:
+					// nothing to do
+			}
 		}
 
 		/*
@@ -258,12 +304,15 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 *   any array of children
 		 * @param {object} mChildAnnotations
 		 *   map from child name (or role) to annotations
+		 * @param {string} sTypeClass
+		 *   the type class of the given children; supported type classes are "Property" and
+		 *   "EntitySet"
 		 * @param {function} [fnCallback]
 		 *   optional callback for each child
 		 */
-		function visitChildren(aChildren, mChildAnnotations, fnCallback) {
+		function visitChildren(aChildren, mChildAnnotations, sTypeClass, fnCallback) {
 			jQuery.each(aChildren || [], function (iUnused, oChild) {
-				liftSAPData(iUnused, oChild);
+				liftSAPData(oChild, sTypeClass);
 				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 
 				if (fnCallback) {
@@ -319,7 +368,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 						var sQualifiedName = oSchema.namespace + "." + oParent.name,
 							mChildAnnotations = getChildAnnotations(sQualifiedName, bInContainer);
 
-						liftSAPData(j, oParent);
+						liftSAPData(oParent);
 						jQuery.extend(oParent, oAnnotations[sQualifiedName]);
 						oParent.$path = "/dataServices/schema/" + i + "/" + sArrayName + "/" + j;
 
@@ -327,7 +376,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 					});
 				}
 
-				liftSAPData(i, oSchema);
+				liftSAPData(oSchema);
 				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
 
 				visitParents("association", false, function (oAssociation, mChildAnnotations) {
@@ -335,7 +384,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 				});
 
 				visitParents("complexType", false, function (oComplexType, mChildAnnotations) {
-					visitChildren(oComplexType.property, mChildAnnotations);
+					visitChildren(oComplexType.property, mChildAnnotations, "Property");
 				});
 
 				visitParents("entityContainer", true,
@@ -354,7 +403,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 
 							jQuery.each(oFunctionImport.parameter || [],
 								function (iUnused, oParam) {
-									liftSAPData(iUnused, oParam);
+									liftSAPData(oParam);
 									jQuery.extend(oParam,
 										mAnnotations[oFunctionImport.name + "/" + oParam.name]);
 								}
@@ -362,14 +411,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 						}
 
 						visitChildren(oEntityContainer.associationSet, mChildAnnotations);
-						visitChildren(oEntityContainer.entitySet, mChildAnnotations);
+						visitChildren(oEntityContainer.entitySet, mChildAnnotations, "EntitySet");
 						visitChildren(oEntityContainer.functionImport, mChildAnnotations,
-							visitParameters);
+							undefined, visitParameters);
 					}
 				);
 
 				visitParents("entityType", false, function (oEntityType, mChildAnnotations) {
-					visitChildren(oEntityType.property, mChildAnnotations);
+					visitChildren(oEntityType.property, mChildAnnotations, "Property");
 					visitChildren(oEntityType.navigationProperty, mChildAnnotations);
 				});
 			});
