@@ -533,6 +533,10 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 	DropdownBox.prototype.oninput = function(oEvent) {
 
+		if (!this._realOninput(oEvent)) {
+			return;
+		}
+
 		var $Ref = jQuery(this.getInputDomRef());
 		var sVal = $Ref.val();
 		if (!this.oPopup || !this.oPopup.isOpen()) {

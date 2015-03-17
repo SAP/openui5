@@ -92,7 +92,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	 * Event handler called after control is rendered
 	 */
 	TextArea.prototype.onAfterRendering = function () {
+
+		TextField.prototype.onAfterRendering.apply(this, arguments);
 		this._attachEventHandler();
+
 	};
 
 	/**
