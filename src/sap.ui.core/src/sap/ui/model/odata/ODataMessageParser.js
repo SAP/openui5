@@ -18,9 +18,30 @@ var mSeverityMap = {
 	"info":    sap.ui.core.MessageType.Information
 };
 
+/**
+ * 
+ * @namespace
+ * @name sap.ui.model.odata
+ * @public
+ */
 
 /**
  * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * 
+ * @class
+ * @classdesc 
+ *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * @extends sap.ui.core.message.MessageParser
+ *
+ * @author SAP SE
+ * @version ${version}
+ * @public
+ * @abstract
+ * @alias sap.ui.model.odata.ODataMessageParser
+ */
+
+
+/**
  * 
  * @public
  */
