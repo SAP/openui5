@@ -87,6 +87,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 		DatePicker.prototype.onAfterRendering = function() {
 
+			TextField.prototype.onAfterRendering.apply(this, arguments);
+
 			if (this._bMobile) {
 				// convert output to mobile format
 				if (this._oDate) {
