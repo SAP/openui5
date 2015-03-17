@@ -1143,8 +1143,8 @@
 			},
 			{
 			  "id": "sap.m.sample.SemanticPage",
-			  "name": "Semantic Page",
-			  "description": "Semantic Page"
+			  "name": "Semantic Page Master-Detail",
+			  "description": "Semantic Page Master/Detail"
 			},
 			{
 			  "id": "sap.m.sample.SemanticPageFullScreen",
@@ -1570,11 +1570,6 @@
 				"id": "sap.m.sample.UploadCollection",
 				"name": "Upload Collection",
 				"description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
-			},
-			{
-			  "id": "sap.m.sample.SemanticPage",
-			  "name": "Semantic Page",
-			  "description": "Semantic Page"
 			},
 			{
 				"id": "sap.m.sample.StandardMarginsAbout",

@@ -557,16 +557,16 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 			position: SemanticPage._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://message-warning",
+					icon: "sap-icon://alert",
 					text: {
 						path: "message>/",
 						formatter: function (aMessages) {
-							return (aMessages && aMessages.length) || 0;
+							return aMessages.length || 0;
 						}
 					},
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
 					ariaLabelledBy: _ensureInvisibleText(SemanticType.MessagesIndicator, oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR")),
-					type: "Accept",
+					type: sap.m.ButtonType.Emphasized,
 					press: function () {
 						if (!this._messagePopover) {
 							this._messagePopover = SemanticControl.prototype._createMessagePopover();

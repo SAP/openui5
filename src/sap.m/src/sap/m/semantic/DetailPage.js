@@ -63,10 +63,11 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticType", "s
 		SemanticType.Flag,
 		SemanticType.Favorite,
 		SemanticType.OpenIn,
-		SemanticType.SendEmail,
 		SemanticType.DiscussInJam,
-		SemanticType.ShareInJam,
+		SemanticType.SaveAsTile,
+		SemanticType.SendEmail,
 		SemanticType.SendMessage,
+		SemanticType.ShareInJam,
 		SemanticType.Print,
 		SemanticType.MessagesIndicator
 	];

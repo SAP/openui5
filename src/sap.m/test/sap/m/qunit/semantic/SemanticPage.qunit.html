@@ -771,8 +771,8 @@
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			//messages indicator
-			strictEqual(oPage._getPage().getFooter().getContent()[0].getType(), sap.m.ButtonType.Accept, "MessagesIndicator button type is Accept");
-			strictEqual(oPage._getPage().getFooter().getContent()[0].getIcon(), "sap-icon://message-warning", "MessagesIndicator button icon");
+			strictEqual(oPage._getPage().getFooter().getContent()[0].getType(), sap.m.ButtonType.Emphasized, "MessagesIndicator button type is Accept");
+			strictEqual(oPage._getPage().getFooter().getContent()[0].getIcon(), "sap-icon://alert", "MessagesIndicator button icon");
 
 			//spacer
 			strictEqual(oPage._getPage().getFooter().getContent()[1] instanceof sap.m.ToolbarSpacer, true, "contains spacer");
