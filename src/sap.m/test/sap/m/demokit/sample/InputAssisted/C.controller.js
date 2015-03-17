@@ -16,8 +16,10 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		handleValueHelp : function (oController) {
-			this.inputId = oController.oSource.sId;
+		handleValueHelp : function (oEvent) {
+			var sInputValue = oEvent.getSource().getValue();
+
+			this.inputId = oEvent.getSource().getId();
 			// create value help dialog
 			if (!this._valueHelpDialog) {
 				this._valueHelpDialog = sap.ui.xmlfragment(
@@ -27,8 +29,14 @@ sap.ui.define([
 				this.getView().addDependent(this._valueHelpDialog);
 			}
 
-			// open value help dialog
-			this._valueHelpDialog.open();
+			// create a filter for the binding
+			this._valueHelpDialog.getBinding("items").filter([new Filter(
+				"Name",
+				sap.ui.model.FilterOperator.Contains, sInputValue
+			)]);
+
+			// open value help dialog filtered by the input value
+			this._valueHelpDialog.open(sInputValue);
 		},
 
 		_handleValueHelpSearch : function (evt) {
