@@ -1,6 +1,7 @@
 sap.ui.define([
-		"sap/ui/demo/worklist/controller/BaseController"
-	], function (BaseController) {
+		"sap/ui/demo/worklist/controller/BaseController",
+		"sap/ui/demo/worklist/model/promise"
+	], function (BaseController, promise) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.Object", {
@@ -48,7 +49,7 @@ sap.ui.define([
 			oView.setBusy(true);
 			oView.bindElement(sObjectPath);
 
-			this.getModel().whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
+			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
 					// Everything went fine.
 					this.getView().setBusy(false);
