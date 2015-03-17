@@ -130,7 +130,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	 */
 	Menu.prototype.exit = function(){
 		if (this.oPopup) {
-			this.oPopup.detachOpened(this._menuOpened, this);
 			this.oPopup.detachClosed(this._menuClosed, this);
 			this.oPopup.destroy();
 			delete this.oPopup;
@@ -319,16 +318,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			jQuery(window).bind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = true;
 		}
-	};
-
-	/**
-	 * This function is called when the Menu was opened.
-	 *
-	 * @since 1.17.0
-	 * @private
-	 */
-	Menu.prototype._menuOpened = function() {
-		fnIe8RepaintBug(this);
 	};
 
 
@@ -569,7 +558,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		if (!sap.ui.Device.system.desktop) {
 			return;
 		}
-		fnIe8RepaintBug(this);
 
 		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			if (!this.oOpenedSubMenu || !this.oOpenedSubMenu.getParent() === this.oHoveredItem) {
@@ -697,7 +685,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		if (!this.oPopup) {
 			this.oPopup = new Popup(this, false, true, false); // content, modal, shadow, autoclose (TBD: standard popup autoclose)
 			this.oPopup.setDurations(0, 0);
-			this.oPopup.attachOpened(this._menuOpened, this);
 			this.oPopup.attachClosed(this._menuClosed, this);
 		}
 		return this.oPopup;
@@ -830,7 +817,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	};
 
 	Menu.prototype.checkEnabled = function(oItem){
-		fnIe8RepaintBug(this);
 		return oItem && oItem.getEnabled() && this.getEnabled();
 	};
 
@@ -941,31 +927,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			$Menu.css("max-height", "").toggleClass("sapUiMnuScroll", false);
 		}
 	}
-
-
-	//IE 8 repainting bug when hovering over MenuItems with IconFont
-	var fnIe8RepaintBug = function() {};
-	if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9) {
-		fnIe8RepaintBug = function(oMenu, iDelay) {
-			if (iDelay === undefined) {
-				iDelay = 50;
-			}
-
-
-			/* In case of perdormance issues, the commented code around the delayedCall might help:
-			jQuery.sap.clearDelayedCall(oMenu.data("delayedRepaintId"));
-			var iDelayedId =  */
-			jQuery.sap.delayedCall(iDelay, oMenu, function() {
-				var $Elem = this.$(); // this is the Menu instance from the oMenu argument
-				if ($Elem.length > 0) {
-					var oDomRef = $Elem[0].firstChild;
-					sap.ui.core.RenderManager.forceRepaint(oDomRef);
-				}
-			});
-			/* oMenu.data("delayedRepaintId", iDelayedId); */
-		};
-	}
-
 
 	//**********************************************
 

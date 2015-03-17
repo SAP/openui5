@@ -140,18 +140,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	MenuTextFieldItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
 		
-		var that = this;
-		function focusTF() {
-			oMenu.closeSubmenu(false, true);
-			that.$("tf").focus();
-		}
-		
 		if (bHovered && oMenu.checkEnabled(this)) {
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-				setTimeout(focusTF, 0);
-			} else {
-				focusTF();
-			}
+			oMenu.closeSubmenu(false, true);
+			this.$("tf").focus();
 		}
 	};
 	
