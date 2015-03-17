@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 		renderer: SemanticPageRenderer.render
 	});
 
-	ShareMenuPage._PositionInPage = jQuery.extend({ shareMenu: "shareMenu" }, SemanticPage._PositionInPage);
+	ShareMenuPage.prototype._PositionInPage = jQuery.extend({ shareMenu: "shareMenu" }, SemanticPage.prototype._PositionInPage);
 
 	ShareMenuPage.prototype.init = function () {
 		SemanticPage.prototype.init.apply(this, arguments);
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 			aContent: [this._oShareMenuBtn]
 		});
 
-		this._oPositionsMap[ShareMenuPage._PositionInPage.shareMenu] = {
+		this._oPositionsMap[ShareMenuPage.prototype._PositionInPage.shareMenu] = {
 			oContainer: this._oSegmentedShareMenu.getSectionComposite("semantic"),
 			sAggregation: "content"
 		};

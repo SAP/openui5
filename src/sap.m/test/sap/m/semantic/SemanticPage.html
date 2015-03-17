@@ -414,6 +414,32 @@
 				]
 			});
 		}
+		
+		function createRemoveSemanticContentForm() {
+			
+			var oPageSelect = createPageSelect();
+			var oContentSelect = createSemanticContentSelect();
+			
+			
+			var oForm = new sap.ui.layout.form.SimpleForm({
+				maxContainerCols: 2,
+				editable: true,
+				content: [
+				          new sap.m.Label({text: "Page"}),
+				          oPageSelect,
+				          new sap.m.Label({text: "Content"}),
+				          oContentSelect
+				]
+			});
+			
+			oPageSelect.attachChange(function() {
+				oForm.removeContent(oContentSelect);
+				oContentSelect = createSemanticContentSelect();
+				oForm.addContent(oContentSelect);
+			});
+			
+			return oForm;
+		}
 
 
 		/**
@@ -576,7 +602,7 @@
 			title: "Remove semantic content",
 			beforeOpen: function() {
 				this.removeAllContent();
-				this.addContent(createSemanticContentSelect());
+				this.addContent(createRemoveSemanticContentForm());
 			},
 			buttons:[
 				new sap.m.Button({

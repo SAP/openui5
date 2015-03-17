@@ -674,9 +674,6 @@
 					{ type: sap.m.semantic.SemanticType.Approve },
 					{ type: sap.m.semantic.SemanticType.Reject },
 					{ type: sap.m.semantic.SemanticType.Forward },
-					{ type: sap.m.semantic.SemanticType.Sort },
-					{ type: sap.m.semantic.SemanticType.Filter },
-					{ type: sap.m.semantic.SemanticType.Group },
 					{ type: sap.m.semantic.SemanticType.Flag },
 					{ type: sap.m.semantic.SemanticType.Favorite },
 					{ type: sap.m.semantic.SemanticType.Add },
@@ -713,8 +710,8 @@
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 			var iCustomFooterContentLength = 2;
 
-			strictEqual(oPage.getSemanticControls().length, 18, "page has semantic content");
-			strictEqual(oPage._getPage().getFooter().getContent().length, (13 + iInitFooterContentLength + iCustomFooterContentLength), "footer has semantic content");
+			strictEqual(oPage.getSemanticControls().length, 15, "page has semantic content");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (10 + iInitFooterContentLength + iCustomFooterContentLength), "footer has semantic content");
 			strictEqual(oPage._oWrappedShareMenu.getContent().length, 5, "shareMenu has semantic content");
 
 			// Clean up
