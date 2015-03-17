@@ -716,11 +716,6 @@
 							"String" : "GWSAMPLE_BASIC.CT_Address"
 						});
 						delete oCTAddress["acme.Foo.v1.Foo"];
-						// complex type: property
-						deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
-							"String" : "GWSAMPLE_BASIC.CT_Address/City"
-						});
-						delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
 						// association
 						deepEqual(oAssociation["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.Assoc_Foo"
@@ -760,6 +755,22 @@
 						delete oParameter["acme.Foo.v1.Foo"];
 					}
 				}
+
+				// check SAP V2 annotations as V4 annotations
+				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"], {
+					"String" : "Bus. Part. ID"
+				}, "Label derived from sap:label");
+				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"];
+				// in case of i > 1 property has been overwritten by annotation file
+				// complex type: property
+				deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
+					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
+				}, "Label derived from sap:label");
+				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
+				deepEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], {
+					"String" : "ID"
+				}, "Label derived from sap:label");
+				delete oParameter["com.sap.vocabularies.Common.v1.Label"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			}, onError)["catch"](onError);
