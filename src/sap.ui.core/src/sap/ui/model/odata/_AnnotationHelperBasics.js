@@ -50,7 +50,7 @@ sap.ui.define([
 		 *   if the result is not of the expected type
 		 */
 		descend: function (oPathValue, vProperty, sExpectedType) {
-			Basics.expectType(oPathValue, "object");
+			Basics.expectType(oPathValue, typeof vProperty === "number" ? "array" : "object");
 			oPathValue = {
 				path: oPathValue.path + "/" + vProperty,
 				value: oPathValue.value[vProperty]
@@ -93,11 +93,11 @@ sap.ui.define([
 				vValue = oPathValue.value;
 
 			if (sExpectedType === "array") {
-				bError = !jQuery.isArray(vValue);
+				bError = !Array.isArray(vValue);
 			} else {
 				bError = typeof vValue !== sExpectedType
 					|| vValue === null
-					|| jQuery.isArray(vValue);
+					|| Array.isArray(vValue);
 			}
 			if (bError) {
 				Basics.error(oPathValue, "Expected " + sExpectedType);
@@ -151,25 +151,27 @@ sap.ui.define([
 		 *   the resulting string to embed into an composite binding or a binding expression
 		 */
 		resultToString: function (oResult, bExpression, bWithType) {
-			var sResult,
-				vValue = oResult.value;
+			var vValue = oResult.value;
+
+			function binding(bAddType) {
+				var sResult;
+
+				if (rBadChars.test(vValue) || bAddType) {
+					sResult = "{path:" + Basics.toJSON(vValue);
+					if (bAddType) {
+						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
+						if (oResult.constraints && !jQuery.isEmptyObject(oResult.constraints)) {
+							sResult += ",constraints:" + Basics.toJSON(oResult.constraints);
+						}
+					}
+					return sResult + "}";
+				}
+				return "{" + vValue + "}";
+			}
 
 			switch (oResult.result) {
 			case "binding":
-				if (bExpression) {
-					return "${" + vValue + "}";
-				}
-				if (bWithType) {
-					sResult = "{path:'" + vValue + "',type:'"
-						+ mUi5TypeForEdmType[oResult.type] + "'";
-					if (oResult.constraints && !jQuery.isEmptyObject(oResult.constraints)) {
-						sResult += ",constraints:" + Basics.toJSON(oResult.constraints);
-					}
-					return sResult + "}";
-				} else if (rBadChars.test(vValue)) {
-					return "{path:'" + BindingParser.complexParser.escape(vValue) + "'}";
-				}
-				return "{" + vValue + "}";
+				return bExpression ?  "$" + binding(false) : binding(bWithType);
 			case "composite":
 				if (bExpression) {
 					throw new Error(
