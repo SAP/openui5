@@ -298,7 +298,7 @@
 	});
 
 	var oToolPopupDefBtn = new sap.ui.ux3.ToolPopup({
-		content : [ 
+		content : [
 			new sap.ui.commons.FormattedTextView({
 				htmlText : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
 			})
@@ -385,7 +385,7 @@
 		opener : oButtonListBox,
 		content : [ oListBoxCostCenter ]
 	});
-	
+
 	// ToolPopup with TabStrip
 	var btnOpener = new sap.ui.commons.Button({
 		text : "Open With TabStrip",
@@ -397,23 +397,23 @@
 			}
 		}
 	}).placeAt("tabstrip");
-			
+
 	//Create tab strip
 	var oLabel1 = new sap.ui.commons.Label({ text: "Name:" });
 	var oTextField1 = new sap.ui.commons.TextField();
 	var btnSave = new sap.ui.commons.Button({text:'Save'});
-	
+
 	var oTabProduct = new sap.ui.commons.Tab();
 	oTabProduct.setTitle(new sap.ui.core.Title({text : "Product"}));
 	oTabProduct.addContent(oLabel1);
 	oTabProduct.addContent(oTextField1);
 	var oTabStripComplete = new sap.ui.commons.TabStrip();
 	oTabStripComplete.addTab(oTabProduct);
-					
+
 	var tp = new sap.ui.ux3.ToolPopup({
 		content : [ oTabStripComplete ],
 		opener : btnOpener
-	});	
+	});
 	tp.addButton(btnSave);
 </script>
 
