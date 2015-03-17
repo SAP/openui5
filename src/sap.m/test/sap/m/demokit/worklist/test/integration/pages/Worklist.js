@@ -67,7 +67,7 @@ sap.ui.require([
 							errorMessage : "The Table has not been loaded"
 						});
 					}
-					
+
 				},
 				assertions: {
 
@@ -101,7 +101,7 @@ sap.ui.require([
 					theTitleShouldDisplayTheTotalAmountOfItems : function () {
 						var bRequestCompleted = false,
 							iObjectCount,
-							sUrl = jQuery.sap.getResourcePath("sap/ui/demo/worklist/test/service/Object", ".json");
+							sUrl = jQuery.sap.getResourcePath("sap/ui/demo/worklist/test/service/Objects", ".json");
 
 						jQuery.getJSON(sUrl, function( aObjects ) {
 							bRequestCompleted = true;
@@ -145,7 +145,7 @@ sap.ui.require([
 							errorMessage : "Table does not have the double amount of entries."
 						});
 					},
-					
+
 					iShouldSeeTheWorklistViewsBusyIndicator : function () {
 						return this.waitFor({
 							id : "page",
@@ -156,7 +156,7 @@ sap.ui.require([
 							errorMessage : "The worklist view is not busy"
 						});
 					},
-					
+
 					theWorkListViewsBusyIndicatorDelayIsZero : function () {
 						return this.waitFor({
 							id : "page",
