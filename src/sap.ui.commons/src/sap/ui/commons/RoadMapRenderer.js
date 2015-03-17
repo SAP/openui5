@@ -257,7 +257,9 @@ sap.ui.define(['jquery.sap.global'],
 			var oPos = getStepEndPosition(oRoadMap, false);
 			if (oRoadMap.getFirstVisibleStep()) {
 				var jStep = jQuery.sap.byId(oRoadMap.getFirstVisibleStep());
-				oPos = getPositionLeft(jStepArea, jStep);
+				if (jStep.length) {
+					oPos = getPositionLeft(jStepArea, jStep);
+				}
 			}
 			updateScrollState(oRoadMap, oPos + getRTLFactor() * jStepArea.scrollLeft(), true);
 		}
