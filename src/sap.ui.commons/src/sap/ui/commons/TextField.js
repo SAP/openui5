@@ -161,6 +161,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
+	TextField.prototype.onAfterRendering = function() {
+
+		if (sap.ui.Device.browser.internet_explorer) {
+			// as IE fires oninput event directly after rendering if value contains special characters (like Ü,Ö,Ä)
+			// compare first value in first oninput event with rendered one
+			var $input = jQuery(this.getInputDomRef());
+			this._sRenderedValue = $input.val();
+		}
+
+	};
+
 	/**
 	 * Event handler called when control is receiving the focus
 	 *
@@ -426,7 +437,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	TextField.prototype.oninput = function(oEvent) {
 
+		if (!this._realOninput(oEvent)) {
+			return;
+		}
+
 		this._fireLiveChange(oEvent);
+
+	};
+
+	TextField.prototype._realOninput = function(oEvent) {
+
+		if (sap.ui.Device.browser.internet_explorer) {
+			// as IE fires oninput event directly after rendering if value contains special characters (like Ü,Ö,Ä)
+			// compare first value in first oninput event with rendered one
+			var $input = jQuery(this.getInputDomRef());
+			if (this._sRenderedValue == $input.val()) {
+				this._sRenderedValue = undefined;
+				return false;
+			}
+		}
+
+		return true;
 
 	};
 
