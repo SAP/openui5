@@ -255,15 +255,15 @@
 					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file in filenameLengthExceed event provided by oEvent.getParameter('files')[0]");
 				},
 				fileRenamed : function(oEvent) {
-					ok(true, "Event fileRenamed fired");
 					equal(oEvent.getId(), "fileRenamed", "Event Id 'fileRenamed' provided");
 					// deprecated
-					equal(oEvent.getParameter("fileName"), "renamedFileName", "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameter('fileName')");
-					equal(oEvent.getParameters()["fileName"], "renamedFileName",  "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameters()['fileName']");
+					equal(oEvent.getParameter("fileName"), "renamedFileName.txt", "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameter('fileName')");
+					equal(oEvent.getParameters()["fileName"], "renamedFileName.txt",  "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameters()['fileName']");
 					equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcdf", "Correct documentId in event fileRenamed provided by oEvent.getParameter('documentId')");
 					equal(oEvent.getParameters()["documentId"], "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",  "Correct documentId in event fileRenamed provided by oEvent.getParameters().getParameters()['documentId']");
 					// new
 					equal(oEvent.getParameter("item"), this._oItemForRename, "Correct item in event fileRenamed");
+					equal(oEvent.getParameter("item").getFileName(), this._oItemForRename.getFileName(), "Correct item in event fileRenamed");
 				},
 				typeMissmatch : function(oEvent) {
 					var oFile = { name: "someFileName", fileType : "someNotAllowedFileType", mimeType : "someNotAllowedMimeType" };
@@ -406,8 +406,8 @@
 	test("Event fileRenamed", function() {
 		expect(7);
 		this.oUploadCollection._oItemForRename = this.oUploadCollection.getItems()[2]; // contributor : "J Edgar Hoover", documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf"
-		this.oUploadCollection._oItemForRename.setFileName("renamedFileName");
-		this.oUploadCollection._onEditItemOk();
+		this.oUploadCollection._oItemForRename.setFileName("renamedFileName.txt");
+		this.oUploadCollection._onEditItemOk("renamedFileName.txt");
 	});
 
 	test("uploadComplete", function() {

@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					 */
 					fileName : {type : "string"},
 					/**
-					 * An item to be renamed.
+					 * The renamed UI element as a UploadCollectionItem.
 					 * Since version 1.28.0.
 					 */
 					item : {type : "sap.m.UploadCollectionItem"}
@@ -1075,9 +1075,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._handleOk = function(oEvent, oContext, sSourceId, bTriggerRenderer) {
 		var bTriggerOk = true;
 		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
+		var sNewFileName;
 		// get new/changed file name and remove possible leading spaces
-		var sNewFileName = oEditbox.value.replace(/^\s+/,"");
-
+		if (oEditbox !== null) {
+			sNewFileName = oEditbox.value.replace(/^\s+/,"");
+		}
 		if (!oContext.sFocusId) {
 			oContext.sFocusId = oContext.editModeItem + "-cli";
 		}
@@ -1119,7 +1121,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				}
 				if (bTriggerOk) {
 					oContext._oItemForRename = oContext.aItems[iSourceLine];
-					oContext._onEditItemOk.bind(oContext);
+					oContext._onEditItemOk.bind(oContext)(sNewFileName + oFile.extension);
 				}
 			} else {
 				// nothing changed -> nothing to do!
@@ -1135,13 +1137,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @description Handling of edit item
 	 * @private
 	 */
-	UploadCollection.prototype._onEditItemOk = function () {
+	UploadCollection.prototype._onEditItemOk = function (sNewFileName) {
 		if (this._oItemForRename) {
+			this._oItemForRename.setFileName(sNewFileName);
 			// fire event
 			this.fireFileRenamed({
 				// deprecated
 				documentId : this._oItemForRename.getProperty("documentId"),
-				fileName : this._oItemForRename.getProperty("fileName"),
+				fileName : sNewFileName,
 				// new
 				item : this._oItemForRename
 			});
