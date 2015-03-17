@@ -377,31 +377,46 @@
 			}
 		});
 
-		test("TestOpenCloseViaKeyboardOK", function(){
+		asyncTest("TestOpenCloseViaKeyboardF4OK", function(){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			setTimeout( function(){
+				// as Popup calls fireOpended for IE9 async
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
-
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
-
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second F4 press");
+				start();
+			}, 10);
 
 		});
 
-		test("TestOpenCloseViaMouseOK", function(){
+		asyncTest("TestOpenCloseViaKeyboardARROWOK", function(){
+			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+			setTimeout( function(){
+				// as Popup calls fireOpended for IE9 async
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after Alt + Arrow Down press");
+
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after Alt + Arrow Up press");
+				start();
+			}, 10);
+
+		});
+
+		asyncTest("TestOpenCloseViaMouseOK", function(){
 			resetBeforeTest();
 
 			qutils.triggerEvent("click", sComboIconId);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
+			setTimeout( function(){
+				// as Popup calls fireOpended for IE9 async
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after click on F4 help button");
 
-			qutils.triggerEvent("click", sComboIconId);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
+				qutils.triggerEvent("click", sComboIconId);
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after second click on F4 help button");
+				start();
+			}, 10);
 
 		});
 
@@ -420,30 +435,34 @@
 			}
 		});
 
-		test("TestSelectItemFromListOK", function(){
+		asyncTest("TestSelectItemFromListOK", function(){
 			expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events) 
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			setTimeout( function(){
+				// as Popup calls fireOpended for IE9 async
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerEvent("click", "si-txt");
-			equal(oCombo.getValue(), "second item", "ComboBox' second item should have been selected.");
-			equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' selected value should be shown in HTML.");
-			equal(oCombo.getSelectedKey(), "key2", "selectedKey should fit to the selected item");
-			equal(oCombo.getSelectedItemId(), "si", "selectedItemId should fit to the selected item");
+				qutils.triggerEvent("click", "si-txt");
+				equal(oCombo.getValue(), "second item", "ComboBox' second item should have been selected.");
+				equal(oCombo.getFocusDomRef().value, "second item", "ComobBox' selected value should be shown in HTML.");
+				equal(oCombo.getSelectedKey(), "key2", "selectedKey should fit to the selected item");
+				equal(oCombo.getSelectedItemId(), "si", "selectedItemId should fit to the selected item");
 
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerEvent("click", "li-txt");
-			equal(oCombo.getValue(), "last item", "ComboBox' second item should have been selected.");
-			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' selected value should be shown in HTML.");
-			equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
-			equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
+				qutils.triggerEvent("click", "li-txt");
+				equal(oCombo.getValue(), "last item", "ComboBox' second item should have been selected.");
+				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' selected value should be shown in HTML.");
+				equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
+				equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
 
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden after item selection");
+				start();
+			}, 10);
 		});
 
 
@@ -453,67 +472,75 @@
 			}
 		});
 
-		test("TestEndWhenOpenedOK", function(){
+		asyncTest("TestEndWhenOpenedOK", function(){
 			resetBeforeTest();
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			setTimeout( function(){
+				// as Popup calls fireOpended for IE9 async
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
-			equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
-			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
-			equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
-			equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
+				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
+				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
+				equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
+				equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
-			// also check that second 'END' stays the same
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
-			equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");			
-			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
-			equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
-			equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
+				// also check that second 'END' stays the same
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
+				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");			
+				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
+				equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
+				equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 
-			equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");			
-			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
-			equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
-			equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
+				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");			
+				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
+				equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
+				equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oCombo.getValue(), "last item", "ComboBox' value should hold selected value.");
-			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should not have changed in HTML.");
-			equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
-			equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
+				equal(oCombo.getValue(), "last item", "ComboBox' value should hold selected value.");
+				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should not have changed in HTML.");
+				equal(oCombo.getSelectedKey(), "key4", "selectedKey should fit to the selected item");
+				equal(oCombo.getSelectedItemId(), "li", "selectedItemId should fit to the selected item");
+				start();
+			}, 10);
 		});
 
-		test("TestHomeWhenOpenedOK", function(){			
+		asyncTest("TestHomeWhenOpenedOK", function(){
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
+			setTimeout( function(){
+				// as Popup calls fireOpended for IE9 async
+				ok(jQuery.sap.byId(sComboListBoxId).is(":visible"), "ListBox should be visible after F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
-			equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
-			equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should have changed in HTML.");
-			equal(oCombo.getSelectedKey(), "key4", "selectedKey should not have changed");
-			equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
+				equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
+				equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should have changed in HTML.");
+				equal(oCombo.getSelectedKey(), "key4", "selectedKey should not have changed");
+				equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
 
-			// also check that second 'Home' stays the same
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
-			equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
-			equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
-			equal(oCombo.getSelectedKey(), "key4", "selectedKey should not have changed");
-			equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
+				// also check that second 'Home' stays the same
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.HOME, false, false, false);
+				equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
+				equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
+				equal(oCombo.getSelectedKey(), "key4", "selectedKey should not have changed");
+				equal(oCombo.getSelectedItemId(), "li", "selectedItemId should not have changed");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
-			ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
+				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 
-			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			equal(oCombo.getValue(), "first item", "ComboBox' value should hold selected value.");
-			equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
-			equal(oCombo.getSelectedKey(), "key1", "selectedKey should fit to the selected item");
-			equal(oCombo.getSelectedItemId(), "fi", "selectedItemId should fit to the selected item");
+				equal(oCombo.getValue(), "first item", "ComboBox' value should hold selected value.");
+				equal(oCombo.getFocusDomRef().value, "first item", "ComobBox' value should not have changed in HTML.");
+				equal(oCombo.getSelectedKey(), "key1", "selectedKey should fit to the selected item");
+				equal(oCombo.getSelectedItemId(), "fi", "selectedItemId should fit to the selected item");
+				start();
+			}, 10);
 		});
 
 		module("Event Tests - sap.ui.commons.ComboBox", {
