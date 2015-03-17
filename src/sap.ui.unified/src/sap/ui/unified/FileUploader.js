@@ -1063,7 +1063,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					if (aMimeTypes && aMimeTypes.length > 0) {
 						var bWrongMime = true;
 						for (var j = 0; j < aMimeTypes.length; j++) {
-							if (sType == aMimeTypes[j]) {
+							if (sType == aMimeTypes[j] || aMimeTypes[j] == "*/*" || sType.match(aMimeTypes[j])) {
 								bWrongMime = false;
 							}
 						}
@@ -1082,7 +1082,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 						var iIdx = sName.lastIndexOf(".");
 						var sFileEnding = sName.substring(iIdx + 1);
 						for (var k = 0; k < aFileTypes.length; k++) {
-							if (sFileEnding == aFileTypes[k]) {
+							if (sFileEnding.toLowerCase() == aFileTypes[k].toLowerCase()) {
 								bWrongType = false;
 							}
 						}
