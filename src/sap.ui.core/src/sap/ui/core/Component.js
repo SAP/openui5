@@ -247,9 +247,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
 	
-		// registry of mock servers
-		this._mMockServers = {};
-		
+		// registry of models from manifest
+		this._mManifestModels = {};
+	
 		// register the component instance
 		this.getMetadata().onInitComponent();
 		
@@ -291,12 +291,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 */
 	Component.prototype.destroy = function() {
 		
-		// kill the mock servers
-		if (this._mMockServers) {
-			jQuery.each(this._mMockServers, function(sName, oMockServer) {
-				oMockServer.stop();
-			});
-			delete this._mMockServers;
+		// destroy all models created via manifest definition
+		if (typeof this._mManifestModels === 'object') {
+			for (var sModelName in this._mManifestModels) {
+				this._mManifestModels[sModelName].destroy();
+			}
+			this._mManifestModels = null;
 		}
 		
 		// remove the event handlers
@@ -362,109 +362,192 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * 
 	 * @private
 	 */
-	Component.prototype.initComponentModels = function(mModels, mServices) {
-		
+	Component.prototype.initComponentModels = function() {
+
 		var oMetadata = this.getMetadata();
-		
-		// currently the automatic creation of the models is not activated
-		// for the metadata version 2 - here the implementation needs to be
-		// adopted to take the model configuration out of the models section
-		// of sap.ui5 and the datasources mapping from sap.app
-		if (oMetadata.getMetadataVersion() === 2) {
-			jQuery.sap.log.debug("Skipping component model creation for manifest.json models.");
+		var oAppManifest = oMetadata.getManifestEntry("sap.app");
+		var oUI5Manifest = oMetadata.getManifestEntry("sap.ui5");
+
+		var mModelConfigs = (oUI5Manifest && oUI5Manifest["models"]) ? oUI5Manifest["models"] : null;
+		if (!mModelConfigs) {
+			// skipping model creation because of missing sap.ui5 models manifest entry
 			return;
-		} 
-		
-		// get the application configuration
-		var oModelsConfig = mModels || oMetadata.getModels(),
-			oServicesConfig = mServices || oMetadata.getServices();
-	
-		// iterate over the model configurations and create and register the 
-		// models base on the configuration if available
-		if (oModelsConfig) {
-			
-			// create and start the mock server
-			var fnCreateMockServer = function(sName, sUri, sMetadataUrl, sMockdataBaseUrl) {
-				
-				// kill the existing mock server
-				if (this._mMockServers[sName]) {
-					this._mMockServers[sName].stop();
-				}
-				
-				// start the mock server
-				jQuery.sap.require("sap.ui.core.util.MockServer");
-				this._mMockServers[sName] = new sap.ui.core.util.MockServer({
-					rootUri: sUri
-				});
-				
-				this._mMockServers[sName].simulate(sMetadataUrl, sMockdataBaseUrl);
-				this._mMockServers[sName].start();
-					
-			};
-			
-			// helper to create a model depending on the type
-			// TODO: models could have generic instantiation to pass the JSON object 
-			//       of the configuration directly instead of individual handling 
-			var fnCreateModel = function(sName, oConfig) {
-				
-				// extract uri and type
-				var sUri = oConfig.uri, sType = oConfig.type;
-				
-				// require the model and instantiate it
-				jQuery.sap.require(sType);
-				var oClass = jQuery.sap.getObject(sType);
-				jQuery.sap.assert(oClass !== undefined, "The specified model type \"" + sType + "\" could not be found!");
-				
-				// create the model and apply the configuration
-				var oModel;
-				if (sType === "sap.ui.model.resource.ResourceModel") {
-					oModel = new oClass({bundleUrl: sUri});
-				} else if (sType === "sap.ui.model.odata.ODataModel" || sType === "sap.ui.model.odata.v2.ODataModel") {
-					// check for a mock server configuration and start the mock server
-					if (oConfig.mockserver) {
-						fnCreateMockServer.call(this, sName, sUri, oConfig.mockserver.model, oConfig.mockserver.data);
-					}
-					// create the model
-					oModel = new oClass(sUri, oConfig.settings);
-				} else if (sType === "sap.ui.model.json.JSONModel" || sType === "sap.ui.model.xml.XMLModel") {
-					oModel = new oClass();
-					if (sUri) {
-						oModel.loadData(sUri);
-					}
-				} /* else {
-					TODO: what about custom models / analog to ODataModel & setting? 
-				} */
-	
-				// check the model to be an instance of sap.ui.model.Model
-				jQuery.sap.assert(oModel instanceof sap.ui.model.Model, "The specified model type \"" + sType + "\" must be an instance of sap.ui.model.Model!");
-				return oModel;
-	
-			};
-			
-			// create the models
-			var that = this;
-			jQuery.each(oModelsConfig, function(sKey, oModelConfig) {
-				
-				// if the model refer to a service configuration we use the service configuration 
-				var sService = oModelConfig.service,
-					oModel;
-				if (sService) {
-					var oServiceConfig = oServicesConfig[sService];
-					jQuery.sap.assert(oServiceConfig, "The service configuration for service \"" + sService + "\" is not available!");
-					oModel = fnCreateModel.call(that, sKey, oServiceConfig);
-				} else if (oModelConfig.type) {
-					oModel = fnCreateModel.call(that, sKey, oModelConfig);
-				}
-				
-				// we apply the model to the root component if created
-				if (oModel) {
-					that.setModel(oModel, sKey || undefined);
-				}
-				
-			});
-			
 		}
-		
+
+		// optional dataSources from "sap.app" manifest
+		var mDataSources = (oAppManifest && oAppManifest["dataSources"]) ? oAppManifest["dataSources"] : null;
+
+		// create a model for each ["sap.ui5"]["models"] entry
+		for (var sModelName in mModelConfigs) {
+
+			var oModelConfig = mModelConfigs[sModelName];
+
+			// normalize dataSource shorthand, e.g.
+			// "myModel": "myDataSource" => "myModel": { dataSource: "myDataSource" }
+			if (typeof oModelConfig === 'string') {
+				oModelConfig = {
+					dataSource: oModelConfig
+				};
+			}
+
+			// check for referenced dataSource entry and read out settings/uri/type
+			// if not already provided in model config
+			if (oModelConfig.dataSource && mDataSources) {
+
+				var oDataSource = mDataSources[oModelConfig.dataSource];
+				if (typeof oDataSource === 'object') {
+
+					// default type is OData
+					if (oDataSource.type === undefined) {
+						oDataSource.type = 'OData';
+					}
+
+					// read out type and translate to model class
+					// (only if no model type was set to allow overriding)
+					if (!oModelConfig.type) {
+						switch (oDataSource.type) {
+							case 'OData':
+								oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
+								break;
+							case 'JSON':
+								oModelConfig.type = 'sap.ui.model.json.JSONModel';
+								break;
+							case 'XML':
+								oModelConfig.type = 'sap.ui.model.xml.XMLModel';
+								break;
+							default:
+								// for custom dataSource types, the class should already be specified in the sap.ui5 models config
+						}
+					}
+
+					// use dataSource uri if it isn't already defined in model config
+					if (!oModelConfig.uri) {
+						oModelConfig.uri = oDataSource.uri;
+					}
+
+					// read out OData annotations and create ODataModel settings for it
+					if (oDataSource.type === 'OData' && oDataSource.settings && oDataSource.settings.annotations) {
+						var aAnnotations = oDataSource.settings.annotations;
+
+						for (var i = 0; i < aAnnotations.length; i++) {
+							var oAnnotation = mDataSources[aAnnotations[i]];
+
+							// dataSource entry should be defined!
+							if (!oAnnotation) {
+								jQuery.sap.log.error("ODataAnnotation \"" + aAnnotations[i] + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								continue;
+							}
+
+							// type should be ODataAnnotation!
+							if (oAnnotation.type !== 'ODataAnnotation') {
+								jQuery.sap.log.error("dataSource \"" + aAnnotations[i] + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								continue;
+							}
+
+							// uri is required!
+							if (!oAnnotation.uri) {
+								jQuery.sap.log.error("Missing \"uri\" for ODataAnnotation \"" + aAnnotations[i] + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								continue;
+							}
+
+							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
+							oModelConfig.settings = oModelConfig.settings || {};
+							oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
+							oModelConfig.settings.annotationURI.push(oAnnotation.uri);
+						}
+					}
+
+				}
+			}
+
+			// model type is required!
+			if (!oModelConfig.type) {
+				jQuery.sap.log.error("Missing \"type\" for model \"" + sModelName + "\"", this);
+				continue;
+			}
+
+			// load model class and log error message if it couldn't be loaded.
+			// error gets catched to continue creating the other models and not breaking the execution here
+			try {
+				jQuery.sap.require(oModelConfig.type);
+			} catch(oError) {
+				jQuery.sap.log.error("Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, this);
+				continue;
+			}
+
+			// get model class object
+			var ModelClass = jQuery.sap.getObject(oModelConfig.type);
+			if (!ModelClass) {
+				// this could be the case if the required module doesn't register itself in the defined namespace
+				jQuery.sap.log.error("Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", this);
+				continue;
+			}
+
+			// set mode of old ODataModel to "json" (default is xml).
+			// as the automatic model creation is a new feature, this is not incompatible here
+			if (oModelConfig.type === 'sap.ui.model.odata.ODataModel' &&
+					(!oModelConfig.settings || oModelConfig.settings.json === undefined)) {
+					// do not overwrite the flag if it was explicitly defined!
+
+					oModelConfig.settings = oModelConfig.settings || {};
+					oModelConfig.settings.json = true;
+			}
+
+			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
+			// (only if it wasn't specified before)
+			if (oModelConfig.uriSettingName === undefined) {
+				switch (oModelConfig.type) {
+					case 'sap.ui.model.odata.v2.ODataModel':
+						oModelConfig.uriSettingName = 'serviceUrl';
+						break;
+					case 'sap.ui.model.resource.ResourceModel':
+						oModelConfig.uriSettingName = 'bundleUrl';
+						break;
+					default:
+						// default 'undefined' is already set in this case
+				}
+			}
+
+			// include "uri" property in "settings" object, depending on "uriSettingName"
+			if (oModelConfig.uri) {
+				if (oModelConfig.uriSettingName !== undefined) {
+					oModelConfig.settings = oModelConfig.settings || {};
+
+					// do not override the property if it's already defined!
+					if (!oModelConfig.settings[oModelConfig.uriSettingName]) {
+						oModelConfig.settings[oModelConfig.uriSettingName] = oModelConfig.uri;
+					}
+
+				} else if (oModelConfig.settings) {
+					// shift settings to 2nd argument if no "uriSettingName" was specified
+					oModelConfig.settings = [ oModelConfig.uri, oModelConfig.settings ];
+				} else {
+					// only use 1st argument with "uri" string if there are no settings
+					oModelConfig.settings = [ oModelConfig.uri ];
+				}
+			}
+
+			// normalize settings object to array
+			if (oModelConfig.settings && !jQuery.isArray(oModelConfig.settings)) {
+				oModelConfig.settings = [ oModelConfig.settings ];
+			}
+
+			// create arguments array with leading "null" value so that it can be passed to the apply function
+			var aArgs = [null].concat(oModelConfig.settings || []);
+
+			// create factory function by calling "Model.bind" with the provided arguments
+			var Factory = ModelClass.bind.apply(ModelClass, aArgs);
+
+			// the factory will create the model with the arguments above
+			var oModel = new Factory();
+
+			// keep the model instance to be able to destroy the created models on component destroy
+			this._mManifestModels[sModelName] = oModel;
+
+			// apply the model to the component with provided name ("" as key means unnamed model)
+			this.setModel(oModel, sModelName || undefined);
+		}
+
 	};
 	
 	

@@ -38,15 +38,11 @@
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"settings": {
-					"uri": "i18n/i18n.properties"
-				}
+				"uri": "i18n/i18n.properties"
 			},
 			"sfapi": {
 				"type": "sap.ui.model.odata.ODataModel",
-				"settings": {
-					"uri": "/sap/opu/odata/snce/PO_S_SRV/"
-				}
+				"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 			}
 		},
 
