@@ -40,6 +40,11 @@ sap.ui.define(['jquery.sap.global'],
 			role: "radiogroup",
 			disabled: !oControl.getEnabled()
 		});
+		if (oControl.getEnabled()) {
+			rm.writeAttribute("tabIndex","0");
+		} else {
+			rm.writeAttribute("tabIndex","-1");
+		}
 		rm.write(">"); // SPAN element
 		this.renderButtons(rm,oControl);
 	    rm.write("</span>");
