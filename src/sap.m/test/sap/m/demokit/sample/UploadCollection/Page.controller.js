@@ -34,23 +34,6 @@ sap.ui.define([
 			oSelect.setModel(oModelCB);
 		},
 
-		onFileDeleted: function(oEvent) {
-			var oData = this.oView.getModel().getData();
-			var aItems = oData.items;
-			var sDocumentId = oEvent.getParameter("documentId");
-			var bSetData = false;
-
-			jQuery.each(aItems, function(index) {
-				if (aItems[index] && aItems[index].documentId === sDocumentId) {
-					aItems.splice(index, 1);
-					bSetData = true;
-				};
-			});
-			if (bSetData === true) {
-				this.oView.getModel().setData(oData);
-			};
-		},
-
 		onChange: function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
@@ -66,7 +49,29 @@ sap.ui.define([
 
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 			oUploadCollection.addHeaderParameter(oCustomerHeaderSlug);
-			MessageToast.show("Change event triggered");
+			MessageToast.show("Event change triggered");
+		},
+
+		onFileDeleted: function(oEvent) {
+			var oData = this.oView.getModel().getData();
+			var aItems = oData.items;
+			var sDocumentId = oEvent.getParameter("documentId");
+			var bSetData = false;
+
+			jQuery.each(aItems, function(index) {
+				if (aItems[index] && aItems[index].documentId === sDocumentId) {
+					aItems.splice(index, 1);
+					bSetData = true;
+				};
+			});
+			if (bSetData === true) {
+				this.oView.getModel().setData(oData);
+			};
+			MessageToast.show("Event fileDeleted triggered");
+		},
+
+		onFilenameLengthExceed : function(oEvent) {
+			MessageToast.show("Event filenameLengthExceed triggered");
 		},
 
 		onFileRenamed: function(oEvent) {
@@ -81,6 +86,15 @@ sap.ui.define([
 				};
 			});
 			this.oView.getModel().setData(oData);
+			MessageToast.show("Event fileRenamed triggered");
+		},
+
+		onFileSizeExceed : function(oEvent) {
+			MessageToast.show("Event fileSizeExceed triggered");
+		},
+
+		onTypeMissmatch : function(oEvent) {
+			MessageToast.show("Event typeMissmatch triggered");
 		},
 
 		onUploadComplete: function(oEvent) {
@@ -123,7 +137,7 @@ sap.ui.define([
 				this.oView.getModel().setData(oData);
 				// delay the success message for to notice onChange message
 				setTimeout(function() {
-					MessageToast.show("Upload successful")
+					MessageToast.show("Event uploadComplete triggered")
 				}, 4000);
 			}
 		},

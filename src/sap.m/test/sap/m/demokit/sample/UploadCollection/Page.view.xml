@@ -24,12 +24,16 @@
 			<UploadCollection
 				id="UploadCollection"
 				maximumFilenameLength="55"
+				maximumFileSize="1"
 				multiple="true"
 				items="{/items}"
 				showSeparators="None"
 				change="onChange"
 				fileDeleted="onFileDeleted"
+				filenameLengthExceed="onFilenameLengthExceed"
 				fileRenamed="onFileRenamed"
+				fileSizeExceed="onFileSizeExceed"
+				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete" >
 				<UploadCollectionItem
 					contributor="{contributor}"
