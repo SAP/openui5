@@ -356,7 +356,7 @@
 				});
 			});
 
-			test("A Switch control type of AcceptReject should render invisible elements with the corresponding text nodes for screen reader announcement", function() {
+			test("it should render invisible elements with the corresponding text nodes for screen reader announcement", function() {
 
 				// system under test
 				var oSwitch = new sap.m.Switch({
@@ -370,6 +370,12 @@
 				// assert
 				strictEqual(oSwitch.getDomRef("texton").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
 				strictEqual(oSwitch.getDomRef("textoff").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
+				strictEqual(oSwitch.getDomRef("acceptlabel").innerText, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
+				strictEqual(oSwitch.getDomRef("rejectlabel").innerText, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
+				strictEqual(getComputedStyle(oSwitch.getDomRef("acceptlabel")).getPropertyValue("display"), "none");
+				strictEqual(getComputedStyle(oSwitch.getDomRef("rejectlabel")).getPropertyValue("display"), "none");
+				strictEqual(oSwitch.getDomRef("acceptlabel").getAttribute("aria-hidden"), "true");
+				strictEqual(oSwitch.getDomRef("rejectlabel").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSwitch.destroy();

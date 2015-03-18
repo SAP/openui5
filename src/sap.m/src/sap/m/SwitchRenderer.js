@@ -128,7 +128,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</span>");
 
 			if (bAcceptRejectType && bAccessibility) {
-				this.renderInvisibleElement(oRm, oSwitch, oRb.getText("SWITCH_ARIA_ACCEPT"));
+				this.renderInvisibleElement(oRm, oSwitch, {
+					id: oSwitch.getId() + "-acceptlabel",
+					text: oRb.getText("SWITCH_ARIA_ACCEPT")
+				});
 			}
 
 			oRm.write("</div>");
@@ -158,7 +161,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</span>");
 
 			if (bAcceptRejectType && bAccessibility) {
-				this.renderInvisibleElement(oRm, oSwitch, oRb.getText("SWITCH_ARIA_REJECT"));
+				this.renderInvisibleElement(oRm, oSwitch, {
+					id: oSwitch.getId() + "-rejectlabel",
+					text: oRb.getText("SWITCH_ARIA_REJECT")
+				});
 			}
 
 			oRm.write("</div>");
@@ -221,15 +227,21 @@ sap.ui.define(['jquery.sap.global'],
 		/**
 		 * Writes an invisible span element with a text node that is referenced in the ariaLabelledBy
 		 * associations for screen reader announcement.
+		 *
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
-		 * @param {string} sText
+		 * @param {object} mOptions
 		 */
-		SwitchRenderer.renderInvisibleElement = function(oRm, oSwitch, sText) {
-			oRm.write('<span aria-hidden="true" style="display: none">');
-			oRm.writeEscaped(sText);
+		SwitchRenderer.renderInvisibleElement = function(oRm, oSwitch, mOptions) {
+			oRm.write("<span");
+			oRm.writeAttribute("id", mOptions.id);
+			oRm.writeAttribute("aria-hidden", "true");
+			oRm.addClass("sapUiInvisibleText");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(mOptions.text);
 			oRm.write("</span>");
 		};
 
