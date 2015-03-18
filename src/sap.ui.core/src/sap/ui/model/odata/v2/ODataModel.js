@@ -2125,16 +2125,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oRequestGroup.changes = {};
 			}
 			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
-				if (oRequest.method === "POST") {
-					//failed create Entry createEntry
-					oRequestGroup.map[oRequest.key].method = "POST";
+				oRequestGroup.map[oRequest.key].method = oRequest.method;
+				if (oRequest.method === "PUT") {
+					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
+					// (by submitChanges) the merge header must be removed
+					delete oRequestGroup.map[oRequest.key].headers["x-http-method"];
 				}
+
 				// if change is aborted (resetChanges) and a change happens before submit we should delete
 				// the aborted flag
 				if (oRequestGroup.map[oRequest.key]._aborted) {
 					delete oRequestGroup.map[oRequest.key]._aborted;
 				}
 				oRequestGroup.map[oRequest.key].data = oRequest.data;
+				
 			} else {
 				oChangeGroup = oRequestGroup.changes[sChangeSetId];
 				if (!oChangeGroup) {
@@ -2431,7 +2435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, bMerge) {
-		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType;
+		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -2444,10 +2448,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sKey = oData.__metadata.created.key;
 		} else if (bMerge) {
 			sMethod = "MERGE";
+			// get original unmodified entry for diff 
+			oUnModifiedEntry = this.oData[sKey];
 		} else {
 			sMethod = "PUT";
 		}
-
+		
 		// do a copy of the payload or the changes will be deleted in the model as well (reference)
 		oPayload = jQuery.sap.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
@@ -2467,18 +2473,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oPayload.__metadata.etag = sETag;
 			}
 		}
-		jQuery.each(oPayload, function(sPropName, oPropValue) {
-			if (oPropValue && oPropValue.__deferred) {
-				delete oPayload[sPropName];
-			}
-		});
-
+		
+		// delete nav props
 		if (oEntityType) {
 			var aNavProps = this.oMetadata._getNavigationPropertyNames(oEntityType);
 			jQuery.each(aNavProps, function(iIndex, sNavPropName) {
 				delete oPayload[sNavPropName];
 			});
 		}
+		
+		jQuery.each(oPayload, function(sPropName, oPropValue) {
+			if (bMerge && oUnModifiedEntry && sPropName !== '__metadata') {
+				// remove unmodified properties and keep only modified properties for delta MERGE
+				// Compare whether last data is completely contained in current data and to a maximum depth of 3, to cover complex types.
+				if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue, 3, true)) {
+					delete oPayload[sPropName];
+				}
+			}
+		});
 
 		// remove any yet existing references which should already have been deleted
 		oPayload = this._removeReferences(oPayload);
@@ -2774,7 +2786,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 * 		The handler can have the parameter <code>oError</code> which contains additional error information.
-	 * @param {boolean} [mParameters.merge=false] trigger a MERGE request instead of a PUT request to perform a differential update
+	 * @param {boolean} [mParameters.merge=true] trigger a MERGE request instead of a PUT request to perform a differential update.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 * 		Please be advised that this feature is officially unsupported as using asynchronous
 	 * 		requests can lead to data inconsistencies if the application does not make sure that
@@ -2794,6 +2806,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mUrlParams, mHeaders, sMethod, mRequests,
 			that = this;
 
+		bMerge = true;
+		
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
 			sChangeSetId = mParameters.changeSetId;
@@ -3197,6 +3211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *            	                 following parameters: oData
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
 	 * additional error information
+	 * @param {boolean} [mParameters.merge=true] trigger a MERGE request instead of a PUT request to perform a differential update.
 	 *
 	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
 	 *
