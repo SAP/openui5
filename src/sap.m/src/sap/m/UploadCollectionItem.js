@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollectionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
-	function(jQuery, library, Element) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus'],
+	function(jQuery, library, Element, ObjectAttribute, ObjectStatus) {
 	"use strict";
 
 
@@ -37,8 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 				/**
 				 * Specifies the name of the user who uploaded the file.
-				 *
-				 * @since 1.12.2
+				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 				 */
 				contributor : {
 					type : "string",
@@ -66,6 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 				/**
 				 * Specifies the size of the uploaded file (in megabytes).
+				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 				 */
 				fileSize : {
 					type : "float",
@@ -94,6 +94,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				/**
 				 * Specifies the date on which the file was uploaded. 
 				 * The application has to define the date format.
+				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 				 */
 				uploadedDate : {
 					type : "string",
@@ -152,6 +153,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 					type : "boolean",
 					group : "Behavior",
 					defaultValue : true
+				}
+			},
+			aggregations : {
+				/**
+				 * Attributes of an uploaded item, e.g. 'Uploaded by', 'Uploaded on', 'File Size'
+				 * Attributes will be displayed after an item has been uploaded
+				 * The property 'active' of sap.m.ObjectAttribute is not supported
+				 * @experimental Since 1.30. Behavior might change.
+				 */
+				attributes : {
+					type : "sap.m.ObjectAttribute",
+					multiple : true
+				},
+				/**
+				 * Statuses of an uploaded item
+				 * Statuses will be displayed after an item has been uploaded
+				 * @experimental Since 1.30. Behavior might change.
+				 */
+				statuses : {
+					type : "sap.m.ObjectStatus",
+					multiple : true
 				}
 			}
 		}
