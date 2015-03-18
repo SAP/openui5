@@ -220,6 +220,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.writeAttribute("id", oLI._popinId);
 		rm.writeAttribute("role", "row");
 		
+		// sometimes confuses the screen reader
+		// it reads the pop-in of the next item, not of the current one
+		rm.writeAttribute("aria-labelledby", oLI._popinId);
+		
 		// logical parent of the popin is the base row
 		rm.writeAttribute("aria-owns", oLI.getId());
 		
