@@ -140,12 +140,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			}
 
 			var sId = this.getId(),
-				oOnDomRef = oDomRef.querySelector("#" + sId + "-texton"),
-				oOffDomRef = oDomRef.querySelector("#" + sId + "-textoff"),
-				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby"),
 				$Switch = this.$("switch"),
+				oOnDomRef = this.getDomRef("texton"),
+				oOffDomRef = this.getDomRef("textoff"),
 				oSwitchInnerDomRef = this.getDomRef("inner"),
 				oHandleDomRef = this.getDomRef("handle"),
+				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby"),
+				sTextOnId = sId + "-texton",
+				sTextOffId = sId + "-textoff",
 				oCheckboxDomRef = null;
 
 			if (this.getName()) {
@@ -159,13 +161,13 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			if (bState) {
 				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
 				oDomRef.setAttribute("aria-checked", "true");
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-textoff", sId + "-texton"));
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sTextOffId, sTextOnId));
 				oOnDomRef.removeAttribute("aria-hidden");
 				oOffDomRef.setAttribute("aria-hidden", "true");
 			} else {
 				$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
 				oDomRef.setAttribute("aria-checked", "false");
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-texton", sId + "-textoff"));
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sTextOnId, sTextOffId));
 				oOnDomRef.setAttribute("aria-hidden", "true");
 				oOffDomRef.removeAttribute("aria-hidden");
 			}
