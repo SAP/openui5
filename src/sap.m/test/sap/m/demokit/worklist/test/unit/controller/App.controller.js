@@ -16,7 +16,10 @@ sap.ui.require(
 						}.bind(this),
 						setModel: function (oModel) {
 							this.oViewModel = oModel;
-						}.bind(this)
+						}.bind(this),
+						getBusyIndicatorDelay: function () {
+							return null;
+						}
 					};
 
 				this.oComponentStub = {
