@@ -99,6 +99,14 @@ xhr.onCreate = function(request) {
 				sAnswer = sSimpleValues;
 				break;
 
+			case "fakeService://testdata/odata/collection-with-namespace.xml":
+				sAnswer = sCollectionWithNamespace;
+				break;
+
+			case "fakeService://testdata/odata/UrlRef.xml":
+				sAnswer = sUrlRefTest;
+				break;
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -3647,3 +3655,115 @@ var sSimpleValues = '\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>';
+
+var sCollectionWithNamespace = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">\
+	<edm:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edm:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edm:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="CollectionWithNamespace.Test/Value">\
+				<Annotation Term="UI.TestNoNS">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product ID" />\
+							<PropertyValue Property="Value" Path="ProductID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Quantity / Unit" />\
+							<PropertyValue Property="Value" Path="QuantityPerUnit" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Unit Price" />\
+							<PropertyValue Property="Value" Path="UnitPrice" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Category" />\
+							<PropertyValue Property="Value" Path="Category/CategoryName" />\
+						</Record>\
+						<Record Type="UI.DataFieldWithNavigation">\
+							<PropertyValue Property="Label" String="Supplier" />\
+							<PropertyValue Property="Value" Path="Supplier/CompanyName" />\
+							<PropertyValue Property="Target" Path="Supplier" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+				<Annotation Term="UI.TestNS">\
+					<edm:Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product ID" />\
+							<PropertyValue Property="Value" Path="ProductID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Quantity / Unit" />\
+							<PropertyValue Property="Value" Path="QuantityPerUnit" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Unit Price" />\
+							<PropertyValue Property="Value" Path="UnitPrice" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Category" />\
+							<PropertyValue Property="Value" Path="Category/CategoryName" />\
+						</Record>\
+						<Record Type="UI.DataFieldWithNavigation">\
+							<PropertyValue Property="Label" String="Supplier" />\
+							<PropertyValue Property="Value" Path="Supplier/CompanyName" />\
+							<PropertyValue Property="Target" Path="Supplier" />\
+						</Record>\
+					</edm:Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sUrlRefTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">\
+	<edm:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edm:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edm:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="UrlTest">\
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="ID"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAnnotation">\
+							<PropertyValue Property="Label" String="Address"/>\
+							<PropertyValue Property="Target" AnnotationPath="@com.sap.vocabularies.Communication.v1.Address"/>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+							<PropertyValue Property="Label" String="Link to"/>\
+							<PropertyValue Property="Value" String="Google Maps"/>\
+							<PropertyValue Property="Url">\
+								<UrlRef>\
+									<Apply Function="odata.fillUriTemplate">\
+										<String>https://www.google.de/maps/place/{street},{city}</String>\
+										<LabeledElement Name="street">\
+											<Apply Function="odata.uriEncode">\
+												<Path>Address/Street</Path>\
+											</Apply>\
+										</LabeledElement>\
+										<LabeledElement Name="city">\
+											<Apply Function="odata.uriEncode">\
+												<Path>Address/City</Path>\
+											</Apply>\
+										</LabeledElement>\
+									</Apply>\
+								</UrlRef>\
+							</PropertyValue>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
