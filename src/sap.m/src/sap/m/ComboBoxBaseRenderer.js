@@ -47,18 +47,27 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		};
 
 		/**
-		 * Writes the accessibility state.
+		 * Retrieves the ARIA role for the control.
 		 * To be overwritten by subclasses.
 		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 */
+		ComboBoxBaseRenderer.getAriaRole = function() {
+			return "combobox";
+		};
+
+		/**
+		 * Retrieves the accessibility state of the control.
+		 * To be overwritten by subclasses.
+		 *
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
-		ComboBoxBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
-			oRm.writeAccessibilityState(oControl, {
-				role: "combobox",
-				expanded: oControl.isOpen(),
-				autocomplete: "both"
-			});
+		ComboBoxBaseRenderer.getAccessibilityState = function(oControl) {
+			var mAccessibilityState = sap.m.InputBaseRenderer.getAccessibilityState.call(this, oControl);
+
+			mAccessibilityState.expanded = oControl.isOpen();
+			mAccessibilityState.autocomplete = "both";
+
+			return mAccessibilityState;
 		};
 
 		/**
