@@ -9,12 +9,14 @@ sap.ui.define([
 
 	"use strict";
 
-	// global QUnit
-	
+	// global QUnit, Flexie
+
+	var oLog = jQuery.sap.log.getLogger("SampleTester");
+
 	var SampleTester = function(sLibraryName, aExcludes) {
 
 		var that = this;
-		
+
 		this._sLibraryName = sLibraryName;
 		this._aExcludes = aExcludes || [];
 		this._iTimeout = 200;
@@ -30,8 +32,8 @@ sap.ui.define([
 
 		var oLibInfo = new LibraryInfo();
 		oLibInfo._getDocuIndex(sLibraryName, function(oData) {
-			
-			// wait with text creation until all libs are loaded
+
+			// wait with test creation until all libs are loaded
 			sap.ui.getCore().attachInit(function() {
 				that._createTests(oData && oData.explored);
 			});
@@ -56,18 +58,24 @@ sap.ui.define([
 		var oApp = this._oApp;
 		var oPage = this._oPage;
 
+		oLog.info("starting to define tests for the samples of '" + this._sLibraryName + "'");
+
 		QUnit.module(this._sLibraryName, {
 			afterEach : function(assert) {
+				if ( window.Flexie ) {
+					oLog.info("destroy flexie instances");
+					Flexie.destroyInstance();
+				}
 				// empty the page after each test, even in case of failures
 				oPage.setTitle("---");
 				oPage.destroyContent();
-			}
+ 			}
 		});
 
 		function makeTest(sampleConfig) {
 
 			QUnit.test(sampleConfig.name, function(assert) {
-				
+
 				// clear metadata cache
 				ODataModel.mServiceData = {};
 
@@ -87,7 +95,6 @@ sap.ui.define([
 				var done = assert.async();
 				setTimeout(function() {
 					assert.ok(true, sampleConfig.description || "sample " + sampleConfig.name);
-					
 					done();
 				}, iTimeout);
 
@@ -106,14 +113,18 @@ sap.ui.define([
 			var nTests = 0;
 			for (var i = 0; i < aSamples.length; i++ ) {
 				if ( this._aExcludes.indexOf(aSamples[i].id) < 0 ) {
+					oLog.info("adding test for sample '" + aSamples[i].name + "'");
 					makeTest(aSamples[i]);
 					nTests++;
+				} else {
+					oLog.info("ignoring sample '" + aSamples[i].name + "'");
 				}
 			}
 			
 		}
 
 		if ( nTests == 0 ) {
+			oLog.info("no samples found, adding dummy test");
 			QUnit.test("Dummy", function(assert) {
 				assert.ok(true);
 			});
@@ -126,6 +137,10 @@ sap.ui.define([
 				jQuery.sap.byId(oUIArea.getId()).hide();
 			}
 		});
+
+		// now QUnit can start processing the tests 
+		oLog.info("start tests");
+		QUnit.start();
 
 	};
 
