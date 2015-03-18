@@ -90,21 +90,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 	};
 
-	DatePickerRenderer.writeAccessibilityState = function(oRm, oDP) {
+	DatePickerRenderer.getAriaRole = function(oDP) {
 
-		var mProps = {
-			role: "combobox",
-			multiline: false,
-			autocomplete: "none",
-			haspopup: true,
-			owns: oDP.getId() + "-cal",
-			describedby: {value: oDP.getId() + "-Descr", append: true}};
+		return "combobox";
 
-		if (oDP.getValueState() == sap.ui.core.ValueState.Error) {
-			mProps["invalid"] = true;
-		}
+	};
 
-		oRm.writeAccessibilityState(oDP, mProps);
+	DatePickerRenderer.getAriaDescribedBy = function(oDP) {
+
+		var sBaseAriaDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments) || "";
+		return sBaseAriaDescribedBy + " " + oDP.getId() + "-Descr";
+
+	};
+
+	DatePickerRenderer.getAccessibilityState = function(oDP) {
+
+		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
+
+		mAccessibilityState["multiline"] = false;
+		mAccessibilityState["autocomplete"] = "none";
+		mAccessibilityState["haspopup"] = true;
+		mAccessibilityState["owns"] = oDP.getId() + "-cal";
+
+		return mAccessibilityState;
 
 	};
 
