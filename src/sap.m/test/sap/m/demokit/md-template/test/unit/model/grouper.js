@@ -14,7 +14,7 @@ sap.ui.require(
 		QUnit.module("Grouping functions", {
 			setup: function () {
 				this._oResourceModel = new ResourceModel({
-					bundleUrl : [$.sap.getModulePath("sap.ui.demo.mdtemplate"), "i18n/messageBundle.properties"].join("/")
+					bundleUrl : [$.sap.getModulePath("sap.ui.demo.mdtemplate"), "i18n/i18n.properties"].join("/")
 				});
 			},
 			teardown: function () {
