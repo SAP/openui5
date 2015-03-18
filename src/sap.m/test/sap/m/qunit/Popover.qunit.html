@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.Popover</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -188,9 +188,9 @@
 				]
 			});
 
-			var oCustomHeader = new sap.m.Bar("customHeader", { 
+			var oCustomHeader = new sap.m.Bar("customHeader", {
 				contentLeft: [new sap.m.Image('myAppIcon', {src: "../images/SAPUI5.png"}),
-				              new sap.m.Label("IconHeader", {text: "Icon Header"})],	
+				              new sap.m.Label("IconHeader", {text: "Icon Header"})],
 				contentMiddle: [],
 				contentRight: []
 			});
@@ -218,7 +218,7 @@
 
 			test("Initialization", function() {
 				ok(!jQuery.sap.domById("popover"), "Popover is not rendered in the beginning.");
-			});	
+			});
 
 			module("Open and Close", {
 				setup: function() {
@@ -828,15 +828,15 @@
 				ok(oPopover.getScrollDelegate(), "Scrolling is enabled when vertical scrolling is manually set to true");
 				oPopover.destroy();
 			});
-			
+
 			test("Popover should keep open when openBy control rerenders", function(){
 				var oButton = new sap.m.Button({
 					text: "abced"
 				});
-				
+
 				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
-				
+
 				var oPopover = new sap.m.Popover({
 					contentWidth: "400px",
 					contentHeight: "400px"
@@ -940,7 +940,6 @@
 				sap.ui.getCore().applyChanges();
 
 				oButton.firePress();
-				this.clock.tick(500);
 				ok(oPopover.isOpen(), "Popover should be opened");
 
 				oPopover.destroy();
@@ -985,13 +984,13 @@
 						tablet: true,
 						phone: false
 					};
-					
+
 					this.stub(sap.ui.Device, "system", oSystem);
-					
+
 					var oButton = new sap.m.Button({
 						text: "Open"
 					});
-					
+
 					var oPopover = new sap.m.Popover({
 						contentWidth: "200px",
 						contentHeight: "200px",
@@ -999,19 +998,19 @@
 							content: "<div style='width: 400px;height: 400px'></div>"
 						})
 					});
-					
+
 					oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 					oPopover.openBy(oButton);
-					
+
 					this.clock.tick(500);
 					ok(oPopover.isOpen(), "Popover is open");
 					oPopover.$("cont").scrollTop(20).scrollLeft(30);
-					
+
 					oPopover._onOrientationChange();
 					equal(oPopover.$("cont").scrollTop(), 20, "scrollTop is restored");
 					equal(oPopover.$("cont").scrollLeft(), 30, "scrollLeft is restored");
-					
+
 					oPopover.destroy();
 					oButton.destroy();
 				});
@@ -1031,20 +1030,20 @@
 					contentWidth: "300px",
 					contentHeight: "300px"
 				});
-				
+
 				var oButton = new sap.m.Button({
 					text: "Focus Problem with Popover"
 				});
 				page.addContent(oButton)
 				sap.ui.getCore().applyChanges();
-				
+
 				oPopover.openBy(oButton);
 				this.clock.tick(1000);
 				ok(oPopover.isOpen(), "Popover is still open");
 				oPopover.destroy();
 				oButton.destroy();
 			});
-			
+
 			test("Container Padding Classes", function () {
 				// System under Test + Act
 				var oContainer = new sap.m.Popover(),
