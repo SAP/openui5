@@ -15,7 +15,6 @@
 				<Property Name="Binary" Type="Edm.Binary" />
 				<Property Name="Boolean" Type="Edm.Boolean" />
 				<Property Name="Byte" Type="Edm.Byte" />
-				<Property Name="Char" Type="Edm.String" MaxLength="40" />
 				<Property Name="Date" Type="Edm.DateTime" Precision="0"
 					sap:display-format="Date" sap:label="Date" />
 				<Property Name="DateTime" Type="Edm.DateTime" Precision="0"
@@ -30,10 +29,10 @@
 				<Property Name="Int16" Type="Edm.Int16" sap:label="Int2" />
 				<Property Name="Int32" Type="Edm.Int32" sap:label="Number" />
 				<Property Name="Int64" Type="Edm.Int64" />
-				<Property Name="Numc" Type="Edm.String" MaxLength="10" />
 				<Property Name="SByte" Type="Edm.SByte" />
 				<Property Name="Single" Type="Edm.Single" />
 				<Property Name="String" Type="Edm.String" />
+				<Property Name="String40" Type="Edm.String" MaxLength="40" />
 				<Property Name="Time" Type="Edm.Time" Precision="0" />
 				<Property Name="TimeStampLong" Type="Edm.DateTime"
 					Precision="7" sap:label="Time Stamp" />

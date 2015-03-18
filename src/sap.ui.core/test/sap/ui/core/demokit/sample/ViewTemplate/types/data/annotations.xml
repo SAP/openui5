@@ -48,12 +48,8 @@
 							<PropertyValue Property="Value" Path="String"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Label" String="Char"/>
-							<PropertyValue Property="Value" Path="Char"/>
-						</Record>
-						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Label" String="Numc"/>
-							<PropertyValue Property="Value" Path="Numc"/>
+							<PropertyValue Property="Label" String="String40"/>
+							<PropertyValue Property="Value" Path="String40"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Label" String="Int16"/>
