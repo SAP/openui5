@@ -1,0 +1,13 @@
+.sapMListTbl > thead.widget-droparea-sortable > tr {
+	outline: solid 2px #4fb81c !important;
+}
+
+.sapMListTbl > tbody > tr.widget-droparea-sortable {
+	outline: solid 2px #4fb81c !important;
+}
+.sapMListTbl > thead.widget-droparea-sortable::before {
+	content: none;
+}
+.sapMListTbl > tbody > tr.widget-droparea-sortable::before {
+	content: none;
+}

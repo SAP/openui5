@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>DesignTime - sap.ui.dt</title>
+
+		<style>
+			html, body, #content {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;	
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				data-sap-ui-resourceroots='{"dt.view": "qunit/testdata/designtime/"}'
+				>
+		</script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.dt.adapter");
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+
+
+			var oView = sap.ui.xmlview("testView", "dt.view.Test2");
+			oView.placeAt("content");
+
+			var oDesignTime = new sap.ui.dt.DesignTime({
+				rootControl : oView
+			});
+
+			oDesignTime.ensureLoadedThen(function() {
+				jQuery.sap.log.debug("DesignTime ready");
+			});
+			
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		Press "ctrl" key to switch drop zones when a control is dragged
+		<div id="content"></div>
+	</body>
+</html>
