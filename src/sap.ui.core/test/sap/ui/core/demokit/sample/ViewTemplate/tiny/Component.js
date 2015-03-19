@@ -23,7 +23,13 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component",
 			}),
 			oMetaModel = oModel.getMetaModel(),
 			sPath = "/ProductSet('HT-1021')/ToSupplier",
-			oViewContainer = new sap.m.VBox();
+			oViewContainer = new sap.m.VBox({
+				items: [
+					new sap.m.Title({text: "This is meant to be a pure code sample. "
+						+ "(To run it, you would need a proxy which is configured properly.)",
+						titleStyle: sap.ui.core.TitleLevel.H3})
+				]
+			});
 
 		oMetaModel.loaded().then(function () {
 			var oTemplateView = sap.ui.view({
@@ -43,7 +49,13 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component",
 
 			oTemplateView.setModel(oModel);
 			oTemplateView.bindElement(sPath);
+			oViewContainer.destroyItems();
 			oViewContainer.addItem(oTemplateView);
+		}, function (oError) {
+			jQuery.sap.require("sap.m.MessageBox");
+			sap.m.MessageBox.alert(oError.message, {
+				icon: sap.m.MessageBox.Icon.ERROR,
+				title: "Missing Proxy?"});
 		});
 
 		// Note: synchronously return s.th. here and add content to it later on
