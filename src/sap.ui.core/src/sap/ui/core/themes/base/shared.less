@@ -274,13 +274,12 @@
 .sapUiNoMarginBegin  { margin-left: 0 !important; }
 .sapUiNoMarginEnd    { margin-right: 0 !important; }
 
-
-
 .sapUiInvisibleText, .sapUiHiddenPlaceholder {
 	display: none !important;
 }
 
-
- 
-
-
+/* hides the content to sighted users, but still allow it to be read by screen readers */
+.sapUiPseudoInvisibleText {
+	position: absolute !important;
+	clip: rect(1px, 1px, 1px, 1px);
+}
