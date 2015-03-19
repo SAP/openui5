@@ -394,39 +394,43 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 
 	TreeTable.prototype._updateTableContent = function() {
 		Table.prototype._updateTableContent.apply(this, arguments);
-
-		if (!this.getUseGroupMode()) {
-			return;
-		}
-
+		
 		//If group mode is enabled nodes which have children are visualized as if they were group header
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
 			iCount = this.getVisibleRowCount();
-
+		
 		for (var iRow = 0; iRow < iCount; iRow++) {
 			var oContext = this.getContextByIndex(iFirstRow + iRow),
-				$row = this.getRows()[iRow].$(),
-				$rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
-
-			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
-				// modify the rows
-				$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
-				var sClass = oBinding.isExpanded(iFirstRow + iRow) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + this.getModel().getProperty(this.getGroupHeaderProperty(), oContext) + "</div>");
-				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
-			} else {
-				$row.removeClass("sapUiTableGroupHeader");
-				if (oContext) {
-					$row.removeClass("sapUiTableRowHidden");
+				$row = this.getRows()[iRow].$();
+			
+			this._updateExpandIcon($row, oContext, iFirstRow + iRow);
+			
+			if (this.getUseGroupMode()) {
+				var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
+				if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
+					// modify the rows
+					$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
+					var sClass = oBinding.isExpanded(iFirstRow + iRow) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
+					$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + this.getModel().getProperty(this.getGroupHeaderProperty(), oContext) + "</div>");
+					$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
+				} else {
+					$row.removeClass("sapUiTableGroupHeader");
+					if (oContext) {
+						$row.removeClass("sapUiTableRowHidden");
+					}
+					$rowHdr.html("");
+					$rowHdr.removeClass("sapUiTableGroupHeader");
 				}
-				$rowHdr.html("");
-				$rowHdr.removeClass("sapUiTableGroupHeader");
 			}
 		}
 	};
 
-	TreeTable.prototype._updateTableCell = function(oCell, oContext, oTD, iAbsoluteRowIndex) {
+	TreeTable.prototype._updateTableCell = function () {
+		return true;
+	};
+	
+	TreeTable.prototype._updateExpandIcon = function($row, oContext, iAbsoluteRowIndex) {
 
 		var oBinding = this.getBinding("rows");
 
@@ -444,14 +448,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 				bIsExpanded = oNode && oNode.nodeState ? oNode.nodeState.expanded : false;
 			}
 			
-			var $row;
-			// in case of fixed columns we need to lookup the fixed table
-			// otherwise the expand/collapse/margin will not be set!
-			if (this.getFixedColumnCount() > 0) {
-				$row = oCell.getParent().$("fixed");
-			} else {
-				$row = oCell.getParent().$();
-			}
 			var $TreeIcon = $row.find(".sapUiTableTreeIcon");
 			var sTreeIconClass = "sapUiTableTreeIconLeaf";
 			if (!this.getUseGroupMode()) {

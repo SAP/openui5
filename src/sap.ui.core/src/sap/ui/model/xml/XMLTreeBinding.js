@@ -73,7 +73,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 				}
 			}
 		});
-
+		
+		this._applySorter(aContexts);
+		this._setLengthCache(sContextPath, aContexts.length);
+		
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
 
