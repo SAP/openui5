@@ -126,6 +126,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	ListItemBaseRenderer.renderCounterContent = function(rm, oLI, iCounter) {
 		rm.write("<div");
 		rm.writeAttribute("id", oLI.getId() + "-counter");
+		var sAriaLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_COUNTER", iCounter);
+		rm.writeAttribute("aria-label", sAriaLabel);
 		rm.addClass("sapMLIBCounter");
 		rm.writeClasses();
 		rm.write(">");
@@ -248,6 +250,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaLabelledBy = function(oLI) {
+		if (oLI.getAriaLabelledBy().length) {
+			return oLI.getId();
+		}
 	};
 	
 	/**
