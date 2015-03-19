@@ -6,8 +6,10 @@
 
 	jQuery.sap.require("sap.ui.base.ExpressionParser");
 
-	var iCount = 10000,
+	var iCount = 100000,
 		oModel = new sap.ui.model.json.JSONModel({x: 2}),
+		sResult = "\tParse expression binding\tEvaluate expression binding\tFormatter"
+			+ "\tBind with expression\tBind with formatter\n", //output in Excel friendly format
 		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {
@@ -29,6 +31,7 @@
 		iDuration = Date.now() - iStart;
 		ok(true, iCount + " iterations took " + iDuration + " ms, that is " + iDuration / iCount
 			+ " ms per iteration");
+		sResult += "\t" + iDuration / iCount;
 	}
 
 	window.formatters = {
@@ -59,6 +62,10 @@
 	//*********************************************************************************************
 	module("sap.ui.base.ExpressionParser Performance");
 
+	QUnit.done(function () {
+		jQuery.sap.log.info(sResult);
+	});
+
 	//*********************************************************************************************
 	jQuery.each([
 		{name: "trivial", expression:"{=${x}}"},
@@ -67,6 +74,7 @@
 	], function(iUnused, oFixture) {
 
 		test("Parse expression binding: " + oFixture.name, function () {
+			sResult += oFixture.name;
 			repeatedTest(function () {
 				sap.ui.base.BindingParser.complexParser(oFixture.expression);
 			});
@@ -94,6 +102,7 @@
 		test("Bind with formatter: " + oFixture.name, function () {
 			bindTest(sap.ui.base.BindingParser.complexParser(
 				"{path: '/x', formatter: 'formatters." + oFixture.name + "'}"));
+			sResult += "\n";
 		});
 	});
 } ());

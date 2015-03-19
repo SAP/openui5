@@ -35,7 +35,7 @@
 	 * @param {function} [fnInit] - optional initializer function to e.g. set stubs
 	 */
 	function checkFixtures(sTitle, aFixtures, fnInit) {
-		jQuery.each(aFixtures, function (iUnused, oFixture) {
+		aFixtures.forEach(function (oFixture) {
 			test(sTitle + " : " + oFixture.expression + " --> " + oFixture.result, function () {
 				if (fnInit) {
 					fnInit(this); //call initializer with sandbox

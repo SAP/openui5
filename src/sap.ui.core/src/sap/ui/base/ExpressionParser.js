@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 	//nud = "null denotation"
 	//rbp = "right binding power"
-	var fnUndefined = jQuery.proxy(CONSTANT, null, undefined),
+	var fnUndefined = CONSTANT.bind(null, undefined),
 		mDefaultGlobals = {
 			encodeURIComponent: encodeURIComponent,
 			Math: Math,
@@ -43,25 +43,25 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			"BINDING": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return jQuery.proxy(BINDING, null, oToken.value);
+					return BINDING.bind(null, oToken.value);
 				}
 			},
 			"IDENTIFIER": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return jQuery.proxy(CONSTANT, null, oParser.globals[oToken.value]);
+					return CONSTANT.bind(null, oParser.globals[oToken.value]);
 				}
 			},
 			"CONSTANT": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return jQuery.proxy(CONSTANT, null, oToken.value);
+					return CONSTANT.bind(null, oToken.value);
 				}
 			},
 			".": {
 				lbp: 18,
 				led: function (oToken, oParser, fnLeft) {
-					return jQuery.proxy(DOT, null, fnLeft, oParser.advance("IDENTIFIER").value);
+					return DOT.bind(null, fnLeft, oParser.advance("IDENTIFIER").value);
 				},
 				nud: unexpected
 			},
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 						aArguments.push(oParser.expression(0));
 					}
 					oParser.advance(")");
-					return jQuery.proxy(FUNCTION_CALL, null, fnLeft, aArguments);
+					return FUNCTION_CALL.bind(null, fnLeft, aArguments);
 				},
 				nud: function (oToken, oParser) {
 					var fnValue = oParser.expression(0);
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					var fnName = oParser.expression(0);
 
 					oParser.advance("]");
-					return jQuery.proxy(PROPERTY_ACCESS, null, fnLeft, fnName);
+					return PROPERTY_ACCESS.bind(null, fnLeft, fnName);
 				},
 				nud: function (oToken, oParser) {
 					var aElements = [],
@@ -111,14 +111,14 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 							oParser.current().id === "," ? fnUndefined : oParser.expression(0));
 					}
 					oParser.advance("]");
-					return jQuery.proxy(ARRAY, null, aElements);
+					return ARRAY.bind(null, aElements);
 				}
 			},
 			"!": {
 				lbp: 15,
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+					return UNARY.bind(null, oParser.expression(this.lbp),
 						function (x) { return !x; });
 				}
 			},
@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 				lbp: 15,
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+					return UNARY.bind(null, oParser.expression(this.lbp),
 							function (x) { return typeof x; });
 				}
 			},
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 					fnThen = oParser.expression(this.lbp - 1);
 					oParser.advance(":");
 					fnElse = oParser.expression(this.lbp - 1);
-					return jQuery.proxy(CONDITIONAL, null, fnLeft, fnThen, fnElse);
+					return CONDITIONAL.bind(null, fnLeft, fnThen, fnElse);
 				},
 				nud: unexpected
 			},
@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 						mMap[sKey] = fnValue;
 					}
 					oParser.advance("}");
-					return jQuery.proxy(MAP, null, mMap);
+					return MAP.bind(null, mMap);
 				}
 			},
 			"}": {
@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			"/", "%", "+", "-", "<=", "<", ">=", ">", "[", "]"],
 		rTokens;
 
-	jQuery.each(aTokens, function(i, sToken) {
+	aTokens.forEach(function(sToken, i) {
 		aTokens[i] = jQuery.sap.escapeRegExp(sToken);
 	});
 	rTokens = new RegExp(aTokens.join("|"), "g");
@@ -206,11 +206,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	addInfix("/", 14, function (x, y) { return x / y; });
 	addInfix("%", 14, function (x, y) { return x % y; });
 	addInfix("+", 13, function (x, y) { return x + y; }).nud = function (oToken, oParser) {
-		return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+		return UNARY.bind(null, oParser.expression(this.lbp),
 			function (x) { return +x; });
 	};
 	addInfix("-", 13, function (x, y) { return x - y; }).nud = function (oToken, oParser) {
-		return jQuery.proxy(UNARY, null, oParser.expression(this.lbp),
+		return UNARY.bind(null, oParser.expression(this.lbp),
 				function (x) { return -x; });
 	};
 	addInfix("<=", 11, function (x, y) { return x <= y; });
@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	function ARRAY(aElements, aParts) {
 		var aResult = [];
 
-		jQuery.each(aElements, function(i, fnArgument) {
+		aElements.forEach(function(fnArgument, i) {
 			aResult[i] = fnArgument(aParts);
 		});
 		return aResult;
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	function FUNCTION_CALL(fnLeft, aArguments, aParts) {
 		var aResult = [];
 
-		jQuery.each(aArguments, function(i, fnArgument) {
+		aArguments.forEach(function(fnArgument, i) {
 			aResult[i] = fnArgument(aParts); // evaluate argument
 		});
 		// evaluate function expression and call it
@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	 */
 	function INFIX(fnLeft, fnRight, fnOperator, bLazy, aParts) {
 		return fnOperator(fnLeft(aParts),
-			bLazy ? jQuery.proxy(fnRight, null, aParts) : fnRight(aParts));
+			bLazy ? fnRight.bind(null, aParts) : fnRight(aParts));
 	}
 
 	/**
@@ -376,7 +376,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 				//default operator, e.g. true || A || B || C does not execute the || for B and C
 				var rbp = bLazy ? this.lbp - 1 : this.lbp;
 
-				return jQuery.proxy(INFIX, null, fnLeft, oParser.expression(rbp),
+				return INFIX.bind(null, fnLeft, oParser.expression(rbp),
 					fnOperator, bLazy);
 			},
 			nud: unexpected
