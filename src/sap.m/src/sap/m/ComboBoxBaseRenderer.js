@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxBaseRenderer.writeInnerContent = function(oRm, oControl) {
-			this.renderButton(oRm, oControl.getId() + "-arrow");
+			this.renderButton(oRm, oControl);
 		};
 
 		/**
@@ -131,14 +131,29 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {string} sId Id for the button.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
-		ComboBoxBaseRenderer.renderButton = function(oRm, sId) {
+		ComboBoxBaseRenderer.renderButton = function(oRm, oControl) {
+			var sId = oControl.getId(),
+				sButtonId = sId + "-arrow",
+				sButtonLabelId = sId + "-buttonlabel",
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			oRm.write('<button tabindex="-1"');
-			oRm.writeAttribute("id", sId);
+			oRm.writeAttribute("id", sButtonId);
+			oRm.writeAttribute("aria-labelledby", sButtonLabelId);
 			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS + "Arrow");
 			oRm.writeClasses();
-			oRm.write("></button>");
+			oRm.write(">");
+			oRm.write("<label");
+			oRm.writeAttribute("id", sButtonLabelId);
+			oRm.addClass("sapUiInvisibleText");
+			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS + "ButtonLabel");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write(oRb.getText("COMBOBOX_BUTTON"));
+			oRm.write("</label>");
+			oRm.write("</button>");
 		};
 
 		return ComboBoxBaseRenderer;
