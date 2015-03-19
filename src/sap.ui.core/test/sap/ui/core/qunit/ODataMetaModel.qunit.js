@@ -963,10 +963,14 @@
 							null, "getODataEntityType");
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
 							undefined, "getODataEntityType as path");
-						strictEqual(oMetaModel.getODataEntitySet("ProductSet"), null,
-							"getODataEntitySet");
-						strictEqual(oMetaModel.getODataEntitySet("ProductSet", true), undefined,
-							"getODataEntitySet as path");
+						strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
+							null, "getODataEntitySet");
+						strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
+							undefined, "getODataEntitySet as path");
+						strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
+							null, "getODataFunctionImport");
+						strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
+							undefined, "getODataFunctionImport as path");
 					}, onError)["catch"](onError);
 				});
 			}
@@ -1008,6 +1012,27 @@
 			strictEqual(oMetaModel.getODataEntitySet(undefined, true), undefined);
 		});
 	});
+
+	//*********************************************************************************************
+	test("getODataFunctionImport", function () {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
+				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
+			strictEqual(oMetaModel.getODataFunctionImport("Foo"), null);
+			strictEqual(oMetaModel.getODataFunctionImport(), null);
+		});
+	});
+
+	//*********************************************************************************************
+	test("getODataFunctionImport as path", function () {
+		withMetaModel(function (oMetaModel) {
+			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
+				"/dataServices/schema/0/entityContainer/0/functionImport/0");
+			strictEqual(oMetaModel.getODataFunctionImport("Foo", true), undefined);
+			strictEqual(oMetaModel.getODataFunctionImport(undefined, true), undefined);
+		});
+	});
+
 	//TODO test with multiple schemas; what if there is no default entity container?
 	/*
 	 * http://www.odata.org/documentation/odata-version-2-0/overview/ says about

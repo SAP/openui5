@@ -154,6 +154,37 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	}
 
 	/*
+	 * Returns the thing with the given simple name from the given entity container.
+	 *
+	 * @param {object} oEntityContainer
+	 *   the entity container
+	 * @param {string} sArrayName
+	 *   name of array within entity container which will be searched
+	 * @param {string} sName
+	 *   a simple name, e.g. "Foo"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the thing itself is returned or just its path
+	 * @returns {object|string}
+	 *   (the path to) the thing with the given qualified name; <code>undefined</code> (for a path)
+	 *   or <code>null</code> (for an object) if no such thing is found
+	 */
+	function getFromContainer(oEntityContainer, sArrayName, sName, bAsPath) {
+		var k,
+			vResult = bAsPath ? undefined : null;
+
+		if (oEntityContainer) {
+			k = findIndex(oEntityContainer[sArrayName], sName);
+			if (k >= 0) {
+				vResult = bAsPath
+					? oEntityContainer.$path + "/" + sArrayName + "/" + k
+					: oEntityContainer[sArrayName][k];
+			}
+		}
+
+		return vResult;
+	}
+
+	/*
 	 * Returns the thing with the given qualified name from the given model's array (within a
 	 * schema) of given name.
 	 *
@@ -708,20 +739,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * @public
 	 */
 	ODataMetaModel.prototype.getODataEntitySet = function (sName, bAsPath) {
-		var k,
-			oEntityContainer = this.getODataEntityContainer(),
-			vResult = bAsPath ? undefined : null;
-
-		if (oEntityContainer) {
-			k = findIndex(oEntityContainer.entitySet, sName);
-			if (k >= 0) {
-				vResult = bAsPath
-					? oEntityContainer.$path + "/entitySet/" + k
-					: oEntityContainer.entitySet[k];
-			}
-		}
-
-		return vResult;
+		return getFromContainer(this.getODataEntityContainer(), "entitySet", sName, bAsPath);
 	};
 
 	/**
@@ -739,6 +757,23 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 */
 	ODataMetaModel.prototype.getODataEntityType = function (sQualifiedName, bAsPath) {
 		return getObject(this.oModel, "entityType", sQualifiedName, bAsPath);
+	};
+
+	/**
+	 * Returns the OData function import with the given simple name from the default entity
+	 * container.
+	 *
+	 * @param {string} sName
+	 *   a simple name, e.g. "Save"
+	 * @param {boolean} [bAsPath=false]
+	 *   determines whether the function import is returned as a path or as an object
+	 * @returns {object|string}
+	 *   (the path to) the function import with the given simple name; <code>undefined</code> (for
+	 *   a path) or <code>null</code> (for an object) if no such function import is found
+	 * @public
+	 */
+	ODataMetaModel.prototype.getODataFunctionImport = function (sName, bAsPath) {
+		return getFromContainer(this.getODataEntityContainer(), "functionImport", sName, bAsPath);
 	};
 
 	/**
