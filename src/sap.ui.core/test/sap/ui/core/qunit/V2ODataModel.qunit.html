@@ -15,7 +15,7 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
 	</script>
 
 <link rel="stylesheet"
@@ -2584,7 +2584,259 @@
 			}
 		});
 	});
+	asyncTest("test oDataModel checkupdate/dataReceived event order", function() {
+		var iCount = 0;
+		var iChange = 0;
+		var iReceived = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		var oInput1, oInput2;
+		
+		oInput1 = new sap.m.Input();
+		oInput1.setModel(oModel);
+		oInput2 = new sap.m.Input();
+		oInput2.setModel(oModel);
+		
+		var fnChange = function(oEvent) {
+			iChange++;
+		}
+		var fnDataReceived = function(oEvent) {
+			ok(iChange == 2, "checkupdate done");
+			iReceived++;
+			if (iReceived == 2) {
+				ok(true, "dataReceived after checkUpdate");
+			}
+		}
+		
+		oInput1.bindElement({path:"/ProductSet('AD-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+		oInput2.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+		
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 1 ) {
+				ok(true, "batch request completed");
+				start();
+			}
+		});
+	});
 	
+	asyncTest("test oDataModel checkupdate/dataReceived event order - data already loaded", function() {
+		var iCount = 0;
+		var iChange = 0;
+		var iReceived = 0;
+		var oInput1, oInput2;
+		
+		oInput1 = new sap.m.Input();
+		oInput1.setModel(oModel);
+		oInput2 = new sap.m.Input();
+		oInput2.setModel(oModel);
+		
+		var fnChange = function(oEvent) {
+			iChange++;
+			if (iChange == 2) {
+				ok(true, "checkupdate done");
+				start();
+			}
+		}
+		var fnDataReceived = function(oEvent) {
+			ok(false, "no data retrieval necessary");
+		}
+	
+		oModel.read("/ProductSet('AD-1000')", {
+			batchGroupId : "myId1",
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.read("/ProductSet('HT-1000')", {
+			batchGroupId : "myId1",
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		
+		var fnBind = function() {
+			oInput1.bindElement({path:"/ProductSet('AD-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+			oInput2.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+		};
+		
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 1 ) {
+				ok(true, "read batch request completed");
+				fnBind();
+			}
+			if (iCount > 1 ) {
+				ok(false, "data already loaded: No further request necessary");
+			}
+		});
+	});
+	asyncTest("test oDataModel listbinding with table - event order change/dataReceived", function() {
+		var iCount = 0,
+			iChange = 0,
+			iReceived = 0;
+
+		var mEntities = {
+				categories: { 
+					collection: "/VH_CategorySet", 
+					properties: ["Category"]
+				}
+			}
+		var oTable = initTable(mEntities);
+		
+		oTable.placeAt("target1");
+		
+		oTable.setModel(oModel);
+		
+		var fnChange = function(oEvent) {
+			iChange++;
+		}
+		var fnDataReceived = function(oEvent) {
+			ok(iChange == 1, "checkupdate done");
+			iReceived++;
+			if (iReceived == 1) {
+				ok(true, "dataReceived after checkUpdate");
+			}
+		}
+		
+		oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
+		var fnCheck = function() {
+			ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
+			oTable.destroy();
+			start();
+		}
+		oModel.attachBatchRequestCompleted(this, fnCheck);
+	});
+	
+	asyncTest("test oDataModel listbinding with table - event order change/dataReceived - data already loaded", function() {
+		var iCount = 0,
+			iChange = 0,
+			iReceived = 0;
+
+		var mEntities = {
+				categories: { 
+					collection: "/VH_CategorySet", 
+					properties: ["Category"]
+				}
+			}
+		var oTable = initTable(mEntities);
+		
+		oTable.placeAt("target1");
+		
+		oTable.setModel(oModel);
+		
+		var fnChange = function(oEvent) {
+			iChange++;
+		}
+		var fnDataReceived = function(oEvent) {
+			ok(iChange == 1, "checkupdate done");
+			iReceived++;
+			if (iReceived == 1) {
+				ok(true, "dataReceived after checkUpdate");
+				oTable.destroy();
+				start();
+			}
+		}
+		
+		oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
+		var fnCheck = function() {
+			iCount++;
+			if (iCount <= 2) {
+				ok(true, "request completed");
+			} else {
+				ok(false, "too many requests");
+			}
+		}
+		oModel.attachBatchRequestCompleted(this, fnCheck);
+		
+		var fnLoad = function() {
+			oModel.read("/VH_CategorySet", {
+				success : function(oData, oResponse) {
+					ok(true, "request succeeded");
+					fnTest();
+				},
+				error : function(oError) {
+					ok(false, "request failed");
+				}
+			});
+		};
+	});
+	asyncTest("test oDataModel createEntry, submit fails, change again and submit", function() {
+		var iCount = 0;
+		var oContext;
+		
+		oModel.setDeferredBatchGroups(["myId"]);
+		oModel.setChangeBatchGroups({
+					"Product": {
+			 			batchGroupId: "myId",  
+			  			changeSetId: "Test",
+			  			single: false
+			 		}});
+		
+		var fnChange = function() {
+			oModel.setProperty("TypeCode","AD", oContext);
+			oModel.setProperty("Category","Computer system accessories", oContext);
+			oModel.setProperty("Name","TestEntry", oContext);
+			oModel.setProperty("NameLanguage","E", oContext);
+			oModel.setProperty("Description","Flyer for our product palette", oContext);
+			oModel.setProperty("DescriptionLanguage","E", oContext);
+			oModel.setProperty("SupplierID","0100000015", oContext);
+			oModel.setProperty("SupplierName","Robert Brown Entertainment", oContext);
+			oModel.setProperty("TaxTarifCode",1, oContext);
+			oModel.setProperty("MeasureUnit","EA", oContext);
+			oModel.setProperty("WeightMeasure","0.01", oContext);
+			oModel.setProperty("WeightUnit","KG", oContext);
+			oModel.setProperty("CurrencyCode","CAD", oContext);
+			oModel.setProperty("Price","0.0", oContext);
+			oModel.setProperty("Width","0.46", oContext);
+			oModel.setProperty("Depth","0.3", oContext);
+			oModel.setProperty("Height","0.03", oContext);
+			oModel.setProperty("DimUnit","M", oContext);
+			oModel.submitChanges({
+				success : function(oData, oResponse) {
+					ok(true, "$batch successful");
+					ok(oData.__batchResponses.length === 1, "One response found");
+					if (!oData.__batchResponses[0].message) {
+						ok(true, "creation successful");
+						start();
+					}
+				},
+				error : function(oError) {
+					ok(false, "creation failed");
+				}
+			});
+		};
+		
+		var fnTest = function(){
+			oContext = oModel.createEntry("/ProductSet", {properties: {
+				"ProductID":"AD-12345",
+			}, batchGroupId: "myId"});
+			
+			oModel.submitChanges({
+				success : function(oData, oResponse) {
+					ok(true, "$batch successful");
+					ok(oData.__batchResponses.length === 1, "One response found");
+					//MockServer does not really fail so we create a message
+					oData.__batchResponses[0].message = "error";
+					if (oData.__batchResponses[0].message) {
+						ok(true, "creation failed");
+						fnChange();
+					}
+				},
+				error : function(oError) {
+					ok(false, "should not land here");
+				}
+			});
+		};
+		
+		oModel.attachMetadataLoaded(this, fnTest);
+	});
 	</script>
 
 </head>
