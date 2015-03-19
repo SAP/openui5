@@ -708,7 +708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
 			oClone,
-			oItems,
+			aItems,
 			oItem,
 			iIndex,
 			that = this,
@@ -730,10 +730,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (aContexts.diff && sChangeReason) {
 			var aDiff = aContexts.diff;
 			for (var i = 0; i < aDiff.length; i++) {
-				oItems = this.getItems();
+				aItems = this.getItems();
 				iIndex = aDiff[i].index;
 				if (aDiff[i].type === "delete") {
-					oItem = oItems[iIndex];
+					oItem = aItems[iIndex];
 					aDiff[i].item = oItem;
 					this.removeItem(oItem);
 				} else if (aContexts.diff[i].type === "insert") {
@@ -755,8 +755,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				that[oAggregationInfo._sMutator](oClone);
 			});
 		}
+		
+		// update context on all items after applying diff
+		aItems = this.getItems();
+		for (var i = 0, l = aContexts.length; i < l; i++) {
+			aItems[i].setBindingContext(aContexts[i], oBindingInfo.model);
+		}
 	};
-
 
 	return DataSet;
 
