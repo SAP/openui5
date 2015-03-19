@@ -22,7 +22,10 @@
 		</headerContent>
 		<content>
 			<ObjectHeader
-				title="{i18n>lineItemTitle}: {LineItemID}"
+				title="{
+					parts: [{path: 'i18n>lineItemObjectTitle'}, {path: 'i18n>lineItemTitle'}, {path: 'LineItemID'}],
+					formatter: 'jQuery.sap.formatMessage'
+				}"
 				number="{UnitNumber}"
 				numberUnit="{UnitOfMeasure}">
 			</ObjectHeader>
