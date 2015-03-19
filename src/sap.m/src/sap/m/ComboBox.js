@@ -241,6 +241,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.oninput = function(oEvent) {
 			ComboBoxBase.prototype.oninput.apply(this, arguments);
 
+			// note: suppress input events of read-only fields (IE11)
+			if (!this.getEditable()) {
+				return;
+			}
+
 			var oSelectedItem = this.getSelectedItem(),
 				aItems = this.getItems(),
 				oInputDomRef = oEvent.target,
