@@ -104,9 +104,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				sTextDir = oSelect.getTextDirection(),
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir);
 
-			oRm.write('<label class="' + SelectRenderer.CSS_CLASS + 'Label"');
+			oRm.write("<label");
 			oRm.writeAttribute("id", oSelect.getId() + "-label");
 			oRm.writeAttribute("for", oSelect.getId());
+			oRm.addClass(SelectRenderer.CSS_CLASS + "Label");
+
+			if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+				oRm.addClass("sapUiPseudoInvisibleText");
+			}
 
 			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
 				oRm.writeAttribute("dir", sTextDir.toLowerCase());
@@ -117,6 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			}
 
 			oRm.writeStyles();
+			oRm.writeClasses();
 
 			oRm.write(">");
 			oRm.writeEscaped(oSelectedItem ? oSelectedItem.getText() : "");
