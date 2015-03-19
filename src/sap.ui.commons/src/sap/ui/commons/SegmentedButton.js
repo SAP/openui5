@@ -125,7 +125,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oButton,
 			aButtons,
 			aItemDomRefs = [];
-	
+		if (!this.getEnabled()) {
+			return;
+		}
 		if (this.getDomRef()) {
 			this._oItemNavigation.setRootDomRef(this.getDomRef("radiogroup"));
 			aButtons = this.getButtons();
