@@ -126,6 +126,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 
 		// Assertions
 		Then.iShouldBeOnTheObjectNPage(1).
+			and.iShouldSeeTheHashForObjectN(1).
 			and.iTeardownMyAppFrame();
 
 	});
@@ -140,6 +141,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 
 		// Assertions
 		Then.iShouldBeOnTheObjectNPage(10).
+			and.iShouldSeeTheHashForObjectN(10).
 			and.theObjectNShouldBeSelectedInTheMasterList(10).
 			and.iTeardownMyAppFrame();
 	});
@@ -156,5 +158,19 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 			and.theListShouldHaveNoSelection().
 			and.iTeardownMyAppFrame();
 	});
-
+	
+	opaTest("Start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartTheAppOnADesktopDevice();
+		
+		//Actions
+		When.iWaitUntilTheMasterListIsLoaded();
+		//Assertions
+		
+		Then.theObjectNShouldBeSelectedInTheMasterList(1).
+			and.iShouldBeOnTheObjectNPage(1).
+			and.iShouldSeeTheHashForObjectN(1).
+			and.iTeardownMyAppFrame();
+	});
+	
 });

@@ -268,6 +268,28 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				},
 				errorMessage: "list does not show the no data text for search and filter"
 			});
+		},
+		
+		iShouldSeeTheHashForObjectN : function (iObjIndex) {
+			return this.waitFor({
+				success : function () {
+					var oHashChanger = Opa5.getHashChanger(),
+						sHash = oHashChanger.getHash();
+					strictEqual(sHash, "object/ObjectID_" + iObjIndex, "The Hash is not correct");
+				},
+				errorMessage : "The Hash is not Correct!"
+			});
+		},
+		
+		iShouldSeeAnEmptyHash : function () {
+			return this.waitFor({
+				success : function () {
+					var oHashChanger = Opa5.getHashChanger(),
+						sHash = oHashChanger.getHash();
+					strictEqual(sHash, "", "The Hash should be empty");
+				},
+				errorMessage : "The Hash is not Correct!"
+			});
 		}
 	});
 }, /* bExport= */ true);

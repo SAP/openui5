@@ -107,7 +107,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 	opaTest("Navigate directly to Line Item 7 of object 3 with hash: press back button twice should take me to the master list", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheAppOnAPhone("#/object/ObjectID_3/lineitem/LineItemID_7");
-		
+
 		//Actions
 		When.iWaitUntilISeePageForLineItem7().
 		    and.iPressTheBackButtonOnLineItemPage().
@@ -117,5 +117,17 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		Then.iShouldSeeTheObjectList().
 			and.iTeardownMyAppFrame();
 	});
+	
+	opaTest("Start the app with an empty hash: the hash should still be empty after loading", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartTheAppOnAPhone();
+
+		//Actions
+		When.iWaitUntilTheMasterListIsLoaded();
+
+		//Assertions
+		Then.iShouldSeeAnEmptyHash().
+			and.iTeardownMyAppFrame();
+	})
 
 });
