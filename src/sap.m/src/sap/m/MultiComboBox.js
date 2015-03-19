@@ -1025,18 +1025,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		return aSelectedItems;
 	};
 
-	MultiComboBox.prototype.setPlaceholder = function(sPlaceholder) {
-		this._sPlaceholder = sPlaceholder;
 
-		var sTargetPlaceholder = sPlaceholder;
-		if (this._hasTokens()) {
-			sTargetPlaceholder = "";
-		}
-
-		ComboBoxBase.prototype.setPlaceholder.apply(this, [sTargetPlaceholder]);
-		return this;
-	};
-	
 	/**
 	 * @private
 	 */
@@ -1376,13 +1365,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 				this.fireChangeEvent('');
 			}
 		}
-
-		var sTargetPlaceholder = this._sPlaceholder;
-		// Remove Placeholder when MCB has tokens.
-		if (this._hasTokens()) {
-			sTargetPlaceholder = "";
-		}
-		ComboBoxBase.prototype.setPlaceholder.apply(this, [sTargetPlaceholder]);
 	};
 	
 	/* =========================================================== */
@@ -2155,10 +2137,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (this._oTokenizer) {
 			this._oTokenizer.destroy();
 			this._oTokenizer = null;
-		}
-		
-		if (this._sPlaceholder) {
-			this._sPlaceholder = null;
 		}
 	};
 	
