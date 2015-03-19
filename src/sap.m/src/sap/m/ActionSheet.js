@@ -276,6 +276,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				if (sap.ui.Device.system.phone) {
 					//remove the transparent property from blocklayer
 					this._parent.oPopup.setModal(true);
+					//doesn't need to react on content change because content is always 100%
+					this._parent._registerResizeHandler = this._parent._deregisterResizeHandler = function() {};
 					this._parent._setDimensions = function(){
 						var $this = this.$(),
 							$content = this.$("cont");
