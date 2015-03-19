@@ -846,7 +846,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * 
 	 * @private
 	 */
-	ODataTreeBinding.prototype.resetData = function(oContext) {
+	ODataTreeBinding.prototype.resetData = function(oContext, mParameters) {
 		if (oContext) {
 			//Only reset specific content
 			var sPath = oContext.getPath();
@@ -949,7 +949,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		this.aSorters = aSorters || [];
 
 		if (!this.bInitial) {
-			this.resetData();
+			this.resetData(undefined, {reason: ChangeReason.Sort});
 			
 			// abort running request, since new requests will be sent containing $orderby
 			jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {

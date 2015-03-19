@@ -1572,6 +1572,58 @@
 	});
 	
 	
+	asyncTest("Sorting with stable expand states", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
+				rootLevel: 2,
+				displayRootNode: false
+			});
+			
+			//initial load
+			function fnChangeHandler1 () {
+				oBinding.detachChange(fnChangeHandler1);
+				var aContexts = oBinding.getContexts(0, 100);
+				
+				oBinding.attachChange(fnChangeHandler2);
+				oBinding.expand(2);
+				oBinding.expand(0);
+				//trigger reload
+				oBinding.getContexts(0, 100);
+			}
+			
+			//change after expand
+			function fnChangeHandler2(oEvent) {
+				
+				if (oEvent.getParameter("reason") === "expand") {
+					return;
+				}
+				
+				oBinding.detachChange(fnChangeHandler2);
+				var aContexts = oBinding.getContexts(0, 100);
+				
+				oBinding.attachRefresh(fnRefreshHandler);
+				//sort descending
+				oBinding.sort(new sap.ui.model.Sorter("HierarchyNode", true));
+			}
+			
+			//refresh after sort()
+			function fnRefreshHandler() {
+				oBinding.detachRefresh(fnRefreshHandler);
+				
+				ok(oBinding._mTreeState.expanded["/000682/"], "NodeState for 000682 still there.");
+				ok(oBinding._mTreeState.expanded["/000002/"], "NodeState for 000002 still there.");
+				equal(oBinding._mTreeState.expanded["/000682/"].expanded, true, "Node 000682 is still expanded after sorting.");
+				equal(oBinding._mTreeState.expanded["/000002/"].expanded, true, "Node 000002 is still expanded after sorting.");
+					
+				start();
+			}
+			
+			oBinding.attachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 100);
+			
+		});
+	});
+	
 	</script>
 
 </head>

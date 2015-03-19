@@ -896,8 +896,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		}
 	};
 	
-	ODataTreeBindingAdapter.prototype.resetData = function(oContext) {
-		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext);
+	ODataTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
+		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 		
 		// clear the mapping table
 		this._aRowIndexMap = [];
@@ -908,11 +908,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		// clear page size
 		this._iPageSize = 0;
 		
-		//remove the selection/reset lead selection index
-		this.clearSelection();
-		
-		// clear the tree state
-		this._createTreeState(true);
+		if (!mParameters || mParameters.reason !== ChangeReason.Sort) {
+			//remove the selection/reset lead selection index
+			this.clearSelection();
+			
+			// clear the tree state
+			this._createTreeState(true);
+		}
 		
 		return vReturn;
 	};
