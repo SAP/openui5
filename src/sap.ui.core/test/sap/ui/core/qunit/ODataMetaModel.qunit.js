@@ -43,7 +43,7 @@
 			<EntityType Name="BusinessPartner" sap:content-version="1">\
 				<Property Name="BusinessPartnerID" Type="Edm.String"\
 					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID"\
-					sap:creatable="false" sap:updatable="false">\
+					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false">\
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
 				<Property Name="AnyProperty" Type="Edm.String" sap:updatable="false"/>\
@@ -51,24 +51,36 @@
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
 			<EntityType Name="VH_Sex" sap:content-version="1">\
-				<Key>\
-					<PropertyRef Name="Sex"/>\
-				</Key>\
 				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1" />\
+			</EntityType>\
+			<EntityType Name="Product">\
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" \
+					sap:precision="PriceScale" sap:unit="CurrencyCode"/>\
+				<Property Name="PriceScale" Type="Edm.Byte"/>\
+				<Property Name="WeightMeasure" Type="Edm.Decimal" Precision="13" Scale="3" \
+					sap:unit="WeightUnit"/>\
+				<Property Name="WeightUnit" Type="Edm.String" MaxLength="3" \
+					sap:semantics="unit-of-measure"/>\
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" \
+					sap:semantics="currency-code"/>\
 			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
 				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
-					sap:content-version="1" />\
+					sap:topable="false" sap:requires-filter="true" sap:content-version="1" />\
 				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex" \
 					sap:creatable="false" sap:updatable="false" sap:deletable="false" \
-					sap:searchable="true" sap:content-version="1"/> \
-				<AssociationSet Name="Assoc_FooSet" Association="GWSAMPLE_BASIC.Assoc_Foo" sap:creatable="false">\
+					sap:pageable="false" sap:searchable="true" sap:content-version="1"/> \
+				<AssociationSet Name="Assoc_FooSet" Association="GWSAMPLE_BASIC.Assoc_Foo" \
+					sap:creatable="false">\
 					<End EntitySet="BusinessPartnerSet" Role="FromRole_Foo"/>\
 					<End EntitySet="BusinessPartnerSet" Role="ToRole_Foo"/>\
 				</AssociationSet>\
-				<FunctionImport Name="Foo" ReturnType="GWSAMPLE_BASIC.BusinessPartner" EntitySet="BusinessPartnerSet" m:HttpMethod="POST" sap:action-for="GWSAMPLE_BASIC.BusinessPartner">\
-					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In" MaxLength="10" sap:label="ID"/>\
+				<FunctionImport Name="Foo" ReturnType="GWSAMPLE_BASIC.BusinessPartner" \
+					EntitySet="BusinessPartnerSet" m:HttpMethod="POST" \
+					sap:action-for="GWSAMPLE_BASIC.BusinessPartner">\
+					<Parameter Name="BusinessPartnerID" Type="Edm.String" Mode="In" MaxLength="10" \
+						sap:label="ID"/>\
 				</FunctionImport>\
 			</EntityContainer>\
 			<ComplexType Name="CT_Address">\
@@ -109,18 +121,31 @@
 	</Annotation>\
 </Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
-		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode"/>\
 		<Annotation Term="Org.OData.Core.V1.Computed" Bool="true"/>\
+		<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="AnyProperty"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
 		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
 	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Product/Price">\
+		<Annotation Term="Org.OData.Measures.V1.Scale" Path="PriceScale"/>\
+		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.Product/WeightMeasure">\
+		<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"/>\
+	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
+		<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">\
+			<Record>\
+				<PropertyValue Property="RequiresFilter" Bool="true"/>\
+			</Record>\
+		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.SearchRestrictions">\
 			<Record>\
 				<PropertyValue Property="Searchable" Bool="false"/>\
 			</Record>\
 		</Annotation>\
+		<Annotation Term="Org.OData.Capabilities.V1.TopSupported" Bool="false" />\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet">\
 		<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">\
@@ -128,6 +153,8 @@
 				<PropertyValue Property="Insertable" Bool="false"/>\
 			</Record>\
 		</Annotation>\
+		<Annotation Term="Org.OData.Capabilities.V1.TopSupported" Bool="false" />\
+		<Annotation Term="Org.OData.Capabilities.V1.SkipSupported" Bool="false" />\
 		<Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">\
 			<Record>\
 				<PropertyValue Property="Updatable" Bool="false"/>\
@@ -631,12 +658,17 @@
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
+					oAnyProperty = oBusinessPartner.property[1],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
-					oAnyProperty = oBusinessPartner.property[1],
 					oNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oParameter = oFunctionImport.parameter[0],
+					oProduct = oGWSampleBasic.entityType[2],
+					oProductCurrencyCode =  oProduct.property[4],
+					oProductPrice = oProduct.property[0],
+					oProductWeightMeasure =  oProduct.property[2],
+					oProductWeightUnit =  oProduct.property[3],
 					sSAPData = "http://www.sap.com/Protocols/SAPData",
 					oVHSex = oGWSampleBasic.entityType[1],
 					oVHSexSet = oEntityContainer.entitySet[1];
@@ -679,6 +711,8 @@
 				delete oBusinessPartner.$path;
 				strictEqual(oVHSex.$path, "/dataServices/schema/0/entityType/1");
 				delete oVHSex.$path;
+				strictEqual(oProduct.$path, "/dataServices/schema/0/entityType/2");
+				delete oProduct.$path;
 
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
@@ -720,11 +754,6 @@
 
 				if (i > 0) {
 					ok(oAnnotations, "annotations are also loaded");
-
-					deepEqual(oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"], {
-						"Path" : "CurrencyCode"
-					});
-					delete oBusinessPartnerId["Org.OData.Measures.V1.ISOCurrency"];
 
 					deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
 						"String" : "Label via external annotation: Business Partner"
@@ -876,6 +905,62 @@
 					"Searchable": {"Bool" : "false"}
 				}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
+
+				// sap:pageable
+				deepEqual(oVHSexSet["sap:pageable"], "false");
+				delete oVHSexSet["sap:pageable"];
+				deepEqual(oVHSexSet["Org.OData.Capabilities.V1.TopSupported"], {"Bool" : "false"},
+					"VH_SexSet not TopSupported");
+				deepEqual(oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"], {"Bool" : "false"},
+					"VH_SexSet not SkipSupported");
+				delete oVHSexSet["Org.OData.Capabilities.V1.TopSupported"];
+				delete oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"];
+
+				// sap:topable
+				deepEqual(oBusinessPartnerSet["sap:topable"], "false");
+				delete oBusinessPartnerSet["sap:topable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"],
+					{"Bool" : "false"}, "oBusinessPartnerSet not TopSupported");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"];
+
+				// sap:requires-filter
+				deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
+				delete oBusinessPartnerSet["sap:requires-filter"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
+					"RequiresFilter": {"Bool" : "true"}
+				}, "BusinessPartnerSet requires filter");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
+
+				// sap:text
+				deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
+				delete oBusinessPartnerId["sap:text"];
+				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"],
+					{ "Path" : "AnyProperty" }, "BusinessPartnerId text");
+				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"];
+
+				// sap:precision
+				deepEqual(oProductPrice["sap:precision"], "PriceScale");
+				delete oProductPrice["sap:precision"];
+				deepEqual(oProductPrice["Org.OData.Measures.V1.Scale"],
+					{ "Path" : "PriceScale" }, "ProductPrice precision");
+				delete oProductPrice["Org.OData.Measures.V1.Scale"];
+
+				// sap:unit - currency
+				deepEqual(oProductPrice["sap:unit"], "CurrencyCode");
+				delete oProductPrice["sap:unit"];
+				deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
+				delete oProductCurrencyCode["sap:semantics"];
+				deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
+					{ "Path" : "CurrencyCode" }, "ProductPrice currency");
+				delete oProductPrice["Org.OData.Measures.V1.ISOCurrency"];
+				// sap:unit - unit
+				deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
+				delete oProductWeightMeasure["sap:unit"];
+				deepEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
+				delete oProductWeightUnit["sap:semantics"];
+				deepEqual(oProductWeightMeasure["Org.OData.Measures.V1.Unit"],
+					{ "Path" : "WeightUnit" }, "ProductWeightMeasure unit");
+				delete oProductWeightMeasure["Org.OData.Measures.V1.Unit"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			}, onError)["catch"](onError);

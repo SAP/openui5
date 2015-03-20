@@ -95,12 +95,23 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		}),
 		oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
+		// map from v2 to v4 for NON-DEFAULT cases only
 		mV2ToV4 = {
 			creatable : {
 				"Org.OData.Capabilities.V1.InsertRestrictions" : { "Insertable" : oBoolFalse }
 			},
 			deletable : {
 				"Org.OData.Capabilities.V1.DeleteRestrictions" : { "Deletable" : oBoolFalse }
+			},
+			pageable : {
+				"Org.OData.Capabilities.V1.SkipSupported" : oBoolFalse,
+				"Org.OData.Capabilities.V1.TopSupported" : oBoolFalse
+			},
+			"requires-filter" : {
+				"Org.OData.Capabilities.V1.FilterRestrictions" : { "RequiresFilter" : oBoolTrue }
+			},
+			topable : {
+				"Org.OData.Capabilities.V1.TopSupported" : oBoolFalse
 			},
 			updatable : {
 				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
@@ -251,14 +262,28 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			switch (oExtension.name) {
 				case "creatable":
 				case "deletable":
+				case "pageable":
+				case "topable":
 				case "updatable":
 					// true is the default in V4 so add annotation only in case of false
 					if (sTypeClass === "EntitySet" && oExtension.value === "false") {
 						jQuery.extend(o, mV2ToV4[oExtension.name]);
 					}
 					break;
+				case "requires-filter":
+					// false is the default in V4 so add annotation only in case of true
+					if (sTypeClass === "EntitySet" && oExtension.value === "true") {
+						jQuery.extend(o, mV2ToV4[oExtension.name]);
+					}
+					break;
 				case "label":
-					o["com.sap.vocabularies.Common.v1.Label"] = {"String" : oExtension.value};
+					o["com.sap.vocabularies.Common.v1.Label"] = { "String" : oExtension.value };
+					break;
+				case "precision":
+					o["Org.OData.Measures.V1.Scale"] = { "Path" : oExtension.value };
+					break;
+				case "text":
+					o["com.sap.vocabularies.Common.v1.Text"] = { "Path" : oExtension.value };
 					break;
 				default:
 					// no transformation for V2 annotation supported or necessary
@@ -342,14 +367,47 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 *   optional callback for each child
 		 */
 		function visitChildren(aChildren, mChildAnnotations, sTypeClass, fnCallback) {
-			jQuery.each(aChildren || [], function (iUnused, oChild) {
-				liftSAPData(oChild, sTypeClass);
-				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
+			var mUnitToValues;
 
+			jQuery.each(aChildren || [], function (iUnused, oChild) {
+				var sUnitProperty, aValueProperties;
+
+				liftSAPData(oChild, sTypeClass);
+				if (sTypeClass === "Property") {
+					sUnitProperty = oChild["sap:unit"];
+					if (sUnitProperty) {
+						// oChild is a value, sUnitProperty is the name of its unit
+						// collect all values that share the same unit
+						mUnitToValues = mUnitToValues || {};
+						aValueProperties = mUnitToValues[sUnitProperty] || [];
+						aValueProperties.push(oChild);
+						mUnitToValues[sUnitProperty] = aValueProperties;
+					}
+				}
+				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 				if (fnCallback) {
 					fnCallback(oChild);
 				}
 			});
+
+			if (mUnitToValues) {
+				jQuery.each(aChildren || [], function (iUnused, oUnit) {
+					var aValueProperties;
+
+					aValueProperties = mUnitToValues[oUnit.name];
+					if (aValueProperties) {
+						// oUnit is a unit: annotate its values
+						aValueProperties.forEach(function (oValue) {
+							if (oUnit["sap:semantics"] === "unit-of-measure") {
+								oValue["Org.OData.Measures.V1.Unit"] = { "Path" : oUnit.name };
+							} else if (oUnit["sap:semantics"] === "currency-code") {
+								oValue["Org.OData.Measures.V1.ISOCurrency"] =
+									{ "Path" : oUnit.name };
+							}
+						});
+					}
+				});
+			}
 		}
 
 		/*
