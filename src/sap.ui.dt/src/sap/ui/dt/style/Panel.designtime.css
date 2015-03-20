@@ -4,6 +4,6 @@
 .layoutEditorSapMPanelHdrEmpty , .layoutEditorSapMPanelInfoToolbarEmpty {
 	height: 0px;
 }
-.widget-droparea-sortable > .layoutEditorSapMPanelHdrEmpty , .widget-droparea-sortable > .layoutEditorSapMPanelInfoToolbarEmpty {
+.sapUiDtWidget-droparea-sortable > .layoutEditorSapMPanelHdrEmpty , .sapUiDtWidget-droparea-sortable > .layoutEditorSapMPanelInfoToolbarEmpty {
 	height : 48px !important;
 }

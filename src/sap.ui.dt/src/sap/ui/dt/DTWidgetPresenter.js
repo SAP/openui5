@@ -163,7 +163,7 @@ function(jQuery, BaseObject) {
 			};
 
 			this.removeEventsAndStyles = function() {
-				jQuery(this).removeClass("widget-droparea-sortable widget-droparea-min-height widget-droparea-min-width widget-droparea-relative");
+				jQuery(this).removeClass("sapUiDtWidget-droparea-sortable sapUiDtWidget-droparea-min-height sapUiDtWidget-droparea-min-width sapUiDtWidget-droparea-relative");
 				this.removeEventListener("dragover", that.onContainerDragOverDetected);
 				this.removeEventListener("dragenter", that.onContainerDragEnter);
 			};
@@ -171,14 +171,14 @@ function(jQuery, BaseObject) {
 			this.addEventsAndStyles = function(oElement) {
 				var $elem = jQuery(oElement);
 				if ($elem.css("position") === "static") {
-					$elem.addClass("widget-droparea-relative");
+					$elem.addClass("sapUiDtWidget-droparea-relative");
 				}
-				$elem.addClass("widget-droparea-sortable");
+				$elem.addClass("sapUiDtWidget-droparea-sortable");
 				if ($elem.height() === 0) {
-					$elem.addClass("widget-droparea-min-height");
+					$elem.addClass("sapUiDtWidget-droparea-min-height");
 				}
 				if ($elem.width() === 0) {
-					$elem.addClass("widget-droparea-min-width");
+					$elem.addClass("sapUiDtWidget-droparea-min-width");
 				}
 				oElement.addEventListener("dragover", that.onContainerDragOverDetected);
 				oElement.addEventListener("dragenter", that.onContainerDragEnter);
@@ -204,7 +204,7 @@ function(jQuery, BaseObject) {
 				}
 			}
 			item.attachBrowserEvent("dragover", that.onDragOver)
-				.addStyleClass("widget-droparea-sortable-child");
+				.addStyleClass("sapUiDtWidget-droparea-sortable-child");
 			
 		}
 		//Needed in case the ui5 control rerenders itself during dragover and the dragover event handlers are lost.
@@ -279,7 +279,7 @@ function(jQuery, BaseObject) {
 
 		function removeDroppable(item) {
 			item.detachBrowserEvent("dragover", that.onDragOver)
-				.removeStyleClass("widget-droparea-sortable-child");
+				.removeStyleClass("sapUiDtWidget-droparea-sortable-child");
 		}
 		this.oControl.removeEventDelegate(this._oOnAfterRenderDelegate);
 		this.aChildEnabledControls.forEach(removeDroppable);

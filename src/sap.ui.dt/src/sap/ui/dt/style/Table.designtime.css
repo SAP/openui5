@@ -1,13 +1,13 @@
-.sapMListTbl > thead.widget-droparea-sortable > tr {
+.sapMListTbl > thead.sapUiDtWidget-droparea-sortable > tr {
 	outline: solid 2px #4fb81c !important;
 }
 
-.sapMListTbl > tbody > tr.widget-droparea-sortable {
+.sapMListTbl > tbody > tr.sapUiDtWidget-droparea-sortable {
 	outline: solid 2px #4fb81c !important;
 }
-.sapMListTbl > thead.widget-droparea-sortable::before {
+.sapMListTbl > thead.sapUiDtWidget-droparea-sortable::before {
 	content: none;
 }
-.sapMListTbl > tbody > tr.widget-droparea-sortable::before {
+.sapMListTbl > tbody > tr.sapUiDtWidget-droparea-sortable::before {
 	content: none;
 }

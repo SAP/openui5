@@ -221,8 +221,8 @@ function(jQuery, Element, Control) {
 			var oCtrl = arguments[0].srcControl;
 			if (fnCheckIfEmpty(oCtrl)) {
 				var elem = oCtrl.$();
-				elem.addClass("narrowEmptyContainer");
-				elem.addClass("riverBGChecked");
+				elem.addClass("sapUiDtNarrowEmptyContainer");
+				elem.addClass("sapUiDtEmptyBackground");
 			}
 		});
 	}
@@ -233,7 +233,7 @@ function(jQuery, Element, Control) {
 			if (fnCheckIfEmpty(oCtrl)) {
 				var elem = oCtrl.$();
 				oCtrl.setSrc("none");
-				elem.addClass("emptyImage");
+				elem.addClass("sapUiDtEmptyImage");
 			}
 		});
 	}
@@ -243,7 +243,7 @@ function(jQuery, Element, Control) {
 			var oCtrl = arguments[0].srcControl;
 			if (fnCheckIfEmpty(oCtrl)) {
 				var elem = oCtrl.$();
-				elem.addClass("emptyIcon");
+				elem.addClass("sapUiDtEmptyIcon");
 			}
 		});
 	}
@@ -252,7 +252,7 @@ function(jQuery, Element, Control) {
 		extendOnAfterRendering(oControl, function() {
 			var oCtrl = arguments[0].srcControl;
 			var elem = oCtrl.$();
-			elem.addClass("toolbarSpacerStyle");
+			elem.addClass("sapUiDtToolbarSpacerStyle");
 		});
 	}
 
@@ -328,9 +328,9 @@ function(jQuery, Element, Control) {
 			return;
 		}
 		if (ctrl._oLabel.getText().length == 0) {
-			ctrl._oLabel.$().addClass("riverBGChecked").addClass("sapMRbBLabel");
+			ctrl._oLabel.$().addClass("sapUiDtEmptyBackground").addClass("sapMRbBLabel");
 		} else {
-			ctrl._oLabel.$().removeClass("riverBGChecked").removeClass("sapMRbBLabel");
+			ctrl._oLabel.$().removeClass("sapUiDtEmptyBackground").removeClass("sapMRbBLabel");
 		}
 	});
 
@@ -506,9 +506,9 @@ function(jQuery, Element, Control) {
 			return;
 		}
 		if (ctrl._oLabel.getText().length == 0) {
-			ctrl._oLabel.$().addClass("riverBGChecked");
+			ctrl._oLabel.$().addClass("sapUiDtEmptyBackground");
 		} else {
-			ctrl._oLabel.$().removeClass("riverBGChecked");
+			ctrl._oLabel.$().removeClass("sapUiDtEmptyBackground");
 		}
 	});
 
@@ -693,7 +693,7 @@ function(jQuery, Element, Control) {
 			var elem = ctrl.$();
 
 			elem.attr("style", null); // remove "display:none"
-			elem.addClass("riverBGChecked");
+			elem.addClass("sapUiDtEmptyBackground");
 		}
 	});
 
@@ -1016,8 +1016,8 @@ function(jQuery, Element, Control) {
 			var elem = ctrl.$();
 
 			elem.attr("style", null); // remove "display:none"
-			elem.addClass("emptyContainer"); // show a rect with grey color backgroud
-			elem.addClass("riverBGChecked");
+			elem.addClass("sapUiDtEmptyContainer"); // show a rect with grey color backgroud
+			elem.addClass("sapUiDtEmptyBackground");
 		}
 	});
 
@@ -1273,8 +1273,8 @@ function(jQuery, Element, Control) {
 //		var ctrl = arguments[0].srcControl;
 //		if (ctrl.getContent().length === 0) {
 //			var elem = ctrl.$();
-//			elem.addClass("emptyContainer");
-//			elem.addClass("riverBGChecked");
+//			elem.addClass("sapUiDtEmptyContainer");
+//			elem.addClass("sapUiDtEmptyBackground");
 //		}
 //	});
 //
@@ -1346,8 +1346,8 @@ function(jQuery, Element, Control) {
 			var elem = ctrl.$();
 
 			elem.attr("style", null); // remove "display:none"
-			elem.addClass("emptyContainer"); // show a rect with grey color backgroud
-			elem.addClass("riverBGChecked");
+			elem.addClass("sapUiDtEmptyContainer"); // show a rect with grey color backgroud
+			elem.addClass("sapUiDtEmptyBackground");
 		}
 	});
 
@@ -1389,7 +1389,7 @@ function(jQuery, Element, Control) {
 		var oHeaderToolbar = ctrl.getHeaderToolbar();
 		
 		if (!oHeaderToolbar && !ctrl.getHeaderText()) {
-			ctrl.$().prepend("<div class=\"riverBGChecked layoutEditorSapMPanelHdrEmpty\"></div>");
+			ctrl.$().prepend("<div class=\"sapUiDtEmptyBackground layoutEditorSapMPanelHdrEmpty\"></div>");
 		}
 		if (!ctrl.getInfoToolbar()) {
 			//ensure info toolbar is added below header!
@@ -1400,7 +1400,7 @@ function(jQuery, Element, Control) {
 				$header = ctrl.$().find(PANEL_HEADER_TOOLBAR_CSS_SELECTOR);
 			}
 			
-			$header.after("<div class=\"riverBGChecked layoutEditorSapMPanelInfoToolbarEmpty\"></div>");
+			$header.after("<div class=\"sapUiDtEmptyBackground layoutEditorSapMPanelInfoToolbarEmpty\"></div>");
 		}
 
 	});

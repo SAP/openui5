@@ -49,7 +49,7 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 
 			this._oWidget = oWidget;
 			this.scope = oWidget.oScope;
-			this.selectedClass = "controlOverlaySelected";
+			this.selectedClass = "sapUiDtControlOverlaySelected";
 			this.presenter = new DTWidgetPresenter(this, oControl);
 			this.oDragManager = new DragManager(this.scope, this.eventBus, this.oControl);
 
@@ -157,8 +157,8 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 			if (this.oControl.findAggregatedObjects().length === 0 ||
 					this.oControl.findAggregatedObjects().length === 1 && this.oControl.findAggregatedObjects()[0].sParentAggregationName === "layoutData") {
 
-				this.oControl.$().addClass("emptyContainer");
-				this.oControl.$().addClass("riverBGChecked");
+				this.oControl.$().addClass("sapUiDtEmptyContainer");
+				this.oControl.$().addClass("sapUiDtEmptyBackground");
 				//TODO: remove this in future, must be handled by mutation observer
 				this.eventBus.publish("dom.changed");
 			}
@@ -219,7 +219,7 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 				return;
 			}
 			var $parent = jQuery(evt.currentTarget).parent();
-			if (!$parent.closest(".controlOverlayForUnsupportedControl").length && !$parent.closest(".controlOverlayForTemplates").length) {
+			if (!$parent.closest(".sapUiDtControlOverlayForUnsupportedControl").length && !$parent.closest(".controlOverlayForTemplates").length) {
 			// Fixing click after resize
 				if (!realEvent.target.classList.contains("ui-resizable-handle")) {
 					realEvent.stopPropagation();
@@ -253,7 +253,7 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 		}
 
 		jQuery.sap.log.warning("Creating overlay for control " + that.oControl.__widget.getEscapedId());
-		this.$overlayElement = jQuery('<div class="controlOverlay"></div>').attr("data-overlay-id", this.oControl.getId());
+		this.$overlayElement = jQuery('<div class="sapUiDtControlOverlay"></div>').attr("data-overlay-id", this.oControl.getId());
 
 		var bNestedView = false;
 		if (this.oControl.getMetadata()._sClassName == "sap.ui.core.mvc.XMLView" && 
@@ -264,14 +264,14 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 		// creating special overlay for unsupported controls
 		var $badge;
 		if (this.oControl.getMetadata().__designTimeOptions.unsupported || bNestedView) {
-			this.$overlayElement.addClass("controlOverlayForUnsupportedControl");
-			$badge = jQuery("<div class='controlOverlayBadge'>unsupported</div>");
+			this.$overlayElement.addClass("sapUiDtControlOverlayForUnsupportedControl");
+			$badge = jQuery("<div class='sapUiDtControlOverlayBadge'>unsupported</div>");
 			this.$overlayElement.append($badge);
 		}
 
 		if (this.oControl.__widget.hasBoundAggregations) {
 			this.$overlayElement.addClass("controlOverlayForTemplateParents");
-			$badge = jQuery("<div class='controlOverlayBadge'>template</div>");
+			$badge = jQuery("<div class='sapUiDtControlOverlayBadge'>template</div>");
 			this.$overlayElement.append($badge);
 		}
 
@@ -551,7 +551,7 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 	DTWidgetView.prototype.destroyOverlayContainerIfNeeded = function() {
 		var $overlayContainer = jQuery(this.scope.getElementById("overlay-container"));
 		if ($overlayContainer.length) {
-			var bNoOverlays = $overlayContainer.find(".controlOverlay").length === 0;
+			var bNoOverlays = $overlayContainer.find(".sapUiDtControlOverlay").length === 0;
 			if (bNoOverlays) {
 				$overlayContainer.remove();
 			}
@@ -593,11 +593,11 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 	};
 
 	DTWidgetView.prototype.highlight = function() {
-		this.getOverlay().addClass("widget-overlay-highlighted");
+		this.getOverlay().addClass("sapUiDtWidget-overlay-highlighted");
 	};
 
 	DTWidgetView.prototype.downplay = function() {
-		this.getOverlay().removeClass("widget-overlay-highlighted");
+		this.getOverlay().removeClass("sapUiDtWidget-overlay-highlighted");
 	};
 
 	DTWidgetView.prototype.onSelect = function() {
@@ -662,7 +662,7 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 				this.moveOverLayToParent();
 				var parentOffset = null;
 				var $parrentOverlay = this.$overlayElement.parent();
-				if ($parrentOverlay.hasClass("controlOverlay")) {
+				if ($parrentOverlay.hasClass("sapUiDtControlOverlay")) {
 					parentOffset = this.$overlayElement.parent().offset();
 				} else {
 					parentOffset = this.$overlayElement.closest(".scrollContainerOverlay").offset();
