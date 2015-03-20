@@ -2358,6 +2358,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		if (oldBoundObject && oldBoundObject.binding) {
 			oldBoundObject.binding.detachChange(oldBoundObject.fChangeHandler);
 			oldBoundObject.binding.detachEvents(oldBoundObject.events);
+			oldBoundObject.binding.destroy();
 			//clear elementContext
 			delete this.mElementBindingContexts[sModelName];
 		}
@@ -2446,6 +2447,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			if (oBoundObject.binding) {
 				oBoundObject.binding.detachChange(oBoundObject.fChangeHandler);
 				oBoundObject.binding.detachEvents(oBoundObject.events);
+				oBoundObject.binding.destroy();
 			}
 			delete this.mBoundObjects[sModelName];
 			delete this.mElementBindingContexts[sModelName];
@@ -2599,6 +2601,8 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				if (oBinding.getBindingMode() === sap.ui.model.BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
+					oBinding.destroy();
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
 				}
 			},
 			fMessageChangeHandler = function(oEvent){
@@ -2698,6 +2702,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 			}
 			delete this.mBindingInfos[sName];
 			if (!bSuppressReset) {
@@ -2985,6 +2990,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 			}
 			// remove template if any
 			if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.destroy) {
@@ -3179,6 +3185,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
 				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 				delete oBindingInfo.binding;
 			}
 
