@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				/**
 				 * Specifies the name of the user who uploaded the file.
 				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
+				 * However, if the property is filled, it is displayed as an attribute. To make sure the title does not appear twice, do not use the property.
 				 */
 				contributor : {
 					type : "string",
@@ -154,10 +155,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 			},
 			aggregations : {
 				/**
-				 * Attributes of an uploaded item, e.g. 'Uploaded by', 'Uploaded on', 'File Size'
-				 * Attributes will be displayed after an item has been uploaded
-				 * The property 'active' of sap.m.ObjectAttribute is not supported
-				 * @experimental Since 1.30. Behavior might change.
+				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
+				 * Attributes are displayed after an item has been uploaded.
+				 * The Active property of sap.m.ObjectAttribute is not supported.
+				 * @experimental since version 1.30. The behavior of aggregations might change in the next version.
+				 * Note that if one of the deprecated properties contributor, fileSize or UploadedDate is filled in addition to this attribute, two attributes with the same title
+				 * are displayed as these properties get displayed as an attribute.
+				 * Example: An application passes the property ‘contributor’ with the value ‘A’ and the aggregation attributes ‘contributor’: ‘B’. As a result, the attributes
+				 * ‘contributor’:’A’ and ‘contributor’:’B’ are displayed. To make sure the title does not appear twice, check if one of the properties is filled.
 				 */
 				attributes : {
 					type : "sap.m.ObjectAttribute",
@@ -166,7 +171,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				/**
 				 * Statuses of an uploaded item
 				 * Statuses will be displayed after an item has been uploaded
-				 * @experimental Since 1.30. Behavior might change.
+				 * @experimental since version 1.30. The behavior might change in the next version.
 				 */
 				statuses : {
 					type : "sap.m.ObjectStatus",

@@ -24,7 +24,7 @@ sap.ui.define([
 					"key" : "None",
 					"text" : "sap.m.ListSeparators.None"
 				}],
-				"selectedKey" : "None"
+				"selectedKey" : "All"
 			};
 
 			var oModelCB = new JSONModel();
