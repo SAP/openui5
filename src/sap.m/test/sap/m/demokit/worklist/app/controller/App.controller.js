@@ -8,6 +8,7 @@ sap.ui.define([
 
 		onInit : function () {
 			var oViewModel;
+			this._iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 
 			oViewModel = new JSONModel({
 				busy : true,
@@ -31,7 +32,7 @@ sap.ui.define([
 				oData = oModel.getData();
 
 			oData.busy = false;
-			oData.delay = null;
+			oData.delay = this._iOriginalBusyDelay;
 			oModel.setData(oData);
 		}
 	});

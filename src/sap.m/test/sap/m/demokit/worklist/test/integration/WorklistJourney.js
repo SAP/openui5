@@ -39,12 +39,11 @@ function (Opa5) {
 		When.onTheWorklistPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onTheWorklistPage.theWorkListViewsBusyIndicatorDelayIsZero();
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
 			and.iTeardownMyAppFrame();
 	});
 	
-	opaTest("Should see the busy indicator on worklist view after metadata is loaded", function (Given, When, Then) {
+	opaTest("Should see the busy indicator on worklist table after metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
 			delay: "1000"
@@ -54,7 +53,7 @@ function (Opa5) {
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
-		Then.onTheWorklistPage.iShouldSeeTheWorklistViewsBusyIndicator(). 
+		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator(). 
 			and.iTeardownMyAppFrame();
 	});
 	
@@ -70,7 +69,6 @@ function (Opa5) {
 		When.onTheWorklistPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onTheWorklistPage.theWorkListViewsBusyIndicatorDelayIsZero();
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
 			and.iTeardownMyAppFrame();
 	});
@@ -78,7 +76,7 @@ function (Opa5) {
 	opaTest("Should see the busy indicator on worklist view after metadata is loaded, after starting app with object and navigating back", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 1000,
+			delay: 2000,
 			hash: "#/object/ObjectID_10"
 		});
 		
@@ -87,7 +85,7 @@ function (Opa5) {
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
-		Then.onTheWorklistPage.iShouldSeeTheWorklistViewsBusyIndicator().
+		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator().
 			and.iTeardownMyAppFrame();
 	});
 

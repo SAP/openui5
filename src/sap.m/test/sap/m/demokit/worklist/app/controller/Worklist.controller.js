@@ -14,7 +14,8 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit : function () {
-			var oView = this.getView();
+			var oView = this.getView(),
+				iOriginalBusyDelay;
 			this._oTable = this.byId("table");
 
 			// Control state model
@@ -23,38 +24,18 @@ sap.ui.define([
 			});
 
 			oView.setModel(this.oViewModel, "view");
-
-			// Use the table's 'updateStarted' event to set the table busy. We can not use
-			// the list bindings's 'dataRequested' because unfortunately is fired BEFORE
-			// the router fires its 'display' event, if the app has been started with an
-			// object hash and navigates back to the worklist.
-			this._oTable.attachUpdateStarted(function () {
-				this.setBusy(true);
-			}.bind(oView));
-
-			// Have to wait until the worklist view is displayed, before we can attach listeners
-			// to the table's 'items' list binding: the list bindings are not available any earlier.
-			this.getRouter().getTargets().getTarget("worklist").attachEventOnce("display", function () {
-				// Put down worklist view's original value for busy indicator delay,
-				// so it can be restored later on.
-
-				this.setOriginalBusyIndicatorDelay(this.getView().getBusyIndicatorDelay());
-				// Make sure, busy indication is showing immediately so there is no
-				// break in between the busy indication for loading the view's meta data
-				// (this is being taken care of by class 'BusyHandler')
-				this.getView().setBusyIndicatorDelay(0);
-
-				// Using event 'dataReceived' and NOT the table's
-				// own 'updateFinished' event because 'updateFinished'
-				// does not return if the request returns with an error code.
-				this._oTable.getBinding("items").attachDataReceived(function () {
-					this.getView().setBusy(false);
-				}.bind(this));
-
-				// Restore original busy indicator delay for the worklist view
-				this._oTable.getBinding("items").attachEventOnce('dataReceived', function () {
-					this.getView().setBusyIndicatorDelay(this.getOriginalBusyIndicatorDelay());
-				}.bind(this));
+			
+			// Put down worklist table's original value for busy indicator delay, 
+			// so it can be restored later on. Busy handling on the table is
+			// taken care of by the table itself.
+			iOriginalBusyDelay = this._oTable.getBusyIndicatorDelay();
+			// Make sure, busy indication is showing immediately so there is no
+			// break after the busy indication for loading the view's meta data is 
+			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
+			this._oTable.setBusyIndicatorDelay(0).
+				attachEventOnce("updateFinished", function(){
+				// Restore original busy indicator delay for worklist's table
+				this._oTable.setBusyIndicatorDelay(iOriginalBusyDelay);
 			}.bind(this));
 
 

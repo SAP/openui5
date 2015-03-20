@@ -72,26 +72,6 @@ sap.ui.define([
 				var bReplace = true; // otherwise we go backwards with a forward history
 				this.getRouter().navTo(sRoute, mData, bReplace);
 			}
-		},
-		
-		/**
-		 * Can be used to put down a value for busy indicator delay.
-		 * @param {int} iOriginalBusyIndicatorDelay
-		 * @return the controller object for method chaining
-		 * @public
-		 */
-		setOriginalBusyIndicatorDelay : function(iOriginalBusyIndicatorDelay) {
-			this._iOriginalBusyIndicatorDelay = iOriginalBusyIndicatorDelay;
-			return this;
-		},
-		
-		/**
-		 * Can be used to restore the value for busy indicator delay.
-		 * @return {int} iOriginalBusyIndicatorDelay 
-		 * @public
-		 */
-		getOriginalBusyIndicatorDelay : function() {
-			return this._iOriginalBusyIndicatorDelay;
 		}
 		
 	});
