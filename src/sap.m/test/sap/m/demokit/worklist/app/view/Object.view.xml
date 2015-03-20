@@ -6,7 +6,9 @@
 		id="page"
 		navButtonPress="onNavBack"
 		showNavButton="true"
-		title="{i18n>objectTitle}">
+		title="{i18n>objectTitle}"
+		busy="{view>/busy}"
+		busyIndicatorDelay="{view>/delay}">
 		<content>
 			<ObjectHeader
 				id="objectHeader"

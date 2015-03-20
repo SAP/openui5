@@ -7,33 +7,23 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.worklist.controller.App", {
 
 		onInit : function () {
-			var oViewModel;
-			this._iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+			var oViewModel,
+				fnSetAppNotBusy,
+				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 
 			oViewModel = new JSONModel({
 				busy : true,
 				delay : 0
 			});
-
 			this.setModel(oViewModel, "view");
 
+			fnSetAppNotBusy = function() {
+				oViewModel.setProperty("/busy", false);
+				oViewModel.setProperty("/delay", iOriginalBusyDelay);
+			};
+
 			this.getOwnerComponent().oWhenMetadataIsLoaded
-				.then(this._setAppUnbusy.bind(this), this._setAppUnbusy.bind(this));
-		},
-
-		/**
-		 * This method removes the busy indicator delay and the app's busy state.
-		 * The busy indicator delay is reset to the UI5 default after the initial busy state of the view.
-		 *
-		 * @private
-		 */
-		_setAppUnbusy : function () {
-			var oModel = this.getModel("view"),
-				oData = oModel.getData();
-
-			oData.busy = false;
-			oData.delay = this._iOriginalBusyDelay;
-			oModel.setData(oData);
+				.then(fnSetAppNotBusy, fnSetAppNotBusy);
 		}
 	});
 

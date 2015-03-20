@@ -1,25 +1,30 @@
 sap.ui.define([
 		"sap/ui/demo/worklist/controller/BaseController",
-		"sap/ui/demo/worklist/model/promise"
-	], function (BaseController, promise) {
+		"sap/ui/demo/worklist/model/promise",
+		"sap/ui/model/json/JSONModel"
+	], function (BaseController, promise, JSONModel) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.Object", {
 
 		onInit : function () {
+			// Model used to manipulate control states. The chosen values make sure,
+			// detail page is busy indication immediately so there is no break in
+			// between the busy indication for loading the view's meta data
+			// (this is being taken care of by class 'BusyHandler')
+			var iOriginalBusyDelay,
+				oViewModel = new JSONModel({
+					busy : true,
+					delay : 0
+				});
+
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 			// Store original busy indicator delay, so it can be restored later on
 			var iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
-			// Set the detail page busy after the metadata has been loaded successfully
+			this.setModel(oViewModel, "view");
 			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
-					// Make sure, busy indication is showing immediately so there is no
-					// break in between the busy indication for loading the view's meta data
-					// (this is being taken care of by class 'BusyHandler')
-					this.getView().setBusyIndicatorDelay(0)
-						.setBusy(true);
-					// Method chaining not possible, 'setBusy' does not return view
 					// Restore original busy indicator delay for the object view
-					this.getView().setBusyIndicatorDelay(iOriginalBusyDelay);
+					oViewModel.setProperty("/delay", iOriginalBusyDelay);
 				}.bind(this)
 			);
 		},
@@ -43,23 +48,23 @@ sap.ui.define([
 		 * @private
 		 */
 		_bindView : function (sObjectPath) {
-			var oView = this.getView();
+			var oView = this.getView(),
+				oViewModel = this.getModel("view");
 			// Set busy indicator during view binding
-			oView.setBusy(true);
+			oViewModel.setProperty("/busy", true);
 			oView.bindElement(sObjectPath);
 
 			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
 					// Everything went fine.
-					this.getView().setBusy(false);
+					oViewModel.setProperty("/busy", false);
 				}.bind(this),
 				function () {
 					// Something went wrong. Display an error page.
-					this.getView().setBusy(false);
+					oViewModel.setProperty("/busy", false);
 					this.getRouter().getTargets().display("objectNotFound");
 				}.bind(this)
 			);
-
 		},
 
 		/**

@@ -19,6 +19,7 @@
 						}
 					}"
 				noDataText="{i18n>tableNoDataText}"
+				busyIndicatorDelay="{view>/tableBusyDelay}"
 				growing="true"
 				growingScrollToLoad="true"
 				updateFinished="onUpdateFinished">
