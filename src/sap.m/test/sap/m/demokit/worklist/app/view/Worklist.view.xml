@@ -21,7 +21,6 @@
 				noDataText="{i18n>tableNoDataText}"
 				growing="true"
 				growingScrollToLoad="true"
-				enableBusyIndicator="false"
 				updateFinished="onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>

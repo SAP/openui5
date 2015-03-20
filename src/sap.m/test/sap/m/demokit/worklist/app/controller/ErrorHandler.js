@@ -64,7 +64,7 @@ sap.ui.define([
 					styleClass: this._sCompactModeClass,
 					actions: [sap.m.MessageBox.Action.RETRY, sap.m.MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if(sAction === sap.m.MessageBox.Action.RETRY) {
+						if (sAction === sap.m.MessageBox.Action.RETRY) {
 							this.bMessageOpen = false;
 							this._oModel.refreshMetadata();
 						}
