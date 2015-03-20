@@ -202,32 +202,23 @@ function(BaseObject) {
 		var oTmpControl = oControl;
 
 		while (oParent) {
-			var oMetaData = oParent.getMetadata();
-
-			if (oMetaData._mPrivateAggregations[oTmpControl.sParentAggregationName]) {
-				oResult.parent = oParent;
-
+			var oParentMeta  = oParent.getMetadata();
+			if (oParentMeta._mPrivateAggregations[oTmpControl.sParentAggregationName]) {
 				// find aggregation
-				var oParentMeta = oParent.getMetadata();
-
 				for ( var agg in oParentMeta._mAggregations) {
 					var oAct = oParentMeta._mAggregations[agg];
-					var sGetter = oAct._sGetter;
-
+					sGetter = oAct._sGetter;
 					var aMember = oParent[sGetter]();
-					if (aMember && aMember.indexOf(oControl) > -1) {
+					if (aMember.indexOf(oControl) > -1) {
 						oResult.aggregation = agg;
 						oResult.getter = sGetter;
+						oResult.parent = oParent;
 						return oResult;
 					}
-
 				}
-				return oResult;
-			} else {
-				oTmpControl = oParent;
-				oParent = oParent.getParent();
 			}
-
+			oTmpControl = oParent;
+			oParent = oParent.getParent();
 		}
 
 		return oResult;
