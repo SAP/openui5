@@ -701,6 +701,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				var $fixedRow = oRow.$("fixed");
 				var $rowHdr = that.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
 
+				// update row header tooltip
+				if (oRow.getBindingContext()) {
+					$rowHdr.attr("title", that._oResBundle.getText("TBL_ROW_SELECT"));
+				} else {
+					$rowHdr.attr("title", "");
+				}
+
 				if (iFixedTopRows > 0) {
 					var bIsTopRow = iIndex < iFixedTopRows;
 					if (bIsTopRow) {
