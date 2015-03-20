@@ -16,8 +16,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					stretch : true,
 					files : [
 						"patternApp/view/PatternTable.controller.js",
-						"patternApp/model/Pattern.js",
 						"patternApp/view/PatternTable.view.xml",
+						"patternApp/view/Dialog.fragment.xml",
+						"patternApp/model/Pattern.js",
 						"patternApp/Component.js",
 						"Patterns.html"
 					]
