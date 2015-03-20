@@ -103,6 +103,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			iLength = this.oModel.iSizeLimit;
 		}
 	
+		// FIX for Frontrunner-Apps:
+		// If the requests(s) triggered by getRootContexts return no data (__count == "0" and results.length == 0),
+		// the TBA should not again request the data. This will lead to an endless loop, since the AnalyticalBinding does not
+		// check if the length for the root group is final before requesting data again.
+		if (this.mFinalLength["null"] && this.mLength["null"] === 0) {
+			this._bInitial = false;
+		}
+		
 		if (this._bInitial) {
 			//Get number of expandend levels from the parameters
 			var iNumberOfExpandedLevels = this.mParameters && this.mParameters.numberOfExpandedLevels;
