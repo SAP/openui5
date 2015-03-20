@@ -89,49 +89,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init : function () {
-			var mConfig = this.getMetadata().getConfig();
-
-			// call the base component's init function
-			UIComponent.prototype.init.apply(this, arguments);
-
-			// set the internationalization model
-			this.setModel(new ResourceModel({
-				bundleName : mConfig.i18nBundle
-			}), "i18n");
-
-			this.oListSelector = new ListSelector();
-
-			this._oErrorHandler = new ErrorHandler(this);
-			// initialize the busy handler with the component
-			this._oBusyHandler = new BusyHandler(this);
-
-			// set the device model
-			this.setModel(models.createDeviceModel(), "device");
-
-			// create the views based on the url/hash
-			this.getRouter().initialize();
-		},
-
-		/**
-		 * The component is destroyed by UI5 automatically.
-		 * In this method, the ListSelector and BusyHandler are destroyed.
-		 * @public
-		 * @override
-		 */
-		destroy : function () {
-			this.oListSelector.destroy();
-			this._oBusyHandler.destroy();
-			this._oErrorHandler.destroy();
-			// call the base component's destroy function
-			UIComponent.prototype.destroy.apply(this, arguments);
-		},
-
-		/**
-		 * In this method, the rootView is initialized and stored.
-		 * @public
-		 * @override
-		 */
-		createContent : function() {
 			// set the app data model since the app controller needs it, we create this model very early
 			var oAppModel = models.createODataModel({
 				urlParametersForEveryRequest: [
@@ -152,10 +109,46 @@ sap.ui.define([
 			this.setModel(oAppModel);
 			this._createMetadataPromise(oAppModel);
 
-			// call the base component's createContent function
-			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
-			this._oRootView.addStyleClass(this.getCompactCozyClass());
-			return this._oRootView;
+			var mConfig = this.getMetadata().getConfig();
+
+			// set the device model
+			this.setModel(models.createDeviceModel(), "device");
+
+			// set the internationalization model
+			this.setModel(new ResourceModel({
+				bundleName : mConfig.i18nBundle
+			}), "i18n");
+
+			this.oListSelector = new ListSelector();
+
+			this._oErrorHandler = new ErrorHandler(this);
+
+			// call the base component's init function and create the App view
+			UIComponent.prototype.init.apply(this, arguments);
+
+			var oRootControl = this.getAggregation("rootControl").addStyleClass(this.getCompactCozyClass());
+			this._oRootView = oRootControl;
+			
+			// initialize the busy handler with the component
+			this._oBusyHandler = new BusyHandler(this);
+
+
+			// create the views based on the url/hash
+			this.getRouter().initialize();
+		},
+
+		/**
+		 * The component is destroyed by UI5 automatically.
+		 * In this method, the ListSelector and BusyHandler are destroyed.
+		 * @public
+		 * @override
+		 */
+		destroy : function () {
+			this.oListSelector.destroy();
+			this._oBusyHandler.destroy();
+			this._oErrorHandler.destroy();
+			// call the base component's destroy function
+			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 
 		/**
