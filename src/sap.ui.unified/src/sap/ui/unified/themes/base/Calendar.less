@@ -99,8 +99,21 @@
 	display: inline-block;
 }
 
+.sapUiCalDateInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalDateInt > .sapUiCalContent > .sapUiCalYearPicker{
+	width: auto;
+}
+
 .sapUiCalMonthHead{
 	text-align: center;
+}
+
+.sapUiCalDatesRow .sapUiCalMonthHead{
+	float: left;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	whitespace: nowrap;
 }
 
 .sapUiCalDays{
@@ -123,9 +136,8 @@
 	text-align: center;
 }
 
-.sapUiCalWH,
-.sapUiCalDay,
-.sapUiCalWeekNum{
+.sapUiCalMonthView .sapUiCalWH,
+.sapUiCalMonthView .sapUiCalDay{
 	width: 12.5%;
 }
 
@@ -162,7 +174,7 @@
 	background-color: @sapUiFieldFocusBackground;
 }
 
-.sapUiCalFirstWDay{
+.sapUiCalMonthView .sapUiCalFirstWDay{
 	clear: both;
 	margin-left: 12.5%;
 	position: relative;
@@ -212,14 +224,6 @@
 	left: 0;
 	right: 0;
 	background-color: @sapUiFieldBackground;
-}
-
-.sapUiCalMonth{
-	width: 33.33%;
-}
-
-.sapUiCalYear{
-	width: 25%;
 }
 
 .sapUiCalCancel{

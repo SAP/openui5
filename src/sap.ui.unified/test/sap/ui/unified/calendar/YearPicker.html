@@ -39,6 +39,31 @@
 				}
 			}).placeAt("event1");
 
+			oYearPicker = new sap.ui.unified.calendar.YearPicker("YP2",{
+				years: 5,
+				columns: 0,
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oYP = oEvent.oSource;
+					var iYear = oYP.getYear();
+					oTF.setValue(iYear);
+				}
+			}).placeAt("sample2");
+
+			oLabel = new sap.ui.commons.Label({text: "selected Year", labelFor: "TF2"}).placeAt("event2");
+			oInput = new sap.ui.commons.TextField("TF2",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oYP = sap.ui.getCore().byId("YP2");
+					if(sValue && !isNaN(sValue)){
+						var iYear = parseInt(sValue);
+						oYP.setYear(iYear);
+					}
+				}
+			}).placeAt("event2");
+
 		</script>
 
 	</head>
@@ -47,8 +72,12 @@
 		<h1>Test Page for <code>sap.ui.unified.calendar.YearPicker</code></h1>
 		<br>
 		<div>
+		<h2>Default YearPicker</h2>
 		<div id="sample1" style="display:inline-block;"></div>
 		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+		<h2>one line YearPicker</h2>
+		<div id="sample2" style="display:inline-block;"></div>
+		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 
 	</body>
