@@ -1593,8 +1593,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
-		return this;
+		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	Input.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
