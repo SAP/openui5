@@ -256,8 +256,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		this._externalIcon = undefined;
 		this._sResizeListenerId = null;
 		this._$Window = jQuery(window);
-		this._iHMargin = sap.ui.Device.system.phone ? 64 : 128;
-		this._iVMargin = 16;
+		this._iHMargin = 32;
+		this._iVMargin = 32;
 
 		this._aButtons = [];
 
