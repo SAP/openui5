@@ -18,11 +18,9 @@
 				<items>
 					<IconTabFilter
 						icon="sap-icon://hint">
-						<Text width="auto" class="sapUiSmallMargin" text="Info content goes here ..." />
 					</IconTabFilter>
 					<IconTabFilter
 						icon="sap-icon://attachment">
-						<Text width="auto" class="sapUiSmallMargin" text="Attachments go here ..." />
 					</IconTabFilter>
 				</items>
 			</IconTabBar>
