@@ -1353,6 +1353,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 */
 	ComboBox.prototype.onAfterRendering = function(oEvent){
 
+		TextField.prototype.onAfterRendering.apply(this, arguments);
+
 		// if a ListBox is given (shared ListBox) make sure that is nor visible and move it in the
 		// static UI Area. Not needed for private ListBox
 		var sListBox = this.getListBox();
