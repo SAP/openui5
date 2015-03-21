@@ -209,7 +209,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Multiselect] = {
 			type: SemanticType.Multiselect,
-			position: SemanticPage._PositionInPage.headerRight,
+			position: SemanticPage.prototype._PositionInPage.headerRight,
 
 			triggers: [{
 				inState: SemanticPage._PageMode.display,
@@ -248,7 +248,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Edit] = {
 			type: SemanticType.Edit,
-				position: SemanticPage._PositionInPage.footerRight,
+				position: SemanticPage.prototype._PositionInPage.footerRight,
 				triggers: SemanticPage._PageMode.edit,
 				getSettings: function() {
 			return {
@@ -262,12 +262,12 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 			};
 		},
 		group: "TextOnly",
-				order: 0
+		order: 0
 	};
 
 		oTypeConfigs[SemanticType.Save] = {
 			type: SemanticType.Save,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			triggers: SemanticPage._PageMode.display,
 			getSettings: function() {
 				return {
@@ -282,7 +282,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Cancel] = {
 			type: SemanticType.Cancel,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			triggers: SemanticPage._PageMode.display,
 			getSettings: function() {
 				return {
@@ -296,7 +296,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Approve] = {
 			type: SemanticType.Approve,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_APPROVE"),
@@ -313,7 +313,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Reject] = {
 			type: SemanticType.Reject,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_REJECT"),
@@ -331,7 +331,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Forward] = {
 			type: SemanticType.Forward,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_FORWARD"),
@@ -348,7 +348,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.OpenIn] = {
 			type: SemanticType.OpenIn,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_OPEN_IN"),
@@ -359,9 +359,55 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 			order: 6
 		};
 
+		oTypeConfigs[SemanticType.Add] = {
+			type: SemanticType.Add,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
+			triggers: SemanticPage._PageMode.edit,
+			getSettings: function() {
+				return {
+					icon: "sap-icon://add",
+					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD"),
+					ariaLabelledBy: _ensureInvisibleText(SemanticType.Add, oBundle.getText("SEMANTIC_CONTROL_ADD"))
+				};
+			},
+			group: "IconOnly",
+			order: 0
+		};
+
+		oTypeConfigs[SemanticType.Favorite] = {
+			type: SemanticType.Favorite,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
+			getSettings: function() {
+				return {
+					icon: "sap-icon://favorite",
+					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
+					ariaLabelledBy: _ensureInvisibleText(SemanticType.Favorite, oBundle.getText("SEMANTIC_CONTROL_FAVORITE"))
+				};
+			},
+			group: "IconOnly",
+			order: 1
+		};
+
+		oTypeConfigs[SemanticType.Flag] = {
+			type: SemanticType.Flag,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
+			getSettings: function() {
+				return {
+					icon: "sap-icon://flag",
+					text: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
+					ariaLabelledBy: _ensureInvisibleText(SemanticType.Flag, oBundle.getText("SEMANTIC_CONTROL_FLAG"))
+				};
+			},
+			group: "IconOnly",
+			order: 2
+		};
+
 		oTypeConfigs[SemanticType.Sort] = {
 			type: SemanticType.Sort,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://sort",
@@ -375,12 +421,12 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 				};
 			},
 			group: "IconOnly",
-			order: 0
+			order: 3
 		};
 
 		oTypeConfigs[SemanticType.Filter] = {
 			type: SemanticType.Filter,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://filter",
@@ -394,12 +440,12 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 				};
 			},
 			group: "IconOnly",
-			order: 1
+			order: 4
 		};
 
 		oTypeConfigs[SemanticType.Group] = {
 			type: SemanticType.Group,
-			position: SemanticPage._PositionInPage.footerRight,
+			position: SemanticPage.prototype._PositionInPage.footerRight,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://group-2",
@@ -413,58 +459,12 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 				};
 			},
 			group: "IconOnly",
-			order: 2
-		};
-
-		oTypeConfigs[SemanticType.Favorite] = {
-			type: SemanticType.Favorite,
-			position: SemanticPage._PositionInPage.footerRight,
-			getSettings: function() {
-				return {
-					icon: "sap-icon://favorite",
-					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
-					ariaLabelledBy: _ensureInvisibleText(SemanticType.Favorite, oBundle.getText("SEMANTIC_CONTROL_FAVORITE"))
-				};
-			},
-			group: "IconOnly",
-			order: 3
-		};
-
-		oTypeConfigs[SemanticType.Flag] = {
-			type: SemanticType.Flag,
-			position: SemanticPage._PositionInPage.footerRight,
-			getSettings: function() {
-				return {
-					icon: "sap-icon://flag",
-					text: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
-					ariaLabelledBy: _ensureInvisibleText(SemanticType.Flag, oBundle.getText("SEMANTIC_CONTROL_FLAG"))
-				};
-			},
-			group: "IconOnly",
-			order: 4
-		};
-
-		oTypeConfigs[SemanticType.Add] = {
-			type: SemanticType.Add,
-			position: SemanticPage._PositionInPage.footerRight,
-			triggers: SemanticPage._PageMode.edit,
-			getSettings: function() {
-				return {
-					icon: "sap-icon://add",
-					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD"),
-					ariaLabelledBy: _ensureInvisibleText(SemanticType.Add, oBundle.getText("SEMANTIC_CONTROL_ADD"))
-				};
-			},
-			group: "IconOnly",
 			order: 5
 		};
 
 		oTypeConfigs[SemanticType.SendEmail] = {
 			type: SemanticType.SendEmail,
-			position: ShareMenuPage._PositionInPage.shareMenu,
+			position: ShareMenuPage.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://email",
@@ -479,7 +479,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.DiscussInJam] = {
 			type: SemanticType.DiscussInJam,
-			position: ShareMenuPage._PositionInPage.shareMenu,
+			position: ShareMenuPage.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://discussion-2",
@@ -494,7 +494,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.ShareInJam] = {
 			type: SemanticType.ShareInJam,
-			position: ShareMenuPage._PositionInPage.shareMenu,
+			position: ShareMenuPage.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://share-2",
@@ -509,7 +509,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.SendMessage] = {
 			type: SemanticType.SendMessage,
-			position: ShareMenuPage._PositionInPage.shareMenu,
+			position: ShareMenuPage.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://discussion",
@@ -524,7 +524,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.SaveAsTile] = {
 			type: SemanticType.SaveAsTile,
-			position: ShareMenuPage._PositionInPage.shareMenu,
+			position: ShareMenuPage.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://add-favorite",
@@ -539,7 +539,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.Print] = {
 			type: SemanticType.Print,
-			position: ShareMenuPage._PositionInPage.shareMenu,
+			position: ShareMenuPage.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://print",
@@ -554,7 +554,7 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 
 		oTypeConfigs[SemanticType.MessagesIndicator] = {
 			type: SemanticType.MessagesIndicator,
-			position: SemanticPage._PositionInPage.footerLeft,
+			position: SemanticPage.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
 					icon: "sap-icon://alert",

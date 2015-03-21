@@ -21,9 +21,6 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticType", "s
 	 * <li>{@link SemanticType.Edit}</li>
 	 * <li>{@link SemanticType.Save}</li>
 	 * <li>{@link SemanticType.Cancel}</li>
-	 * <li>{@link SemanticType.Sort}</li>
-	 * <li>{@link SemanticType.Filter}</li>
-	 * <li>{@link SemanticType.Group}</li>
 	 * <li>{@link SemanticType.Flag}</li>
 	 * <li>{@link SemanticType.Favorite}</li>
 	 * <li>{@link SemanticType.OpenIn}</li>
@@ -57,9 +54,6 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticType", "s
 		SemanticType.Edit,
 		SemanticType.Save,
 		SemanticType.Cancel,
-		SemanticType.Sort,
-		SemanticType.Filter,
-		SemanticType.Group,
 		SemanticType.Flag,
 		SemanticType.Favorite,
 		SemanticType.OpenIn,

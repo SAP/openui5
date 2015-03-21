@@ -140,7 +140,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 	/*
 	 static members
 	 */
-	SemanticPage._PositionInPage = {
+	SemanticPage.prototype._PositionInPage = {
 
 		headerLeft: "headerLeft",
 		headerRight: "headerRight",
@@ -491,7 +491,7 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 		//remove from innerAggregations
 		var that = this;
-		jQuery.each(SemanticPage._PositionInPage, function (key, position) {
+		jQuery.each(this._PositionInPage, function (key, position) {
 			var oPositionInPage = that._oPositionsMap[position];
 			if (oPositionInPage && oPositionInPage.oContainer) {
 				oPositionInPage.oContainer["removeAll" + capitalize(oPositionInPage.sAggregation)](bSupressInvalidate);
@@ -633,27 +633,27 @@ function (jQuery, SegmentedContainer, Button, Title, ActionSheet, Page, Overflow
 
 		var oMap = {};
 
-		oMap[SemanticPage._PositionInPage.headerLeft] = {
+		oMap[SemanticPage.prototype._PositionInPage.headerLeft] = {
 			oContainer: this._getInternalHeader(),
 			sAggregation: "contentLeft"
 		};
 
-		oMap[SemanticPage._PositionInPage.headerRight] = {
+		oMap[SemanticPage.prototype._PositionInPage.headerRight] = {
 			oContainer: this._getInternalHeader(),
 			sAggregation: "contentRight"
 		};
 
-		oMap[SemanticPage._PositionInPage.headerMiddle] = {
+		oMap[SemanticPage.prototype._PositionInPage.headerMiddle] = {
 			oContainer: this._getInternalHeader(),
 			sAggregation: "contentMiddle"
 		};
 
-		oMap[SemanticPage._PositionInPage.footerLeft] = {
+		oMap[SemanticPage.prototype._PositionInPage.footerLeft] = {
 			oContainer: this._oWrappedFooter.getSectionComposite("semanticLeft"),
 			sAggregation: "content"
 		};
 
-		oMap[SemanticPage._PositionInPage.footerRight] = {
+		oMap[SemanticPage.prototype._PositionInPage.footerRight] = {
 			oContainer: this._oWrappedFooter.getSectionComposite("semanticRight"),
 			sAggregation: "content"
 		};

@@ -32,9 +32,7 @@
 		<detailPages>
 
 			<semantic:DetailPage
-					title="Detail Page Title"
-					showNavButton="true"
-					navButtonPress="onNavButtonPress">
+					title="Detail Page Title">
 				<semantic:semanticControls>
 					<semantic:SemanticButton type="Approve" press="onSemanticButtonPress"/>
 					<semantic:SemanticButton type="Reject" press="onSemanticButtonPress"/>
