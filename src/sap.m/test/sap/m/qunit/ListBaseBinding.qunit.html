@@ -439,56 +439,53 @@
 	});
 	
 	module("FocusAfterBindingUpdate");
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	if (!sap.ui.Device.browser.phantomJS) {
-		asyncTest("Focus should be retained after binding update", function() {
-			var sFocusedControlId,
-				oMockServer = startMockServer(),
-				oDeferred = jQuery.Deferred(),
-				oList = createList({
-					growing : false,
-				}, {
-					template : new sap.m.InputListItem({
-						label: "Product Name",
-						content : new sap.m.Input({
-							value: "{Name}"
-						})
+	asyncTest("Focus should be retained after binding update", function() {
+		var sFocusedControlId,
+			oMockServer = startMockServer(),
+			oDeferred = jQuery.Deferred(),
+			oList = createList({
+				growing : false,
+			}, {
+				template : new sap.m.InputListItem({
+					label: "Product Name",
+					content : new sap.m.Input({
+						value: "{Name}"
 					})
-				});
-			
-			// when initial binding is completed
-			oList.done(function () {
-				
-				// focus to the input field
-				sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
-				
-				// rerender list
-				oList.rerender();
-				
-				setTimeout(function() {
-					// check focus after rerender
-					strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
-					
-					// recheck focus after binding update
-					oList.attachUpdateFinished(function(oEvent) {
-						strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
-						oDeferred.resolve();
-					});
-					
-					// update the list binding
-					oList.updateItems();
-				}, 0);
-				
+				})
 			});
 		
-			// when test is completed
-			jQuery.when(oDeferred).done(function () {
-				oMockServer.stop();
-				oList.destroy();
-				start();
-			});
+		// when initial binding is completed
+		oList.done(function () {
+			
+			// focus to the input field
+			sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
+			
+			// rerender list
+			oList.rerender();
+			
+			setTimeout(function() {
+				// check focus after rerender
+				strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
+				
+				// recheck focus after binding update
+				oList.attachUpdateFinished(function(oEvent) {
+					strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
+					oDeferred.resolve();
+				});
+				
+				// update the list binding
+				oList.updateItems();
+			}, 0);
+			
 		});
-	}
+	
+		// when test is completed
+		jQuery.when(oDeferred).done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
 	
 	asyncTest("Last setGrowingThreshold should be respected before data fetching", function() {
 		var iInitThreshold = 5,

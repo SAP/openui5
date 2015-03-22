@@ -1631,146 +1631,143 @@
 				});
 			}
 
-			// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-			if (!sap.ui.Device.browser.phantomJS) {
-				test("Arrow Right", function() {
-	
-					//Arrange
-					var oIconTabBar = createIconTabBar();
-	
-					// System under Test
-					oIconTabBar.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-	
-					var $tab1 = oIconTabBar.getItems()[0].$();
-					var $tab2 = oIconTabBar.getItems()[1].$();
-	
-					$tab1.focus(); // set focus on first filter
-	
-					sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
-					ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
-	
-					sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
-					ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
-	
-					// Clean up
-					oIconTabBar.destroy();
-				});
-	
-				test("Arrow Left", function() {
-	
-					//Arrange
-					var oIconTabBar = createIconTabBar();
-	
-					// System under Test
-					oIconTabBar.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-	
-					var $tab1 = oIconTabBar.getItems()[0].$();
-					var $tab2 = oIconTabBar.getItems()[1].$();
-	
-					$tab2.focus(); // set focus on second filter
-	
-					sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
-					ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
-	
-					sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
-					ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
-	
-					// Clean up
-					oIconTabBar.destroy();
-				});
-	
-				test("Arrow Down", function() {
-	
-					//Arrange
-					var oIconTabBar = createIconTabBar();
-	
-					// System under Test
-					oIconTabBar.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-	
-					var $tab1 = oIconTabBar.getItems()[0].$();
-					var $tab2 = oIconTabBar.getItems()[1].$();
-	
-					$tab1.focus(); // set focus on first filter
-	
-					sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
-					ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
-	
-					sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
-					ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
-	
-					// Clean up
-					oIconTabBar.destroy();
-				});
-	
-				test("Arrow Up", function() {
-	
-					//Arrange
-					var oIconTabBar = createIconTabBar();
-	
-					// System under Test
-					oIconTabBar.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-	
-					var $tab1 = oIconTabBar.getItems()[0].$();
-					var $tab2 = oIconTabBar.getItems()[1].$();
-	
-					$tab2.focus(); // set focus on second filter
-	
-					sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
-					ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
-	
-					sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on first filter
-					ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
-	
-					// Clean up
-					oIconTabBar.destroy();
-				});
-	
-				test("END", function() {
-	
-					//Arrange
-					var oIconTabBar = createIconTabBar();
-	
-					// System under Test
-					oIconTabBar.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-	
-					var $tab1 = oIconTabBar.getItems()[0].$();
-					var $tab2 = oIconTabBar.getItems()[1].$();
-	
-					$tab1.focus(); // set focus on first filter
-	
-					sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
-					ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
-	
-					// Clean up
-					oIconTabBar.destroy();
-				});
-	
-				test("HOME", function() {
-	
-					//Arrange
-					var oIconTabBar = createIconTabBar();
-	
-					// System under Test
-					oIconTabBar.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-	
-					var $tab1 = oIconTabBar.getItems()[0].$();
-					var $tab2 = oIconTabBar.getItems()[1].$();
-	
-					$tab2.focus(); // set focus on second filter
-	
-					sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
-					ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
-	
-					// Clean up
-					oIconTabBar.destroy();
-				});
-			}
+			test("Arrow Right", function() {
+
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab1 = oIconTabBar.getItems()[0].$();
+				var $tab2 = oIconTabBar.getItems()[1].$();
+
+				$tab1.focus(); // set focus on first filter
+
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
+				ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
+
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
+				ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("Arrow Left", function() {
+
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab1 = oIconTabBar.getItems()[0].$();
+				var $tab2 = oIconTabBar.getItems()[1].$();
+
+				$tab2.focus(); // set focus on second filter
+
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
+				ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
+
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
+				ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("Arrow Down", function() {
+
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab1 = oIconTabBar.getItems()[0].$();
+				var $tab2 = oIconTabBar.getItems()[1].$();
+
+				$tab1.focus(); // set focus on first filter
+
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
+				ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
+
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
+				ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("Arrow Up", function() {
+
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab1 = oIconTabBar.getItems()[0].$();
+				var $tab2 = oIconTabBar.getItems()[1].$();
+
+				$tab2.focus(); // set focus on second filter
+
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
+				ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
+
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on first filter
+				ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("END", function() {
+
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab1 = oIconTabBar.getItems()[0].$();
+				var $tab2 = oIconTabBar.getItems()[1].$();
+
+				$tab1.focus(); // set focus on first filter
+
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
+				ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("HOME", function() {
+
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var $tab1 = oIconTabBar.getItems()[0].$();
+				var $tab2 = oIconTabBar.getItems()[1].$();
+
+				$tab2.focus(); // set focus on second filter
+
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
+				ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
 
 			test("SPACE", function() {
 

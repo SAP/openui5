@@ -162,12 +162,7 @@
 			sap.ui.getCore().applyChanges();
 			setTimeout(function(){ // give the Toolbar some time to recognize the change
 				equal(oCtrl.getVisibleItemInfo().count, 5, "5 item should be considered visible on the left side");
-				// FIXME: the following tests will fail with PhantomJS => check how to renable them
-				if (!sap.ui.Device.browser.phantomJS) {
-					equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
-				} else {
-					ok(true, "this test will fail sometimes with PhantomJS");
-				}
+				equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
 				start();
 			}, 500);
 		});

@@ -237,12 +237,7 @@
 				equal($Ref.css("display"), "block", "Popup should be 'display:block' while closing");
 				equal($Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' while closing");
 				var opacity = parseFloat($Ref.css("opacity"));
-				// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-				if (!sap.ui.Device.browser.phantomJS) {
-					ok((opacity>0.1 && opacity<0.9), "Popup opacity should be somewhere between 0.1 and 0.9 in the middle of the closing animation, but was: " + opacity);
-				} else {
-					ok((opacity>0 && opacity<0.9), "Popup opacity should be somewhere between 0 and 0.9 in the middle of the closing animation, but was: " + opacity);
-				}
+				ok((opacity>0.1 && opacity<0.9), "Popup opacity should be somewhere between 0.1 and 0.9 in the middle of the closing animation, but was: " + opacity);
 				setTimeout(function() {
 					equal(oPopup.isOpen(), false, "Popup should not be 'open' after closing");
 					equal($Ref.css("display"), "none", "Popup should be 'display:none' after closing");
