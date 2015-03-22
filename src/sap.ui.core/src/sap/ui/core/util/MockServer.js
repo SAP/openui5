@@ -2188,40 +2188,62 @@ sap.ui
 												method : "POST",
 												path : new RegExp("(" + sEntitySetName + ")(\\(([^/\\?#]+)\\)/?(.*)?)?"),
 												response : function(oXhr, sEntitySetName, group2, sKeys, sNavName) {
+													var bMerge = false;
+													// check for method tunneling
 													if (oXhr.requestHeaders["x-http-method"] === "MERGE") {
-														return jQuery.sap.sjax({
-															type : 'MERGE',
-															url : oXhr.url,
-															data : oXhr.requestBody
-														});
+														bMerge = true;
 													}
 													jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 													var sRespondData = null;
 													var sRespondContentType = null;
 													var iResult = 405; // default: method not allowed
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															var sUri = that._getRootUri() + sTargetEntityName + "("
-																	+ that._createKeysString(that._mEntitySets[sTargetEntityName], oEntity)
-																	+ ")";
-															sRespondData = JSON.stringify({
-																d : oEntity,
-																uri : sUri
-															}); //'{"uri": "' + sUri + '" }';
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-															that._oMockdata[sTargetEntityName] = that._oMockdata[sTargetEntityName]
-																	.concat([ oEntity ]);
-															iResult = 201;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																		"Content-Type" : "application/json;charset=utf-8"
+																	};
+																if (bMerge){
+																		var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																		if (oExistingEntry) {
+																			jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																		}
+																		iResult = 204;
+																} else {
+																	var sUri = that._getRootUri() + sTargetEntityName + "("
+																			+ that._createKeysString(that._mEntitySets[sTargetEntityName], oEntity)
+																			+ ")";
+																	sRespondData = JSON.stringify({
+																		d : oEntity,
+																		uri : sUri
+																	});
+																	that._oMockdata[sTargetEntityName] = that._oMockdata[sTargetEntityName]
+																			.concat([ oEntity ]);
+																	iResult = 201;
+																}
+															}
 														}
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													} catch (e) {
+														if (e.error){
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log
+															.debug("MockServer: response sent with: "
+																	+ parseInt(e.message || e.number,
+																			10));
+														}
+
 													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
 
@@ -2231,93 +2253,130 @@ sap.ui
 												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
 													jQuery.sap.log.debug("MockServer: incoming update request for url: " + oXhr.url);
-													var iResult = 405; // default: method not allowed 
+													var iResult = 405; // default: method not allowed
 													var sRespondData = null;
 													var sRespondContentType = null;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
 
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-
-															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-															if (oExistingEntry) { // Overwrite existing
-																that._oMockdata[sEntitySetName][oExistingEntry.index] = oEntity;
+																var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																if (oExistingEntry) { // Overwrite existing
+																	that._oMockdata[sEntitySetName][oExistingEntry.index] = oEntity;
+																}
+																iResult = 204;
 															}
-															iResult = 204;
+														}
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													} catch (e) {
+														if (e.error){
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log
+															.debug("MockServer: response sent with: "
+																	+ parseInt(e.message || e.number,
+																			10));
 														}
 													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
-											
+
 											// support partial update of an entity of a specific type
 											aRequests.push({
 												method : "MERGE",
 												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
 													jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
-													var iResult = 405; // default: method not allowed 
+													var iResult = 405; // default: method not allowed
 													var sRespondData = null;
 													var sRespondContentType = null;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
 
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-
-															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-															if (oExistingEntry) { 
-																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																if (oExistingEntry) {
+																	jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																}
+																iResult = 204;
 															}
-															iResult = 204;
+														}
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													}catch (e) {
+														if (e.error) {
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
 														}
 													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
-											
+
 											// support partial update of an entity of a specific type
 											aRequests.push({
 												method : "PATCH",
 												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
 												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
 													jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
-													var iResult = 405; // default: method not allowed 
+													var iResult = 405; // default: method not allowed
 													var sRespondData = null;
 													var sRespondContentType = null;
+													try {
+														var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+																decodeURIComponent(sKeys), sNavName);
+														if (sTargetEntityName) {
+															var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+															if (oEntity) {
+																sRespondContentType = {
+																	"Content-Type" : "application/json;charset=utf-8"
+																};
 
-													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
-															decodeURIComponent(sKeys), sNavName);
-													if (sTargetEntityName) {
-														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
-														if (oEntity) {
-															sRespondContentType = {
-																"Content-Type" : "application/json;charset=utf-8"
-															};
-
-															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
-															if (oExistingEntry) { 
-																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+																if (oExistingEntry) {
+																	jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+																}
+																iResult = 204;
 															}
-															iResult = 204;
+														}
+														oXhr.respond(iResult, sRespondContentType, sRespondData);
+														jQuery.sap.log
+																.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+													} catch (e) {
+														if (e.error) {
+															var mHeaders = {
+																	"Content-Type" : "text/plain;charset=utf-8"
+																};
+															oXhr.respond(e.error.code, mHeaders, JSON.stringify(e));
+														} else {
+															oXhr.respond(parseInt(e.message || e.number, 10));
+															jQuery.sap.log
+															.debug("MockServer: response sent with: " + parseInt(e.message || e.number, 10));
 														}
 													}
-													oXhr.respond(iResult, sRespondContentType, sRespondData);
-													jQuery.sap.log
-															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
 
