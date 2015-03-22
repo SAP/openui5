@@ -1767,6 +1767,9 @@ sap.ui
 										};
 										var fnBuildResponseString = function(oResponse, sContentType) {
 											var sResponseData = JSON.stringify(oResponse.data) || "";
+											if (!oResponse.success) {
+												sResponseData = oResponse.errorResponse;
+											} 
 											if (sContentType) {
 												return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: "
 														+ sContentType + "\r\nContent-Length: " + sResponseData.length
