@@ -289,7 +289,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @private
 	 */
 	Input.prototype.exit = function() {
+		
 		this._deregisterEvents();
+		
+		// clear delayed calls
+		if (this._iSuggestDelay) {
+			jQuery.sap.clearDelayedCall(this._iSuggestDelay);
+			this._iSuggestDelay = null;
+		}
+		if (this._iRefreshListTimeout) {
+			jQuery.sap.clearDelayedCall(this._iRefreshListTimeout);
+			this._iRefreshListTimeout = null;
+		}
+		
 		if (this._oSuggestionPopup) {
 			this._oSuggestionPopup.destroy();
 			this._oSuggestionPopup = null;
