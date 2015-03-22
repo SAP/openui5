@@ -868,376 +868,373 @@
 		});
 
 
-		// FIXME: the following tests will fail with PhantomJS => check how to renable them
-		if (!sap.ui.Device.browser.phantomJS) {
-			asyncTest("Navigation interrupted by rerendering of NavContainer - SLIDE", function() {
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
-					};
-				
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				nc.to("page2");
-				
-				window.setTimeout(function(){
-					nc.invalidate(); // force invalidation during navigation()
-					
-					window.setTimeout(function(){
-						nc.to("page3");
-						
-						window.setTimeout(function(){
-							nc.rerender(); // force rerendering during navigation()
-							
-							window.setTimeout(function(){
-								nc.back(); // to page2
-								nc.back(); // to initial page 1
-								
-								window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-									nc.rerender();
-									window.setTimeout(function(){
-										nc.rerender();
-										window.setTimeout(function(){
-											nc.invalidate();
-											window.setTimeout(function(){
-												nc.rerender();
-												
-												window.setTimeout(function(){
-													strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
-													
-													//ensure right order
-													strictEqual(calls[0], "page2");
-													strictEqual(calls[1], "page3");
-													strictEqual(calls[2], "page2");
-													strictEqual(calls[3], "page1");
-													
-													//cleanup
-													nc.detachAfterNavigate(afterNavigate);
-		
-													start();
-												}, 1000);
-											}, 100);
-										}, 100);
-									}, 100);
-								}, 100);
-							}, 400); // 400 more before next navigation
-						}, 200); // 200 into navigation for forced rerendering
-					}, 400); // 400 more before next navigation
-				}, 200); // 200 before first invalidation
+		asyncTest("Navigation interrupted by rerendering of NavContainer - SLIDE", function() {
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				};
 			
-			});
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			nc.to("page2");
 			
-			
-			asyncTest("Navigation interrupted by rerendering of child controls - SLIDE", function() {
-				jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
-					};
-				
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				nc.to("page2");
+			window.setTimeout(function(){
+				nc.invalidate(); // force invalidation during navigation()
 				
 				window.setTimeout(function(){
-					page1.invalidate(); // force invalidation during navigation()
-					page2.invalidate(); // force invalidation during navigation()
+					nc.to("page3");
 					
 					window.setTimeout(function(){
-						nc.to("page3");
+						nc.rerender(); // force rerendering during navigation()
 						
 						window.setTimeout(function(){
-							page1.rerender(); // force rerendering during navigation()
-							page2.rerender(); // force rerendering during navigation()
+							nc.back(); // to page2
+							nc.back(); // to initial page 1
 							
-							window.setTimeout(function(){
-								nc.back(); // to page2
-								nc.back(); // to initial page 1
-								
-								window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+							window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+								nc.rerender();
+								window.setTimeout(function(){
 									nc.rerender();
 									window.setTimeout(function(){
-										page1.rerender();
+										nc.invalidate();
 										window.setTimeout(function(){
-											page2.invalidate();
+											nc.rerender();
+											
 											window.setTimeout(function(){
-												page2.rerender();
+												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 												
-												window.setTimeout(function(){
-													strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
-													
-													//ensure right order
-													strictEqual(calls[0], "page2");
-													strictEqual(calls[1], "page3");
-													strictEqual(calls[2], "page2");
-													strictEqual(calls[3], "page1");
-													
-													//cleanup
-													nc.detachAfterNavigate(afterNavigate);
-		
-													start();
-												}, 1000);
-											}, 100);
-										}, 100);
-									}, 100);
-								}, 100);
-							}, 400); // 400 more before next navigation
-						}, 200); // 200 into navigation for forced rerendering
-					}, 400); // 400 more before next navigation
-				}, 200); // 200 before first invalidation
-			
-			});
+												//ensure right order
+												strictEqual(calls[0], "page2");
+												strictEqual(calls[1], "page3");
+												strictEqual(calls[2], "page2");
+												strictEqual(calls[3], "page1");
+												
+												//cleanup
+												nc.detachAfterNavigate(afterNavigate);
 	
-			
-			asyncTest("Navigation interrupted by rerendering of NavContainer - FADE", function() {
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
-					};
-				
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				nc.to("page2", "fade");
-				
-				window.setTimeout(function(){
-					nc.invalidate(); // force invalidation during navigation()
-					
-					window.setTimeout(function(){
-						nc.to("page3", "fade");
-						
-						window.setTimeout(function(){
-							nc.rerender(); // force rerendering during navigation()
-							
-							window.setTimeout(function(){
-								nc.back(); // to page2
-								nc.back(); // to initial page 1
-								
-								window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-									nc.rerender();
-									window.setTimeout(function(){
-										nc.rerender();
-										window.setTimeout(function(){
-											nc.invalidate();
-											window.setTimeout(function(){
-												nc.rerender();
-												
-												window.setTimeout(function(){
-													strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
-													
-													//ensure right order
-													strictEqual(calls[0], "page2");
-													strictEqual(calls[1], "page3");
-													strictEqual(calls[2], "page2");
-													strictEqual(calls[3], "page1");
-													
-													//cleanup
-													nc.detachAfterNavigate(afterNavigate);
-		
-													start();
-												}, 1000);
-											}, 100);
+												start();
+											}, 1000);
 										}, 100);
 									}, 100);
 								}, 100);
-							}, 400); // 400 more before next navigation
-						}, 200); // 200 into navigation for forced rerendering
-					}, 400); // 400 more before next navigation
-				}, 200); // 200 before first invalidation
+							}, 100);
+						}, 400); // 400 more before next navigation
+					}, 200); // 200 into navigation for forced rerendering
+				}, 400); // 400 more before next navigation
+			}, 200); // 200 before first invalidation
+		
+		});
+		
+		
+		asyncTest("Navigation interrupted by rerendering of child controls - SLIDE", function() {
+			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				};
 			
-			});
-		
-		
-			asyncTest("Navigation interrupted by rerendering of child controls - FADE", function() {
-				jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
-					};
-				
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				nc.to("page2", "fade");
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			nc.to("page2");
+			
+			window.setTimeout(function(){
+				page1.invalidate(); // force invalidation during navigation()
+				page2.invalidate(); // force invalidation during navigation()
 				
 				window.setTimeout(function(){
-					page1.invalidate(); // force invalidation during navigation()
-					page2.invalidate(); // force invalidation during navigation()
+					nc.to("page3");
 					
 					window.setTimeout(function(){
-						nc.to("page3", "fade");
+						page1.rerender(); // force rerendering during navigation()
+						page2.rerender(); // force rerendering during navigation()
 						
 						window.setTimeout(function(){
-							page1.rerender(); // force rerendering during navigation()
-							page2.rerender(); // force rerendering during navigation()
+							nc.back(); // to page2
+							nc.back(); // to initial page 1
 							
-							window.setTimeout(function(){
-								nc.back(); // to page2
-								nc.back(); // to initial page 1
-								
-								window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-									nc.rerender();
+							window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+								nc.rerender();
+								window.setTimeout(function(){
+									page1.rerender();
 									window.setTimeout(function(){
-										page1.rerender();
+										page2.invalidate();
 										window.setTimeout(function(){
-											page2.invalidate();
+											page2.rerender();
+											
 											window.setTimeout(function(){
-												page2.rerender();
+												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 												
-												window.setTimeout(function(){
-													strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
-													
-													//ensure right order
-													strictEqual(calls[0], "page2");
-													strictEqual(calls[1], "page3");
-													strictEqual(calls[2], "page2");
-													strictEqual(calls[3], "page1");
-													
-													//cleanup
-													nc.detachAfterNavigate(afterNavigate);
-		
-													start();
-												}, 1000);
-											}, 100);
+												//ensure right order
+												strictEqual(calls[0], "page2");
+												strictEqual(calls[1], "page3");
+												strictEqual(calls[2], "page2");
+												strictEqual(calls[3], "page1");
+												
+												//cleanup
+												nc.detachAfterNavigate(afterNavigate);
+	
+												start();
+											}, 1000);
 										}, 100);
 									}, 100);
 								}, 100);
-							}, 400); // 400 more before next navigation
-						}, 200); // 200 into navigation for forced rerendering
-					}, 400); // 400 more before next navigation
-				}, 200); // 200 before first invalidation
+							}, 100);
+						}, 400); // 400 more before next navigation
+					}, 200); // 200 into navigation for forced rerendering
+				}, 400); // 400 more before next navigation
+			}, 200); // 200 before first invalidation
+		
+		});
+
+		
+		asyncTest("Navigation interrupted by rerendering of NavContainer - FADE", function() {
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				};
 			
-			});
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			nc.to("page2", "fade");
 			
-			
-			asyncTest("Navigation interrupted by rerendering of NavContainer - FLIP", function() {
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
-					};
-				
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				nc.to("page2", "flip");
+			window.setTimeout(function(){
+				nc.invalidate(); // force invalidation during navigation()
 				
 				window.setTimeout(function(){
-					nc.invalidate(); // force invalidation during navigation()
+					nc.to("page3", "fade");
 					
 					window.setTimeout(function(){
-						nc.to("page3", "flip");
+						nc.rerender(); // force rerendering during navigation()
 						
 						window.setTimeout(function(){
-							nc.rerender(); // force rerendering during navigation()
+							nc.back(); // to page2
+							nc.back(); // to initial page 1
 							
-							window.setTimeout(function(){
-								nc.back(); // to page2
-								nc.back(); // to initial page 1
-								
-								window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+							window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+								nc.rerender();
+								window.setTimeout(function(){
 									nc.rerender();
 									window.setTimeout(function(){
-										nc.rerender();
+										nc.invalidate();
 										window.setTimeout(function(){
-											nc.invalidate();
+											nc.rerender();
+											
 											window.setTimeout(function(){
-												nc.rerender();
+												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 												
-												window.setTimeout(function(){
-													strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
-													
-													//ensure right order
-													strictEqual(calls[0], "page2");
-													strictEqual(calls[1], "page3");
-													strictEqual(calls[2], "page2");
-													strictEqual(calls[3], "page1");
-													
-													//cleanup
-													nc.detachAfterNavigate(afterNavigate);
-		
-													start();
-												}, 3000);
-											}, 100);
+												//ensure right order
+												strictEqual(calls[0], "page2");
+												strictEqual(calls[1], "page3");
+												strictEqual(calls[2], "page2");
+												strictEqual(calls[3], "page1");
+												
+												//cleanup
+												nc.detachAfterNavigate(afterNavigate);
+	
+												start();
+											}, 1000);
 										}, 100);
 									}, 100);
 								}, 100);
-							}, 600); // 600 more before next navigation
-						}, 200); // 200 into navigation for forced rerendering
-					}, 600); // 600 more before next navigation
-				}, 200); // 200 before first invalidation
+							}, 100);
+						}, 400); // 400 more before next navigation
+					}, 200); // 200 into navigation for forced rerendering
+				}, 400); // 400 more before next navigation
+			}, 200); // 200 before first invalidation
+		
+		});
+	
+	
+		asyncTest("Navigation interrupted by rerendering of child controls - FADE", function() {
+			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				};
 			
-			});
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			nc.to("page2", "fade");
 			
-			
-			asyncTest("Navigation interrupted by rerendering of child controls - FLIP", function() {
-				jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
-					};
-				
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				nc.to("page2", "flip");
+			window.setTimeout(function(){
+				page1.invalidate(); // force invalidation during navigation()
+				page2.invalidate(); // force invalidation during navigation()
 				
 				window.setTimeout(function(){
-					page1.invalidate(); // force invalidation during navigation()
-					page2.invalidate(); // force invalidation during navigation()
+					nc.to("page3", "fade");
 					
 					window.setTimeout(function(){
-						nc.to("page3", "flip");
+						page1.rerender(); // force rerendering during navigation()
+						page2.rerender(); // force rerendering during navigation()
 						
 						window.setTimeout(function(){
-							page1.rerender(); // force rerendering during navigation()
-							page2.rerender(); // force rerendering during navigation()
+							nc.back(); // to page2
+							nc.back(); // to initial page 1
 							
-							window.setTimeout(function(){
-								nc.back(); // to page2
-								nc.back(); // to initial page 1
-								
-								window.setTimeout(function(){ // now be really nasty while the back navigations should happen
-									nc.rerender();
+							window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+								nc.rerender();
+								window.setTimeout(function(){
+									page1.rerender();
 									window.setTimeout(function(){
-										page1.rerender();
+										page2.invalidate();
 										window.setTimeout(function(){
-											page2.invalidate();
+											page2.rerender();
+											
 											window.setTimeout(function(){
-												page2.rerender();
+												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
 												
-												window.setTimeout(function(){
-													strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
-													
-													//ensure right order
-													strictEqual(calls[0], "page2");
-													strictEqual(calls[1], "page3");
-													strictEqual(calls[2], "page2");
-													strictEqual(calls[3], "page1");
-													
-													//cleanup
-													nc.detachAfterNavigate(afterNavigate);
-		
-													start();
-												}, 3000);
-											}, 100);
+												//ensure right order
+												strictEqual(calls[0], "page2");
+												strictEqual(calls[1], "page3");
+												strictEqual(calls[2], "page2");
+												strictEqual(calls[3], "page1");
+												
+												//cleanup
+												nc.detachAfterNavigate(afterNavigate);
+	
+												start();
+											}, 1000);
 										}, 100);
 									}, 100);
 								}, 100);
-							}, 600); // 600 more before next navigation
-						}, 200); // 200 into navigation for forced rerendering
-					}, 600); // 600 more before next navigation
-				}, 200); // 200 before first invalidation
+							}, 100);
+						}, 400); // 400 more before next navigation
+					}, 200); // 200 into navigation for forced rerendering
+				}, 400); // 400 more before next navigation
+			}, 200); // 200 before first invalidation
+		
+		});
+		
+		
+		asyncTest("Navigation interrupted by rerendering of NavContainer - FLIP", function() {
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				};
 			
-			});
-		}
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			nc.to("page2", "flip");
+			
+			window.setTimeout(function(){
+				nc.invalidate(); // force invalidation during navigation()
+				
+				window.setTimeout(function(){
+					nc.to("page3", "flip");
+					
+					window.setTimeout(function(){
+						nc.rerender(); // force rerendering during navigation()
+						
+						window.setTimeout(function(){
+							nc.back(); // to page2
+							nc.back(); // to initial page 1
+							
+							window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+								nc.rerender();
+								window.setTimeout(function(){
+									nc.rerender();
+									window.setTimeout(function(){
+										nc.invalidate();
+										window.setTimeout(function(){
+											nc.rerender();
+											
+											window.setTimeout(function(){
+												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												
+												//ensure right order
+												strictEqual(calls[0], "page2");
+												strictEqual(calls[1], "page3");
+												strictEqual(calls[2], "page2");
+												strictEqual(calls[3], "page1");
+												
+												//cleanup
+												nc.detachAfterNavigate(afterNavigate);
+	
+												start();
+											}, 3000);
+										}, 100);
+									}, 100);
+								}, 100);
+							}, 100);
+						}, 600); // 600 more before next navigation
+					}, 200); // 200 into navigation for forced rerendering
+				}, 600); // 600 more before next navigation
+			}, 200); // 200 before first invalidation
+		
+		});
+		
+		
+		asyncTest("Navigation interrupted by rerendering of child controls - FLIP", function() {
+			jQuery.sap.log.warning("## START - Navigation interrupted by rerendering of child controls");
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " +evt.getParameter("toId"));
+				};
+			
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			nc.to("page2", "flip");
+			
+			window.setTimeout(function(){
+				page1.invalidate(); // force invalidation during navigation()
+				page2.invalidate(); // force invalidation during navigation()
+				
+				window.setTimeout(function(){
+					nc.to("page3", "flip");
+					
+					window.setTimeout(function(){
+						page1.rerender(); // force rerendering during navigation()
+						page2.rerender(); // force rerendering during navigation()
+						
+						window.setTimeout(function(){
+							nc.back(); // to page2
+							nc.back(); // to initial page 1
+							
+							window.setTimeout(function(){ // now be really nasty while the back navigations should happen
+								nc.rerender();
+								window.setTimeout(function(){
+									page1.rerender();
+									window.setTimeout(function(){
+										page2.invalidate();
+										window.setTimeout(function(){
+											page2.rerender();
+											
+											window.setTimeout(function(){
+												strictEqual(calls.length, 4, "Did call to() 2 times and back() 2 times");
+												
+												//ensure right order
+												strictEqual(calls[0], "page2");
+												strictEqual(calls[1], "page3");
+												strictEqual(calls[2], "page2");
+												strictEqual(calls[3], "page1");
+												
+												//cleanup
+												nc.detachAfterNavigate(afterNavigate);
+	
+												start();
+											}, 3000);
+										}, 100);
+									}, 100);
+								}, 100);
+							}, 100);
+						}, 600); // 600 more before next navigation
+					}, 200); // 200 into navigation for forced rerendering
+				}, 600); // 600 more before next navigation
+			}, 200); // 200 before first invalidation
+		
+		});
 		
 		/*
 		asyncTest("Navigation interrupted by rerendering of NavContainer - DOOR", function() {
@@ -1363,92 +1360,89 @@
 		});
 		*/
 		
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		if (!sap.ui.Device.browser.phantomJS) {
-			asyncTest("Should build a navigation stack if the page is the same", function() {
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
-					};
-	
-				//Act
-				nc.attachAfterNavigate(afterNavigate);
-				//Wait for navigation to page 1
+		asyncTest("Should build a navigation stack if the page is the same", function() {
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				};
+
+			//Act
+			nc.attachAfterNavigate(afterNavigate);
+			//Wait for navigation to page 1
+			nc.to("page2");
+
+			setTimeout(function() {
+				
+				nc.to("page1");
+				//build up a queue with the current page(page1)
 				nc.to("page2");
-	
-				setTimeout(function() {
-					
-					nc.to("page1");
-					//build up a queue with the current page(page1)
-					nc.to("page2");
-					
-					setTimeout(function() {
-						//Assert
-						strictEqual(calls.length, 3, "Did call to() 3 times");
-		
-						//ensure right order
-						strictEqual(calls[0], "page2");
-						strictEqual(calls[1], "page1");
-						strictEqual(calls[2], "page2");
-	
-						//cleanup
-						nc.detachAfterNavigate(afterNavigate);
-						start();
-						//show first page again to see the test result
-						nc.back();
-						nc.back();
-						nc.back();
-					}, 2000);
-				}, 2000);
-			});
-			
-			
-			asyncTest("Should build a navigation stack if there is no page at the moment", function() {
-				var page1 = new sap.m.Page({
-					title: "Other Page 1"
-					}),
-					page2 = new sap.m.Page({
-						title: "Other Page 2"
-					}),
-					localNc = new sap.m.NavContainer({
-					initialPage: page1.getId(),
-					pages: [
-						page1,
-						page2
-					]
-				});
-				localNc.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				//Arrange
-				var calls = [],
-					afterNavigate = function(evt) {
-						calls.push(evt.getParameter("toId"));
-						jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
-					};
-	
-				//Act
-				localNc.attachAfterNavigate(afterNavigate);
-				//Wait for navigation to page 2
-				localNc.to(page2.getId());
-				localNc.back();
-	
+				
 				setTimeout(function() {
 					//Assert
-					strictEqual(calls.length, 2, "Did call to() 2 times");
+					strictEqual(calls.length, 3, "Did call to() 3 times");
 	
 					//ensure right order
-					strictEqual(calls[0], page2.getId());
-					strictEqual(calls[1], page1.getId());
-	
+					strictEqual(calls[0], "page2");
+					strictEqual(calls[1], "page1");
+					strictEqual(calls[2], "page2");
+
 					//cleanup
-					localNc.detachAfterNavigate(afterNavigate);
+					nc.detachAfterNavigate(afterNavigate);
 					start();
-					localNc.destroy();
+					//show first page again to see the test result
+					nc.back();
+					nc.back();
+					nc.back();
 				}, 2000);
+			}, 2000);
+		});
+		
+		
+		asyncTest("Should build a navigation stack if there is no page at the moment", function() {
+			var page1 = new sap.m.Page({
+				title: "Other Page 1"
+				}),
+				page2 = new sap.m.Page({
+					title: "Other Page 2"
+				}),
+				localNc = new sap.m.NavContainer({
+				initialPage: page1.getId(),
+				pages: [
+					page1,
+					page2
+				]
 			});
-		}
+			localNc.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			//Arrange
+			var calls = [],
+				afterNavigate = function(evt) {
+					calls.push(evt.getParameter("toId"));
+					jQuery.sap.log.info("afterNavigate with toId: " + evt.getParameter("toId"));
+				};
+
+			//Act
+			localNc.attachAfterNavigate(afterNavigate);
+			//Wait for navigation to page 2
+			localNc.to(page2.getId());
+			localNc.back();
+
+			setTimeout(function() {
+				//Assert
+				strictEqual(calls.length, 2, "Did call to() 2 times");
+
+				//ensure right order
+				strictEqual(calls[0], page2.getId());
+				strictEqual(calls[1], page1.getId());
+
+				//cleanup
+				localNc.detachAfterNavigate(afterNavigate);
+				start();
+				localNc.destroy();
+			}, 2000);
+		});
 
 		module("Event data");
 
