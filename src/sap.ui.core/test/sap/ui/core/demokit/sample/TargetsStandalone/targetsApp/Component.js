@@ -3,21 +3,23 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 	return UIComponent.extend("sap.ui.core.sample.TargetsStandalone.targetsApp.Component", {
 
 		metadata: {
-			rootView: "targets.view.App",
+			rootView: "sap.ui.core.sample.TargetsStandalone.targetsApp.view.App",
 			routing: {
 				config: {
 					targetsClass: "sap.m.routing.Targets",
-					viewPath: "targets.view",
+					viewPath: "sap.ui.core.sample.TargetsStandalone.targetsApp.view",
 					controlId: "rootControl",
 					controlAggregation: "pages",
 					viewType: "XML"
 				},
 				targets: {
 					page1: {
-						viewName: "View1"
+						viewName: "View1",
+						viewLevel: 0
 					},
 					page2: {
-						viewName: "View2"
+						viewName: "View2",
+						viewLevel: 1
 					}
 				}
 			}
