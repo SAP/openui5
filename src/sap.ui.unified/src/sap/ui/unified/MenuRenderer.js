@@ -51,9 +51,21 @@ sap.ui.define(['jquery.sap.global'],
 		}
 	
 		rm.addClass("sapUiMnu");
-		if (oMenu.getRootMenu().bUseTopStyle) {
+		
+		var oRootMenu = oMenu.getRootMenu();
+		
+		if (oRootMenu.bUseTopStyle) {
 			rm.addClass("sapUiMnuTop");
 		}
+		
+		if (oRootMenu.isCozy()) {
+			rm.addClass("sapUiSizeCozy");
+		}
+		
+		if (oMenu.bCozySupported) {
+			rm.addClass("sapUiMnuCozySupport");
+		}
+		
 		rm.writeClasses();
 		rm.writeControlData(oMenu);
 		rm.write(">");

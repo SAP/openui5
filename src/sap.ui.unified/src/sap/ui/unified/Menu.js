@@ -103,6 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 
 	(function(window) {
 
+	Menu.prototype.bCozySupported = true;
 
 	Menu.prototype.init = function(){
 		var that = this;
@@ -893,6 +894,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		var res = sap.ui.core.Control.prototype.focus.apply(this, arguments);
 		this._setActiveDescendant(this.oHoveredItem);
 		return res;
+	};
+	
+	/**
+	 * Checks whether the Menu should run with cozy design.
+	 * This function must only be called on the root menu (getRootMenu) to get proper results.
+	 * 
+	 * @private
+	 */
+	Menu.prototype.isCozy = function(){
+		if (!this.bCozySupported) {
+			return false;
+		}
+		
+		if (this.hasStyleClass("sapUiSizeCozy")) {
+			return true;
+		}
+		
+		var oParent = this.getParent();
+		if (oParent && oParent.$ && oParent.$().closest(".sapUiSizeCompact,.sapUiSizeCondensed,.sapUiSizeCozy").hasClass("sapUiSizeCozy")) {
+			return true;
+		}
+		
+		return false;
 	};
 
 

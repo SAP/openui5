@@ -35,6 +35,8 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 		library : "sap.ui.commons"
 	}});
 	
+	Menu.prototype.bCozySupported = false;
+	
 	/*Ensure MenuItemBase is loaded (incl. loading of unified library)*/
 
 	return Menu;
