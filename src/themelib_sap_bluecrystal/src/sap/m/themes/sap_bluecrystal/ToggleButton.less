@@ -41,6 +41,11 @@
 	outline-offset:   -1px;
 }
 
+/* override the custom button's outline in IE for the press state */
+html[data-sap-ui-browser^="ie"] .sapMBtn:focus > .sapMToggleBtnPressed.sapMFocusable::before {
+	border-color: @sapUiInvertedFocus;
+}
+
 /************************************/
 /* Bar context                      */
 /************************************/
