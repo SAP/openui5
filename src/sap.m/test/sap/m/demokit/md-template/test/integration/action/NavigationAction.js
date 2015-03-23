@@ -173,7 +173,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "The master list has not been loaded"
 			});
 		},
-		
+
 		iWaitUntilISeePage : function (sViewName, sTitleName) {
 			return this.waitFor({
 				controlType : "sap.m.ObjectHeader",
@@ -186,10 +186,20 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "We are not on " + sTitleName
 			});
 		},
-		
+
 		iWaitUntilISeePageForLineItem7 : function() {
 			return this.iWaitUntilISeePage("LineItem", "Line Item: LineItemID_7");
+		},
+
+		iWaitUntilTheMessageBoxIsShown : function (sMessageBoxId) {
+			return this.waitFor({
+				id : sMessageBoxId,
+				success : function () {
+					ok(true, "the correct MessageBox was shown");
+				}
+			});
 		}
-	
+
+
 	});
 });

@@ -24,6 +24,14 @@ sap.ui.require([
 							},
 							errorMessage : "Did not find the App control"
 						});
+					},
+					iWaitUntilTheMessageBoxIsShown : function (sMessageBoxId) {
+						return this.waitFor({
+							id : sMessageBoxId,
+							success : function () {
+								ok(true, "the correct MessageBox was shown");
+							}
+						});
 					}
 				},
 				assertions: {

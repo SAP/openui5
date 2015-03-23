@@ -76,4 +76,29 @@ function (Opa5) {
 			and.iTeardownMyAppFrame();
 	});
 
+
+	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
+
+		//Actions
+		When.onTheAppPage.iWaitUntilTheMessageBoxIsShown("metadataErrorMessageBox");
+
+		//Assertioens
+		Then.iTeardownMyAppFrame();
+
+	});
+
+	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartMyAppOnADesktopToTestErrorHandler("errorType=serverError");
+
+		//Actions
+		When.onTheAppPage.iWaitUntilTheMessageBoxIsShown("serviceErrorMessageBox");
+
+		//Assertioens
+		Then.iTeardownMyAppFrame();
+
+	});
+
 });

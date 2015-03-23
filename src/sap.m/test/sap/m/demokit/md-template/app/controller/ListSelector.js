@@ -26,23 +26,32 @@ sap.ui.define([
 				// Used to wait until the setBound masterList function is invoked
 				this._oWhenListHasBeenSet
 					.then(function (oList) {
-						oList.attachEventOnce("updateFinished", function() {
-							var oFirstListItem = oList.getItems()[0];
-							if (oFirstListItem) {
-								// Have to make sure that first list Item is selected
-								// and a select event is triggered. Like that, the corresponding
-								// detail page is loaded automatically
-								fnResolve({
-									list: oList,
-									path: oFirstListItem.getBindingContext().getPath()
-								});
-							} else {
-								// No items in the list
-								fnReject({
-									list : oList
-								});
+						oList.getBinding("items").attachEventOnce("dataReceived",
+							function (oData) {
+								if (!oData.getParameter("data")) {
+									fnReject({
+										list : oList,
+										error : true
+									});
+								}
+								var oFirstListItem = oList.getItems()[0];
+								if (oFirstListItem) {
+									// Have to make sure that first list Item is selected
+									// and a select event is triggered. Like that, the corresponding
+									// detail page is loaded automatically
+									fnResolve({
+										list: oList,
+										firstListitem: oFirstListItem
+									});
+								} else {
+									// No items in the list
+									fnReject({
+										list : oList,
+										error : false
+									});
+								}
 							}
-						});
+						);
 					});
 			}.bind(this));
 
@@ -69,28 +78,33 @@ sap.ui.define([
 		 */
 		selectAListItem : function (sBindingPath) {
 
-			this.oWhenListLoadingIsDone.then(function () {
-				var oList = this._oList,
-					oSelectedItem;
+			this.oWhenListLoadingIsDone.then(
+				function () {
+					var oList = this._oList,
+						oSelectedItem;
 
-				if (oList.getMode() === "None") {
-					return;
-				}
-
-				oSelectedItem = oList.getSelectedItem();
-
-				// skip update if the current selection is already matching the object path
-				if (oSelectedItem && oSelectedItem.getBindingContext().getPath() === sBindingPath) {
-					return;
-				}
-
-				oList.getItems().some(function (oItem) {
-					if (oItem.getBindingContext() && oItem.getBindingContext().getPath() === sBindingPath) {
-						oList.setSelectedItem(oItem);
-						return true;
+					if (oList.getMode() === "None") {
+						return;
 					}
-				});
-			}.bind(this));
+
+					oSelectedItem = oList.getSelectedItem();
+
+					// skip update if the current selection is already matching the object path
+					if (oSelectedItem && oSelectedItem.getBindingContext().getPath() === sBindingPath) {
+						return;
+					}
+
+					oList.getItems().some(function (oItem) {
+						if (oItem.getBindingContext() && oItem.getBindingContext().getPath() === sBindingPath) {
+							oList.setSelectedItem(oItem);
+							return true;
+						}
+					});
+				}.bind(this),
+				function () {
+					jQuery.sap.log.warning("Could not select the list item with the path" + sBindingPath + " because the list encountered an error or had no items");
+				}
+			);
 		},
 
 		/**

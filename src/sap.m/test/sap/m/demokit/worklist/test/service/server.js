@@ -20,7 +20,11 @@ sap.ui.define([
 				oMockServer = new MockServer({
 					rootUri: this._sServiceUrl
 				}),
-				sPath = jQuery.sap.getModulePath(this._sModulePath);
+				sPath = jQuery.sap.getModulePath(this._sModulePath),
+			// TODO: replace this at template generator step with Master List Entity Set
+				sEntity = "Objects",
+				sErrorParam = oUriParameters.get("errorType"),
+				iErrorCode = sErrorParam === "badRequest" ? 400 : 500;
 
 			// configure mock server with a delay of 1s
 			MockServer.config({
@@ -30,6 +34,30 @@ sap.ui.define([
 
 			// load local mock data
 			oMockServer.simulate(sPath + "/metadata.xml", sPath);
+			var aRequests = oMockServer.getRequests(),
+				fnResponse = function (iErrorCode, sMessage, aRequest) {
+					aRequest.response = function(oXhr, oMockserver){
+						oXhr.respond(iErrorCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
+					};
+				};
+
+			// handling the metadata error test
+			if (oUriParameters.get("metadataError")) {
+				aRequests.forEach( function ( aEntry, iIndex, aRequests ) {
+					if (aEntry.path.toString().indexOf("$metadata") > -1) {
+						fnResponse(500, "metadata Error", aEntry);
+					}
+				});
+			}
+
+			// Handling request errors
+			if (sErrorParam) {
+				aRequests.forEach( function ( aEntry, iIndex, aRequests ) {
+					if (aEntry.path.toString().indexOf(sEntity) > -1) {
+						fnResponse(iErrorCode, sErrorParam, aEntry);
+					}
+				});
+			}
 			oMockServer.start();
 
 			jQuery.sap.log.info("Running the app with mock data");

@@ -23,13 +23,17 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				iStartTheAppOnAPhone : function (sHash) {
 					this.iStartMyAppInAFrame(this._getFrameUrl(sHash, true));
 				},
-				
+
 				iStartTheAppOnADesktopDeviceWithDelay : function (sHash, iDelay) {
 					this.iStartMyAppInAFrame(this._getFrameUrl(sHash, false, "serverDelay=" + iDelay));
 				},
 
 				iStartTheAppOnAPhoneWithDelay : function (sHash, iDelay) {
 					this.iStartMyAppInAFrame(this._getFrameUrl(sHash, true, "serverDelay=" + iDelay));
+				},
+
+				iStartMyAppOnADesktopToTestErrorHandler : function (sParam) {
+					this.iStartMyAppInAFrame(this._getFrameUrl("", false, sParam));
 				}
 			});
 		});
