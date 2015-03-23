@@ -93,6 +93,37 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 	});
 
+	asyncTest("ListBinding relative with context", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("Products");
+		var iCount = 0;
+
+		var changeHandler = function() {
+			iCount++;
+			if (iCount == 1) {
+				equal(oBinding.getPath(), "Products", "ListBinding path");
+				ok(oBinding.getModel() == oModel, "ListBinding model");
+				equal(oBinding.getLength(), 5, "length of items");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oBinding.setContext(null);
+			} else {
+				equal(oBinding.getLength(), 0, "length of items");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oBinding.detachChange(changeHandler);
+				start(); // resume normal testing
+			}
+		}
+		
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.attachChange(changeHandler);
+		oBinding.initialize();
+		oModel.createBindingContext("/Categories(7)", function(oContext) {
+			oBinding.setContext(oContext);
+		});
+	});
+	
 	asyncTest("ListBinding sort", function(){
 		var oBinding = oModel.bindList("/Categories");
 		var handler3 = function(oEvent){

@@ -306,11 +306,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 						this.iLength = oRef.length;
 						this.bLengthFinal = true;
 						this._fireChange();
-					} else if (oRef === null && this.oModel.resolve(this.sPath, this.oContext)) { // means that expanded data has no data available e.g. for 0..n relations
-							this.aKeys = [];
-							this.iLength = 0;
-							this.bLengthFinal = true;
-							this._fireChange();
+					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){ 
+						// if path does not resolve, or data is known to be null (e.g. expanded list)
+						this.aKeys = [];
+						this.iLength = 0;
+						this.bLengthFinal = true;
+						this._fireChange();
 					} else {
 						this.refresh();
 					}
