@@ -122,20 +122,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 
 	AnalyticalTable.prototype.getModel = function(oModel, sName) {
 		var oModel = Table.prototype.getModel.apply(this, arguments);
+		// apply the ODataModelAdapter if necessary
 		if (oModel && sap.ui.model.odata && oModel instanceof sap.ui.model.odata.ODataModel) {
 			jQuery.sap.require("sap.ui.model.analytics.ODataModelAdapter");
 			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
 		}
 		return oModel;
-	};
-
-	AnalyticalTable.prototype._bindAggregation = function(sName, sPath, oTemplate, oSorter, aFilters) {
-		if (sName === "rows") {
-			// make sure to reset the first visible row (currently needed for the analytical binding)
-			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
-			this.setProperty("firstVisibleRow", 0, true);
-		}
-		return Table.prototype._bindAggregation.apply(this, arguments);
 	};
 
 	/**
@@ -155,12 +147,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 	};
 
 	AnalyticalTable.prototype.bindRows = function(oBindingInfo) {
+		// Sanitize the arguments for API Compatibility: sName, sPath, oTemplate, oSorter, aFilters
+		var oBindingInfoSanitized = this._sanitizeBindingInfo.apply(this, arguments);
+		
+		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
+		this._bSupressRefresh = true;
+		this._updateColumns();
+		this._bSupressRefresh = false;
+		
+		this._bBindingAttachedListener = false;
+		
+		return vReturn;
+	};
+
+	/**
+	 * _bindAggregation is overwritten, and will be called by either ManagedObject.prototype.bindAggregation 
+	 * or ManagedObject.prototype.setModel
+	 */
+	AnalyticalTable.prototype._bindAggregation = function(sName, sPath, oTemplate, oSorter, aFilters) {
+		if (sName === "rows") {
+			// make sure to reset the first visible row (currently needed for the analytical binding)
+			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
+			this.setProperty("firstVisibleRow", 0, true);
+			
+			// The current syntax for _bindAggregation is sPath can be an object wrapping the other parameters
+			// in this case we have to sanitize the parameters, so the ODataModelAdapter will instantiate the correct binding.
+			this._sanitizeBindingInfo.call(this, sPath, oTemplate, oSorter, aFilters);
+		}
+		return Table.prototype._bindAggregation.apply(this, arguments);
+	};
+	
+	AnalyticalTable.prototype._sanitizeBindingInfo = function (oBindingInfo) {
 		var sPath,
 			oTemplate,
 			aSorters,
 			aFilters;
-
-		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
+		
+		// Old API compatibility
+		// previously the bind* functions were called in this pattern: sName, sPath, oTemplate, oSorter, aFilters
 		if (typeof oBindingInfo == "string") {
 			sPath = arguments[0];
 			oTemplate = arguments[1];
@@ -174,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				oBindingInfo.factory = oTemplate;
 			}
 		}
-
+		
 		// extract the sorters from the columns (TODO: reconsider this!)
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
@@ -183,33 +207,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				oBindingInfo.sorter.push(new sap.ui.model.Sorter(aColumns[i].getSortProperty() || aColumns[i].getLeadingProperty(), aColumns[i].getSortOrder() === sap.ui.table.SortOrder.Descending));
 			}
 		}
-
+		
+		// Make sure all necessary parameters are given.
+		// The ODataModelAdapter (via bindList) needs these properties to determine if an AnalyticalBinding should be instantiated.
+		// This is the default for the AnalyticalTable.
 		oBindingInfo.parameters = oBindingInfo.parameters || {};
 		oBindingInfo.parameters.analyticalInfo = this._getColumnInformation();
 		oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
 		oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
-
-		var oModel = this.getModel(oBindingInfo.model);
 		
+		// This may fail, in case the model is not yet set.
+		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)
+		var oModel = this.getModel(oBindingInfo.model);
 		if (oModel) {
 			ODataModelAdapter.apply(oModel);
 		}
 		
-		var vReturn = this.bindAggregation("rows", oBindingInfo);
-		this._bSupressRefresh = true;
-		this._updateColumns();
-		this._bSupressRefresh = false;
-
-		this._bBindingAttachedListener = false;
-
-		return vReturn;
+		return oBindingInfo;
 	};
-
-		/**
-		 * @param {Boolean} bSuppressRefresh Suppress Refresh
-		 * @returns {sap.ui.table.AnalyticalTable} this
-		 * @private
- 		 */
+	
+	/**
+	 * @param {Boolean} bSuppressRefresh Suppress Refresh
+	 * @returns {sap.ui.table.AnalyticalTable} this
+	 * @private
+ 	 */
 	AnalyticalTable.prototype._setSuppressRefresh = function (bSuppressRefresh) {
 		this._bSupressRefresh = bSuppressRefresh;
 		return this;

@@ -510,6 +510,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getProperty = function(sPropertyName) {
+		if (this.bInitial) {
+			return {};
+		}
 		return this.oAnalyticalQueryResult.getEntityType().findPropertyByName(sPropertyName);
 	};
 
@@ -524,6 +527,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getFilterablePropertyNames = function() {
+		if (this.bInitial) {
+			return [];
+		}
 		return this.oAnalyticalQueryResult.getEntityType().getFilterablePropertyNames();
 	};
 
@@ -538,6 +544,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getSortablePropertyNames = function() {
+		if (this.bInitial) {
+			return [];
+		}
 		return this.oAnalyticalQueryResult.getEntityType().getSortablePropertyNames();
 	};
 
@@ -554,6 +563,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getPropertyLabel = function(sPropertyName) {
+		if (this.bInitial) {
+			return "";
+		}
 		return this.oAnalyticalQueryResult.getEntityType().getLabelOfProperty(sPropertyName);
 	};
 
@@ -570,6 +582,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getPropertyHeading = function(sPropertyName) {
+		if (this.bInitial) {
+			return "";
+		}
 		return this.oAnalyticalQueryResult.getEntityType().getHeadingOfProperty(sPropertyName);
 	};
 
@@ -586,6 +601,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.getPropertyQuickInfo = function(sPropertyName) {
+		if (this.bInitial) {
+			return "";
+		}
 		return this.oAnalyticalQueryResult.getEntityType().getQuickInfoOfProperty(sPropertyName);
 	};
 

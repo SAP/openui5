@@ -538,7 +538,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	
 	TreeBindingAdapter.prototype.hasTotaledMeasures = function() {
 		var bHasMeasures = false;
-		jQuery.each(this.getMeasureDetails(), function(iIndex, oMeasure) {
+		jQuery.each(this.getMeasureDetails() || [], function(iIndex, oMeasure) {
 			if (oMeasure.analyticalInfo.total) {
 				bHasMeasures = true;
 				return false;
