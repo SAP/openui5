@@ -451,8 +451,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// as IE fires oninput event directly after rendering if value contains special characters (like Ü,Ö,Ä)
 			// compare first value in first oninput event with rendered one
 			var $input = jQuery(this.getInputDomRef());
-			if (this._sRenderedValue == $input.val()) {
-				this._sRenderedValue = undefined;
+			var sRenderedValue = this._sRenderedValue;
+			this._sRenderedValue = undefined;
+			if (sRenderedValue == $input.val()) {
 				return false;
 			}
 		}
