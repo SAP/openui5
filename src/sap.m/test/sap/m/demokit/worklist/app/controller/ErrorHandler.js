@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-		"sap/ui/base/Object",
-		"sap/m/MessageBox"
-	], function (Object, MessageBox) {
+	'sap/ui/base/Object',
+	'sap/m/MessageBox'
+], function (Object, MessageBox) {
 	"use strict";
 
 	return Object.extend("sap.ui.demo.worklist.controller.ErrorHandler", {
@@ -61,14 +61,14 @@ sap.ui.define([
 			MessageBox.show(
 				this._oResourceBundle.getText("errorMetadataText"),
 				{
+					id : "metadataErrorMessageBox",
 					icon: MessageBox.Icon.ERROR,
 					title: this._oResourceBundle.getText("errorMetadataTitle"),
 					details: sDetails,
 					styleClass: this._oComponent.getCompactCozyClass(),
-					actions: [MessageBox.Action.RETRY, sap.m.MessageBox.Action.CLOSE],
+					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if (sAction === sap.m.MessageBox.Action.RETRY) {
-							this._bMessageOpen = false;
+						if(sAction === MessageBox.Action.RETRY) {
 							this._oModel.refreshMetadata();
 						}
 					}.bind(this)
@@ -84,22 +84,24 @@ sap.ui.define([
 		 * @private
 		 */
 		_showServiceError : function (sDetails) {
-			if (!this._bMessageOpen) {
-				this._bMessageOpen = true;
-				MessageBox.show(
-					this._oResourceBundle.getText("errorServiceText"),
-					{
-						icon: MessageBox.Icon.ERROR,
-						title: this._oResourceBundle.getText("errorServiceTitle"),
-						details: sDetails,
-						styleClass: this._oComponent.getCompactCozyClass(),
-						actions: [MessageBox.Action.CLOSE],
-						onClose: function () {
-							this._bMessageOpen = false;
-						}.bind(this)
-					}
-				);
+			if (this._bMessageOpen) {
+				return;
 			}
+			this._bMessageOpen = true;
+			MessageBox.show(
+				this._oResourceBundle.getText("errorServiceText"),
+				{
+					id : "serviceErrorMessageBox",
+					icon: MessageBox.Icon.ERROR,
+					title: this._oResourceBundle.getText("errorServiceTitle"),
+					details: sDetails,
+					styleClass: this._oComponent.getCompactCozyClass(),
+					actions: [MessageBox.Action.CLOSE],
+					onClose: function () {
+						this._bMessageOpen = false;
+					}.bind(this)
+				}
+			);
 		}
 
 	});

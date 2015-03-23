@@ -6,8 +6,10 @@ sap.ui.define([
 		"sap/ui/core/UIComponent",
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/worklist/model/models",
-		"sap/ui/demo/worklist/controller/ErrorHandler"
-	], function (UIComponent, ResourceModel, models, ErrorHandler) {
+		"sap/ui/Device",
+		"sap/ui/demo/worklist/controller/ErrorHandler",
+		"sap/ui/demo/worklist/model/formatter"
+	], function (UIComponent, ResourceModel, models, Device, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
@@ -75,7 +77,7 @@ sap.ui.define([
 		 */
 		getCompactCozyClass : function() {
 			if (!this._sCompactCozyClass) {
-				if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable for the user on "combi" devices with touch AND mouse
+				if (!Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable for the user on "combi" devices with touch AND mouse
 					this._sCompactCozyClass = "sapUiSizeCompact";
 				} else {
 					this._sCompactCozyClass = "sapUiSizeCozy"; // needed for desktop-first controls like sap.ui.table.Table

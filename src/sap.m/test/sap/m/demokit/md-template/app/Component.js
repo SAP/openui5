@@ -37,6 +37,7 @@ sap.ui.define([
 
 			// set the app data model
 			this.setModel(new AppModel(mConfig.serviceUrl));
+
 			this._createMetadataPromise(this.getModel());
 
 			this._oErrorHandler = new ErrorHandler(this);

@@ -26,6 +26,14 @@ sap.ui.require([
 							},
 							errorMessage : "The app is still busy."
 						});
+					},
+					iWaitUntilTheMessageBoxIsShown : function (sMessageBoxId) {
+						return this.waitFor({
+							id : sMessageBoxId,
+							success : function () {
+								ok(true, "the correct MessageBox was shown");
+							}
+						});
 					}
 				},
 				assertions: {

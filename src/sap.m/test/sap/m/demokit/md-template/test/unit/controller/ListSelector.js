@@ -45,7 +45,16 @@ sap.ui.require(
 
 		function createListStub (bCreateListItem, sBindingPath) {
 			var fnAttachEventOnce = function (sEventName, fnCallback) {
-					fnCallback();
+					fnCallback(oDataStub);
+				},
+				fnGetBinding = this.stub().returns({
+					attachEventOnce : fnAttachEventOnce
+				}),
+				fnGetParameter = function (sParam) {
+					return true;
+				},
+				oDataStub = {
+					getParameter : fnGetParameter
 				},
 				oListItemStub = {
 					getBindingContext: this.stub().returns({
@@ -60,6 +69,7 @@ sap.ui.require(
 
 			return {
 				attachEventOnce : fnAttachEventOnce,
+				getBinding : fnGetBinding,
 				getItems: this.stub().returns(aListItems)
 			};
 		}
