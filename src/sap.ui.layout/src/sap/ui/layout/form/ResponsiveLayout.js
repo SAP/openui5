@@ -276,6 +276,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			this.onsapright(oEvent);
 		};
 
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormContainer has a title or is expandable a internal Panel is rendered.
+		 * In this case the Panels DOM reference is returned, otherwise the DOM reference
+		 * of the ResponsifeFlowLayout rendering the containers content.
+		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
+
+			if (this.getDomRef()) {
+				var sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						var oPanel = this.mContainers[sContainerId][0];
+						return oPanel.getDomRef();
+					}else if (this.mContainers[sContainerId][1]){
+						// no panel used -> return RFLayout
+						var oRFLayout = this.mContainers[sContainerId][1];
+						return oRFLayout.getDomRef();
+					}
+				}
+			}
+
+			return null;
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists.
+		 * In this Layout each FormElement is represented by an own ResponsiveFlowLayout.
+		 * So the DOM of this ResponsiveFlowLayout is returned
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveLayout.prototype.getElementRenderedDomRef = function(oElement) {
+
+			if (this.getDomRef()) {
+				var oContainer = oElement.getParent();
+				var sElementId = oElement.getId();
+				var sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][2]){
+						var mRFLayouts = this.mContainers[sContainerId][2];
+						if (mRFLayouts[sElementId]) {
+							var oRFLayout = mRFLayouts[sElementId][0];
+							return oRFLayout.getDomRef();
+						}
+					}
+				}
+			}
+
+			return null;
+
+		};
+
 		function _createPanels( oLayout, oForm ) {
 
 			var aContainers = oForm.getFormContainers();
