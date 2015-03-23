@@ -26,98 +26,125 @@
 
 	<!-- Initialization -->
 	<script language="javascript">
+
+	/**
+	* Returns true if the browser has native Promise support according to our knowledge.
+	* We could just test whether window.Promise is the Polyfill or the native object, but this makes sure
+	*/
+	function hasNativePromiseSupport() {
+		return (
+			sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 || 
+			sap.ui.Device.browser.chrome  && sap.ui.Device.browser.version > 32 ||
+			sap.ui.Device.browser.safari  && sap.ui.Device.browser.version >= 7.1 || 
+			sap.ui.Device.os.ios          && sap.ui.Device.browser.safari && sap.ui.Device.browser.version >= 8
+		);
+	}
 	
-	function doOnNativeSupport(fDoWhenNativeSupport, fDoWhenNotNativeSupport){
-		if(sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 || sap.ui.Device.browser.chrome && sap.ui.Device.browser.version > 32){
-			if(fDoWhenNativeSupport){
-				return fDoWhenNativeSupport();
-			}
-		}else{
-			if(fDoWhenNotNativeSupport){
-				return fDoWhenNotNativeSupport();
-			}
+	sap.ui.getCore().attachInit(function() {
+		if (hasNativePromiseSupport()) {
+			jQuery.sap.require("jquery.sap.script");
+			// If native Promise support is available test it as well as the polyfill
+			testPromise(window.Promise, "Native: ");
 		}
-		return null;
-	};
-	
-	var bNative = doOnNativeSupport(function(){
-		jQuery.sap.require("jquery.sap.script");
-		return jQuery.sap.getUriParameters().get("native") == "x";
-	}, function(){
-		return false;
+		
+		// Test the UI5 promise polyfill in any case window._UI5Promise is defined due to 
+		// window.sap.__ui5PublishPromisePolyfill being set to true in the first script tag of this page (before the
+		// UI5 bootstrap)
+		testPromise(window._UI5Promise, "Polyfill: ");
 	});
-	
-	var P = bNative ? window.Promise : window._UI5Promise;
-	
-	
-	function asyncAction(bFail, oObj, iDelay, bStart){
-		return new P(function(fResolve, fReject) {
-			var f = bFail ? fReject : fResolve;
-			setTimeout(function(){
-				f(oObj);
-				if(bStart){
-					start();
-				}
-			}, iDelay || 10);
-		});
-	};
-	
-	function asyncAction_Deferred(bFail, oObj, iDelay, bStart){
-		var d = new jQuery.Deferred();
-		(function(fResolve, fReject) {
-			var f = bFail ? fReject : fResolve;
-			setTimeout(function(){
-				f(oObj);
-				if(bStart){
-					start();
-				}
-			}, iDelay || 10);
-		})(function(o){d.resolve(o);}, function(o){d.reject(o);});
-		return d.promise();
-	};
-	
-	function createLog(){
-		var aLog = [];
-		return function(txt, flush){
-			aLog.push(txt);
-			if(flush){
-				var s = aLog.join(" -> ");
-				return s;
-			}
-		};
-	};
 	
 	</script>
 	
 	<!-- Test functions -->
 	<script language="javascript">
 
-		qutils.delayTestStart();
+	function testPromise(P, sTestPrefix) {
+		
+		/////////////////////////////////////////////// Helper Functions ///////////////////////////////////////////////
+		
+		function doOnNativeSupport(fDoWhenNativeSupport, fDoWhenNotNativeSupport) {
+			if(hasNativePromiseSupport()) {
+				if(fDoWhenNativeSupport) {
+					return fDoWhenNativeSupport();
+				}
+			}else{
+				if(fDoWhenNotNativeSupport) {
+					return fDoWhenNotNativeSupport();
+				}
+			}
+			return null;
+		}
 
-		module("Basics");
+		function asyncAction(bFail, oObj, iDelay, bStart){
+			return new P(function(fResolve, fReject) {
+				var f = bFail ? fReject : fResolve;
+				setTimeout(function(){
+					f(oObj);
+					if(bStart){
+						start();
+					}
+				}, iDelay || 10);
+			});
+		}
+		
+		function asyncAction_Deferred(bFail, oObj, iDelay, bStart){
+			var d = new jQuery.Deferred();
+			(function(fResolve, fReject) {
+				var f = bFail ? fReject : fResolve;
+				setTimeout(function(){
+					f(oObj);
+					if(bStart){
+						start();
+					}
+				}, iDelay || 10);
+			})(function(o){d.resolve(o);}, function(o){d.reject(o);});
+			return d.promise();
+		}
+		
+		function createLog(){
+			var aLog = [];
+			return function(txt, flush){
+				aLog.push(txt);
+				if(flush){
+					var s = aLog.join(" -> ");
+					return s;
+				}
+			};
+		}
+				
+		
+		
+		
+		///////////////////////////////////////////////// Actual Tests /////////////////////////////////////////////////
+		
+		// qutils.delayTestStart();
+
+		module(sTestPrefix + "Basics");
+		
+		var bNative = P !== window._UI5Promise;
 		
 		test((bNative ? "Native" : "Custom") +" API tested", function() {
 			var p = new P(function(res, rej){rej();});
 			ok(!p._deferred && bNative || p._deferred && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 		
-		test("Native Support", function() {
+		test(sTestPrefix + "Native Support", function() {
 			doOnNativeSupport(function(){
-				ok(window.Promise != window._UI5Promise, "Firefox and Chrome support Promises natively.");
+				ok(window.Promise != window._UI5Promise, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
-				ok(window.Promise == window._UI5Promise, "Browsers other than Firefox and Chrome does not support Promises natively.");
+				ok(window.Promise == window._UI5Promise, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
 			});	
 		});
 		
 		
-		module("promise.then");
+		module(sTestPrefix + "promise.then");
 	
-		test("API available", function() {
+		test(sTestPrefix + "API available", function() {
 			var p = new P(function(res, rej){rej();});
 			ok(typeof(p.then) == "function", "promise.then is a function");
 		});
 		
-		asyncTest("promise.then", function() {
+		asyncTest(sTestPrefix + "promise.then", function() {
 			var p1 = asyncAction(false, "X", 10, false);
 			p1.then(function(oVal){
 				equal(oVal, "X", "Success Case - promise.then");
@@ -135,7 +162,7 @@
 			});
 		});
 		
-		asyncTest("promise.then after resolve/reject", function() {
+		asyncTest(sTestPrefix + "promise.then after resolve/reject", function() {
 			var p1 = asyncAction(false, "X", 10, false);
 			setTimeout(function(){
 				p1.then(function(oVal){
@@ -158,14 +185,14 @@
 		});
 		
 		
-		module("promise.catch");
+		module(sTestPrefix + "promise.catch");
 		
-		test("API available", function() {
+		test(sTestPrefix + "API available", function() {
 			var p = new P(function(res, rej){rej();});
 			ok(typeof(p["catch"]) == "function", "promise.catch is a function");
 		});
 		
-		asyncTest("promise.catch", function() {
+		asyncTest(sTestPrefix + "promise.catch", function() {
 			var p1 = asyncAction(false, "X", 10, false);
 			p1["catch"](function(oVal){
 				ok(false, "Success Case - promise.catch, Fail should not be called");
@@ -178,7 +205,7 @@
 			});
 		});
 		
-		asyncTest("promise.catch after resolve/reject", function() {
+		asyncTest(sTestPrefix + "promise.catch after resolve/reject", function() {
 			var p1 = asyncAction(false, "X", 10, false);
 			setTimeout(function(){
 				p1["catch"](function(oVal){
@@ -196,19 +223,19 @@
 		});
 		
 		
-		module("Promise.resolve");
+		module(sTestPrefix + "Promise.resolve");
 		
-		test("API available", function() {
+		test(sTestPrefix + "API available", function() {
 			ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
 		});
 		
-		asyncTest("Promise.resolve(promise)", function() {
+		asyncTest(sTestPrefix + "Promise.resolve(promise)", function() {
 			var p1 = asyncAction(false, "X", 10, true);
 			var p2 = P.resolve(p1);
 			ok(p1 == p2, "Promise.resolve(promise) == promise");
 		});
 		
-		asyncTest("Promise.resolve(thenable)", function() {
+		asyncTest(sTestPrefix + "Promise.resolve(thenable)", function() {
 			var d1 = asyncAction_Deferred(false, "X", 10, false);
 			var p1 = P.resolve(d1);
 			p1.then(function(oVal){
@@ -228,7 +255,7 @@
 			});
 		});
 		
-		asyncTest("Promise.resolve(obj)", function() {
+		asyncTest(sTestPrefix + "Promise.resolve(obj)", function() {
 			function check(oValue, bStart){
 				var p = P.resolve(oValue);
 				p.then(function(oVal){
@@ -254,7 +281,7 @@
 			check({}, true);
 		});
 		
-		asyncTest("then: resolve/reject called multiple times - 1", function(){
+		asyncTest(sTestPrefix + "then: resolve/reject called multiple times - 1", function(){
 			var oError = new Error("error"),
 				iSuccessCount = 0,
 				iFailCount = 0,
@@ -280,7 +307,7 @@
             }, 10);
 		});
 		
-		asyncTest("then: resolve/reject called multiple times - 2", function(){
+		asyncTest(sTestPrefix + "then: resolve/reject called multiple times - 2", function(){
 			var iSuccessCount = 0,
 				iFailCount = 0,
 				thenable = {
@@ -305,7 +332,7 @@
             }, 10);
 		});
 		
-		asyncTest("then: resolve/reject called multiple times - 3", function(){
+		asyncTest(sTestPrefix + "then: resolve/reject called multiple times - 3", function(){
 			var oError = new Error("error"),
 				iSuccessCount = 0,
 				iFailCount = 0,
@@ -331,7 +358,7 @@
             }, 10);
 		});
 		
-		asyncTest("then: resolve/reject called multiple times - 4", function(){
+		asyncTest(sTestPrefix + "then: resolve/reject called multiple times - 4", function(){
 			var oError = new Error("error"),
 				iSuccessCount = 0,
 				iFailCount = 0,
@@ -358,13 +385,13 @@
 		});
 		
 		
-		module("Promise.reject");
+		module(sTestPrefix + "Promise.reject");
 		
-		test("API available", function() {
+		test(sTestPrefix + "API available", function() {
 			ok(typeof(P.reject) == "function", "Promise.reject is a function");
 		});
 		
-		asyncTest("Promise.reject(obj)", function() {
+		asyncTest(sTestPrefix + "Promise.reject(obj)", function() {
 			function check(oValue, bStart){
 				var p = P.reject(oValue);
 				p.then(function(oVal){
@@ -393,13 +420,13 @@
 		});
 		
 		
-		module("Promise.all");
+		module(sTestPrefix + "Promise.all");
 		
-		test("API available", function() {
+		test(sTestPrefix + "API available", function() {
 			ok(typeof(P.all) == "function", "Promise.all is a function");
 		});
 		
-		asyncTest("Promise.all - Success Case", function() {
+		asyncTest(sTestPrefix + "Promise.all - Success Case", function() {
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(jQuery.isArray(oVal), "Result is array");
@@ -413,7 +440,7 @@
 			});
 		});
 		
-		asyncTest("Promise.all - Fail Case 1", function() {
+		asyncTest(sTestPrefix + "Promise.all - Fail Case 1", function() {
 			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(false, "Success should not be called");
@@ -424,7 +451,7 @@
 			});
 		});
 		
-		asyncTest("Promise.all - Fail Case 2", function() {
+		asyncTest(sTestPrefix + "Promise.all - Fail Case 2", function() {
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(false, "Success should not be called");
@@ -435,7 +462,7 @@
 			});
 		});
 		
-		asyncTest("Promise.all - Fail Case 3", function() {
+		asyncTest(sTestPrefix + "Promise.all - Fail Case 3", function() {
 			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(false, "Success should not be called");
@@ -446,7 +473,7 @@
 			});
 		});
 		
-		asyncTest("Promise.all - empty array", function () {
+		asyncTest(sTestPrefix + "Promise.all - empty array", function () {
 	        var p = P.all([]);
 	        ok(p instanceof P);
 
@@ -459,7 +486,7 @@
 	        });
 	    });
 		
-		asyncTest("Promise.all - no array parameter", function(){
+		asyncTest(sTestPrefix + "Promise.all - no array parameter", function(){
 			P.all({}).then(function(oVal){
 				ok(false, "Success should not be called");
 				start();
@@ -469,7 +496,7 @@
 			});
 		});
 		
-		asyncTest("Promise.all - non-promise array content", function(){
+		asyncTest(sTestPrefix + "Promise.all - non-promise array content", function(){
 			P.all(["X", new P(function(resolve, reject){resolve("Y");})]).then(function(oVal){
 				ok(jQuery.isArray(oVal), "Result is array");
 				equal(oVal.length, 2, "Result has length 2");
@@ -483,13 +510,13 @@
 		});
 
 		
-		module("Promise.race");
+		module(sTestPrefix + "Promise.race");
 		
-		test("API available", function() {
+		test(sTestPrefix + "API available", function() {
 			ok(typeof(P.race) == "function", "Promise.race is a function");
 		});
 		
-		asyncTest("Promise.race - Fail Case 1", function() {
+		asyncTest(sTestPrefix + "Promise.race - Fail Case 1", function() {
 			var p = P.race([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 20, false)]);
 			p.then(function(oVal){
 				ok(false, "Success should not be called");
@@ -500,7 +527,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - Fail Case 2", function() {
+		asyncTest(sTestPrefix + "Promise.race - Fail Case 2", function() {
 			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(false, "Success should not be called");
@@ -511,7 +538,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - Fail Case 3", function() {
+		asyncTest(sTestPrefix + "Promise.race - Fail Case 3", function() {
 			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(true, "Y", 10, false)]);
 			p.then(function(oVal){
 				ok(false, "Success should not be called");
@@ -522,7 +549,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - Success Case 1", function() {
+		asyncTest(sTestPrefix + "Promise.race - Success Case 1", function() {
 			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 20, false)]);
 			p.then(function(oVal){
 				equal(oVal, "X", "Result is 'X'");
@@ -533,7 +560,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - Success Case 2", function() {
+		asyncTest(sTestPrefix + "Promise.race - Success Case 2", function() {
 			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
 				equal(oVal, "Y", "Result is 'Y'");
@@ -544,7 +571,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - Success Case 3", function() {
+		asyncTest(sTestPrefix + "Promise.race - Success Case 3", function() {
 			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 20, false)]);
 			p.then(function(oVal){
 				equal(oVal, "X", "Result is 'X'");
@@ -555,7 +582,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - Success Case 4", function() {
+		asyncTest(sTestPrefix + "Promise.race - Success Case 4", function() {
 			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
 				equal(oVal, "Y", "Result is 'Y'");
@@ -566,7 +593,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - empty array", function(){
+		asyncTest(sTestPrefix + "Promise.race - empty array", function(){
 			P.race([]).then(function(oVal){
 				sCallbackCalled = "Success";
 			}, function(oVal){
@@ -581,7 +608,7 @@
 			}, 30);
 		});
 		
-		asyncTest("Promise.race - no array parameter", function(){
+		asyncTest(sTestPrefix + "Promise.race - no array parameter", function(){
 			P.race({}).then(function(oVal){
 				ok(false, "Success should not be called");
 				start();
@@ -591,7 +618,7 @@
 			});
 		});
 		
-		asyncTest("Promise.race - non-promise array content", function(){
+		asyncTest(sTestPrefix + "Promise.race - non-promise array content", function(){
 			var p = P.race(["X", new P(function(resolve, reject){
 					setTimeout(function(){reject("Y");}, 10);
 				})]);
@@ -605,9 +632,9 @@
 		});
 		
 		
-		module("then chaining");
+		module(sTestPrefix + "then chaining");
 		
-		asyncTest("Chain Test 1", function() {
+		asyncTest(sTestPrefix + "Chain Test 1", function() {
 			var log = createLog();
 			asyncAction(false, "1", 10, false).then(function(oVal){
 				log("A: "+oVal);
@@ -667,7 +694,7 @@
 			});
 		};
 		
-		asyncTest("Chain Test 2", function() {
+		asyncTest(sTestPrefix + "Chain Test 2", function() {
 			checkChain([false, false, false, false, false, false], function(sResult){
 				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> SUCCESS: 5", "Result is: " + sResult);
 			}, function(sResult){
@@ -675,7 +702,7 @@
 			});
 		});
 		
-		asyncTest("Chain Test 3", function() {
+		asyncTest(sTestPrefix + "Chain Test 3", function() {
 			checkChain([true, false, false, false, false, false], function(sResult){
 				equal(sResult, "C: 1 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 			}, function(sResult){
@@ -683,7 +710,7 @@
 			});
 		});
 		
-		asyncTest("Chain Test 4", function() {
+		asyncTest(sTestPrefix + "Chain Test 4", function() {
 			checkChain([false, true, false, false, false, false], function(sResult){
 				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 			}, function(sResult){
@@ -691,7 +718,7 @@
 			});
 		});
 		
-		asyncTest("Chain Test 5", function() {
+		asyncTest(sTestPrefix + "Chain Test 5", function() {
 			checkChain([false, false, true, false, false, false], function(sResult){
 				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
 			}, function(sResult){
@@ -699,7 +726,7 @@
 			});
 		});
 		
-		asyncTest("Chain Test 6", function() {
+		asyncTest(sTestPrefix + "Chain Test 6", function() {
 			checkChain([false, false, true, true, false, false], function(sResult){
 				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> SUCCESS: 6", "Result is: " + sResult);
 			}, function(sResult){
@@ -707,7 +734,7 @@
 			});
 		});
 		
-		asyncTest("Chain Test 7", function() {
+		asyncTest(sTestPrefix + "Chain Test 7", function() {
 			checkChain([false, false, true, true, false, true], function(sResult){
 				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6 -> SUCCESS: undefined", "Success-Result is: " + sResult);
 			}, function(sResult){
@@ -715,7 +742,7 @@
 			}, true);
 		});
 		
-		asyncTest("Chain Test 8", function() {
+		asyncTest(sTestPrefix + "Chain Test 8", function() {
 			checkChain([false, false, false, false, true, false], function(sResult){
 				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
 			}, function(sResult){
@@ -723,7 +750,7 @@
 			}, true);
 		});
 		
-		asyncTest("Chain Test 9", function() {
+		asyncTest(sTestPrefix + "Chain Test 9", function() {
 			checkChain([false, true, false, false, true, false], function(sResult){
 				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
 			}, function(sResult){
@@ -731,7 +758,7 @@
 			}, true);
 		});
 		
-		asyncTest("Chain Test 10", function (){
+		asyncTest(sTestPrefix + "Chain Test 10", function (){
 	        var resolveP1, rejectP2;
 	        var log = createLog();
 
@@ -764,9 +791,9 @@
 	    });
 		
 		
-		module("error handling");
+		module(sTestPrefix + "error handling");
 		
-		asyncTest("throw error in promise.then", function() {
+		asyncTest(sTestPrefix + "throw error in promise.then", function() {
 			var p = asyncAction(false, "1", 10, false);
 			p.then(function(oVal){
 				throw new Error("error");
@@ -780,7 +807,7 @@
 			});
 		});
 		
-		asyncTest("throw error in promise.catch", function() {
+		asyncTest(sTestPrefix + "throw error in promise.catch", function() {
 			var p = asyncAction(true, "1", 10, false);
 			p["catch"](function(oVal){
 				throw new Error("error");
@@ -794,7 +821,7 @@
 			});
 		});
 		
-		asyncTest("throw error in action (sync)", function() {
+		asyncTest(sTestPrefix + "throw error in action (sync)", function() {
 			var log = createLog();
 			log("A");
 			
@@ -817,7 +844,7 @@
 			log("C");
 		});
 		
-		asyncTest("throw error in action (async)", function() {
+		asyncTest(sTestPrefix + "throw error in action (async)", function() {
 			var log = createLog();
 			log("A");
 			
@@ -848,13 +875,13 @@
 			}, 30);
 		});
 		
-		test("Wrong argument in constructor", function(){
+		test(sTestPrefix + "Wrong argument in constructor", function(){
 			throws(function(){
 	            new P("not callable");
 	        }, Error);
 		});
 		
-		asyncTest("Error in then: resolve/reject already called", function(){
+		asyncTest(sTestPrefix + "Error in then: resolve/reject already called", function(){
             var thenable = {
 				then: function(resolve, reject){
 					resolve("X");
@@ -871,7 +898,7 @@
 			});
 		});
 		
-		asyncTest("Error in then: resolve/reject not yet called", function(){
+		asyncTest(sTestPrefix + "Error in then: resolve/reject not yet called", function(){
 			var oError = new Error("error");
             var thenable = {
 				then: function(resolve, reject){
@@ -889,9 +916,9 @@
 		});
 		
 		
-		module("snyc");
+		module(sTestPrefix + "snyc");
 		
-		asyncTest("sync resolve", function() {
+		asyncTest(sTestPrefix + "sync resolve", function() {
 			var log = createLog();
 			log("A");
 			
@@ -912,7 +939,7 @@
 			log("C");
 		});
 		
-		asyncTest("sync reject", function() {
+		asyncTest(sTestPrefix + "sync reject", function() {
 			var log = createLog();
 			log("A");
 			
@@ -934,9 +961,9 @@
 		});
 		
 		
-		module("Assimilation");
+		module(sTestPrefix + "Assimilation");
 		
-		asyncTest("resolve called with a successful promise", function() {
+		asyncTest(sTestPrefix + "resolve called with a successful promise", function() {
 	        var p1 = asyncAction(false, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 
@@ -949,7 +976,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a rejected promise", function() {
+		asyncTest(sTestPrefix + "resolve called with a rejected promise", function() {
 	        var p1 = asyncAction(true, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 
@@ -962,7 +989,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a successful thenable", function() {
+		asyncTest(sTestPrefix + "resolve called with a successful thenable", function() {
 	        var p1 = asyncAction_Deferred(false, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 
@@ -975,7 +1002,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a rejected thenable", function() {
+		asyncTest(sTestPrefix + "resolve called with a rejected thenable", function() {
 	        var p1 = asyncAction_Deferred(true, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 
@@ -988,7 +1015,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a successful promise (multi-level)", function() {
+		asyncTest(sTestPrefix + "resolve called with a successful promise (multi-level)", function() {
 	        var p1 = asyncAction(false, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 	        var p3 = asyncAction(false, p2, 10, false);
@@ -1002,7 +1029,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a rejected promise (multi-level)", function() {
+		asyncTest(sTestPrefix + "resolve called with a rejected promise (multi-level)", function() {
 	        var p1 = asyncAction(true, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 	        var p3 = asyncAction(false, p2, 10, false);
@@ -1016,7 +1043,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a successful promise (multi-level, mix with thenables)", function() {
+		asyncTest(sTestPrefix + "resolve called with a successful promise (multi-level, mix with thenables)", function() {
 	        var p1 = asyncAction(false, "X", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 	        var p3 = asyncAction(false, p2, 10, false);
@@ -1030,7 +1057,7 @@
 			});
 		});
 		
-		asyncTest("resolve called with a rejected promise (multi-level, mix with thenables)", function() {
+		asyncTest(sTestPrefix + "resolve called with a rejected promise (multi-level, mix with thenables)", function() {
 	        var p1 = asyncAction(true, "X", 10, false);
 	        var p2 = asyncAction_Deferred(false, p1, 10, false);
 	        var p3 = asyncAction(false, p2, 10, false);
@@ -1044,7 +1071,7 @@
 			});
 		});
 		
-		asyncTest("reject called with a successful promise", function() {
+		asyncTest(sTestPrefix + "reject called with a successful promise", function() {
 	        var p1 = asyncAction(false, "X", 10, false);
 	        var p2 = asyncAction(true, p1, 0, false);
 	
@@ -1057,7 +1084,7 @@
 			});
 		});
 		
-		asyncTest("Promise.all", function() {
+		asyncTest(sTestPrefix + "Promise.all", function() {
 	        var p1 = asyncAction(false, "Y", 10, false);
 	        var p2 = asyncAction(false, p1, 10, false);
 	        
@@ -1074,6 +1101,7 @@
 			});
 		});
 
+	}
 	</script>
 		  
 </head>
