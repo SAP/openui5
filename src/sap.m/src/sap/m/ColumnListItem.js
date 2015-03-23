@@ -162,6 +162,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	ColumnListItem.prototype.updateSelectedDOM = function(bSelected, $LI) {
 		ListItemBase.prototype.updateSelectedDOM.apply(this, arguments);
 		$LI.children().attr("aria-selected", bSelected);
+		
+		// update popin selected and cell as well
+		var $Popin = $LI.next(".sapMListTblSubRow");
+		$Popin.add("td", $Popin).attr("aria-selected", bSelected);
 	};
 	
 	// remove pop-in on destroy
