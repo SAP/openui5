@@ -3,8 +3,9 @@ sap.ui.define([
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/worklist/model/models",
 		"sap/ui/demo/worklist/controller/ErrorHandler",
+		"jquery.sap.global",
 		"sap/ui/demo/worklist/model/formatter"
-	], function (UIComponent, ResourceModel, models, ErrorHandler) {
+	], function (UIComponent, ResourceModel, models, ErrorHandler, jQuery) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
