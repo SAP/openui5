@@ -735,7 +735,7 @@
 
 			strictEqual(oPage.getSemanticControls().length, 15, "page has semantic content");
 			strictEqual(oPage._getPage().getFooter().getContent().length, (10 + iInitFooterContentLength + iCustomFooterContentLength), "footer has semantic content");
-			strictEqual(oPage._getSegmentedShareMenu().getSectionComposite("semantic").getContent().length, 5, "shareMenu has semantic content");
+			strictEqual(oPage._getSegmentedShareMenu().getSection("semantic").getContent().length, 5, "shareMenu has semantic content");
 
 			// Clean up
 			oPage.destroy();

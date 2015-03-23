@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 		if (!this._oPositionsMap) {
 			this._oPositionsMap = SemanticPage.prototype._getSemanticPositionsMap.apply(this, arguments);
 			this._oPositionsMap[ShareMenuPage.prototype._PositionInPage.shareMenu] = {
-				oContainer: this._getSegmentedShareMenu().getSectionComposite("semantic"),
+				oContainer: this._getSegmentedShareMenu().getSection("semantic"),
 				sAggregation: "content"
 			};
 		}
@@ -83,29 +83,29 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 	 */
 
 	ShareMenuPage.prototype.getCustomShareMenuContent = function () {
-		return this._getSegmentedShareMenu().getSectionComposite("custom").getContent();
+		return this._getSegmentedShareMenu().getSection("custom").getContent();
 	};
 
 	ShareMenuPage.prototype.addCustomShareMenuContent = function (oButton, bSuppressInvalidate) {
-		this._getSegmentedShareMenu().getSectionComposite("custom").addContent(oButton, bSuppressInvalidate);
+		this._getSegmentedShareMenu().getSection("custom").addContent(oButton, bSuppressInvalidate);
 		return this;
 	};
 
 	ShareMenuPage.prototype.indexOfCustomShareMenuContent = function (oButton) {
-		return this._getSegmentedShareMenu().getSectionComposite("custom").indexOfContent(oButton);
+		return this._getSegmentedShareMenu().getSection("custom").indexOfContent(oButton);
 	};
 
 	ShareMenuPage.prototype.insertCustomShareMenuContent = function (oButton, iIndex, bSuppressInvalidate) {
-		this._getSegmentedShareMenu().getSectionComposite("custom").insertContent(oButton, iIndex, bSuppressInvalidate);
+		this._getSegmentedShareMenu().getSection("custom").insertContent(oButton, iIndex, bSuppressInvalidate);
 		return this;
 	};
 
 	ShareMenuPage.prototype.removeCustomShareMenuContent = function (oButton, bSuppressInvalidate) {
-		return this._getSegmentedShareMenu().getSectionComposite("custom").removeContent(oButton, bSuppressInvalidate);
+		return this._getSegmentedShareMenu().getSection("custom").removeContent(oButton, bSuppressInvalidate);
 	};
 
 	ShareMenuPage.prototype.removeAllCustomShareMenuContent = function (bSuppressInvalidate) {
-		return this._getSegmentedShareMenu().getSectionComposite("custom").removeAllContent(bSuppressInvalidate);
+		return this._getSegmentedShareMenu().getSection("custom").removeAllContent(bSuppressInvalidate);
 	};
 
 	ShareMenuPage.prototype.destroyCustomShareMenuContent = function (bSuppressInvalidate) {
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 			this.iSuppressInvalidate++;
 		}
 
-		this._getSegmentedShareMenu().getSectionComposite("custom").destroy();
+		this._getSegmentedShareMenu().getSection("custom").destroy();
 
 		if (!this.isInvalidateSuppressed()) {
 			this.invalidate();
