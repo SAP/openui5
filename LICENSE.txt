@@ -413,13 +413,6 @@ Licensor: Alexis Sellier & The Core Less Team
 Website: http://github.com/cloudhead/less.js/
 License: Apache License 2.0
 
-Component: punycode.js 1.2.3
-Licensor: Acid Media
-Website: http://github.com/bestiejs/punycode.js/
-License: MIT License
-<year> = 2010
-<copyright holders> = Acid Media
-
 Component: mobify.js 1.1
 Licensor: Mobify R&D Inc
 Website: http://www.mobify.com/
@@ -434,11 +427,25 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Mathias Bynens
 
+Component: punycode.js 1.2.3
+Licensor: Acid Media
+Website: http://github.com/bestiejs/punycode.js/
+License: MIT License
+<year> = 2010
+<copyright holders> = Acid Media
+
 Component: qunit 1.10.0
 Licensor: jQuery Foundation and other contributors
 Website: http://github.com/jquery/qunit/
 License: MIT License
 <year> = 2012
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: qunit composite 1.0.4
+Licensor: jQuery Foundation and other contributors
+Website:https://github.com/JamesMGreene/qunit-composite
+License: MIT License
+<year> = unspecified
 <copyright holders> = jQuery Foundation and other contributors
 
 Component: requirejs 2.1.8
