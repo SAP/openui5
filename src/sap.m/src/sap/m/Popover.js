@@ -450,7 +450,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					oNavContent.attachEvent("navigate", function(oEvent){
 						var oPage = oEvent.getParameter("to");
 						if (oPage instanceof sap.m.Page) {
-							this.$().toggleClass("sapMPopoverWithHeaderCont", oPage._getAnyHeader());
+							this.$().toggleClass("sapMPopoverWithHeaderCont", !!oPage._getAnyHeader());
 						}
 					}, this);
 				}
