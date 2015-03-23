@@ -37,35 +37,35 @@ sap.ui.require([
 							errorMessage : "We are not on the " + sTitleName + " page"
 						});
 					},
-					
+
 					iShouldSeeTheObjectViewsBusyIndicator : function () {
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
 							success : function (oPage) {
-								ok(oPage.getParent().getBusy(), "The worklist view is busy");
+								ok(oPage.getBusy(), "The object view is busy");
 							},
 							errorMessage : "The worklist view is not busy"
 						});
 					},
-					
+
 					theObjectViewsBusyIndicatorDelayIsZero : function () {
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
 							success : function (oPage) {
-								ok(oPage.getParent().getBusyIndicatorDelay() == 0, "The object view's busy indicator delay is zero.");
+								ok(oPage.getBusyIndicatorDelay() == 0, "The object view's busy indicator delay is zero.");
 							},
 							errorMessage : "The object view's busy indicator delay is not zero."
 						});
 					},
-					
+
 					theObjectViewsBusyIndicatorDelayIsRestored : function () {
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
 							success : function (oPage) {
-								ok(oPage.getParent().getBusyIndicatorDelay() == 1000, "The object view's busy indicator delay default is restored.");
+								ok(oPage.getBusyIndicatorDelay() == 1000, "The object view's busy indicator delay default is restored.");
 							},
 							errorMessage : "The object view's busy indicator delay is still zero."
 						});
