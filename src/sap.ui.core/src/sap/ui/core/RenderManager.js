@@ -463,14 +463,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		/**
 		 * Renders the given control to the provided DOMNode.
 		 *
-		 * If to control is already rendered in the provided DOMNode the DOM of the control is replaced. If the control
+		 * If the control is already rendered in the provided DOMNode the DOM of the control is replaced. If the control
 		 * is already rendered somewhere else the current DOM of the control is removed and the new DOM is appended
 		 * to the provided DOMNode.
 		 *
 		 * This function must not be called within control renderers.
 		 *
 		 * @param {sap.ui.core.Control} oControl the Control that should be rendered.
-		 * @param {Element} oTargetDomNode The node in the dom where the result of the rendering should be inserted.
+		 * @param {Element} oTargetDomNode The node in the DOM where the result of the rendering should be inserted.
 		 * @public
 		 */
 		RenderManager.prototype.render = function(oControl, oTargetDomNode) {
@@ -485,8 +485,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				return;
 			}
 
-			// Reset the buffer before rendering
+			// Reset internal state before rendering
+			this.aRenderedControls = [];
 			this.aBuffer = [];
+			this.aStyleStack = [{}];
 
 			// Retrieve the markup (the rendering phase)
 			this.renderControl(oControl);
