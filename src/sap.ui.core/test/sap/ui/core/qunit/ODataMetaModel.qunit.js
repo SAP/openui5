@@ -11,8 +11,6 @@
 	jQuery.sap.require("sap.ui.thirdparty.datajs");
 
 	sinon.config.useFakeServer = true;
-	// WARNING! These are on by default and break the Promise polyfill...
-	sinon.config.useFakeTimers = false;
 
 	function onError(oError) {
 		start();

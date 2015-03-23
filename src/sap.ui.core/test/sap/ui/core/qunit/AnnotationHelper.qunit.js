@@ -10,9 +10,6 @@
 	jQuery.sap.require("sap.ui.base.BindingParser");
 	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper"); //TODO get rid of this?!
 
-	// WARNING! These are on by default and break the Promise polyfill...
-	sinon.config.useFakeTimers = false;
-
 	var AnnotationHelper = sap.ui.model.odata.AnnotationHelper, // shorten lines
 		oCIRCULAR = {},
 		oBoolean = {
