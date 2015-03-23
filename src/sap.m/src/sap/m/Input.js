@@ -1399,7 +1399,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						oInput._sCloseTimer = null;
 					}
 
-					if (!oPopup.isOpen() && !oInput._sOpenTimer) {
+					if (!oPopup.isOpen() && !oInput._sOpenTimer && (this.getValue().length >= this.getStartSuggestion())) {
 						oInput._sOpenTimer = setTimeout(function() {
 							oInput._resizePopup();
 							oInput._sOpenTimer = null;
