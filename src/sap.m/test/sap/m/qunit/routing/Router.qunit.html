@@ -14,16 +14,9 @@
 				jQuery.sap.require("sap.ui.qunit.qunit-css");
 				jQuery.sap.require("sap.ui.thirdparty.qunit");
 				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-					jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				}
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 				jQuery.sap.require("sap.ui.thirdparty.sinon");
 				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-				//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
-				var original = module;
-				module = undefined;
-
 
 				sap.ui.require([
 							"sap/m/routing/Router",
@@ -36,9 +29,6 @@
 						],
 						function (Router, TargetHandler, NavContainer, SplitContainer, Page, Views, integrationTests) {
 							"use strict";
-
-							module = original;
-
 
 							QUnit.module("Construction and destruction");
 
