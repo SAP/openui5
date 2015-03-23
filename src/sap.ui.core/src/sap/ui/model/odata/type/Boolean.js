@@ -9,10 +9,10 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	"use strict";
 
 	/**
-	 * Returns the error message for the type.
+	 * Returns the locale-dependent error message for the type.
 	 *
 	 * @returns {string}
-	 *   the message
+	 *   the locale-dependent error message
 	 */
 	function getErrorMessage() {
 		return getMessage("EnterYesOrNo", [getText(true), getText(false)]);
@@ -88,7 +88,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -138,7 +138,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 	 * Parses the given value from the given type to a boolean.
 	 *
 	 * @param {boolean|string} vValue
-	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
+	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
 	 * 	 the source type (the expected type of <code>vValue</code>); may be "boolean" or "string".

@@ -42,18 +42,23 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 			"sap:label" : "Bus. Part. ID"
 		}
 	 * </pre>
-	 * Additionally to this transformation corresponding V4 annotations are created for annotations
-	 * from the "http://www.sap.com/Protocols/SAPData" namespace. Supported annotations are:
-	 * <code>label</code>
+	 *
+	 * Since 1.29.0 the equivalent vocabulary based annotations for the following
+	 * <a src="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a> are
+	 * also added:
+	 * <ul>
+	 * <li><code>label</code></li>;
+	 * <li><code>creatable</code>, <code>deletable</code>, <code>pageable</code>,
+	 * <code>requires-filter</code>, <code>searchable</code>, <code>topable</code> and
+	 * <code>updatable</code> on entity sets</li>;
+	 * <li><code>creatable</code>, <code>precision</code>, <code>text</code>, <code>unit</code> and
+	 * <code>updatable</code> on properties</li>.
+	 * </ul>
 	 * For example:
 	 * <pre>
 		{
 			"name" : "BusinessPartnerID",
-			"extensions" : [{
-				"name" : "label",
-				"value" : "Bus. Part. ID",
-				"namespace" : "http://www.sap.com/Protocols/SAPData"
-			}],
+			...
 			"sap:label" : "Bus. Part. ID",
 			"com.sap.vocabularies.Common.v1.Label" : {
 				"String" : "Bus. Part. ID"
@@ -829,6 +834,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 *   (the path to) the function import with the given simple name; <code>undefined</code> (for
 	 *   a path) or <code>null</code> (for an object) if no such function import is found
 	 * @public
+	 * @since 1.29.0
 	 */
 	ODataMetaModel.prototype.getODataFunctionImport = function (sName, bAsPath) {
 		return getFromContainer(this.getODataEntityContainer(), "functionImport", sName, bAsPath);
