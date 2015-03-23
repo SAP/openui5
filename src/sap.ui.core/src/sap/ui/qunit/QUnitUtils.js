@@ -70,6 +70,20 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 				});
 			}
 			
+			// PhantomJS patch for Focus detection via jQuery:
+			// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
+			//     ==> https://github.com/ariya/phantomjs/issues/10427
+			if (sap.ui.Device.browser.phantomJS) {
+				// workaround copied from above bug report
+				var $is = jQuery.fn.is;
+				jQuery.fn.is = function(sSelector) {
+					if (sSelector === ":focus") {
+						return this.get(0) === document.activeElement;
+					}
+					return $is.apply(this, arguments);
+				};
+			}
+			
 		}
 	}());
 	
