@@ -1002,15 +1002,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		function computeRelativeDate(iDiff){
 			var iDate, iToday,
 				oToday = that._now(),
+				oDate,
 				iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()),
 				iDiffMillis = iDiff * (24 * 60 * 60 * 1000);
 
 			var iDate = iToday + iDiffMillis;
+			oDate = new Date(iDate);
 			if (!bUTC) {
-				var oTarget = new Date(oToday.getTime() + iDiffMillis);
-				iDate += oTarget.getTimezoneOffset() * 60 * 1000;
+				oDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate());
 			}
-			return new Date(iDate);
+			return oDate;
 		}
 
 		var sPattern, _oPattern, _sValue, i, iSign;
