@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 		"sap/ui/demo/mdtemplate/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
