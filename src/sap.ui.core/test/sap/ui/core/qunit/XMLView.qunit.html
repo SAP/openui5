@@ -33,10 +33,6 @@ sap.ui.core.mvc.Controller</title>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
-
-	// WARNING! These are on by default and break the Promise polyfill...
-	sinon.config.useFakeTimers = false;
-
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
 		idsToBeChecked : ["myPanel", "Button1", "localTableId"]

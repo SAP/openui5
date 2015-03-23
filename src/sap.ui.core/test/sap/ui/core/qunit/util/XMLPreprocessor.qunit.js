@@ -229,9 +229,6 @@
 		checkError(aViewContent, sExpectedMessage, undefined, iUnexpected);
 	}
 
-	// WARNING! These are on by default and break the Promise polyfill...
-	sinon.config.useFakeTimers = false;
-
 	//*********************************************************************************************
 	module("sap.ui.core.util.XMLPreprocessor", {
 		teardown: function () {
