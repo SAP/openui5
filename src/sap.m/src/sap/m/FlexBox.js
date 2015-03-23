@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			for (parent = currentElement.getParent();
 				parent !== null && parent !== undefined &&
 				(parent instanceof FlexBox
-				|| (parent.getLayoutData() !== null && parent.getLayoutData() instanceof sap.m.FlexItemData));
+				|| (parent.getLayoutData && parent.getLayoutData() instanceof sap.m.FlexItemData));
 				) {
 				currentElement = parent;
 				parent = currentElement.getParent();
