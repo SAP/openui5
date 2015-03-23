@@ -17,29 +17,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	// create ARIA announcements 
 	var mAriaAnnouncements = {};
 	
-	/**
-	 * Writes necessary invisible placeholder HTML attributes and styles.
-	 * TODO: Why this functionality does not come from RenderManager
-	 *
-	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
-	 * @private
-	 */
-	ListItemBaseRenderer.writeInvisiblePlaceholderData = function(rm, oLI) {
-		var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oLI.getId();
-		var sPlaceholderHtml = ' ' +
-			'id="' + sPlaceholderId + '" ' + 
-			'class="sapUiHiddenPlaceholder" ' + 
-			'data-sap-ui="' + sPlaceholderId + '" ' + 
-			'style="display: none;"' + 
-			'aria-hidden="true"';
-		
-		rm.write(sPlaceholderHtml);
-	};
-	
 	ListItemBaseRenderer.renderInvisible = function(rm, oLI) {
 		this.openItemTag(rm, oLI);
-		this.writeInvisiblePlaceholderData(rm, oLI);
+		rm.writeInvisiblePlaceholderData(oLI);
 		rm.write(">");
 		this.closeItemTag(rm, oLI);
 	};
