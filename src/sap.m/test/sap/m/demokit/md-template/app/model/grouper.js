@@ -1,20 +1,24 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([], function () {
 	"use strict";
 
 		/*
 		 * Use this file to implement your custom grouping functions
-		 * 
+		 *
 		 * The predefined functions are simple examples and might be replaced by your more complex implementations
-		 * 
+		 *
 		 * to be called with jQuery.proxy and handed over to a sap.ui.model.Sorter
-		 *  
+		 *
 		 * return value for all your functions is an object with  key-text pairs
-		 * 
+		 *
 		 * the oContext parameter is not under your control!
 		 */
 
 	return {
-		
+
 		/**
 		 * Grouping function to group the master list by price
 		 *

@@ -1,10 +1,14 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 		"sap/ui/core/mvc/Controller"
 	], function (Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.worklist.controller.BaseController", {
-		
+
 		/**
 		 * Convenience method for accessing the event bus.
 		 * @public
@@ -73,7 +77,7 @@ sap.ui.define([
 				this.getRouter().navTo(sRoute, mData, bReplace);
 			}
 		}
-		
+
 	});
 
 }, /* bExport= */ true);
