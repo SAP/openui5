@@ -841,11 +841,50 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
-	 * Returns the given OData type's property of given name. If an array is given instead of a
-	 * single name, it is consumed (via <code>Array.prototype.shift</code>) piece by piece until an
-	 * element is encountered which cannot be resolved as a property name of the current type; in
-	 * this case, the last property found is returned and <code>vName</code> contains only the
-	 * remaining names, with <code>vName[0]</code> being the one which was not found.
+	 * Returns the given OData type's property (not navigation property!) of given name.
+	 *
+	 * If an array is given instead of a single name, it is consumed (via
+	 * <code>Array.prototype.shift</code>) piece by piece. Each element is interpreted as a
+	 * property name of the current type, and the current type is replaced by that property's type.
+	 * This is repeated until an element is encountered which cannot be resolved as a property name
+	 * of the current type anymore; in this case, the last property found is returned and
+	 * <code>vName</code> contains only the remaining names, with <code>vName[0]</code> being the
+	 * one which was not found.
+	 *
+	 * Examples:
+	 * <ul>
+	 * <li> Get address property of business partner:
+	 * <pre>
+	 * var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
+	 *     oAddressProperty = oMetaModel.getODataProperty(oEntityType, "Address");
+	 * oAddressProperty.name === "Address";
+	 * oAddressProperty.type === "GWSAMPLE_BASIC.CT_Address";
+	 * </pre>
+	 * </li>
+	 * <li> Get street property of address type:
+	 * <pre>
+	 * var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
+	 *     oStreetProperty = oMetaModel.getODataProperty(oComplexType, "Street");
+	 * oStreetProperty.name === "Street";
+	 * oStreetProperty.type === "Edm.String";
+	 * </pre>
+	 * </li>
+	 * <li> Get address' street property directly from business partner:
+	 * <pre>
+	 * var aParts = ["Address", "Street"];
+	 * oMetaModel.getODataProperty(oEntityType, aParts) === oStreetProperty;
+	 * aParts.length === 0;
+	 * </pre>
+	 * </li>
+	 * <li> Trying to get address' foo property directly from business partner:
+	 * <pre>
+	 * aParts = ["Address", "foo"];
+	 * oMetaModel.getODataProperty(oEntityType, aParts) === oAddressProperty;
+	 * aParts.length === 1;
+	 * aParts[0] === "foo";
+	 * </pre>
+	 * </li>
+	 * </ul>
 	 *
 	 * @param {object} oType
 	 *   a complex type as returned by {@link #getODataComplexType getODataComplexType}, or
