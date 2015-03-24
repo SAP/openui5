@@ -775,8 +775,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			// remove section from loadedSections so the data can be requested again.
 			// this might be required when e.g. when the service was not available for a short time
 			var aLoadedSections = [];
-			for (var i = 0; i < this._mLoadedSections[sNodeId].length; i++) {
-				var oCurrentSection = this._mLoadedSections[sNodeId][i];
+			for (var i = 0; i < that._mLoadedSections[sNodeId].length; i++) {
+				var oCurrentSection = that._mLoadedSections[sNodeId][i];
 				if (oRequestedSection.startIndex >= oCurrentSection.startIndex && oRequestedSection.startIndex + oRequestedSection.length <= oCurrentSection.startIndex + oCurrentSection.length) {
 					// remove the section interval and maintain adapted sections. If start index and length are the same, ignore the section
 					if (oRequestedSection.startIndex !== oCurrentSection.startIndex && oRequestedSection.length !== oCurrentSection.length) {
@@ -788,7 +788,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 					aLoadedSections.push(oCurrentSection);
 				}
 			}
-			this._mLoadedSections[sNodeId] = aLoadedSections;
+			that._mLoadedSections[sNodeId] = aLoadedSections;
 			}
 		}
 		
