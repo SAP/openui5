@@ -22,24 +22,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @param {string} sServiceUrl required - base uri of the service to request data from; additional URL parameters appended here will be appended to every request
-	 * @param {string | object} [bJSON] (optional) true to request data as JSON or an object which contains the following parameter properties:
-	 * 							json, user, password, headers, tokenHandling, withCredentials, loadMetadataAsync, maxDataServiceVersion (default = '2.0';
-	 * please use the following string format e.g. '2.0' or '3.0'. OData version supported by the ODataModel: '2.0'. '3.0' may work but is currently experimental.),
-	 * useBatch (all requests will be sent in batch requests default = false),
-	 * refreshAfterChange (enable/disable automatic refresh after change operations: default = true),
-	 * serviceUrlParams (URL parameters for all requests),
-	 * metadataUrlParams (additional URL parameters for Metadata requests).
-	 * See below for descriptions of these parameters.
-	 * @param {string} [sUser] (optional) user
-	 * @param {string} [sPassword] (optional) password
-	 * @param {object} [mHeaders] (optional) map of custom headers which should be set in each request.
-	 * @param {boolean} [bTokenHandling] (optional) enable/disable XCSRF-Token handling
-	 * @param {boolean} [bWithCredentials] (optional, experimental) true when user credentials are to be included in a cross-origin request. Please note that this works only if all requests are asynchronous.
-	 * @param {object} [bLoadMetadataAsync] (optional) determined if the service metadata request is sent synchronous or asynchronous. Default is false.
-	 * Please note that if this is set to true attach to the metadataLoaded event to get notified when the metadata has been loaded before accessing the service metadata.
-	 * @param {string|string[]} [annotationURI] (optional) The URL (or an array of URLs) from which the annotation metadata should be loaded
-	 * @param {boolean} [loadAnnotationsJoined] (optional) Whether or not to fire the metadataLoaded-event only after annotations have been loaded as well.
+	 * @param {string} [sServiceUrl] base uri of the service to request data from; additional URL parameters appended here will be appended to every request
+	 * 								can be passed with the mParameters object as well: [mParameters.serviceUrl] A serviceURl is required!
+	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
+	 * @param {boolean} [mParameters.json] if set true request payloads will be JSON, XML for false (default = false),
+	 * @param {string} [mParameters.user] user for the service,
+	 * @param {string} [mParameters.password] password for service,
+	 * @param {map} [mParameters.headers] a map of custom headers like {"myHeader":"myHeaderValue",...},
+	 * @param {boolean} [mParameters.tokenHandling] enable/disable XCSRF-Token handling (default = true),
+	 * @param {boolean} [mParameters.withCredentials] experimental - true when user credentials are to be included in a cross-origin request. Please note that this works only if all requests are asynchronous.
+	 * @param {object} [mParameters.loadMetadataAsync] (optional) determined if the service metadata request is sent synchronous or asynchronous. Default is false.
+	 * @param [mParameters.maxDataServiceVersion] (default = '2.0') please use the following string format e.g. '2.0' or '3.0'.
+	 * 									OData version supported by the ODataModel: '2.0',
+	 * @param {boolean} [mParameters.useBatch] when true all requests will be sent in batch requests (default = false),
+	 * @param {boolean} [mParameters.refreshAfterChange] enable/disable automatic refresh after change operations: default = true,
+	 * @param  {string|string[]} [mParameters.annotationURI] The URL (or an array of URLs) from which the annotation metadata should be loaded,
+	 * @param {boolean} [mParameters.loadAnnotationsJoined] Whether or not to fire the metadataLoaded-event only after annotations have been loaded as well,
+	 * @param {map} [mParameters.serviceUrlParams] map of URL parameters - these parameters will be attached to all requests,
+	 * @param {map} [mParameters.metadataUrlParams] map of URL parameters for metadata requests - only attached to $metadata request.
+	 * @param {string} [mParameters.defaultCountMode] sets the default count mode for the model. If not set, sap.ui.model.odata.CountMode.Both is used.
+	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -69,6 +71,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				mServiceUrlParams,
 				mMetadataUrlParams,
 				that = this;
+
+			if (typeof (sServiceUrl) === "object") {
+				bJSON = sServiceUrl;
+				sServiceUrl = bJSON.serviceUrl;
+			}
 
 			if (typeof bJSON === "object") {
 				sUser = bJSON.user;
