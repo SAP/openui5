@@ -42,7 +42,7 @@
 	function normalizeXml(sXml) {
 		/*jslint regexp: true*/
 		return sXml
-			// Note: IE > 8 does not add all namespace at root level, but deeper inside the tree!
+			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
 			// Note: Chrome adds all namespaces at root level, but before other attributes!
 			.replace(/ xmlns.*?=\".+?\"/g,"")
 			// Note: browsers differ in whitespace for empty HTML(!) tags
@@ -159,8 +159,7 @@
 			vExpected = [];
 			for (i = 1; i < aViewContent.length - 1; i += 1) {
 				// Note: <In> should really have some attributes to make sure they are kept!
-				if (aViewContent[i].indexOf("<In ") === 0
-					|| aViewContent[i] === "<!-- prevent empty tag -->") {
+				if (aViewContent[i].indexOf("<In ") === 0) {
 					vExpected.push(aViewContent[i]);
 				}
 			}
@@ -168,6 +167,9 @@
 		if (jQuery.isArray(vExpected)) {
 			vExpected.unshift(aViewContent[0]); // 1st line is always in
 			vExpected.push(aViewContent[aViewContent.length - 1]); // last line is always in
+			if (vExpected.length === 2) {
+				vExpected = ['<mvc:View/>']; // expect just a single empty tag
+			}
 		}
 
 		withBalancedBindAggregation(function () {
@@ -248,7 +250,6 @@
 			'<t:if test="false">',
 			'<Out/>',
 			'</t:if>',
-			'<!-- prevent empty tag -->',
 			'</mvc:View>'
 		]);
 	});
@@ -261,7 +262,6 @@
 					'<template:if test="false">',
 					'<Out/>',
 					'<\/template:if>',
-					'<!-- prevent empty tag -->',
 					'<\/mvc:View>'
 				],
 				oLogMock = this.mock(jQuery.sap.log);
@@ -363,7 +363,6 @@
 					'<template:if test="{/flag}">',
 					'<Out/>',
 					'</template:if>',
-					'<!-- prevent empty tag -->',
 					'</mvc:View>'
 				], {
 					models: new sap.ui.model.json.JSONModel({flag: oFlag})
@@ -425,7 +424,6 @@
 						'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
 						'<Out/>',
 						'</template:if>',
-						'<!-- prevent empty tag -->',
 						'</mvc:View>'
 					],
 					oError = new Error("deliberate failure"),
@@ -463,7 +461,6 @@
 					'<template:if test="' + "{unrelated>/some/path}" + '">',
 					'<Out/>',
 					'</template:if>',
-					'<!-- prevent empty tag -->',
 					'</mvc:View>'
 				],
 				oLogMock = this.mock(jQuery.sap.log);
@@ -495,7 +492,6 @@
 			'<template:if test="false">',
 			'<template:if test="{formatter: \'foo.Helper.forbidden\', path:\'/flag\'}"/>',
 			'</template:if>',
-			'<!-- prevent empty tag -->',
 			'</mvc:View>'
 		], {
 			models: new sap.ui.model.json.JSONModel({flag: true})
@@ -511,7 +507,6 @@
 			'<Out/>',
 			'</template:then>',
 			'</template:if>',
-			'<!-- prevent empty tag -->',
 			'</mvc:View>'
 		]);
 	});
@@ -721,7 +716,6 @@
 			'<Out/>',
 			'</template:elseif>',
 			'</template:if>',
-			'<!-- prevent empty tag -->',
 			'</mvc:View>'
 		]);
 	});
@@ -1197,7 +1191,6 @@
 		check([
 			mvcView(),
 			'<template:repeat list="{/unsupported/path}"/>',
-			'<!-- prevent empty tag -->',
 			'</mvc:View>'
 		], {
 			models: new sap.ui.model.json.JSONModel()
