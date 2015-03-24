@@ -432,14 +432,18 @@
 
 
     //exports to multiple environments
-    if(typeof define === 'function' && define.amd){ //AMD
+    if (typeof define === 'function' && define.amd){ //AMD
         define(function () { return signals; });
+    /* ##### BEGIN: MODIFIED BY SAP
+    QUnit does define a global called module. to be able to require signals together with qunit we need to stop the export here since UI5 will not run signals with node
     } else if (typeof module !== 'undefined' && module.exports){ //node
-        module.exports = signals;
+         module.exports = signals;
+     ##### END: MODIFIED BY SAP*/
     } else { //browser
         //use string because of Google closure compiler ADVANCED_MODE
         /*jslint sub:true */
         global['signals'] = signals;
     }
+
 
 }(this));

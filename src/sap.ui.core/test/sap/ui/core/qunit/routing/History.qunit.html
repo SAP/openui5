@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
            Tested classes: sap.ui.core.navigation.History
          -->
 
@@ -13,7 +13,7 @@
 	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
-	
+
 </script>
 
 <script>
@@ -22,17 +22,11 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-css");
 		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		}
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-		//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
-		var original = module;
-		module = undefined;
 		jQuery.sap.require("sap.ui.core.routing.History");
-		module = original;
 
 		sap.ui.core.routing.HashChanger.getInstance().init();
 
