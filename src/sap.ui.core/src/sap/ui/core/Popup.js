@@ -697,6 +697,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 			that.eOpenState = sap.ui.core.OpenState.OPEN;
 
+			// set and register listener of 'followOf' (given via Popup.open()) only when
+			// the popup has been opened already. Otherwise checking the opener's positio
+			// starts to early
 			if (that.getFollowOf()) {
 				Popup.DockTrigger.addListener(Popup.checkDocking, that);
 			}
@@ -1696,30 +1699,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @public
 	 */
 	Popup.prototype.setFollowOf = function(followOf) {
-		var bUpdateOfRect = false;
-
 		// deregister any listener to ensure that in every state of the Popup the correct listener is attached (or not)
 		Popup.DockTrigger.removeListener(Popup.checkDocking, this);
 
+		var bUpdateOfRect = false;
+		this._bFollowOf = true;
+		this._followOfHandler = null;
+
 		if (typeof (followOf) === "function") {
-			this._bFollowOf = true;
 			this._followOfHandler = followOf;
 			bUpdateOfRect = true;
 		} else if (typeof (followOf) === "boolean") {
-			this._bFollowOf = followOf;
-			if (!this._bFollowOf) {
-				this._followOfHandler = null;
-			}
 			bUpdateOfRect = followOf;
 		} else if (followOf === Popup.CLOSE_ON_SCROLL) {
-			this._bFollowOf = true;
 			this._followOfHandler = this._fnCloseOnScroll;
 			bUpdateOfRect = true;
 		} else {
 			this._bFollowOf = false;
-			this._followOfHandler = null;
 
-			if (followOf != null) {
+			if (followOf !== null) {
 				jQuery.sap.log.error("Trying to set an invalid type to 'followOf: " + followOf);
 			}
 		}
@@ -2076,11 +2074,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	//****************************************************
 	Popup.DockTrigger = new IntervalTrigger(200);
 
+	/**
+	 * This function compares two different objects (created via jQuery(DOM-ref).rect()).
+	 * If the left, top, width or height differs more than a set puffer this function
+	 * will return false.
+	 *
+	 * @param {object} oRectOne the first object
+	 * @param {object} oRectTwo the other object
+	 * @return {boolean} if the given objects are equal
+	 * @private
+	 */
 	var fnRectEqual = function(oRectOne, oRectTwo) {
-		if (oRectOne.left != oRectTwo.left
-				|| oRectOne.top != oRectTwo.top
-				|| oRectOne.width != oRectTwo.width
-				|| oRectOne.height != oRectTwo.height) {
+		var iPuffer = 3;
+		var iLeft = Math.abs(oRectOne.left - oRectTwo.left);
+		var iTop = Math.abs(oRectOne.top - oRectTwo.top);
+		var iWidth = Math.abs(oRectOne.width - oRectTwo.width);
+		var iHeight = Math.abs(oRectOne.height - oRectTwo.height);
+
+		// check if the of has moved more pixels than set in the puffer
+		// Puffer is needed if the opener changed its position only by 1 pixel:
+		// this happens in IE if a control was clicked (is a reported IE bug)
+		if (iLeft > iPuffer || iTop > iPuffer || iWidth > iPuffer || iHeight > iPuffer) {
 			return false;
 		}
 		return true;
