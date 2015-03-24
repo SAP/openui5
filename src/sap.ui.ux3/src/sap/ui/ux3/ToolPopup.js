@@ -992,6 +992,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		return this;
 	};
 
+	var fnChangeContent = function(that, sType) {
+		if (sType === "content") {
+			fnRenderContent(that);
+		} else if (sType === "buttons") {
+			fnRenderButtons(that);
+		}
+
+		// this fixes the height of the ToolPopup if the height exceeds the window height
+		that._proxyFixSize();
+		// if the height/width changed the Popup's position has to be fixed as well
+		that.oPopup._applyPosition(that.oPopup._oLastPosition);
+		// fix the arrow's position
+		fnSetArrow(that);
+	};
+
 	var fnRenderContent = function(oThis) {
 		var oContentDomRef = oThis.getDomRef("content");
 		oContentDomRef.innerHTML = "";
@@ -1005,9 +1020,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		rm.flush(oContentDomRef, true);
 		rm.destroy();
-
-		// this fixes the height of the ToolPopup if the height exceeds the window height
-		oThis._proxyFixSize();
 	};
 	var fnRenderButtons = function(oThis) {
 		var oButtons = oThis.getDomRef("buttons");
@@ -1029,68 +1041,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			rm.flush(oButtons, true);
 			rm.destroy();
-
-			// this fixes the height of the ToolPopup if the height exceeds the window height
-			oThis._proxyFixSize();
 		}
 	};
 
 	ToolPopup.prototype.addContent = function(oContent) {
-		this.addAggregation("content", oContent, true);
+		this.addAggregation("content", oContent, /* suppressInvalidate */true);
 
 		if (this.isOpen()) {
-			fnRenderContent(this);
-			fnSetArrow(this);
+			fnChangeContent(this, "content");
 		}
 
 		return this;
 	};
 	ToolPopup.prototype.insertContent = function(oContent, index) {
-		this.insertAggregation("content", oContent, index, true);
+		this.insertAggregation("content", oContent, index, /* suppressInvalidate */true);
 
 		if (this.isOpen()) {
-			fnRenderContent(this);
-			fnSetArrow(this);
+			fnChangeContent(this, "content");
 		}
 
 		return this;
 	};
 	ToolPopup.prototype.removeContent = function(oContent) {
-		this.removeAggregation("content", oContent, true);
+		this.removeAggregation("content", oContent, /* suppressInvalidate */true);
 
 		if (this.isOpen()) {
-			fnRenderContent(this);
-			fnSetArrow(this);
+			fnChangeContent(this, "content");
 		}
 
 		return this;
 	};
 	ToolPopup.prototype.addButton = function(oButton) {
-		this.addAggregation("buttons", oButton, true);
+		this.addAggregation("buttons", oButton, /* suppressInvalidate */true);
 
 		if (this.isOpen()) {
-			fnRenderButtons(this);
-			fnSetArrow(this);
+			fnChangeContent(this, "buttons");
 		}
 
 		return this;
 	};
 	ToolPopup.prototype.insertButton = function(oButton, index) {
-		this.insertAggregation("buttons", oButton, index, true);
+		this.insertAggregation("buttons", oButton, index, /* suppressInvalidate */true);
 
 		if (this.isOpen()) {
-			fnRenderButtons(this);
-			fnSetArrow(this);
+			fnChangeContent(this, "buttons");
 		}
 
 		return this;
 	};
 	ToolPopup.prototype.removeButton = function(oButton) {
-		this.removeAggregation("button", oButton, true);
+		this.removeAggregation("button", oButton, /* suppressInvalidate */true);
 
 		if (this.isOpen()) {
-			fnRenderButtons(this);
-			fnSetArrow(this);
+			fnChangeContent(this, "buttons");
 		}
 
 		return this;

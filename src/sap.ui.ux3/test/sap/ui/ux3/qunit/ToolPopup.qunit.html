@@ -8,18 +8,19 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3">
-	
+
 </script>
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
 	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 
 <style>
 .widePopup {
@@ -553,9 +554,9 @@
 	});
 	asyncTest("default button is focused by default", function() {
 		expect(1);
-		
+
 		oTPFocus.setDefaultButton("defaultBtn1");
-		
+
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
@@ -570,23 +571,23 @@
 	});
 	asyncTest("default button is focused by pressEnter", function() {
 		expect(1);
-		
+
 		oTPFocus.setInitialFocus("focusBtn2");
 		oTPFocus.setDefaultButton("defaultBtn1");
-		
+
 		var fnOpened = function() {
 			oTPFocus.detachOpened(fnOpened);
 
 			var sKeyEnter = jQuery.sap.KeyCodes.ENTER;
 			var oDomRef = sap.ui.getCore().byId("FormattedTextView1").getDomRef();
 			sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyEnter);
-			
+
 			start();
 
 			bTest = document.activeElement.id === "defaultBtn1";
 			ok(bTest, "Default button was focused by pressEnter");
 		};
-		
+
 		oTPFocus.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
@@ -649,24 +650,24 @@
 
 	test("Focusable area (type check)", function() {
 		expect(4);
-		
+
 		var oTF = new sap.ui.commons.TextField().placeAt("uiArea1");
 		oTPFocus.setAutoClose(true);
-		
+
 		// since a wrong type is given 'oValue' should be null
 		var oValue = oTPFocus.addFocusableArea(oTF);
 		ok(!!!oValue, "Wrong type is recognized while adding");
 		oValue = null; // reset result for next test
-		
+
 		oValue = oTPFocus.addFocusableArea(oTF.getId());
 		ok(!!oValue, "Correct type is accepted while adding");
 		oValue = null;
-		
+
 		oValue = oTPFocus.removeFocusableArea(oTF);
 		// since a wrong type is given 'oValue' should be null
 		ok(!!!oValue, "Wrong type is recognized while removal");
 		oValue = null;
-		
+
 		oValue = oTPFocus.removeFocusableArea(oTF.getId());
 		ok(!!oValue, "Correct type is accepted while removal");
 		oValue = null;
@@ -784,7 +785,7 @@
 
 	asyncTest("Autoclose on opener removal", function() {
 		expect(2);
-		
+
 		oTP1.setCloseDuration(0).close();
 		sap.ui.getCore().applyChanges();
 
@@ -798,14 +799,14 @@
 				start();
 			});
 
-			
+
 			oBtn1.$().remove();
 		});
-		
-		
+
+
 		oTP1.open(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop);
 	});
-	
+
 	var oTPMaxHeight;
 	module("Size of the ToolPopup", {
 		setup : function() {
@@ -884,6 +885,106 @@
 		oTPMaxHeight.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
+	});
+
+	var oButtonContent;
+	var oTPContent;
+	module("Changing content", {
+		setup : function() {
+			oButtonContent = new sap.ui.commons.Button({
+				text : "Open"
+			}).placeAt("uiArea1");
+			oButtonContent.press = 	function() {
+					oTPContent.open();
+			};
+
+			oTPContent = new sap.ui.ux3.ToolPopup({
+				maxWidth : '200px',
+				opener : oButtonContent
+			});
+
+			this.s
+		},
+
+		teardown : function() {
+			oTPContent.destroy();
+			oButtonContent.destroy();
+		}
+	});
+
+	asyncTest("Change Content", function(){
+		expect(2);
+		var that = this;
+
+		function row(sLabel, sText, sUrl) {
+			var oControl;
+			if (!sUrl) {
+				oControl = new sap.ui.commons.TextView({
+					text : sText,
+					tooltip : sText
+				});
+			} else {
+				oControl = new sap.ui.commons.Link({
+					text : sText,
+					href : sUrl,
+					tooltip : sText,
+					target : "_blank"
+				});
+			}
+
+			var oLabel = new sap.ui.commons.Label({
+				text : sLabel + ":",
+				labelFor : oControl
+			});
+
+			var oMLCell1 = new sap.ui.commons.layout.MatrixLayoutCell({
+				hAlign : sap.ui.commons.layout.HAlign.End,
+				vAlign : sap.ui.commons.layout.VAlign.Top,
+				content : [ oLabel ]
+			});
+			var oMLCell2 = new sap.ui.commons.layout.MatrixLayoutCell({
+				hAlign : sap.ui.commons.layout.HAlign.Begin,
+				vAlign : sap.ui.commons.layout.VAlign.Top,
+				content : [ oControl ]
+			});
+
+			return new sap.ui.commons.layout.MatrixLayoutRow({
+				cells : [ oMLCell1, oMLCell2 ]
+			});
+		};
+
+		fnOpened = function() {
+			oTPContent.detachOpened(fnOpened);
+			start();
+
+			var fnApplyPosition = sinon.spy(oTPContent.oPopup, "_applyPosition");
+
+			var $Rect = oTPContent.$().rect();
+			var iOldHeight = $Rect.height;
+
+			var oLayout = new sap.ui.commons.layout.MatrixLayout({
+				rows : [ row("Date of birth", "09/09/1999"), row("Gender", "male"),
+					row("Nationality", "german"), row("VIP", "yes"),
+					row("Address", "Hauptstraße 10, Musterstadt, Germany"),
+					row("Phone", "06221/23428374"),
+					row("Fax", "06221/23423432"),
+					row("E-mail", "m.m@sap.com", "mailto:m.m@sap.com"),
+					row("Web Site", "www.sap.com", "http://www.sap.com")
+				]
+			});
+			
+			oTPContent.addContent(oLayout);
+			sap.ui.getCore().applyChanges();
+
+			$Rect = oTPContent.$().rect();
+			var iNewHeight = $Rect.height;
+
+			ok(iNewHeight > iOldHeight, "Content was added when Popup was open");
+			ok(fnApplyPosition.calledOnce, "Position of Popup was updated");
+		};
+
+		oTPContent.attachOpened(fnOpened);
+		oButtonContent.press();
 	});
 </script>
 
