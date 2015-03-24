@@ -4562,7 +4562,13 @@ if (typeof sinon == "undefined") {
     FakeXMLHttpRequest.addFilter = function addFilter(fn) {
         this.filters.push(fn)
     };
-    var IE6Re = /MSIE 6/;
+    // ##### BEGIN OF MODIFICATION BY SAP
+    //var IE6Re = /MSIE 6/;
+    // Fix in SAP internally used sinon.js version:
+    // In the newest Sinon, errors are only suppressed for user agents matching /MSIE 6/, 
+    // so IE7-IE9 throw an exception: a broader RegExp needs to be used for IE7-IE9
+    var IE6Re = /MSIE [6-9]/;
+    // ##### END OF MODIFICATION BY SAP
     FakeXMLHttpRequest.defake = function defake(fakeXhr, xhrArgs) {
         var xhr = new sinonXhr.workingXHR();
         each([
