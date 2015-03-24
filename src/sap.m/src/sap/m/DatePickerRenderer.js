@@ -46,17 +46,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		}
 
 		// invisible span with description for keyboard navigation
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			// ResourceBundle always returns the key if the text is not found
-		var sText = rb.getText("DATEPICKER_KEYBOARD");
-		var sDateType = rb.getText("DATEPICKER_DATE_TYPE");
+		var sText = rb.getText("DATEPICKER_DATE_TYPE");
 
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oDP, oDP.getTooltip_AsString());
 		if (sTooltip) {
 			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
-			sText = sTooltip + ". " + sText;
+			sText = sText + ". " + sTooltip;
 		}
-		sText = sDateType + ". " + sText;
 		oRm.write('<SPAN id="' + oDP.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		oRm.writeEscaped(sText);
 		oRm.write('</SPAN>');
