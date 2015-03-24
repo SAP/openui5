@@ -3,178 +3,14 @@
  */
 
 // Provides object sap.ui.model.odata.AnnotationHelper
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
-	function(jQuery, BindingParser) {
+sap.ui.define([
+	"jquery.sap.global", "./_AnnotationHelperBasics", "./_AnnotationHelperExpression"
+], function(jQuery, Basics, Expression) {
 		'use strict';
 
 		var AnnotationHelper,
-			rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 			// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
-			rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
-			fnEscape = BindingParser.complexParser.escape;
-
-		/**
-		 * Handling of "14.5.3.1.1 Function odata.concat".
-		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call
-		 * @param {object[]} aParameters
-		 *   the parameters
-		 * @returns {string}
-		 *   the resulting string value to write into the processed XML
-		 */
-		function concat(oInterface, aParameters) {
-			var aParts = [],
-				i, oParameter;
-
-			for (i = 0; i < aParameters.length; i += 1) {
-				oParameter = aParameters[i];
-				if (oParameter) {
-					switch (oParameter.Type) {
-					case "Path":
-						aParts.push(formatPath(oInterface, oParameter.Value, true).value);
-						break;
-					case "String":
-						aParts.push(escapedString(oParameter.Value));
-						break;
-					//TODO support non-string constants
-					default:
-						aParts.push("[" + unsupported(oParameter) + "]");
-					}
-				} else {
-					aParts.push("[" + unsupported(oParameter) + "]");
-				}
-			}
-			return aParts.join("");
-		}
-
-		/**
-		 * Returns the given value properly turned into a string and escaped.
-		 *
-		 * @param {any} vValue
-		 *   any value
-		 * @returns {string}
-		 *   the given value properly turned into a string and escaped
-		 */
-		function escapedString(vValue) {
-			return fnEscape(String(vValue));
-		}
-
-		/**
-		 * Calculates a dynamic expression.
-		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call
-		 * @param {object} oRawValue
-		 *   the raw value from the meta model
-		 * @returns {object}
-		 *   the evaluated expression with the following parameters:
-		 *   result: "constant", "binding" or "expression"
-		 *   value: the value to write into the resulting string; constant values are not escaped;
-		 *     expressions are not wrapped (no "{=" and "}")
-		 *   type: the EDM data type (like "Edm.String") if it could be determined
-		 */
-		function dynamicExpression(oInterface, oRawValue) {
-			var sResult;
-
-			if (!oRawValue) {
-				return {
-					result: "constant",
-					value: unsupported(oRawValue, true),
-					type: "Edm.String"
-				};
-			}
-
-			switch (oRawValue.Type) {
-			case "Path": // 14.5.12 Expression edm:Path
-				return formatPath(oInterface, oRawValue.Value, false);
-			case "String": // 14.4.11 Expression edm:String
-				return {
-					result: "constant",
-					value: oRawValue.Value,
-					type: "Edm.String"
-				};
-			case undefined:
-				if (oRawValue.Path) { // 14.5.12 Expression edm:Path
-					return formatPath(oInterface, oRawValue.Path, false);
-				}
-				break;
-			// fall through to the global "unsupported"
-			// no default
-			}
-
-			// 14.5.3 Expression edm:Apply
-			if (oRawValue.Apply && typeof oRawValue.Apply === "object") {
-				switch (oRawValue.Apply.Name) {
-				case "odata.uriEncode": // 14.5.3.1.3 Function odata.uriEncode
-					sResult = uriEncode(oInterface, oRawValue.Apply.Parameters);
-					if (sResult) {
-						return {
-							result: "expression",
-							value: sResult.slice(2, -1),
-							type: "Edm.String"
-						};
-					}
-					break;
-				// fall through to the global "unsupported"
-				// no default
-				}
-			}
-
-			//TODO constants, apply functions
-			return {
-				result: "constant",
-				value: unsupported(oRawValue, true),
-				type: "Edm.String"
-			};
-		}
-
-		/**
-		 * Handling of "14.5.3.1.2 Function odata.fillUriTemplate".
-		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call
-		 * @param {object[]} aParameters
-		 *   the parameters
-		 * @returns {string}
-		 *   an expression binding in the format "{= odata.fillUriTemplate('template',
-		 *   {'param1': ${path1}, 'param2': ${path2}, ...}" or <code>undefined</code>
-		 *   if the parameters could not be processed
-		 */
-		function fillUriTemplate(oInterface, aParameters) {
-			var i,
-				aParts = [],
-				sPrefix,
-				oParameter;
-
-			if (!jQuery.isArray(aParameters) || !aParameters.length || !aParameters[0]
-					|| aParameters[0].Type !== "String") {
-				return undefined;
-			}
-			aParts.push('{=odata.fillUriTemplate(');
-			aParts.push(stringify(aParameters[0].Value));
-			aParts.push(', {');
-			sPrefix = "";
-			for (i = 1; i < aParameters.length; i += 1) {
-				aParts.push(sPrefix);
-				aParts.push(stringify(aParameters[i].Name));
-				aParts.push(": ");
-				oParameter = dynamicExpression(oInterface, aParameters[i].Value);
-				switch (oParameter.result) {
-				case "binding":
-					aParts.push("$" + oParameter.value);
-					break;
-				case "expression":
-					aParts.push(oParameter.value);
-					break;
-				default:
-					aParts.push(stringify(oParameter.value));
-				}
-				sPrefix = ", ";
-			}
-			aParts.push("})}");
-			return aParts.join("");
-		}
+			rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/;
 
 		/**
 		 * Follows the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
@@ -274,256 +110,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 		}
 
 		/**
-		 * Handling of "14.5.12 Expression edm:Path".
-		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call
-		 * @param {string} sPath
-		 *   the string path value from the meta model
-		 * @param {boolean} bWithType
-		 *   if <code>true</code> the type is included into the binding
-		 * @returns {object}
-		 *   an object with the following parameters:
-		 *   <code>result</code> is "binding", <code>value</code> contains the resulting string
-		 *   value to write into the processed XML and <code>type</code> the property type (like
-		 *   "Edm.String")
-		 */
-		function formatPath(oInterface, sPath, bWithType) {
-			var oConstraints = {},
-				sConstraints,
-				oModel = oInterface.getModel(),
-				sContextPath = oInterface.getPath(),
-				aMatches = rEntityTypePath.exec(sContextPath),
-				oEntityType,
-				aParts,
-				oProperty,
-				oResult = {result: "binding"},
-				sType;
-
-			if (aMatches) {
-				// go up to "/dataServices/schema/<i>/entityType/<j>/"
-				oEntityType = oModel.getProperty(aMatches[1]);
-
-				// determine the property given by sPath
-				aParts = sPath.split('/');
-				oProperty = oModel.getODataProperty(oEntityType, aParts);
-
-				if (oProperty && !aParts.length) {
-					oResult.type = oProperty.type;
-					switch (oProperty.type) {
-					case "Edm.Boolean":
-						sType = 'sap.ui.model.odata.type.Boolean';
-						break;
-
-					case "Edm.Byte":
-						sType = 'sap.ui.model.odata.type.Byte';
-						break;
-
-					case "Edm.DateTime":
-						sType = 'sap.ui.model.odata.type.DateTime';
-						oConstraints.displayFormat = oProperty["sap:display-format"];
-						break;
-
-					case "Edm.DateTimeOffset":
-						sType = 'sap.ui.model.odata.type.DateTimeOffset';
-						break;
-
-					case "Edm.Decimal":
-						sType = 'sap.ui.model.odata.type.Decimal';
-						oConstraints.precision = oProperty.precision;
-						oConstraints.scale = oProperty.scale;
-						break;
-
-					case "Edm.Double":
-						sType = 'sap.ui.model.odata.type.Double';
-						break;
-
-					case "Edm.Guid":
-						sType = 'sap.ui.model.odata.type.Guid';
-						break;
-
-					case "Edm.Int16":
-						sType = 'sap.ui.model.odata.type.Int16';
-						break;
-
-					case "Edm.Int32":
-						sType = 'sap.ui.model.odata.type.Int32';
-						break;
-
-					case "Edm.Int64":
-						sType = 'sap.ui.model.odata.type.Int64';
-						break;
-
-					case "Edm.SByte":
-						sType = 'sap.ui.model.odata.type.SByte';
-						break;
-
-					case "Edm.Single":
-					case "Edm.Float":
-						sType = 'sap.ui.model.odata.type.Single';
-						break;
-
-					case "Edm.String":
-						sType = 'sap.ui.model.odata.type.String';
-						oConstraints.maxLength = oProperty.maxLength;
-						break;
-
-					case "Edm.Time":
-						sType = 'sap.ui.model.odata.type.Time';
-						break;
-
-					default:
-						// type remains undefined, no mapping is known
-					}
-					oConstraints.nullable = oProperty.nullable;
-				}
-			}
-
-			// TODO warn if type could not be determined
-			if (bWithType) {
-				sConstraints = stringify(oConstraints);
-				oResult.value = "{path : " + stringify(sPath) + ", type : '" + sType + "'"
-					+ (sConstraints === "{}" ? "" : ", constraints : " + sConstraints)
-					+ "}";
-			} else if (rBadChars.test(sPath)) {
-				oResult.value = "{path : " + stringify(sPath) + "}";
-			} else {
-				oResult.value = "{" + sPath + "}";
-			}
-			return oResult;
-		}
-
-		/**
-		 * Warns about an illegal value for a type and returns an appropriate string representation
-		 * of the value.
-		 *
-		 * @param {any} vRawValue
-		 *   the raw value from the meta model
-		 * @param {string} sName
-		 *   the name of the property which holds the illegal value
-		 * @returns {string}
-		 *   the resulting string value to write into the processed XML
-		 */
-		function illegalValue(vRawValue, sName) {
-			jQuery.sap.log.warning("Illegal value for " + sName + ": "
-					+ vRawValue[sName], null, "sap.ui.model.odata.AnnotationHelper");
-			return escapedString(vRawValue[sName]);
-		}
-
-		/**
-		 * Stringifies the value for usage in a XML attribute value. Prefers the single quote over
-		 * the double quote.
-		 *
-		 * @param {any} vValue the value
-		 * @returns {string} the stringified value
-		 * @throws {Error} if the value cannot be stringified
-		 */
-		function stringify(vValue) {
-			var sStringified = JSON.stringify(vValue),
-				bEscaped = false,
-				sResult = "",
-				i, c;
-
-			for (i = 0; i < sStringified.length; i += 1) {
-				switch (c = sStringified.charAt(i)) {
-					case "'": // a single quote must be escaped (can only occur within a string)
-						sResult += "\\'";
-						break;
-					case '"':
-						if (bEscaped) { // a double quote needs no escaping (only within a string)
-							sResult += c;
-							bEscaped = false;
-						} else { // string begin or end with single quotes
-							sResult += "'";
-						}
-						break;
-					case "\\":
-						if (bEscaped) { // an escaped backslash
-							sResult += "\\\\";
-						}
-						bEscaped = !bEscaped;
-						break;
-					default:
-						if (bEscaped) {
-							sResult += "\\";
-							bEscaped = false;
-						}
-						sResult += c;
-				}
-			}
-			return sResult;
-		}
-
-		/**
-		 * Handles unsupported cases.
-		 *
-		 * @param {any} vRawValue
-		 *   the raw value from the meta model
-		 * @param {boolean} [bSkipEscaping]
-		 *   if <code>true</code> the result is not escaped for bindings
-		 * @returns {string}
-		 *   the resulting string value to write into the processed XML
-		 */
-		function unsupported(vRawValue, bSkipEscaping) {
-			var sText;
-
-			if (typeof vRawValue === "object") {
-				// anything else: convert to string, prefer JSON
-				try {
-					sText = "Unsupported: " + stringify(vRawValue);
-				} catch (ex) {
-					// "Converting circular structure to JSON"
-					sText = String(vRawValue);
-				}
-			} else {
-				sText = String(vRawValue);
-			}
-			return bSkipEscaping ? sText : fnEscape(sText);
-		}
-
-		/**
-		 * Handling of "14.5.3.1.3 Function odata.uriEncode".
-		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call
-		 * @param {object[]} aParameters
-		 *   the parameters
-		 * @returns {string}
-		 *   an expression binding in the format "{= odata.uriEncode(${path})}" or
-		 *   <code>undefined</code> if the parameters could not be processed
-		 */
-		function uriEncode(oInterface, aParameters) {
-			var aParts = [],
-				oParameter = aParameters && aParameters[0],
-				oPathInfo;
-
-			if (!oParameter) {
-				return undefined;
-			}
-			aParts.push('{=odata.uriEncode(');
-			switch (oParameter.Type) {
-				case "Path":
-					aParts.push('$');
-					oPathInfo = formatPath(oInterface, oParameter.Value, false);
-					aParts.push(oPathInfo.value);
-					aParts.push(", '");
-					aParts.push(oPathInfo.type);
-					aParts.push("'");
-					break;
-				case "String":
-					aParts.push(stringify(oParameter.Value));
-					aParts.push(", 'Edm.String'");
-					break;
-				//TODO support non-string constants
-				default:
-					aParts.push(stringify("[Unsupported: " + stringify(oParameter) + "]"));
-					aParts.push(", 'Edm.String'");
-				}
-			aParts.push(')}');
-			return aParts.join("");
-		}
-
-		/**
 		 * @classdesc
 		 * A collection of methods which help to consume
 		 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html">
@@ -563,8 +149,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *     <li> "14.5.3.1.2 Function odata.fillUriTemplate": This is turned into an
 			 *     expression binding to fill the template at run-time.
 			 *     <li> "14.5.3.1.3 Function odata.uriEncode": This is turned into an expression
-			 *     binding to encode the parameter at run-time (it is possible to embed
-			 *     <code>odata.uriEncode</code> into <code>odata.fillUriTemplate</code>).
+			 *     binding to encode the parameter at run-time.
+			 *     <li> Apply functions may be nested arbitrarily.
 			 *   </ul>
 			 *   <li> the dynamic "14.5.12 Expression edm:Path": This is turned into a data
 			 *   binding relative to an entity, including type information and constraints as
@@ -572,9 +158,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 *   type : 'sap.ui.model.odata.type.String', constraints : {'maxLength':'255'}}"
 			 *   </code>.
 			 * </ul>
-			 * Unsupported values are turned into a string nevertheless, but indicated as such.
-			 * Illegal values are output "as is" for a human reader to make sense of them.
-			 * Proper escaping is used to make sure that data binding syntax is not corrupted.
+			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
+			 * as such. Proper escaping is used to make sure that data binding syntax is not
+			 * corrupted. An error describing the problem is logged to the console in such a case.
 			 *
 			 * Example:
 			 * <pre>
@@ -590,54 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			format : function (oInterface, vRawValue) {
-				var sResult;
-
-				// 14.4.11 Expression edm:String
-				if (vRawValue && vRawValue.hasOwnProperty("String")) {
-					if (typeof vRawValue.String === "string") {
-						if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
-							sResult = "/##" + oInterface.getPath() + "/String";
-							return formatPath(oInterface, sResult, false).value;
-						}
-						return fnEscape(vRawValue.String);
-					}
-					return illegalValue(vRawValue, "String");
-				}
-
-				// 14.5.12 Expression edm:Path
-				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
-					if (typeof vRawValue.Path === "string") {
-						return formatPath(oInterface, vRawValue.Path, true).value;
-					}
-					return illegalValue(vRawValue, "Path");
-				}
-
-				// 14.5.3 Expression edm:Apply
-				if (vRawValue && vRawValue.Apply && typeof vRawValue.Apply === "object") {
-					switch (vRawValue.Apply.Name) {
-					case "odata.concat": // 14.5.3.1.1 Function odata.concat
-						if (jQuery.isArray(vRawValue.Apply.Parameters)) {
-							return concat(oInterface, vRawValue.Apply.Parameters);
-						}
-						break;
-					case "odata.fillUriTemplate": // 14.5.3.1.2 Function odata.fillUriTemplate
-						sResult = fillUriTemplate(oInterface, vRawValue.Apply.Parameters);
-						if (sResult) {
-							return sResult;
-						}
-						break;
-					case "odata.uriEncode": // 14.5.3.1.3 Function odata.uriEncode
-						sResult = uriEncode(oInterface, vRawValue.Apply.Parameters);
-						if (sResult) {
-							return sResult;
-						}
-						break;
-					// fall through to the global "unsupported"
-					// no default
-					}
-				}
-
-				return unsupported(vRawValue);
+				return Expression.getExpression(oInterface, vRawValue, true);
 			},
 
 			/**
@@ -836,15 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
 			 * @public
 			 */
 			simplePath : function (oInterface, vRawValue) {
-				// 14.5.12 Expression edm:Path
-				if (vRawValue && vRawValue.hasOwnProperty("Path")) {
-					if (typeof vRawValue.Path === "string") {
-						return formatPath(oInterface, vRawValue.Path, false).value;
-					}
-					return illegalValue(vRawValue, "Path");
-				}
-
-				return unsupported(vRawValue);
+				return Expression.getExpression(oInterface, vRawValue, false);
 			}
 		};
 
