@@ -776,11 +776,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 	
 			_onScroll: function(oEvent) {
-				var $Container = this._$Container;
+				var $Container = this._$Container,
+					fScrollTop = $Container.scrollTop(),
+					fVerticalMove = fScrollTop - this._scrollY;
 
 				// Prevent false tap event during momentum scroll in IOS
 				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
-					var dY = Math.abs(this._scrollY - $Container.scrollTop());
+					var dY = Math.abs(fVerticalMove);
 					// check if we are still in momentum scrolling
 					if (dY > 0 && dY < 10 || oEvent.timeStamp - this._oIOSScroll.iTimeStamp > 120) {
 						jQuery.sap.log.debug("IOS Momentum Scrolling is OFF");
@@ -789,10 +791,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 
 				this._scrollX = $Container.scrollLeft(); // remember position
-				this._scrollY = $Container.scrollTop();
-	
+				this._scrollY = fScrollTop;
+
 				// Growing List/Table
-				if (this._fnScrollLoadCallback && $Container[0].scrollHeight - $Container.scrollTop() - $Container.height() < 100 ) {
+				if (this._fnScrollLoadCallback && fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container.height() < 100 ) {
 					this._fnScrollLoadCallback(); // close to the bottom
 				}
 
