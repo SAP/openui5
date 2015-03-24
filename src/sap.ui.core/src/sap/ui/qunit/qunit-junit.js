@@ -39,7 +39,7 @@
 
 		// avoid . in module names to avoid displaying issues in Jenkins results
 		var formatModuleName = function(sName) {
-			return String(sName).replace(/\./g, "_");
+			return String(sName || 'default').replace(/\./g, "_");
 		};
 
 		// HACK: insert our hook in front of QUnit's own hook so that we execute first
@@ -68,7 +68,7 @@
 			oData.name = sTestPageName + "." + formatModuleName(oData.name);
 		});
 		QUnit.testStart(function(oData) {
-			oData.module = sTestPageName + "." + formatModuleName(oData.module || 'default');
+			oData.module = sTestPageName + "." + formatModuleName(oData.module);
 			window.assert = QUnit.config.current.assert;
 		});
 		QUnit.testDone(function(assert) {
