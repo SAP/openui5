@@ -1011,8 +1011,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			this._oList.removeSelections(true);
 			// reset the selection to the selected context paths stored in the open method
 			this._oList.setSelectedContextPaths(this._aInitiallySelectedContextPaths);
+			// reset the selection on the list manually
+			this._oList.getItems().forEach(function (oItem) {
+				var sPath = oItem.getBindingContextPath();
+				if (sPath && this._aInitiallySelectedContextPaths.indexOf(sPath) > -1) {
+					oItem.setSelected(true);
+				}
+			}, this);
 		}
 	};
+
 
 	/* =========================================================== */
 	/*           end: internal methods                             */
