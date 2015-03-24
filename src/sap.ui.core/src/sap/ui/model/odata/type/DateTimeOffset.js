@@ -44,7 +44,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *   constraints; {@link sap.ui.model.odata.type.DateTimeBase#validateValue validateValue}
 	 *   throws an error if any constraint is violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
 	 * @since 1.27.0
 	 */

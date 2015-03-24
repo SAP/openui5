@@ -64,10 +64,10 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *   constraints; {@link sap.ui.model.odata.type.DateTimeBase#validateValue validateValue}
 	 *   throws an error if any constraint is violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @param {string} [oConstraints.displayFormat=undefined]
-	 *   may be "Date", in this case only the date part will be used, the time part will always be
-	 *   00:00:00, the timezone will be UTC to avoid timezone-related problems
+	 *   may be "Date", in this case only the date part is used, the time part is always 00:00:00
+	 *   and the timezone is UTC to avoid timezone-related problems
 	 * @public
 	 * @since 1.27.0
 	 */

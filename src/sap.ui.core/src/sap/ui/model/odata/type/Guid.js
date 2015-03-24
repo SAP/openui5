@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * Returns the locale-dependent error message.
 	 *
 	 * @returns {string}
-	 *   the locale-dependent error message.
+	 *   the locale-dependent error message
 	 * @private
 	 */
 	function getErrorMessage() {

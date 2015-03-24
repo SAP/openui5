@@ -136,7 +136,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> will be accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
 	 * @since 1.27.1
 	 */
@@ -215,15 +215,15 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	 * <code>string</code> representation.
 	 *
 	 * If certain format options are defined and you parse a value with <code>sSourceType</code>
-	 * "string", floating point numbers will be used internally.
+	 * "string", floating point numbers are used internally.
 	 * This may cause a loss of precision (e.g.
-	 * "1,234,567,890,123,456,789" will be parsed to "1234567890123456800"). The following options
+	 * "1,234,567,890,123,456,789" is parsed to "1234567890123456800"). The following options
 	 * do not cause this effect: decimals, decimalSeparator, groupingEnabled, groupingSeparator,
 	 * maxFractionDigits, maxIntegerDigits, minFractionDigits, minIntegerDigits, minusSign and
 	 * plusSign.
 	 *
 	 * @param {string|number} vValue
-	 *   the value to be parsed; the empty string and <code>null</code> will be parsed to
+	 *   the value to be parsed; the empty string and <code>null</code> are parsed to
 	 *   <code>null</code>
 	 * @param {string} sSourceType
 	 *   the source type (the expected type of <code>vValue</code>); may be "float", "int" or

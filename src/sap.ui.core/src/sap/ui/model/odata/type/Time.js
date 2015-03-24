@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @param {sap.ui.model.odata.type.Time} oType
 	 *   the type
 	 * @returns {string}
-	 *   the locale-dependent error message.
+	 *   the locale-dependent error message
 	 * @private
 	 */
 	function getErrorMessage(oType) {
