@@ -10,6 +10,13 @@ function runODataMessagesTests() {
 	jQuery.sap.require("sap.ui.model.odata.ODataMessageParser");
 	jQuery.sap.require("sap.ui.core.message.MessageManager");
 
+	var oInput = new sap.m.Input({value:"{json>/Products(1)/ProductName}"});
+	oInput.placeAt("content");
+	
+	var oInput2 = new sap.m.Input({value:"{xml>/Products(1)/ProductName}"});
+	oInput2.placeAt("content");
+	
+	
 	
 	var sServiceURI = "fakeService://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
@@ -64,12 +71,16 @@ function runODataMessagesTests() {
 
 		ok(oMessageModel.getProperty("/").length === undefined, "No message has been added");
 
+		ok(oInput.getValueState() === "None", "ValueState has not been set");
+
 		var iRequests = 0;
 		oModelJson.attachRequestCompleted(function(oRequest) {
 			iRequests++;
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
 				ok(iRequests === 2, "Two Requests (with messages) has been processed");
 				setTimeout(function() {
+					ok(oInput.getValueState() === "Error", "ValueState has been set to 'Error'");
+
 					var iMessages = oMessageModel.getProperty("/").length;
 					ok(iMessages === 21, "One message has been added for every Item and one for the Collection");
 					start();
@@ -84,6 +95,8 @@ function runODataMessagesTests() {
 		sap.ui.getCore().setModel(oModelXml, "xml");
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
+		ok(oInput2.getValueState() === "None", "ValueState has not been set");
+
 		var iRequests = 0;
 		oModelXml.attachRequestCompleted(function(oRequest) {
 			iRequests++;
@@ -91,6 +104,8 @@ function runODataMessagesTests() {
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
 				ok(iRequests === 2, "Two Requests (with messages) has been processed");
 				setTimeout(function() {
+					ok(oInput2.getValueState() === "Error", "ValueState has been set to 'Error'");
+
 					var iMessages = oMessageModel.getProperty("/").length;
 					ok(iMessages === 42, "One message has been added for every Item and one for the Collection");
 					start();
