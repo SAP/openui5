@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.DataTable.
-sap.ui.define(['jquery.sap.global', './TreeTable', './library'],
-	function(jQuery, TreeTable, library) {
+sap.ui.define(['jquery.sap.global', './TreeTable', './Table', './library'],
+	function(jQuery, TreeTable, Table, library) {
 	"use strict";
 
 
@@ -132,6 +132,9 @@ sap.ui.define(['jquery.sap.global', './TreeTable', './library'],
 		}
 	};
 	
+	DataTable.prototype.getContextByIndex = function (iRowIndex) {
+		Table.prototype.getContextByIndex.call(this, iRowIndex);
+	};
 
 	return DataTable;
 
