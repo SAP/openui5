@@ -75,7 +75,10 @@
 				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Single" />
-				<Text text="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}"/>
+				<Label text="no constraints"/>
+				<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}"/>
+				<Label text="nullable: false"/>
+				<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single', constraints: {nullable: false}}"/>
 
 				<core:Title text="sap.ui.model.odata.type.Guid" />
 				<Label text="no constraints"/>

@@ -60,7 +60,8 @@
 			constraints : {"nullable" : false}
 		},
 		oSingle = {
-			name : "sap.ui.model.odata.type.Single"
+			name : "sap.ui.model.odata.type.Single",
+			constraints : {"nullable" : false}
 		},
 		oString10 = {
 			name : "sap.ui.model.odata.type.String",
