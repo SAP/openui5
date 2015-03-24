@@ -1,7 +1,8 @@
 sap.ui.define([
 		'sap/ui/base/Object',
-		'sap/m/MessageBox'
-	], function (Object, MessageBox) {
+		'sap/m/MessageBox',
+		'sap/ui/Device'
+	], function (Object, MessageBox, Device) {
 	"use strict";
 
 	return Object.extend("sap.ui.demo.mdtemplate.controller.ErrorHandler", {
@@ -19,7 +20,7 @@ sap.ui.define([
 			this._oModel = oComponent.getModel();
 			this._bFirstCall = true;
 			this._bMessageOpen = false;
-			this._sCompactModeClass = sap.ui.Device.support.touch ? "" : "sapUiSizeCompact"; // compact mode for the MessageBoxes on non-touch devices
+			this._sCompactModeClass = Device.support.touch ? "" : "sapUiSizeCompact"; // compact mode for the MessageBoxes on non-touch devices
 
 			this._oModel.attachEvent("metadataFailed", function (oEvent) {
 				var oParams = oEvent.getParameters();
@@ -58,13 +59,13 @@ sap.ui.define([
 			MessageBox.show(
 				this._oResourceBundle.getText("errorMetadataText"),
 				{
-					icon: sap.m.MessageBox.Icon.ERROR,
+					icon: MessageBox.Icon.ERROR,
 					title: this._oResourceBundle.getText("errorMetadataTitle"),
 					details: sDetails,
 					styleClass: this._sCompactModeClass,
-					actions: [sap.m.MessageBox.Action.RETRY, sap.m.MessageBox.Action.CLOSE],
+					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if(sAction === sap.m.MessageBox.Action.RETRY) {
+						if(sAction === MessageBox.Action.RETRY) {
 							this.bMessageOpen = false;
 							this._oModel.refreshMetadata();
 						}
@@ -86,11 +87,11 @@ sap.ui.define([
 				MessageBox.show(
 					this._oResourceBundle.getText("errorServiceText"),
 					{
-						icon: sap.m.MessageBox.Icon.ERROR,
+						icon: MessageBox.Icon.ERROR,
 						title: this._oResourceBundle.getText("errorServiceTitle"),
 						details: sDetails,
 						styleClass: this._sCompactModeClass,
-						actions: [sap.m.MessageBox.Action.CLOSE],
+						actions: [MessageBox.Action.CLOSE],
 						onClose: function (sAction) {
 							this._bMessageOpen = false;
 						}.bind(this)
