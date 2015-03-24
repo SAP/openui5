@@ -326,6 +326,22 @@
         oMultiInput.destroy();
     });
 
+	test("parsing for copy and paste", function() {
+		var text1 = "1\r\n2\r\n3";
+		var aTextArray1 = tokenizer1._parseString(text1);
+		
+		equals(aTextArray1[0], "1", "text separated");
+		equals(aTextArray1[1], "2", "text separated");
+		equals(aTextArray1[2], "3", "text separated");
+		
+		var text1 = "1 2\n2+4\r3)\t(/&%$)";
+		var aTextArray1 = tokenizer1._parseString(text1);
+		
+		equals(aTextArray1[0], "1 2", "text separated");
+		equals(aTextArray1[1], "2+4", "text separated");
+		equals(aTextArray1[2], "3)\t(/&%$)", "text separated");
+	});
+	
 </script>
 
 </head>

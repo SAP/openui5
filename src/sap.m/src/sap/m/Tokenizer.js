@@ -681,6 +681,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
+	 * Function parses given text, and text is separated by line break 
+	 * 
+	 * @private
+	 * @param {String} string needed parsed
+	 * @return {Array} array of string after parsing
+	 */
+	Tokenizer.prototype._parseString = function(sString) {
+		
+		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+		// delimiter is line break
+		return sString.split(/\r\n|\r|\n/g);
+	};
+	
+	/**
 	 * Function checks if a given token already exists in the tokens aggregation based on their keys
 	 * 
 	 * @private
