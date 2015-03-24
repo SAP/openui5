@@ -13,7 +13,7 @@
 		baseTag.href = baseTag.href;
 	})();
 	</script><![endif]-->
-	<title>Test Page for 'Explored' samples from sap.ui.layout</title>
+	<title>Test Page for 'Explored' samples from sap.ui.core</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-noConflict="true"
 			src="resources/sap-ui-core.js"
@@ -40,13 +40,17 @@
 
 		sap.ui.require(['sap/ui/demo/mock/qunit/SampleTester'], function(SampleTester) {
 			new SampleTester(
-				'sap.ui.layout'
+				'sap.ui.core',
+				[
+					'sap.ui.core.sample.ViewTemplate.tiny' // fails due to the need for a proxy
+				]
 			).placeAt('content');
 		});
 
 	</script>
 </head>
 <body class='sapUiBody'>
+	<div id="elog"></div>
 	<div id="content"></div>
 	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>

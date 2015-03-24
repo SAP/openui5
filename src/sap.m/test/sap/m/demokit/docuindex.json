@@ -872,11 +872,6 @@
 				"description": "Panels also have the possibility to expand/collapse their content (including the infoToolbar if available). [since rel. 1.22]"
 			},
 			{
-				"id": "sap.m.sample.FlexBox",
-				"name": "Flex Box",
-				"description": "The Flex Box implements a CSS Flexible Box Layout which gives control over the way that box items automatically adjust their dimensions to different viewports."
-			},
-			{
 				"id": "sap.m.sample.FlexBoxOpposingAlignment",
 				"name": "Flex Box - Opposing Alignment",
 				"description": "In this Flex Box the items are aligned at opposing ends of the container with justifyContent set to 'SpaceBetween'."
