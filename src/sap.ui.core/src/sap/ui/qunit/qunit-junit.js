@@ -39,7 +39,7 @@
 
 		// avoid . in module names to avoid displaying issues in Jenkins results
 		var formatModuleName = function(sName) {
-			return sName.replace(/\./g, "_");
+			return String(sName || 'default').replace(/\./g, "_");
 		};
 
 		// register QUnit event handler to manipulate module names for better reporting in Jenkins
@@ -47,7 +47,7 @@
 			oData.name = sTestPageName + "." + formatModuleName(oData.name);
 		});
 		QUnit.testStart(function(oData) {
-			oData.module = sTestPageName + "." + formatModuleName(oData.module || 'default');
+			oData.module = sTestPageName + "." + formatModuleName(oData.module);
 		});
 		QUnit.log(function(data) {
 			// manipulate data.message for failing tests with source info
