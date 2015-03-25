@@ -92,20 +92,12 @@
 					"viewName": "Detail",
 					"viewLevel": 2
 				},
-				"lineItem": {
-					"viewName": "LineItem",
-					"viewLevel": 3
-				},
 				"detailObjectNotFound": {
 					"viewName": "DetailObjectNotFound",
 					"viewLevel": 3
 				},
 				"detailNoObjectsAvailable": {
 					"viewName": "DetailNoObjectsAvailable",
-					"viewLevel": 3
-				},
-				"lineItemNotFound": {
-					"viewName": "LineItemNotFound",
 					"viewLevel": 3
 				},
 				"notFound": {

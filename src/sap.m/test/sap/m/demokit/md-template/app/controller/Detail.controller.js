@@ -37,28 +37,6 @@ sap.ui.define([
 			this.setModel(this._oControlStateModel, 'controlStates');
 		},
 
-		/* =========================================================== */
-		/* event handlers                                              */
-		/* =========================================================== */
-
-		/**
-		 * Triggered when an item of the line item table in the detail view is selected.
-		 * Collects the needed information ProductID and OrderID for navigation.
-		 * Navigation to the corresponding line item is triggered.
-		 *
-		 * @param oEvent listItem selection event
-		 * @function
-		 */
-		onSelect : function (oEvent) {
-			//We need the 'ObjectID' and 'LineItemID' of the
-			//selected LineItem to navigate to the corresponding
-			//line item view. Here's how this information is extracted:
-			var oContext = oEvent.getSource().getBindingContext();
-
-			jQuery.sap.log.debug(oContext.getProperty("LineItemID") + "' was pressed");
-			this.getRouter().navTo("lineItem", {objectId : oContext.getProperty("ObjectID"),
-				lineItemId: oContext.getProperty("LineItemID")});
-		},
 
 		/* =========================================================== */
 		/* begin: internal methods                                     */
