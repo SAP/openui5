@@ -114,7 +114,7 @@ sap.ui.require([
 									},
 									errorMessage : "Did not find the " + sItem + " element in select"
 								});
-							},
+							}.bind(this),
 							errorMessage : "Did not find the " + sSelect + " select"
 						});
 					},
@@ -190,7 +190,7 @@ sap.ui.require([
 						return this.iSearchForValue({ sSearchValue: "abc", bTriggerSearch: true });
 					},
 
-					iTriggerRefresh : function (sSearchValue) {
+					iTriggerRefresh : function () {
 						return this.iSearchForValue({bTriggerSearch: true, bRefreshButtonPressed: true});
 					}
 				},
@@ -235,13 +235,10 @@ sap.ui.require([
 						});
 					},
 
-					theListShouldNotContainGroupHeaders : function (sField) {
+					theListShouldNotContainGroupHeaders : function () {
 						function fnContainsGroupHeader (oList){
 							var fnIsGroupHeader = function (oElement) {
-								if (oElement.getMetadata().getName() === "sap.m.GroupHeaderListItem") {
-									return true;
-								}
-								return false;
+								return oElement.getMetadata().getName() === "sap.m.GroupHeaderListItem";
 							};
 							return !oList.getItems().some(fnIsGroupHeader);
 						}
@@ -313,7 +310,7 @@ sap.ui.require([
 							id : "list",
 							viewName : sViewName,
 							matchers : [fnCheckFilter],
-							success : function(bResult){
+							success : function(){
 								QUnit.ok(true, "Master list has been filtered correctly with filter value '" + iThreshhold + "'.");
 							},
 							errorMessage : "Master list has not been filtered correctly with filter value '" + iThreshhold + "'."
@@ -394,7 +391,7 @@ sap.ui.require([
 							id : "page",
 							viewName : sViewName,
 							matchers : [ new PropertyStrictEquals({name : "title", value : "Objects (20)"}) ],
-							success : function (oList) {
+							success : function () {
 								QUnit.ok(true, "The master page header displays 20 items");
 							},
 							errorMessage : "The  master page header does not display 20 items."

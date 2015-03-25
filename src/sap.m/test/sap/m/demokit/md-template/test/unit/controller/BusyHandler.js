@@ -31,7 +31,7 @@ sap.ui.require(
 		QUnit.asyncTest("Should set the control not busy and reset the delay", function (assert) {
 			var oComponentStub = {
 				oWhenMetadataIsLoaded: {
-					then: function (fnResolve, fnReject) {
+					then: function (fnResolve) {
 						// immediately resolve the promise for this test
 						setTimeout(function () {
 							fnResolve();

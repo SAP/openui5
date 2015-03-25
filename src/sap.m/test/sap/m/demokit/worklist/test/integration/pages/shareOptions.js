@@ -15,7 +15,7 @@ sap.ui.define([],
 							errorMessage: "Did not find the share button"
 						});
 					}
-				}
+				};
 			},
 			createAssertions: function (sViewName) {
 				return {
@@ -23,7 +23,7 @@ sap.ui.define([],
 						return this.waitFor({
 							id: "shareEmail",
 							viewName: sViewName,
-							success: function (oButton) {
+							success: function () {
 								ok(true, "The E-Mail button is visible");
 							},
 							errorMessage: "The E-Mail button was not found"
@@ -34,7 +34,7 @@ sap.ui.define([],
 						return this.waitFor({
 							id: "shareTile",
 							viewName: sViewName,
-							success: function (oButton) {
+							success: function () {
 								ok(true, "The Save as Tile button is visible");
 							},
 							errorMessage: "The Save as Tile  button was not found"
@@ -45,7 +45,7 @@ sap.ui.define([],
 						return this.waitFor({
 							id: "shareJam",
 							viewName: sViewName,
-							success: function (oButton) {
+							success: function () {
 								ok(true, "The Jam share button is visible");
 							},
 							errorMessage: "The Jam share button was not found"

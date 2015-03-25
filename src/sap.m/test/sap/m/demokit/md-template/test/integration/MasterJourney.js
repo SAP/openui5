@@ -1,10 +1,9 @@
 /*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.require(
-[
-	"sap/ui/test/Opa5"
-],
-function (Opa5) {
+[],
+function () {
+	"use strict";
 
 	QUnit.module("Master List");
 
@@ -28,6 +27,7 @@ function (Opa5) {
 		Then.onTheMasterPage.theListShowsObject2().
 			and.theListShouldHaveNEntries(2);
 	});
+
 
 	opaTest("Entering 'Object 3' into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
 		//Actions
@@ -57,6 +57,7 @@ function (Opa5) {
 	});
 
 	opaTest("MasterList Filtering on UnitNumber less than 100", function(Given, When, Then) {
+
 		// Action
 		When.onTheMasterPage.iOpenViewSettingsDialog().
 			and.iSelectListItemInViewSettingsDialog("Unit Number").

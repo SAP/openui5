@@ -2,10 +2,8 @@ sap.ui.define([
 		"sap/ui/core/UIComponent",
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/worklist/model/models",
-		"sap/ui/demo/worklist/controller/ErrorHandler",
-		"jquery.sap.global",
-		"sap/ui/demo/worklist/model/formatter"
-	], function (UIComponent, ResourceModel, models, ErrorHandler, jQuery) {
+		"sap/ui/demo/worklist/controller/ErrorHandler"
+	], function (UIComponent, ResourceModel, models, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
@@ -21,8 +19,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init : function () {
-			var mConfig = this.getMetadata().getConfig();
-
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -71,6 +67,7 @@ sap.ui.define([
 		/**
 		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy design mode class should be set, which influences the size appearance of some controls.
 		 * @public
+		 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy'
 		 */
 		getCompactCozyClass : function() {
 			if (!this._sCompactCozyClass) {

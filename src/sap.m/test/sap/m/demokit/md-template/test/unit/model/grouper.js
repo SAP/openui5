@@ -1,10 +1,10 @@
 /*global QUnit, jQuery *///declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.require(
 	[
-		'sap/ui/demo/mdtemplate/model/grouper',
-		'sap/ui/model/resource/ResourceModel',
-		'sap/ui/thirdparty/sinon',
-		'sap/ui/thirdparty/sinon-qunit'
+		"sap/ui/demo/mdtemplate/model/grouper",
+		"sap/ui/model/resource/ResourceModel",
+		"sap/ui/thirdparty/sinon",
+		"sap/ui/thirdparty/sinon-qunit"
 	],
 	function (grouper, ResourceModel) {
 	"use strict";

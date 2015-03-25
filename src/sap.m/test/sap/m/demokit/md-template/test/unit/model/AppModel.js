@@ -5,7 +5,7 @@ sap.ui.require(
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/thirdparty/sinon-qunit"
 	],
-	function (AppModel, List) {
+	function (AppModel) {
 		"use strict";
 
 		QUnit.module("Wait for element binding", {

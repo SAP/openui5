@@ -36,7 +36,7 @@ sap.ui.define([
 			this._oViewModel = new JSONModel({
 				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
 			});
-			this.setModel(this._oViewModel, 'view');
+			this.setModel(this._oViewModel, "view");
 		},
 
 
@@ -65,7 +65,6 @@ sap.ui.define([
 		 * the detail view.
 		 *
 		 * @function
-		 * @param oEvent pattern match event in route 'master'
 		 * @private
 		 */
 		_onMasterMatched : function () {
@@ -84,7 +83,7 @@ sap.ui.define([
 		 * Binds the view to the object path and expands the aggregated line items.
 		 *
 		 * @function
-		 * @param oEvent pattern match event in route 'object'
+		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
 		 * @private
 		 */
 		_onObjectMatched : function (oEvent) {
@@ -97,6 +96,7 @@ sap.ui.define([
 		 * Binds the view to the object path and expands the aggregated line items.
 		 *
 		 * @function
+		 * @param {string} sObjectPath path to the object to be bound to the view.
 		 * @private
 		 */
 		_bindView : function (sObjectPath) {
@@ -122,18 +122,18 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the line item list header
-		 * @param {integer} iTotlaItems the total number of items in the list
+		 * @param {integer} iTotalItems the total number of items in the list
 		 * @private
 		 */
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
 			// only update the counter if the length is final
-			if (this._oLineItemsList.getBinding('items').isLengthFinal()) {
+			if (this._oLineItemsList.getBinding("items").isLengthFinal()) {
 				if (iTotalItems) {
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
 				} else {
 					//Display 'Line Items' instead of 'Line items (0)'
-					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading")
+					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
 				}
 				this._oViewModel.setProperty("/lineItemListTitle", sTitle);
 			}
