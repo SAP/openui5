@@ -367,6 +367,10 @@
 		equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "EUR-6,622.33", "format test");
 		equal(currencyType.formatValue([1.0, "EUR"], "string"), "EUR1.00", "format test");
 		equal(currencyType.formatValue([1.0000, "EUR"], "string"), "EUR1.00", "format test");
+
+		equal(currencyType.formatValue(null, "string"), null, "format test");
+		equal(currencyType.formatValue([null, "EUR"], "string"), null, "format test");
+		equal(currencyType.formatValue([1, null], "string"), "1.00", "format test");
 		
 		raises(function(){currencyType.formatValue(22.0, "int")}, sap.ui.model.FormatException, "format test");
 		raises(function(){currencyType.formatValue(22.0, "float")}, sap.ui.model.FormatException, "format test");

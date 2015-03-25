@@ -49,9 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		if (this.oInputFormat) {
 			aValues = this.oInputFormat.parse(vValue);
-			if (aValues == null) {
-				throw new sap.ui.model.FormatException("Cannot format float: " + vValue + " has the wrong format");
-			}
+		}
+		if (!jQuery.isArray(aValues)) {
+			throw new sap.ui.model.FormatException("Cannot format currency: " + vValue + " has the wrong format");
+		}	
+		if (aValues[0] == undefined || aValues[0] == null) {
+			return null;
 		}
 		switch (sInternalType) {
 			case "string":
@@ -60,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			case "float":
 			case "any":
 			default:
-				throw new sap.ui.model.FormatException("Don't know how to format Currency to " + sInternalType);
+				throw new sap.ui.model.FormatException("Don't know how to format currency to " + sInternalType);
 		}
 	};
 
