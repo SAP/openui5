@@ -1567,11 +1567,6 @@
 				"description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
 			},
 			{
-				"id": "sap.m.sample.StandardMarginsAbout",
-				"name": "Predefined Margin CSS Classes",
-				"description": "Since version 1.28, UI5 provides predefined CSS classes for application developers to add margins to their controls."
-			},
-			{
 				"id": "sap.m.sample.StandardMarginsAll",
 				"name": "Margins All Around",
 				"description": "Use standard margin classes 'sapUiTinyMargin', 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) margin to your control. This will clear the area all around your control (outside its border)."
