@@ -27,6 +27,7 @@ var mServiceData = {
 				"Discontinued": { type: "bool" },
 			},
 			itemMessages: [{ // Messages per Item
+				"target": "/ProductName",
 				"code": "Item",
 				"message": "This Item is very doof",
 				"severity": "error",
@@ -290,7 +291,7 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 		if (oColData.itemMessages) {
 			for (var n = 0; n < oColData.itemMessages.length; ++n) {
 				var mMessage = jQuery.extend({}, oColData.itemMessages[n]);
-				mMessage.target = "(" + (i + 1) + ")";
+				mMessage.target = "(" + (i + 1) + ")" + oColData.itemMessages[n].target;
 				aMessages.push(mMessage);
 			}
 		}
