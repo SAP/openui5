@@ -83,8 +83,7 @@
 		url : "{url}"
 	});
 
-	var oModel = new sap.ui.model.json.JSONModel();
-	oModel.setData(oData);
+	var oModel = new sap.ui.model.json.JSONModel(oData);
 	sap.ui.getCore().setModel(oModel);
 
 	/* --------------------------------------- */
@@ -93,10 +92,10 @@
 	module("Rendering", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
-						items : {
-							path : "/items",
-							template : oItemTemplate
-						}
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
 			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
@@ -106,12 +105,12 @@
 		}
 	});
 
-	test("Basic tests", function() {
-		ok(this.oUploadCollection, "UploadCollection instantiated");
-		ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
-		ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
-		ok(jQuery.sap.domById("__collection0-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
-		ok(jQuery.sap.domById("__collection0-uploader"), "FileUploader is rendered");
+	test("Basic tests", function(assert) {
+		assert.ok(this.oUploadCollection, "UploadCollection instantiated");
+		assert.ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
+		assert.ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
+		assert.ok(jQuery.sap.domById("__collection0-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
+		assert.ok(jQuery.sap.domById("__collection0-uploader"), "FileUploader is rendered");
 	});
 
 
@@ -126,7 +125,7 @@
 					path : "/items",
 					template : oItemTemplate
 				}
-	});
+			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
 		},
@@ -135,35 +134,35 @@
 		}
 	});
 
-	test("Get number of attachments label", function() {
+	test("Get number of attachments label", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
-		equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
-		equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), sText, "Correct label for number of attachments returned");
+		assert.equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
+		assert.equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), sText, "Correct label for number of attachments returned");
 	});
 
-	test("Determine icon from filename", function() {
-		equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), 'sap-icon://pdf-attachment', "Correct icon for file type .pdf determined");
+	test("Determine icon from filename", function(assert) {
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), 'sap-icon://pdf-attachment', "Correct icon for file type .pdf determined");
 
-		equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://attachment-photo', "Correct icon for file type .jpg determined");
-		equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://attachment-photo', "Correct icon for file type .png determined");
-		equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://attachment-photo', "Correct icon for file type .bmp determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://attachment-photo', "Correct icon for file type .jpg determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://attachment-photo', "Correct icon for file type .png determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://attachment-photo', "Correct icon for file type .bmp determined");
 
-		equal(this.oUploadCollection._getIconFromFilename("fileName.txt"), 'sap-icon://document-text', "Correct icon for file type .txt determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.txt"), 'sap-icon://document-text', "Correct icon for file type .txt determined");
 
-		equal(this.oUploadCollection._getIconFromFilename("fileName.doc"), 'sap-icon://doc-attachment', "Correct icon for file type .doc determined");
-		equal(this.oUploadCollection._getIconFromFilename("fileName.docx"), 'sap-icon://doc-attachment', "Correct icon for file type .docx determined");
-		equal(this.oUploadCollection._getIconFromFilename("fileName.odt"), 'sap-icon://doc-attachment', "Correct icon for file type .odt determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.doc"), 'sap-icon://doc-attachment', "Correct icon for file type .doc determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.docx"), 'sap-icon://doc-attachment', "Correct icon for file type .docx determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.odt"), 'sap-icon://doc-attachment', "Correct icon for file type .odt determined");
 
-		equal(this.oUploadCollection._getIconFromFilename("fileName.xls"), 'sap-icon://excel-attachment', "Correct icon for file type .xls determined");
-		equal(this.oUploadCollection._getIconFromFilename("fileName.csv"), 'sap-icon://excel-attachment', "Correct icon for file type .csv determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.xls"), 'sap-icon://excel-attachment', "Correct icon for file type .xls determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.csv"), 'sap-icon://excel-attachment', "Correct icon for file type .csv determined");
 
-		equal(this.oUploadCollection._getIconFromFilename("fileName.ppt"), 'sap-icon://ppt-attachment', "Correct icon for file type .ppt determined");
-		equal(this.oUploadCollection._getIconFromFilename("fileName.pptx"), 'sap-icon://ppt-attachment', "Correct icon for file type .pptx determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.ppt"), 'sap-icon://ppt-attachment', "Correct icon for file type .ppt determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("fileName.pptx"), 'sap-icon://ppt-attachment', "Correct icon for file type .pptx determined");
 
-		equal(this.oUploadCollection._getIconFromFilename("complexFileName.123.pdf.jpg.png.bmp.ppt"), 'sap-icon://ppt-attachment', "Correct icon for file type determined");
+		assert.equal(this.oUploadCollection._getIconFromFilename("complexFileName.123.pdf.jpg.png.bmp.ppt"), 'sap-icon://ppt-attachment', "Correct icon for file type determined");
 	});
 
-	test("Determine thumbnail of an item", function() {
+	test("Determine thumbnail of an item", function(assert) {
 		var sThumbnailUrl = "anyFolder/myThumbnailFile.jpg";
 		var sFilename = "complexFileName.123.pdf.jpg.png.bmp.ppt";
 		this.oUploadCollection._getIconFromFilename = function() {
@@ -171,17 +170,17 @@
 		};
 
 		// determine by thumbnail
-		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "anyFolder/myThumbnailFile.jpg", "Correct thumbnail determined by thumbnail url");
+		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "anyFolder/myThumbnailFile.jpg", "Correct thumbnail determined by thumbnail url");
 
 		// determine by file name
 		sThumbnailUrl = "";
-		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, thumbnail Url not provided");
+		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, thumbnail Url not provided");
 		sThumbnailUrl = null;
-		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, thumbnail Url is null");
+		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, thumbnail Url is null");
 		sFilename = "";
-		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name not provided");
+		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name not provided");
 		sFilename = null;
-		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
+		assert.equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
 	});
 
 
@@ -195,103 +194,6 @@
 				items : {
 					path : "/items",
 					template : oItemTemplate
-				},
-				change : function(oEvent) {
-					var oFile1 = {
-							name: "file1",
-							size: 1,
-							type: "type1"
-						};
-					var oFile2 = {
-							name: "file2",
-							size: 2,
-							type: "type2"
-						};
-					ok(true, "Event change fired");
-					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
-						// deprecated
-						equal(oEvent.getParameters().getParameter("files")[0].name, "file1", "Correct file name in change event provided by oEvent.getParameters().getParameter('files').name");
-						equal(oEvent.getParameters().getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters().getParameters()['files']['name']");
-						equal(oEvent.getParameter("mParameters")["files"][0]["name"], "file1", "Correct file 1 in change event provided by oEvent.getParameter('mParameters')['files'][0]['name']");
-
-						// check for properly provided parameters
-						equal(oEvent.getParameter("files")[0].name, "file1", "Correct file name 1 in change event provided byoEvent.getParameter('files')[0].name");
-						equal(oEvent.getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters()['files'][0]['name']");
-					}
-					else {
-						// deprecated
-						deepEqual(oEvent.getParameters().getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameter('files')");
-						deepEqual(oEvent.getParameters().getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameter('files').");
-
-						deepEqual(oEvent.getParameters().getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameters()['files']");
-						deepEqual(oEvent.getParameters().getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameters()['files']");
-
-						deepEqual(oEvent.getParameter("mParameters").files[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('mParameters').files[0]");
-						deepEqual(oEvent.getParameter("mParameters").files[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('mParameters').files[1]");
-
-						// checks for properly provided parameters
-						deepEqual(oEvent.getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('files')");
-						deepEqual(oEvent.getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('files')");
-						deepEqual(oEvent.getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters()['files']");
-						deepEqual(oEvent.getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters()['files']");
-					}
-				},
-				fileDeleted : function(oEvent) {
-					ok(true, "Event fileDeleted fired");
-					// deprecated
-					equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
-					// new
-					equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
-				},
-				filenameLengthExceed : function(oEvent) {
-					var oFile = { name: "tooLongFileName" };
-					ok(true, "Event filenameLengthExceed fired");
-					equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided");
-					// deprecated
-					equal(oEvent.getParameters().getParameter("fileName"), "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameters().getParameter('fileName')");
-					equal(oEvent.getParameters().getParameters()["fileName"], "tooLongFileName",  "Correct file name in filenameLengthExceed event provided by oEvent.getParameters().getParameters()['fileName']");
-					equal(oEvent.getParameter("mParameters")["fileName"], "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameter('mParameters')['fileName']");
-					// new
-					equal(oEvent.getParameter("files")[0].name, "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameter('files')[0].name");
-					equal(oEvent.getParameters()["files"][0]["name"], "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameters()['files'][0]['name']");
-					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file in filenameLengthExceed event provided by oEvent.getParameter('files')[0]");
-				},
-				fileRenamed : function(oEvent) {
-					equal(oEvent.getId(), "fileRenamed", "Event Id 'fileRenamed' provided");
-					// deprecated
-					equal(oEvent.getParameter("fileName"), "renamedFileName.txt", "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameter('fileName')");
-					equal(oEvent.getParameters()["fileName"], "renamedFileName.txt",  "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameters()['fileName']");
-					equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcdf", "Correct documentId in event fileRenamed provided by oEvent.getParameter('documentId')");
-					equal(oEvent.getParameters()["documentId"], "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",  "Correct documentId in event fileRenamed provided by oEvent.getParameters().getParameters()['documentId']");
-					// new
-					equal(oEvent.getParameter("item"), this._oItemForRename, "Correct item in event fileRenamed");
-					equal(oEvent.getParameter("item").getFileName(), this._oItemForRename.getFileName(), "Correct item in event fileRenamed");
-				},
-				typeMissmatch : function(oEvent) {
-					var oFile = { name: "someFileName", fileType : "someNotAllowedFileType", mimeType : "someNotAllowedMimeType" };
-					ok(true, "Event typeMissmatch fired");
-					equal(oEvent.getId(), "typeMissmatch", "Event Id 'typeMissmatch' provided");
-					// deprecated
-					equal(oEvent.mParameters.getParameter("fileName"), "someFileName", "Correct file name provided in typeMissmatch by oEvent.mParameters.getParameter('fileName')");
-					equal(oEvent.getParameters().getParameters()["fileName"], "someFileName", "Correct file name provided in typeMissmatch by oEvent.getParameters().getParameters()['fileName']");
-					equal(oEvent.getParameter("mParameters")["fileName"], "someFileName", "Correct file name provided in typeMissmatch by oEvent.getParameter('mParameters')['fileName']");
-					equal(oEvent.mParameters.getParameter("fileType"), "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.mParameters.getParameter('fileType')");
-					equal(oEvent.getParameters().getParameters()["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameters().getParameters()['fileType']");
-					equal(oEvent.getParameter("mParameters")["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('mParameters')['fileType']");
-					equal(oEvent.mParameters.getParameter("mimeType"), "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.mParameters.getParameter('mimeType')");
-					equal(oEvent.getParameters().getParameters()["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameters().getParameters()['mimeType']");
-					equal(oEvent.getParameter("mParameters")["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('mParameters')['mimeType']");
-					//new
-					equal(oEvent.getParameter("files")[0].name, "someFileName", "Correct file name provided in typeMissmatch event by oEvent.getParameter('files')[0].name");
-					equal(oEvent.getParameters()["files"][0]["name"], "someFileName", "Correct file name provided in typeMissmatch event by oEvent.getParameters()['files'][0]['name']");
-					equal(oEvent.getParameter("files")[0].fileType, "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('files')[0].fileType");
-					equal(oEvent.getParameter("files")[0]["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('files')[0]['fileType']");
-					equal(oEvent.getParameter("files")[0].mimeType, "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0].mimeType");
-					equal(oEvent.getParameter("files")[0]["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0]['mimeType']");
-					deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file provided in typeMissmatch event by oEvent.getParameter('files')[0].");
-				},
-				uploadTerminated : function(oEvent) {
-					ok(true, "Event uploadTerminated fired");
 				}
 			});
 			this.oDataCopy = jQuery.extend(true, {}, oData);
@@ -304,10 +206,37 @@
 		}
 	});
 
-	test("Event typeMissmatch", function() {
-		var oFileUploader = this.oUploadCollection._getFileUploader();
+	test("Event typeMissmatch", function(assert) {
 		expect(18); // verifies the event handler was executed
-		oFileUploader.fireTypeMissmatch({
+		var oFile = {
+			name: "someFileName",
+			fileType : "someNotAllowedFileType",
+			mimeType : "someNotAllowedMimeType"
+		};
+		function onTypeMissmatch(oEvent) {
+			assert.ok(true, "Event typeMissmatch fired");
+			assert.equal(oEvent.getId(), "typeMissmatch", "Event Id 'typeMissmatch' provided");
+			// deprecated
+			assert.equal(oEvent.mParameters.getParameter("fileName"), "someFileName", "Correct file name provided in typeMissmatch by oEvent.mParameters.getParameter('fileName')");
+			assert.equal(oEvent.getParameters().getParameters()["fileName"], "someFileName", "Correct file name provided in typeMissmatch by oEvent.getParameters().getParameters()['fileName']");
+			assert.equal(oEvent.getParameter("mParameters")["fileName"], "someFileName", "Correct file name provided in typeMissmatch by oEvent.getParameter('mParameters')['fileName']");
+			assert.equal(oEvent.mParameters.getParameter("fileType"), "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.mParameters.getParameter('fileType')");
+			assert.equal(oEvent.getParameters().getParameters()["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameters().getParameters()['fileType']");
+			assert.equal(oEvent.getParameter("mParameters")["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('mParameters')['fileType']");
+			assert.equal(oEvent.mParameters.getParameter("mimeType"), "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.mParameters.getParameter('mimeType')");
+			assert.equal(oEvent.getParameters().getParameters()["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameters().getParameters()['mimeType']");
+			assert.equal(oEvent.getParameter("mParameters")["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('mParameters')['mimeType']");
+			//new
+			assert.equal(oEvent.getParameter("files")[0].name, "someFileName", "Correct file name provided in typeMissmatch event by oEvent.getParameter('files')[0].name");
+			assert.equal(oEvent.getParameters()["files"][0]["name"], "someFileName", "Correct file name provided in typeMissmatch event by oEvent.getParameters()['files'][0]['name']");
+			assert.equal(oEvent.getParameter("files")[0].fileType, "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('files')[0].fileType");
+			assert.equal(oEvent.getParameter("files")[0]["fileType"], "someNotAllowedFileType", "Correct file type provided in typeMissmatch by oEvent.getParameter('files')[0]['fileType']");
+			assert.equal(oEvent.getParameter("files")[0].mimeType, "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0].mimeType");
+			assert.equal(oEvent.getParameter("files")[0]["mimeType"], "someNotAllowedMimeType", "Correct mime type provided in typeMissmatch by oEvent.getParameter('files')[0]['mimeType']");
+			assert.deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file provided in typeMissmatch event by oEvent.getParameter('files')[0].");
+		}
+		this.oUploadCollection.attachTypeMissmatch(onTypeMissmatch);
+		this.oUploadCollection._getFileUploader().fireTypeMissmatch({
 			fileName : "someFileName",
 			fileType : "someNotAllowedFileType",
 			mimeType : "someNotAllowedMimeType"
@@ -318,10 +247,10 @@
 		var sFileSize = "sizeOfTooBigFile";
 		var sFileName = "nameOfTooBigFile";
 		var oFileUploaderEventMock = {
-				newValue : sFileName,
-				fileSize : sFileSize,
-				fileName : sFileName
-			};
+			newValue : sFileName,
+			fileSize : sFileSize,
+			fileName : sFileName
+		};
 		function fileSizeExceed(oEvent) {
 			var sFileName = "nameOfTooBigFile";
 			var sDocumentId; // undefined
@@ -360,59 +289,118 @@
 		this.oUploadCollection._onFileSizeExceed(new sap.ui.base.Event("fileSizeExceed", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
-	test("Event change", function() {
+	test("Event change", function(assert) {
 		var oFile1 = {
-				name: "file1",
-				size: 1,
-				type: "type1"
-			};
+			name: "file1",
+			size: 1,
+			type: "type1"
+		};
 		var oFile2 = {
-				name: "file2",
-				size: 2,
-				type: "type2"
-			};
-		var aFiles = [];
-		aFiles.push(oFile1);
-		aFiles.push(oFile2);
-		var oFileUploader = this.oUploadCollection._getFileUploader();
+			name: "file2",
+			size: 2,
+			type: "type2"
+		};
+		var aFiles = [oFile1, oFile2];
+		function onChange (oEvent) {
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+				// deprecated
+				assert.equal(oEvent.getParameters().getParameter("files")[0].name, "file1", "Correct file name in change event provided by oEvent.getParameters().getParameter('files').name");
+				assert.equal(oEvent.getParameters().getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters().getParameters()['files']['name']");
+				assert.equal(oEvent.getParameter("mParameters")["files"][0]["name"], "file1", "Correct file 1 in change event provided by oEvent.getParameter('mParameters')['files'][0]['name']");
 
+				// check for properly provided parameters
+				assert.equal(oEvent.getParameter("files")[0].name, "file1", "Correct file name 1 in change event provided byoEvent.getParameter('files')[0].name");
+				assert.equal(oEvent.getParameters()["files"][0]["name"], "file1", "Correct file name in change event provided by oEvent.getParameters()['files'][0]['name']");
+			}
+			else {
+				// deprecated
+				assert.deepEqual(oEvent.getParameters().getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameter('files')");
+				assert.deepEqual(oEvent.getParameters().getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameter('files').");
+
+				assert.deepEqual(oEvent.getParameters().getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters().getParameters()['files']");
+				assert.deepEqual(oEvent.getParameters().getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters().getParameters()['files']");
+
+				assert.deepEqual(oEvent.getParameter("mParameters").files[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('mParameters').files[0]");
+				assert.deepEqual(oEvent.getParameter("mParameters").files[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('mParameters').files[1]");
+
+				// checks for properly provided parameters
+				assert.deepEqual(oEvent.getParameter("files")[0], oFile1, "Correct file 1 in change event provided by oEvent.getParameter('files')");
+				assert.deepEqual(oEvent.getParameter("files")[1], oFile2, "Correct file 2 in change event provided by oEvent.getParameter('files')");
+				assert.deepEqual(oEvent.getParameters()["files"][0], oFile1, "Correct file 1 in change event provided by oEvent.getParameters()['files']");
+				assert.deepEqual(oEvent.getParameters()["files"][1], oFile2, "Correct file 2 in change event provided by oEvent.getParameters()['files']");
+			}
+		}
+		this.oUploadCollection.attachChange(onChange);
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 			// at present FileUploader does not set the parameter files for IE9
-			expect(6);
-			oFileUploader.fireChange({
+			expect(5);
+			this.oUploadCollection._getFileUploader().fireChange({
 				newValue : "file1"
 			});
 		}
 		else {
-			expect(11); // verifies the event handler was executed
-			oFileUploader.fireChange({
+			expect(10); // verifies the event handler was executed
+			this.oUploadCollection._getFileUploader().fireChange({
 				files : aFiles
 			});
 		}
 	});
 
-	test("Event fileDeleted", function() {
-		expect(3);
+	test("Event fileDeleted", function (assert) {
+		function onDelete (oEvent) {
+			// deprecated
+			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcde", "Correct documentId in event delete");
+			// new
+			assert.equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
+		}
+		expect(2);
+		this.oUploadCollection.attachFileDeleted(onDelete);
 		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[1]; // contributor : John Smith, documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcde"
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	});
 
-	test("Event filenameLengthExceed", function() {
-		var oFileUploader = this.oUploadCollection._getFileUploader();
+	test("Event filenameLengthExceed", function(assert) {
 		expect(8);
-		oFileUploader.fireFilenameLengthExceed({
+		function onFilenameLengthExceed (oEvent) {
+			var oFile = { name: "tooLongFileName" };
+			assert.ok(true, "Event filenameLengthExceed fired");
+			assert.equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided");
+			// deprecated
+			assert.equal(oEvent.getParameters().getParameter("fileName"), "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameters().getParameter('fileName')");
+			assert.equal(oEvent.getParameters().getParameters()["fileName"], "tooLongFileName",  "Correct file name in filenameLengthExceed event provided by oEvent.getParameters().getParameters()['fileName']");
+			assert.equal(oEvent.getParameter("mParameters")["fileName"], "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameter('mParameters')['fileName']");
+			// new
+			assert.equal(oEvent.getParameter("files")[0].name, "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameter('files')[0].name");
+			assert.equal(oEvent.getParameters()["files"][0]["name"], "tooLongFileName", "Correct file name in filenameLengthExceed event provided by oEvent.getParameters()['files'][0]['name']");
+			assert.deepEqual(oEvent.getParameter("files")[0], oFile, "Correct file in filenameLengthExceed event provided by oEvent.getParameter('files')[0]");
+		}
+
+		this.oUploadCollection.attachFilenameLengthExceed(onFilenameLengthExceed);
+		this.oUploadCollection._getFileUploader().fireFilenameLengthExceed({
 			fileName : "tooLongFileName"
 		});
 	});
 
-	test("Event fileRenamed", function() {
+	test("Event fileRenamed", function(assert) {
 		expect(7);
+		function onFileRenamed (oEvent) {
+			assert.equal(oEvent.getId(), "fileRenamed", "Event Id 'fileRenamed' provided");
+			// deprecated
+			assert.equal(oEvent.getParameter("fileName"), "renamedFileName.txt", "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameter('fileName')");
+			assert.equal(oEvent.getParameters()["fileName"], "renamedFileName.txt",  "Correct file name in fileRenamed event provided by oEvent.getParameters().getParameters()['fileName']");
+			assert.equal(oEvent.getParameter("documentId"), "5082cc4d-da9f-2835-2c0a-8100ed47bcdf", "Correct documentId in event fileRenamed provided by oEvent.getParameter('documentId')");
+			assert.equal(oEvent.getParameters()["documentId"], "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",  "Correct documentId in event fileRenamed provided by oEvent.getParameters().getParameters()['documentId']");
+			// new
+			assert.equal(oEvent.getParameter("item"), this._oItemForRename, "Correct item in event fileRenamed");
+			assert.equal(oEvent.getParameter("item").getFileName(), this._oItemForRename.getFileName(), "Correct item in event fileRenamed");
+		}
+		this.oUploadCollection.attachFileRenamed(onFileRenamed);
 		this.oUploadCollection._oItemForRename = this.oUploadCollection.getItems()[2]; // contributor : "J Edgar Hoover", documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf"
 		this.oUploadCollection._oItemForRename.setFileName("renamedFileName.txt");
 		this.oUploadCollection._onEditItemOk("renamedFileName.txt");
 	});
 
-	test("uploadComplete", function() {
+	test("uploadComplete", function(assert) {
 		var oFileUploaderEventMock = {
 			fileName : "file1",
 			reponse : { "propertyOne" : "ValueOne" },
@@ -430,25 +418,28 @@
 		};
 		function uploadComplete(oEvent) {
 			// Deprecated
-			equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event");
-			equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "correct reponse in complete event");
-			equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "correct readyStateXHR in complete event");
-			equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "correct status in complete event");
+			assert.equal(oEvent.getParameters().getParameter("fileName"), "file1", "correct file1 name in complete event");
+			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "correct reponse in complete event");
+			assert.equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "correct readyStateXHR in complete event");
+			assert.equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "correct status in complete event");
 			// check for properly provided parameters
-			equal(oEvent.getParameter("files")[0].fileName, "file1", "correct file1 name in complete event");
-			equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "correct response in complete event");
-			equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "correct raw response in complete event");
-			equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "correct headers in complete event");
+			assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "correct file1 name in complete event");
+			assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "correct response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "correct raw response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "correct headers in complete event");
 		}
 		this.oUploadCollection.attachUploadComplete(uploadComplete);
 		this.oUploadCollection._onUploadComplete(new sap.ui.base.Event("uploadComplete", this.oUploadCollection._getFileUploader(), oFileUploaderEventMock));
 	});
 
-	test("Event terminate", function() {
-		var sFileName = "file1";
-		var oFileUploader = this.oUploadCollection._getFileUploader();
+	test("Event terminate", function(assert) {
 		expect(1); // verifies the event handler was executed
-		oFileUploader.fireUploadAborted({
+		var sFileName = "file1";
+		function onUploadTerminated(oEvent) {
+			assert.ok(true, "Event uploadTerminated fired");
+		}
+		this.oUploadCollection.attachUploadTerminated(onUploadTerminated);
+		this.oUploadCollection._getFileUploader().fireUploadAborted({
 			fileName : sFileName
 		})
 	});
@@ -470,13 +461,13 @@
 		}
 	});
 	
-	test("Edit", function() {
+	test("Edit", function(assert) {
 		//trigger edit button of line 2 and check the status of the line 
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2");
-		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
+		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2");
+		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 		
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
@@ -489,11 +480,11 @@
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'cancel' as expected in Line 2");
+		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'cancel' as expected in Line 2");
 		
 		//check file name after cancel
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
-		equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");
+		assert.equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");
 
 		//check save
 		sap.ui.getCore().byId(sEditButtonId).firePress();
@@ -506,18 +497,18 @@
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		oModel.setData(oData);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'ok' as expected in Line 2");
+		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'ok' as expected in Line 2");
 
 		//check chnaged file name after save
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
-		equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
+		assert.equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
 
 		//check sameFileNameAllowed == false!
 		var sEditButtonId2 = this.oUploadCollection.aItems[2].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId2).firePress();
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[2]._status, "Edit", "'Edit'-status as expected in Line 2");
-		equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
+		assert.equal(this.oUploadCollection.aItems[2]._status, "Edit", "'Edit'-status as expected in Line 2");
+		assert.equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 
 		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
 		oInputField3[0].value = "NewDocument";
@@ -526,31 +517,31 @@
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
 		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
-		equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exist");
-		equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
+		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exist");
+		assert.equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
 
 		var oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		var oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
 		var oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
 		var oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
-		equal(oEditButton0.getEnabled(), false, "Edit button is NOT enabled");
-		equal(oEditButton1.getEnabled(), false, "Edit button is NOT enabled");
-		equal(oDeleteButton0.getEnabled(), false, "Delete button is NOT enabled");
-		equal(oDeleteButton1.getEnabled(), false, "Delete button is NOT enabled");
+		assert.equal(oEditButton0.getEnabled(), false, "Edit button is NOT enabled");
+		assert.equal(oEditButton1.getEnabled(), false, "Edit button is NOT enabled");
+		assert.equal(oDeleteButton0.getEnabled(), false, "Delete button is NOT enabled");
+		assert.equal(oDeleteButton1.getEnabled(), false, "Delete button is NOT enabled");
 
 		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-cancelButton";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[2]._status, "display", "'display'-status after 'cancel' as expected in Line 3");
+		assert.equal(this.oUploadCollection.aItems[2]._status, "display", "'display'-status after 'cancel' as expected in Line 3");
 
 		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
 		oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
 		oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
-		equal(oEditButton0.getEnabled(), true, "Edit button is enabled");
-		equal(oEditButton1.getEnabled(), true, "Edit button is enabled");
-		equal(oDeleteButton0.getEnabled(), true, "Delete button is enabled");
-		equal(oDeleteButton1.getEnabled(), true, "Delete button is enabled");
+		assert.equal(oEditButton0.getEnabled(), true, "Edit button is enabled");
+		assert.equal(oEditButton1.getEnabled(), true, "Edit button is enabled");
+		assert.equal(oDeleteButton0.getEnabled(), true, "Delete button is enabled");
+		assert.equal(oDeleteButton1.getEnabled(), true, "Delete button is enabled");
 	});
 
 	module("Display tests", {
@@ -570,9 +561,9 @@
 			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
 		}
 	});
-	test("Display", function() {
+	test("Display", function(assert) {
 		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-			ok(true, "Link is triggered");
+			assert.ok(true, "Link is triggered");
 		};
 		expect(8); // verifies the event handler was executed
 		//check status = "display"
@@ -584,9 +575,9 @@
 		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
 		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
 		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
-		equal(oEditButton.getEnabled(), true, "Edit button is enabled");
-		equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
-		equal(oFileName.getEnabled(), true, "File name is enabled");
+		assert.equal(oEditButton.getEnabled(), true, "Edit button is enabled");
+		assert.equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
+		assert.equal(oFileName.getEnabled(), true, "File name is enabled");
 
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
 		sap.ui.getCore().applyChanges();
@@ -606,7 +597,7 @@
 		}
 	});
 
-	testSetter = function(oUploadCollection, sProperty, oPropertyValue, bPropagate) {
+	testSetter = function(oUploadCollection, sProperty, oPropertyValue, bPropagate, assert) {
 		if (!bPropagate) {
 			// set default value
 			bPropagate = false;
@@ -627,142 +618,123 @@
 		var sGetterMethodFileUploader = "get" + sPropertyFileUploader[0].toUpperCase() + sPropertyFileUploader.slice(1);
 
 		oUploadCollection[sSetterMethod](oPropertyValue);
-		deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
+		assert.deepEqual(oUploadCollection[sGetterMethod](), oPropertyValue, "UploadCollection setter method");
 		if (bPropagate) {
 			switch (sProperty) {
 				case "noDataText":
-					deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
+					assert.deepEqual(oUploadCollection._oList[sGetterMethodFileUploader](), oPropertyValue, "Propagation to List");
 					break;
 				default:
-					deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
+					assert.deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
 			}
 		}
 	}
 
-	test("Default values", function() {
-			var sFileType,
-			sMaximumFilenameLength = 0,
-			nMaximumFileSize = 0,
-			sMimeType,
-			bMultiple = false,
-			sNoDataText = "",
-			bSameFilenameAllowed = false,
-			bShowSeparators = "None",
-			bUploadEnabled = true,
-			sUploadUrl = "../../../upload";
+	test("Default values", function(assert) {
+		var sFileType,
+		sMaximumFilenameLength = 0,
+		nMaximumFileSize = 0,
+		sMimeType,
+		bMultiple = false,
+		sNoDataText = "",
+		bSameFilenameAllowed = false,
+		bShowSeparators = "None",
+		bUploadEnabled = true,
+		sUploadUrl = "../../../upload";
 
-		strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
-		strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
-		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
-		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
-		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
-		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
-		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
-		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
-		strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
-		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
-		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
+		assert.equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), this.oUploadCollection._oRb.getText("LIST_NO_DATA"), "Property 'noDataText' properly rendered in DOM");
+		assert.strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("showSeparators"), bShowSeparators, "Property 'showSeparators': default value is '" + bShowSeparators + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
+		assert.strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
 	});
 
 	test("fileType", function() {
-		var bPropagateTrue = true;
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
-
-		testSetter(this.oUploadCollection, "fileType", aFileTypes, bPropagateTrue);
+		testSetter(this.oUploadCollection, "fileType", aFileTypes, true, assert);
 	});
 
-	test("fileType conversion", function() {
+	test("fileType conversion", function(assert) {
 		var aFileTypes = ["jpg", "png", "bmp", "unittest"];
 		var aFileTypesExpected = aFileTypes.toString();
 		var aFileTypesMix = ["JpG", "png", "bMp", "uniTTest"];
 		this.oUploadCollection.setFileType(aFileTypesMix);
 		var aFileTypes = this.oUploadCollection.getFileType().toString();
-		equal(aFileTypes, aFileTypesExpected, "Property 'fileType': Conversion to lower case");
+		assert.equal(aFileTypes, aFileTypesExpected, "Property 'fileType': Conversion to lower case");
 	});
 
-	test("fileType empty", function() {
+	test("fileType empty", function(assert) {
 		//undefined
 		var aFileTypesEmpty;
 		this.oUploadCollection.setFileType(aFileTypesEmpty);
 		var FileTypesEmpty = this.oUploadCollection.getFileType();
 		var FileTypesExpected;
-		equal(FileTypesEmpty, FileTypesExpected, "Property 'fileType': Call with undefined!");
+		assert.equal(FileTypesEmpty, FileTypesExpected, "Property 'fileType': Call with undefined!");
 
 		//empty array
 		aFileTypesEmpty = [];
 		this.oUploadCollection.setFileType(aFileTypesEmpty);
 		var sFileTypesExpected = "";
 		var sFileTypesEmpty = this.oUploadCollection.getFileType().toString();
-		equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
+		assert.equal(sFileTypesEmpty, sFileTypesExpected, "Property 'fileType': Call with an empty array!");
 	});
 
-	test("maximumFilenameLength", function() {
-		var bPropagateTrue = true;
+	test("maximumFilenameLength", function(assert) {
 		var iMaximumFilenameLength = 4711;
-
-		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, bPropagateTrue);
+		testSetter(this.oUploadCollection, "maximumFilenameLength", iMaximumFilenameLength, true, assert);
 	});
 
-	test("maximumFileSize", function() {
-		var bPropagateTrue = true;
+	test("maximumFileSize", function(assert) {
 		var iMaximumFileSize = 4711;
-
-		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, bPropagateTrue);
+		testSetter(this.oUploadCollection, "maximumFileSize", iMaximumFileSize, true, assert);
 	});
 
-	test("mimeType", function() {
-		var bPropagateTrue = true;
+	test("mimeType", function(assert) {
 		var aMimeTypes = ["text", "image", "unittest"];
-
-		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, bPropagateTrue);
+		testSetter(this.oUploadCollection, "mimeType", aMimeTypes, true, assert);
 	});
 
-	test("multiple", function() {
-		var bPropagateTrue = true;
+	test("multiple", function(assert) {
 		var bMultiple = true;
-
-		testSetter(this.oUploadCollection, "multiple", bMultiple, bPropagateTrue);
+		testSetter(this.oUploadCollection, "multiple", bMultiple, true, assert);
 	});
 
-	test("noDataText", function() {
-		var bPropagateTrue = true;
+	test("noDataText", function(assert) {
 		var sNoDataText = "myNoDataText";
-
-		testSetter(this.oUploadCollection, "noDataText", sNoDataText, bPropagateTrue);
-		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
+		testSetter(this.oUploadCollection, "noDataText", sNoDataText, true, assert);
+		assert.equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
 	});
 
-	test("sameFilenameAllowed", function() {
+	test("sameFilenameAllowed", function(assert) { // this test makes no sence
 		var bSameFilenameAllowed = true;
 		var oFileUploader = this.oUploadCollection._getFileUploader();
-		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed);
-		equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' is correctly true ");
+		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, false, assert);
+		assert.equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' is correctly true ");
 		bSameFilenameAllowed = false;
-		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed);
-		equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' should stay 'true' ");
+		testSetter(this.oUploadCollection, "sameFilenameAllowed", bSameFilenameAllowed, false, assert);
+		assert.equal(oFileUploader.getSameFilenameAllowed(), true, "Property 'sameFilenameAllowed' should stay 'true' ");
 	});
 
-	test("showSeparators", function() {
+	test("showSeparators", function(assert) {
 		var bShowSeparators = "All";
-
-		testSetter(this.oUploadCollection, "showSeparators", bShowSeparators);
+		testSetter(this.oUploadCollection, "showSeparators", bShowSeparators, false, assert);
 	});
 
-	test("uploadEnabled", function() {
-		var bPropagateTrue = true;
+	test("uploadEnabled", function(assert) {
 		var bUploadEnabled = false;
-
-		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, bPropagateTrue);
+		testSetter(this.oUploadCollection, "uploadEnabled", bUploadEnabled, true, assert);
 	});
 
-	test("uploadUrl", function() {
-		var bPropagateTrue = true;
+	test("uploadUrl", function(assert) {
 		var sUploadUrl = "my/upload/url";
-
-		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, bPropagateTrue);
+		testSetter(this.oUploadCollection, "uploadUrl", sUploadUrl, true, assert);
 	});
-
-
 
 </script>
 
