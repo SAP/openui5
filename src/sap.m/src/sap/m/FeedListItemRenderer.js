@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write('" >');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<p id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
-				rm.renderControl(oFeedListItem._getLinkSender());
+				rm.renderControl(oFeedListItem._getLinkSender(false));
 				rm.write('</p>');
 			}
 			if (!!oFeedListItem.getTimestamp()) {
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText" >');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
-				rm.renderControl(oFeedListItem._getLinkSender());
+				rm.renderControl(oFeedListItem._getLinkSender(true));
 				rm.write(' ');
 				rm.write('</span>');
 			}
