@@ -22,7 +22,7 @@ sap.ui.define([
 			// to be updated.
 			var oControlStateModel =
 				new sap.ui.model.json.JSONModel({previousButtonEnabled : false, nextButtonEnabled : false});
-			this.setModel(oControlStateModel, 'controlStates');
+			this.setModel(oControlStateModel, "controlStates");
 			this.getRouter().getRoute("lineItem").attachPatternMatched(this._onRouteMatched, this);
 		},
 
@@ -47,9 +47,8 @@ sap.ui.define([
 		/**
 		 * Triggers navigation to the next line item in the list of line items to the current object.
 		 *
-		 * @param {Event} oEvent the event object
 		 */
-		onNavToNextLineItem: function (oEvent) {
+		onNavToNextLineItem: function () {
 			var iLineItemId = this._oObject.aLineItemIds[this.iCurrentIndex + 1];
 			this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this._oObject.sObjectId}, true);
 		},
@@ -58,9 +57,8 @@ sap.ui.define([
 		/**
 		 * Triggers navigation to the previous line item in the list of line items to the current object.
 		 *
-		 * @param {Event} oEvent the event object
 		 */
-		onNavToPrevLineItem: function (oEvent) {
+		onNavToPrevLineItem: function () {
 			var iLineItemId = this._oObject.aLineItemIds[this.iCurrentIndex - 1];
 			this.getRouter().navTo("lineItem", {lineItemId : iLineItemId, objectId: this._oObject.sObjectId}, true);
 		},
@@ -74,8 +72,10 @@ sap.ui.define([
 		 * function extracts the currently selected object and line item id. Afterwards
 		 * it populates the LineItemView with the data of the newly selected lineItem.
 		 *
+		 * @param {object} oEvent the event object
 		 * @function
 		 * @private
+		 *
 		 */
 		_onRouteMatched : function(oEvent) {
 			var oParameters = oEvent.getParameters();
@@ -185,7 +185,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_toggleButtonState : function () {
-			var oControlStateModel = this.getView().getModel('controlStates');
+			var oControlStateModel = this.getView().getModel("controlStates");
 			oControlStateModel.setProperty("/nextButtonEnabled", this._itemExists(this.iCurrentIndex + 1));
 			oControlStateModel.setProperty("/previousButtonEnabled", this._itemExists(this.iCurrentIndex - 1));
 		},

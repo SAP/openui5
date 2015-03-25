@@ -1,25 +1,25 @@
-sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals', 'sap/ui/test/matchers/PropertyStrictEquals'],
+sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/matchers/AggregationLengthEquals", "sap/ui/test/matchers/PropertyStrictEquals"],
 	function(Opa5, AggregationLengthEquals, PropertyStrictEquals) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.mdtemplate.test.integration.assertion.MasterAssertion", {
-		
+
 		theMasterListShouldContainGroup20OrLess : function () {
-			return this.theMasterListShouldBeGroupedBy('Unit Number 20 or less');
+			return this.theMasterListShouldBeGroupedBy("Unit Number 20 or less");
 		},
-		
+
 		theMasterListShouldContainGroup20OrMore : function () {
-			return this.theMasterListShouldBeGroupedBy('Unit Number higher than 20');
+			return this.theMasterListShouldBeGroupedBy("Unit Number higher than 20");
 		},
-		
+
 		theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrLess : function () {
 			return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, false, {iLow: 1, iHigh: 2});
 		},
-		
+
 		theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrMore : function () {
 			return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, true, {iLow: 3, iHigh: 11});
 		},
-		
+
 		theMasterListShouldBeGroupedBy : function (sGroupName) {
 			return this.waitFor({
 				controlType : "sap.m.GroupHeaderListItem",
@@ -31,18 +31,15 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage: "Master list is not grouped by " + sGroupName + "'"
 			});
 		},
-		
-		theMasterListShouldNotContainGroupHeaders : function (sField) {
+
+		theMasterListShouldNotContainGroupHeaders : function () {
 			function fnContainsGroupHeader (oList){
 				var fnIsGroupHeader = function (oElement) {
-						if (oElement.getMetadata().getName() === 'sap.m.GroupHeaderListItem') {
-							return true;
-						}
-						return false;
+						return oElement.getMetadata().getName() === "sap.m.GroupHeaderListItem";
 					};
 				return !oList.getItems().some(fnIsGroupHeader);
 			}
-			
+
 			return this.waitFor({
 				viewName : "Master",
 				id : "list",
@@ -53,16 +50,16 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Master list still contains a group header although grouping has been removed."
 			});
 		},
-		
-		
+
+
 		theMasterListShouldBeSortedAscendingOnUnitNumber : function () {
 			return this.theMasterListShouldBeSortedAscendingOnField("UnitNumber");
 		},
-		
+
 		theMasterListShouldBeSortedAscendingOnName : function () {
 			return this.theMasterListShouldBeSortedAscendingOnField("Name");
 		},
-		
+
 		theMasterListShouldBeSortedAscendingOnField : function (sField) {
 			function fnCheckSort (oList){
 				var oLastValue = null,
@@ -75,10 +72,10 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 						}
 						return true;
 					};
-				
+
 				return oList.getItems().every(fnIsOrdered);
 			}
-			
+
 			return this.waitFor({
 				viewName : "Master",
 				id : "list",
@@ -89,9 +86,9 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Master list has not been sorted correctly for field '" + sField + "'."
 			});
 		},
-		
+
 		theMasterListShouldBeFilteredOnUnitNumberValue : function(iThreshhold, bGreaterThan, oRange) {
-			
+
 			function fnCheckFilter (oList){
 				var fnIsGreaterThanMaxValue = function (oElement) {
 						if (bGreaterThan) {
@@ -103,29 +100,29 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				if (oRange) {
 					aItems = aItems.slice(oRange.iLow, oRange.iHigh);
 				}
-				
+
 				return !aItems.some(fnIsGreaterThanMaxValue);
 			}
-			
+
 			return this.waitFor({
 				viewName : "Master",
 				id : "list",
 				matchers : [fnCheckFilter],
-				success : function(bResult){
+				success : function(){
 					ok(true, "Master list has been filtered correctly with filter value '" + iThreshhold + "'.");
 				},
 				errorMessage : "Master list has not been filtered correctly with filter value '" + iThreshhold + "'."
 			});
 		},
-		
+
 		theMasterListShouldBeFilteredOnUnitNumberValueMoreThan100 : function(){
 			return this.theMasterListShouldBeFilteredOnUnitNumberValue(100, true);
 		},
-		
+
 		theMasterListShouldBeFilteredOnUnitNumberValueLessThan100 : function(){
 			return this.theMasterListShouldBeFilteredOnUnitNumberValue(100);
 		},
-		
+
 		iShouldSeeTheMasterList : function () {
 			return this.waitFor({
 				id : "list",
@@ -136,7 +133,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Can't see the master list."
 			});
 		},
-		
+
 		theMasterListShowsObject2 : function () {
 			return this.waitFor({
 				controlType : "sap.m.ObjectListItem",
@@ -148,7 +145,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Can't see Object 2 in master list."
 			});
 		},
-		
+
 		theMasterListShouldHaveNEntries : function (iObjIndex) {
 			return this.waitFor({
 				id : "list",
@@ -160,8 +157,8 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "List does not have " + iObjIndex + " entries."
 			});
 		},
-		
-		theMasterListShouldHaveAllEntries : function () {	
+
+		theMasterListShouldHaveAllEntries : function () {
 			return this.waitFor({
 				id : "list",
 				viewName : "Master",
@@ -177,4 +174,4 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		}
 	});
 }, /* bExport= */ true);
-		
+

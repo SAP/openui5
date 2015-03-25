@@ -60,7 +60,7 @@ sap.ui.define([
 		 * Tries to select a list item with a matching binding context. If there are no items matching the binding context or the ListMode is none,
 		 * no selection will happen
 		 *
-		 * @param sBindingPath the binding path matching the binding path of a list item
+		 * @param {string} sBindingPath the binding path matching the binding path of a list item
 		 * @public
 		 */
 		selectAListItem : function (sBindingPath) {

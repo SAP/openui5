@@ -6,6 +6,7 @@ sap.ui.require(
 		'sap/ui/test/Opa5'
 	],
 	function (Opa5) {
+		"use strict";
 
 		QUnit.module("Not found Journey");
 
@@ -24,8 +25,8 @@ sap.ui.require(
 
 
 		opaTest("Should see the not found page if the hash is something that matches no route", function (Given, When, Then) {
-			Given.iStartMyApp({ 
-				hash: "#somethingThatDoesNotExist" 
+			Given.iStartMyApp({
+				hash: "#somethingThatDoesNotExist"
 			});
 
 			When.onTheNotFoundPage.iLookAtTheScreen();
@@ -46,7 +47,7 @@ sap.ui.require(
 			Then.onTheNotFoundPage.iShouldSeeObjectNotFound().
 				and.iTeardownMyAppFrame();
 		});
-		
+
 		opaTest("Clicking the 'Show my worklist' link on the 'Object not found' page should bring me back to the worklist", function (Given, When, Then) {
 			Given.iStartMyApp({
 				hash: "#/object/SomeInvalidObjectId"
@@ -60,10 +61,10 @@ sap.ui.require(
 			Then.onTheWorklistPage.iShouldSeeTheTable().
 				and.iTeardownMyAppFrame();
 		});
-		
+
 		opaTest("Clicking the 'Show my worklist' link on the 'Resource not found' page should bring me back to the worklist", function (Given, When, Then) {
-			Given.iStartMyApp({ 
-				hash: "#somethingThatDoesNotExist" 
+			Given.iStartMyApp({
+				hash: "#somethingThatDoesNotExist"
 			});
 
 			//Actions

@@ -61,7 +61,7 @@ sap.ui.define([
 				iTotalItems = oEvent.getParameter("total");
 			// only update the counter if the length is final and
 			// the table is not empty
-			if (iTotalItems && oTable.getBinding('items').isLengthFinal()) {
+			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");

@@ -2,12 +2,13 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/NavigationAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion'
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/mdtemplate/test/integration/action/NavigationAction",
+	"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
+	"sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion"
 ],
 function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
+	"use strict";
 
 	module("Mobile navigation", { setup : function () {
 		Opa5.extendConfig({
@@ -53,7 +54,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		// Assertions
 		Then.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
-			and.theFirstLineItemHasIDLineItemID_1();
+			and.theFirstLineItemHasIDLineItemID1();
 
 	});
 
@@ -103,21 +104,21 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 			and.iTeardownMyAppFrame();
 
 	});
-	
+
 	opaTest("Navigate directly to Line Item 7 of object 3 with hash: press back button twice should take me to the master list", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheAppOnAPhone("#/object/ObjectID_3/lineitem/LineItemID_7");
 
 		//Actions
 		When.iWaitUntilISeePageForLineItem7().
-		    and.iPressTheBackButtonOnLineItemPage().
+			and.iPressTheBackButtonOnLineItemPage().
 			and.iPressTheBackButtonOnDetailPage();
 
 		// Assertions
 		Then.iShouldSeeTheObjectList().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Start the app with an empty hash: the hash should still be empty after loading", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheAppOnAPhone();
@@ -128,6 +129,6 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		//Assertions
 		Then.iShouldSeeAnEmptyHash().
 			and.iTeardownMyAppFrame();
-	})
+	});
 
 });

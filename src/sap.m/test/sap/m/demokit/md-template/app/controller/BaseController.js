@@ -58,8 +58,8 @@ sap.ui.define([
 		 * Event handler  for navigating back.
 		 * It checks if there is a history entry. If yes, history.go(-1) will happen.
 		 * If not, a backward navigation with forward history will take place.
-		 * @param sRoute the route name where you would like to navigate to
-		 * @param mData optional data for the route
+		 * @param {string} sRoute the route name where you would like to navigate to
+		 * @param {object} mData optional data for the route
 		 * @public
 		 */
 		onNavBack : function(sRoute, mData) {
@@ -67,7 +67,9 @@ sap.ui.define([
 
 			//The history contains a previous entry
 			if (sPreviousHash !== undefined) {
+				/*eslint-disable */
 				window.history.go(-1);
+				/*eslint-enable */
 			} else {
 				var bReplace = true; // otherwise we go backwards with a forward history
 				this.getRouter().navTo(sRoute, mData, bReplace);

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals', 'sap/ui/test/matchers/PropertyStrictEquals'],
+sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/matchers/AggregationLengthEquals", "sap/ui/test/matchers/PropertyStrictEquals"],
 	function(Opa5, AggregationLengthEquals, PropertyStrictEquals) {
 	"use strict";
 
@@ -38,13 +38,13 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "List does not have 10 entries."
 			});
 		},
-		
+
 		theMasterPageHeaderShouldDisplay20Entries : function () {
 			return this.waitFor({
 				id : "page",
 				viewName : "Master",
 				matchers : [ new PropertyStrictEquals({name : "title", value : "Objects (20)"}) ],
-				success : function (oList) {
+				success : function () {
 					ok(true, "The master page header displays 20 items");
 				},
 				errorMessage : "The  master page header does not display 20 items."
@@ -83,33 +83,33 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				id : "lineItemsList",
 				viewName : "Detail",
 				matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
-				success : function (oList) {
+				success : function () {
 					ok(true, "The list has 4 items");
 				},
 				errorMessage : "The list does not have 4 items."
 			});
 		},
-		
+
 		theLineItemsHeaderShouldDisplay4Entries : function () {
 			return this.waitFor({
 				id : "lineItemsHeader",
 				viewName : "Detail",
 				matchers : [ new PropertyStrictEquals({name : "text", value : "Line Items (4)"}) ],
-				success : function (oList) {
+				success : function () {
 					ok(true, "The line item list displays 4 items");
 				},
 				errorMessage : "The line item list does not display 4 items."
 			});
 		},
 
-		theFirstLineItemHasIDLineItemID_1 : function () {
+		theFirstLineItemHasIDLineItemID1 : function () {
 			return this.waitFor({
 				id : "lineItemsList",
 				viewName : "Detail",
 				matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
 				success : function (oList) {
 					var oFirstItem = oList.getItems()[0];
-					strictEqual(oFirstItem.getBindingContext().getProperty('LineItemID'), "LineItemID_1", "The first line item has Id 'LineItemID_1'");
+					strictEqual(oFirstItem.getBindingContext().getProperty("LineItemID"), "LineItemID_1", "The first line item has Id 'LineItemID_1'");
 				},
 				errorMessage : "The first line item does not have Id 'LineItemID_1'."
 			});
@@ -126,7 +126,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "Object 3 is not selected."
 			});
 		},
-		
+
 		iShouldBeOnTheLineItem1Page : function() {
 			return this.iShouldBeOnPage("LineItem", "Line Item: LineItemID_1");
 		},
@@ -147,15 +147,15 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 		},
 
 		thePreviousButtonIsDisabled : function() {
-			return this.theLineItemNavigationButtonHasCorrectEnabledState('Previous', 'sap-icon://up', false );
+			return this.theLineItemNavigationButtonHasCorrectEnabledState("Previous", "sap-icon://up", false );
 		},
 
 		thePreviousButtonIsEnabled : function() {
-			return this.theLineItemNavigationButtonHasCorrectEnabledState('Previous', 'sap-icon://up', true );
+			return this.theLineItemNavigationButtonHasCorrectEnabledState("Previous", "sap-icon://up", true );
 		},
 
 		theNextButtonIsEnabled : function() {
-			return this.theLineItemNavigationButtonHasCorrectEnabledState('Next', 'sap-icon://down', true );
+			return this.theLineItemNavigationButtonHasCorrectEnabledState("Next", "sap-icon://down", true );
 		},
 
 		iShouldBeOnTheLineItem2Page : function() {
@@ -269,7 +269,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage: "list does not show the no data text for search and filter"
 			});
 		},
-		
+
 		iShouldSeeTheHashForObjectN : function (iObjIndex) {
 			return this.waitFor({
 				success : function () {
@@ -280,7 +280,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				errorMessage : "The Hash is not Correct!"
 			});
 		},
-		
+
 		iShouldSeeAnEmptyHash : function () {
 			return this.waitFor({
 				success : function () {

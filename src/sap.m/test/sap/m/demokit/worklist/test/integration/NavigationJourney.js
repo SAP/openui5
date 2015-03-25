@@ -3,9 +3,10 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5'
+	"sap/ui/test/Opa5"
 ],
 function (Opa5) {
+	"use strict";
 
 	QUnit.module("Navigation");
 

@@ -2,12 +2,13 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/NavigationAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion'
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/mdtemplate/test/integration/action/NavigationAction",
+	"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
+	"sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion"
 ],
 function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
+	"use strict";
 
 	module("Desktop navigation", { setup : function () {
 		Opa5.extendConfig({
@@ -59,7 +60,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 			and.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
 			and.theLineItemsHeaderShouldDisplay4Entries().
-			and.theFirstLineItemHasIDLineItemID_1();
+			and.theFirstLineItemHasIDLineItemID1();
 
 	});
 
@@ -158,19 +159,19 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 			and.theListShouldHaveNoSelection().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheAppOnADesktopDevice();
-		
+
 		//Actions
 		When.iWaitUntilTheMasterListIsLoaded();
 		//Assertions
-		
+
 		Then.theObjectNShouldBeSelectedInTheMasterList(1).
 			and.iShouldBeOnTheObjectNPage(1).
 			and.iShouldSeeTheHashForObjectN(1).
 			and.iTeardownMyAppFrame();
 	});
-	
+
 });

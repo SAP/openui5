@@ -3,12 +3,13 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5'
+	"sap/ui/test/Opa5"
 ],
 function (Opa5) {
+	"use strict";
 
 	QUnit.module("Object");
-	
+
 	opaTest("Should see the busy indicator on app view while object view metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
@@ -23,7 +24,7 @@ function (Opa5) {
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Should see the busy indicator on object view after metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
@@ -36,7 +37,7 @@ function (Opa5) {
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheObjectViewsBusyIndicator().
-		    and.theObjectViewsBusyIndicatorDelayIsRestored(). 
+			and.theObjectViewsBusyIndicatorDelayIsRestored().
 			and.iTeardownMyAppFrame();
 	});
 
