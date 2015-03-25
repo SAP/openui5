@@ -23,35 +23,14 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-css");
 		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		}
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-		//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
-		var original = module;
-		module = undefined;
 
 		jQuery.sap.require("sap.ui.thirdparty.signals");
 		jQuery.sap.require("sap.ui.thirdparty.crossroads");
 		jQuery.sap.require("sap.ui.thirdparty.hasher");
 		jQuery.sap.require("sap.ui.core.routing.Router");
-
-		module = original;
-
-		//ie 8 support, since this test uses sap.m controls which use Array.forEach
-		if (!Array.prototype.forEach) {
-			Array.prototype.forEach = function (fn, scope) {
-				'use strict';
-				var i, len;
-				for (i = 0, len = this.length; i < len; ++i) {
-					if (i in this) {
-						fn.call(scope, this[i], i, this);
-					}
-				}
-			};
-		}
 
 		module("initialization");
 

@@ -684,13 +684,15 @@ var factory = function (signals) {
 };
 
 if (typeof define === 'function' && define.amd) {
-    define(['signals'], factory);
-} else if (typeof module !== 'undefined' && module.exports) { //Node
+define(['signals'], factory);
+/* ##### BEGIN: MODIFIED BY SAP
+QUnit does define a global called module. to be able to require signals together with qunit we need to stop the export here since UI5 will not run signals with node
+}  else if (typeof module !== 'undefined' && module.exports){ //node
     module.exports = factory(require('signals'));
+##### END: MODIFIED BY SAP */
 } else {
-    /*jshint sub:true */
-    window['crossroads'] = factory(window['signals']);
+	/*jshint sub:true */
+	window['crossroads'] = factory(window['signals']);
 }
-
 }());
 

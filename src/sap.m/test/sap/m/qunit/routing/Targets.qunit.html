@@ -21,11 +21,6 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-		//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
-		var original = module;
-		module = undefined;
-
-
 		sap.ui.require([
 					"sap/m/routing/Targets",
 					"sap/m/NavContainer",
@@ -36,8 +31,6 @@
 				],
 				function (Targets, NavContainer, Page, Views, integrationTests, Route) {
 					"use strict";
-
-					module = original;
 
 					module("add and execute navigations", {
 						setup: function () {

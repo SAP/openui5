@@ -4,7 +4,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.ui.core.navigation.HashChanger</title>
-		
+
 		<script
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal">
@@ -15,21 +15,13 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-css");
 			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			}
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			sinon.config.useFakeTimers = false;
 
-			//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
-			var original = module;
-			module = undefined;
-
 			jQuery.sap.require("sap.ui.thirdparty.signals");
 			jQuery.sap.require("sap.ui.core.routing.HashChanger");
-
-			module = original;
 
 			test("ShouldInitAndDestroyCorrectly", function () {
 				//Arrange
@@ -228,6 +220,6 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
-		
+
 	</body>
 </html>
