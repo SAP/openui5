@@ -106,7 +106,7 @@ sap.ui.require([
 	[false, true].forEach(function (bTestProperty) {
 		test("descend, bTestProperty=" + bTestProperty, function () {
 			[
-				{type: "string", property: "p", value: {p: "foo"}},
+				{type: "object", property: "p", value: {p: "foo"}},
 				{type: "array", property: 0, value: ["foo"]}
 			].forEach(sinon.test(function (oFixture) {
 				var oStart = {
@@ -120,13 +120,15 @@ sap.ui.require([
 					oResult,
 					oBasics = this.mock(Basics);
 
-				oBasics.expects("expectType").withExactArgs(oStart, "object");
+				oBasics.expects("expectType").withExactArgs(oStart, oFixture.type);
 				if (bTestProperty) {
-					oBasics.expects("expectType").withExactArgs(oEnd, oFixture.type);
+					oBasics.expects("expectType").withExactArgs(oEnd, "string");
+				} else {
+					oBasics.expects("expectType").never();
 				}
 
 				oResult = bTestProperty ?
-					Basics.descend(oStart, oFixture.property, oFixture.type) :
+					Basics.descend(oStart, oFixture.property, "string") :
 					Basics.descend(oStart, oFixture.property);
 				deepEqual(oResult, oEnd, oFixture.type);
 			}));
@@ -149,6 +151,10 @@ sap.ui.require([
 			value: {result: "binding", value: "path"},
 			binding: "{path}",
 			expression: "${path}"
+		}, {
+			value: {result: "binding", value: "{foo'bar}"},
+			binding: "{path:'{foo\\'bar}'}",
+			expression: "${path:'{foo\\'bar}'}"
 		}, {
 			value: {result: "constant", value: "{foo\\bar}"},
 			binding: "\\{foo\\\\bar\\}",
@@ -173,8 +179,6 @@ sap.ui.require([
 			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, true)
 		}, /Trying to embed a composite binding into an expression binding/,
 			"composite to expression");
-		strictEqual(Basics.resultToString({result: "binding", value: "{foo\\bar}"}, false),
-			"{path:'\\{foo\\\\bar\\}'}", "binding with bad chars");
 	});
 
 	//*********************************************************************************************
@@ -187,13 +191,15 @@ sap.ui.require([
 			binding: "type:'sap.ui.model.odata.type.Byte',constraints:{'nullable':false}"
 		}, {
 			value: {type: "Edm.DateTime", constraints: {displayFormat: "DateOnly"}},
-			binding: "type:'sap.ui.model.odata.type.DateTime',constraints:{'displayFormat':'DateOnly'}"
+			binding: "type:'sap.ui.model.odata.type.DateTime'," +
+				"constraints:{'displayFormat':'DateOnly'}"
 		}, {
 			value: {type: "Edm.DateTimeOffset", constraints: {nullable: false}},
 			binding: "type:'sap.ui.model.odata.type.DateTimeOffset',constraints:{'nullable':false}"
 		}, {
 			value: {type: "Edm.Decimal", constraints: {precision: 10, scale: "variable"}},
-			binding: "type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':10,'scale':'variable'}"
+			binding: "type:'sap.ui.model.odata.type.Decimal'," +
+				"constraints:{'precision':10,'scale':'variable'}"
 		}, {
 			value: {type: "Edm.Double", constraints: {nullable: false}},
 			binding: "type:'sap.ui.model.odata.type.Double',constraints:{'nullable':false}"
@@ -223,9 +229,9 @@ sap.ui.require([
 			binding: "type:'sap.ui.model.odata.type.Time'"
 		}].forEach(function (oFixture) {
 			oFixture.value.result = "binding";
-			oFixture.value.value = "foo/bar";
+			oFixture.value.value = "foo/'bar'";
 			strictEqual(Basics.resultToString(oFixture.value, false, true),
-				"{path:'foo/bar'," + oFixture.binding + "}",
+				"{path:'foo/\\'bar\\''," + oFixture.binding + "}",
 				oFixture.value.type);
 		});
 	});
