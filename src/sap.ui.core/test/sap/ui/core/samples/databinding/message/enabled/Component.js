@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 
 
 	// new Component
-	var Component = UIComponent.extend("messages.enabled.Component", {
+	var Component = UIComponent.extend("message.enabled.Component", {
 
 		metadata : {
 			version : "1.0",

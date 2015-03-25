@@ -8,10 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 
 
 	// new Component
-	var Component = UIComponent.extend("messages.Component", {
+	var Component = UIComponent.extend("message.disabled.Component", {
 
 		metadata : {
 			version : "1.0",
+			handleValidation : false,
 			dependencies : {
 				version : "1.8",
 				libs : [ "sap.ui.core" ]
@@ -39,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 			layout: oLayout,
 			formContainers: [
 				new FormContainer({
-					title: "Component: Contact Data - validation undefined",
+					title: "Component: Contact Data - validation disabled",
 					formElements: [
 						new FormElement({
 							label: "Name",
@@ -172,7 +173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
-
+	
 		return oForm;
 	};
 
