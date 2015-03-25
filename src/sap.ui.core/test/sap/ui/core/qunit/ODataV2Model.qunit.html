@@ -138,6 +138,8 @@
 		});
 
 		oModel.attachMetadataLoaded(function(){
+			ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
+			oModel.destroy();
 			oModel2 = initModel(sURI, mOptions, false);
 
 			var bFiredAtMetadata = false;
@@ -151,6 +153,7 @@
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
+				ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
 				if (!bFiredAtMetadata) {
 					ok(true, 'Metadata loaded fired at model only');
 				} else {

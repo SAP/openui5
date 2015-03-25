@@ -222,6 +222,8 @@
 		});
 
 		oModel.attachMetadataLoaded(function(){
+			ok(oModel.getServiceMetadata() != null, "First model: Service metadata is available");
+			oModel.destroy();
 			oModel2 = new sap.ui.model.odata.ODataModel(sURI, mOptions);
 
 			var bFiredAtMetadata = false;
@@ -236,6 +238,7 @@
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
+				ok(oModel2.getServiceMetadata() != null, "Second model: Service metadata is available");
 				if (!bFiredAtMetadata) {
 					metadataDfd.resolve();
 				} else {
@@ -1224,7 +1227,6 @@
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
 		
 	});
-	
 	
 	test("test ODataModel destroy cancel load data", function(){
 		var oModel = initModel(sURI, true, "Categories");
