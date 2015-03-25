@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 		 * <li> Function call </li>
 		 * <li> Embedded binding to refer to model contents, e.g. ${myModel>/Address/city} </li>
 		 * <li> Global functions and objects: encodeURIComponent, Math, RegExp </li>
-		 * <li> Property Access via [, e.g. ['foo', 'bar'][0] </li>
+		 * <li> Property Access, e.g. ['foo', 'bar'][0] or Math['PI']</li>
 		 * <li> Array literal, e.g. ['foo', 'bar'] </li>
 		 * </ul>
 		 *
