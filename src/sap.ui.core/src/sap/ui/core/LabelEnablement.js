@@ -98,6 +98,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @protected
 	 * @alias sap.ui.core.LabelEnablement
 	 * @namespace
+	 * @since 1.28.0
 	 */
 	var LabelEnablement = {};
 
@@ -133,7 +134,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Returns an array of ids of the labels referencing the given element
 	 * 
-	 * @param {sap.ui.core.Element} oElement the element whose accessibility state should be rendered
+	 * @param {sap.ui.core.Element} oElement The element whose referencing labels should be returned
 	 * @returns {string[]} an array of ids of the labels referencing the given element
 	 * @public
 	 */
@@ -143,6 +144,37 @@ sap.ui.define(['jquery.sap.global'],
 			return [];
 		}
 		return CONTROL_TO_LABELS_MAPPING[sId] || [];
+	};
+	
+	/**
+	 * Returns <code>true</code> when the given control is required (property 'required') or one of its referencing labels, <code>false</code> otherwise.
+	 * 
+	 * @param {sap.ui.core.Element} oElement The element which should be checked for its required state
+	 * @returns {boolean} <code>true</code> when the given control is required (property 'required') or one of its referencing labels, <code>false</code> otherwise
+	 * @public
+	 * @since 1.29.0
+	 */
+	LabelEnablement.isRequired = function(oElement){
+		
+		function checkRequired(oElem) {
+			return !!(oElem && oElem.getMetadata().getProperty("required") && oElem.getRequired());
+		}
+		
+		if (checkRequired(oElement)) {
+			return true;
+		}
+		
+		var aLabelIds = LabelEnablement.getReferencingLabels(oElement),
+			oLabel;
+		
+		for (var i = 0; i < aLabelIds.length; i++) {
+			oLabel = sap.ui.getCore().byId(aLabelIds[i]);
+			if (checkRequired(oLabel)) {
+				return true;
+			}
+		}
+		
+		return false;
 	};
 	
 	
@@ -216,6 +248,17 @@ sap.ui.define(['jquery.sap.global'],
 		// Returns id of the labelled control. The labelFor association is preferred before AlternativeLabelFor.
 		oControl.getLabelForRendering = function() {
 			return this.getLabelFor() || this._sAlternativeId;
+		};
+		
+		if (!oControl.getMetadata().getProperty("required")) {
+			return;
+		}
+		
+		oControl.__orig_setRequired = oControl.setRequired;
+		oControl.setRequired = function(sId) {
+			var res = this.__orig_setRequired.apply(this, arguments);
+			toControl(this.__sLabeledControl, true); //invalidate the related control
+			return res;
 		};
 		
 	};

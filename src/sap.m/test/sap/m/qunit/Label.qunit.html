@@ -186,48 +186,6 @@
 			oLabel.destroy();
 		});
 
-		test("Handling required property and aria support", function() {
-			var oLabel = new sap.m.Label({text: "Alabala"});
-			oLabel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-required"), undefined, "Aria attribute is not defined as required is not set");
-
-			oLabel.setRequired(true);
-			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-required"), "true", "Aria attribute is true as required is set");
-
-			// test removal of aria attribute
-			oLabel.setRequired(false);
-			sap.ui.getCore().applyChanges();
-			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-required"), undefined, "Aria attribute is removed as required is set to false");
-
-			oLabel.destroy();
-		});
-		test("Handling labelFor association and aria support", function() {
-			var INPUT_ID = "input1";
-			var input1 = new sap.m.Input({ 	id: INPUT_ID });
-			var oLabel = new sap.m.Label({text: "Alabala", labelFor: INPUT_ID});
-
-			oLabel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-labelledby"), INPUT_ID, "Aria labelledby attribute is set to the labelFor association");
-
-			oLabel.destroy();
-			input1.destroy();
-		});
-		test("Handling missing labelFor association and aria support", function() {
-			var oLabel = new sap.m.Label({text: "Alabala"});
-
-			oLabel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			strictEqual(jQuery(oLabel.getFocusDomRef()).attr("aria-labelledby"), "null", "Aria labelledby attribute is not set as labelFor association is not set too");
-
-			oLabel.destroy();
-		});
-
 		</script>
 
 	</head>

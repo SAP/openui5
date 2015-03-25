@@ -28,6 +28,9 @@
 				interfaces : [
 					"sap.ui.core.Label"
 				],
+				properties : {
+					required : {type : "boolean", defaultValue : false}
+				},
 				associations : {
 					labelFor : {type : "sap.ui.core.Control", multiple : false}
 				}
@@ -46,6 +49,9 @@
 				interfaces : [
 					"sap.ui.core.Label"
 				],
+				properties : {
+					required : {type : "boolean", defaultValue : false}
+				},
 				associations : {
 					labelFor : {type : "sap.ui.core.Control", multiple : false}
 				}
@@ -65,6 +71,9 @@
 			metadata : {
 				associations : {
 					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+				},
+				properties : {
+					required : {type : "boolean", defaultValue : false}
 				}
 			},
 			
@@ -184,6 +193,63 @@
 			ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
 			strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
 			strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+		});
+		
+		module("Required Propagation", {
+			setup : function () {
+				this.oLabel = new TestLabel("testLabel");
+				this.oControl = new TestControl("testControl");
+				this.oLabel.placeAt("content");
+				this.oControl.placeAt("content");
+				this.oLabel.setLabelFor(this.oControl);
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oLabel.destroy();
+				this.oLabel = null;
+				this.oControl.destroy();
+				this.oControl = null;
+			}
+		});
+		
+		test("LabelEnablement.isRequired", function() {
+			ok(!sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control not required (own property and label property not set)");
+			
+			this.oControl.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			ok(sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control required (explicitly via own property)");
+			
+			this.oControl.setRequired(false);
+			sap.ui.getCore().applyChanges();
+			ok(!sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control not required (own property and label property not set)");
+			
+			this.oLabel.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			ok(sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control required (implicitly via label property)");
+			
+			this.oLabel.setLabelFor(null);
+			sap.ui.getCore().applyChanges();
+			ok(!sap.ui.core.LabelEnablement.isRequired(this.oControl), "Control not required (own property not set and no label assigned)");
+		});
+		
+		test("aria-required", function() {
+			ok(!this.oControl.$().attr("aria-required"), "Control not required (own property and label property not set)");
+			
+			this.oControl.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.oControl.$().attr("aria-required"), "true", "Control required (explicitly via own property)");
+			
+			this.oControl.setRequired(false);
+			sap.ui.getCore().applyChanges();
+			ok(!this.oControl.$().attr("aria-required"), "Control not required (own property and label property not set)");
+			
+			this.oLabel.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.oControl.$().attr("aria-required"), "true", "Control required (implicitly via label property)");
+			
+			this.oLabel.setLabelFor(null);
+			sap.ui.getCore().applyChanges();
+			ok(!this.oControl.$().attr("aria-required"), "Control not required (own property not set and no label assigned)");
 		});
 
 		</script>

@@ -1073,9 +1073,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 * <code>required===true</code> => <code>aria-required="true"</code>
 	 * <code>selected===true</code> => <code>aria-selected="true"</code>
 	 * <code>checked===true</code> => <code>aria-checked="true"</code>
+	 * 
+	 * In case of the required attribute also the Label controls which referencing the given element in their 'for' relation
+	 * are taken into account to compute the <code>aria-required</code> attribute.
 	 *
 	 * Additionally the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
 	 * the id lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
+	 * 
+	 * Label controls which referencing the given element in their 'for' relation are automatically added to the
+	 * <code>aria-labelledby</code> attributes.
 	 *
 	 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
 	 * have to check whether it fullfills their requirements. In case of problems (for example the RadioButton has a
@@ -1146,7 +1152,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			addACCForProp("editable", "readonly", false);
 			addACCForProp("enabled", "disabled", false);
 			addACCForProp("visible", "hidden", false);
-			addACCForProp("required", "required", true);
+			if (sap.ui.core.LabelEnablement.isRequired(oElement)) {
+				mAriaProps["required"] = "true";
+			}
 			addACCForProp("selected", "selected", true);
 			addACCForProp("checked", "checked", true);
 			addACCForAssoc("ariaDescribedBy", "describedby");
