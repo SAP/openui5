@@ -998,7 +998,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeSelections(true);
 			this._hideBusyIndicator();
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
-			this._oItemNavigation && this._oItemNavigation.destroy();
+			
+			/* reset focused position */
+			if (this._oItemNavigation) {
+				this._oItemNavigation.iFocusedIndex = -1;
+			}
 		}
 	};
 	
@@ -1181,7 +1185,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeEventDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
-			this._oLastNavItem = null;
 		}
 	};
 	
