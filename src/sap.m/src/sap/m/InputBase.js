@@ -719,10 +719,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._popup) {
 			this._popup.close();
 		}
-		
-		//remove aria property "aria-haspopup"
+
 		var $Input = jQuery(this.getFocusDomRef());
-		$Input.removeAttr("aria-haspopup");
 		$Input.removeAriaDescribedBy(this.getId() + "-message");
 	};
 
@@ -811,9 +809,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else {
 				this._popup._$().addClass("sapMInputBaseMessageTop");
 			}
-			
-			// add aria property "aria-haspopup"
-			$Input.attr("aria-haspopup", "true");
+
 			$Input.addAriaDescribedBy(sMessageId);
 		}
 	};
