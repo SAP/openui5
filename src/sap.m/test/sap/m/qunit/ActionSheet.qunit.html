@@ -261,7 +261,7 @@
 					var spyOfRepositionProxy = sinon.spy(oAC._parent, "_fnOrientationChange");
 
 					//simulates an orientation change
-					oAC._parent.$().width(oAC._parent.$().width()-10);
+					oAC._parent._onResize();
 
 					setTimeout(function(){
 						equal(spyOfReposition.callCount, 0, "_reposition method shouldn't be called");
