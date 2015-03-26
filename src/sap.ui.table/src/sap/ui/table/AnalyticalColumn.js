@@ -134,7 +134,17 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 				if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
 					var oBinding = oParent.getBinding("rows");
 					if (oBinding) {
-						this._oBindingLabel = sap.ui.table.TableHelper.createLabel({text: oBinding.getPropertyLabel(this.getLeadingProperty())});
+						this._oBindingLabel = sap.ui.table.TableHelper.createLabel();
+						var oModel = oBinding.getModel();
+						// if the metadata of the underlying odatamodel is not yet loaded -> the setting of the text of the label must be delayed
+						if (oModel.oMetadata && oModel.oMetadata.isLoaded()) {
+							this._oBindingLabel.setText(oBinding.getPropertyLabel(this.getLeadingProperty()));
+						} else {
+							var that = this;
+							oModel.attachMetadataLoaded(function () {
+								that._oBindingLabel.setText(oBinding.getPropertyLabel(that.getLeadingProperty()));
+							});
+						}
 					}
 				}
 			}
