@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.DragElementWrapper.
 sap.ui.define([
-	'sap/ui/coe/Control'
+	'sap/ui/core/Control'
 ],
 function(Control) {
 	"use strict";
