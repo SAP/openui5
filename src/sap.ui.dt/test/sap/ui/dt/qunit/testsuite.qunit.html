@@ -11,9 +11,13 @@
   function suite() {
     var suite = new parent.jsUnitTestSuite();
     var contextPath = "/" + window.location.pathname.split("/")[1];
-    
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/GestureRecognizer.qunit.html");
+
+    var isSupported = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;    
+    if(isSupported){
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/GestureRecognizer.qunit.html");
+    }
+
     return suite;
   }
 
