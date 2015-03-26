@@ -34,7 +34,7 @@ sap.ui.define([
 
 			// set the internationalization model
 			this.setModel(new ResourceModel({
-				bundleName : mConfig.messageBundle
+				bundleName : mConfig.i18nBundle
 			}), "i18n");
 
 
