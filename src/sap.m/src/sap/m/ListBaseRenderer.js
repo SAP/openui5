@@ -95,6 +95,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			oInfoTBar.addStyleClass("sapMListInfoTBar");
 			rm.renderControl(oInfoTBar);
 		}
+		
+		// determine items rendering 
+		var aItems = oControl.getItems();
+		var bRenderItems = oControl.shouldRenderItems() && aItems.length;
 	
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
@@ -104,8 +108,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	
 		// list attributes
 		rm.addClass("sapMListUl");
-		rm.writeAttribute("tabindex", "0");
 		rm.writeAttribute("id", oControl.getId("listUl"));
+		if (bRenderItems || oControl.getShowNoData()) {
+			rm.writeAttribute("tabindex", "0");
+		}
 	
 		// separators
 		rm.addClass("sapMListShowSeparators" + oControl.getShowSeparators());
@@ -125,16 +131,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		this.renderListHeadAttributes(rm, oControl);
 	
 		// render child controls
-		var aItems = oControl.getItems();
-		var bRenderItems = oControl.shouldRenderItems();
-	
-		//TODO: There should be a better way to set these private variables
 		bRenderItems && aItems.forEach(function(oItem) {
 			rm.renderControl(oItem);
 		});
 	
 		// render no-data if needed
-		if ((!bRenderItems || !aItems.length) && oControl.getShowNoData()) {
+		if (!bRenderItems && oControl.getShowNoData()) {
 			// hook method to render no data
 			this.renderNoData(rm, oControl);
 		}
@@ -143,8 +145,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		this.renderListEndAttributes(rm, oControl);
 	
 		// dummy after focusable area
-		rm.write("<div tabindex='0'");
+		rm.write("<div");
 		rm.writeAttribute("id", oControl.getId("after"));
+		if (bRenderItems || oControl.getShowNoData()) {
+			rm.writeAttribute("tabindex", "0");
+		}
 		rm.write("></div>");
 		
 		// render growing delegate if available
