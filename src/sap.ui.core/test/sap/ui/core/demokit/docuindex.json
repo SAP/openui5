@@ -88,6 +88,15 @@
 				]
 			},
 			{
+				"id" : "sap.ui.core.routing.Router",
+				"name" : "Router",
+				"category" : "Routing",
+				"since" : "1.16",
+				"samples" : [
+					"sap.ui.core.sample.RoutingFullscreen"
+				]
+			},
+			{
 			  "id" : "sap.ui.model.type.Date",
 			  "name" : "Date Type",
 			  "category" : "Data Binding",
@@ -253,6 +262,11 @@
 				"id" : "sap.ui.core.sample.TargetsStandalone",
 				"name" : "Targets without a Router",
 				"description" : "If you do not need bookmarks, a router is too complicated you can use Targets to lazy load your views and navigate through your application."
+			},
+			{
+				"id" : "sap.ui.core.sample.RoutingFullscreen",
+				"name" : "Routing between Fullscreen pages a simple sample",
+				"description" : "A mini app with 2 pages. Both are bookmarkable."
 			}
 		]
 	}
