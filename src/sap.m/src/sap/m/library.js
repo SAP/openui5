@@ -1193,10 +1193,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Vertical : "Vertical",
 
 		/**
+		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
+		 * top side if the space is greater than the Popover's height.
+		 * @public
+		 */
+		VerticalPreferedTop : "VerticalPreferedTop",
+
+		/**
+		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
+		 * bottom side if the space is greater than the Popover's height.
+		 * @public
+		 */
+		VerticalPreferedBottom : "VerticalPreferedBottom",
+
+		/**
 		 * Popover will be placed at the right or left side of the reference control.
 		 * @public
 		 */
 		Horizontal : "Horizontal",
+
+		/**
+		 * Popover will be placed at the right or left side of the reference control but will try to position on the
+		 * right side if the space is greater than the Popover's width.
+		 * @public
+		 */
+		HorizontalPreferedRight : "HorizontalPreferedRight",
+
+		/**
+		 * Popover will be placed at the right or left side of the reference control but will try to position on the
+		 * left side if the space is greater than the Popover's width.
+		 * @public
+		 */
+		HorizontalPreferedLeft : "HorizontalPreferedLeft",
 
 		/**
 		 * Popover will be placed automatically at the reference control.
