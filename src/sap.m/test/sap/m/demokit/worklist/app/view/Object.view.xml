@@ -1,25 +1,21 @@
 <mvc:View
 	controllerName="sap.ui.demo.worklist.controller.Object"
 	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
-	<Page
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:FullscreenPage
 		id="page"
 		navButtonPress="onNavBack"
 		showNavButton="true"
 		title="{i18n>objectTitle}"
 		busy="{view>/busy}"
 		busyIndicatorDelay="{view>/delay}">
-		<content>
 			<ObjectHeader
 				id="objectHeader"
 				title="{Name}"
 				number="{UnitNumber}"
 				numberUnit="{UnitOfMeasure}">
 			</ObjectHeader>
-		</content>
-		<footer>
-			<Toolbar>
-			</Toolbar>
-		</footer>
-	</Page>
+	</semantic:FullscreenPage>
 </mvc:View>

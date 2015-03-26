@@ -2,11 +2,12 @@
 	controllerName="sap.ui.demo.worklist.controller.Worklist"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
-	<Page
+	xmlns="sap.m"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:FullscreenPage
 		id="page"
 		title="{i18n>worklistViewTitle}">
-		<content>
 			<Table
 				id="table"
 				width="auto"
@@ -53,10 +54,5 @@
 					</ColumnListItem>
 				</items>
 			</Table>
-		</content>
-		<footer>
-			<Toolbar id="footerToolbar">
-			</Toolbar>
-		</footer>
-	</Page>
+	</semantic:FullscreenPage>
 </mvc:View>
