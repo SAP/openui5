@@ -158,7 +158,7 @@ sap.ui.define([
 
 				if (rBadChars.test(vValue) || bAddType) {
 					sResult = "{path:" + Basics.toJSON(vValue);
-					if (bAddType) {
+					if (bAddType && oResult.type) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
 						if (oResult.constraints && !jQuery.isEmptyObject(oResult.constraints)) {
 							sResult += ",constraints:" + Basics.toJSON(oResult.constraints);

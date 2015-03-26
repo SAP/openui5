@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
-	'sap/ui/model/odata/_AnnotationHelperBasics', 'sap/ui/model/odata/_AnnotationHelperExpression'
-], function(Basics, Expression) {
+	'sap/ui/base/BindingParser', 'sap/ui/model/odata/_AnnotationHelperBasics',
+	'sap/ui/model/odata/_AnnotationHelperExpression',
+], function(BindingParser, Basics, Expression) {
 	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
 	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
 	*/
@@ -576,5 +577,54 @@ sap.ui.require([
 				"fillUriTemplate: Expected Edm.String but instead saw Edm.Foo");
 
 		Expression.fillUriTemplate(oInterface, oPathValue);
+	});
+
+	//*********************************************************************************************
+	test("getExpression: success", function () {
+		var oInterface = {
+				getPath: function () { return "/my/path"; }
+			},
+			oRawValue = {},
+			oPathValue = {
+				path: "/my/path",
+				value: oRawValue
+			},
+			bWithPath = {},
+			oResult = {},
+			sResult = {};
+
+		this.mock(Expression).expects("expression")
+			.withExactArgs(oInterface, oPathValue, false).returns(oResult);
+		this.mock(Basics).expects("resultToString")
+			.withExactArgs(oResult, false, bWithPath).returns(sResult);
+
+		strictEqual(Expression.getExpression(oInterface, oRawValue, bWithPath), sResult, "result");
+	});
+
+	//*********************************************************************************************
+	test("getExpression: error", function () {
+		var oInterface = {
+				getPath: function () { return "/my/path"; }
+			},
+			oRawValue = {foo: "bar", test: function () {}};
+
+		this.mock(Expression).expects("expression").throws(new SyntaxError());
+
+		strictEqual(Expression.getExpression(oInterface, oRawValue, false),
+			"Unsupported: " + BindingParser.complexParser.escape(Basics.toErrorString(oRawValue)),
+			"result");
+	});
+
+	//*********************************************************************************************
+	test("getExpression: failure", function () {
+		var oInterface = {
+				getPath: function () { return "/my/path"; }
+			};
+
+		this.mock(Expression).expects("expression").throws(new Error("deliberate failure"));
+
+		throws(function () {
+			Expression.getExpression(oInterface, {}, false);
+		}, /deliberate failure/, "error falls through");
 	});
 });

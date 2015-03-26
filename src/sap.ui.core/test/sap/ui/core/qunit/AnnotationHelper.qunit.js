@@ -1,17 +1,16 @@
 /*!
  * ${copyright}
  */
-(function () {
+sap.ui.require([
+	"sap/ui/base/BindingParser", "sap/ui/model/odata/AnnotationHelper",
+	"sap/ui/model/odata/_AnnotationHelperBasics", "sap/ui/model/odata/_AnnotationHelperExpression"
+], function(BindingParser, AnnotationHelper, Basics, Expression) {
 	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
 	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.base.BindingParser");
-	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper"); //TODO get rid of this?!
-
-	var AnnotationHelper = sap.ui.model.odata.AnnotationHelper, // shorten lines
-		oCIRCULAR = {},
+	var oCIRCULAR = {},
 		oBoolean = {
 			name : "sap.ui.model.odata.type.Boolean",
 			constraints : {"nullable" : false}
@@ -85,6 +84,7 @@
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner">\
 		<Annotation Term="com.sap.vocabularies.UI.v1.Identification">\
 			<Collection>\
+				<!-- standalone fillUriTemplate -->\
 				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
 					<PropertyValue Property="Url">\
 						<UrlRef>\
@@ -95,6 +95,32 @@
 								</LabeledElement>\
 							</Apply>\
 						</UrlRef>\
+					</PropertyValue>\
+				</Record>\
+				<!-- concat embeds concat & uriEncode -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<Apply Function="odata.concat">\
+							<Path>CompanyName</Path>\
+							<Apply Function="odata.concat">\
+								<String> </String>\
+							</Apply>\
+							<Apply Function="odata.uriEncode">\
+								<Path>LegalForm</Path>\
+							</Apply>\
+						</Apply>\
+					</PropertyValue>\
+				</Record>\
+				<!-- uriEncode embeds concat -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<Apply Function="odata.uriEncode">\
+							<Apply Function="odata.concat">\
+								<Path>CompanyName</Path>\
+								<String> </String>\
+								<Path>LegalForm</Path>\
+							</Apply>\
+						</Apply>\
 					</PropertyValue>\
 				</Record>\
 			</Collection>\
@@ -223,7 +249,7 @@
 		sPath2SalesOrder = "/dataServices/schema/0/entityType/2",
 		sPath2SalesOrderLineItem = "/dataServices/schema/0/entityType/3",
 		sPath2Contact = "/dataServices/schema/0/entityType/4",
-		fnEscape = sap.ui.base.BindingParser.complexParser.escape,
+		fnEscape = BindingParser.complexParser.escape,
 		fnGetNavigationPath = AnnotationHelper.getNavigationPath,
 		fnIsMultiple = AnnotationHelper.isMultiple,
 		fnSimplePath = AnnotationHelper.simplePath,
@@ -279,7 +305,7 @@
 	 */
 	function parse(sBinding) {
 		// @see applySettings: complex parser returns undefined if there is nothing to unescape
-		return sap.ui.base.BindingParser.complexParser(sBinding, undefined, true) || sBinding;
+		return BindingParser.complexParser(sBinding, undefined, true) || sBinding;
 	}
 
 	/**
@@ -295,40 +321,6 @@
 	 */
 	function formatAndParse(vValue, oCurrentContext, fnMethod) {
 		return parse(format(vValue, oCurrentContext, fnMethod));
-	}
-
-	/**
-	 * Formats the value using the AnnotationHelper. Makes sure no warning is raised. Provides
-	 * access to the given current context.
-	 *
-	 * @param {any} vValue
-	 * @param {sap.ui.model.Context} [oCurrentContext]
-	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
-	 *   the custom formatter function to call
-	 * @returns {object|string}
-	 *   a binding info or the formatted, unescaped value
-	 */
-	function formatNoWarning(vValue, oCurrentContext, fnMethod) {
-		return sinon.test(function() {
-			this.mock(jQuery.sap.log).expects("warning").never();
-
-			return format(vValue, oCurrentContext, fnMethod);
-		}).apply({});
-	}
-
-	/**
-	 * Formats the value using the AnnotationHelper and then parses the result via the complex
-	 * parser. Makes sure no warning is raised. Provides access to the given current context.
-	 *
-	 * @param {any} vValue
-	 * @param {sap.ui.model.Context} [oCurrentContext]
-	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
-	 *   the custom formatter function to call
-	 * @returns {object|string}
-	 *   a binding info or the formatted, unescaped value
-	 */
-	function formatAndParseNoWarning(vValue, oCurrentContext, fnMethod) {
-		return parse(formatNoWarning(vValue, oCurrentContext, fnMethod));
 	}
 
 	/**
@@ -348,80 +340,10 @@
 				models: oModel,
 				bindingContexts: oModel.createBindingContext("/")
 			}),
-			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
+			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
 		oControl.bindProperty("text", oSingleBindingInfo);
 		strictEqual(oControl.getText(), vExpected);
-	}
-
-	/**
-	 * Tests proper console warnings on illegal values for a type.
-	 *
-	 * @param {any[]} aValues
-	 *   Array of illegal values
-	 * @param {string} sTitle
-	 *   The test title
-	 * @param {string} sType
-	 *   The name of the Edm type
-	 * @param {boolean} bAsObject
-	 *   Determines if the value is passed in object format
-	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
-	 *   the custom formatter function to call
-	 */
-	function testIllegalValues(aValues, sTitle, sType, bAsObject, fnMethod) {
-		jQuery.each(aValues, function (i, vValue) {
-			test(sTitle + " (invalid: " + JSON.stringify(vValue) + ")", function () {
-				var oLogMock = this.mock(jQuery.sap.log),
-					vRawValue = vValue;
-
-				if (bAsObject) {
-					vRawValue = {};
-					vRawValue[sType] = vValue;
-				}
-				oLogMock.expects("warning").once().withExactArgs(
-					"Illegal value for " + sType + ": " + vValue,
-					null, "sap.ui.model.odata.AnnotationHelper");
-
-				strictEqual(formatAndParse(vRawValue, fnMethod), String(vValue));
-			});
-		});
-	}
-
-	/**
-	 * Test unsupported cases.
-	 *
-	 * @param {function] [fnMethod=sap.ui.model.odata.AnnotationHelper.format]
-	 *   the custom formatter function to call
-	 */
-	function unsupported(fnMethod) {
-		jQuery.each([undefined, false, true, 0, 1, NaN, Function, oCIRCULAR],
-			function (i, vRawValue) {
-				test("Make sure that output is always a string: " + vRawValue,
-					function () {
-						strictEqual(formatAndParse(vRawValue, fnMethod), String(vRawValue));
-					}
-				);
-			}
-		);
-
-		jQuery.each([
-			{i: null, o: null},
-			{i: {}, o: "{}"},
-			{i: {foo: 'bar'}, o: "{'foo':'bar'}"},
-			{i: {foo: "b'ar"}, o: "{'foo':'b\\'ar'}"},
-			{i: {foo: 'b"ar'}, o: "{'foo':'b\"ar'}"},
-			{i: {foo: 'b\\ar'}, o: "{'foo':'b\\\\ar'}"},
-			{i: {foo: 'b\\"ar'}, o: "{'foo':'b\\\\\"ar'}"},
-			{i: {foo: 'b\tar'}, o: "{'foo':'b\\tar'}"}
-		], function (i, oFixture) {
-				test("Stringify invalid input where possible: " + JSON.stringify(oFixture.i),
-					function () {
-						strictEqual(formatAndParse(oFixture.i, fnMethod),
-							"Unsupported: " + oFixture.o);
-					}
-				);
-			}
-		);
 	}
 
 	/**
@@ -515,7 +437,8 @@
 	}
 
 	/**
-	 * Runs the given code under test with an <code>ODataMetaModel</code>.
+	 * Runs the given code under test with an <code>ODataMetaModel</code> containing
+	 * <code>oTestData</code>.
 	 *
 	 * @param {function} fnCodeUnderTest
 	 */
@@ -532,7 +455,16 @@
 	module("sap.ui.model.odata.AnnotationHelper.format");
 
 	//*********************************************************************************************
-	unsupported();
+	test("forward to getExpression", function () {
+		var oInterface = {},
+			oRawValue = {},
+			sResult = {};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs(oInterface, oRawValue, true).returns(sResult);
+
+		strictEqual(AnnotationHelper.format(oInterface, oRawValue), sResult, "result");
+	});
 
 	//*********************************************************************************************
 	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
@@ -546,13 +478,10 @@
 				// evil, test code only: write into ODataMetaModel
 				oRawValue.String = sString;
 
-				strictEqual(formatAndParseNoWarning(oRawValue, oCurrentContext), sString);
+				strictEqual(formatAndParse(oRawValue, oCurrentContext), sString);
 			});
 		});
 	});
-
-	//*********************************************************************************************
-	testIllegalValues(aNonStrings, "14.4.11 Expression edm:String", "String", true);
 
 	//*********************************************************************************************
 	test("14.4.11 Expression edm:String: references", function () {
@@ -571,7 +500,7 @@
 
 			oCurrentContext.getSetting = getSetting;
 
-			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
+			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
 			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
 
@@ -589,7 +518,7 @@
 			oRawValue = oMetaModel.getProperty(sMetaPath);
 			oCurrentContext.getSetting = getSetting;
 
-			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
+			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
 			deepEqual(oSingleBindingInfo, {path : "/##" + sMetaPath + "/String"});
 		});
@@ -606,36 +535,32 @@
 				sMetaPath = "/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getProperty(sMetaPath),
-				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentContext);
+				oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
 			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			strictEqual(oSingleBindingInfo.path, sPath);
 			strictEqual(oSingleBindingInfo.type, undefined);
 		});
 	});
-
-	//*********************************************************************************************
-	testIllegalValues(aNonStrings, "14.5.12 Expression edm:Path", "Path", true);
-
 	//*********************************************************************************************
 	jQuery.each([
-			oBoolean,
-			oByte,
-			oDateTime,
-			oDateTimeOffset,
-			oDecimal,
-			oDouble,
-			oFloat,
-			oGuid,
-			oInt16,
-			oInt32,
-			oInt64,
-			oSByte,
-			oSingle,
-			oString10,
-			oString80,
-			oTime
-		], function(i, oType) {
+		oBoolean,
+		oByte,
+		oDateTime,
+		oDateTimeOffset,
+		oDecimal,
+		oDouble,
+		oFloat,
+		oGuid,
+		oInt16,
+		oInt32,
+		oInt64,
+		oSByte,
+		oSingle,
+		oString10,
+		oString80,
+		oTime
+	], function(i, oType) {
 		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i + "/Value";
 
 		test("14.5.12 Expression edm:Path w/ type, path = " + sPath + ", type = " + oType.name,
@@ -646,7 +571,7 @@
 						sBinding,
 						oSingleBindingInfo;
 
-					sBinding = formatNoWarning(oRawValue, oCurrentContext);
+					sBinding = format(oRawValue, oCurrentContext);
 
 					ok(!/constraints\s*:\s*{}/.test(sBinding), "No empty constraints in binding");
 
@@ -686,10 +611,15 @@
 		{Apply : {Name : "odata.uriEncode", Parameters : []}},
 		{Apply : {Name : "odata.uriEncode", Parameters : [null]}}
 	], function (i, oApply) {
-		var sError = "Unsupported: " + JSON.stringify(oApply).replace(/"/g, "'");
+		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
 		test("14.5.3 Expression edm:Apply: " + sError, function () {
-			strictEqual(formatAndParseNoWarning(oApply), sError);
+			withMetaModel(function (oMetaModel) {
+				var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+					oCurrentContext = oMetaModel.getContext(sPath);
+
+				strictEqual(formatAndParse(oApply, oCurrentContext), sError);
+			});
 		});
 	});
 
@@ -712,25 +642,39 @@
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
-		var oParameter = {Type: "Int16", Value: 42};
+		withMetaModel(function (oMetaModel) {
+			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+				oCurrentContext = oMetaModel.getContext(sPath),
+				oParameter = {Type: "Int16", Value: 42},
+				oRawValue = {
+					Apply: {
+						Name: "odata.concat",
+						// Note: 1st value needs proper escaping!
+						// Due to changed error handling this is not tested anymore here
+						Parameters: [{Type: "String", Value : "{foo}"}, oParameter]
+					}
+				};
 
-		strictEqual(formatAndParseNoWarning({
-			Apply: {
-				Name: "odata.concat",
-				// Note: 1st value needs proper escaping!
-				Parameters: [{Type: "String", Value : "{foo}"}, oParameter]
-			}
-		}), "{foo}[Unsupported: " + JSON.stringify(oParameter).replace(/"/g, "'") + "]");
+			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+				"Unsupported: " + Basics.toErrorString(oRawValue));
+		});
 	});
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: null parameter", function () {
-		strictEqual(formatAndParseNoWarning({
-			Apply: {
-				Name: "odata.concat",
-				Parameters: [{Type: "String", Value : "*foo*"}, null]
-			}
-		}), "*foo*[Unsupported: null]");
+		withMetaModel(function (oMetaModel) {
+			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
+				oCurrentContext = oMetaModel.getContext(sPath),
+				oRawValue = {
+					Apply: {
+						Name: "odata.concat",
+						Parameters: [{Type: "String", Value : "*foo*"}, null]
+					}
+				};
+
+			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+				"Unsupported: " + Basics.toErrorString(oRawValue));
+		});
 	});
 
 
@@ -782,13 +726,8 @@
 			// evil, test code only: write into ODataMetaModel
 			oCurrentContext.getObject("").Apply = oRawValue.Apply;
 
-			testBinding(oRawValue, oCurrentContext, "http://www.foo.com/\"/1234.56,,"
-				+ encodeURIComponent("Unsupported: "
-				+ JSON.stringify(oUnsupported).replace(/"/g, "'")).replace(/'/g, "%27")
-				+ ",Unsupported%3A%20null,%7B%27%5C%27%7D,bar%3Fbaz", {
-				_Decimal: 1234.56,
-				_String: "bar?baz"
-			});
+			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+				"Unsupported: " + Basics.toErrorString(oRawValue));
 		});
 	});
 
@@ -810,21 +749,29 @@
 	//*********************************************************************************************
 	jQuery.each([
 		{type: "String", value: "foo\\bar", result: "'foo\\bar'"},
-		{type: "Unsupported", value: "foo\\bar", result: "'[Unsupported: "
-			+ "{''Type'':''Unsupported'',''Value'':''foo\\\\bar''}]'"}
+		{type: "Unsupported", value: "foo\\bar", error: true}
 	], function (iUnused, oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
-			var oRawValue = {
-					Apply: {
-						Name: "odata.uriEncode",
-						Parameters: [{
-							Type: oFixture.type,
-							Value: oFixture.value
-						}]
-					}
-				};
+			withMetaModel(function (oMetaModel) {
+				var oExpectedResult,
+					sMetaPath = sPath2BusinessPartner
+						+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
+					oCurrentContext = oMetaModel.getContext(sMetaPath),
+					oRawValue = {
+						Apply: {
+							Name: "odata.uriEncode",
+							Parameters: [{
+								Type: oFixture.type,
+								Value: oFixture.value
+							}]
+						}
+					};
 
-			strictEqual(formatAndParseNoWarning(oRawValue, undefined), oFixture.result);
+				oExpectedResult = oFixture.error
+					? "Unsupported: " + Basics.toErrorString(oRawValue)
+					: oFixture.result;
+				strictEqual(formatAndParse(oRawValue, oCurrentContext), oExpectedResult);
+			});
 		});
 	});
 
@@ -847,7 +794,7 @@
 	});
 
 	//*********************************************************************************************
-	test("14.5.3 Nested apply (odata.fillUriTemplate & uriEncode)", function () {
+	test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
 		withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/UrlRef",
@@ -867,31 +814,75 @@
 
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
-		strictEqual(formatAndParseNoWarning({
-			Apply : {
-				Name : "odata.fillUriTemplate",
-				Parameters : [{
-					Type: "String",
-					Value: "http://foo.bar/{x}"
-				}, {
-					Name: "x",
-					Value: {
-						Apply: {Name: "odata.uriEncode"}
+		withMetaModel(function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
+					+ "/Url/UrlRef",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = {
+					Apply : {
+						Name : "odata.fillUriTemplate",
+						Parameters : [{
+							Type: "String",
+							Value: "http://foo.bar/{x}"
+						}, {
+							Name: "x",
+							Value: {
+								Apply: {Name: "odata.uriEncode"}
+							}
+						}]
 					}
-				}]
-			}
-		}), "http://foo.bar/Unsupported%3A%20%7B%27Apply%27%3A%7B%"
-				+ "27Name%27%3A%27odata.uriEncode%27%7D%7D");
+				};
+
+			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+				"Unsupported: " + Basics.toErrorString(oRawValue));
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3 Nested apply (concat embeds concat & uriEncode)", function () {
+		// This test is important to show that a nested concat must be expression
+		withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/1/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			testBinding(oRawValue, oCurrentContext, "SAP 'SE'", {
+				CompanyName: "SAP",
+				LegalForm: "SE",
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3 Nested apply (uriEncode embeds concat)", function () {
+		withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			testBinding(oRawValue, oCurrentContext, "'SAP SE'", {
+				CompanyName: "SAP",
+				LegalForm: "SE",
+			});
+		});
 	});
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.simplePath");
 
 	//*********************************************************************************************
-	unsupported(fnSimplePath);
+	test("forward to getExpression", function () {
+		var oInterface = {},
+			oRawValue = {},
+			sResult = {};
 
-	//*********************************************************************************************
-	testIllegalValues(aNonStrings, "14.5.12 Expression edm:Path", "Path", true, fnSimplePath);
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs(oInterface, oRawValue, false).returns(sResult);
+
+		strictEqual(AnnotationHelper.simplePath(oInterface, oRawValue), sResult, "result");
+	});
 
 	//*********************************************************************************************
 	jQuery.each(["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'
@@ -906,7 +897,7 @@
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getProperty(sMetaPath),
 				oSingleBindingInfo
-					= formatAndParseNoWarning(oRawValue, oCurrentContext, fnSimplePath);
+					= formatAndParse(oRawValue, oCurrentContext, fnSimplePath);
 
 			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			strictEqual(oSingleBindingInfo.path, sPath);
@@ -1055,7 +1046,7 @@
 
 				// getNavigationPath
 				oSingleBindingInfo
-					= formatAndParseNoWarning(oRawValue, oContext, fnGetNavigationPath);
+					= formatAndParse(oRawValue, oContext, fnGetNavigationPath);
 
 				strictEqual(typeof oSingleBindingInfo, "object",
 					"getNavigationPath: got a binding info");
@@ -1072,14 +1063,14 @@
 				// isMultiple
 				if (oFixture.isMultiple === Error) {
 					try {
-						formatAndParseNoWarning(oRawValue, oContext, fnIsMultiple);
+						formatAndParse(oRawValue, oContext, fnIsMultiple);
 						ok(false, "Exception expected");
 					} catch (e) {
 						strictEqual(e.message,
 							'Association end with multiplicity "*" is not the last one: ' + sPath);
 					}
 				} else {
-					strictEqual(formatAndParseNoWarning(oRawValue, oContext, fnIsMultiple),
+					strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple),
 						String(oFixture.isMultiple), "isMultiple");
 				}
 
@@ -1133,7 +1124,7 @@
 				strictEqual(AnnotationHelper.gotoEntitySet(oContext), undefined, "gotoEntitySet");
 
 				// isMultiple
-				strictEqual(formatAndParseNoWarning(oRawValue, oContext, fnIsMultiple), "",
+				strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple), "",
 					"isMultiple");
 
 				// resolvePath
@@ -1186,4 +1177,4 @@
 				oMetaModel.getODataEntitySet("ProductSet", true));
 		});
 	});
-} ());
+});

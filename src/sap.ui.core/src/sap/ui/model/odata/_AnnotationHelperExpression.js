@@ -5,8 +5,8 @@
 // This module provides internal functions for dynamic expressions in OData V4 annotations. It is a
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
-	'jquery.sap.global', './_AnnotationHelperBasics'
-], function(jQuery, Basics) {
+	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser'
+], function(jQuery, Basics, BindingParser) {
 	'use strict';
 
 	var // path to entity type ("/dataServices/schema/<i>/entityType/<j>")
@@ -120,15 +120,15 @@ sap.ui.define([
 				// We want a model binding to the path in the metamodel (which is oPathValue.path)
 				// "/##" is prepended because it leads from model to metamodel
 				oResult = {
-					result: "binding",
-					value: "/##" + oPathValue.path
+					result : "binding",
+					value : "/##" + oPathValue.path
 				};
 				// No type; it would become part of the output
 			} else {
 				oResult = {
-					result: "constant",
-					value: oPathValue.value,
-					type: "Edm.String"
+					result : "constant",
+					value : oPathValue.value,
+					type : "Edm.String"
 				};
 			}
 			return oResult;
@@ -178,6 +178,37 @@ sap.ui.define([
 					return Expression.constant(oInterface, oSubPathValue);
 				default:
 					Basics.error(oPathValue, "Expected 'Apply', 'Path' or 'String'");
+			}
+		},
+
+		/**
+		 * Calculates an expression. Ensures that errors that are thrown via {#error} while
+		 * processing are handled accordingly.
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
+		 * @param {object} oRawValue
+		 *   the raw value from the meta model
+		 * @param {boolean} bWithType
+		 *   if <code>true</code>, embedded bindings contain type information
+		 * @returns {string}
+		 *   the expression value or "Unsupported: oRawValue" in case of an error.
+		 */
+		getExpression: function (oInterface, oRawValue, bWithType) {
+			var oResult;
+
+			try {
+				oResult = Expression.expression(oInterface, {
+					path: oInterface.getPath(),
+					value: oRawValue
+				}, /*bExpression*/false);
+				return Basics.resultToString(oResult, false, bWithType);
+			} catch (e) {
+				if (e instanceof SyntaxError) {
+					return "Unsupported: "
+						+ BindingParser.complexParser.escape(Basics.toErrorString(oRawValue));
+				}
+				throw e;
 			}
 		},
 
