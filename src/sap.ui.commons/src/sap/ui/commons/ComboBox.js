@@ -11,11 +11,11 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	/**
 	 * Constructor for a new ComboBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * 
+	 *
 	 * The control provides a field that allows end users to either enter some text, or to choose an entry out of a list of pre-defined items. The choosable items can be provided in the form of complete list boxes, single listbox items, or text strings defined for the current application.
 	 * @extends sap.ui.commons.TextField
 	 * @implements sap.ui.commons.ToolbarItem
@@ -65,13 +65,13 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		aggregations : {
 
 			/**
-			 * 
+			 *
 			 * Getter for aggregation items. Allows setting ListItems (see sap.ui.core.ListBox) that shall be displayed in the list.
 			 */
-			items : {type : "sap.ui.core.ListItem", multiple : true, singularName : "item", bindable : "bindable"}, 
+			items : {type : "sap.ui.core.ListItem", multiple : true, singularName : "item", bindable : "bindable"},
 
 			/**
-			 * 
+			 *
 			 * The hidden ListBox which is only used when no shared ListBox is set via association listBox
 			 */
 			myListBox : {type : "sap.ui.commons.ListBox", multiple : false, visibility : "hidden"}
@@ -859,7 +859,6 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		oPopup.setContent(oListBox);
 		oPopup.setAutoClose(true);
 		oPopup.setAutoCloseAreas([this.getDomRef()]);
-		oPopup.setFollowOf(sap.ui.core.Popup.CLOSE_ON_SCROLL);
 		oPopup.setDurations(0, 0); // no animations
 		oPopup.setInitialFocusId(this.getId() + '-input'); // to prevent popup to set focus to the ListBox -> stay in input field
 
@@ -875,7 +874,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		// attachClosed moved to _handleOpened
 
 		var eDock = Popup.Dock;
-		oPopup.open(iDuration, eDock.BeginTop, eDock.BeginBottom, this/*.getDomRef()*/, null, null, true);
+		oPopup.open(iDuration, eDock.BeginTop, eDock.BeginBottom, this/*.getDomRef()*/,
+			/*offset*/null, /*collision*/ null, /*followOf*/ Popup.CLOSE_ON_SCROLL);
 		jQuery(oListBox.getFocusDomRef()).attr("tabIndex", "-1");
 		//attachSelect moved to _handleOpened
 
@@ -1674,7 +1674,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			oListBoxClone;
 
 		// if listbox exists, clone it and add it to the combobox clone
-		// FIX 20120905 FWE when items is fully bound for this ComboBox, _oListBox exists already in the clone and must not be cloned again  
+		// FIX 20120905 FWE when items is fully bound for this ComboBox, _oListBox exists already in the clone and must not be cloned again
 		if (oListBox && !oClone._oListBox) {
 			// detatch event handlers to not clone it.
 			oListBox.detachEvent("itemsChanged", this._handleItemsChanged, this);
