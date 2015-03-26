@@ -1273,6 +1273,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 			this.setNumberSymbol("group", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].groupingSeparator);
 			this.setNumberSymbol("decimal", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].decimalSeparator);
 			this.oConfiguration._endCollect();
+			return this;
+		},
+
+		/**
+		 * Allows to specify the customizing data for Islamic calendar support
+		 *
+		 * @param {object[]} aMappings contains the customizing data for the support of Islamic calendar.
+		 * @param {string} aMappings[].dateFormat The date format
+		 * @param {string} aMappings[].islamicMonthStart The Islamic date
+		 * @param {string} aMappings[].gregDate The corresponding Gregorian date
+		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @public
+		 */
+		setLegacyDateCalendarCustomizing : function(aMappings) {
+			check(jQuery.isArray(aMappings), "aMappings must be an Array");
+
+			var mChanges = this.oConfiguration._collect();
+			this.aLegacyDateCalendarCustomizing = mChanges.legacyDateCalendarCustomizing = aMappings;
+			this.oConfiguration._endCollect();
+			return this;
+		},
+
+		/**
+		 * Returns the currently set customizing data for Islamic calendar support
+		 *
+		 * @return {object[]} Returns an array contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #setLegacyDateCalendarCustomizing}
+		 * @public
+		 */
+		getLegacyDateCalendarCustomizing : function() {
+			return this.aLegacyDateCalendarCustomizing;
 		},
 
 		/*
