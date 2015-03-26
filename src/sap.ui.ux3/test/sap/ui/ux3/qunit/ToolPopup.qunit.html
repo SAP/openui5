@@ -37,6 +37,8 @@
 </style>
 
 <script language="javascript">
+	sinon.config.useFakeTimers = false;
+
 	var bTest = false;
 	var sBorderWidth = "";
 	var iBorderWidth = 0;
@@ -972,7 +974,7 @@
 					row("Web Site", "www.sap.com", "http://www.sap.com")
 				]
 			});
-			
+
 			oTPContent.addContent(oLayout);
 			sap.ui.getCore().applyChanges();
 
