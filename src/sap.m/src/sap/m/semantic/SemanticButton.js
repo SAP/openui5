@@ -25,7 +25,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticButton
 	 */
-	
+
 	var SemanticButton = SemanticControl.extend("sap.m.semantic.SemanticButton", /** @lends sap.m.semantic.SemanticButton.prototype */ {
 		metadata : {
 
@@ -58,18 +58,29 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 		}
 	});
 
-	SemanticButton.prototype.setProperty = function(key, value, bSuppressInvalidate) {
+	/**
+	 * Forwards all properties to the inner control,
+	 * except in the case where the property is 'type',
+	 * since 'type' belongs to the semantic wrapper control itself
+	 * @ param {string} sPropertyName - the name of the property to set
+	 * @ param {any} oValue - value to set the property to
+	 * @ param {boolean} [bSuppressInvalidate] if true, the managed object is not marked as changed
+	 * @ return this
+	 * @ public
+	 */
+	SemanticButton.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
-		if ((key === "type") || this._getControl()) {
-			if (key === "buttonType") {
-				this._getControl().setProperty("type", value, bSuppressInvalidate);
+		if ((sPropertyName === "type") || this._getControl()) { // either (1) the type of the semantic wrapper control is being given
+														// or (2) the property has to be forwarded to the inner control, so that control has to be given
+			if (sPropertyName === "buttonType") {
+				this._getControl().setProperty("type", oValue, bSuppressInvalidate);
 				return this;
 			}
-			SemanticControl.prototype.setProperty.call(this, key, value, bSuppressInvalidate);
+			SemanticControl.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
 		}
 
 		this._aSettings || (this._aSettings = {});
-		this._aSettings[key] = value; //cache properties to apply upon deferred creation of inner control
+		this._aSettings[sPropertyName] = oValue; // cache properties to apply upon deferred creation of inner control
 
 		return this;
 	};
@@ -86,11 +97,9 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 		return (this._aSettings)  ? this._aSettings[key] : null;
 	};
 
-	SemanticButton.prototype.exit = function() {
-		this._aSettings = null;
-	};
-
-	//overwrites
+	/**
+	 * @Overwrites
+	 */
 	SemanticButton.prototype._getControl = function() {
 
 		var oControl = this.getAggregation('_control');
@@ -98,7 +107,8 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 
 			this._bTypeChanged = false;
 
-			var oClass = this._getConfiguration() && this._getConfiguration().group === "IconOnly" ? OverflowToolbarButton : Button;
+			var oClass = this._getConfiguration()
+					&& this._getConfiguration().constraints === "IconOnly" ? OverflowToolbarButton : Button;
 			var bReinstantiate = oControl && (oControl.getMetadata().getName() !== oClass.getMetadata().getName());
 			var oOldParent, sOldParentAggregationName;
 

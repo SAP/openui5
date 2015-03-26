@@ -657,7 +657,7 @@
 					press : function() {
 						var oControl = fnCreateCustomContent();
 						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
-						oPage.addCustomFooterContentRight(oControl);
+						oPage.addCustomFooterContent(oControl);
 
 						oAddCustomFooterContentDialog.close();
 					}
@@ -686,7 +686,7 @@
 						var oControl = fnCreateCustomContent();
 						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
 						var iIndex = parseInt(oStatusModel.getData().selectedCustomControl.insertIndex);
-						oPage.insertCustomFooterContentRight(oControl, iIndex);
+						oPage.insertCustomFooterContent(oControl, iIndex);
 
 						oInsertCustomFooterContentDialog.close();
 					}
@@ -717,7 +717,7 @@
 				function refreshContentSelect() {
 					oCustomFooterContentSelect.removeAllItems();
 					var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
-					var aContent = oPage.getCustomFooterContentRight();
+					var aContent = oPage.getCustomFooterContent();
 					jQuery.each(aContent, function(oKey, oValue) {
 						var sLabel = oValue.getText && oValue.getText();
 						if (!sLabel) {
@@ -747,7 +747,7 @@
 						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
 						var oSelectedControlId = sap.ui.getCore().byId("customFooterContentSelect").getSelectedItem().getKey();
 						var oSelectedControl = sap.ui.getCore().byId(oSelectedControlId);
-						oPage.removeCustomFooterContentRight(oSelectedControl);
+						oPage.removeCustomFooterContent(oSelectedControl);
 						oRemoveCustomFooterContentDialog.close();
 					}
 				}),
