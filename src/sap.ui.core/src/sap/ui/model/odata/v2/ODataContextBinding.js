@@ -59,6 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 					});
 				}
 			}, bReloadNeeded);
+			this.bInitial = false;
 		}
 
 	};
@@ -74,9 +75,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
-		if (!this.oModel.oMetadata.isLoaded()) {
+		if (this.bInitial) {
 			return;
 		}
+		
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
 			oStoredEntry = this.oModel._getObject(this.sPath, this.oContext);
@@ -136,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
 
 			// don't fire any requests if metadata is not loaded yet.
-			if (this.oModel.oMetadata.isLoaded()) {
+			if (!this.bInitial) {
 				if (sResolvedPath && bReloadNeeded) {
 					this.fireDataRequested();
 				}
