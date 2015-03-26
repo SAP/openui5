@@ -382,6 +382,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["And", "Eq", "Ge", "Gt", "Le", "Lt", "Ne", "Or"
+	].forEach(function (sOperator) {
+		var oDirect = {},
+			oOperatorValue = {};
+
+		function testOperator(oRawValue, sProperty) {
+			test("expression: " + JSON.stringify(oRawValue), function () {
+				var oInterface = {},
+					oPathValue = {path: "/my/path", value: oRawValue},
+					oSubPathValue = {path: "/my/path/" + sProperty, value: oOperatorValue},
+					oResult = {};
+
+				this.mock(Expression).expects("operator")
+					.withExactArgs(oInterface, oSubPathValue, sOperator).returns(oResult);
+
+				strictEqual(Expression.expression(oInterface, oPathValue, false), oResult);
+			});
+		}
+
+		oDirect[sOperator] = oOperatorValue;
+		testOperator(oDirect, sOperator);
+		testOperator({Type: sOperator, Value: oOperatorValue}, "Value");
+	});
+
+	//*********************************************************************************************
+	(function () {
+		var oOperatorValue = {};
+
+		function testNot(oRawValue, sProperty) {
+			test("expression: " + JSON.stringify(oRawValue), function () {
+				var oInterface = {},
+					oPathValue = {path: "/my/path", value: oRawValue},
+					oSubPathValue = {path: "/my/path/" + sProperty, value: oOperatorValue},
+					oResult = {};
+
+				this.mock(Expression).expects("not")
+					.withExactArgs(oInterface, oSubPathValue).returns(oResult);
+
+				strictEqual(Expression.expression(oInterface, oPathValue, false), oResult);
+			});
+		}
+
+		testNot({Not: oOperatorValue}, "Not");
+		testNot({Type: "Not", Value: oOperatorValue}, "Value");
+	}());
+
+	//*********************************************************************************************
 	test("expression: unknown", function () {
 		var oPathValue = {value: {}};
 
@@ -597,6 +644,96 @@ sap.ui.require([
 			result: "expression",
 			value: "odata.fillUriTemplate('template({p0},{p1})',{'p0':${bar},'p1':'foo'})",
 			type: "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		parameter: {result: "binding", value: "path", type: "Edm.Boolean"},
+		value: "!${path}"
+	}, {
+		parameter: {result: "expression", value: "!${path}", type: "Edm.Boolean"},
+		value: "!(!${path})"
+	}].forEach(function (oFixture) {
+		test("Not", function () {
+			var oInterface = {},
+				oPathValue = {},
+				oExpectedResult = {
+					result: "expression",
+					type: "Edm.Boolean",
+					value: oFixture.value
+				};
+
+			this.mock(Expression).expects("expression")
+				.withExactArgs(oInterface, oPathValue, true)
+				.returns(oFixture.parameter);
+
+			deepEqual(Expression.not(oInterface, oPathValue), oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{text: "And", operator: "&&", type: "Edm.Boolean"},
+		{text: "Eq", operator: "==="},
+		{text: "Ge", operator: ">="},
+		{text: "Gt", operator: ">"},
+		{text: "Le", operator: "<="},
+		{text: "Lt", operator: "<"},
+		{text: "Ne", operator: "!=="},
+		{text: "Or", operator: "||", type: "Edm.Boolean"}
+	].forEach(function (oFixture) {
+		test("operator " + oFixture.text, function () {
+			var oInterface = {},
+				oPathValue = {},
+				oParameter0 = {result: "binding", value: "path1", type: oFixture.type || "Edm.String"},
+				oParameter1 = {result: "expression", value: "!${path2}", type: oFixture.type || "Edm.String"},
+				oExpectedResult = {
+					result: "expression",
+					value: "${path1}" + oFixture.operator + "(!${path2})",
+					type: "Edm.Boolean"
+				},
+				oExpression = this.mock(Expression);
+
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0, oFixture.type)
+				.returns(oParameter0);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1, oFixture.type)
+				.returns(oParameter1);
+
+			deepEqual(Expression.operator(oInterface, oPathValue, oFixture.text), oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{text: "Eq", operator: "==="},
+		{text: "Ge", operator: ">="},
+		{text: "Gt", operator: ">"},
+		{text: "Le", operator: "<="},
+		{text: "Lt", operator: "<"},
+		{text: "Ne", operator: "!=="}
+	].forEach(function (oFixture) {
+		test("mixed types for operator " + oFixture.text, function () {
+			var oInterface = {},
+				oPathValue = {},
+				oExpression = this.mock(Expression);
+
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0, undefined)
+				.returns({type: "Edm.String"});
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1, undefined)
+				.returns({type: "Edm.Double"});
+			this.mock(Basics).expects("error")
+				.withExactArgs(oPathValue, "Expected two parameters of the same type but instead" +
+					" saw Edm.String and Edm.Double")
+				.throws(new SyntaxError());
+
+			throws(function () {
+				Expression.operator(oInterface, oPathValue, oFixture.text);
+			}, SyntaxError);
 		});
 	});
 
