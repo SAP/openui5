@@ -28,6 +28,7 @@
 					src="{img>/products/pic3}"
 					densityAware="false"
 					width="{/imageWidth}"
+					decorative="false"
 					press="handleImage3Press" >
 					<layoutData>
 						<FlexItemData growFactor="1" />
