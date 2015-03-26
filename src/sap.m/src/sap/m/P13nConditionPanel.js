@@ -1182,7 +1182,7 @@ sap.ui.define([
 	 * @private
 	 * @param {object}
 	 *            oCurrentKeyField object of the current selected KeyField which contains type of the
-	 *            column ("string" (default) "date" or "numeric") and a maxLength information
+	 *            column ("string", "date" or "numeric") and a maxLength information
 	 * @param {object}
 	 *            oFieldInfo
 	 * @param {grid}
@@ -1258,6 +1258,11 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._fillOperationItems = function(oSelect, aOperations, sType) {
 		oSelect.removeAllItems();
+		if (sType === "_STRING_") {
+			// ignore the "String" Type when accessing the resource text 
+			sType = "";
+		}
+		
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
 			oSelect.addItem(new sap.ui.core.ListItem({
@@ -1396,6 +1401,10 @@ sap.ui.define([
 
 		var aOperations = this._oTypeOperations["default"];
 		if (oKeyField && !this.getExclude()) {
+			if (oKeyField.type && oKeyField.type === "string" && this._oTypeOperations["string"]) {
+				sType = oKeyField.type;
+				aOperations = this._oTypeOperations[sType];
+			}
 			if (oKeyField.type && oKeyField.type === "numeric" && this._oTypeOperations["numeric"]) {
 				sType = oKeyField.type;
 				aOperations = this._oTypeOperations[sType];
