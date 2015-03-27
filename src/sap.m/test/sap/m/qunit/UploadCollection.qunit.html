@@ -3,20 +3,17 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Test Page for sap.m.UploadCollection</title>
+
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
 </script>
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
 <script type="text/javascript">
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -207,7 +204,7 @@
 	});
 
 	test("Event typeMissmatch", function(assert) {
-		expect(18); // verifies the event handler was executed
+		assert.expect(18); // verifies the event handler was executed
 		var oFile = {
 			name: "someFileName",
 			fileType : "someNotAllowedFileType",
@@ -333,13 +330,13 @@
 		this.oUploadCollection.attachChange(onChange);
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 			// at present FileUploader does not set the parameter files for IE9
-			expect(5);
+			assert.expect(5);
 			this.oUploadCollection._getFileUploader().fireChange({
 				newValue : "file1"
 			});
 		}
 		else {
-			expect(10); // verifies the event handler was executed
+			assert.expect(10); // verifies the event handler was executed
 			this.oUploadCollection._getFileUploader().fireChange({
 				files : aFiles
 			});
@@ -353,14 +350,14 @@
 			// new
 			assert.equal(oEvent.getParameter("item"), this._oItemForDelete, "Correct item in event delete");
 		}
-		expect(2);
+		assert.expect(2);
 		this.oUploadCollection.attachFileDeleted(onDelete);
 		this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[1]; // contributor : John Smith, documentId : "5082cc4d-da9f-2835-2c0a-8100ed47bcde"
 		this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 	});
 
 	test("Event filenameLengthExceed", function(assert) {
-		expect(8);
+		assert.expect(8);
 		function onFilenameLengthExceed (oEvent) {
 			var oFile = { name: "tooLongFileName" };
 			assert.ok(true, "Event filenameLengthExceed fired");
@@ -382,7 +379,7 @@
 	});
 
 	test("Event fileRenamed", function(assert) {
-		expect(7);
+		assert.expect(7);
 		function onFileRenamed (oEvent) {
 			assert.equal(oEvent.getId(), "fileRenamed", "Event Id 'fileRenamed' provided");
 			// deprecated
@@ -433,7 +430,7 @@
 	});
 
 	test("Event terminate", function(assert) {
-		expect(1); // verifies the event handler was executed
+		assert.expect(1); // verifies the event handler was executed
 		var sFileName = "file1";
 		function onUploadTerminated(oEvent) {
 			assert.ok(true, "Event uploadTerminated fired");
@@ -565,7 +562,7 @@
 		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
 			assert.ok(true, "Link is triggered");
 		};
-		expect(8); // verifies the event handler was executed
+		assert.expect(8); // verifies the event handler was executed
 		//check status = "display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
@@ -740,12 +737,7 @@
 
 </head>
 <body class="sapUiBody">
-	<h1 id="qunit-header">QUnit page for sap.m.UploadCollection</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<div id="qunit-fixture">test markup, will be hidden</div>
-	<ol id="qunit-tests"></ol>
+	<div id="qunit"></div>
 	<div id="uiArea"></div>
 </body>
 </html>

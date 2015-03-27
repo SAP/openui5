@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Test Page for sap.m.FeedInput</title>
+
 		<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_bluecrystal"
 			type="text/javascript"
@@ -10,12 +11,16 @@
 			data-sap-ui-libs="sap.m"
 			src="../../../../resources/sap-ui-core.js">
 		</script>
+
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
 
+		<script type="text/javascript">
+			if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			}
 
 			module("Properties", {
 				setup : function() {
@@ -157,7 +162,7 @@
 			});
 
 			test("Post - fired with correct param", function(assert) {
-				expect(1); // verifies the event handler was executed
+				assert.expect(1); // verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -168,7 +173,7 @@
 			});
 
 			test("Post - not fired if disabled", function(assert) {
-				expect(0); // verifies the event handler was NOT executed
+				assert.expect(0); // verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -178,7 +183,7 @@
 			});
 
 			test("Post - not fired if value contains only whitespaces", function(assert) {
-				expect(0); // verifies the event handler was NOT executed
+				assert.expect(0); // verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -189,7 +194,7 @@
 			});
 
 			test("Post - not fired if enabled BUT value contains only whitespaces", function(assert) {
-				expect(0); // verifies the event handler was NOT executed
+				assert.expect(0); // verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -200,7 +205,7 @@
 			});
 
 			test("Post - value is empty afterwards", function(assert) {
-				expect(2); // verifies the event handler was executed
+				assert.expect(2); // verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -212,7 +217,7 @@
 			});
 
 			test("Post - fired when pressing ENTER", function(assert) {
-				expect(1); //verifies the event handler was executed
+				assert.expect(1); //verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -225,7 +230,7 @@
 			});
 
 			test("Post - fired when pressing SPACE", function(assert) {
-				expect(1); //verifies the event handler was executed
+				assert.expect(1); //verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -238,7 +243,7 @@
 			});
 
 			test("Post - not fired when pressing 'A'", function(assert) {
-				expect(0); //verifies the event handler was NOT executed
+				assert.expect(0); //verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
 				}
@@ -252,12 +257,7 @@
 		</script>
 	</head>
 	<body class="sapUiBody">
-		<h1 id="qunit-header">QUnit page for sap.m.FeedInput</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<div id="qunit-fixture">test markup, will be hidden</div>
-		<ol id="qunit-tests"></ol>
+		<div id="qunit"></div>
 		<div id="uiArea"></div>
 	</body>
 </html>
