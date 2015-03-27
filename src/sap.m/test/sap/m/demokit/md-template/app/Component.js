@@ -14,14 +14,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
 
 		metadata : {
-			name : "MD Template",
-			manifest: "json",
-
-			config : {
-				// always use absolute paths relative to our own component
-				// (relative paths will fail if running in the Fiori Launchpad)
-				rootPath: jQuery.sap.getModulePath("sap.ui.demo.mdtemplate")
-			}
+			manifest: "json"
 		},
 
 		/**
@@ -35,11 +28,6 @@ sap.ui.define([
 
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
-
-			// set the internationalization model
-			this.setModel(new ResourceModel({
-				bundleName : mConfig.i18nBundle
-			}), "i18n");
 
 			this.oListSelector = new ListSelector();
 
