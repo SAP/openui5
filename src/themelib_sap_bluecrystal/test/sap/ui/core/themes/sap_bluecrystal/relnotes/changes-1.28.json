@@ -384,7 +384,7 @@
         "id": "e4d23ffdcb48b7892ab8ad2c63b4b57038ccfc41",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Input: ValueHelp icon on wrong position if description used",
+        "text": "sap.m.Input: ValueHelp icon displayed correctly if description is used",
         "references": []
       },
       {
@@ -417,14 +417,40 @@
         "id": "2276b93e3a03b8c0087c8e834fd6ae63892095b7",
         "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.MultiInput: Fix placeholder covering ValueHelp button in IE",
+        "text": "sap.m.MultiInput: Placeholder no longer covers ValueHelp button in Internet Explorer",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "2d85de57fc396c083b3bc4c86e2018636ac6c84c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Hover state odd when transparent",
         "references": []
       },
       {
-        "id": "c6d7c561c72c55f6452815ce7febc53a7e9694bb",
-        "author": "Axel Warner \u003caxel.warner@sap.com\u003e",
+        "id": "84a691847ed6062efbffe25b7b99cd79f8f83fd7",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nColumnsPanel : CSS correction for phone \u0026 tablet",
+        "text": "sap.m.Input: F4 button width on compact mode adjusted",
+        "references": []
+      },
+      {
+        "id": "3e32e5e9ec6a6b9e11bacffb79f842f7d0d2e60b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Popup closed on first chosen token",
+        "references": []
+      },
+      {
+        "id": "b0653a8acd10aecd9be29ceaabc8fb818cf330a1",
+        "author": "Lidiya Bobeva \u003clidiya.bobeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text: Min-height is added when text in editable form is empty",
         "references": []
       }
     ]
