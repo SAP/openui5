@@ -32,6 +32,7 @@ sap.ui.define([
 			var sPath = jQuery.sap.getModulePath("sap.m.sample.TableBreadcrumb", "/productHierarchy.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
+			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");
 
 			if (! this.oTemplate) {
 				this.oTemplate = sap.ui.xmlfragment("sap.m.sample.TableBreadcrumb.Row");
@@ -41,7 +42,6 @@ sap.ui.define([
 			var sPath = this._getInitialPath();
 			this._setAggregation(sPath);
 
-			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");
 		},
 
 
