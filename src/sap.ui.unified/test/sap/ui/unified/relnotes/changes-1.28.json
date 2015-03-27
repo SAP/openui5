@@ -167,5 +167,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "68882c5d72f3a400200faf34d75bf85b4b27ddca",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: Setting content-type for Internet Explorer 9 repaired",
+        "references": []
+      },
+      {
+        "id": "12b2a87faea54ef0b1abba94f228871e9ce08256",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Menu: Submenu is closed when textfield item is focused",
+        "references": []
+      }
+    ]
   }
 }
