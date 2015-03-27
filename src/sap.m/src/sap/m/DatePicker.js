@@ -59,8 +59,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			InputBase.prototype.init.apply(this, arguments);
 
-			this._inputProxy = jQuery.proxy(_onInput, this);
-
 			this._bIntervalSelection = false;
 
 			this._bValid = true;
@@ -90,13 +88,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			this._sDisplayFormat = undefined;
 			this._sUsedValuePattern = undefined;
 			this._sValueFormat = undefined;
-
-		};
-
-		DatePicker.prototype.onAfterRendering = function() {
-
-			InputBase.prototype.onAfterRendering.apply(this, arguments);
-			this.bindToInputEvent(this._inputProxy);
 
 		};
 
@@ -151,6 +142,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 			this._bFocusNoPopup = undefined;
 
+		};
+		
+		DatePicker.prototype.oninput = function(oEvent) {
+			InputBase.prototype.oninput.call(this, oEvent);
+			if (oEvent.isMarked("invalid")) {
+				return;
+			}
+
+			// do not use sap.m.InputBase.prototype._setLabelVisibility because value is not updated during typing
+			if (this.getDomRef() && this._$label) {
+				var sValue = this._$input.val();
+				this._$label.css("display", sValue ? "none" : "inline");
+			}
 		};
 
 		DatePicker.prototype.onsapshow = function(oEvent) {
@@ -715,16 +719,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 
 				var sValue = oThis.getValue();
 				oThis.fireChangeEvent(sValue, {valid: true});
-			}
-
-		}
-
-		function _onInput(oEvent){
-
-			// do not use sap.m.InputBase.prototype._setLabelVisibility because value is not updated during typing
-			if (this.getDomRef() && this._$label) {
-				var sValue = this._$input.val();
-				this._$label.css("display", sValue ? "none" : "inline");
 			}
 
 		}
