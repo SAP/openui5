@@ -251,6 +251,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		if (initialFocusId) {
 			this._oPopup.setInitialFocusId(initialFocusId);
 		}
+		
+		this._oPreviousFocus = Popup.getCurrentFocusInfo();
+		
 		this._oPopup.open(400);
 		
 		this._initDom(jQuery.proxy(this._setFocusFirst, this), jQuery.proxy(this._setFocusLast, this), jQuery.proxy(this._applyChanges, this));
@@ -273,6 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			return;
 		}
 		this._oPopup.close(400);
+		jQuery.sap.delayedCall(400, this, 'restorePreviousFocus');
 		this._cleanupDom();
 	};
 	
@@ -386,6 +390,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		return this._oPopup.isOpen();
 	};
 	
+	/* restore previous focus when closing */
+	Overlay.prototype.restorePreviousFocus = function() {
+		Popup.applyFocusInfo(this._oPreviousFocus);
+	};
 
 	return Overlay;
 
