@@ -34,7 +34,7 @@ sap.ui.define([
 			var mConfig = this.getMetadata().getConfig();
 
 			// call the base component's init function
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, arguments);
 
 			// set the internationalization model
 			this.setModel(new ResourceModel({
@@ -69,7 +69,7 @@ sap.ui.define([
 			this._oBusyHandler.destroy();
 			this._oErrorHandler.destroy();
 			// call the base component's destroy function
-			sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);
+			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 
 		/**
@@ -79,7 +79,7 @@ sap.ui.define([
 		 */
 		createContent : function() {
 			// call the base component's createContent function
-			this._oRootView = sap.ui.core.UIComponent.prototype.createContent.apply(this, arguments);
+			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
 
 			if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable on "combi" devices with touch AND mouse
 				this._oRootView.addStyleClass("sapUiSizeCompact");

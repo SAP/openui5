@@ -1,6 +1,7 @@
 sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
+		"sap/ui/core/mvc/Controller",
+		"sap/ui/core/routing/History"
+	], function (Controller, History) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.mdtemplate.controller.BaseController", {
@@ -62,7 +63,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onNavBack : function(sRoute, mData) {
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
 
 			//The history contains a previous entry
