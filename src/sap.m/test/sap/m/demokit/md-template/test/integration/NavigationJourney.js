@@ -2,60 +2,50 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/NavigationAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion'
+	"sap/ui/test/Opa5"
 ],
-function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
+function (Opa5) {
 
-	module("Desktop navigation", { setup : function () {
-		Opa5.extendConfig({
-			actions : new NavigationAction(),
-			arrangements : new StartAppArrangement(),
-			assertions : new NavigationAssertion(),
-			viewNamespace : "sap.ui.demo.mdtemplate.view."
-		});
-	}});
+	QUnit.module("Desktop navigation");
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnADesktopDevice();
 
 		//Actions
-		When.iLookAtTheScreen();
+		When.onTheMasterPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheObjectList().
-			and.theObjectListShouldHave10Entries().
-			and.theMasterPageHeaderShouldDisplay20Entries().
-			and.theObjectPageShowsTheFirstObject();
+		Then.onTheMasterPage.iShouldSeeTheList().
+			and.theListShouldHaveNEntries(10).
+			and.theHeaderShouldDisplay20Entries();
+		Then.onTheDetailPage.theObjectPageShowsTheFirstObject();
 	});
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
 		// Actions
-		When.iChangeTheHashToObjectN(10);
+		When.onTheBrowserPage.iChangeTheHashToObjectN(10);
 
 		// Assertions
-		Then.iShouldBeOnTheObjectNPage(10).
-			and.theObjectNShouldBeSelectedInTheMasterList(10);
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(10);
+		Then.onTheMasterPage.theObjectNShouldBeSelectedInTheList(10);
 	});
 
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheObject1InMasterList();
+		When.onTheMasterPage.iPressOnTheObject1InList();
 
 		// Assertions
-		Then.iShouldBeOnTheObjectNPage(1);
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
 	});
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
 		// Actions
-		When.iPressOnTheObject1InMasterList();
+		When.onTheMasterPage.iPressOnTheObject1InList();
 
 		// Assertions
-		Then.iShouldBeOnTheObjectNPage(1).
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1).
 			and.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
 			and.theLineItemsHeaderShouldDisplay4Entries().
@@ -69,26 +59,26 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		Given.iStartTheAppOnADesktopDevice("#/object/ObjectID_2");
 
 		//Actions
-		When.iWaitUntilTheMasterListIsLoaded();
+		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
 
 		// Assertions
-		Then.iShouldBeOnTheObjectNPage(2).
-			and.theListShouldHaveNoSelection().
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(2);
+		Then.onTheMasterPage.theListShouldHaveNoSelection().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartTheAppOnADesktopDevice();
-		
+
 		//Actions
-		When.iWaitUntilTheMasterListIsLoaded();
+		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
 		//Assertions
-		
-		Then.theObjectNShouldBeSelectedInTheMasterList(1).
-			and.iShouldBeOnTheObjectNPage(1).
-			and.iShouldSeeTheHashForObjectN(1).
+
+		Then.onTheMasterPage.theObjectNShouldBeSelectedInTheList(1);
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
+		Then.onTheBrowserPage.iShouldSeeTheHashForObjectN(1).
 			and.iTeardownMyAppFrame();
 	});
-	
+
 });
