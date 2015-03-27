@@ -7,7 +7,7 @@
 		id="page"
 		title="{view>/masterListTitle}">
 		<subHeader>
-			<Bar>
+			<Bar id="headerBar">
 				<contentMiddle>
 					<SearchField
 						id="searchField"
@@ -76,7 +76,8 @@
 			</List>
 		</content>
 		<footer>
-			<OverflowToolbar>
+			<OverflowToolbar
+				id="footerBar">
 				<ToolbarSpacer/>
 				<!-- simple sort/group/filter with Select controls -->
 				<Select

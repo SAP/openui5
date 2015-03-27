@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<MessagePage
-		id="detailNoObjectsAvailablePage"
+		id="page"
 		title="{i18n>masterTitle}"
 		text="{i18n>noObjectsAvailableText}"
 		icon="{sap-icon://product}"

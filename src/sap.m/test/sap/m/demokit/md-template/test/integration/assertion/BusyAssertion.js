@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 
 		iShouldSeeTheDetailBusyIndicator: function () {
 			return this.waitFor({
-				id : "detailPage",
+				id : "page",
 				viewName : "Detail",
 				success : function (oPage) {
 					// we set the view busy, so we need to query the parent of the app

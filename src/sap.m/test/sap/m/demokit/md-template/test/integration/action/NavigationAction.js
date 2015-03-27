@@ -124,7 +124,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 
 		iPressTheBackButtonOnDetailPage : function () {
 			return this.waitFor({
-				id : "detailPage",
+				id : "page",
 				viewName : "Detail",
 				success: function (oPage) {
 					oPage.$("navButton").trigger("tap");
