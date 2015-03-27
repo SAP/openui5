@@ -106,7 +106,7 @@ public class ResourceServlet extends HttpServlet {
     
     // determine the content type (special case for properties request)
     String contentType = connection.getContentType();
-    if ("content/unknown".equals(contentType)) {
+    if (contentType == null || "content/unknown".equals(contentType)) {
       if (PATTERN_PROPERTIES_REQUEST.matcher(url).matches()) {
         contentType = "text/plain;charset=ISO-8859-1";
       } else {
