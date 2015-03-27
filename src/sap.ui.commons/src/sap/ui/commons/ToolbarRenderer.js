@@ -51,10 +51,11 @@ function(jQuery) {
 		var iRightItemsLength =  aRightItems.length;
 		var bHasRightItems = iRightItemsLength > 0;
 
+		var sInnerDiv = "<div class='sapUiTbInner' id='" + oToolbar.getId() + "-inner" + "'>";
 		if (bHasRightItems) {
-			rm.write("<div class='sapUiTbCont sapUiTbContLeft'><div class='sapUiTbInner' >");
+            rm.write("<div class='sapUiTbCont sapUiTbContLeft'>" + sInnerDiv);
 		} else {
-			rm.write("<div class='sapUiTbCont'><div class='sapUiTbInner'>");
+			rm.write("<div class='sapUiTbCont'>" + sInnerDiv);
 		}
 
 
@@ -139,9 +140,10 @@ function(jQuery) {
 			oPopupHolder = ToolbarRenderer.initOverflowPopup(oToolbar).firstChild;
 		}
 
-		// Move all invisible items from the second row of the toolbar to the popup
+		// Move all invisible (due to overflow) left items from the second row of the toolbar to the popup
+		//1. Obtaining all invisible due to overflow and due to API property visible=false
 		var $oPopupHolderParent = jQuery(oPopupHolder.parentNode),
-			iVisibleItems = oToolbar.getVisibleItemInfo().count,
+			iVisibleItems = oToolbar.getVisibleItemInfo(true).count,
 			oToolbarCont = oToolbar.getDomRef().firstChild.firstChild,
 			iPos = 0,
 			oChild = oToolbarCont.firstChild,
@@ -149,6 +151,7 @@ function(jQuery) {
 			iPopupParentWidth = $oPopupHolderParent.width(),
 			iBiggestItemWidth = 0;
 
+		//2. Move all left items that are not visible due to the overflow
 		while (oChild) {
 			var nextChild = oChild.nextSibling;
 			if (iPos >= iVisibleItems) {
