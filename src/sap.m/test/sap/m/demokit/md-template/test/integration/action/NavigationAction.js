@@ -69,30 +69,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			return this.iPressAnObjectListItem("Master", "list", "Object 1" );
 		},
 
-		iPressOnTheItem1InLineItemList : function (){
-			return this.iPressAColumnListItem("Detail", "lineItemsList", "Line Item 1" );
-		},
-
-		iPressTheNavigationButton : function ( sName, sIcon) {
-			return this.waitFor({
-				controlType : "sap.m.Button",
-				viewName : "LineItem",
-				matchers : [ new PropertyStrictEquals({name : "icon", value : sIcon}) ],
-				success : function (aButtons) {
-					aButtons[0].$().trigger("tap");
-				},
-				errorMessage : "'" + sName + "' button not found."
-			});
-		},
-
-		iPressTheNextButton : function () {
-			return this.iPressTheNavigationButton("Next", "sap-icon://down");
-		},
-
-		iPressThePreviousButton : function () {
-			return this.iPressTheNavigationButton("Previous", "sap-icon://up");
-		},
-
 		iChangeTheHashToObjectN : function (iObjIndex) {
 			return this.waitFor({
 				success : function () {
@@ -130,17 +106,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 					oPage.$("navButton").trigger("tap");
 				},
 				errorMessage : "Did not find the nav button on detail page"
-			});
-		},
-
-		iPressTheBackButtonOnLineItemPage : function () {
-			return this.waitFor({
-				id : "lineItemPage",
-				viewName : "LineItem",
-				success: function (oPage) {
-					oPage.$("navButton").trigger("tap");
-				},
-				errorMessage : "Did not find the nav button on line item page"
 			});
 		},
 
@@ -185,11 +150,7 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				},
 				errorMessage : "We are not on " + sTitleName
 			});
-		},
-		
-		iWaitUntilISeePageForLineItem7 : function() {
-			return this.iWaitUntilISeePage("LineItem", "Line Item: LineItemID_7");
 		}
-	
+
 	});
 });
