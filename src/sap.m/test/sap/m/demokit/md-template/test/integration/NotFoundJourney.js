@@ -1,36 +1,25 @@
-/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
+﻿/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.require(
 	[
-		"sap/ui/test/Opa5",
-		"sap/ui/demo/mdtemplate/test/integration/action/NavigationAction",
-		"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
-		"sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion"
+		"sap/ui/test/Opa5"
 	],
-	function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
-		"use strict";
+	function (Opa5) {
 
-		module("Not found Journey", { setup : function () {
-			Opa5.extendConfig({
-				actions : new NavigationAction(),
-				arrangements : new StartAppArrangement(),
-				assertions : new NavigationAssertion(),
-				viewNamespace : "sap.ui.demo.mdtemplate.view."
-			});
-		}});
+		QUnit.module("Not found Journey");
 
 		opaTest("Should see the resource not found page and no selection in the master list when navigating to an invalid hash", function (Given, When, Then) {
 			//Arrangement
 			Given.iStartTheAppOnADesktopDevice();
 
 			//Actions
-			When.iWaitUntilTheMasterListIsLoaded().
-				and.iChangeTheHashToSomethingInvalid();
+			When.onTheMasterPage.iWaitUntilTheListIsLoaded();
+			When.onTheBrowserPage.iChangeTheHashToSomethingInvalid();
 
 			// Assertions
-			Then.iShouldSeeTheNotFoundPage().
-				and.theListShouldHaveNoSelection().
-				and.theNotFoundPageShouldSayResourceNotFound().
+			Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
+				and.theNotFoundPageShouldSayResourceNotFound();
+			Then.onTheMasterPage.theListShouldHaveNoSelection().
 				and.iTeardownMyAppFrame();
 		});
 
@@ -49,32 +38,33 @@ sap.ui.require(
 
 		opaTestPhoneAndDesktop("Should see the not found page if the hash is something that matches no route", "#somethingThatDoesNotExist", function (Given, When, Then) {
 			//Actions
-			When.iLookAtTheScreen();
+			When.onTheNotFoundPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.iShouldSeeTheNotFoundPage().
+			Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
 				and.theNotFoundPageShouldSayResourceNotFound();
 		});
 
 		opaTestPhoneAndDesktop("Should see the not found master and detail page if an invalid object id has been called", "#/object/SomeInvalidObjectId", function (Given, When, Then) {
 			//Actions
-			When.iLookAtTheScreen();
+			When.onTheNotFoundPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.iShouldSeeTheObjectNotFoundPage().
+			Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
 				and.theNotFoundPageShouldSayObjectNotFound();
 		});
 
 		opaTestPhoneAndDesktop("Should see the not found text for no search results", "", function (Given, When, Then) {
 			//Actions
-			When.iLookAtTheScreen();
+			When.onTheMasterPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.iShouldSeeTheObjectList();
+			Then.onTheMasterPage.iShouldSeeTheList();
 
-			When.iSearchForSomethingWithNoResults();
+			//Actions
+			When.onTheMasterPage.iSearchForSomethingWithNoResults();
 
-			Then.iShouldSeeTheNoDataTextForNoSearchResults();
+			// Assertions
+			Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults();
 		});
-
 	});
