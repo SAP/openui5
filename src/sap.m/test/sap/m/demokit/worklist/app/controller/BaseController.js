@@ -1,10 +1,11 @@
 sap.ui.define([
-		"sap/ui/core/mvc/Controller"
-	], function (Controller) {
+		"sap/ui/core/mvc/Controller",
+		"sap/ui/core/routing/History"
+	], function (Controller, History) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.worklist.controller.BaseController", {
-		
+
 		/**
 		 * Convenience method for accessing the event bus.
 		 * @public
@@ -62,7 +63,7 @@ sap.ui.define([
 		 * @param {object} mData the parameters of the route, if the route does not need parameters, it may be omitted.
 		 */
 		myNavBack : function(sRoute, mData) {
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
 
 			//The history contains a previous entry
@@ -73,7 +74,7 @@ sap.ui.define([
 				this.getRouter().navTo(sRoute, mData, bReplace);
 			}
 		}
-		
+
 	});
 
 }, /* bExport= */ true);
