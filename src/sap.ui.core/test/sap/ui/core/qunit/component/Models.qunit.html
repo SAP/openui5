@@ -23,7 +23,7 @@
 
 	<script>
 
-	jQuery.sap.registerModulePath("sap.ui.test", "../../../../../../test-resources/sap/ui/core/qunit/component/");
+	jQuery.sap.registerModulePath("sap.ui.test", "./");
 
 	sap.ui.require([
 		"jquery.sap.global",
@@ -127,17 +127,23 @@
 
 
 			// sap.ui.model.json.JSONModel
-			sinon.assert.callCount(this.modelSpy.json, 1);
+			sinon.assert.callCount(this.modelSpy.json, 2);
 
 			// model: "json"
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json');
 
+			// model: "json"
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/path/to/local/data.json');
+
 
 			// sap.ui.model.xml.XMLModel
-			sinon.assert.callCount(this.modelSpy.xml, 1);
+			sinon.assert.callCount(this.modelSpy.xml, 2);
 
 			// model: "xml"
 			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml');
+
+			// model: "xml"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/path/to/local/data.xml');
 
 
 			// sap.ui.model.resource.ResourceModel
@@ -150,15 +156,18 @@
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "./i18n.properties"
+				bundleUrl: "v2models/i18n.properties"
 			});
 
 
 			// sap.ui.test.v2models.CustomModel
-			sinon.assert.callCount(this.modelSpy.custom, 6);
+			sinon.assert.callCount(this.modelSpy.custom, 7);
 
 			// model: "custom-uri-string"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype');
+
+			// model: "custom-uri-relative-string"
+			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/path/to/local/custom.datatype');
 
 			// model: "custom-uri-string-with-settings"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype', {
@@ -203,10 +212,13 @@
 				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
 				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
 				"json": sap.ui.model.json.JSONModel,
+				"json-relative": sap.ui.model.json.JSONModel,
 				"xml": sap.ui.model.xml.XMLModel,
+				"xml-relative": sap.ui.model.xml.XMLModel,
 				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
 				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
 				"custom-uri-string": sap.ui.test.v2models.CustomModel,
+				"custom-relative-uri-string": sap.ui.test.v2models.CustomModel,
 				"custom-uri-string-with-settings": sap.ui.test.v2models.CustomModel,
 				"custom-without-args": sap.ui.test.v2models.CustomModel,
 				"custom-uri-setting-name": sap.ui.test.v2models.CustomModel,
@@ -274,7 +286,7 @@
 
 			// model: "i18n"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "i18n/i18n.properties"
+				bundleUrl: "v1/i18n/i18n.properties"
 			});
 
 			// check if models are set on component (and save them internally)
