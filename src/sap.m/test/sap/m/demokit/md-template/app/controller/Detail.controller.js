@@ -1,6 +1,8 @@
 sap.ui.define([
-		"sap/ui/demo/mdtemplate/controller/BaseController"
-	], function (BaseController) {
+		"sap/ui/demo/mdtemplate/controller/BaseController",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/Device"
+	], function (BaseController, JSONModel, Device) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.mdtemplate.controller.Detail", {
@@ -14,7 +16,7 @@ sap.ui.define([
 			this._oLineItemsList = this.byId("lineItemsList");
 
 			// When there is a list displayed, bind to the first item.
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				this.getRouter().getRoute("master").attachPatternMatched(this._onMasterMatched, this);
 			}
 
@@ -31,10 +33,10 @@ sap.ui.define([
 			);
 
 			// Control state model
-			this._oControlStateModel = new sap.ui.model.json.JSONModel({
+			this._oViewModel = new JSONModel({
 				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
 			});
-			this.setModel(this._oControlStateModel, 'controlStates');
+			this.setModel(this._oViewModel, 'view');
 		},
 
 		/* =========================================================== */
@@ -142,7 +144,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the line item list header
-		 * @param {integer} the total number of items in the list
+		 * @param {integer} iTotalItems the total number of items in the list
 		 * @private
 		 */
 		_updateListItemCount : function (iTotalItems) {
@@ -155,7 +157,7 @@ sap.ui.define([
 					//Display 'Line Items' instead of 'Line items (0)'
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeading");
 				}
-				this._oControlStateModel.setProperty("/lineItemListTitle", sTitle);
+				this._oViewModel.setProperty("/lineItemListTitle", sTitle);
 			}
 		}
 	});

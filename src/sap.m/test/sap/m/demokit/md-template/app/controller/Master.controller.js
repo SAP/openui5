@@ -1,6 +1,13 @@
 sap.ui.define([
-		"sap/ui/demo/mdtemplate/controller/BaseController"
-	], function (BaseController) {
+		"sap/ui/demo/mdtemplate/controller/BaseController",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
+		"sap/ui/model/Sorter",
+		"sap/m/GroupHeaderListItem",
+		"sap/ui/Device",
+		"sap/ui/demo/mdtemplate/model/grouper"
+	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, grouper) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.mdtemplate.controller.Master", {
@@ -30,13 +37,13 @@ sap.ui.define([
 			};
 
 			// Control state model
-			this._oControlStateModel = new sap.ui.model.json.JSONModel({
+			this._oViewModel = new JSONModel({
 				isFilterBarVisible : false,
 				filterBarLabel : "",
 				masterListTitle : this.getResourceBundle().getText("masterTitle"),
 				masterListNoDataText : this.getResourceBundle().getText("masterListNoDataText")
 			});
-			this.setModel(this._oControlStateModel, 'controlStates');
+			this.setModel(this._oViewModel, 'view');
 
 			// instead of relying on the master list's automatic busy indication
 			// we attach to the dataRequested and dataReceived events on the list
@@ -54,12 +61,12 @@ sap.ui.define([
 					this.getView().setBusyIndicatorDelay(null);
 				}.bind(this));
 			}.bind(this));
-			
-			
+
+
 			oListSelector.setBoundMasterList(this._oList);
-			
-			// if the master route was hit (empty hash) we have to set 
-			// the hash to to the first item in the list as soon as the 
+
+			// if the master route was hit (empty hash) we have to set
+			// the hash to to the first item in the list as soon as the
 			// listLoading is done and the first item in the list is known
 			this.getRouter().getRoute("master").attachPatternMatched( function() {
 				oListSelector.oWhenListLoadingIsDone.then(
@@ -67,11 +74,11 @@ sap.ui.define([
 						if (this._oList.getMode() !== "None") {
 								var sObjectId = this._oList.getItems()[0].getBindingContext().getProperty("ObjectID");
 								this.getRouter().navTo("object", {objectId : sObjectId}, true);
-						}	
+						}
 					}.bind(this)
 				)
 			}, this);
-			
+
 			this.getRouter().attachBypassed(this.onBypassed, this);
 		},
 
@@ -117,7 +124,7 @@ sap.ui.define([
 			var sQuery = oEvent.getParameter("query");
 
 			if (sQuery && sQuery.length > 0) {
-				this._oListFilterState.aSearch  = [new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery)];
+				this._oListFilterState.aSearch  = [new Filter("Name", FilterOperator.Contains, sQuery)];
 			} else {
 				this._oListFilterState.aSearch  = [];
 			}
@@ -143,7 +150,7 @@ sap.ui.define([
 		onSort : function (oEvent) {
 			var sPath = oEvent.getParameter("selectedItem").getKey();
 
-			this._oListSorterState.aSort   = new sap.ui.model.Sorter(sPath, false);
+			this._oListSorterState.aSort   = new Sorter(sPath, false);
 			this._applyGroupSort();
 		},
 
@@ -162,8 +169,8 @@ sap.ui.define([
 				};
 
 			if (sKey !== "None") {
-				this._oListSorterState.aGroup = [new sap.ui.model.Sorter(oGroups[sKey], false,
-						sap.ui.demo.mdtemplate.model.grouper[sKey].bind(oEvent.getSource()))];
+				this._oListSorterState.aGroup = [new Sorter(oGroups[sKey], false,
+						grouper[sKey].bind(oEvent.getSource()))];
 			} else {
 				this._oListSorterState.aGroup = [];
 			}
@@ -182,7 +189,7 @@ sap.ui.define([
 		 */
 		onOpenViewSettings : function (oEvent) {
 			if (!this.oViewSettingsDialog) {
-				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog", this);
+				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog" , this);
 				this.getView().addDependent(this.oViewSettingsDialog);
 				// sync compact style
 				jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oViewSettingsDialog);
@@ -210,10 +217,10 @@ sap.ui.define([
 			aFilterItems.forEach(function (oItem) {
 				switch (oItem.getKey()) {
 				case "Filter1":
-					aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.LE, 100));
+					aFilters.push(new Filter("UnitNumber", FilterOperator.LE, 100));
 					break;
 				case "Filter2":
-					aFilters.push(new sap.ui.model.Filter("UnitNumber", sap.ui.model.FilterOperator.GT, 100));
+					aFilters.push(new Filter("UnitNumber", FilterOperator.GT, 100));
 					break;
 				}
 				aCaptions.push(oItem.getText());
@@ -255,7 +262,7 @@ sap.ui.define([
 		 * @public
 		 */
 		createGroupHeader: function (oGroup) {
-			return new sap.m.GroupHeaderListItem( {
+			return new GroupHeaderListItem( {
 				title: oGroup.text,
 				upperCase: false
 			});
@@ -272,7 +279,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_showDetail : function (oItem) {
-			var bReplace = !jQuery.device.is.phone;
+			var bReplace = !Device.system.phone;
 			this.getRouter().navTo("object", {
 				objectId: oItem.getBindingContext().getProperty("ObjectID")
 			}, bReplace);
@@ -280,7 +287,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the master list header
-		 * @param {integer} the total number of items in the list
+		 * @param {integer} iTotalItems the total number of items in the list
 		 * @private
 		 */
 		_updateListItemCount : function (iTotalItems) {
@@ -292,7 +299,7 @@ sap.ui.define([
 				//Display 'Objects' instead of 'Objects (0)'
 				sTitle = this.getResourceBundle().getText("masterTitle");
 			}
-			this._oControlStateModel.setProperty("/masterListTitle", sTitle);
+			this._oViewModel.setProperty("/masterListTitle", sTitle);
 		},
 
 		/**
@@ -304,11 +311,11 @@ sap.ui.define([
 			this._oList.getBinding("items").filter(aFilters, "Application");
 			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
-				this._oControlStateModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
+				this._oViewModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
 			} else  {
 				// only reset the no data text to default when no new search was triggered
 				if (this._oListFilterState.aSearch.length > 0) {
-					this._oControlStateModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataText"));
+					this._oViewModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataText"));
 				}
 			}
 		},
@@ -324,14 +331,13 @@ sap.ui.define([
 
 		/**
 		 * Internal helper method that sets the filter bar visibility property and the label's caption to be shown
-		 * @param String the selected filter value
+		 * @param String sValue the selected filter value
 		 * @private
 		 */
 		_updateFilterBar : function (sValue) {
-			this._oControlStateModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
-			this._oControlStateModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
+			this._oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
+			this._oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
 		}
-
 	});
 
 }, /* bExport= */ true);

@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
-		title="{controlStates>/masterListTitle}">
+		title="{view>/masterListTitle}">
 		<subHeader>
 			<Bar>
 				<contentMiddle>
@@ -36,7 +36,7 @@
 						},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
-				noDataText="{controlStates>/masterListNoDataText}"
+				noDataText="{view>/masterListNoDataText}"
 				enableBusyIndicator="false"
 				mode="{
 					path: 'device>/isPhone',
@@ -51,11 +51,11 @@
 					<Toolbar
 						active="true"
 						id="filterBar"
-						visible="{controlStates>/isFilterBarVisible}"
+						visible="{view>/isFilterBarVisible}"
 						press="onOpenViewSettings">
 						<Label
 							id="filterBarLabel"
-							text="{controlStates>/filterBarLabel}" />
+							text="{view>/filterBarLabel}" />
 					</Toolbar>
 				</infoToolbar>
 				<items>
