@@ -499,10 +499,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 	
 	ResponsivePopover.prototype.setBeginButton = function(oButton){
+		this._oControl.setBeginButton(oButton);
 		return this._setButton("begin", oButton);
 	};
 	
 	ResponsivePopover.prototype.setEndButton = function(oButton){
+		this._oControl.setEndButton(oButton);
 		return this._setButton("end", oButton);
 	};
 	
