@@ -6,7 +6,7 @@
 		"id": "sap.ui.demo.worklist",
 		"type": "application",
 		
-		"i18n": "app/i18n/messageBundle.properties",
+		"i18n": "i18n/i18n.properties",
 		"title": "{i18n>appTitle}",
 		"description": "{i18n>appDescription}",
 		
@@ -48,8 +48,16 @@
 		},
 
 		"config": {
-			"i18nBundle": "sap.ui.demo.worklist.i18n.i18n",
 			"serviceUrl": "here/goes/your/serviceUrl/"
+		},
+
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.worklist.i18n.i18n"
+				}
+			}
 		},
 
 		"routing": {
