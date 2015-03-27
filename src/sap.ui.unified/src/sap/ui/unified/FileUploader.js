@@ -815,7 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 						var sFilename = oFiles[0].name;
 
-						if (sap.ui.Device.browser.internet_explorer) {
+						if (sap.ui.Device.browser.internet_explorer && oFiles[0].type) {
 							var sContentType = oFiles[0].type;
 							oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 							oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
