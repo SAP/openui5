@@ -40,15 +40,15 @@
 
 		"dependencies": {
 			"minUI5Version": "1.28.0",
-			"libs": {  
+			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.ui.layout": {}
 			}
 		},
-		
+
 		"config": {
-			"messageBundle": "sap.ui.demo.mdtemplate.i18n.messageBundle",
+			"i18nBundle": "sap.ui.demo.mdtemplate.i18n.i18n",
 			"serviceUrl": "here/goes/your/serviceUrl/"
 		},
 

@@ -38,7 +38,7 @@ sap.ui.define([
 
 			// set the internationalization model
 			this.setModel(new ResourceModel({
-				bundleName : mConfig.messageBundle
+				bundleName : mConfig.i18nBundle
 			}), "i18n");
 
 			this.oListSelector = new ListSelector();
@@ -84,7 +84,7 @@ sap.ui.define([
 			if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable on "combi" devices with touch AND mouse
 				this._oRootView.addStyleClass("sapUiSizeCompact");
 			}
-			
+
 			return this._oRootView;
 		},
 
