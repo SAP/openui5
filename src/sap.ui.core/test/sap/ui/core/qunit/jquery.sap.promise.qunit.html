@@ -230,9 +230,27 @@
 		});
 		
 		asyncTest(sTestPrefix + "Promise.resolve(promise)", function() {
-			var p1 = asyncAction(false, "X", 10, true);
+			var p1 = asyncAction(false, "X", 10, false);
 			var p2 = P.resolve(p1);
-			ok(p1 == p2, "Promise.resolve(promise) == promise");
+			if (!bNative || !sap.ui.Device.browser.safari) {
+				ok(p1 == p2, "Promise.resolve(promise) == promise");
+			}
+			
+			p2.then(function(oVal){
+				equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
+			}, function(oVal){
+				ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
+			});
+			
+			var p3 = asyncAction_Deferred(true, "Y", 10, false);
+			var p4 = P.resolve(p3);
+			p4.then(function(oVal){
+				ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
+				start();
+			});
 		});
 		
 		asyncTest(sTestPrefix + "Promise.resolve(thenable)", function() {
@@ -491,7 +509,7 @@
 				ok(false, "Success should not be called");
 				start();
 			}, function(oVal){
-				ok(jQuery.isEmptyObject(oVal), "Fail should be called with value {}");
+				ok(oVal instanceof TypeError, "Fail should be called with an TypeError");
 				start();
 			});
 		});
@@ -613,7 +631,7 @@
 				ok(false, "Success should not be called");
 				start();
 			}, function(oVal){
-				ok(jQuery.isEmptyObject(oVal), "Fail should be called with value {}");
+				ok(oVal instanceof TypeError, "Fail should be called with an TypeError");
 				start();
 			});
 		});
