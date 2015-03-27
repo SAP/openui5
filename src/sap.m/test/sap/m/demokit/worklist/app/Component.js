@@ -10,14 +10,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.worklist.Component", {
 
 		metadata : {
-			name : "Worklist Template",
-			manifest: "json",
-
-			"config": {
-				// always use absolute paths relative to our own component
-				// (relative paths will fail if running in the Fiori Launchpad)
-				rootPath: jQuery.sap.getModulePath("sap.ui.demo.worklist")
-			}
+			manifest: "json"
 		},
 
 		/**
