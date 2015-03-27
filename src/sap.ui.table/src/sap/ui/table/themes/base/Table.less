@@ -653,15 +653,17 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 .sapUiTableRowHdr.sapUiTableGroupHeader > div {
 	position: absolute;
 	left: 3px;
-	margin-top: 5px;
+	
+	// vertical centering
+	top: 50%;
+	-moz-transform: translatey(-50%);
+	-ms-transform: translatey(-50%);
+	-webkit-transform: translatey(-50%);
+	transform: translatey(-50%);
+	
 	white-space: nowrap;
 	z-index: 1;
-	margin-top: 0;
-	position: absolute;
-	top: 0;
-	bottom: 0;
 	font-weight: normal;
-	padding-right: 15px;
 	color: @sapUiBaseText;
 	overflow: hidden;
 	text-overflow: ellipsis;
