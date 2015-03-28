@@ -1048,6 +1048,7 @@ sap.ui.define([
 		var oRemoveControl = new sap.m.Button({
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI("sys-cancel"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_REMOVE_TOOLTIP"),
 			press: function() {
 				that._triggerRemoveCondition(this.oTargetGrid, oConditionGrid);
 			},
