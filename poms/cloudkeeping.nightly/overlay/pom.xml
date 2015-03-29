@@ -118,9 +118,10 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.sap.ui5.dist</groupId> 
-			<artifactId>sapui5-sdk-dist</artifactId> 
-			<version>${sapui5.version}</version> 
+			<groupId>com.sap.ui5.dist</groupId>
+			<artifactId>sapui5-sdk-dist</artifactId>
+			<version>${sapui5.version}</version>
+			<classifier>hanacloud</classifier>
 			<type>war</type>
 			<scope>runtime</scope>
 		</dependency>
