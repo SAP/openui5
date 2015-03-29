@@ -99,8 +99,9 @@
 					</archive>
 					<overlays>
 						<overlay>
-							<groupId>com.sap.ui5.dist</groupId> 
-							<artifactId>sapui5-sdk-dist</artifactId> 
+							<groupId>com.sap.ui5.dist</groupId>
+							<artifactId>sapui5-sdk-dist</artifactId>
+							<classifier>hanacloud</classifier>
 						</overlay>
 					</overlays>
 				</configuration>
