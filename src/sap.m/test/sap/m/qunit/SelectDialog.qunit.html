@@ -207,6 +207,25 @@
 					},
 				});
 
+				QUnit.asyncTest("Remember Selections after Cancel", function (assert) {
+
+					// arrange
+					this.oSelectDialog.setRememberSelections(true);
+
+					bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+					sap.ui.getCore().applyChanges();
+
+					this.oSelectDialog._oDialog.attachAfterOpen(function() {
+
+						var aInitiallySelectedItems = this.oSelectDialog._oList.getSelectedItems();
+						this.oSelectDialog._resetSelection();
+						assert.strictEqual(aInitiallySelectedItems.length, this.oSelectDialog._oList.getSelectedItems().length, 'Selected items after cancelling are the same');
+						start();
+					}, this);
+
+					this.oSelectDialog.open();
+				});
+
 				QUnit.test("Remember Selections false mode", function (assert) {
 
 					// arrange
