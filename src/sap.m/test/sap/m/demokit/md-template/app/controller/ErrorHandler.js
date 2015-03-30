@@ -20,7 +20,6 @@ sap.ui.define([
 			this._oModel = oComponent.getModel();
 			this._bFirstCall = true;
 			this._bMessageOpen = false;
-			this._sCompactModeClass = Device.support.touch ? "" : "sapUiSizeCompact"; // compact mode for the MessageBoxes on non-touch devices
 
 			this._oModel.attachEvent("metadataFailed", function (oEvent) {
 				var oParams = oEvent.getParameters();
@@ -62,7 +61,7 @@ sap.ui.define([
 					icon: MessageBox.Icon.ERROR,
 					title: this._oResourceBundle.getText("errorMetadataTitle"),
 					details: sDetails,
-					styleClass: this._sCompactModeClass,
+					styleClass: this._oComponent.getCompactCozyClass(),
 					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
 						if(sAction === MessageBox.Action.RETRY) {
@@ -90,7 +89,7 @@ sap.ui.define([
 						icon: MessageBox.Icon.ERROR,
 						title: this._oResourceBundle.getText("errorServiceTitle"),
 						details: sDetails,
-						styleClass: this._sCompactModeClass,
+						styleClass: this._oComponent.getCompactCozyClass(),
 						actions: [MessageBox.Action.CLOSE],
 						onClose: function (sAction) {
 							this._bMessageOpen = false;

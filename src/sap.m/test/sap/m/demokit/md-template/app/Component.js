@@ -73,12 +73,21 @@ sap.ui.define([
 		createContent : function() {
 			// call the base component's createContent function
 			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
-
-			if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable on "combi" devices with touch AND mouse
-				this._oRootView.addStyleClass("sapUiSizeCompact");
-			}
-
+			this._oRootView.addStyleClass(this.getCompactCozyClass());
 			return this._oRootView;
+		},
+
+		/**
+		 * This method can be called to determine whether the sapUiSizeCompact design mode class should be set, which influences the size appearance of some controls.
+		 * @public
+		 */
+		getCompactCozyClass : function() { // in 1.28 "Cozy" mode class does not exist yet, but keep the method name in sync with 1.30
+			if (!this._sCompactCozyClass) {
+				if (!sap.ui.Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable for the user on "combi" devices with touch AND mouse
+					this._sCompactCozyClass = "sapUiSizeCompact";
+				}
+			}
+			return this._sCompactCozyClass;
 		},
 
 		/**
