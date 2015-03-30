@@ -2,8 +2,8 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -41,10 +41,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Time", {
-		setup: function () {
+		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		afterEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -172,7 +172,7 @@
 	);
 
 	//*********************************************************************************************
-	test("validate success", 0, function () {
+	test("validate success", function () {
 		var oType = new sap.ui.model.odata.type.Time();
 
 		jQuery.each([null, {__edmType: "Edm.Time", ms: 4711}],
@@ -180,6 +180,7 @@
 				oType.validateValue(sValue);
 			}
 		);
+		expect(0);
 	});
 
 	//*********************************************************************************************

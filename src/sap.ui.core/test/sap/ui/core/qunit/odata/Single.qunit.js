@@ -2,8 +2,8 @@
  *{copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -15,10 +15,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Single", {
-		setup: function () {
+		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		afterEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
