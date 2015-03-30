@@ -2,121 +2,108 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/MasterAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/MasterAssertion'
+	"sap/ui/test/Opa5"
 ],
-function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
-	
-	module("Master List", { setup : function () {
-		Opa5.extendConfig({
-			actions : new MasterAction(),
-			arrangements : new StartAppArrangement(),
-			assertions : new MasterAssertion(),
-			viewNamespace : "sap.ui.demo.mdtemplate.view."
-		});
-	}});
+function (Opa5) {
+
+	QUnit.module("Master List");
 
 	opaTest("Should see the master list with all entries", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnADesktopDevice();
 
 		//Actions
-		When.iLookAtTheScreen();
+		When.onTheMasterPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheMasterList().
-			and.theMasterListShouldHaveAllEntries();
+		Then.onTheMasterPage.iShouldSeeTheList().
+			and.theListShouldHaveAllEntries();
 	});
-	
+
 	opaTest("Search for 'Object 2' should deliver exactly two results", function (Given, When, Then) {
-
 		//Actions
-		When.iSearchForObject2();
+		When.onTheMasterPage.iSearchForObject2();
 
 		// Assertions
-		Then.theMasterListShowsObject2().
-			and.theMasterListShouldHaveNEntries(2);
+		Then.onTheMasterPage.theListShowsObject2().
+			and.theListShouldHaveNEntries(2);
 	});
-	
+
 	opaTest("Entering 'Object 3' into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
-
 		//Actions
-		When.iEnterObject3InTheSearchField().and.iTriggerRefresh();
+		When.onTheMasterPage.iEnterObject3InTheSearchField().
+			and.iTriggerRefresh();
 
 		// Assertions
-		Then.theMasterListShowsObject2().
-			and.theMasterListShouldHaveNEntries(2);
+		Then.onTheMasterPage.theListShowsObject2().
+			and.theListShouldHaveNEntries(2);
 	});
-	
+
 	opaTest("MasterList Sorting on UnitNumber", function(Given, When, Then) {
-	
 		// Actions
-		When.iClearTheSearch().and.iSortTheListOnUnitNumber();
-		// Assertions
-		Then.theMasterListShouldBeSortedAscendingOnUnitNumber();
+		When.onTheMasterPage.iClearTheSearch().
+			and.iSortTheListOnUnitNumber();
 
+		// Assertions
+		Then.onTheMasterPage.theListShouldBeSortedAscendingOnUnitNumber();
 	});
-	
+
 	opaTest("MasterList Sorting on Name", function(Given, When, Then) {
-		
 		// Actions
-		When.iSortTheListOnName();
-		// Assertions
-		Then.theMasterListShouldBeSortedAscendingOnName();
+		When.onTheMasterPage.iSortTheListOnName();
 
+		// Assertions
+		Then.onTheMasterPage.theListShouldBeSortedAscendingOnName();
 	});
-	
+
 	opaTest("MasterList Filtering on UnitNumber less than 100", function(Given, When, Then) {
-		
 		// Action
-		When.iOpenViewSettingsDialog().
+		When.onTheMasterPage.iOpenViewSettingsDialog().
 			and.iSelectListItemInViewSettingsDialog("Unit Number").
 			and.iSelectListItemInViewSettingsDialog("<100 UoM").
 			and.iPressOKInViewSelectionDialog();
-		
+
 		// Assertion
-		Then.theMasterListShouldBeFilteredOnUnitNumberValueLessThan100();
+		Then.onTheMasterPage.theListShouldBeFilteredOnUnitNumberValue();
 	});
-	
+
 	opaTest("MasterList Filtering on UnitNumber more than 100", function(Given, When, Then) {
-		
 		// Action
-		When.iOpenViewSettingsDialog().
+		When.onTheMasterPage.iOpenViewSettingsDialog().
 			and.iSelectListItemInViewSettingsDialog(">100 UoM").
 			and.iPressOKInViewSelectionDialog();
+
 		// Assertion
-		Then.theMasterListShouldBeFilteredOnUnitNumberValueMoreThan100();
+		Then.onTheMasterPage.theListShouldBeFilteredOnUnitNumberValue();
 	});
-	
+
 	opaTest("MasterList remove filter should display all items", function(Given, When, Then) {
-		
 		// Action
-		When.iOpenViewSettingsDialog().
+		When.onTheMasterPage.iOpenViewSettingsDialog().
 			and.iPressResetInViewSelectionDialog().
 			and.iPressOKInViewSelectionDialog();
+
 		// Assertion
-		Then.theMasterListShouldHaveAllEntries();
+		Then.onTheMasterPage.theListShouldHaveAllEntries();
 	});
-	
+
 	opaTest("MasterList grouping delivers a group with one member and a group with 8 members", function(Given, When, Then) {
-		
 		// Action
-		When.iGroupTheList();
+		When.onTheMasterPage.iGroupTheList();
+
 		// Assertion
-		Then.theMasterListShouldContainGroup20OrLess().
-			and.theMasterListShouldContainGroup20OrMore().
-			and.theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrLess();
+		Then.onTheMasterPage.theListShouldContainGroup20OrLess().
+			and.theListShouldContainGroup20OrMore().
+			and.theListGroupShouldBeFilteredOnUnitNumberValue20OrLess();
 	});
-	
+
 	opaTest("Remove grouping from MasterList delivers initial list", function(Given, When, Then) {
-			
 			// Action
-			When.iRemoveListGrouping();
+			When.onTheMasterPage.iRemoveListGrouping();
+
 			// Assertion
-			Then.theMasterListShouldNotContainGroupHeaders().
-				and.theMasterListShouldHaveAllEntries().
+			Then.onTheMasterPage.theListShouldNotContainGroupHeaders().
+				and.theListShouldHaveAllEntries().
 				and.iTeardownMyAppFrame();
 		});
 	});

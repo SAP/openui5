@@ -2,31 +2,21 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/BusyAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/BusyAssertion'
+	"sap/ui/test/Opa5"
 ],
-function (Opa5, BusyAction, StartAppArrangement, BusyAssertion) {
+function (Opa5) {
 
-	module("Desktop busy indication", { setup : function () {
-		Opa5.extendConfig({
-			actions : new BusyAction(),
-			arrangements : new StartAppArrangement(),
-			assertions : new BusyAssertion(),
-			viewNamespace : "sap.ui.demo.mdtemplate.view."
-		});
-	}});
+	QUnit.module("Desktop busy indication");
 
 	opaTest("Should see a global busy indication while loading the metadata", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnADesktopDeviceWithDelay("", 10000);
 
-		//Actions
-		When.iLookAtTheScreen();
+		// Actions
+		When.onTheAppPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheAppBusyIndicator().
+		Then.onTheAppPage.iShouldSeeTheBusyIndicator().
 			and.iTeardownMyAppFrame();
 	});
 
@@ -34,10 +24,12 @@ function (Opa5, BusyAction, StartAppArrangement, BusyAssertion) {
 		// Arrangements
 		Given.iStartTheAppOnADesktopDeviceWithDelay("", 10000);
 
-		When.iWaitUntilTheAppBusyIndicatorIsGone();
+		// Actions
+		When.onTheAppPage.iWaitUntilTheBusyIndicatorIsGone();
 
-		Then.iShouldSeeTheMasterBusyIndicator().
-			and.iShouldSeeTheDetailBusyIndicator().
+		// Assertions
+		Then.onTheMasterPage.iShouldSeeTheBusyIndicator();
+		Then.onTheDetailPage.iShouldSeeTheBusyIndicator().
 			and.iTeardownMyAppFrame();
 	});
 
