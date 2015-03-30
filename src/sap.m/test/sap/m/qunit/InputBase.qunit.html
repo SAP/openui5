@@ -795,12 +795,12 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					if (!oInput.bShowLabelAsPlaceholder) {
+					if (!oInput._bShowLabelAsPlaceholder) {
 						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder"), mSettings.output);
 					}
 					
 					// force to show synthetic placeholder
-					this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
+					this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
 					
 					// rerender for synthetic placeholder 
 					oInput.rerender();
@@ -851,12 +851,12 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					if (!oInput.bShowLabelAsPlaceholder) {
+					if (!oInput._bShowLabelAsPlaceholder) {
 						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
 					}
 					
 					// force to show synthetic placeholder
-					this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
+					this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
 					
 					// rerender for synthetic placeholder 
 					oInput.rerender();
@@ -1718,55 +1718,7 @@
 				oInput.destroy();
 				oText.destroy();
 			});
-			
-		module("invalid input event");
-		test("iE10+ should mark event invalid when an input field with a native placeholder is focused", function() {
-			this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
-			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
-			this.stub(sap.ui.Device, "browser", {
-				msie: true,
-				version: 10
-			});
-			
-			var oInput = new sap.m.InputBase({
-				placeholder : "Test"
-			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
 
-			var oInputDomRef = oInput.getFocusDomRef();
-			oInputDomRef.focus();
-			sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
-			
-			strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
-
-			// cleanup
-			oInput.destroy();
-		})
-		
-		test("iE11 should mark event invalid when an readonly input field fires input event", function() {
-			var fnOnInputSpy = this.spy(sap.m.InputBase.prototype, "oninput");
-			this.stub(sap.ui.Device, "browser", {
-				msie: true,
-				version: 11
-			});
-			
-			var oInput = new sap.m.InputBase({
-				editable : false
-			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			var oInputDomRef = oInput.getFocusDomRef();
-			oInputDomRef.focus();
-			sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
-			
-			strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
-			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
-
-			// cleanup
-			oInput.destroy();
-		});
-		
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
