@@ -39,12 +39,6 @@ var mSeverityMap = {
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
  */
-
-
-/**
- * 
- * @public
- */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
 	metadata: {
 		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
