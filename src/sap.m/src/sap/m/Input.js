@@ -274,6 +274,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 */
 	Input.prototype.init = function() {
 		InputBase.prototype.init.call(this);
+		this._inputProxy = jQuery.proxy(this._onInput, this);
 		this._fnFilter = Input._DEFAULTFILTER;
 
 		// Show suggestions in a dialog on phones:
@@ -365,6 +366,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		var that = this;
 
 		InputBase.prototype.onAfterRendering.call(this);
+		this.bindToInputEvent(this._inputProxy);
 
 		if (!this._bFullScreen) {
 			this._resizePopup();
@@ -906,12 +908,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			}
 		};
 
-		Input.prototype.oninput = function(oEvent) {
-			InputBase.prototype.oninput.call(this, oEvent);
-			if (oEvent.isMarked("invalid")) {
-				return;
-			}
-
+		Input.prototype._onInput = function(oEvent) {
 			var value = this._$input.val();
 
 			// add maxlength support for all types

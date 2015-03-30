@@ -211,7 +211,7 @@
 		i8.setValueLiveUpdate(false);
 		i8.setValue("");
 		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
-		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
+		i8._onInput(); // simulate input event
 
 		equals(oModel.getProperty("/testValue"),"" , "no valueLiveUpdate, no model value update");
 		equals(i8.getValue()                   ,"a", "no valueLiveUpdate, new value");
@@ -227,7 +227,7 @@
 		i8.setValue("");
 		fnFireChangeSpy.reset();
 		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
-		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
+		i8._onInput(); // simulate input event
 		equals(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
 		equals(i8.getValue()                   ,"a", "valueLiveUpdate, new value");
 		equals(fnFireChangeSpy.callCount       , 0,  "valueLiveUpdate, stil no change event");
@@ -303,7 +303,8 @@
 
 		// temporarily overwrite function to get a placeholder on all browsers
 
-		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
+		this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
+		oInput._bShowLabelAsPlaceholder = function() {return true;}
 		oInput.rerender();
 		oInput.$().find("label").css("display","block");
 		strictEqual(oInput.$().find("label").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");

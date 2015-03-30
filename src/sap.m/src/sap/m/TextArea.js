@@ -81,9 +81,17 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		}
 	}});
 	
+	TextArea.prototype.init = function() {
+		InputBase.prototype.init.call(this);
+		this._inputProxy = jQuery.proxy(this._onInput, this);
+	};
+	
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
+	
+		// bind events
+		this.bindToInputEvent(this._inputProxy);
 	
 		// touch browser behaviour differs
 		if (sap.ui.Device.support.touch) {
@@ -113,20 +121,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	// Overwrite input base revert handling for escape 
 	// to fire own liveChange event and property set
 	TextArea.prototype.onValueRevertedByEscape = function(sValue) {
-		// update value property if needed
-		if (this.getValueLiveUpdate()) {
-			this.setProperty("value", sValue, true);
-
-			// get the value back maybe there is a formatter
-			sValue = this.getValue();
-		}
-		
-		this.fireLiveChange({
-			value: sValue,
-
-			// backwards compatibility
-			newValue: sValue
-		});
+		this._onInput();
 	};
 	
 	/**
@@ -143,12 +138,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		return oDomRef ? oDomRef.value : this.getProperty("value");
 	};
 	
-	TextArea.prototype.oninput = function(oEvent) {
-		InputBase.prototype.oninput.call(this, oEvent);
-		if (oEvent.isMarked("invalid")) {
-			return;
-		}
-
+	TextArea.prototype._onInput = function(oEvent) {
 		var sValue = this._$input.val(),
 			iMaxLength = this.getMaxLength();
 	
