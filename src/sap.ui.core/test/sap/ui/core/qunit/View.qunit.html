@@ -229,7 +229,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 			}),
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
-		var oViewInfo = { caller: oView + " (foo)", id: oView.getId(), name: oView.sViewName };
+		var oViewInfo = { caller: oView + " (foo)", id: oView.getId(), name: oView.sViewName, sync: false };
 		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo).returns(Promise.resolve(oResult));
 
 		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
@@ -378,18 +378,18 @@ if (!sap.ui.Device.browser.phantomJS) {
 			} ,
 			"default templating preprocessor stored at view");
 
-		sap.ui.core.mvc.View.registerPreprocessor("controls", this.oPreprocessor, "test", this.mSettings);
+		sap.ui.core.mvc.View.registerPreprocessor("controls", this.oPreprocessor, "test", true, this.mSettings);
 		// now a preprocessor is set
 		deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors["test"]["controls"],
-			{onDemand: false, preprocessor: this.oPreprocessor, message: this.mSettings.message, syncSupport: false},
+			{onDemand: false, preprocessor: this.oPreprocessor, message: this.mSettings.message, syncSupport: true},
 			"preprocessor stored at view"
 		);
 	});
 
 	asyncTest("call method via init", 2, function () {
 
-		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call by init
 		var oView = new sap.ui.xmlview({
@@ -406,7 +406,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	asyncTest("call method independent", 4, function () {
 
-		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// init view
 		var oView = new sap.ui.xmlview({
@@ -428,7 +428,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	asyncTest("run async preprocessors", 2, function () {
 
-		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call via init
 		var oView = new sap.ui.xmlview({
@@ -456,7 +456,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 			message: "Local preprocessor executed"
 		};
 
-		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call via init
 		var oView = new sap.ui.xmlview({
@@ -487,7 +487,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 			message: "Local preprocessor executed"
 		};
 
-		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, false, this.mSettings);
 
 		// call via init
 		var oView = new sap.ui.xmlview({
@@ -535,7 +535,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 	});
 
 	asyncTest("on demand preprocessor not provided", 2, function () {
-		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, this.mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, true, this.mSettings);
 
 		var mDefaultSettings = {
 				message: "OnDemand preprocessor executed"
@@ -566,7 +566,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 			assert: ok
 		};
 
-		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", "sap.ui.core.qunit.mvc.TestPreprocessor", mSettings);
+		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", "sap.ui.core.qunit.mvc.TestPreprocessor", true, mSettings);
 
 		// call via init
 		var oView = new sap.ui.xmlview({viewContent: this.sViewContent, async: true});

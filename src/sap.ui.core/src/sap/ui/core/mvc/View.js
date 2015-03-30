@@ -397,8 +397,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 *   the type of preprocessor, e.g. "raw", "xml" or "controls"
 	 * @param {object|string|Element} vSource
 	 *   the view source as a JSON object, a raw text, or an XML document element
-	 * @param {boolean} bSync
-	 *   describes the view execution
+	 * @param {boolean} [bSync]
+	 *   describes the view execution, true if sync
 	 * @returns {Promise}
 	 *   a promise resolving with the processed source or an error
 	 * @protected
@@ -409,7 +409,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			oViewInfo = {
 				name: this.sViewName,
 				id: this.getId(),
-				caller: this + " (" + this.sViewName + ")"
+				caller: this + " (" + this.sViewName + ")",
+				sync: !!bSync
 			},
 			//global preprocessor availability
 			oConfig = View._mPreprocessors[sViewType] ? View._mPreprocessors[sViewType][sType] : undefined,
