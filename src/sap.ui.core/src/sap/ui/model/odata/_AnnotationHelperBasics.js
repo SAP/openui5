@@ -160,7 +160,7 @@ sap.ui.define([
 					sResult = "{path:" + Basics.toJSON(vValue);
 					if (bAddType && oResult.type) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
-						if (oResult.constraints && !jQuery.isEmptyObject(oResult.constraints)) {
+						if (oResult.constraints && Object.keys(oResult.constraints).length) {
 							sResult += ",constraints:" + Basics.toJSON(oResult.constraints);
 						}
 					}

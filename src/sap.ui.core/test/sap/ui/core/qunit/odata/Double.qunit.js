@@ -36,14 +36,14 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{i: {}, o: undefined},
 		{i: {nullable: true}, o: undefined},
 		{i: {nullable: false}, o: {nullable: false}},
 		{i: {nullable: "true"}, o: undefined},
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType;
 
@@ -160,7 +160,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, null, {}, "foo"], function (i, sValue) {
+	[false, null, {}, "foo"].forEach(function (sValue) {
 		test("validate errors: " + JSON.stringify(sValue), function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Double({}, {nullable: false});
@@ -181,7 +181,7 @@
 		var oType = new sap.ui.model.odata.type.Double();
 
 		// TODO "NaN", "Infinity", "-Infinity"
-		jQuery.each([null, 1.1, 1.234E+235], function (i, sValue) {
+		[null, 1.1, 1.234E+235].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
 		expect(0);
@@ -201,13 +201,13 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		set: {foo: "bar"},
 		expect: {foo: "bar", groupingEnabled: true}
 	}, {
 		set: {decimals: 7, groupingEnabled: false},
 		expect: {decimals: 7, groupingEnabled: false}
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 			var oSpy,
 				oType = new sap.ui.model.odata.type.Double(oFixture.set);

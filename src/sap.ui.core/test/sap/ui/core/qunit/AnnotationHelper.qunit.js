@@ -404,8 +404,8 @@ sap.ui.require([
 				return mFixture[sUrl] === undefined; // do not fake if URL is unknown
 			});
 
-			jQuery.each(mFixture, function(sUrl, vResponse) {
-				oServer.respondWith(sUrl, vResponse);
+			Object.keys(mFixture).forEach(function(sUrl) {
+				oServer.respondWith(sUrl, mFixture[sUrl]);
 			});
 			oServer.autoRespond = true;
 
@@ -460,7 +460,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
+	["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'].forEach(function (sString) {
 		test("14.4.11 Expression edm:String: " + sString, function () {
 			return withMetaModel(function (oMetaModel) {
 				var sMetaPath = sPath2Product
@@ -518,7 +518,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'], function (i, sPath) {
+	["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new sap.ui.model.json.JSONModel({
 					"Value" : {
@@ -536,7 +536,7 @@ sap.ui.require([
 		});
 	});
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		oBoolean,
 		oByte,
 		oDateTime,
@@ -553,7 +553,7 @@ sap.ui.require([
 		oString10,
 		oString80,
 		oTime
-	], function(i, oType) {
+	].forEach(function(oType, i) {
 		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i + "/Value";
 
 		test("14.5.12 Expression edm:Path w/ type, path = " + sPath + ", type = " + oType.name,
@@ -586,7 +586,7 @@ sap.ui.require([
 	// A: rather not, we probably need complex bindings in many cases (e.g. for types)
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{Apply : null},
 		{Apply : "unsupported"},
 		{Apply : {Name : "unsupported"}},
@@ -603,7 +603,7 @@ sap.ui.require([
 		{Apply : {Name : "odata.uriEncode", Parameters : {}}},
 		{Apply : {Name : "odata.uriEncode", Parameters : []}},
 		{Apply : {Name : "odata.uriEncode", Parameters : [null]}}
-	], function (i, oApply) {
+	].forEach(function (oApply) {
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
 		test("14.5.3 Expression edm:Apply: " + sError, function () {
@@ -740,10 +740,10 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{type: "String", value: "foo\\bar", result: "'foo\\bar'"},
 		{type: "Unsupported", value: "foo\\bar", error: true}
-	], function (iUnused, oFixture) {
+	].forEach(function (oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
 			return withMetaModel(function (oMetaModel) {
 				var oExpectedResult,
@@ -878,8 +878,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'
-		], function (i, sPath) {
+	["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new sap.ui.model.json.JSONModel({
 					"Value" : {
@@ -909,7 +908,7 @@ sap.ui.require([
 	module("sap.ui.model.odata.AnnotationHelper.followPath");
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		// empty (annotation) path
 		AnnotationPath : "",
 		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
@@ -1003,7 +1002,7 @@ sap.ui.require([
 		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
 		navigationPath : "",
 		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		var sPath, sTitle;
 
 		if (oFixture.hasOwnProperty("AnnotationPath")) {
@@ -1075,7 +1074,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		// invalid meta path
 		metaPath : "/foo",
 		isMultiple : "",
@@ -1093,7 +1092,7 @@ sap.ui.require([
 		isMultiple : "",
 		navigationPath : undefined,
 		resolvedPath : undefined
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		test("Missing path expression, context: " + oFixture.metaPath, function () {
 			return withMetaModel(function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),

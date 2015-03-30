@@ -38,13 +38,13 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{i: {nullable: true}, o: undefined},
 		{i: {nullable: "true"}, o: undefined},
 		{i: {nullable: false}, o: {nullable: false}},
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", sinon.test(function () {
 			var oType;
 
@@ -81,7 +81,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{test:"format to boolean", value:"12.34", targetType: "boolean",
 			errorText:"Don't know how to format sap.ui.model.odata.type.Int64 to boolean"},
 		{test:"format to int with overflow error", value: "9007199254740992",
@@ -89,8 +89,8 @@
 			errorText:"EnterIntMax 9,007,199,254,740,991"},
 		{test:"format to int with overflow error", value: "-9007199254740992",
 			targetType: "int",
-			errorText:"EnterIntMin -9,007,199,254,740,991"}],
-			function (i, oFixture) {
+			errorText:"EnterIntMin -9,007,199,254,740,991"}
+	].forEach(function (oFixture) {
 		test(oFixture.test, function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Int64();
@@ -135,7 +135,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["foo", "1,234,567.890", "true", "-", "+"], function (i, sValue) {
+	["foo", "1,234,567.890", "true", "-", "+"].forEach(function (sValue) {
 		test("parse invalid value from string: " + sValue, function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Int64();
@@ -226,17 +226,15 @@
 	test("validate success", function () {
 		var oType = new sap.ui.model.odata.type.Int64();
 
-		jQuery.each(["+1", "-1", "+123", "-123", "0", null,
-		             "-9223372036854775808", "9223372036854775807", "+9223372036854775807"],
-			function (i, sValue) {
-				oType.validateValue(sValue);
-			}
-		);
+		["+1", "-1", "+123", "-123", "0", null, "-9223372036854775808", "9223372036854775807",
+		 "+9223372036854775807"].forEach(function (sValue) {
+			oType.validateValue(sValue);
+		});
 		expect(0);
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, 1.1, "foo", "1.234"], function (i, sValue) {
+	[false, 1.1, "foo", "1.234"].forEach(function (sValue) {
 		test("validate errors: " + JSON.stringify(sValue), function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Int64();
@@ -253,7 +251,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{ test: "exceeds min by length", value: "-92233720368547758090",
 			message: "EnterIntMin -9,223,372,036,854,775,808"},
 		{ test: "exceeds max by length", value: "92233720368547758080" ,
@@ -262,7 +260,7 @@
 			message: "EnterIntMin -9,223,372,036,854,775,808"},
 		{ test: "exceeds max by 1", value: "9223372036854775808",
 			message: "EnterIntMax 9,223,372,036,854,775,807"}
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("validate: error: range " + oFixture.test, function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Int64();
@@ -307,13 +305,13 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		set: {foo: "bar"},
 		expect: {foo: "bar", groupingEnabled: true}
 	}, {
 		set: {minIntegerDigits: 17, groupingEnabled: false},
 		expect: {minIntegerDigits: 17, groupingEnabled: false}
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 			var oSpy,
 				oType = new sap.ui.model.odata.type.Int64(oFixture.set);

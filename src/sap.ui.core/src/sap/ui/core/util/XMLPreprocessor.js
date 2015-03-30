@@ -167,24 +167,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * Prepares the given binding info or part of it; makes it "one time" and binds its
 			 * formatter function (if opted in) to an interface object.
 			 *
-			 * @param {number} i
-			 *   index of binding info's part (if applicable)
 			 * @param {object} oInfo
 			 *   a binding info or a part of it
+			 * @param {number} i
+			 *   index of binding info's part (if applicable)
 			 */
-			function prepare(i, oInfo) {
+			function prepare(oInfo, i) {
 				var fnFormatter = oInfo.formatter;
 
 				oInfo.mode = sap.ui.model.BindingMode.OneTime;
 				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
-					= jQuery.proxy(fnFormatter, null, getInterface(oWithControl, mSettings, i));
+					= fnFormatter.bind(null, getInterface(oWithControl, mSettings, i));
 				}
 			}
 
 			try {
-				prepare(undefined, oBindingInfo);
-				jQuery.each(oBindingInfo.parts || [], prepare);
+				prepare(oBindingInfo);
+				if (oBindingInfo.parts) {
+					oBindingInfo.parts.forEach(prepare);
+				}
 
 				oWithControl.bindProperty("any", oBindingInfo);
 				return oWithControl.getBinding("any")
@@ -228,7 +230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 */
 		function serializeSingleElement(oElement) {
 			var sText = "<" + oElement.nodeName;
-			jQuery.each(oElement.attributes, function (i, oAttribute) {
+			Array.prototype.forEach.call(oElement.attributes, function (oAttribute) {
 				sText += " " + oAttribute.name + '="' + oAttribute.value + '"';
 			});
 			return sText + (oElement.childNodes.length ? ">" : "/>");
@@ -547,7 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					oNewWithControl.setModel(oListBinding.getModel(), sVar);
 
 					// the actual loop
-					jQuery.each(aContexts, function (i, oContext) {
+					aContexts.forEach(function (oContext, i) {
 						var oSourceNode = (i === aContexts.length - 1) ?
 							oElement : oElement.cloneNode(true);
 						// Note: because sVar and sModelName refer to the same model instance, it

@@ -109,7 +109,7 @@
 
 		});
 
-		jQuery.each(["foo", "123.809"], function (i, oValue) {
+		["foo", "123.809"].forEach(function (oValue) {
 			test("parse invalid value from string: " + oValue, function () {
 				sap.ui.test.TestUtils.withNormalizedMessages(function () {
 					try {
@@ -124,7 +124,7 @@
 			});
 		});
 
-		jQuery.each(["123", undefined, false], function (i, iValue) {
+		["123", undefined, false].forEach(function (iValue) {
 			test("illegal values and value type: " + iValue,
 				function () {
 					try {
@@ -139,7 +139,7 @@
 			});
 		});
 
-		jQuery.each([undefined, false, true], function (i, bNullable) {
+		[undefined, false, true].forEach(function (bNullable) {
 			test("setConstraints: nullable=" + bNullable, function () {
 				var oExpectedConstraints = bNullable === false ? {nullable: false} : undefined;
 
@@ -150,7 +150,7 @@
 		});
 
 		test("validation success", function () {
-			jQuery.each([iMin, iMax], function (i, iValue) {
+			[iMin, iMax].forEach(function (iValue) {
 				oType.validateValue(iValue);
 			});
 			expect(0);
@@ -216,13 +216,13 @@
 			});
 		});
 
-		jQuery.each([{
+		[{
 			set: {foo: "bar"},
 			expect: {foo: "bar", groupingEnabled: true}
 		}, {
 			set: {decimals: 7, groupingEnabled: false},
 			expect: {decimals: 7, groupingEnabled: false}
-		}], function (i, oFixture) {
+		}].forEach(function (oFixture) {
 			test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 				var oSpy,
 					oType = createType(oFixture.set);

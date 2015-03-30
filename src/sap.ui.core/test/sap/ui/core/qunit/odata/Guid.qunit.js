@@ -31,7 +31,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["false", false, "true", true, undefined], function (i, vNullable) {
+	["false", false, "true", true, undefined].forEach(function (vNullable, i) {
 		test("with nullable=" + vNullable + " (type: " + typeof vNullable + ")", function () {
 			var oType;
 
@@ -69,7 +69,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["int", "boolean", "float", "foo"], function (i, sTargetType) {
+	["int", "boolean", "float", "foo"].forEach(function (sTargetType) {
 		test("format fail for target type " + sTargetType, function () {
 			var oType = new sap.ui.model.odata.type.Guid();
 
@@ -108,8 +108,8 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]],
-		function (i, aFixture) {
+	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]].forEach(
+		function (aFixture) {
 			test("parse fail for source type " + aFixture[1], function () {
 				var oType = new sap.ui.model.odata.type.Guid();
 
@@ -129,22 +129,20 @@
 	test("validate success", function () {
 		var oType = new sap.ui.model.odata.type.Guid();
 
-		jQuery.each([null, "0050568D-393C-1ED4-9D97-E65F0F3FCC23"],
-			function (i, sValue) {
-				oType.validateValue(sValue);
-			}
-		);
+		[null, "0050568D-393C-1ED4-9D97-E65F0F3FCC23"].forEach(function (sValue) {
+			oType.validateValue(sValue);
+		});
 		expect(0);
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{value: 1234, message: "Illegal sap.ui.model.odata.type.Guid value: 1234"},
 		{value: "123", message: "EnterGuid"},
 		{value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23-2", message: "EnterGuid"},
 		{value: "G050568D-393C-1ED4-9D97-E65F0F3FCC23", message: "EnterGuid"},
 		{value: null, message: "EnterGuid"}
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("validate exception for value " + oFixture.value, function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Guid({}, {nullable: false});
