@@ -256,8 +256,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		this._externalIcon = undefined;
 		this._sResizeListenerId = null;
 		this._$Window = jQuery(window);
-		this._iHMargin = 32;
-		this._iVMargin = 32;
 
 		this._aButtons = [];
 
@@ -598,14 +596,45 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 	};
 
+	Dialog.prototype._getDialogOffset = function(windowWidth) {
+		var iWindowWidth = windowWidth || this._$Window.width();
+		var screenSizes = {
+			small: 600,
+			large: 1024
+		};
+		var remToPixelMargin = function (rem) {
+			var iRemInPx = parseInt(window.getComputedStyle(document.body).fontSize, 10);
+			return (rem * iRemInPx) * 2;
+		};
+		var margins = {
+			top: remToPixelMargin(1), //default value for small size
+			left: remToPixelMargin(1) //default value for small size
+		};
+
+		if (iWindowWidth > screenSizes.small && iWindowWidth < screenSizes.large) {
+			//medium size
+			margins = {
+				top: remToPixelMargin(2),
+				left: remToPixelMargin(2)
+			};
+		} else if (iWindowWidth >= screenSizes.large) {
+			margins = {
+				top: remToPixelMargin(4),
+				left: remToPixelMargin(4)
+			};
+		}
+
+		return margins;
+	};
+
 	Dialog.prototype._setDimensions = function() {
 		var iWindowWidth = this._$Window.width(),
 			iWindowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height(),
 			$this = this.$(),
 			//stretch is ignored for message dialog
 			bStretch = this.getStretch() && !this._bMessageType,
-			iHPaddingToScreen = this._iHMargin,
-			iVPaddingToScreen = this._iVMargin,
+			iHPaddingToScreen = this._getDialogOffset(iWindowWidth).left,
+			iVPaddingToScreen = this._getDialogOffset(iWindowWidth).top,
 			iPaddingLeft = window.parseInt($this.css("padding-left"), 10),
 			iPaddingRight = window.parseInt($this.css("padding-right"), 10),
 			iPaddingTop = window.parseInt($this.css("padding-top"), 10),
