@@ -5,3 +5,8 @@ jQuery.sap.require({
 	modName: "test.unit.controller.App",
 	type: "controller"
 });
+jQuery.sap.require({
+	modName: "test.unit.controller.Worklist",
+	type: "controller"
+});
+
