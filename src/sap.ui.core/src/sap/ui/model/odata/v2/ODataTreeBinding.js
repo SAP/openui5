@@ -147,16 +147,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		};
 		
 		var _handleError = function (oError) {
-			var sErrorMsg = "Request for root node failed: " + oError.message;
-			if (oError.response){
-				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+			//check if the error handler was executed because of an intentionally aborted request: 
+			if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+				var sErrorMsg = "Request for root node failed: " + oError.message;
+				if (oError.response){
+					sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+				}
+				jQuery.sap.log.fatal(sErrorMsg);
+				that.bNeedsUpdate = true;
+				that._bRootMissing = true;
+				delete that.mRequestHandles[sRequestKey];
+				
+				that.fireDataReceived();
 			}
-			jQuery.sap.log.fatal(sErrorMsg);
-			that.bNeedsUpdate = true;
-			that._bRootMissing = true;
-			delete that.mRequestHandles[sRequestKey];
-			
-			that.fireDataReceived();
 		};
 		
 		var aParams = [];
@@ -211,11 +214,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				that.fireDataReceived();
 			},
 			error: function (oError) {
-				that.bNeedsUpdate = true;
-				that._bRootMissing = true;
-				delete that.mRequestHandles[sRequestKey];
+				//Only perform error handling if the request was not aborted intentionally
+				if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+					that.bNeedsUpdate = true;
+					that._bRootMissing = true;
+					delete that.mRequestHandles[sRequestKey];
 				
-				that.fireDataReceived();
+					that.fireDataReceived();
+				}
 			}
 		});
 	};
@@ -635,6 +641,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		}
 	
 		function _handleError(oError) {
+			//Only perform error handling if the request was not aborted intentionally
+			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
+				return;
+			}
 			var sErrorMsg = "Request for $count failed: " + oError.message;
 			if (oError.response){
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
@@ -652,14 +662,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	
 		// Only send request, if path is defined
 		if (sPath) {
-			//var sUrl = this.oModel._createRequestUrl(sPath + "/$count", null, aParams);
-			//var oRequest = this.oModel._createRequest(sUrl, "GET", false);
-			// count needs other accept header
-			//oRequest.headers["Accept"] = "text/plain, */*;q=0.5";
-		
-			// execute the request and use the metadata if available
-			// (since $count requests are synchronous we skip the withCredentials here)
-			//this.oModel._request(oRequest, _handleSuccess, _handleError, undefined, undefined, this.oModel.getServiceMetadata());
 			this.oModel.read(sPath + "/$count", {
 				urlParameters: aParams,
 				success: _handleSuccess,
@@ -793,7 +795,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			that.fireDataReceived();
 		}
 	
-		function fnError(oData) {
+		function fnError(oError) {
+			//Only perform error handling if the request was not aborted intentionally
+			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
+				return;
+			}
+			
 			that.oRequestHandle = null;
 			delete that.mRequestHandles[sRequestKey];
 			that.fireDataReceived();
