@@ -134,7 +134,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	ElementMetadata.prototype.isHidden = function() {
 		return this._sVisibility === "hidden";
 	};
-	
+
+	/**
+	 * Returns the design time metadata. The design time metadata contains all relevant information to support the control
+	 * in the UI5 design time.
+	 *
+	 * @return {map} The design time metadata
+	 * @since 1.30.0
+	 */
+	ElementMetadata.prototype.getDesignTime = function() {	
+		if (!this._oDesignTime && this._bHasDesignTime) {
+			// the synchronous loading would be only relevant during the
+			// development time - for productive usage the design time metadata should
+			// provide in a preload packaging which includes the control design time metadata
+			// - so the sync request penalty
+			// should be ignorable for now (async implementation will
+			// change the complete behavior of the constructor function)
+			jQuery.sap.require({modName: this.getElementName(), type: "designtime"});
+			this._oDesignTime = jQuery.sap.getObject(this.getElementName() + ".designtime");	
+		}
+		return this._oDesignTime;	
+	};
+
+	/**
+	 * Load and returns the design time metadata asynchronously. The design time metadata contains all relevant information to support the control
+	 * in the UI5 design time.
+	 *
+	 * @return {Promise} A promise which will return the loaded design time metadata
+	 * @since 1.28.0
+	 */
 	ElementMetadata.prototype.loadDesignTime = function() {
 		
 		var that = this;

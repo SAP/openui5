@@ -51,7 +51,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			 * Child Controls within the layout.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		}
+		},
+		designTime : true
 	}});
 	
 	

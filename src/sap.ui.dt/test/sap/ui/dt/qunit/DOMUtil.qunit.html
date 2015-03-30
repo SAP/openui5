@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.DOMUtil</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				z-index: 1000;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.DOMUtil");
+			jQuery.sap.require("sap.m.Button");
+
+			module("Given that a control is rendered", {
+				setup : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oButton.destroy();
+				}
+			});
+
+			test("when the DOM reference is available", function() {
+				var oButtonDomRef = this.oButton.getDomRef();
+				var mSize = sap.ui.dt.DOMUtil.getSize(oButtonDomRef);
+				deepEqual(mSize, {width: 66, height: 48}, 'then the static method "getSize" returns the right value');
+
+				var mPosition = sap.ui.dt.DOMUtil.getPosition(oButtonDomRef);
+				deepEqual(mPosition, {top: 10, left: 400}, 'and the static method "getPosition" returns the right value');
+
+				var zIndex = sap.ui.dt.DOMUtil.getZIndex(oButtonDomRef);
+				equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
+			});
+
+			// TODO:
+			// * Add tests for CSSSelector
+			// * Add tests for escapedID (is this needed?)
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.DOMUtil</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

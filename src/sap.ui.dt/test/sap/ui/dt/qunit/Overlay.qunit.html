@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.Overlay</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				z-index: 1000;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.DOMUtil");
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
+
+			module("Given that an Overlay is created for a control", {
+				setup : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.Overlay({
+						element : this.oButton
+					});
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			test("when the control is rendered", function() {				
+				var oDomRef = this.oOverlay.getDomRef();
+				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
+				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
+				equal(oDomRef.parentNode, oDomRef.parentNode, 'then the overlay is added to the static UI area');
+
+				equal(oDomRef.className, "sapUiDtOverlay", 'and the right CSS class is set to the element');
+
+				var mSize = sap.ui.dt.DOMUtil.getSize(oElementDomRef);
+				equal(oDomRef.offsetWidth, mSize.width, 'and the right width is applied to the overlay');
+				equal(oDomRef.offsetHeight, mSize.height, 'and the right height is applied to the overlay');
+
+				var mPosition = sap.ui.dt.DOMUtil.getPosition(oElementDomRef);
+				var mOffset = jQuery(oDomRef).offset();
+				equal(mOffset.top, mPosition.top, 'and the right postion "top" is applied to the overlay');
+				equal(mOffset.left, mPosition.left, 'and the right postion "left" is applied to the overlay');
+
+				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
+				equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
+			});
+
+			test("when the overlay is selected", function() {
+				this.oOverlay.attachSelectionChange(function(oEvent) {
+					ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
+				}, this);
+				this.oOverlay.setSelected(true);
+				ok(this.oOverlay.isSelected(), 'then the state of the overlay is "selected"');
+			});
+
+			test("when the overlay is selected and selected again", function() {
+				this.oOverlay.setSelected(true);
+				var bFired = false;
+				this.oOverlay.attachSelectionChange(function(oEvent) {
+					bFired = true;
+				}, this);
+				this.oOverlay.setSelected(true);
+				ok(!bFired, 'then the "selection change" event should not fire again');
+			});
+
+			test("when the overlay is changed to selectable false and the overlay is selected", function() {
+				this.oOverlay.setSelectable(false);
+				ok(!this.oOverlay.isSelectable(), 'then the state of the overlay is "not selectable"');
+
+				var bFired = false;
+				this.oOverlay.attachSelectionChange(function(oEvent) {
+					bFired = true;
+				}, this);
+				this.oOverlay.setSelected(true);
+				ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
+				ok(!bFired, 'and no "selection change" event is fired');
+			});
+
+			module("Given that an Overlay is created for a layout with child controls", {
+				setup : function() {
+					this.oButton1 = new sap.m.Button({
+						text : "Button 1"
+					});
+					this.oOverlayButton1 = new sap.ui.dt.Overlay({
+						element : this.oButton1
+					});
+
+					this.oButton2 = new sap.m.Button({
+						text : "Button 2"
+					});
+					this.oOverlayButton2 = new sap.ui.dt.Overlay({
+						element : this.oButton2
+					});
+
+
+					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
+							content : [this.oButton1, this.oButton2]
+					});
+					this.oOverlayLayout1 = new sap.ui.dt.Overlay({
+						element : this.oVerticalLayout1
+					});
+
+					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout();
+
+					this.oOverlayLayout2 = new sap.ui.dt.Overlay({
+						element : this.oVerticalLayout2
+					});
+
+					this.oVerticalLayout1.placeAt("content");
+					this.oVerticalLayout2.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					/*
+					this.oButton1.destroy();
+					this.oButton2.destroy();
+					this.oVerticalLayout1.destroy();
+					this.oVerticalLayout2.destroy();
+					this.oOverlayLayout1.destroy();
+					this.oOverlayLayout2.destroy();
+					this.oOverlayButton1.destroy();
+					this.oOverlayButton2.destroy();
+					*/
+				}
+			});
+
+			test("when a control is moved from one layout to another", function() {
+				this.oVerticalLayout2.addContent(this.oButton2);
+				ok(true);
+			});
+
+			module("Given that an Overlay is created for a control with custom design time metadata", {
+				setup : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.Overlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
+							data : {
+								name : "My Custom Metadata"
+							}
+						})
+					});
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			test("when the design time metadata is retrieved", function() {
+				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
+				equal(oDesignTimeMetadata.getName(), "My Custom Metadata", "then the right custom data is set");
+			});
+
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.Overlay</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

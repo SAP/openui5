@@ -1,0 +1,185 @@
+/*!
+ * ${copyright}
+ */
+
+// Provides class sap.ui.dt.ManagedObjectObserver.
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject'
+],
+function(jQuery, ManagedObject) {
+	"use strict";
+
+
+	/**
+	 * Constructor for a new ManagedObjectObserver.
+	 *
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {object} [mSettings] initial settings for the new object
+	 *
+	 * @class
+	 * The ManagedObjectObserver observs changes of a ManagedObject and propagates them via events.
+	 * @extends sap.ui.base.ManagedObject
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.30
+	 * @alias sap.ui.dt.Overlay
+	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 */
+	var ManagedObjectObserver = ManagedObject.extend("sap.ui.dt.ManagedObjectObserver", /** @lends sap.ui.dt.ManagedObjectObserver.prototype */ {
+		metadata : {
+			abstract : true,
+			// ---- object ----
+
+			// ---- control specific ----
+			library : "sap.ui.dt",
+			properties : {
+				
+			},
+			associations : {
+				"target" : {
+					"type" : "sap.ui.base.ManagedObject"
+				}
+			},
+			events : {
+				"changed" : {},
+				"destroyed" : {},
+				"parentChanged" : {}
+			}
+		}
+	});
+
+	/**
+	 * @protected
+	 * @override
+	 */
+	ManagedObjectObserver.prototype.init = function() {
+		
+	};
+
+	/**
+	 * @protected
+	 * @override
+	 */
+	ManagedObjectObserver.prototype.exit = function() {
+		var oTarget = this.getTargetInstance();
+		if (oTarget) {
+			this.unobserve(oTarget);	
+		}
+	};
+
+	ManagedObjectObserver.prototype.setTarget = function(vTarget) {
+		var oOldTarget = this.getTargetInstance();
+		if (oOldTarget) {
+			this.unobserve(oOldTarget);	
+		}
+
+		this.setAssociation("target", vTarget);
+
+		var oTarget = this.getTargetInstance();
+		if (oTarget) {
+			this.observe(oTarget);	
+		}
+
+		return this;
+	};
+
+	/**
+	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * 
+	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
+	 * @protected
+	 */
+	ManagedObjectObserver.prototype.observe = function(oTarget) {
+		var that = this;
+
+		oTarget.attachEvent("_change", this.fireChanged, this);
+
+		// Wrapper for the destroy method to recognize changes
+		this._fnOriginalDestroy = oTarget.destroy;
+		var bDestroyed = false;
+		oTarget.destroy = function() {
+			if (bDestroyed) {
+				return;
+			}
+			that._fnOriginalDestroy.apply(this, arguments);
+			that.unobserve(oTarget);
+			that.fireDestroyed();
+		};
+
+		// Wrapper for the bindProperty method to recognize changes
+		this._fnOriginalBindProperty = oTarget.bindProperty;
+		oTarget.bindProperty = function() {
+			that._fnOriginalBindProperty.apply(this, arguments);
+			that.fireChanged();
+		};
+
+		// Wrapper for the unbindProperty method to recognize changes
+		this._fnOriginalUnBindProperty = oTarget.unbindProperty;
+		oTarget.unbindProperty = function() {
+			that._fnOriginalUnBindProperty.apply(this, arguments);
+			that.fireChanged();
+		};
+
+		// Wrapper for the bindAggregation method to recognize changes
+		this._fnOriginalBindAggregation = oTarget.bindAggregation;
+		oTarget.bindAggregation = function(sAggregationName) {
+			that._fnOriginalBindAggregation.apply(this, arguments);
+			that.fireChanged();
+		};
+
+		// Wrapper for the unbindAggregation method to recognize changes
+		this._fnOriginalUnBindAggregation = oTarget.unbindAggregation;
+		oTarget.unbindAggregation = function(sAggregationName) {
+			that._fnOriginalUnBindAggregation.apply(this, arguments);
+			that.fireChanged();
+		};
+
+		// We wrap the native setParent method of the control with our logic
+		this._fnOriginalSetParent = oTarget.setParent;
+		oTarget.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
+			that._fnOriginalSetParent.apply(this, arguments);
+			that.fireParentChanged();
+			that.fireChanged();
+			return this;
+		};
+	};
+
+	/**
+	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * 
+	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
+	 * @protected
+	 */
+	ManagedObjectObserver.prototype.unobserve = function(oTarget) {
+		oTarget.destroy = this._fnOriginalDestroy;
+		delete this._fnOriginalDestroy;
+		oTarget.bindProperty = this._fnOriginalBindProperty;
+		delete this._fnOriginalBindProperty;
+		oTarget.unbindProperty = this._fnOriginalUnBindProperty;
+		delete this._fnOriginalUnBindProperty;
+		oTarget.bindAggregation = this._fnOriginalBindAggregation;
+		delete this._fnOriginalBindAggregation;
+		oTarget.unbindAggregation = this._fnOriginalUnBindAggregation;
+		delete this._fnOriginalUnBindAggregation;
+		oTarget.setParent = this._fnOriginalSetParent;
+		delete this._fnOriginalSetParent;
+
+		oTarget.detachEvent("_change", this.fireChanged, this);
+	};
+
+
+	/**
+	 * @protected
+	 * @return {sap.ui.base.ManagedObject} The instance of the associated target to observe.
+	 */
+	ManagedObjectObserver.prototype.getTargetInstance = function() {
+		return sap.ui.getCore().byId(this.getTarget());
+	};
+
+	return ManagedObjectObserver;
+}, /* bExport= */ true);
