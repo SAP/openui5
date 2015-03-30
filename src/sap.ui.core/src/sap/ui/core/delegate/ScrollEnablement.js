@@ -778,7 +778,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			_onScroll: function(oEvent) {
 				var $Container = this._$Container,
 					fScrollTop = $Container.scrollTop(),
-					fVerticalMove = this._scrollY - fScrollTop;
+					fVerticalMove = fScrollTop - this._scrollY;
 
 				// Prevent false tap event during momentum scroll in IOS
 				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
