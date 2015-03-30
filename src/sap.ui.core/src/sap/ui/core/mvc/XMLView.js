@@ -260,8 +260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		* type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 		* view instance already, that one is used.
 		*
-		* It can be either an implementation of {@link sap.ui.core.mvc.Preprocessor} or a function with
-		* a signature according to {@link sap.ui.core.mvc.Preprocessor.process}.
+		* It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.Preprocessor} or a
+		* function with a signature according to {@link sap.ui.core.mvc.Preprocessor.process}.
 		*
 		* <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
 		* in sync mode, as this could have unexpected side effects.
