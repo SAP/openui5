@@ -127,30 +127,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Private properties                                          */
 	/* ----------------------------------------------------------- */
 
-	// use labels as placeholder configuration
-	InputBase.prototype._bShowLabelAsPlaceholder = (function(oDevice) {
-
-		// check native placeholder support first
-		if (!oDevice.support.input.placeholder) {
-			return true;
-		}
-
-		// according to HTML 5 placeholder specification,
-		// http://www.w3.org/html/wg/drafts/html/master/single-page.html#the-placeholder-attribute
-		// the placeholder attribute is only shown before the user enters a value
-		// but IE removes placeholder when the user puts focus on the field
-		// http://msdn.microsoft.com/en-us/library/ie/hh772942(v=vs.85).aspx
-		if (oDevice.browser.msie) {
-			return true;
-		}
-
-		// we exclude not right alignable placeholders
-		// check test page : http://jsfiddle.net/89FhB/
-		if (oDevice.os.android && oDevice.os.version < 4.4) {
-			return true;
-		}
-
-	}(sap.ui.Device));
+	/**
+	 * Use labels as placeholder configuration.
+	 * It can be necessary for the subclasses to overwrite this when
+	 * native placeholder usage causes undesired input events or when
+	 * placeholder attribute is not supported for the specified type.
+	 * https://html.spec.whatwg.org/multipage/forms.html#input-type-attr-summary
+	 * 
+	 * @see sap.m.InputBase#oninput
+	 * @protected
+	 */
+	InputBase.prototype.bShowLabelAsPlaceholder = !sap.ui.Device.support.input.placeholder;
 
 	/* ----------------------------------------------------------- */
 	/* Private methods                                             */
@@ -170,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Update the synthetic placeholder visibility.
 	 */
 	InputBase.prototype._setLabelVisibility = function() {
-		if (!this._bShowLabelAsPlaceholder || !this._$label || !this.isActive()) {
+		if (!this.bShowLabelAsPlaceholder || !this._$label || !this.isActive()) {
 			return;
 		}
 
@@ -269,7 +256,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._bCheckDomValue = false;
 
 		// handle synthetic placeholder visibility
-		if (this._bShowLabelAsPlaceholder) {
+		if (this.bShowLabelAsPlaceholder) {
 			this._$label = this.$("placeholder");
 			this._setLabelVisibility();
 		}
@@ -313,7 +300,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	InputBase.prototype.onfocusin = function() {
+	InputBase.prototype.onfocusin = function(oEvent) {
+
+		// iE10+ fires the input event when an input field with a native placeholder is focused
+		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
+									sap.ui.Device.browser.msie &&
+									sap.ui.Device.browser.version > 9 &&
+									!!this.getPlaceholder() && 
+									!this._getInputValue();
+
 		this.$().toggleClass("sapMFocus", true);
 		if (sap.ui.Device.support.touch) {
 			// listen to all touch events
@@ -526,11 +521,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * This event is fired synchronously when the value of an <input> or <textarea> element is changed.
 	 * IE9 does not fire an input event when the user removes characters via BACKSPACE / DEL / CUT
 	 * InputBase normalize this behaviour for IE9 and calls oninput for the subclasses
+	 * 
+	 * When the input event is buggy the input event is marked as "invalid".
+	 * - IE10+ fires the input event when an input field with a native placeholder is focused.
+	 * - IE11 fires input event from read-only fields.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
+		// ie 10+ fires the input event when an input field with a native placeholder is focused
+		if (this._bIgnoreNextInput) {
+			this._bIgnoreNextInput = false;
+			oEvent.setMarked("invalid");
+			return;
+		}
+
+		// ie11 fires input event from read-only fields
+		if (!this.getEditable()) {
+			oEvent.setMarked("invalid");
+			return;
+		}
 
 		// dom value updated other than value property
 		this._bCheckDomValue = true;
@@ -661,7 +672,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Registers an event listener to the browser input event.
 	 *
 	 * @param {function} fnCallback Function to be called when the value of the input element is changed.
-	 * @deprecated Since 1.22. Instead use event delegation(oninput) to listen input event.
+	 * @deprecated Since 1.22. Instead, use event delegation(oninput) to listen input event.
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
 	 * @protected
 	 */
