@@ -28,7 +28,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 			//handle themeChange
 			sap.ui.getCore().applyTheme(oData.themeActive);
 			//handle compact mode
-			this.getView().toggleStyleClass("sapUiSizeCompact", oData.compactOn);
+			jQuery('body').toggleClass("sapUiSizeCompact", oData.compactOn);
 		} else {
 			this._themeActive = oData.themeActive;
 			this._compactOn = oData.compactOn;
