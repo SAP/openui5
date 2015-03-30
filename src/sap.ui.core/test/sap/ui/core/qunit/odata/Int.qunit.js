@@ -2,8 +2,8 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -31,11 +31,11 @@
 
 		//*********************************************************************************************
 		module(sName, {
-			setup: function () {
+			beforeEach: function () {
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 				oType = createType();
 			},
-			teardown: function () {
+			afterEach: function () {
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
 		});
@@ -149,10 +149,11 @@
 			});
 		});
 
-		test("validation success", 0, function () {
+		test("validation success", function () {
 			jQuery.each([iMin, iMax], function (i, iValue) {
 				oType.validateValue(iValue);
 			});
+			expect(0);
 		});
 
 		test("validate w/ decimal", function () {

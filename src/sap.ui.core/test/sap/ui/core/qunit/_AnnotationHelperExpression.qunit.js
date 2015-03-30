@@ -5,8 +5,8 @@ sap.ui.require([
 	'sap/ui/base/BindingParser', 'sap/ui/model/odata/_AnnotationHelperBasics',
 	'sap/ui/model/odata/_AnnotationHelperExpression',
 ], function(BindingParser, Basics, Expression) {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 

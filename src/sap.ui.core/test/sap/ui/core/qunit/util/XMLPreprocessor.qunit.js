@@ -2,19 +2,13 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	window */
 	"use strict";
 
 	jQuery.sap.require("jquery.sap.xml");
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
-
-	// default error handler
-	function onRejected(oError) {
-		start(); // MUST be called before an assertion which fails!
-		ok(false, oError);
-	}
 
 	/**
 	 * Creates an <mvc:View> tag with namespace definitions.
@@ -233,7 +227,7 @@
 
 	//*********************************************************************************************
 	module("sap.ui.core.util.XMLPreprocessor", {
-		teardown: function () {
+		afterEach: function () {
 			try {
 				delete window.foo;
 			} catch (e) {
@@ -373,26 +367,19 @@
 	//*********************************************************************************************
 	// Note: relative paths now!
 	jQuery.each(["true", true, 1, "X"], function (i, oFlag) {
-		asyncTest("XML with template:if test='{flag}', truthy, flag = " + oFlag,
-			function () {
-				var oModel = new sap.ui.model.json.JSONModel({flag: oFlag});
+		test("XML with template:if test='{flag}', truthy, flag = " + oFlag, function () {
+			var oModel = new sap.ui.model.json.JSONModel({flag: oFlag});
 
-				oModel.createBindingContext("/", /*oContext*/null, /*mParameters*/null,
-					function (oContext) {
-						start();
-
-						check([
-							mvcView(),
-							'<template:if test="{flag}">',
-							'<In id="flag"/>',
-							'</template:if>',
-							'</mvc:View>'
-						], {
-							models: oModel, bindingContexts: oContext
-						});
-					}
-				);
+			check([
+				mvcView(),
+				'<template:if test="{flag}">',
+				'<In id="flag"/>',
+				'</template:if>',
+				'</mvc:View>'
+			], {
+				models: oModel, bindingContexts: oModel.createBindingContext("/")
 			});
+		});
 	});
 
 	//*********************************************************************************************
