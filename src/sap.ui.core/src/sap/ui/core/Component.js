@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMetadata', './Core'],
-	function(jQuery, ManagedObject, ComponentMetadata, Core) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMetadata', './Core', 'sap/ui/thirdparty/URI'],
+	function(jQuery, ManagedObject, ComponentMetadata, Core, URI) {
 	"use strict";
 
 	/*global Promise */
@@ -377,6 +377,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		// optional dataSources from "sap.app" manifest
 		var mDataSources = (oAppManifest && oAppManifest["dataSources"]) ? oAppManifest["dataSources"] : null;
 
+		// base dir to resolve URIs relative to component
+		var sComponentBaseDir = jQuery.sap.getModulePath(this.getMetadata().getComponentName()) + "/";
+
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mModelConfigs) {
 
@@ -491,6 +494,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 					oModelConfig.settings = oModelConfig.settings || {};
 					oModelConfig.settings.json = true;
+			}
+
+			// resolve URI relative to component
+			if (oModelConfig.uri) {
+				oModelConfig.uri = new URI(oModelConfig.uri).absoluteTo(sComponentBaseDir).toString();
 			}
 
 			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
