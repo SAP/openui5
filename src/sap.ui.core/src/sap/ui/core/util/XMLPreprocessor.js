@@ -248,21 +248,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 *
 			 * @param {Element} oRootElement
 			 *   the DOM element to process
+			 * @param {object} oViewInfo
+			 *   info object of the calling instance
+			 * @param {string} oViewInfo.sCaller
+			 *   identifies the caller of this preprocessor; basis for log or
+			 *   exception messages
 			 * @param {object} mSettings
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
 			 *   binding contexts relevant for template pre-processing
 			 * @param {object} mSettings.models
 			 *   models relevant for template pre-processing
-			 * @param {string} sCaller
-			 *   identifies the caller of this preprocessor; used as a prefix for log or
-			 *   exception messages
 			 * @returns {Element}
 			 *   <code>oRootElement</code>
 			 *
 			 * @private
 			 */
-			process : function(oRootElement, mSettings, sCaller) {
+			process : function(oRootElement, oViewInfo, mSettings) {
+
+				var sCaller;
+
+				// legacy compatibility, obsolete when unit tests are adapted
+				if (typeof mSettings === "string") {
+					sCaller = mSettings;
+					mSettings = oViewInfo;
+				} else {
+					sCaller = oViewInfo.sCaller;
+				}
+
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
 				 * identification (separated by a colon) and appending the serialization of the

@@ -1,4 +1,4 @@
-<mvc:View controllerName="sap.ui.core.mvctest.controller.Product"
+<mvc:View controllerName="sap.ui.core.mvctest.controller.Async"
 	xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout" xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
 
@@ -16,7 +16,7 @@
 				<Label text="Product:"></Label>
 			</layout:MatrixLayoutCell>
 			<layout:MatrixLayoutCell>
-				<TextField id="Product" value="Deluxe Screw"></TextField>
+				<TextField id="Product" value="Deluxe Async Screw"></TextField>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
 		<layout:MatrixLayoutRow>
@@ -24,7 +24,7 @@
 				<Label text="Material:"></Label>
 			</layout:MatrixLayoutCell>
 			<layout:MatrixLayoutCell>
-				<TextField id="Material" value="titanium"></TextField>
+				<TextField id="Material" value="asynchronium"></TextField>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
 		<layout:MatrixLayoutRow >
@@ -32,7 +32,7 @@
 				<Label id="More1" text="Diameter:"></Label>
 			</layout:MatrixLayoutCell>
 			<layout:MatrixLayoutCell>
-				<TextField id="TFMore1" value="1/4 inch"></TextField>
+				<TextField id="TFMore1" value="2/4 inch"></TextField>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
 		<layout:MatrixLayoutRow >
@@ -60,8 +60,8 @@
 		</layout:MatrixLayoutRow>
 	</layout:MatrixLayout>
 
-	<core:Fragment fragmentName="sap.ui.core.mvctest.views.Dummy" type="XML"></core:Fragment>
+	<core:Fragment fragmentName="sap.ui.core.mvctest.views.Dummy" type="XML" async="true"></core:Fragment>
 
-	<mvc:View viewName="sap.ui.core.mvctest.views.Dummy"></mvc:View>
+	<mvc:View viewName="sap.ui.core.mvctest.views.Dummy" type="XML"></mvc:View>
 
 </mvc:View>
