@@ -21,7 +21,7 @@ sap.ui.define([
 		 * @returns {sap.ui.core.routing.Router} the router for this component
 		 */
 		getRouter : function () {
-			return sap.ui.core.UIComponent.getRouterFor(this);
+			return this.getOwnerComponent().getRouter();
 		},
 
 		/**
@@ -63,8 +63,8 @@ sap.ui.define([
 		 * @public
 		 */
 		onNavBack : function(sRoute, mData) {
-			var oHistory = History.getInstance();
-			var sPreviousHash = oHistory.getPreviousHash();
+			var sPreviousHash = History.getInstance().getPreviousHash();
+
 
 			//The history contains a previous entry
 			if (sPreviousHash !== undefined) {

@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
-		title="{controlStates>/masterListTitle}">
+		title="{view>/masterListTitle}">
 		<subHeader>
 			<Bar id="headerBar">
 				<contentMiddle>
@@ -45,16 +45,16 @@
 				growingScrollToLoad="true"
 				updateFinished="onUpdateFinished"
 				select="onSelect"
-				noDataText="{controlStates>/masterListNoDataText}">
+				noDataText="{view>/masterListNoDataText}">
 				<infoToolbar>
 					<Toolbar
 						active="true"
 						id="filterBar"
-						visible="{controlStates>/isFilterBarVisible}"
+						visible="{view>/isFilterBarVisible}"
 						press="onOpenViewSettings">
-						<Label 
+						<Label
 							id="filterBarLabel"
-							text="{controlStates>/filterBarLabel}" />
+							text="{view>/filterBarLabel}" />
 					</Toolbar>
 				</infoToolbar>
 				<items>
@@ -94,14 +94,14 @@
 						key="UnitNumber"
 						text="{i18n>masterSort2}"/>
 				</Select>
-				
+
 				<!-- complex sort/group/filter with ViewSettingsDialog -->
 				<OverflowToolbarButton
 					text="{i18n>MasterListFilterButtonOverflowText}"
 					id="filter"
 					icon="sap-icon://filter"
 					press="onOpenViewSettings"/>
-				
+
 				<Select
 					id="groupSelect"
 					type="IconOnly"
