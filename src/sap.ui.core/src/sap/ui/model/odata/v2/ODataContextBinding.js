@@ -74,6 +74,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
+		if (!this.oModel.oMetadata.isLoaded()) {
+			return;
+		}
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
 			oStoredEntry = this.oModel._getObject(this.sPath, this.oContext);
