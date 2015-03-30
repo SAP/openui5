@@ -257,13 +257,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		
 		if (sType == mType.Navigation) {
 			aDescribedBy.push(this.getAriaAnnouncement("navigation"));
-		} else {
-			if (sType == mType.Active || sType == mType.DetailAndActive) {
-				aDescribedBy.push(this.getAriaAnnouncement("active"));
-			}
-			if (sType == mType.Detail || sType == mType.DetailAndActive) {
-				aDescribedBy.push(this.getAriaAnnouncement("detail"));
-			}
+		} else if (sType == mType.Detail || sType == mType.DetailAndActive) {
+			aDescribedBy.push(this.getAriaAnnouncement("detail"));
 		}
 		
 		return aDescribedBy.join(" ");
