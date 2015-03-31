@@ -1036,9 +1036,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
+		this._hideBusyIndicator();
 		jQuery.sap.delayedCall(0, this, function() {
 			this._startItemNavigation(true);
-			this._hideBusyIndicator();
 			this.fireUpdateFinished({
 				reason : this._sUpdateReason,
 				actual : oInfo ? oInfo.actual : this.getItems().length,

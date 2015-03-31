@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		render : function(rm) {
 			var bHasScrollToLoadAndScrollbars = this._oControl.getGrowingScrollToLoad() && this._getHasScrollbars();
 
-			rm.write("<ul id='" + this._oControl.getId() + "-triggerList'");
+			rm.write("<ul id='" + this._oControl.getId() + "-triggerList' role='presentation'");
 
 			if (bHasScrollToLoadAndScrollbars) {
 				rm.addStyle("display", "none");
@@ -105,7 +105,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			}
 
 			// this variable is needed to render loading indicator in list even in table mode
-			oActionItem._renderInList = true;
 			rm.renderControl(oActionItem);
 			rm.write("</ul>");
 		},
@@ -286,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					oEvent.preventDefault();
 				},
 				onAfterRendering : function(oEvent) {
-					this._oTrigger.$().prop("tabindex", 0);
+					this._oTrigger.$().attr("tabindex", 0).attr("role", "button");
 				}
 			}, this);
 			
@@ -751,11 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				oActionItem = this._getTrigger();
 			}
 
-			// this variable is needed to render loading indicator in list even in table mode
-			oActionItem._renderInList = true;
-
 			$TriggerList.empty();
-
 			rm.render(oActionItem, $TriggerList[0]);
 		},
 
