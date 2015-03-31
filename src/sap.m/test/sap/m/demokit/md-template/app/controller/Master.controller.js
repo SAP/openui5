@@ -166,11 +166,11 @@ sap.ui.define([
 		 */
 		onGroup : function (oEvent) {
 			var sKey = oEvent.getParameter("selectedItem").getKey(),
-				// TODO: make this better!
-				oGroups = {
-					Group1 : "UnitNumber",
-					Group2 : "Name"
-				};
+			// In order to add additional Grouping functions you can add them here and
+			// additional grouping functions in the grouper.js File
+			oGroups = {
+				Group1 : "UnitNumber"
+			};
 
 			if (sKey !== "None") {
 				this._oListSorterState.aGroup = [new Sorter(oGroups[sKey], false,
