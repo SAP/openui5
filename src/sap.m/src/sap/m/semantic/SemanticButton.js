@@ -122,6 +122,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 			if (!oControl || bReinstantiate) {
 
 				var oNewInstance = new oClass({
+					id: this.getId() + "-button",
 					press: jQuery.proxy(this.firePress, this)
 				});
 
