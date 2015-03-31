@@ -10,7 +10,7 @@ sap.ui.define([], function () {
 		 *
 		 * The predefined functions are simple examples and might be replaced by your more complex implementations
 		 *
-		 * to be called with jQuery.proxy and handed over to a sap.ui.model.Sorter
+		 * to be called with .bind() and handed over to a sap.ui.model.Sorter
 		 *
 		 * return value for all your functions is an object with  key-text pairs
 		 *
