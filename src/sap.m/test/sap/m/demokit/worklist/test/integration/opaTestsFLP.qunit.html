@@ -9,14 +9,15 @@
 		src="../../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-resourceroots='{
 			"sap.ui.demo.worklist.test": "../",
-			"sap.ui.demo.app.test" : "../../demokit"
+			"sap.ui.demo.app.test" : "../../testFLPService"
 		}'
 		data-sap-ui-frameOptions='trusted'>
 	</script>
 
 	<script>
 		jQuery.sap.require("sap.ui.demo.worklist.test.integration.AllJourneys");
-		sap.ui.demo.worklist.test.integration.AllJourneys.start();
+		sap.ui.demo.worklist.test.integration.AllJourneys.start({isFLP: true});
+		jQuery.sap.require("sap.ui.demo.worklist.test.integration.FLPJourneys");
 	</script>
 
 </head>
