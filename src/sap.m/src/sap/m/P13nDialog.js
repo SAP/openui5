@@ -13,7 +13,7 @@ sap.ui.define([
 	 * 
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The P13nDialog control provides dialog that contains one or more panels. On each of the panels, one or more changes with regards to a
+	 * @class The P13nDialog control provides a dialog that contains one or more panels. On each of the panels, one or more changes with regards to a
 	 *        table can be processed. For example, a panel to set a column to invisible, change the order of the columns or a panel to sort or filter
 	 *        tables.
 	 * @extends sap.m.Dialog
