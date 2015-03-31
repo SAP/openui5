@@ -50,7 +50,7 @@ sap.ui.define([	'jquery.sap.global', 'sap/ui/base/Object'],
 	 * @param {object} oViewInfo identification information about the calling instance
 	 * @param {string} oViewInfo.id the id
 	 * @param {string} oViewInfo.name the name
-	 * @param {string} oViewInfo.sCaller
+	 * @param {string} oViewInfo.caller
 	 * 		identifies the caller of this preprocessor; basis for log or exception messages
 	 * @param {object} [mSettings]
 	 * 		settings object which was provided with the preprocessor

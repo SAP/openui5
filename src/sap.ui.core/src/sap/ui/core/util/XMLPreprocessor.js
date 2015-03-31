@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 *   the DOM element to process
 			 * @param {object} oViewInfo
 			 *   info object of the calling instance
-			 * @param {string} oViewInfo.sCaller
+			 * @param {string} oViewInfo.caller
 			 *   identifies the caller of this preprocessor; basis for log or
 			 *   exception messages
 			 * @param {object} mSettings
@@ -273,7 +273,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					sCaller = mSettings;
 					mSettings = oViewInfo;
 				} else {
-					sCaller = oViewInfo.sCaller;
+					sCaller = oViewInfo.caller;
 				}
 
 				/**
