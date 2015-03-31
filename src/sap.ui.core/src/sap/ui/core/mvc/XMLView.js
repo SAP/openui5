@@ -29,15 +29,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 
 		specialSettings : {
 			/**
-			 * Determines initialization mode of the view
-			 * @type {Boolean}
-			 * @since 1.28.1
-			 */
-			async : {
-				type : "boolean",
-				defaultValue : false
-			},
-			/**
 			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
 			 * then that other XMLView is provided with this setting to be able to delegate
 			 * View functionality (createId, getController) to that 'real' view.
