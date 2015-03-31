@@ -24,7 +24,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	 * @since 1.30
 	 * @alias sap.m.semantic.SemanticSelect
 	 */
-	
+
 	var SemanticSelect = SemanticControl.extend("sap.m.semantic.SemanticSelect", /** @lends sap.m.semantic.SemanticSelect.prototype */ {
 		metadata: {
 
@@ -97,6 +97,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 		if (!oControl) {
 			this.setAggregation('_control',
 					new Select({
+						id: this.getId() + "-select",
 						type: "IconOnly", //TODO: more generic way to specify Fiori-specific init SELECT properties
 						autoAdjustWidth: true,
 						change: jQuery.proxy(this.fireChange, this)
