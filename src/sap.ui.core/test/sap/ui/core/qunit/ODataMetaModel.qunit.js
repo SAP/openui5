@@ -35,10 +35,12 @@
 			<EntityType Name="BusinessPartner" sap:content-version="1">\
 				<Property Name="BusinessPartnerID" Type="Edm.String"\
 					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID"\
-					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false">\
+					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false" \
+					sap:sortable="false" sap:required-in-filter ="true">\
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
-				<Property Name="AnyProperty" Type="Edm.String" sap:updatable="false"/>\
+				<Property Name="AnyProperty" Type="Edm.String" sap:field-control="UX_FC_READONLY" \
+					sap:updatable="false" sap:sortable="false"/>\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
@@ -113,15 +115,16 @@
 	</Annotation>\
 </Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
-		<Annotation Term="Org.OData.Core.V1.Computed" Bool="true"/>\
+		<Annotation Term="Org.OData.Core.V1.Computed" Bool="false"/>\
 		<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="AnyProperty"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" Path="UX_FC_READONLY"/>\
 		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/Price">\
 		<Annotation Term="Org.OData.Measures.V1.Scale" Path="PriceScale"/>\
-		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode"/>\
+		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCodeFromAnnotation"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightMeasure">\
 		<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"/>\
@@ -130,11 +133,26 @@
 		<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">\
 			<Record>\
 				<PropertyValue Property="RequiresFilter" Bool="true"/>\
+				<PropertyValue Property="RequiredProperties">\
+					<Collection>\
+						<PropertyPath>AnyProperty</PropertyPath>\
+					</Collection>\
+				</PropertyValue>\
 			</Record>\
 		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.SearchRestrictions">\
 			<Record>\
-				<PropertyValue Property="Searchable" Bool="false"/>\
+				<PropertyValue Property="Searchable" Bool="true"/>\
+			</Record>\
+		</Annotation>\
+		<Annotation Term="Org.OData.Capabilities.V1.SortRestrictions">\
+			<Record>\
+				<PropertyValue Property="NonSortableProperties">\
+					<Collection>\
+						<PropertyPath>BusinessPartnerID</PropertyPath>\
+						<PropertyPath>AnyProperty</PropertyPath>\
+					</Collection>\
+				</PropertyValue>\
 			</Record>\
 		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.TopSupported" Bool="false" />\
@@ -872,7 +890,7 @@
 				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
 				deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
-					"Bool" : "true"
+					"Bool" : (i > 0 ? "false" : "true")
 				}, "sap:creatable=false and sap:updatable=false on property level");
 				delete oBusinessPartnerId["Org.OData.Core.V1.Computed"];
 
@@ -889,7 +907,7 @@
 				deepEqual(oVHSexSet["sap:searchable"], "true");
 				delete oVHSexSet["sap:searchable"];
 				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
-					"Searchable": {"Bool" : "false"}
+					"Searchable": {"Bool" : (i > 0 ? "true" : "false")}
 				}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
 
@@ -913,10 +931,11 @@
 				// sap:requires-filter
 				deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
 				delete oBusinessPartnerSet["sap:requires-filter"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
-					"RequiresFilter": {"Bool" : "true"}
-				}, "BusinessPartnerSet requires filter");
-				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
+				deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
+						RequiresFilter, {"Bool" : "true"}, "BusinessPartnerSet requires filter");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
+					RequiresFilter;
 
 				// sap:text
 				deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
@@ -938,7 +957,8 @@
 				deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
 				delete oProductCurrencyCode["sap:semantics"];
 				deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
-					{ "Path" : "CurrencyCode" }, "ProductPrice currency");
+					{ "Path" : (i > 0 ? "CurrencyCodeFromAnnotation" : "CurrencyCode") },
+					"ProductPrice currency");
 				delete oProductPrice["Org.OData.Measures.V1.ISOCurrency"];
 				// sap:unit - unit
 				deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
@@ -948,6 +968,37 @@
 				deepEqual(oProductWeightMeasure["Org.OData.Measures.V1.Unit"],
 					{ "Path" : "WeightUnit" }, "ProductWeightMeasure unit");
 				delete oProductWeightMeasure["Org.OData.Measures.V1.Unit"];
+
+				// sap:field-control
+				deepEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
+				delete oAnyProperty["sap:field-control"];
+				deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"],
+					{ "Path" : "UX_FC_READONLY" }, "AnyProperty FieldControl");
+				delete oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"];
+
+				// sap:sortable
+				deepEqual(oBusinessPartnerId["sap:sortable"], "false");
+				delete oBusinessPartnerId["sap:sortable"];
+				deepEqual(oAnyProperty["sap:sortable"], "false");
+				delete oAnyProperty["sap:sortable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"], {
+					"NonSortableProperties": [
+						{"PropertyPath" : "BusinessPartnerID"},
+						{"PropertyPath" : "AnyProperty"}
+					]
+				}, "BusinessPartnerSet not searchable");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
+
+				// sap:required-in-filter
+				deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
+				delete oBusinessPartnerId["sap:required-in-filter"];
+				// check that v4 annotations win
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
+					"RequiredProperties": i === 0
+					? [ {"PropertyPath" : "BusinessPartnerID"} ]
+					: [ {"PropertyPath" : "AnyProperty"} ]
+				}, "BusinessPartnerSet filter restrictions");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
 
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			});
