@@ -70,7 +70,7 @@ sap.ui.define([
 					styleClass: this._oComponent.getCompactCozyClass(),
 					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if(sAction === MessageBox.Action.RETRY) {
+						if (sAction === MessageBox.Action.RETRY) {
 							this._oModel.refreshMetadata();
 						}
 					}.bind(this)

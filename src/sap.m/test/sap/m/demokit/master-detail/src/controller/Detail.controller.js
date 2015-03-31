@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * ${copyright}
  */
 
@@ -38,9 +38,33 @@ sap.ui.define([
 
 			// Control state model
 			this._oViewModel = new JSONModel({
-				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
+				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading"),
+				shareSaveAsTileTitle: "",
+				shareOnJamTitle: "",
+				shareSendEmailSubject: "",
+				shareSendEmailMessage: ""
 			});
 			this.setModel(this._oViewModel, "view");
+		},
+
+		/* =========================================================== */
+		/* event handlers                                              */
+		/* =========================================================== */
+
+		/**
+		 * Event handler when the share by E-Mail button has been clicked
+		 * @param {sap.ui.base.Event} oEvent the button press event
+		 * @public
+		 * @returns
+		 */
+		onShareEmailPress: function () {
+			var oViewModel = this.getModel("view");
+
+			sap.m.URLHelper.triggerEmail(
+				null,
+				oViewModel.getProperty("/shareSendEmailSubject"),
+				oViewModel.getProperty("/shareSendEmailMessage")
+			);
 		},
 
 
@@ -89,12 +113,27 @@ sap.ui.define([
 		 * @private
 		 */
 		_bindView : function (sObjectPath) {
-			var oView = this.getView().bindElement(sObjectPath, {expand : "LineItems"});
+			var oView = this.getView(),
+				oViewModel = this.getModel("view");
+
+			oView.bindElement(sObjectPath, {expand : "LineItems"});
 
 			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
+					var oResourceBundle = this.getResourceBundle(),
+						oObject = oView.getModel().getObject(oView.getElementBinding().getPath()),
+						sObjectId = oObject.ObjectID,
+						sObjectName = oObject.Name;
+
 					this._setViewBusy(false);
 					this.getOwnerComponent().oListSelector.selectAListItem(sPath);
+
+					oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
+					oViewModel.setProperty("/shareOnJamTitle", sObjectName);
+					oViewModel.setProperty("/shareSendEmailSubject",
+						oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
+					oViewModel.setProperty("/shareSendEmailMessage",
+						oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
 				}.bind(this),
 				function () {
 					this._setViewBusy(false);

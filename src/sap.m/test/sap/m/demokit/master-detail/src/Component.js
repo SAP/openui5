@@ -24,8 +24,6 @@ sap.ui.define([
 		 * @override
 		 */
 		init : function () {
-			var mConfig = this.getMetadata().getConfig();
-
 			// create the metadata promise
 			this._createMetadataPromise(this.getModel());
 

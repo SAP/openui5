@@ -23,36 +23,36 @@ sap.ui.require([
 					},
 
 					iSortTheListOnName : function () {
-						return this.iPressItemInSelectInFooter("sortSelect", "masterSort1");
+						return this.iPressItemInSelectInFooter("sort-select", "masterSort1");
 					},
 
 					iSortTheListOnUnitNumber : function () {
-						return this.iPressItemInSelectInFooter("sortSelect", "masterSort2");
+						return this.iPressItemInSelectInFooter("sort-select", "masterSort2");
 					},
 
 					iRemoveFilterFromTheList : function () {
-						return this.iPressItemInSelectInFooter("filterSelect", "masterFilterNone");
+						return this.iPressItemInSelectInFooter("filter-select", "masterFilterNone");
 					},
 
 					iFilterTheListLessThan100UoM : function () {
-						return this.iPressItemInSelectInFooter("filterSelect", "masterFilter1");
+						return this.iPressItemInSelectInFooter("filter-select", "masterFilter1");
 					},
 
 					iFilterTheListMoreThan100UoM : function () {
-						return this.iPressItemInSelectInFooter("filterSelect", "masterFilter2");
+						return this.iPressItemInSelectInFooter("filter-select", "masterFilter2");
 					},
 
 					iGroupTheList : function () {
-						return this.iPressItemInSelectInFooter("groupSelect", "masterGroup1");
+						return this.iPressItemInSelectInFooter("group-select", "masterGroup1");
 					},
 
 					iRemoveListGrouping : function () {
-						return this.iPressItemInSelectInFooter("groupSelect", "masterGroupNone");
+						return this.iPressItemInSelectInFooter("group-select", "masterGroupNone");
 					},
 
 					iOpenViewSettingsDialog : function () {
 						return this.waitFor({
-							id : "filter",
+							id : "filter-button",
 							viewName : sViewName,
 							success : function (oButton) {
 								oButton.$().trigger("tap");
