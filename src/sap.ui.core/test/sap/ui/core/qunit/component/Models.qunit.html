@@ -85,7 +85,8 @@
 			sinon.assert.callCount(this.modelSpy.odata, 1);
 
 			// model: "ODataModel"
-			sinon.assert.calledWithExactly(this.modelSpy.odata, '/path/to/odata/service', {
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service',
 				annotationURI: [ '/path/to/odata/annotations/1', '/path/to/odata/annotations/2' ],
 				useBatch: false,
 				refreshAfterChange: false,
@@ -276,7 +277,8 @@
 			sinon.assert.callCount(this.modelSpy.odata, 1);
 
 			// model: "sfapi"
-			sinon.assert.calledWithExactly(this.modelSpy.odata, '/sap/opu/odata/snce/PO_S_SRV/', {
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/sap/opu/odata/snce/PO_S_SRV/',
 				json: true
 			});
 

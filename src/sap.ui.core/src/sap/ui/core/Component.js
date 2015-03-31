@@ -505,6 +505,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			// (only if it wasn't specified before)
 			if (oModelConfig.uriSettingName === undefined) {
 				switch (oModelConfig.type) {
+					case 'sap.ui.model.odata.ODataModel':
 					case 'sap.ui.model.odata.v2.ODataModel':
 						oModelConfig.uriSettingName = 'serviceUrl';
 						break;
