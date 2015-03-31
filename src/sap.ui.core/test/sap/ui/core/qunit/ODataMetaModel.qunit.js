@@ -301,7 +301,7 @@
 	 *   <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
 	 */
 	function setupSandbox(oSandbox) {
-		var oServer = oSandbox.useFakeServer();
+		var oServer = oSandbox.useFakeServer(), sUrl;
 
 		//TODO how to properly tear down this stuff?
 		sinon.FakeXMLHttpRequest.useFilters = true;
@@ -309,9 +309,9 @@
 			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
 		});
 
-		Object.keys(mFixture).forEach(function (sUrl) {
+		for (sUrl in mFixture) {
 			oServer.respondWith(sUrl, mFixture[sUrl]);
-		});
+		}
 		oServer.autoRespond = true;
 	}
 

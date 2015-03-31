@@ -358,7 +358,8 @@ sap.ui.require([
 		var oMetaModel,
 			oModel,
 			oSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-			oServer;
+			oServer,
+			sUrl;
 
 		function onFailed(oEvent) {
 			var oParameters = oEvent.getParameters();
@@ -404,9 +405,9 @@ sap.ui.require([
 				return mFixture[sUrl] === undefined; // do not fake if URL is unknown
 			});
 
-			Object.keys(mFixture).forEach(function(sUrl) {
+			for (sUrl in mFixture) {
 				oServer.respondWith(sUrl, mFixture[sUrl]);
-			});
+			}
 			oServer.autoRespond = true;
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there

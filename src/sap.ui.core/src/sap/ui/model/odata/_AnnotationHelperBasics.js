@@ -154,14 +154,15 @@ sap.ui.define([
 			var vValue = oResult.value;
 
 			function binding(bAddType) {
-				var sResult;
+				var sConstraints, sResult;
 
 				if (rBadChars.test(vValue) || bAddType) {
 					sResult = "{path:" + Basics.toJSON(vValue);
 					if (bAddType && oResult.type) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
-						if (oResult.constraints && Object.keys(oResult.constraints).length) {
-							sResult += ",constraints:" + Basics.toJSON(oResult.constraints);
+						sConstraints = Basics.toJSON(oResult.constraints);
+						if (sConstraints && sConstraints !== "{}") {
+							sResult += ",constraints:" + sConstraints;
 						}
 					}
 					return sResult + "}";

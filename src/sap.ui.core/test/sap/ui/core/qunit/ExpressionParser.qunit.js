@@ -224,6 +224,7 @@
 			var mGlobals = {
 					odata: {
 						fillUriTemplate: function(sTemplate, mParameters) {
+							var sKey;
 							if (!sTemplate) {
 								return "TODO";
 							}
@@ -233,9 +234,9 @@
 							if (typeof mParameters === "string") {
 								return sTemplate + mParameters;
 							}
-							Object.keys(mParameters).forEach(function(sKey) {
+							for (sKey in mParameters) {
 								sTemplate = sTemplate.replace("{" + sKey + "}", mParameters[sKey]);
-							});
+							}
 							return sTemplate;
 						},
 						foo: "bar"
