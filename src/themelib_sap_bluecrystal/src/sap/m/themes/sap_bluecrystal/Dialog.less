@@ -6,7 +6,7 @@
   box-shadow: @sapUiPopupBoxShadow;
 
   .sapMDialogSection {
-	background: darken(@sapUiLightestBG, 2);
+    background: darken(@sapUiLightestBG, 2);
   }
 }
 
@@ -22,18 +22,32 @@
   background-color: @sapUiFooterOnDesktopBG;
 }
 
-.sapMDialogWarning > header.sapMDialogTitle .sapUiIcon ,
-.sapMDialogWarning > header.sapMDialogTitle .sapMDialogTitle.sapMTitle {
-  color: @sapUiCriticalText;
+.sapMDialogWarning > header {
+  &.sapMDialogTitle .sapUiIcon {
+    color: @sapUiCriticalText;
+  }
+
+  &.sapMBar {
+    box-shadow: inset 0 -0.0625rem @sapUiCriticalText;
+  }
 }
 
-.sapMDialogError > header.sapMDialogTitle .sapUiIcon ,
-.sapMDialogError > header.sapMDialogTitle .sapMDialogTitle.sapMTitle {
-  color: @sapUiNegativeText;
+.sapMDialogError > header {
+  &.sapMDialogTitle .sapUiIcon {
+    color: @sapUiNegativeText;
+  }
+
+  &.sapMBar {
+    box-shadow: inset 0 -0.0625rem @sapUiNegativeText;
+  }
 }
 
-.sapMDialogSuccess > header.sapMDialogTitle .sapUiIcon,
-.sapMDialogSuccess > header.sapMDialogTitle .sapMDialogTitle.sapMTitle {
-  color: @sapUiPositiveText;
-}
+.sapMDialogSuccess > header {
+  &.sapMDialogTitle .sapUiIcon {
+    color: @sapUiPositiveText;
+  }
 
+  &.sapMBar {
+    box-shadow: inset 0 -0.0625rem @sapUiPositiveText;
+  }
+}
