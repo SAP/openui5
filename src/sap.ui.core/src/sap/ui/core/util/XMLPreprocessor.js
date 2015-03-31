@@ -251,9 +251,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * @param {object} oViewInfo
 			 *   info object of the calling instance
 			 * @param {string} oViewInfo.caller
-			 *   identifies the caller of this preprocessor; basis for log or
+			 *   identifies the caller of this preprocessor; used as a prefix for log or
 			 *   exception messages
-			 * @param {object} mSettings
+			 * @param {object} [mSettings={}]
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
 			 *   binding contexts relevant for template pre-processing
@@ -265,16 +265,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * @private
 			 */
 			process : function(oRootElement, oViewInfo, mSettings) {
-
 				var sCaller;
-
-				// legacy compatibility, obsolete when unit tests are adapted
-				if (typeof mSettings === "string") {
-					sCaller = mSettings;
-					mSettings = oViewInfo;
-				} else {
-					sCaller = oViewInfo.caller;
-				}
 
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
@@ -696,6 +687,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					visitChildNodes(oNode, oWithControl);
 				}
 
+				//TODO remove this legacy compatibility for design time templating
+				if (typeof mSettings === "string") {
+					sCaller = mSettings;
+					mSettings = oViewInfo;
+				} else {
+					sCaller = oViewInfo.caller;
+				}
+				mSettings = mSettings || {};
 				visitNode(oRootElement, new With({
 					models : mSettings.models,
 					bindingContexts : mSettings.bindingContexts
