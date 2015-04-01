@@ -325,11 +325,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	 * @return {object} - the resulting map
 	 */
 	function MAP(mMap, aParts) {
-		var mResult = {};
+		var sKey, mResult = {};
 
-		Object.keys(mMap).forEach(function(sKey) {
+		for (sKey in mMap) {
 			mResult[sKey] = mMap[sKey](aParts); // evaluate value
-		});
+		}
 		return mResult;
 	}
 

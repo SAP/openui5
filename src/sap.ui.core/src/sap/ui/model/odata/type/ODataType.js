@@ -130,9 +130,9 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *   true if given formatOptions are safe regarding our own parseValue.
 	 */
 	function isSafeFormatOptions(oFormatOptions) {
-		var bSafe = true;
+		var sKey;
 
-		Object.keys(oFormatOptions || {}).forEach(function (sKey) {
+		for (sKey in oFormatOptions) {
 			switch (sKey) {
 				case "decimalSeparator":
 				case "decimals":
@@ -144,13 +144,13 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 				case "minIntegerDigits":
 				case "minusSign":
 				case "plusSign":
-					break;
+					break; // this format option is safe
 				default:
-					bSafe = false;
-					return false; //break
+					return false;
 			}
-		});
-		return bSafe;
+		}
+
+		return true;
 	}
 
 	/**
