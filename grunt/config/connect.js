@@ -25,9 +25,9 @@ module.exports = function(grunt, config) {
 				// hacky solution to replace the "version" placeholder in sap/ui/Global.js to enable version comparison
 				// the file won't be cached
 				middleware: function(connect, options, middlewares) {
-					var filePath = 'src/sap.ui.core/src/sap/ui/Global.js';
-					middlewares.unshift([ '/testsuite/resources/sap/ui/Global.js', function(req, res, next) {
-						fs.readFile(filePath, { encoding: 'utf-8' } , function(err, data) {
+					// make sure to put the middleware after "cors"
+					middlewares.splice(3, 0, [ '/testsuite/resources/sap/ui/Global.js', function(req, res, next) {
+						fs.readFile('src/sap.ui.core/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
 							if (err) {
 								res.writeHead(404);
 								res.end();
