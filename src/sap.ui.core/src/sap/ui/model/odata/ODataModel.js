@@ -181,14 +181,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				this.aUrlParams = this.aUrlParams.concat(ODataUtils._createUrlParamsArray(mServiceUrlParams));
 			}
 
+			
+			this.onMetadataLoaded = function(oEvent){
+				that._initializeMetadata();
+				that.initialize();
+			};
+			this.onMetadataFailed = function(oEvent) {
+				that.fireMetadataFailed(oEvent.getParameters());
+			};
+			
 			if (!this.oMetadata.isLoaded()) {
-				this.oMetadata.attachLoaded(function(oEvent){
-					that._initializeMetadata();
-					that.initialize();
-				}, this);
-				this.oMetadata.attachFailed(function(oEvent) {
-					that.fireMetadataFailed(oEvent.getParameters());
-				});
+				this.oMetadata.attachLoaded(this.onMetadataLoaded);
+				this.oMetadata.attachFailed(this.onMetadataFailed);
 			}
 			if (this.oMetadata.isFailed()){
 				this.refreshMetadata();
@@ -3218,7 +3222,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		}
 
 		if (this.oMetadata) {
-			this.oMetadata.destroy();
+			this.oMetadata.detachLoaded(this.onMetadataLoaded);
+			this.oMetadata.detachFailed(this.onMetadataFailed);
+			// Only destroy metadata, if request is still running and no other models
+			// are registered to it
+			if (!this.oMetadata.isLoaded() && !this.oMetadata.hasListeners("loaded")) {
+				this.oMetadata.destroy();
+				delete this.oServiceData.oMetadata;
+			}
 			delete this.oMetadata;
 		}
 
