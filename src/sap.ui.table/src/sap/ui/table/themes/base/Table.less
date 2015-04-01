@@ -429,13 +429,11 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 }
 
 /* Cozy Mode when sap.m. library is loaded */
-.sapUiTableM.sapUiTableCozy {
-	 @sapUiTableCozyColHdrHeight: 3rem;
-	 @sapUiTableCozyRowHeight: 3rem;
+.sapUiTableM.sapUiSizeCozy {
 
 	/* Header */
 	& > .sapUiTableCnt > .sapUiTableColHdrCnt {
-		min-height: @sapUiTableCozyColHdrHeight;
+		min-height: 3rem;
 	}
 
 	/* Footer */
@@ -447,7 +445,7 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 
 	/* Row */
 	.sapUiTableCtrl tr {
-		height: @sapUiTableCozyRowHeight;
+		height: 3rem;
 	}
 
 	/* Cell Adjustments */
