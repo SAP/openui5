@@ -454,6 +454,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	// Begin of Popup-Stacking facilities
 	(function() {
 		var iLastZIndex = 0;
+		// TODO: Implement Number.SAFE_MAX_INTEGER (Math.pow(2, 53) -1) when ECMAScript 6 is mostly supported
+		var iMaxInteger = Math.pow(2, 32) - 1;
+
+		/**
+		 * Set an initial z-index that should be used by all Popup so all Popups start at least
+		 * with the set z-index.
+		 * If the given z-index is lower than any current available z-index the highest z-index will be used.
+		 *
+		 * @param {Number} iInitialZIndex is the initial z-index
+		 * @public
+		 * @since 1.30.0
+		 */
+		Popup.setInitialZIndex = function(iInitialZIndex){
+			if (iInitialZIndex >= iMaxInteger) {
+				throw new Error("Z-index can't be higher than Number.MAX_SAFE_INTEGER");
+			}
+
+			iLastZIndex = Math.max(iInitialZIndex, this.getLastZIndex());
+		};
 
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
@@ -483,6 +502,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		 */
 		Popup.getNextZIndex = function(){
 			iLastZIndex += 10;
+			if (iLastZIndex >= iMaxInteger) {
+				throw new Error("Z-index can't be higher than Number.MAX_SAFE_INTEGER");
+			}
 			return iLastZIndex;
 		};
 
