@@ -708,7 +708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				if (window.File) {
 					var oFiles = jQuery.sap.domById(this.getId() + "-fu").files;
 				}
-				if (!sap.ui.Device.browser.internet_explorer || !this.getSameFilenameAllowed() || oldValue) {
+				if (!this.getSameFilenameAllowed() || sValue) {
 					this.fireChange({id:this.getId(), newValue:sValue, files:oFiles});
 				}
 			}
