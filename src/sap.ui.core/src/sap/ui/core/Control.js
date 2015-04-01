@@ -556,7 +556,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	};
 	
 	(function() {
-		var sPreventedEvents = "focusin focusout keydown keypress keyup",
+		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
 					if (this.getProperty("busy") === true && this.$()) {
@@ -601,11 +601,22 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				fnHandleInteraction.apply(this, [true]);
 			},
 			fnHandleInteraction = function(bBusy) {
+				var $this = this.$(this._sBusySection);
+
 				if (bBusy) {
-					var $this = this.$(this._sBusySection),
-						$TabRefs = $this.find('[tabindex]'),
+					var $TabRefs = $this.find('[tabindex]'),
 						that = this;
 					this._busyTabIndices = [];
+
+					// if only the control itself without any tabrefs was found
+					// block the events as well
+					this._busyTabIndices.push({
+						ref : $this,
+						tabindex : $this.attr('tabindex')
+					});
+					$this.attr('tabindex', -1);
+					$this.bind(sPreventedEvents, fnPreserveEvents);
+
 					$TabRefs.each(function(iIndex, oObject) {
 						var $Ref = jQuery(oObject),
 							iTabIndex = $Ref.attr('tabindex');
@@ -618,6 +629,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 							ref: $Ref,
 							tabindex: iTabIndex
 						});
+
 						$Ref.attr('tabindex', -1);
 						$Ref.bind(sPreventedEvents, fnPreserveEvents);
 					});
