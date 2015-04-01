@@ -133,6 +133,18 @@
 	}
 
 	/**
+	 * Calls our XMLPreprocessor on the given view content, identifying the caller as "qux".
+	 *
+	 * @param {Element} oViewContent
+	 *   the original view content as an XML document element
+	 * @param {object} [mSettings]
+	 *   a settings object for the preprocessor
+	 */
+	function process(oViewContent, mSettings) {
+		return sap.ui.core.util.XMLPreprocessor.process(oViewContent, {caller : "qux"}, mSettings);
+	}
+
+	/**
 	 * Checks that our XMLPreprocessor works as expected on the given view content.
 	 *
 	 * @param {string[]} aViewContent
@@ -169,9 +181,7 @@
 		withBalancedBindAggregation(function () {
 			withBalancedBindProperty(function () {
 				// code under test
-				strictEqual(
-					sap.ui.core.util.XMLPreprocessor.process(oViewContent, mSettings || {}, "qux"),
-					oViewContent);
+				strictEqual(process(oViewContent, mSettings), oViewContent);
 			});
 		});
 
@@ -197,7 +207,7 @@
 			sOffender = aViewContent[iOffender || 1];
 
 		try {
-			sap.ui.core.util.XMLPreprocessor.process(oViewContent, mSettings || {}, "qux");
+			process(oViewContent, mSettings);
 			ok(false);
 		} catch (ex) {
 			strictEqual(ex.message, "qux: " + sExpectedMessage.replace("{0}", sOffender));
@@ -1413,5 +1423,36 @@
 			{},
 			/Error: Stopped due to cyclic fragment reference/
 			);
+	});
+
+	//*********************************************************************************************
+	test("Legacy signature support", function () {
+		var aViewContent = [
+				mvcView(),
+				'<template:if test="false">',
+				'<Out/>',
+				'<\/template:if>',
+				'<\/mvc:View>'
+			],
+			oLogMock = this.mock(jQuery.sap.log),
+			fnProcess = sap.ui.core.util.XMLPreprocessor.process;
+
+		oLogMock.expects("isLoggable").once()
+			.withExactArgs(jQuery.sap.log.Level.WARNING)
+			.returns(true);
+		oLogMock.expects("warning")
+			.exactly(1)
+			.withExactArgs(
+				'qux: Constant test condition in ' + aViewContent[1],
+				null, "sap.ui.core.util.XMLPreprocessor");
+
+		this.stub(sap.ui.core.util.XMLPreprocessor, "process",
+			function (oRootElement, oViewInfo, mSettings) {
+				// simulate call with legacy signature
+				return fnProcess.call(this, oRootElement, mSettings, oViewInfo.caller);
+			}
+		);
+
+		check(aViewContent);
 	});
 } ());
