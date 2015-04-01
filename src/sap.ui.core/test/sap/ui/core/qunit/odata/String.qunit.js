@@ -40,11 +40,11 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{maxLength: "foo", warning: "Illegal maxLength: foo"},
 		{maxLength: -1, warning: "Illegal maxLength: -1"},
 		{maxLength: 0, warning: "Illegal maxLength: 0"}
-	], function (i, oFixture) {
+	].forEach(function (oFixture, i) {
 		test("constraints error #" + i, function () {
 			var oType = new sap.ui.model.odata.type.String();
 
@@ -100,11 +100,9 @@
 	test("validate", function () {
 		var oType = new sap.ui.model.odata.type.String({}, {maxLength: 3});
 
-		jQuery.each(["", "A", "AB", "ABC"],
-			function (i, sValue) {
-				oType.validateValue(sValue);
-			}
-		);
+		["", "A", "AB", "ABC"].forEach(function (sValue) {
+			oType.validateValue(sValue);
+		});
 
 		sap.ui.test.TestUtils.withNormalizedMessages(function () {
 			try {

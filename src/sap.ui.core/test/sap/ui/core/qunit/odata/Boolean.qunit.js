@@ -92,11 +92,9 @@
 	test("validate", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
-		jQuery.each([false, true, null],
-			function (i, sValue) {
-				oType.validateValue(sValue);
-			}
-		);
+		[false, true, null].forEach(function (sValue) {
+			oType.validateValue(sValue);
+		});
 
 		try {
 			oType.validateValue("foo");

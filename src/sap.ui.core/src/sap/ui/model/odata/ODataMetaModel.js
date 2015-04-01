@@ -992,7 +992,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 */
 	ODataMetaModel.prototype.getODataProperty = function (oType, vName, bAsPath) {
 		var i,
-			aParts = jQuery.isArray(vName) ? vName : [vName],
+			aParts = Array.isArray(vName) ? vName : [vName],
 			oProperty = null,
 			sPropertyPath;
 

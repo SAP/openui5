@@ -67,11 +67,11 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{name: "trivial", expression:"{=${x}}"},
 		{name: "moderate", expression: "{=3+2*${x}}"},
 		{name: "complex", expression: "{='foo'.charCodeAt(-17+2*Math.floor(null||(${x}===2?5+2*${x}:42)))}"}
-	], function(iUnused, oFixture) {
+	].forEach(function(oFixture) {
 
 		test("Parse expression binding: " + oFixture.name, function () {
 			sResult += oFixture.name;

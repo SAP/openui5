@@ -54,7 +54,7 @@
 		var sActual = normalizeXml(jQuery.sap.serializeXML(oElement)),
 			sExpected;
 
-		if (jQuery.isArray(vExpected)) {
+		if (Array.isArray(vExpected)) {
 			sExpected = vExpected.join("");
 			strictEqual(sActual, normalizeXml(sExpected),
 					"XML looks as expected: " + sExpected);
@@ -111,7 +111,7 @@
 				function (sName, oBindingInfo) {
 					strictEqual(sName, "any");
 					strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime);
-					jQuery.each(oBindingInfo.parts || [], function (i, oInfoPart) {
+					(oBindingInfo.parts || []).forEach(function (oInfoPart) {
 						strictEqual(oInfoPart.mode, sap.ui.model.BindingMode.OneTime);
 					});
 					fnBindProperty.apply(this, arguments);
@@ -158,7 +158,7 @@
 				}
 			}
 		}
-		if (jQuery.isArray(vExpected)) {
+		if (Array.isArray(vExpected)) {
 			vExpected.unshift(aViewContent[0]); // 1st line is always in
 			vExpected.push(aViewContent[aViewContent.length - 1]); // last line is always in
 			if (vExpected.length === 2) {
@@ -216,7 +216,7 @@
 	function unexpected(aViewContent, sExpectedMessage) {
 		var iUnexpected;
 
-		jQuery.each(aViewContent, function (i, sViewContent) {
+		aViewContent.forEach(function (sViewContent, i) {
 			if (/id="unexpected"/.test(sViewContent)) {
 				iUnexpected = i;
 			}
@@ -249,7 +249,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bIsLoggable) {
+	[false, true].forEach(function (bIsLoggable) {
 		test("template:if test='false', warn = " + bIsLoggable, function () {
 			var aViewContent = [
 					mvcView(),
@@ -332,7 +332,7 @@
 
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
-	jQuery.each(["true", true, 1, "X"], function (i, oFlag) {
+	["true", true, 1, "X"].forEach(function (oFlag) {
 		test("XML with template:if test='{/flag}', truthy, flag = " + oFlag,
 			function () {
 				check([
@@ -349,7 +349,7 @@
 
 	//*********************************************************************************************
 	// Note: " " intentionally not included yet, should not matter for OData!
-	jQuery.each(["false", false, 0, null, undefined, NaN, ""], function (i, oFlag) {
+	["false", false, 0, null, undefined, NaN, ""].forEach(function (oFlag) {
 		test("XML with template:if test='{/flag}', falsy, flag = " + oFlag,
 			function () {
 				check([
@@ -366,7 +366,7 @@
 
 	//*********************************************************************************************
 	// Note: relative paths now!
-	jQuery.each(["true", true, 1, "X"], function (i, oFlag) {
+	["true", true, 1, "X"].forEach(function (oFlag) {
 		test("XML with template:if test='{flag}', truthy, flag = " + oFlag, function () {
 			var oModel = new sap.ui.model.json.JSONModel({flag: oFlag});
 
@@ -403,7 +403,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bIsLoggable) {
+	[false, true].forEach(function (bIsLoggable) {
 		test("template:if test='{formatter:...}', exception in formatter, warn = " + bIsLoggable,
 			function () {
 				var aViewContent = [
@@ -441,7 +441,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bIsLoggable) {
+	[false, true].forEach(function (bIsLoggable) {
 		test("template:if test='{unrelated>/some/path}', warn = " + bIsLoggable, function () {
 			var aViewContent = [
 					mvcView(),
@@ -583,7 +583,7 @@
 	);
 
 	//*********************************************************************************************
-	jQuery.each([[
+	[[
 		mvcView(),
 		'<template:foo id="unexpected"/>',
 		'</mvc:View>'
@@ -595,13 +595,13 @@
 		mvcView(),
 		'<template:else id="unexpected"/>',
 		'</mvc:View>'
-	]], function (i, aViewContent) {
+	]].forEach(function (aViewContent, i) {
 		test("Unexpected tags (" + i + ")", function () {
 			unexpected(aViewContent, "Unexpected tag {0}");
 		});
 	});
 
-	jQuery.each([[
+	[[
 		mvcView(),
 		'<template:if test="true">',
 		'<template:then/>',
@@ -623,14 +623,14 @@
 		'<template:else/>',
 		'</template:if>',
 		'</mvc:View>'
-	]], function (i, aViewContent) {
+	]].forEach(function (aViewContent, i) {
 		test("Expected <template:else>, but instead saw... (" + i + ")", function () {
 			unexpected(aViewContent,
 				"Expected <template:elseif> or <template:else>, but instead saw {0}");
 		});
 	});
 
-	jQuery.each([[
+	[[
 		mvcView("t"),
 		'<t:if test="true">',
 		'<t:then/>',
@@ -647,7 +647,7 @@
 		'<t:else id="unexpected"/>',
 		'</t:if>',
 		'</mvc:View>'
-	]], function (i, aViewContent) {
+	]].forEach(function (aViewContent, i) {
 		test("Expected </t:if>, but instead saw... (" + i + ")", function () {
 			unexpected(aViewContent, "Expected </t:if>, but instead saw {0}");
 		});
@@ -859,7 +859,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bIsLoggable) {
+	[false, true].forEach(function (bIsLoggable) {
 		test("binding resolution, exception in formatter, debug = " + bIsLoggable, function () {
 			var oError = new Error("deliberate failure"),
 				oLogMock = this.mock(jQuery.sap.log);
@@ -929,7 +929,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bHasHelper) {
+	[false, true].forEach(function (bHasHelper) {
 		test("template:with and 'named context', has helper = " + bHasHelper, function () {
 			window.foo = {
 				Helper : {
@@ -991,7 +991,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bWithVar) {
+	[false, true].forEach(function (bWithVar) {
 		test("template:with and helper, with var = " + bWithVar, function () {
 			var oModel = new sap.ui.model.json.JSONModel({
 					target: {
@@ -1025,7 +1025,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bWithVar) {
+	[false, true].forEach(function (bWithVar) {
 		test("template:with and helper changing the model, with var = " + bWithVar, function () {
 			var oMetaModel = new sap.ui.model.json.JSONModel({
 					target: {
@@ -1063,7 +1063,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([undefined, {}], function (i, fnHelper) {
+	[undefined, {}].forEach(function (fnHelper) {
 		test("template:with and helper = " + fnHelper, function () {
 			window.foo = fnHelper;
 			checkError([
@@ -1077,7 +1077,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([true, ""], function (i, vResult) {
+	[true, ""].forEach(function (vResult) {
 		test("template:with and helper returning " + vResult, function () {
 			window.foo = function () {
 				return vResult;

@@ -282,7 +282,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	function DOT(fnLeft, sIdentifier, aParts) {
 		var oParent = fnLeft(aParts),
 			vChild = oParent[sIdentifier];
-		// Note: jQuery.proxy() cannot handle this in case typeof oParent === "string"
 		return typeof vChild === "function" ? vChild.bind(oParent) : vChild;
 	}
 
@@ -328,8 +327,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	function MAP(mMap, aParts) {
 		var mResult = {};
 
-		jQuery.each(mMap, function(sKey, fnValue) {
-			mResult[sKey] = fnValue(aParts); // evaluate value
+		Object.keys(mMap).forEach(function(sKey) {
+			mResult[sKey] = mMap[sKey](aParts); // evaluate value
 		});
 		return mResult;
 	}

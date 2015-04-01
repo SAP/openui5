@@ -309,8 +309,8 @@
 			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
 		});
 
-		jQuery.each(mFixture, function (sUrl, vResponse) {
-			oServer.respondWith(sUrl, vResponse);
+		Object.keys(mFixture).forEach(function (sUrl) {
+			oServer.respondWith(sUrl, mFixture[sUrl]);
 		});
 		oServer.autoRespond = true;
 	}
@@ -442,7 +442,7 @@
 			this.spy(sap.ui.model.MetaModel.prototype, "destroy");
 
 			// generic dispatching
-			jQuery.each(["destroy", "isList"], function (i, sName) {
+			["destroy", "isList"].forEach(function (sName) {
 				oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
 
 				strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
@@ -560,7 +560,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bIsLoggable) {
+	[false, true].forEach(function (bIsLoggable) {
 		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
@@ -627,7 +627,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		annotationURI : null,
 		title : "no annotations"
 	}, {
@@ -636,7 +636,7 @@
 	}, {
 		annotationURI : ["/fake/annotations", "/fake/annotations2"],
 		title : "multiple annotation files"
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture, i) {
 		test("ODataMetaModel loaded: " + oFixture.title, function () {
 			var oMetaModel, oModel;
 
@@ -1029,7 +1029,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true, false, true], function (i, bAsync) {
+	[false, true, false, true].forEach(function (bAsync, i) {
 		test("Error loading" + (i < 2 ? " meta data" : " annotations" )
 				+ ", async: " + bAsync, function () {
 			var oModel,
@@ -1056,9 +1056,9 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["annotations", "emptyAnnotations"], function (i, sAnnotation) {
-		jQuery.each(["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"],
-			function (j, sPath) {
+	["annotations", "emptyAnnotations"].forEach(function (sAnnotation) {
+		["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
+			function (sPath) {
 				test(sAnnotation + ", " + sPath, function () {
 					var oMetaModel, oModel;
 

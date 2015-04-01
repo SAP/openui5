@@ -112,7 +112,7 @@
 			strictEqual(oType.formatValue(oDateTime, "any"), oDateTime, "target type any");
 			strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime,
 				"target type string");
-			jQuery.each(["int", "float", "boolean"], function (i, sType) {
+			["int", "float", "boolean"].forEach(function (sType) {
 				try {
 					oType.formatValue(oDateTime, sType);
 					ok(false);
@@ -132,7 +132,7 @@
 			strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
 			deepEqual(oType.parseValue(sFormattedDateTime, "string"), oDateTime);
 
-			jQuery.each(["int", "float", "boolean"], function (i, sType) {
+			["int", "float", "boolean"].forEach(function (sType) {
 				try {
 					oType.parseValue(sFormattedDateTime, sType);
 					ok(false);
@@ -184,7 +184,7 @@
 	dateTime("sap.ui.model.odata.type.DateTime");
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{i: {}, o: undefined},
 		{i: {nullable: true, displayFormat: "Date"}, o: {isDateOnly: true}},
 		{i: {nullable: false, displayFormat: "foo"}, o: {nullable: false},
@@ -193,7 +193,7 @@
 			warning: "Illegal displayFormat: 1"},
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
-    ], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType = new sap.ui.model.odata.type.DateTime();
 
@@ -210,7 +210,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{oFormatOptions: {},  oExpected: {strictParsing: true}},
 		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
 		{oFormatOptions: {strictParsing: false, UTC: true}, oExpected: {strictParsing: false}},
@@ -229,7 +229,7 @@
 			oExpected: {UTC: true, strictParsing: true}},
 		{oFormatOptions: {style: "medium"}, oConstraints: {displayFormat: "Date"},
 			oExpected: {UTC: true, strictParsing: true, style: "medium"}},
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			sinon.test(function () {
 					var oType = createInstance("sap.ui.model.odata.type.DateTime",
@@ -282,14 +282,14 @@
 	dateTime("sap.ui.model.odata.type.DateTimeOffset");
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{i: {}, o: undefined},
 		{i: {nullable: true, displayFormat: "Date"}, o: undefined},
 		{i: {nullable: false, isDateOnly: true}, o: {nullable: false}},
 		{i: {nullable: "true"}, o: undefined},
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
-    ], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType;
 
@@ -307,13 +307,13 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{oFormatOptions: {},  oExpected: {strictParsing: true}},
 		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
 		{oFormatOptions: {strictParsing: false}, oExpected: {strictParsing: false}},
 		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
 		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}}
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			sinon.test(function () {
 					var oType = createInstance("sap.ui.model.odata.type.DateTimeOffset", {},

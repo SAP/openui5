@@ -132,7 +132,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	function isSafeFormatOptions(oFormatOptions) {
 		var bSafe = true;
 
-		jQuery.each(oFormatOptions || {}, function(sKey) {
+		Object.keys(oFormatOptions || {}).forEach(function (sKey) {
 			switch (sKey) {
 				case "decimalSeparator":
 				case "decimals":
