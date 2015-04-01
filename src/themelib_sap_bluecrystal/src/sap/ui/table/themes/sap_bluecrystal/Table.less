@@ -173,7 +173,12 @@
 .sapUiTableCtrl.sapUiTableCtrlRowFixed tr:last-child > td {
 	padding-top: 2px;
 	padding-bottom: 1px;
-	border-bottom: 1px solid @sapUiMediumBorder;
+	border-bottom: 1px solid @sapUiExtraDarkBorder;
+}
+
+.sapUiTableCtrl.sapUiTableCtrlFixed tr > td:last-child, 
+.sapUiTableColHdrCnt .sapUiTableColHdrFixed  .sapUiTableCol:nth-last-of-type(2) {
+	border-right: 1px solid @sapUiExtraDarkBorder !important;
 }
 
 .sapUiTableCtrl.sapUiTableCtrlRowFixedBottom {
