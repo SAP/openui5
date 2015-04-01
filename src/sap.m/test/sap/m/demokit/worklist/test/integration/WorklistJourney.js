@@ -2,9 +2,10 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5'
+	"sap/ui/test/Opa5"
 ],
 function (Opa5) {
+	"use strict";
 
 	module("Worklist");
 
@@ -28,7 +29,7 @@ function (Opa5) {
 		Then.onTheWorklistPage.theTableShouldHaveTheDoubleAmountOfInitialEntries().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
@@ -42,7 +43,7 @@ function (Opa5) {
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Should see the busy indicator on worklist table after metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
@@ -53,17 +54,17 @@ function (Opa5) {
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
-		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator(). 
+		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded, after starting app with object and navigating back", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
 			delay: 10000,
 			hash: "#/object/ObjectID_10"
 		});
-		
+
 		// Actions
 		When.onTheObjectPage.iPressTheBackButton();
 		When.onTheWorklistPage.iLookAtTheScreen();
@@ -72,14 +73,14 @@ function (Opa5) {
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
 			and.iTeardownMyAppFrame();
 	});
-	
+
 	opaTest("Should see the busy indicator on worklist view after metadata is loaded, after starting app with object and navigating back", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
 			delay: 2000,
 			hash: "#/object/ObjectID_10"
 		});
-		
+
 		// Actions
 		When.onTheObjectPage.iPressTheBackButton();
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();

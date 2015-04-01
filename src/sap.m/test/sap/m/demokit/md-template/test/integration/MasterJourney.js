@@ -2,13 +2,14 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/MasterAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/MasterAssertion'
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/mdtemplate/test/integration/action/MasterAction",
+	"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
+	"sap/ui/demo/mdtemplate/test/integration/assertion/MasterAssertion"
 ],
 function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
-	
+	"use strict";
+
 	module("Master List", { setup : function () {
 		Opa5.extendConfig({
 			actions : new MasterAction(),
@@ -29,7 +30,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		Then.iShouldSeeTheMasterList().
 			and.theMasterListShouldHaveAllEntries();
 	});
-	
+
 	opaTest("Search for 'Object 2' should deliver exactly two results", function (Given, When, Then) {
 
 		//Actions
@@ -39,7 +40,7 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		Then.theMasterListShowsObject2().
 			and.theMasterListShouldHaveNEntries(2);
 	});
-	
+
 	opaTest("Entering 'Object 3' into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
 
 		//Actions
@@ -49,39 +50,39 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		Then.theMasterListShowsObject2().
 			and.theMasterListShouldHaveNEntries(2);
 	});
-	
+
 	opaTest("MasterList Sorting on UnitNumber", function(Given, When, Then) {
-	
+
 		// Actions
 		When.iClearTheSearch().and.iSortTheListOnUnitNumber();
 		// Assertions
 		Then.theMasterListShouldBeSortedAscendingOnUnitNumber();
 
 	});
-	
+
 	opaTest("MasterList Sorting on Name", function(Given, When, Then) {
-		
+
 		// Actions
 		When.iSortTheListOnName();
 		// Assertions
 		Then.theMasterListShouldBeSortedAscendingOnName();
 
 	});
-	
+
 	opaTest("MasterList Filtering on UnitNumber less than 100", function(Given, When, Then) {
-		
+
 		// Action
 		When.iOpenViewSettingsDialog().
 			and.iSelectListItemInViewSettingsDialog("Unit Number").
 			and.iSelectListItemInViewSettingsDialog("<100 UoM").
 			and.iPressOKInViewSelectionDialog();
-		
+
 		// Assertion
 		Then.theMasterListShouldBeFilteredOnUnitNumberValueLessThan100();
 	});
-	
+
 	opaTest("MasterList Filtering on UnitNumber more than 100", function(Given, When, Then) {
-		
+
 		// Action
 		When.iOpenViewSettingsDialog().
 			and.iSelectListItemInViewSettingsDialog(">100 UoM").
@@ -89,9 +90,9 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		// Assertion
 		Then.theMasterListShouldBeFilteredOnUnitNumberValueMoreThan100();
 	});
-	
+
 	opaTest("MasterList remove filter should display all items", function(Given, When, Then) {
-		
+
 		// Action
 		When.iOpenViewSettingsDialog().
 			and.iPressResetInViewSelectionDialog().
@@ -99,9 +100,9 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 		// Assertion
 		Then.theMasterListShouldHaveAllEntries();
 	});
-	
+
 	opaTest("MasterList grouping delivers a group with one member and a group with 8 members", function(Given, When, Then) {
-		
+
 		// Action
 		When.iGroupTheList();
 		// Assertion
@@ -109,9 +110,9 @@ function (Opa5, MasterAction, StartAppArrangement, MasterAssertion) {
 			and.theMasterListShouldContainGroup20OrMore().
 			and.theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrLess();
 	});
-	
+
 	opaTest("Remove grouping from MasterList delivers initial list", function(Given, When, Then) {
-			
+
 			// Action
 			When.iRemoveListGrouping();
 			// Assertion

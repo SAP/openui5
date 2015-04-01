@@ -1,7 +1,7 @@
 sap.ui.require([
-		'sap/ui/test/Opa5',
-		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/demo/worklist/test/integration/pages/Common'
+		"sap/ui/test/Opa5",
+		"sap/ui/test/matchers/PropertyStrictEquals",
+		"sap/ui/demo/worklist/test/integration/pages/Common"
 	],
 	function(Opa5, PropertyStrictEquals, Common) {
 		"use strict";
@@ -19,7 +19,7 @@ sap.ui.require([
 								// we set the view busy, so we need to query the parent of the app
 								return oAppControl.getParent() && oAppControl.getParent().getBusy() === false;
 							},
-							success : function (oRootView) {
+							success : function () {
 								ok(true, "The root view is not busy anymore");
 							},
 							errorMessage : "Did not find the App control"
@@ -35,7 +35,7 @@ sap.ui.require([
 								name: "busy",
 								value: true
 							}),
-							success : function (oRootView) {
+							success : function () {
 								// we set the view busy, so we need to query the parent of the app
 								ok(true, "The rootview is busy");
 							},

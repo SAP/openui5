@@ -2,12 +2,13 @@
 
 sap.ui.require(
 	[
-		'sap/ui/test/Opa5',
-		'sap/ui/demo/mdtemplate/test/integration/action/NavigationAction',
-		'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-		'sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion'
+		"sap/ui/test/Opa5",
+		"sap/ui/demo/mdtemplate/test/integration/action/NavigationAction",
+		"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
+		"sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion"
 	],
 	function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
+		"use strict";
 
 		module("Not found Journey", { setup : function () {
 			Opa5.extendConfig({
@@ -16,12 +17,12 @@ sap.ui.require(
 				assertions : new NavigationAssertion(),
 				viewNamespace : "sap.ui.demo.mdtemplate.view."
 			});
-		}}); 
-		
+		}});
+
 		opaTest("Should see the resource not found page and no selection in the master list when navigating to an invalid hash", function (Given, When, Then) {
 			//Arrangement
 			Given.iStartTheAppOnADesktopDevice();
-			
+
 			//Actions
 			When.iWaitUntilTheMasterListIsLoaded().
 				and.iChangeTheHashToSomethingInvalid();
@@ -54,7 +55,7 @@ sap.ui.require(
 			Then.iShouldSeeTheNotFoundPage().
 				and.theNotFoundPageShouldSayResourceNotFound();
 		});
-		
+
 		opaTestPhoneAndDesktop("Should see the not found master and detail page if an invalid object id has been called", "#/object/SomeInvalidObjectId", function (Given, When, Then) {
 			//Actions
 			When.iLookAtTheScreen();
@@ -72,14 +73,14 @@ sap.ui.require(
 			Then.iShouldSeeTheLineItemNotFoundPage().
 				and.theNotFoundPageShouldSayLineItemNotFound();
 		});
-		
+
 		opaTestPhoneAndDesktop("Should see the not found text for no search results", "", function (Given, When, Then) {
 			//Actions
 			When.iLookAtTheScreen();
 
 			// Assertions
 			Then.iShouldSeeTheObjectList();
-			
+
 			When.iSearchForSomethingWithNoResults();
 
 			Then.iShouldSeeTheNoDataTextForNoSearchResults();

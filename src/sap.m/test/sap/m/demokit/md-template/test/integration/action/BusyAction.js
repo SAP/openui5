@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 					// we set the view busy, so we need to query the parent of the app
 					return oRootView.getParent().getBusy() === false;
 				},
-				success : function (oRootView) {
+				success : function () {
 					ok(true, "The app is not busy busy anymore");
 				},
 				errorMessage : "The app is still busy."

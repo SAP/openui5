@@ -11,7 +11,7 @@ sap.ui.require(
 		QUnit.module("Initialization", {
 			setup: function () {
 				var oViewStub = {
-						getModel: function (oModel) {
+						getModel: function () {
 							return this.oViewModel;
 						}.bind(this),
 						setModel: function (oModel) {

@@ -2,12 +2,13 @@
 
 sap.ui.require(
 [
-	'sap/ui/test/Opa5',
-	'sap/ui/demo/mdtemplate/test/integration/action/BusyAction',
-	'sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement',
-	'sap/ui/demo/mdtemplate/test/integration/assertion/BusyAssertion'
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/mdtemplate/test/integration/action/BusyAction",
+	"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
+	"sap/ui/demo/mdtemplate/test/integration/assertion/BusyAssertion"
 ],
 function (Opa5, BusyAction, StartAppArrangement, BusyAssertion) {
+	"use strict";
 
 	module("Phone busy indication", { setup : function () {
 		Opa5.extendConfig({

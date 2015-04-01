@@ -1,7 +1,7 @@
 sap.ui.require([
-		'sap/ui/test/Opa5',
-		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/demo/worklist/test/integration/pages/Common'
+		"sap/ui/test/Opa5",
+		"sap/ui/test/matchers/PropertyStrictEquals",
+		"sap/ui/demo/worklist/test/integration/pages/Common"
 	],
 	function(Opa5, PropertyStrictEquals, Common) {
 		"use strict";
@@ -31,7 +31,7 @@ sap.ui.require([
 							id : "objectHeader",
 							viewName : sViewName,
 							matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName }) ],
-							success : function (oObjectHeader) {
+							success : function () {
 								ok(true, "was on the " + sTitleName + " page");
 							},
 							errorMessage : "We are not on the " + sTitleName + " page"
@@ -54,7 +54,7 @@ sap.ui.require([
 							id : "page",
 							viewName : sViewName,
 							success : function (oPage) {
-								ok(oPage.getBusyIndicatorDelay() == 0, "The object view's busy indicator delay is zero.");
+								ok(oPage.getBusyIndicatorDelay() === 0, "The object view's busy indicator delay is zero.");
 							},
 							errorMessage : "The object view's busy indicator delay is not zero."
 						});
@@ -65,7 +65,7 @@ sap.ui.require([
 							id : "page",
 							viewName : sViewName,
 							success : function (oPage) {
-								ok(oPage.getBusyIndicatorDelay() == 1000, "The object view's busy indicator delay default is restored.");
+								ok(oPage.getBusyIndicatorDelay() === 1000, "The object view's busy indicator delay default is restored.");
 							},
 							errorMessage : "The object view's busy indicator delay is still zero."
 						});

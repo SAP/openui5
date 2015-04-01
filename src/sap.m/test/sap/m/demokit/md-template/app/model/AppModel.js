@@ -10,7 +10,7 @@ sap.ui.define(
 		/**
 		 * Will wait until there is data in the model for the elementbinding given.
 		 *
-		 * @param oElementBinding the element binding that should contain the data
+		 * @param {object} oElementBinding the element binding that should contain the data
 		 * @returns {Promise} Gets resolved if the data is already on the client or when the data has been requested from the server. Gets rejected when there was no data on the server.
 		 */
 		whenThereIsDataForTheElementBinding : function (oElementBinding) {

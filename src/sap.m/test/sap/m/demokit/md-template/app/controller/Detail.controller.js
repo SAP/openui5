@@ -48,7 +48,7 @@ sap.ui.define([
 		 * Collects the needed information ProductID and OrderID for navigation.
 		 * Navigation to the corresponding line item is triggered.
 		 *
-		 * @param oEvent listItem selection event
+		 * @param {sap.ui.base.Event} oEvent listItem selection event
 		 * @function
 		 */
 		onSelect : function (oEvent) {
@@ -87,7 +87,6 @@ sap.ui.define([
 		 * the detail view.
 		 *
 		 * @function
-		 * @param oEvent pattern match event in route 'master'
 		 * @private
 		 */
 		_onMasterMatched : function () {
@@ -106,7 +105,7 @@ sap.ui.define([
 		 * Binds the view to the object path and expands the aggregated line items.
 		 *
 		 * @function
-		 * @param oEvent pattern match event in route 'object'
+		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
 		 * @private
 		 */
 		_onObjectMatched : function (oEvent) {
@@ -150,7 +149,7 @@ sap.ui.define([
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
 			// only update the counter if the length is final
-			if (this._oLineItemsList.getBinding('items').isLengthFinal()) {
+			if (this._oLineItemsList.getBinding("items").isLengthFinal()) {
 				if (iTotalItems) {
 					sTitle = this.getResourceBundle().getText("detailLineItemTableHeadingCount", [iTotalItems]);
 				} else {

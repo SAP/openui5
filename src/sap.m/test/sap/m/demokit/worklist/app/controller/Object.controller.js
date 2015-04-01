@@ -20,12 +20,12 @@ sap.ui.define([
 
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 			// Store original busy indicator delay, so it can be restored later on
-			var iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 			this.setModel(oViewModel, "view");
 			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
 					// Restore original busy indicator delay for the object view
 					oViewModel.setProperty("/delay", iOriginalBusyDelay);
-				}.bind(this)
+				}
 			);
 		},
 
@@ -33,7 +33,7 @@ sap.ui.define([
 		 * Binds the view to the object path.
 		 *
 		 * @function
-		 * @param oEvent pattern match event in route 'object'
+		 * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
 		 * @private
 		 */
 		_onObjectMatched : function (oEvent) {
@@ -45,6 +45,7 @@ sap.ui.define([
 		 * Binds the view to the object path.
 		 *
 		 * @function
+		 * @param {string} sObjectPath path to the object to be bound
 		 * @private
 		 */
 		_bindView : function (sObjectPath) {
@@ -55,10 +56,10 @@ sap.ui.define([
 			oView.bindElement(sObjectPath);
 
 			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
-				function (sPath) {
+				function () {
 					// Everything went fine.
 					oViewModel.setProperty("/busy", false);
-				}.bind(this),
+				},
 				function () {
 					// Something went wrong. Display an error page.
 					oViewModel.setProperty("/busy", false);
