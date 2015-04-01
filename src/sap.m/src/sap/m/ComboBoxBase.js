@@ -259,6 +259,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		ComboBoxBase.prototype.ontap = function(oEvent) {
 			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
 
+			InputBase.prototype.ontap.call(this, oEvent);
+
 			// a non editable or disabled ComboBox, the picker pop-up cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;

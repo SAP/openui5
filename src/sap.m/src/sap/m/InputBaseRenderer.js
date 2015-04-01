@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		// outer attributes
 		this.writeOuterAttributes(oRm, oControl);
-		var sTooltip = ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
+		var sTooltip = oControl.getTooltip_AsString();
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
@@ -73,7 +73,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		if (oControl.bShowLabelAsPlaceholder) {
 			oRm.write('<label class="sapMInputBasePlaceholder"');
 			oRm.writeAttribute("id", oControl.getId() + "-placeholder");
-			oRm.writeAttribute("for", oControl.getId() + "-inner");
 			if (sTextAlign) {
 				oRm.addStyle("text-align", sTextAlign);
 			}
@@ -146,6 +145,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// finish inner
 		this.writeInnerContent(oRm, oControl);
 		this.closeInputTag(oRm, oControl);
+		
+		// render hidden aria nodes
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			this.renderAriaLabelledBy(oRm, oControl);
+			this.renderAriaDescribedBy(oRm, oControl);
+		}
 
 		// finish outer
 		oRm.write("</div>");
@@ -170,6 +175,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @returns {String|undefined}
 	 */
 	InputBaseRenderer.getAriaLabelledBy = function(oControl) {
+		if (this.getLabelledByAnnouncement(oControl)) {
+			return oControl.getId() + "-labelledby";
+		}
+	};
+	
+	/**
+	 * Returns the inner aria labelledby announcement texts for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {String}
+	 */
+	InputBaseRenderer.getLabelledByAnnouncement = function(oControl) {
+		return oControl.getPlaceholder() || "";
+	};
+	
+	/**
+	 * Renders the hidden aria labelledby node for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.renderAriaLabelledBy = function(oRm, oControl) {
+		var sAnnouncement = this.getLabelledByAnnouncement(oControl);
+		if (sAnnouncement) {
+			oRm.write("<label");
+			oRm.writeAttribute("id", oControl.getId() + "-labelledby");
+			oRm.writeAttribute("aria-hidden", "true");
+			oRm.addClass("sapUiHidden");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(sAnnouncement.trim());
+			oRm.write("</label>");
+		}
 	};
 	
 	/**
@@ -180,6 +220,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @returns {String|undefined} 
 	 */
 	InputBaseRenderer.getAriaDescribedBy = function(oControl) {
+		if (this.getDescribedByAnnouncement(oControl)) {
+			return oControl.getId() + "-describedby";
+		}
+	};
+	
+	/**
+	 * Returns the inner aria describedby announcement texts for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {String}
+	 */
+	InputBaseRenderer.getDescribedByAnnouncement = function(oControl) {
+		return oControl.getTooltip_AsString() || "";
+	};
+	
+	/**
+	 * Renders the hidden aria labelledby node for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.renderAriaDescribedBy = function(oRm, oControl) {
+		var sAnnouncement = this.getDescribedByAnnouncement(oControl);
+		if (sAnnouncement) {
+			oRm.write("<span");
+			oRm.writeAttribute("id", oControl.getId() + "-describedby");
+			oRm.writeAttribute("aria-hidden", "true");
+			oRm.addClass("sapUiHidden");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(sAnnouncement.trim());
+			oRm.write("</span>");
+		}
 	};
 	
 	/**
