@@ -441,6 +441,53 @@
 
 				oSC.destroy();
 			});
+
+			test("Overwrite and restore of methods on page in detail area of SplitContainer", function() {
+				var oPage = new sap.m.Page(),
+					oSC = new sap.m.SplitContainer({
+						detailPages: oPage
+					});
+
+				notEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be overwritten");
+				notEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be overwritten");
+
+				oSC.removeDetailPage(oPage);
+
+				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be restored");
+				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
+			});
+
+			test("Hide hamburger button when page shows back button", function() {
+				var oPortrait = {
+						landscape: false,
+						portrait: true
+					},
+					oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oPage = new sap.m.Page(),
+					oSC = new sap.m.SplitContainer({
+						detailPages: oPage
+					});
+
+				oSC.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(oSC._oShowMasterBtn.$().is(":visible"), "Master button is shown");
+
+				oPage.setShowNavButton(true);
+				sap.ui.getCore().applyChanges();
+
+				ok(oSC._oShowMasterBtn.$().is(":hidden"), "Master button is now hidden");
+
+				oSC.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
