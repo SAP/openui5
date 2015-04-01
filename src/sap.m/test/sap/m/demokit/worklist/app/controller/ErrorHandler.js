@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 		'sap/ui/base/Object',
 		'sap/m/MessageBox',
