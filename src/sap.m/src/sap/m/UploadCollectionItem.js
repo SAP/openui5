@@ -179,6 +179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 
 	UploadCollectionItem.prototype.init = function() {
 		this._mapDeprecatedProperties = {};
+		sap.m.UploadCollectionItem.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	};
 
 	/**
@@ -266,6 +267,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	UploadCollectionItem.prototype._addDecprecatedPropertyContributor = function(sContributor) {
 		this._mapDeprecatedProperties.contributor = new ObjectAttribute({
 			active : false,
+			title : this._oRb.getText("UPLOADCOLLECTION_UPLOADED_BY"),
 			text : sContributor
 		});
 		return Element.prototype.insertAggregation.apply(this, ["attributes", this._mapDeprecatedProperties.contributor, 0, true]);
@@ -281,6 +283,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 		var iPosition = 0;
 		this._mapDeprecatedProperties.uploadedDate = new ObjectAttribute({
 			active : false,
+			title : this._oRb.getText("UPLOADCOLLECTION_UPLOADED_ON"),
 			text : sUploadedDate
 		});
 		//Determine the position of the uploadedDate attribute
@@ -300,6 +303,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 		var iPosition = 1;
 		this._mapDeprecatedProperties.fileSize = new ObjectAttribute({
 			active : false,
+			title : this._oRb.getText("UPLOADCOLLECTION_FILE_SIZE"),
 			text : sFileSize
 		});
 		//Determines the position of the fileSize attribute; default is position 1
