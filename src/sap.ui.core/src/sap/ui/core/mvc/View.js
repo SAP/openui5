@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	* @param {object} [mSettings] settings for the view
 	* @param {object.string} [mSettings.viewData] view data
 	* @param {object.string} [mSettings.viewName] view name
-	* @param {object.boolean} [mSettings.async] set the view to load XML-view asynchronously
+	* @param {object.boolean} [mSettings.async] set the view to load a view resource asynchronously
 	* @private
 	*/
 	View.prototype._initCompositeSupport = function(mSettings) {
