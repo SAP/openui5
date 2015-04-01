@@ -30,6 +30,10 @@ sap.ui.define([
 
 		iLookAtTheScreen : function () {
 			return this;
+		},
+
+		iStartMyAppOnADesktopToTestErrorHandler : function (sParam) {
+			this.iStartMyAppInAFrame(getFrameUrl("", sParam));
 		}
 
 	});

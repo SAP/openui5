@@ -74,11 +74,18 @@ sap.ui.define([
 			// listLoading is done and the first item in the list is known
 			this.getRouter().getRoute("master").attachPatternMatched( function() {
 				oListSelector.oWhenListLoadingIsDone.then(
-					function () {
-						if (this._oList.getMode() !== "None") {
-								var sObjectId = this._oList.getItems()[0].getBindingContext().getProperty("ObjectID");
-								this.getRouter().navTo("object", {objectId : sObjectId}, true);
+					function (mParams) {
+						if (mParams.list.getMode() === "None") {
+							return;
 						}
+						var sObjectId = mParams.firstListitem.getBindingContext().getProperty("ObjectID");
+						this.getRouter().navTo("object", {objectId : sObjectId}, true);
+					}.bind(this),
+					function (mParams) {
+						if (mParams.error) {
+							return;
+						}
+						this.getRouter().getTargets().display("detailNoObjectsAvailable");
 					}.bind(this)
 				);
 			}, this);
@@ -193,7 +200,7 @@ sap.ui.define([
 		 */
 		onOpenViewSettings : function () {
 			if (!this.oViewSettingsDialog) {
-				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog" , this);
+				this.oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.mdtemplate.view.ViewSettingsDialog", this);
 				this.getView().addDependent(this.oViewSettingsDialog);
 				// forward compact style into Dialog
 				jQuery.sap.syncStyleClass(this.getOwnerComponent().getCompactCozyClass(), this.getView(), this.oViewSettingsDialog);
