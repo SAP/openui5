@@ -357,36 +357,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					var vTest = oElement.getAttribute("test"),
 						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest);
 
-					/**
-					 * Outputs a warning; takes care not to serialize XML in vain.
-					 *
-					 * @param {string} sText
-					 *   the main text of the warning
-					 * @param {string} sDetails
-					 *   the details of the warning
-					 */
-					function warn(sText, sDetails) {
-						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-							jQuery.sap.log.warning(
-								sCaller + sText + serializeSingleElement(oElement),
-								sDetails, "sap.ui.core.util.XMLPreprocessor");
-						}
-					}
-
 					if (oBindingInfo) {
 						try {
 							vTest = getAny(oWithControl, oBindingInfo, mSettings);
 							if (vTest === oUNBOUND) {
-								warn(': Binding not ready in ', null);
+								warn('Binding not ready in ', oElement, null);
 								vTest = false;
 							}
 						} catch (ex) {
-							warn(': Error in formatter of ', ex);
+							warn('Error in formatter of ', oElement, ex);
 							vTest = false;
 						}
 					} else {
 						// constant test conditions are suspicious, but useful during development
-						warn(': Constant test condition in ', null);
+						warn('Constant test condition in ', oElement, null);
 					}
 					return vTest && vTest !== "false";
 				}
@@ -436,6 +420,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						oFragmentElement = XMLTemplateProcessor.loadTemplate(
 							sFragmentName, "fragment");
 
+					// Note: It is perfectly valid to include the very same fragment again, as long
+					// as the context is changed. So we check for cycles at the current "with"
+					// control. A context change will create a new one.
 					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
 					if (oWithControl.$mFragmentContexts[sFragmentName]) {
 						oElement.appendChild(oElement.ownerDocument.createTextNode(
@@ -578,10 +565,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
+					//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
+					oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
+					sVar = sVar || oBindingInfo.model; // default variable is same model name
+
 					//TODO Simplify code once named contexts are supported by the core
 					if (sHelper || sVar) { // create a "named context"
-						//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
-						oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
 							error("Missing model '" + oBindingInfo.model + "' in ", oElement);
@@ -609,7 +598,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 								sResolvedPath = vHelperResult;
 							}
 						}
-						sVar = sVar || oBindingInfo.model; // default variable is same model name
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({ //TODO setBindingContext?!
 							model : sVar,
@@ -617,6 +605,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						});
 					} else {
 						oNewWithControl.bindObject(sPath);
+					}
+
+					if (oNewWithControl.getBindingContext(sVar)
+							=== oWithControl.getBindingContext(sVar)) {
+						// Warn and ignore the new "with" control when its binding context is
+						// the same as a previous one.
+						// We test identity because models cache and reuse binding contexts.
+						warn("set unchanged path '" + sResolvedPath + "' in ", oElement, null);
+						oNewWithControl = oWithControl;
 					}
 
 					liftChildNodes(oElement, oNewWithControl);
@@ -687,6 +684,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 
 					visitAttributes(oNode, oWithControl);
 					visitChildNodes(oNode, oWithControl);
+				}
+
+				/**
+				 * Outputs a warning; takes care not to serialize XML in vain.
+				 *
+				 * @param {string} sText
+				 *   the main text of the warning
+				 * @param {Element} oElement
+				 *   a DOM element
+				 * @param {string} sDetails
+				 *   the details of the warning
+				 */
+				function warn(sText, oElement, sDetails) {
+					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+						jQuery.sap.log.warning(
+							sCaller + ": " + sText + serializeSingleElement(oElement),
+							sDetails, "sap.ui.core.util.XMLPreprocessor");
+					}
 				}
 
 				//TODO remove this legacy compatibility for design time templating
