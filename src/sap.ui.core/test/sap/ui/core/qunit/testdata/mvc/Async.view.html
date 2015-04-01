@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<template data-controller-name="testdata.mvc.Async">
+<div data-sap-ui-type="sap.ui.commons.Image" data-width="150px"
+	data-height="110px" data-src="./testdata/images/screw.jpg"></div>
+<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayout" id="Layout"
+	data-width="250px">
+	<div data-sap-ui-aggregation="rows">
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+			<div data-sap-ui-aggregation="cells">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Label" data-text="Product: "></div>
+				</div>
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextField" id="Product"
+						data-value="Deluxe Screw"></div>
+				</div>
+			</div>
+		</div>
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+			<div data-sap-ui-aggregation="cells">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Label" data-text="Material: "></div>
+				</div>
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextField" id="Material"
+						data-value="Asynchronium"></div>
+				</div>
+			</div>
+		</div>
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+			<div data-sap-ui-aggregation="cells">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Label" id="More1"
+						data-text="Diameter: "></div>
+				</div>
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextField" id="TFMore1"
+						data-value="1/4 inch"></div>
+				</div>
+			</div>
+		</div>
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+			<div data-sap-ui-aggregation="cells">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Label" id="More2"
+						data-text="Length: "></div>
+				</div>
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextField" id="TFMore2"
+						data-value="2 inch"></div>
+				</div>
+			</div>
+		</div>
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+			<div data-sap-ui-aggregation="cells">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Label" id="More3"
+						data-text="Package Quantity: "></div>
+				</div>
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextField" id="TFMore3"
+						data-value="500"></div>
+				</div>
+			</div>
+		</div>
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+			<div data-sap-ui-aggregation="cells">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Link" id="showMore"
+						data-text="show details..." data-press="showMore"></div>
+					<div data-sap-ui-type="sap.ui.commons.Link" id="hideMore"
+						data-text="hide details..." data-press="hideMore"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</template>

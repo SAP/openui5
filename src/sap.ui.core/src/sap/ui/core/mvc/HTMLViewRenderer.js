@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 */
 	var HTMLViewRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	HTMLViewRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
@@ -42,49 +42,52 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">");
-		
-		var sHTML = oControl._oTemplate.innerHTML;
-	
-		var content = oControl.getContent();
-		var aDeferred = [];
-		
-		// helper method to render the controls
-		var renderControl = function(oControl) {
-			var sTemp = HTMLViewRenderer._getHTML(rm, oControl, sHTML);
-			if (sTemp) {
-				sHTML = sTemp;
-			} else {
-				aDeferred.push(oControl);
-			}
-		};
-	
-		if (content) {
-			if (jQuery.isArray(content)) {
-				// looks like an Array
-				for (var i = 0; i < content.length; i++) {
-					renderControl(content[i]);
+
+		// check if the template has been loaded in async view case
+		if (oControl._oTemplate) {
+			var sHTML = oControl._oTemplate.innerHTML;
+
+			var content = oControl.getContent();
+			var aDeferred = [];
+
+			// helper method to render the controls
+			var renderControl = function(oControl) {
+				var sTemp = HTMLViewRenderer._getHTML(rm, oControl, sHTML);
+				if (sTemp) {
+					sHTML = sTemp;
+				} else {
+					aDeferred.push(oControl);
 				}
-	
-			} else if (content) {
-				// should be a Control
-				renderControl(content);
+			};
+
+			if (content) {
+				if (jQuery.isArray(content)) {
+					// looks like an Array
+					for (var i = 0; i < content.length; i++) {
+						renderControl(content[i]);
+					}
+
+				} else if (content) {
+					// should be a Control
+					renderControl(content);
+				}
+			}
+
+			rm.write(sHTML);
+
+			// all controls that are not found in the template will be added at the end
+			for (var i = 0; i < aDeferred.length; i++) {
+				rm.renderControl(aDeferred[i]);
 			}
 		}
-	
-		rm.write(sHTML);
-		
-		// all controls that are not found in the template will be added at the end
-		for (var i = 0; i < aDeferred.length; i++) {
-			rm.renderControl(aDeferred[i]);
-		}
-	
+
 		rm.write("</div>");
 	};
-	
-	
+
+
 	/**
 	 * Replaces the control placeholder in the given HTML template. Returns the new HTML template if the control was found in the template.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 * @param {string} sHTML the HTML to replace with the control HTML
