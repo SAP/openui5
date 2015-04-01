@@ -165,7 +165,7 @@ sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/matchers/AggregationLengthEquals
 		iShouldSeeTheNotFoundPage : function () {
 			return this.waitFor({
 				//controlType : "sap.m.MessagePage"
-				id : "notFoundPage",
+				id : "page",
 				viewName : "NotFound",
 				success : function (oPage) {
 					// workaround, we currently cannot test not loaded controls in Opa, awaiting fix
@@ -177,7 +177,7 @@ sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/matchers/AggregationLengthEquals
 
 		theNotFoundPageShouldSayResourceNotFound : function () {
 			return this.waitFor({
-				id : "notFoundPage",
+				id : "page",
 				viewName : "NotFound",
 				success: function (oPage) {
 					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("notFoundTitle"), "the not found text is shown as title");
@@ -190,7 +190,7 @@ sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/matchers/AggregationLengthEquals
 		iShouldSeeTheObjectNotFoundPage : function () {
 			return this.waitFor({
 				//controlType : "sap.m.MessagePage"
-				id : "detailObjectNotFoundPage",
+				id : "page",
 				viewName : "DetailObjectNotFound",
 				success : function (oPage) {
 					// workaround, we currently cannot test not loaded controls in Opa, awaiting fix
@@ -202,7 +202,7 @@ sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/matchers/AggregationLengthEquals
 
 		theNotFoundPageShouldSayObjectNotFound : function () {
 			return this.waitFor({
-				id : "detailObjectNotFoundPage",
+				id : "page",
 				viewName : "DetailObjectNotFound",
 				success: function (oPage) {
 					strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("detailTitle"), "the object text is shown as title");

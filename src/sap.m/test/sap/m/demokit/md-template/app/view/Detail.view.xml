@@ -3,30 +3,34 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
-		id="detailPage"
+		id="page"
 		navButtonPress="onNavBack"
 		showNavButton="{device>/isPhone}"
 		title="{i18n>detailTitle}">
 		<content>
 			<ObjectHeader
+				id="objectHeader"
 				title="{Name}"
 				number="{UnitNumber}"
 				numberUnit="{UnitOfMeasure}">
 			</ObjectHeader>
 			<IconTabBar
+				id="iconTabBar"
 				class="sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
+						id="iconTabBarFilter1"
 						icon="sap-icon://hint">
 					</IconTabFilter>
 					<IconTabFilter
+						id="iconTabBarFilter2"
 						icon="sap-icon://attachment">
 					</IconTabFilter>
 				</items>
 			</IconTabBar>
 			<Table id="lineItemsList" width="auto" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiResponsiveMargin">
 				<headerToolbar>
-					<Toolbar>
+					<Toolbar id="lineItemsToolbar">
 						<Label id="lineItemsHeader" text="{view>/lineItemListTitle}"/>
 					</Toolbar>
 				</headerToolbar>
@@ -57,7 +61,7 @@
 			</Table>
 		</content>
 		<footer>
-			<Toolbar>
+			<Toolbar id="footerToolbar">
 			</Toolbar>
 		</footer>
 	</Page>

@@ -68,10 +68,12 @@
 				"master": {
 					"viewName": "Master",
 					"viewLevel": 1,
+					"viewId": "master",
 					"controlAggregation": "masterPages"
 				},
 				"object": {
 					"viewName": "Detail",
+					"viewId": "detail",
 					"viewLevel": 2
 				},
 				"lineItem": {
@@ -80,10 +82,12 @@
 				},
 				"detailObjectNotFound": {
 					"viewName": "DetailObjectNotFound",
+					"viewId": "detailObjectNotFound",
 					"viewLevel": 3
 				},
 				"detailNoObjectsAvailable": {
 					"viewName": "DetailNoObjectsAvailable",
+					"viewId": "detailNoObjectsAvailable",
 					"viewLevel": 3
 				},
 				"lineItemNotFound": {
@@ -92,6 +96,7 @@
 				},
 				"notFound": {
 					"viewName": "NotFound",
+					"viewId": "notFound",
 					"viewLevel": 3
 				}
 			}
