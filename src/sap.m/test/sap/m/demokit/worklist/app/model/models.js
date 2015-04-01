@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define(
 	[
 		"sap/ui/model/odata/v2/ODataModel",

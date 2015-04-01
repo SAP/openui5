@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 		"sap/ui/demo/worklist/controller/BaseController",
 		"sap/ui/demo/worklist/model/promise",

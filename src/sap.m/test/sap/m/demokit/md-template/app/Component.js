@@ -1,3 +1,7 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
 		"sap/ui/core/UIComponent",
 		"sap/ui/model/resource/ResourceModel",
