@@ -47,7 +47,6 @@
 
 	test("Check if the deprecated properties were set with initial load", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
-
 		assert.equal(this.oUploadCollectionItem.getContributor(), "Susan Baker", "Contributor property is set");
 		assert.equal(this.oUploadCollectionItem.getUploadedDate(), "2014-07-30", "UploadedDate property is set");
 		assert.equal(this.oUploadCollectionItem.getFileSize(), "20", "FileSize property is set");
