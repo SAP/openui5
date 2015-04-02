@@ -576,6 +576,21 @@ if (!sap.ui.Device.browser.phantomJS) {
 		sinon.assert.calledTwice(spy);
 	});
 
+	module("sap.ui.core.mvc.View#loaded");
+
+	asyncTest("Retrieve promise for view generally", function() {
+		var oView = new sap.ui.core.mvc.View({});
+			oPromise = oView.loaded();
+
+		ok(oPromise instanceof Promise, "Promise returned");
+
+		oPromise.then(function(oViewLoaded) {
+			deepEqual(oView, oViewLoaded, "Views equal deeply");
+			start();
+		});
+	});
+
+
 } // FIXME
 
 </script>

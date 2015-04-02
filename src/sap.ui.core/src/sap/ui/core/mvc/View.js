@@ -141,7 +141,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			 * Additional configuration data that should be given to the view at construction time
 			 * and which will be available early, even before model data or other constructor settings are applied.
 			 */
-			viewData : true
+			viewData : true,
+
+			/**
+			 * Determines initialization mode of the view
+			 * @type {Boolean}
+			 * @since 1.30
+			 */
+			async : {
+				type : "boolean",
+				defaultValue : false
+			}
 		}
 	}});
 
@@ -177,6 +187,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		this.mPreprocessors	= mSettings.preprocessors || {};
 
 		var that = this;
+
+		// create a Promise that represents the view initialization state
+		if (mSettings.async) {
+			this._oAsyncState = {};
+			this._oAsyncState.promise = new Promise(function(fnResolve) {
+				// remember resolve method for calling it later
+				that._oAsyncState.resolve = fnResolve;
+			});
+		}
+
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
 		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			this._fnSettingsPreprocessor = function(mSettings) {
@@ -204,13 +224,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		if (this.initViewSettings) {
 			if (mSettings.async) {
-				that.initViewSettings(mSettings)
+				this.initViewSettings(mSettings)
 					.then(fnInitController)
 					.then(that.runPreprocessor("controls", that))
 					.then(function() {
 						// notify renderer
 						that._bRenderAsync = true;
 						that.fireAfterInit();
+						// resolve View.prototype.loaded() methods promise
+						that._oAsyncState.resolve(that);
 					});
 			} else {
 				this.initViewSettings(mSettings);
@@ -320,6 +342,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	View.prototype.exit = function() {
 		this.fireBeforeExit();
 		this.oController = null;
+		this._oAsyncState = null;
 	};
 
 	/**
@@ -585,6 +608,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 
 		return view;
+	};
+
+	/**
+	* Creates a Promise representing the state of the view initialization.
+	*
+	* For views that are loading asynchronously (by setting async=true) this Promise is created by view
+	* initialization. Synchronously loading views get wrapped in an immediately resolving Promise.
+	*
+	* @since 1.30
+	* @public
+	* @return {Promise} resolves with the view instance, fulfilled when completely initialized
+	*/
+	View.prototype.loaded = function() {
+		if (!this._oAsyncState) {
+			// resolve immediately with this view instance
+			var that = this;
+			return new Promise(function(fnResolve) {
+				fnResolve(that);
+			});
+		} else {
+			return this._oAsyncState.promise;
+		}
 	};
 
 
