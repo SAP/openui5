@@ -3,10 +3,9 @@
  */
 
 sap.ui.define([
-		'sap/ui/base/Object',
-		'sap/m/MessageBox',
-		'sap/ui/Device'
-	], function (Object, MessageBox, Device) {
+		"sap/ui/base/Object",
+		"sap/m/MessageBox"
+	], function (Object, MessageBox) {
 	"use strict";
 
 	return Object.extend("sap.ui.demo.mdtemplate.controller.ErrorHandler", {
@@ -15,6 +14,7 @@ sap.ui.define([
 		 * Handles application errors by automatically attaching to the model events and displaying errors when needed.
 		 *
 		 * @class
+		 * @param {sap.ui.core.UIComponent} oComponent reference to the app's component
 		 * @public
 		 * @alias sap.ui.demo.mdtemplate.controller.ErrorHandler
 		 */
@@ -22,7 +22,6 @@ sap.ui.define([
 			this._oResourceBundle = oComponent.getModel("i18n").getResourceBundle();
 			this._oComponent = oComponent;
 			this._oModel = oComponent.getModel();
-			this._bFirstCall = true;
 			this._bMessageOpen = false;
 
 			this._oModel.attachEvent("metadataFailed", function (oEvent) {
@@ -41,7 +40,7 @@ sap.ui.define([
 				// An entity that was not found in the service is also throwing a 404 error in oData.
 				// We already cover this case with a notFound target so we skip it here.
 				// A request that cannot be sent to the server is a technical error that we have to handle though
-				if (oParams.response.statusCode != "404" || (oParams.response.statusCode === 404 && oParams.response.responseText.indexOf("Cannot POST") === 0)) {
+				if (oParams.response.statusCode !== "404" || (oParams.response.statusCode === 404 && oParams.response.responseText.indexOf("Cannot POST") === 0)) {
 					this._showServiceError(
 						oParams.response.statusCode + " (" + oParams.response.statusText + ")\r\n" +
 						oParams.response.message + "\r\n" +
@@ -68,8 +67,8 @@ sap.ui.define([
 					styleClass: this._oComponent.getCompactCozyClass(),
 					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if(sAction === MessageBox.Action.RETRY) {
-							this.bMessageOpen = false;
+						if (sAction === MessageBox.Action.RETRY) {
+							this._bMessageOpen = false;
 							this._oModel.refreshMetadata();
 						}
 					}.bind(this)
@@ -95,7 +94,7 @@ sap.ui.define([
 						details: sDetails,
 						styleClass: this._oComponent.getCompactCozyClass(),
 						actions: [MessageBox.Action.CLOSE],
-						onClose: function (sAction) {
+						onClose: function () {
 							this._bMessageOpen = false;
 						}.bind(this)
 					}

@@ -1,10 +1,10 @@
 sap.ui.require([
-		'sap/ui/test/Opa5',
-		'sap/ui/test/matchers/AggregationLengthEquals',
-		'sap/ui/test/matchers/AggregationFilled',
-		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/demo/worklist/test/integration/pages/Common',
-		'sap/ui/demo/worklist/test/integration/pages/shareOptions'
+		"sap/ui/test/Opa5",
+		"sap/ui/test/matchers/AggregationLengthEquals",
+		"sap/ui/test/matchers/AggregationFilled",
+		"sap/ui/test/matchers/PropertyStrictEquals",
+		"sap/ui/demo/worklist/test/integration/pages/Common",
+		"sap/ui/demo/worklist/test/integration/pages/shareOptions"
 	],
 	function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 		"use strict";
@@ -101,7 +101,7 @@ sap.ui.require([
 
 					theTitleShouldDisplayTheTotalAmountOfItems : function () {
 						var bRequestCompleted = false,
-							iObjectCount,
+							iObjectCount = 0,
 							sUrl = jQuery.sap.getResourcePath("sap/ui/demo/worklist/test/service/Objects", ".json");
 
 						jQuery.getJSON(sUrl, function( aObjects ) {
@@ -123,7 +123,7 @@ sap.ui.require([
 								var sExpectedText = oPage.getModel("i18n").getResourceBundle().getText("worklistTableTitleCount", [iObjectCount]);
 								return new PropertyStrictEquals({name : "text", value: sExpectedText}).isMatching(oPage);
 							},
-							success : function (oTable) {
+							success : function () {
 								ok(true, "The Page has a title containing the number " + iObjectCount);
 							},
 							errorMessage : "The Page's header does not container the number of items " + iObjectCount

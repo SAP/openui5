@@ -37,7 +37,7 @@ sap.ui.require(
 			this.stub(sap.ui.Device, "support", { touch : bIsTouch });
 
 			// System under test
-			this.oDeviceModel =  models.createDeviceModel();
+			this.oDeviceModel = models.createDeviceModel();
 
 			// Assert
 			assert.strictEqual(this.oDeviceModel.getData().support.touch, bIsTouch, "IsTouch property is correct");
@@ -100,7 +100,7 @@ sap.ui.require(
 			sinon.assert.calledWith(this.oDataModelStub, sUrl, sinon.match({}));
 		});
 
-		QUnit.test("Should add url parameters that are present in the url", function (assert) {
+		QUnit.test("Should add url parameters that are present in the url", function () {
 			// Arrange
 			var sUrl = "someUrl",
 				sSapServerParameter = "sap-server",
@@ -135,7 +135,7 @@ sap.ui.require(
 			sinon.assert.calledWith(this.oDataModelStub, sUrl + "?" + sSapServerParameter + "=" + sServerValue, sinon.match(oExpectedConfig));
 		});
 
-		QUnit.test("Should overwrite existing values when in the url", function (assert) {
+		QUnit.test("Should overwrite existing values when in the url", function () {
 			// Arrange
 			var sUrl = "someUrl",
 				sSapServerParameter = "sap-server",
@@ -212,7 +212,7 @@ sap.ui.require(
 			delete sap.ushell;
 		});
 
-		QUnit.test("Should add sap-language from the url if the user is not logged on in the shell", function (assert) {
+		QUnit.test("Should add sap-language from the url if the user is not logged on in the shell", function () {
 			// Arrange
 			var sUrl = "someUrl",
 				sLanguageParameter = "sap-language",
@@ -245,7 +245,7 @@ sap.ui.require(
 
 		QUnit.module("CreateODataModel - logging");
 
-		QUnit.test("Should log an error if no url is provided", function (assert) {
+		QUnit.test("Should log an error if no url is provided", function () {
 			// Arrange
 			var oErrorStub = this.stub(jQuery.sap.log, "error");
 

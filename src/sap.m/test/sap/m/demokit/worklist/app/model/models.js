@@ -7,7 +7,7 @@ sap.ui.define(
 		"sap/ui/model/odata/v2/ODataModel",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/thirdparty/URI",
-		'sap/ui/Device',
+		"sap/ui/Device",
 		"jquery.sap.global"
 	], function (ODataModel, JSONModel, URI, Device, jQuery) {
 		"use strict";
@@ -58,9 +58,9 @@ sap.ui.define(
 		return {
 			/**
 			 *
-			 * @param oOptions {object}a map which contains the following parameter properties
-			 * @param oOptions.url {string} see {@link sap.ui.model.odata.v2.ODataModel#constructor.sServiceUrl}.
-			 * @param [oOptions.urlParametersForEveryRequest] {object} If the parameter is present in the URL or in case of language the UShell can provide it,
+			 * @param {object} oOptions a map which contains the following parameter properties
+			 * @param {string} oOptions.url see {@link sap.ui.model.odata.v2.ODataModel#constructor.sServiceUrl}.
+			 * @param {object} [oOptions.urlParametersForEveryRequest] If the parameter is present in the URL or in case of language the UShell can provide it,
 			 * it is added to the odata models metadataUrlParams {@link sap.ui.model.odata.v2.ODataModel#constructor.mParameters.metadataUrlParams}, and to the service url.
 			 * If you provided a value in the config.metadataUrlParams this value will be overwritten by the value in the url.
 			 *
@@ -91,8 +91,8 @@ sap.ui.define(
 			 *     // anotherValue is not present in the url and will not be added
 			 * }
 			 *
-			 * @param [oOptions.config] {object} see {@link sap.ui.model.odata.v2.ODataModel#constructor.mParameters} it is the exact same object, the metadataUrlParams are enrichted by the oOptions.urlParametersToPassOn
-			 * @returns {sap.ui.model.odata.v2.ODataModel}
+			 * @param {object} [oOptions.config] see {@link sap.ui.model.odata.v2.ODataModel#constructor.mParameters} it is the exact same object, the metadataUrlParams are enrichted by the oOptions.urlParametersToPassOn
+			 * @returns {sap.ui.model.odata.v2.ODataModel} teh resulting odata model.
 			 */
 			createODataModel: function (oOptions) {
 				var aUrlParametersForEveryRequest,

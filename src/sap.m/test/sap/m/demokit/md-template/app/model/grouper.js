@@ -23,7 +23,7 @@ sap.ui.define([], function () {
 		 * Grouping function to group the master list by price
 		 *
 		 * @public
-		 * @param oContext the current list item context
+		 * @param {object} oContext the current list item context
 		 * @returns {object} an object with the rating as key and a text for the group headers
 		 */
 		Group1 : function (oContext){

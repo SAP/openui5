@@ -1,6 +1,6 @@
 sap.ui.require([
-		'sap/ui/test/Opa5',
-		'sap/ui/demo/worklist/test/integration/pages/Common'
+		"sap/ui/test/Opa5",
+		"sap/ui/demo/worklist/test/integration/pages/Common"
 	],
 	function(Opa5, Common) {
 		"use strict";
@@ -12,7 +12,10 @@ sap.ui.require([
 					iPressOnTheBackwardsButton : function () {
 						return this.waitFor({
 							success : function () {
+								/*eslint-disable */
+								// manipulate history directly for testing purposes
 								sap.ui.test.Opa5.getWindow().history.back();
+								/*eslint-enable */
 							}
 						});
 					},
@@ -20,7 +23,10 @@ sap.ui.require([
 					iPressOnTheForwardsButton : function () {
 						return this.waitFor({
 							success : function () {
+								/*eslint-disable */
+								// manipulate history directly for testing purposes
 								sap.ui.test.Opa5.getWindow().history.forward();
+								/*eslint-enable */
 							}
 						});
 					},

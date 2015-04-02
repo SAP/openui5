@@ -34,7 +34,7 @@ sap.ui.define([
 				shareSaveAsTileTitle: this.getResourceBundle().getText("worklistViewTitle"),
 				shareOnJamTitle: this.getResourceBundle().getText("worklistViewTitle"),
 				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
-				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage",  [window.location.href]),
+				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [window.location.href]),
 				tableBusyDelay : 0
 			});
 			this.setModel(oViewModel, "view");
@@ -69,7 +69,7 @@ sap.ui.define([
 				iTotalItems = oEvent.getParameter("total");
 			// only update the counter if the length is final and
 			// the table is not empty
-			if (iTotalItems && oTable.getBinding('items').isLengthFinal()) {
+			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");
@@ -113,13 +113,13 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the worklist view header
-		 * @param {integer} the total number of items in the table
+		 * @param {integer} iTotalItems the total number of items in the table
 		 * @private
 		 */
 		_updateListItemCount : function (iTotalItems) {
 			var sTitle;
 			// only update the counter if the length is final
-			if (this._oTable.getBinding('items').isLengthFinal()) {
+			if (this._oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
 				this.oViewModel.setProperty("/worklistTableTitle", sTitle);
 			}

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/m/Text",
+	"sap/m/Text"
 ], function (Text) {
 	"use strict";
 
@@ -50,7 +50,7 @@ sap.ui.define([
 					display: new Text({text: sTitle}),
 					share: ""
 				}
-			}
+			};
 		}
 	};
 

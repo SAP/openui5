@@ -32,7 +32,7 @@ sap.ui.require([
 							id : "objectHeader",
 							viewName : sViewName,
 							matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName }) ],
-							success : function (oObjectHeader) {
+							success : function () {
 								ok(true, "was on the " + sTitleName + " page");
 							},
 							errorMessage : "We are not on the " + sTitleName + " page"

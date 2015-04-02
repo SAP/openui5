@@ -67,6 +67,7 @@ sap.ui.define([
 		/**
 		 * In this method, the rootView is initialized and stored.
 		 * @public
+		 * @return {sap.ui.core.mvc.View} the app's root view.
 		 * @override
 		 */
 		createContent : function() {
@@ -75,10 +76,13 @@ sap.ui.define([
 			this._oRootView.addStyleClass(this.getCompactCozyClass());
 			return this._oRootView;
 		},
-		
+
 		/**
-		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy design mode class should be set, which influences the size appearance of some controls.
+		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy
+		 * design mode class should be set, which influences the size appearance of some controls.
+		 *
 		 * @public
+		 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy'
 		 */
 		getCompactCozyClass : function() {
 			if (!this._sCompactCozyClass) {

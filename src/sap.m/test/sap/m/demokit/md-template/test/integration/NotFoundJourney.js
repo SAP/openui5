@@ -4,7 +4,8 @@ sap.ui.require(
 	[
 		"sap/ui/test/Opa5"
 	],
-	function (Opa5) {
+	function () {
+		"use strict";
 
 		QUnit.module("Not found Journey");
 

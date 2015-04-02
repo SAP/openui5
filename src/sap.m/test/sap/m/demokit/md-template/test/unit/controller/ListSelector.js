@@ -66,8 +66,7 @@ sap.ui.require(
 
 		QUnit.asyncTest("Should resolve the list loading promise, if the list has items", function (assert) {
 			// Arrange
-			var sBindingPath = "anything",
-				fnRejectSpy = this.spy(),
+			var fnRejectSpy = this.spy(),
 				fnResolveSpy = function (sBindingPath) {
 					// Assert
 					assert.strictEqual(sBindingPath, sBindingPath, "Did pass the binding path");
@@ -77,7 +76,7 @@ sap.ui.require(
 
 			// Act
 			this.oListSelector.oWhenListLoadingIsDone.then(fnResolveSpy, fnRejectSpy);
-			this.oListSelector.setBoundMasterList(createListStub.call(this, true, sBindingPath));
+			this.oListSelector.setBoundMasterList(createListStub.call(this, true, "anything"));
 		});
 
 		QUnit.asyncTest("Should reject the list loading promise, if the list has no items", function (assert) {

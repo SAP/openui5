@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Object) {
 		 *
 		 * @class
 		 * @public
+		 * @param {sap.ui.core.UIComponent} oComponent reference to the app's component
 		 * @alias sap.ui.demo.mdtemplate.controller.BusyHandler
 		 */
 		constructor : function ( oComponent) {

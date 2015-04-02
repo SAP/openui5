@@ -10,19 +10,19 @@ sap.ui.define([], function () {
 		 * Returns None for phone and SingleSelectMaster for other devices
 		 *
 		 * @public
-		 * @param bIsPhone
-		 * @returns {sap.m.ListMode}
+		 * @param {boolean} bIsPhone is app running on a phone
+		 * @returns {sap.m.ListMode} list mode according to the device in use
 		 */
 		listMode : function (bIsPhone) {
 			return (bIsPhone ? "None" : "SingleSelectMaster");
 		},
 
 		/**
-		 * Returns Active for phone and Inactive for other devices
+		 * Returns list item type 'Active' for phone and 'Inactive' for other devices
 		 *
 		 * @public
-		 * @param bIsPhone
-		 * @returns {string}
+		 * @param {boolean} bIsPhone is app running on a phone
+		 * @returns {string} list item type according to the device in use
 		 */
 		listItemType : function (bIsPhone) {
 			return (bIsPhone ? "Active" : "Inactive");
@@ -32,8 +32,8 @@ sap.ui.define([], function () {
 		 * Rounds the currency value to 2 digits
 		 *
 		 * @public
-		 * @param sValue
-		 * @returns {string}
+		 * @param {string} sValue value to be formatted
+		 * @returns {string} formatted currency value with 2 digits
 		 */
 		currencyValue : function (sValue) {
 			if (!sValue) {

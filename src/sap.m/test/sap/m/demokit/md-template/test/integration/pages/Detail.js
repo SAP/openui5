@@ -7,8 +7,6 @@ sap.ui.require([
 	function(Opa5, Common, AggregationLengthEquals, PropertyStrictEquals) {
 		"use strict";
 
-		var sViewName = "Detail";
-
 		Opa5.createPageObjects({
 			onTheDetailPage: {
 				baseClass: Common,
@@ -16,7 +14,7 @@ sap.ui.require([
 					iPressTheBackButton : function () {
 						return this.waitFor({
 							id : "page",
-							viewName : sViewName,
+							viewName : "Detail",
 							success: function (oPage) {
 								oPage.$("navButton").trigger("tap");
 							},
@@ -28,7 +26,7 @@ sap.ui.require([
 					iShouldSeeTheBusyIndicator: function () {
 						return this.waitFor({
 							id : "page",
-							viewName : sViewName,
+							viewName : "Detail",
 							success : function (oPage) {
 								// we set the view busy, so we need to query the parent of the app
 								QUnit.ok(oPage.getParent().getBusy(), "The master view is busy");
@@ -40,7 +38,7 @@ sap.ui.require([
 					theObjectPageShowsTheFirstObject : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectHeader",
-							viewName : sViewName,
+							viewName : "Detail",
 							matchers : [ new PropertyStrictEquals({name : "title", value : "Object 1"}) ],
 							success : function () {
 								QUnit.ok(true, "was on the first object page");
@@ -69,7 +67,7 @@ sap.ui.require([
 					iShouldSeeTheObjectLineItemsList : function () {
 						return this.waitFor({
 							id : "lineItemsList",
-							viewName : sViewName,
+							viewName : "Detail",
 							success : function (oList) {
 								QUnit.ok(oList, "Found the line items list.");
 							}
@@ -79,9 +77,9 @@ sap.ui.require([
 					theLineItemsListShouldHave4Entries : function () {
 						return this.waitFor({
 							id : "lineItemsList",
-							viewName : sViewName,
+							viewName : "Detail",
 							matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
-							success : function (oList) {
+							success : function () {
 								QUnit.ok(true, "The list has 4 items");
 							},
 							errorMessage : "The list does not have 4 items."
@@ -91,19 +89,19 @@ sap.ui.require([
 					theLineItemsHeaderShouldDisplay4Entries : function () {
 						return this.waitFor({
 							id : "lineItemsHeader",
-							viewName : sViewName,
+							viewName : "Detail",
 							matchers : [ new PropertyStrictEquals({name : "text", value : "Line Items (4)"}) ],
-							success : function (oList) {
+							success : function () {
 								QUnit.ok(true, "The line item list displays 4 items");
 							},
 							errorMessage : "The line item list does not display 4 items."
 						});
 					},
 
-					theFirstLineItemHasIDLineItemID_1 : function () {
+					theFirstLineItemHasIDLineItemID1 : function () {
 						return this.waitFor({
 							id : "lineItemsList",
-							viewName : sViewName,
+							viewName : "Detail",
 							matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
 							success : function (oList) {
 								var oFirstItem = oList.getItems()[0];

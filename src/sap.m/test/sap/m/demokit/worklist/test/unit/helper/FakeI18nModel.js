@@ -7,7 +7,7 @@ sap.ui.define(
 
 		return Model.extend("test.unit.helper.FakeI18nModel", {
 
-			constructor: function (mTexts)  {
+			constructor: function (mTexts) {
 				this.mTexts = mTexts || {};
 			},
 
