@@ -144,15 +144,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		};
 		
 		var _handleError = function (oError) {
-			var sErrorMsg = "Request for root node failed: " + oError.message;
-			if (oError.response){
-				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+			//check if the error handler was executed because of an intentionally aborted request: 
+			if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+				var sErrorMsg = "Request for root node failed: " + oError.message;
+				if (oError.response){
+					sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+				}
+				jQuery.sap.log.fatal(sErrorMsg);
+				that.bNeedsUpdate = true;
+				that._bRootMissing = true;
+				delete that.mRequestHandles[sRequestKey];
+				
+				that.fireDataReceived();
 			}
-			jQuery.sap.log.fatal(sErrorMsg);
-			that.bNeedsUpdate = true;
-			that._bRootMissing = true;
-			delete that.mRequestHandles[sRequestKey];
-			
 			jQuery.sap.delayedCall(0,that, that.fireDataReceived);
 		};
 		
