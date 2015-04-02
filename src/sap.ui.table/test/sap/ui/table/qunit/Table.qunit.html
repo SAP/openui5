@@ -13,7 +13,7 @@
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-	    data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.table" >
+	    data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table" >
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -792,6 +792,37 @@
 		.always(function() {
 			start();
 		});
+	});
+	
+	module("Toolbar");
+	test("Table toolbar should have the transparent design by default without changing the design property", function() {
+		var oTB = new sap.m.Toolbar(),
+			oTable = new sap.ui.table.Table({
+				toolbar: oTB
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(sap.m.ToolbarDesign.Auto, oTB.getDesign(), "Design property of the Toolbar is Auto");
+		strictEqual(sap.m.ToolbarDesign.Transparent, oTB.getActiveDesign(), "Active design of the Toolbar is Transparent");
+
+		oTable.destroy();
+	});
+
+	test("Table should respect the design property of the Toolbar when it is set", function() {
+		var oTB = new sap.m.Toolbar({
+				design: "Solid"
+			}),
+			oTable = new sap.ui.table.Table({
+				toolbar: oTB
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getDesign(), "Design property of the Toolbar is Solid");
+		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getActiveDesign(), "Active design of the Toolbar is Solid as well");
+
+		oTable.destroy();
 	});
 
 	</script>

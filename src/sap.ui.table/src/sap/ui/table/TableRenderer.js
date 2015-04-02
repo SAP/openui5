@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, Parameters) {
 	"use strict";
 
 
@@ -231,6 +231,11 @@ sap.ui.define(['jquery.sap.global'],
 		// toolbar has to be embedded (not standalone)!
 		if (typeof oToolbar.getStandalone === "function" && oToolbar.getStandalone()) {
 			oToolbar.setStandalone(false);
+		}
+
+		// set the default design of the toolbar
+		if (sap.m && sap.m.Toolbar && oToolbar instanceof sap.m.Toolbar) {
+			oToolbar.setDesign(Parameters.get("sapUiTableToolbarDesign"), true);
 		}
 
 		rm.renderControl(oToolbar);
