@@ -22,6 +22,17 @@ sap.ui.require([
 							},
 							errorMessage : "Did not find the nav button on detail page"
 						});
+					},
+
+					iPressOnTheShareButton : function () {
+						return this.waitFor({
+							id: "shareButton",
+							viewName : sViewName,
+							success: function (oButton) {
+								oButton.$().trigger("tap");
+							},
+							errorMessage : "Did not find the share button on detail page"
+						});
 					}
 				},
 				assertions: {
@@ -110,6 +121,39 @@ sap.ui.require([
 								QUnit.strictEqual(oFirstItem.getBindingContext().getProperty("LineItemID"), "LineItemID_1", "The first line item has Id 'LineItemID_1'");
 							},
 							errorMessage : "The first line item does not have Id 'LineItemID_1'."
+						});
+					},
+
+					iShouldSeeTheShareEmailButton: function () {
+						return this.waitFor({
+							id: "shareEmail",
+							viewName: sViewName,
+							success: function (oButton) {
+								QUnit.ok(true, "The E-Mail button is visible");
+							},
+							errorMessage: "The E-Mail button was not found"
+						});
+					},
+
+					iShouldSeeTheShareTileButton: function () {
+						return this.waitFor({
+							id: "shareTile",
+							viewName: sViewName,
+							success: function (oButton) {
+								QUnit.ok(true, "The Save as Tile button is visible");
+							},
+							errorMessage: "The Save as Tile  button was not found"
+						});
+					},
+
+					iShouldSeeTheShareJamButton: function () {
+						return this.waitFor({
+							id: "shareJam",
+							viewName: sViewName,
+							success: function (oButton) {
+								QUnit.ok(true, "The Jam share button is visible");
+							},
+							errorMessage: "The Jam share button was not found"
 						});
 					}
 				}
