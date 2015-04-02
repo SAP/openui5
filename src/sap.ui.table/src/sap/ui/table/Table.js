@@ -626,6 +626,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._updateVSb(true);
 		this._updateTableContent();
 		this._handleResize();
+		
 		this._attachEvents();
 
 		// restore the column icons
@@ -696,7 +697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iVisibleRowCount = this.getVisibleRowCount();
 		var that = this;
 
-		if (oBinding) {
+		if (oBinding && (iFixedBottomRows > 0 || iFixedTopRows > 0)) {
 			jQuery.each(this.getRows(), function(iIndex, oRow) {
 
 				var $row = oRow.$();
@@ -1163,7 +1164,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		// update the bindings only once the table is rendered
 		if (this.getDomRef()) {
-
 			// update the bindings by using a delayed mechanism to avoid to many update
 			// requests: by using the mechanism below it will trigger an update each 50ms
 			this._sBindingTimer = this._sBindingTimer || jQuery.sap.delayedCall(50, this, function() {
@@ -1393,7 +1393,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._createRows = function(iStartIndex) {
-
 		var iFirstVisibleRow = this.getFirstVisibleRow();
 		var iVisibleRowCount = this.getVisibleRowCount();
 
@@ -1462,7 +1461,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		// destroy the template
 		oTemplate.destroy();
-
 	};
 
 
@@ -2174,6 +2172,159 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	/**
+	 * Synchronizes the <th> width of the table, with the rendered header divs.
+	 * @private
+	 */
+	Table.prototype._syncColumnHeaders = function(bUpdateResizeHandlers) {
+		var $this = this.$();
+		var oRectTable = this.getDomRef().getBoundingClientRect();
+		var iTableWidth = oRectTable.right - oRectTable.left;
+		var aVisibleColumns = this._getVisibleColumns();
+		var iInvisibleColWidth = 0;
+		
+		var bRtl = this._bRtlMode;
+		var iLeftAway = bRtl ? "99000px" : "-99000px";
+		
+		// Select only table headers (identified by data-sap-ui-headcolindex attribute). Not the row header.
+		var $colHeaderContainer = $this.find(".sapUiTableColHdr");
+		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th");
+		var $colRszs = $colHeaderContainer.find(".sapUiTableColRsz");
+
+		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
+		if (bHasRowHeader) {
+			var oHiddenElement = $tableHeaders.get(0);
+			iInvisibleColWidth = oHiddenElement.getBoundingClientRect().right - oHiddenElement.getBoundingClientRect().left;
+			$tableHeaders = $tableHeaders.not(":nth-child(1)");
+		}
+		
+		// Create map with source table headers and their corresponding resizers.
+		var mHeaders = {};
+		
+		// Traverse the source table headers, which are needed for determine to column head width
+		$tableHeaders.each(function(iIndex, oElement) {
+			var iHeadColIndex = oElement.getAttribute("data-sap-ui-headcolindex");
+			var oRect = oElement.getBoundingClientRect();
+
+			// set width of target column div
+			var iTargetWidth;
+			var oVisibleColumn = aVisibleColumns[iIndex];
+			if (oVisibleColumn) {
+				iTargetWidth = oRect.right - oRect.left;
+			}
+			
+			//for the first column also calculate the width of the hidden column
+			if (iIndex == 0) {
+				iTargetWidth += iInvisibleColWidth;
+			}
+
+			// apply the width of the column
+			var	vHeaderSpan = aVisibleColumns[iIndex] ? aVisibleColumns[iIndex].getHeaderSpan() : 1,
+				aHeaderWidths = [],
+				aSpans;
+
+			if (vHeaderSpan) {
+				// vHeaderSpan can be an array for multi column header rows purpose.
+				if (!jQuery.isArray(vHeaderSpan)) {
+					vHeaderSpan = [vHeaderSpan];
+				}
+				jQuery.each(vHeaderSpan, function(iSpanIndex, iSpan) {
+					vHeaderSpan[iSpanIndex] = Math.max((iSpan + iIndex > aVisibleColumns.length) ? Math.min(iSpan, aVisibleColumns.length - iIndex) : iSpan, 1);
+				});
+
+				aSpans = vHeaderSpan;
+			} else {
+				aSpans = [1];
+			}
+
+			for (var i = 0; i < aSpans.length; i++) {
+				aHeaderWidths[i] = iTargetWidth;
+				for (var j = 1; j < aSpans[i]; j++) {
+					var oHeader = $tableHeaders[iIndex + j];
+					var oHeaderRect = oHeader.getBoundingClientRect();
+					if (oHeader) {
+						aHeaderWidths[i] += oHeaderRect.right - oHeaderRect.left;
+					}
+				}
+			}
+
+			mHeaders[iHeadColIndex] = {
+			   domRefColumnTh: oElement,
+			   domRefColumnDivs: [],
+			   domRefColumnResizer: $colRszs[iIndex],
+			   domRefColumnResizerPosition: undefined,
+			   rect: oRect,
+			   aHeaderWidths: aHeaderWidths
+			};
+		});
+		
+		// Map target column header divs to corresponding source table header.
+		var $cols = $colHeaderContainer.find(".sapUiTableCol");
+		$cols.each(function(iIndex, oElement) {
+			var iColIndex = parseInt(oElement.getAttribute("data-sap-ui-colindex"),10);
+			var mHeader = mHeaders[iColIndex];
+			mHeader.domRefColumnDivs.push(oElement);
+
+			var iResizerPositionLeft = 0;
+			
+			if (mHeader) {
+				if (!bRtl) {
+					iResizerPositionLeft = mHeader.rect.right - oRectTable.left;
+				} else {
+					iResizerPositionLeft = mHeader.rect.left - oRectTable.left;
+				}
+			}
+
+			if (!iResizerPositionLeft || iResizerPositionLeft <= 0 || iResizerPositionLeft >= iTableWidth) {
+				iResizerPositionLeft = iLeftAway;
+			}
+			mHeader.domRefColumnResizerPosition = iResizerPositionLeft;
+		});
+
+		jQuery.each(mHeaders, function(iIndex, mHeader) {
+			for (var i = 0; i < mHeader.domRefColumnDivs.length; i++) {
+				// apply header widths
+				mHeader.domRefColumnDivs[i].style.width =  (mHeader.aHeaderWidths[i] || mHeader.aHeaderWidths[0]) + "px";
+
+				// position resizer
+				if (mHeader.domRefColumnResizer) {
+					mHeader.domRefColumnResizer.style.left = mHeader.domRefColumnResizerPosition + "px";
+				}
+			}
+		});
+
+		// Table Column Height Calculation
+		
+		// we change the height of the cols, col header and the row header to auto to
+		// find out whether to use the height of a cell or the min height of the col header.
+		var iHeaderRowCount = this._getHeaderRowCount();
+		var bHasColHdrHeight = this.getColumnHeaderHeight() > 0;
+		if (!bHasColHdrHeight && !bUpdateResizeHandlers) {
+			var $jqo = $this.find(".sapUiTableColHdrCnt,.sapUiTableColRowHdr");
+			
+			// We do this without jQuery for improved performance in IE (3500ms)
+			var iColsLength = $cols.length;
+			for (var i = 0; i < iColsLength; i++) {
+				$cols[i].style.height = 'auto';
+			}
+			$jqo.height("auto");
+
+			
+			// Total height of the table header
+			var iHeight = Math.max($colHeaderContainer.height(), $jqo.height());
+			
+			// Height of one row within the header
+			var iRegularHeight = iHeight / iHeaderRowCount;
+			if (this._bjQueryLess18) {
+				$cols.height(iRegularHeight);
+				$jqo.height(iHeight);
+			} else {
+				$cols.outerHeight(iRegularHeight);
+				$jqo.outerHeight(iHeight);
+			}
+		}
+	};
+	
+	/**
 	 * updates the column headers (width and position of the resize handles)
 	 * @private
 	 */
@@ -2181,150 +2332,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (this._sColHdrPosTimer) {
 			jQuery.sap.clearDelayedCall(this._sColHdrPosTimer);
 		}
-		var bRtl = this._bRtlMode;
-		var iLeftAway = this._bRtlMode ? "99000px" : "-99000px";
-
-		var fnSyncColumnHeaders = function() {
-
-			// resize the dependent columns
-			// (put the percentage width into relation th fixed widths)
-			// TODO: reconsider this behavior: see snippix #98183 (initial display) and #98183 (resizing)
-			this._resizeDependentColumns();
-
-			// sync the width of the columns
-			var that = this, $this = this.$();
-			var $cols = $this.find(".sapUiTableColHdr .sapUiTableCol");
-			var $colRszs = $this.find(".sapUiTableColHdr .sapUiTableColRsz");
-			var aCols = this._getVisibleColumns();
-			//If no header items exist an emty th is rendered but aCols.length is 0
-			//Because of that we don't have to do anything of aCols.length = 0
-			if (aCols.length == 0) {
-				return;
-			}
-			var iTableWidth = $this.width();
-			var $ths = $this.find(".sapUiTableCtrlFirstCol > th");
-			var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-			var iInvisibleColWidth = 0;
-			if (bHasRowHeader) {
-				var oHiddenElement = $ths.get(0);
-				iInvisibleColWidth = oHiddenElement.getBoundingClientRect().right - oHiddenElement.getBoundingClientRect().left;
-				$ths = $ths.not(":nth-child(1)");
-			}
-			$ths.each(function(iIndex, oElement) {
-				if (aCols[iIndex]) {
-					jQuery(oElement).css('width', aCols[iIndex].getWidth());
-				}
-			});
-			$ths.each(function(iIndex, oElement) {
-				// apply the width of the column
-				var iWidth = (oElement.getBoundingClientRect().right - oElement.getBoundingClientRect().left), //get real width (with decimal values),
-					vHeaderSpan = aCols[iIndex] ? aCols[iIndex].getHeaderSpan() : 1,
-					aHeaderWidths = [],
-					aSpans;
-
-					if (vHeaderSpan) {
-						if (jQuery.isArray(vHeaderSpan)) {
-							jQuery.each(vHeaderSpan, function(iSpanIndex, iSpan) {
-								vHeaderSpan[iSpanIndex] = Math.max((iSpan + iIndex > aCols.length) ? Math.min(iSpan, aCols.length - iIndex) : iSpan, 1);
-							});
-							aSpans = vHeaderSpan;
-						} else {
-							vHeaderSpan = Math.max((vHeaderSpan + iIndex > aCols.length) ? Math.min(vHeaderSpan, aCols.length - iIndex) : vHeaderSpan, 1);
-							aSpans = [vHeaderSpan];
-						}
-					} else {
-						aSpans = [1];
-					}
-
-				//for the first column also calculate the width of the hidden column
-				if (iIndex == 0) {
-					iWidth += iInvisibleColWidth;
-				}
-
-				for (var i = 0; i < aSpans.length; i++) {
-					aHeaderWidths[i] = iWidth;
-					for (var j = 1; j < aSpans[i]; j++) {
-						var oHeader = $ths[iIndex + j];
-						if (oHeader) {
-							aHeaderWidths[i] += oHeader.getBoundingClientRect().right - oHeader.getBoundingClientRect().left;
-						}
-					}
-				}
-
-				var $col = $cols.filter('[data-sap-ui-colindex=' + jQuery(oElement).data('sap-ui-headcolindex') + ']');
-				if ($col.length > 0) {
-					if (!bUpdateResizeHandlers) {
-						// to avoid flickering we store the last real width of the column
-						// and update the width of the column only when it has been changed
-						var oCol = sap.ui.getCore().byId($col.first().data("sap-ui-colid"));
-						for (var i = 0; i < $col.length; i++) {
-							if (that._bjQueryLess18) {
-								jQuery($col[i]).width(aHeaderWidths[i] || aHeaderWidths[0]);
-							} else {
-								jQuery($col[i]).outerWidth(aHeaderWidths[i] || aHeaderWidths[0]);
-							}
-						}
-						oCol._iRealWidth = iWidth;
-					}
-					// the left position is calculated from the sapUiTableCnt element (therefore we need the offset!)
-					var iLeft = $col.first().position().left;
-					if (iLeft === 0 && $col.css("display") == "none") {
-						// in order to get the correct position for the resize handle we need to go via the bounding rect
-						// of the header instead of the left position of the colum. Columns could be display=none in case
-						// a column span is set.
-						oHeader = $ths[iIndex];
-						iLeft = oHeader.getBoundingClientRect().left;
-					}
-					var iStartColIndex = jQuery(oElement).data('sap-ui-headcolindex');
-					for (var i = 0; i < aSpans[0]; i++) {
-						iLeft += (bRtl ? -2 : ($ths[iIndex + i].getBoundingClientRect().right - $ths[iIndex + i].getBoundingClientRect().left) - 3);
-						// PERF-OPT: only positon the visible resize handlers
-						var $colrsz = $colRszs.filter('[data-sap-ui-colindex=' + iStartColIndex + ']');
-						if (iLeft >= 0 && iLeft <= iTableWidth) {
-							$colrsz.css({
-								"left": iLeft
-							});
-						} else if ($colrsz.css("left") !== iLeftAway) {
-							$colrsz.css({
-								"left": iLeftAway
-							});
-						}
-						iStartColIndex++;
-					}
-				}
-			});
-
-			// we change the height of the cols, col header and the row header to auto to
-			// find out whether to use the height of a cell or the min height of the col header
-			var bHasColHdrHeight = this.getColumnHeaderHeight() > 0;
-			if (!bHasColHdrHeight && !bUpdateResizeHandlers) {
-				var $jqColHdr = $this.find(".sapUiTableColHdr");
-				var $jqColHdrCnt = $this.find(".sapUiTableColHdrCnt");
-				var $jqColRowHdr = $this.find(".sapUiTableColRowHdr");
-				var $jqo = $jqColRowHdr.add($jqColHdrCnt);
-				$jqo.height("auto");
-				$cols.height("auto");
-				//Total height of the table header
-				var iHeight = Math.max($jqColHdr.height(), $jqColHdrCnt.height());
-				//Height of one row within the header
-				var iRegularHeight = iHeight / this._getHeaderRowCount();
-				if (this._bjQueryLess18) {
-					$cols.height(iRegularHeight);
-					$jqo.height(iHeight);
-				} else {
-					$cols.outerHeight(iRegularHeight);
-					$jqo.outerHeight(iHeight);
-				}
-			}
-		};
 
 		// instantly execute the synchronization or delay it
 		if (this._bOnAfterRendering) {
-			fnSyncColumnHeaders.apply(this, arguments);
+			this._syncColumnHeaders.apply(this, arguments);
 		} else {
-			this._sColHdrPosTimer = jQuery.sap.delayedCall(150, this, fnSyncColumnHeaders);
+			this._sColHdrPosTimer = jQuery.sap.delayedCall(150, this, this._syncColumnHeaders, arguments);
 		}
-
 	};
 
 	/**

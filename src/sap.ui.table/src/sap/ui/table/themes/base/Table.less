@@ -395,9 +395,14 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	position: absolute;
 	top: 0px;
 	width: 5px;
+	margin-left: -4px;
 	bottom: 0px;
 	cursor: col-resize;
 	z-index: 1;
+}
+
+html[dir=rtl] .sapUiTableColRsz {
+	margin-right: -3px;
 }
 
 .sapUiTableHScr .sapUiTableColRsz {
@@ -448,27 +453,38 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	.sapUiTableCtrl tr {
 		height: 3rem;
 	}
-
-	/* Cell Adjustments */
-	.sapUiTableColCell, .sapUiTableColRowHdrIco {
-		position: absolute;
-		display: block;
-		left: 0;
-		right: 0;
-		top: 50%;
-		transform: translateY(-50%);
-		-webkit-transform: translateY(-50%);
-		-ms-transform: translateY(-50%);
+	
+	/* Header */
+	.sapUiTableCol, .sapUiTableColRowHdr {
+		padding-top: 0;
+		padding-bottom: 0;
 	}
 	
+	.sapUiTableColRowHdr {
+		margin-top: -1px;
+	}
+	
+	.sapUiTableColCell {
+		height: 3rem;
+	}
+	
+	.sapUiTableColCell > * {
+		height: 100%;
+		line-height: 3rem;
+	}
+	
+	.sapUiTableColRowHdrIco {
+		height:100%;
+	}
+
+	/* Cell Adjustments */
+	
 	.sapUiTableColIcons {
-		padding-top: 0px;
-	} 
+		padding-top: 0;
+	}
 
 	/* Group Header Adjustments */
 	div.sapUiTableGroupHeader div.sapUiTableGroupIcon {
-		height: 3rem;
-		line-height: 3rem;
 		background-color: transparent;
 	}
 
