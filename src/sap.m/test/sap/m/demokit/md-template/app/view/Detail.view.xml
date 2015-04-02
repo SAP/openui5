@@ -20,11 +20,13 @@
 				<items>
 					<IconTabFilter
 						id="iconTabBarFilter1"
-						icon="sap-icon://hint">
+						icon="sap-icon://hint"
+						tooltip="{i18n>detailIconTabBarInfo}">
 					</IconTabFilter>
 					<IconTabFilter
 						id="iconTabBarFilter2"
-						icon="sap-icon://attachment">
+						icon="sap-icon://attachment"
+						tooltip="{i18n>detailIconTabBarAttachments}">
 					</IconTabFilter>
 				</items>
 			</IconTabBar>
