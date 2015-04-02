@@ -564,8 +564,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 		mSettings = {
 			message: "TestPreprocessor executed",
-			assert: ok,
-			start: start
+			assert: ok
 		};
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", "sap.ui.core.qunit.mvc.TestPreprocessor", mSettings);
@@ -573,7 +572,10 @@ if (!sap.ui.Device.browser.phantomJS) {
 		// call via init
 		var oView = new sap.ui.xmlview({viewContent: this.sViewContent, async: true});
 		// twice, default + the registered one
-		sinon.assert.calledTwice(spy);
+		oView.attachAfterInit(function() {
+			sinon.assert.calledTwice(spy);
+			start();
+		});
 	});
 
 	module("sap.ui.core.mvc.View#loaded");

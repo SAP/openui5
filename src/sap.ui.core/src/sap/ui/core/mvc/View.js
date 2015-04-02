@@ -226,10 +226,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			if (mSettings.async) {
 				this.initViewSettings(mSettings)
 					.then(fnInitController)
-					.then(that.runPreprocessor("controls", that))
 					.then(function() {
-						// notify renderer
+						// notify renderer for delayed initial rendering
 						that._bRenderAsync = true;
+						return that.runPreprocessor("controls", that);
+					})
+					.then(function() {
 						that.fireAfterInit();
 						// resolve View.prototype.loaded() methods promise
 						that._oAsyncState.resolve(that);
