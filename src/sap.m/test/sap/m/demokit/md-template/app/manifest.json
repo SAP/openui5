@@ -57,11 +57,6 @@
 					"pattern": "object/{objectId}",
 					"name": "object",
 					"target": ["master", "object"]
-				},
-				{
-					"pattern": "object/{objectId}/lineitem/{lineItemId}",
-					"name": "lineItem",
-					"target": ["master", "lineItem"]
 				}
 			],
 			"targets": {
@@ -76,10 +71,6 @@
 					"viewId": "detail",
 					"viewLevel": 2
 				},
-				"lineItem": {
-					"viewName": "LineItem",
-					"viewLevel": 3
-				},
 				"detailObjectNotFound": {
 					"viewName": "DetailObjectNotFound",
 					"viewId": "detailObjectNotFound",
@@ -88,10 +79,6 @@
 				"detailNoObjectsAvailable": {
 					"viewName": "DetailNoObjectsAvailable",
 					"viewId": "detailNoObjectsAvailable",
-					"viewLevel": 3
-				},
-				"lineItemNotFound": {
-					"viewName": "LineItemNotFound",
 					"viewLevel": 3
 				},
 				"notFound": {

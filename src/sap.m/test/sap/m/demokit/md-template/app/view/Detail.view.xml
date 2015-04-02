@@ -46,7 +46,7 @@
 					</Column>
 				</columns>
 				<items>
-					<ColumnListItem type="Navigation" press="onSelect">
+					<ColumnListItem>
 						<cells>
 							<ObjectIdentifier
 								title="{Name}"

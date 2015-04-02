@@ -54,68 +54,7 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		// Assertions
 		Then.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
-			and.theFirstLineItemHasIDLineItemID1();
-
-	});
-
-	opaTest("Line Item Page shows Line Item and Navigation Buttons have correct state", function (Given, When, Then) {
-
-		// Actions
-		When.iPressOnTheItem1InLineItemList();
-
-		// Assertions
-		Then.iShouldBeOnTheLineItem1Page().
-			and.thePreviousButtonIsDisabled().
-			and.theNextButtonIsEnabled();
-
-	});
-
-	opaTest("Line Item Page pressing 'Next' Button on Line Item 1 page navigates to Line Item 2 and updates the Navigation Buttons", function (Given, When, Then) {
-
-		// Actions
-		When.iPressTheNextButton();
-
-		// Assertions
-		Then.iShouldBeOnTheLineItem2Page().
-			and.thePreviousButtonIsEnabled().
-			and.theNextButtonIsEnabled();
-
-	});
-
-	opaTest("Line Item Page ressing 'Previous' Button on Line Item 2 page navigates to Line Item 1 and updates the Navigation Buttons", function (Given, When, Then) {
-
-		// Actions
-		When.iPressThePreviousButton();
-
-		// Assertions
-		Then.iShouldBeOnTheLineItem1Page().
-			and.thePreviousButtonIsDisabled().
-			and.theNextButtonIsEnabled();
-
-	});
-
-	opaTest("Line Item Page: after several 'Next' and 'Previous' navigation, going back in browser history should take us back to Detail Page for Object 1", function (Given, When, Then) {
-
-		// Actions
-		When.iGoBackInBrowserHistory();
-
-		// Assertions
-		Then.iShouldBeOnTheObjectNPage(1).
-			and.iTeardownMyAppFrame();
-
-	});
-
-	opaTest("Navigate directly to Line Item 7 of object 3 with hash: press back button twice should take me to the master list", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheAppOnAPhone("#/object/ObjectID_3/lineitem/LineItemID_7");
-
-		//Actions
-		When.iWaitUntilISeePageForLineItem7().
-			and.iPressTheBackButtonOnLineItemPage().
-			and.iPressTheBackButtonOnDetailPage();
-
-		// Assertions
-		Then.iShouldSeeTheObjectList().
+			and.theFirstLineItemHasIDLineItemID1().
 			and.iTeardownMyAppFrame();
 	});
 

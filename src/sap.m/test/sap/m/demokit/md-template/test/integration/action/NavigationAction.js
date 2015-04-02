@@ -133,16 +133,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		iPressTheBackButtonOnLineItemPage : function () {
-			return this.waitFor({
-				id : "lineItemPage",
-				viewName : "LineItem",
-				success: function (oPage) {
-					oPage.$("navButton").trigger("tap");
-				},
-				errorMessage : "Did not find the nav button on line item page"
-			});
-		},
 
 		iGoBackInBrowserHistory : function () {
 			return this.waitFor({
@@ -187,10 +177,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 			});
 		},
 
-		iWaitUntilISeePageForLineItem7 : function() {
-			return this.iWaitUntilISeePage("LineItem", "Line Item: LineItemID_7");
-		},
-
 		iWaitUntilTheMessageBoxIsShown : function (sMessageBoxId) {
 			return this.waitFor({
 				id : sMessageBoxId,
@@ -199,7 +185,6 @@ sap.ui.define(['sap/ui/test/Opa5', 'sap/ui/test/matchers/AggregationLengthEquals
 				}
 			});
 		}
-
 
 	});
 });
