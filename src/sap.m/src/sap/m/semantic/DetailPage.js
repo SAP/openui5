@@ -41,6 +41,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticType", "s
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.DetailPage
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DetailPage = ShareMenuPage.extend("sap.m.semantic.DetailPage", /** @lends sap.m.semantic.DetailPage.prototype */ {
 		renderer: SemanticPageRenderer.render
