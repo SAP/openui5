@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.AutoComplete
   Author: d046314
 -->
@@ -10,7 +10,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>AutoComplete - sap.ui.commons</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.AutoComplete.gif">
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -22,30 +22,8 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<!-- Control initialization -->
-	<script language="javascript">
-	
-	var oAuto0 = new sap.ui.commons.AutoComplete();
-	
-	var oAuto1 = new sap.ui.commons.AutoComplete({
-		maxPopupItems: 3
-	});
-	var aVals = ["A", "B", "C"];
-	for(var i=0; i<aVals.length; i++){
-		for(var j=0; j<4; j++){
-			oAuto1.addItem(new sap.ui.core.ListItem({text: aVals[i]+j}));
-		}
-	}
-	oAuto1.placeAt("uiArea1");
-	
-	var oAuto2 = new sap.ui.commons.AutoComplete();
-	oAuto2.placeAt("uiArea2");
-	
-	</script>
-	
 	<!-- Test functions -->
 	<script language="javascript">
-	
 		function clear(oAuto, bDestroyItems){
 			jQuery(oAuto.getInputDomRef()).val("");
 			oAuto.setValue("");
@@ -59,7 +37,7 @@
 			}
 			sap.ui.getCore().applyChanges();
 		}
-		
+
 		function checkSuggestion(oAuto, aTexts){
 			checkPopup(oAuto, true);
 			var aItems = oAuto._getListBox().getItems();
@@ -68,7 +46,7 @@
 				ok(jQuery.inArray(aItems[i].getText(), aTexts) >= 0, "Item '"+aItems[i].getText()+"' contained in suggestion list");
 			}
 		}
-		
+
 		function checkPopup(oAuto, bExpectOpen){
 			if(bExpectOpen){
 				ok(oAuto.oPopup && oAuto.oPopup.isOpen(), "Popup is open");
@@ -76,10 +54,10 @@
 				ok(!oAuto.oPopup || !oAuto.oPopup.isOpen(), "Popup is closed");
 			}
 		}
-		
+
 		function checkStaticSuggestion(oAuto, sChar, aTexts, fCleanup, iCheckTimer){
 			oAuto.focus();
-			
+
 			setTimeout(function(){
 				sap.ui.test.qunit.triggerCharacterInput(oAuto.getFocusDomRef(), sChar);
 				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
@@ -95,126 +73,214 @@
 				}, iCheckTimer || 200);
 			}, 10);
 		}
-	
+
 		qutils.delayTestStart();
-		
-		module("Control API");
-		
+
+		module("Control API", {
+			setup : function() {
+				this.oAuto0 = new sap.ui.commons.AutoComplete();
+			},
+			teardown : function() {
+				clear(this.oAuto0);
+				this.oAuto0.destroy();
+
+				jQuery("#focusDummy").focus();
+				sap.ui.getCore().applyChanges();
+			}
+		});
+
 		test("Property Defaults", function() {
-			equals(oAuto0.getEnableScrolling(), true, "Default 'enableScrolling'");
-			ok(oAuto0._filter === sap.ui.commons.AutoComplete._DEFAULTFILTER, "Default filter set");
+			equals(this.oAuto0.getEnableScrolling(), true, "Default 'enableScrolling'");
+			ok(this.oAuto0._filter === sap.ui.commons.AutoComplete._DEFAULTFILTER, "Default filter set");
 		});
 
 		test("Property Custom Values", function() {
-			oAuto0.setEnableScrolling(false);
-			
+			this.oAuto0.setEnableScrolling(false);
+
 			function foo(){};
-			
-			oAuto0.setFilterFunction(foo);
-			
-			equals(oAuto0.getEnableScrolling(), false, "Custom 'enableScrolling'");
-			ok(oAuto0._filter === foo, "Custom filter set");
+
+			this.oAuto0.setFilterFunction(foo);
+
+			equals(this.oAuto0.getEnableScrolling(), false, "Custom 'enableScrolling'");
+			ok(this.oAuto0._filter === foo, "Custom filter set");
 		});
-		
+
 		test("Deprecated APIs", function() {
 			var oCustomLB = new sap.ui.commons.ListBox();
-			oAuto0.setListBox(oCustomLB);
-			oAuto0.setSelectedItemId("abc");
-			oAuto0.setSelectedKey("abc");
-			
-			ok(!oAuto0.getSelectedKey(), "Deprecated property 'selectedKey'");
-			ok(!oAuto0.getSelectedItemId(), "Deprecated property 'selectedItemId'");
-			ok(oCustomLB != oAuto0._getListBox(), "Deprecated aggregation 'listBox'");
+			this.oAuto0.setListBox(oCustomLB);
+			this.oAuto0.setSelectedItemId("abc");
+			this.oAuto0.setSelectedKey("abc");
+
+			ok(!this.oAuto0.getSelectedKey(), "Deprecated property 'selectedKey'");
+			ok(!this.oAuto0.getSelectedItemId(), "Deprecated property 'selectedItemId'");
+			ok(oCustomLB != this.oAuto0._getListBox(), "Deprecated aggregation 'listBox'");
 		});
-		
-		module("Suggestion - Static Items");
-		
+
+		module("Suggestion - Static Items", {
+			setup : function() {
+				this.oAuto1 = new sap.ui.commons.AutoComplete({
+					maxPopupItems: 3
+				}).placeAt("uiArea1");
+
+				var aVals = ["A", "B", "C"];
+				for(var i=0; i<aVals.length; i++){
+					for(var j=0; j<4; j++){
+						this.oAuto1.addItem(new sap.ui.core.ListItem({
+							text: aVals[i]+j
+						}));
+					}
+				}
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				clear(this.oAuto1);
+				this.oAuto1.destroy();
+
+				jQuery("#focusDummy").focus();
+				sap.ui.getCore().applyChanges();
+			}
+		});
+
 		asyncTest("Scrolling enabled", function() {
-			checkStaticSuggestion(oAuto1, "a", ["A0", "A1", "A2", "A3"]);
+			this.oAuto1.onfocusin();
+
+			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2", "A3"]);
+
 		});
-		
+
 		asyncTest("Scrolling disabled", function() {
-			oAuto1.setEnableScrolling(false);
-			
-			checkStaticSuggestion(oAuto1, "a", ["A0", "A1", "A2"]);		
+			this.oAuto1.setEnableScrolling(false);
+			this.oAuto1.onfocusin();
+
+			checkStaticSuggestion(this.oAuto1, "a", ["A0", "A1", "A2"]);
 		});
-		
+
 		asyncTest("Custom Filter", function() {
-			oAuto1.setFilterFunction(function(sValue, oItem){
+			this.oAuto1.onfocusin();
+
+			this.oAuto1.setFilterFunction(function(sValue, oItem){
 				return jQuery.sap.endsWithIgnoreCase(oItem.getText(), sValue);
 			});
-			
-			checkStaticSuggestion(oAuto1, "0", ["A0", "B0", "C0"]);
+
+			checkStaticSuggestion(this.oAuto1, "0", ["A0", "B0", "C0"]);
 		});
-		
+
 		asyncTest("Change Items (No Focus)", function() {
 			jQuery("#focusDummy").focus();
-			oAuto1.setValue("c");
+			this.oAuto1.setValue("c");
 			sap.ui.getCore().applyChanges();
-			
+
+			var that = this;
+
 			setTimeout(function(){
-				checkPopup(oAuto1, false);
-				oAuto1.addItem(new sap.ui.core.ListItem({text: "C4"}));
+				checkPopup(that.oAuto1, false);
+				that.oAuto1.addItem(new sap.ui.core.ListItem({text: "C4"}));
 				setTimeout(function(){
 					start();
-					checkPopup(oAuto1, false);
-					clear(oAuto1);
+					checkPopup(that.oAuto1, false);
 				}, 200);
 			}, 10);
 		});
-		
+
 		asyncTest("Change Items (Focus)", function() {
-			oAuto1.setValue("a");
+			this.oAuto1.setValue("a");
 			sap.ui.getCore().applyChanges();
-			oAuto1.focus();
-			
+			this.oAuto1.onfocusin();
+
+			var that = this;
+
 			setTimeout(function(){
-				checkPopup(oAuto1, false);
-				oAuto1.addItem(new sap.ui.core.ListItem({text: "A4"}));
-				oAuto1.removeItem(oAuto1.getItems()[0]);
+				checkPopup(that.oAuto1, false);
+				that.oAuto1.addItem(new sap.ui.core.ListItem({text: "A4"}));
+				that.oAuto1.removeItem(that.oAuto1.getItems()[0]);
 				setTimeout(function(){
 					start();
-					checkSuggestion(oAuto1, ["A1", "A2", "A3", "A4"]);
-					clear(oAuto1);
+					checkSuggestion(that.oAuto1, ["A1", "A2", "A3", "A4"]);
 				}, 200);
 			}, 10);
 		});
-		
-		module("Suggestion - Dynamic Items");
-		
-		function dynamicItemSuggestionTest(fHandler, iDelay){
+
+		module("Suggestion - Dynamic Items", {
+			setup : function() {
+				this.oAuto2 = new sap.ui.commons.AutoComplete();
+				this.oAuto2.placeAt("uiArea2");
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				clear(this.oAuto2);
+				this.oAuto2.destroy();
+
+				jQuery("#focusDummy").focus();
+				sap.ui.getCore().applyChanges();
+			}
+		});
+
+		function dynamicItemSuggestionTest(oAuto2, fHandler, iDelay){
 			oAuto2.attachSuggest(fHandler);
 			checkStaticSuggestion(oAuto2, "a", ["A0", "A1", "A2", "A3"], function(oAuto){
 				clear(oAuto, true);
 				oAuto.detachSuggest(fHandler);
 			}, iDelay);
 		};
-		
+
 		asyncTest("Dynamic Items (sync)", function() {
-			dynamicItemSuggestionTest(function(){
-				oAuto2.destroyItems();
+			this.oAuto2.onfocusin();
+			var that = this;
+
+			dynamicItemSuggestionTest(this.oAuto2, function(){
+				that.oAuto2.destroyItems();
 				for(var j=0; j<4; j++){
-					oAuto2.addItem(new sap.ui.core.ListItem({text: "A"+j}));
+					that.oAuto2.addItem(new sap.ui.core.ListItem({text: "A"+j}));
 				}
 			}, 200);
 		});
-		
+
 		asyncTest("Dynamic Items (async)", function() {
-			dynamicItemSuggestionTest(function(){
+			this.oAuto2.onfocusin();
+			var that = this;
+
+			dynamicItemSuggestionTest(this.oAuto2, function(){
 				setTimeout(function(){
-					oAuto2.destroyItems();
+					that.oAuto2.destroyItems();
 					for(var j=0; j<4; j++){
-						oAuto2.addItem(new sap.ui.core.ListItem({text: "A"+j}));
+						that.oAuto2.addItem(new sap.ui.core.ListItem({text: "A"+j}));
 					}
 				}, 200);
 			}, 500);
 		});
-		
-		module("Closing Popup");
-		
-		function popupClosingTest(fAction){
+
+		module("Closing Popup", {
+			setup : function() {
+				this.oAuto1 = new sap.ui.commons.AutoComplete({
+					maxPopupItems: 3
+				}).placeAt("uiArea1");
+
+				var aVals = ["A", "B", "C"];
+				for(var i=0; i<aVals.length; i++){
+					for(var j=0; j<4; j++){
+						this.oAuto1.addItem(new sap.ui.core.ListItem({
+							text: aVals[i]+j
+						}));
+					}
+				}
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				clear(this.oAuto1);
+				this.oAuto1.destroy();
+
+				jQuery("#focusDummy").focus();
+				sap.ui.getCore().applyChanges();
+			}
+		});
+
+		function popupClosingTest(oAuto1, fAction){
 			oAuto1.focus();
-			
+			oAuto1.onfocusin();
+
 			setTimeout(function(){
 				checkPopup(oAuto1, false);
 				sap.ui.test.qunit.triggerCharacterInput(oAuto1.getFocusDomRef(), "a");
@@ -222,51 +288,77 @@
 				sap.ui.test.qunit.triggerKeyup(oAuto1.getFocusDomRef(), "a");
 				setTimeout(function(){
 					checkPopup(oAuto1, true);
-					fAction(oAuto1);
-					setTimeout(function(){
+
+					oAuto1.oPopup.attachClosed(function(){
 						start();
 						checkPopup(oAuto1, false);
-						clear(oAuto1);
-					}, 200);
+					});
+
+					fAction(oAuto1);
 				}, 200);
 			}, 10);
 		};
-		
+
 		asyncTest("Focusout", function() {
-			popupClosingTest(function(oAuto){
+			expect(3);
+			popupClosingTest(this.oAuto1, function(oAuto){
 				jQuery("#focusDummy").focus();
 			});
 		});
-		
+
 		asyncTest("Empty AutoComplete", function() {
-			popupClosingTest(function(oAuto){
+			popupClosingTest(this.oAuto1, function(oAuto){
 				jQuery(oAuto.getInputDomRef()).val("");
 				sap.ui.test.qunit.triggerEvent("input", oAuto.getFocusDomRef());
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
 			});
 		});
-		
+
 		asyncTest("Enter", function() {
-			popupClosingTest(function(oAuto){
+			popupClosingTest(this.oAuto1, function(oAuto){
 				sap.ui.test.qunit.triggerKeydown(oAuto.getFocusDomRef(), "ENTER");
 			});
 		});
-		
+
 		asyncTest("Escape", function() {
-			popupClosingTest(function(oAuto){
+			popupClosingTest(this.oAuto1, function(oAuto){
 				sap.ui.test.qunit.triggerKeydown(oAuto.getFocusDomRef(), "ESCAPE");
 				sap.ui.test.qunit.triggerKeypress(oAuto.getFocusDomRef(), "ESCAPE");
 				sap.ui.test.qunit.triggerKeyup(oAuto.getFocusDomRef(), "ESCAPE");
 			});
 		});
-		
-		module("ARIA");
-		
-		function checkAriaAttributes(iExpPos, iExpSize, bOpenDesc, sAdditionalText){
+
+		module("ARIA", {
+			setup : function() {
+				this.oAuto1 = new sap.ui.commons.AutoComplete({
+					maxPopupItems: 3
+				}).placeAt("uiArea1");
+
+				var aVals = ["A", "B", "C"];
+				for(var i=0; i<aVals.length; i++){
+					for(var j=0; j<4; j++){
+						this.oAuto1.addItem(new sap.ui.core.ListItem({
+							text: aVals[i]+j
+						}));
+					}
+				}
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				clear(this.oAuto1);
+				this.oAuto1.destroy();
+
+				jQuery("#focusDummy").focus();
+				sap.ui.getCore().applyChanges();
+			}
+		});
+
+		function checkAriaAttributes(oAuto1, iExpPos, iExpSize, bOpenDesc, sAdditionalText){
 			var $Ref = jQuery(oAuto1.getInputDomRef());
 			var sPos = $Ref.attr("aria-posinset");
 			var sSize = $Ref.attr("aria-setsize");
-			
+
 			if(iExpPos < 0){
 				ok(!sPos, "No aria-posinset attribute set "+sAdditionalText);
 			}else{
@@ -276,7 +368,7 @@
 					ok(false, "aria-posinset attribute set "+sAdditionalText);
 				}
 			}
-			
+
 			if(iExpSize < 0){
 				ok(!sSize, "No aria-setsize attribute set "+sAdditionalText);
 			}else{
@@ -286,63 +378,53 @@
 					ok(false, "aria-setsize attribute set "+sAdditionalText);
 				}
 			}
-			
+
 			if(bOpenDesc){
 				ok(!!$Ref.attr("aria-describedby"), "aria-describedby attribute set "+sAdditionalText);
 			}else{
 				ok(!$Ref.attr("aria-describedby"), "aria-describedby attribute not set "+sAdditionalText);
 			}
-			
+
 			equals($Ref.attr("aria-live"), "polite", "aria-live attribute set "+sAdditionalText);
 			equals($Ref.attr("aria-relevant"), "all", "aria-relevant attribute set "+sAdditionalText);
 			equals($Ref.attr("aria-autocomplete"), "list", "aria-autocomplete attribute set "+sAdditionalText);
 			equals(jQuery(oAuto1.getDomRef()).attr("role"), "textbox", "role attribute set "+sAdditionalText);
 		}
-		
+
 		asyncTest("Attributes", function() {
-			oAuto1.focus();
-			
+			this.oAuto1.focus();
+			this.oAuto1.onfocusin();
+			var that = this;
+
 			setTimeout(function(){
-				checkAriaAttributes(-1, -1, false, "when popup is closed");
-				sap.ui.test.qunit.triggerCharacterInput(oAuto1.getFocusDomRef(), "a");
-				sap.ui.test.qunit.triggerEvent("input", oAuto1.getFocusDomRef());
-				sap.ui.test.qunit.triggerKeyup(oAuto1.getFocusDomRef(), "a");
+				checkAriaAttributes(that.oAuto1, -1, -1, false, "when popup is closed");
+				sap.ui.test.qunit.triggerCharacterInput(that.oAuto1.getFocusDomRef(), "a");
+				sap.ui.test.qunit.triggerEvent("input", that.oAuto1.getFocusDomRef());
+				sap.ui.test.qunit.triggerKeyup(that.oAuto1.getFocusDomRef(), "a");
 				setTimeout(function(){
-					checkAriaAttributes(-1, 4, true, "when popup is open");
-					sap.ui.test.qunit.triggerKeydown(oAuto1.getFocusDomRef(), "ARROW_DOWN");
+					checkAriaAttributes(that.oAuto1, -1, 4, true, "when popup is open");
+					sap.ui.test.qunit.triggerKeydown(that.oAuto1.getFocusDomRef(), "ARROW_DOWN");
 					setTimeout(function(){
-						checkAriaAttributes(1, 4, true, "when popup is open and list item 1 selected");
-						sap.ui.test.qunit.triggerKeydown(oAuto1.getFocusDomRef(), "ARROW_DOWN");
+						checkAriaAttributes(that.oAuto1, 1, 4, true, "when popup is open and list item 1 selected");
+						sap.ui.test.qunit.triggerKeydown(that.oAuto1.getFocusDomRef(), "ARROW_DOWN");
 						setTimeout(function(){
-							checkAriaAttributes(2, 4, true, "when popup is open and list item 2 selected");
-							jQuery("#focusDummy").focus();
+							checkAriaAttributes(that.oAuto1, 2, 4, true, "when popup is open and list item 2 selected");
+							that.oAuto1._close();
 							setTimeout(function(){
 								start();
-								checkAriaAttributes(-1, -1, false, "when popup is closed");
-								clear(oAuto1);
+								checkAriaAttributes(that.oAuto1, -1, -1, false, "when popup is closed");
 							}, 200);
 						}, 200);
 					}, 200);
 				}, 200);
 			}, 10);
 		});
-		
-		module("Lifecycle");
-		
-		test("destroy()", function() {
-			oAuto0.destroy();
-			oAuto1.destroy();
-			oAuto2.destroy();
-			ok(true, "destroy succeeded");
-		});
-		
-		
 	</script>
-  
+
 </head>
 <body class="sapUiBody" role="application">
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
+	<div id="uiArea1" style="position: relative; left: 10px; top: 10px;"></div>
+	<div id="uiArea2" style="position: relative; left: 10px; top: 10px;"></div>
 	<button id="focusDummy"></button>
 	<br>
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.AutoComplete</h1>
