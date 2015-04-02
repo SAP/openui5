@@ -427,6 +427,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @param {jQuery.Event} oEvent
 	 */
 	Input.prototype.ontap = function(oEvent) {
+		InputBase.prototype.ontap.call(this, oEvent);
 		this._fireValueHelpRequestForValueHelpOnly();
 	};
 

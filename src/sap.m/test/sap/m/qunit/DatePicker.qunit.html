@@ -202,6 +202,27 @@
 				sap.ui.getCore().applyChanges();
 			});
 
+			module("ARIA");
+			test("Tooltip and date annoncement should be set correctly at the described by", function() {
+				var sTooltip = "tooltip";
+				var oDP = new sap.m.DatePicker().placeAt("uiArea4");
+				sap.ui.getCore().applyChanges();
+
+				var $Input = jQuery(oDP.getFocusDomRef());
+				var $Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
+				var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
+				strictEqual($Reference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
+
+				oDP.setTooltip(sTooltip);
+				sap.ui.getCore().applyChanges();
+				$Input = jQuery(oDP.getFocusDomRef());
+				$Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
+
+				strictEqual($Reference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
+
+				oDP.destroy();
+			});
+
 		</script>
 
 	</head>
@@ -217,5 +238,7 @@
 		<div id="uiArea2"></div>
 		<br>
 		<div id="uiArea3"></div>
+		<br>
+		<div id="uiArea4"></div>
 	</body>
 </html>

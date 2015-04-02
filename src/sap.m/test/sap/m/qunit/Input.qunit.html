@@ -243,29 +243,25 @@
 
 
 	test("Value States", function() {
-		var errorTooltip = i4.$().attr("title"),
-			warningTooltip = i5.$().attr("title");
 
 		equals(i4.$().hasClass('sapMInputBaseError'), true, "Before new value state : Error");
 		equals(i5.$().hasClass('sapMInputBaseWarning'), true, "Before new value state : Warning");
-		ok(errorTooltip.length, "Error tooltip is filled with a message");
-		ok(warningTooltip.length, "Warning tooltip is filled with a message");
+		equals(i4.$().attr("title"), undefined, "No tooltip for error state");
+		equals(i5.$().attr("title"), undefined, "No tooltip for warning state");
 
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
 		sap.ui.getCore().applyChanges();
 
 		equals(i4.$().hasClass('sapMInputBaseWarning'), true, "After new value state : Warning");
-		equals(i4.$().attr("title"), warningTooltip,  "Tooltip is \""+ warningTooltip +"\" empty for valueState \"Warning\""); 
 		equals(i5.$().hasClass('sapMInputBaseError'), true, "After new value state : Error");
-		equals(i5.$().attr("title"), errorTooltip,  "Tooltip is \""+ errorTooltip +"\" empty for valueState \"Error\"");
 
 		i4.setValueState();
 		i5.setValueState("None");
 
 		equals(i4.getValueState(), "None", "Last value state : None");
 		equals(i5.getValueState(), "None", "Last value state : None");
-		equals(i5.$().attr("title"), "", "Tooltip is empty for valueState \"None\"");
+		equals(i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
 	});
 
 	test("Value Help Indicator", function() {

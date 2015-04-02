@@ -398,6 +398,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Handle when input is tapped.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	InputBase.prototype.ontap = function(oEvent) {
+		// put the focus to the editable input when synthetic placeholder is tapped
+		// label for attribute breaks the screen readers labelledby announcement
+		if (this.getEnabled() &&
+			this.getEditable() &&
+			this.bShowLabelAsPlaceholder &&
+			oEvent.target.id === this.getId() + "-placeholder") {
+			this.focus();
+		}
+	};
+
+	/**
 	 * Handles the change event.
 	 *
 	 * @protected
@@ -787,16 +804,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var sClass = "sapMInputBaseMessage sapMInputBaseMessage" + sState;
 			var sTextClass = "sapMInputBaseMessageText";
-			var $Content = jQuery("<div>",{
+			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var $Content = jQuery("<div>", {
 				"id": sMessageId,
-				"class": sClass
+				"class": sClass,
+				"role": "tooltip"
 			}).append(
-				jQuery("<span>",{
+				jQuery("<span>", {
+					"aria-hidden": true,
+					"class": "sapUiHidden",
+					"text": oRB.getText("INPUTBASE_VALUE_STATE_" + sState.toUpperCase())
+				})
+			).append(
+				jQuery("<span>", {
 					"id": sMessageId + "-text",
 					"class": sTextClass,
-					"text": sText,
-					"role": "tooltip"
-			}));
+					"text": sText
+				})
+			);
 
 			this._popup.setContent($Content[0]);
 
@@ -872,10 +897,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$This.addClass("sapMInputBaseState sapMInputBase" + sValueState);
 			$Input.addClass("sapMInputBaseStateInner sapMInputBase" + sValueState + "Inner");
 		}
-
-		// set tooltip based on state (will be undefined when state is None)
-		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
-		$This.attr("title", sTooltip || "");
 
 		if ($Input[0] === document.activeElement) {
 			switch (sValueState) {

@@ -45,20 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.writeIcon("sap-icon://appointment-2", aClasses, mAttributes);
 		}
 
-		// invisible span with description for keyboard navigation
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			// ResourceBundle always returns the key if the text is not found
-		var sText = rb.getText("DATEPICKER_DATE_TYPE");
-
-		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oDP, oDP.getTooltip_AsString());
-		if (sTooltip) {
-			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
-			sText = sText + ". " + sTooltip;
-		}
-		oRm.write('<SPAN id="' + oDP.getId() + '-Descr" style="visibility: hidden; display: none;">');
-		oRm.writeEscaped(sText);
-		oRm.write('</SPAN>');
-
 	};
 
 	/**
@@ -94,10 +80,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 	};
 
-	DatePickerRenderer.getAriaDescribedBy = function(oDP) {
-
-		var sBaseAriaDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments) || "";
-		return sBaseAriaDescribedBy + " " + oDP.getId() + "-Descr";
+	DatePickerRenderer.getDescribedByAnnouncement = function(oDP) {
+	
+		var sBaseAnnouncement = InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE") + " " + sBaseAnnouncement;
 
 	};
 
