@@ -1,60 +1,49 @@
-/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
+﻿/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.require(
 [
-	"sap/ui/test/Opa5",
-	"sap/ui/demo/mdtemplate/test/integration/action/NavigationAction",
-	"sap/ui/demo/mdtemplate/test/integration/arrangement/StartAppArrangement",
-	"sap/ui/demo/mdtemplate/test/integration/assertion/NavigationAssertion"
+	"sap/ui/test/Opa5"
 ],
-function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
-	"use strict";
+function (Opa5) {
 
-	module("Mobile navigation", { setup : function () {
-		Opa5.extendConfig({
-			actions : new NavigationAction(),
-			arrangements : new StartAppArrangement(),
-			assertions : new NavigationAssertion(),
-			viewNamespace : "sap.ui.demo.mdtemplate.view."
-		});
-	}});
+	QUnit.module("Mobile navigation");
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheAppOnAPhone();
 
 		//Actions
-		When.iLookAtTheScreen();
+		When.onTheMasterPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheObjectList();
+		Then.onTheMasterPage.iShouldSeeTheList();
 	});
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
 		// Actions
-		When.iChangeTheHashToObjectN(3);
+		When.onTheBrowserPage.iChangeTheHashToObjectN(3);
 
 		// Assertions
-		Then.iShouldBeOnTheObjectNPage(3);
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(3);
 	});
-
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
-		When.iPressTheBackButtonOnDetailPage().and.iPressOnTheObject1InMasterList();
+		When.onTheDetailPage.iPressTheBackButton();
+		When.onTheMasterPage.iPressOnTheObject1InList();
 
 		// Assertions
-		Then.iShouldBeOnTheObjectNPage(1);
+		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
 	});
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
 		// Actions
-		When.iLookAtTheScreen();
+		When.onTheDetailPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.iShouldSeeTheObjectLineItemsList().
+		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
-			and.theFirstLineItemHasIDLineItemID1().
+			and.theFirstLineItemHasIDLineItemID_1().
 			and.iTeardownMyAppFrame();
 	});
 
@@ -63,10 +52,10 @@ function (Opa5, NavigationAction, StartAppArrangement, NavigationAssertion) {
 		Given.iStartTheAppOnAPhone();
 
 		//Actions
-		When.iWaitUntilTheMasterListIsLoaded();
+		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
 
 		//Assertions
-		Then.iShouldSeeAnEmptyHash().
+		Then.onTheBrowserPage.iShouldSeeAnEmptyHash().
 			and.iTeardownMyAppFrame();
 	});
 
