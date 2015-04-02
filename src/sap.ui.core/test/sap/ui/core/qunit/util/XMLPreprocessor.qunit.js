@@ -1103,6 +1103,42 @@
 	});
 
 	//*********************************************************************************************
+	test('template:with repeated w/ same variable and value', function () {
+		var oLogMock = this.mock(jQuery.sap.log),
+			oModel = new sap.ui.model.json.JSONModel(),
+			sTemplate1 = '<template:with path="bar>/my/path" var="bar"/>',
+			sTemplate2 = '<template:with path="bar>bla" helper="foo"/>',
+			sTemplate3 = '<template:with path="bar>/my/path"/>';
+
+		window.foo = function () {
+			return "/my/path";
+		};
+
+		oLogMock.expects("warning")
+			.withExactArgs("qux: set unchanged path '/my/path' in " + sTemplate1,
+				null, "sap.ui.core.util.XMLPreprocessor");
+		oLogMock.expects("warning")
+			.withExactArgs("qux: set unchanged path '/my/path' in " + sTemplate2,
+				null, "sap.ui.core.util.XMLPreprocessor");
+		oLogMock.expects("warning")
+			.withExactArgs("qux: set unchanged path '/my/path' in " + sTemplate3,
+				null, "sap.ui.core.util.XMLPreprocessor");
+
+		check([
+			mvcView(),
+			sTemplate1,
+			sTemplate2,
+			sTemplate3,
+			'</mvc:View>'
+		], {
+			models: {bar: oModel},
+			bindingContexts: {
+				bar: oModel.createBindingContext("/my/path")
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	test("template:repeat w/o named models", function () {
 		check([
 			mvcView(),
@@ -1408,10 +1444,19 @@
 	});
 
 	//*********************************************************************************************
-	test("error on fragment with ping pong cyclic reference", function () {
+	test("error on fragment with ping pong cyclic reference and <with> elements", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
 			if (sTemplateName === "A") {
-				return xml(['<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>']);
+				return xml([
+				    '<FragmentDefinition xmlns="sap.ui.core" xmlns:template'
+				    	+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
+			    	'<template:with path="/foo" var="bar">',
+			    	'<template:with path="/bar" var="foo">',
+				    '<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>',
+			    	'</template:with>',
+				    '</template:with>',
+				    '</FragmentDefinition>'
+	            ]);
 			}
 			return xml(['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']);
 		});
@@ -1420,7 +1465,7 @@
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
 			],
-			{},
+			{ models: new sap.ui.model.json.JSONModel() },
 			/Error: Stopped due to cyclic fragment reference/
 			);
 	});
