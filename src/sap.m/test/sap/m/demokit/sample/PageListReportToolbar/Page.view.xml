@@ -59,7 +59,7 @@
 				</fb:FilterBar>
 				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 					<t:toolbar>
-						<Toolbar design="Transparent">
+						<Toolbar>
 							<Title text="Title Bar Here"/>
 							<ToolbarSeparator />
 							<var:VariantManagement>
