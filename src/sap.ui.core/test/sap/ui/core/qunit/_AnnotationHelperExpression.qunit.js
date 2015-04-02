@@ -371,12 +371,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	test("uriEncode", function () {
 		var oInterface = {},
-			oPathValue = {},
-			oSubPathValue = {};
+			oPathValue = {};
 
-		this.mock(Basics).expects("descend").withExactArgs(oPathValue, 0).returns(oSubPathValue);
-		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oSubPathValue, true)
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0)
 			.returns({
 				result: "binding",
 				value: "path",
@@ -412,19 +410,13 @@ sap.ui.require([
 			var oInterface = {},
 				oPathValue = {value: [{}, {}]},
 				oResult1 = {result: "binding", value: "path", type: "Edm.String"},
-				oSubPathValue1 = {},
-				oSubPathValue2 = {},
-				oBasics = this.mock(Basics),
 				oExpression = this.mock(Expression);
 
-			oBasics.expects("expectType").withExactArgs(oPathValue, "array");
-			oBasics.expects("descend").withExactArgs(oPathValue, 0).returns(oSubPathValue1);
-			oExpression.expects("expression")
-				.withExactArgs(oInterface, oSubPathValue1, true).returns(oResult1);
-			oBasics.expects("descend").withExactArgs(oPathValue, 1).returns(oSubPathValue2);
-			oExpression.expects("expression")
-				.withExactArgs(oInterface, oSubPathValue2, true)
-				.returns(oFixture.parameter2);
+			this.mock(Basics).expects("expectType").withExactArgs(oPathValue, "array");
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 0).returns(oResult1);
+			oExpression.expects("parameter")
+				.withExactArgs(oInterface, oPathValue, 1).returns(oFixture.parameter2);
 
 			deepEqual(Expression.concat(oInterface, oPathValue, oFixture.bExpression),
 				oFixture.result);
@@ -435,18 +427,14 @@ sap.ui.require([
 	test("fillUriTemplate: template only", function () {
 		var oInterface = {},
 			oPathValue = {value: [{}]},
-			oSubPathValue = {},
 			oResult = {
 				result: "constant",
 				value: "template",
 				type: "Edm.String"
-			},
-			oBasics = this.mock(Basics);
+			};
 
-		oBasics.expects("descend")
-			.withExactArgs(oPathValue, 0).returns(oSubPathValue);
-		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oSubPathValue, true).returns(oResult);
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.String").returns(oResult);
 
 		deepEqual(Expression.fillUriTemplate(oInterface, oPathValue), {
 			result: "expression",
@@ -459,7 +447,6 @@ sap.ui.require([
 	test("fillUriTemplate: template with one parameter", function () {
 		var oInterface = {},
 			oPathValue = {value: [{}, {}]},
-			oSubPathValueTemplate = {},
 			oSubPathValueNamedParameter = {},
 			oSubPathValueParameter = {},
 			oResultTemplate = {
@@ -475,10 +462,8 @@ sap.ui.require([
 			oBasics = this.mock(Basics),
 			oExpression = this.mock(Expression);
 
-		oBasics.expects("descend")
-			.withExactArgs(oPathValue, 0).returns(oSubPathValueTemplate);
-		oExpression.expects("expression")
-			.withExactArgs(oInterface, oSubPathValueTemplate, true).returns(oResultTemplate);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.String").returns(oResultTemplate);
 		oBasics.expects("descend")
 			.withExactArgs(oPathValue, 1, "object").returns(oSubPathValueNamedParameter);
 		oBasics.expects("property")
@@ -498,7 +483,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("fillUriTemplate: template with two parameters", function () {
-		var i,
+		var oInterface = {},
 			aRawValue = [{
 				String: "template({p0},{p1})"
 			}, {
@@ -512,45 +497,33 @@ sap.ui.require([
 					String: "foo"
 				}
 			}],
-			oInterface = {},
-			oPathValue = {value: aRawValue},
-			oSubPathValueTemplate = {value: aRawValue[0]},
-			aSubPathValueNamedParameters = [{value: aRawValue[1]}, {value: aRawValue[2]}],
-			aSubPathValueParameters = [{value: aRawValue[1].Value}, {value: aRawValue[2].Value}],
+			oPathValue = {path: "/my/path", value: aRawValue},
 			oResultTemplate = {
 				result: "constant",
 				value: "template({p0},{p1})",
 				type: "Edm.String"
 			},
-			aResultParameters = [{
+			aResultParameters1 = {
 				result: "binding",
 				value: "bar",
 				type: "Edm.String"
-			}, {
+			},
+			aResultParameters2 = {
 				result: "constant",
 				value: "foo",
 				type: "Edm.String"
-			}],
-			oBasics = this.mock(Basics),
+			},
 			oExpression = this.mock(Expression);
 
-		oBasics.expects("descend")
-			.withExactArgs(oPathValue, 0).returns(oSubPathValueTemplate);
+		oExpression.expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0, "Edm.String").returns(oResultTemplate);
 		oExpression.expects("expression")
-			.withExactArgs(oInterface, oSubPathValueTemplate, true).returns(oResultTemplate);
-		for (i = 0; i < aSubPathValueParameters.length; i += 1) {
-			oBasics.expects("descend")
-				.withExactArgs(oPathValue, i + 1, "object")
-				.returns(aSubPathValueNamedParameters[i]);
-			oBasics.expects("property")
-				.withExactArgs(aSubPathValueNamedParameters[i], "Name", "string").returns("p" + i);
-			oBasics.expects("descend")
-				.withExactArgs(aSubPathValueNamedParameters[i], "Value")
-				.returns(aSubPathValueParameters[i]);
-			oExpression.expects("expression")
-				.withExactArgs(oInterface, aSubPathValueParameters[i], true)
-				.returns(aResultParameters[i]);
-		}
+			.withExactArgs(oInterface, {path: "/my/path/1/Value", value: aRawValue[1].Value}, true)
+			.returns(aResultParameters1);
+		oExpression.expects("expression")
+			.withExactArgs(oInterface, {path: "/my/path/2/Value", value: aRawValue[2].Value}, true)
+			.returns(aResultParameters2);
+
 
 		deepEqual(Expression.fillUriTemplate(oInterface, oPathValue), {
 			result: "expression",
@@ -560,23 +533,51 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("fillUriTemplate: error on non-Edm.String template ", function () {
+	test("parameter: w/o type expectation", function () {
 		var oInterface = {},
-			oPathValue = {path: "/my/path", value: [{}]},
-			oSubPath = {},
-			oResult = {
-				type: "Edm.Foo"
-			};
+			oRawValue = [{}],
+			oPathValue = {path: "/my/path", value: oRawValue},
+			oResult = {};
 
-		this.mock(Basics).expects("descend")
-			.withExactArgs(oPathValue, 0).returns(oSubPath);
 		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oSubPath, true).returns(oResult);
-		this.mock(Basics).expects("error")
-			.withExactArgs(oSubPath,
-				"fillUriTemplate: Expected Edm.String but instead saw Edm.Foo");
+			.withExactArgs(oInterface, {path: "/my/path/0", value: oRawValue[0]}, true)
+			.returns(oResult);
 
-		Expression.fillUriTemplate(oInterface, oPathValue);
+		strictEqual(Expression.parameter(oInterface, oPathValue, 0), oResult);
+	});
+
+	//*********************************************************************************************
+	test("parameter: w/ correct type", function () {
+		var oInterface = {},
+			oRawValue = [{}],
+			oPathValue = {path: "/my/path", value: oRawValue},
+			oResult = {type: "Edm.String"};
+
+		this.mock(Expression).expects("expression")
+			.withExactArgs(oInterface, {path: "/my/path/0", value: oRawValue[0]}, true)
+			.returns(oResult);
+
+		strictEqual(Expression.parameter(oInterface, oPathValue, 0, "Edm.String"), oResult);
+	});
+
+	//*********************************************************************************************
+	test("parameter: w/ incorrect type", function () {
+		var oInterface = {},
+			oRawValue = [{}],
+			oPathValue = {path: "/my/path", value: oRawValue},
+			oResult = {type: "Edm.Float"};
+
+		this.mock(Expression).expects("expression")
+			.withExactArgs(oInterface, {path: "/my/path/0", value: oRawValue[0]}, true)
+			.returns(oResult);
+		this.mock(Basics).expects("error")
+			.withExactArgs({path: "/my/path/0", value: oRawValue[0]},
+				"Expected Edm.String but instead saw Edm.Float")
+			.throws(new SyntaxError());
+
+		throws(function () {
+			Expression.parameter(oInterface, oPathValue, 0, "Edm.String");
+		}, SyntaxError);
 	});
 
 	//*********************************************************************************************
