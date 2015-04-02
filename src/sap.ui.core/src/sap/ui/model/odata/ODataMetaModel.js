@@ -48,13 +48,13 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * also added if they are not defined in v4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations}:
 	 * <ul>
-	 * <li><code>label</code></li>;
+	 * <li><code>label</code>;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>pageable</code>,
 	 * <code>requires-filter</code>, <code>searchable</code>, <code>topable</code> and
-	 * <code>updatable</code> on entity sets</li>;
+	 * <code>updatable</code> on entity sets;</li>
 	 * <li><code>creatable</code>, <code>field-control</code>, <code>precision</code>,
 	 * <code>required-in-filter</code>, <code>sortable</code>, <code>text</code>, <code>unit</code>
-	 * and <code>updatable</code> on properties</li>.
+	 * and <code>updatable</code> on properties.</li>
 	 * </ul>
 	 * For example:
 	 * <pre>
