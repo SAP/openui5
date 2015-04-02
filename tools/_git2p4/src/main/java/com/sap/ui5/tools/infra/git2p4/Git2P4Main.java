@@ -517,6 +517,18 @@ public class Git2P4Main {
         null
         ));
   }
+  
+  private static void createUI5UXAPMappings(File repositoryRoot, String p4depotPrefix, String branch) {
+    mappings.clear();
+    mappings.add(new Mapping(
+        "/UED/sap.uxap.git",
+        new File(repositoryRoot, "sap.uxap"),
+        null,
+        null,
+        null
+        ));
+  }
+
     
 
   private static String getPerforceCodelineForBranch(String branch) {
@@ -781,6 +793,8 @@ public class Git2P4Main {
       if (!UPDATE_ONLY_CORE_FILTER_NAME.equals(filter.name)) {
         filter.name = (EnumSet.of(ReleaseOperation.PatchDevelopment, ReleaseOperation.MilestoneDevelopment).contains(op)) ? "after" : "before";
       }
+    } else if ( "uxap".equals(mappingSet) ) {
+    	createUI5UXAPMappings(gitDir, p4depotPath, branch);
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }

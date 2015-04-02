@@ -25,6 +25,7 @@ public class MyReleaseButton {
 
   // ---- following code is copied from phx.generator.util.IOUtils ----
 
+  private static final String PROPERTY_PREFIX_OSGI_VERSION = "(phx|sap\\.(ui5|uxap))";
   private static final Pattern CORE_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)");
   private static final Pattern CONTRIBUTOR_VERSION_PATTERN = Pattern.compile("(?<=\\.version>).*(?=</com.sap.*version>)");
   private static final String COM_SAP_UI5_CORE = "com.sap.ui5:core";
@@ -204,8 +205,10 @@ public class MyReleaseButton {
     } else if ("deploy.properties".equals(file.getName())) { // pwt-webbundle-archetype
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.RepositoryPaths);
-    } else if ("package.json".equals(file.getName())) { 
+    } else if ("package.json".equals(file.getName())) { // openui5
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
+    } else if ("sap-ui-version.json".equals(file.getName())) { // uxap release
+        processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     }
     
 
@@ -338,9 +341,9 @@ public class MyReleaseButton {
     toR = newMavenVersion.endsWith("-SNAPSHOT") ? "/repositories/build.snapshots.unzip/" : "/repositories/build.milestones.unzip/";
 
     if (oldOSGiVersion.endsWith(".qualifier")) {
-      fromT = Pattern.compile(Pattern.quote(oldOSGiVersion.replace(".qualifier", ".${maven.build.timestamp}") + "</") + "(phx|sap\\.ui5)" + Pattern.quote(".osgi.version>"));
+      fromT = Pattern.compile(Pattern.quote(oldOSGiVersion.replace(".qualifier", ".${maven.build.timestamp}") + "</") + PROPERTY_PREFIX_OSGI_VERSION + Pattern.quote(".osgi.version>"));
     } else {
-      fromT = Pattern.compile(Pattern.quote(oldOSGiVersion + "</") + "(phx|sap\\.ui5)" + Pattern.quote(".osgi.version>"));
+      fromT = Pattern.compile(Pattern.quote(oldOSGiVersion + "</") + PROPERTY_PREFIX_OSGI_VERSION + Pattern.quote(".osgi.version>"));
     }
     if (newOSGiVersion.endsWith(".qualifier")) {
       toT = newOSGiVersion.replace(".qualifier", ".\\${maven.build.timestamp}") + "</$1.osgi.version>";
