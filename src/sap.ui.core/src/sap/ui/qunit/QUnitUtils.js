@@ -122,9 +122,12 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 	 */
 	sap.ui.test.qunit.triggerEvent = function(sEventName, oTarget, oParams) {
 		var tmpEvent = jQuery.Event(sEventName);
+		tmpEvent.originalEvent = tmpEvent.originalEvent || {};
+		
 		if (oParams) {
 			for (var x in oParams) {
 				tmpEvent[x] = oParams[x];
+				tmpEvent.originalEvent[x] = oParams[x];
 			}
 		}
 	
