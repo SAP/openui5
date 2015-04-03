@@ -15,7 +15,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 
 	onAfterRendering : function () {
 		if (this.hasOwnProperty("_compactOn")) {
-			this.getView().toggleStyleClass("sapUiSizeCompact", this._compactOn);
+			jQuery('body').toggleClass("sapUiSizeCompact", this._compactOn);
 		}
 		if (this.hasOwnProperty("_themeActive") && !jQuery.sap.getUriParameters().get("sap-theme")) {
 			sap.ui.getCore().applyTheme(this._themeActive);
