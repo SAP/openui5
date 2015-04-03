@@ -6,7 +6,7 @@
 
 .sapMITBHead {
 	display: block;
-	margin: 1rem 2rem 0 2rem;
+	margin: 1rem 1.25rem 0 1.25rem;
 	padding: 0.125rem 0.125rem 0 0.125rem;
 	white-space: nowrap;
 	font-size: @sapMFontSmallSize;
@@ -31,7 +31,7 @@ html[data-sap-ui-os=win8] .sapMITBHead {
 	display: block;
 	/* the same padding as on the sapMITBHead is needed
 	to correct the scrolling calculations*/
-	padding: 1px 1px 0 1px;
+	padding: 0.125rem 0.125rem 0 0.125rem;
 	margin-right: 1rem;
 	margin-left: 1rem;
 }
@@ -41,8 +41,8 @@ html[data-sap-ui-os=win8] .sapMITBHead {
 
 .sap-tablet .sapMITBScrollContainer,
 html[data-sap-ui-os=win8] .sapMITBScrollContainer {
-	margin-right: 2rem;
-	margin-left: 2rem;
+	margin-right: 1.25rem;
+	margin-left: 1.25rem;
 }
 
 /* scrollbar from iscroll should not be visible */
@@ -182,22 +182,32 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 }
 
 .sapMITBTextOnly .sapMITBFilter:first-child {
-	padding: 0 0 0 1px;
+	padding: 0;
 	margin: 0 1rem 0 0.5rem;
 }
 
 .sapMITBTextOnly .sapMITBFilter:last-child {
-	padding: 0 1px 0 0;
+	padding: 0;
 	margin: 0 0.5rem 0 1rem;
-}
-
-.sap-phone .sapMITBTextOnly .sapMITBFilter {
-	padding: 0 0.75rem;
-	margin: 0 1rem;
 }
 
 .sap-phone .sapMITBFilter {
 	margin: 0 0.125rem;
+}
+
+.sap-phone .sapMITBTextOnly .sapMITBFilter {
+	padding: 0 0.75rem;
+	margin: 0 0.125rem;
+}
+
+.sap-phone .sapMITBTextOnly .sapMITBFilter:first-child {
+	padding: 0 0.75rem 0 0;
+	margin: 0 0.125rem 0 0;
+}
+
+.sap-phone .sapMITBTextOnly .sapMITBFilter:last-child {
+	padding: 0 0 0 0.75rem;
+	margin: 0 0 0 0.125rem;
 }
 
 .sapMITBNoText .sapMITBFilter > .sapMITBTab {
@@ -434,7 +444,7 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 }
 
 .sapMITBAll:first-Child {
-	margin-left: 0;
+	margin-left: 0.75rem;
 }
 
 .sapMITBAll .sapMITBText {
