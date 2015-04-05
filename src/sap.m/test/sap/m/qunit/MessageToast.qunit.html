@@ -50,7 +50,7 @@
 				// arrange
 				var $MessageToast = jQuery(".sapMMessageToast").eq(0);
 
-				// assertions
+				// assert
 				ok($MessageToast.length, "The message toast HTML DIV element exist");
 				strictEqual($MessageToast[0].style.width, "15em", "Default MessageToast width is 15em");
 				strictEqual($MessageToast.css("visibility"), "visible", "After calling the sap.m.MessageToast.show(): the MessageToast is visible");
@@ -82,7 +82,7 @@
 					// act
 					sap.m.MessageToast._isFiniteInteger(vValue);
 
-					// assertions
+					// assert
 					ok(fnErrorSpy.calledOnce, '"duration" needs to be a finite positive nonzero integer, jQuery.sap.log.error() method must be called exactly once');
 
 					// cleanup
@@ -111,7 +111,7 @@
 				// act
 				sap.m.MessageToast._validateWidth("16");
 
-				// assertions
+				// assert
 				ok(fnErrorSpy.calledOnce, '"width" should be type of "sap.ui.core/CSSSize"');
 
 				// cleanup
@@ -131,7 +131,7 @@
 					// act
 					sap.m.MessageToast._validateDockPosition(vValue);
 
-					// assertions
+					// assert
 					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"' + vValue + '"' + ' should be type of "sap.ui.core.Popup.Dock"');
 
 					// cleanup
@@ -169,7 +169,7 @@
 					// act
 					sap.m.MessageToast._validateOf(vValue);
 
-					// assertions
+					// assert
 					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window');
 
 					// cleanup
@@ -198,7 +198,7 @@
 				// act
 				sap.m.MessageToast._validateOffset(50);
 
-				// assertions
+				// assert
 				ok(fnErrorSpy.calledOnce, '"offset" should be type of "string"');
 
 				// cleanup
@@ -218,7 +218,7 @@
 					// act
 					sap.m.MessageToast._validateCollision(vValue);
 
-					// assertions
+					// assert
 					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"collision" needs to be a single value “fit”, “flip” or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none"');
 
 					// cleanup
@@ -254,7 +254,7 @@
 					// act
 					sap.m.MessageToast._validateOnClose(vValue);
 
-					// assertions
+					// assert
 					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"onClose"' + ' should be a function or null');
 
 					// cleanup
@@ -279,7 +279,7 @@
 					// act
 					sap.m.MessageToast._validateAutoClose(vValue);
 
-					// assertions
+					// assert
 					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"autoClose"' + ' should be a boolean');
 
 					// cleanup
@@ -304,7 +304,7 @@
 					// act
 					sap.m.MessageToast._validateAnimationTimingFunction(vValue);
 
-					// assertions
+					// assert
 					strictEqual(fnErrorSpy.callCount, iNumberOfErrors, '"animationTimingFunction"' + ' should be a string, expected values: ' + ["ease", "linear", "ease-in", "ease-out", "ease-in-out"].toString());
 
 					// cleanup
@@ -349,7 +349,7 @@
 						closeOnBrowserNavigation: bCloseOnBrowserNavigation
 					});
 
-					// assertions
+					// assert
 					strictEqual(fnAddPopoverInstanceSpy.callCount, bCloseOnBrowserNavigation ? 1 : 0);
 
 					// cleanup
@@ -416,7 +416,7 @@
 
 					setTimeout(function() {
 
-						// assertions
+						// assert
 						ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
 						hasEventListeners(window, "resize", false);
 						hasEventListeners(document, "mousedown", false);
