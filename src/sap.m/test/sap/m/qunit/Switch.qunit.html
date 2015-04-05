@@ -344,7 +344,7 @@
 				oPage.getContent().forEach(function(oSwitch) {
 					var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-					// assertions
+					// assert
 					ok(oSwitch.$().length, "The switch container html div element exists");
 					ok(mDomRefs.$Swt.length, "The switch first-child html div element exists");
 					ok(mDomRefs.$SwtInner.length, "The switch first-child html div inner element exists");
@@ -404,7 +404,7 @@
 			function testSwitchON(oSwitch) {
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch first-child html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOn"), 'The switch first-child html element "must have" the css class "sapMSwtOn"');
@@ -434,7 +434,7 @@
 				// arrange
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwt"), 'The switch html element "must have" the css class "sapMSwt"');
 				ok(mDomRefs.$Swt.hasClass("sapMSwtOff"), 'The switch html element "must have" the css class "sapMSwtOff"');
@@ -457,7 +457,7 @@
 				// arrange
 				var mDomRefs = fnGetDomRefs(oSwitch.getId());
 
-				// assertions
+				// assert
 				if (oSwitch.getEnabled()) {
 					ok(!oSwitch.$().hasClass("sapMSwtContDisabled"), 'The switch container html element "must not have" the css class "sapMSwtContDisabled"');
 					ok(!mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must not have" the css class "sapMSwtDisabled"');
@@ -479,7 +479,7 @@
 				// arrange
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				testSwitchOFF(oSwitch7);
 			});
 
@@ -492,7 +492,7 @@
 				// arrange
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				testSwitchOFF(oSwitch7);
 				strictEqual(jQuery(oSwitch7.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute not set');
 			});
@@ -845,7 +845,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 				this.clock.tick(1000);
 
-				// assertion
+				// assert
 				strictEqual(oSwitch.getState(), true, "After the space key is pressed, the switch state must change");
 				strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
@@ -869,7 +869,7 @@
 				sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 				this.clock.tick(1000);
 
-				// assertion
+				// assert
 				strictEqual(oSwitch.getState(), false, "After the enter key is pressed, the switch state must change");
 				strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
