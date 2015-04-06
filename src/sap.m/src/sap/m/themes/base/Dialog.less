@@ -23,6 +23,7 @@
   animation-fill-mode: forwards;
   max-width: 100%;
   max-height: 100%;
+  min-height: 6rem;
   overflow: hidden;
   outline: none;
 }
@@ -321,16 +322,20 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
 
 /* Compact size */
 .sapUiSizeCompact {
-  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
+  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg,
+  & .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapMImg {
     width: 1.5rem;
     height: 1.5rem;
   }
-  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
+
+  &.sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon,
+  & .sapMDialog > header.sapMDialogTitle > .sapMBarMiddle > .sapMBarPH > .sapUiIcon {
     line-height: 1.5rem;
     height: 1.5rem;
     width: 1rem;
     font-size: 1rem;
   }
+
   .sapMDialogActions {
     /* footer with actions buttons */
     width: auto;
@@ -340,7 +345,9 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
   }
 
   &.sapMDialog > header:first-of-type.sapMHeader-CTX,
-  &.sapMDialog footer:last-of-type.sapMFooter-CTX {
+  &.sapMDialog > footer:last-of-type.sapMFooter-CTX,
+  & .sapMDialog > header:first-of-type.sapMHeader-CTX,
+  & .sapMDialog > footer:last-of-type.sapMFooter-CTX {
     height: 2.5rem;
 
     .sapMBarLeft,
