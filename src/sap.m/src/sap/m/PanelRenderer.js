@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.writeClasses();
-
+			oRm.writeAttribute("id", oControl.getId() + "-header");
 			// ARIA
 			oRm.write("role=\"heading\">");
 
