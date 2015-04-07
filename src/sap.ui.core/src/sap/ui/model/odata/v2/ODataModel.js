@@ -3053,7 +3053,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (oFunctionMetadata.parameter != null) {
 				jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
 					var matchingParams = jQuery.grep(oFunctionMetadata.parameter, function (oParameter) {
-						return oParameter.name === sParameterName && oParameter.mode === "In";
+						return oParameter.name === sParameterName && 
+								(!oParameter.mode || oParameter.mode === "In");
 					});
 					if (matchingParams != null && matchingParams.length > 0) {
 						mInputParams[sParameterName] = ODataUtils.formatValue(oParameterValue, matchingParams[0].type);
