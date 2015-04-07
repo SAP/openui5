@@ -429,6 +429,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 */
 	Dialog.prototype.open = function(){
 		var oPopup = this.oPopup;
+		// Set the initial focus to the dialog itself.
+		// The initial focus should be set because otherwise the first focusable element will be focused.
+		// This first element can be input or textarea which will trigger the keyboard to open.
+		// The focus will be change after the dialog is opened;
+		oPopup.setInitialFocusId(this.getId());
 
 		if (oPopup.isOpen()) {
 			return this;
