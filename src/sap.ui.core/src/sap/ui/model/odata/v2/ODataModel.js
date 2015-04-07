@@ -1321,6 +1321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var oData = this._getObject(sPath, oContext),
 		sKey,
 		oNewContext,
+		sBatchGroupId,
 		that = this;
 
 		if (!bReload) {
@@ -1344,7 +1345,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				if (sCustomParams) {
 					aParams.push(sCustomParams);
 				}
-
+				if (mParameters && mParameters.batchGroupId) {
+					sBatchGroupId = mParameters.batchGroupId;
+				}
 				var handleSuccess = function(oData) {
 					sKey = oData ? that._getKey(oData) : undefined;
 					if (sKey && oContext && bIsRelative) {
@@ -1371,7 +1374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 					fnCallBack(null); // error - notify to recreate contexts
 				};
-				this.read(sFullPath, {urlParameters: aParams,success: handleSuccess, error: handleError});
+				this.read(sFullPath, {batchGroupId: sBatchGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}

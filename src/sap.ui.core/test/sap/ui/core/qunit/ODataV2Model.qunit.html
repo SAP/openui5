@@ -35,6 +35,7 @@
 
 <!-- Test functions -->
 <script language="javascript">
+	sinon.config.useFakeTimers = false;
 	
 	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel")
 	
@@ -153,13 +154,10 @@
 					ok(true, 'Metadata loaded fired at model only');
 				} else {
 					ok(false, 'Metadata loaded fired at metadata object')
-					if (that.clock) that.clock.restore();
 				}
 				start();
 			});
-			if (that.clock) that.clock.tick(1);
 		});
-		if (that.clock) that.clock.tick(1);
 	});
 
 	asyncTest("metadata failed handling", function(){
@@ -181,7 +179,6 @@
 			start();
  		};
 		oModel.attachMetadataFailed(handleFailed);
-		if (that.clock) that.clock.tick(1);
 	});
 	
 	asyncTest("test oDataModel _loadData XML",function(){
@@ -696,6 +693,30 @@
 		}
 		
 		oTable.getBinding("rows").attachDataReceived(oHandler);
+	});
+	
+	asyncTest("test bindElement with batchGroupId", 2, function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setUseBatch(true);
+		oModel.setDeferredBatchGroups(["test"]);
+		sap.ui.getCore().setModel(oModel);
+		oLabel.bindElement("/Categories(2)", {batchGroupId:"test"});
+		var fnHandler = function() {
+			equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+			oLabel.setBindingContext(null);
+			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.unbindElement();
+			start();
+		}
+		oLabel.getElementBinding().attachChange(fnHandler);
+		
+		oModel.oMetadata.loaded().then(function() {	
+			oLabel.getElementBinding().refresh();
+			setTimeout(function() {
+				ok(oModel.mDeferredRequests['test'].requests.length === 2, "request deferred");
+				oModel.submitChanges("test");
+			}, 0);
+		});
 	});
 	
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
