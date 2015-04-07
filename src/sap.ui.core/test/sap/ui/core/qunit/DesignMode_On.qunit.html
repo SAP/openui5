@@ -60,30 +60,63 @@ test("Create a XMLView instance and check controller methods are replaced by emp
 	oView.destroy();
 });
 
-asyncTest("Get Design Time Metadata", 2, function() {
+jQuery.sap.require("example.designmode.Button");
+jQuery.sap.require("example.designmode.TextField");
+
+module("Design Time Metadata", {
+	teardown : function() {
+		example.designmode.Button.getMetadata()._oDesignTime = undefined;
+	}
+});
+
+var testDesignTimeMetadata = function(oButtonDesignTime, oTextFieldDesignTime) {
+	deepEqual(oButtonDesignTime, {
+		css: "Button.designtime.css",
+		icon: "Button.png",
+		name: "{name}",
+		description: "{description}"
+	});
 	
-	jQuery.sap.require("example.designmode.Button");
-	jQuery.sap.require("example.designmode.TextField");
+	deepEqual(oTextFieldDesignTime, {
+		css: "TextField.designtime.css",
+		icon: "TextField.png",
+		name: "{name}",
+		description: "{description}"
+	});
+};
+
+test("Get Design Time Metadata sync when it's not loaded yet", 1, function() {
+	var oButtonDesignTime = example.designmode.Button.getMetadata().getDesignTime();
+
+	strictEqual(oButtonDesignTime, undefined, "the designTime Metadata is not yet loaded");
 	
+});
+
+asyncTest("Get Design Time Metadata async", 2, function() {
+
 	Promise.all([example.designmode.Button.getMetadata().loadDesignTime(),
 		example.designmode.TextField.getMetadata().loadDesignTime()]).then(function(aValues) {
 	
 		var oButtonDesignTime = aValues[0];
 		var oTextFieldDesignTime = aValues[1];
 		
-		deepEqual(oButtonDesignTime, {
-			css: "Button.designtime.css",
-			icon: "Button.png",
-			name: "{name}",
-			description: "{description}"
-		});
+		testDesignTimeMetadata(oButtonDesignTime, oTextFieldDesignTime);
 		
-		deepEqual(oTextFieldDesignTime, {
-			css: "TextField.designtime.css",
-			icon: "TextField.png",
-			name: "{name}",
-			description: "{description}"
-		});
+		start();
+		
+	});
+	
+});
+
+asyncTest("Load Design Time Metadata async and the get it sync", 2, function() {
+
+	Promise.all([example.designmode.Button.getMetadata().loadDesignTime(),
+		example.designmode.TextField.getMetadata().loadDesignTime()]).then(function() {
+	
+		var oButtonDesignTime = example.designmode.Button.getMetadata().getDesignTime();
+		var oTextFieldDesignTime = example.designmode.TextField.getMetadata().getDesignTime();
+		
+		testDesignTimeMetadata(oButtonDesignTime, oTextFieldDesignTime);
 		
 		start();
 		
