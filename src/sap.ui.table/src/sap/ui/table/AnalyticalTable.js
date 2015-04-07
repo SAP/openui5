@@ -375,6 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\" style=\"max-width:"  + sMaxGroupHeaderWidth + "\">" + sGroupHeaderText + "</div>");
 				if (oContextInfo.expanded && !this.getSumOnTop()) {
 					$row.addClass("sapUiTableRowHidden");
+					$rowHdr.addClass("sapUiTableRowHidden");
 				}
 				$row.removeClass("sapUiAnalyticalTableSum");
 				$rowHdr.removeClass("sapUiAnalyticalTableSum");
