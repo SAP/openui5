@@ -968,26 +968,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			});
 
-			// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
-			oRealPage._setCustomHeaderInSC = oRealPage.setCustomHeader;
-			oRealPage.setCustomHeader = function(oHeader) {
-				this._setCustomHeaderInSC.apply(this, arguments);
-				if (oHeader && that._needShowMasterButton()) {
-					that._setMasterButton(oRealPage);
-				}
-				return this;
-			};
+			if (!sap.ui.Device.system.phone) {
+				// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
+				oRealPage._setCustomHeaderInSC = oRealPage.setCustomHeader;
+				oRealPage.setCustomHeader = function(oHeader) {
+					this._setCustomHeaderInSC.apply(this, arguments);
+					if (oHeader && that._needShowMasterButton()) {
+						that._setMasterButton(oRealPage);
+					}
+					return this;
+				};
 
-			oRealPage._setShowNavButtonInSC = oRealPage.setShowNavButton;
-			oRealPage.setShowNavButton = function(bShow) {
-				this._setShowNavButtonInSC.apply(this, arguments);
-				if (!bShow && that._needShowMasterButton()) {
-					that._setMasterButton(oRealPage);
-				} else {
-					that._removeMasterButton(oRealPage, true);
-				}
-				return this;
-			};
+				oRealPage._setShowNavButtonInSC = oRealPage.setShowNavButton;
+				oRealPage.setShowNavButton = function(bShow) {
+					this._setShowNavButtonInSC.apply(this, arguments);
+					if (!bShow && that._needShowMasterButton()) {
+						that._setMasterButton(oRealPage);
+					} else {
+						that._removeMasterButton(oRealPage, true);
+					}
+					return this;
+				};
+			}
 		}
 
 		// When the same NavContainer is used for both aggregations, calling "addPage()" will not do anything in case the oPage is already
@@ -1035,8 +1037,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SplitContainer.prototype.insertDetailPage = function(oPage, iIndex, bSuppressInvalidate) {
 		return this._insertPage(this._aDetailPages, "detailPages", oPage, iIndex, bSuppressInvalidate);
 	};
-	
+
 	SplitContainer.prototype._restoreMethodsInPage = function(oPage) {
+		if (sap.ui.Device.system.phone) {
+			// no need to restore the functions on phone
+			return;
+		}
+
 		var oRealPage = this._getRealPage(oPage);
 
 		if (oRealPage) {
@@ -1047,10 +1054,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oRealPage.setShowNavButton = oRealPage._setShowNavButtonInSC;
 			delete oRealPage._setShowNavButtonInSC;
 		}
-
-		return oRealPage;
 	};
-	
+
 	SplitContainer.prototype.removeDetailPage = function(oPage, bSuppressInvalidate) {
 		this._restoreMethodsInPage(oPage);
 

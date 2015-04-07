@@ -442,7 +442,15 @@
 				oSC.destroy();
 			});
 
-			test("Overwrite and restore of methods on page in detail area of SplitContainer", function() {
+			test("Overwrite and restore of methods on page in detail area of SplitContainer when not runs on phone", function() {
+				var oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
 				var oPage = new sap.m.Page(),
 					oSC = new sap.m.SplitContainer({
 						detailPages: oPage
@@ -455,6 +463,26 @@
 
 				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader should be restored");
 				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton should be restored");
+			});
+
+			test("Functions on page shouldn't be patched when runs on phone", function() {
+				var oSystem = {
+						desktop: false,
+						phone: true,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				var oPage = new sap.m.Page(),
+					oSC = new sap.m.SplitContainer({
+						detailPages: oPage
+					});
+
+				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader shouldn't be patched");
+				strictEqual(oPage.setShowNavButton, sap.m.Page.prototype.setShowNavButton, "setShowNavButton shouldn't be patched");
+
+				oSC.destroy();
 			});
 
 			test("Hide hamburger button when page shows back button", function() {
