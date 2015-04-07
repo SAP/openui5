@@ -566,7 +566,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		Calendar.prototype.onThemeChanged = function(){
+		Calendar.prototype.onThemeChanged = function() {
+
+			//If the calendar is not yet rendered we cannot perform the theme change operations, which include DOM manipulation
+			if (!this.getDomRef()) {
+				return;
+			}
 
 			var that = this;
 			this._bNamesLengthChecked = undefined;
