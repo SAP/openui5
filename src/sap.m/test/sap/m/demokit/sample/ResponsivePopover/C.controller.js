@@ -15,9 +15,10 @@ sap.ui.controller("sap.m.sample.ResponsivePopover.C", {
 	handleResponsivePopoverPress: function (oEvent) {
 		if (! this._oPopover) {
 			this._oPopover = sap.ui.xmlfragment("sap.m.sample.ResponsivePopover.Popover", this);
+			this._oPopover.bindElement("/ProductCollection/0");
+			this.getView().addDependent(this._oPopover);
 		}
-		this._oPopover.setModel(this.getView().getModel());
-		this._oPopover.bindElement("/ProductCollection/0");
+
 		this._oPopover.openBy(oEvent.getSource());
 	},
 
