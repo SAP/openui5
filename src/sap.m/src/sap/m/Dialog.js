@@ -1451,7 +1451,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		};
 
 		Dialog.prototype.onmousedown = function(e) {
-			if (this.getStretch()) {
+			if (this.getStretch() || (!this.getDraggable() && !this.getResizeable())) {
 				return;
 			}
 
@@ -1477,7 +1477,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 				}
 			};
 
-			if (isHeaderClicked(e.target)) {
+			if (isHeaderClicked(e.target) && this.getDraggable()) {
 				$w.on("mousemove.sapMDialog", function(e) {
 					fnMouseMoveHandler(function() {
 						that._bDisableRepositioning = true;
