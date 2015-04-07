@@ -133,6 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
 			 */
 			masterNavigate : {
+				allowPreventDefault : true,
 				parameters : {
 	
 					/**
@@ -277,6 +278,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
 			 */
 			detailNavigate : {
+				allowPreventDefault : true,
 				parameters : {
 	
 					/**
@@ -1573,10 +1575,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	SplitContainer.prototype._handleNavigationEvent = function(oEvent, bAfter, bMaster){
-		var sEventName = (bAfter ? "After" : "") + (bMaster ? "Master" : "Detail") + "Navigate";
+		var sEventName = (bAfter ? "After" : "") + (bMaster ? "Master" : "Detail") + "Navigate",
+			bContinue;
 		sEventName = sEventName.charAt(0).toLowerCase() + sEventName.slice(1);
 		
-		this.fireEvent(sEventName, oEvent.mParameters);
+		bContinue = this.fireEvent(sEventName, oEvent.mParameters, true);
+		if (!bContinue) {
+			oEvent.preventDefault();
+		}
 	};
 	
 	SplitContainer.prototype._handleResize = function() {
