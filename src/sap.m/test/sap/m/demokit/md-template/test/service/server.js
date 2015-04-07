@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return {
 
-		_sServiceUrl : "here/goes/your/serviceUrl/",
+		_sServiceUrl : "/here/goes/your/serviceUrl/",
 		_sModulePath : "sap.ui.demo.mdtemplate.service",
 
 		/**

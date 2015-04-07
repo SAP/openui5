@@ -27,6 +27,9 @@ sap.ui.define([
 		 */
 		init : function () {
 			var mConfig = this.getMetadata().getConfig();
+			
+			// create the metadata promise
+			this._createMetadataPromise(this.getModel());
 
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
@@ -39,7 +42,7 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
-
+			
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 		},
@@ -65,29 +68,10 @@ sap.ui.define([
 		 * @override
 		 */
 		createContent : function() {
-			// set the app data model since the app controller needs it, we create this model very early
-			var oAppModel = models.createODataModel({
-				urlParametersForEveryRequest: [
-					"sap-server",
-					"sap-host",
-					"sap-host-http",
-					"sap-client",
-					"sap-language"
-				],
-				url : this.getMetadata().getConfig().serviceUrl,
-				config: {
-					metadataUrlParams: {
-						"sap-documentation": "heading"
-					}
-				}
-			});
-
-			this.setModel(oAppModel);
-			this._createMetadataPromise(oAppModel);
-
 			// call the base component's createContent function
 			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
 			this._oRootView.addStyleClass(this.getCompactCozyClass());
+			
 			return this._oRootView;
 		},
 
@@ -116,12 +100,8 @@ sap.ui.define([
 		 */
 		_createMetadataPromise : function(oModel) {
 			this.oWhenMetadataIsLoaded = new Promise(function (fnResolve, fnReject) {
-				oModel.attachEventOnce("metadataLoaded", function() {
-					fnResolve();
-				});
-				oModel.attachEventOnce("metadataFailed", function() {
-					fnReject();
-				});
+				oModel.attachEventOnce("metadataLoaded", fnResolve);
+				oModel.attachEventOnce("metadataFailed", fnReject);
 			});
 		}
 
