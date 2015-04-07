@@ -22,13 +22,13 @@
 						}
 					}"
 				noDataText="{i18n>tableNoDataText}"
-				busyIndicatorDelay="{view>/tableBusyDelay}"
+				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 				growing="true"
 				growingScrollToLoad="true"
 				updateFinished="onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
-						<Label id="tableHeader" text="{view>/worklistTableTitle}"/>
+						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -67,11 +67,11 @@
 								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>shareSendEmail}" press="onShareEmailPress" />
 								<!-- we have to comment this out since ushell lib is not available in the openui5 layer currenlty
 								<footerbar:AddBookmarkButton id ="shareTile" appData="{
-									path: 'view>/shareSaveAsTileTitle',
+									path: 'worklistView>/shareSaveAsTileTitle',
 									formatter: 'sap.ui.demo.worklist.model.formatter.shareTileData'
 								}"/>
 								<footerbar:JamShareButton id ="shareJam" jamData="{
-									path: 'view>/shareOnJamTitle',
+									path: 'worklistView>/shareOnJamTitle',
 									formatter: 'sap.ui.demo.worklist.model.formatter.shareJamData'
 								}"/> -->
 							</buttons>

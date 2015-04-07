@@ -7,9 +7,10 @@ sap.ui.define([
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/masterdetail/model/models",
 		"sap/ui/demo/masterdetail/controller/ListSelector",
-		"sap/ui/demo/masterdetail/controller/BusyHandler",
-		"sap/ui/demo/masterdetail/controller/ErrorHandler"
-	], function (UIComponent, ResourceModel, models, ListSelector, BusyHandler, ErrorHandler) {
+		"sap/ui/demo/masterdetail/controller/ErrorHandler",
+		"sap/ui/demo/masterdetail/model/formatter",
+		"sap/ui/demo/masterdetail/model/grouper"
+], function (UIComponent, ResourceModel, models, ListSelector, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.masterdetail.Component", {
@@ -124,12 +125,7 @@ sap.ui.define([
 			// call the base component's init function and create the App view
 			UIComponent.prototype.init.apply(this, arguments);
 
-			var oRootControl = this.getAggregation("rootControl").addStyleClass(this.getCompactCozyClass());
-			this._oRootView = oRootControl;
-
-			// initialize the busy handler with the component
-			this._oBusyHandler = new BusyHandler(this);
-
+			this._oRootView = this.getAggregation("rootControl").addStyleClass(this.getCompactCozyClass());
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
@@ -137,13 +133,12 @@ sap.ui.define([
 
 		/**
 		 * The component is destroyed by UI5 automatically.
-		 * In this method, the ListSelector and BusyHandler are destroyed.
+		 * In this method, the ListSelector and ErrorHandler are destroyed.
 		 * @public
 		 * @override
 		 */
 		destroy : function () {
 			this.oListSelector.destroy();
-			this._oBusyHandler.destroy();
 			this._oErrorHandler.destroy();
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
@@ -151,6 +146,7 @@ sap.ui.define([
 
 		/**
 		 * This method can be called to determine whether the sapUiSizeCompact design mode class should be set, which influences the size appearance of some controls.
+		 * @return {string} the currently active 'cozy' mode class
 		 * @public
 		 */
 		getCompactCozyClass : function() { // in 1.28 "Cozy" mode class does not exist yet, but keep the method name in sync with 1.30

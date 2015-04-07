@@ -1,16 +1,12 @@
 sap.ui.define(
-	[
-		"sap/ui/model/odata/v2/ODataModel",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/thirdparty/URI"
-	], function (ODataModel, JSONModel, URI) {
+	[], function () {
 		"use strict";
 
 		return {
 			/**
 			 * Will wait until there is data available in the model, for the elementBinding given.
 			 *
-			 * @param oElementBinding the element binding that should contain the data
+			 * @param {sap.ui.core.Binding} oElementBinding the element binding that should contain the data
 			 * @returns {Window.Promise} Gets resolved if the data is already on the client or when the data has been requested from the server. Gets rejected when there was no data on the server.
 			 */
 			whenThereIsDataForTheElementBinding: function (oElementBinding) {

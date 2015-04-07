@@ -3,7 +3,7 @@
 
 sap.ui.require(
 	[
-		'sap/ui/test/Opa5'
+		"sap/ui/test/Opa5"
 	],
 	function (Opa5) {
 		"use strict";
@@ -54,6 +54,7 @@ sap.ui.require(
 			});
 
 			//Actions
+			When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 			When.onTheNotFoundPage.iWaitUntilISeeObjectNotFoundPage().
 				and.iPressTheObjectNotFoundShowWorklistLink();
 
@@ -68,6 +69,7 @@ sap.ui.require(
 			});
 
 			//Actions
+			When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 			When.onTheNotFoundPage.iWaitUntilISeeResourceNotFoundPage().
 				and.iPressTheNotFoundShowWorklistLink();
 

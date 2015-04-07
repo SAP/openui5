@@ -1,6 +1,10 @@
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
-		'sap/ui/base/Object',
-		'sap/m/MessageBox'
+		"sap/ui/base/Object",
+		"sap/m/MessageBox"
 	], function (Object, MessageBox) {
 	"use strict";
 
@@ -64,7 +68,7 @@ sap.ui.define([
 					styleClass: this._oComponent.getCompactCozyClass(),
 					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if(sAction === MessageBox.Action.RETRY) {
+						if (sAction === MessageBox.Action.RETRY) {
 							this._oModel.refreshMetadata();
 						}
 					}.bind(this)

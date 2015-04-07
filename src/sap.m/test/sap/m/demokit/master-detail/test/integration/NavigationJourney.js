@@ -1,10 +1,11 @@
-﻿/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
-
+﻿/*global opaTest*/
+//declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.require(
 [
 	"sap/ui/test/Opa5"
 ],
 function (Opa5) {
+	"use strict";
 
 	QUnit.module("Desktop navigation");
 
@@ -49,7 +50,7 @@ function (Opa5) {
 			and.iShouldSeeTheObjectLineItemsList().
 			and.theLineItemsListShouldHave4Entries().
 			and.theLineItemsHeaderShouldDisplay4Entries().
-			and.theFirstLineItemHasIDLineItemID_1().
+			and.theFirstLineItemHasIDLineItemID1().
 			and.iTeardownMyAppFrame();
 	});
 

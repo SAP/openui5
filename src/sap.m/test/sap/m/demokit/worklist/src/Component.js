@@ -137,6 +137,7 @@ sap.ui.define([
 
 		/**
 		 * This method can be called to determine whether the sapUiSizeCompact design mode class should be set, which influences the size appearance of some controls.
+		 * @return {string}
 		 * @public
 		 */
 		getCompactCozyClass : function() { // in 1.28 "Cozy" mode class does not exist yet, but keep the method name in sync with 1.30
