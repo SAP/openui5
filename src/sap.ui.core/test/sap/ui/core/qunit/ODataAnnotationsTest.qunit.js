@@ -1,6 +1,32 @@
 /* global module start test asyncTest expect ok equal deepEqual */
 
-sinon.config.useFakeTimers = false;
+
+/**
+ * Test-Function to be used in place of deepEquals which only tests for the existence of the given
+ * values, not the absence of others.
+ * 
+ * @param {object} oValue - The value to be tested
+ * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
+ * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
+ * @returns {void}
+ */
+function deepContains(oValue, oExpected, sMessage) {
+	for (var sKey in oExpected) {
+		ok(typeof oExpected[sKey] === typeof oValue[sKey], sMessage + "/" + sKey + " have same type");
+		
+		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
+			equal(oExpected[sKey].length, oValue[sKey].length, sMessage + "/" + sKey + " length matches");
+		}
+		
+		if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+			// Go deeper
+			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+		} else {
+			// Compare directly
+			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
+		}
+	}
+}
 
 /* eslint-disable no-unused-vars */
 function runODataAnnotationTests() {
@@ -176,6 +202,30 @@ function runODataAnnotationTests() {
 		"Alias Replacement": {
 			service          : "fakeService://testdata/odata/sapdata01/",
 			annotations      : "fakeService://testdata/odata/Aliases.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},		
+		"DynamicExpressions": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/DynamicExpressions.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"DynamicExpressions2": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/DynamicExpressions2.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"CollectionsWithSimpleValues": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/collections-with-simple-values.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"Simple Values 2": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/simple-values-2.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
 		},
@@ -3325,5 +3375,172 @@ function runODataAnnotationTests() {
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"], "Second Entry is available.");
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "Second Entry value is available.");
 		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "@internal.ui5.test.Value", "Second Entry value is correct.");
+	});
+	
+	
+	
+	test("DynamicExpressions", function() {
+		expect(15);
+
+		var mTest = mAdditionalTestsServices["DynamicExpressions"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+		ok(!!oAnnotations, "Annotations are available.");
+		
+		ok(!!oAnnotations["DynamicExpressions"], "Annotation target is available");
+		ok(!!oAnnotations["DynamicExpressions"]["org.example.person.Gender"], "Annotation term is available");
+		
+		var mValue = oAnnotations["DynamicExpressions"]["org.example.person.Gender"];
+		var mExpected = {
+			"If" : [
+				{ "Path": "IsFemale" },
+				{ "String": "Female" },
+				{ "String": "Male" }
+			]
+		};
+		deepContains(mValue, mExpected, "Value is correct: DynamicExpressions/org.example.person.Gender");
+	});
+
+	test("DynamicExpressions 2", function() {
+		expect(56);
+
+		var mTest = mAdditionalTestsServices["DynamicExpressions2"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+		ok(!!oAnnotations, "Annotations are available.");
+		
+		ok(!!oAnnotations["DynamicExpressions2"], "Annotation target is available");
+		ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
+		ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"], "Annotation value is available");
+		
+		var mValue = oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"];
+		var mExpected = {
+			"And": [{
+				"Or":[{
+					"Eq":[{
+						"Lt":[{
+							"Not":{
+								"Path":"p1"
+							}
+						}, {
+							"Path":"p2"
+						}]
+					}, {
+						"Path":"p3"
+					}]
+				}, {
+					"Gt": [{
+						"Path":"p4"
+					}, {
+						"Path":"p5"
+					}]
+				}]
+			}, {
+				"Ne": [{
+					"Ge":[{
+						"Path":"p6"
+					}, {
+						"Path":"p7"
+					}]
+				}, {
+					"Le":[{
+						"Path":"p8"
+					},{
+						"Path":"p9"
+					}]
+				}]
+			}]
+		};
+		
+		deepContains(mValue, mExpected, "Value is correct: DynamicExpressions2/com.sap.vocabularies.Test.v1.Data/Value");
+		
+		
+		
+	});
+
+	test("CollectionsWithSimpleValues", function() {
+		expect(14);
+
+		var mTest = mAdditionalTestsServices["CollectionsWithSimpleValues"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+		ok(!!oAnnotations, "Annotations are available.");
+		
+		ok(!!oAnnotations["CollectionsWithSimpleValues"], "Annotation target is available");
+		ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
+		ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"]["Collection"], "Annotation collection is available");
+
+		var mValue = oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"]["Collection"];
+		var mExpected = [
+			{ "String": "String01" },
+			{ "String": "String02" },
+			{ "String": "String03" }
+		];
+		deepContains(mValue, mExpected, "Value is correct: CollectionsWithSimpleValues/com.sap.vocabularies.Test.v1.Data");
+	});
+	
+	test("Multiple Simple Values", function() {
+		expect(9);
+		
+		var mTest = mAdditionalTestsServices["Simple Values 2"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+		ok(!!oAnnotations, "Annotations are available.");
+		
+		deepContains(
+			oAnnotations["SimpleValues"],
+			{
+				"com.sap.vocabularies.Test.v1.Data": {
+					"String": "String03",
+					"Path": "Path02",
+					"Int": "4"
+				}
+			},
+			"Multiple String values as array: SimpleValues"
+		);
 	});
 }

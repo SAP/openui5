@@ -40,6 +40,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		NavigationPropertyPath: true,
 		AnnotationPath: true
 	};
+	
+	var mMultipleArgumentDynamicExpressions = {
+		And: true,
+		Or: true,
+		// Not: true,
+		Eq: true,
+		Ne: true,
+		Gt: true,
+		Ge: true,
+		Lt: true,
+		Le: true,
+		If: true,
+		Collection: true
+	};
+	
+	
 
 	/**
 	 * @param {string|string[]} aAnnotationURI The annotation-URL or an array of URLS that should be parsed and merged
@@ -1093,7 +1109,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							} else {
 								vValue = this.getPropertyValueAttributes(oChildNode, mAlias);
 							}
-							vPropertyValue[oChildNode.nodeName] = vValue;
+							
+							var sNodeName = oChildNode.nodeName;
+							var sParentName = oChildNode.parentNode.nodeName;
+							
+							
+							// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+							// their order within the document
+							if (mMultipleArgumentDynamicExpressions[sParentName]) {
+								if (!Array.isArray(vPropertyValue)) {
+									vPropertyValue = [];
+								}
+								
+								var mValue = {};
+								mValue[sNodeName] = vValue;
+								vPropertyValue.push(mValue);
+							} else {
+								if (vPropertyValue[sNodeName]) {
+									jQuery.sap.log.warning(
+										"Annotation contained multiple " + sNodeName + " values. Only the last " +
+										"one will be stored"
+									);
+								}
+								vPropertyValue[sNodeName] = vValue;
+							}
+							
 						}
 
 						if (oChildNodes.length === 0 && oDocumentNode.nodeName in mTextNodeWhitelist) {
