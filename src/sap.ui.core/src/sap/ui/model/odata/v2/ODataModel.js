@@ -889,7 +889,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @returns {object} oEventInfo The EventInfo object
 	 * @private
 	 */
-	ODataModel.prototype._createEventInfo = function(oRequest, vResponse, aBatchRequests) {
+	ODataModel.prototype._createEventInfo = function(oRequest, oResponse, aBatchRequests) {
 		var oEventInfo = {};
 
 		oEventInfo.url = oRequest.requestUri;
@@ -948,23 +948,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				}
 			}
 		}
-		if (vResponse) {
+		if (oResponse) {
 			oEventInfo.response = {};
 			oEventInfo.success = true;
-			if (vResponse.message) {
-				oEventInfo.response.message = vResponse.message;
+			if (oResponse.message) {
+				oEventInfo.response.message = oResponse.message;
 				oEventInfo.success = false;
 			}
-			if (vResponse.response) {
-				// vResponse is response object
-				vResponse = vResponse.response;
+			if (oResponse.response) {
+				// oResponse is response object
+				oResponse = oResponse.response;
 			}
 			//in case of aborted requests there is no further info
-			if (vResponse && vResponse.statusCode) {
-				oEventInfo.response.headers = vResponse.headers;
-				oEventInfo.response.statusCode = vResponse.statusCode;
-				oEventInfo.response.statusText = vResponse.statusText;
-				oEventInfo.response.responseText = vResponse.body !== undefined ? vResponse.body : vResponse.responseText;
+			if (oResponse && oResponse.statusCode) {
+				oEventInfo.response.headers = oResponse.headers;
+				oEventInfo.response.statusCode = oResponse.statusCode;
+				oEventInfo.response.statusText = oResponse.statusText;
+				oEventInfo.response.responseText = oResponse.body !== undefined ? oResponse.body : oResponse.responseText;
 			}
 		}
 		oEventInfo.ID = oRequest.requestID;
@@ -1156,7 +1156,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * This will call initialize on all bindings. This is done if metadata is loaded asynchronously.
 	 *
 	 * @private
-	 * @private
 	 */
 	ODataModel.prototype.initialize = function() {
 		// Call initialize on all bindings in case metadata was not available when they were created
@@ -1171,9 +1170,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * This will check all bindings for updated data and update the controls if data has been changed.
 	 *
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
-	 * @param {string} [sBatchGroupId] The batchGroupId
 	 * @param {boolean} [bRemoveData=false] If set to true then the model data will be removed/cleared.
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned.
+	 * @param {string} [sBatchGroupId] The batchGroupId
 	 *
 	 * @public
 	 */
