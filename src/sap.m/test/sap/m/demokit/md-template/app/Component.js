@@ -17,7 +17,69 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
 
 		metadata : {
-			manifest: "json"
+			"rootView": "sap.ui.demo.mdtemplate.view.App",
+			"dependencies": {
+				"minUI5Version": "1.28.0",
+				"libs": [ "sap.ui.core", "sap.m", "sap.ui.layout" ]
+			},
+
+			"config": {
+				"i18nBundle": "sap.ui.demo.mdtemplate.i18n.i18n",
+				"serviceUrl": "here/goes/your/serviceUrl/"
+			},
+
+			"routing": {
+				"config": {
+					"routerClass": "sap.m.routing.Router",
+					"viewType": "XML",
+					"viewPath": "sap.ui.demo.mdtemplate.view",
+					"controlId": "idAppControl",
+					"controlAggregation": "detailPages",
+					"bypassed": {
+						"target": ["master", "notFound"]
+					}
+				},
+				"routes": [
+					{
+						"pattern": "",
+						"name": "master",
+						"target": ["object", "master"]
+					},
+					{
+						"pattern": "object/{objectId}",
+						"name": "object",
+						"target": ["master", "object"]
+					}
+				],
+				"targets": {
+					"master": {
+						"viewName": "Master",
+						"viewLevel": 1,
+						"viewId": "master",
+						"controlAggregation": "masterPages"
+					},
+					"object": {
+						"viewName": "Detail",
+						"viewId": "detail",
+						"viewLevel": 2
+					},
+					"detailObjectNotFound": {
+						"viewName": "DetailObjectNotFound",
+						"viewId": "detailObjectNotFound",
+						"viewLevel": 3
+					},
+					"detailNoObjectsAvailable": {
+						"viewName": "DetailNoObjectsAvailable",
+						"viewId": "detailNoObjectsAvailable",
+						"viewLevel": 3
+					},
+					"notFound": {
+						"viewName": "NotFound",
+						"viewId": "notFound",
+						"viewLevel": 3
+					}
+				}
+			}
 		},
 
 		/**
