@@ -2448,7 +2448,56 @@
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
+	asyncTest("test oDataModel callFunction: Parameter without mode", function() {
+		var iCount = 0;
+		var oContext;
+		
+		var fnTest = function(){
+			oModel.callFunction("/SalesOrder_InvoiceCreated",{method:"POST",urlParameters:{"SalesOrderID":"test"}})
+		};
+		
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'");
+			start();	
+		});
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
 	
+	asyncTest("test oDataModel callFunction: Parameter with mode", function() {
+		var iCount = 0;
+		var oContext;
+		
+		var fnTest = function(){
+			oModel.callFunction("/SalesOrder_Confirm",{method:"POST",urlParameters:{"SalesOrderID":"test"}})
+		};
+		
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'");
+			start();	
+		});
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
+	
+	asyncTest("test oDataModel callFunction: invalid parameter", function() {
+		var iCount = 0;
+		var oContext;
+		
+		var fnTest = function(){
+			oModel.callFunction("/SalesOrder_Confirm",{method:"POST",urlParameters:{"Test":"test"}})
+		};
+		
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm");
+			start();	
+		});
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
 	</script>
 
 </head>

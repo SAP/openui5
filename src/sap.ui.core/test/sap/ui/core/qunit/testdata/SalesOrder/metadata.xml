@@ -842,7 +842,7 @@
 				<FunctionImport Name="SalesOrder_InvoiceCreated"
 					ReturnType="gwsample_basic.SalesOrder" EntitySet="SalesOrderSet"
 					m:HttpMethod="POST" sap:action-for="gwsample_basic.SalesOrder">
-					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
+					<Parameter Name="SalesOrderID" Type="Edm.String"
 						MaxLength="10" />
 				</FunctionImport>
 				<FunctionImport Name="SalesOrder_GoodsIssueCreated"
