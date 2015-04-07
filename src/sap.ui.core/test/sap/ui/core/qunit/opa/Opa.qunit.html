@@ -88,14 +88,14 @@
 		strictEqual(oSecondSuccess.callCount, 1, "Second did succeed");
 		strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
-	
+
 	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
 		// System under Test
 		var oOpa = new Opa();
 		oOpa.extendConfig({
 			pollingInterval : 1
 		});
-		
+
 		// Arrange
 		var	oSuccess_1_1 = this.spy(),
 			oSuccess_1_2_1 = this.spy(),
@@ -124,9 +124,9 @@
 			fnSuccessSpy_1 = this.spy(fnSuccess_1),
 			oSuccess_2 = this.spy(),
 			oDoneSpy = this.spy();
-		
-			
-			
+
+
+
 		// Act
 		oOpa.waitFor({
 			_debugID : "1",
@@ -137,9 +137,9 @@
 			_debugID : "2",
 			success : oSuccess_2
 		}).done(oDoneSpy);
-		
+
 		sap.ui.test.Opa.emptyQueue();
-		
+
 		//Ensure all timers have been triggered
 		this.clock.tick(100);
 
@@ -226,7 +226,7 @@
 				oSuccessSpy = this.spy(),
 				oDoneSpy = this.spy();
 		jQuery.sap.log.error = this.spy();
-		
+
 		// System under Test
 		var oOpa = new Opa();
 
@@ -246,17 +246,33 @@
 			strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
 			strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
 			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
-			
+
 			start();
 		}).done(oDoneSpy);
 
 	});
 
+	function theCurrentBrowserSupporstStacktraces () {
+		if (sap.ui.Device.browser.phantomJS) {
+			return false;
+		}
+
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+			return false;
+		}
+
+		if (sap.ui.Device.browser.safari) {
+			return false;
+		}
+
+		return true;
+	}
+
 	asyncTest("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction() {
 		// System under Test
 		var oOpa = new Opa();
 		jQuery.sap.log.error = this.spy();
-		
+
 		// Act
 		oOpa.waitFor({
 			check : function () {
@@ -270,12 +286,8 @@
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
 
-			// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-			if (!sap.ui.Device.browser.phantomJS) {
-				// for IE 9 stacktrace does not work yet
-				if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
-					ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
-				}
+			if (theCurrentBrowserSupporstStacktraces()) {
+				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
 			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
@@ -284,14 +296,14 @@
 		});
 
 	});
-	
+
 	asyncTest("Reject message stack for additional waitFor declared in the success handler contains original call", function thisIsTheMainTest() {
 		// System under Test
 		var oOpa = new Opa();
 		oOpa.extendConfig({
 			pollingInterval : 1
 		});
-		
+
 		function thisIsTheSuccessHandler(){
 			oOpa.waitFor({
 				check : function () {
@@ -301,7 +313,7 @@
 			});
 
 		}
-			
+
 		oOpa.waitFor({
 			check : function () {
 				return true;
@@ -309,20 +321,17 @@
 			success : thisIsTheSuccessHandler
 		});
 
-		
+
 		oOpa.emptyQueue().fail(function (oOptions) {
 			ok(true, 0, "Promise got rejected");
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
 
-			// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-			if (!sap.ui.Device.browser.phantomJS) {
-				// for IE 9 stacktrace does not work yet
-				if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
-					ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
-					ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
-				}
+			if (theCurrentBrowserSupporstStacktraces()) {
+				ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
+				ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
 			}
+
 			start();
 		});
 	});
