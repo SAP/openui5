@@ -5,8 +5,9 @@
 sap.ui.define([
 		"sap/ui/demo/mdtemplate/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/Device"
-	], function (BaseController, JSONModel, Device) {
+		"sap/ui/Device",
+		"sap/ui/demo/mdtemplate/model/promise"
+	], function (BaseController, JSONModel, Device, promise) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.mdtemplate.controller.Detail", {
@@ -92,7 +93,7 @@ sap.ui.define([
 		_bindView : function (sObjectPath) {
 			var oView = this.getView().bindElement(sObjectPath, {expand : "LineItems"});
 
-			this.getModel().whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
+			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
 					this._setViewBusy(false);
 					this.getOwnerComponent().oListSelector.selectAListItem(sPath);
