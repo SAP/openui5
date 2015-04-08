@@ -14,35 +14,131 @@ sap.ui.require([
 	module("sap.ui.model.odata._AnnotationHelperExpression");
 
 	//*********************************************************************************************
-	test("constant: no settings", function () {
-		var oInterface = {},
-			oPathValue = {
-				path: "/my/path",
-				value: "foo"
-			},
-			oResult;
+	[
+		{constant: "Bool", type: "Edm.Boolean",
+			values: ["true", "false", "TRUE", "False"]},
+		{constant: "Bool", error: true,
+			values: ["foo", "not false", "trueish"]},
 
-		oResult = Expression.constant(oInterface, oPathValue);
-		deepEqual(oResult, {
-			result: "constant",
-			value: oPathValue.value,
-			type: "Edm.String"
-		});
-	});
+		{constant: "Date", type: "Edm.Date",
+			values: ["2000-01-01", "-0006-12-24"]},
+		{constant: "Date", error: true,
+			values: ["20000101", "2000-01-01T16:00:00Z",
+				"2000-00-01", "2000-13-01", "2000-01-00", "2000-01-32", "-6-12-24"]},
 
-	//*********************************************************************************************
-	test("constant: bindTexts", function () {
-		var oInterface = {},
-			oPathValue = {path: "/my/path", value: "foo"};
+		{constant: "DateTimeOffset", type: "Edm.DateTimeOffset",
+			values: [
+				"2000-01-01T16:00Z",
+				"2000-01-01t16:00:00z",
+				"2000-01-01T16:00:00.0Z",
+				"2000-01-01T16:00:00.000Z",
+				"2000-01-02T01:00:00.000+09:00",
+				"2000-01-01T16:00:00.000+14:00", // http://www.w3.org/TR/xmlschema11-2/#nt-tzFrag
+				"2000-01-01T16:00:00.000456789012Z",
+				"-0006-12-24T00:00:00Z"
+			]},
+		{constant: "DateTimeOffset", error: true,
+			values: [
+				"2000-01-01",
+				"2000-01-32T16:00:00.000Z",
+				"2000-01-01T16:00:00.1234567890123Z",
+				"2000-01-01T16:00:00.000+14:01", // http://www.w3.org/TR/xmlschema11-2/#nt-tzFrag
+				"2000-01-01T16:00:00.000+00:60",
+				"2000-01-01T16:00:00.000~00:00",
+				"2000-01-01T16:00:00.Z",
+				"-6-12-24T16:00:00Z"]},
 
-		oInterface.getSetting = function (sName) {
-			strictEqual(sName, "bindTexts");
-			return true;
-		};
+		{constant: "Decimal", type: "Edm.Decimal", values: ["+1.1", "+123.123", "-123.1", "+123.1",
+			"1.123", "-1.123", "123.1", "1", "-123"]},
+		{constant: "Decimal", error: true, values: ["3,14", "1e+12", "INF", "-INF", "NaN"]},
 
-		deepEqual(Expression.constant(oInterface, oPathValue), {
-			result: "binding",
-			value: "/##" + oPathValue.path
+		{constant: "Float", type: "Edm.Double",
+			values: ["1.23e4", "31415.926535", "0.1E-3", "INF", "-INF", "NaN"]},
+		{constant: "Float", error: true,
+			values: ["foo", "1a", "1e", "3,23", "0.1e-", "Inf", "-iNF", "NAN"]},
+
+		{constant: "Guid", type: "Edm.Guid", values: ["12345678-ABCD-EFab-cdef-123456789012"]},
+		{constant: "Guid", error: true, values: [
+				"123g5678-1234-1234-1234-123456789abc",
+				"12345-1234-1234-1234-123456789abc",
+				"12_45678-1234-1234-1234-123456789abc"]},
+
+		{constant: "Int", type: "Edm.Int64", values: ["-1234567890"]},
+		{constant: "Int", error: true,
+			values: ["INF", "-INF", "NaN", "12345678901234567890", "1.0", "1a", "1e3"]},
+
+		{constant: "String", type: "Edm.String", values: ["", "foo"]},
+
+		{constant: "TimeOfDay", type: "Edm.TimeOfDay",
+			values: ["23:59", "23:59:59", "23:59:59.1", "23:59:59.123",
+				"23:59:59.123456789012"]},
+		{constant: "TimeOfDay", error: true,
+			values: ["23", "23:60", "23:59:60", "24:00:00", "23:59:59.1234567890123"]},
+	].forEach(function (oFixture) {
+		oFixture.values.forEach(function (sConstantValue, i) {
+			var oValue = {};
+
+			function testIt(oRawValue, sProperty, sConstantValue) {
+				test("14.4.x Constant Expression: " + JSON.stringify(oRawValue), function () {
+					var oInterface = {},
+						oPathValue = {
+							path: "/my/path",
+							value: oRawValue
+						},
+						oConstantPathValue = {
+							path: "/my/path/" + sProperty,
+							value: oRawValue[sProperty]
+						},
+						oError = new SyntaxError(),
+						oExpectedResult,
+						oResult;
+
+					if (oFixture.error) {
+						this.mock(Basics).expects("error")
+							.withExactArgs(oConstantPathValue, "Expected " + oFixture.constant
+								+ " value but instead saw '" + oConstantPathValue.value + "'")
+							.throws(oError);
+
+						throws(function () {
+							Expression.expression(oInterface, oPathValue, false);
+						}, oError);
+					} else {
+						this.mock(Basics).expects("error").never();
+
+						oExpectedResult = {
+							result: "constant",
+							value: sConstantValue,
+							type: oFixture.type
+						};
+
+						//********** first test with bindTexts: false
+						oResult = Expression.expression(oInterface, oPathValue, false);
+
+						deepEqual(oResult, oExpectedResult, "bindTexts: false");
+
+						//********** second test with bindTexts: true
+						oInterface.getSetting = function (sName) {
+							strictEqual(sName, "bindTexts");
+							return true;
+						};
+
+						oResult = Expression.expression(oInterface, oPathValue, false);
+
+						if (oFixture.constant === "String") {
+							deepEqual(oResult, {
+								result: "binding",
+								value: "/##" + oConstantPathValue.path
+							}, "bindTexts");
+						} else {
+							deepEqual(oResult, oExpectedResult, "bindTexts: true");
+						}
+					}
+				});
+			}
+
+			oValue[oFixture.constant] = sConstantValue;
+			testIt(oValue, oFixture.constant, sConstantValue);
+			testIt({Type: oFixture.constant, Value: sConstantValue}, "Value", sConstantValue);
 		});
 	});
 
@@ -232,34 +328,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{property: "String", value: {String: "foo"}},
-		{property: "Value", value: {Type: "String", Value: "foo"}}
-	].forEach(function (oFixture) {
-		test("expression: " + JSON.stringify(oFixture.value), function () {
-			var oInterface = {},
-				oPathValue = {value: oFixture.value},
-				oSubPathValue = {},
-				oResult = {},
-				oBasics =  this.mock(Basics);
-
-			oBasics.expects("expectType").withExactArgs(oPathValue, "object");
-			if (oFixture.value.Type) {
-				oBasics.expects("property")
-					.withExactArgs(oPathValue, "Type", "string").returns("String");
-			}
-			oBasics.expects("descend")
-				.withExactArgs(oPathValue, oFixture.property)
-				.returns(oSubPathValue);
-			this.mock(Expression).expects("constant")
-				.withExactArgs(oInterface, oSubPathValue)
-				.returns(oResult);
-
-			strictEqual(Expression.expression(oInterface, oPathValue), oResult);
-		});
-	});
-
-	//*********************************************************************************************
-	[
 		{property: "Path", value: {Path: "foo"}},
 		{property: "Value", value: {Type: "Path", Value: "foo"}}
 	].forEach(function (oFixture) {
@@ -318,7 +386,7 @@ sap.ui.require([
 		var oPathValue = {value: {}};
 
 		this.mock(Basics).expects("error")
-			.withExactArgs(oPathValue, "Expected 'Apply', 'Path' or 'String'");
+			.withExactArgs(oPathValue, "Unsupported OData expression");
 
 		Expression.expression({}, oPathValue, false);
 	});

@@ -123,6 +123,29 @@ sap.ui.require([
 						</Apply>\
 					</PropertyValue>\
 				</Record>\
+				<!-- concat w/ constants -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<Apply Function="odata.concat">\
+							<Bool>true</Bool>\
+							<String>|</String>\
+							<Date>2015-03-24</Date>\
+							<String>|</String>\
+							<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+							<String>|</String>\
+							<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+							<String>|</String>\
+							<Float>-7.4503e-36</Float>\
+							<String>|</String>\
+							<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+							<String>|</String>\
+							<!-- Number.MAX_SAFE_INTEGER + 1 -->\
+							<Int>9007199254740992</Int>\
+							<String>|</String>\
+							<TimeOfDay>13:57:06</TimeOfDay>\
+						</Apply>\
+					</PropertyValue>\
+				</Record>\
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
@@ -675,6 +698,26 @@ sap.ui.require([
 
 			strictEqual(formatAndParse(oRawValue, oCurrentContext),
 				"Unsupported: " + Basics.toErrorString(oRawValue));
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3.1.1 Function odata.concat: various constants", function () {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/3/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+					"true|" +
+					"2015-03-24|" +
+					"2015-03-24T14:03:27Z|" +
+					"-123456789012345678901234567890.1234567890|" +
+					"-7.4503e-36|" +
+					"0050568D-393C-1ED4-9D97-E65F0F3FCC23|" +
+					"9007199254740992|" +
+					"13:57:06");
 		});
 	});
 
