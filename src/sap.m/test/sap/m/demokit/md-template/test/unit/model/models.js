@@ -21,8 +21,7 @@ sap.ui.require(
 			this.oDeviceModel = models.createDeviceModel();
 
 			// Assert
-			assert.strictEqual(this.oDeviceModel.getData().isPhone, bIsPhone, "IsPhone property is correct");
-			assert.strictEqual(this.oDeviceModel.getData().isNoPhone, !bIsPhone, "IsNoPhone property is correct");
+			assert.strictEqual(this.oDeviceModel.getData().system.phone, bIsPhone, "IsPhone property is correct");
 		}
 
 		QUnit.test("Should initialize a device model for desktop", function (assert) {
@@ -41,8 +40,7 @@ sap.ui.require(
 			this.oDeviceModel =  models.createDeviceModel();
 
 			// Assert
-			assert.strictEqual(this.oDeviceModel.getData().isTouch, bIsTouch, "IsTouch property is correct");
-			assert.strictEqual(this.oDeviceModel.getData().isNoTouch, !bIsTouch, "IsNoTouch property is correct");
+			assert.strictEqual(this.oDeviceModel.getData().support.touch, bIsTouch, "IsTouch property is correct");
 		}
 
 		QUnit.test("Should initialize a device model for non touch devices", function (assert) {

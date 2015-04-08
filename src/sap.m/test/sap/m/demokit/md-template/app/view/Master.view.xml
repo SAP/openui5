@@ -11,7 +11,7 @@
 				<contentMiddle>
 					<SearchField
 						id="searchField"
-						showRefreshButton="{device>/isNoTouch}"
+						showRefreshButton="{= !${device>/support/touch} }"
 						tooltip="{i18n>masterSearchTooltip}"
 						width="100%"
 						search="onSearch">
@@ -22,7 +22,7 @@
 		<content>
 			<PullToRefresh
 				id="pullToRefresh"
-				visible="{device>/isTouch}"
+				visible="{device>/support/touch}"
 				refresh="onRefresh" />
 			<!-- For client side filtering add this to the items attribute:  parameters: {operationMode: 'Client'}}" -->
 			<List
@@ -37,7 +37,7 @@
 				}"
 				busyIndicatorDelay="0"
 				mode="{
-					path: 'device>/isPhone',
+					path: 'device>/system/phone',
 					formatter: 'sap.ui.demo.mdtemplate.model.formatter.listMode'
 				}"
 				growing="true"
@@ -60,7 +60,7 @@
 				<items>
 					<ObjectListItem
 						type="{
-							path: 'device>/isPhone',
+							path: 'device>/system/phone',
 							formatter: 'sap.ui.demo.mdtemplate.model.formatter.listItemType'
 						}"
 						press="onSelect"
