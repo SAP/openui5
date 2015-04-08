@@ -2,8 +2,9 @@ sap.ui.define(
 	[
 		"sap/ui/model/odata/v2/ODataModel",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/thirdparty/URI"
-	], function (ODataModel, JSONModel, URI) {
+		"sap/ui/thirdparty/URI",
+		'sap/ui/Device'
+	], function (ODataModel, JSONModel, URI, Device) {
 		"use strict";
 
 		function extendMetadataUrlParameters (aUrlParametersToAdd, oMetadataUrlParams, sServiceUrl) {
@@ -116,12 +117,7 @@ sap.ui.define(
 			},
 
 			createDeviceModel: function () {
-				var oModel = new JSONModel({
-						isTouch: sap.ui.Device.support.touch,
-						isNoTouch: !sap.ui.Device.support.touch,
-						isPhone: sap.ui.Device.system.phone,
-						isNoPhone: !sap.ui.Device.system.phone
-					});
+				var oModel = new JSONModel(Device);
 				oModel.setDefaultBindingMode("OneWay");
 				return oModel;
 			}

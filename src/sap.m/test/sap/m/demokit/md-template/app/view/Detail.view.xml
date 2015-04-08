@@ -5,7 +5,7 @@
 	<Page
 		id="page"
 		navButtonPress="onNavBack"
-		showNavButton="{device>/isPhone}"
+		showNavButton="{device>/system/phone}"
 		title="{i18n>detailTitle}">
 		<content>
 			<ObjectHeader
