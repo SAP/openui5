@@ -71,7 +71,7 @@ sap.ui.define([
 				var oFilter = new Filter("Name", sap.ui.model.FilterOperator.Contains, this.sSearchQuery);
 				aFilters.push(oFilter);
 			}
-
+			
 			this.byId("idProductsTable").getBinding("items").filter(aFilters).sort(aSorters);
 		}
 	});

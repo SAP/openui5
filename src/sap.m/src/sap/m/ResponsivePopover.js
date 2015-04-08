@@ -383,7 +383,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.addAggregation("content", oContent);
 	};
 
-	ResponsivePopover.prototype._getSingleNavContent = Popover.prototype._getSingleNavContent;
+
+	ResponsivePopover.prototype._getSingleNavContent = function(){
+		var aContent = this.getContent();
+
+		while (aContent.length === 1 && aContent[0] instanceof sap.ui.core.mvc.View) {
+			aContent = aContent[0].getContent();
+		}
+
+		if (aContent.length === 1 && aContent[0] instanceof sap.m.NavContainer) {
+			return aContent[0];
+		} else {
+			return null;
+		}
+	};
 
 	ResponsivePopover.prototype._getRealPage = function(oPage){
 		var oReturn = oPage, aContent;
