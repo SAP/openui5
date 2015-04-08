@@ -142,8 +142,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 					return jQuery.sap.loadResource(sResourceName, {async: true})
 						.then(function(oData) {
 							that._xContent = oData.documentElement; // result is the document node
-							return that.runPreprocessor("xml", that._xContent, true);
-						}).then(function(xContent) {
+							return that.runPreprocessor("xml", that._xContent);
+						})
+						.then(function(xContent) {
 							that._xContent = xContent;
 							fnProcessView();
 						});
@@ -168,10 +169,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			} // else does not happen, already checked
 
 			if (mSettings.async) {
-				return this.runPreprocessor("xml", this._xContent).then(function(xContent) {
-					that._xContent = xContent;
-					fnProcessView();
-				});
+				return this.runPreprocessor("xml", this._xContent)
+					.then(function(xContent) {
+						that._xContent = xContent;
+						fnProcessView();
+					});
 			} else {
 				// sync preprocessor fallback case for templating
 				if (View._mPreprocessors.XML.xml.preprocessor === "sap.ui.core.util.XMLPreprocessor"
