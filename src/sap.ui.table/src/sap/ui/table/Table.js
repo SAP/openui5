@@ -498,8 +498,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
 		// basic selection model (by default the table uses multi selection)
-		this._oSelection = new SelectionModel(SelectionModel.MULTI_SELECTION);
-		this._oSelection.attachSelectionChanged(this._onSelectionChanged, this);
+		this._initSelectionModel(sap.ui.model.SelectionModel.MULTI_SELECTION);
 
 		// minimum width of a table column in pixel:
 		// should at least be larger than the paddings for cols and cells!
@@ -1054,9 +1053,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (sName === "rows" && oBinding) {
 			oBinding.attachChange(this._onBindingChange, this);
 		}
+		
+		// re-initialize the selection model, might be necessary in case the table gets "rebound"
+		this._initSelectionModel(sap.ui.model.SelectionModel.MULTI_SELECTION);
+		
 		return this;
 	};
 
+	/**
+	 * Initialises a new selection model for the Table instance.
+	 * @param {sap.ui.model.SelectionModel.MULTI_SELECTION|sap.ui.model.SelectionModel.SINGLE_SELECTION} sSelectionMode the selection mode of the selection model
+	 * @return {sap.ui.table.Table} the table instance for chaining
+	 */
+	Table.prototype._initSelectionModel = function (sSelectionMode) {
+		// detach old selection model event handler
+		if (this._oSelection) {
+			this._oSelection.detachSelectionChanged(this._onSelectionChanged, this);
+		}
+		//new selection model with the currently set selection mode
+		this._oSelection = new sap.ui.model.SelectionModel(sSelectionMode);
+		this._oSelection.attachSelectionChanged(this._onSelectionChanged, this);
+		
+		return this;
+	};
+	
 	/**
 	 * handler for change events of the binding
 	 * @param {sap.ui.base.Event} oEvent change event
