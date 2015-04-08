@@ -285,7 +285,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					oEvent.preventDefault();
 				},
 				onAfterRendering : function(oEvent) {
-					this._oTrigger.$().attr("tabindex", 0).attr("role", "button");
+					this._oTrigger.$().attr({
+						"tabindex": 0,
+						"role": "button",
+						"aria-live": "polite"
+					});
 				}
 			}, this);
 			
