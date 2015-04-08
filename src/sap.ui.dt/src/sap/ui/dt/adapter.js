@@ -174,7 +174,7 @@ function(jQuery, Element, Control) {
 			display : false,
 			draggable : false,
 			resizable : false,
-			unsupported : true
+			unsupported : false
 		});
 	};
 

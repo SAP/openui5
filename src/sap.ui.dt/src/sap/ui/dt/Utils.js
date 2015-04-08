@@ -32,7 +32,7 @@ function(jQuery) {
 	};
 
 	Utils.getControlFilter = function() {
-		return [ "sap.m.SplitApp", "sap.m.App" ];
+		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout"  ];
 	};
 
 	Utils.iterateOverAllPublicAggregations = function(oControl, fnCallback, fnBreakCondition, aFilter) {
@@ -201,7 +201,7 @@ function(jQuery) {
 		if (!oParent) {
 			return;
 		}
-		var oLayoutData = oControl.getLayoutData();
+		var oLayoutData = oControl.getLayoutData && oControl.getLayoutData();
 		var bParentIsWYSIWYGControl = !!oParent.__widget;
 		var oParentLayoutDataFactory = bParentIsWYSIWYGControl && oParent.__widget.getLayoutDataFactory(oControl.sParentAggregationName);
 
