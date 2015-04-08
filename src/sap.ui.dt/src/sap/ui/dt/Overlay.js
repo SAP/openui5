@@ -8,9 +8,12 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/dt/ControlObserver',
 	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/dt/Utils'
+	'sap/ui/dt/AggregationOverlay',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/Utils',
+	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, Control, ControlObserver, Utils) {
+function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, Utils, DOMUtil) {
 	"use strict";
 
 
@@ -49,6 +52,9 @@ function(jQuery, Control, ControlObserver, Utils) {
 				selectable : {
 					type : "boolean",
 					defaultValue : true
+				},
+				offset : {
+					type : "object"
 				}
 			},
 			associations : {
@@ -57,9 +63,10 @@ function(jQuery, Control, ControlObserver, Utils) {
 				}
 			},
 			aggregations : {
-				children : {
-					type : "sap.ui.dt.Overlay",
-					multiple : true
+				_aggregationOverlays : {
+					type : "sap.ui.dt.AggregationOverlay",
+					multiple : true,
+					visibility : "hidden"
 				},
 				designTimeMetadata : {
 					type : "sap.ui.dt.DesignTimeMetadata",
@@ -78,28 +85,17 @@ function(jQuery, Control, ControlObserver, Utils) {
 		}
 	});
 
-	Overlay._mOverlays = {};
-
-
-	Overlay.byId = function(vElementOrId) {
-		// TODO rename to getByControlId
-		var sId = (vElementOrId instanceof sap.ui.core.Element) ? vElementOrId.getId() : vElementOrId;
-		return Overlay._mOverlays[sId];
-	};
-
 	Overlay.prototype.init = function() {
 		this._oDefaultDesignTimeMetadata = null;
 		this._addToStaticUIArea();	
 	};
 
 	Overlay.prototype.exit = function() {
-		this._removeFromStaticUIArea();
-
 		this._destroyDefaultDesignTimeMetadata();
 
 		var oElement = this.getElementInstance();
 		if (oElement) {
-			delete Overlay._mOverlays[oElement.getId()];
+			OverlayRegistry.deregister(oElement);
 			if (oElement instanceof sap.ui.core.Control) {
 				this._unobserveControl(oElement);
 			}
@@ -107,24 +103,45 @@ function(jQuery, Control, ControlObserver, Utils) {
 		
 	};
 
+	Overlay.prototype._createAggregationOverlays = function() {
+		var oElement = this.getElementInstance();
+
+		if (oElement) {
+			var that = this;
+			Utils.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
+				var sAggregationName = oAggregation.name;
+				
+				var oAggregationOverlay = new AggregationOverlay({
+					aggregationName : sAggregationName
+				});
+
+				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
+
+			}, null, Utils.getAggregationFilter());
+		}
+	};
+
 	Overlay.prototype.setElement = function(vElement) {
 
 		var oOldElement = this.getElementInstance();
-		if (oOldElement instanceof sap.ui.core.Control) {
-			delete Overlay._mOverlays[oOldElement.getId()];
+		if (oOldElement instanceof sap.ui.core.Element) {
+			OverlayRegistry.deregister(oOldElement);
 			this._unobserveControl(oOldElement);
 		}
 
+		this.destroyAggregation("_aggregationOverlays");
 		this._destroyDefaultDesignTimeMetadata();
 		
 		this.setAssociation("element", vElement);
+		this._createAggregationOverlays();
 
 		var oElement = this.getElementInstance();
-		if (oElement instanceof sap.ui.core.Control) {
-			Overlay._mOverlays[oElement.getId()] = this;
+		if (oElement instanceof sap.ui.core.Element) {
+
+			OverlayRegistry.register(oElement, this);
 			this._observeControl(oElement);
 
-			if (oElement.getDomRef()) {
+			if (DOMUtil.getElementGeometry(oElement)) {
 				this.rerender();
 			}
 
@@ -165,7 +182,7 @@ function(jQuery, Control, ControlObserver, Utils) {
 	Overlay.prototype.getDesignTimeMetadata = function() {
 		var oDesignTimeMetdata = this.getAggregation("designTimeMetadata");
 		if (!oDesignTimeMetdata && !this._oDefaultDesignTimeMetadata) {
-			this._oDefaultDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
+			this._oDefaultDesignTimeMetadata = new DesignTimeMetadata({
 				data : this._getElementDesignTimeMetadata()
 			});
 		}
@@ -215,14 +232,6 @@ function(jQuery, Control, ControlObserver, Utils) {
 	Overlay.prototype._addToStaticUIArea = function() {
 		var oStaticArea = this._getStaticUIArea();
 		oStaticArea.addContent(this);
-	};
-
-	/**
-	 * @private
-	 */
-	Overlay.prototype._removeFromStaticUIArea = function() {
-		var oStaticArea = this._getStaticUIArea();
-		oStaticArea.removeContent(this);
 	};
 
 	/**

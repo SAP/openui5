@@ -4,9 +4,10 @@
 
 // Provides object sap.ui.dt.Utils.
 sap.ui.define([
-	'jquery.sap.global'
+	'jquery.sap.global',
+	'sap/ui/dt/Utils'
 ],
-function(jQuery) {
+function(jQuery, Utils) {
 	"use strict";
 
 	/**
@@ -34,11 +35,21 @@ function(jQuery) {
 		};
 	};
 
-	DOMUtil.getPosition = function(oDomRef, oParentDomRef) {
+	DOMUtil.getPosition = function(oDomRef) {
 		var mOffset = jQuery(oDomRef).offset();
+		mOffset.offsetLeft = mOffset.left;
+		mOffset.offsetTop = mOffset.top;
 
-		if (oParentDomRef) {
-			var mParentOffset = jQuery(oParentDomRef).offset();
+		return mOffset;
+	};
+
+	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset) {
+		var mOffset = {
+			left : oPosition.left,
+			top : oPosition.top
+		};
+		
+		if (mParentOffset) {
 			mOffset.left -= mParentOffset.left;
 			mOffset.top -= mParentOffset.top;
 		}
@@ -46,9 +57,96 @@ function(jQuery) {
 	};
 
 	DOMUtil.getZIndex = function(oDomRef) {
+		var zIndex;
 		var $ElementDomRef = jQuery(oDomRef);
-		var zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
+		if ($ElementDomRef.length) {
+			zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
+		}
 		return zIndex;
+	};
+
+	DOMUtil.getOverflows = function(oDomRef) {
+		var oOverflows;
+		var $ElementDomRef = jQuery(oDomRef);
+		if ($ElementDomRef.length) {
+			oOverflows = {};
+			oOverflows.overflowX = $ElementDomRef.css("overflow-x");
+			oOverflows.overflowY = $ElementDomRef.css("overflow-y");
+		}
+		return oOverflows;
+	};
+
+	DOMUtil.getChildrenAreaGeometry = function(aElements) {
+		var that = this;
+		if (!aElements) {
+			return;
+		}
+
+		var minLeft, maxRight, minTop, maxBottom;
+		jQuery.each(aElements, function(index, oElement) {
+			var oElementGeometry = that.getElementGeometry(oElement);
+			if (oElementGeometry) {
+				if (!minLeft || oElementGeometry.position.left < minLeft) {
+					minLeft = oElementGeometry.position.left;
+				}
+				if (!minTop || oElementGeometry.position.top < minTop) {
+					minTop = oElementGeometry.position.top;
+				}
+
+				var iRight = oElementGeometry.position.left + oElementGeometry.size.width;
+				if (!maxRight || iRight > maxRight) {
+					maxRight = iRight;
+				}
+				var iBottom = oElementGeometry.position.top + oElementGeometry.size.height;
+				if (!maxBottom || iBottom > maxBottom) {
+					maxBottom = iBottom;
+				}
+			}
+		});
+
+		if (minLeft) {
+			return {
+				size : {
+					width : maxRight - minLeft,
+					height : maxBottom - minTop
+				},
+				position : {
+					left : minLeft,
+					top : minTop
+				}
+			};
+		}
+	};
+
+	DOMUtil.getDomGeometry = function(oDomRef) {
+		if (oDomRef) {
+			return {
+				domRef : oDomRef,
+				size : this.getSize(oDomRef),
+				position : this.getPosition(oDomRef)
+			};
+		}
+	};
+
+	DOMUtil.getElementGeometry = function(oElement) {
+		var oDomRef;
+		if (!oElement) { 
+			return;
+		}
+		
+		if (oElement.getDomRef) {
+			oDomRef = oElement.getDomRef();
+		}
+		if (!oDomRef && oElement.getRenderedDomRef) {
+			oDomRef = oElement.getRenderedDomRef();
+		}
+		if (!oDomRef)  {
+			var aFoundElements = Utils.findAllPublicElements(oElement);
+			return this.getChildrenAreaGeometry(aFoundElements);
+		} else {
+			return this.getDomGeometry(oDomRef);
+		}
+
 	};
 
 	DOMUtil.getDomRefForCSSSelector = function(oDomRef, sCSSSelector) {
@@ -64,6 +162,10 @@ function(jQuery) {
 			return document.querySelector(sCSSSelector.replace(":sap-domref", "#" + this.getEscapedString(oDomRef.id)));
 		}
 		return oDomRef ? oDomRef.querySelector(sCSSSelector) : undefined;
+	};
+
+	DOMUtil.getAggregationGeometryForCSSSelector = function(oDomRef, sCSSSelector) {
+		return this.getDomGeometry(this.getDomRefForCSSSelector(oDomRef, sCSSSelector));
 	};
 
 	DOMUtil.getEscapedString = function(sString) {

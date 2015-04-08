@@ -28,11 +28,34 @@ function(jQuery) {
 	var Utils = {};
 
 	Utils.getAggregationFilter = function() {
-		return [ "tooltip", "customData", "layoutData" ];
+		return [ "tooltip", "customData", "dependents", "layoutData" ];
 	};
 
 	Utils.getControlFilter = function() {
-		return [ "sap.m.SplitApp", "sap.m.App" ];
+		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout"  ];
+	};
+
+	Utils.getAggregationValue = function(sAggregationName, oControl) {
+		var mAggregations = oControl.getMetadata().getAllAggregations();
+		var oAggregation = mAggregations[sAggregationName];
+		var oValue;
+		if (!oAggregation._sGetter && !oControl.__calledJSONKeys) {
+			oControl.getMetadata().getJSONKeys();
+			// Performance optimization
+			oControl.__calledJSONKeys = true;
+		}
+		if (oAggregation._sGetter) {
+			oValue = oControl[oAggregation._sGetter]();
+			//ATTENTION:
+			//under some unknown circumstances the return oValue looks like an Array but jQuery.isArray() returned undefined => false
+			//that is why we use array ducktyping with a null check!
+			//In Watt reproducible with Windows and Chrome (currently 35), when creating a project and opening WYSIWYG editor afterwards on any file
+			//sap.m.Panel.prototype.getHeaderToolbar() returns a single object but an array
+			/*eslint-disable no-nested-ternary */
+			oValue = oValue && oValue.splice ? oValue : (oValue ? [oValue] : []);
+			/*eslint-enable no-nested-ternary */
+		}
+		return oValue;
 	};
 
 	Utils.iterateOverAllPublicAggregations = function(oControl, fnCallback, fnBreakCondition, aFilter) {
@@ -51,30 +74,16 @@ function(jQuery) {
 				continue;
 			}
 			var oAggregation = mAggregations[sName];
-			if (!oAggregation._sGetter && !oControl.__calledJSONKeys) {
-				oControl.getMetadata().getJSONKeys();
-				// Performance optimization
-				oControl.__calledJSONKeys = true;
-			}
-			if (oAggregation._sGetter) {
-				var oValue = oControl[oAggregation._sGetter]();
+			var oValue = this.getAggregationValue(sName, oControl);
 
-				//ATTENTION:
-				//under some unknown circumstances the return oValue looks like an Array but jQuery.isArray() returned undefined => false
-				//that is why we use array ducktyping with a null check!
-				//In Watt reproducible with Windows and Chrome (currently 35), when creating a project and opening WYSIWYG editor afterwards on any file
-				//sap.m.Panel.prototype.getHeaderToolbar() returns a single object but an array
-				/*eslint-disable no-nested-ternary */
-				oValue = oValue && oValue.splice ? oValue : (oValue ? [oValue] : []);
-				/*eslint-enable no-nested-ternary */
-				oRes = fnCallback(oAggregation, oValue);
-				if (window.Q && window.Q.isPromise(oRes)) {
-					aPromises.push(oRes);
-				}
-				if (fnBreakCondition && fnBreakCondition(oAggregation, oValue)) {
-					break;
-				}
+			oRes = fnCallback(oAggregation, oValue);
+			if (window.Q && window.Q.isPromise(oRes)) {
+				aPromises.push(oRes);
 			}
+			if (fnBreakCondition && fnBreakCondition(oAggregation, oValue)) {
+				break;
+			}
+			
 		}
 
 		if (window.Q && aPromises.length) {
@@ -96,38 +105,44 @@ function(jQuery) {
 		return oParent;
 	};
 
-	Utils.findAllPublicControls = function(oControl, oCore) {
-		var aFoundControls = [];
+	Utils.findAllPublicElements = function(oElement) {
+		var aFoundElements = [];
+		var oInitialElement = oElement;
 		var that = this;
+		var oCore = sap.ui.core;
 
-		function internalFind(oControl) {
-			if (oControl.getMetadata().getClass() === oCore.UIArea) {
-				var aContent = oControl.getContent();
+		function internalFind(oElement) {
+			if (!(oElement instanceof oCore.Element)) {
+				return;
+			}
+
+			if (oElement.getMetadata().getClass() === oCore.UIArea) {
+				var aContent = oElement.getContent();
 				for (var i = 0; i < aContent.length; i++) {
 					internalFind(aContent[i]);
 				}
-			} else if (oControl.getMetadata().getClass() === oCore.ComponentContainer) {
-				internalFind(oControl.getComponentInstance().getAggregation("rootControl"));
+			} else if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
+				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
 			} else {
-				oControl.__publicControl = true;
-				aFoundControls.push(oControl);
-				that.iterateOverAllPublicAggregations(oControl, function(oAggregation, aControls) {
-					if (aControls && aControls.length) { // TODO: ARRAY CHECK
-						for (var k = 0; k < aControls.length; k++) {
-							var oObj = aControls[k];
-							if (oObj instanceof oCore.Element) {
-								internalFind(oObj);
-							}
+				if (oElement !== oInitialElement) {
+					oElement.__publicControl = true;
+					aFoundElements.push(oElement);
+				}
+				that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
+					if (vElements && vElements.length) { // TODO: ARRAY CHECK
+						for (var k = 0; k < vElements.length; k++) {
+							var oObj = vElements[k];
+							internalFind(oObj);
 						}
-					} else if (aControls instanceof oCore.Element) {
-						internalFind(aControls);
+					} else if (vElements instanceof oCore.Element) {
+						internalFind(vElements);
 					}
 				}, null, sap.ui.dt.Utils.getAggregationFilter());
 			}
 		}
-		internalFind(oControl);
+		internalFind(oElement);
 
-		return aFoundControls;
+		return aFoundElements;
 
 	};
 
@@ -201,7 +216,7 @@ function(jQuery) {
 		if (!oParent) {
 			return;
 		}
-		var oLayoutData = oControl.getLayoutData();
+		var oLayoutData = oControl.getLayoutData && oControl.getLayoutData();
 		var bParentIsWYSIWYGControl = !!oParent.__widget;
 		var oParentLayoutDataFactory = bParentIsWYSIWYGControl && oParent.__widget.getLayoutDataFactory(oControl.sParentAggregationName);
 

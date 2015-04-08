@@ -62,7 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			 * Title element of the Container. Can either be a Label object, or a simple string.
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false}
-		}
+		},
+		designTime : true
 	}});
 
 	/**
