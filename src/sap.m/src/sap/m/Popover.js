@@ -448,7 +448,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 			if (oNavContent || oPageContent) {
 				oPageContent = oPageContent || oNavContent.getCurrentPage();
-				if (oPageContent._getAnyHeader) {
+				if (oPageContent && oPageContent._getAnyHeader) {
 					this.addStyleClass("sapMPopoverWithHeaderCont");
 				}
 
@@ -928,7 +928,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		}
 
 		if (aContent.length === 1) {
-			for (i = 0 ; i < this._scrollContentList.length ; i++) {
+			for (i = 0; i < this._scrollContentList.length; i++) {
 				if (aContent[0] instanceof this._scrollContentList[i]) {
 					return true;
 				}
