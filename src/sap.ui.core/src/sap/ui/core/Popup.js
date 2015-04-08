@@ -826,6 +826,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				// focus/blur for handling autoclose is disabled for desktop browsers which are not in the touch simulation mode
 				// create timeout for closing the popup if there is no focus immediately returning to the popup
 				if (!this.touchEnabled && !this._sTimeoutId) {
+					// If Popup has focus and we click outside of the browser, in Chrome the blur event is fired, but the focused element is still in the Popup and is the same as the focused that triggers the blur event.
+					// if the dom element that fires the blur event is the same as the currently focused element, just return
+					// because in Chrome when the browser looses focus, it fires the blur event of the
+					// dom element that has the focus before, but document.activeElement is still this element
+					if (oEvent.target === document.activeElement) {
+						return;
+					}
+
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
 					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
