@@ -448,9 +448,49 @@
 
 			oDialog1.addContent(oSimpleForm);
 			oDialog1.open();
-		};
+		}
 
 		//=================================================================
+
+		var oDialogDrag = new sap.m.Dialog({
+			title: "Drag Dialog",
+			draggable: true,
+			content: new sap.ui.core.HTML({
+				content: '<div>Lipsum limple text</div>'
+			}),
+			endButton: new sap.m.Button({
+				text: "Cancel", press: function() {
+					oDialogDrag.close();
+				}
+			})
+		});
+
+		var oDialogResize = new sap.m.Dialog({
+			title: "Resizeable Dialog",
+			resizeable: true,
+			content: new sap.ui.core.HTML({
+				content: '<div>Lipsum limple text</div>'
+			}),
+			endButton: new sap.m.Button({
+				text: "Cancel", press: function() {
+					oDialogResize.close();
+				}
+			})
+		});
+
+		var oDialogResizeAndDrag = new sap.m.Dialog({
+			title: "Dialog Resize And Drag",
+			draggable: true,
+			resizeable: true,
+			content: new sap.ui.core.HTML({
+				content: '<div>Lipsum limple text</div>'
+			}),
+			endButton: new sap.m.Button({
+				text: "Cancel", press: function() {
+					oDialogResizeAndDrag.close();
+				}
+			})
+		});
 
 		var oDialogSimple = new sap.m.Dialog({
 			title: "Simple Dialog",
@@ -935,6 +975,28 @@
 					width: "200px",
 					press: function() {
 						oMessageDialog1.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br/>"}),
+				new sap.m.Button({
+					text: "Drag Enabled",
+					width: "200px",
+					press: function() {
+						oDialogDrag.open();
+					}
+				}),
+				new sap.m.Button({
+					text: "Resize Enabled",
+					width: "200px",
+					press: function() {
+						oDialogResize.open();
+					}
+				}),
+				new sap.m.Button({
+					text: "Resize and Drag Enabled",
+					width: "200px",
+					press: function() {
+						oDialogResizeAndDrag.open();
 					}
 				}),
 				new sap.m.Label({text: "Starting on"}).addStyleClass("specialLabelDialogPage"),
