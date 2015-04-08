@@ -274,6 +274,24 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		return sap.ui.core.Element.prototype.getTooltip_AsString.apply(this);
 	};
 
+	/**
+	 * Checks whether or not the menu has items
+	 * @return {Boolean} True if the menu has or could have items.
+	 */
+	AnalyticalColumn.prototype._menuHasItems = function() {
+		var fnMenuHasItems = function() {
+			var oTable = this.getParent();
+			var oBinding = oTable.getBinding("rows");
+			var oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+			return  ((oTable && oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
+					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
+					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) || // group menu item
+				(oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty()))
+			);
+		}.bind(this);
+
+		return Column.prototype._menuHasItems.apply(this) || fnMenuHasItems();
+	};
 
 	return AnalyticalColumn;
 
