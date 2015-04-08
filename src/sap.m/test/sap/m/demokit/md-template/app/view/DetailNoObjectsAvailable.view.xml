@@ -8,7 +8,7 @@
 		text="{i18n>noObjectsAvailableText}"
 		icon="{sap-icon://product}"
 		description=""
-		showNavButton="{device>/isPhone}"
+		showNavButton="{device>/system/phone}"
 		navButtonPress="onNavBack">
 	</MessagePage>
 </mvc:View>
