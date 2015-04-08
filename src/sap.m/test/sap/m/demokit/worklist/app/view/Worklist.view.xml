@@ -46,7 +46,7 @@
 							<ObjectNumber
 									number="{
 										path: 'UnitNumber',
-										formatter: 'sap.ui.demo.worklist.model.formatter.numberUnit'
+										formatter: '.formatter.numberUnit'
 									}"
 									unit="{UnitOfMeasure}"/>
 						</cells>

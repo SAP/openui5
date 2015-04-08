@@ -40,7 +40,7 @@
 				enableBusyIndicator="false"
 				mode="{
 					path: 'device>/system/phone',
-					formatter: 'sap.ui.demo.mdtemplate.model.formatter.listMode'
+					formatter: '.formatter.listMode'
 				}"
 				growing="true"
 				growingThreshold="10"
@@ -62,13 +62,13 @@
 					<ObjectListItem
 						type="{
 							path: 'device>/system/phone',
-							formatter: 'sap.ui.demo.mdtemplate.model.formatter.listItemType'
+							formatter: '.formatter.listItemType'
 						}"
 						press="onSelect"
 						title="{Name}"
 						number="{
 							path: 'UnitNumber',
-							formatter: 'sap.ui.demo.mdtemplate.model.formatter.currencyValue'
+							formatter: '.formatter.currencyValue'
 						}"
 						numberUnit="{UnitOfMeasure}">
 					</ObjectListItem>

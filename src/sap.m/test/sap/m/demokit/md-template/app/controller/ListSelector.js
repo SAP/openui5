@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * ${copyright}
  */
 
@@ -149,4 +149,4 @@ sap.ui.define(['sap/ui/base/EventProvider'], function (EventProvider) {
 			}.bind(this));
 		}
 	});
-}, /* bExport= */ true);
+});

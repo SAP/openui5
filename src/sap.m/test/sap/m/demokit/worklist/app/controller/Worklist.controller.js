@@ -4,11 +4,14 @@
 
 sap.ui.define([
 		"sap/ui/demo/worklist/controller/BaseController",
-		"sap/ui/model/json/JSONModel"
-	], function (BaseController, JSONModel) {
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/demo/worklist/model/formatter"
+	], function (BaseController, JSONModel, formatter) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.Worklist", {
+
+		formatter: formatter,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -86,4 +89,4 @@ sap.ui.define([
 		}
 	});
 
-}, /* bExport= */ true);
+});
