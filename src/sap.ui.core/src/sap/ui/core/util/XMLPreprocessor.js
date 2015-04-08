@@ -229,10 +229,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 * @returns {string} the serialization
 		 */
 		function serializeSingleElement(oElement) {
-			var sText = "<" + oElement.nodeName;
-			Array.prototype.forEach.call(oElement.attributes, function (oAttribute) {
+			var oAttribute,
+				oAttributesList = oElement.attributes,
+				sText = "<" + oElement.nodeName,
+				i, n;
+
+			for (i = 0, n = oAttributesList.length; i < n; i += 1) {
+				oAttribute = oAttributesList.item(i);
 				sText += " " + oAttribute.name + '="' + oAttribute.value + '"';
-			});
+			}
 			return sText + (oElement.childNodes.length ? ">" : "/>");
 		}
 
@@ -299,10 +304,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					var oNodeList = oIfElement.childNodes,
 						oChild,
 						aChildren = [],
-						i,
+						i, n,
 						bFoundElse = false;
 
-					for (i = 0; i < oNodeList.length; i += 1) {
+					for (i = 0, n = oNodeList.length; i < n; i += 1) {
 						oChild = oNodeList.item(i);
 						if (oChild.nodeType === 1 /*ELEMENT_NODE*/) {
 							aChildren.push(oChild);
@@ -311,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					if (!aChildren.length || !isTemplateElement(aChildren[0], "then")) {
 						return null;
 					}
-					for (i = 1; i < aChildren.length; i += 1) {
+					for (i = 1, n = aChildren.length; i < n; i += 1) {
 						oChild = aChildren[i];
 						if (bFoundElse) {
 							error("Expected </" + oIfElement.prefix + ":if>, but instead saw ",
@@ -336,10 +341,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 * @param {Element} [oTarget=oParent] the target DOM element
 				 */
 				function liftChildNodes(oParent, oWithControl, oTarget) {
+					var oChild;
+
 					oTarget = oTarget || oParent;
 					visitChildNodes(oParent, oWithControl);
-					while (oParent.firstChild) {
-						oTarget.parentNode.insertBefore(oParent.firstChild, oTarget);
+					while ((oChild = oParent.firstChild)) {
+						oTarget.parentNode.insertBefore(oChild, oTarget);
 					}
 				}
 
@@ -627,11 +634,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
 				function visitAttributes(oNode, oWithControl) {
-					var i;
+					var i, n,
+						oAttributesList = oNode.attributes;
 
-					if (oNode.attributes) {
-						for (i = 0; i < oNode.attributes.length; i += 1) {
-							resolveAttributeBinding(oNode, oNode.attributes.item(i), oWithControl);
+					if (oAttributesList) { // only if oNode is an Element
+						for (i = 0, n = oAttributesList.length; i < n; i += 1) {
+							resolveAttributeBinding(oNode, oAttributesList.item(i), oWithControl);
 						}
 					}
 				}
@@ -644,11 +652,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 */
 				function visitChildNodes(oNode, oWithControl) {
 					var i,
-						oNodeList = oNode.childNodes;
+						oNodeList = oNode.childNodes,
+						n = oNodeList.length,
+						aChildren = new Array(n);
 
-					// iterate from the end so that removing a template node does not hurt
-					for (i = oNodeList.length - 1; i >= 0; i -= 1) {
-						visitNode(oNodeList.item(i), oWithControl);
+					// cache live collection so that removing a template node does not hurt
+					for (i = 0; i < n; i += 1) {
+						aChildren[i] = oNodeList.item(i);
+					}
+					for (i = 0; i < n; i += 1) {
+						visitNode(aChildren[i], oWithControl);
 					}
 				}
 
