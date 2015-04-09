@@ -670,7 +670,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			}
 
 			//set max height and width smaller that the screen
-			oStyles["max-width"] = iMaxWidth + 'px';
+			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';
 
 			if (sap.ui.Device.system.tablet || sap.ui.Device.system.desktop) {
