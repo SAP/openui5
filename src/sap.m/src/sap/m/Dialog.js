@@ -569,7 +569,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			bOpenedCalled = false,
 			fnEnd;
 
-		if ((sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) || sap.ui.Device.os.ios) {
+		if ((sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
 			$Ref.fadeIn(200, fnOpened);
 		} else {
 			fnEnd = function() {
