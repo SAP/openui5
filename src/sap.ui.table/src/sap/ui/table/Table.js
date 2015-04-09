@@ -613,12 +613,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		var $this = this.$();
 
-		if (!$this.closest('.sapUiSizeCompact,.sapUiSizeCondensed').length) {
-			$this.addClass("sapUiSizeCozy");
-
-			if (sap.ui.Device.system.tablet) {
-				$this.addClass("sapUiTableTouch");
-			}
+		if (sap.ui.Device.system.tablet) {
+			$this.addClass("sapUiTableTouch");
 		}
 
 		this._renderOverlay();
