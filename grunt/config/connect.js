@@ -26,7 +26,8 @@ module.exports = function(grunt, config) {
 				// the file won't be cached
 				middleware: function(connect, options, middlewares) {
 					// make sure to put the middleware after "cors"
-					middlewares.splice(3, 0, [ '/testsuite/resources/sap/ui/Global.js', function(req, res, next) {
+					// if "watch" is enabled, there will be another livereload middleware in between
+					middlewares.splice(grunt.option('watch') ? 3 : 2, 0, [ '/testsuite/resources/sap/ui/Global.js', function(req, res, next) {
 						fs.readFile('src/sap.ui.core/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
 							if (err) {
 								res.writeHead(404);
