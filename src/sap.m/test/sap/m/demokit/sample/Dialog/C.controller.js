@@ -45,6 +45,68 @@ sap.ui.define([
 			dialog.open();
 		},
 
+		onResizableDialog: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Resizeable Available Products',
+				contentWidth: "550px",
+				contentHeight: "300px",
+				resizeable: true,
+				content: new List({
+					items: {
+						path: '/ProductCollection',
+						template: new StandardListItem({
+							title: "{Name}",
+							counter: "{Quantity}"
+						})
+					}
+				}),
+				beginButton: new Button({
+					text: 'Close',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
+				}
+			});
+
+			//to get access to the global model
+			this.getView().addDependent(dialog);
+			dialog.open();
+		},
+
+		onDraggableDialog: function (oEvent) {
+			var dialog = new Dialog({
+				title: 'Draggable Available Products',
+				contentWidth: "550px",
+				contentHeight: "300px",
+				draggable: true,
+				content: new List({
+					items: {
+						path: '/ProductCollection',
+						template: new StandardListItem({
+							title: "{Name}",
+							counter: "{Quantity}"
+						})
+					}
+				}),
+				beginButton: new Button({
+					text: 'Close',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
+				}
+			});
+
+			//to get access to the global model
+			this.getView().addDependent(dialog);
+			dialog.open();
+		},
+
 		onDialogWithSizePress: function (oEvent) {
 			var dialog = new Dialog({
 				title: 'Available Products',
