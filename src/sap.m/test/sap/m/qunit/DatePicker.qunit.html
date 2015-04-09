@@ -205,20 +205,26 @@
 			module("ARIA");
 			test("Tooltip and date annoncement should be set correctly at the described by", function() {
 				var sTooltip = "tooltip";
-				var oDP = new sap.m.DatePicker().placeAt("uiArea4");
+				var sPlaceholder = "placeholder";
+				var oDP = new sap.m.DatePicker({
+					placeholder: sPlaceholder
+				}).placeAt("uiArea4");
 				sap.ui.getCore().applyChanges();
 
 				var $Input = jQuery(oDP.getFocusDomRef());
-				var $Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
+				var $LabelledByReference = jQuery.sap.byId($Input.attr("aria-labelledby"));
+				var $DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 				var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
-				strictEqual($Reference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
+				
+				strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
+				strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
 
 				oDP.setTooltip(sTooltip);
 				sap.ui.getCore().applyChanges();
 				$Input = jQuery(oDP.getFocusDomRef());
-				$Reference = jQuery.sap.byId($Input.attr("aria-describedby"));
+				$DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 
-				strictEqual($Reference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
+				strictEqual($DescribedByReference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
 
 				oDP.destroy();
 			});
