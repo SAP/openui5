@@ -204,5 +204,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "d2233ccd9fb1d41879bfbff822facbabee01fab2",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "Overlay: Focus is now restored when closing Overlay",
+        "references": []
+      }
+    ]
   }
 }

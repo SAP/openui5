@@ -1508,5 +1508,73 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "0073f25eea6f3a18c06f4bae03969e8c2a93ab5a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSONView: Exception when composite controls fill an association with an object instance corrected (e.g. a SearchField)",
+        "references": []
+      },
+      {
+        "id": "85fc15e0a310899e6cb0f59a649a2c999054acd0",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Public API corrected",
+        "references": []
+      },
+      {
+        "id": "03dfd05f18c468e33f0ada0839d497ab2b32c4c2",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Metadata is no longer destroyed when model is destroyed",
+        "references": []
+      },
+      {
+        "id": "7ce3c54d9c778a50964969d7e66d98cbf58eed7b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Promise Polyfill: Invalid argument case for functions all and race corrected; Unit test (Safari case only) corrected",
+        "references": []
+      },
+      {
+        "id": "5017bbf086abb1f4bf76d44000af0946d7fd633d",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Control: Events are now prevented if control is set to busy",
+        "references": []
+      },
+      {
+        "id": "46affa85e3caa61ff54f6086e08ac047010fa7d9",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ScrollEnablement: Growing is now only triggered for the vertical scrolling",
+        "references": []
+      },
+      {
+        "id": "1c3ad5465c48e14b42a96405b35300135726226e",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event fired but does not close corrected",
+        "references": []
+      },
+      {
+        "id": "a14d77ff90b82151b5f11f3ec7a4e60d58d0840a",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "RenderManager: Visible DOM elements in preserve area avoided",
+        "references": []
+      },
+      {
+        "id": "e95b4c40e75b9e204e4a92f2c918fc343119131a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: callFunction prameter is now recognized if mode not set in metadata",
+        "references": []
+      }
+    ]
   }
 }

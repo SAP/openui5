@@ -2442,5 +2442,101 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "d68d358bf373de33bd47f41b3ab2e59a1386da50",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessagePage, OverflowToolbar: Metamodel description added",
+        "references": []
+      },
+      {
+        "id": "4c64c8afa360e87e8bd96b57da60fde3ca0abb51",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ResponsivePopover: Title is now binded at first opening of the sample application in the DemoKit",
+        "references": []
+      },
+      {
+        "id": "5b26c46ff54760f51ca4a7618f2bc7276c68431c",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ListBase: Swipe content changes no longer invalidate the list",
+        "references": []
+      },
+      {
+        "id": "e13adf5301b8caa00c9114bb6ee6158902e5500e",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "Dialog: Keyboard will no longer blink on mobile",
+        "references": []
+      },
+      {
+        "id": "5663061f9125c703202bdc3f242c044b0698e292",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "Dialog: Opening animation is changed from CSS to jQuery animation",
+        "references": []
+      },
+      {
+        "id": "79f48e077f9ccfa3599c1e0dbcabf1a9849d9665",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "FeedListItem: Delete and Edit buttons are no longer displayed at the end of line",
+        "references": []
+      },
+      {
+        "id": "5bd081f938e0f9843f2f03fc64ddee9c8027d78a",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "IconTabBar: Left padding is now correct",
+        "references": []
+      },
+      {
+        "id": "62fd754f2b29b977d3e8058fc9263728b1fad9fd",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "MultiInput: Indicator issue on mobile corrected",
+        "references": []
+      },
+      {
+        "id": "6d62931db47486c9bbb8b957113841e148239866",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Panel: Support for nested panels added",
+        "references": []
+      },
+      {
+        "id": "27b2708a40109904c000ea2572249de1f3d36d61",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popover: Check for empty nav container added",
+        "references": []
+      },
+      {
+        "id": "142e4faaaa34f74c4f1e234a59de27130ee607d5",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "PullToRefresh: No focus indicator on HCB corrected",
+        "references": []
+      },
+      {
+        "id": "9a2da8d318b74b1ce389ace46f2709ae5063e64d",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "SelectDialog: Remember selection after cancel button pressed issue solved",
+        "references": []
+      },
+      {
+        "id": "f4ffd57debdab5343b6e5ad04c386eb8e0b4b421",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Title, Label: Margin in transparent toolbar context for Bluecrystal and HCB theme corrected",
+        "references": []
+      }
+    ]
   }
 }

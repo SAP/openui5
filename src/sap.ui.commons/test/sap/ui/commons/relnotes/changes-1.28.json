@@ -502,5 +502,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "4a24f074c81329196f3a2051e603ba4df88a3bca",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Selection after model change restored",
+        "references": []
+      }
+    ]
   }
 }

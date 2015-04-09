@@ -268,5 +268,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "9ba59e6744b1cb3e80d3173b8c4883d70ed638c1",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable: Rendering of selection checkboxes corrected",
+        "references": []
+      },
+      {
+        "id": "8f052e0dec0e66d72d1e1613af4c16ee21621aa9",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: Table parts now have focus indicator",
+        "references": []
+      }
+    ]
   }
 }
