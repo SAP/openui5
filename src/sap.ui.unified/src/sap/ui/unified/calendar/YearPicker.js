@@ -34,8 +34,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			 * The year is initial focused and selected
 			 * The value must be between 0 and 9999
 			 */
-			year : {type : "int", group : "Misc", defaultValue : 2000}
+			year : {type : "int", group : "Misc", defaultValue : 2000},
 
+			/**
+			 * number of displayed years
+			 * @since 1.30.0
+			 */
+			years : {type : "int", group : "Misc", defaultValue : 20},
+
+			/**
+			 * number of years in each row
+			 * 0 means just to have all years in one row, independent of the number
+			 * @since 1.30.0
+			 */
+			columns : {type : "int", group : "Misc", defaultValue : 4}
 		},
 		events : {
 
@@ -51,7 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		YearPicker.prototype.init = function(){
 
-			this._iColumns = 4;
 
 		};
 
@@ -75,8 +86,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			if (this.getDomRef()) {
 				var that = this;
-				var iFirstYear = iYear - 10;
-				_updateYears(that, iFirstYear, 10);
+				var iYears = this.getYears();
+				var iFirstYear = iYear - Math.floor(iYears / 2);
+				_updateYears(that, iFirstYear, Math.floor(iYears / 2));
 			}
 
 
@@ -129,14 +141,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		function _initItemNavigation(oThis){
 
 			var iYear = oThis.getYear();
+			var iYears = oThis.getYears();
 			var oRootDomRef = oThis.getDomRef();
 			var aDomRefs = oThis.$().find(".sapUiCalYear");
-			var iIndex = 10;
+			var iIndex = Math.floor(iYears / 2);
 
-			if (iYear > 9990) {
-				iIndex = iIndex + iYear - 9990;
-			} else if (iYear <= 10){
-				iIndex = iIndex - 11 + iYear;
+			if (iYear > 10000 - Math.floor(iYears / 2)) {
+				iIndex = iIndex + iYear - 10000 + Math.floor(iYears / 2);
+			} else if (iYear <= iIndex){
+				iIndex = iIndex - Math.floor(iYears / 2) + 1 + iYear;
 			}
 
 			if (!oThis._oItemNavigation) {
@@ -156,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
 			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
 			oThis._oItemNavigation.setCycling(false);
-			oThis._oItemNavigation.setColumns(oThis._iColumns, true);
+			oThis._oItemNavigation.setColumns(oThis.getColumns(), true);
 			oThis._oItemNavigation.setFocusedIndex(iIndex);
 			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
 
@@ -212,13 +225,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			if (oEvent.type) {
 				var that = this;
+				var iYears = this.getYears();
+				var iColumns = this.getColumns();
+				if (iColumns == 0) {
+					iColumns = iYears;
+				}
 
 				switch (oEvent.type) {
 				case "sapnext":
 				case "sapnextmodifiers":
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
-						//same column in first row of next group
-						_updatePage(that, true, this._oItemNavigation.getFocusedIndex() - 16);
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN && iColumns < iYears) {
+						//same column in first row of next group (only if more than one row)
+						_updatePage(that, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns);
 					} else {
 						// first year in next group
 						_updatePage(that, true, 0);
@@ -227,12 +245,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 				case "sapprevious":
 				case "sappreviousmodifiers":
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
-						//same column in last row of previous group
-						_updatePage(that, false, 16 + this._oItemNavigation.getFocusedIndex());
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP && iColumns < iYears) {
+						//same column in last row of previous group (only if more than one row)
+						_updatePage(that, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex());
 					} else {
 						// last year in previous group
-						_updatePage(that, false, 19);
+						_updatePage(that, false, iYears - 1);
 					}
 					break;
 
@@ -278,9 +296,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			var iFirstYear = parseInt(jQuery(aDomRefs[0]).text(), 10);
 
 			if (bForward) {
-				iFirstYear = iFirstYear + 20;
+				iFirstYear = iFirstYear + oThis.getYears();
 			} else {
-				iFirstYear = iFirstYear - 20;
+				iFirstYear = iFirstYear - oThis.getYears();
 			}
 
 			_updateYears(oThis, iFirstYear, iSelectedIndex);
@@ -290,10 +308,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		function _updateYears(oThis, iFirstYear, iSelectedIndex){
 
 			var sCurrentYear = oThis.getYear().toString();
+			var iYears = oThis.getYears();
 
-			if (iFirstYear >= 9980) {
-				iSelectedIndex = iSelectedIndex + iFirstYear - 9980;
-				iFirstYear = 9980;
+			if (iFirstYear >= 10000 - iYears) {
+				iSelectedIndex = iSelectedIndex + iFirstYear - 10000 + iYears;
+				iFirstYear = 10000 - iYears;
 			}else if (iFirstYear < 1) {
 				iSelectedIndex = iSelectedIndex + iFirstYear - 1;
 				iFirstYear = 1;
