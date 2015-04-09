@@ -340,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onfocusin = function(oEvent){
 		var jTarget = jQuery(oEvent.target);
 		var jTargetId = jTarget.attr("id");
-		/*eslint no-empty:1 */
+		/*eslint-disable no-empty */
 		//TODO Rethink if empty block is needed
 		if (jTargetId && jQuery.sap.endsWith(jTargetId, "-box")) {
 			this.sCurrentFocusedStepRefId = jTargetId.substring(0, jTargetId.length - 4);
@@ -350,6 +350,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.sCurrentFocusedStepRefId = sap.ui.commons.RoadMapRenderer.getFirstVisibleRef(this).attr("id");
 			refreshFocus(this);
 		}
+		/*eslint-enable no-empty */
 		//Remove the control from tab chain to make tab out working (see onfocusout)
 		this.$().attr("tabindex", "-1");
 	};
