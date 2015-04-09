@@ -889,6 +889,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 		oFocusDomRef = oFocusDomRef || jQuery.sap.domById(sFocusId);
 
+		//if there is no set initial focus, set the default one to the initialFocus association
+		if (!this.getInitialFocus()) {
+			this.setAssociation('initialFocus', oFocusDomRef ? oFocusDomRef.id : this.getId(), true);
+		}
+
 		// Setting focus to DOM Element which can open the on screen keyboard on mobile device doesn't work
 		// consistently across devices. Therefore setting focus to those elements are disabled on mobile devices
 		// and the keyboard should be opened by the User explicitly
