@@ -186,5 +186,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3dc6d73ecb2d0e070ebe67bf50898ae0478fb523",
+        "author": "Christoph Kraemer \u003cchr.kraemer@sap.com\u003e",
+        "type": "FIX",
+        "text": "Calendar: Month picker is now updated only if rendered",
+        "references": []
+      },
+      {
+        "id": "c855b26f35b33402c605447fb7656e3a5616b794",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: Internet Explorer change event handling corrected",
+        "references": []
+      }
+    ]
   }
 }

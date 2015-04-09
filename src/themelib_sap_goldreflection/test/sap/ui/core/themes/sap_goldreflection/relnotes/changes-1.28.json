@@ -24,5 +24,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "cc71e7b852bd95dbe12d6d10224c7d7ed2b74623",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Incorrect text alignment in Internet Explorer 10 corrected",
+        "references": []
+      }
+    ]
   }
 }
