@@ -217,6 +217,7 @@ sap.ui.define(['jquery.sap.global'],
 				role: "checkbox",
 				checked: oSwitch.getState(),
 				live: "assertive",
+				relevant: "all",
 				labelledby: {
 					value: sLabelledbyId,
 					append: true
