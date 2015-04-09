@@ -108,8 +108,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				iPosition = Switch._OFFPOSITION;
 			} else if (iPosition < Switch._ONPOSITION) {
 				iPosition = Switch._ONPOSITION;
-			} else {
-				iPosition = iPosition;
 			}
 
 			if (this._iCurrentPosition === iPosition) {
