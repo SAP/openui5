@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @returns {String}
 	 */
 	InputBaseRenderer.getLabelledByAnnouncement = function(oControl) {
-		return oControl.getPlaceholder() || "";
+		return oControl._getPlaceholder() || "";
 	};
 	
 	/**
