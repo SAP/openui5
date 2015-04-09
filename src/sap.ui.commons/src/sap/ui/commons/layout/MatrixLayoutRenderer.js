@@ -188,11 +188,11 @@ sap.ui.define(['jquery.sap.global'],
 	
 					var sHAlign = r.getHAlign(oMatrixLayoutCell.getHAlign(), bRTL);
 					if (sHAlign) {
-						rm.writeAttribute("align", sHAlign);
+						rm.addStyle("text-align", sHAlign);
 					}
 					var sVAlign = r.getVAlign(oMatrixLayoutCell.getVAlign());
-					if (sVAlign && sVAlign != "middle") { //middle is default, not needed
-						rm.writeAttribute("valign", sVAlign);
+					if (sVAlign) {
+						rm.addStyle("vertical-align", sVAlign);
 					}
 					if (oMatrixLayoutCell.getColSpan() > 1) {
 						rm.writeAttribute("colspan", oMatrixLayoutCell.getColSpan());
