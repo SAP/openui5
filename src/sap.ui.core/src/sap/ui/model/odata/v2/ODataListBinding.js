@@ -9,7 +9,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 
 	/**
-	 *
 	 * @class
 	 * List binding implementation for oData format
 	 *
@@ -24,6 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {boolean} [mParameters.faultTolerant] turns on the fault tolerance mode, data is not reset if a backend request returns an error
 	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
 	 *
+	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
