@@ -536,6 +536,7 @@ sap.ui.require([
 			strictEqual(oSingleBindingInfo.type, undefined);
 		});
 	});
+
 	//*********************************************************************************************
 	[
 		oBoolean,
@@ -608,6 +609,8 @@ sap.ui.require([
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
 		test("14.5.3 Expression edm:Apply: " + sError, function () {
+			this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
 			return withMetaModel(function (oMetaModel) {
 				var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 					oCurrentContext = oMetaModel.getContext(sPath);
@@ -636,6 +639,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
+		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
 		return withMetaModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
@@ -656,6 +661,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: null parameter", function () {
+		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
 		return withMetaModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
@@ -665,60 +672,6 @@ sap.ui.require([
 						Parameters: [{Type: "String", Value : "*foo*"}, null]
 					}
 				};
-
-			strictEqual(formatAndParse(oRawValue, oCurrentContext),
-				"Unsupported: " + Basics.toErrorString(oRawValue));
-		});
-	});
-
-
-	//*********************************************************************************************
-	test("14.5.3.1.2 Function odata.fillUriTemplate: test data", function () {
-		return withMetaModel(function (oMetaModel) {
-			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef",
-				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oUnsupported = {
-					Type: "Unsupported",
-					Value: "foo"
-				},
-				oRawValue = {
-					Apply: {
-						Name: "odata.fillUriTemplate",
-						Parameters: [{
-							Type: "String",
-							Value: "http://www.foo.com/\"/{decimal},{unknown},{unsupported},"
-									+ "{nullValue},{constant},{string}"
-						}, {
-							Name: "decimal",
-							Value: {
-								Type: "Path",
-								Value: "_Decimal"
-							}
-						}, {
-							Name: "string",
-							Value: {
-								Type: "Path",
-								Value: "_String"
-							}
-						}, {
-							Name: "unsupported",
-							Value: oUnsupported
-						}, {
-							Name: "nullValue",
-							Value: null
-						}, {
-							Name: "constant",
-							Value: {
-								Type: "String",
-								Value: "{'\\'}"
-							}
-						}]
-					}
-				};
-
-			// evil, test code only: write into ODataMetaModel
-			oCurrentContext.getObject("").Apply = oRawValue.Apply;
 
 			strictEqual(formatAndParse(oRawValue, oCurrentContext),
 				"Unsupported: " + Basics.toErrorString(oRawValue));
@@ -746,6 +699,10 @@ sap.ui.require([
 		{type: "Unsupported", value: "foo\\bar", error: true}
 	].forEach(function (oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
+			if (oFixture.error) {
+				this.mock(Basics).expects("error").once().throws(new SyntaxError());
+			}
+
 			return withMetaModel(function (oMetaModel) {
 				var oExpectedResult,
 					sMetaPath = sPath2BusinessPartner
@@ -808,6 +765,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
+		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
 		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/UrlRef",
