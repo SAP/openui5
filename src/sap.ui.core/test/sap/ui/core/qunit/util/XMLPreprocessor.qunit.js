@@ -145,7 +145,10 @@
 	}
 
 	/**
-	 * Checks that our XMLPreprocessor works as expected on the given view content.
+	 * Checks that our XMLPreprocessor works as expected on the given view content. If called on a
+	 * <code>this</code> (which MUST be a sandbox then), the view content is automatically searched
+	 * for constant test conditions and appropriate warnings are expected; log output is stubbed
+	 * in order to keep console clean.
 	 *
 	 * @param {string[]} aViewContent
 	 *   the original view content
@@ -157,7 +160,8 @@
 	 *   a regular expression which is expected to match the serialized original view content.
 	 */
 	function check(aViewContent, mSettings, vExpected) {
-		var oViewContent = xml(aViewContent),
+		var oLogMock = this && this.mock(jQuery.sap.log),
+			oViewContent = xml(aViewContent),
 			i;
 
 		// setup
@@ -176,6 +180,15 @@
 			if (vExpected.length === 2) {
 				vExpected = ['<mvc:View/>']; // expect just a single empty tag
 			}
+		}
+		if (oLogMock) {
+			aViewContent.forEach(function (sLine) {
+				if (/if test="(false|true)"/.test(sLine)) {
+					oLogMock.expects("warning")
+						.withExactArgs('qux: Constant test condition in ' + sLine,
+							null, "sap.ui.core.util.XMLPreprocessor");
+				}
+			});
 		}
 
 		withBalancedBindAggregation(function () {
@@ -249,7 +262,7 @@
 
 	//*********************************************************************************************
 	test("XML with template:if test='false'", function () {
-		check([
+		check.call(this, [
 			mvcView("t"),
 			'<t:if test="false">',
 			'<Out/>',
@@ -285,7 +298,7 @@
 
 	//*********************************************************************************************
 	test("XML with template:if test='true'", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="first"/>',
@@ -298,7 +311,7 @@
 
 	//*********************************************************************************************
 	test("XML with multiple template:if", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="true"/>',
@@ -312,7 +325,7 @@
 
 	//*********************************************************************************************
 	test("XML with nested template:if (as last child)", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="true"/>',
@@ -326,15 +339,14 @@
 
 	//*********************************************************************************************
 	test("XML with nested template:if (as inner child)", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<In id="true"/>',
 			'<template:if test="false">',
 			'<Out/>',
 			'</template:if>',
-			'<template:if test="false">', // this must also be processed, of course!
-			'</template:if>',
+			'<template:if test="false"/>', // this must also be processed, of course!
 			'</template:if>',
 			'</mvc:View>'
 		]);
@@ -455,7 +467,7 @@
 		test("template:if test='{unrelated>/some/path}', warn = " + bIsLoggable, function () {
 			var aViewContent = [
 					mvcView(),
-					'<template:if test="' + "{unrelated>/some/path}" + '">',
+					'<template:if test="{unrelated>/some/path}">',
 					'<Out/>',
 					'</template:if>',
 					'</mvc:View>'
@@ -484,7 +496,7 @@
 				}
 			}
 		};
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:if test="{formatter: \'foo.Helper.forbidden\', path:\'/flag\'}"/>',
@@ -497,7 +509,7 @@
 
 	//*********************************************************************************************
 	test("XML with template:if test='false' and template:then", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -510,7 +522,7 @@
 
 	//*********************************************************************************************
 	test("XML with template:if test='true' and template:then", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<!-- some text node -->',
@@ -524,7 +536,7 @@
 
 	//*********************************************************************************************
 	test("XML with nested template:if test='true' and template:then", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			// it is essential for the test that there is not tag between the if's
 			'<template:if test="true">',
@@ -540,7 +552,7 @@
 
 	//*********************************************************************************************
 	test("XML with template:if test='true' and template:then/else", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<template:then>',
@@ -557,7 +569,7 @@
 
 	//*********************************************************************************************
 	test("XML with template:if test='false' and template:then/else", function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -574,7 +586,7 @@
 	//*********************************************************************************************
 	test("XML with nested template:if test='true' and template:then/else",
 		function () {
-			check([
+			check.call(this, [
 				mvcView(),
 				'<template:if test="true">',
 				'<In id="true"/>',
@@ -665,13 +677,14 @@
 
 	//*********************************************************************************************
 	test('<template:elseif>: if is true', function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="true">',
 			'<template:then>',
 			'<In id="true"/>',
 			'</template:then>',
-			'<template:elseif test="true">',
+			// condition is not evaluated, use some truthy value but do not expect a warning
+			'<template:elseif test="truthy">',
 			'<Out/>',
 			'</template:elseif>',
 			'<template:else>',
@@ -684,7 +697,7 @@
 
 	//*********************************************************************************************
 	test('<template:elseif>: all false, w/ else', function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -703,7 +716,7 @@
 
 	//*********************************************************************************************
 	test('<template:elseif>: all false, w/o else', function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -719,7 +732,7 @@
 
 	//*********************************************************************************************
 	test('<template:elseif>: elseif is true', function () {
-		check([
+		check.call(this, [
 			mvcView(),
 			'<template:if test="false">',
 			'<template:then>',
@@ -1357,9 +1370,9 @@
 	test("fragment with FragmentDefinition", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
 			return xml(['<FragmentDefinition xmlns="sap.ui.core">',
-			            '<In id="first"/>',
-			            '<In id="last"/>',
-			            '</FragmentDefinition>']);
+						'<In id="first"/>',
+						'<In id="last"/>',
+						'</FragmentDefinition>']);
 		});
 		check([
 				mvcView(),
@@ -1422,11 +1435,9 @@
 
 	//*********************************************************************************************
 	test("error on fragment with simple cyclic reference", function () {
-		var oLogMock = this.mock(jQuery.sap.log);
-
-		oLogMock.expects("error")
+		this.mock(jQuery.sap.log).expects("error")
 			.once()
-			.withExactArgs('Stopped due to cyclic reference in fragment cycle',
+			.withExactArgs('Stopped due to cyclic reference in fragment: cycle',
 				sinon.match(/Error: Stopped due to cyclic fragment reference/),
 				"sap.ui.core.util.XMLPreprocessor");
 
@@ -1445,18 +1456,33 @@
 
 	//*********************************************************************************************
 	test("error on fragment with ping pong cyclic reference and <with> elements", function () {
+		var aFragmentContent = [
+				'<FragmentDefinition xmlns="sap.ui.core" xmlns:template'
+					+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
+				'<template:with path="/foo" var="bar">',
+				'<template:with path="/bar" var="foo">',
+				'<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>',
+				'</template:with>',
+				'</template:with>',
+				'</FragmentDefinition>'
+			],
+			oLogMock = this.mock(jQuery.sap.log);
+
+		oLogMock.expects("error")
+			.once()
+			.withExactArgs('Stopped due to cyclic reference in fragment: B',
+				sinon.match(/Error: Stopped due to cyclic fragment reference/),
+				"sap.ui.core.util.XMLPreprocessor");
+		oLogMock.expects("warning")
+			.withExactArgs("qux: set unchanged path '/foo' in " + aFragmentContent[1],
+				null, "sap.ui.core.util.XMLPreprocessor");
+		oLogMock.expects("warning")
+			.withExactArgs("qux: set unchanged path '/bar' in " + aFragmentContent[2],
+				null, "sap.ui.core.util.XMLPreprocessor");
+
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
 			if (sTemplateName === "A") {
-				return xml([
-				    '<FragmentDefinition xmlns="sap.ui.core" xmlns:template'
-				    	+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
-			    	'<template:with path="/foo" var="bar">',
-			    	'<template:with path="/bar" var="foo">',
-				    '<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>',
-			    	'</template:with>',
-				    '</template:with>',
-				    '</FragmentDefinition>'
-	            ]);
+				return xml(aFragmentContent);
 			}
 			return xml(['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']);
 		});
