@@ -16,14 +16,9 @@
 				</form:SimpleForm>
 			</template:then>
 			<template:elseif test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.ReferenceFacet'}">
-				<template:if test="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'}">
-					<template:then>
-						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.TableFacet" type="XML"/>
-					</template:then>
-					<template:else>
-						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.FormFacet" type="XML"/>
-					</template:else>
-				</template:if>
+				<core:Fragment fragmentName="{= ${path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.isMultiple'} === 'true'
+					? 'sap.ui.core.sample.ViewTemplate.scenario.TableFacet'
+					: 'sap.ui.core.sample.ViewTemplate.scenario.FormFacet' }" type="XML"/>
 			</template:elseif>
 			<template:else>
 				<form:SimpleForm>
