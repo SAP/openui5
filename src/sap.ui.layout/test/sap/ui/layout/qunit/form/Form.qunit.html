@@ -162,6 +162,8 @@
 			//title must return text if text entered, control if control enterd
 			equal(oContainer1.getTitle(), "Container1", "getTitle(): Title as text entered must return text");
 			ok(oContainer2.getTitle() instanceof sap.ui.core.Title, "getTitle(): Title as control entered must return control");
+
+			equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
 		});
 
 		test("Element", function() {
@@ -173,6 +175,8 @@
 			oElement = sap.ui.getCore().byId("C1E2");
 			ok(oElement.getLabel() instanceof sap.ui.commons.Label, "getLabel(): Label as control entered must return control");
 			equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+
+			equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
 
 		module("Rendering");
