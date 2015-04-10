@@ -4,15 +4,13 @@
 
 sap.ui.define([
 		"sap/ui/core/UIComponent",
-		"sap/ui/model/resource/ResourceModel",
-		"sap/ui/demo/mdtemplate/model/Device",
-		"sap/ui/demo/mdtemplate/model/AppModel",
+		"sap/ui/demo/mdtemplate/model/models",
 		"sap/ui/demo/mdtemplate/controller/ListSelector",
 		"sap/ui/demo/mdtemplate/controller/BusyHandler",
 		"sap/ui/demo/mdtemplate/controller/ErrorHandler",
 		"sap/ui/demo/mdtemplate/model/formatter",
 		"sap/ui/demo/mdtemplate/model/grouper"
-	], function (UIComponent, ResourceModel, DeviceModel, AppModel, ListSelector, BusyHandler, ErrorHandler) {
+	], function (UIComponent, models, ListSelector, BusyHandler, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.mdtemplate.Component", {
@@ -35,17 +33,12 @@ sap.ui.define([
 
 			this.oListSelector = new ListSelector();
 
-			// set the app data model
-			this.setModel(new AppModel(mConfig.serviceUrl));
-
-			this._createMetadataPromise(this.getModel());
-
 			this._oErrorHandler = new ErrorHandler(this);
 			// initialize the busy handler with the component
 			this._oBusyHandler = new BusyHandler(this);
 
 			// set the device model
-			this.setModel(new DeviceModel(), "device");
+			this.setModel(models.createDeviceModel(), "device");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
@@ -72,6 +65,26 @@ sap.ui.define([
 		 * @override
 		 */
 		createContent : function() {
+			// set the app data model since the app controller needs it, we create this model very early
+			var oAppModel = models.createODataModel({
+				urlParametersForEveryRequest: [
+					"sap-server",
+					"sap-host",
+					"sap-host-http",
+					"sap-client",
+					"sap-language"
+				],
+				url : this.getMetadata().getConfig().serviceUrl,
+				config: {
+					metadataUrlParams: {
+						"sap-documentation": "heading"
+					}
+				}
+			});
+
+			this.setModel(oAppModel);
+			this._createMetadataPromise(oAppModel);
+
 			// call the base component's createContent function
 			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
 			this._oRootView.addStyleClass(this.getCompactCozyClass());
