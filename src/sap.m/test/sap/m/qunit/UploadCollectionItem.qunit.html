@@ -52,11 +52,11 @@
 		assert.equal(this.oUploadCollectionItem.getFileSize(), "20", "FileSize property is set");
 	});
 
-	test("Check the correct sequence/completeness of deprecated properties in atributes aggregation", function(assert) {
+	test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "1. attribute: contributor");
-		assert.equal(aAggregation[1].getText(), "2014-07-30", "2. attribute: uploadedDate");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
+		assert.equal(aAggregation[1].getText(), "Susan Baker", "2. attribute: contributor");
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
@@ -64,8 +64,8 @@
 		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		//before change
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "1. attribute: contributor");
-		assert.equal(aAggregation[1].getText(), "2014-07-30", "2. attribute: uploadedDate");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "2. attribute: uploadedDate");
+		assert.equal(aAggregation[1].getText(), "Susan Baker", "1. attribute: contributor");
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 		//corresponding setter functions of the deprecated properties
 		this.oUploadCollectionItem.setContributor("John Doe");
@@ -73,8 +73,8 @@
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		//after change
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation[0].getText(), "John Doe", "Attribute 'contributor' updated");
-		assert.equal(aAggregation[1].getText(), "2015-08-31", "Attribute 'uploadedDate' updated");
+		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' updated");
+		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' updated");
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' updated");
 	});
 
@@ -114,8 +114,8 @@
 		this.oUploadCollectionItem.setContributor("Susan Baker");
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, "3", "Aggregation filled with 3 attributes");
-		assert.equal(aAggregation[0].getText(), "Susan Baker", "1. attribute: contributor");
-		assert.equal(aAggregation[1].getText(), "2014-07-30", "2. attribute: uploadedDate");
+		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
+		assert.equal(aAggregation[1].getText(), "Susan Baker", "2. attribute: contributor");
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
@@ -156,16 +156,16 @@
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		this.oUploadCollectionItem.setContributor("John Doe");
 		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
-		assert.equal(aAggregation[0].getText(), "John Doe", "Attribute 'contributor' set");
-		assert.equal(aAggregation[1].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
+		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
+		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' set");
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
 		assert.equal(aAggregation.length, 4, "Additional attribute added");
 
 		this.oUploadCollectionItem.removeAllAggregation("attributes");
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 3, "Additional attribute added");
-		assert.equal(aAggregation[0].getText(), "John Doe", "Attribute 'contributor' set");
-		assert.equal(aAggregation[1].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
+		assert.equal(aAggregation[0].getText(), "2015-08-31", "Attribute 'uploadedDate' set");
+		assert.equal(aAggregation[1].getText(), "John Doe", "Attribute 'contributor' set");
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
 	});
 
