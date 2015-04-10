@@ -19,13 +19,8 @@
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -4228,6 +4223,35 @@
 
 				// cleanup
 				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* ariaLabelledBy()               */
+			/* ------------------------------ */
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the internal label element separated by a space", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label"
+				});
+
+				var oSelect = new sap.m.Select({
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSelect.getId() + "-label";
+
+				// assert
+				strictEqual(oSelect.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSelect.destroy();
+				oLabel.destroy();
 			});
 
 			/* ------------------------------------ */
