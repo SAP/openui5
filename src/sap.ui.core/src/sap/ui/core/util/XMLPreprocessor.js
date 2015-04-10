@@ -527,7 +527,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					if (!oListBinding) {
 						error("Missing model '" + sModelName + "' in ", oElement);
 					}
-					aContexts = oListBinding.getContexts();
+					aContexts
+						= oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 
 					// set up the model for the loop variable
 					sVar = sVar || sModelName; // default loop variable is to keep the same model

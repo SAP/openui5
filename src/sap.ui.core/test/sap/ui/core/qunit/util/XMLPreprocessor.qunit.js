@@ -1177,6 +1177,32 @@
 	});
 
 	//*********************************************************************************************
+	test("template:repeat, startIndex & length", function () {
+		check([
+			mvcView(),
+			'<template:repeat list="' + "{path:'/items',startIndex:1,length:2}" + '">',
+			'<In src="{src}"/>',
+			'</template:repeat>',
+			'</mvc:View>'
+		], {
+			models: new sap.ui.model.json.JSONModel({
+				items: [{
+					src: "A"
+				}, {
+					src: "B"
+				}, {
+					src: "C"
+				}, {
+					src: "D"
+				}]
+			})
+		}, [
+			'<In src="B"/>',
+			'<In src="C"/>',
+		]);
+	});
+
+	//*********************************************************************************************
 	test("template:repeat with named models", function () {
 		check([
 			mvcView(),
