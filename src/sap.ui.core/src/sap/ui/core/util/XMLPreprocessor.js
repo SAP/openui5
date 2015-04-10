@@ -435,7 +435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						oElement.appendChild(oElement.ownerDocument.createTextNode(
 							"Error: Stopped due to cyclic fragment reference"));
 						jQuery.sap.log.error(
-							'Stopped due to cyclic reference in fragment ' + sFragmentName,
+							'Stopped due to cyclic reference in fragment: ' + sFragmentName,
 							jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
 							"sap.ui.core.util.XMLPreprocessor");
 						return;
