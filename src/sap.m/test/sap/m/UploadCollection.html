@@ -176,7 +176,7 @@
 					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 				}]
 			}, {
-				// item with a long attribute's title
+				// item with a long attribute's title and aggregation statuses
 				"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
 				"enableEdit" : true,
 				"enableDelete" : true,
@@ -193,6 +193,11 @@
 				}, {
 					"title" : "This attribute's title is as long as the story about The Wind and the Sun starting with 'One day, the boastful wind declared to the sun, ‘You know that I am the strongest and most effective of all the weather!’ ...'",
 					"text" : "no value"
+				}],
+				"statuses" : [{
+					"title" : "Status",
+					"text" : "Success",
+					"state" : sap.ui.core.ValueState.Success
 				}]
 			}, {
 				// item with aggregation statuses
@@ -207,11 +212,9 @@
 				"uploadedDate" : "Date: 2014-07-26",
 				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Instructions.pdf",
 				"statuses" : [{
-					"title" : "Success",
-					"icon" : "sap-icon://accept"
-				}, {
-					"title" : "Error",
-					"icon" : "sap-icon://error"
+					"title" : "Status",
+					"text" : "Warning",
+					"state" : sap.ui.core.ValueState.Warning
 				}]
 			}, {
 				// item with aggregation statuses
@@ -229,21 +232,9 @@
 					"title" : "Status",
 					"text" : "Error",
 					"state" : sap.ui.core.ValueState.Error
-				}, {
-					"title" : "Status",
-					"text" : "None",
-					"state" : sap.ui.core.ValueState.None
-				}, {
-					"title" : "Status",
-					"text" : "Success",
-					"state" : sap.ui.core.ValueState.Success
-				}, {
-					"title" : "Status",
-					"text" : "Warning",
-					"state" : sap.ui.core.ValueState.Warning
 				}]
 			}, {
-				// item with aggregation statuses and icons
+				// item with aggregation statuses
 				"contributor" : "Dr. Susan Baker",
 				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9d1",
 				"enableEdit" : true,
@@ -256,12 +247,8 @@
 				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Screenshot.jpg",
 				"statuses" : [{
 					"title" : "Status",
-					"text" : "Success",
-					"icon" : "sap-icon://accept"
-				}, {
-					"title" : "Status",
-					"text" : "Error",
-					"icon" : "sap-icon://error"
+					"text" : "None",
+					"state" : sap.ui.core.ValueState.None
 				}]
 			}, {
 				// item with aggregation containing many attributes
