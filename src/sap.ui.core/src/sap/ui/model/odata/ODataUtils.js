@@ -318,6 +318,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				sValue = "'" + String(vValue).replace(/'/g, "''") + "'";
 				break;
 			case "Edm.Time":
+			case "Edm.TimeOfDay":
 				sValue = "time'" + vValue + "'";
 				break;
 			case "Edm.DateTime":
@@ -335,14 +336,22 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			case "Edm.Int64":
 				sValue = vValue + "L";
 				break;
+			case "Edm.Double":
+				sValue = vValue + "d";
+				break;
 			case "Edm.Single":
 				sValue = vValue + "f";
 				break;
 			case "Edm.Binary":
 				sValue = "binary'" + vValue + "'";
 				break;
+			case "Edm.Byte":
+				sValue = typeof vValue === "number"
+					? vValue.toString(16)
+					: String(vValue);
+				break;
 			default:
-				sValue = new String(vValue);
+				sValue = String(vValue);
 				break;
 		}
 		return sValue;
