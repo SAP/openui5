@@ -8,7 +8,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	"use strict";
 
 	/*global Promise */
-	
+
+	/**
+	 * Util function which adds SAP-specific search parameters to an URI instance
+	 *
+	 * @param {object} oUriParams See <code>jQuery.sap.getUriParameters()</code>
+	 * @param {URI} oUri URI.js instance
+	 * @private
+	 */
+	function addSapUriParams(oUriParams, oUri) {
+		['sap-client', 'sap-server'].forEach(function(sName) {
+			var sValue = oUriParams.get(sName);
+			if (sValue && !oUri.hasSearch(sName)) {
+				oUri.addSearch(sName, sValue);
+			}
+		});
+	}
+
 	/**
 	 * Creates and initializes a new component with the given <code>sId</code> and
 	 * settings.
@@ -380,6 +396,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		// base dir to resolve URIs relative to component
 		var sComponentBaseDir = jQuery.sap.getModulePath(this.getMetadata().getComponentName()) + "/";
 
+		// read current URI params to mix them into model URI
+		var oUriParams = jQuery.sap.getUriParameters();
+
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mModelConfigs) {
 
@@ -496,9 +515,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					oModelConfig.settings.json = true;
 			}
 
-			// resolve URI relative to component
+			// adopt model uri
 			if (oModelConfig.uri) {
-				oModelConfig.uri = new URI(oModelConfig.uri).absoluteTo(sComponentBaseDir).toString();
+
+				// parse model URI to be able to modify it
+				var oUri = new URI(oModelConfig.uri);
+
+				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
+				if (oModelConfig.dataSource) {
+					addSapUriParams(oUriParams, oUri);
+				}
+
+				// resolve URI relative to component
+				oModelConfig.uri = oUri.absoluteTo(sComponentBaseDir).toString();
 			}
 
 			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
