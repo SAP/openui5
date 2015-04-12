@@ -1769,6 +1769,73 @@
 			// return undefined;
 		}
 
+		var rDotsAnywhere = /(?:^|\/)\.+/;
+		var rDotSegment = /^\.*$/;
+
+		/**
+		 * Resolves relative module names that contain <code>./</code> or <code>../</code> segments to absolute names.
+		 * E.g.: A name <code>../common/validation.js</code> defined in <code>sap/myapp/controller/mycontroller.controller.js</code>
+		 * may resolve to <code>sap/myapp/common/validation.js</code>.
+		 * 
+		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call) 
+		 * and their usage results in an error being thrown.
+		 * 
+		 * @param {string|null} sBaseName name of a reference module
+		 * @param {string} sModuleName the name to resolve
+		 * @returns {string} resolved name
+		 * @private
+		 */
+		function resolveModuleName(sBaseName, sModuleName) {
+
+			var m = rDotsAnywhere.exec(sModuleName),
+				aSegments,
+				sSegment,
+				i,j,l;
+			
+			// check whether the name needs to be resolved at all - if not, just return the sModuleName as it is.
+			if ( !m ) {
+				return sModuleName;
+			}
+			
+			// if the name starts with a relative segments then there must be a base name (a global sap.ui.require doesn't support relative names)
+			if ( m.index === 0 && sBaseName == null ) {
+				throw new Error("relative name not supported ('" + sModuleName + "'");
+			}
+			
+			// if relative name starts with a dot segment, then prefix it with the base path
+			aSegments = (m.index === 0 ? sBaseName + sModuleName : sModuleName).split('/');
+			
+			// process path segments
+			for (i = 0, j = 0, l = aSegments.length; i < l; i++) {
+				
+				var sSegment = aSegments[i];
+
+				if ( rDotSegment.test(sSegment) ) {
+					if (sSegment === '.' || sSegment === '') {
+						// ignore '.' as it's just a pointer to current package. ignore '' as it results from double slashes (ignored by browsers as well)
+						continue;
+					} else if (sSegment === '..') {
+						// move to parent directory
+						if ( j === 0 ) {
+							throw new Error("Can't navigate to parent of root (base='" + sBaseName + "', name='" + sModuleName + "'");//  sBaseNamegetPackagePath(), relativePath));
+						}
+						j--;
+					} else {
+						throw new Error("illegal path segment '" + sSegment + "'");
+					}
+				} else {
+
+					aSegments[j++] = sSegment;
+
+				}
+
+			}
+
+			aSegments.length = j;
+
+			return aSegments.join('/');
+		}
+
 		function declareModule(sModuleName) {
 			var oModule;
 
@@ -1989,13 +2056,13 @@
 			}
 		}
 
-		function requireAll(aDependencies, fnCallback) {
+		function requireAll(sBaseName, aDependencies, fnCallback) {
 
 			var aModules = [],
 				i, sDepModName;
 
 			for (i = 0; i < aDependencies.length; i++) {
-				sDepModName = aDependencies[i];
+				sDepModName = resolveModuleName(sBaseName, aDependencies[i]);
 				log.debug(sLogPrefix + "require '" + sDepModName + "'");
 				requireModule(sDepModName + ".js");
 				// best guess for legacy modules that don't use sap.ui.define
@@ -2550,8 +2617,6 @@
 		 * <li><code>sap.ui.define</code> does <b>not</b> support the 'sugar' of requireJS where CommonJS
 		 * style dependency declarations using <code>sap.ui.require("something")</code> are automagically
 		 * converted into <code>sap.ui.define</code> dependencies before executing the factory function.</li>
-		 * <li><code>sap.ui.define</code> does not support the '../' prefix for module names. Only
-		 * relative names in the same package or in subpackages thereof are supported.</li>
 		 * </ul>
 		 *
 		 *
@@ -2583,7 +2648,7 @@
 		 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
 		 */
 		sap.ui.define = function(sModuleName, aDependencies, vFactory, bExport) {
-			var sResourceName, i;
+			var sResourceName, sBaseName;
 
 			// optional id
 			if ( typeof sModuleName === 'string' ) {
@@ -2598,21 +2663,16 @@
 			
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
-
+			
+			// calculate the base name for relative module names 
+			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
+			
 			// optional array of dependencies
 			if ( !jQuery.isArray(aDependencies) ) {
 				// shift parameters
 				bExport = vFactory;
 				vFactory = aDependencies;
 				aDependencies = [];
-			} else {
-				// resolve relative module names
-				var sPackage = sResourceName.slice(0,1 + sResourceName.lastIndexOf('/'));
-				for (i = 0; i < aDependencies.length; i++) {
-					if ( /^\.\//.test(aDependencies[i]) ) {
-						aDependencies[i] = sPackage + aDependencies[i].slice(2); // 2 == length of './' prefix
-					}
-				}
 			}
 
 			if ( log.isLoggable() ) {
@@ -2621,8 +2681,8 @@
 
 			var oModule = declareModule(sResourceName);
 
-			// note: dependencies will be converted from RJS to URN inside requireAll
-			requireAll(aDependencies, function(aModules) {
+			// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
+			requireAll(sBaseName, aDependencies, function(aModules) {
 
 				// factory
 				if ( log.isLoggable() ) {
@@ -2746,7 +2806,7 @@
 
 			}
 
-			requireAll(vDependencies, function(aModules) {
+			requireAll(null, vDependencies, function(aModules) {
 
 				if ( typeof fnCallback === 'function' ) {
 					// enforce asynchronous execution of callback
