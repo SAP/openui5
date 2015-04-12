@@ -4,7 +4,7 @@
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
-    "test": "grunt lint"
+    "test": "grunt lint test --browsers=\"firefox\""
   },
   "keywords": [
     "openui5",
