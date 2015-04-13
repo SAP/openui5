@@ -255,23 +255,10 @@ function(jQuery, BaseObject, DTWidgetPresenter, DragManager) {
 		jQuery.sap.log.warning("Creating overlay for control " + that.oControl.__widget.getEscapedId());
 		this.$overlayElement = jQuery('<div class="sapUiDtControlOverlay"></div>').attr("data-overlay-id", this.oControl.getId());
 
-		var bNestedView = false;
-		if (this.oControl.getMetadata()._sClassName == "sap.ui.core.mvc.XMLView" && 
-				this.oControl.getParent() && this.oControl.getParent().getMetadata()._sClassName !== "sap.ui.core.UIArea") {
-			bNestedView = true;
-		}
-		
-		// creating special overlay for unsupported controls
-		var $badge;
-		if (this.oControl.getMetadata().__designTimeOptions.unsupported || bNestedView) {
-			this.$overlayElement.addClass("sapUiDtControlOverlayForUnsupportedControl");
-			$badge = jQuery("<div class='sapUiDtControlOverlayBadge'>unsupported</div>");
-			this.$overlayElement.append($badge);
-		}
 
 		if (this.oControl.__widget.hasBoundAggregations) {
 			this.$overlayElement.addClass("controlOverlayForTemplateParents");
-			$badge = jQuery("<div class='sapUiDtControlOverlayBadge'>template</div>");
+			var $badge = jQuery("<div class='sapUiDtControlOverlayBadge'>template</div>");
 			this.$overlayElement.append($badge);
 		}
 
