@@ -47,7 +47,8 @@
 	border-right: none;
 }
 
-.sapUiAnalyticalTable .sapUiTableGroupHeader .sapUiTableTdFirst:not(.sapUiTableMeasureCell) .sapMLabel:first-child {
+// The cell under the first column cell of a group header is only allowed to show a measure label. Any other content should be hidden.
+.sapUiAnalyticalTable .sapUiTableGroupHeader .sapUiTableTdFirst:not(.sapUiTableMeasureCell) .sapUiTableCell {
 	display: none;
 }
 
