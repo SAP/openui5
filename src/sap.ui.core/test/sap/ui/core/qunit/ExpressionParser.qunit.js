@@ -405,4 +405,10 @@
 		{ expression: "[42][0]", result: "42" },
 		{ expression: "[42 + ${/3}]", result: "45" }
 	]);
+
+	//*********************************************************************************************
+	checkFixtures("in", [
+		{ expression: "'PI' in Math", result: "true" },
+		{ expression: "'foo' in {}", result: "false" }
+	]);
 } ());
