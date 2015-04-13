@@ -529,6 +529,7 @@
 			parseAsString: true
 		});
 		equal(oFormat.parse("123.23"), "123.23", "Simple number is parsed as string");
+		equal(oFormat.parse("000123.23"), "123.23", "Number with leading zeros is parsed as string");
 		equal(oFormat.parse("12,345.67"), "12345.67", "Number with grouping is parsed as string");
 		equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78", 
 				"Ridiculously long number is parsed as string");
@@ -543,12 +544,14 @@
 
 		equal(oIntegerFormat.parse("123"), "123", "123");
 		equal(oIntegerFormat.parse("123,123"), "123123", "123,123");
+		equal(oIntegerFormat.parse("000123,123"), "123123", "000123,123");
 		equal(oIntegerFormat.parse("123,123,1234"), "1231231234", "123,123,1234");
 		equal(isNaN(oIntegerFormat.parse("123.00")), true, "123.00");
 		equal(isNaN(oIntegerFormat.parse("5e+3")), true, "5e+3");
 		equal(isNaN(oIntegerFormat.parse("a1b2c3")), true, "a1b2c3");
 
 		equal(oFloatFormat.parse("123.23"), "123.23", "123.23");
+		equal(oFloatFormat.parse("000123.23"), "123.23", "000123.23");
 		equal(oFloatFormat.parse("123,123,123.23"), "123123123.23", "123,123,123.23");
 		equal(oFloatFormat.parse("+.23"), "0.23", ".23");
 		equal(oFloatFormat.parse("-123.23"), "-123.23", "-123.23");
@@ -585,6 +588,7 @@
 			decimalSeparator: ","
 		});
 		equal(oFormat.parse("123,23"), "123.23", "Simple number is parsed as string");
+		equal(oFormat.parse("000123,23"), "123.23", "Number with leading zeros is parsed as string");
 		equal(oFormat.parse("12.345,67"), "12345.67", "Number with grouping is parsed as string");
 		equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78", 
 				"Ridiculously long number is parsed as string");
@@ -652,6 +656,11 @@
 		});
 
 		aResult = oFormat.parse("-12,345.67 EUR");
+		ok(jQuery.isArray(aResult), "Currency parser should return an array");
+		equal(aResult[0], "-12345.67", "Number is parsed correctly");
+		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+
+		aResult = oFormat.parse("-00012,345.67 EUR");
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], "-12345.67", "Number is parsed correctly");
 		equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
