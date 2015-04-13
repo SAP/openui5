@@ -107,8 +107,7 @@ sap.ui.define([
 			Basics.expectType(oPathValue, "array");
 			oPathValue.value.forEach(function (oUnused, i) {
 				// an embedded concat must use expression binding
-				oResult = Expression.expression(oInterface, Basics.descend(oPathValue, i),
-					/*bExpression*/true);
+				oResult = Expression.parameter(oInterface, oPathValue, i);
 				// if any parameter is type expression, the concat must become expression, too
 				bExpression = bExpression || oResult.result === "expression";
 				aResults.push(oResult);
@@ -285,15 +284,9 @@ sap.ui.define([
 				sPrefix = "",
 				oParameter,
 				aParameters = oPathValue.value,
-				oPathValueTemplate = Basics.descend(oPathValue, 0),
 				oResult,
-				oTemplate = Expression.expression(oInterface, oPathValueTemplate,
-					/*bExpression*/true);
+				oTemplate = Expression.parameter(oInterface, oPathValue, 0, "Edm.String");
 
-			if (oTemplate.type !== "Edm.String") {
-				Basics.error(oPathValueTemplate,
-					"fillUriTemplate: Expected Edm.String but instead saw " + oTemplate.type);
-			}
 			aParts.push('odata.fillUriTemplate(', Basics.resultToString(oTemplate, true), ',{');
 			for (i = 1; i < aParameters.length; i += 1) {
 				oParameter = Basics.descend(oPathValue, i, "object");
@@ -310,6 +303,36 @@ sap.ui.define([
 				value: aParts.join(""),
 				type: "Edm.String"
 			};
+		},
+
+		/**
+		 * Evaluates a parameter and ensures that the result is of the given EDM type.
+		 *
+		 * The function calls <code>expression</code> with <code>bExpression=true</code>. This will
+		 * cause any embedded <code>odata.concat</code> to generate an expression binding. This
+		 * should be correct in any case because only a standalone <code>concat</code> may generate
+		 * a composite binding.
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
+		 * @param {object} oPathValue
+		 *   a path/value pair pointing to the parameter array
+		 * @param {int} iIndex
+		 *   the parameter index
+		 * @param {string} [sEdmType]
+		 *   the expected EDM type or <code>undefined</code> if any type is allowed
+		 * @returns {object}
+		 *   the result object
+		 */
+		parameter: function (oInterface, oPathValue, iIndex, sEdmType) {
+			var oParameter = Basics.descend(oPathValue, iIndex),
+				oResult = Expression.expression(oInterface, oParameter, /*bExpression*/true);
+
+			if (sEdmType && sEdmType !== oResult.type) {
+				Basics.error(oParameter,
+					"Expected " + sEdmType + " but instead saw " + oResult.type);
+			}
+			return oResult;
 		},
 
 		/**
@@ -384,8 +407,8 @@ sap.ui.define([
 		 *   the result object
 		 */
 		uriEncode: function (oInterface, oPathValue) {
-			var oResult = Expression.expression(oInterface, Basics.descend(oPathValue, 0),
-					/*bExpression*/true);
+			var oResult = Expression.parameter(oInterface, oPathValue, 0);
+
 			return {
 				result: "expression",
 				value: 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","
