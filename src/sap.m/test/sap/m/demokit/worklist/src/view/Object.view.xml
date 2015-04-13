@@ -31,11 +31,11 @@
 								<!-- we have to comment this out since ushell lib is not available in the openui5 layer currenlty
 								<footerbar:AddBookmarkButton id ="shareTile" appData="{
 									path: 'view>/shareSaveAsTileTitle',
-									formatter: 'sap.ui.demo.worklist.model.formatter.shareTileData'
+									formatter: '.formatter.shareTileData'
 								}"/>
 								<footerbar:JamShareButton id ="shareJam" jamData="{
 									path: 'view>/shareOnJamTitle',
-									formatter: 'sap.ui.demo.worklist.model.formatter.shareJamData'
+									formatter: '.formatter.shareJamData'
 								}"/> -->
 							</buttons>
 						</ActionSheet>

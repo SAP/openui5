@@ -1,4 +1,4 @@
-<mvc:View
+﻿<mvc:View
 	controllerName="sap.ui.demo.masterdetail.controller.Master"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
@@ -38,7 +38,7 @@
 				busyIndicatorDelay="0"
 				mode="{
 					path: 'device>/system/phone',
-					formatter: 'sap.ui.demo.masterdetail.model.formatter.listMode'
+					formatter: '.formatter.listMode'
 				}"
 				growing="true"
 				growingThreshold="10"
@@ -61,13 +61,13 @@
 					<ObjectListItem
 						type="{
 							path: 'device>/system/phone',
-							formatter: 'sap.ui.demo.masterdetail.model.formatter.listItemType'
+							formatter: '.formatter.listItemType'
 						}"
 						press="onSelect"
 						title="{Name}"
 						number="{
 							path: 'UnitNumber',
-							formatter: 'sap.ui.demo.masterdetail.model.formatter.currencyValue'
+							formatter: '.formatter.currencyValue'
 						}"
 						numberUnit="{UnitOfMeasure}">
 					</ObjectListItem>

@@ -7,8 +7,7 @@ sap.ui.define([
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/demo/worklist/model/models",
 		"sap/ui/Device",
-		"sap/ui/demo/worklist/controller/ErrorHandler",
-		"sap/ui/demo/worklist/model/formatter"
+		"sap/ui/demo/worklist/controller/ErrorHandler"
 	], function (UIComponent, ResourceModel, models, Device, ErrorHandler) {
 	"use strict";
 
@@ -85,4 +84,4 @@ sap.ui.define([
 
 	});
 
-}, /* bExport= */ true);
+});
