@@ -9,6 +9,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 	"use strict";
 
 	var rInteger = /^[-+]?(\d+)$/,
+		rInt64Input = /^0*(\d+)$/, // user input for an Int64 w/o the sign
 		// The number range of an Int64
 		oRange = {minimum: "-9223372036854775808", maximum: "9223372036854775807"},
 		// The values Number.MIN_SAFE_INTEGER and Number.MAX_SAFE_INTEGER are the largest integer
@@ -245,7 +246,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		switch (sSourceType) {
 		case "string":
 			sResult = ODataType.normalizeNumber(this.oFormatOptions, getFormatter(this), vValue,
-				/^0*(\d+)$/ );
+				rInt64Input);
 			if (!sResult) {
 				throw new ParseException(getText("EnterInt"));
 			}
