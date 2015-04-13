@@ -1383,7 +1383,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	ListBase.prototype.invalidate = function(oOrigin) {
 		if (oOrigin && oOrigin === this.getSwipeContent()) {
 			this._bRerenderSwipeContent = true;
-			return this._renderSwipeContent();
+			this._isSwipeActive && this._renderSwipeContent();
+			return this;
 		}
 	
 		Control.prototype.invalidate.apply(this, arguments);
