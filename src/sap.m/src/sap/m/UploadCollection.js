@@ -1124,6 +1124,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oContext._onEditItemOk.bind(oContext)(sNewFileName + oFile.extension);
 				}
 			} else {
+				oContext.sErrorState = null;
+				oContext.aItems[iSourceLine].errorState = null;
 				// nothing changed -> nothing to do!
 				oContext.editModeItem = null;
 				if (bTriggerRenderer) {
