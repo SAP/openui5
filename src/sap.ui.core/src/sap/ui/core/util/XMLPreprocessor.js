@@ -333,6 +333,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				}
 
 				/**
+				 * Interprets the given value as a binding and returns the resulting value; takes
+				 * care of unescaping and thus also of constant expressions.
+				 *
+				 * @param {string} sValue
+				 *   an XML attribute value
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the "with" control
+				 * @param {boolean} bUnescape
+				 *   whether the binding parser should unescape the given value; note that this is
+				 *   a prerequisite for constant expressions
+				 * @param {function} [fnCallIfConstant]
+				 *   optional function to be called in case the return value is obviously a
+				 *   constant, not influenced by any binding
+				 * @returns {string|object}
+				 *   the resulting value or <code>oUNBOUND</code> in case the binding is not ready
+				 *   (because it refers to a model which is not available)
+				 * @throws Error
+				 */
+				function getResolvedBinding(sValue, oWithControl, bUnescape, fnCallIfConstant) {
+					var vBindingInfo
+						= sap.ui.base.BindingParser.complexParser(sValue, null, bUnescape)
+						|| sValue; // in case there is no binding and nothing to unescape
+
+					if (typeof vBindingInfo === "object") {
+						return getAny(oWithControl, vBindingInfo, mSettings);
+					}
+					if (fnCallIfConstant) {
+						fnCallIfConstant();
+					}
+					return vBindingInfo; // string
+				}
+
+				/**
 				 * Visits the child nodes of the given parent element. Lifts them up by inserting
 				 * them before the target element.
 				 *
@@ -361,23 +394,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 *   the test result
 				 */
 				function performTest(oElement, oWithControl) {
-					var vTest = oElement.getAttribute("test"),
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest);
+					// constant test conditions are suspicious, but useful during development
+					var fnCallIfConstant
+						= warn.bind(null, 'Constant test condition in ', oElement, null),
+						sTest = oElement.getAttribute("test"),
+						vTest;
 
-					if (oBindingInfo) {
-						try {
-							vTest = getAny(oWithControl, oBindingInfo, mSettings);
-							if (vTest === oUNBOUND) {
-								warn('Binding not ready in ', oElement, null);
-								vTest = false;
-							}
-						} catch (ex) {
-							warn('Error in formatter of ', oElement, ex);
+					try {
+						vTest = getResolvedBinding(sTest, oWithControl, true, fnCallIfConstant);
+						if (vTest === oUNBOUND) {
+							warn('Binding not ready in ', oElement, null);
 							vTest = false;
 						}
-					} else {
-						// constant test conditions are suspicious, but useful during development
-						warn('Constant test condition in ', oElement, null);
+					} catch (ex) {
+						warn('Error in formatter of ', oElement, ex);
+						vTest = false;
 					}
 					return vTest && vTest !== "false";
 				}
@@ -394,29 +425,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
 				 */
 				function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
-					var vAny,
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
+					var sValue = oAttribute.value,
+						vValue;
 
-					if (oBindingInfo) {
-						try {
-							vAny = getAny(oWithControl, oBindingInfo, mSettings);
-							if (vAny !== oUNBOUND) {
-								oAttribute.value = vAny;
-							}
-						} catch (ex) {
-							// just don't replace XML attribute value
-							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
-								jQuery.sap.log.debug(
-									sCaller + ': Error in formatter of '
-										+ serializeSingleElement(oElement),
-									ex, "sap.ui.core.util.XMLPreprocessor");
-							}
+					try {
+						vValue = getResolvedBinding(sValue, oWithControl, false);
+						if (vValue !== oUNBOUND) {
+							oAttribute.value = vValue;
+						}
+					} catch (ex) {
+						// just don't replace XML attribute value
+						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
+							jQuery.sap.log.debug(
+								sCaller + ': Error in formatter of '
+									+ serializeSingleElement(oElement),
+								ex, "sap.ui.core.util.XMLPreprocessor");
 						}
 					}
 				}
 
 				/**
-				 * Loads and inlines the content of a sap.ui.core:Fragment element.
+				 * Loads and inlines the content of a <sap.ui.core:Fragment> element.
+				 *
 				 * @param {Element} oElement
 				 *   the <sap.ui.core:Fragment> element
 				 * @param {sap.ui.core.util._with} oWithControl
@@ -424,34 +454,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 */
 				function templateFragment(oElement, oWithControl) {
 					var sFragmentName = oElement.getAttribute("fragmentName"),
-						oFragmentElement = XMLTemplateProcessor.loadTemplate(
-							sFragmentName, "fragment");
+						vFragmentName;
 
-					// Note: It is perfectly valid to include the very same fragment again, as long
-					// as the context is changed. So we check for cycles at the current "with"
-					// control. A context change will create a new one.
-					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
-					if (oWithControl.$mFragmentContexts[sFragmentName]) {
-						oElement.appendChild(oElement.ownerDocument.createTextNode(
-							"Error: Stopped due to cyclic fragment reference"));
-						jQuery.sap.log.error(
-							'Stopped due to cyclic reference in fragment: ' + sFragmentName,
-							jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
-							"sap.ui.core.util.XMLPreprocessor");
-						return;
+					/**
+					 * Inserts the fragment with the given name in place of the <core:Fragment>
+					 * element.
+					 *
+					 * @param {string} sFragmentName
+					 *   the fragment's resolved name
+					 */
+					function insertFragment(sFragmentName) {
+						var oFragmentElement
+							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+
+						// Note: It is perfectly valid to include the very same fragment again, as long
+						// as the context is changed. So we check for cycles at the current "with"
+						// control. A context change will create a new one.
+						oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
+						if (oWithControl.$mFragmentContexts[sFragmentName]) {
+							oElement.appendChild(oElement.ownerDocument.createTextNode(
+								"Error: Stopped due to cyclic fragment reference"));
+							jQuery.sap.log.error(
+								'Stopped due to cyclic reference in fragment: ' + sFragmentName,
+								jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
+								"sap.ui.core.util.XMLPreprocessor");
+							return;
+						}
+
+						oWithControl.$mFragmentContexts[sFragmentName] = true;
+
+						if (localName(oFragmentElement) === "FragmentDefinition" &&
+								oFragmentElement.namespaceURI === "sap.ui.core") {
+							liftChildNodes(oFragmentElement, oWithControl, oElement);
+						} else {
+							oElement.appendChild(oFragmentElement);
+							liftChildNodes(oElement, oWithControl);
+						}
+						oElement.parentNode.removeChild(oElement);
+						oWithControl.$mFragmentContexts[sFragmentName] = false;
 					}
 
-					oWithControl.$mFragmentContexts[sFragmentName] = true;
-
-					if (localName(oFragmentElement) === "FragmentDefinition" &&
-							oFragmentElement.namespaceURI === "sap.ui.core") {
-						liftChildNodes(oFragmentElement, oWithControl, oElement);
-					} else {
-						oElement.appendChild(oFragmentElement);
-						liftChildNodes(oElement, oWithControl);
+					try {
+						vFragmentName = getResolvedBinding(sFragmentName, oWithControl, true);
+						if (vFragmentName !== oUNBOUND) {
+							insertFragment(vFragmentName);
+							return;
+						}
+						warn('Binding not ready in ', oElement, null);
+					} catch (ex) {
+						warn('Error in formatter of ', oElement, ex);
 					}
-					oElement.parentNode.removeChild(oElement);
-					oWithControl.$mFragmentContexts[sFragmentName] = false;
 				}
 
 				/**
@@ -620,7 +672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						// Warn and ignore the new "with" control when its binding context is
 						// the same as a previous one.
 						// We test identity because models cache and reuse binding contexts.
-						warn("set unchanged path '" + sResolvedPath + "' in ", oElement, null);
+						warn("Set unchanged path '" + sResolvedPath + "' in ", oElement, null);
 						oNewWithControl = oWithControl;
 					}
 
@@ -694,6 +746,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						&& localName(oNode) === "Fragment"
 						&& oNode.getAttribute("type") === "XML") {
 						templateFragment(oNode, oWithControl);
+						return;
 					}
 
 					visitAttributes(oNode, oWithControl);

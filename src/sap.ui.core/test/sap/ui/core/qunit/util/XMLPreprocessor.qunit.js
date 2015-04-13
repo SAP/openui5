@@ -272,27 +272,52 @@
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bIsLoggable) {
-		test("template:if test='false', warn = " + bIsLoggable, function () {
-			var aViewContent = [
-					mvcView(),
-					'<template:if test="false">',
-					'<Out/>',
-					'<\/template:if>',
-					'<\/mvc:View>'
-				],
-				oLogMock = this.mock(jQuery.sap.log);
+	test("XML with template:if test='{= false }'", function () {
+		check([
+			mvcView("t"),
+			// Note: requires unescaping to support constant expressions!
+			'<t:if test="{= false }">',
+			'<Out/>',
+			'</t:if>',
+			'</mvc:View>'
+		]);
+	});
 
-			oLogMock.expects("isLoggable").once()
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
-			oLogMock.expects("warning")
-				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-				.withExactArgs(
-					'qux: Constant test condition in ' + aViewContent[1],
-					null, "sap.ui.core.util.XMLPreprocessor");
+	//*********************************************************************************************
+	[{
+		aViewContent : [
+			mvcView(),
+			'<template:if test="false">',
+			'<Out/>',
+			'<\/template:if>',
+			'<\/mvc:View>'
+		]
+	}, {
+		aViewContent : [
+			mvcView(),
+			'<template:if test="{= false }">',
+			'<Out/>',
+			'<\/template:if>',
+			'<\/mvc:View>'
+		]
+	}].forEach(function (oFixture) {
+		[false, true].forEach(function (bIsLoggable) {
+			var aViewContent = oFixture.aViewContent;
 
-			check(aViewContent);
+			test(aViewContent[1] + ", warn = " + bIsLoggable, function () {
+				var oLogMock = this.mock(jQuery.sap.log);
+
+				oLogMock.expects("isLoggable").once()
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+					.withExactArgs(
+						'qux: Constant test condition in ' + aViewContent[1],
+						null, "sap.ui.core.util.XMLPreprocessor");
+
+				check(aViewContent);
+			});
 		});
 	});
 
@@ -425,19 +450,33 @@
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bIsLoggable) {
-		test("template:if test='{formatter:...}', exception in formatter, warn = " + bIsLoggable,
-			function () {
-				var aViewContent = [
-						mvcView(),
-						'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
-						'<Out/>',
-						'</template:if>',
-						'</mvc:View>'
-					],
-					oError = new Error("deliberate failure"),
+	[{
+		aViewContent : [
+			mvcView(),
+			'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}"
+				+ '">',
+			'<Out/>',
+			'</template:if>',
+			'</mvc:View>'
+		]
+	}, {
+		aViewContent : [
+			mvcView(),
+			'<Fragment fragmentName="' + "{formatter: 'foo.Helper.fail', path:'/flag'}"
+				+ '" type="XML"/>',
+			'</mvc:View>'
+		],
+		bAsIs : true // view remains "as is"
+	}].forEach(function (oFixture) {
+		[false, true].forEach(function (bIsLoggable) {
+			var aViewContent = oFixture.aViewContent,
+				vExpected = oFixture.bAsIs ? [aViewContent[1]] : undefined;
+
+			test(aViewContent[1] + ", exception in formatter, warn = " + bIsLoggable, function () {
+				var oError = new Error("deliberate failure"),
 					oLogMock = this.mock(jQuery.sap.log);
 
+				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
 				oLogMock.expects("isLoggable").once()
 					.withExactArgs(jQuery.sap.log.Level.WARNING)
 					.returns(bIsLoggable);
@@ -457,33 +496,49 @@
 
 				check(aViewContent, {
 					models: new sap.ui.model.json.JSONModel({flag: true})
-				});
-			}
-		);
+				}, vExpected);
+			});
+		});
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bIsLoggable) {
-		test("template:if test='{unrelated>/some/path}', warn = " + bIsLoggable, function () {
-			var aViewContent = [
-					mvcView(),
-					'<template:if test="{unrelated>/some/path}">',
-					'<Out/>',
-					'</template:if>',
-					'</mvc:View>'
-				],
-				oLogMock = this.mock(jQuery.sap.log);
+	[{
+		aViewContent : [
+			mvcView(),
+			'<template:if test="{unrelated>/some/path}">',
+			'<Out/>',
+			'</template:if>',
+			'</mvc:View>'
+		]
+	}, {
+		aViewContent : [
+			mvcView(),
+			'<Fragment fragmentName="{foo>/some/path}" type="XML"/>',
+			'</mvc:View>'
+		],
+		vExpected : [ // Note: XML serializer outputs &gt; encoding...
+			'<Fragment fragmentName="{foo&gt;/some/path}" type="XML"/>'
+		]
+	}].forEach(function (oFixture) {
+		[false, true].forEach(function (bIsLoggable) {
+			var aViewContent = oFixture.aViewContent,
+				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
 
-			oLogMock.expects("isLoggable").once()
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
-			oLogMock.expects("warning")
-				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-				.withExactArgs(
-					'qux: Binding not ready in ' + aViewContent[1],
-					null, "sap.ui.core.util.XMLPreprocessor");
+			test(aViewContent[1] + ", warn = " + bIsLoggable, function () {
+				var oLogMock = this.mock(jQuery.sap.log);
 
-			check(aViewContent);
+				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+				oLogMock.expects("isLoggable").once()
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+					.withExactArgs(
+						'qux: Binding not ready in ' + aViewContent[1],
+						null, "sap.ui.core.util.XMLPreprocessor");
+
+				check(aViewContent, {}, vExpected);
+			});
 		});
 	});
 
@@ -768,6 +823,7 @@
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+			'<Label text="A \\{ is a special character"/>', // escaping MUST NOT be changed!
 			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
 			'<html:img src="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
@@ -791,6 +847,7 @@
 		}, [ // Note: XML serializer outputs &gt; encoding...
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>',
+			'<Label text="A \\{ is a special character"/>',
 			'<Text text="{unrelated&gt;/some/path}"/>',
 			// TODO is this the expected behaviour? And what about text nodes?
 			'<html:img src="/coco/apps/main/img/Icons/product_48.png"/>'
@@ -1128,13 +1185,13 @@
 		};
 
 		oLogMock.expects("warning")
-			.withExactArgs("qux: set unchanged path '/my/path' in " + sTemplate1,
+			.withExactArgs("qux: Set unchanged path '/my/path' in " + sTemplate1,
 				null, "sap.ui.core.util.XMLPreprocessor");
 		oLogMock.expects("warning")
-			.withExactArgs("qux: set unchanged path '/my/path' in " + sTemplate2,
+			.withExactArgs("qux: Set unchanged path '/my/path' in " + sTemplate2,
 				null, "sap.ui.core.util.XMLPreprocessor");
 		oLogMock.expects("warning")
-			.withExactArgs("qux: set unchanged path '/my/path' in " + sTemplate3,
+			.withExactArgs("qux: Set unchanged path '/my/path' in " + sTemplate3,
 				null, "sap.ui.core.util.XMLPreprocessor");
 
 		check([
@@ -1393,6 +1450,24 @@
 	});
 
 	//*********************************************************************************************
+	test("dynamic fragment names", function () {
+		this.mock(sap.ui.core.XMLTemplateProcessor)
+			.expects("loadTemplate")
+			.once()
+			.withExactArgs("dynamicFragmentName", "fragment")
+			.returns(xml(['<In xmlns="foo"/>']));
+		check([
+				mvcView(),
+				'<Fragment fragmentName="{= \'dynamicFragmentName\' }" type="XML"/>',
+				'</mvc:View>'
+			],
+			{},
+			[
+				'<In />'
+			]);
+	});
+
+	//*********************************************************************************************
 	test("fragment with FragmentDefinition", function () {
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
 			return xml(['<FragmentDefinition xmlns="sap.ui.core">',
@@ -1500,10 +1575,10 @@
 				sinon.match(/Error: Stopped due to cyclic fragment reference/),
 				"sap.ui.core.util.XMLPreprocessor");
 		oLogMock.expects("warning")
-			.withExactArgs("qux: set unchanged path '/foo' in " + aFragmentContent[1],
+			.withExactArgs("qux: Set unchanged path '/foo' in " + aFragmentContent[1],
 				null, "sap.ui.core.util.XMLPreprocessor");
 		oLogMock.expects("warning")
-			.withExactArgs("qux: set unchanged path '/bar' in " + aFragmentContent[2],
+			.withExactArgs("qux: Set unchanged path '/bar' in " + aFragmentContent[2],
 				null, "sap.ui.core.util.XMLPreprocessor");
 
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
@@ -1531,17 +1606,7 @@
 				'<\/template:if>',
 				'<\/mvc:View>'
 			],
-			oLogMock = this.mock(jQuery.sap.log),
 			fnProcess = sap.ui.core.util.XMLPreprocessor.process;
-
-		oLogMock.expects("isLoggable").once()
-			.withExactArgs(jQuery.sap.log.Level.WARNING)
-			.returns(true);
-		oLogMock.expects("warning")
-			.exactly(1)
-			.withExactArgs(
-				'qux: Constant test condition in ' + aViewContent[1],
-				null, "sap.ui.core.util.XMLPreprocessor");
 
 		this.stub(sap.ui.core.util.XMLPreprocessor, "process",
 			function (oRootElement, oViewInfo, mSettings) {
@@ -1550,6 +1615,6 @@
 			}
 		);
 
-		check(aViewContent);
+		check.call(this, aViewContent);
 	});
 } ());
