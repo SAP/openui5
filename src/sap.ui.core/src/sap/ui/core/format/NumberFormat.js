@@ -891,6 +891,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sInt = vValue.substring(0, iAfterMovePos);
 			sDecimal = vValue.substring(iAfterMovePos);
 
+			// remove unnecessary leading zeros
+			sInt = sInt.replace(/^(-?)0+(\d)/, "$1$2");
+
 			return sInt + (sDecimal ? ("." + sDecimal) : "");
 		} else {
 			// can't shift decimal point in this case
