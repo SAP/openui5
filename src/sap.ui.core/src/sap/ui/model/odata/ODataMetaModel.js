@@ -150,12 +150,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		var iIndex = -1;
 
 		sPropertyName = sPropertyName || "name";
-		(aArray || []).forEach(function (oObject, i) {
-			if (oObject[sPropertyName] === vExpectedPropertyValue) {
-				iIndex = i;
-				return false; // break
-			}
-		});
+		if (aArray) {
+			aArray.forEach(function (oObject, i) {
+				if (oObject[sPropertyName] === vExpectedPropertyValue) {
+					iIndex = i;
+					return false; // break
+				}
+			});
+		}
 
 		return iIndex;
 	}
@@ -227,7 +229,8 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 *   or <code>null</code> (for an object) if no such thing is found
 	 */
 	function getObject(vModel, sArrayName, sQualifiedName, bAsPath) {
-		var vResult = bAsPath ? undefined : null,
+		var aArray,
+			vResult = bAsPath ? undefined : null,
 			aSchemas = Array.isArray(vModel) ? vModel
 				: (vModel.getObject("/dataServices/schema") || []),
 			iSeparatorPos,
@@ -240,12 +243,15 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		sName = sQualifiedName.slice(iSeparatorPos + 1);
 		aSchemas.forEach(function (oSchema) {
 			if (oSchema.namespace === sNamespace) {
-				(oSchema[sArrayName] || []).forEach(function (oThing) {
-					if (oThing.name === sName) {
-						vResult = bAsPath ? oThing.$path : oThing;
-						return false; // break
-					}
-				});
+				aArray = oSchema[sArrayName];
+				if (aArray) {
+					aArray.forEach(function (oThing) {
+						if (oThing.name === sName) {
+							vResult = bAsPath ? oThing.$path : oThing;
+							return false; // break
+						}
+					});
+				}
 				return false; // break
 			}
 		});
@@ -344,7 +350,11 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		 *   "EntitySet"
 		 */
 		function liftSAPData(o, sTypeClass) {
-			(o.extensions || []).forEach(function (oExtension) {
+			if (!o.extensions) {
+				return;
+			}
+
+			o.extensions.forEach(function (oExtension) {
 				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
 					o["sap:" + oExtension.name] = oExtension.value;
 					addV4Annotation(o, oExtension, sTypeClass);
@@ -509,11 +519,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 				 *   optional callback for each child
 				 */
 				function visitChildren(aChildren, mChildAnnotations, sTypeClass, fnCallback) {
-					(aChildren || []).forEach(function (oChild) {
+					if (!aChildren) {
+						return;
+					}
+					aChildren.forEach(function (oChild) {
 						// lift SAP data for easy access to SAP Annotations for OData Version 2.0
 						liftSAPData(oChild, sTypeClass);
 					});
-					(aChildren || []).forEach(function (oChild) {
+					aChildren.forEach(function (oChild) {
 						if (sTypeClass === "Property" && oChild["sap:unit"]) {
 							addUnitAnnotation(oChild, aChildren);
 						} else if (sTypeClass === "EntitySet") {
@@ -545,7 +558,10 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 				function visitParents(sArrayName, bInContainer, fnCallback) {
 					var aParents = oSchema[sArrayName];
 
-					(aParents || []).forEach(function (oParent, j) {
+					if (!aParents) {
+						return;
+					}
+					aParents.forEach(function (oParent, j) {
 						var sQualifiedName = oSchema.namespace + "." + oParent.name,
 							mChildAnnotations = getChildAnnotations(sQualifiedName, bInContainer);
 
@@ -590,7 +606,10 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 									&& oAnnotations.EntityContainer[sQualifiedName]
 									|| {};
 
-							(oFunctionImport.parameter || []).forEach(
+							if (!oFunctionImport.parameter) {
+								return;
+							}
+							oFunctionImport.parameter.forEach(
 								function (oParam) {
 									liftSAPData(oParam);
 									jQuery.extend(oParam,
