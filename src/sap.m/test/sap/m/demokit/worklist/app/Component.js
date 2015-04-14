@@ -25,6 +25,10 @@ sap.ui.define([
 		 * @override
 		 */
 		init : function () {
+			
+			// create the metadata promise
+			this._createMetadataPromise(this.getModel());
+			
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -45,25 +49,6 @@ sap.ui.define([
 		 * @returns {sap.ui.mvc.View} the root view of the component
 		 */
 		createContent : function() {
-			// set the app data model since the app controller needs it, we create this model very early
-			var oAppModel = models.createODataModel({
-				urlParametersForEveryRequest: [
-					"sap-server",
-					"sap-host",
-					"sap-host-http",
-					"sap-client",
-					"sap-language"
-				],
-				url : this.getMetadata().getConfig().serviceUrl,
-				config: {
-					metadataUrlParams: {
-						"sap-documentation": "heading"
-					}
-				}
-			});
-			this.setModel(oAppModel);
-			this._createMetadataPromise(oAppModel);
-
 			// call the base component's createContent function
 			var oRootView = UIComponent.prototype.createContent.apply(this, arguments);
 			oRootView.addStyleClass(this.getCompactCozyClass());
