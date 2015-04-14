@@ -69,10 +69,23 @@
 					QUnit.assert.ok(oModel.bDestroyed,
 						'Expected model "' + sName + '" to be destroyed');
 				}
+			},
+			mockGetUriParameters: function() {
+				var oGetParameterStub = this.stub();
+
+				// returns sap-client=foo, sap-server=bar
+				[ 'sap-client', 'sap-server' ].forEach(function(sName, i) {
+					oGetParameterStub.withArgs(sName).returns(i ? 'bar': 'foo');
+				});
+
+				this.stub(jQuery.sap, 'getUriParameters').returns({
+					get: oGetParameterStub
+				});
 			}
 		});
 
 		QUnit.test("metadata v2 with dataSources", function(assert) {
+			this.mockGetUriParameters();
 			this.mockModels();
 
 			var oLogSpy = this.spy(jQuery.sap.log, "error");
@@ -86,7 +99,7 @@
 
 			// model: "ODataModel"
 			sinon.assert.calledWithExactly(this.modelSpy.odata, {
-				serviceUrl: '/path/to/odata/service',
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
 				annotationURI: [ '/path/to/odata/annotations/1', '/path/to/odata/annotations/2' ],
 				useBatch: false,
 				refreshAfterChange: false,
@@ -99,7 +112,7 @@
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-				serviceUrl: '/path/to/default/datasource',
+				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
 				annotationURI: [ '/path/to/odata/annotations/2', '/path/to/odata/annotations/1' ]
 			});
 
@@ -110,7 +123,7 @@
 
 			// model: ""
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-				serviceUrl: '/path/to/default/datasource'
+				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar'
 			});
 
 			// model: "v2-ODataModel"
@@ -122,7 +135,7 @@
 
 			// model: "invalid-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-				serviceUrl: '/path/to/odata/service',
+				serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
 				annotationURI: [ '/path/to/odata/annotations/1' ]
 			});
 
@@ -131,20 +144,20 @@
 			sinon.assert.callCount(this.modelSpy.json, 2);
 
 			// model: "json"
-			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json');
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
 
-			// model: "json"
-			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/path/to/local/data.json');
+			// model: "json-relative"
+			sinon.assert.calledWithExactly(this.modelSpy.json, 'v2models/path/to/local/data.json?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.xml.XMLModel
 			sinon.assert.callCount(this.modelSpy.xml, 2);
 
 			// model: "xml"
-			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml');
+			sinon.assert.calledWithExactly(this.modelSpy.xml, '/path/to/data.xml?sap-client=foo&sap-server=bar');
 
-			// model: "xml"
-			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/path/to/local/data.xml');
+			// model: "xml-relative"
+			sinon.assert.calledWithExactly(this.modelSpy.xml, 'v2models/path/to/local/data.xml?sap-client=foo&sap-server=bar');
 
 
 			// sap.ui.model.resource.ResourceModel
@@ -165,13 +178,13 @@
 			sinon.assert.callCount(this.modelSpy.custom, 7);
 
 			// model: "custom-uri-string"
-			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype');
+			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar');
 
 			// model: "custom-uri-relative-string"
-			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/path/to/local/custom.datatype');
+			sinon.assert.calledWithExactly(this.modelSpy.custom, 'v2models/path/to/local/custom.datatype?sap-client=foo&sap-server=bar');
 
 			// model: "custom-uri-string-with-settings"
-			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype', {
+			sinon.assert.calledWithExactly(this.modelSpy.custom, '/path/to/custom.datatype?sap-client=foo&sap-server=bar', {
 				foo: 'bar'
 			});
 
@@ -180,12 +193,12 @@
 
 			// model: "custom-uri-setting-name"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, {
-				myUri: '/path/to/custom.datatype'
+				myUri: '/path/to/custom.datatype?sap-client=foo&sap-server=bar'
 			});
 
 			// model: "custom-uri-setting-merge"
 			sinon.assert.calledWithExactly(this.modelSpy.custom, {
-				uri: '/path/to/custom.datatype',
+				uri: '/path/to/custom.datatype?sap-client=foo&sap-server=bar',
 				foo: 'bar'
 			});
 
@@ -267,6 +280,7 @@
 		});
 
 		QUnit.test("metadata v1 with models", function(assert) {
+			this.mockGetUriParameters();
 			this.mockModels();
 
 			this.oComponent = sap.ui.component({
