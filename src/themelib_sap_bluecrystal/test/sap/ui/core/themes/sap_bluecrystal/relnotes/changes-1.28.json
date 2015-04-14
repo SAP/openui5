@@ -454,5 +454,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "5bd081f938e0f9843f2f03fc64ddee9c8027d78a",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Left padding is now correct",
+        "references": []
+      },
+      {
+        "id": "f4ffd57debdab5343b6e5ad04c386eb8e0b4b421",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Title, Label: Margin in transparent toolbar context for Bluecrystal and High Contrast Black themes corrected",
+        "references": []
+      },
+      {
+        "id": "f47c834c0ab29eb8b17ba61786ba1d75ca7d283a",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: Custom button outline CSS issue in Internet Explorer corrected",
+        "references": []
+      },
+      {
+        "id": "cc71e7b852bd95dbe12d6d10224c7d7ed2b74623",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Incorrect text alignment in Internet Explorer 10 corrected",
+        "references": []
+      }
+    ]
   }
 }
