@@ -997,16 +997,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {Document} oXmlDoc - The XML document that is parsed
 	 * @param {XPathResult} oNodeList - As many nodes as should be checked for Record values
+	 * @param {map} [mAlias] - If this map is given, alias replacement with the given values will be performed on the found text
 	 * @return {object[]}
 	 * @private
 	 */
-	ODataAnnotations.prototype._getTextValues = function(oXmlDoc, oNodeList) {
+	ODataAnnotations.prototype._getTextValues = function(oXmlDoc, oNodeList, mAlias) {
 		var aNodeValues = [];
 
 		for (var i = 0; i < oNodeList.length; i += 1) {
 			var oNode = this.xPath.nextNode(oNodeList, i);
 			var oValue = {};
-			oValue[oNode.nodeName] = this.xPath.getNodeText(oNode); // TODO: Is nodeName correct or should we remove the namespace?
+			var sText = this.xPath.getNodeText(oNode); // TODO: Is nodeName correct or should we remove the namespace?
+			oValue[oNode.nodeName] = mAlias ? this.replaceWithAlias(sText, mAlias) : sText;
 			aNodeValues.push(oValue);
 		}
 
@@ -1066,7 +1068,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					var oCollectionNodes = this.xPath.selectNodes(oXmlDocument, "./d:Collection/d:AnnotationPath | ./d:Collection/d:PropertyPath", oDocumentNode);
 
 					if (oCollectionNodes.length > 0) {
-						vPropertyValue = this._getTextValues(oXmlDocument, oCollectionNodes);
+						vPropertyValue = this._getTextValues(oXmlDocument, oCollectionNodes, mAlias);
 					} else {
 						vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 
