@@ -49,10 +49,6 @@
 		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_goldreflection</module>
 
-		<!-- testsuite -->
-		<module>src/testsuite-utils</module>
-		<module>src/testsuite</module>
-
 	</modules>
 
 
@@ -327,6 +323,24 @@
 				<sap.ui5.eslint.onlyChangedFiles>false</sap.ui5.eslint.onlyChangedFiles>
 
 			</properties>
+
+		</profile>
+
+		<profile>
+
+			<id>testsuite.build</id>
+
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+
+			<modules>
+
+				<!-- testsuite -->
+				<module>src/testsuite-utils</module>
+				<module>src/testsuite</module>
+
+			</modules>
 
 		</profile>
 
