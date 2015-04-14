@@ -35,7 +35,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			/**
 			 * Label of the list item
 			 */
-			label : {type : "string", group : "Misc", defaultValue : null}
+			label : {type : "string", group : "Misc", defaultValue : null},
+	
+			/**
+			 * This property specifies the label text directionality with enumerated options. By default, the label inherits text direction from the DOM.
+			 * @since 1.30.0
+			 */
+			labelTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		defaultAggregation : "content",
 		aggregations : {
