@@ -457,8 +457,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.destroyAggregation("buttons");
 		this.myChange = undefined;
 
-		this.setSelectedIndex(undefined);
-
 		if (this.aRBs) {
 			while (this.aRBs.length > 0) {
 				this.aRBs[0].destroy();
