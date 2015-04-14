@@ -2690,7 +2690,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		// format handling
-		if (sMethod === "MERGE" && !this.bUseBatch) {
+		if (sMethod === "MERGE" && this.bUseBatch) {
 			mHeaders["x-http-method"] = "MERGE";
 			sMethod = "POST";
 		}
