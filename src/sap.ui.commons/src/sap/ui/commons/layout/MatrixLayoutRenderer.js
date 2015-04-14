@@ -186,9 +186,9 @@ sap.ui.define(['jquery.sap.global'],
 						//rm.addStyle("text-overflow", "ellipsis");
 					}
 	
-					var sHAlign = r.getHAlign(oMatrixLayoutCell.getHAlign(), bRTL);
+					var sHAlign = r.getHAlignClass(oMatrixLayoutCell.getHAlign(), bRTL);
 					if (sHAlign) {
-						rm.addStyle("text-align", sHAlign);
+						rm.addClass(sHAlign);
 					}
 					var sVAlign = r.getVAlign(oMatrixLayoutCell.getVAlign());
 					if (sVAlign) {
@@ -412,33 +412,38 @@ sap.ui.define(['jquery.sap.global'],
 	};
 	
 	/**
-	 * Returns the value for the HTML "align" attribute according to the given
-	 * horizontal alignment and RTL mode, or NULL if the HTML default is fine.
+	 * Returns the a classname according to the given
+	 * horizontal alignment and RTL mode or null if an invalid value.
+	 * was given.
 	 *
 	 * @param {sap.ui.commons.layout.HAlign} oHAlign
 	 * @param {boolean} bRTL
 	 * @type string
 	 */
-	MatrixLayoutRenderer.getHAlign = function(oHAlign, bRTL) {
-	  switch (oHAlign) {
+	MatrixLayoutRenderer.getHAlignClass = function(oHAlign, bRTL) {
+		var sClassPrefix = "sapUiMltCellHAlign";
+
+		switch (oHAlign) {
 		case sap.ui.commons.layout.HAlign.Begin:
-		  return null; // this is the HTML default
-	
+			return sClassPrefix + (bRTL ? "Right" : "Left");
+
 		case sap.ui.commons.layout.HAlign.Center:
-		  return "center";
-	
+			return sClassPrefix + "Center";
+
 		case sap.ui.commons.layout.HAlign.End:
-		  return bRTL ? "left" : "right";
-	
+			return sClassPrefix + (bRTL ? "Left" : "Right");
+
 		case sap.ui.commons.layout.HAlign.Left:
-		  return bRTL ? "left" : null;
-	
+			return sClassPrefix + "Left";
+
 		case sap.ui.commons.layout.HAlign.Right:
-		  return bRTL ? null : "right";
-	  }
-	
-	  jQuery.sap.assert(false, "MatrixLayoutRenderer.getHAlign: oHAlign must be a known value");
-	  return null;
+			return sClassPrefix + "Right";
+
+		default:
+			jQuery.sap.assert(false, "MatrixLayoutRenderer.getHAlign: oHAlign must be a known value");
+			return null;
+		}
+
 	};
 	
 	/**
