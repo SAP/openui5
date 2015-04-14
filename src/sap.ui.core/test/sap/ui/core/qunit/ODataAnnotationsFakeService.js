@@ -95,6 +95,11 @@ xhr.onCreate = function(request) {
 				sAnswer = sOtherPropertyTextNodes;
 				break;
 
+			case "fakeService://testdata/odata/Aliases.xml":
+				sAnswer = sAliasesTest;
+				break;
+
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -3610,3 +3615,26 @@ var sMetadataWithEntityContainers = '\
 	</edmx:DataServices>\
 </edmx:Edmx>';
 
+var sAliasesTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+	<edmx:Reference Uri="/some/path/Test.xml">\
+		<edmx:Include Alias="TEST" Namespace="internal.ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.AliasReplacement">\
+				<Annotation Term="TestAnnotation">\
+				  <Record>\
+				    <PropertyValue Property="NotReplaced">\
+				      <Collection>\
+				        <AnnotationPath>@TEST.Value</AnnotationPath>\
+				      </Collection>\
+				    </PropertyValue>\
+				    <PropertyValue Property="Replaced" AnnotationPath="@TEST.Value"/>\
+				  </Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
