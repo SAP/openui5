@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			/**
 			 * number of days displayed
+			 * on phones the maximum rendered number of days is 8.
 			 */
 			days : {type : "int", group : "Misc", defaultValue : 7},
 
@@ -110,6 +111,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("days", iDays, true);
 
+			iDays = this._getDays(); // to use phone limit
+
 			var oDatesRow = this.getAggregation("month")[0];
 			oDatesRow.setDays(iDays);
 
@@ -147,9 +150,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		CalendarDateInterval.prototype._getShowMonthHeader = function(){
+		CalendarDateInterval.prototype._getDays = function(){
 
 			var iDays = this.getDays();
+
+			// in phone mode max 8 days are displayed
+			if (sap.ui.Device.system.phone && iDays > 8) {
+				return 8;
+			} else {
+				return iDays;
+			}
+
+		};
+
+		CalendarDateInterval.prototype._getShowMonthHeader = function(){
+
+			var iDays = this._getDays();
 			if (iDays > this._iDaysMonthHead) {
 				return true;
 			}else {
@@ -236,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oMonthPicker = this.getAggregation("monthPicker");
 			var oYearPicker = this.getAggregation("yearPicker");
 			var oStartDate = new Date(_getStartDate(that).getTime());
-			var iDays = this.getDays();
+			var iDays = this._getDays();
 
 			switch (this._iMode) {
 			case 0: // day picker
@@ -272,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oMonthPicker = this.getAggregation("monthPicker");
 			var oYearPicker = this.getAggregation("yearPicker");
 			var oStartDate = new Date(_getStartDate(that).getTime());
-			var iDays = this.getDays();
+			var iDays = this._getDays();
 
 			switch (this._iMode) {
 			case 0: // day picker
@@ -305,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var aMonths = [];
 			var iMonth = oDate.getUTCMonth();
-			var iDays = this.getDays();
+			var iDays = this._getDays();
 
 			aMonths.push(iMonth);
 			if (iDays > this._iDaysLarge) {
@@ -326,7 +342,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _setStartDate(oThis, oStartDate, bSetFocusDate){
 
 			var oMaxDate = new Date(oThis._oMaxDate.getTime());
-			oMaxDate.setUTCDate(oMaxDate.getUTCDate() - oThis.getDays());
+			oMaxDate.setUTCDate(oMaxDate.getUTCDate() - oThis._getDays());
 			if (oStartDate.getTime() < oThis._oMinDate.getTime()) {
 				oStartDate = oThis._oMinDate;
 			}else if (oStartDate.getTime() > oMaxDate.getTime()){
