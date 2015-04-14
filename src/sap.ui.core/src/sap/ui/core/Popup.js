@@ -680,6 +680,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			that.bOpen = true;
 			$Ref.css("display","block");
 
+
 			// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
 			if (that._bModal || that._bAutoClose || that._sInitialFocusId) {
 				var domRefToFocus = null;
@@ -707,7 +708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			that._updateBlindLayer();
 
 			// notify that opening has completed
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9) {
+			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9) {
 				jQuery.sap.delayedCall(0,that,function(){
 					that.fireOpened();
 				});
