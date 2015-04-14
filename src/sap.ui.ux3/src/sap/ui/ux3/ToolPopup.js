@@ -505,8 +505,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		if (!this._sInitialFocusId) {
 			var sInitFocusId = fnGetInitialFocus(this);
-			var oControl = jQuery.sap.byId(sInitFocusId);
-			oControl.focus();
+
+			// Compare the initial focus id with the current focus that is
+			// stored in the FocusHandler in the core.
+			// If the initial focus was set properly already by the Popup
+			// don't focus twice. Because Internet Explorer will be confused with
+			// two focusin and focusout events
+			if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
+				var oControl = jQuery.sap.byId(sInitFocusId);
+				oControl.focus();
+			}
 		}
 
 		// forward the Popup's opened event accordingly
