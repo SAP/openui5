@@ -69,6 +69,8 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	function(SimpleType) {
 	"use strict";
 
+	var rAllWhitespace = /\s/g; // whitespace, globally
+
 	/**
 	 * Normalizes the given number to the fixed format.
 	 *
@@ -91,7 +93,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 			sSign = "";
 
 		// remove all whitespace
-		sText = sText.replace(/\s/g, "");
+		sText = sText.replace(rAllWhitespace, "");
 
 		// determine the sign
 		switch (sText.charAt(0)) {

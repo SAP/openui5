@@ -8,7 +8,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	function(NumberFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
-	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
+	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/,
+		rDecimalInput = /^0*(\d*)(?:\.(\d*?)0*)?$/; // user input for a Decimal w/o the sign
 
 	/**
 	 * Returns the formatter. Creates it lazily.
@@ -261,7 +262,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		switch (sSourceType) {
 		case "string":
 			sResult = ODataType.normalizeNumber(this.oFormatOptions, getFormatter(this), vValue,
-				/^0*(\d*)(?:\.(\d*?)0*)?$/);
+				rDecimalInput);
 			if (!sResult) {
 				throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
 					.getText("EnterNumber"));

@@ -7,7 +7,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	function(FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
-	var rGuid = /^[A-F0-9]{8}-([A-F0-9]{4}-){3}[A-F0-9]{12}$/i;
+	var rAllWhitespaceAndSeparators = /[-\s]/g, // whitespace and "-" separator, globally
+		rGuid = /^[A-F0-9]{8}-([A-F0-9]{4}-){3}[A-F0-9]{12}$/i;
 
 	/**
 	 * Returns the locale-dependent error message.
@@ -137,7 +138,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 				+ sSourceType);
 		}
 		// remove all whitespaces and separators
-		sResult = sValue.replace(/[-\s]/g, '');
+		sResult = sValue.replace(rAllWhitespaceAndSeparators, '');
 		if (sResult.length != 32) {
 			// don't try to add separators to invalid value
 			return sValue;
