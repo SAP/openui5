@@ -62,6 +62,6 @@
 
 	<core:Fragment fragmentName="sap.ui.core.mvctest.views.Dummy" type="XML"></core:Fragment>
 
-	<mvc:View viewName="sap.ui.core.mvctest.views.Dummy"></mvc:View>
+	<mvc:XMLView viewName="sap.ui.core.mvctest.views.Dummy"></mvc:XMLView>
 
 </mvc:View>

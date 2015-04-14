@@ -46,7 +46,7 @@ var sXml;
 jQuery.ajax({
 	url : "testdata/mvc/Async.view.xml",
 	success : function(data) {
-		sXml = data.documentElement.outerHTML;
+		sXml = new XMLSerializer().serializeToString(data);
 	},
 	async : false
 });
