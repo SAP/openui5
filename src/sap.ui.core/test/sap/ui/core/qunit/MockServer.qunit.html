@@ -617,10 +617,10 @@
 				path : new RegExp("path(\\?.*)?"),
 				response : function(oXhr, sUrlParameters) {
 					var self = oMockServer;
-					self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path:before', {oXhr: oXhr, sUrlParameters: sUrlParameters});
+					self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path' + ':before' , {oXhr: oXhr, sUrlParameters: sUrlParameters});
 			        console.log("processing");
 			        oXhr.responseText = "test";
-			        self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path:after', {oXhr: oXhr}); 
+			        self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path' + ':after', {oXhr: oXhr}); 
 					oXhr.respondJSON(200, null, '{"name": "' + oXhr.responseText + '"}');
 				}
 			}]
@@ -634,8 +634,8 @@
 			oEvent.getParameter("oXhr").responseText = "finished";
 		};
 		
-		oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, 'path', fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, 'path', fnCbPost);
+		oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "path");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "path");
 		
 		oMockServer.start();
 		
@@ -647,8 +647,8 @@
 		equal(oResponse.data.name, "finished");
 		iTesterPre = 0;
 				
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, 'path', fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, 'path', fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, 'path');
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, 'path');
 		
 		oResponse = jQuery.sap.sjax({
 			url : "/mydummyservice/path?customParameter=123",
@@ -683,8 +683,8 @@
 			oEvent.getParameter("oFilteredData").results.splice(0,1)
 		};
 		
-		oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPost);
+		oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 		
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection/$count",
@@ -696,8 +696,8 @@
 		equal(oResponse.data, 99, "callback on $count on entityset attach");
         iTesterPre = 0;
         
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection/$count",
@@ -733,8 +733,8 @@
 		    oEvent.getParameter("oFilteredData").results.splice(0,1);
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre);
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost);
 		
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection/$count",
@@ -757,8 +757,8 @@
 		equal(oResponse.data, 99, "callback on $count on entityset attach");
         iTesterPre = 0;
 		
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "", fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre);
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost);
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection/$count",
@@ -803,8 +803,8 @@
 		    oEvent.getParameter("oFilteredData").results.splice(0,1)
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 		
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
@@ -816,8 +816,8 @@
 		equal(oResponse.data.d.results.length, 99,"callback on query options on entityset attach");
 		iTesterPre = 0;
    
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "FlightCollection", fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
@@ -854,8 +854,8 @@
 			oEvent.getParameter("oEntry").CARRNAME = "CARRNAME 2";
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 		
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')",
@@ -867,8 +867,8 @@
 		equal(oResponse.data.d.CARRNAME, "CARRNAME 2","callback on single entry on entityset attach");
 		iTesterPre = 0;
 
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')",
@@ -904,8 +904,8 @@
 		    oEvent.getParameter("oFilteredData").results.splice(0,1);
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 		
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
@@ -917,8 +917,8 @@
 		equal(oResponse.data, 99,"callback on navigation property count attach");
 		iTesterPre = 0;
    
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
@@ -954,8 +954,8 @@
 			oEvent.mParameters.oFilteredData.results.splice(0,1);
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 		
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$skip=10",
@@ -967,8 +967,8 @@
 		equal(oResponse.data.d.results.length, 89,"callback on navigation property query option attach");
 		iTesterPre = 0;
    
-		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, "CarrierCollection", fnCbPost);
+		oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$skip=10",
@@ -1004,8 +1004,8 @@
 		    iTesterPost = iTesterPost + 1;
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.POST, "FlightCollection", fnCbPre);
-		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.POST, "FlightCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPre, "FlightCollection");
+		oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPost, "FlightCollection");
 		
 		var oPostResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
@@ -1020,8 +1020,8 @@
 		iTesterPre = 0;
 		iTesterPost = 0;
    
-    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.POST, "FlightCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.POST, "FlightCollection", fnCbPost);
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.POST, fnCbPost, "FlightCollection");
 
 		var oPostResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
@@ -1060,8 +1060,8 @@
             iTesterPost = iTesterPost + 1;
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, "FlightCollection", fnCbPre);
-	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, "FlightCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPre, "FlightCollection");
+	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPost, "FlightCollection");
 	
 	    oPutResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -1076,8 +1076,8 @@
 		iTesterPre = 0;
 	    iTesterPost = 0;
    
-    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, "FlightCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, "FlightCollection", fnCbPost);
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PUT, fnCbPost, "FlightCollection");
 
         oPutResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -1115,8 +1115,8 @@
 		    iTesterPost = iTesterPost + 1;
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, "FlightCollection", fnCbPre);
-	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, "FlightCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPre, "FlightCollection");
+	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPost, "FlightCollection");
 	
 	    var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -1132,8 +1132,8 @@
 		iTesterPre = 0;
 	    iTesterPost = 0;
    
-    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, "FlightCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, "FlightCollection", fnCbPost);
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE, fnCbPost, "FlightCollection");
 
         oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -1172,8 +1172,8 @@
 		     iTesterPost = iTesterPost + 1;
 		};
 		
-	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, "FlightCollection", fnCbPre);
-	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, "FlightCollection", fnCbPost);
+	    oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPre, "FlightCollection");
+	    oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPost, "FlightCollection");
 	
 	    var oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -1189,8 +1189,8 @@
 		iTesterPre = 0;
 	    iTesterPost = 0;
    
-    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, "FlightCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, "FlightCollection", fnCbPost);
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPre, "FlightCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH, fnCbPost, "FlightCollection");
 
         oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
@@ -1229,8 +1229,8 @@
             iTesterPost = iTesterPost + 1;
 		};
 		
-	   oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, "CarrierCollection", fnCbPre);
-	   oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, "CarrierCollection", fnCbPost);
+	   oMockServer.attachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, fnCbPre, "CarrierCollection");
+	   oMockServer.attachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, fnCbPost, "CarrierCollection");
 	
 		var oDelResponse = jQuery.sap.sjax({
 		    url:  "/myservice/CarrierCollection('carrid 1')",
@@ -1244,8 +1244,8 @@
 		iTesterPre = 0;
 	    iTesterPost = 0;
    
-    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, "CarrierCollection", fnCbPre);
-		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, "CarrierCollection", fnCbPost);
+    	oMockServer.detachBefore(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE, fnCbPre, "CarrierCollection");
+		oMockServer.detachAfter(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE,  fnCbPost, "CarrierCollection");
 
         var oDelResponse = jQuery.sap.sjax({
 		    url:  "/myservice/CarrierCollection('carrid 2')",

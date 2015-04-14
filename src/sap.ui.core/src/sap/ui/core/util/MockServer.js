@@ -173,44 +173,48 @@ sap.ui
 			/**
 			 * callback function for attachBefore
 			 * @param {string} event type according to HTTP Method
-			 * @param {string} sEntitySet - the name of the entity set
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
-			MockServer.prototype.attachBefore = function(sHttpMethod, sEntitySet, fnCallback) {
+			MockServer.prototype.attachBefore = function(sHttpMethod, fnCallback, sEntitySet) {
+			    sEntitySet = sEntitySet ? sEntitySet : "";
 				this.attachEvent(sHttpMethod + sEntitySet + ":before", fnCallback);
 			};
 			
 			/**
 			 * callback function for attachBefore
 			 * @param {string} event type according to HTTP Method
-			 * @param {string} sEntitySet - the name of the entity set
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
-			MockServer.prototype.attachAfter = function(sHttpMethod, sEntitySet, fnCallback) {
+			MockServer.prototype.attachAfter = function(sHttpMethod, fnCallback, sEntitySet) {
+			    sEntitySet = sEntitySet ? sEntitySet : "";
 				this.attachEvent(sHttpMethod + sEntitySet + ":after", fnCallback);
 			};
 			
 			/**
 			 * callback function for detachBefore
 			 * @param {string} event type according to HTTP Method
-			 * @param {string} sEntitySet - the name of the entity set
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
-			MockServer.prototype.detachBefore = function(sHttpMethod, sEntitySet, fnCallback) {
+			MockServer.prototype.detachBefore = function(sHttpMethod, fnCallback, sEntitySet) {
+			    sEntitySet = sEntitySet ? sEntitySet : "";
 			    this.detachEvent(sHttpMethod + sEntitySet + ":before", fnCallback);
 			};
 			
 			/**
 			 * callback function for detachAfter
 			 * @param {string} event type according to HTTP Method
-			 * @param {string} sEntitySet - the name of the entity set
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
-			MockServer.prototype.detachAfter = function(sHttpMethod, sEntitySet, fnCallback) {
+			MockServer.prototype.detachAfter = function(sHttpMethod, fnCallback, sEntitySet) {
+			    sEntitySet = sEntitySet ? sEntitySet : "";
 			    this.detachEvent(sHttpMethod + sEntitySet + ":after", fnCallback);
 			};
 			
