@@ -525,6 +525,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			// check control based logic to handle from scratch is required or not
 			var bCheckGrowingFromScratch = this._oControl.checkGrowingFromScratch && this._oControl.checkGrowingFromScratch();
+			
+			// rebuild list from scratch if there were no items and new items needs to be added 
+			if (!this._oControl.getItems().length && aContexts.diff && aContexts.diff.length) {
+				aContexts.diff = undefined;
+			}
 
 			// when data is grouped we insert the sequential items to the end
 			// but with diff calculation we may need to create GroupHeaders
