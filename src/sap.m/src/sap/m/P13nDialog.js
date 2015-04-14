@@ -209,6 +209,7 @@ sap.ui.define([
 			// according to consistency we adjust the content width of P13nDialog to the content width of value help dialog
 			this.setContentWidth("65rem");
 			this.setContentHeight("40rem");
+			this.setDraggable(true);
 			this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
 			this.addButton(this._createOKButton());
 			this.addButton(this._createCancelButton());
