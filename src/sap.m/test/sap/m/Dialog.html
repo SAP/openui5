@@ -999,6 +999,31 @@
 						oDialogResizeAndDrag.open();
 					}
 				}),
+				new sap.ui.core.HTML({content: "<br/>"}),
+				new sap.m.Button({
+					width: "200px",
+					text: "Compact size",
+					press: function() {
+						var oDialog = new sap.m.Dialog({
+							title: "View Settings",
+							horizontalScrolling: false,
+							contentWidth: "65rem",
+							contentHeight: "40rem",
+							draggable: true,
+							subHeader: new sap.m.Bar({
+								contentLeft: [new sap.m.SegmentedButton({
+									width: "100%",
+									buttons: [new sap.m.Button({
+										type: sap.m.ButtonType.Default,
+										text: "Filter"
+									})]
+								})]
+							})
+						});
+						oDialog.toggleStyleClass("sapUiSizeCompact", true);
+						oDialog.open();
+					}
+				}),
 				new sap.m.Label({text: "Starting on"}).addStyleClass("specialLabelDialogPage"),
 				new sap.m.DateTimeInput({
 					type: sap.m.DateTimeInputType.Date,
