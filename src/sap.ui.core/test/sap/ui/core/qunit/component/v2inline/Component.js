@@ -17,16 +17,23 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 			},
 			
 			"sap.ui5": {
-				
+
 				"resources": {
-					"js": [{
-						"uri": "script.js"
-					}],
-					"css": [{
-						"uri": "style.css"
-					}]
+					"js": [
+						{
+							"uri": "script.js"
+						},
+						{}
+					],
+					"css": [
+						{
+							"uri": "style.css",
+							"id": "mystyle"
+						},
+						{}
+					]
 				},
-				
+
 				"dependencies": {
 					"minUI5Version": "1.22.5",
 					"libs": {

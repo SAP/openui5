@@ -46,17 +46,17 @@
 	 * SHARED TEST CODE
 	 */
 
-	function moduleSetup(sComponentVersion) {
+	function moduleSetup(sComponentName, iMetadataVersion) {
 
 		this.oComponent = sap.ui.getCore().createComponent({
-			name: "sap.ui.test." + sComponentVersion
+			name: "sap.ui.test." + sComponentName
 		});
 
 		this.oMetadata = this.oComponent.getMetadata()
 
 		this.oExpectedMetadata = {
 
-			"name": "sap.ui.test." + sComponentVersion + ".Component",
+			"name": "sap.ui.test." + sComponentName + ".Component",
 			"version": "1.0.0",
 			"includes" : ["style.css", "script.js"],
 			"dependencies": {
@@ -146,21 +146,39 @@
 		};
 
 		this.oExpectedManifest = {
-			"name": "sap.ui.test." + sComponentVersion + ".Component",
+			"name": "sap.ui.test." + sComponentName + ".Component",
 			"sap.app": {
-				"id": "sap.ui.test." + sComponentVersion,
+				"id": "sap.ui.test." + sComponentName,
 				"applicationVersion": {
 					"version": "1.0.0"
 				}
 			},
 			"sap.ui5": {
-				"resources": {
-					"js": [{
-						"uri": "script.js"
-					}],
-					"css": [{
-						"uri": "style.css"
-					}]
+				"resources": iMetadataVersion === 1 ? {
+					"js": [
+						{
+							"uri": "script.js"
+						}
+					],
+					"css": [
+						{
+							"uri": "style.css"
+						}
+					]
+				} : {
+					"js": [
+						{
+							"uri": "script.js"
+						},
+						{}
+					],
+					"css": [
+						{
+							"uri": "style.css",
+							"id": "mystyle"
+						},
+						{}
+					]
 				},
 				"dependencies": {
 					"components": {
@@ -306,7 +324,7 @@
 
 	module("Component Metadata v1", {
 		setup: function() {
-			moduleSetup.call(this, "v1");
+			moduleSetup.call(this, "v1", 1);
 			// fix the specials in the metadata for the v1
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
@@ -325,7 +343,7 @@
 
 	module("Component Metadata v2", {
 		setup: function() {
-			moduleSetup.call(this, "v2");
+			moduleSetup.call(this, "v2", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -341,7 +359,7 @@
 
 	module("Component Metadata v1 (inline)", {
 		setup: function() {
-			moduleSetup.call(this, "v1inline");
+			moduleSetup.call(this, "v1inline", 1);
 			// fix the specials in the metadata for the v1
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
 			this.oExpectedManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
@@ -360,7 +378,7 @@
 
 	module("Component Metadata v2 (inline)", {
 		setup: function() {
-			moduleSetup.call(this, "v2inline");
+			moduleSetup.call(this, "v2inline", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -452,7 +470,7 @@
 
 	module("Component Metadata v1 & v2 (mixed)", {
 		setup: function() {
-			moduleSetup.call(this, "mixed");
+			moduleSetup.call(this, "mixed", 2);
 		},
 		teardown: function() {
 			moduleTeardown.call(this);
@@ -493,7 +511,7 @@
 
 	module("Component Metadata v1 & v2 (mixed/inheritance)", {
 		setup: function() {
-			moduleSetup.call(this, "inherit");
+			moduleSetup.call(this, "inherit", 2);
 			// fix the specials in the metadata for the v1 & v2 mixed/inheritance
 			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
 			this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
