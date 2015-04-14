@@ -20,8 +20,8 @@
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
         <raw-module name="jquery-1.7.1.js" />
-        <raw-module name="jquery.sap.promise.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery/jquery-1.11.1.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,jquery.sap.promise.js" />
+        <raw-module name="jquery.sap.promise.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,jquery.sap.promise.js" />
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
@@ -34,13 +34,13 @@
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
+        <raw-module name="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
+        <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-clip.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -54,10 +54,10 @@
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-shake.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-slide.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-transfer.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-core.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-core.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-clip.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
@@ -82,9 +82,9 @@
         <raw-module name="sap/ui/thirdparty/less.js" />
         <raw-module name="sap/ui/thirdparty/mobify-carousel.js" />
         <raw-module name="sap/ui/thirdparty/mobify/carousel.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
+        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
+        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
         <raw-module name="sap/ui/thirdparty/punycode.js" />
         <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
@@ -109,11 +109,11 @@
         <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
         <exclude name="jquery-*.js" />
         <exclude name="sap-*" />
-        <!-- Other jQuery versions that conflict with jquery-1.11.1 -->
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
+        <exclude name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
         <!-- CorePlugin, shouldn't be installed by default -->
         <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" /> 
         <exclude name="sap/ui/core/plugin/LessSupport.js" />
