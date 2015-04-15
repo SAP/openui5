@@ -1105,6 +1105,7 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b1", "When not set selectedKey property should be equal to the first key in the list 'b1'");
 
 		// Act
 		// Change selectedKey to "b2"
@@ -1112,6 +1113,7 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 
 		// Act
 		// Change selectedKey to non existing key
@@ -1119,6 +1121,39 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be unchanged = 'b2'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be unchanged = 'b2'");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("selectedKey property on button press", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "b1",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "b2",
+					text: "Button 2"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// Click on the second button
+		oSegmentedButton.getButtons()[1].$().trigger("tap");
+
+		// Assert
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
