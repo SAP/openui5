@@ -35,12 +35,17 @@
 	// remove all namespaces and all spaces before tag ends (..."/>)
 	function normalizeXml(sXml) {
 		/*jslint regexp: true*/
-		return sXml
+		sXml = sXml
 			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
 			// Note: Chrome adds all namespaces at root level, but before other attributes!
-			.replace(/ xmlns.*?=\".+?\"/g,"")
+			.replace(/ xmlns.*?=\".+?\"/g, "")
 			// Note: browsers differ in whitespace for empty HTML(!) tags
-			.replace(/ \/>/g,'/>');
+			.replace(/ \/>/g, '/>');
+		if (sap.ui.Device.browser.msie) {
+			// IE shuffles attribute order, a core:Fragment's type is the only relevant example
+			sXml = sXml.replace(/ type="XML"/g, "");
+		}
+		return sXml;
 	}
 
 	/**
@@ -145,6 +150,21 @@
 	}
 
 	/**
+	 * Expects a warning with the given message for the given log mock.
+	 *
+	 * @param {object} oLogMock
+	 * @param {string} sExpectedWarning
+	 * @param {any} [vDetails=null]
+	 * @returns {object} the resulting Sinon.JS expectation
+	 */
+	function warn(oLogMock, sExpectedWarning, vDetails) {
+		return oLogMock.expects("warning")
+			.withExactArgs(sinon.match(function (sActualWarning) {
+				return normalizeXml(sExpectedWarning) === normalizeXml(sActualWarning);
+			}, sExpectedWarning), vDetails || null, "sap.ui.core.util.XMLPreprocessor");
+	}
+
+	/**
 	 * Checks that our XMLPreprocessor works as expected on the given view content. If called on a
 	 * <code>this</code> (which MUST be a sandbox then), the view content is automatically searched
 	 * for constant test conditions and appropriate warnings are expected; log output is stubbed
@@ -160,7 +180,7 @@
 	 *   a regular expression which is expected to match the serialized original view content.
 	 */
 	function check(aViewContent, mSettings, vExpected) {
-		var oLogMock = this && this.mock(jQuery.sap.log),
+		var oLogMock = this && this.mock && this.mock(jQuery.sap.log),
 			oViewContent = xml(aViewContent),
 			i;
 
@@ -178,15 +198,14 @@
 			vExpected.unshift(aViewContent[0]); // 1st line is always in
 			vExpected.push(aViewContent[aViewContent.length - 1]); // last line is always in
 			if (vExpected.length === 2) {
-				vExpected = ['<mvc:View/>']; // expect just a single empty tag
+				// expect just a single empty tag
+				vExpected = ['<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'];
 			}
 		}
 		if (oLogMock) {
 			aViewContent.forEach(function (sLine) {
 				if (/if test="(false|true)"/.test(sLine)) {
-					oLogMock.expects("warning")
-						.withExactArgs('qux: Constant test condition in ' + sLine,
-							null, "sap.ui.core.util.XMLPreprocessor");
+					warn(oLogMock, 'qux: Constant test condition in ' + sLine);
 				}
 			});
 		}
@@ -310,11 +329,8 @@
 				oLogMock.expects("isLoggable").once()
 					.withExactArgs(jQuery.sap.log.Level.WARNING)
 					.returns(bIsLoggable);
-				oLogMock.expects("warning")
-					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-					.withExactArgs(
-						'qux: Constant test condition in ' + aViewContent[1],
-						null, "sap.ui.core.util.XMLPreprocessor");
+				warn(oLogMock, 'qux: Constant test condition in ' + aViewContent[1])
+					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
 				check(aViewContent);
 			});
@@ -480,11 +496,8 @@
 				oLogMock.expects("isLoggable").once()
 					.withExactArgs(jQuery.sap.log.Level.WARNING)
 					.returns(bIsLoggable);
-				oLogMock.expects("warning")
-					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-					.withExactArgs(
-						'qux: Error in formatter of ' + aViewContent[1],
-						oError, "sap.ui.core.util.XMLPreprocessor");
+				warn(oLogMock, 'qux: Error in formatter of ' + aViewContent[1], oError)
+					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
 				window.foo = {
 					Helper: {
@@ -531,11 +544,8 @@
 				oLogMock.expects("isLoggable").once()
 					.withExactArgs(jQuery.sap.log.Level.WARNING)
 					.returns(bIsLoggable);
-				oLogMock.expects("warning")
-					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-					.withExactArgs(
-						'qux: Binding not ready in ' + aViewContent[1],
-						null, "sap.ui.core.util.XMLPreprocessor");
+				warn(oLogMock, 'qux: Binding not ready in ' + aViewContent[1])
+					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
 				check(aViewContent, {}, vExpected);
 			});
@@ -1184,15 +1194,9 @@
 			return "/my/path";
 		};
 
-		oLogMock.expects("warning")
-			.withExactArgs("qux: Set unchanged path '/my/path' in " + sTemplate1,
-				null, "sap.ui.core.util.XMLPreprocessor");
-		oLogMock.expects("warning")
-			.withExactArgs("qux: Set unchanged path '/my/path' in " + sTemplate2,
-				null, "sap.ui.core.util.XMLPreprocessor");
-		oLogMock.expects("warning")
-			.withExactArgs("qux: Set unchanged path '/my/path' in " + sTemplate3,
-				null, "sap.ui.core.util.XMLPreprocessor");
+		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate1);
+		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate2);
+		warn(oLogMock, "qux: Set unchanged path '/my/path' in " + sTemplate3);
 
 		check([
 			mvcView(),
@@ -1574,12 +1578,8 @@
 			.withExactArgs('Stopped due to cyclic reference in fragment: B',
 				sinon.match(/Error: Stopped due to cyclic fragment reference/),
 				"sap.ui.core.util.XMLPreprocessor");
-		oLogMock.expects("warning")
-			.withExactArgs("qux: Set unchanged path '/foo' in " + aFragmentContent[1],
-				null, "sap.ui.core.util.XMLPreprocessor");
-		oLogMock.expects("warning")
-			.withExactArgs("qux: Set unchanged path '/bar' in " + aFragmentContent[2],
-				null, "sap.ui.core.util.XMLPreprocessor");
+		warn(oLogMock, "qux: Set unchanged path '/foo' in " + aFragmentContent[1]);
+		warn(oLogMock, "qux: Set unchanged path '/bar' in " + aFragmentContent[2]);
 
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function (sTemplateName) {
 			if (sTemplateName === "A") {
