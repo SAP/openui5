@@ -3,9 +3,11 @@
  */
 
 // Provides object sap.ui.core.util.XMLPreprocessor
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
-	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
-	function(jQuery, ManagedObject, XMLTemplateProcessor, CompositeBinding, Context) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject',
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/BindingMode',
+	'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
+	function(jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
+		CompositeBinding, Context) {
 		'use strict';
 
 		var oUNBOUND = {}, // @see getAny
@@ -53,6 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 * @param {number} [i]
 		 *   index of part in case of a composite binding
 		 * @returns {object}
+		 *   the callback interface
 		 */
 		function getInterface(oWithControl, mSettings, i) {
 			/*
@@ -175,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			function prepare(oInfo, i) {
 				var fnFormatter = oInfo.formatter;
 
-				oInfo.mode = sap.ui.model.BindingMode.OneTime;
+				oInfo.mode = BindingMode.OneTime;
 				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
 					= fnFormatter.bind(null, getInterface(oWithControl, mSettings, i));
@@ -338,11 +341,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 *
 				 * @param {string} sValue
 				 *   an XML attribute value
+				 * @param {Element} oElement
+				 *   the element
 				 * @param {sap.ui.core.util._with} oWithControl
 				 *   the "with" control
-				 * @param {boolean} bUnescape
-				 *   whether the binding parser should unescape the given value; note that this is
-				 *   a prerequisite for constant expressions
+				 * @param {boolean} bMandatory
+				 *   whether a binding is actually required (e.g. by a <code>template:if</code>)
+				 *   and not optional (e.g. for {@link resolveAttributeBinding}); if so, the
+				 *   binding parser unescapes the given value (which is a prerequisite for
+				 *   constant expressions) and warnings are logged for functions not found
 				 * @param {function} [fnCallIfConstant]
 				 *   optional function to be called in case the return value is obviously a
 				 *   constant, not influenced by any binding
@@ -351,18 +358,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 *   (because it refers to a model which is not available)
 				 * @throws Error
 				 */
-				function getResolvedBinding(sValue, oWithControl, bUnescape, fnCallIfConstant) {
+				function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
+					fnCallIfConstant) {
 					var vBindingInfo
-						= sap.ui.base.BindingParser.complexParser(sValue, null, bUnescape)
+						= BindingParser.complexParser(sValue, null, bMandatory, true)
 						|| sValue; // in case there is no binding and nothing to unescape
 
-					if (typeof vBindingInfo === "object") {
-						return getAny(oWithControl, vBindingInfo, mSettings);
+					if (vBindingInfo.functionsNotFound) {
+						if (bMandatory) {
+							warn('Function name(s) ' + vBindingInfo.functionsNotFound.join(", ")
+								+ ' not found in ', oElement, null);
+						}
+						return oUNBOUND; // treat incomplete bindings as unrelated
 					}
-					if (fnCallIfConstant) {
+
+					if (typeof vBindingInfo === "object") {
+						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings);
+						if (vBindingInfo === oUNBOUND) {
+							warn('Binding not ready in ', oElement, null);
+						}
+					} else if (fnCallIfConstant) { // string
 						fnCallIfConstant();
 					}
-					return vBindingInfo; // string
+					return vBindingInfo;
 				}
 
 				/**
@@ -401,9 +419,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						vTest;
 
 					try {
-						vTest = getResolvedBinding(sTest, oWithControl, true, fnCallIfConstant);
+						vTest = getResolvedBinding(sTest, oElement, oWithControl, true,
+							fnCallIfConstant);
 						if (vTest === oUNBOUND) {
-							warn('Binding not ready in ', oElement, null);
 							vTest = false;
 						}
 					} catch (ex) {
@@ -429,7 +447,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						vValue;
 
 					try {
-						vValue = getResolvedBinding(sValue, oWithControl, false);
+						vValue = getResolvedBinding(sValue, oElement, oWithControl, false);
 						if (vValue !== oUNBOUND) {
 							oAttribute.value = vValue;
 						}
@@ -495,12 +513,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					}
 
 					try {
-						vFragmentName = getResolvedBinding(sFragmentName, oWithControl, true);
+						vFragmentName
+							= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
 						if (vFragmentName !== oUNBOUND) {
 							insertFragment(vFragmentName);
-							return;
 						}
-						warn('Binding not ready in ', oElement, null);
 					} catch (ex) {
 						warn('Error in formatter of ', oElement, ex);
 					}
@@ -552,7 +569,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 */
 				function templateRepeat(oElement, oWithControl) {
 					var sList = oElement.getAttribute("list") || "",
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(sList),
+						oBindingInfo = BindingParser.complexParser(sList),
 						aContexts,
 						oListBinding,
 						sModelName,
@@ -571,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					oWithControl.setChild(oNewWithControl);
 
 					// use a list binding to get an array of contexts
-					oBindingInfo.mode = sap.ui.model.BindingMode.OneTime;
+					oBindingInfo.mode = BindingMode.OneTime;
 					oNewWithControl.bindAggregation("list", oBindingInfo);
 					oListBinding = oNewWithControl.getBinding("list");
 					oNewWithControl.unbindAggregation("list", true);
@@ -626,7 +643,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					oWithControl.setChild(oNewWithControl);
 
 					//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
-					oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
+					oBindingInfo = BindingParser.simpleParser("{" + sPath + "}");
 					sVar = sVar || oBindingInfo.model; // default variable is same model name
 
 					//TODO Simplify code once named contexts are supported by the core

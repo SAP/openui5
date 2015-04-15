@@ -282,40 +282,19 @@
 	});
 
 	//*********************************************************************************************
-	test("XML with template:if test='false'", function () {
-		check.call(this, [
+	[{
+		aViewContent : [
 			mvcView("t"),
+			// namespace prefix other than "template"
 			'<t:if test="false">',
 			'<Out/>',
 			'</t:if>',
 			'</mvc:View>'
-		]);
-	});
-
-	//*********************************************************************************************
-	test("XML with template:if test='{= false }'", function () {
-		check([
-			mvcView("t"),
-			// Note: requires unescaping to support constant expressions!
-			'<t:if test="{= false }">',
-			'<Out/>',
-			'</t:if>',
-			'</mvc:View>'
-		]);
-	});
-
-	//*********************************************************************************************
-	[{
-		aViewContent : [
-			mvcView(),
-			'<template:if test="false">',
-			'<Out/>',
-			'<\/template:if>',
-			'<\/mvc:View>'
 		]
 	}, {
 		aViewContent : [
 			mvcView(),
+			// Note: requires unescaping to support constant expressions!
 			'<template:if test="{= false }">',
 			'<Out/>',
 			'<\/template:if>',
@@ -528,6 +507,26 @@
 	}, {
 		aViewContent : [
 			mvcView(),
+			'<template:if test="' + "{path:'/some/path',formatter:'.someMethod'}" + '">',
+			'<Out/>',
+			'</template:if>',
+			'</mvc:View>'
+		],
+		sMessage : 'qux: Function name(s) .someMethod not found in '
+	}, {
+		aViewContent : [
+			mvcView(),
+			'<template:if test="'
+			+ "{path:'/some/path',formatter:'.someMethod'}{path:'/some/path',formatter:'foo.bar'}"
+			+ '">',
+			'<Out/>',
+			'</template:if>',
+			'</mvc:View>'
+		],
+		sMessage : 'qux: Function name(s) .someMethod, foo.bar not found in '
+	}, {
+		aViewContent : [
+			mvcView(),
 			'<Fragment fragmentName="{foo>/some/path}" type="XML"/>',
 			'</mvc:View>'
 		],
@@ -537,7 +536,8 @@
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bIsLoggable) {
 			var aViewContent = oFixture.aViewContent,
-				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
+				vExpected = oFixture.vExpected && oFixture.vExpected.slice(),
+				sMessage = (oFixture.sMessage || 'qux: Binding not ready in ') + aViewContent[1];
 
 			test(aViewContent[1] + ", warn = " + bIsLoggable, function () {
 				var oLogMock = this.mock(jQuery.sap.log);
@@ -546,7 +546,7 @@
 				if (!bIsLoggable) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 				}
-				warn(oLogMock, 'qux: Binding not ready in ' + aViewContent[1])
+				warn(oLogMock, sMessage)
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
 				check(aViewContent, {}, vExpected);
@@ -821,6 +821,11 @@
 
 	//*********************************************************************************************
 	test("binding resolution", function () {
+		var oLogMock = this.mock(jQuery.sap.log);
+
+		oLogMock.expects("error").never();
+		warn(oLogMock, 'qux: Binding not ready in <Text text="{unrelated>/some/path}"/>');
+
 		window.foo = {
 			Helper: {
 				help: function (vRawValue) {
@@ -837,6 +842,8 @@
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 			'<Label text="A \\{ is a special character"/>', // escaping MUST NOT be changed!
 			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
+			// avoid error "formatter function .someMethod not found!"
+			'<Text text="' + "{path:'/some/path',formatter:'.someMethod'}" + '"/>',
 			'<html:img src="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
 			'</mvc:View>'
@@ -861,6 +868,7 @@
 			'<Text text="{CustomerName}"/>',
 			'<Label text="A \\{ is a special character"/>',
 			'<Text text="{unrelated&gt;/some/path}"/>',
+			'<Text text="' + "{path:'/some/path',formatter:'.someMethod'}" + '"/>',
 			// TODO is this the expected behaviour? And what about text nodes?
 			'<html:img src="/coco/apps/main/img/Icons/product_48.png"/>'
 		]);
