@@ -72,6 +72,29 @@
 				sut.destroy();
 			});
 
+			test("Should not init hasher twice when init is called in hashChange event", function() {
+				// System under test
+				var sut = new sap.ui.core.routing.HashChanger();
+
+				// Arrange
+				var initSpy = this.spy(sut, "init"),
+					hashChanged = function(evt) {
+						sut.init();
+					};
+				sut.attachEvent("hashChanged", hashChanged);
+
+				// Act
+				sut.init();
+
+				// Assert
+				equal(initSpy.callCount, 2, "The init method should only be called twice");
+				strictEqual(initSpy.returnValues[0], false, "The first call is returned with true");
+				strictEqual(initSpy.returnValues[1], true, "The second call is returned with false");
+
+				// Cleanup
+				sut.destroy();
+			});
+
 			test("Should set the Hash", function () {
 				//Arrange
 				var aCalls = [],
