@@ -139,7 +139,6 @@
 	function assertObjectArguments(oModel) {
 		// can only be set with parameters object => expect different values
 		equal(oModel.bLoadAnnotationsJoined, false, 'loadAnnotationsJoined');
-		deepEqual(oModel.oAnnotations.aAnnotationURI, [ 'foo', 'bar' ], 'annotationURI');
 		deepEqual(oModel.aUrlParams, [ 'foo=bar' ], 'serviceUrlParams');
 		equal(oModel.oServiceData.oMetadata.sUrl, sURI + '$metadata?bar=foo', 'metadataUrlParams');
 		equal(oModel.sDefaultCountMode, 'None', 'defaultCountMode');

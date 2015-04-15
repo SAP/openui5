@@ -131,11 +131,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.setDeferredBatchGroups([this.sDefaultChangeBatchGroup]);
 			this.setChangeBatchGroups({"*":{batchGroupId: this.sDefaultChangeBatchGroup}});
 
-			// Load annotations support on demand
-			if (this.sAnnotationURI) {
-				jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
-			}
-
 			this.oData = {};
 			this.oMetadata = null;
 			this.oAnnotations = null;
@@ -201,11 +196,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 
 			if (this.sAnnotationURI) {
-				this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(this.sAnnotationURI, this.oMetadata, { async: this.bLoadMetadataAsync });
-				this.oAnnotations.attachFailed(function(oEvent) {
+				var oAnnotations = this._getAnnotationParser();
+				oAnnotations.addUrl(this.sAnnotationURI);
+				oAnnotations.attachFailed(function(oEvent) {
 					that.fireAnnotationsFailed(oEvent.getParameters());
 				});
-				this.oAnnotations.attachLoaded(function(oEvent) {
+				oAnnotations.attachLoaded(function(oEvent) {
 					that.fireAnnotationsLoaded(oEvent.getParameters());
 				});
 			}
@@ -3218,6 +3214,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (this.oAnnotations && this.oAnnotations.getAnnotationsData) {
 			return this.oAnnotations.getAnnotationsData();
 		}
+	};
+
+	/**
+	 * Singleton Lazy loading of the annotation parser on demand
+	 * 
+	 * @return {sap.ui.model.odata.Annotations} The annotation parser instance
+	 */
+	ODataModel.prototype._getAnnotationParser = function() {
+		if (!this.oAnnotations) {
+			jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
+			this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(null, this.oMetadata, { async: this.bLoadMetadataAsync });
+		}
+
+		return this.oAnnotations;
+	};
+
+	/**
+	 * Adds (a) new URL(s) to the be parsed for OData annotations, which are then merged into the annotations object 
+	 * which can be retrieved by calling the getServiceAnnotations()-method. 
+	 *
+	 * @param {string|sting[]} vUrl - Either one URL as string or an array or Uri strings
+	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load
+	 * @public
+	 */
+	ODataModel.prototype.addAnnotationUrl = function(vUrl) {
+		return this._getAnnotationParser().addUrl(vUrl);
+	};
+
+	/**
+	 * Adds new xml content to be parsed for OData annotations, which are then merged into the annotations object which
+	 * can be retrieved by calling the getServiceAnnotations()-method.
+	 *
+	 * @param {string} sXMLContent - The string that should be parsed as annotation XML
+	 * @return {Promise} The Promise to parse the given XML-String, resolved if parsed without errors, rejected if errors occur
+	 * @public
+	 */
+	ODataModel.prototype.addAnnotationXML = function(sXMLContent) {
+		return new Promise(function(resolve, reject) {
+			this._getAnnotationParser().setXML(null, sXMLContent, {
+				success : resolve,
+				error   : reject
+			});
+		}.bind(this));
 	};
 
 	/**
