@@ -1472,11 +1472,13 @@
 						equal(oRequest.requestUri, "ProductSet('HT-1000')", "request URI");
 						equal(oRequest.data.Name, "xy", "request payload name");
 						equal(oRequest.data.Price, "4445.6", "request payload price");
+						equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +  
+								"Should be also here because price is a currency and has sap:unit = currency code");
 						var iCount = 0;
 						jQuery.each(oRequest.data, function(iIndex, oValue) {
 							iCount++;
 						});
-						equal(iCount, 3, "request payload number of properties");
+						equal(iCount, 4, "request payload number of properties");
 						spy.restore();
 						bSuccess = true;
 					},
@@ -1549,11 +1551,13 @@
 						"request URI");
 				equal(oRequest.data.Name, "xy", "request payload name");
 				equal(oRequest.data.Price, "4445.8", "request payload price");
+				equal(oRequest.data.CurrencyCode, "EUR", "request payload currencyCode." +  
+				"Should be also here because price is a currency and has sap:unit = currency code");
 				var iCount2 = 0;
 				jQuery.each(oRequest.data, function(iIndex, oValue) {
 					iCount2++;
 				});
-				equal(iCount2, 3, "request payload number of properties");
+				equal(iCount2, 4, "request payload number of properties");
 				spy.restore();
 				start();
 			}

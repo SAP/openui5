@@ -2439,7 +2439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, bMerge) {
-		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry;
+		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -2486,15 +2486,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			});
 		}
 		
-		jQuery.each(oPayload, function(sPropName, oPropValue) {
-			if (bMerge && oUnModifiedEntry && sPropName !== '__metadata') {
-				// remove unmodified properties and keep only modified properties for delta MERGE
-				// Compare whether last data is completely contained in current data and to a maximum depth of 3, to cover complex types.
-				if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue, 3, true)) {
-					delete oPayload[sPropName];
+		if (bMerge && oEntityType && oUnModifiedEntry) {
+			jQuery.each(oPayload, function(sPropName, oPropValue) {
+				if (sPropName !== '__metadata') {
+					// remove unmodified properties and keep only modified properties for delta MERGE
+					// Compare whether last data is completely contained in current data and to a maximum depth of 3, to cover complex types.
+					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue, 3, true)) {
+						delete oPayload[sPropName];
+					}
 				}
+			});
+			// check if we have unit properties which were changed and if yes sent the associated unit prop also.
+			var oMetaEntityType = this.getMetaModel().getODataEntityType(oEntityType.namespace + "." + oEntityType.name);
+			var oMetaPropertyType, sUnitNameProp;
+			if (oMetaEntityType) {
+				jQuery.each(oPayload, function(sPropName, oPropValue) {
+					if (sPropName !== '__metadata') {
+						oMetaPropertyType = that.getMetaModel().getODataProperty(oMetaEntityType, sPropName);
+						sUnitNameProp = oMetaPropertyType['sap:unit'];
+						if (sUnitNameProp) {
+							oPayload[sUnitNameProp] = oUnModifiedEntry[sUnitNameProp];
+						}
+					}
+				});
 			}
-		});
+		}
 
 		// remove any yet existing references which should already have been deleted
 		oPayload = this._removeReferences(oPayload);
