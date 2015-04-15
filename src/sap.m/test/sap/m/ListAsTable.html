@@ -9,226 +9,53 @@
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
 </script>
 
-<script>
-	var oApp = new sap.m.App;
-
-	jQuery.sap.require("sap.m.MessageToast");
-
-	var data = {
-		navigation : [{
-			name : "Headphone",
-			qty : "10 EA",
-			limit : "15.00 Eur",
-			price : "12.00 EUR"
-		}, {
-			name : "Mouse Pad",
-			qty : "10 EA",
-			limit : "5.00 Eur",
-			price : "3.00 EUR"
-		}, {
-			name : "Monitor",
-			qty : "8 EA",
-			limit : "60.00 Eur",
-			price : "45.00 EUR"
-		}, {
-			name : "Optic Mouse",
-			qty : "2 EA",
-			limit : "40.00 Eur",
-			price : "15.00 EUR"
-		}, {
-			name : "Dock Station",
-			qty : "10 EA",
-			limit : "90.00 Eur",
-			price : "55.00 EUR"
-		}]
-	};
-
-	var o18n = new sap.ui.model.json.JSONModel();
-	o18n.setData({
-		Name : "Name",
-		Value : "Value",
-		Price : "Price",
-		Qty : "Quantity",
-	});
-	sap.ui.getCore().setModel(o18n, "i18n");
-	
-	var oFooterToolbar = new sap.m.Toolbar({
-		content : [
-			new sap.m.Text({
-				text : "Items (5)",
-				wrapping : false
-			}),
-			new sap.m.ToolbarSpacer(),
-			new sap.m.Button({
-				icon: "sap-icon://drop-down-list",
-				press : function() {
-					sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
-				}
-			}),
-			new sap.m.Button({
-				icon: "sap-icon://action-settings",
-				press : function() {
-					sap.m.MessageToast.show("Table personalization popup will be shown on press.");
-				}
+<script type="text/javascript">
+			
+			// create a mobile App
+			var app = new sap.m.App("myApp");
+			
+			var oJSON = { Accounts: [{ Id: "400000", Text: "Material Consumption"},
+									 { Id: "400100", Text: "Travel Expense"},
+									 { Id: "400200", Text: "Marketing Expense"} ]
+						};
+			
+			var oJSONModel = new sap.ui.model.json.JSONModel();
+			oJSONModel.setData(oJSON);
+			
+			
+			var oInput = new sap.m.Input({ 
+				value: "{Id}",
+			});
+			
+			var oList = new sap.m.List({			
+				growing: true,
+				mode: "SingleSelect",
+				headerText: "The List",
 			})
-		]
-	});
-	
-	var oHeaderToolbar = new sap.m.Toolbar({
-		content : [
-			new sap.m.Text({
-				text : "Items (5)",
-				wrapping : false
-			}),
-			new sap.m.ToolbarSpacer(),
-			new sap.m.Button({
-				icon: "sap-icon://drop-down-list",
-				press : function() {
-					sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
-				}
-			}),
-			new sap.m.Button({
-				icon: "sap-icon://action-settings",
-				press : function() {
-					sap.m.MessageToast.show("Table personalization popup will be shown on press.");
-				}
-			})
-		]
-	});
-	
-	var oInfoToolbar = new sap.m.Toolbar({
-		active : true,
-		content : [
-			new sap.m.Text({
-				text : "The quick brown fox jumps over the lazy dog.",
-				wrapping : false
-			}),
-			new sap.m.ToolbarSpacer(),
-			new sap.ui.core.Icon({
-				src : "sap-icon://add-filter"
-			})
-		]
-	}).attachPress(function() {
-		sap.m.MessageToast.show("InfoBar Pressed!");
-	});
-	
-	var oSwipeContent = new sap.m.Button({
-		text : "Swipe Button",
-		type : "Accept",
-		press : function(e) {
-			oTable.swipeOut();
-		}
-	});
-	
-	var aColumns = [
-		new sap.m.Column({
-			styleClass : "name",
-			hAlign : "Left",
-			header : new sap.m.Label({
-				text : "{i18n>/Name}"
-			})
-		}),
-		new sap.m.Column({
-			hAlign : "Center",
-			styleClass : "qty",
-			popinDisplay : "Inline",
-			header : new sap.m.Label({
-				text : "{i18n>/Qty}"
-			}),
-			minScreenWidth : "Tablet",
-			demandPopin : true
-		}),
-		new sap.m.Column({
-			hAlign : "Right",
-			styleClass : "limit",
-			width : "30%",
-			header : new sap.m.Label({
-				text : "{i18n>/Value}"
-			}),
-			minScreenWidth : "XXSmall",
-			demandPopin : true
-		}),
-		new sap.m.Column({
-			hAlign : "Right",
-			styleClass : "price",
-			width : "30%",
-			popinDisplay : "Inline",
-			header : new sap.m.Label({
-				text : "{i18n>/Price}"
-			}),
-			footer : new sap.m.Label({
-				text : "130.00 EUR"
-			}),
-			minScreenWidth : "400px",
-			demandPopin : true
-		})
-	];
-	
-	var oTemplate = new sap.m.ColumnListItem({
-		type : "Navigation",
-		unread : false,
-		vAlign : "Middle",
-		cells : [
-			new sap.m.Input({
-				value : "{name}",
-				wrapping : true
-			}),
-			new sap.m.Input({
-				value: "{qty}",
-				wrapping : false
-			}),
-			new sap.m.Text({
-				text: "{limit}",
-				wrapping : false
-			}), 
-			new sap.m.Text({
-				text: "{price}",
-				wrapping : false
-			})
-		]
-	});
-	
-	var oTable = new sap.m.Table("items", {
-		growing : false,
-		growingThreshold: 2,
-		inset : false,
-		mode: "MultiSelect",
-		showUnread : true,
-		growingScrollToLoad : false,
-		selectionChange : function(e) {
-			jQuery.sap.log.info("selectionChanged", Date.now());
-		},
-		itemPress : function(e) {
-			jQuery.sap.log.info("itemPressed", e.getParameter("listItem").getId(), e.getParameter("srcControl").getId());
-		},
-		updateStarted : function(e) {
-			jQuery.sap.log.info("updateStarted ", JSON.stringify(e.getParameters()), Date.now());
-		},
-		updateFinished : function(e) {
-			jQuery.sap.log.info("updateFinished ", JSON.stringify(e.getParameters()), Date.now());
-		},
-		footerText : "This is a table footer",
-		headerToolbar : oHeaderToolbar,
-		infoToolbar : oInfoToolbar,
-		swipeContent : oSwipeContent,
-		columns : aColumns
-	})
-
-	var oPage = new sap.m.Page({
-		title : "Table",
-		enableScrolling : true,
-		footer: oFooterToolbar,
-		content : [oTable]
-	});
-
-	var oModel = new sap.ui.model.json.JSONModel();
-	oModel.setData(data);
-	oTable.setModel(oModel);
-	oTable.bindAggregation("items", "/navigation", oTemplate);
-	
-	oApp.addPage(oPage).placeAt("body");
-</script>
-</head>
-<body id="body" class="sapUiBody">
-</body>
+			
+			var oListItem1 = new sap.m.StandardListItem({
+					title: "Title1",
+					selected: true,
+				}),
+				oListItem2 = new sap.m.StandardListItem({
+					title: "Title2",
+					selected: true
+				})
+			
+			oList.addItem(oListItem1).addItem(oListItem2);
+			
+			
+			var page = new sap.m.Page({
+				title: "The Page",
+				content : oList
+			});
+					
+			app.addPage(page).placeAt("content"); 
+			
+		</script>
+		
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

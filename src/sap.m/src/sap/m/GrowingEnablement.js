@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			this._oControl.addDelegate(this);
 
 			/* init growing list */
-			var iRenderedItemsLength = this._oControl.getItems().length;
+			var iRenderedItemsLength = this._oControl.getItems(true).length;
 			this._iRenderedDataItems = iRenderedItemsLength;
 			this._iItemCount = iRenderedItemsLength;
 			this._bRebuilding = false;
@@ -362,7 +362,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * function is called to destroy all items in list
 		 */
 		destroyListItems : function() {
-			this._oControl.destroyAggregation("items");
+			this._oControl.destroyItems();
 			this._iRenderedDataItems = 0;
 		},
 
@@ -378,7 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			if (oBinding.isGrouped() && oBindingInfo) {
 				var bNewGroup = false,
-					aItems = this._oControl.getItems(),
+					aItems = this._oControl.getItems(true),
 					sModelName = oBindingInfo.model || undefined,
 					oNewGroup = this._getGroupForContext(oItem.getBindingContext(sModelName));
 
@@ -490,7 +490,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				fnFactory = oBindingInfo.factory;
 
 			// set iItemCount to initial value if not set or no items at the control yet
-			if (!this._iItemCount || this.shouldReset(sChangeReason) || !this._oControl.getItems().length) {
+			if (!this._iItemCount || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
 				this._iItemCount = this._oControl.getGrowingThreshold();
 			}
 
@@ -527,7 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			var bCheckGrowingFromScratch = this._oControl.checkGrowingFromScratch && this._oControl.checkGrowingFromScratch();
 			
 			// rebuild list from scratch if there were no items and new items needs to be added 
-			if (!this._oControl.getItems().length && aContexts.diff && aContexts.diff.length) {
+			if (!this._oControl.getItems(true).length && aContexts.diff && aContexts.diff.length) {
 				aContexts.diff = undefined;
 			}
 
@@ -604,7 +604,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 										iLastIndex = -1;
 									}
 
-									aItems = this._oControl.mAggregations["items"]; // access via getItems() copies the array, so direct access... it is only used in the next line to give the item instance, so it's fine
+									aItems = this._oControl.getItems(true);
 									this.deleteListItem(aItems[iIndex]);
 								} else if (aContexts.diff[i].type === "insert") { // case 2: element is added
 									oClone = fnFactory("", aContexts[iIndex]);
@@ -625,7 +625,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 								}
 							}
 							// update context on all items after applying diff
-							aItems = this._oControl.getItems();
+							aItems = this._oControl.getItems(true);
 							for (var i = 0, l = aContexts.length; i < l; i++) {
 								aItems[i].setBindingContext(aContexts[i], oBindingInfo.model);
 							}
@@ -676,7 +676,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			// hide trigger if no items or maximum of items reached
 			var iMaxItems = this._oControl.getMaxItemsCount();
-			var iItemsLength = this._oControl.getItems().length;
+			var iItemsLength = this._oControl.getItems(true).length;
 			var sDisplay = (!iItemsLength || !this._iItemCount || this._iItemCount >= iMaxItems) ? "none" : "block";
 
 			// if we are in the popover then hiding the trigger removes focus and closes popup
