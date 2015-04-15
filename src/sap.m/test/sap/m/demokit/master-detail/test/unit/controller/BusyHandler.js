@@ -28,8 +28,9 @@ sap.ui.require(
 			assert.strictEqual(oComponentStub._oRootView.getBusy(), true, "The root view is busy.");
 		});
 
-		QUnit.asyncTest("Should set the control not busy and reset the delay", function (assert) {
-			var oComponentStub = {
+		QUnit.test("Should set the control not busy and reset the delay", function (assert) {
+			var done = assert.async(),
+				oComponentStub = {
 				oWhenMetadataIsLoaded: {
 					then: function (fnResolve) {
 						// immediately resolve the promise for this test
@@ -39,7 +40,7 @@ sap.ui.require(
 							assert.strictEqual(oComponentStub._oRootView.getBusyIndicatorDelay(), oComponentStub._oRootView.getMetadata()._mDefaults.busyIndicatorDelay, "The root view has the busy indicator delay set.");
 							assert.strictEqual(oComponentStub._oRootView.getBusy(), false, "The root view is not busy.");
 
-							QUnit.start();
+							done();
 						}, 0);
 					}
 				},

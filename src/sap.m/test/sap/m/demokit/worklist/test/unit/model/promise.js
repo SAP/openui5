@@ -23,9 +23,10 @@ sap.ui.require(
 			}
 		});
 
-		QUnit.asyncTest("Should immediately resolve the promise, if there is data in the model", function (assert) {
+		QUnit.test("Should immediately resolve the promise, if there is data in the model", function (assert) {
 			// Arrange
-			var fnRejectSpy = sinon.spy();
+			var done = assert.async(),
+				fnRejectSpy = sinon.spy();
 			this.oModelStub = {
 				//Provide data in the model
 				getProperty : sinon.stub().withArgs().returns({})
@@ -36,13 +37,15 @@ sap.ui.require(
 				// Assert
 				assert.strictEqual(fnRejectSpy.callCount, 0, "Did not reject");
 				assert.strictEqual(sPath, this.sModelPath, "Dis pass the correct path");
-				QUnit.start();
+
+				done();
 			}.bind(this), fnRejectSpy);
 		});
 
-		QUnit.asyncTest("Should reject the promise, if there is no data in the model", function (assert) {
+		QUnit.test("Should reject the promise, if there is no data in the model", function (assert) {
 			// Arrange
-			var fnDataReceivedCallback,
+			var done = assert.async(),
+				fnDataReceivedCallback,
 				fnAttachDataReceived = sinon.spy(function (sEventName, fnCallback) {
 					fnDataReceivedCallback = fnCallback;
 					assert.strictEqual(sEventName, "dataReceived", "Did attach on data received");
@@ -51,7 +54,8 @@ sap.ui.require(
 				fnRejectSpy = sinon.spy(function () {
 					// Assert
 					assert.strictEqual(fnResolveSpy.callCount, 0, "Did not resolve");
-					QUnit.start();
+
+					done();
 				});
 
 			this.oModelStub = {
@@ -72,9 +76,10 @@ sap.ui.require(
 			}, 0);
 		});
 
-		QUnit.asyncTest("Should resolve the promise, if there is data on the server", function (assert) {
+		QUnit.test("Should resolve the promise, if there is data on the server", function (assert) {
 			// Arrange
-			var fnDataReceivedCallback,
+			var done = assert.async(),
+				fnDataReceivedCallback,
 				bIsFirstGetPropertyCall = true,
 				fnAttachDataReceived = sinon.spy(function (sEventName, fnCallback) {
 					fnDataReceivedCallback = fnCallback;
@@ -85,7 +90,8 @@ sap.ui.require(
 					// Assert
 					assert.strictEqual(fnRejectSpy.callCount, 0, "Did not reject");
 					assert.strictEqual(sPath, this.sModelPath, "Did pass the correct path");
-					QUnit.start();
+
+					done();
 				});
 
 			this.oModelStub = {
