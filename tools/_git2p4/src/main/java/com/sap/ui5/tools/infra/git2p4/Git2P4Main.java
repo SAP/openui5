@@ -898,7 +898,7 @@ public class Git2P4Main {
   private static int exitcode = 0;
   public static void main(String[] args) throws IOException {
     main0(args);
-    System.exit(exitcode);
+   // System.exit(exitcode);
   }
 
 }
