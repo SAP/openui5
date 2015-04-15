@@ -66,7 +66,6 @@
 		test("Check FocusHandler.getCurrentFocusedControlId", function() {
 			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current not available:");
 			oControls["oControl1"].focus();
-			console.error("\n\n TESCHD \n\n");
 			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current available:");
 			jQuery("#customInput").get(0).focus(); //Reset for next test
 		});
