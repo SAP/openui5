@@ -780,6 +780,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		if (this._oBlindLayer) {
 			this._resizeListenerId = sap.ui.core.ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
 		}
+
+		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
+		// preventScroll can be set to false in jQuery.sap.initMobile(),
+		// then the scrolling for popups content in iOS is also scrolling the page content
+		// issue reported in Incident ID: 1472005153
+		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+			jQuery(document).on("touchmove", this._fnPreventScroll);
+		}
 	};
 
 	/**
@@ -979,6 +987,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			if (!this._bModal && this._bAutoClose) {
 				jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
 			}
+		}
+
+		//stop listening for touchmove on the window for preventing the scroll
+		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+			jQuery(document).off("touchmove", this._fnPreventScroll);
 		}
 
 		if (this.oContent instanceof sap.ui.core.Element) {
@@ -1710,6 +1723,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		return this;
+	};
+
+	Popup.prototype._fnPreventScroll = function(oEvent) {
+		if (!oEvent.isMarked()) {
+			oEvent.preventDefault(); // prevent the rubber-band effect
+		}
 	};
 
 	Popup.CLOSE_ON_SCROLL = "close_Popup_if_of_is_moved";
