@@ -41,6 +41,21 @@ sap.ui.define(['jquery.sap.global'],
 	};
 	
 	/**
+	 * The primitive base type of this type or the primitive type itself.
+	 * @return {sap.ui.base.DataType} the primitive type
+	 * @public
+	 */
+	DataType.prototype.getPrimitiveType = function() {
+		/*eslint-disable consistent-this*/
+		var oType = this;
+		/*eslint-enable consistent-this*/
+		while (oType.getBaseType()) {
+			oType = oType.getBaseType();
+		}
+		return oType;
+	};
+	
+	/**
 	 * The component type of this type or undefined if this is not an array.
 	 * @return {sap.ui.base.DataType} component type or undefined
 	 * @public
@@ -138,10 +153,10 @@ sap.ui.define(['jquery.sap.global'],
 			jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
 			jQuery.sap.assert(!base || base instanceof DataType, "DataType.<createType>: base type must be empty or a DataType");
 			s = s || {};
-			base = base || DataType.prototype;
 	
 			// create a new type object with the base type as prototype
-			var type = jQuery.sap.newObject(base);
+			var baseObject = base || DataType.prototype;
+			var type = jQuery.sap.newObject(baseObject);
 	
 			// getter for the name
 			type.getName = function() {
@@ -160,8 +175,8 @@ sap.ui.define(['jquery.sap.global'],
 			// or set it if no base validator exists
 			if ( s.hasOwnProperty("isValid") ) {
 				var fnIsValid = s.isValid;
-				type.isValid = base.isValid ? function(vValue) {
-					if ( !base.isValid(vValue) ) {
+				type.isValid = baseObject.isValid ? function(vValue) {
+					if ( !baseObject.isValid(vValue) ) {
 						return false;
 					}
 					return fnIsValid(vValue);
@@ -171,6 +186,11 @@ sap.ui.define(['jquery.sap.global'],
 			// not an array type
 			type.isArrayType = function() {
 				return false;
+			};
+			
+			// return the base type
+			type.getBaseType = function() {
+				return base;
 			};
 			
 			return type;
@@ -222,6 +242,11 @@ sap.ui.define(['jquery.sap.global'],
 				return true;
 			};
 	
+			// return the base type
+			type.getBaseType = function() {
+				return ARRAY_TYPE;
+			};
+			
 			return type;
 		}
 	
@@ -274,6 +299,14 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				})
 		};
+		
+		// Array type is not part of predefined types to avoid direct usage as property type
+		var ARRAY_TYPE = createType("array", {
+			defaultValue : [],
+			isValid : function(vValue) {
+				return jQuery.isArray(vValue);
+			}
+		});
 	
 		/**
 		 * Returns the type object for the type with the given name.
