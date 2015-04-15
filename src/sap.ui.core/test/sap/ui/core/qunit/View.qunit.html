@@ -33,7 +33,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
 
-	module("sap.ui.core.mvc.View#runPreprocessor(sync / only default XMLPreprocessor)", {
+	module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
 		setup: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
@@ -47,17 +47,16 @@ if (!sap.ui.Device.browser.phantomJS) {
 		}
 	});
 
-	test("runPreprocessor w/o config", function () {
+	test("runPreprocessor w/o config", 3, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
-		expect(3);
 
 		deepEqual(oView.mPreprocessors, {}, "empty preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 		equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
 
-	test("runPreprocessor w/ config", function () {
+	test("runPreprocessor w/ config", 2, function () {
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -75,7 +74,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 			}),
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
-		expect(2);
 		var oViewInfo = { name: oView.sViewName, id: oView.getId(), async: false, sCaller: oView + " (foo)"};
 		expectProcess.never();
 
@@ -85,13 +83,11 @@ if (!sap.ui.Device.browser.phantomJS) {
 		expectProcess.verify();
 	});
 
-	test("runPreprocessor w/ default preprocessor for xml view", function () {
+	test("runPreprocessor w/ default preprocessor for xml view", 2, function () {
 		var oConfig = {},
 			sViewContent = [
 			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join('');
-
-		expect(2);
 
 		// returns the processed vSource
 		expectProcess.returnsArg(0);
@@ -106,7 +102,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		strictEqual(oView._xContent, expectProcess.returnValues[0]);
 	});
 
-	test("runPreprocessor w/ invalid preprocessor", function () {
+	test("runPreprocessor w/ invalid preprocessor", 2, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -115,7 +111,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 					}
 				}
 			});
-		expect(2);
 
 		try {
 			oView.runPreprocessor("xml", oSource);
@@ -126,31 +121,30 @@ if (!sap.ui.Device.browser.phantomJS) {
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/ valid preprocessor", function () {
+	test("runPreprocessor w/ valid preprocessor", 1, function () {
 		var oSource = {},
+			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
 					xml: {
-						preprocessor: function(val) {return val;},
+						preprocessor: function(val) {
+							bCalled = true;
+							return val;
+						},
+						syncSupport: true
 					}
 				}
-			}),
-			logSpy = this.spy(jQuery.sap.log, "debug");
-		expect(2);
+			});
 
 		try {
-			oView.runPreprocessor("xml", oSource);
-			ok(true);
+			oView.runPreprocessor("xml", oSource, true);
+			ok(bCalled, "Preprocessor executed correctly");
 		} catch (ex) {
 			ok(false, ex); // TypeError: string is not a function
 		}
-
-		logSpy.restore();
-
-		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/o known preprocessor", function () {
+	test("runPreprocessor w/o known preprocessor", 2, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -161,6 +155,30 @@ if (!sap.ui.Device.browser.phantomJS) {
 		oView.runPreprocessor("foo", oSource);
 		ok(true); // do nothing
 
+		sinon.assert.notCalled(expectProcess);
+	});
+
+	test("runPreprocessor w/o syncSupport preprocessor", 2, function () {
+		var oSource = {},
+			bCalled = false,
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: {
+					xml: {
+						preprocessor: function(val) {
+							bCalled = true;
+							return val;
+						},
+					}
+				}
+			}),
+			logSpy = this.spy(jQuery.sap.log, "debug");
+
+		try {
+			oView.runPreprocessor("xml", oSource, true);
+			ok(!bCalled, "Preprocessor was ignored in sync view");
+		} catch (ex) {
+			ok(false, ex); // TypeError: string is not a function
+		}
 		sinon.assert.notCalled(expectProcess);
 	});
 
@@ -178,10 +196,9 @@ if (!sap.ui.Device.browser.phantomJS) {
 		}
 	});
 
-	asyncTest("runPreprocessor w/o config", function () {
+	asyncTest("runPreprocessor w/o config", 3, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
-		expect(3);
 
 		deepEqual(oView.mPreprocessors, {}, "empty preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
@@ -192,7 +209,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		});
 	});
 
-	asyncTest("runPreprocessor w/ config", function () {
+	asyncTest("runPreprocessor w/ config", 4, function () {
 		var sCaller,
 			oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
@@ -212,13 +229,8 @@ if (!sap.ui.Device.browser.phantomJS) {
 			}),
 			logSpy = this.spy(jQuery.sap.log, "debug");
 
-		expect(4);
 		var oViewInfo = { caller: oView + " (foo)", id: oView.getId(), name: oView.sViewName };
-		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo).returns(
-			new Promise(function(resolve) {
-				resolve(oResult)
-			})
-		);
+		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo).returns(Promise.resolve(oResult));
 
 		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
 
@@ -234,14 +246,11 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	});
 
-	asyncTest("runPreprocessor w/ default preprocessor for xml view", function () {
+	asyncTest("runPreprocessor w/ default preprocessor for xml view", 3, function () {
 		var oConfig = {},
 			sViewContent = [
 			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join('');
-
-		expect(3);
-
 
 		// returns the processed vSource
 		expectProcess.returnsArg(0);
@@ -262,7 +271,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		})
 	});
 
-	asyncTest("runPreprocessor w/ invalid preprocessor", function () {
+	asyncTest("runPreprocessor w/ invalid preprocessor", 2, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -272,7 +281,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 				},
 				async: true
 			});
-		expect(2);
 
 		try {
 			oView.runPreprocessor("xml", oSource). then(function() {
@@ -286,7 +294,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		}
 	});
 
-	asyncTest("runPreprocessor w/ valid preprocessor", function () {
+	asyncTest("runPreprocessor w/ valid preprocessor", 3, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -313,7 +321,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	});
 
-	asyncTest("runPreprocessor w/o known preprocessor", function () {
+	asyncTest("runPreprocessor w/o known preprocessor", 2, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -354,8 +362,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		}
 	});
 
-	test("register global preprocessor", function () {
-		expect(2);
+	test("register global preprocessor", 2, function () {
 
 		// templating preprocessor set by default
 		deepEqual(
@@ -364,7 +371,8 @@ if (!sap.ui.Device.browser.phantomJS) {
 			  "XML": {
 			    "xml": {
 			      "onDemand": true,
-			      "preprocessor": "sap.ui.core.util.XMLPreprocessor"
+			      "preprocessor": "sap.ui.core.util.XMLPreprocessor",
+				  "syncSupport": true
 			    }
 			  }
 			} ,
@@ -374,13 +382,12 @@ if (!sap.ui.Device.browser.phantomJS) {
 		// now a preprocessor is set
 		deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors["test"]["controls"],
-			{onDemand: false, preprocessor: this.oPreprocessor, message: this.mSettings.message},
+			{onDemand: false, preprocessor: this.oPreprocessor, message: this.mSettings.message, syncSupport: false},
 			"preprocessor stored at view"
 		);
 	});
 
-	asyncTest("call method via init", function () {
-		expect(2);
+	asyncTest("call method via init", 2, function () {
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
 
@@ -397,8 +404,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		});
 	});
 
-	asyncTest("call method independent", function () {
-		expect(4);
+	asyncTest("call method independent", 4, function () {
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
 
@@ -420,8 +426,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	});
 
-	asyncTest("run async preprocessors", function () {
-		expect(2);
+	asyncTest("run async preprocessors", 2, function () {
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
 
@@ -438,7 +443,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	});
 
-	asyncTest("run together with local preprocessor", function () {
+	asyncTest("run together with local preprocessor", 3, function () {
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
 			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
@@ -451,8 +456,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 			message: "Local preprocessor executed"
 		};
 
-		// two method and two preprocessor calls
-		expect(3);
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
 
 		// call via init
@@ -473,7 +476,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 		});
 	});
 
-	asyncTest("global preprocessor locally overridden", function () {
+	asyncTest("global preprocessor locally overridden", 2, function () {
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
@@ -483,7 +486,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 		mLocalSettings = {
 			message: "Local preprocessor executed"
 		};
-		expect(2);
 
 		sap.ui.core.mvc.XMLView.registerPreprocessor("controls", this.oPreprocessor, this.mSettings);
 
@@ -505,14 +507,13 @@ if (!sap.ui.Device.browser.phantomJS) {
 		});
 	});
 
-	asyncTest("on demand preprocessor provided", function () {
+	asyncTest("on demand preprocessor provided", 3, function () {
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, this.mSettings);
 
 		var mDefaultSettings = {
 				message: "OnDemand preprocessor executed"
 			},
 			logSpy = this.spy(jQuery.sap.log, "debug");
-		expect(3);
 
 		// call via init
 		var oView = new sap.ui.xmlview({
@@ -533,14 +534,13 @@ if (!sap.ui.Device.browser.phantomJS) {
 		});
 	});
 
-	asyncTest("on demand preprocessor not provided", function () {
+	asyncTest("on demand preprocessor not provided", 2, function () {
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, this.mSettings);
 
 		var mDefaultSettings = {
 				message: "OnDemand preprocessor executed"
 			},
 			logSpy = this.spy(jQuery.sap.log, "debug");
-		expect(2);
 
 		// call via init
 		var oView = new sap.ui.xmlview({
@@ -556,9 +556,8 @@ if (!sap.ui.Device.browser.phantomJS) {
 		});
 	});
 
-	asyncTest("sap.ui.core.mvc.Preprocessor extending module", function() {
+	asyncTest("sap.ui.core.mvc.Preprocessor extending module", 2, function() {
 		var sUrl = "test-resources/";
-		expect(2);
 
 		jQuery.sap.registerModulePath("", "../../../../../" + sUrl);
 
@@ -580,7 +579,7 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	module("sap.ui.core.mvc.View#loaded");
 
-	asyncTest("Retrieve promise for view generally", function() {
+	asyncTest("Retrieve promise for view generally", 2, function() {
 		var oView = new sap.ui.core.mvc.View({});
 			oPromise = oView.loaded();
 
