@@ -1419,6 +1419,7 @@
 				'sap/ui/thirdparty/handlebars.js': true,
 				'sap/ui/thirdparty/hasher.js': true,
 				'sap/ui/thirdparty/IPv6.js': true,
+				'sap/ui/thirdparty/jquery.js': true,
 				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': true,
 				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': true,
 				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': true,
