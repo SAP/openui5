@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 
 		dir: {
-			webapp: 'app',
+			webapp: 'src',
 			tests: 'test',
 			dist: 'dist',
 			bower_components: 'bower_components',
