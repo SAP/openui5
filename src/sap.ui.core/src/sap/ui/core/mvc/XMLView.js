@@ -175,11 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 						fnProcessView();
 					});
 			} else {
-				// sync preprocessor fallback case for templating
-				if (View._mPreprocessors.XML.xml.preprocessor === "sap.ui.core.util.XMLPreprocessor"
-					&& this.mPreprocessors.xml && this.mPreprocessors.xml.preprocessor == undefined) {
-					this._xContent = this.runPreprocessor("xml", this._xContent, true);
-				}
+				this._xContent = this.runPreprocessor("xml", this._xContent, true);
 				fnProcessView();
 			}
 		};
@@ -253,11 +249,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		* type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 		* view instance already, that one is used.
 		*
-		* It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.Preprocessor} or a
-		* function with a signature according to {@link sap.ui.core.mvc.Preprocessor.process}.
+		* It can be either a module name as string of an object with the same interface as
+		* {@link sap.ui.core.mvc.View.Preprocessor} (you may inherit from it) or a function with a signature according to
+		* {@link sap.ui.core.mvc.View.Preprocessor.process}.
 		*
 		* <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
-		* in sync mode, as this could have unexpected side effects.
+		* in sync mode, as this could have unexpected side effects. You may override this behaviour by setting the
+		* bSyncSupport flag to true.
 		*
 		* @public
 		* @static
@@ -265,15 +263,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		* 		the type of content to be processed
 		* @param {string|function} vPreprocessor
 		* 		module path of the preprocessor implementation or a preprocessor function
+		* @param {boolean} bSyncSupport
+		* 		declares if the vPreprocessor ensures safe sync processing. This means the preprocessor will be executed
+		* 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
+		* 		break the view initialization and lead to unexpected results.
 		* @param {boolean} [bOnDemand]
 		* 		ondemand preprocessor which enables developers to quickly specify the preprocessor for a view,
 		* 		by setting <code>preprocessors : { xml }</code>, for example.
 		* @param {object} [mSettings]
 		* 		optional configuration for preprocessor
 		*/
-		XMLView.registerPreprocessor = function(sType, vPreprocessor, bOnDemand, mSettings) {
+		XMLView.registerPreprocessor = function(sType, vPreprocessor, bOnDemand, bSyncSupport, mSettings) {
 			if (sType == "xml" || sType == "controls") {
-				sap.ui.core.mvc.View.registerPreprocessor(sType, vPreprocessor, this.getMetadata().getClass()._sType, bOnDemand, mSettings);
+				sap.ui.core.mvc.View.registerPreprocessor(sType, vPreprocessor, this.getMetadata().getClass()._sType, bOnDemand, bSyncSupport, mSettings);
 			} else {
 				jQuery.sap.log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
@@ -290,7 +292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		});
 
 		// Register OpenUI5 default preprocessor for templating
-		XMLView.registerPreprocessor("xml", "sap.ui.core.util.XMLPreprocessor", true);
+		XMLView.registerPreprocessor("xml", "sap.ui.core.util.XMLPreprocessor", true, true);
 
 	return XMLView;
 
