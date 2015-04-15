@@ -11,6 +11,9 @@
 	jQuery.sap.require("sap.ui.thirdparty.datajs");
 
 	sinon.config.useFakeServer = true;
+	//TODO remove this workaround in IE9 for
+	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+	sinon.xhr.supportsCORS = true;
 
 	function onFailed(oEvent) {
 		var oParameters = oEvent.getParameters();

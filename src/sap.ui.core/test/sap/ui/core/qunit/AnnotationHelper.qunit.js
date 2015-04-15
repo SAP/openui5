@@ -419,6 +419,9 @@ sap.ui.require([
 			// sets up a sandbox in order to use the URLs and responses defined in mFixture;
 			// leaves unknown URLs alone
 			sinon.config.useFakeServer = true;
+			//TODO remove this workaround in IE9 for
+			// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+			sinon.xhr.supportsCORS = true;
 			oSandbox = sinon.sandbox.create();
 			oServer = oSandbox.useFakeServer();
 
