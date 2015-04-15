@@ -3738,10 +3738,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype.clearSelection = function() {
 		this._oSelection.clearSelection();
-		var oSelMode = this.getSelectionMode();
-		if (oSelMode == "Multi" || oSelMode == "MultiToggle") {
-			this.$("selall").attr('title',this._oResBundle.getText("TBL_SELECT_ALL")).addClass("sapUiTableSelAll");
-		}
 		return this;
 	};
 
@@ -5419,7 +5415,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._toggleSelectAll = function() {
-		if (this._getSelectableRowCount() === this.getSelectedIndices().length) {
+		
+		if (!this.$("selall").hasClass("sapUiTableSelAll")) { //this._getSelectableRowCount() === this.getSelectedIndices().length) {
 			this.clearSelection();
 		} else {
 			this.selectAll();
