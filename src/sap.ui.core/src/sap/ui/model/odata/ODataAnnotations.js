@@ -664,17 +664,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					// Finished loading all URIs
 					mResults.annotations = that.oAnnotations;
 
+					if (mResults.success.length > 0) {
+						// For compatibility reasons, we fire the loaded event if at least one has been loaded...
+						var mSuccess = {
+							annotations:	that.oAnnotations,
+							results: 	mResults
+						};
+						
+						if (that.bAsync) {
+							that.fireLoaded(mSuccess);
+						} else {
+							that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mSuccess ]);
+						}
+					}
+
 					if (mResults.success.length < aUris.length) {
 						// firefailed is called for every failed URL in _loadFromUrl
 						fnReject(mResults);
 					} else {
 						// All URLs could be loaded and parsed
-						if (that.bAsync) {
-							that.fireLoaded({annotations: that.oAnnotations});
-						} else {
-							that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [{annotations: that.oAnnotations}]);
-						}
-
 						fnResolve(mResults);
 					}
 				}
@@ -713,7 +721,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					message:		sStatusText,
 					statusCode:		oJQXHR.statusCode,
 					statusText:		oJQXHR.statusText,
-					responseText:	oJQXHR.responseText
+					responseText:		oJQXHR.responseText
 				};
 
 				if (that.bAsync) {
@@ -736,7 +744,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							message:		sStatusText,
 							statusCode:		oJQXHR.statusCode,
 							statusText:		oJQXHR.statusText,
-							responseText:	oJQXHR.responseText
+							responseText:		oJQXHR.responseText
 						});
 					},
 					error : function(mData) {
