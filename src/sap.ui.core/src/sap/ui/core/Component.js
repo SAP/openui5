@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		var oAppManifest = oMetadata.getManifestEntry("sap.app");
 		var oUI5Manifest = oMetadata.getManifestEntry("sap.ui5");
 
-		var mModelConfigs = (oUI5Manifest && oUI5Manifest["models"]) ? oUI5Manifest["models"] : null;
+		var mModelConfigs = oUI5Manifest && oUI5Manifest["models"];
 		if (!mModelConfigs) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
 			return;
@@ -414,9 +414,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 			// check for referenced dataSource entry and read out settings/uri/type
 			// if not already provided in model config
-			if (oModelConfig.dataSource && mDataSources) {
+			if (oModelConfig.dataSource) {
 
-				var oDataSource = mDataSources[oModelConfig.dataSource];
+				var oDataSource = mDataSources && mDataSources[oModelConfig.dataSource];
 				if (typeof oDataSource === 'object') {
 
 					// default type is OData
@@ -456,19 +456,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 							// dataSource entry should be defined!
 							if (!oAnnotation) {
-								jQuery.sap.log.error("ODataAnnotation \"" + aAnnotations[i] + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								jQuery.sap.log.error("Component Manifest: ODataAnnotation \"" + aAnnotations[i] + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
 								continue;
 							}
 
 							// type should be ODataAnnotation!
 							if (oAnnotation.type !== 'ODataAnnotation') {
-								jQuery.sap.log.error("dataSource \"" + aAnnotations[i] + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								jQuery.sap.log.error("Component Manifest: dataSource \"" + aAnnotations[i] + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
 								continue;
 							}
 
 							// uri is required!
 							if (!oAnnotation.uri) {
-								jQuery.sap.log.error("Missing \"uri\" for ODataAnnotation \"" + aAnnotations[i] + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
+								jQuery.sap.log.error("Component Manifest: Missing \"uri\" for ODataAnnotation \"" + aAnnotations[i] + "\"", "[\"sap.app\"][\"dataSources\"][\"" + aAnnotations[i] + "\"]", this);
 								continue;
 							}
 
@@ -479,12 +479,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						}
 					}
 
+				} else {
+					jQuery.sap.log.error("Component Manifest: dataSource \"" + oModelConfig.dataSource + "\" for model \"" + sModelName + "\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"" + oModelConfig.dataSource + "\"]", this);
 				}
 			}
 
 			// model type is required!
 			if (!oModelConfig.type) {
-				jQuery.sap.log.error("Missing \"type\" for model \"" + sModelName + "\"", this);
+				jQuery.sap.log.error("Component Manifest: Missing \"type\" for model \"" + sModelName + "\"", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}
 
@@ -493,7 +495,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			try {
 				jQuery.sap.require(oModelConfig.type);
 			} catch(oError) {
-				jQuery.sap.log.error("Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, this);
+				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}
 
@@ -501,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			var ModelClass = jQuery.sap.getObject(oModelConfig.type);
 			if (!ModelClass) {
 				// this could be the case if the required module doesn't register itself in the defined namespace
-				jQuery.sap.log.error("Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", this);
+				jQuery.sap.log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", this);
 				continue;
 			}
 

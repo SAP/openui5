@@ -209,13 +209,16 @@
 
 
 			// jQuery.sap.log.error
-			sinon.assert.calledWithExactly(oLogSpy, "Missing \"type\" for model \"no-model-type\"", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"type\" for model \"no-model-type\"", "[\"sap.ui5\"][\"models\"][\"no-model-type\"]", this.oComponent);
 			sinon.assert.calledWithExactly(oLogSpy, sinon.match("Class \"sap.ui.not.defined.Model\" for model \"missing-model-class\" could not be loaded. " +
-				"Error: failed to load 'sap/ui/not/defined/Model.js' from ../../../../../../resources/sap/ui/not/defined/Model.js: 404"), this.oComponent);
-			sinon.assert.calledWithExactly(oLogSpy, "Class \"sap.ui.test.v2models.ModelNotDefined\" for model \"model-not-found\" could not be found", this.oComponent);
-			sinon.assert.calledWithExactly(oLogSpy, "ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"undefined\"]", this.oComponent);
-			sinon.assert.calledWithExactly(oLogSpy, "Missing \"uri\" for ODataAnnotation \"annotation-without-uri\"", "[\"sap.app\"][\"dataSources\"][\"annotation-without-uri\"]", this.oComponent);
-			sinon.assert.calledWithExactly(oLogSpy, "dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent);
+				"Error: failed to load 'sap/ui/not/defined/Model.js' from ../../../../../../resources/sap/ui/not/defined/Model.js: 404"), "[\"sap.ui5\"][\"models\"][\"missing-model-class\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Class \"sap.ui.test.v2models.ModelNotDefined\" for model \"model-not-found\" could not be found", "[\"sap.ui5\"][\"models\"][\"model-not-found\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: ODataAnnotation \"undefined\" for dataSource \"odata-invalid-annotations\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"undefined\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: Missing \"uri\" for ODataAnnotation \"annotation-without-uri\"", "[\"sap.app\"][\"dataSources\"][\"annotation-without-uri\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent);
+			sinon.assert.calledWithExactly(oLogSpy, "Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent);
+
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({

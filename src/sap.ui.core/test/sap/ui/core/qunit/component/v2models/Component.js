@@ -96,7 +96,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"annotation-without-uri": {
 							"type": "ODataAnnotation"
-						}
+						},
+
+						"invalid": true
 
 					}
 				},
@@ -225,7 +227,13 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 						"model-not-found": {
 							"type": "sap.ui.test.v2models.ModelNotDefined"
-						}
+						},
+						"dataSource-not-found": {
+							"dataSource": "does-not-exist"
+						},
+						"dataSource-invalid": {
+							"dataSource": "invalid"
+						},
 
 					}
 
