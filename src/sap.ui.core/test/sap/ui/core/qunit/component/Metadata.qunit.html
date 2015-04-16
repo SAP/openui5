@@ -12,25 +12,17 @@
 
 	<title>QUnit tests: Component Metadata</title>
 
-	<base href="../../../../../../">
-	<!--[if lte IE 9]><script type="text/javascript">
-		(function() {
-			var baseTag = document.getElementsByTagName('base')[0];
-			baseTag.href = baseTag.href;
-		})();
-	</script><![endif]-->
-
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
-		src="resources/sap-ui-core.js"
+		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true">
 	</script>
 
-	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script language="javascript">
 
@@ -42,7 +34,7 @@
 	qutils.delayTestStart();
 
 	// register the module paths (package mapping)
-	jQuery.sap.registerModulePath("sap.ui.test", "test-resources/sap/ui/core/qunit/component/");
+	jQuery.sap.registerModulePath("sap.ui.test", ".");
 
 
 	/*
@@ -601,6 +593,48 @@
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
 
+	});
+
+	/*
+	 * TEST CODE: Component Metadata URI resolution
+	 */
+
+	module("Component Metadata: Resolve URI", {
+		assertResolvedUri: function(sInput, sBase, sExpected) {
+			var sActual = sap.ui.core.ComponentMetadata._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+			assert.equal(sActual, sExpected, "Resolved URI is correct!");
+		}
+	});
+
+	test("relative", function(assert) {
+		this.assertResolvedUri("local/uri",                           "path/to/base/",          "path/to/base/local/uri");
+		this.assertResolvedUri("./local/uri",                         "path/to/base/",          "path/to/base/local/uri");
+		this.assertResolvedUri("../relative/1/uri",                   "path/to/base/",          "path/to/relative/1/uri");
+		this.assertResolvedUri("../../relative/2/uri",                "path/to/base/",          "path/relative/2/uri");
+		this.assertResolvedUri("../../../relative/3/uri",             "path/to/base/",          "relative/3/uri");
+		this.assertResolvedUri("../../../../relative/4/uri",          "path/to/base/",          "../relative/4/uri");
+		this.assertResolvedUri("../../../../../relative/5/uri",       "path/to/base/",          "../../relative/5/uri");
+		this.assertResolvedUri("../../../../../../relative/6/uri",    "path/to/base/",          "../../../relative/6/uri");
+		this.assertResolvedUri("../../../../../../../relative/7/uri", "path/to/base/",          "../../../../relative/7/uri");
+
+		this.assertResolvedUri("local/uri",                           "../../../path/to/base/", "../../../path/to/base/local/uri");
+		this.assertResolvedUri("./local/uri",                         "../../../path/to/base/", "../../../path/to/base/local/uri");
+		this.assertResolvedUri("../relative/1/uri",                   "../../../path/to/base/", "../../../path/to/relative/1/uri");
+		this.assertResolvedUri("../../relative/2/uri",                "../../../path/to/base/", "../../../path/relative/2/uri");
+		this.assertResolvedUri("../../../relative/3/uri",             "../../../path/to/base/", "../../../relative/3/uri");
+		this.assertResolvedUri("../../../../relative/4/uri",          "../../../path/to/base/", "../../../../relative/4/uri");
+		this.assertResolvedUri("../../../../../relative/5/uri",       "../../../path/to/base/", "../../../../../relative/5/uri");
+		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
+		this.assertResolvedUri("../../../../../../../relative/7/uri", "../../../path/to/base/", "../../../../../../../relative/7/uri");
+	});
+
+	test("absolute", function(assert) {
+		this.assertResolvedUri("http://absolute:1234/uri", "path/to/base/",          "http://absolute:1234/uri");
+		this.assertResolvedUri("//absolute:1234/uri",      "path/to/base/",          "//absolute:1234/uri");
+		this.assertResolvedUri("/server-absolute/uri",     "path/to/base/",          "/server-absolute/uri");
+		this.assertResolvedUri("http://absolute:1234/uri", "../../../path/to/base/", "http://absolute:1234/uri");
+		this.assertResolvedUri("//absolute:1234/uri",      "../../../path/to/base/", "//absolute:1234/uri");
+		this.assertResolvedUri("/server-absolute/uri",     "../../../path/to/base/", "/server-absolute/uri");
 	});
 
 	</script>

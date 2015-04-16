@@ -393,9 +393,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		// optional dataSources from "sap.app" manifest
 		var mDataSources = (oAppManifest && oAppManifest["dataSources"]) ? oAppManifest["dataSources"] : null;
 
-		// base dir to resolve URIs relative to component
-		var sComponentBaseDir = jQuery.sap.getModulePath(this.getMetadata().getComponentName()) + "/";
-
 		// read current URI params to mix them into model URI
 		var oUriParams = jQuery.sap.getUriParameters();
 
@@ -472,10 +469,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 								continue;
 							}
 
+							// resolve relative to component
+							var oAnnotationUri = oMetadata._resolveUri(new URI(oAnnotation.uri)).toString();
+
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
 							oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
-							oModelConfig.settings.annotationURI.push(oAnnotation.uri);
+							oModelConfig.settings.annotationURI.push(oAnnotationUri);
 						}
 					}
 
@@ -523,13 +523,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				// parse model URI to be able to modify it
 				var oUri = new URI(oModelConfig.uri);
 
+				// resolve URI relative to component
+				oUri = oMetadata._resolveUri(oUri);
+
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
 					addSapUriParams(oUriParams, oUri);
 				}
 
-				// resolve URI relative to component
-				oModelConfig.uri = oUri.absoluteTo(sComponentBaseDir).toString();
+				oModelConfig.uri = oUri.toString();
 			}
 
 			// set model specific "uri" property names which should be used to map "uri" to model specific constructor
