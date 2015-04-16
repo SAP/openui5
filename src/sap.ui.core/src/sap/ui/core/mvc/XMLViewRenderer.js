@@ -26,11 +26,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	XMLViewRenderer.render = function(rm, oControl) {
 		// write the HTML into the render manager
 		var $oldContent = oControl._$oldContent = sap.ui.core.RenderManager.findPreservedContent(oControl.getId());
-		if ( $oldContent.length === 0 || oControl._bRenderAsync ) {
-			if (oControl._bRenderAsync) {
-				// initial async rendering taking place
-				delete oControl._bRenderAsync;
-			}
+		if ( $oldContent.length === 0) {
 			// jQuery.sap.log.debug("rendering " + oControl + " anew");
 			var bSubView = oControl.isSubView();
 			if (!bSubView) {
@@ -39,8 +35,10 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 				rm.addClass("sapUiView");
 				rm.addClass("sapUiXMLView");
 				ViewRenderer.addDisplayClass(rm, oControl);
-				rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
-
+				if (oControl._oAsyncState && !oControl._oAsyncState.suppressPreserve) {
+					// do not preserve when rendering initially in async mode
+					rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
+				}
 				if (oControl.getWidth()) {
 					rm.addStyle("width", oControl.getWidth());
 				}

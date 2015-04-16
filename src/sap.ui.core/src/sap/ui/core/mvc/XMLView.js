@@ -127,6 +127,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 				throw new Error("mSettings must be given");
 			}
 
+			if (this._oAsyncState) {
+				// suppress rendering of preserve content
+				this._oAsyncState.suppressPreserve = true;
+			}
+
 			// View template handling - either template name or XML node is given
 			if (mSettings.viewName && mSettings.viewContent) {
 				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
@@ -191,6 +196,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
 				// parse the XML tree
 				that._aParsedContent = XMLTemplateProcessor.parseTemplate(that._xContent, that);
+				// allow rendering of preserve content
+				if (that._oAsyncState) {
+					delete that._oAsyncState.suppressPreserve;
+				}
 			}, {
 				settings: this._fnSettingsPreprocessor
 			});
