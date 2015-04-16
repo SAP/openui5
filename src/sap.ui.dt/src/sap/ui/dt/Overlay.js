@@ -9,14 +9,16 @@ sap.ui.define([
 	'sap/ui/dt/ControlObserver',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/AggregationOverlay',
+	'sap/ui/dt/OverlayContainer',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Utils',
 	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, Utils, DOMUtil) {
+function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverlay, OverlayContainer, OverlayRegistry, Utils, DOMUtil) {
 	"use strict";
 
-
+	var sOverlayContainerId = "overlay-container";
+	var oOverlayContainer;
 	/**
 	 * Constructor for a new Overlay.
 	 *
@@ -87,7 +89,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 
 	Overlay.prototype.init = function() {
 		this._oDefaultDesignTimeMetadata = null;
-		this._addToStaticUIArea();	
+		this._addToOverlayContainer();	
 	};
 
 	Overlay.prototype.exit = function() {
@@ -99,8 +101,12 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 			if (oElement instanceof sap.ui.core.Control) {
 				this._unobserveControl(oElement);
 			}
+		} else {
+			// element can be destroyed before
+			OverlayRegistry.deregister(this._elementId);
 		}
-		
+
+		delete this._elementId;
 	};
 
 	Overlay.prototype._createAggregationOverlays = function() {
@@ -114,6 +120,8 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 				var oAggregationOverlay = new AggregationOverlay({
 					aggregationName : sAggregationName
 				});
+
+				that._syncAggregationOverlay(oAggregationOverlay);
 
 				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
 
@@ -131,6 +139,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 
 		this.destroyAggregation("_aggregationOverlays");
 		this._destroyDefaultDesignTimeMetadata();
+		delete this._elementId;
 		
 		this.setAssociation("element", vElement);
 		this._createAggregationOverlays();
@@ -138,6 +147,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		var oElement = this.getElementInstance();
 		if (oElement instanceof sap.ui.core.Element) {
 
+			this._elementId = oElement.getId();
 			OverlayRegistry.register(oElement, this);
 			this._observeControl(oElement);
 
@@ -215,6 +225,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 			target : oControl
 		});
 		this._oControlObserver.attachChanged(this._onElementChanged, this);
+		this._oControlObserver.attachAfterRendering(this._onElementRendered, this);
 		this._oControlObserver.attachDestroyed(this._onElementDestroyed, this);
 	};
 
@@ -229,23 +240,61 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	/**
 	 * @private
 	 */
-	Overlay.prototype._addToStaticUIArea = function() {
-		var oStaticArea = this._getStaticUIArea();
-		oStaticArea.addContent(this);
+	Overlay.prototype._addToOverlayContainer = function() {
+		this.ensureOverlayContainer();
+		this.placeAt(sOverlayContainerId);
 	};
 
 	/**
 	 * @private
 	 */
-	Overlay.prototype._getStaticUIArea = function() {
-		var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
-		return sap.ui.getCore().getUIArea(oStaticAreaRef);
+	Overlay.prototype.ensureOverlayContainer = function() {
+		if (!oOverlayContainer) {
+			oOverlayContainer = jQuery("#" + sOverlayContainerId);
+			if (!oOverlayContainer.length) {
+				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").appendTo("body");
+			}
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._syncAggregationOverlay = function(oAggregationOverlay) {
+		var sAggregationName = oAggregationOverlay.getAggregationName();
+		var aAggregationElements = Utils.getAggregationValue(sAggregationName, this.getElementInstance());
+
+		jQuery.each(aAggregationElements, function(iIndex, oAggregationElement) {
+			var oChildOverlay = OverlayRegistry.getOverlay(oAggregationElement);
+			if (oChildOverlay) {
+				oAggregationOverlay.addChild(oChildOverlay);
+			}
+		});
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._syncAggregationOverlays = function() {
+		var that = this;
+		var aAggregationOverlays = this.getAggregation("_aggregationOverlays") || [];
+		jQuery.each(aAggregationOverlays, function(index, oAggregationOverlay) {
+			that._syncAggregationOverlay(oAggregationOverlay);
+		});
 	};
 
 	/**
 	 * @private
 	 */
 	Overlay.prototype._onElementChanged = function() {
+		this._syncAggregationOverlays();
+		this.invalidate();
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._onElementRendered = function() {
 		this.invalidate();
 	};
 

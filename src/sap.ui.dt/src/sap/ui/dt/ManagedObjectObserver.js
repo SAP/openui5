@@ -100,14 +100,14 @@ function(jQuery, ManagedObject) {
 		oTarget.attachEvent("_change", this.fireChanged, this);
 
 		// Wrapper for the destroy method to recognize changes
-		this._fnOriginalDestroy = oTarget.destroy;
+		var fnOriginalDestroy = this._fnOriginalDestroy = oTarget.destroy;
 		var bDestroyed = false;
 		oTarget.destroy = function() {
 			if (bDestroyed) {
 				return;
 			}
-			that._fnOriginalDestroy.apply(this, arguments);
 			that.unobserve(oTarget);
+			fnOriginalDestroy.apply(this, arguments);
 			that.fireDestroyed();
 		};
 
@@ -147,6 +147,47 @@ function(jQuery, ManagedObject) {
 			that.fireChanged();
 			return this;
 		};
+
+		// We wrap the native addAggregation method of the control with our logic
+		this._fnOriginalAddAggregation = oTarget.addAggregation;
+		oTarget.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+			that._fnOriginalAddAggregation.apply(this, arguments);
+			that.fireChanged();
+			return this;
+		};
+
+		// We wrap the native removeAggregation method of the control with our logic
+		this._fnOriginalRemoveAggregation = oTarget.removeAggregation;
+		oTarget.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+			that._fnOriginalRemoveAggregation.apply(this, arguments);
+			that.fireChanged();
+			return this;
+		};
+
+		// We wrap the native insertAggregation method of the control with our logic
+		this._fnOriginalInsertAggregation = oTarget.insertAggregation;
+		oTarget.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+			that._fnOriginalInsertAggregation.apply(this, arguments);
+			that.fireChanged();
+			return this;
+		};
+
+		// We wrap the native removeAllAggregations method of the control with our logic
+		this._fnOriginalRemoveAllAggregations = oTarget.removeAllAggregations;
+		oTarget.removeAllAggregations = function(sAggregationName, bSuppressInvalidate) {
+			that._fnOriginalRemoveAllAggregations.apply(this, arguments);
+			that.fireChanged();
+			return this;
+		};
+
+		// We wrap the native destroyAggregation method of the control with our logic
+		this._fnOriginalDestroyAggregation = oTarget.destroyAggregation;
+		oTarget.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+			that._fnOriginalDestroyAggregation.apply(this, arguments);
+			that.fireChanged();
+			return this;
+		};		
+
 	};
 
 	/**
@@ -168,6 +209,17 @@ function(jQuery, ManagedObject) {
 		delete this._fnOriginalUnBindAggregation;
 		oTarget.setParent = this._fnOriginalSetParent;
 		delete this._fnOriginalSetParent;
+
+		oTarget.addAggregation = this._fnOriginalAddAggregation;
+		delete this._fnOriginalAddAggregation;
+		oTarget.removeAggregation = this._fnOriginalRemoveAggregation;
+		delete this._fnOriginalRemoveAggregation;
+		oTarget.insertAggregation = this._fnOriginalInsertAggregation;
+		delete this._fnOriginalInsertAggregation;
+		oTarget.removeAllAggregations = this._fnOriginalRemoveAllAggregations;
+		delete this._fnOriginalRemoveAllAggregations;
+		oTarget.destroyAggregation = this._fnOriginalDestroyAggregation;
+		delete this._fnOriginalDestroyAggregation;
 
 		oTarget.detachEvent("_change", this.fireChanged, this);
 	};

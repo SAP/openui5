@@ -107,7 +107,6 @@ function(jQuery) {
 
 	Utils.findAllPublicElements = function(oElement) {
 		var aFoundElements = [];
-		var oInitialElement = oElement;
 		var that = this;
 		var oCore = sap.ui.core;
 
@@ -124,12 +123,9 @@ function(jQuery) {
 			} else if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
 				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
 			} else {
-				if (oElement !== oInitialElement) {
-					oElement.__publicControl = true;
-					aFoundElements.push(oElement);
-				}
+				aFoundElements.push(oElement);
 				that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
-					if (vElements && vElements.length) { // TODO: ARRAY CHECK
+					if (vElements && vElements.length) {
 						for (var k = 0; k < vElements.length; k++) {
 							var oObj = vElements[k];
 							internalFind(oObj);
@@ -142,6 +138,16 @@ function(jQuery) {
 		}
 		internalFind(oElement);
 
+		return aFoundElements;
+
+	};
+
+	Utils.findAllPublicChildren = function(oElement) {
+		var aFoundElements = this.findAllPublicElements(oElement);
+		var iIndex = aFoundElements.indexOf(oElement);
+		if (iIndex > -1) {
+			aFoundElements.splice(iIndex, 1);
+		}
 		return aFoundElements;
 
 	};
@@ -180,7 +186,7 @@ function(jQuery) {
 				return false;
 			}
 			if (oParent.__publicControl) {
-				var aList = that.findAllPublicControls(oParent, oCore).filter(function(oSingleControl) {
+				var aList = that.findAllPublicElements(oParent, oCore).filter(function(oSingleControl) {
 					return oSingleControl.getId() === oControl.getId();
 				});
 				return aList.length > 0;

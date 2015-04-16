@@ -1,6 +1,7 @@
 <html>
  <head>
   <title>QUnit TestSuite for sap.ui.table</title>
+  <script id="sap-ui-bootstrap" src='../../../../../resources/sap-ui-core.js'> </script>
   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
   <script language="javascript">
 
@@ -14,10 +15,11 @@
 
     var isSupported = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;    
     if(isSupported){
-      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/GestureRecognizer.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DOMUtil.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Overlay.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayRegistry.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTimeNew.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementObserver.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ControlObserver.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/FormInDesignTime.qunit.html");

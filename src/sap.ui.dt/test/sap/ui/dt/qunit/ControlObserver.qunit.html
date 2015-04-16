@@ -35,13 +35,10 @@
 				}
 			});
 
-			test("when the property of the Button is changed", 4, function() {
+			test("when the property of the Button is changed", function() {
 				var that = this;
 				this.oControlObserver.attachEventOnce("changed", function(oEvent) {
 					ok(oEvent, 'then a "Changed" event is fired because of the property change');
-					that.oControlObserver.attachEventOnce("changed", function(oEvent) {
-					ok(oEvent, 'and a "Changed" event is fired because of rerendering');
-				});
 				});
 				this.oControlObserver.attachBeforeRendering(function(oEvent) {
 					ok(oEvent, 'and a "BeforeRendering" event is fired');

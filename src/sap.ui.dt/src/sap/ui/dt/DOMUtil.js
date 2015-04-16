@@ -35,14 +35,6 @@ function(jQuery, Utils) {
 		};
 	};
 
-	DOMUtil.getPosition = function(oDomRef) {
-		var mOffset = jQuery(oDomRef).offset();
-		mOffset.offsetLeft = mOffset.left;
-		mOffset.offsetTop = mOffset.top;
-
-		return mOffset;
-	};
-
 	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset) {
 		var mOffset = {
 			left : oPosition.left,
@@ -123,7 +115,7 @@ function(jQuery, Utils) {
 			return {
 				domRef : oDomRef,
 				size : this.getSize(oDomRef),
-				position : this.getPosition(oDomRef)
+				position :  jQuery(oDomRef).offset()
 			};
 		}
 	};
@@ -141,7 +133,7 @@ function(jQuery, Utils) {
 			oDomRef = oElement.getRenderedDomRef();
 		}
 		if (!oDomRef)  {
-			var aFoundElements = Utils.findAllPublicElements(oElement);
+			var aFoundElements = Utils.findAllPublicChildren(oElement);
 			return this.getChildrenAreaGeometry(aFoundElements);
 		} else {
 			return this.getDomGeometry(oDomRef);

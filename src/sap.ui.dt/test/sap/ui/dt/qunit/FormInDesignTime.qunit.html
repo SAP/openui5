@@ -161,27 +161,27 @@
 				var $FormOverlay = jQuery(this.oFormOverlay.getDomRef());
 
 				var $FormContainersOverlay = jQuery(this.oFormOverlay.getAggregation("_aggregationOverlays")[0].getDomRef());
-				notEqual($FormContainersOverlay.width, 0, "Overlay for aggregation FormContainers exists and ... ");
+				notEqual($FormContainersOverlay.width(), 0, "Overlay for aggregation FormContainers exists and ... ");
 				ok(isElementChildOf($FormContainersOverlay, $FormOverlay), "... and is a child of a form overlay");
 
 				var $ContainerOverlay1 = jQuery(this.oContainerOverlay1.getDomRef());
-				notEqual($ContainerOverlay1.width, 0, "Overlay for FormContainer1 exists and has width");
+				notEqual($ContainerOverlay1.width(), 0, "Overlay for FormContainer1 exists and has width");
 				ok(isElementChildOf($ContainerOverlay1, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
 				var $formElementsOverlay1 = jQuery(this.oContainerOverlay1.getAggregation("_aggregationOverlays")[0].getDomRef());
-				notEqual($formElementsOverlay1.width, 0, "Overlay for aggregation formElements exists and ... ");
+				notEqual($formElementsOverlay1.width(), 0, "Overlay for aggregation formElements exists and ... ");
 				ok(isElementChildOf($formElementsOverlay1, $ContainerOverlay1), "... and is a child of a FormContainer1 overlay");
 
 				var $ElementOverlay1 = jQuery(this.oElementOverlay1.getDomRef());
-				notEqual($ElementOverlay1.width, 0, "Overlay for Element0 exists and has width");
+				notEqual($ElementOverlay1.width(), 0, "Overlay for Element0 exists and has width");
 				ok(isElementChildOf($ElementOverlay1, $formElementsOverlay1), "... and is a child of a FormContainer1 overlay");
 
 				var $ContainerOverlay2 = jQuery(this.oContainerOverlay2.getDomRef());
-				notEqual($ContainerOverlay2.width, 0, "Overlay for FormContainer2 exists and has width");
+				notEqual($ContainerOverlay2.width(), 0, "Overlay for FormContainer2 exists and has width");
 				ok(isElementChildOf($ContainerOverlay2, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
 				var $ContainerOverlay3 = jQuery(this.oContainerOverlay3.getDomRef());
-				notEqual($ContainerOverlay3.width, 0, "Overlay for FormContainer3 exists and has width");
+				notEqual($ContainerOverlay3.width(), 0, "Overlay for FormContainer3 exists and has width");
 				ok(isElementChildOf($ContainerOverlay3, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 			};
 

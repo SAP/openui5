@@ -91,23 +91,8 @@ function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
 		return this._mGeometry;
 	};
 
-	AggregationOverlay.prototype._syncChildrenOverlays = function() {
-		var that = this;
-		var oElement = this.getParent().getElementInstance();
-		var sAggregationName = this.getAggregationName();
-		var aAggregationElements = Utils.getAggregationValue(sAggregationName, oElement);
-
-		jQuery.each(aAggregationElements, function(iIndex, oAggregationElement) {
-			var oChildOverlay = OverlayRegistry.getOverlay(oAggregationElement);
-			if (oChildOverlay) {
-				that.addChild(oChildOverlay);
-			}
-		});
-	};
-
 	AggregationOverlay.prototype.onBeforeRendering = function() {
 		this._mGeometry = null;
-		this._syncChildrenOverlays();
 	};
 
 	AggregationOverlay.prototype.onAfterRendering = function() {

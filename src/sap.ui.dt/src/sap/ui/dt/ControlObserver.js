@@ -97,7 +97,6 @@ function(jQuery, ManagedObjectObserver) {
 	 */
 	ControlObserver.prototype._onAfterRendering = function() {
 		this.fireAfterRendering();
-		this.fireChanged();
 	};
 
 	return ControlObserver;
