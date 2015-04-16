@@ -10,6 +10,8 @@
 	jQuery.sap.require("jquery.sap.xml");
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 
+	var iOldLogLevel = jQuery.sap.log.getLevel();
+
 	/**
 	 * Creates an <mvc:View> tag with namespace definitions.
 	 * @param {string} [sPrefix="template"] the prefix for the template namespace
@@ -269,13 +271,13 @@
 
 	//*********************************************************************************************
 	module("sap.ui.core.util.XMLPreprocessor", {
-		afterEach: function () {
-			try {
-				delete window.foo;
-			} catch (e) {
-				// IE 8 doesn't like this: "Object doesn't support this action"
-				window.foo = undefined;
-			}
+		beforeEach : function () {
+			// do not rely on ERROR vs. DEBUG due to minified sources
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+		},
+		afterEach : function () {
+			jQuery.sap.log.setLevel(iOldLogLevel);
+			delete window.foo;
 		}
 	});
 
@@ -326,9 +328,9 @@
 			test(aViewContent[1] + ", warn = " + bIsLoggable, function () {
 				var oLogMock = this.mock(jQuery.sap.log);
 
-				oLogMock.expects("isLoggable").once()
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
-					.returns(bIsLoggable);
+				if (!bIsLoggable) {
+					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+				}
 				warn(oLogMock, 'qux: Constant test condition in ' + aViewContent[1])
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
@@ -493,9 +495,9 @@
 					oLogMock = this.mock(jQuery.sap.log);
 
 				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
-				oLogMock.expects("isLoggable").once()
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
-					.returns(bIsLoggable);
+				if (!bIsLoggable) {
+					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+				}
 				warn(oLogMock, 'qux: Error in formatter of ' + aViewContent[1], oError)
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
@@ -541,9 +543,9 @@
 				var oLogMock = this.mock(jQuery.sap.log);
 
 				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
-				oLogMock.expects("isLoggable").once()
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
-					.returns(bIsLoggable);
+				if (!bIsLoggable) {
+					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+				}
 				warn(oLogMock, 'qux: Binding not ready in ' + aViewContent[1])
 					.exactly(bIsLoggable ? 1 : 0); // do not construct arguments in vain!
 
@@ -923,7 +925,6 @@
 				other: other
 			}
 		};
-		this.stub(jQuery.sap.log, "isLoggable").returns(true);
 		this.mock(jQuery.sap.log).expects("debug").never();
 
 		check([
@@ -954,10 +955,9 @@
 			var oError = new Error("deliberate failure"),
 				oLogMock = this.mock(jQuery.sap.log);
 
-			oLogMock.expects("isLoggable")
-				.twice() // Note: default is once()
-				.withExactArgs(jQuery.sap.log.Level.DEBUG)
-				.returns(bIsLoggable);
+			if (!bIsLoggable) {
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
+			}
 			oLogMock.expects("debug")
 				.exactly(bIsLoggable ? 2 : 0) // do not construct arguments in vain!
 				.withExactArgs(
