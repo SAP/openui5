@@ -227,8 +227,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				this.initViewSettings(mSettings)
 					.then(fnInitController)
 					.then(function() {
-						// notify renderer for delayed initial rendering
-						that._bRenderAsync = true;
 						return that.runPreprocessor("controls", that);
 					})
 					.then(function() {
@@ -439,7 +437,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				return fnResult(vSource);
 		} // else { // global not overridden }
 
-
 		if (oConfig) {
 			// determine preprocessor implementation
 			if (typeof oConfig.preprocessor === "string") {
@@ -504,7 +501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 		if (vPreprocessor) {
 			jQuery.sap.log.debug("Register " + (bOnDemand ? "onDemand-" : "") + "preprocessor for \"" + sType + "\"" +
-				(bSyncSupport ? "with syncSupport" : ""), this.getMetadata().getName());
+				(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 			if (!View._mPreprocessors[sViewType]) {
 				View._mPreprocessors[sViewType] = {};
 			} else if (!View._mPreprocessors[sViewType][sType]) {
