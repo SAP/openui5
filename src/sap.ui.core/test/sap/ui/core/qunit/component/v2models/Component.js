@@ -20,6 +20,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
+					"i18n": "i18n.properties",
+					"title": "{{title}}",
+					"description": "{{description}}",
 					"dataSources": {
 
 						"default": {
