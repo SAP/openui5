@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							iHeaderHeight = $this.children("header.sapMIBar").outerHeight(true),
 							$content = this.$("cont");
 
-						$content.css("max-height", iHeight - iHeaderHeight);
+						$content.css("max-height", iHeight - (that.getTitle() ? iHeaderHeight : 0));
 						if (this._oScroller) {
 							this._oScroller.refresh();
 						}
@@ -492,6 +492,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.setProperty("title", sTitle, true);
 		if (this._parent && sap.ui.Device.system.phone) {
 			this._parent.setTitle(sTitle);
+			this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
 		}
 
 		if (this._parent) {
