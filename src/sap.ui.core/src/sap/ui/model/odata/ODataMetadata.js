@@ -792,7 +792,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		return oPropertyMetadata;
 	};
 	
-	
 	ODataMetadata.prototype.destroy = function() {
 		delete this.oMetadata;
 
