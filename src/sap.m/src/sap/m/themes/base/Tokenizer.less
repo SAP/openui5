@@ -19,6 +19,24 @@
 	display: inline-block;
 }
 
+.sapMTokenTruncate {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
+}
+
+.sapMTokenTruncate > .sapMTokenIcon {
+	position: absolute;
+	right: 0rem;
+}
+
+.sapMTokenTruncate > .sapMTokenText {
+	line-height: 1.625rem;
+	display: inline-block;
+	width: calc(~"100% - 2rem");
+}
+
 .sap-phone .sapMTokenizerMultiLine {
 	padding-left: 1rem;
 	padding-right: 1rem;
@@ -45,6 +63,11 @@
 
 .sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken{
 	margin-bottom: -0.125rem;
+}
+
+sapUiSizeCompact .sapMTokenTruncate > .sapMTokenText {
+	line-height: 1.25rem;
+	width: calc(~"100% - 1.25rem");
 }
 
 .sapMTokenizer:focus{
