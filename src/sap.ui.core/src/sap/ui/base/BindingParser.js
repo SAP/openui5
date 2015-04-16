@@ -89,10 +89,17 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 		return sValue;
 	};
 	
-	BindingParser.complexParser = function(sString, oContext, bUnescape) {
+	/*
+	 * @param {boolean} [bTolerateFunctionsNotFound=false]
+	 *   if true, function names which cannot be resolved to a reference are reported via the
+	 *   string array <code>functionsNotFound</code> of the result object; else they are logged
+	 *   as errors
+	 */
+	BindingParser.complexParser = function(sString, oContext, bUnescape, bTolerateFunctionsNotFound) {
 		var parseObject = jQuery.sap.parseJS,
 			oBindingInfo = {parts:[]},
 			aFragments = [],
+			aFunctionsNotFound,
 			bUnescaped,
 			p = 0,
 			m,
@@ -108,7 +115,12 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 					o[sProp] = jQuery.sap.getObject(o[sProp]);
 				}
 				if (typeof (o[sProp]) !== "function") {
-					jQuery.sap.log.error(sProp + " function " + sName + " not found!");
+					if (bTolerateFunctionsNotFound) {
+						aFunctionsNotFound = aFunctionsNotFound || [];
+						aFunctionsNotFound.push(sName);
+					} else {
+						jQuery.sap.log.error(sProp + " function " + sName + " not found!");
+					}
 				}
 			}
 		}
@@ -269,6 +281,9 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			}
 			if (BindingParser._keepBindingStrings) {
 				oBindingInfo.bindingString = sString;
+			}
+			if (aFunctionsNotFound) {
+				oBindingInfo.functionsNotFound = aFunctionsNotFound;
 			}
 			return oBindingInfo;
 		} else if ( bUnescape && bUnescaped ) {
