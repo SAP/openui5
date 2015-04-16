@@ -42,10 +42,9 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 		}
 	 * </pre>
 	 *
-	 * Since 1.29.0 the equivalent vocabulary based annotations for the following
-	 * <a src="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a> are
-	 * also added if they are not defined in v4 annotations from the existing
-	 * {@link sap.ui.model.odata.ODataAnnotations}:
+	 * As of 1.29.0, the corresponding vocabulary-based annotations for the following
+	 * "<a src="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a>"
+	 * are added, if they are not yet defined in the v4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>pageable</code>,
@@ -53,7 +52,14 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * <code>updatable</code> on entity sets;</li>
 	 * <li><code>creatable</code>, <code>field-control</code>, <code>precision</code>,
 	 * <code>required-in-filter</code>, <code>sortable</code>, <code>text</code>, <code>unit</code>
-	 * and <code>updatable</code> on properties.</li>
+	 * and <code>updatable</code> on properties;</li>
+	 * <li><code>semantics</code>; following values for <code>sap:semantics</code> are supported:
+	 * <ul>
+	 * <li>"bday", "city", "country", "familyname", "givenname", "honorific", "middlename", "name",
+	 * "nickname", "note", "org", "org-unit", "org-role", "photo", "pobox", "region", "street",
+	 * "suffix", "title" and "zip" (mapped to V4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Contact</code>);</li>
+	 * </ul>
 	 * </ul>
 	 * For example:
 	 * <pre>

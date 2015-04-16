@@ -1,13 +1,14 @@
 /*!
  * ${copyright}
  */
-(function () {
+sap.ui.require([
+	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/v2/ODataModel"
+], function(Utils, ODataModel) {
 	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
 	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 	jQuery.sap.require("sap.ui.thirdparty.datajs");
 
 	sinon.config.useFakeServer = true;
@@ -61,6 +62,13 @@
 				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" \
 					sap:semantics="currency-code"/>\
 			</EntityType>\
+			<EntityType Name="Contact">\
+				<Property Name="FirstName" Type="Edm.String" sap:semantics="givenname"/>\
+				<Property Name="Honorific" Type="Edm.String" sap:semantics="honorific"/>\
+				<Property Name="LastName" Type="Edm.String" sap:semantics="familyname"/>\
+				<Property Name="NickName" Type="Edm.String" sap:semantics="nickname"/>\
+				<Property Name="Zip" Type="Edm.String" sap:semantics="zip"/>\
+			</EntityType>\
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
 				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
@@ -81,7 +89,8 @@
 				</FunctionImport>\
 			</EntityContainer>\
 			<ComplexType Name="CT_Address">\
-				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"/>\
+				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"\
+					sap:semantics="city"/>\
 			</ComplexType>\
 			<Association Name="Assoc_Foo" sap:content-version="1">\
 				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="FromRole_Foo"/>\
@@ -116,6 +125,22 @@
 			</PropertyValue>\
 		</Record>\
 	</Annotation>\
+</Annotations>\
+<Annotations Target="GWSAMPLE_BASIC.Contact">\
+<Annotation Term="com.sap.vocabularies.Communication.v1.Contact">\
+	<Record>\
+		<PropertyValue Property="n">\
+			<Record>\
+				<PropertyValue Property="given" Path="FirstName"/>\
+				<PropertyValue Property="additional" Path="MiddleName"/>\
+				<PropertyValue Property="surname" Path="LastName"/>\
+				<PropertyValue Property="prefix" Path="Honorific"/>\
+				<PropertyValue Property="suffix" Path="Suffix"/>\
+			</Record>\
+		</PropertyValue>\
+		<PropertyValue Property="nickname" Path="NickName"/>\
+	</Record>\
+</Annotation>\
 </Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
 		<Annotation Term="Org.OData.Core.V1.Computed" Bool="false"/>\
@@ -356,7 +381,7 @@
 			setupSandbox(oSandbox);
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-			oModel = new sap.ui.model.odata.v2.ODataModel("/GWSAMPLE_BASIC", {
+			oModel = new ODataModel("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : true
@@ -387,7 +412,7 @@
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox. verifyAndRestore();
-			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
+			ODataModel.mServiceData = {}; // clear cache
 		}
 	});
 
@@ -644,7 +669,7 @@
 			var oMetaModel, oModel;
 
 			setupSandbox(this.sandbox);
-			oModel = new sap.ui.model.odata.v2.ODataModel("/fake/service", {
+			oModel = new ODataModel("/fake/service", {
 				annotationURI : oFixture.annotationURI,
 				json : true,
 				loadMetadataAsync : true
@@ -667,6 +692,7 @@
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
+					oContact = oGWSampleBasic.entityType[3],
 					oAnyProperty = oBusinessPartner.property[1],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
@@ -721,6 +747,8 @@
 				delete oVHSex.$path;
 				strictEqual(oProduct.$path, "/dataServices/schema/0/entityType/2");
 				delete oProduct.$path;
+				strictEqual(oContact.$path, "/dataServices/schema/0/entityType/3");
+				delete oContact.$path;
 
 				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
@@ -870,6 +898,12 @@
 					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
 				}, "Label derived from sap:label");
 				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
+				// check sap:semantics
+				deepEqual(oCTAddressCity["sap:semantics"], "city");
+				delete oCTAddressCity["sap:semantics"];
+				deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
+					{ "adr": { "locality": { "Path": "City" } } });
+				delete oCTAddress["com.sap.vocabularies.Communication.v1.Contact"];
 
 				deepEqual(oParameter["sap:label"], "ID");
 				delete oParameter["sap:label"];
@@ -1003,6 +1037,43 @@
 				}, "BusinessPartnerSet filter restrictions");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
 
+				// sap:semantics for Communication.Contact
+				// test only a subset of sap:semantics (different categories)
+				oContact.property.forEach(function (oProperty) {
+					// check only availability of sap:semantics
+					// lift is tested multiple times before
+					ok(oProperty["sap:semantics"]);
+					delete oProperty["sap:semantics"];
+				});
+				deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"], i === 0
+					? {
+						"adr": {
+							"code": { "Path": "Zip" }
+						},
+						"n": {
+							"given": { "Path": "FirstName" },
+							"prefix": { "Path": "Honorific" },
+							"surname": { "Path": "LastName" }
+						},
+						"nickname": { "Path": "NickName" }
+					}
+					: {
+						"n": {
+							"additional": { "Path": "MiddleName" },
+							"given": { "Path": "FirstName" },
+							"prefix": { "Path": "Honorific" },
+							"suffix": { "Path": "Suffix" },
+							"surname": { "Path": "LastName" }
+						},
+						"nickname": {
+							// TODO why is EdmType contained here but not in properties in n above?
+							"EdmType": "Edm.String",
+							"Path": "NickName"
+						}
+					}
+				);
+				delete oContact["com.sap.vocabularies.Communication.v1.Contact"];
+
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 			});
 		});
@@ -1018,7 +1089,7 @@
 
 		oGlobalSandbox.stub(sap.ui.model.Model.prototype, "setDefaultBindingMode").throws(oError);
 		setupSandbox(this.sandbox);
-		oModel = new sap.ui.model.odata.v2.ODataModel("/fake/service", {
+		oModel = new ODataModel("/fake/service", {
 			annotationURI : "",
 			json : true
 		});
@@ -1039,7 +1110,7 @@
 				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
 				sAnnotationsURL = i < 2 ? "" : "/invalid/annotations",
 				fnConstructor = bAsync
-					? sap.ui.model.odata.v2.ODataModel
+					? ODataModel
 					: sap.ui.model.odata.ODataModel;
 
 			setupSandbox(this.sandbox);
@@ -1066,7 +1137,7 @@
 					var oMetaModel, oModel;
 
 					setupSandbox(this.sandbox);
-					oModel = new sap.ui.model.odata.v2.ODataModel("/fake/" + sPath, {
+					oModel = new ODataModel("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
 						json : true
@@ -1447,4 +1518,4 @@
 		});
 	});
 	//TODO our errors do not include sufficient detail for error analysis, e.g. a full path
-}());
+});
