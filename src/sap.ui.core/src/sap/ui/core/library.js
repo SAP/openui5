@@ -575,14 +575,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 */
 	sap.ui.core.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
 	    isValid : function(vValue) {
-            var unitsExpr   = "([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)";
-            var keyWordExpr = "auto|inherit";
-            var sizeExpr    = "[-+]?(0*|([0-9]+|[0-9]*\\.[0-9]+)" + unitsExpr + ")";
-            var calcArgExpr = "[-+]?(([0-9]+|[0-9]*\\.[0-9]+)" + unitsExpr + "?)";
-            var calcExpr    = "calc\\(" + calcArgExpr + "(\\s*[+*/-]?\\s*(" + calcArgExpr + "))*\\)";
-            var regexp      = new RegExp("^(" + keyWordExpr + "|" + sizeExpr + "|" + calcExpr + ")$");
-
-            return regexp.test(vValue);
+            return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))|calc\([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)(\s*[+*\/-]?\s*([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)))*\))$/.test(vValue);
 	    }
 	
 	  },
