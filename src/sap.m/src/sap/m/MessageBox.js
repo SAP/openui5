@@ -340,6 +340,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							if (mOptions.initialFocus instanceof sap.ui.core.Control) {//covers sap.m.Control cases
 								oInitialFocusControl = mOptions.initialFocus;
 							}
+
 							if (typeof mOptions.initialFocus === "string") {//covers string and MessageBox.Action cases
 								for (i = 0; i < aButtons.length; i++) {
 									if (MessageBox.Action.hasOwnProperty(mOptions.initialFocus)) {
@@ -356,33 +357,39 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 								}
 							}
 						}
+
 						return oInitialFocusControl;
+					}
+
+					if (typeof (vMessage) === "string") {
+						vMessage = new Text({
+								textDirection: mOptions.textDirection
+							}).setText(vMessage).addStyleClass("sapMMsgBoxText");
+					} else if (vMessage instanceof sap.ui.core.Control) {
+						vMessage.addStyleClass("sapMMsgBoxText");
+					}
+
+					function onOpen () {
+						var oInitiallyFocusedControl = sap.ui.getCore().byId(oDialog.getInitialFocus());
+
+						oDialog.$().attr("role", "alertdialog");
+						if (vMessage instanceof sap.m.Text) {
+							oInitiallyFocusedControl.$().attr("aria-describedby", vMessage.getId());
+						}
 					}
 
 					oDialog = new Dialog({
 						id: mOptions.id,
 						type: sap.m.DialogType.Message,
 						title: mOptions.title,
+						content: vMessage,
 						icon: mIcons[mOptions.icon],
 						initialFocus: getInitialFocusControl(),
 						verticalScrolling: mOptions.verticalScrolling,
 						horizontalScrolling: mOptions.horizontalScrolling,
+						afterOpen: onOpen,
 						afterClose: onclose
 					});
-
-					oDialog.addEventDelegate({
-						onAfterRendering: function () {
-							oDialog.$().attr("role", "alertdialog");
-						}
-					});
-
-					if (typeof (vMessage) === "string") {
-						oDialog.addContent(new Text({
-							textDirection: mOptions.textDirection
-						}).setText(vMessage).addStyleClass("sapMMsgBoxText"));
-					} else if (vMessage instanceof sap.ui.core.Control) {
-						oDialog.addContent(vMessage.addStyleClass("sapMMsgBoxText"));
-					}
 
 					if (aButtons.length > 2) {
 						for (i = 0; i < aButtons.length; i++) {
