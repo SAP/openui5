@@ -50,7 +50,7 @@ sap.ui.testfwk.TestFWK = {
 	bRTL : false,
 	bAccessibilityMode: true,
 	bSimulateTouch: false,
-	sJQueryVersion: "1.11.1"
+	sJQueryVersion: jQuery.fn.jquery
 };
 
 sap.ui.testfwk.TestFWK.LANGUAGES = {
