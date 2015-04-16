@@ -362,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				maxLines: 2
 			});
 
-			this._oTitleText.setParent(this);
+			this._oTitleText.setParent(this, null, true);
 		}
 		return this._oTitleText;
 	};
