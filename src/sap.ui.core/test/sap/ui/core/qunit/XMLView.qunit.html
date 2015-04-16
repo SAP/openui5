@@ -35,7 +35,6 @@ sap.ui.core.mvc.Controller</title>
 <script>
 
 // FIXME: the following tests will fail with PhantomJS => check how to renable them
-if (!sap.ui.Device.browser.phantomJS) {
 
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
@@ -187,42 +186,41 @@ if (!sap.ui.Device.browser.phantomJS) {
 
 	});
 
-	module("Preprocessor");
+	module("Preprocessor API");
 
-	test("Preprocessor registration", function() {
+	test("registration", function() {
 		var XMLView = sap.ui.core.mvc.XMLView,
 			View =  sap.ui.core.mvc.View,
 			oPreprocessor = function(vSource, sCaller, mSettings) {
 				return vSource;
 			};
 
-		XMLView.registerPreprocessor("xml", oPreprocessor, {type: "xml"});
-		XMLView.registerPreprocessor("controls", oPreprocessor, {type: "controls"});
+		XMLView.registerPreprocessor("xml", oPreprocessor, false, {type: "xml"});
+		XMLView.registerPreprocessor("controls", oPreprocessor, false, {type: "controls"});
 
 		strictEqual(View._mPreprocessors["XML"]["xml"].type, "xml", "Registration for xml successful");
 		strictEqual(View._mPreprocessors["XML"]["controls"].type, "controls", "Registration for content successful");
 
-		assert.throws(XMLView.registerPreprocessor("unknown", oPreprocessor, {type: "unknown"}), "Error thrown when registering invalid type");
+		assert.throws(XMLView.registerPreprocessor("unknown", oPreprocessor, false, {type: "unknown"}), "Error thrown when registering invalid type");
 
 		strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 	});
 
-	test("Preprocessor sync / no execution", function() {
+	test("sync / no execution", 1, function() {
 		jQuery.sap.require("sap.ui.core.mvc.View");
 		var oResult,
+			bCalled,
 			oView,
 			sViewContent = [
 			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join(''),
-			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor"),
 			oPreprocessor = function(vSource, sCaller, mSettings) {
 				// async test part
 				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				ok(true, "Preprocessor executed");
+				bCalled = true;
+				ok(false, "Preprocessor executed");
 				return vSource;
 			};
-
-		expect(1);
 
 		oView = sap.ui.xmlview({
 			viewContent: sViewContent,
@@ -234,12 +232,44 @@ if (!sap.ui.Device.browser.phantomJS) {
 			}
 		});
 
-		ok(!spy.called);
+		ok(!bCalled, "Preprocessor not called as no syncSupport declared.");
+	});
+
+	test("sync", 3, function() {
+		jQuery.sap.require("sap.ui.core.mvc.View");
+		var oResult,
+			bCalled,
+			oView,
+			sViewContent = [
+			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
+			].join(''),
+			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor"),
+			oPreprocessor = function(vSource, sCaller, mSettings) {
+				// async test part
+				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
+				bCalled = true;
+				ok(true, "Preprocessor executed");
+				return vSource;
+			};
+
+		oView = sap.ui.xmlview({
+			viewContent: sViewContent,
+			preprocessors: {
+				xml: {
+					preprocessor: oPreprocessor,
+					message: "Preprocessor executed",
+					syncSupport: true
+				}
+			}
+		});
+
+		sinon.assert.calledTwice(spy);
+		ok(bCalled, "Preprocessor called in sync view as declared.");
 		// reset the spy for coming tests
 		sap.ui.core.mvc.View.prototype.runPreprocessor.restore();
 	});
 
-	asyncTest("Preprocessor async", function() {
+	asyncTest("async", 2, function() {
 		jQuery.sap.require("sap.ui.core.mvc.View");
 		var oResult,
 			oView,
@@ -256,14 +286,11 @@ if (!sap.ui.Device.browser.phantomJS) {
 				});
 			};
 
-		expect(2);
-
 		oView = sap.ui.xmlview({
 			viewContent: sViewContent,
 			preprocessors: {
 				controls: {
 					preprocessor: oPreprocessor,
-					async: true,
 					message: "Preprocessor executed"
 				}
 			},
@@ -275,8 +302,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 			start();
 		});
 	});
-
-} // FIXME
 
 </script>
 </head>

@@ -36,9 +36,6 @@
 
 <script>
 
-// FIXME: the following tests will fail with PhantomJS => check how to renable them
-if (!sap.ui.Device.browser.phantomJS) {
-
 var sUrl = "test-resources/sap/ui/core/qunit/testdata/";
 jQuery.sap.registerModulePath("testdata", "../../../../../" + sUrl);
 
@@ -171,8 +168,6 @@ asyncTest("Retrieve promise for async view", function() {
 	});
 
 });
-
-} // FIXME
 
 </script>
 </head>

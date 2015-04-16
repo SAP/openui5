@@ -27,9 +27,6 @@
 <script src="../../../../../test-resources/sap/ui/core/qunit/mvc/TestPreprocessor.js"></script>
 <script>
 
-// FIXME: the following tests will fail with PhantomJS => check how to renable them
-if (!sap.ui.Device.browser.phantomJS) {
-
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
 
@@ -590,9 +587,6 @@ if (!sap.ui.Device.browser.phantomJS) {
 			start();
 		});
 	});
-
-
-} // FIXME
 
 </script>
 </head>
