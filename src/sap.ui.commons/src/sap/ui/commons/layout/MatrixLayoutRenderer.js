@@ -425,7 +425,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		switch (oHAlign) {
 		case sap.ui.commons.layout.HAlign.Begin:
-			return sClassPrefix + (bRTL ? "Right" : "Left");
+			return null; // CSS default in both directions
 
 		case sap.ui.commons.layout.HAlign.Center:
 			return sClassPrefix + "Center";
@@ -434,10 +434,10 @@ sap.ui.define(['jquery.sap.global'],
 			return sClassPrefix + (bRTL ? "Left" : "Right");
 
 		case sap.ui.commons.layout.HAlign.Left:
-			return sClassPrefix + "Left";
+			return bRTL ? sClassPrefix + "Left" : null; // CSS default in ltr
 
 		case sap.ui.commons.layout.HAlign.Right:
-			return sClassPrefix + "Right";
+			return bRTL ? null : sClassPrefix + "Right"; // CSS default in rtl
 
 		default:
 			jQuery.sap.assert(false, "MatrixLayoutRenderer.getHAlign: oHAlign must be a known value");
