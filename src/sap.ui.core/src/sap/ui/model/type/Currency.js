@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (aValues[0] == undefined || aValues[0] == null) {
 			return null;
 		}
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				return this.oOutputFormat.format(aValues);
 			case "int":
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 */
 	Currency.prototype.parseValue = function(vValue, sInternalType) {
 		var vResult, oBundle;
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
 				if (!jQuery.isArray(vResult)) {
