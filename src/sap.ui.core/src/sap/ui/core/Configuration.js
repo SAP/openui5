@@ -4,10 +4,8 @@
 
 //Provides class sap.ui.core.Configuration
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/thirdparty/URI'],
-	function(jQuery, BaseObject, Locale, URI1) {
+	function(jQuery, BaseObject, Locale, URI) {
 	"use strict";
-
-	/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
 
 	/**
 	 * Creates a new Configuration object.

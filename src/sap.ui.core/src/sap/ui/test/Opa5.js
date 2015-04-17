@@ -1,9 +1,9 @@
 /*!
  * ${copyright}
  */
-/*global URI*/
 
 sap.ui.define(['jquery.sap.global',
+			'sap/ui/thirdparty/URI',
 			'./Opa',
 			'./OpaPlugin',
 			'./PageObjectFactory',
@@ -15,9 +15,8 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/Properties',
 			'./matchers/Ancestor',
 			'./matchers/AggregationContainsPropertyEqual',
-			'./everyPolyfill',
-			'sap/ui/thirdparty/URI'],
-	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
+			'./everyPolyfill'],
+	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
 			oFrameJQuery = null,

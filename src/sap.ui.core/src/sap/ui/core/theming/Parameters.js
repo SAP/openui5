@@ -9,11 +9,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Core, URI1) {
+	function(jQuery, Core, URI) {
 	"use strict";
-
-		/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
-
 
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.

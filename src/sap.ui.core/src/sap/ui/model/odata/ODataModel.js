@@ -12,12 +12,9 @@
 
 // Provides class sap.ui.model.odata.ODataModel
 sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './CountMode', './ODataContextBinding', './ODataListBinding', './ODataMetadata', './ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/thirdparty/URI', 'sap/ui/thirdparty/datajs'],
-	function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI1, datajs) {
+	function(jQuery, Model, ODataUtils, CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, URI, OData) {
 	"use strict";
 
-
-	/*global OData *///declare unusual global vars for JSLint/SAPUI5 validation
-	/*global URI *///declare unusual global vars for JSLint/SAPUI5 validation
 
 	/**
 	 * Constructor for a new ODataModel.
