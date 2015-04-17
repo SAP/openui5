@@ -1487,6 +1487,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.$().toggleClass("sapMSplitContainerStretchCompress", false);
 				this.$().toggleClass("sapMSplitContainerShowHide", false);
 				this.$().toggleClass("sapMSplitContainerHideMode", true);
+				this.$().toggleClass("sapMSplitContainerMasterHidden", true);
 				this._setMasterButton(this._oDetailNav.getCurrentPage());
 				if (this._isMie9) {
 					this._oMasterNav.$().css({
