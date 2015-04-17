@@ -940,13 +940,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * This hook method get called if growing feature is enabled and after new page loaded
 	 * @protected
 	 */
-	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
-		// remove nodata text if we get new data
-		if (this.getShowNoData() && oGrowingInfo.total) {
-			this.$("nodata").remove();
-		}
-	
-		// fire events
+	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {	
 		this._fireUpdateFinished(oGrowingInfo);
 		this.fireGrowingFinished(oGrowingInfo);
 	};
