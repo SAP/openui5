@@ -105,10 +105,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			verticalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 			/**
-			 * This property decides whether the dialog is resizeable. If this property is set to true, the dialog will have a resize handler in it's bottom right corner. This property has a default value true.
+			 * This property decides whether the dialog is resizable. If this property is set to true, the dialog will have a resize handler in it's bottom right corner. This property has a default value true.
 			 * @since 1.30
 			 */
-			resizeable: {type: "boolean", group: "Behavior", defaultValue: false},
+			resizable: {type: "boolean", group: "Behavior", defaultValue: false},
 
 			/**
 			 * This property decides whether the dialog is draggable. If this property is set to true, the dialog will be draggable with it's header. This property has a default value true.
@@ -1461,7 +1461,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		};
 
 		Dialog.prototype.onmousedown = function(e) {
-			if (this.getStretch() || (!this.getDraggable() && !this.getResizeable())) {
+			if (this.getStretch() || (!this.getDraggable() && !this.getResizable())) {
 				return;
 			}
 
@@ -1469,7 +1469,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			var that = this;
 			var $w = jQuery(document);
 			var $target = jQuery(e.target);
-			var bResize = $target.hasClass('sapMDialogResizeHandler') && this.getResizeable();
+			var bResize = $target.hasClass('sapMDialogResizeHandler') && this.getResizable();
 			var fnMouseMoveHandler = function(action) { timeout = timeout ? clearTimeout(timeout) : setTimeout(function() { action(); }, 0); };
 			var initial = {
 				x: e.pageX,

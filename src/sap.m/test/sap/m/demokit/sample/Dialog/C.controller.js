@@ -47,10 +47,10 @@ sap.ui.define([
 
 		onResizableDialog: function (oEvent) {
 			var dialog = new Dialog({
-				title: 'Resizeable Available Products',
+				title: 'Resizable Available Products',
 				contentWidth: "550px",
 				contentHeight: "300px",
-				resizeable: true,
+				resizable: true,
 				content: new List({
 					items: {
 						path: '/ProductCollection',

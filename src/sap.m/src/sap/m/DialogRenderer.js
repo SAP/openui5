@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			bVerticalScrolling = oControl.getVerticalScrolling(),
 			sState = oControl.getState(),
 			bStretch = oControl.getStretch(),
-			bResizeable = oControl.getResizeable(),
+			bResizable = oControl.getResizable(),
 			bDraggable = oControl.getDraggable();
 
 		if (oHeader) {
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 		if (sap.ui.Device.system.desktop) {
 
-			if (bResizeable && !bStretch) {
+			if (bResizable && !bStretch) {
 				oRm.write('<div class="sapMDialogResizeHandler"></div>');
 			}
 
