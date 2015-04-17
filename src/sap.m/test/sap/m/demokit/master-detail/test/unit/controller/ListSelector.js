@@ -17,9 +17,10 @@ sap.ui.require(
 			}
 		});
 
-		QUnit.asyncTest("Should initialize the List loading promise", function (assert) {
+		QUnit.test("Should initialize the List loading promise", function (assert) {
 			// Arrange
-			var fnRejectSpy = this.spy(),
+			var done = assert.async(),
+				fnRejectSpy = this.spy(),
 				fnResolveSpy = this.spy();
 
 			// Act
@@ -29,7 +30,8 @@ sap.ui.require(
 			setTimeout(function () {
 				assert.strictEqual(fnResolveSpy.callCount, 0, "Did not resolve the promise");
 				assert.strictEqual(fnRejectSpy.callCount, 0, "Did not reject the promise");
-				QUnit.start();
+
+				done();
 			}, 0);
 		});
 
@@ -74,14 +76,16 @@ sap.ui.require(
 			};
 		}
 
-		QUnit.asyncTest("Should resolve the list loading promise, if the list has items", function (assert) {
+		QUnit.test("Should resolve the list loading promise, if the list has items", function (assert) {
 			// Arrange
-			var fnRejectSpy = this.spy(),
+			var done = assert.async(),
+				fnRejectSpy = this.spy(),
 				fnResolveSpy = function (sBindingPath) {
 					// Assert
 					assert.strictEqual(sBindingPath, sBindingPath, "Did pass the binding path");
 					assert.strictEqual(fnRejectSpy.callCount, 0, "Did not reject the promise");
-					QUnit.start();
+
+					done();
 				};
 
 			// Act
@@ -89,12 +93,14 @@ sap.ui.require(
 			this.oListSelector.setBoundMasterList(createListStub.call(this, true, "anything"));
 		});
 
-		QUnit.asyncTest("Should reject the list loading promise, if the list has no items", function (assert) {
+		QUnit.test("Should reject the list loading promise, if the list has no items", function (assert) {
 			// Arrange
-			var fnRejectSpy = function () {
+			var done = assert.async(),
+				fnRejectSpy = function () {
 					// Assert
 					assert.strictEqual(fnResolveSpy.callCount, 0, "Did not resolve the promise");
-					QUnit.start();
+
+					done();
 				},
 				fnResolveSpy = this.spy();
 
