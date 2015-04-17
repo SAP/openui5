@@ -261,4 +261,4 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.unified;
 
-}, /* bExport= */ false);
+});

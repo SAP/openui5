@@ -189,4 +189,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 
 	return sap.ui.layout;
 
-}, /* bExport= */ false);
+});

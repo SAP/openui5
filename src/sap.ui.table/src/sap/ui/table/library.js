@@ -262,4 +262,4 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.table;
 
-}, /* bExport= */ false);
+});

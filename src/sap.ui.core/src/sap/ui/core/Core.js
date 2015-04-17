@@ -1254,6 +1254,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			return oLibrary;
 		}
 
+		// ensure namespace
+		jQuery.sap.getObject(sLibName, 0);
+
 		// Create lib info object or merge with existing 'adhoc' library
 		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
 			name : sLibName,
@@ -1872,6 +1875,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		// if library has not been loaded yet, create empty 'adhoc' library
 		// don't set 'loaded' marker, so it might be loaded later
 		if ( !oLibrary ) {
+			
+			// ensure namespace
+			jQuery.sap.getObject(sLibraryName, 0);
+			
 			oLibrary = this.mLibraries[sLibraryName] = {
 				name: sLibraryName,
 				dependencies : [],
