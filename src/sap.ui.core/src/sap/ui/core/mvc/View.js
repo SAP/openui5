@@ -729,7 +729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 */
 
 	/**
-	 * Processing method that must be implemented when inheriting the Preprocessor.
+	 * Processing method that must be implemented by a Preprocessor.
 	 *
 	 * @name sap.ui.core.mvc.View.Preprocessor.process
 	 * @function
