@@ -188,6 +188,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// when token selected we no longer truncate; thereby the delete icon is visible
 		var fSelectHandler = null;
 		fSelectHandler = function() {
+			lastToken.removeStyleClass("sapMTokenTruncate");
 			this.$().removeAttr("style");
 			this.detachSelect(fSelectHandler);
 			that.scrollToEnd();
@@ -198,10 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!lastToken.getSelected() && nWidth < widthOfLastToken) {
 			// truncate last token if not selected and not completely visible
 			$LastToken.outerWidth(nWidth, true);
-			$LastToken.css("overflow", "hidden");
-			$LastToken.css("text-overflow", "ellipsis");
-			$LastToken.css("white-space", "nowrap");
-	
+			lastToken.addStyleClass("sapMTokenTruncate");
 			lastToken.attachSelect(fSelectHandler);
 		} else {
 		  // last token is completely visible
