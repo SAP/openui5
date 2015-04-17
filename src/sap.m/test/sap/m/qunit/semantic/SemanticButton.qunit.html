@@ -22,6 +22,8 @@
 		jQuery.sap.require("sap.m.semantic.SemanticPage");
 		jQuery.sap.require("sap.m.semantic.SemanticButton");
 		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		function capitalize(sName) {
 			return sName.substring(0, 1).toUpperCase() + sName.substring(1);
@@ -312,7 +314,7 @@
 			// Assert
 			strictEqual(oSemanticButton.getButtonType(), "Reject", "The property 'buttonType' is correctly set");
 			strictEqual(oSemanticButton.getEnabled(), false, "The property 'enabled' is correctly set");
-			strictEqual(oSemanticButton._getControl().getText(), "Reject", "The property 'text' is correctly set");
+			strictEqual(oSemanticButton._getControl().getText(), oBundle.getText("SEMANTIC_CONTROL_REJECT"), "The property 'text' is correctly set");
 		});
 
 		module("inaccessible properties");
@@ -323,21 +325,26 @@
 					oRejectButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Reject}),
 					testIcon = 'sap-icon://settings';
 
+			var fnErrorStub = this.stub(jQuery.sap.log, "error");
+			
 			// Act
 			oRejectButton.setProperty("icon", testIcon);
 
 			// Assert
-			equal(oRejectButton.getProperty("icon"), "", "the reject button icon value is correctly set to an empty value");
+			equal(oRejectButton.getProperty("icon"), "", "the reject button icon value is correctly not modified");
 
 			// Act
 			oEditButton.setProperty("icon", testIcon);
 
 			// Assert
-			equal(oEditButton.getProperty("icon"), "", "the edit button icon value is correctly set to an empty value");
+			equal(oEditButton.getProperty("icon"), "", "the edit button icon value is correctly not modified");
+
+			ok(fnErrorStub.calledTwice, "Two errors are generated, because the property icon does not exist");
 
 			// Clean up
 			oRejectButton.destroy();
 			oEditButton.destroy();
+			fnErrorStub.restore();
 		});
 
 		test("Semantic buttons should not allow setting text value to them", function () {
@@ -346,21 +353,26 @@
 					oRejectButton = new sap.m.semantic.SemanticButton("", {type: sap.m.semantic.SemanticType.Reject}),
 					testText = 'Test';
 
+			var fnErrorStub = this.stub(jQuery.sap.log, "error");
+			
 			// Act
 			oRejectButton.setProperty("text", testText);
 
 			// Assert
-			equal(oRejectButton.getProperty("text"), "Reject", "the reject button text value is nt overwritten");
+			equal(oRejectButton.getProperty("text"), oBundle.getText("SEMANTIC_CONTROL_REJECT"), "the reject button text value is not overwritten");
 
 			// Act
 			oEditButton.setProperty("text", testText);
 
 			// Assert
-			equal(oEditButton.getProperty("text"), "Edit", "the edit button text value is is nt overwritten");
+			equal(oEditButton.getProperty("text"), oBundle.getText("SEMANTIC_CONTROL_EDIT"), "the edit button text value is not overwritten");
+
+			ok(fnErrorStub.calledTwice, "Two errors are generated, because the property text does not exist");
 
 			// Clean up
 			oRejectButton.destroy();
 			oEditButton.destroy();
+			fnErrorStub.restore();
 		});
 
 	</script>
