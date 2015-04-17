@@ -163,6 +163,39 @@
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
 
+	asyncTest("test metadata promise", function() {
+		oModel = initModel(true);
+		var fnTest = function() {
+			var oPromise = oModel.metadataLoaded();
+			ok(oPromise, "promise exists");
+			oPromise.then(function(result){
+				ok(true, "Promise resolved");
+				start();
+			}, function(){
+				ok(false, "Promise rejected");
+			});
+		}
+		oModel.attachMetadataLoaded(this, fnTest);
+	});
+	
+	asyncTest("test metadata promise rejected", function() {
+		oModel = new sap.ui.model.odata.v2.ODataModel("/doesnotwork");
+		var fnTest = function() {
+			ok(false, "Metadata should not be loaded!");
+		}
+		
+		var oPromise = oModel.metadataLoaded();
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(false, "Promise resolved");
+		}, function(){
+			ok(true, "Promise rejected");
+			start();
+		});
+		
+		oModel.attachMetadataLoaded(this, fnTest);
+	});
+	
 	asyncTest("test oDataModel read filter test", function() {
 		var fnTest = function() {
 			oModel.read("/ProductSet", {

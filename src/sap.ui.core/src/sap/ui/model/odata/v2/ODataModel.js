@@ -239,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 		},
 		metadata : {
-			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata",
+			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata", "metadataLoaded",
 			                 "hasPendingChanges", "refresh", "refreshMetadata", "resetChanges", "setDefaultCountMode",
 			                 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode",
 			                 "setProperty", "getSecurityToken", "refreshSecurityToken", "setHeaders",
@@ -3186,7 +3186,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * Return the metadata object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
+	 * Return the parsed XML metadata as a Javascript object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
 	 * metadata has not been loaded yet.
 	 * In this case attach to the <code>metadataLoaded</code> event to get notified when the metadata is available and then call this function.
 	 *
@@ -3198,7 +3198,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			return this.oMetadata.getServiceMetadata();
 		}
 	};
-
+	
+	/**
+	 * Returns a promise for the loaded state of the metadata
+	 * 
+	 * @public
+	 * @returns {Promise} returns a promise on metadata loaded state
+	 * 
+	 * @since 1.30
+	 */
+	ODataModel.prototype.metadataLoaded = function() {
+			return this.oMetadata.loaded();
+	};
+	
 	/**
 	 * Return the annotation object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
 	 * metadata has not been loaded yet.
