@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/demo/wt/controller/HelloDialog"
-], function (UIComponent, JSONModel, ResourceModel, HelloDialog) {
+], function (UIComponent, JSONModel, HelloDialog) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.wt.Component", {
