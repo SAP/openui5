@@ -31,6 +31,10 @@ sap.ui.define([
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
 				worklistTableTitle : this.getResourceBundle().getText("worklistTableTitle"),
+				shareSaveAsTileTitle: this.getResourceBundle().getText("worklistViewTitle"),
+				shareOnJamTitle: this.getResourceBundle().getText("worklistViewTitle"),
+				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
+				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage",  [window.location.href]),
 				tableBusyDelay : 0
 			});
 			this.setModel(oViewModel, "view");
@@ -80,8 +84,45 @@ sap.ui.define([
 		 */
 		onPress : function (oEvent) {
 			// The source is the list item that got pressed
+			this._showObject(oEvent.getSource());
+		},
+
+		/**
+		 * Navigates back in the browser history, if the entry was created by this app.
+		 * If not, it navigates to the Fiori Launchpad home page
+		 *
+		 * @public
+		 */
+		onNavBack : function () {
+			var oHistory = sap.ui.core.routing.History.getInstance(),
+				sPreviousHash = oHistory.getPreviousHash(),
+				oCrossAppNavigator = sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("CrossApplicationNavigation");
+
+			if (sPreviousHash !== undefined || !oCrossAppNavigator) {
+				// The history contains a previous entry
+				window.history.go(-1);
+			} else if (oCrossAppNavigator) {
+				// Navigate back to FLP home
+				// TODO: Test this in a working sandbox, with the current version it is not possible
+				oCrossAppNavigator.toExternal({
+					target: {shellHash: "#"}
+				});
+			}
+		},
+
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+
+		/**
+		 * Shows the selected item on the object page
+		 * On phones a additional history entry is created
+		 * @param {sap.m.ObjectListItem} oItem selected Item
+		 * @private
+		 */
+		_showObject : function (oItem) {
 			this.getRouter().navTo("object", {
-				objectId: oEvent.getSource().getBindingContext().getProperty("ObjectID")
+				objectId: oItem.getBindingContext().getProperty("ObjectID")
 			});
 		}
 	});

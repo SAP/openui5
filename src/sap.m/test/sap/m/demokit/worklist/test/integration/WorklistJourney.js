@@ -62,7 +62,7 @@ function (Opa5) {
 		// Arrangements
 		Given.iStartMyApp({
 			delay: 10000,
-			hash: "#/object/ObjectID_10"
+			hash: "/object/ObjectID_10"
 		});
 
 		// Actions
@@ -78,7 +78,7 @@ function (Opa5) {
 		// Arrangements
 		Given.iStartMyApp({
 			delay: 2000,
-			hash: "#/object/ObjectID_10"
+			hash: "/object/ObjectID_10"
 		});
 
 		// Actions
@@ -86,7 +86,16 @@ function (Opa5) {
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
-		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator().
+		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator();
+	});
+
+	opaTest("Should open the share menu and display the share buttons", function (Given, When, Then) {
+		// Actions
+		When.onTheBrowser.iChangeTheHashToObject(10);
+		When.onTheWorklistPage.iPressOnTheShareButton();
+
+		// Assertions
+		Then.onTheWorklistPage.iShouldSeeTheShareEmailButton().
 			and.iTeardownMyAppFrame();
 	});
 
