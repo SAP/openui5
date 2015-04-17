@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Dynamic Side Content</title>
+	<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.unified"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script>
+
+		var oApp = new sap.m.App();
+		var oShell = new sap.m.Shell({
+			app: oApp,
+			appWidthLimited: false
+		});
+
+		var DynamicSideContent = new sap.ui.layout.DynamicSideContent({
+			sideContent: [
+				new sap.m.VBox({
+					height: "200px",
+					alignItems: sap.m.FlexAlignItems.Center,
+					justifyContent: sap.m.FlexAlignItems.Center,
+					items: [
+						new sap.m.Text({
+							text: "Side Content"
+						})
+					]
+				}),
+				new sap.m.Text({
+					text: 'Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				sirloin turkey. Tail turkey tenderloin salami. Jerky\
+				jowl andouille venison, meatball tenderloin chuck\
+				boudin chicken beef tongue shank.\
+						Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin'
+				}),
+				new sap.m.Text({
+					text: 'Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				sirloin turkey. Tail turkey tenderloin salami. Jerky\
+				jowl andouille venison, meatball tenderloin chuck\
+				boudin chicken beef tongue shank.\
+						Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin'
+				}),
+				new sap.m.Text({
+					text: 'Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				sirloin turkey. Tail turkey tenderloin salami. Jerky\
+				jowl andouille venison, meatball tenderloin chuck\
+				boudin chicken beef tongue shank.\
+						Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin'
+				}),
+				new sap.m.Text({
+					text: 'Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				sirloin turkey. Tail turkey tenderloin salami. Jerky\
+				jowl andouille venison, meatball tenderloin chuck\
+				boudin chicken beef tongue shank.\
+						Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin'
+				})
+			],
+			mainContent: [
+					new sap.m.ObjectHeader({
+						title: "App Header",
+						number: "KPI 1234",
+						intro: "3 General Data",
+					}),
+					new sap.m.Text({
+						text: 'Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				sirloin turkey. Tail turkey tenderloin salami. Jerky\
+				jowl andouille venison, meatball tenderloin chuck\
+				boudin chicken beef tongue shank.\
+						Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin\
+				corned beef chicken turkey. Ham hock short ribs tail\
+				Bacon ipsum dolor amet pork belly fatback shank\
+				boudin tri-tip short ribs filet mignon picanha.\
+						Corned beef landjaeger pork chop ham hock\
+				fatback tri-tip ground round, shoulder strip steak\
+				flank spare ribs porchetta. Prosciutto meatball jerky\
+				cow swine kevin. Tongue ball tip beef ribs, kevin'
+					}),
+				new sap.m.Button({press: function() {
+					DynamicSideContent.addMainContent(new sap.m.Button({text: "Btn"}));
+				}, text: "Add main content"}),
+				new sap.m.Button({press: function() {
+					DynamicSideContent.addSideContent(new sap.m.Button({text: "Btn"}));
+				}, text: "Add side content"}),
+				new sap.ui.core.HTML({ content: "<hr>" })
+
+			]
+		});
+
+		var oFooterBar = new sap.m.Bar();
+
+		var oPage = new sap.m.Page("mySecondPage", {
+			backgroundDesign: "Standard",
+			title : "Dynamic Side Content",
+			enableScrolling : true,
+			footer: oFooterBar,
+			content: DynamicSideContent
+		});
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "Limit ON",
+			press: function () {
+				if (oShell.getAppWidthLimited()) {
+					oShell.setAppWidthLimited(false);
+					this.setText("Limit ON");
+				} else {
+					oShell.setAppWidthLimited(true);
+					this.setText("Limit OFF");
+				}
+			}
+		}));
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "Show SC",
+			press: function () {
+				DynamicSideContent.setShowSideContent(true);
+			}
+		}));
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "Hide SC",
+			press: function () {
+				DynamicSideContent.setShowSideContent(false);
+			}
+		}));
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "Show MC",
+			press: function () {
+				DynamicSideContent.setShowMainContent(true);
+			}
+		}));
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "Hide MC",
+			press: function () {
+				DynamicSideContent.setShowMainContent(false);
+			}
+		}));
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "Toggle",
+			press: function () {
+				DynamicSideContent.toggle();
+			}
+		}));
+
+		oFooterBar.addContentMiddle(new sap.m.Button({
+			text: "EqualSplit ON",
+			press: function () {
+				if (DynamicSideContent.getEqualSplit()) {
+					DynamicSideContent.setEqualSplit(false);
+					this.setText("EqualSplit ON");
+				} else {
+					DynamicSideContent.setEqualSplit(true);
+					this.setText("EqualSplit OFF");
+				}
+			}
+		}));
+
+		oApp.addPage(oPage);
+		oShell.placeAt("content");
+
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>
