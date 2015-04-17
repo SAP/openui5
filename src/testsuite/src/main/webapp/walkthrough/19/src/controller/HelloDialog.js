@@ -1,5 +1,5 @@
 sap.ui.define([
-	'sap/ui/base/Object'
+	"sap/ui/base/Object"
 ], function (Object) {
 	"use strict";
 
