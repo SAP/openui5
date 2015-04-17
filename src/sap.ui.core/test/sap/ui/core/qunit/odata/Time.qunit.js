@@ -252,4 +252,11 @@
 		);
 	});
 
+	//*********************************************************************************************
+	test("parse milliseconds", function () {
+		var oType = new sap.ui.model.odata.type.Time({pattern: "HH:mm:ss.SSS"});
+
+		deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
+	});
+
 } ());
