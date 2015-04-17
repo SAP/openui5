@@ -252,4 +252,4 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 	
 	return sap.ui.demokit;
 	
-}, /* bExport= */ false);
+});

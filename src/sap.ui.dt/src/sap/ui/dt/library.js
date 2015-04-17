@@ -36,4 +36,4 @@ function(jQuery) {
 
 	return sap.ui.dt;
 
-}, /* bExport= */ false);
+});

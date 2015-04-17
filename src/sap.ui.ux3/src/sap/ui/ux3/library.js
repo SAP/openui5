@@ -385,4 +385,4 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.ux3;
 
-}, /* bExport= */ false);
+});

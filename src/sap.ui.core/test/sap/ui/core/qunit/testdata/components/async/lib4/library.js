@@ -7,4 +7,4 @@ sap.ui.define(['jquery.sap.global'],
 		noLibraryCSS:true
 	});
 
-}, /* bExport= */ true);
+});
