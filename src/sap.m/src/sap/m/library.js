@@ -2768,4 +2768,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	return sap.m;
 
-}, /* bExport= */ false);
+});
