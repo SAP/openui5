@@ -4567,7 +4567,7 @@ if (typeof sinon == "undefined") {
     // Fix in SAP internally used sinon.js version:
     // In the newest Sinon, errors are only suppressed for user agents matching /MSIE 6/, 
     // so IE7-IE9 throw an exception: a broader RegExp needs to be used for IE7-IE9
-    var IE6Re = /MSIE [6-9]/;
+    var IE6to9Re = /MSIE [6-9]/;
     // ##### END OF MODIFICATION BY SAP
     FakeXMLHttpRequest.defake = function defake(fakeXhr, xhrArgs) {
         var xhr = new sinonXhr.workingXHR();
@@ -4592,7 +4592,15 @@ if (typeof sinon == "undefined") {
                 try {
                     fakeXhr[attr] = xhr[attr]
                 } catch (e) {
-                    if (!IE6Re.test(navigator.userAgent)) {
+                    // ##### BEGIN OF MODIFICATION BY SAP
+                    //if (!IE6Re.test(navigator.userAgent)) {
+                    // Sinon.JS does not respect https://msdn.microsoft.com/en-us/library/ms753800(v=vs.85).aspx saying: 
+                    // In MSXML 3.0 and MSXML 6.0, reading the status property after loading has commenced but has not 
+                    // yet completed (for example, at the LOADED or INTERACTIVE state) returns the following error: 
+                    // "The data necessary to complete this operation is not yet available."
+                    if (!IE6to9Re.test(navigator.userAgent)
+                      && "The data necessary to complete this operation is not yet available.\r\n" !== e.message) {
+                    // ##### END OF MODIFICATION BY SAP
                         throw e;
                     }
                 }
