@@ -13,6 +13,7 @@
 
 	<items>
 		<rdf:Seq>
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/116631893405" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/112684181095" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856062395" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856162090" />
@@ -26,6 +27,12 @@
 	</items>
 </channel>
 
+<item rdf:about="http://openui5picks.tumblr.com/post/116631893405">
+	<title>Demos: Rounded Tiles in UI5</title>
+	<link>http://openui5picks.tumblr.com/post/116631893405</link>
+	<content:encoded>&lt;img src=&quot;https://40.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content:encoded>
+	<dc:date>2015-03-27T11:36:00+00:00</dc:date>
+</item>
 <item rdf:about="http://openui5picks.tumblr.com/post/112684181095">
 	<title>Demos: Creating modularized SAPUI5 applications with XML Views, Routing and i18n</title>
 	<link>http://openui5picks.tumblr.com/post/112684181095</link>

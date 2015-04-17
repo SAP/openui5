@@ -8,6 +8,13 @@
 	<description>Planet OpenUI5 - http://openui5.org/</description>
 
 <item>
+	<title>Demos: Rounded Tiles in UI5</title>
+	<guid>http://openui5picks.tumblr.com/post/116631893405</guid>
+	<link>http://openui5picks.tumblr.com/post/116631893405</link>
+	<description>&lt;img src=&quot;https://40.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</description>
+	<pubDate>Fri, 27 Mar 2015 11:36:00 +0000</pubDate>
+</item>
+<item>
 	<title>Demos: Creating modularized SAPUI5 applications with XML Views, Routing and i18n</title>
 	<guid>http://openui5picks.tumblr.com/post/112684181095</guid>
 	<link>http://openui5picks.tumblr.com/post/112684181095</link>
