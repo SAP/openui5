@@ -58,12 +58,12 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 .sapMInputVHO:hover > .sapMInputValHelp > .sapMInputValHelpInner {
-	background-color: @sapUiBtnBGTransparentHover;
+	background-color: @sapUiButtonLiteHoverBackground;
 }
 
 .sapMInputVHO:active > .sapMInputValHelp > .sapMInputValHelpInner {
-	background-color: @sapUiBtnBGTransparentDown;
-	color: @sapUiBtnTextActive;
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 }
 
 .sapMInputValHelpInner {
@@ -73,7 +73,7 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 
 .sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
 .sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
-	background-color: @sapUiBtnBGTransparentHover;
+	background-color: @sapUiButtonLiteHoverBackground;
 }
 .sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
 	outline: 1px dotted @sapUiFocus;
@@ -82,8 +82,8 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 
 .sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
 	/* works fine in desktop browsers, iOS6 and mobile Chrome; does not work well in older Android browser */
-	background-color: @sapUiBtnBGTransparentDown;
-	color: @sapUiBtnTextActive;
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 	outline: 1px dotted @sapUiInvertedFocus;
 }
 
