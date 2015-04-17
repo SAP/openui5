@@ -25,24 +25,18 @@ sap.ui.define(["jquery.sap.global"],
 			sHeight = oControl.getHeight(),
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
-			sSize = oControl.getSize(),
-			sTooltip = oControl.getTooltip_AsString();
+			sSize = oControl.getSize();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
+		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
 		if (!oControl.getDecorative()) {
 			oRm.writeAttribute("tabindex", 0);
 		}
 
-		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
-		}
-
 		if (oIconInfo) {
 			oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
-			oRm.writeAttribute("role", "img");
-			oRm.writeAttributeEscaped("aria-label", sTooltip || oIconInfo.name);
 			oRm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
 		}
 
