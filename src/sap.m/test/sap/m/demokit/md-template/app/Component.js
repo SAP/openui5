@@ -8,9 +8,7 @@ sap.ui.define([
 		"sap/ui/demo/mdtemplate/model/models",
 		"sap/ui/demo/mdtemplate/controller/ListSelector",
 		"sap/ui/demo/mdtemplate/controller/BusyHandler",
-		"sap/ui/demo/mdtemplate/controller/ErrorHandler",
-		"sap/ui/demo/mdtemplate/model/formatter",
-		"sap/ui/demo/mdtemplate/model/grouper"
+		"sap/ui/demo/mdtemplate/controller/ErrorHandler"
 	], function (UIComponent, ResourceModel, models, ListSelector, BusyHandler, ErrorHandler) {
 	"use strict";
 
@@ -182,4 +180,4 @@ sap.ui.define([
 
 	});
 
-}, /* bExport= */ true);
+});

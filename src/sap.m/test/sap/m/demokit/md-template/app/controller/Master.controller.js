@@ -10,11 +10,14 @@ sap.ui.define([
 		"sap/ui/model/Sorter",
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
+		"sap/ui/demo/mdtemplate/model/formatter",
 		"sap/ui/demo/mdtemplate/model/grouper"
-	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, grouper) {
+	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, grouper) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.mdtemplate.controller.Master", {
+
+		formatter: formatter,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -354,4 +357,4 @@ sap.ui.define([
 		}
 	});
 
-}, /* bExport= */ true);
+});

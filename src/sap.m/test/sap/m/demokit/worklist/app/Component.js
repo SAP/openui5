@@ -8,8 +8,7 @@ sap.ui.define([
 		"sap/ui/demo/worklist/model/models",
 		"sap/ui/Device",
 		"sap/ui/demo/worklist/controller/ErrorHandler",
-		"jquery.sap.global",
-		"sap/ui/demo/worklist/model/formatter"
+		"jquery.sap.global"
 	], function (UIComponent, ResourceModel, models, Device, ErrorHandler, jQuery) {
 	"use strict";
 
@@ -163,4 +162,4 @@ sap.ui.define([
 
 	});
 
-}, /* bExport= */ true);
+});
