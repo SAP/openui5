@@ -6,10 +6,8 @@
 
 // Provides class sap.ui.model.odata.ODataMetadata
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs'],
-	function(jQuery, EventProvider, datajs) {
+	function(jQuery, EventProvider, OData) {
 	"use strict";
-
-	/*global OData *///declare unusual global vars for JSLint/SAPUI5 validation
 
 	/**
 	 * Constructor for a new ODataMetadata.

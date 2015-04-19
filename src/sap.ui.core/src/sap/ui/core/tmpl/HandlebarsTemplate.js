@@ -1,14 +1,12 @@
 /*!
  * ${copyright}
  */
-/*global Handlebars *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', 'sap/ui/thirdparty/handlebars'],
-	function(jQuery, RenderManager, Template, handlebars) {
+	function(jQuery, RenderManager, Template, Handlebars) {
 	"use strict";
 
 
-	
 	/**
 	 * Creates and initializes a new handlebars template with the given <code>sId</code> 
 	 * and settings.
