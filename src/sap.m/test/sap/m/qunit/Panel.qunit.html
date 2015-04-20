@@ -415,16 +415,6 @@
 			"should have background-color:rgba(255, 255, 255, 0.8) style present");
 	});
 
-	QUnit.test("Panel with transparent backgroundDesign", function(assert) {
-		this.oPanel.setBackgroundDesign(sap.m.BackgroundDesign.Transparent);
-		sap.ui.getCore().applyChanges();
-
-		var $panel = this.oPanel.$();
-
-		assert.strictEqual($panel.find(".sapMPanelBGTransparent").css("background-color"), "rgba(0, 0, 0, 0)",
-			"should have background-color:rgba(0, 0, 0, 0) style present");
-	});
-
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new sap.m.Panel(),
