@@ -819,7 +819,8 @@ sap.ui.define(['jquery.sap.global'],
 						break;
 					case "attribute-for": {
 						var oDimensionAttribute = new odata4analytics.DimensionAttribute(this, oProperty);
-						oAttributeForPropertySet[oDimensionAttribute.getKeyProperty()] = oDimensionAttribute;
+						var oKeyProperty = oDimensionAttribute.getKeyProperty();
+						oAttributeForPropertySet[oKeyProperty.name] = oDimensionAttribute;
 						break;
 						}
 					default:
