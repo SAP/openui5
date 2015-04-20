@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		// the namespace sap.ui5 and eventually the extends property
 		oManifest["name"] = oManifest["name"] || sName;
 		oManifest["sap.app"] = oManifest["sap.app"] || {
-			"id": sName
+			"id": sPackage // use the "package" namespace instead of the classname (without ".Component")
 		};
 		oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
 		if (sParentName) {

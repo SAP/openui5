@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				"name": "sap.ui.test.v2inline.Component",
 			
 				"sap.app": {
-					"id": "sap.ui.test.v2inline.Component",
+					"id": "sap.ui.test.v2inline",
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
