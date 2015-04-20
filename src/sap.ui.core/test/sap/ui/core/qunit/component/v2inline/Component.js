@@ -23,12 +23,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				"sap.ui5": {
 				
 					"resources": {
-						"js": [{
-							"uri": "script.js"
-						}],
-						"css": [{
-							"uri": "style.css"
-						}]
+						"js": [
+							{
+								"uri": "script.js"
+							},
+							{}
+						],
+						"css": [
+							{
+								"uri": "style.css",
+								"id": "mystyle"
+							},
+							{}
+						]
 					},
 				
 					"dependencies": {

@@ -160,13 +160,31 @@
 				"description": "App Description"
 			},
 			"sap.ui5": {
-				"resources": {
-					"js": [{
-						"uri": "script.js"
-					}],
-					"css": [{
-						"uri": "style.css"
-					}]
+				"resources": iMetadataVersion === 1 ? {
+					"js": [
+						{
+							"uri": "script.js"
+						}
+					],
+					"css": [
+						{
+							"uri": "style.css"
+						}
+					]
+				} : {
+					"js": [
+						{
+							"uri": "script.js"
+						},
+						{}
+					],
+					"css": [
+						{
+							"uri": "style.css",
+							"id": "mystyle"
+						},
+						{}
+					]
 				},
 				"dependencies": {
 					"components": {

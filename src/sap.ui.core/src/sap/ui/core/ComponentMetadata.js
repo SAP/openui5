@@ -733,9 +733,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		if (aCSSResources) {
 			for (var j = 0; j < aCSSResources.length; j++) {
 				var oCSSResource = aCSSResources[j];
-				var sCssUrl = sap.ui.resource(sComponentName, oCSSResource.uri);
-				jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
-				jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
+				if (oCSSResource.uri) {
+					var sCssUrl = sap.ui.resource(sComponentName, oCSSResource.uri);
+					jQuery.sap.log.info("Component \"" + this.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
+					jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
+				}
 			}
 		}
 
