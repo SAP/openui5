@@ -40,6 +40,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		NavigationPropertyPath: true,
 		AnnotationPath: true
 	};
+	
+	var mMultipleArgumentDynamicExpressions = {
+		And: true,
+		Or: true,
+		// Not: true,
+		Eq: true,
+		Ne: true,
+		Gt: true,
+		Ge: true,
+		Lt: true,
+		Le: true,
+		If: true,
+		Collection: true
+	};	
 
 	/**
 	 * !!! EXPERIMENTAL !!!
@@ -997,7 +1011,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 										} else {
 											vValue = this.getPropertyValueAttributes(oOtherNode, oAlias);
 										}
-										propertyValue[oOtherNode.nodeName] = vValue;
+										
+										var sNodeName = oOtherNode.nodeName;
+										var sParentName = oOtherNode.parentNode.nodeName;
+										
+										
+										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+										// their order within the document
+										if (mMultipleArgumentDynamicExpressions[sParentName]) {
+											if (!Array.isArray(propertyValue)) {
+												propertyValue = [];
+											}
+											
+											var mValue = {};
+											mValue[sNodeName] = vValue;
+											propertyValue.push(mValue);
+										} else {
+											if (propertyValue[sNodeName]) {
+												jQuery.sap.log.warning(
+													"Annotation contained multiple " + sNodeName + " values. Only the last " +
+													"one will be stored"
+												);
+											}
+											propertyValue[sNodeName] = vValue;
+										}
 									}
 								}
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {
