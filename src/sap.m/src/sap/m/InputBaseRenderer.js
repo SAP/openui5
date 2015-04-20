@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.write("<label");
 			oRm.writeAttribute("id", oControl.getId() + "-labelledby");
 			oRm.writeAttribute("aria-hidden", "true");
-			oRm.addClass("sapUiHidden");
+			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.writeEscaped(sAnnouncement.trim());
@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.write("<span");
 			oRm.writeAttribute("id", oControl.getId() + "-describedby");
 			oRm.writeAttribute("aria-hidden", "true");
-			oRm.addClass("sapUiHidden");
+			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.writeEscaped(sAnnouncement.trim());

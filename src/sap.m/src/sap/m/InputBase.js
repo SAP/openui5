@@ -773,10 +773,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.openValueStateMessage = function (){
 		var sState = this.getValueState();
-		var mValueState = sap.ui.core.ValueState;
 
-		if (this.getShowValueStateMessage() && sState && ((sState === mValueState.Warning)
-				|| (sState === mValueState.Error)) && this.getEnabled() && this.getEditable()) {
+		if (this.getShowValueStateMessage() && this.getEnabled() && this.getEditable()) {
 
 			//get value state text
 			var sText = this.getValueStateText();
@@ -802,13 +800,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var mDock = Popup.Dock;
 			var bIsRightAligned = $Input.css("text-align") === "right";
 
-			var sClass = "sapMInputBaseMessage sapMInputBaseMessage" + sState;
+			var sClass = (sState === sap.ui.core.ValueState.Success) ? "sapUiInvisibleText" : "sapMInputBaseMessage sapMInputBaseMessage" + sState;
 			var sTextClass = "sapMInputBaseMessageText";
 			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var $Content = jQuery("<div>", {
 				"id": sMessageId,
 				"class": sClass,
-				"role": "tooltip"
+				"role": "tooltip",
+				"aria-live": "polite"
 			}).append(
 				jQuery("<span>", {
 					"aria-hidden": true,
@@ -902,6 +901,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			switch (sValueState) {
 				case mValueState.Error:
 				case mValueState.Warning:
+				case mValueState.Success:
 					this.openValueStateMessage();
 					break;
 				default:
