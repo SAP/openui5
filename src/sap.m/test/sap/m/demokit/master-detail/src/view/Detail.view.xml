@@ -1,0 +1,70 @@
+<mvc:View
+	controllerName="sap.ui.demo.masterdetail.controller.Detail"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="page"
+		navButtonPress="onNavBack"
+		showNavButton="{device>/system/phone}"
+		title="{i18n>detailTitle}">
+		<content>
+			<ObjectHeader
+				id="objectHeader"
+				title="{Name}"
+				number="{UnitNumber}"
+				numberUnit="{UnitOfMeasure}">
+			</ObjectHeader>
+			<IconTabBar
+				id="iconTabBar"
+				class="sapUiResponsiveContentPadding">
+				<items>
+					<IconTabFilter
+						id="iconTabBarFilter1"
+						icon="sap-icon://hint"
+						tooltip="{i18n>detailIconTabBarInfo}">
+					</IconTabFilter>
+					<IconTabFilter
+						id="iconTabBarFilter2"
+						icon="sap-icon://attachment"
+						tooltip="{i18n>detailIconTabBarAttachments}">
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<Table id="lineItemsList" width="auto" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiResponsiveMargin">
+				<headerToolbar>
+					<Toolbar id="lineItemsToolbar">
+						<Label id="lineItemsHeader" text="{view>/lineItemListTitle}"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Label text="{i18n>detailLineItemTableIDColumn}" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Label text="{i18n>detailLineItemTableAttributeColumn}"/>
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Right">
+						<Label text="{i18n>detailLineItemTableUnitNumberColumn}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"
+								text="{LineItemID}"/>
+							<Text text="{Attribute}"/>
+							<ObjectNumber
+								number="{UnitNumber}"
+								unit="{UnitOfMeasure}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Toolbar id="footerToolbar">
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>
