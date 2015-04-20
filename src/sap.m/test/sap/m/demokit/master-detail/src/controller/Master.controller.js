@@ -4,15 +4,15 @@
 
 /*global history */
 sap.ui.define([
-		"sap/ui/demo/masterdetail/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-		"sap/ui/model/Sorter",
-		"sap/m/GroupHeaderListItem",
-		"sap/ui/Device",
-		"sap/ui/demo/masterdetail/model/formatter",
-		"sap/ui/demo/masterdetail/model/grouper"
+		'sap/ui/demo/masterdetail/controller/BaseController',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
+		'sap/ui/model/Sorter',
+		'sap/m/GroupHeaderListItem',
+		'sap/ui/Device',
+		'sap/ui/demo/masterdetail/model/formatter',
+		'sap/ui/demo/masterdetail/model/grouper'
 	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, grouper) {
 	"use strict";
 

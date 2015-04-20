@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-		"sap/ui/core/UIComponent",
-		"sap/ui/demo/masterdetail/model/models",
-		"sap/ui/demo/masterdetail/controller/ListSelector",
-		"sap/ui/demo/masterdetail/controller/BusyHandler",
-		"sap/ui/demo/masterdetail/controller/ErrorHandler"
+		'sap/ui/core/UIComponent',
+		'sap/ui/demo/masterdetail/model/models',
+		'sap/ui/demo/masterdetail/controller/ListSelector',
+		'sap/ui/demo/masterdetail/controller/BusyHandler',
+		'sap/ui/demo/masterdetail/controller/ErrorHandler'
 	], function (UIComponent, models, ListSelector, BusyHandler, ErrorHandler) {
 	"use strict";
 

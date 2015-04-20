@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/demo/worklist/controller/BaseController",
-	"sap/ui/model/json/JSONModel"
-], function (BaseController, JSONModel) {
+		'sap/ui/demo/worklist/controller/BaseController',
+		'sap/ui/model/json/JSONModel'
+	], function (BaseController, JSONModel) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.worklist.controller.App", {

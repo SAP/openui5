@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-		"sap/ui/core/UIComponent",
-		"sap/ui/model/resource/ResourceModel",
-		"sap/ui/demo/worklist/model/models",
-		"sap/ui/Device",
-		"sap/ui/demo/worklist/controller/ErrorHandler"
+		'sap/ui/core/UIComponent',
+		'sap/ui/model/resource/ResourceModel',
+		'sap/ui/demo/worklist/model/models',
+		'sap/ui/Device',
+		'sap/ui/demo/worklist/controller/ErrorHandler'
 	], function (UIComponent, ResourceModel, models, Device, ErrorHandler) {
 	"use strict";
 
@@ -24,10 +24,10 @@ sap.ui.define([
 		 * @override
 		 */
 		init : function () {
-			
+
 			// create the metadata promise
 			this._createMetadataPromise(this.getModel());
-			
+
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
