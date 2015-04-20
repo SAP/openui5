@@ -307,6 +307,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			return null;
 		}
 		
+		if (this.mEntityTypes[sPath]) {
+			return this.mEntityTypes[sPath];
+		}
+		
 		// remove starting and trailing /
 		var sCandidate = sPath.replace(/^\/|\/$/g, ""),
 			aParts = sCandidate.split("/"),
@@ -372,7 +376,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			}
 		}
 	
-	
+		if (oEntityType) {
+			this.mEntityTypes[sPath] = oEntityType;
+		}
+		
 		//jQuery.sap.assert(oEntityType, "EntityType for path " + sPath + " could not be found!");
 		return oEntityType;
 	};
