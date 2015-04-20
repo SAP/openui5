@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.write("<" + groupTag + ">");
 		rm.write("<tr");
 		rm.writeAttribute("tabindex", -1);
-		rm.writeAttribute("role", "rowheader");
+		rm.writeAttribute("role", "row");
 		rm.writeAttribute("id", oTable.addNavSection(idPrefix + type + "er" ));
 	
 		if (isHeaderHidden) {
