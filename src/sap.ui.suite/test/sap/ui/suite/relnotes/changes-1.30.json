@@ -1,0 +1,14 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      }
+    ]
+  }
+}
