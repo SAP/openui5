@@ -2619,30 +2619,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * returns an ETag: either the passed sETag or tries to retrieve the ETag from the metadata of oPayload or sPath
-	 *
+	 * Returns the ETag for a given url, binding path/context or data object
+	 * 
 	 * @param {string} sPath The binding path
-	 * @param {object} oData The entry data
-	 * @returns {string} sEtag The eTag
+	 * @param {sap.ui.model.Context} [oContext] The binding context
+	 * @param {object} [oData] The entry data
+	 * 
+	 * @returns {string} The found ETag (or null if none could be found)
 	 * @private
 	 */
-	ODataModel.prototype._getETag = function(sPath, oData) {
-		var sETag, sEntry, iIndex;
-
-		if (oData && oData.__metadata){
-			sETag = oData.__metadata.etag;
-		} else if (sPath) {
-			sEntry = sPath.replace(this.sServiceUrl + '/', '');
-			iIndex = sEntry.indexOf("?");
-			if (iIndex > -1){
-				sEntry = sEntry.substr(0, iIndex);
-			}
-			if (this.oData.hasOwnProperty(sEntry)){
-				sETag = this.getProperty('/' + sEntry + '/__metadata/etag');
-			}
+	ODataModel.prototype._getETag = function(sPath, oContext, oData) {
+		if (!oData || !oData.__metadata) {
+			oData = this._getObject(sPath, oContext);
 		}
-
-		return sETag;
+		if (oData && oData.__metadata) {
+			return oData.__metadata.etag;
+		}
+		return null;
 	};
 
 	/**
@@ -2658,8 +2651,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sMethod, mHeaders, oData, sETag, bAsync) {
-		sETag = sETag || this._getETag(sUrl, oData);
-
 		bAsync = bAsync !== false;
 
 		if (sETag && sMethod !== "GET") {
@@ -2796,7 +2787,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
 		var fnSuccess, fnError, bMerge, oRequest, sUrl, oContext, sETag, 
 			oStoredEntry, sKey, aUrlParams, sBatchGroupId, sChangeSetId,
-			mUrlParams, mHeaders, sMethod, mRequests,
+			mUrlParams, mHeaders, sMethod, mRequests, 
+			oKeys = {},
 			that = this;
 
 		if (mParameters) {
@@ -2814,19 +2806,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = bMerge ? "MERGE" : "PUT";
+		sETag = sETag || this._getETag(sPath, oContext, oData);
+		oStoredEntry = that._getObject(sPath, oContext);
+		if (oStoredEntry) {
+			sKey = this._getKey(oStoredEntry);
+			oKeys[sKey] = true;
+		}
 
 		return this._processRequest(function() {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
-
-			sPath = that._normalizePath(sPath, oContext);
-			oStoredEntry = that._getObject(sPath);
-
-			oRequest.keys = {};
-			if (oStoredEntry) {
-				sKey = that._getKey(oStoredEntry);
-				oRequest.keys[sKey] = true;
-			}
+			oRequest.keys = oKeys;
 
 			mRequests = that.mRequests;
 			if (sBatchGroupId in that.mDeferredBatchGroups) {
@@ -2945,6 +2935,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = "DELETE";
+		sETag = sETag || this._getETag(sPath, oContext);
+
 		handleSuccess = function(oData, oResponse) {
 			sEntry = sUrl.substr(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
@@ -3094,7 +3086,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aFilters, aSorters, sFilterParams, sSorterParams,
 		oEntityType, sNormalizedPath,
 		aUrlParams, mHeaders, sMethod,
-		sBatchGroupId,
+		sBatchGroupId, sETag,
 		mRequests,
 		that = this;
 
@@ -3117,6 +3109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = "GET";
+		sETag = this._getETag(sPath, oContext);
 
 		function createReadRequest() {
 			// Add filter/sorter to URL parameters
@@ -3135,7 +3128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 	
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sMethod, mHeaders);
+			oRequest = that._createRequest(sUrl, sMethod, mHeaders, null, sETag);
 	
 			mRequests = that.mRequests;
 			if (sBatchGroupId in that.mDeferredBatchGroups) {
