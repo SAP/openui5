@@ -29,17 +29,22 @@ sap.ui.define([
 			// create the metadata promise
 			this._createMetadataPromise(this.getModel());
 
-			// call the base component's init function
-			UIComponent.prototype.init.apply(this, arguments);
 
 			this.oListSelector = new ListSelector();
 
 			this._oErrorHandler = new ErrorHandler(this);
-			// initialize the busy handler with the component
-			this._oBusyHandler = new BusyHandler(this);
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
+
+			// call the base component's init function and create the App view
+			UIComponent.prototype.init.apply(this, arguments);
+
+			var oRootControl = this.getAggregation("rootControl").addStyleClass(this.getCompactCozyClass());
+			this._oRootView = oRootControl;
+
+			// initialize the busy handler with the component
+			this._oBusyHandler = new BusyHandler(this);
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
@@ -59,19 +64,6 @@ sap.ui.define([
 			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 
-		/**
-		 * In this method, the rootView is initialized and stored.
-		 * @public
-		 * @return {sap.ui.core.mvc.View} the app's root view.
-		 * @override
-		 */
-		createContent : function() {
-			// call the base component's createContent function
-			this._oRootView = UIComponent.prototype.createContent.apply(this, arguments);
-			this._oRootView.addStyleClass(this.getCompactCozyClass());
-
-			return this._oRootView;
-		},
 
 		/**
 		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy
