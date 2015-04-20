@@ -372,6 +372,25 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 		};
 
+		DatePicker.prototype.oninput = function(oEvent) {
+
+			if (this._bMobile) {
+				// fire change event i changed via native DatePicker
+				// but check if valid, because we don't know if on some devices maybe an keyboard input is possible
+				var oInput = this.getInputDomRef();
+				var sNewValue = oInput && oInput.value;
+				if (sNewValue) {
+					var oDate = this._oFormatMobile.parse(sNewValue);
+				}
+				if (!sNewValue || oDate) {
+					this._checkChange(oEvent);
+				}
+			} else {
+				TextField.prototype.oninput.apply(this, arguments);
+			}
+
+		};
+
 		/*
 		 * Overwrites the method in TextField to add additional YYYYMMDD parameter
 		 */
