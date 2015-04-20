@@ -34,6 +34,9 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		
 		function fnCompare(a, b) {
+			if (a == b) {
+				return 0;
+			}
 			if (b == null) {
 				return -1;
 			}
