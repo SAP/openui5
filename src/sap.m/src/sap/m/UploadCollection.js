@@ -688,7 +688,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				text : sFileNameLong,
 				enabled : bEnabled,
 				target : "_blank",
-				href : oItem.getUrl()
+//				href : oItem.getUrl()
+				press : function(oEvent) {
+					sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
+				}
 			}).addStyleClass("sapMUCFileName");
 		}
 
@@ -782,7 +785,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			} else {
 				oButtonsHL.removeStyleClass("sapMUCEditMode");
 			}
-		
+
 		oListItem = new sap.m.CustomListItem(sItemId + "-cli", {
 			content : [oBusyIndicator, oItemIcon, oTextVL, oButtonsHL]
 		});
@@ -916,6 +919,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			sCompact = "sapUiSizeCompact";
 		}
 
+		if (oContext.editModeItem) {
+			//In case there is a list item in edit mode, the edit mode has to be finished first.
+			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
+			if (oContext.sErrorState === "Error") {
+				//If there is an error, the deletion must not be triggered
+				return this;
+			}
+		}
+
 		if (!!aItems[index]) {
 			// popup delete file
 			sFileName =  aItems[index].getFileName();
@@ -1034,8 +1046,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			// get line
 			var iSelectdRow = aId[iLength - 2];
 
-			oContext.aItems[iSelectdRow]._status = "Edit";
-			oContext.editModeItem = oEvent.oSource.sId.split("-editButton")[0];
+			if (oContext.sErrorState !== "Error") {
+				oContext.aItems[iSelectdRow]._status = "Edit";
+				oContext.editModeItem = oEvent.oSource.sId.split("-editButton")[0];
+			}
 
 			// trigger re-rendering!
 			oContext.invalidate();
@@ -1080,9 +1094,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (oEditbox !== null) {
 			sNewFileName = oEditbox.value.replace(/^\s+/,"");
 		}
-		if (!oContext.sFocusId) {
-			oContext.sFocusId = oContext.editModeItem + "-cli";
-		}
+
+		//prepare the Id of the UI element which will get the focus
+		var aSrcIdElements = oEvent.srcControl ? oEvent.srcControl.getId().split("-") : oEvent.oSource.getId().split("-");
+		aSrcIdElements = aSrcIdElements.slice(0, 3);
+		oContext.sFocusId = aSrcIdElements.join("-") + "-cli";
 
 		if (sNewFileName.length > 0) {
 			var iSourceLine = sSourceId.split("-").pop();
@@ -1124,6 +1140,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					oContext._onEditItemOk.bind(oContext)(sNewFileName + oFile.extension);
 				}
 			} else {
+				oContext.sErrorState = null;
+				oContext.aItems[iSourceLine].errorState = null;
 				// nothing changed -> nothing to do!
 				oContext.editModeItem = null;
 				if (bTriggerRenderer) {
@@ -1515,18 +1533,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._getRequestId = function(oEvent) {
-		var oHeaderParams, sHeader, sValue;
+		var oHeaderParams;
 		oHeaderParams = oEvent.getParameter("requestHeaders");
 		if (!oHeaderParams) {
 			return null;
 		}
 		for (var j = 0; j < oHeaderParams.length; j++) {
-			sHeader = oHeaderParams[j].name;
-			if (sHeader == this._requestIdName) {
-				sValue = oHeaderParams[j].value;
+			if (oHeaderParams[j].name == this._requestIdName) {
+				return oHeaderParams[j].value;
 			}
 		}
-		return sValue;
 	};
 
 	/**
@@ -1641,18 +1657,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-		var sLinkId = null;
-		var iLine;
-		var sId = oEvent.getParameter("id");
+		var iLine = null;
 
 		if (oContext.editModeItem) {
-			iLine = oContext.editModeItem.split("-").pop();
-			sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
-			return;
-		} else {
-			sLinkId = sId.split(sId.split("-").pop())[0] + "ta_filenameHL";
-			sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), true);
+			//In case there is a list item in edit mode, the edit mode has to be finished first.
+			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
+			if (oContext.sErrorState === "Error") {
+				//If there is an error, the link of the list item must not be triggered.
+				return this;
+			}
+			oContext.sFocusId = oEvent.getParameter("id");
 		}
+		iLine = oEvent.oSource.getId().split("-")[2];
+		sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
 	};
 
 	// ================================================================================
@@ -1826,7 +1843,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					if (oContext.editModeItem){
 						sap.m.UploadCollection.prototype._handleClick(oEvent, oContext, oContext.editModeItem);
 					}
-					oEditButton.firePress();
+					if (oContext.sErrorState !== "Error") {
+						oEditButton.firePress();
+					}
 				}
 			} else {
 				//focus at list line(status= "Edit") and F2 is pressed --> status = "display", changes will be saved and
