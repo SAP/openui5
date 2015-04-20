@@ -148,6 +148,12 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/simple-values.xml",
 			serviceValid     : true,
 			annotationsValid : true
+		},
+		"Alias Replacement": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/Aliases.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
 		}
 	};
 
@@ -1506,4 +1512,42 @@ function runODataAnnotationTests() {
 		);
 		
 	});
+
+	
+	test("Alias Replacement", function() {
+		expect(11);
+
+		var mTest = mAdditionalTestsServices["Alias Replacement"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true,
+			loadAnnotationsJoined: false,
+			loadMetadataAsync: false
+		};
+
+		var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, mModelOptions);
+		var oMetadata = oModel.getServiceMetadata();
+		var oAnnotations = oModel.getServiceAnnotations();
+
+		ok(!!oMetadata, "Metadata is available.");
+
+		ok(!!oAnnotations, "Annotations are available.");
+
+		
+		
+		ok(!!oAnnotations["Test.AliasReplacement"], "Namespace is available.");
+		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"], "Annotation is available.");
+		
+		
+		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"], "First Entry is available.");
+		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0], "First Entry array is available.");
+		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "First Entry value is available.");
+		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "@internal.ui5.test.Value", "First Entry value is correct.");
+		
+		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"], "Second Entry is available.");
+		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "Second Entry value is available.");
+		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "@internal.ui5.test.Value", "Second Entry value is correct.");
+	});
+		
 }
