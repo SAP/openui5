@@ -262,8 +262,8 @@
 
 	test("Flag Rendering Position", function() {
 
-		equal(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop, jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop,
-				"Attribute and flag should be rendered on the same row");
+		ok(Math.abs(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop)<=1,
+		"Attribute and flag should be rendered on the same row");
 	});
 
 	test("ProgressIndicatorRendered", function() {
