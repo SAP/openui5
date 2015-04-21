@@ -1,0 +1,28 @@
+{
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "27b6907775bd125c08fd6d6b357272f632c13e96",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery can be referenced without a concrete version",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "f53501991b25501d7da14414abb32318c3e43f36",
+        "author": "Monika Juhasz \u003cmonika.juhasz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Explorer: Added footer for favorites list in edit mode",
+        "references": []
+      }
+    ]
+  }
+}
