@@ -33,11 +33,11 @@ sap.ui.require([
 			var fnIsolatedFormatter = formatter.statusText.bind(oControllerStub);
 
 			// Assert
-			assert.strictEqual(fnIsolatedFormatter("A"), this._oResourceModel.getProperty("statusA"), "The long text for status A is correct");
+			assert.strictEqual(fnIsolatedFormatter("A"), this._oResourceModel.getProperty("invoiceStatusA"), "The long text for status A is correct");
 
-			assert.strictEqual(fnIsolatedFormatter("B"), this._oResourceModel.getProperty("statusB"), "The long text for status B is correct");
+			assert.strictEqual(fnIsolatedFormatter("B"), this._oResourceModel.getProperty("invoiceStatusB"), "The long text for status B is correct");
 
-			assert.strictEqual(fnIsolatedFormatter("C"), this._oResourceModel.getProperty("statusC"), "The long text for status C is correct");
+			assert.strictEqual(fnIsolatedFormatter("C"), this._oResourceModel.getProperty("invoiceStatusC"), "The long text for status C is correct");
 
 			assert.strictEqual(fnIsolatedFormatter("Foo"), "Foo", "The long text for status Foo is correct");
 		});

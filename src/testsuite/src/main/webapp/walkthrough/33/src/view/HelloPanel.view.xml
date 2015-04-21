@@ -8,21 +8,21 @@
 			width="auto">
 		<content>
 			<Button
-					icon="sap-icon://world"
-					text="{i18n>openDialogButtonText}"
-					press="onOpenDialog"
-					class="sapUiSmallMarginEnd"/>
+				icon="sap-icon://world"
+				text="{i18n>openDialogButtonText}"
+				press="onOpenDialog"
+				class="sapUiSmallMarginEnd"/>
 			<Button
-					text="{i18n>showHelloButtonText}"
-					press="onShowHello"
-					class="sapUiDemoWTmyCustomButton"/>
+				text="{i18n>showHelloButtonText}"
+				press="onShowHello"
+				class="sapUiDemoWTmyCustomButton"/>
 			<Input
-					value="{/recipient/name}"
-					valueLiveUpdate="true"
-					width="60%"/>
+				value="{/recipient/name}"
+				valueLiveUpdate="true"
+				width="60%"/>
 			<Text
-					text="Hello {/recipient/name}"
-					class="sapUiSmallMargin sapThemeHighlight-asColor sapUiDemoWTmyCustomText"/>
+				text="Hello {/recipient/name}"
+				class="sapUiSmallMargin sapThemeHighlight-asColor sapUiDemoWTmyCustomText"/>
 		</content>
 	</Panel>
 </mvc:View>
