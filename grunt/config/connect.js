@@ -2,16 +2,13 @@ var fs = require('fs');
 
 module.exports = function(grunt, config) {
 
-	// set default port
-	if (typeof grunt.option('port') !== 'number') {
-		grunt.option('port', 8080);
-	}
-
 	return {
 
 		options: {
-
-			port: '<%= grunt.option("port") %>',
+			// set default port
+			port: typeof grunt.option('port') === 'number' ? grunt.option('port') : 8080,
+			// use the next best port if specified port is already in use
+			useAvailablePort: true,
 			hostname: '*'
 
 		},
