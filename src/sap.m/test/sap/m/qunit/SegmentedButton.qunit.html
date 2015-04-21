@@ -1611,6 +1611,44 @@
 		oSegmentedButton.destroy();
 	});
 
+	test("Check aria attributes on SegmentedButton with icons", function() {
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://home",
+					text: "button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "button 3"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		var aButtons = oSegmentedButton.getButtons();
+
+		// Assert
+		strictEqual(aButtons[0].$().attr("aria-label"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://home").name + " button 1",
+				"Attribute aria-label on the first button should contain the generic icon name and the text of the button");
+
+		strictEqual(aButtons[1].$().attr("aria-label"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
+				"Attribute aria-label on the second button should contain only the icon generic name");
+
+		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
+				"If we don't have a SAP Icon we don't need the aria-label attribute");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
 </script>
 </head>
 <body>

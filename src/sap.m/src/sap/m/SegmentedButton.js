@@ -728,6 +728,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oItemNavigation.onsaphome(oEvent);
 	};
 
+	/**
+	 * Image does not have an onload event but we need to recalculate the button sizes after the image is loaded
+	 * we override the onload method once and call the calculation method after the original method is called
+	 * @param {sap.m.Image} oImage instance of the image
+	 * @private
+	 */
+	SegmentedButton.prototype._overwriteImageOnload = function (oImage) {
+		var that = this;
+
+		if (oImage.onload === sap.m.Image.prototype.onload) {
+			oImage.onload = function () {
+				if (sap.m.Image.prototype.onload) {
+					sap.m.Image.prototype.onload.apply(this, arguments);
+				}
+				window.setTimeout(function() {
+					that._fCalcBtnWidth();
+				}, 20);
+			};
+		}
+	};
+
+	/**
+	 * Get native SAP icon name
+	 * @param {sap.ui.core.Icon} oIcon icon object
+	 * @returns {string} the generic name of the icon
+	 * @private
+	 */
+	SegmentedButton.prototype._getIconAriaLabel = function (oIcon) {
+		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oIcon.getSrc()),
+			sResult = "";
+		if (oIconInfo && oIconInfo.name) {
+			sResult = oIconInfo.name;
+		}
+		return sResult;
+	};
+
 	return SegmentedButton;
 
 }, /* bExport= */ true);
