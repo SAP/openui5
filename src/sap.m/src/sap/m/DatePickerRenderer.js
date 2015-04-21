@@ -21,8 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	DatePickerRenderer.addOuterClasses = function(oRm, oDP) {
 
 		oRm.addClass("sapMDP");
+		oRm.addClass("sapMInputVH"); // just reuse styling of value help icon
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			oRm.addClass("sapMInputIE9");
 		}
 
@@ -37,12 +38,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	DatePickerRenderer.writeInnerContent = function(oRm, oDP) {
 
 		if (oDP.getEnabled() && oDP.getEditable()) {
-			var aClasses = [];
+			var aClasses = ["sapMInputValHelpInner"];
 			var mAttributes = {};
 
 			mAttributes["id"] = oDP.getId() + "-icon";
 			mAttributes["tabindex"] = "-1"; // to get focus events on it, needed for popup autoclose handling
+			oRm.write('<div class="sapMInputValHelp">');
 			oRm.writeIcon("sap-icon://appointment-2", aClasses, mAttributes);
+			oRm.write("</div>");
 		}
 
 		// invisible span with description for keyboard navigation
