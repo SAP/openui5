@@ -10,7 +10,7 @@ function (Opa5) {
 
 	opaTest("Should see the master list with all entries", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheAppOnADesktopDevice();
+		Given.iStartTheApp();
 
 		//Actions
 		When.onTheMasterPage.iLookAtTheScreen();
