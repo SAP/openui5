@@ -19,8 +19,16 @@
 <script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE 9]>
+	<script>
+		// If this flag is set to `false` sinon will only fake `XDomainRequest` but not `XMLHttpRequest`
+		sinon.xhr.supportsCORS = true;
+	</script>
+<![endif]-->
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
 <script>
 
 function mockBrowserAPI(oTest, mOptions) {
