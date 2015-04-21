@@ -88,16 +88,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					_handleError(mParameters);
 					return;
 				}
+				that.sMetadataBody = oResponse.body;
 				that.oMetadata = oMetadata;
 				that.oRequestHandle = null;
-				resolve();
+				
+				var mParams = {
+					metadataString: that.sMetadataBody
+				};
+				resolve(mParams);
 				if (that.bAsync) {
-					that.fireLoaded(that);
+					that.fireLoaded(mParams);
 				} else {
 					//delay the event so anyone can attach to this _before_ it is fired, but make
 					//sure that bLoaded is already set properly
 					that.bLoaded = true;
-					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [that]);
+					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mParams ]);
 				}
 			}
 	
@@ -189,9 +194,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @return {sap.ui.model.odata.ODataMetadata} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	ODataMetadata.prototype.fireLoaded = function() {
+	ODataMetadata.prototype.fireLoaded = function(mParams) {
 		this.bLoaded = true;
-		this.fireEvent("loaded");
+		this.fireEvent("loaded", mParams);
 		jQuery.sap.log.debug(this + " - loaded was fired");
 		return this;
 	};

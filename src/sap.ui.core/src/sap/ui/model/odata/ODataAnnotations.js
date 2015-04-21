@@ -742,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					message:		sStatusText,
 					statusCode:		oJQXHR.statusCode,
 					statusText:		oJQXHR.statusText,
-					responseText:		oJQXHR.responseText
+					responseText:	oJQXHR.responseText
 				};
 
 				if (that.bAsync) {

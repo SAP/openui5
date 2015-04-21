@@ -40,6 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} [mParameters.defaultCountMode] sets the default count mode for the model. If not set, sap.ui.model.odata.CountMode.Request is used.
 	 * @param {string} [mParameters.defaultOperationMode] sets the default operation mode for the model. If not set, sap.ui.model.odata.OperationModel.Server is used.
 	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
+	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document 
 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -64,6 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
+			bSkipMetadataAnnotationParsing,
 			that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -90,6 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				mMetadataUrlParams = mParameters.metadataUrlParams;
 				bJSON = mParameters.json;
 				oMessageParser = mParameters.messageParser;
+				bSkipMetadataAnnotationParsing = mParameters.skipMetadataAnnotationParsing;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || sap.ui.model.BindingMode.OneWay;
@@ -118,6 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
 			this.bIncludeInCurrentBatch = false;
+			this.bSkipMetadataAnnotationParsing = bSkipMetadataAnnotationParsing;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -170,6 +174,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.oServiceData.oMetadata = this.oMetadata;
 			} else {
 				this.oMetadata = this.oServiceData.oMetadata;
+			}
+
+			if (!this.bSkipMetadataAnnotationParsing) {
+				this.oMetadata.loaded().then(function(mParams) {
+					that.addAnnotationXML(mParams["metadataString"])
+						.then(that.fireAnnotationsLoaded.bind(that))
+						.catch(that.fireAnnotationsFailed.bind(that));
+				});
 			}
 
 			if (mServiceUrlParams) {
