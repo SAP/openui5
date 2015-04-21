@@ -5,12 +5,12 @@
 // Provides class sap.ui.dt.DesignTimeNew.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Utils'
 ],
-function(jQuery, Control, Overlay, OverlayRegistry, Utils) {
+function(jQuery, ManagedObject, Overlay, OverlayRegistry, Utils) {
 	"use strict";
 
 	/**
@@ -22,7 +22,7 @@ function(jQuery, Control, Overlay, OverlayRegistry, Utils) {
 	 * @class
 	 * The DesignTimeNew allows to create an absolute positioned DIV above the associated
 	 * control / element.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.core.ManagedObject
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -33,7 +33,7 @@ function(jQuery, Control, Overlay, OverlayRegistry, Utils) {
 	 * @alias sap.ui.dt.DesignTimeNew
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var DesignTimeNew = Control.extend("sap.ui.dt.DesignTimeNew", /** @lends sap.ui.dt.DesignTimeNew.prototype */ {
+	var DesignTimeNew = ManagedObject.extend("sap.ui.dt.DesignTimeNew", /** @lends sap.ui.dt.DesignTimeNew.prototype */ {
 		metadata : {
 
 			// ---- object ----
@@ -44,8 +44,9 @@ function(jQuery, Control, Overlay, OverlayRegistry, Utils) {
 
 			},
 			associations : {
-				"rootElement" : {
-					"type" : "sap.ui.core.Element"
+				"rootElements" : {
+					"type" : "sap.ui.core.Element",
+					multiple : true
 				}
 			},
 			events : {
@@ -61,39 +62,132 @@ function(jQuery, Control, Overlay, OverlayRegistry, Utils) {
 
 	};
 
-	DesignTimeNew.prototype._createOverlays = function() {
-		var aAllPublicElements = Utils.findAllPublicElements(this._getRootElementInstance());
-		jQuery.each(aAllPublicElements, function(index, oElement) {
-			new Overlay({
-				element : oElement
+	DesignTimeNew.prototype.addRootElement = function(vRootElement) {
+		this.addAssociation("rootElements", vRootElement);
+
+		this._createOverlaysForRootElement(Utils.getElementInstance(vRootElement));
+	};
+
+	DesignTimeNew.prototype.removeRootElement = function(vRootElement) {
+		this.removeAssociation("rootElements", vRootElement);
+
+		this._destroyOverlaysForRootElement(Utils.getElementInstance(vRootElement));
+	};
+
+	DesignTimeNew.prototype.removeAllRootElements = function() {
+		this.destroyAllOverlays();
+
+		this.removeAllAssociation("rootElements");
+	};
+
+	DesignTimeNew.prototype.destroyAllOverlays = function() {
+		var aRootElements = this.getRootElements() || [];
+		jQuery.each(aRootElements, function(iIndex, sRootElementId) {
+			var oRootElement = Utils.getElementInstance(sRootElementId);
+			var aAllPublicElements = Utils.findAllPublicElements(oRootElement);
+			jQuery.each(aAllPublicElements, function(iIndex, oElement) {
+				var oOverlay = OverlayRegistry.getOverlay(oElement);
+				if (oOverlay) {
+					oOverlay.destroy();
+				}
 			});
+		});
+	};
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._createOverlaysForRootElement = function(oRootElement) {
+		var that = this;
+
+		var aAllPublicElements = Utils.findAllPublicElements(oRootElement);
+		jQuery.each(aAllPublicElements, function(iIndex, oElement) {
+			that._createOverlay(oElement);
 		}); 
 	};
 
-	DesignTimeNew.prototype._getRootElementInstance = function() {
-		return sap.ui.getCore().byId(this.getRootElement());
-	};
-
-	DesignTimeNew.prototype.setRootElement = function(vRootElement) {
-		this.destroyOverlays();
-
-		this.setAssociation("rootElement", vRootElement);
-		
-		this._createOverlays();
-	};
-
-	DesignTimeNew.prototype.destroyOverlays = function() {
-		var aAllPublicElements = Utils.findAllPublicElements(this._getRootElementInstance());
-		jQuery.each(aAllPublicElements, function(index, oElement) {
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._destroyOverlaysForRootElement = function(oRootElement) {
+		var aAllPublicElements = Utils.findAllPublicElements(oRootElement);
+		jQuery.each(aAllPublicElements, function(iIndex, oElement) {
 			var oOverlay = OverlayRegistry.getOverlay(oElement);
 			if (oOverlay) {
 				oOverlay.destroy();
 			}
 		});
+	};	
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._createOverlay = function(oElement) {
+		var oOverlay = new Overlay({
+			element : oElement
+		});
+		this._attachOverlayEvents(oOverlay);
+	};
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._attachOverlayEvents = function(oOverlay) {
+		oOverlay.attachEvent("elementDataChanged", this._onElementDataChanged, this);
+	};
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._onElementDataChanged = function(oEvent) {
+		var oParams = oEvent.getParameters();
+		if (oParams.type === "addAggregation" || oParams.type === "insertAggregation") {
+			this._onOverlayElementAddAggregation(oParams.value);
+		} else if (oParams.type === "setParent") {
+			this._onOverlayElementSetParent(oParams.target, oParams.value);
+		}
+	};
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._onOverlayElementAddAggregation = function(oElement) {
+		var oOverlay = OverlayRegistry.getOverlay(oElement);
+		if (!oOverlay) {
+			this._createOverlay(oElement);
+		}
+	};
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._onOverlayElementSetParent = function(oElement, oParent) {
+		var oOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oOverlay && !this._isElementInRootElements(oElement)) {
+			oOverlay.destroy();
+		}
+	};	
+
+	/*
+	 * @private
+	 */
+	DesignTimeNew.prototype._isElementInRootElements = function(oElement) {
+		var bFoundAncestor = false;
+
+		var aRootElements = this.getRootElements() || [];
+		jQuery.each(aRootElements, function(iIndex, vRootElement) {
+			var oRootElement = Utils.getElementInstance(vRootElement);
+			if (Utils.hasAncestor(oElement, oRootElement)) {
+				bFoundAncestor = true;
+				return false;
+			}
+		});
+
+		return bFoundAncestor;
 	};
 
 	DesignTimeNew.prototype.exit = function() {
-		this.destroyOverlays();
+		this.destroyAllOverlays();
 	};
 
 	return DesignTimeNew;

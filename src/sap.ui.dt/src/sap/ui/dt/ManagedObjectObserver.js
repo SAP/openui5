@@ -46,7 +46,14 @@ function(jQuery, ManagedObject) {
 				}
 			},
 			events : {
-				"changed" : {},
+				"changed" : {
+					parameters : {
+						type : "string",
+						value : "any",
+						oldValue : "any",
+						target : "sap.ui.core.Element"
+					}
+				},
 				"destroyed" : {},
 				"parentChanged" : {}
 			}
@@ -142,9 +149,26 @@ function(jQuery, ManagedObject) {
 		// We wrap the native setParent method of the control with our logic
 		this._fnOriginalSetParent = oTarget.setParent;
 		oTarget.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
+			var bFireChanged = false;
+			if (!this._bInSetParent) {
+				bFireChanged = true;
+				this._bInSetParent = true;
+			}
+
+			var oCurrentParent = this.getParent();
 			that._fnOriginalSetParent.apply(this, arguments);
-			that.fireParentChanged();
-			that.fireChanged();
+			if (bFireChanged) {
+				this._bInSetParent = false;
+				if (oCurrentParent !== oParent) {
+					that.fireChanged({
+						type : "setParent",
+						value : oParent,
+						oldValue : oCurrentParent,
+						target : this
+					});
+				}
+			}
+
 			return this;
 		};
 
@@ -152,7 +176,11 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalAddAggregation = oTarget.addAggregation;
 		oTarget.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			that._fnOriginalAddAggregation.apply(this, arguments);
-			that.fireChanged();
+			that.fireChanged({
+				type : "addAggregation",
+				value : oObject,
+				target : this
+			});
 			return this;
 		};
 
@@ -160,7 +188,11 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalRemoveAggregation = oTarget.removeAggregation;
 		oTarget.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
 			that._fnOriginalRemoveAggregation.apply(this, arguments);
-			that.fireChanged();
+			that.fireChanged({
+				type : "removeAggregation",
+				value : vObject,
+				target : this
+			});
 			return this;
 		};
 
@@ -168,23 +200,37 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalInsertAggregation = oTarget.insertAggregation;
 		oTarget.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 			that._fnOriginalInsertAggregation.apply(this, arguments);
-			that.fireChanged();
+			that.fireChanged({
+				type : "insertAggregation",
+				value : oObject,
+				target : this
+			});
 			return this;
 		};
 
 		// We wrap the native removeAllAggregations method of the control with our logic
 		this._fnOriginalRemoveAllAggregations = oTarget.removeAllAggregations;
 		oTarget.removeAllAggregations = function(sAggregationName, bSuppressInvalidate) {
+			var aRemovedObjects = this.getAggregation(sAggregationName);
 			that._fnOriginalRemoveAllAggregations.apply(this, arguments);
-			that.fireChanged();
+			that.fireChanged({
+				type : "removeAllAggregations",
+				value : aRemovedObjects,
+				target : this
+			});
 			return this;
 		};
 
 		// We wrap the native destroyAggregation method of the control with our logic
 		this._fnOriginalDestroyAggregation = oTarget.destroyAggregation;
 		oTarget.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+			var aRemovedObjects = this.getAggregation(sAggregationName);
 			that._fnOriginalDestroyAggregation.apply(this, arguments);
-			that.fireChanged();
+			that.fireChanged({
+				type : "destroyAggregation",
+				value : aRemovedObjects,
+				target : this
+			});
 			return this;
 		};		
 

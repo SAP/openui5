@@ -7,7 +7,7 @@
 		<style>
 			#content {
 				position: absolute;
-				top: 0px;
+				bottom: 0px;
 				z-index: 1000;
 				width: 700px;
 				height: 300px;
@@ -28,6 +28,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
+		jQuery.sap.require("sap.ui.dt.Overlay");
 			jQuery.sap.require("sap.ui.dt.DesignTimeNew");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
@@ -42,10 +43,32 @@
 				}
 			});
 
-			test("when the DesignTimeNew is initialized", function() {
+			test("when the DesignTimeNew is initialized ", function() {
 				ok(OverlayRegistry.getOverlay(this.oLayout.getId()), "overlay for layout exists");
 				ok(OverlayRegistry.getOverlay(this.oButton1.getId()), "overlay for button1 exists");
 				ok(OverlayRegistry.getOverlay(this.oButton2.getId()), "overlay for button2 exists");
+			});
+
+			test("... and new control without overlay is added to a root control aggregation", function() {
+				var oButton3 = new sap.m.Button();
+				this.oLayout.addContent(oButton3);
+
+				ok(OverlayRegistry.getOverlay(oButton3.getId()), "overlay for button3 exists");
+
+				oButton3.destroy();
+			});
+
+			test("... and the control is moved inside of root element", function() {
+				var oOldButtonOverlay = OverlayRegistry.getOverlay(this.oButton1.getId());
+				this.oLayout.addContent(this.oButton1);
+				oNewButtonOverlay = OverlayRegistry.getOverlay(this.oButton1.getId());
+				strictEqual(oOldButtonOverlay, oNewButtonOverlay, "overlay for button1 is not changed");
+			});
+
+			test("... and the control is removed from root element", function() {
+				this.oInnerLayout.removeContent(this.oButton1);
+
+				strictEqual(OverlayRegistry.getOverlay(this.oButton1.getId()), undefined, "no overlay for button1");
 			});
 
 			module("Given that an DesignTimeNew is created for a root control", {
@@ -64,22 +87,73 @@
 				strictEqual(OverlayRegistry.getOverlay(this.oButton2.getId()), undefined, "overlay for button2 destroyed");
 			});
 
+			module("Given that an DesignTimeNew is created for two root controls", {
+				setup : function() {
+					this.oLayout1 = new sap.ui.layout.VerticalLayout({
+						content : []
+					});
+					this.oLayout2 = new sap.ui.layout.VerticalLayout({
+						content : []
+					});
+					this.oLayout3 = new sap.ui.layout.VerticalLayout({
+						content : []
+					});
+					this.oLayout = new sap.ui.layout.VerticalLayout({
+						content : [this.oLayout1, this.oLayout2, this.oLayout3]
+					});
+					this.oLayout.placeAt("content");
+
+					this.oDesignTime = new sap.ui.dt.DesignTimeNew({
+						rootElements : [this.oLayout1, this.oLayout3]
+					});
+
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function() {
+					this.oLayout.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			test("when the DesignTimeNew is initialized", function() {
+				ok(OverlayRegistry.getOverlay(this.oLayout1.getId()), "overlay for layout1 exists");
+				strictEqual(OverlayRegistry.getOverlay(this.oLayout2.getId()), undefined, "overlay for layout2 not exists");
+				ok(OverlayRegistry.getOverlay(this.oLayout3.getId()), "overlay for layout3 exists");
+			});
+
+			test("when the DesignTimeNew is initialized and one root element is removed", function() {
+				this.oDesignTime.removeRootElement(this.oLayout3);
+				ok(OverlayRegistry.getOverlay(this.oLayout1.getId()), "overlay for layout1 exists");
+				strictEqual(OverlayRegistry.getOverlay(this.oLayout2.getId()), undefined, "overlay for layout2 doesn't exists");
+				strictEqual(OverlayRegistry.getOverlay(this.oLayout3.getId()), undefined, "overlay for layout3 doesn't exists");
+			});
+
+			test("when the DesignTimeNew is initialized and one root element is removed", function() {
+				this.oDesignTime.removeAllRootElements();
+				strictEqual(OverlayRegistry.getOverlay(this.oLayout1.getId()), undefined, "overlay for layout1 doesn't exists");
+				strictEqual(OverlayRegistry.getOverlay(this.oLayout2.getId()), undefined, "overlay for layout2 doesn't exists");
+				strictEqual(OverlayRegistry.getOverlay(this.oLayout3.getId()), undefined, "overlay for layout3 doesn't exists");
+			});
+
 			var setupTest = function() {
 				this.oButton1 = new sap.m.Button();
 				this.oButton2 = new sap.m.Button();
-				this.oLayout = new sap.ui.layout.VerticalLayout({
+				this.oInnerLayout = new sap.ui.layout.VerticalLayout({
 					content : [
 						this.oButton1,
 						this.oButton2
 					]
 				});
+				this.oLayout = new sap.ui.layout.VerticalLayout({
+					content : [this.oInnerLayout]
+				});
 				this.oLayout.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				this.oDesignTime = new sap.ui.dt.DesignTimeNew({
-					rootElement : this.oLayout
+					rootElements : [this.oLayout]
 				});
 				sap.ui.getCore().applyChanges();
-			};
+			};		
 
 		</script>
 	</head>

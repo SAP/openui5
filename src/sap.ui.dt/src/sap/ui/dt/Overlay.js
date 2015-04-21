@@ -34,7 +34,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
@@ -81,6 +81,14 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 						selected : {
 							type : "boolean"
 						}
+					}
+				},
+				elementDataChanged : {
+					parameters : {
+						type : "string",
+						value : "any",
+						oldValue : "any",
+						target : "sap.ui.core.Element"
 					}
 				}
 			}
@@ -150,6 +158,12 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 			this._elementId = oElement.getId();
 			OverlayRegistry.register(oElement, this);
 			this._observeControl(oElement);
+
+			var oParent = oElement.getParent();
+			var oParentOverlay = OverlayRegistry.getOverlay(oParent);
+			if (oParentOverlay) {
+				oParentOverlay.sync();
+			}
 
 			if (DOMUtil.getElementGeometry(oElement)) {
 				this.rerender();
@@ -275,7 +289,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	/**
 	 * @private
 	 */
-	Overlay.prototype._syncAggregationOverlays = function() {
+	Overlay.prototype.sync = function() {
 		var that = this;
 		var aAggregationOverlays = this.getAggregation("_aggregationOverlays") || [];
 		jQuery.each(aAggregationOverlays, function(index, oAggregationOverlay) {
@@ -286,9 +300,10 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	/**
 	 * @private
 	 */
-	Overlay.prototype._onElementChanged = function() {
-		this._syncAggregationOverlays();
+	Overlay.prototype._onElementChanged = function(oEvent) {
+		this.sync();
 		this.invalidate();
+		this.fireElementDataChanged(oEvent.getParameters());
 	};
 
 	/**

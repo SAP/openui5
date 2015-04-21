@@ -105,6 +105,23 @@ function(jQuery) {
 		return oParent;
 	};
 
+	Utils.getElementInstance = function(vElement) {
+		if (typeof vElement === "string") {
+			return sap.ui.getCore().byId(vElement);
+		} else {
+			return vElement;
+		}
+	};
+
+	Utils.hasAncestor = function(oElement, oAncestor) {
+		var oParent = oElement;
+		while (oParent && oParent !== oAncestor) {
+			oParent = oParent.getParent();
+		}
+
+		return !!oParent;
+	};
+
 	Utils.findAllPublicElements = function(oElement) {
 		var aFoundElements = [];
 		var that = this;
@@ -202,8 +219,8 @@ function(jQuery) {
 		var oControlContentMetaData = oControl.getContent && oControl.getContent() ? oControl.getContent()[0] : undefined;
 		oControlContentMetaData = oControlContentMetaData ? oControlContentMetaData.getMetadata() : undefined;
 
-		return ((oControl.getMetadata()._sClassName === "sap.ui.core.UIArea")
-				|| (oControlContentMetaData && oControlContentMetaData._sClassName === "sap.m.Page") ? true
+		return ((oControl.getMetadata()._sClassName === "sap.ui.core.UIArea") ||
+				(oControlContentMetaData && oControlContentMetaData._sClassName === "sap.m.Page") ? true
 				: this.isTypeOf(oControl.getMetadata(), aType));
 	};
 	
