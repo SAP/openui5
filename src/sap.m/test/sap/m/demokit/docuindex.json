@@ -340,7 +340,7 @@
 				"name" : "Message Strip",
 				"category" : "Container",
 				"since" : "1.27",
-				"samples" : [ "sap.m.sample.MessageStrip" ]
+				"samples" : [ "sap.m.sample.MessageStrip", "sap.m.sample.DynamicMessageStripGenerator" ]
 			},
 			{
 				"id" : "sap.m.MessagePopover",
@@ -1507,6 +1507,11 @@
 				"id": "sap.m.sample.MessageStrip",
 				"name": "Message Strip",
 				"description": "MessageStrip for showing status messages."
+			},
+			{
+				"id": "sap.m.sample.DynamicMessageStripGenerator",
+				"name": "Dynamic Message Strip Generator",
+				"description": "Generates MessageStrips with random properties."
 			},
 			{
 				"id": "sap.m.sample.MessageToast",
