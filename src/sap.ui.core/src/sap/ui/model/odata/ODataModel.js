@@ -299,8 +299,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			if (!!bDelay) {
 				that.metadataLoadEvent = jQuery.sap.delayedCall(0, that, doFire);
 			} else {
-				that.fireMetadataLoaded({metadata: that.oMetadata});
-				jQuery.sap.log.debug("ODataModel fired metadataloaded");
+				if (that.oMetadata) {
+					that.fireMetadataLoaded({metadata: that.oMetadata});
+					jQuery.sap.log.debug("ODataModel fired metadataloaded");
+				}
 			}
 		};
 
@@ -1389,17 +1391,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	ODataModel.prototype._getObject = function(sPath, oContext) {
 		var oNode = this.isLegacySyntax() ? this.oData : null, 
 			sResolvedPath = this.resolve(sPath, oContext),
-			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey;
+			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
 		//check for metadata path
 		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
 			iSeparator = sResolvedPath.indexOf('/##');
 			if (iSeparator >= 0) {
 				// Metadata binding resolved by ODataMetaModel
+				oMetaModel = this.getMetaModel();
+				if (!this.bMetaModelLoaded) {
+					return null;
+				}
 				sDataPath = sResolvedPath.substr(0, iSeparator);
 				sMetaPath = sResolvedPath.substr(iSeparator + 3);
-				oMetaContext = this.getMetaModel().getMetaContext(sDataPath);
-				oNode = this.getMetaModel()._getObject(sMetaPath, oMetaContext);
+				oMetaContext = oMetaModel.getMetaContext(sDataPath);
+				oNode = oMetaModel.getProperty(sMetaPath, oMetaContext);
 			} else {
 				// Metadata binding resolved by ODataMetadata
 				oNode = this.oMetadata._getAnnotation(sResolvedPath);
@@ -3246,8 +3252,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @returns {sap.ui.model.odata.ODataMetaModel} The meta model for this ODataModel
 	 */
 	ODataModel.prototype.getMetaModel = function() {
+		var that = this;
 		if (!this.oMetaModel) {
 			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations);
+			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
+			this.oMetaModel.loaded().then(function() {
+				that.bMetaModelLoaded = true;
+				that.checkUpdate();
+			});
 		}
 		return this.oMetaModel;
 	};
