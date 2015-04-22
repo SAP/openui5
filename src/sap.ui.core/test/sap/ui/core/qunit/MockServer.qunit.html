@@ -618,7 +618,7 @@
 				response : function(oXhr, sUrlParameters) {
 					var self = oMockServer;
 					self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path' + ':before' , {oXhr: oXhr, sUrlParameters: sUrlParameters});
-			        console.log("processing");
+			        //console.log("processing");
 			        oXhr.responseText = "test";
 			        self.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + 'path' + ':after', {oXhr: oXhr}); 
 					oXhr.respondJSON(200, null, '{"name": "' + oXhr.responseText + '"}');
@@ -1095,7 +1095,10 @@
 	
 	
 		test("test Callbacks Merge", function() {
-		    
+			if (!!sap.ui.Device.browser.internet_explorer) {
+				ok(true, "IE does not support HTTP MERGE");
+				return;
+			}
 		iTesterPre = 0;
 	    iTesterPost = 0;
 
@@ -1152,7 +1155,10 @@
 	
 	
 	test("test Callbacks Patch", function() {
-	    
+		if (!!sap.ui.Device.browser.internet_explorer) {
+			ok(true, "IE does not support HTTP PATCH");
+			return;
+		}
 	   iTesterPre = 0;
 	   iTesterPost = 0;
 
