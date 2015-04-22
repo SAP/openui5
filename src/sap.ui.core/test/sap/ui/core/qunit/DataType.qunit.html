@@ -242,6 +242,42 @@
 			equal(_string.normalize("test"), "test", "the formatter is not applied for other types");
 		});
 
+		test("enum type sap.ui.core.TextAlign", function() {
+			var type = sap.ui.base.DataType.getType("sap.ui.core.TextAlign");
+			ok(!!type, "type 'sap.ui.core.TextAlign' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.TextAlign', "type name");
+			equal(type.getDefaultValue(), "Begin", "default value");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+			jQuery.each(sap.ui.core.TextAlign, function(i,v) {
+				equal(type.isValid(v), true, "accepts value " + v);
+				equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+			});
+			equal(type.isValid("something"), false, "should not accept 'something'");
+			ok(sap.ui.base.DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
+		});
+
+		test("enum type sap.ui.core.Popup.Dock", function() {
+			jQuery.sap.require("sap.ui.core.Popup");
+			var type = sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock");
+			ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.Popup.Dock', "type name");
+			equal(type.getDefaultValue(), "begin top", "default value");
+			equal(type.getBaseType().getName(), "string", "base type is string");
+			equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+
+			jQuery.each(sap.ui.core.Popup.Dock, function(i,v) {
+				equal(type.isValid(v), true, "'" + v + "' should be a valid value");
+				equal(type.parseValue(i), v, "'" + i + "' should be parsed as '" + v + "'");
+			});
+			equal(type.isValid("something"), false, "should not accept 'something'");
+			// TODO parsing of illegal values?
+			ok(sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock") === type, "multiple calls should return same type object");
+		});
+		
 	</script>
 
 </head>
