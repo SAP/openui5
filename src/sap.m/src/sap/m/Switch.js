@@ -190,22 +190,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			return sText;
 		};
 
-		Switch._getCssParameter = function(sParameter) {
-			var fnGetCssParameter = Parameters.get;
-			return fnGetCssParameter(sParameter) || fnGetCssParameter(sParameter + "-" + sap.ui.Device.os.name.toLowerCase());
-		};
-
-		var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
-			sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
-
 		// the milliseconds takes the transition from one state to another
-		Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
+		Switch._TRANSITIONTIME = Number(Parameters.get("sapMSwitch-TRANSITIONTIME")) || 0;
 
 		// the position of the inner HTML element whether the switch is "ON"
-		Switch._ONPOSITION = Number(Switch._getCssParameter("sapMSwitch-ONPOSITION"));
+		Switch._ONPOSITION = Number(Parameters.get("sapMSwitch-ONPOSITION"));
 
 		// the position of the inner HTML element whether the switch is "OFF"
-		Switch._OFFPOSITION = Number(Switch._getCssParameter("sapMSwitch-OFFPOSITION"));
+		Switch._OFFPOSITION = Number(Parameters.get("sapMSwitch-OFFPOSITION"));
 
 		// swap point
 		Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);
