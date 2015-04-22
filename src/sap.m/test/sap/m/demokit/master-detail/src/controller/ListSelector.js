@@ -2,12 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define([
-		"sap/ui/base/Object"
-	], function (Object) {
+sap.ui.define(['sap/ui/base/EventProvider'], function (EventProvider) {
 	"use strict";
 
-	return Object.extend("sap.ui.demo.masterdetail.model.ListSelector", {
+	return EventProvider.extend("sap.ui.demo.mdtemplate.model.ListSelector", {
 
 		/**
 		 * Provides a convenience API for selecting list items. All the functions will wait until the initial load of the a List passed to the instance by the setBoundMasterList
@@ -17,7 +15,9 @@ sap.ui.define([
 		 * @public
 		 * @alias sap.ui.demo.masterdetail.model.ListSelector
 		 */
-		constructor : function () {
+
+		constructor: function () {
+			sap.ui.base.EventProvider.prototype.constructor.apply(this, arguments);
 			this._oWhenListHasBeenSet = new Promise(function (fnResolveListHasBeenSet) {
 				this._fnResolveListHasBeenSet = fnResolveListHasBeenSet;
 			}.bind(this));
@@ -54,7 +54,6 @@ sap.ui.define([
 						);
 					});
 			}.bind(this));
-
 		},
 
 		/**
@@ -64,10 +63,15 @@ sap.ui.define([
 		 * @param {sap.m.List} oList The list all the select functions will be invoked on.
 		 * @public
 		 */
-		setBoundMasterList : function (oList) {
+		setBoundMasterList: function (oList) {
 			this._oList = oList;
 			this._fnResolveListHasBeenSet(oList);
+
+			// this handles that the master gets closed if the app is run
+			// on a tablet in orientation mode.
+			oList.attachEvent("selectionChange", this.fireListSelectionChanged, this);
 		},
+
 
 		/**
 		 * Tries to select and scroll to a list item with a matching binding context. If there are no items matching the binding context or the ListMode is none,
@@ -76,7 +80,7 @@ sap.ui.define([
 		 * @param {string} sBindingPath the binding path matching the binding path of a list item
 		 * @public
 		 */
-		selectAListItem : function (sBindingPath) {
+		selectAListItem: function (sBindingPath) {
 
 			this.oWhenListLoadingIsDone.then(
 				function () {
@@ -107,6 +111,31 @@ sap.ui.define([
 			);
 		},
 
+
+		//
+		// Convenience Functions for List Selection Change Event
+		//
+
+		fireListSelectionChanged : function (mArguments) {
+			this.fireEvent(this.M_EVENTS.ListSelectionChanged, mArguments);
+			return this;
+		},
+
+		attachListSelectionChanged : function (oData, fnFunction, oListener) {
+			this.attachEvent(this.M_EVENTS.ListSelectionChanged, oData, fnFunction, oListener);
+			return this;
+		},
+
+		detachListSelectionChanged : function (fnFunction, oListener) {
+			this.detachEvent(this.M_EVENTS.ListSelectionChanged, fnFunction, oListener)
+			return this;
+		},
+
+
+		M_EVENTS : {
+			ListSelectionChanged : "listSelectionChanged"
+		},
+
 		/**
 		 * Removes all selections from master list.
 		 * Does not trigger 'selectionChange' event on master list, though.
@@ -119,8 +148,6 @@ sap.ui.define([
 				this._oList.removeSelections(true);
 			}.bind(this));
 		}
-
-
 	});
 
 });
