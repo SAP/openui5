@@ -1770,7 +1770,7 @@
 				ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				ok(oError.statusCode === "404", "error code");
+				equal(oError.statusCode, 404, "error code");
 				ok(true, "request failed");
 			},
 			batchGroupId: "myId1"
@@ -2128,25 +2128,25 @@
 		oModel.attachRequestSent(this, function(oEvent) {
 			iCount1++;
 			if (iCount1 == 1) {
+				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				sReqId3 = oEvent.getParameter('ID');
+			}
+			
+			if (iCount1 == 2) {
 				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
 			
-			if (iCount1 == 2) {
+			if (iCount1 == 3) {
 				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
-			}
-			
-			if (iCount1 == 3) {
-				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
-				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
-				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
-				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
-				sReqId3 = oEvent.getParameter('ID');
 			}
 			
 
@@ -2230,7 +2230,7 @@
 				bSuccess = true;
 			},
 			error : function(oError) {
-				ok(false, "request failed");
+				ok(true, "error callback of aborted request is called");
 			},
 			batchGroupId: "myId1"
 		});
@@ -2252,7 +2252,7 @@
 				bSuccess = true;
 			},
 			error : function(oError) {
-				ok(false, "request failed");
+				ok(true, "error callback of aborted request is called");
 			},
 			batchGroupId: "myId1"
 		});
@@ -2261,7 +2261,7 @@
 				bSuccess = true;
 			},
 			error : function(oError) {
-				ok(false, "request failed");
+				ok(true, "error callback of aborted request is called");
 			},
 			batchGroupId: "myId1"
 		});
@@ -2269,20 +2269,19 @@
 			ok(false, "request should be aborted");
 		}, error: function(oEvent){
 			ok(true, "request should be aborted");
-			start();
 		}});
 		oAbort.abort();
 
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			ok(true, "request should be aborted");
 			equal(oEvent.getParameter('success'), false, "request completed with success false");
+			start();
 		});
 	});
 
 	asyncTest("test abort of request in non batch request", function() {
 		var bSuccess = false;
 		var oAbort = {};
-		var iCount = 0;
 		oModel.setUseBatch(false);
 		oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
@@ -2297,20 +2296,18 @@
 				bSuccess = true;
 			},
 			error : function(oError) {
-				ok(true, "request aborted");
+				ok(true, "error callback of aborted request is called");
 			},
 		});
 		oAbort.abort();
 
 		oModel.attachRequestCompleted(this, function(oEvent) {
-			iCount++;
 			if (oEvent.getParameter('success')){
 				ok(oEvent.getParameter('url').indexOf("ProductSet('HT-1001')") !== -1, "Param check: url");						
 			} else {
-				ok(oEvent.getParameter('url').indexOf("ProductSet('AD-1000')") !== -1, "Param check: url");
-				ok(true, "request should have been aborted!");
+				ok(false, "aborted request should have never been sent");
 			}
-			if (iCount == 2 && bSuccess){
+			if (bSuccess){
 				start();						
 			}
 		});
