@@ -282,9 +282,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 		* @param {object} [mSettings]
 		* 		optional configuration for preprocessor
 		*/
-		XMLView.registerPreprocessor = function(sType, vPreprocessor, bOnDemand, bSyncSupport, mSettings) {
+		XMLView.registerPreprocessor = function(sType, vPreprocessor, bSyncSupport, bOnDemand, mSettings) {
 			if (sType == "xml" || sType == "controls") {
-				sap.ui.core.mvc.View.registerPreprocessor(sType, vPreprocessor, this.getMetadata().getClass()._sType, bOnDemand, bSyncSupport, mSettings);
+				sap.ui.core.mvc.View.registerPreprocessor(sType, vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
 			} else {
 				jQuery.sap.log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
