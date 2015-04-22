@@ -3,7 +3,7 @@
 	"name": "sap.ui.test.mixed.Component",
 	
 	"sap.app": {
-		"id": "sap.ui.test.mixed.Component",
+		"id": "sap.ui.test.mixed",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
