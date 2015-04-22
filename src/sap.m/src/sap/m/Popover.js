@@ -1414,10 +1414,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		//cross header or cross footer detection
 		oArrowPos = $arrow.position();
 		oFooterPos = $footer.position();
+
+		var oNavContent = this._getSingleNavContent(),
+			oPageContent = this._getSinglePageContent(),
+			iPageHeaderHeight = 0;
+
+		if (oNavContent || oPageContent) {
+			oPageContent = oPageContent || oNavContent.getCurrentPage();
+			iPageHeaderHeight = oPageContent._getAnyHeader().$().outerHeight();
+		}
+
 		if (sPlacement === sap.m.PlacementType.Left || sPlacement === sap.m.PlacementType.Right) {
-			if ((oArrowPos.top + iArrowHeight) < (iHeaderHeight + iSubHeaderHeight)) {
+			if ((oArrowPos.top + iArrowHeight) < (iHeaderHeight + iSubHeaderHeight) || ((oArrowPos.top + iArrowHeight) < iPageHeaderHeight)) {
 				$arrow.addClass("sapMPopoverHeaderAlignArr");
-			} else if ( (oArrowPos.top < (iHeaderHeight + iSubHeaderHeight)) || ($footer.length && ((oArrowPos.top + iArrowHeight) > oFooterPos.top) && (oArrowPos.top < oFooterPos.top)) ) {
+			} else if ((oArrowPos.top < (iHeaderHeight + iSubHeaderHeight)) || (oArrowPos.top < iPageHeaderHeight) || ($footer.length && ((oArrowPos.top + iArrowHeight) > oFooterPos.top) && (oArrowPos.top < oFooterPos.top)) ) {
 				$arrow.addClass("sapMPopoverCrossArr");
 			} else if ($footer.length && (oArrowPos.top > oFooterPos.top) ) {
 				$arrow.addClass("sapMPopoverFooterAlignArr");
