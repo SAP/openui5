@@ -467,9 +467,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 	 * view instance already, that one is used.
 	 *
-	 * It can be either a module name as string of an object with the same interface as
-	 * {@link sap.ui.core.mvc.View.Preprocessor} (you may inherit from it) or a function with a signature according to
-	 * {@link sap.ui.core.mvc.View.Preprocessor.process}.
+	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
+	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
 	 *
 	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
 	 * in sync mode, as this could have unexpected side effects. You may override this behaviour by setting the
