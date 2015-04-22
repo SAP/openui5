@@ -2202,14 +2202,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (oGroup.changes) {
 			jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 				for (var i = 0; i < aChangeSet.length; i++) {
-					var oRequest = aChangeSet[i].request;
+					var oRequest = aChangeSet[i].request,
+						sKey = oRequest.requestUri.split('?')[0];
 					if (oRequest.method === "POST") {
-						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + oRequest.requestUri);
+						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 						if (oEntityMetadata) {
 							mEntityTypes[oEntityMetadata.entityType] = true;
 						}
 					} else {
-						mChangedEntities[oRequest.requestUri] = true;
+						mChangedEntities[sKey] = true;
 					}
 				}
 			});
