@@ -942,7 +942,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (typeof (vTitle) === "string" || vTitle instanceof String) {
 			oTitle = sap.ui.table.TableHelper.createTextView({
 				text: vTitle,
-				wrapping: false,
 				width: "100%"
 			});
 			oTitle.addStyleClass("sapUiTableHdrTitle");
@@ -960,7 +959,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (typeof (vFooter) === "string" || vFooter instanceof String) {
 			oFooter = sap.ui.table.TableHelper.createTextView({
 				text: vFooter,
-				wrapping: false,
 				width: "100%"
 			});
 		}
