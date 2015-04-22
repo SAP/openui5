@@ -10,7 +10,7 @@ function (Opa5) {
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheAppOnADesktopDevice();
+		Given.iStartTheApp();
 
 		//Actions
 		When.onTheMasterPage.iLookAtTheScreen();
@@ -55,7 +55,7 @@ function (Opa5) {
 
 	opaTest("Navigate directly to an object not on the client with hash: no item should be selected and the object page should be displayed", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartTheAppOnADesktopDevice("#/object/ObjectID_2");
+		Given.iStartTheApp("#/object/ObjectID_2");
 
 		//Actions
 		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
@@ -68,7 +68,7 @@ function (Opa5) {
 
 	opaTest("Start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartTheAppOnADesktopDevice();
+		Given.iStartTheApp();
 
 		//Actions
 		When.onTheMasterPage.iWaitUntilTheListIsLoaded();

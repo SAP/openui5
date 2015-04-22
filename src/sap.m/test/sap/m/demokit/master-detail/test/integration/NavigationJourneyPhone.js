@@ -6,11 +6,11 @@ sap.ui.require(
 ],
 function (Opa5) {
 
-	QUnit.module("Mobile navigation");
+	QUnit.module("Phone navigation");
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheAppOnAPhone();
+		Given.iStartTheApp();
 
 		//Actions
 		When.onTheMasterPage.iLookAtTheScreen();
@@ -49,7 +49,7 @@ function (Opa5) {
 
 	opaTest("Start the app with an empty hash: the hash should still be empty after loading", function (Given, When, Then) {
 		//Arrangement
-		Given.iStartTheAppOnAPhone();
+		Given.iStartTheApp();
 
 		//Actions
 		When.onTheMasterPage.iWaitUntilTheListIsLoaded();

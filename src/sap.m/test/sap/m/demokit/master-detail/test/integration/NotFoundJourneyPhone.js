@@ -1,4 +1,4 @@
-﻿/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
+/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.require(
 	[
@@ -8,23 +8,8 @@ sap.ui.require(
 
 		QUnit.module("Phone not found");
 
-		opaTest("Should see the resource not found page and no selection in the master list when navigating to an invalid hash", function (Given, When, Then) {
-			//Arrangement
-			Given.iStartTheApp();
-
-			//Actions
-			When.onTheMasterPage.iWaitUntilTheListIsLoaded();
-			When.onTheBrowserPage.iChangeTheHashToSomethingInvalid();
-
-			// Assertions
-			Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
-				and.theNotFoundPageShouldSayResourceNotFound();
-			Then.onTheMasterPage.theListShouldHaveNoSelection().
-				and.iTeardownMyAppFrame();
-		});
-
 		function opaTestFactory (sTestName, sHash , fnTest) {
-			opaTest("Desktop: " + sTestName, function (Given, When, Then) {
+			opaTest("Phone: " + sTestName, function (Given, When, Then) {
 				Given.iStartTheApp(sHash);
 				fnTest.call(this, Given, When, Then);
 				Then.iTeardownMyAppFrame();

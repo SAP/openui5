@@ -13,6 +13,10 @@ module.exports = function(grunt) {
 			localServerTestUrl : 'http://localhost:8080/test-resources'
 		},
 
+		tests: {
+			opaTimeout: 900000
+		},
+
 		connect: {
 			options: {
 				port: 8080,
@@ -73,9 +77,23 @@ module.exports = function(grunt) {
 						'<%= dir.localServerTestUrl %>/integration/opaTests.qunit.html'
 					],
 					// same as qunits timeout 90 seconds since opa test might take a while
-					timeout: 900000
+					timeout: '<%= tests.opaTimeout %>'
 				}
+			},
+			opaPhone: {
+				options: {
+					urls: [
+						'<%= dir.localServerTestUrl %>/integration/opaTestsPhone.qunit.html'
+					],
+					// same as qunits timeout 90 seconds since opa test might take a while
+					timeout: '<%= tests.opaTimeout %>'
+				},
 
+				page: {
+					settings: {
+						userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3" // iOS userAgent string
+					}
+				}
 			}
 		}
 
