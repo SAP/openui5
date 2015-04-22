@@ -7,6 +7,8 @@ sap.ui.require([
 	function(Opa5, Common, AggregationLengthEquals, PropertyStrictEquals) {
 		"use strict";
 
+		var sViewName = "Detail";
+
 		Opa5.createPageObjects({
 			onTheDetailPage: {
 				baseClass: Common,
@@ -14,11 +16,26 @@ sap.ui.require([
 					iPressTheBackButton : function () {
 						return this.waitFor({
 							id : "page",
-							viewName : "Detail",
+							viewName : sViewName,
 							success: function (oPage) {
 								oPage.$("navButton").trigger("tap");
 							},
 							errorMessage : "Did not find the nav button on detail page"
+						});
+					},
+
+					iPressOnTheShareButton : function () {
+						return this.waitFor({
+							controlType: "sap.m.Button",
+							viewName : sViewName,
+							matchers : new sap.ui.test.matchers.PropertyStrictEquals({
+								name : "icon",
+								value : "sap-icon://action"
+							}),
+							success: function (oButton) {
+								oButton[0].$().trigger("tap");
+							},
+							errorMessage : "Did not find the share button on detail page"
 						});
 					}
 				},
@@ -26,7 +43,7 @@ sap.ui.require([
 					iShouldSeeTheBusyIndicator: function () {
 						return this.waitFor({
 							id : "page",
-							viewName : "Detail",
+							viewName : sViewName,
 							success : function (oPage) {
 								// we set the view busy, so we need to query the parent of the app
 								QUnit.ok(oPage.getParent().getBusy(), "The master view is busy");
@@ -38,7 +55,7 @@ sap.ui.require([
 					theObjectPageShowsTheFirstObject : function () {
 						return this.waitFor({
 							controlType : "sap.m.ObjectHeader",
-							viewName : "Detail",
+							viewName : sViewName,
 							matchers : [ new PropertyStrictEquals({name : "title", value : "Object 1"}) ],
 							success : function () {
 								QUnit.ok(true, "was on the first object page");
@@ -67,7 +84,7 @@ sap.ui.require([
 					iShouldSeeTheObjectLineItemsList : function () {
 						return this.waitFor({
 							id : "lineItemsList",
-							viewName : "Detail",
+							viewName : sViewName,
 							success : function (oList) {
 								QUnit.ok(oList, "Found the line items list.");
 							}
@@ -77,7 +94,7 @@ sap.ui.require([
 					theLineItemsListShouldHave4Entries : function () {
 						return this.waitFor({
 							id : "lineItemsList",
-							viewName : "Detail",
+							viewName : sViewName,
 							matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
 							success : function () {
 								QUnit.ok(true, "The list has 4 items");
@@ -89,7 +106,7 @@ sap.ui.require([
 					theLineItemsHeaderShouldDisplay4Entries : function () {
 						return this.waitFor({
 							id : "lineItemsHeader",
-							viewName : "Detail",
+							viewName : sViewName,
 							matchers : [ new PropertyStrictEquals({name : "text", value : "Line Items (4)"}) ],
 							success : function () {
 								QUnit.ok(true, "The line item list displays 4 items");
@@ -101,13 +118,46 @@ sap.ui.require([
 					theFirstLineItemHasIDLineItemID1 : function () {
 						return this.waitFor({
 							id : "lineItemsList",
-							viewName : "Detail",
+							viewName : sViewName,
 							matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
 							success : function (oList) {
 								var oFirstItem = oList.getItems()[0];
 								QUnit.strictEqual(oFirstItem.getBindingContext().getProperty("LineItemID"), "LineItemID_1", "The first line item has Id 'LineItemID_1'");
 							},
 							errorMessage : "The first line item does not have Id 'LineItemID_1'."
+						});
+					},
+
+					iShouldSeeTheShareEmailButton: function () {
+						return this.waitFor({
+							id: "shareEmail-button",
+							viewName: sViewName,
+							success: function (oButton) {
+								QUnit.ok(true, "The E-Mail button is visible");
+							},
+							errorMessage: "The E-Mail button was not found"
+						});
+					},
+
+					iShouldSeeTheShareTileButton: function () {
+						return this.waitFor({
+							id: "shareTile-button",
+							viewName: sViewName,
+							success: function (oButton) {
+								QUnit.ok(true, "The Save as Tile button is visible");
+							},
+							errorMessage: "The Save as Tile  button was not found"
+						});
+					},
+
+					iShouldSeeTheShareJamButton: function () {
+						return this.waitFor({
+							id: "shareJam-button",
+							viewName: sViewName,
+							success: function (oButton) {
+								QUnit.ok(true, "The Jam share button is visible");
+							},
+							errorMessage: "The Jam share button was not found"
 						});
 					}
 				}

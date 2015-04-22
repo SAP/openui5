@@ -2,11 +2,14 @@
 	controllerName="sap.ui.demo.masterdetail.controller.Master"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
-	<Page
+	xmlns="sap.m"
+	xmlns:semantic="sap.m.semantic">
+	<semantic:MasterPage
 		id="page"
-		title="{view>/masterListTitle}">
-		<subHeader>
+		title="{view>/masterListTitle}"
+		navButtonPress="onNavBack"
+		showNavButton="true">
+		<semantic:subHeader>
 			<Bar id="headerBar">
 				<contentMiddle>
 					<SearchField
@@ -18,8 +21,9 @@
 					</SearchField>
 				</contentMiddle>
 			</Bar>
-		</subHeader>
-		<content>
+		</semantic:subHeader>
+
+		<semantic:content>
 			<PullToRefresh
 				id="pullToRefresh"
 				visible="{device>/support/touch}"
@@ -73,51 +77,20 @@
 					</ObjectListItem>
 				</items>
 			</List>
-		</content>
-		<footer>
-			<OverflowToolbar
-				id="footerBar">
-				<ToolbarSpacer/>
-				<!-- simple sort/group/filter with Select controls -->
-				<Select
-					id="sortSelect"
-					type="IconOnly"
-					icon="sap-icon://sort"
-					autoAdjustWidth="true"
-					change="onSort">
-					<core:Item
-						id="masterSort1"
-						key="Name"
-						text="{i18n>masterSort1}"/>
-					<core:Item
-						id="masterSort2"
-						key="UnitNumber"
-						text="{i18n>masterSort2}"/>
-				</Select>
+		</semantic:content>
 
-				<!-- complex sort/group/filter with ViewSettingsDialog -->
-				<OverflowToolbarButton
-					text="{i18n>MasterListFilterButtonOverflowText}"
-					id="filter"
-					icon="sap-icon://filter"
-					press="onOpenViewSettings"/>
+		<semantic:semanticControls>
+			<semantic:SemanticSelect id="sort" type="Sort" change="onSort">
+				<core:Item id="masterSort1" key="Name" text="{i18n>masterSort1}"/>
+				<core:Item id="masterSort2" key="UnitNumber" text="{i18n>masterSort2}"/>
+			</semantic:SemanticSelect>
 
-				<Select
-					id="groupSelect"
-					type="IconOnly"
-					icon="sap-icon://group-2"
-					autoAdjustWidth="true"
-					change="onGroup">
-					<core:Item
-						id="masterGroupNone"
-						key="None"
-						text="{i18n>masterGroupNone}"/>
-					<core:Item
-						id="masterGroup1"
-						key="Group1"
-						text="{i18n>masterGroup1}"/>
-				</Select>
-			</OverflowToolbar>
-		</footer>
-	</Page>
+			<semantic:SemanticButton id="filter" type="Filter" press="onOpenViewSettings" />
+
+			<semantic:SemanticSelect id="group" type="Group" change="onGroup">
+				<core:Item id="masterGroupNone" key="None" text="{i18n>masterGroupNone}"/>
+				<core:Item id="masterGroup1" key="Group1" text="{i18n>masterGroup1}"/>
+			</semantic:SemanticSelect>
+		</semantic:semanticControls>
+	</semantic:MasterPage>
 </mvc:View>
