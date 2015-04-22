@@ -16,7 +16,6 @@ sap.ui.test.Opa5.extendConfig({
 	viewNamespace: "sap.ui.demo.masterdetail.view."
 });
 
-jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.MasterJourney");
-jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.NavigationJourney");
-jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.NotFoundJourney");
-jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.BusyJourney");
+jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.NavigationJourneyPhone");
+jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.NotFoundJourneyPhone");
+jQuery.sap.require("sap.ui.demo.masterdetail.test.integration.BusyJourneyPhone");

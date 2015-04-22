@@ -4,42 +4,30 @@ sap.ui.define([
 	function(Opa5) {
 		"use strict";
 
-		function getFrameUrl (sHash, bAddPhone, sUrlParameters) {
+		function getFrameUrl (sHash, sUrlParameters) {
 			sHash = sHash || "";
 			var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/app/test", ".html");
 
 			sUrlParameters = "?" + (sUrlParameters ? sUrlParameters + "&" : "");
-
-			if (bAddPhone) {
-				sUrlParameters += "sap-ui-xx-fakeOS=ios";
-			}
 
 			return sUrl + sUrlParameters + sHash;
 		}
 
 		return Opa5.extend("sap.ui.demo.masterdetail.test.integration.pages.Common", {
 
-			iStartTheAppOnADesktopDevice : function (sHash) {
+			iStartTheApp : function (sHash) {
 				this.iStartMyAppInAFrame(getFrameUrl(sHash));
 			},
 
-			iStartTheAppOnAPhone : function (sHash) {
-				this.iStartMyAppInAFrame(getFrameUrl(sHash, true));
-			},
-
-			iStartTheAppOnADesktopDeviceWithDelay : function (sHash, iDelay) {
-				this.iStartMyAppInAFrame(getFrameUrl(sHash, false, "serverDelay=" + iDelay));
-			},
-
-			iStartTheAppOnAPhoneWithDelay : function (sHash, iDelay) {
-				this.iStartMyAppInAFrame(getFrameUrl(sHash, true, "serverDelay=" + iDelay));
+			iStartTheAppWithDelay : function (sHash, iDelay) {
+				this.iStartMyAppInAFrame(getFrameUrl(sHash, "serverDelay=" + iDelay));
 			},
 
 			iLookAtTheScreen : function () {
 				return this;
 			},
 			iStartMyAppOnADesktopToTestErrorHandler : function (sParam) {
-				this.iStartMyAppInAFrame(getFrameUrl("", false, sParam));
+				this.iStartMyAppInAFrame(getFrameUrl("", sParam));
 			}
 
 		});
