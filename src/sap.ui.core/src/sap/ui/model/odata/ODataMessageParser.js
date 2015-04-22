@@ -116,7 +116,6 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
 		this._outputMesages(aMessages);
 	}
-
 	this._propagateMessages(aMessages, sRequestUri, mGetEntities, mChangeEntities);
 };
 
@@ -161,7 +160,7 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
  * messageChange-event) based on the entities belonging to this request.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {object} oResponse - The response from the back-end
+ * @param {string} sRequestUri - The request URL
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @return {void}
@@ -222,7 +221,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, sRequestUr
  * Creates a sap.ui.core.message.Message from the given JavaScript object
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {object} oResponse - The response from the back-end
+ * @param {string} sRequestUri - The request URL
  * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
  * @return {sap.ui.core.message.Message} The message for the given error
  */
@@ -239,12 +238,15 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
 		? oMessageObject["message"]["value"]
 		: oMessageObject["message"];
 
+	var sDescriptionUrl = oMessageObject.longtextUrl ? oMessageObject.longtextUrl : "";
+
 	var sTarget = this._createTarget(oMessageObject, sRequestUri);
 
 	return new Message({
 		type:      sType,
 		code:      sCode,
 		message:   sText,
+		descriptionUrl: sDescriptionUrl,
 		target:    sTarget,
 		processor: this._processor,
 		technical: bIsTechnical
@@ -258,7 +260,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, sRequestU
  * URI and appends the target if the target was not specified as absolute path (with leading "/")
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {object} oResponse - The response from the back-end
+ * @param {string} sRequestUri - The request URL
  * @return {string} The actual target string
  * @private
  */
@@ -305,7 +307,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, sRequestUr
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the headers property map will be used
- *
+ * @param {string} sRequestUri - The request URL
  */
 ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, sRequestUri) {
 	var sField = this.getHeaderField();
@@ -339,6 +341,7 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sRequestUri - The request URL
  */
 ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oResponse, sRequestUri) {
 	// TODO: The main error object does not support "target". Find out how to proceed with the main error information (ignore/add without target/add to all other errors)
@@ -359,6 +362,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sRequestUri - The request URL
  * @param {string} sContentType - The content type of the response (for the XML parser)
  * @return {void}
  */
@@ -416,6 +420,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
+ * @param {string} sRequestUri - The request URL
  * @return {void}
  */
 ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, sRequestUri) {
