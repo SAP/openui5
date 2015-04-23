@@ -56,6 +56,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.Input",
+			"url": "Input.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Label",
 			"url": "../Label.html",
 			"appComponent": "CA-UI5-CTR-SOF"
