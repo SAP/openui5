@@ -40,7 +40,10 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('>');
 	
 		// the SAPUI5 TextField and Button
-		rm.write('<div class="sapUiFupInp"');
+		rm.write('<div ');
+		if (!oFileUploader.bMobileLib) {
+			rm.write('class="sapUiFupInp"');
+		}
 		if (accessibility) {
 			rm.writeAttribute("role", "textbox");
 			rm.writeAttribute("aria-readonly", "true");
