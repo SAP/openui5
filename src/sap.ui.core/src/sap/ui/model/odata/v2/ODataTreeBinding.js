@@ -54,8 +54,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this._bRootMissing = false;
 			
 			this.aSorters = aSorters || [];
-			
-			// a queue containing all parallel running requests
+			this.sFilterParams = "";
+
+				// a queue containing all parallel running requests
 			// a request is identified by (node id, startindex, length)
 			this.mRequestHandles = {};
 			
@@ -163,8 +164,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		};
 		
 		var aParams = [];
-		
-		aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-node-for"] + " eq '" + sRootNodeID + "'"));
+		var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
+		aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-node-for"] + " eq '" + sRootNodeID + "'") + sFilterParams);
 		// make sure to abort previous requests, with the same paging parameters
 		// this is necessary to make sure, that only the most recent request gets processed
 		// e.g. the (Tree)Table performs multiple calls to the binding (see BindingTimer in Table.js) 
@@ -601,12 +602,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			if (aMissingSections.length > 0) {
 				var aParams = [];
 				if (this.bHasTreeAnnotations) {
+					var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
 					if (sNodeId) {
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'"));
+						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
 					} else {
 						// no root node id is given: sNodeId === null
 						// in this case we use the root level
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + iRootLevel));
+						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + iRootLevel) + sFilterParams);
 					}
 				}
 				/*else {
@@ -655,7 +657,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		var sPath;
 		if (this.bHasTreeAnnotations) {
 			sPath = this.oModel.resolve(this.getPath(), this.getContext());
-			aParams.push("$filter=" + this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'");
+			var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
+			aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
 		} else {
 			sPath = sNodeId;
 		}
@@ -876,6 +879,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.mRequestHandles = {};
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
+			this.sFilterParams = "";
 		}
 	};
 	
@@ -1179,6 +1183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.bInitial = false;
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this._processSelectParameters();
+			this.oEntityType = this._getEntityType();
 			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
 		}
 		return this;
@@ -1252,10 +1257,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		if (this.aSorters && this.aSorters.length > 0) {
 			aParams.push(ODataUtils.createSortParams(this.aSorters));
 		}
-		/*
-		if (this.sFilterParams) {
-			aParams.push(this.sFilterParams);
-		}*/
+
+		if (this.getFilterParams()) {
+			aParams.push("$filter=" + this.getFilterParams());
+		}
 		//also includes the selct parameters
 		//in hierarchy annotated trees, the mapping properties are mandatory
 		if (this.sCustomParams) {
@@ -1324,7 +1329,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	ODataTreeBinding.prototype.getRootLevel = function() {
 		return this.iRootLevel;
 	};
-	
+
+	ODataTreeBinding.prototype._getEntityType = function(){
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+		if (sResolvedPath) {
+			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
+			jQuery.sap.assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
+			return oEntityType;
+		}
+
+		return undefined;
+	};
+
+	ODataTreeBinding.prototype.getFilterParams = function() {
+		if (this.aFilters && this.aFilters.length > 0) {
+			if (!this.sFilterParams) {
+				this.sFilterParams = ODataUtils._createFilterParams(this.aFilters, this.oModel.oMetadata, this.oEntityType);
+				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
+			}
+		} else {
+			this.sFilterParams = "";
+		}
+
+		return this.sFilterParams;
+	};
+
 	return ODataTreeBinding;
 
 }, /* bExport= */ true);
