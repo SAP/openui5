@@ -24,6 +24,9 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script type="text/javascript" charset="utf-8">
 
+		// sinon must not use FakeXDomainRequest
+		sinon.xhr.supportsCORS = true;
+
 		var _test = "äöü";
 		
 		test("PropertiesClassAvailable", function () {
