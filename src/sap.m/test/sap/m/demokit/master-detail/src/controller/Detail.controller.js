@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-		"sap/ui/demo/masterdetail/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/Device",
-		"sap/ui/demo/masterdetail/model/promise"
+		'sap/ui/demo/masterdetail/controller/BaseController',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/Device',
+		'sap/ui/demo/masterdetail/model/promise'
 	], function (BaseController, JSONModel, Device, promise) {
 	"use strict";
 

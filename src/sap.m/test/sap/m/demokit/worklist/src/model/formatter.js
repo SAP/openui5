@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/m/Text"
-], function (Text) {
+		'sap/m/Text'
+	], function (Text) {
 	"use strict";
 
 	return {

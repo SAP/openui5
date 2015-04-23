@@ -1,8 +1,10 @@
-/*!
+﻿/*!
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/EventProvider'], function (EventProvider) {
+sap.ui.define([
+		'sap/ui/base/EventProvider'
+	], function (EventProvider) {
 	"use strict";
 
 	return EventProvider.extend("sap.ui.demo.mdtemplate.model.ListSelector", {

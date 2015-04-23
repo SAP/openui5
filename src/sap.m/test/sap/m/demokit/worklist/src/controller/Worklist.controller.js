@@ -5,9 +5,9 @@
 /*global history*/
 
 sap.ui.define([
-		"sap/ui/demo/worklist/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/demo/worklist/model/formatter"
+		'sap/ui/demo/worklist/controller/BaseController',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/demo/worklist/model/formatter'
 	], function (BaseController, JSONModel, formatter) {
 	"use strict";
 
