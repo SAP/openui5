@@ -102,6 +102,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		if (oParent instanceof sap.m.Table) {
 			return oParent;
 		}
+		
+		// support old list with columns aggregation
+		if (oParent && oParent.getMetadata().getName() == "sap.m.Table") {
+			return oParent;
+		}
 	};
 	
 	/**
