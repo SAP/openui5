@@ -298,7 +298,7 @@
 
 				var $Dialog = oDialog.$();
 				equal(jQuery(window).width(), $Dialog.outerWidth(), "Stretched Dialog's width equals window's width");
-				equal(jQuery(window).height(), $Dialog.outerHeight(), "Stretched Dialog's width equals window's width");
+				equal(jQuery(window).height(), $Dialog.outerHeight(), "Stretched Dialog's height equals window's height");
 				equal($Dialog.width(), oDialog._$content.width(), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
@@ -318,7 +318,7 @@
 
 				var $Dialog = oDialog.$();
 				equal(jQuery(window).width(), $Dialog.outerWidth(), "Stretched Dialog's width equals window's width");
-				equal(jQuery(window).height(), $Dialog.outerHeight(), "Stretched Dialog's width equals window's width");
+				equal(jQuery(window).height(), $Dialog.outerHeight(), "Stretched Dialog's height equals window's height");
 				equal($Dialog.width(), oDialog._$content.width(), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
