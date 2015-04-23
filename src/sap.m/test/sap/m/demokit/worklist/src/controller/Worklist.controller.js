@@ -42,7 +42,7 @@ sap.ui.define([
 				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [window.location.href]),
 				tableBusyDelay : 0
 			});
-			this.setModel(oViewModel, "view");
+			this.setModel(oViewModel, "worklistView");
 
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
@@ -79,7 +79,7 @@ sap.ui.define([
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");
 			}
-			this.getModel("view").setProperty("/worklistTableTitle", sTitle);
+			this.getModel("worklistView").setProperty("/worklistTableTitle", sTitle);
 		},
 
 		/**

@@ -22,6 +22,18 @@ sap.ui.require([
 						});
 					},
 
+					iWaitUntilTheFirstItemIsSelected : function () {
+						return this.waitFor({
+							id : "list",
+							viewName : sViewName,
+							matchers : function(oList) {
+								// wait until the list has a selected item
+								return oList.getSelectedItem() && oList.getSelectedItem().getTitle() === "Object 1";
+							},
+							errorMessage : "The first item of the master list is not selected"
+						});
+					},
+
 					iSortTheListOnName : function () {
 						return this.iPressItemInSelectInFooter("sort-select", "masterSort1");
 					},
@@ -152,7 +164,7 @@ sap.ui.require([
 							id : "searchField",
 							viewName : sViewName,
 							success : function (oSearchField) {
-								if ( oSearchParams.sSearchValue != null ) {
+								if ( oSearchParams.sSearchValue !== null ) {
 									oSearchField.setValue(oSearchParams.sSearchValue);
 								}
 
@@ -197,13 +209,13 @@ sap.ui.require([
 				assertions: {
 					iShouldSeeTheBusyIndicator: function () {
 						return this.waitFor({
-							id : "page",
+							id : "list",
 							viewName : sViewName,
-							success : function (oPage) {
-								// we set the view busy, so we need to query the parent of the app
-								QUnit.ok(oPage.getParent().getBusy(), "The master view is busy");
+							success : function (oList) {
+								// we set the list busy, so we need to query the parent of the app
+								QUnit.ok(oList.getBusy(), "The master list is busy");
 							},
-							errorMessage : "The master view is not busy."
+							errorMessage : "The master list is not busy."
 						});
 					},
 
@@ -218,10 +230,6 @@ sap.ui.require([
 					theListGroupShouldBeFilteredOnUnitNumberValue20OrLess : function () {
 						return this.theListShouldBeFilteredOnUnitNumberValue(20, false, {iLow: 1, iHigh: 2});
 					},
-
-/*					theMasterListGroupShouldBeFilteredOnUnitNumberValue20OrMore : function () {
-						return this.theMasterListShouldBeFilteredOnUnitNumberValue(20, true, {iLow: 3, iHigh: 11});
-					},*/
 
 					theListShouldBeGroupedBy : function (sGroupName) {
 						return this.waitFor({
@@ -402,9 +410,12 @@ sap.ui.require([
 						return this.waitFor({
 							id : "list",
 							viewName : sViewName,
-							matchers : [ new AggregationLengthEquals({name : "items", length : 10}) ],
-							success : function (oList) {
-								QUnit.strictEqual(oList.getSelectedItem().getTitle(), "Object " + iObjIndex, "Object " + iObjIndex + " is selected");
+							matchers : function(oList) {
+								// wait until the list has a selected item
+								return oList.getSelectedItem();
+							},
+							success : function (oListItem) {
+								QUnit.strictEqual(oListItem.getTitle(), "Object " + iObjIndex, "Object " + iObjIndex + " is selected");
 							},
 							errorMessage : "Object " + iObjIndex + " is not selected."
 						});
@@ -414,6 +425,14 @@ sap.ui.require([
 						return this.waitFor({
 							id : "list",
 							viewName : sViewName,
+							matchers : function(oList) {
+								// wait until the list has a selected item
+								var result = null;
+								if (!oList.getSelectedItem()) {
+									result = oList;
+								}
+								return result;
+							},
 							success: function (oList) {
 								QUnit.strictEqual(oList.getSelectedItems().length, 0, "the list selection is removed");
 							},

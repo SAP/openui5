@@ -44,11 +44,11 @@ sap.ui.require([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
-							success : function (oPage) {
+							success : function (oView) {
 								// we set the view busy, so we need to query the parent of the app
-								QUnit.ok(oPage.getParent().getBusy(), "The master view is busy");
+								QUnit.ok(oView.getBusy(), "The detail view is busy");
 							},
-							errorMessage : "The master view is not busy."
+							errorMessage : "The detail view is not busy."
 						});
 					},
 
@@ -64,7 +64,7 @@ sap.ui.require([
 						});
 					},
 
-					iShouldBeOnPage : function (sViewName, sTitleName) {
+					iShouldBeOnPage : function (sTitleName) {
 						return this.waitFor({
 							controlType : "sap.m.ObjectHeader",
 							viewName : sViewName,
@@ -78,7 +78,7 @@ sap.ui.require([
 					},
 
 					iShouldBeOnTheObjectNPage : function (iObjIndex) {
-						return this.iShouldBeOnPage("Detail", "Object " + iObjIndex);
+						return this.iShouldBeOnPage("Object " + iObjIndex);
 					},
 
 					iShouldSeeTheObjectLineItemsList : function () {

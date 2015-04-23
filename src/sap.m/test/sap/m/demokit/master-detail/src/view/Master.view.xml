@@ -6,7 +6,7 @@
 	xmlns:semantic="sap.m.semantic">
 	<semantic:MasterPage
 		id="page"
-		title="{view>/masterListTitle}"
+		title="{masterView>/title}"
 		navButtonPress="onNavBack"
 		showNavButton="true">
 		<semantic:subHeader>
@@ -39,7 +39,8 @@
 						},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
-				busyIndicatorDelay="0"
+				busyIndicatorDelay="{masterView>/delay}"
+				noDataText="{masterView>/noDataText}"
 				mode="{
 					path: 'device>/system/phone',
 					formatter: '.formatter.listMode'
@@ -48,17 +49,16 @@
 				growingThreshold="10"
 				growingScrollToLoad="true"
 				updateFinished="onUpdateFinished"
-				select="onSelect"
-				noDataText="{view>/masterListNoDataText}">
+				select="onSelect">
 				<infoToolbar>
 					<Toolbar
 						active="true"
 						id="filterBar"
-						visible="{view>/isFilterBarVisible}"
+						visible="{masterView>/isFilterBarVisible}"
 						press="onOpenViewSettings">
 						<Label
 							id="filterBarLabel"
-							text="{view>/filterBarLabel}" />
+							text="{masterView>/filterBarLabel}" />
 					</Toolbar>
 				</infoToolbar>
 				<items>

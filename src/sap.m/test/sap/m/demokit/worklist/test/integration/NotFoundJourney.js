@@ -52,6 +52,7 @@ function () {
 		});
 
 		//Actions
+		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iWaitUntilISeeObjectNotFoundPage().
 			and.iPressTheObjectNotFoundShowWorklistLink();
 
@@ -66,6 +67,7 @@ function () {
 		});
 
 		//Actions
+		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iWaitUntilISeeResourceNotFoundPage().
 			and.iPressTheNotFoundShowWorklistLink();
 

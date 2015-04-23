@@ -1,4 +1,5 @@
-/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
+/*global opaTest*/
+//declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.require(
 [],

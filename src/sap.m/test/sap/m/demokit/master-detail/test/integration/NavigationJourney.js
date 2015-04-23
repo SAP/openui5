@@ -1,5 +1,5 @@
-﻿/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
-
+﻿/*global opaTest*/
+//declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.require(
 [],
 function () {
@@ -50,7 +50,6 @@ function () {
 			and.theLineItemsHeaderShouldDisplay4Entries().
 			and.theFirstLineItemHasIDLineItemID1().
 			and.iTeardownMyAppFrame();
-
 	});
 
 	opaTest("Navigate directly to an object not on the client with hash: no item should be selected and the object page should be displayed", function (Given, When, Then) {
@@ -72,8 +71,8 @@ function () {
 
 		//Actions
 		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
-		//Assertions
 
+		//Assertions
 		Then.onTheMasterPage.theObjectNShouldBeSelectedInTheList(1);
 		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
 		Then.onTheBrowserPage.iShouldSeeTheHashForObjectN(1).

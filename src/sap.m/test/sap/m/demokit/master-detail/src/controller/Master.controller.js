@@ -4,16 +4,16 @@
 
 /*global history */
 sap.ui.define([
-		'sap/ui/demo/masterdetail/controller/BaseController',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/Filter',
-		'sap/ui/model/FilterOperator',
-		'sap/ui/model/Sorter',
-		'sap/m/GroupHeaderListItem',
-		'sap/ui/Device',
-		'sap/ui/demo/masterdetail/model/formatter',
-		'sap/ui/demo/masterdetail/model/grouper'
-	], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, grouper) {
+		"sap/ui/demo/masterdetail/controller/BaseController",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
+		"sap/ui/model/Sorter",
+		"sap/m/GroupHeaderListItem",
+		"sap/ui/Device",
+		"sap/ui/demo/masterdetail/model/formatter",
+		"sap/ui/demo/masterdetail/model/grouper"
+], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, GroupHeaderListItem, Device, formatter, grouper) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.masterdetail.controller.Master", {
@@ -29,9 +29,16 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit : function () {
-			var oListSelector = this.getOwnerComponent().oListSelector;
+			var oListSelector = this.getOwnerComponent().oListSelector,
+				oViewModel,
+				iOriginalBusyDelay;
 
 			this._oList = this.byId("list");
+			// Put down master list's original value for busy indicator delay,
+			// so it can be restored later on. Busy handling on the master list is
+			// taken care of by the master list itself.
+			iOriginalBusyDelay = this._oList.getBusyIndicatorDelay();
+
 			this._oPullToRefresh = this.byId("pullToRefresh");
 			// keeps the filter and search state
 			this._oListFilterState = {
@@ -45,32 +52,21 @@ sap.ui.define([
 			};
 
 			// Control state model
-			this._oViewModel = new JSONModel({
+			oViewModel = new JSONModel({
 				isFilterBarVisible : false,
 				filterBarLabel : "",
-				masterListTitle : this.getResourceBundle().getText("masterTitle"),
-				masterListNoDataText : this.getResourceBundle().getText("masterListNoDataText")
+				delay : 0,
+				title : this.getResourceBundle().getText("masterTitle"),
+				noDataText : this.getResourceBundle().getText("masterListNoDataText")
 			});
-			this.setModel(this._oViewModel, "view");
-
-			// instead of relying on the master list's automatic busy indication
-			// we attach to the dataRequested and dataReceived events on the list
-			// binding to set the content of the master page busy. Otherwise only
-			// the list is busy while loading the data. Additionally, we set the
-			// delay to 0 to set the view busy initially and reset it to the
-			// default after the first data was loaded.
-			this.getRouter().getTargets().getTarget("master").attachEventOnce("display", function () {
-				this.getView().setBusyIndicatorDelay(0);
-				this._oList.getBinding("items").attachDataRequested(function () {
-					this.getView().setBusy(true);
-				}.bind(this));
-				this._oList.getBinding("items").attachDataReceived(function () {
-					this.getView().setBusy(false);
-					this.getView().setBusyIndicatorDelay(null);
-				}.bind(this));
-			}.bind(this));
-
-
+			this.setModel(oViewModel, "masterView");
+			// Make sure, busy indication is showing immediately so there is no
+			// break after the busy indication for loading the view's meta data is
+			// ended (see promise 'oWhenMetadataIsLoaded' in AppController)
+			this._oList.attachEventOnce("updateFinished", function(){
+				// Restore original busy indicator delay for worklist's table
+				oViewModel.setProperty("/delay", iOriginalBusyDelay);
+			});
 			oListSelector.setBoundMasterList(this._oList);
 
 			// if the master route was hit (empty hash) we have to set
@@ -337,7 +333,7 @@ sap.ui.define([
 				//Display 'Objects' instead of 'Objects (0)'
 				sTitle = this.getResourceBundle().getText("masterTitle");
 			}
-			this._oViewModel.setProperty("/masterListTitle", sTitle);
+			this.getModel("masterView").setProperty("/title", sTitle);
 		},
 
 		/**
@@ -345,14 +341,15 @@ sap.ui.define([
 		 * @private
 		 */
 		_applyFilterSearch : function () {
-			var aFilters = this._oListFilterState.aSearch.concat(this._oListFilterState.aFilter);
+			var aFilters = this._oListFilterState.aSearch.concat(this._oListFilterState.aFilter),
+				oViewModel = this.getModel("masterView");
 			this._oList.getBinding("items").filter(aFilters, "Application");
 			// changes the noDataText of the list in case there are no filter results
 			if (aFilters.length !== 0) {
-				this._oViewModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
+				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataWithFilterOrSearchText"));
 			} else if (this._oListFilterState.aSearch.length > 0) {
 				// only reset the no data text to default when no new search was triggered
-				this._oViewModel.setProperty("/masterListNoDataText", this.getResourceBundle().getText("masterListNoDataText"));
+				oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
 			}
 		},
 
@@ -371,8 +368,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_updateFilterBar : function (sValue) {
-			this._oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
-			this._oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
+			var oViewModel = this.getModel("masterView");
+			oViewModel.setProperty("/isFilterBarVisible", (this._oListFilterState.aFilter.length > 0));
+			oViewModel.setProperty("/filterBarLabel", this.getResourceBundle().getText("masterFilterBarText", [sValue]));
 		}
 	});
 
