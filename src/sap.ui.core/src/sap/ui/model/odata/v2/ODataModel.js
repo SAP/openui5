@@ -2534,19 +2534,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				}
 			});
 			// check if we have unit properties which were changed and if yes sent the associated unit prop also.
-			var oMetaEntityType = this.getMetaModel().getODataEntityType(oEntityType.namespace + "." + oEntityType.name);
-			var oMetaPropertyType, sUnitNameProp;
-			if (oMetaEntityType) {
-				jQuery.each(oPayload, function(sPropName, oPropValue) {
-					if (sPropName !== '__metadata') {
-						oMetaPropertyType = that.getMetaModel().getODataProperty(oMetaEntityType, sPropName);
-						sUnitNameProp = oMetaPropertyType['sap:unit'];
-						if (sUnitNameProp) {
+			var sPath = "/" + sKey, sUnitNameProp;
+			jQuery.each(oPayload, function(sPropName, oPropValue) {
+				if (sPropName !== '__metadata') {
+					sUnitNameProp = that.getProperty(sPath + "/" + sPropName + "/#@sap:unit");
+					if (sUnitNameProp) {
+						// set unit property only if it wasn't modified. Otherwise it should already exist on the payload.
+						if (oPayload[sUnitNameProp] === undefined) {
 							oPayload[sUnitNameProp] = oUnModifiedEntry[sUnitNameProp];
 						}
 					}
-				});
-			}
+				}
+			});
 		}
 
 		// remove any yet existing references which should already have been deleted
