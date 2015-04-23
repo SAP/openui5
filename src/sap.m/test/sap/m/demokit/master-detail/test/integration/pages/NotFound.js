@@ -28,11 +28,11 @@ sap.ui.require([
 					},
 
 					iShouldSeeTheNotFoundPage : function () {
-						return this.iShouldSeeTheNotFoundGeneralPage(sNotFoundPageId, sNotFoundView)
+						return this.iShouldSeeTheNotFoundGeneralPage(sNotFoundPageId, sNotFoundView);
 					},
 
 					iShouldSeeTheObjectNotFoundPage : function () {
-						return this.iShouldSeeTheNotFoundGeneralPage(sNotFoundPageId, sDetailNotFoundView)
+						return this.iShouldSeeTheNotFoundGeneralPage(sNotFoundPageId, sDetailNotFoundView);
 					},
 
 					theNotFoundPageShouldSayResourceNotFound : function () {

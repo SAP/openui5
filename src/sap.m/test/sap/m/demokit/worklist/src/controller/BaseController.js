@@ -84,11 +84,8 @@ sap.ui.define([
 
 		/**
 		 * Event handler when the share button has been clicked
-		 * @param {sap.ui.base.Event} oEvent the butten press event
-		 * @public
-		 * @returns
 		 */
-		onSharePress : function (oEvent) {
+		onSharePress : function () {
 			var oShareSheet = this.getView().byId("shareSheet");
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), oShareSheet);
 			oShareSheet.openBy(this.byId("shareButton"));
@@ -96,9 +93,6 @@ sap.ui.define([
 
 		/**
 		 * Event handler when the share by E-Mail button has been clicked
-		 * @param {sap.ui.base.Event} oEvent the button press event
-		 * @public
-		 * @returns
 		 */
 		onShareEmailPress: function () {
 			var oViewModel = this.getModel("view");

@@ -35,26 +35,26 @@ sap.ui.define([
 
 			oMockServer.simulate(sPath + "/metadata.xml", sPath);
 			var aRequests = oMockServer.getRequests(),
-				fnResponse = function (iErrorCode, sMessage, aRequest) {
-					aRequest.response = function(oXhr, oMockserver){
-						oXhr.respond(iErrorCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
+				fnResponse = function (iErrCode, sMessage, aRequest) {
+					aRequest.response = function(oXhr){
+						oXhr.respond(iErrCode, {"Content-Type": "text/plain;charset=utf-8"}, sMessage);
 					};
 				};
 
 			// handling the metadata error test
 			if (oUriParameters.get("metadataError")) {
-				aRequests.forEach( function ( aEntry, iIndex, aRequests ) {
+				aRequests.forEach( function ( aEntry ) {
 					if (aEntry.path.toString().indexOf("$metadata") > -1) {
-						fnResponse (500, "metadata Error", aEntry);
+						fnResponse(500, "metadata Error", aEntry);
 					}
 				});
 			}
 
 			// Handling request errors
 			if (sErrorParam) {
-				aRequests.forEach( function ( aEntry, iIndex, aRequests ) {
+				aRequests.forEach( function ( aEntry ) {
 					if (aEntry.path.toString().indexOf(sEntity) > -1) {
-						fnResponse (iErrorCode, sErrorParam, aEntry);
+						fnResponse(iErrorCode, sErrorParam, aEntry);
 					}
 				});
 			}
