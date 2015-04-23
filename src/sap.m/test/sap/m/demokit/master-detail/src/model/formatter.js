@@ -5,7 +5,7 @@
 /*global location *///declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.define(
 	[
-		'sap/m/Text'
+		"sap/m/Text"
 	], function (Text) {
 	"use strict";
 

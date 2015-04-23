@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-		'sap/ui/demo/masterdetail/controller/BaseController',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/Device',
-		'sap/ui/demo/masterdetail/model/promise'
+		"sap/ui/demo/masterdetail/controller/BaseController",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/Device",
+		"sap/ui/demo/masterdetail/model/promise"
 	], function (BaseController, JSONModel, Device, promise) {
 	"use strict";
 
@@ -70,15 +70,13 @@ sap.ui.define([
 			this._oViewModel = new JSONModel({
 				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
 			});
-			this.setModel(this._oViewModel, 'view');
+			this.setModel(this._oViewModel, "view");
 		},
 
 
 		/**
 		 * Event handler when the share by E-Mail button has been clicked
-		 * @param {sap.ui.base.Event} oEvent the button press event
 		 * @public
-		 * @returns
 		 */
 		onShareEmailPress: function () {
 			var oViewModel = this.getModel("detailView");
@@ -163,7 +161,7 @@ sap.ui.define([
 		/**
 		 * Updates the item count within the line item table's header
 		 *
-		 * @param {integer} iTotalItems the total number of items in the list
+		 * @param {number} iTotalItems the total number of items in the list
 		 * @private
 		 */
 		_updateListItemCount : function (iTotalItems) {

@@ -24,7 +24,7 @@ sap.ui.require(
 			//oListSelector._fnResolveListHasBeenSet = jQuery.noop;
 			oListSelector._oWhenListHasBeenSet.then(function() {
 				sinon.stub(oList, "getBinding").withArgs("items").returns(new EventProvider());
-			}.bind(this));
+			});
 
 			oListSelector.setBoundMasterList(oList);
 
@@ -51,12 +51,12 @@ sap.ui.require(
 					fnHideMasterSpy = sinon.spy(oSplitApp,"hideMaster");
 				sinon.stub(oAppController, "byId").withArgs("idAppControl").returns(oSplitApp);
 				oList.fireEvent("selectionChange");
-		
+
 				// Assert
 				assert.strictEqual(fnHideMasterSpy.callCount, 1, "Did hide the master");
 				oList.getBinding.restore();
 				oAppController.byId.restore();
-			}.bind(this));
+			});
 		});
 	}
 
