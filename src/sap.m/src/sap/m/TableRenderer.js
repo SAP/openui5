@@ -172,7 +172,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<table");
 		rm.addClass("sapMListTbl");
-		rm.addStyle("table-layout", oControl.getFixedLayout() ? "fixed" : "auto");
+		if (oControl.getFixedLayout() === false) {
+			rm.addStyle("table-layout", "auto");
+		}
 		
 		// make the type column visible if needed
 		if (oControl._iItemNeedsColumn) {
