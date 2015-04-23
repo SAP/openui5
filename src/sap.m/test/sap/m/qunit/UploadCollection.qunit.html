@@ -473,6 +473,10 @@
 		//check cancel
 		var oObj = {};
 		oObj.target = {};
+		oObj.oSource = {};
+		oObj.oSource.getId = function() {
+			return this.sId;
+		}
 		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-cancelButton";
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
@@ -490,7 +494,8 @@
 		oInputField2[0].value = "NewDocument";
 		sap.ui.getCore().applyChanges();
 		oData.items[1].fileName = "NewDocument.txt";
-		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-ta_HL";
+		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-cli";
+		oObj.oSource.sId = this.oUploadCollection.aItems[1].sId;
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		oModel.setData(oData);
 		sap.ui.getCore().applyChanges();
