@@ -8,7 +8,9 @@
 		id="page"
 		navButtonPress="onNavBack"
 		showNavButton="{device>/system/phone}"
-		title="{i18n>detailTitle}">
+		title="{i18n>detailTitle}"
+		busy="{detailView>/busy}"
+		busyIndicatorDelay="{detailView>/delay}">
 		<semantic:content>
 			<ObjectHeader
 				id="objectHeader"
@@ -32,10 +34,15 @@
 					</IconTabFilter>
 				</items>
 			</IconTabBar>
-			<Table id="lineItemsList" width="auto" items="{LineItems}" noDataText="{i18n>detailLineItemTableNoDataText}" class="sapUiResponsiveMargin">
+			<Table id="lineItemsList"
+				   width="auto"
+				   items="{LineItems}"
+				   noDataText="{i18n>detailLineItemTableNoDataText}"
+				   busyIndicatorDelay="{detailView>/lineItemTableDelay}"
+				   class="sapUiResponsiveMargin">
 				<headerToolbar>
 					<Toolbar id="lineItemsToolbar">
-						<Label id="lineItemsHeader" text="{view>/lineItemListTitle}"/>
+						<Label id="lineItemsHeader" text="{detailView>/lineItemListTitle}"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>

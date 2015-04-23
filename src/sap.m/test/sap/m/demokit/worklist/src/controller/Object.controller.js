@@ -26,7 +26,6 @@ sap.ui.define([
 			// Model used to manipulate control states. The chosen values make sure,
 			// detail page is busy indication immediately so there is no break in
 			// between the busy indication for loading the view's meta data
-			// (this is being taken care of by class 'BusyHandler')
 			var iOriginalBusyDelay,
 				oViewModel = new JSONModel({
 					busy : true,
@@ -40,7 +39,7 @@ sap.ui.define([
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 			// Store original busy indicator delay, so it can be restored later on
 			iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
-			this.setModel(oViewModel, "view");
+			this.setModel(oViewModel, "objectView");
 			this.getOwnerComponent().oWhenMetadataIsLoaded.then(function () {
 					// Restore original busy indicator delay for the object view
 					oViewModel.setProperty("/delay", iOriginalBusyDelay);
@@ -85,7 +84,7 @@ sap.ui.define([
 		 */
 		_bindView : function (sObjectPath) {
 			var oView = this.getView(),
-				oViewModel = this.getModel("view");
+				oViewModel = this.getModel("objectView");
 			// Set busy indicator during view binding
 			oViewModel.setProperty("/busy", true);
 			oView.bindElement(sObjectPath);

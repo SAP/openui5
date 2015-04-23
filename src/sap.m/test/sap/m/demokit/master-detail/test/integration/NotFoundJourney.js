@@ -1,5 +1,5 @@
-/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
-
+/*global opaTest */
+//declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.require(
 	[
 		"sap/ui/test/Opa5"
@@ -14,7 +14,7 @@ sap.ui.require(
 			Given.iStartTheApp();
 
 			//Actions
-			When.onTheMasterPage.iWaitUntilTheListIsLoaded();
+			When.onTheMasterPage.iWaitUntilTheListIsLoaded().and.iWaitUntilTheFirstItemIsSelected();
 			When.onTheBrowserPage.iChangeTheHashToSomethingInvalid();
 
 			// Assertions

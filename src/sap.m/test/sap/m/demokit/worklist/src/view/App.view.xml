@@ -4,6 +4,6 @@
 	displayBlock="true"
 	xmlns="sap.m">
 	<App id="app"
-		busy="{view>/busy}"
-		busyIndicatorDelay="{view>/delay}"/>
+		 busy="{appView>/busy}"
+		 busyIndicatorDelay="{appView>/delay}"/>
 </mvc:View>

@@ -3,7 +3,6 @@ jQuery.sap.require("test.unit.model.models");
 jQuery.sap.require("test.unit.model.promise");
 jQuery.sap.require("test.unit.model.grouper");
 jQuery.sap.require("test.unit.controller.ListSelector");
-jQuery.sap.require("test.unit.controller.BusyHandler");
 jQuery.sap.require({
 	modName: "test.unit.controller.App",
 	type: "controller"

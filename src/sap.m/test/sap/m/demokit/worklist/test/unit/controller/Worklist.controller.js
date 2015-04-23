@@ -36,7 +36,7 @@ sap.ui.require(
 			this.oWorklistController.onInit();
 
 			// Assert
-			assert.strictEqual(this.oWorklistController.getModel("view").getData().tableBusyDelay, 0, "The original busy delay was restored");
+			assert.strictEqual(this.oWorklistController.getModel("worklistView").getData().tableBusyDelay, 0, "The original busy delay was restored");
 		});
 
 		QUnit.test("Should reset the busy indicator to the original one after the first request completed", function (assert) {
@@ -50,7 +50,7 @@ sap.ui.require(
 			this.oTableStub.fireEvent("updateFinished");
 
 			// Assert
-			assert.strictEqual(this.oWorklistController.getModel("view").getData().tableBusyDelay, iOriginalBusyDelay, "The original busy delay was restored");
+			assert.strictEqual(this.oWorklistController.getModel("worklistView").getData().tableBusyDelay, iOriginalBusyDelay, "The original busy delay was restored");
 		});
 	}
 );

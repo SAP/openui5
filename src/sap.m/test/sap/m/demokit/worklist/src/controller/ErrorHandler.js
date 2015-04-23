@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-		'sap/ui/base/Object',
-		'sap/m/MessageBox'
-	], function (Object, MessageBox) {
+		"sap/ui/base/Object",
+		"sap/m/MessageBox"
+	], function (BaseObject, MessageBox) {
 	"use strict";
 
-	return Object.extend("sap.ui.demo.worklist.controller.ErrorHandler", {
+	return BaseObject.extend("sap.ui.demo.worklist.controller.ErrorHandler", {
 
 		/**
 		 * Handles application errors by automatically attaching to the model events and displaying errors when needed.
@@ -70,7 +70,7 @@ sap.ui.define([
 					styleClass: this._oComponent.getCompactCozyClass(),
 					actions: [MessageBox.Action.RETRY, MessageBox.Action.CLOSE],
 					onClose: function (sAction) {
-						if(sAction === MessageBox.Action.RETRY) {
+						if (sAction === MessageBox.Action.RETRY) {
 							this._oModel.refreshMetadata();
 						}
 					}.bind(this)

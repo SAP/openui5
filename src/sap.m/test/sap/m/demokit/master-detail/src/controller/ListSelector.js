@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-		'sap/ui/base/EventProvider'
-	], function (EventProvider) {
+	"sap/ui/base/Object"
+], function (BaseObject) {
 	"use strict";
 
-	return EventProvider.extend("sap.ui.demo.mdtemplate.model.ListSelector", {
+	return BaseObject.extend("sap.ui.demo.masterdetail.model.ListSelector", {
 
 		/**
 		 * Provides a convenience API for selecting list items. All the functions will wait until the initial load of the a List passed to the instance by the setBoundMasterList
@@ -19,11 +19,11 @@ sap.ui.define([
 		 */
 
 		constructor: function () {
-			sap.ui.base.EventProvider.prototype.constructor.apply(this, arguments);
 			this._oWhenListHasBeenSet = new Promise(function (fnResolveListHasBeenSet) {
 				this._fnResolveListHasBeenSet = fnResolveListHasBeenSet;
 			}.bind(this));
-			// This promise needs to be created in the constructor, since it is allowed to invoke selectItem functions before calling setBoundMasterList
+			// This promise needs to be created in the constructor, since it is allowed to
+			// invoke selectItem functions before calling setBoundMasterList
 			this.oWhenListLoadingIsDone = new Promise(function (fnResolve, fnReject) {
 				// Used to wait until the setBound masterList function is invoked
 				this._oWhenListHasBeenSet
@@ -68,10 +68,6 @@ sap.ui.define([
 		setBoundMasterList: function (oList) {
 			this._oList = oList;
 			this._fnResolveListHasBeenSet(oList);
-
-			// this handles that the master gets closed if the app is run
-			// on a tablet in orientation mode.
-			oList.attachEvent("selectionChange", this.fireListSelectionChanged, this);
 		},
 
 
@@ -118,24 +114,39 @@ sap.ui.define([
 		// Convenience Functions for List Selection Change Event
 		//
 
-		fireListSelectionChanged : function (mArguments) {
-			this.fireEvent(this.M_EVENTS.ListSelectionChanged, mArguments);
+
+		/**
+		 * Attaches a listener and listener function to the ListSelector's bound master list. By using
+		 * a promise, the listener is added, even if the list is not available when 'attachListSelectionChange'
+		 * is called.
+		 *
+		 * @param {function} fnFunction the function to be executed when the list fires a selection change event
+		 * @param {function} oListener the listener object
+		 * @return {sap.ui.demo.masterdetail.model.ListSelector} the list selector object for method chaining
+		 * @public
+		 */
+		attachListSelectionChange : function (fnFunction, oListener) {
+			this._oWhenListHasBeenSet.then(function () {
+				this._oList.attachSelectionChange(fnFunction, oListener);
+			}.bind(this));
 			return this;
 		},
 
-		attachListSelectionChanged : function (oData, fnFunction, oListener) {
-			this.attachEvent(this.M_EVENTS.ListSelectionChanged, oData, fnFunction, oListener);
+		/**
+		 * Detaches a listener and listener function from the ListSelector's bound master list. By using
+		 * a promise, the listener is removed, even if the list is not available when 'detachListSelectionChange'
+		 * is called.
+		 *
+		 * @param {function} fnFunction the function to be executed when the list fires a selection change event
+		 * @param {function} oListener the listener object
+		 * @return {sap.ui.demo.masterdetail.model.ListSelector} the list selector object for method chaining
+		 * @public
+		 */
+		detachListSelectionChange : function (fnFunction, oListener) {
+			this._oWhenListHasBeenSet.then(function () {
+				this._oList.detachSelectionChange(fnFunction, oListener);
+			}.bind(this));
 			return this;
-		},
-
-		detachListSelectionChanged : function (fnFunction, oListener) {
-			this.detachEvent(this.M_EVENTS.ListSelectionChanged, fnFunction, oListener)
-			return this;
-		},
-
-
-		M_EVENTS : {
-			ListSelectionChanged : "listSelectionChanged"
 		},
 
 		/**
@@ -151,5 +162,4 @@ sap.ui.define([
 			}.bind(this));
 		}
 	});
-
 });

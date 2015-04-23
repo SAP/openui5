@@ -10,8 +10,8 @@
 		navButtonPress="onNavBack"
 		showNavButton="true"
 		title="{i18n>objectTitle}"
-		busy="{view>/busy}"
-		busyIndicatorDelay="{view>/delay}">
+		busy="{objectView>/busy}"
+		busyIndicatorDelay="{objectView>/delay}">
 		<semantic:content>
 			<ObjectHeader
 				id="objectHeader"
@@ -30,11 +30,11 @@
 								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>shareSendEmail}" press="onShareEmailPress" />
 								<!-- we have to comment this out since ushell lib is not available in the openui5 layer currenlty
 								<footerbar:AddBookmarkButton id ="shareTile" appData="{
-									path: 'view>/shareSaveAsTileTitle',
+									path: 'objectView>/shareSaveAsTileTitle',
 									formatter: '.formatter.shareTileData'
 								}"/>
 								<footerbar:JamShareButton id ="shareJam" jamData="{
-									path: 'view>/shareOnJamTitle',
+									path: 'objectView>/shareOnJamTitle',
 									formatter: '.formatter.shareJamData'
 								}"/> -->
 							</buttons>

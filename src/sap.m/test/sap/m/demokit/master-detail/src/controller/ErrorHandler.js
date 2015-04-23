@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-		'sap/ui/base/Object',
-		'sap/m/MessageBox'
+		"sap/ui/base/Object",
+		"sap/m/MessageBox"
 	], function (Object, MessageBox) {
 	"use strict";
 
