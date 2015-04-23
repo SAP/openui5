@@ -1429,11 +1429,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				contexts: aContexts });
 
 			if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
-				aContexts = aContexts.concat(oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1));
+				var aFixedBottomContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1);
+				aContexts = aContexts.concat(aFixedBottomContexts);
 				this._setBusy({
 					requestedLength: iFixedBottomRowCount,
-					receivedLength: aContexts.length,
-					contexts: aContexts });
+					receivedLength: aFixedBottomContexts.length,
+					contexts: aFixedBottomContexts });
 			}
 		}
 		for (var i = 0; i < iVisibleRowCount; i++) {
@@ -1656,7 +1657,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					this._setBusy({
 						requestedLength: iFixedRows,
 						receivedLength: aFixedContexts.length,
-						contexts: aContexts });
+						contexts: aFixedContexts });
 
 					aContexts = aFixedContexts.concat(aContexts);
 				}
@@ -1665,7 +1666,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					this._setBusy({
 						requestedLength: iFixedBottomRows,
 						receivedLength: aFixedBottomContexts.length,
-						contexts: aContexts });
+						contexts: aFixedBottomContexts });
 
 					aContexts = aContexts.concat(aFixedBottomContexts);
 				}
