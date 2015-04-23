@@ -327,7 +327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (iDays > this._iDaysLarge) {
 				// of only a few days displayed, there is not enough space for 2 Months in Button
 				var oEndDate = new Date(oDate.getTime());
-				oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays);
+				oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays - 1);
 				var iEndMonth = oEndDate.getUTCMonth();
 				while (iMonth != iEndMonth) {
 					iMonth = (iMonth + 1) % 12;
