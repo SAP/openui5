@@ -153,6 +153,30 @@
 			}
 		});
 	});
+	
+	test("test metadata promise", function() {
+		oModel = initModel(true);
+		
+		var oPromise = oModel.metadataLoaded();
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(true, "Promise resolved");
+		}, function(){
+			ok(false, "Promise rejected");
+		});
+	});
+	
+	test("test metadata promise rejected", function() {
+		oModel = new sap.ui.model.odata.v2.ODataModel("/doesnotwork");
+		
+		var oPromise = oModel.metadataLoaded();
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(false, "Promise resolved");
+		}, function(){
+			ok(true, "Promise rejected");
+		});
+	});
 
 	asyncTest("test oDataModel read filter test", function() {
 		oModel.read("/ProductSet", {
