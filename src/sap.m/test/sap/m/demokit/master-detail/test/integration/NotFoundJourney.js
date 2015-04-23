@@ -14,7 +14,8 @@ sap.ui.require(
 			Given.iStartTheApp();
 
 			//Actions
-			When.onTheMasterPage.iWaitUntilTheListIsLoaded().and.iWaitUntilTheFirstItemIsSelected();
+			When.onTheMasterPage.iWaitUntilTheListIsLoaded()
+				.and.iWaitUntilTheFirstItemIsSelected();
 			When.onTheBrowserPage.iChangeTheHashToSomethingInvalid();
 
 			// Assertions

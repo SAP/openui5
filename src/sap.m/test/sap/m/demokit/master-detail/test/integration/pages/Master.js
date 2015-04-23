@@ -2,12 +2,35 @@ sap.ui.require([
 		"sap/ui/test/Opa5",
 		"sap/ui/demo/masterdetail/test/integration/pages/Common",
 		"sap/ui/test/matchers/AggregationLengthEquals",
+		"sap/ui/test/matchers/AggregationFilled",
 		"sap/ui/test/matchers/PropertyStrictEquals"
 	],
-	function(Opa5, Common, AggregationLengthEquals, PropertyStrictEquals) {
+	function(Opa5, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
 		"use strict";
 
-		var sViewName = "Master";
+		var sViewName = "Master",
+			sSomethingThatCannotBeFound = "*#-Q@@||",
+			iGroupingBoundary = 100;
+
+		function enterSomethingInASearchField (oSearchField, oSearchParams) {
+			oSearchParams = oSearchParams || {};
+
+			if (oSearchParams.searchValue) {
+				oSearchField.setValue(oSearchParams.searchValue);
+			}
+
+			if (oSearchParams.skipEvent) {
+				return;
+			}
+
+			var oEvent = jQuery.Event("touchend");
+			oEvent.originalEvent = {query: oSearchParams.searchValue, refreshButtonPressed: oSearchParams.refreshButtonPressed, id: oSearchField.getId()};
+			oEvent.target = oSearchField;
+			oEvent.srcElement = oSearchField;
+			jQuery.extend(oEvent, oEvent.originalEvent);
+
+			oSearchField.fireSearch(oEvent);
+		}
 
 		Opa5.createPageObjects({
 			onTheMasterPage: {
@@ -17,7 +40,7 @@ sap.ui.require([
 						return this.waitFor({
 							id : "list",
 							viewName : sViewName,
-							matchers : [ new AggregationLengthEquals({name : "items", length : 10}) ],
+							matchers : new AggregationLengthEquals({name : "items", length : 10}),
 							errorMessage : "The master list has not been loaded"
 						});
 					},
@@ -28,7 +51,8 @@ sap.ui.require([
 							viewName : sViewName,
 							matchers : function(oList) {
 								// wait until the list has a selected item
-								return oList.getSelectedItem() && oList.getSelectedItem().getTitle() === "Object 1";
+								var oSelectedItem = oList.getSelectedItem();
+								return oSelectedItem && oList.getItems().indexOf(oSelectedItem) === 0;
 							},
 							errorMessage : "The first item of the master list is not selected"
 						});
@@ -77,8 +101,7 @@ sap.ui.require([
 						return this.waitFor({
 							searchOpenDialogs : true,
 							controlType : "sap.m.StandardListItem",
-							matchers :  [ new Opa5.matchers.PropertyStrictEquals({name : "title", value : sListItemTitle}) ],
-
+							matchers :  new Opa5.matchers.PropertyStrictEquals({name : "title", value : sListItemTitle}),
 							success : function (aListItems) {
 								aListItems[0].$().trigger("tap");
 							},
@@ -90,8 +113,7 @@ sap.ui.require([
 						return this.waitFor({
 							searchOpenDialogs : true,
 							controlType : "sap.m.Button",
-							matchers :  [ new Opa5.matchers.PropertyStrictEquals({name : "text", value : "OK"}) ],
-
+							matchers :  new Opa5.matchers.PropertyStrictEquals({name : "text", value : "OK"}),
 							success : function (aButtons) {
 								aButtons[0].$().trigger("tap");
 							},
@@ -103,8 +125,7 @@ sap.ui.require([
 						return this.waitFor({
 							searchOpenDialogs : true,
 							controlType : "sap.m.Button",
-							matchers : [ new Opa5.matchers.PropertyStrictEquals({name : "icon", value : "sap-icon://refresh"}) ],
-
+							matchers : new Opa5.matchers.PropertyStrictEquals({name : "icon", value : "sap-icon://refresh"}),
 							success : function (aButtons) {
 								aButtons[0].$().trigger("tap");
 							},
@@ -131,32 +152,102 @@ sap.ui.require([
 						});
 					},
 
-					iPressAnObjectListItem : function (sObjectTitle) {
-						var oObjectListItem = null;
-
+					iRememberTheSelectedItem : function () {
 						return this.waitFor({
-							id : "list",
-							viewName : sViewName,
-							check : function (oList) {
-								return oList.getItems().some(function (oItem) {
-									if (oItem.getTitle() === sObjectTitle) {
-										oObjectListItem = oItem;
-
-										return true;
-									}
-									return false;
-								});
+							id: "list",
+							viewName: sViewName,
+							matchers: function (oList) {
+								return oList.getSelectedItem();
 							},
-							success : function (oList) {
-								oObjectListItem.$().trigger("tap");
-								QUnit.ok(oList, "Pressed ObjectListItem '" + sObjectTitle + "' in list 'list' in view '" + sViewName + "'.");
+							success: function (oListItem) {
+								this.getContext().currentListItem = oListItem;
 							},
-							errorMessage : "List 'list' in view '" + sViewName + "' does not contain an ObjectListItem with title '" + sObjectTitle + "'"
+							errorMessage: "the list does not have a selected item so nothing can be remembered"
 						});
 					},
 
-					iPressOnTheObject1InList : function (){
-						return this.iPressAnObjectListItem("Object 1" );
+					iRememberTheIdOfListItemAtPosition : function (iPosition) {
+						return this.waitFor({
+							id: "list",
+							viewName: sViewName,
+							matchers: function (oList) {
+								return oList.getItems()[iPosition];
+							},
+							success: function (oListItem) {
+								this.getContext().currentListItem = oListItem;
+							},
+							errorMessage: "the list does not have an item at the index " + iPosition
+						});
+					},
+
+					iRememberAnIdOfAnObjectThatsNotInTheList : function () {
+						return this.waitFor(this.createAWaitForAnEntitySet({
+							entitySet: "Objects",
+							success: function (aEntityData) {
+								this.waitFor({
+									id: "list",
+									viewName: sViewName,
+									matchers: new AggregationFilled({name: "items"}),
+									success: function (oList) {
+										var aItemsNotInTheList = aEntityData.filter(function (oObject) {
+											return !oList.getItems().some(function (oListItem) {
+												return oListItem.getBindingContext().getProperty("ObjectID") === oObject.ObjectID;
+											});
+										});
+
+										if (!aItemsNotInTheList.length) {
+											QUnit.ok(false, "Did not find a list item that is not in the list");
+										}
+
+										this.getContext().currentId = aItemsNotInTheList[0].ObjectID;
+									},
+									errorMessage: "the model does not have a item that is not in the list"
+								});
+							}
+						}));
+					},
+
+					iPressOnTheObjectAtPosition : function (iPositon) {
+						return this.waitFor({
+							id : "list",
+							viewName : sViewName,
+							matchers : function (oList) {
+								return oList.getItems()[iPositon];
+							},
+							success : function (oListItem) {
+								oListItem.$().trigger("tap");
+							},
+							errorMessage : "List 'list' in view '" + sViewName + "' does not contain an ObjectListItem at position '" + iPositon + "'"
+						});
+					},
+
+					iSearchForTheFirstObject : function (){
+						var sFirstObjectTitle;
+
+						this.waitFor({
+							id : "list",
+							viewName : sViewName,
+							matchers: new AggregationFilled({name : "items"}),
+							success : function (oList) {
+								sFirstObjectTitle = oList.getItems()[0].getTitle();
+							},
+							errorMessage: "Did not find list items while trying to search for the first item."
+						});
+
+						return this.waitFor({
+							id : "searchField",
+							viewName : sViewName,
+							success : function (oSearchField) {
+								enterSomethingInASearchField(oSearchField, {
+									searchValue: sFirstObjectTitle
+								});
+							},
+							errorMessage : "Failed to find search field in Master view.'"
+						});
+					},
+
+					iTypeSomethingInTheSearchThatCannotBeFound : function () {
+						return this.iSearchForValue({searchValue: sSomethingThatCannotBeFound, skipEvent : true});
 					},
 
 					iSearchForValue : function (oSearchParams) {
@@ -164,46 +255,22 @@ sap.ui.require([
 							id : "searchField",
 							viewName : sViewName,
 							success : function (oSearchField) {
-								if ( oSearchParams.sSearchValue !== null ) {
-									oSearchField.setValue(oSearchParams.sSearchValue);
-								}
-
-								if ( oSearchParams.bTriggerSearch ) {
-									var oEvent = jQuery.Event("touchend");
-									oEvent.originalEvent = {query: oSearchParams.sSearchValue, refreshButtonPressed: oSearchParams.bRefreshButtonPressed, id: oSearchField.getId()};
-									oEvent.target = oSearchField;
-									oEvent.srcElement = oSearchField;
-									jQuery.extend(oEvent, oEvent.originalEvent);
-
-									oSearchField.fireSearch(oEvent);
-								}
+								enterSomethingInASearchField(oSearchField, oSearchParams);
 							},
 							errorMessage : "Failed to find search field in Master view.'"
 						});
 					},
 
-					iSearchForObject2 : function () {
-						return this.iSearchForValue({sSearchValue: "Object 2", bTriggerSearch: true});
-					},
-
 					iClearTheSearch : function () {
-						return this.iSearchForValue({sSearchValue: "", bTriggerSearch: true});
-					},
-
-					iSearchForObject3 : function () {
-						return this.iSearchForValue({sSearchValue: "Object 3", bTriggerSearch: true});
-					},
-
-					iEnterObject3InTheSearchField : function () {
-						return this.iSearchForValue({sSearchValue: "Object 2"});
+						return this.iSearchForValue({searchValue: ""});
 					},
 
 					iSearchForSomethingWithNoResults : function () {
-						return this.iSearchForValue({ sSearchValue: "abc", bTriggerSearch: true });
+						return this.iSearchForValue({ searchValue: sSomethingThatCannotBeFound});
 					},
 
 					iTriggerRefresh : function () {
-						return this.iSearchForValue({bTriggerSearch: true, bRefreshButtonPressed: true});
+						return this.iSearchForValue({refreshButtonPressed: true});
 					}
 				},
 				assertions: {
@@ -219,42 +286,46 @@ sap.ui.require([
 						});
 					},
 
-					theListShouldContainGroup20OrLess : function () {
-						return this.theListShouldBeGroupedBy("Unit Number 20 or less");
-					},
-
-					theListShouldContainGroup20OrMore : function () {
-						return this.theListShouldBeGroupedBy("Unit Number higher than 20");
-					},
-
 					theListGroupShouldBeFilteredOnUnitNumberValue20OrLess : function () {
 						return this.theListShouldBeFilteredOnUnitNumberValue(20, false, {iLow: 1, iHigh: 2});
 					},
 
-					theListShouldBeGroupedBy : function (sGroupName) {
+					theListShouldContainAGroupHeader : function () {
 						return this.waitFor({
 							controlType : "sap.m.GroupHeaderListItem",
 							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "title", value : sGroupName}) ],
 							success : function () {
-								QUnit.ok(true, "Master list is grouped by " + sGroupName + "'");
+								QUnit.ok(true, "Master list is grouped");
 							},
-							errorMessage: "Master list is not grouped by " + sGroupName + "'"
+							errorMessage: "Master list is not grouped"
+						});
+					},
+
+					theListHasEntries : function () {
+						return this.waitFor({
+							viewName : sViewName,
+							id : "list",
+							matchers: new AggregationFilled({
+								name: "items"
+							}),
+							success: function () {
+								QUnit.ok(true, "The list has items");
+							},
+							errorMessage: "The list had no items"
 						});
 					},
 
 					theListShouldNotContainGroupHeaders : function () {
-						function fnContainsGroupHeader (oList){
-							var fnIsGroupHeader = function (oElement) {
-								return oElement.getMetadata().getName() === "sap.m.GroupHeaderListItem";
-							};
-							return !oList.getItems().some(fnIsGroupHeader);
+						function fnIsGroupHeader (oElement) {
+							return oElement.getMetadata().getName() === "sap.m.GroupHeaderListItem";
 						}
 
 						return this.waitFor({
 							viewName : sViewName,
 							id : "list",
-							matchers : [fnContainsGroupHeader],
+							matchers : function (oList) {
+								return !oList.getItems().some(fnIsGroupHeader);
+							},
 							success : function() {
 								QUnit.ok(true, "Master list does not contain a group header although grouping has been removed.");
 							},
@@ -289,7 +360,7 @@ sap.ui.require([
 						return this.waitFor({
 							viewName : sViewName,
 							id : "list",
-							matchers : [fnCheckSort],
+							matchers : fnCheckSort,
 							success : function() {
 								QUnit.ok(true, "Master list has been sorted correctly for field '" + sField + "'.");
 							},
@@ -317,7 +388,7 @@ sap.ui.require([
 						return this.waitFor({
 							id : "list",
 							viewName : sViewName,
-							matchers : [fnCheckFilter],
+							matchers : fnCheckFilter,
 							success : function(){
 								QUnit.ok(true, "Master list has been filtered correctly with filter value '" + iThreshhold + "'.");
 							},
@@ -325,12 +396,12 @@ sap.ui.require([
 						});
 					},
 
-					theMasterListShouldBeFilteredOnUnitNumberValueMoreThan100 : function(){
-						return this.theListShouldBeFilteredOnUnitNumberValue(100, true);
+					theMasterListShouldBeFilteredOnUnitNumberValueMoreThanTheGroupBoundary : function(){
+						return this.theListShouldBeFilteredOnUnitNumberValue(iGroupingBoundary, true);
 					},
 
-					theMasterListShouldBeFilteredOnUnitNumberValueLessThan100 : function(){
-						return this.theListShouldBeFilteredOnUnitNumberValue(100);
+					theMasterListShouldBeFilteredOnUnitNumberValueLessThanTheGroupBoundary : function(){
+						return this.theListShouldBeFilteredOnUnitNumberValue(iGroupingBoundary);
 					},
 
 					iShouldSeeTheList : function () {
@@ -344,15 +415,20 @@ sap.ui.require([
 						});
 					},
 
-					theListShowsObject2 : function () {
-						return this.waitFor({
-							controlType : "sap.m.ObjectListItem",
+					theListShowsOnlyObjectsWithTheSearchStringInTheirTitle : function () {
+						this.waitFor({
+							id : "list",
 							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "title", value : "Object 2"}) ],
-							success : function () {
-								QUnit.ok(true, "Object 2 is showing");
+							matchers : new AggregationFilled({name : "items"}),
+							success : function (oList) {
+								var sTitle = oList.getItems()[0].getTitle(),
+									bEveryItemContainsTheTitle = oList.getItems().every(function (oItem) {
+										return oItem.getTitle().indexOf(sTitle) !== -1;
+									});
+
+								QUnit.ok(bEveryItemContainsTheTitle, "Every item did contain the title");
 							},
-							errorMessage : "Can't see Object 2 in master list."
+							errorMessage : "The list did not have items"
 						});
 					},
 
@@ -394,30 +470,35 @@ sap.ui.require([
 						});
 					},
 
-					theHeaderShouldDisplay20Entries : function () {
-						return this.waitFor({
-							id : "page",
-							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "title", value : "Objects (20)"}) ],
-							success : function () {
-								QUnit.ok(true, "The master page header displays 20 items");
-							},
-							errorMessage : "The  master page header does not display 20 items."
-						});
-					},
-
-					theObjectNShouldBeSelectedInTheList : function(iObjIndex) {
+					theHeaderShouldDisplayAllEntries : function () {
 						return this.waitFor({
 							id : "list",
 							viewName : sViewName,
-							matchers : function(oList) {
-								// wait until the list has a selected item
-								return oList.getSelectedItem();
+							success: function (oList) {
+								var iExpectedLength = oList.getBinding("items").getLength();
+								this.waitFor({
+									id : "page",
+									viewName : sViewName,
+									matchers : new PropertyStrictEquals({name : "title", value : "Objects (" + iExpectedLength + ")"}),
+									success : function () {
+										QUnit.ok(true, "The master page header displays " + iExpectedLength + " items");
+									},
+									errorMessage : "The  master page header does not display " + iExpectedLength + " items."
+								});
 							},
-							success : function (oListItem) {
-								QUnit.strictEqual(oListItem.getTitle(), "Object " + iObjIndex, "Object " + iObjIndex + " is selected");
+							errorMessage: "Header does not display the number of items in the list"
+						});
+					},
+
+					theFirstItemShouldBeSelected : function () {
+						return this.waitFor({
+							id : "list",
+							viewName : sViewName,
+							matchers : new AggregationFilled({name : "items"}),
+							success : function (oList) {
+								QUnit.strictEqual(oList.getItems()[0], oList.getSelectedItem(), "The first object is selected");
 							},
-							errorMessage : "Object " + iObjIndex + " is not selected."
+							errorMessage : "The first object is not selected."
 						});
 					},
 
@@ -426,17 +507,26 @@ sap.ui.require([
 							id : "list",
 							viewName : sViewName,
 							matchers : function(oList) {
-								// wait until the list has a selected item
-								var result = null;
-								if (!oList.getSelectedItem()) {
-									result = oList;
-								}
-								return result;
+								return !oList.getSelectedItem();
 							},
 							success: function (oList) {
 								QUnit.strictEqual(oList.getSelectedItems().length, 0, "the list selection is removed");
 							},
 							errorMessage: "list selection was not removed"
+						});
+					},
+
+					theRememberedListItemShouldBeSelected : function () {
+						this.waitFor({
+							id : "list",
+							viewName : sViewName,
+							matchers : function (oList) {
+								return oList.getSelectedItem();
+							},
+							success: function (oSelectedItem) {
+								QUnit.strictEqual(oSelectedItem.getTitle(), this.getContext().currentListItem.getTitle(), "the list selection is incorrect");
+							},
+							errorMessage: "the list has no selection"
 						});
 					}
 				}

@@ -16,27 +16,26 @@ function () {
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList().
-			and.theListShouldHaveAllEntries();
+			and.theListShouldHaveAllEntries()
+			.and.theHeaderShouldDisplayAllEntries();
 	});
 
-	opaTest("Search for 'Object 2' should deliver exactly two results", function (Given, When, Then) {
+	opaTest("Search for the First object should deliver results that contain the firstObject in the name", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iSearchForObject2();
+		When.onTheMasterPage.iSearchForTheFirstObject();
 
 		// Assertions
-		Then.onTheMasterPage.theListShowsObject2().
-			and.theListShouldHaveNEntries(2);
+		Then.onTheMasterPage.theListShowsOnlyObjectsWithTheSearchStringInTheirTitle();
 	});
 
 
-	opaTest("Entering 'Object 3' into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
+	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iEnterObject3InTheSearchField().
+		When.onTheMasterPage.iTypeSomethingInTheSearchThatCannotBeFound().
 			and.iTriggerRefresh();
 
 		// Assertions
-		Then.onTheMasterPage.theListShowsObject2().
-			and.theListShouldHaveNEntries(2);
+		Then.onTheMasterPage.theListHasEntries();
 	});
 
 	opaTest("MasterList Sorting on UnitNumber", function(Given, When, Then) {
@@ -65,7 +64,7 @@ function () {
 			and.iPressOKInViewSelectionDialog();
 
 		// Assertion
-		Then.onTheMasterPage.theListShouldBeFilteredOnUnitNumberValue();
+		Then.onTheMasterPage.theMasterListShouldBeFilteredOnUnitNumberValueLessThanTheGroupBoundary();
 	});
 
 	opaTest("MasterList Filtering on UnitNumber more than 100", function(Given, When, Then) {
@@ -75,7 +74,7 @@ function () {
 			and.iPressOKInViewSelectionDialog();
 
 		// Assertion
-		Then.onTheMasterPage.theListShouldBeFilteredOnUnitNumberValue();
+		Then.onTheMasterPage.theMasterListShouldBeFilteredOnUnitNumberValueMoreThanTheGroupBoundary();
 	});
 
 	opaTest("MasterList remove filter should display all items", function(Given, When, Then) {
@@ -88,14 +87,12 @@ function () {
 		Then.onTheMasterPage.theListShouldHaveAllEntries();
 	});
 
-	opaTest("MasterList grouping delivers a group with one member and a group with 8 members", function(Given, When, Then) {
+	opaTest("MasterList grouping created group headers", function(Given, When, Then) {
 		// Action
 		When.onTheMasterPage.iGroupTheList();
 
 		// Assertion
-		Then.onTheMasterPage.theListShouldContainGroup20OrLess().
-			and.theListShouldContainGroup20OrMore().
-			and.theListGroupShouldBeFilteredOnUnitNumberValue20OrLess();
+		Then.onTheMasterPage.theListShouldContainAGroupHeader();
 	});
 
 	opaTest("Remove grouping from MasterList delivers initial list", function(Given, When, Then) {

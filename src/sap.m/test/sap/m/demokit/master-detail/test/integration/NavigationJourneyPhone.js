@@ -16,23 +16,26 @@ function () {
 
 		// Assertions
 		Then.onTheMasterPage.iShouldSeeTheList();
+		Then.onTheBrowserPage.iShouldSeeAnEmptyHash();
 	});
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
 		// Actions
-		When.onTheBrowserPage.iChangeTheHashToObjectN(3);
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(3);
+		When.onTheBrowserPage.iChangeTheHashToTheRememberedId();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(3);
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
 		When.onTheDetailPage.iPressTheBackButton();
-		When.onTheMasterPage.iPressOnTheObject1InList();
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(2).
+			and.iPressOnTheObjectAtPosition(2);
 
 		// Assertions
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
@@ -41,20 +44,8 @@ function () {
 
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
-			and.theLineItemsListShouldHave4Entries().
-			and.theFirstLineItemHasIDLineItemID1().
-			and.iTeardownMyAppFrame();
-	});
-
-	opaTest("Start the app with an empty hash: the hash should still be empty after loading", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheApp();
-
-		//Actions
-		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
-
-		//Assertions
-		Then.onTheBrowserPage.iShouldSeeAnEmptyHash().
+			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
+			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries().
 			and.iTeardownMyAppFrame();
 	});
 
