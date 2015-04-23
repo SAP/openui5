@@ -377,6 +377,10 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 						});
 						this._aSelectedContexts = undefined;
 					},
+					attachSelectionChanged: function() {
+						// for compatibility reasons (OData Tree Binding)
+						return undefined;
+					},
 					attachSort: function() {},
 					detachSort: function() {}
 				});
