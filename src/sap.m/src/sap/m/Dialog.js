@@ -665,19 +665,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		if (!bStretch) {
 			//set the size to the content
 			if (!this._oManuallySetSize) {
-				oStyles.width = sContentWidth ? sContentWidth : this.$('scroll').width() + 'px';
-				oStyles.height = sContentHeight ? sContentHeight : this.$('scroll').height() + 'px';
+				oStyles.width = sContentWidth || (bMessageType ? '480px' : undefined);
+				oStyles.height = sContentHeight || undefined;
 			}
 
 			//set max height and width smaller that the screen
-			oStyles["max-width"] = bMessageType ? '480px' : iMaxWidth + 'px';
+			oStyles["max-width"] = iMaxWidth + 'px';
 			oStyles["max-height"] = iMaxHeight + 'px';
 
-			if (sap.ui.Device.system.tablet || sap.ui.Device.system.desktop) {
-				if (bMessageType) {
-					oStyles.height = undefined;
-				}
-			} else {
+			//set the max-height so contents with defined height and width can be displayed with scroller when the height/width is smaller than the content
+			this.$('cont').css({ 'max-height': iMaxHeight + "px" });
+
+			if (!(sap.ui.Device.system.tablet || sap.ui.Device.system.desktop)) {
 				if (sap.ui.Device.orientation.portrait) {
 					oStyles.width = iMaxWidth + "px";
 				} else {
@@ -715,7 +714,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 	Dialog.prototype._reposition = function() {
 		if (this._bDisableRepositioning) {
-			//on window resize recalculate the max dimentions, to the resizing is not limited by the old max-width and higth
+			//on window resize recalculate the max dimensions, to the resizing is not limited by the old max-width and height
 			this._setDimensions();
 			return;
 		}
