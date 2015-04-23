@@ -38,7 +38,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRm.addClass("sapMPullDownLogo");
 		}
 		oRm.writeClasses();
-		oRm.write(" tabindex=\"0\">"); // div element
+		oRm.write(" tabindex=\"0\""); // div element		
+		oRm.write(" role='button' aria-controls='" + oControl.getParent().sId + "-cont'>"); // aria attribute
 	
 		if (bShowIcon && sCustomIcon) {
 			var oCustomImage = oControl.getCustomIconImage();
