@@ -317,6 +317,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
 		this.oSelectedItem = oItem;
 		this.setProperty("selectedKey", sSelectedKey, true);
+		if (this.getParent() instanceof sap.m.IconTabBar) {
+			this.getParent().setProperty("selectedKey", sSelectedKey, true);
+		}
 
 		if (!bAPIchange) {
 			// fire event on iconTabBar
