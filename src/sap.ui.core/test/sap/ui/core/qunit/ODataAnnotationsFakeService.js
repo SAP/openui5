@@ -123,7 +123,22 @@ xhr.onCreate = function(request) {
 				sAnswer = sAliasesTest;
 				break;
 
-
+			case "fakeService://testdata/odata/DynamicExpressions.xml":
+				sAnswer = sDynamicExpressionsTest;
+				break;
+				
+			case "fakeService://testdata/odata/DynamicExpressions2.xml":
+				sAnswer = sDynamicExpressionsTest2;
+				break;
+				
+			case "fakeService://testdata/odata/collections-with-simple-values.xml":
+				sAnswer= sCollectionsWithSimpleValuesTest;
+				break;			
+				
+			case "fakeService://testdata/odata/simple-values-2.xml":
+				sAnswer = sSimpleValuesTest2	;
+				break;
+				
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -3913,6 +3928,123 @@ var sAliasesTest = '\
 				    </PropertyValue>\
 				    <PropertyValue Property="Replaced" AnnotationPath="@TEST.Value"/>\
 				  </Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+
+var sDynamicExpressionsTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edm:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edm:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>\
+	</edm:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="DynamicExpressions">\
+				<Annotation Term="org.example.person.Gender">\
+				  <If>\
+				    <Path>IsFemale</Path>\
+				    <String>Female</String>\
+				    <String>Male</String>\
+				  </If>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sDynamicExpressionsTest2 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="DynamicExpressions2">\
+				<Annotation Term="Test.Data">\
+					<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+						<PropertyValue Property="Value">\
+							<And>\
+								<Or>\
+									<Eq>\
+										<Lt>\
+											<Not>\
+												<Path>p1</Path>\
+											</Not>\
+											<Path>p2</Path>\
+										</Lt>\
+										<Path>p3</Path>\
+									</Eq>\
+									<Gt>\
+										<Path>p4</Path>\
+										<Path>p5</Path>\
+									</Gt>\
+								</Or>\
+								<Ne>\
+									<Ge>\
+										<Path>p6</Path>\
+										<Path>p7</Path>\
+									</Ge>\
+									<Le>\
+										<Path>p8</Path>\
+										<Path>p9</Path>\
+									</Le>\
+								</Ne>\
+							</And>\
+						</PropertyValue>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sCollectionsWithSimpleValuesTest = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="CollectionsWithSimpleValues">\
+				<Annotation Term="Test.Data">\
+					<Collection>\
+						<String>String01</String>\
+						<String>String02</String>\
+						<String>String03</String>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sSimpleValuesTest2 = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="SimpleValues">\
+				<Annotation Term="Test.Data">\
+					<String>String01</String>\
+					<String>String02</String>\
+					<String>String03</String>\
+					<Path>Path01</Path>\
+					<Path>Path02</Path>\
+					<Int>1</Int>\
+					<Int>2</Int>\
+					<Int>3</Int>\
+					<Int>4</Int>\
 				</Annotation>\
 			</Annotations>\
 		</Schema>\
