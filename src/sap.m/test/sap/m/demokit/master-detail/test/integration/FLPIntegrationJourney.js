@@ -1,10 +1,9 @@
 /*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.require(
-	[
-		'sap/ui/test/Opa5'
-	],
-	function (Opa5) {
+	[],
+	function () {
+		"use strict";
 
 		QUnit.module("FLP Integration");
 

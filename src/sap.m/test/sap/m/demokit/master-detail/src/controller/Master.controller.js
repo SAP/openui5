@@ -1,7 +1,6 @@
 ﻿/*!
  * ${copyright}
  */
-
 /*global history */
 sap.ui.define([
 		"sap/ui/demo/masterdetail/controller/BaseController",

@@ -40,8 +40,6 @@ sap.ui.define([
 			// call the base component's init function and create the App view
 			UIComponent.prototype.init.apply(this, arguments);
 
-			this._oRootView = this.getAggregation("rootControl").addStyleClass(this.getCompactCozyClass());
-
 			// create the views based on the url/hash
 			this.getRouter().initialize();
 		},

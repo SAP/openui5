@@ -46,7 +46,13 @@ sap.ui.require(
 		});
 
 		function createListStub (bCreateListItem, sBindingPath) {
-			var fnAttachEventOnce = function (sEventName, fnCallback) {
+			var fnGetParameter = function () {
+					return true;
+				},
+				oDataStub = {
+					getParameter : fnGetParameter
+				},
+				fnAttachEventOnce = function (sEventName, fnCallback) {
 					fnCallback(oDataStub);
 				},
 				/*
@@ -57,12 +63,6 @@ sap.ui.require(
 				fnGetBinding = this.stub().returns({
 					attachEventOnce : fnAttachEventOnce
 				}),
-				fnGetParameter = function (sParam) {
-					return true;
-				},
-				oDataStub = {
-					getParameter : fnGetParameter
-				},
 				fnAttachEvent = function (sEventName, fnCallback, oContext) {
 					fnCallback.apply(oContext);
 				},
@@ -105,13 +105,14 @@ sap.ui.require(
 		QUnit.test("Should reject the list loading promise, if the list has no items", function (assert) {
 			// Arrange
 			var done = assert.async(),
+				fnResolveSpy = this.spy(),
 				fnRejectSpy = function () {
 					// Assert
 					assert.strictEqual(fnResolveSpy.callCount, 0, "Did not resolve the promise");
 
 					done();
-				},
-				fnResolveSpy = this.spy();
+				};
+
 
 			// Act
 			this.oListSelector.oWhenListLoadingIsDone.then(fnResolveSpy, fnRejectSpy);
