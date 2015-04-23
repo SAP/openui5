@@ -87,9 +87,10 @@
 				} else {
 					oDeferred.resolve([sTestPage]);
 				}
-			}).fail(function() {
+			}).fail(function(xhr,status,msg) {
+				var text = (xhr ? xhr.status + " " : "") + (msg || status || 'unspecified error');
 				if (window.console && typeof window.console.error === "function") {
-					window.console.error("QUnit: invalid test page: " + sTestPage);
+					window.console.error("QUnit: failed to load page '" + sTestPage + "': " + text);
 				}
 				oDeferred.resolve([]);
 			});
@@ -127,7 +128,10 @@
 				
 			} catch (ex) {
 				if (window.console && typeof window.console.error === "function") {
-					window.console.error("QUnit: error in test page: " + sTestPage + ":\n" + ex);
+					window.console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n" + ex);
+					if ( ex.stack ) {
+						window.console.error(ex.stack);
+					}
 				}
 				oDeferred.resolve([]);
 			}
