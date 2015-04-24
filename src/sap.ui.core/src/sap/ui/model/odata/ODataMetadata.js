@@ -34,10 +34,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 		constructor : function(sMetadataURI, mParams) {
 			EventProvider.apply(this, arguments);
+			
 			this.bLoaded = false;
 			this.bFailed = false;
 			this.mEntityTypes = {};
-			this.oRequestHandle = null;
+			this.mRequestHandles = {};
 			this.sUrl = sMetadataURI;
 			this.bAsync = mParams.async;
 			this.sUser = mParams.user;
@@ -47,13 +48,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
 			this.oMetadata = null;
-			this.pLoaded = null;
 			this.mNamespaces = mParams.namespaces || {
 				sap:"http://www.sap.com/Protocols/SAPData",
 				m:"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
 				"":"http://schemas.microsoft.com/ado/2007/06/edmx"
 			};
-			this._loadMetadata();
+			this.pLoaded = this._loadMetadata();
 		},
 
 		metadata : {
@@ -67,18 +67,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 	/**
 	 * Loads the metadata for the service
+	 * 
+	 * @param string sUrl The metadata url 
+	 * @param boolean bSuppressEvents Suppress metadata events
+	 * @returns Promise Promise for metadata loading
 	 * @private
 	 */
-	ODataMetadata.prototype._loadMetadata = function() {
+	ODataMetadata.prototype._loadMetadata = function(sUrl, bSuppressEvents) {
 
 		// request the metadata of the service
 		var that = this;
-		var oRequest = this._createRequest(this.sUrl);
+		sUrl = sUrl || this.sUrl;
+		var oRequest = this._createRequest(sUrl);
 		
-		this.pLoaded = new Promise(function(resolve, reject) {
-
+		return new Promise(function(resolve, reject) {
+			var oRequestHandle;
 			function _handleSuccess(oMetadata, oResponse) {
-				that.bFailed = false;
 				if (!oMetadata || !oMetadata.dataServices) {
 					var mParameters = {
 							message: "Invalid metadata document",
@@ -88,17 +92,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					_handleError(mParameters);
 					return;
 				}
+
 				that.sMetadataBody = oResponse.body;
-				that.oMetadata = oMetadata;
+				that.oMetadata = !that.oMetadata ? oMetadata : that.merge(that.oMetadata, oMetadata);
 				that.oRequestHandle = null;
 				
 				var mParams = {
 					metadataString: that.sMetadataBody
 				};
 				resolve(mParams);
-				if (that.bAsync) {
-					that.fireLoaded(mParams);
-				} else {
+				
+				if (that.bAsync && !bSuppressEvents) {
+					that.fireLoaded(that);
+				} else if (!that.bAsync && !bSuppressEvents){
 					//delay the event so anyone can attach to this _before_ it is fired, but make
 					//sure that bLoaded is already set properly
 					that.bLoaded = true;
@@ -107,7 +113,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			}
 	
 			function _handleError(oError) {
-				that.bFailed = true;
 				var mParams = { 
 					message: oError.message,
 					request: oError.request,
@@ -119,22 +124,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					mParams.responseText = oError.response.body;
 				}
 	
-				if (that.oRequestHandle && that.oRequestHandle.bSuppressErrorHandlerCall) {
+				if (oRequestHandle && oRequestHandle.bSuppressErrorHandlerCall) {
 					return;
 				}
-				that.oRequestHandle = null;
-				reject(mParams);
 				if (that.bAsync) {
+					delete that.mRequestHandles[oRequestHandle.id];
+				}
+				reject(mParams);
+				if (that.bAsync && !bSuppressEvents) {
 					that.fireFailed(mParams);
-				} else {
+				} else if (!that.bAsync && !bSuppressEvents){
+					that.bFailed = true;
 					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [mParams]);
 				}
 			}
 	
 			// execute the request
-			that.oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
+			oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
+			if (that.bAsync) {
+				oRequestHandle.id = jQuery.sap.uid();
+				that.mRequestHandles[oRequestHandle.id] = oRequestHandle;
+			}
 		});
-
 	};
 
 	/**
@@ -252,6 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @protected
 	 */
 	ODataMetadata.prototype.fireFailed = function(mArguments) {
+		this.bFailed = true;
 		this.fireEvent("failed", mArguments);
 		return this;
 	};
@@ -806,13 +818,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	
 	ODataMetadata.prototype.destroy = function() {
 		delete this.oMetadata;
-
+		var that = this;
+		
 		// Abort pending xml request
-		if (this.oRequestHandle) {
-			this.oRequestHandle.bSuppressErrorHandlerCall = true;
-			this.oRequestHandle.abort();
-			this.oRequestHandle = null;
-		}
+		jQuery.each(this.mRequestHandles, function(sKey, oRequestHandle) {
+			oRequestHandle.bSuppressErrorHandlerCall = true;
+			oRequestHandle.abort();
+			delete that.mRequestHandles[sKey];
+		});
 		if (!!this.oLoadEvent) {
 			jQuery.sap.clearDelayedCall(this.oLoadEvent);
 		}
@@ -883,7 +896,72 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 		return;
 	};
-
+	
+	/**
+	 * Add metadata url: The response will be merged with the existing metadata object
+	 * 
+	 * @param string | array vUrl Either one URL as string or an array or Uri strings
+	 * @returns Promise The Promise for metadata loding
+	 * @private
+	 */
+	ODataMetadata.prototype._addUrl = function(vUrl) {
+		var aPromises = [];
+		var sUrl;
+		var aUris = [].concat(vUrl);
+	
+		for (var i = 0; i < aUris.length; i++) {
+			sUrl = aUris[i];
+			if (sUrl.indexOf("$metadata") > -1) {
+				aPromises.push(this._loadMetadata(sUrl, true));
+				aUris.splice(i,1);
+				i--;
+			}
+		}
+		
+		return new Promise(function(resolve, reject) {
+			Promise.all(aPromises).then(function(mParams) {
+				mParams.annotationUris = aUris;
+				resolve(mParams);
+			}).catch(function(mParams) {
+				reject(mParams);
+			});
+		});
+	};
+	
+	/**
+	 * merges two metadata objects
+	 * @param object oTarget Target metadata object
+	 * @param object oSource Source metadata object
+	 * @private
+	 */
+	ODataMetadata.prototype.merge = function(oTarget, oSource) {
+		jQuery.each(oTarget.dataServices.schema, function(i, oTargetSchema) {
+			// find schema
+			jQuery.each(oSource.dataServices.schema, function(j, oSourceSchema) {
+				if (oSourceSchema.namespace === oTargetSchema.namespace) {
+					//merge entityTypes
+					oTargetSchema.entityType = !oTargetSchema.entityType ? [] : oTargetSchema.entityType;
+					oTargetSchema.entityType = oTargetSchema.entityType.concat(oSourceSchema.entityType);
+					//find EntityContainer
+					jQuery.each(oTargetSchema.entityContainer, function(k, oTargetContainer) {
+						//merge entitySets
+						jQuery.each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
+							if (oSourceContainer.name === oTargetContainer.name) {
+								oTargetContainer.entitySet = !oTargetContainer.entitySet ? [] : oTargetContainer.entitySet;
+								oTargetContainer.entitySet = oTargetContainer.entitySet.concat(oSourceContainer.entitySet);
+							}
+						});
+					});
+					//merge Annotations
+					oTargetSchema.annotations = !oTargetSchema.annotations ? [] : oTargetSchema.annotations;
+					oTargetSchema.annotations = oTargetSchema.annotations.concat(oSourceSchema.annotations);
+					return;
+				}
+			});
+		});
+		return oTarget;
+	};
+	
 	return ODataMetadata;
 
 }, /* bExport= */ true);

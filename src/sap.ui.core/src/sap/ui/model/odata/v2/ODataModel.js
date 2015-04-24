@@ -3293,7 +3293,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @public
 	 */
 	ODataModel.prototype.addAnnotationUrl = function(vUrl) {
-		return this._getAnnotationParser().addUrl(vUrl);
+		var aPromises = [];
+		var aAnnotaionUris;
+		var that = this;
+		return new Promise(function(resolve, reject) {
+			that.oMetadata._addUrl(vUrl).then(function(mParams) {
+				for (var i = 0; i < mParams.length; i++) {
+					aPromises.push(that.addAnnotationXML(mParams[i].metadataString));
+				}
+				aAnnotaionUris = mParams.annotationUris;
+				Promise.all(aPromises).then(function() {
+					if (aAnnotaionUris.length > 0) {
+						that._getAnnotationParser().addUrl(aAnnotaionUris).then(function() {
+							resolve({annotations: that._getAnnotationParser().oAnnotations});
+						}).catch(function(mParams) {
+							reject({annotations: that._getAnnotationParser().oAnnotations});	
+						});
+					} else {
+						resolve({annotations: that._getAnnotationParser().oAnnotations});
+					}
+				}).catch(function(mParams) {
+					reject({annotations: that._getAnnotationParser().oAnnotations});	
+				});
+			}).catch(function(mParams) {
+				reject({annotations: that._getAnnotationParser().oAnnotations});	
+			});
+		});
 	};
 
 	/**
