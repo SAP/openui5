@@ -447,6 +447,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				for (i = 0; i < aUploadingItems.length; i++ ) {
 					this.aItems.unshift(aUploadingItems[i]);
 				}
+				for (i = 0; i < this.aItems.length; i++) {
+					if (this.aItems[i]._status === UploadCollection._toBeDeletedStatus) {
+						this.aItems.splice(i, 1);
+						i = 0;
+					}
+				}
 			} else {
 				// aItems is not empty but getItems() = []
 				if (bItemToBeDeleted === true) {
@@ -488,19 +494,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}
 		}
 
-		//check if preparation of the list is necessary in during the 'add'
+		// check if preparation of the list is necessary during the 'add' process
 		if (this._cAddItems > 0) {
 			cAitems = this.aItems.length;
 			for (var k = 0; k < cAitems; k++) {
 				if (this.aItems[k]._status) {
 					switch (this.aItems[k]._status) {
 						case UploadCollection._displayStatus :
-	//						list has NOT to be prepared!
+	//					list must not to be prepared!
 							bPrepareList = false;
 							bAddLeave = false;
 							break;
 						default :
-	//						list has to be prepared!
+	//					list has to be prepared!
 							bPrepareList = true;
 							bAddLeave = true;
 							break;
@@ -972,12 +978,23 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._handleTerminate = function(oEvent, oContext) {
-		var sCompact = "", aUploadedFiles, oFileList, oListItem, oDialog, i, j;
+		var sCompact = "", aUploadedFiles, oFileList, oListItem, oDialog, i, j, sFileNameLong;
 		if (jQuery.sap.byId(oContext.sId).hasClass("sapUiSizeCompact")) {
 			sCompact = "sapUiSizeCompact";
 		}
-	// popup terminate upload file
+	  // popup terminate upload file
 		aUploadedFiles = this._splitString2Array(oContext._getFileUploader().getProperty("value"), oContext);
+		for (i = 0; i < aUploadedFiles.length; i++) {
+			if (aUploadedFiles[i].length === 0) {
+				aUploadedFiles.splice(i, 1);
+			}
+		}
+		for (i = 0; i < oContext.aItems.length; i++) {
+			sFileNameLong = oContext.aItems[i].getFileName();
+			if (oContext.aItems[i]._status === UploadCollection._uploadingStatus && aUploadedFiles.indexOf(sFileNameLong)) {
+				aUploadedFiles.push(sFileNameLong);
+			}
+		}
 		oFileList = new sap.m.List({});
 
 		aUploadedFiles.forEach(function(sItem) {
@@ -1004,10 +1021,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					aUploadedFiles = oContext._splitString2Array(oContext._getFileUploader().getProperty("value"), oContext);
 					for (i = 0; i < aUploadedFiles.length; i++) {
 						for (j = 0; j < oContext.aItems.length; j++) {
-							if ( aUploadedFiles[i] === oContext.aItems[j].getProperty("fileName") && oContext.aItems[j]._status === UploadCollection._displayStatus) {
+							if ( aUploadedFiles[i] === oContext.aItems[j].getFileName() && oContext.aItems[j]._status === UploadCollection._displayStatus) {
 								oContext.fireFileDeleted({
 									documentId : oContext.aItems[j].getDocumentId()
 								});
+								oContext.aItems[j]._status = UploadCollection._toBeDeletedStatus;
+								break;
+							} else if (aUploadedFiles[i] === oContext.aItems[j].getFileName() && oContext.aItems[j]._status === UploadCollection._uploadingStatus) {
 								oContext.aItems[j]._status = UploadCollection._toBeDeletedStatus;
 								break;
 							}
@@ -1015,6 +1035,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					}
 					//call FileUploader terminate
 					oContext._getFileUploader().abort();
+					oContext.invalidate();
 					oDialog.close();
 				}
 			}),
