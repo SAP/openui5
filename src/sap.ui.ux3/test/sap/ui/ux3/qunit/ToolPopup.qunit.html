@@ -889,6 +889,32 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	asyncTest("Check Resize Handler Registration", function() {
+		expect(3);
+
+		var fnOpened = function() {
+			oTPMaxHeight.detachOpened(fnOpened);
+
+			ok(!!oTPMaxHeight._sResizeID, "Resize handler attached after ToolPopup has been opened");
+
+			oTPMaxHeight.close();
+		};
+		var fnClosed = function() {
+			oTPMaxHeight.detachOpened(fnOpened);
+
+			ok(!!!oTPMaxHeight._sResizeID, "Resize handler deregistered again");
+
+			start();
+		}
+
+		oTPMaxHeight.attachOpened(fnOpened);
+		oTPMaxHeight.attachClosed(fnClosed);
+
+		ok(!!!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
+		oBtn1.press();
+		sap.ui.getCore().applyChanges();
+	});
+
 	var oButtonContent;
 	var oTPContent;
 	module("Changing content", {
@@ -904,8 +930,6 @@
 				maxWidth : '200px',
 				opener : oButtonContent
 			});
-
-			this.s
 		},
 
 		teardown : function() {
