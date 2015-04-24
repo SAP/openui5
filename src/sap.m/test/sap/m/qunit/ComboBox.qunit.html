@@ -3758,6 +3758,7 @@
 					ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS), 'The combo box element has the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + '"');
 					ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
 					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Arrow"');
+					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getDomRef("buttonlabel").id);
 					ok(oComboBox.getDomRef("buttonlabel"), "The button label exists");
