@@ -5181,8 +5181,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (!iHeight) {
 			return iMinRowCount;
 		}
+
 		var $this = this.$();
-		var iControlHeight = this.$().outerHeight();
+		if (!$this.get(0)) {
+			return;
+		}
+
+		// usage of getBoundingClientRect() for retrieving subpixel correct value of the height. Necessary for zooming/flickering bugs in Chrome
+		var iControlHeight = $this.get(0).getBoundingClientRect().height;
 		var iContentHeight = $this.find('.sapUiTableCCnt').outerHeight();
 
 		// Determine default row height.
@@ -5198,12 +5204,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 
 		// Maximum height of the table is the height of the window minus two row height, reserved for header and footer.
-		var iMaxHeight = jQuery(window).height() - 2 * iRowHeight;
+		var iMaxHeight = window.innerHeight - 2 * iRowHeight;
 		var iCalculatedSpace = iHeight - (iControlHeight - iContentHeight);
 
 		// Make sure that table does not grow to infinity
 		var iAvailableSpace = Math.min(iCalculatedSpace, iMaxHeight);
-
+		
 		// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
 		return Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight));
 	};
