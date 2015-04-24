@@ -438,14 +438,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 
-	Column.prototype._openMenu = function() {
+	Column.prototype._openMenu = function(oDomRef) {
 		if (this._bSkipOpen){
 			this._bSkipOpen = false;
 			return;
 		}
 		var oMenu = this.getMenu();
 		var eDock = sap.ui.core.Popup.Dock;
-		oMenu.open(false, this.getFocusDomRef(), eDock.BeginTop, eDock.BeginBottom, this.getDomRef(), "none none");
+		var oFocusDomRef = oDomRef;
+		if (!oDomRef) {
+			oDomRef = this.getDomRef();
+			oFocusDomRef = this.getFocusDomRef();
+		}
+		oMenu.open(false, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
 	};
 
 
