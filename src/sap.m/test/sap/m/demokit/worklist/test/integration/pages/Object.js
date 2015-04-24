@@ -26,16 +26,22 @@ sap.ui.require([
 				}, shareOptions.createActions(sViewName)),
 				assertions: jQuery.extend({
 
-					iShouldSeeTheObject : function (sObjectNumber) {
-						var sTitleName = "Object " + sObjectNumber;
+					iShouldSeeTheRememberedObject : function () {
 						return this.waitFor({
-							id : "objectHeader",
-							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName }) ],
 							success : function () {
-								ok(true, "was on the " + sTitleName + " page");
-							},
-							errorMessage : "We are not on the " + sTitleName + " page"
+								var sBindingPath = this.getContext().currentItem.getBindingContext().getPath();
+								return this.waitFor({
+									id : "page",
+									viewName : sViewName,
+									matchers : function (oPage) {
+										return oPage.getBindingContext() && oPage.getBindingContext().getPath() === sBindingPath;
+									},
+									success : function (oPage) {
+										QUnit.strictEqual(oPage.getBindingContext().getPath(), sBindingPath, "was on the remembered detail page");
+									},
+									errorMessage : "Remembered object " + sBindingPath + " is not shown"
+								});
+							}
 						});
 					},
 
@@ -43,6 +49,9 @@ sap.ui.require([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
+							matchers: function (oPage) {
+								return oPage.getBusy();
+							},
 							success : function (oPage) {
 								ok(oPage.getBusy(), "The object view is busy");
 							},

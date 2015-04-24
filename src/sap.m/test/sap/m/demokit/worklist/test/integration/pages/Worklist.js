@@ -12,41 +12,43 @@ sap.ui.require([
 		var sViewName = "Worklist",
 			sTableId = "table";
 
+
+		function createWaitForItemAtPosition (oOptions) {
+			var iPosition = oOptions.position;
+			return {
+				id : sTableId,
+				viewName : sViewName,
+				matchers : function (oTable) {
+					return oTable.getItems()[iPosition];
+				},
+				success : oOptions.success,
+				errorMessage : "Table in view '" + sViewName + "' does not contain an Item at position '" + iPosition + "'"
+			};
+		}
+
 		Opa5.createPageObjects({
 			onTheWorklistPage : {
 				baseClass: Common,
 				actions: jQuery.extend({
-					iPressATableItem : function (sName) {
-
-						return this.waitFor({
-							id : sTableId,
-							viewName : sViewName,
-							matchers: function (oTable) {
-								var vTableItem = false;
-
-								oTable.getItems().some(function (oItem) {
-									if (oItem.getCells()[0].getTitle() === sName) {
-										vTableItem = oItem;
-										return true;
-									}
-									return false;
-								});
-
-								return vTableItem;
-							},
+					iPressATableItemAtPosition : function (iPosition) {
+						return this.waitFor(createWaitForItemAtPosition({
+							position: iPosition,
 							success : function (oTableItem) {
 								oTableItem.$().trigger("tap");
-							},
-							errorMessage : "The Table does not contain an Item with the name '" + sName + "'"
-						});
+							}
+						}));
 					},
 
-					iPressOnTheObject01InTheTable : function (){
-						return this.iPressATableItem("Object 01");
+					iRememberTheItemAtPosition : function (iPosition){
+						return this.waitFor(createWaitForItemAtPosition({
+							position: iPosition,
+							success : function (oTableItem) {
+								this.getContext().currentItem = oTableItem;
+							}
+						}));
 					},
 
 					iPressOnMoreData : function (){
-
 						return this.waitFor({
 							id : sTableId,
 							viewName : sViewName,
@@ -100,33 +102,26 @@ sap.ui.require([
 					},
 
 					theTitleShouldDisplayTheTotalAmountOfItems : function () {
-						var bRequestCompleted = false,
-							iObjectCount = 0,
-							sUrl = jQuery.sap.getResourcePath("sap/ui/demo/worklist/test/service/Objects", ".json");
-
-						jQuery.getJSON(sUrl, function( aObjects ) {
-							bRequestCompleted = true;
-							iObjectCount = aObjects.length;
-						}).fail(function () {
-							throw "No object found at the url " + sUrl;
-						});
-
 						return this.waitFor({
-							id : "tableHeader",
+							id : sTableId,
 							viewName : sViewName,
-							matchers : function (oPage) {
-								// wait until we know the number of items
-								if (!bRequestCompleted) {
-									return false;
-								}
-
-								var sExpectedText = oPage.getModel("i18n").getResourceBundle().getText("worklistTableTitleCount", [iObjectCount]);
-								return new PropertyStrictEquals({name : "text", value: sExpectedText}).isMatching(oPage);
+							matchers : new AggregationFilled({name : "items"}),
+							success : function (oTable) {
+								var iObjectCount = oTable.getBinding("items").getLength();
+								this.waitFor({
+									id : "tableHeader",
+									viewName : sViewName,
+									matchers : function (oPage) {
+										var sExpectedText = oPage.getModel("i18n").getResourceBundle().getText("worklistTableTitleCount", [iObjectCount]);
+										return new PropertyStrictEquals({name : "text", value: sExpectedText}).isMatching(oPage);
+									},
+									success : function () {
+										ok(true, "The Page has a title containing the number " + iObjectCount);
+									},
+									errorMessage : "The Page's header does not container the number of items " + iObjectCount
+								});
 							},
-							success : function () {
-								ok(true, "The Page has a title containing the number " + iObjectCount);
-							},
-							errorMessage : "The Page's header does not container the number of items " + iObjectCount
+							errorMessage : "The table has no items."
 						});
 					},
 
