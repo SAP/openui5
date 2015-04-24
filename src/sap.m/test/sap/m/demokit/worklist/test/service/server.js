@@ -33,7 +33,11 @@ sap.ui.define([
 			});
 
 			// load local mock data
-			oMockServer.simulate(sPath + "/metadata.xml", sPath);
+			oMockServer.simulate(sPath + "/metadata.xml", {
+				sMockdataBaseUrl : sPath,
+				bGenerateMissingMockData : true
+			});
+
 			var aRequests = oMockServer.getRequests(),
 				fnResponse = function (iErrCode, sMessage, aRequest) {
 					aRequest.response = function(oXhr){

@@ -12,10 +12,8 @@ sap.ui.require([
 					iPressOnTheBackwardsButton : function () {
 						return this.waitFor({
 							success : function () {
-								/*eslint-disable */
 								// manipulate history directly for testing purposes
-								sap.ui.test.Opa5.getWindow().history.back();
-								/*eslint-enable */
+								Opa5.getWindow().history.back();
 							}
 						});
 					},
@@ -23,10 +21,8 @@ sap.ui.require([
 					iPressOnTheForwardsButton : function () {
 						return this.waitFor({
 							success : function () {
-								/*eslint-disable */
 								// manipulate history directly for testing purposes
-								sap.ui.test.Opa5.getWindow().history.forward();
-								/*eslint-enable */
+								Opa5.getWindow().history.forward();
 							}
 						});
 					},
@@ -34,15 +30,32 @@ sap.ui.require([
 					iChangeTheHashToSomethingInvalid : function () {
 						return this.waitFor({
 							success : function () {
-								sap.ui.test.Opa5.getWindow().location.hash = "#/somethingInvalid";
+								Opa5.getWindow().location.hash = "#/somethingInvalid";
 							}
 						});
 					},
 
-					iChangeTheHashToObject : function (iObjIndex) {
+					iChangeTheHashToTheRememberedItem : function () {
 						return this.waitFor({
-							success : function () {
-								sap.ui.test.Opa5.getWindow().location.hash = "#/object/ObjectID_" + iObjIndex;
+							success: function () {
+								var sObjectId = this.getContext().currentItem.getBindingContext().getProperty("ObjectID");
+								Opa5.getHashChanger().setHash("/object/" + sObjectId);
+							}
+						});
+					},
+
+					iRestartTheAppWithTheRememberedItem: function (oOptions) {
+						this.waitFor({
+							success: function () {
+								this.iTeardownMyAppFrame();
+							}
+						});
+
+						return this.waitFor({
+							success: function() {
+								var sObjectId = this.getContext().currentItem.getBindingContext().getProperty("ObjectID");
+								oOptions.hash = "/object/" + encodeURIComponent(sObjectId);
+								this.iStartMyApp(oOptions);
 							}
 						});
 					}

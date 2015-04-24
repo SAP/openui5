@@ -14,7 +14,7 @@ sap.ui.define([
 
 			// if the tests are run inside the FLP sandbox we need to add the
 			// FLP has delimiter "&" in front of our application hash
-			if (oConfig.isFLP) {
+			if (sap.ui.demo.worklist.test.integration.isFLP) {
 				sHash = "&" + sHash;
 			}
 

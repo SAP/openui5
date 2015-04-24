@@ -21,10 +21,11 @@ function () {
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
 		// Actions
-		When.onTheBrowser.iChangeTheHashToObject(10);
+		When.onTheWorklistPage.iRememberTheItemAtPosition(7);
+		When.onTheBrowser.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheObject("10");
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Should go back to the TablePage", function (Given, When, Then) {
@@ -37,10 +38,11 @@ function () {
 
 	opaTest("Object Page shows the correct object Details", function (Given, When, Then) {
 		// Actions
-		When.onTheWorklistPage.iPressOnTheObject01InTheTable();
+		When.onTheWorklistPage.iRememberTheItemAtPosition(1).
+			and.iPressATableItemAtPosition(1);
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheObject("01");
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Should be on the table page again when browser back is pressed", function (Given, When, Then) {
@@ -56,7 +58,7 @@ function () {
 		When.onTheBrowser.iPressOnTheForwardsButton();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheObject("01").
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
 			and.iTeardownMyAppFrame();
 	});
 
@@ -82,7 +84,7 @@ function () {
 		//Actions
 		When.onTheAppPage.iWaitUntilTheMessageBoxIsShown("metadataErrorMessageBox");
 
-		//Assertioens
+		//Assertions
 		Then.iTeardownMyAppFrame();
 
 	});
@@ -94,7 +96,7 @@ function () {
 		//Actions
 		When.onTheAppPage.iWaitUntilTheMessageBoxIsShown("serviceErrorMessageBox");
 
-		//Assertioens
+		//Assertions
 		Then.iTeardownMyAppFrame();
 
 	});
