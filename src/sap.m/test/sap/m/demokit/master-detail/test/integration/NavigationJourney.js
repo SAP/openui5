@@ -7,78 +7,60 @@ function () {
 
 	QUnit.module("Desktop navigation");
 
-	opaTest("Should see the objects list", function (Given, When, Then) {
+	opaTest("Should start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
 		//Actions
-		When.onTheMasterPage.iLookAtTheScreen();
+		When.onTheMasterPage.iRememberTheSelectedItem();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheList().
-			and.theListShouldHaveNEntries(10).
-			and.theHeaderShouldDisplay20Entries();
-		Then.onTheDetailPage.theObjectPageShowsTheFirstObject();
+		Then.onTheMasterPage.theFirstItemShouldBeSelected();
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
+		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
 	});
 
 	opaTest("Should react on hashchange", function (Given, When, Then) {
 		// Actions
-		When.onTheBrowserPage.iChangeTheHashToObjectN(10);
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(3);
+		When.onTheBrowserPage.iChangeTheHashToTheRememberedId();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(10);
-		Then.onTheMasterPage.theObjectNShouldBeSelectedInTheList(10);
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
+		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 
 
 	opaTest("Should navigate on press", function (Given, When, Then) {
 		// Actions
-		When.onTheMasterPage.iPressOnTheObject1InList();
+		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(2).
+			and.iPressOnTheObjectAtPosition(2);
 
 		// Assertions
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
+		Then.onTheDetailPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
 		// Actions
-		When.onTheMasterPage.iPressOnTheObject1InList();
+		When.onTheDetailPage.iLookAtTheScreen();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1).
-			and.iShouldSeeTheObjectLineItemsList().
-			and.theLineItemsListShouldHave4Entries().
-			and.theLineItemsHeaderShouldDisplay4Entries().
-			and.theFirstLineItemHasIDLineItemID1().
-			and.iTeardownMyAppFrame();
+		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
+			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
+			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries();
+
 	});
 
 	opaTest("Navigate directly to an object not on the client with hash: no item should be selected and the object page should be displayed", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheApp("#/object/ObjectID_2");
-
 		//Actions
-		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
+		When.onTheMasterPage.iRememberAnIdOfAnObjectThatsNotInTheList();
+		When.onTheBrowserPage.iReloadMyAppWithTheRememberedId();
 
 		// Assertions
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(2);
+		Then.onTheDetailPage.iShouldSeeTheRememberedObjectId();
 		Then.onTheMasterPage.theListShouldHaveNoSelection().
 			and.iTeardownMyAppFrame();
 	});
-
-	opaTest("Start the app with empty hash: the hash should reflect the selection of the first item in the list", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartTheApp();
-
-		//Actions
-		When.onTheMasterPage.iWaitUntilTheListIsLoaded();
-
-		//Assertions
-		Then.onTheMasterPage.theObjectNShouldBeSelectedInTheList(1);
-		Then.onTheDetailPage.iShouldBeOnTheObjectNPage(1);
-		Then.onTheBrowserPage.iShouldSeeTheHashForObjectN(1).
-			and.iTeardownMyAppFrame();
-	});
-
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyAppOnADesktopToTestErrorHandler("metadataError=true");
@@ -86,7 +68,7 @@ function () {
 		//Actions
 		When.onTheAppPage.iWaitUntilTheMessageBoxIsShown("metadataErrorMessageBox");
 
-		//Assertioens
+		// Assertions
 		Then.iTeardownMyAppFrame();
 
 	});
@@ -98,9 +80,8 @@ function () {
 		//Actions
 		When.onTheAppPage.iWaitUntilTheMessageBoxIsShown("serviceErrorMessageBox");
 
-		//Assertioens
+		// Assertions
 		Then.iTeardownMyAppFrame();
-
 	});
 
 });

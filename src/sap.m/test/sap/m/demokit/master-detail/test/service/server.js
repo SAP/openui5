@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer"
 ], function (MockServer) {
 	"use strict";
+	var oMockServer;
 
 	return {
 
@@ -17,15 +18,15 @@ sap.ui.define([
 
 		init : function () {
 			var oUriParameters = jQuery.sap.getUriParameters(),
-				oMockServer = new MockServer({
-					rootUri: this._sServiceUrl
-				}),
 				sPath = jQuery.sap.getModulePath(this._sModulePath),
 				// TODO: replace this at template generator step with Master List Entity Set
 				sEntity = "Objects",
 				sErrorParam = oUriParameters.get("errorType"),
 				iErrorCode = sErrorParam === "badRequest" ? 400 : 500;
 
+			oMockServer = new MockServer({
+				rootUri: this._sServiceUrl
+			});
 
 			// configure mock server with a delay of 1s
 			MockServer.config({
@@ -33,7 +34,10 @@ sap.ui.define([
 				autoRespondAfter : (oUriParameters.get("serverDelay") || 1000)
 			});
 
-			oMockServer.simulate(sPath + "/metadata.xml", sPath);
+			oMockServer.simulate(sPath + "/metadata.xml", {
+				sMockdataBaseUrl : sPath,
+				bGenerateMissingMockData : true
+			});
 			var aRequests = oMockServer.getRequests(),
 				fnResponse = function (iErrCode, sMessage, aRequest) {
 					aRequest.response = function(oXhr){
@@ -61,6 +65,14 @@ sap.ui.define([
 			oMockServer.start();
 
 			jQuery.sap.log.info("Running the app with mock data");
+		},
+
+		/**
+		 * @public returns the mockserver of the app, should be used in integration tests
+		 * @returns {sap.ui.core.util.MockServer}
+		 */
+		getMockServer : function () {
+			return oMockServer;
 		}
 	};
 

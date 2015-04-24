@@ -1,6 +1,6 @@
 sap.ui.require([
-		"sap/ui/test/Opa5",
-		"sap/ui/demo/masterdetail/test/integration/pages/Common"
+		'sap/ui/test/Opa5',
+		'sap/ui/demo/masterdetail/test/integration/pages/Common'
 	],
 	function(Opa5, Common) {
 		"use strict";
@@ -10,9 +10,19 @@ sap.ui.require([
 				baseClass: Common,
 				actions: {
 					iChangeTheHashToObjectN : function (iObjIndex) {
+						return this.waitFor(this.createAWaitForAnEntitySet({
+							entitySet : "Objects",
+							success : function (aEntitySet) {
+								Opa5.getHashChanger().setHash("/object/" + aEntitySet[iObjIndex].ObjectID);
+							}
+						}));
+					},
+
+					iChangeTheHashToTheRememberedId : function (iObjIndex) {
 						return this.waitFor({
-							success : function () {
-								sap.ui.test.Opa5.getWindow().location.hash = "#/object/ObjectID_" + iObjIndex;
+							success: function (aEntitySet) {
+								var sObjectId = this.getContext().currentListItem.getBindingContext().getProperty("ObjectID");
+								Opa5.getHashChanger().setHash("/object/" + sObjectId);
 							}
 						});
 					},
@@ -20,20 +30,46 @@ sap.ui.require([
 					iChangeTheHashToSomethingInvalid : function () {
 						return this.waitFor({
 							success : function () {
-								sap.ui.test.Opa5.getWindow().location.hash = "#/somethingInvalid";
+								Opa5.getHashChanger().setHash("/somethingInvalid");
+							}
+						});
+					},
+
+					iReloadMyAppWithTheRememberedId : function () {
+						this.waitFor({
+							success: function () {
+								this.iTeardownMyAppFrame();
+							}
+						});
+
+						return this.waitFor({
+							success: function() {
+								this.iStartTheApp("#/object/" + encodeURIComponent(this.getContext().currentId));
 							}
 						});
 					}
 				},
 				assertions: {
 					iShouldSeeTheHashForObjectN : function (iObjIndex) {
-						return this.waitFor({
-							success : function () {
+						return this.waitFor(this.createAWaitForAnEntitySet({
+							entitySet : "Objects",
+							success : function (aEntitySet) {
 								var oHashChanger = Opa5.getHashChanger(),
 									sHash = oHashChanger.getHash();
-								QUnit.strictEqual(sHash, "object/ObjectID_" + iObjIndex, "The Hash is not correct");
-							},
-							errorMessage : "The Hash is not Correct!"
+								QUnit.strictEqual(sHash, "object/" + aEntitySet[iObjIndex].ObjectID, "The Hash is not correct");
+							}
+						}));
+					},
+
+					iShouldSeeTheHashForTheRememberedObject : function () {
+						return this.waitFor({
+							success : function () {
+								var sObjectId = this.getContext().currentListItem.getBindingContext().getProperty("ObjectID"),
+									oHashChanger = Opa5.getHashChanger(),
+									sHash = oHashChanger.getHash();
+
+								QUnit.strictEqual(sHash, "object/" + sObjectId, "The Hash is not correct");
+							}
 						});
 					},
 

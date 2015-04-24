@@ -6,12 +6,6 @@
 
 		return Opa5.extend("sap.ui.demo.masterdetail.test.integration.pages.Common", {
 
-			constructor: function (oConfig) {
-				Opa5.apply(this, arguments);
-
-				this._oConfig = oConfig;
-			},
-
 			_getFrameUrl: function (sHash, sUrlParameters) {
 				sHash = sHash || "";
 				var sUrl = jQuery.sap.getResourcePath("sap/ui/demo/app/test", ".html");
@@ -20,15 +14,15 @@
 
 				// if the tests are run inside the FLP sandbox we need to add the
 				// FLP has delimiter "&" in front of our application hash
-				if (this._oConfig.isFLP) {
+				if (sap.ui.demo.masterdetail.test.integration.isFLP) {
 					sHash = "&" + sHash;
 				}
 
 				return sUrl + sUrlParameters + sHash;
 			},
 
-			iStartTheApp : function (sHash) {
-				this.iStartMyAppInAFrame(this._getFrameUrl(sHash));
+			iStartTheApp : function (oOptions) {
+				this.iStartMyAppInAFrame(this._getFrameUrl(oOptions));
 			},
 
 			iStartTheAppWithDelay : function (sHash, iDelay) {
@@ -41,6 +35,40 @@
 
 			iStartMyAppOnADesktopToTestErrorHandler : function (sParam) {
 				this.iStartMyAppInAFrame(this._getFrameUrl("", sParam));
+			},
+
+			createAWaitForAnEntitySet : function  (oOptions) {
+				return {
+					success: function () {
+						var bMockServerAvailable = false,
+							aEntitySet;
+
+						this.getMockServer().then(function (oMockServer) {
+							aEntitySet = oMockServer.getEntitySetData(oOptions.entitySet);
+							bMockServerAvailable = true;
+						});
+
+
+						return this.waitFor({
+							check: function () {
+								return bMockServerAvailable;
+							},
+							success : function () {
+								oOptions.success.call(this, aEntitySet);
+							}
+						});
+					}
+				};
+			},
+
+			getMockServer : function () {
+				return new Promise(function (success) {
+
+					Opa5.getWindow().sap.ui.require(["sap/ui/demo/masterdetail/service/server"], function (server) {
+						success(server.getMockServer());
+					});
+
+				});
 			}
 
 		});

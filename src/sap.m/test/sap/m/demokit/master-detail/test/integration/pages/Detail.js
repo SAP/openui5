@@ -2,10 +2,12 @@ sap.ui.require([
 		"sap/ui/test/Opa5",
 		"sap/ui/demo/masterdetail/test/integration/pages/Common",
 		"sap/ui/test/matchers/AggregationLengthEquals",
+		"sap/ui/test/matchers/AggregationFilled",
 		"sap/ui/test/matchers/PropertyStrictEquals"
 	],
-	function(Opa5, Common, AggregationLengthEquals, PropertyStrictEquals) {
+	function(Opa5, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
 		"use strict";
+		var sViewName = "Detail";
 
 		var sViewName = "Detail";
 
@@ -44,41 +46,67 @@ sap.ui.require([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
-							success : function (oView) {
+							success : function (oPage) {
 								// we set the view busy, so we need to query the parent of the app
-								QUnit.ok(oView.getBusy(), "The detail view is busy");
+								QUnit.ok(oPage.getBusy(), "The detail view is busy");
 							},
 							errorMessage : "The detail view is not busy."
 						});
 					},
 
 					theObjectPageShowsTheFirstObject : function () {
-						return this.waitFor({
-							controlType : "sap.m.ObjectHeader",
-							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "title", value : "Object 1"}) ],
-							success : function () {
-								QUnit.ok(true, "was on the first object page");
-							},
-							errorMessage : "First object is not shown"
-						});
-					},
-
-					iShouldBeOnPage : function (sTitleName) {
-						return this.waitFor({
-							controlType : "sap.m.ObjectHeader",
-							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "title", value : sTitleName}) ],
-							success : function (aControls) {
-								QUnit.strictEqual(aControls.length, 1, "found only one Objectheader with the object name");
-								QUnit.ok(true, "was on the " + sTitleName + " " + sViewName + " page");
-							},
-							errorMessage : "We are not on " + sTitleName
-						});
+						return this.iShouldBeOnTheObjectNPage(0);
 					},
 
 					iShouldBeOnTheObjectNPage : function (iObjIndex) {
-						return this.iShouldBeOnPage("Object " + iObjIndex);
+						return this.waitFor(this.createAWaitForAnEntitySet({
+							entitySet : "Objects",
+							success : function (aEntitySet) {
+								var sItemName = aEntitySet[iObjIndex].Name;
+
+								this.waitFor({
+									controlType : "sap.m.ObjectHeader",
+									viewName : sViewName,
+									matchers : new PropertyStrictEquals({name : "title", value: aEntitySet[iObjIndex].Name}),
+									success : function () {
+										QUnit.ok(true, "was on the first object page with the name " + sItemName);
+									},
+									errorMessage : "First object is not shown"
+								});
+							}
+						}));
+					},
+
+					iShouldSeeTheRememberedObject : function () {
+						return this.waitFor({
+							success : function () {
+								var sBindingPath = this.getContext().currentListItem.getBindingContext().getPath();
+								this._waitForPageBindingPath(sBindingPath);
+							}
+						});
+					},
+
+					iShouldSeeTheRememberedObjectId : function () {
+						return this.waitFor({
+							success : function () {
+								var sBindingPath = "/Objects('" + this.getContext().currentId + "')";
+								this._waitForPageBindingPath(sBindingPath);
+							}
+						});
+					},
+
+					_waitForPageBindingPath : function (sBindingPath) {
+						return this.waitFor({
+							id : "page",
+							viewName : sViewName,
+							matchers : function (oPage) {
+								return oPage.getBindingContext() && oPage.getBindingContext().getPath() === sBindingPath;
+							},
+							success : function (oPage) {
+								QUnit.strictEqual(oPage.getBindingContext().getPath(), sBindingPath, "was on the remembered detail page");
+							},
+							errorMessage : "Remembered object " + sBindingPath + " is not shown"
+						});
 					},
 
 					iShouldSeeTheObjectLineItemsList : function () {
@@ -91,73 +119,47 @@ sap.ui.require([
 						});
 					},
 
-					theLineItemsListShouldHave4Entries : function () {
+					theLineItemsListShouldHaveTheCorrectNumberOfItems : function () {
+						return this.waitFor(this.createAWaitForAnEntitySet({
+							entitySet: "LineItems",
+							success: function (aEntitySet) {
+
+								return this.waitFor({
+									id : "lineItemsList",
+									viewName : sViewName,
+									matchers : new AggregationFilled({name : "items"}),
+									success : function (oList) {
+										var sObjectID = oList.getBindingContext().getProperty("ObjectID");
+
+										var iLength = aEntitySet.filter(function (oLineItem) {
+											return oLineItem.ObjectID === sObjectID;
+										}).length;
+
+										QUnit.strictEqual(oList.getItems().length, iLength, "The list has the correct number of items");
+									},
+									errorMessage : "The list does not have the correct number of items."
+								});
+							}
+						}));
+					},
+
+					theLineItemsHeaderShouldDisplayTheAmountOfEntries : function () {
 						return this.waitFor({
 							id : "lineItemsList",
 							viewName : sViewName,
-							matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
-							success : function () {
-								QUnit.ok(true, "The list has 4 items");
-							},
-							errorMessage : "The list does not have 4 items."
-						});
-					},
-
-					theLineItemsHeaderShouldDisplay4Entries : function () {
-						return this.waitFor({
-							id : "lineItemsHeader",
-							viewName : sViewName,
-							matchers : [ new PropertyStrictEquals({name : "text", value : "Line Items (4)"}) ],
-							success : function () {
-								QUnit.ok(true, "The line item list displays 4 items");
-							},
-							errorMessage : "The line item list does not display 4 items."
-						});
-					},
-
-					theFirstLineItemHasIDLineItemID1 : function () {
-						return this.waitFor({
-							id : "lineItemsList",
-							viewName : sViewName,
-							matchers : [ new AggregationLengthEquals({name : "items", length : 4}) ],
+							matchers : new AggregationFilled({name : "items"}),
 							success : function (oList) {
-								var oFirstItem = oList.getItems()[0];
-								QUnit.strictEqual(oFirstItem.getBindingContext().getProperty("LineItemID"), "LineItemID_1", "The first line item has Id 'LineItemID_1'");
-							},
-							errorMessage : "The first line item does not have Id 'LineItemID_1'."
-						});
-					},
-
-					iShouldSeeTheShareEmailButton: function () {
-						return this.waitFor({
-							id: "shareEmail-button",
-							viewName: sViewName,
-							success: function (oButton) {
-								QUnit.ok(true, "The E-Mail button is visible");
-							},
-							errorMessage: "The E-Mail button was not found"
-						});
-					},
-
-					iShouldSeeTheShareTileButton: function () {
-						return this.waitFor({
-							id: "shareTile-button",
-							viewName: sViewName,
-							success: function (oButton) {
-								QUnit.ok(true, "The Save as Tile button is visible");
-							},
-							errorMessage: "The Save as Tile  button was not found"
-						});
-					},
-
-					iShouldSeeTheShareJamButton: function () {
-						return this.waitFor({
-							id: "shareJam-button",
-							viewName: sViewName,
-							success: function (oButton) {
-								QUnit.ok(true, "The Jam share button is visible");
-							},
-							errorMessage: "The Jam share button was not found"
+								var iNumberOfItems = oList.getItems().length;
+								return this.waitFor({
+									id: "lineItemsHeader",
+									viewName: sViewName,
+									matchers: new PropertyStrictEquals({name: "text", value: "Line Items (" + iNumberOfItems + ")"}),
+									success: function () {
+										QUnit.ok(true, "The line item list displays " + iNumberOfItems + " items");
+									},
+									errorMessage: "The line item list does not display " + iNumberOfItems + " items."
+								});
+							}
 						});
 					}
 				}
