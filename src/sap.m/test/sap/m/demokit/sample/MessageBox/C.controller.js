@@ -44,7 +44,7 @@ sap.ui.define([
 					"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
 					{
 						icon: MessageBox.Icon.INFORMATION,
-						title: "Set Initial Focus on a Button",
+						title: "Focus on a Button",
 						styleClass: bCompact? "sapUiSizeCompact" : "",
 						initialFocus: MessageBox.Action.CANCEL
 					}
@@ -57,7 +57,7 @@ sap.ui.define([
 					'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive',
 					{
 						icon: MessageBox.Icon.INFORMATION,
-						title: "Set Initial Focus on a Custom Button",
+						title: "Focus on a Custom Button",
 						actions: [MessageBox.Action.YES, MessageBox.Action.NO, "Custom Button"],
 						styleClass: bCompact? "sapUiSizeCompact" : "",
 						initialFocus: "Custom Button"
@@ -77,7 +77,7 @@ sap.ui.define([
 
 			MessageBox.show(oLayout, {
 				icon: MessageBox.Icon.WARNING,
-				title: "Set Initial Focus on a Control",
+				title: "Focus on a Control",
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
