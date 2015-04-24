@@ -277,6 +277,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 				role: this.getAriaRole(oLI)
 			};
 
+		if (oLI.isSelectable()) {
+			mAccessibilityState.selected = oLI.getProperty("selected");
+		}
+
 		if (sAriaLabelledBy) {
 			mAccessibilityState.labelledby = {
 				value: sAriaLabelledBy.trim(),
