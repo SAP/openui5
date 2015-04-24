@@ -339,7 +339,7 @@
 				"id" : "sap.m.MessageStrip",
 				"name" : "Message Strip",
 				"category" : "Container",
-				"since" : "1.27",
+				"since" : "1.30",
 				"samples" : [ "sap.m.sample.MessageStrip", "sap.m.sample.DynamicMessageStripGenerator" ]
 			},
 			{
@@ -1172,7 +1172,7 @@
 				"id": "sap.m.sample.P13nDialogWithCustomPanel",
 				"name": "P13nDialog stand-alone with custom panel",
 				"description": "Dialog for personalization of column order and their visibility and custom panel."
-			},			
+			},
 			{
 				"id": "sap.m.sample.MultiInput",
 				"name": "MultiInput",
@@ -1651,4 +1651,3 @@
 		]
 	}
 }
-
