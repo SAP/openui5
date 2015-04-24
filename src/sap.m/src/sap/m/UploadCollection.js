@@ -441,7 +441,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					}
 				}
 			}
-			if (this.getItems()) {
+			if (this.getItems().length > 0) {
 				this.aItems.length = 0;
 				this.aItems = this.getItems();
 				for (i = 0; i < aUploadingItems.length; i++ ) {
@@ -687,7 +687,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		// /////////////////// ListItem Text Layout
 		if (sStatus === UploadCollection._displayStatus || sStatus === UploadCollection._uploadingStatus) {
 			bEnabled = true;
-			if (this.sErrorState === "Error") {
+			if (this.sErrorState === "Error" || !jQuery.trim(oItem.getUrl())) {
 				bEnabled = false;
 			}
 			oFileNameLabel = new sap.m.Link(sItemId + "-ta_filenameHL", {
@@ -1782,6 +1782,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._handleENTER = function (oEvent, oContext) {
 		var sTarget;
 		var sLinkId;
+		var oLink;
 		if (oContext.editModeItem) {
 			sTarget = oEvent.target.id.split(oContext.editModeItem).pop();
 		} else {
@@ -1806,10 +1807,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			case "ia_iconHL" :
 			case "ia_imageHL" :
 			case "cli":
-				//Display mode
-				sLinkId = oEvent.target.id.split(sTarget)[0] + "ta_filenameHL";
-				sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), true);
-				break;
+        //Display mode
+        sLinkId = oEvent.target.id.split(sTarget)[0] + "ta_filenameHL";
+        oLink = sap.ui.getCore().byId(sLinkId);
+        if (oLink.getEnabled()) {
+	        var iLine = oEvent.target.id.split("-")[2];
+	        sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
+        }
+        break;
 			default :
 				return;
 		}
