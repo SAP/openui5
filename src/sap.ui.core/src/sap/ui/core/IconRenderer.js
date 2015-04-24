@@ -25,11 +25,16 @@ sap.ui.define(["jquery.sap.global"],
 			sHeight = oControl.getHeight(),
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
-			sSize = oControl.getSize();
+			sSize = oControl.getSize(),
+			sTooltip = oControl.getTooltip_AsString();
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
+
+		if (oIconInfo || sTooltip) {
+			oRm.writeAttribute("title", sTooltip || oIconInfo.name);
+		}
 
 		if (!oControl.getDecorative()) {
 			oRm.writeAttribute("tabindex", 0);
