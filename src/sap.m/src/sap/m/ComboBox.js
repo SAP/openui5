@@ -605,7 +605,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @private
 		 */
 		ComboBox.prototype.onfocusin = function(oEvent) {
-			this.$().addClass("sapMComboBoxFocused");
 
 			// the arrow is receiving focus
 			if (oEvent.target === this.getOpenArea()) {
@@ -653,8 +652,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			var oPicker = this.getAggregation("picker");
-
-			this.$().removeClass("sapMComboBoxFocused");
 
 			if (!oEvent.relatedControlId || !oPicker) {
 				return;
@@ -1063,10 +1060,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/**
 		 * Setter for property <code>selectedItemId</code>.
 		 *
-		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
-		 * If the provided <code>vItem</code> has a default value,
-		 * the first enabled item will be selected (if any).
-		 *
 		 * @param {string | undefined} vItem New value for property <code>selectedItemId</code>.
 		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
 		 * @public
@@ -1100,12 +1093,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		/**
 		 * Setter for property <code>selectedKey</code>.
 		 *
-		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
-		 *
-		 * If the provided <code>sKey</code> has a default value,
-		 * the first enabled item will be selected (if any).
-		 * In the case that an item has the default key value, it will be selected instead.
-		 *
 		 * @param {string} sKey New value for property <code>selectedKey</code>.
 		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
 		 * @public
@@ -1116,9 +1103,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (oItem || (sKey === "")) {
 
-				// If the "sKey" value is an empty string "" or undefined,
-				// the first enabled item will be selected (if any).
-				// In the case that an item has the default key value, it will be selected instead.
 				if (!oItem && sKey === "") {
 					oItem = this.getDefaultSelectedItem();
 				}

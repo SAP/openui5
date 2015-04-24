@@ -39,6 +39,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			},
 			RegExp: RegExp
 		},
+		rDigit = /\d/,
+		rIdentifier = /[a-z]\w*/i,
+		rLetter = /[a-z]/i,
 		mSymbols = { //symbol table
 			"BINDING": {
 				led: unexpected,
@@ -217,6 +220,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	addInfix("<", 11, function (x, y) { return x < y; });
 	addInfix(">=", 11, function (x, y) { return x >= y; });
 	addInfix(">", 11, function (x, y) { return x > y; });
+	addInfix("in", 11, function (x, y) { return x in y; });
 	addInfix("===", 10, function (x, y) { return x === y; });
 	addInfix("!==", 10, function (x, y) { return x !== y; });
 	addInfix("&&", 7, function (x, fnY) { return x && fnY(); }, true);
@@ -282,7 +286,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	function DOT(fnLeft, sIdentifier, aParts) {
 		var oParent = fnLeft(aParts),
 			vChild = oParent[sIdentifier];
-		// Note: jQuery.proxy() cannot handle this in case typeof oParent === "string"
 		return typeof vChild === "function" ? vChild.bind(oParent) : vChild;
 	}
 
@@ -326,11 +329,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 	 * @return {object} - the resulting map
 	 */
 	function MAP(mMap, aParts) {
-		var mResult = {};
+		var sKey, mResult = {};
 
-		jQuery.each(mMap, function(sKey, fnValue) {
-			mResult[sKey] = fnValue(aParts); // evaluate value
-		});
+		for (sKey in mMap) {
+			mResult[sKey] = mMap[sKey](aParts); // evaluate value
+		}
 		return mResult;
 	}
 
@@ -448,21 +451,25 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			ch = oTokenizer.getCh();
 			iIndex = oTokenizer.getIndex();
 
-			if (/[a-z]/i.test(ch)) {
-				aMatches = /[a-z]\w*/i.exec(sInput.slice(iIndex));
-				if (aMatches[0] === "false"
-					|| aMatches[0] === "null"
-					|| aMatches[0] === "true") {
+			if (rLetter.test(ch)) {
+				aMatches = rIdentifier.exec(sInput.slice(iIndex));
+				switch (aMatches[0]) {
+				case "false":
+				case "null":
+				case "true":
 					oToken = {id: "CONSTANT", value: oTokenizer.word()};
-				} else if (aMatches[0] === "typeof") {
-					oToken = {id: "typeof"};
+					break;
+				case "in":
+				case "typeof":
+					oToken = {id: aMatches[0]};
 					oTokenizer.setIndex(iIndex + aMatches[0].length);
-				} else {
+					break;
+				default:
 					oToken = {id: "IDENTIFIER", value: aMatches[0]};
 					oTokenizer.setIndex(iIndex + aMatches[0].length);
 				}
-			} else if (/\d/.test(ch)
-					|| ch === "." && /\d/.test(sInput.charAt(oTokenizer.getIndex() + 1))) {
+			} else if (rDigit.test(ch)
+					|| ch === "." && rDigit.test(sInput.charAt(oTokenizer.getIndex() + 1))) {
 				oToken = {id: "CONSTANT", value: oTokenizer.number()};
 			} else if (ch === "'" || ch === '"') {
 				oToken = {id: "CONSTANT", value: oTokenizer.string()};

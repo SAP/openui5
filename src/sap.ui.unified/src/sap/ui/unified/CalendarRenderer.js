@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * DatePicker renderer.
+	 * Calendar renderer.
 	 * @namespace
 	 */
 	var CalendarRenderer = {
@@ -34,7 +34,6 @@ sap.ui.define(['jquery.sap.global'],
 		if (aMonths.length > 1) {
 			oRm.addClass("sapUiCalMulti");
 		}
-		oRm.writeClasses();
 		// This makes the calendar focusable and therefore
 		// the white empty areas can be clicked without closing the calendar
 		// by accident.
@@ -51,6 +50,11 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
+		if (this.addAttributes) {
+			// additional stuff by inherited controls
+			this.addAttributes(oRm, oCal);
+		}
+		oRm.writeClasses();
 		oRm.write(">"); // div element
 
 		var oHeader = oCal.getAggregation("header");

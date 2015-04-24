@@ -69,7 +69,8 @@
 	margin-right: 0.25rem;
 }
 
-.sapUiCalMulti .sapUiCalHeadB1{
+.sapUiCalMulti .sapUiCalHeadB1,
+.sapUiCalDateIntLarge .sapUiCalHeadB1{
 	width: 12.5rem;
 }
 
@@ -83,6 +84,12 @@
 .sapUiCalMonthPicker,
 .sapUiCalYearPicker{
 	width: 18rem; /* +1rem padding left and right = 320 px*/
+}
+
+.sapUiCalMonthView,
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker,
+.sapUiCalDatesRow{
 	background-color: @sapUiLightestBG;
 }
 
@@ -92,7 +99,8 @@
 	color: @sapUiAccent4;
 }
 
-.sapUiCal .sapUiCalMonthView{
+.sapUiCal .sapUiCalMonthView,
+.sapUiCal .sapUiCalDatesRow{
 	margin-left: 0.5rem;
 	margin-right: 0.5rem;
 	margin-bottom: 1rem;
@@ -263,6 +271,18 @@ html[data-sap-ui-browser^="ie"] .sapUiCalYearSel:focus{
 	margin-left: -9.5rem; /* to position in the middle (for multi-month) */
 }
 
+.sapUiCalDateInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalDateInt > .sapUiCalContent > .sapUiCalYearPicker{
+	margin-left: 0;
+	left: 0;
+	padding-bottom: 0;
+}
+
+.sapUiCalDateInt.sapUiCalDateIntMonthHead > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalDateInt.sapUiCalDateIntMonthHead > .sapUiCalContent > .sapUiCalYearPicker{
+	padding-top: 4rem;
+}
+
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker{
 	top: 1rem;
@@ -305,7 +325,9 @@ html[data-sap-ui-browser^="ie"] .sapUiCalYearSel:focus{
 }
 
 .sapUiSizeCompact .sapUiCal .sapUiCalMonthView,
-.sapUiSizeCompact.sapUiCal .sapUiCalMonthView{
+.sapUiSizeCompact.sapUiCal .sapUiCalMonthView,
+.sapUiSizeCompact .sapUiCal .sapUiCalDatesRow,
+.sapUiSizeCompact.sapUiCal .sapUiCalDatesRow{
 	margin-left: 0.25rem;
 	margin-right: 0.25rem;
 	margin-bottom: 0.5rem;
@@ -336,7 +358,9 @@ html[data-sap-ui-browser^="ie"] .sapUiCalYearSel:focus{
 }
 
 .sapUiSizeCompact .sapUiCalMulti .sapUiCalHeadB1,
-.sapUiSizeCompact.sapUiCalMulti .sapUiCalHeadB1{
+.sapUiSizeCompact.sapUiCalMulti .sapUiCalHeadB1,
+.sapUiSizeCompact .sapUiCalDateIntLarge .sapUiCalHeadB1,
+.sapUiSizeCompact.sapUiCalDateIntLarge .sapUiCalHeadB1{
 	width: 12.5rem;
 }
 
@@ -360,6 +384,11 @@ html[data-sap-ui-browser^="ie"] .sapUiCalYearSel:focus{
 	top: 0;
 	padding: 2rem 0.25rem 0.5rem 0.25rem;
 	margin-left: -8.25rem; /* to position in the middle (for multi-month) */
+}
+
+.sapUiSizeCompact .sapUiCalDateInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiSizeCompact .sapUiCalDateInt > .sapUiCalContent > .sapUiCalYearPicker{
+	margin-left: 0;
 }
 
 .sapUiSizeCompact .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,

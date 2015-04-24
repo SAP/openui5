@@ -80,11 +80,11 @@
 	module("sap.ui.base.ExpressionParser");
 
 	//*********************************************************************************************
-	jQuery.each([
-			{ binding: "{='foo'}", literal: 'foo' },
-			{ binding: '{="foo"}', literal: 'foo' },
-			{ binding: "{= 'foo bar' }", literal: 'foo bar' }
-		], function(iUnused, oFixture) {
+	[
+		{ binding: "{='foo'}", literal: 'foo' },
+		{ binding: '{="foo"}', literal: 'foo' },
+		{ binding: "{= 'foo bar' }", literal: 'foo bar' }
+	].forEach(function(oFixture) {
 		test("Valid String literal " + oFixture.binding, function () {
 			var oExpression;
 
@@ -99,11 +99,11 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
-			{ binding: "{=${target>sap:semantics}}" },
-			{ binding: "{=${ b}   }" },
-			{ binding: "{=     ${ b} }" }
-		], function(iUnused, oFixture) {
+	[
+		{ binding: "{=${target>sap:semantics}}" },
+		{ binding: "{=${ b}   }" },
+		{ binding: "{=     ${ b} }" }
+	].forEach(function(oFixture) {
 		test("Valid embedded binding " + oFixture.binding, function () {
 			var oBinding = {
 					result: {/*bindingInfo*/},
@@ -157,12 +157,12 @@
 	]);
 
 	//*********************************************************************************************
-	jQuery.each([
-			//parser error
-			{binding: "{='foo' 'bar'}", message: "Unexpected CONSTANT: 'bar'", at: 9},
-			{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4},
-			{binding: "{='foo' ${bar}}", message: "Unexpected BINDING: ${bar}", at: 9}
-		], function(iUnused, oFixture) {
+	[
+		//parser error
+		{binding: "{='foo' 'bar'}", message: "Unexpected CONSTANT: 'bar'", at: 9},
+		{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4},
+		{binding: "{='foo' ${bar}}", message: "Unexpected BINDING: ${bar}", at: 9}
+	].forEach(function(oFixture) {
 		test("Invalid binding: " + oFixture.binding, function () {
 			checkError(function () {
 				// call ExpressionParser through BindingParser to gain resolution of bindings
@@ -224,6 +224,7 @@
 			var mGlobals = {
 					odata: {
 						fillUriTemplate: function(sTemplate, mParameters) {
+							var sKey;
 							if (!sTemplate) {
 								return "TODO";
 							}
@@ -233,9 +234,9 @@
 							if (typeof mParameters === "string") {
 								return sTemplate + mParameters;
 							}
-							jQuery.map(mParameters, function(sValue, sKey) {
-								sTemplate = sTemplate.replace("{" + sKey + "}", sValue);
-							});
+							for (sKey in mParameters) {
+								sTemplate = sTemplate.replace("{" + sKey + "}", mParameters[sKey]);
+							}
 							return sTemplate;
 						},
 						foo: "bar"
@@ -254,34 +255,34 @@
 	);
 
 	//*********************************************************************************************
-	jQuery.each([
-			{ binding: "{=odata.fillUriTemplate(.}", message: "Unexpected .", token: "." },
-			{ binding: "{=odata.fillUriTemplate('foo', )}", message: "Unexpected )", token: ")" },
-			{ binding: "{={foo: 'bar', }}", message: "Expected IDENTIFIER but instead saw }",
-				at: 16 },
-			{ binding: "{={foo: 'bar',",
-				message: "Expected IDENTIFIER but instead saw end of input" },
-			{ binding: "{={true: 'bar'}}", message: "Expected IDENTIFIER but instead saw true",
-				token: "true" },
-			{ binding: "{=odata foo}", message: "Unexpected IDENTIFIER: foo", token: "foo" },
-			{ binding: "{=odata.fillUriTemplate )}", message: "Unexpected )", token: ")" },
-			{ binding: "{=, 'foo'}", message: "Unexpected ,", token: "," },
-			{ binding: "{='foo' , 'bar'}", message: "Unexpected ,", token: "," },
-			{ binding: "{='foo' ! 'bar'}", message: "Unexpected !", token: "!" },
-			{ binding: "{='foo' typeof 'bar'}", message: "Unexpected typeof", token: "typeof" },
-			{ binding: "{=odata.}", message: "Expected IDENTIFIER but instead saw }", token: "}" },
-			{ binding: "{=odata.", message: "Expected IDENTIFIER but instead saw end of input"},
-			{ binding: "{=true ||", message: "Expected expression but instead saw end of input"},
-			{ binding: "{=odata.'foo'}", message: "Expected IDENTIFIER but instead saw 'foo'",
-				token: "'foo'"},
-			{ binding: "{=(1 2)}", message: "Expected ) but instead saw 2", token: "2"},
-			{ binding: "{='foo'[1+]}", message: "Unexpected ]", token: "]"},
-			{ binding: "{='foo'[1}", message: "Expected ] but instead saw }", token: "}"},
-			{ binding: "{=[1}", message: "Expected , but instead saw }", token: "}"},
-			{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
-			{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
-			{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"}
-		], function(iUnused, oFixture) {
+	[
+		{ binding: "{=odata.fillUriTemplate(.}", message: "Unexpected .", token: "." },
+		{ binding: "{=odata.fillUriTemplate('foo', )}", message: "Unexpected )", token: ")" },
+		{ binding: "{={foo: 'bar', }}", message: "Expected IDENTIFIER but instead saw }",
+			at: 16 },
+		{ binding: "{={foo: 'bar',",
+			message: "Expected IDENTIFIER but instead saw end of input" },
+		{ binding: "{={true: 'bar'}}", message: "Expected IDENTIFIER but instead saw true",
+			token: "true" },
+		{ binding: "{=odata foo}", message: "Unexpected IDENTIFIER: foo", token: "foo" },
+		{ binding: "{=odata.fillUriTemplate )}", message: "Unexpected )", token: ")" },
+		{ binding: "{=, 'foo'}", message: "Unexpected ,", token: "," },
+		{ binding: "{='foo' , 'bar'}", message: "Unexpected ,", token: "," },
+		{ binding: "{='foo' ! 'bar'}", message: "Unexpected !", token: "!" },
+		{ binding: "{='foo' typeof 'bar'}", message: "Unexpected typeof", token: "typeof" },
+		{ binding: "{=odata.}", message: "Expected IDENTIFIER but instead saw }", token: "}" },
+		{ binding: "{=odata.", message: "Expected IDENTIFIER but instead saw end of input"},
+		{ binding: "{=true ||", message: "Expected expression but instead saw end of input"},
+		{ binding: "{=odata.'foo'}", message: "Expected IDENTIFIER but instead saw 'foo'",
+			token: "'foo'"},
+		{ binding: "{=(1 2)}", message: "Expected ) but instead saw 2", token: "2"},
+		{ binding: "{='foo'[1+]}", message: "Unexpected ]", token: "]"},
+		{ binding: "{='foo'[1}", message: "Expected ] but instead saw }", token: "}"},
+		{ binding: "{=[1}", message: "Expected , but instead saw }", token: "}"},
+		{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
+		{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
+		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"}
+	].forEach(function(oFixture) {
 		test("Error handling " + oFixture.binding + " --> " + oFixture.message, function () {
 			checkError(function () {
 					sap.ui.base.BindingParser.complexParser(oFixture.binding);
@@ -294,12 +295,12 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
-			{ binding: "{={}}", result: {} },
-			{ binding: "{={'foo': 'bar'}}", result: {foo: "bar"} },
-			{ binding: "{={foo: 'bar'}}", result: {foo: "bar"} },
-			{ binding: "{={a: 'a', \"b\": \"b\"}}", result: {a: "a", b: "b"} }
-		], function(iUnused, oFixture) {
+	[
+		{ binding: "{={}}", result: {} },
+		{ binding: "{={'foo': 'bar'}}", result: {foo: "bar"} },
+		{ binding: "{={foo: 'bar'}}", result: {foo: "bar"} },
+		{ binding: "{={a: 'a', \"b\": \"b\"}}", result: {a: "a", b: "b"} }
+	].forEach(function(oFixture) {
 		test("Object literal " + oFixture.binding, function () {
 			var oBindingInfo = sap.ui.base.ExpressionParser.parse(undefined /*fnResolver*/,
 					oFixture.binding, 2);
@@ -403,5 +404,11 @@
 		{ expression: "[,'foo',, 'bar'][2]", result: "undefined" },
 		{ expression: "[42][0]", result: "42" },
 		{ expression: "[42 + ${/3}]", result: "45" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("in", [
+		{ expression: "'PI' in Math", result: "true" },
+		{ expression: "'foo' in {}", result: "false" }
 	]);
 } ());

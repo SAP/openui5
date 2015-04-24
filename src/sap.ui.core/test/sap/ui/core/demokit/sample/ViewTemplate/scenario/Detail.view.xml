@@ -38,6 +38,9 @@
 				<form:title>
 					<core:Title text="Identification"/>
 				</form:title>
+				<!-- to show at most 3 ID fields, use:
+					list="{path:'entityType>com.sap.vocabularies.UI.v1.Identification',length:3}"
+				-->
 				<template:repeat list="{entityType>com.sap.vocabularies.UI.v1.Identification}" var="field">
 					<Label text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>

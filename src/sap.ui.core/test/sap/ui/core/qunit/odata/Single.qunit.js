@@ -2,8 +2,8 @@
  *{copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -15,10 +15,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Single", {
-		setup: function () {
+		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		afterEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -36,14 +36,14 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{i: {}, o: undefined},
 		{i: {nullable: true}, o: undefined},
 		{i: {nullable: false}, o: {nullable: false}},
 		{i: {nullable: "true"}, o: undefined},
 		{i: {nullable: "false"}, o: {nullable: false}},
 		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
 			var oType;
 
@@ -152,14 +152,14 @@
 	test("validate success", function () {
 		var oType = new sap.ui.model.odata.type.Single();
 
-		jQuery.each([null, 0, -0, -100000, -9999999.00], function (i, sValue) {
+		[null, 0, -0, -100000, -9999999.00].forEach(function (sValue) {
 			oType.validateValue(sValue);
 			ok(true, sValue);
 		});
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, null, {}, "foo"], function (i, sValue) {
+	[false, null, {}, "foo"].forEach(function (sValue) {
 		test("validate errors: " + JSON.stringify(sValue), function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Single({}, {nullable: false});
@@ -190,7 +190,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		set: {foo: "bar"},
 		expect: {foo: "bar", groupingEnabled: true}
 	}, {
@@ -199,7 +199,7 @@
 	}, {
 		set: {maxFractionDigits: 3},
 		expect: {groupingEnabled: true, maxFractionDigits: 3}
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 			var oSpy,
 				oType = new sap.ui.model.odata.type.Single(oFixture.set);

@@ -16,9 +16,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				sample: {
 					files: [
 						"V.view.xml",
-						"C.controller.js",
-						"MsgDialog.fragment.xml",
-						"StdDialog.fragment.xml"
+						"C.controller.js"
 					]
 				}
 			}

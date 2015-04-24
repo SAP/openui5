@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.sjax'],
 	 * RegExp used to split file into lines, also removes leading whitespace.
 	 * Note: group must be non-capturing, otherwise the line feeds will be part of the split result.
 	 */
-	var rLines = /(?:^|\r\n|\r|\n)[ \t\f]*/;
+	var rLines = /(?:\r\n|\r|\n|^)[ \t\f]*/;
 
 	/**
 	 * RegExp that handles escapes, continuation line markers and key/value separators

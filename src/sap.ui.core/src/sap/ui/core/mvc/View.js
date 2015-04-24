@@ -17,14 +17,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	/**
 	 * Constructor for a new View.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class A base class for Views. 
-	 * 
-	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height 
-	 * and provides lifecycle events. 
-	 *  
+	 * @class A base class for Views.
+	 *
+	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height
+	 * and provides lifecycle events.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -34,25 +34,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core",
 		properties : {
-	
+
 			/**
 			 * The width
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
+
 			/**
 			 * The height
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Name of the View
 			 */
 			viewName : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Whether the CSS display should be set to "block".
 			 * Set this to "true" if the default display "inline-block" causes a vertical scrollbar with Views that are set to 100% height.
@@ -61,126 +61,144 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			displayBlock : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Child Controls of the view
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
 		events : {
-	
+
 			/**
 			 * Fired when the View has parsed the UI description and instantiated the contained controls (/control tree).
 			 */
 			afterInit : {},
-	
+
 			/**
 			 * Fired when the view has received the request to destroy itself, but before it has destroyed anything.
 			 */
 			beforeExit : {},
-	
+
 			/**
 			 * Fired when the View has been (re-)rendered and its HTML is present in the DOM.
 			 */
 			afterRendering : {},
-	
+
 			/**
 			 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
 			 */
 			beforeRendering : {}
 		},
-		specialSettings : { 
-			
+		specialSettings : {
+
 			/**
-			 * Controller instance to use for this view. 
+			 * Controller instance to use for this view.
 			 */
 			controller : true,
-			
+
 			/**
-			 * Name of the controller class to use for this view. 
+			 * Name of the controller class to use for this view.
 			 * If given, it overrides the same information in the view definition (XML, HTML).
 			 */
 			controllerName : true,
-			
+
 			/**
-			 * Preprocessors that the view can use before constructing the view. 
+			 * Preprocessors that the view can use before constructing the view.
 			 */
 			preprocessors : true,
-			
+
 			/**
-			 * (module) Name of a resource bundle that should be loaded for this view  
+			 * (module) Name of a resource bundle that should be loaded for this view
 			 */
 			resourceBundleName : true,
-			
+
 			/**
-			 * URL of a resource bundle that should be loaded for this view 
+			 * URL of a resource bundle that should be loaded for this view
 			 */
 			resourceBundleUrl : true,
-			
+
 			/**
-			 * Locale that should be used to load a resourcebundle for thisview 
+			 * Locale that should be used to load a resourcebundle for thisview
 			 */
 			resourceBundleLocale : true,
-			
+
 			/**
 			 * Model name under which the resource bundle should be stored.
 			 */
 			resourceBundleAlias : true,
-			
+
 			/**
 			 * Type of the view
 			 */
 			type : true,
-			
+
 			/**
 			 * A view definition
-			 */ 
+			 */
 			viewContent : true,
 
 			/**
-			 * Additional configuration data that should be given to the view at construction time 
-			 * and which will be available early, even before model data or other constructor settings are applied.  
-			 */ 
-			viewData : true
+			 * Additional configuration data that should be given to the view at construction time
+			 * and which will be available early, even before model data or other constructor settings are applied.
+			 */
+			viewData : true,
 
-		} 
-	}});
-	
-	/**
-	 * preprocess view content
-	 * 
-	 * @private
-	 */
-	View.prototype._preprocessViewContent = function(){
-		if ( View._sContentPreprocessor ){
-			jQuery.sap.require(View._sContentPreprocessor);
-			var ContentPreprocessor = jQuery.sap.getObject(View._sContentPreprocessor);
-			if ( ContentPreprocessor && ContentPreprocessor.process ){
-				ContentPreprocessor.process(this);
+			/**
+			 * Determines initialization mode of the view
+			 * @type {Boolean}
+			 * @since 1.30
+			 */
+			async : {
+				type : "boolean",
+				defaultValue : false
 			}
 		}
-	};
-	
+	}});
+
 	/**
-	 * initialize the View and connect (create if no instance is given) the Controller
+	 * Global map of preprocessors with view types and source types as keys,
+	 * e.g. _mPreprocessors[sViewType][sSourceType]
 	 *
 	 * @private
 	 */
+	View._mPreprocessors = {};
+
+	/**
+	* Initialize the View and connect (create if no instance is given) the Controller
+	*
+	* @param {object} [mSettings] settings for the view
+	* @param {object.string} [mSettings.viewData] view data
+	* @param {object.string} [mSettings.viewName] view name
+	* @param {object.boolean} [mSettings.async] set the view to load XML-view asynchronously
+	* @private
+	*/
 	View.prototype._initCompositeSupport = function(mSettings) {
+		// if preprocessors available and this != XMLView
+		jQuery.sap.assert(!mSettings.preprocessors || this.getMetadata().getName().indexOf("XMLView"), "Preprocessors only available for XMLView");
 
 		// init View with constructor settings
 		// (e.g. parse XML or identify default controller)
-
 		// make user specific data available during view instantiation
 		this.oViewData = mSettings.viewData;
 		// remember the name of this View
 		this.sViewName = mSettings.viewName;
+
 		// remember the preprocessors
 		this.mPreprocessors	= mSettings.preprocessors || {};
 
+		var that = this;
+
+		// create a Promise that represents the view initialization state
+		if (mSettings.async) {
+			this._oAsyncState = {};
+			this._oAsyncState.promise = new Promise(function(fnResolve) {
+				// remember resolve method for calling it later
+				that._oAsyncState.resolve = fnResolve;
+			});
+		}
+
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
 		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
-			var that = this;
 			this._fnSettingsPreprocessor = function(mSettings) {
 				var sId = this.getId();
 				if (sap.ui.core.CustomizingConfiguration && sId) {
@@ -195,22 +213,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			};
 		}
 
+		var fnInitController = function() {
+			createAndConnectController(that, mSettings);
+
+			// the controller is connected now => notify the view implementations
+			if (that.onControllerConnected) {
+				that.onControllerConnected(that.oController);
+			}
+		};
+
 		if (this.initViewSettings) {
-			this.initViewSettings(mSettings);
+			if (mSettings.async) {
+				this.initViewSettings(mSettings)
+					.then(fnInitController)
+					.then(function() {
+						return that.runPreprocessor("controls", that);
+					})
+					.then(function() {
+						that.fireAfterInit();
+						// resolve View.prototype.loaded() methods promise
+						that._oAsyncState.resolve(that);
+					});
+			} else {
+				this.initViewSettings(mSettings);
+				fnInitController();
+				this.runPreprocessor("controls", this, true);
+				this.fireAfterInit();
+			}
 		}
-
-		createAndConnectController(this, mSettings);
-
-		// the controller is connected now => notify the view implementations
-		if (this.onControllerConnected) {
-			this.onControllerConnected(this.oController);
-		}
-		
-		this._preprocessViewContent();
-
-		// notifies the listeners that the View is initialized
-		this.fireAfterInit();
-
 	};
 
 	/**
@@ -228,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * Returns an Element by its id in the context of the View.
 	 *
 	 * @param {string} sId view local Id of the Element
-	 * @return {sap.ui.core.Element} Element by its id or undefined 
+	 * @return {sap.ui.core.Element} Element by its id or undefined
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
@@ -236,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
-	 * Convert the given view local Element id to a globally unique id 
+	 * Convert the given view local Element id to a globally unique id
 	 * by prefixing it with the view Id.
 	 *
 	 * @param {string} sId view local Id of the Element
@@ -250,24 +280,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 		return sId;
 	};
-	
+
 	/**
-	 * Checks whether the given ID is already prefixed with this View's ID
-	 *
-	 * @param {string} potentially prefixed id
-	 * @return {boolean} whether the ID is already prefixed
-	 */
+	* Checks whether the given ID is already prefixed with this View's ID
+	*
+	* @param {string} potentially prefixed id
+	* @return {boolean} whether the ID is already prefixed
+	*/
 	View.prototype.isPrefixedId = function(sId) {
 		return !!(sId && sId.indexOf(this.getId() + "--") === 0);
 	};
 
 	/**
-	 * Creates and connects the controller if the controller is not given in the
-	 * mSettings
-	 *
-	 * @private
-	 */
-	 function createAndConnectController(oThis, mSettings) {
+	* Creates and connects the controller if the controller is not given in the
+	* mSettings
+	*
+	* @param {sap.ui.core.mvc.XMLView} the instance of the view that should be processed
+	* @param {object} [mSettings]
+	* @param {object.controller} [mSettings.controller] the controller of the view instance
+	* @private
+	*/
+	var createAndConnectController = function(oThis, mSettings) {
+
 		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
 			// only set when used internally
 			var oController = mSettings.controller;
@@ -289,15 +323,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		} else {
 			oThis.oController = {};
 		}
-	}
+	};
 
 	/**
 	 * Returns user specific data object
 	 *
-	 * @return object viewData
+	 * @return {object} viewData
 	 * @public
 	 */
-	View.prototype.getViewData = function(){
+	View.prototype.getViewData = function() {
 		return this.oViewData;
 	};
 
@@ -309,6 +343,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	View.prototype.exit = function() {
 		this.fireBeforeExit();
 		this.oController = null;
+		this._oAsyncState = null;
 	};
 
 	/**
@@ -329,12 +364,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		this.fireBeforeRendering();
 	};
 
-	/**	
+	/**
 	 * Override clone method to avoid conflict between generic cloning of content
 	 * and content creation as defined by the UI5 Model View Controller lifecycle.
-	 * 
+	 *
 	 * For more details see the development guide section about Model View Controller in UI5.
-	 * 
+	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
 	 * @return {sap.ui.core.Element} reference to the newly created clone
@@ -354,38 +389,136 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
+	 * Executes a registered preprocessor at a specified hook.
+	 *
 	 * @param {string} sType
-	 *   the type of preprocessor, e.g. "json", "text", or "xml"
+	 *   the type of preprocessor, e.g. "raw", "xml" or "controls"
 	 * @param {object|string|Element} vSource
 	 *   the view source as a JSON object, a raw text, or an XML document element
-	 * @returns {object|string|Element}
-	 *   the processed source (same type, of course!)
+	 * @param {boolean} [bSync]
+	 *   describes the view execution, true if sync
+	 * @returns {Promise}
+	 *   a promise resolving with the processed source or an error
 	 * @protected
 	 */
-	View.prototype.runPreprocessor = function (sType, vSource) {
-		var sCaller,
-			oConfig = this.mPreprocessors[sType],
-			fnPreprocessor;
+	View.prototype.runPreprocessor = function(sType, vSource, bSync) {
+
+		var sViewType = this.getMetadata().getClass()._sType ,
+			oViewInfo = {
+				name: this.sViewName,
+				id: this.getId(),
+				caller: this + " (" + this.sViewName + ")",
+				sync: !!bSync
+			},
+			//global preprocessor availability
+			oConfig = View._mPreprocessors[sViewType] ? View._mPreprocessors[sViewType][sType] : undefined,
+			//local preprocessor availability
+			oLocalConfig = this.mPreprocessors[sType],
+			fnProcess;
+
+		// determine result type (Promise || object)
+		function fnResult(vResult) {
+			if (vResult instanceof Promise || bSync) {
+				return vResult;
+			} else {
+				return Promise.resolve(vResult);
+			}
+		}
+
+		// determine preprocessor type (local || onDemand || global)
+		if (oLocalConfig && oLocalConfig.preprocessor) {
+			// local preprocessor
+			oConfig = oLocalConfig;
+		} else if (oLocalConfig && (oConfig && oConfig.onDemand)) {
+			// onDemand activated, enrich default config with locally supplied infos
+			 jQuery.extend(true, oConfig, oLocalConfig);
+		} else if (oConfig && oConfig.onDemand) {
+			// default not activated
+				return fnResult(vSource);
+		} // else { // global not overridden }
 
 		if (oConfig) {
-			fnPreprocessor = oConfig.preprocessor;
-			if (!fnPreprocessor && sType === "xml") {
-				jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
-				fnPreprocessor = sap.ui.core.util.XMLPreprocessor.process;
+			// determine preprocessor implementation
+			if (typeof oConfig.preprocessor === "string") {
+				// module string given, resolve and retrieve object
+				jQuery.sap.require(oConfig.preprocessor);
+				jQuery.sap.log.debug("Running preprocessor for \"" + sType + "\" via module string \"" + oConfig.preprocessor + "\"", this);
+				fnProcess = jQuery.sap.getObject(oConfig.preprocessor).process;
+			} else if (oConfig.preprocessor) {
+				// function given directly
+				jQuery.sap.log.debug("Running preprocessor for \"" + sType + "\" via given function", this);
+				fnProcess = oConfig.preprocessor;
 			}
-			sCaller = this + " (" + this.sViewName + ")";
-			jQuery.sap.log.debug(sCaller + ": Running preprocessor for " + sType, null,
-				"sap.ui.core.mvc.View");
-			return fnPreprocessor(vSource, oConfig, sCaller);
+			// determine preprocessor validity (only syncSupport preprocessors when in sync mode)
+			if (fnProcess && (!bSync || oConfig.syncSupport == bSync)) {
+				return fnResult(fnProcess(vSource, oViewInfo, oConfig));
+			}
 		}
-		return vSource;
+		// no valid preprocessor found
+		return fnResult(vSource);
+	};
+
+
+	/**
+	 * Register a preprocessor for all views of a specific type.
+	 *
+	 * The preprocessor can be registered for several stages of view initialization, which are
+	 * dependant from the view type, e.g. "raw", "xml" or already initialized "controls". For each
+	 * type one preprocessor is executed. If there is a preprocessor passed to or activated at the
+	 * view instance already, that one is used.
+	 *
+	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
+	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
+	 *
+	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
+	 * in sync mode, as this could have unexpected side effects. You may override this behaviour by setting the
+	 * bSyncSupport flag to true.
+	 *
+	 * @protected
+	 * @static
+	 * @param {string} sType
+	 * 		the type of content to be processed
+	 * @param {string|function} vPreprocessor
+	 * 		module path of the preprocessor implementation or a preprocessor function
+	 * @param {string} sViewType
+	 * 		type of the calling view, e.g. <code>XML</code>
+	 * @param {boolean} bSyncSupport
+	 * 		declares if the vPreprocessor ensures safe sync processing. This means the preprocessor will be executed
+	 * 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
+	 * 		break the view initialization and lead to unexpected results.
+	 * @param {boolean} [bOnDemand]
+	 * 		ondemand preprocessor which enables developers to quickly specify the preprocessor for a view,
+	 * 		by setting <code>preprocessors : { xml }</code>, for example.
+	 * @param {object} [mSettings]
+	 * 		optional configuration for preprocessor
+	 */
+	View.registerPreprocessor = function(sType, vPreprocessor, sViewType, bSyncSupport, bOnDemand, mSettings) {
+		// determine optional parameters
+		if (typeof bOnDemand !== "boolean") {
+			mSettings = bOnDemand;
+			bOnDemand = false;
+		}
+		if (vPreprocessor) {
+			jQuery.sap.log.debug("Register " + (bOnDemand ? "onDemand-" : "") + "preprocessor for \"" + sType + "\"" +
+				(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
+			if (!View._mPreprocessors[sViewType]) {
+				View._mPreprocessors[sViewType] = {};
+			} else if (!View._mPreprocessors[sViewType][sType]) {
+				View._mPreprocessors[sViewType][sType] = {};
+			}
+			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand, syncSupport: bSyncSupport};
+			// to be consistent with local preprocessors, everything in one config object
+			jQuery.extend(true, View._mPreprocessors[sViewType][sType], mSettings);
+		} else {
+			jQuery.sap.log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
+		}
 	};
 
 	/**
-	 * An (optional) method to be implemented by Views.
-	 * When no controller instance is given at View instantiation time AND this method exists and returns the (package and class) name of a controller,
-	 * the View tries to load and instantiate the controller and to connect it to itself.
-	 * 
+	 * An (optional) method to be implemented by Views. When no controller instance is given at View instantiation time
+	 * AND this method exists and returns the (package and class) name of a controller, the View tries to load and
+	 * instantiate the controller and to connect it to itself.
+	 *
 	 * @return {string} the name of the controller
 	 * @public
 	 * @name sap.ui.core.mvc.View#getControllerName
@@ -409,25 +542,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * view types are listed in the enumeration sap.ui.core.mvc.ViewType.</li>
 	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller</li>
-	 * <li><code>vView.preprocessors</li> can hold a map from source type (e.g. "xml") to
+	 * <li><code>vView.preprocessors</code></li> can hold a map from source type (e.g. "xml") to
 	 * preprocessor configuration; the configuration consists of an optional
-	 * <code>preprocessor</code> property of type function and may contain further
-	 * preprocessor-specific settings. The preprocessor must be a function with the following
-	 * signature:
-	 *   <ul>
-	 *   <li>Parameter <code>vSource</code> with type depending on the source type. For "xml"
-	 *    it is an XML DOM Element. It is allowed to modify the object.</li>
-	 *   <li>Parameter <code>oConfig</code> is the preprocessor configuration
-	 *   <li>Parameter <code>sCaller</code> of type string may be used to identify the caller
-	 *   in log or exception messages.
-	 *   <li>The function must return an equivalent of <code>vSource</code> or
-	 *   <code>vSource</code> itself.
-	 *   </ul>
-	 * For certain source types a default function is known. For "xml" it is a preprocessor
-	 * capable of template processing (for the XML namespace
-	 * "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1").
-	 * </li>
-	 * </ul>
+	 * <code>preprocessor</code> property and may contain further preprocessor-specific settings. The preprocessor can
+	 * be either an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
+	 * {@link sap.ui.core.mvc.View.Preprocessor.process}
+	 *
+	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or a
+	 * default availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
+	 *
+	 * <strong>Note</strong>: Preprocessors work only in async views and will be ignored when the view is instantiated
+	 * in sync mode, as this could have unexpected side effects.
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
 	 * @param {string|object} [vView] the view name or view configuration object
@@ -437,7 +562,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
 		var view = null, oView = {};
-		
+
 		// if the id is a configuration object or a string
 		// and the vView is not defined we shift the parameters
 		if (typeof sId === "object" ||
@@ -445,7 +570,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			vView = sId;
 			sId = undefined;
 		}
-		
+
 		// prepare the parameters
 		if (vView) {
 			if (typeof vView === "string") {
@@ -454,17 +579,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				oView = vView;
 			}
 		}
-		
+
 		// apply the id if defined
 		if (sId) {
 			oView.id = sId;
 		}
-		
+
 		// apply the type defined in specialized factory functions
 		if (sType) {
 			oView.type = sType;
 		}
-		
+
 		// view replacement
 		if (sap.ui.core.CustomizingConfiguration) {
 			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
@@ -496,30 +621,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		return view;
 	};
 
+	/**
+	* Creates a Promise representing the state of the view initialization.
+	*
+	* For views that are loading asynchronously (by setting async=true) this Promise is created by view
+	* initialization. Synchronously loading views get wrapped in an immediately resolving Promise.
+	*
+	* @since 1.30
+	* @public
+	* @return {Promise} resolves with the view instance, fulfilled when completely initialized
+	*/
+	View.prototype.loaded = function() {
+		if (!this._oAsyncState) {
+			// resolve immediately with this view instance
+			var that = this;
+			return new Promise(function(fnResolve) {
+				fnResolve(that);
+			});
+		} else {
+			return this._oAsyncState.promise;
+		}
+	};
+
 
 	/**
 	 * Helper method to resolve an event handler either locally (from a controller) or globally.
-	 * 
-	 * Which contexts are checked for the event handler depends on the syntax of the name: 
+	 *
+	 * Which contexts are checked for the event handler depends on the syntax of the name:
 	 * <ul>
-	 * <li><i>relative</i>: names starting with a dot ('.') must specify a handler in 
+	 * <li><i>relative</i>: names starting with a dot ('.') must specify a handler in
 	 *     the controller (example: <code>".myLocalHandler"</code>)</li>
-	 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are 
+	 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are
 	 *     always assumed to mean a global handler function. {@link jQuery.sap.getObject}
 	 *     will be used to retrieve the function (example: <code>"some.global.handler"</code> )</li>
-	 * <li><i>legacy</i>: Names that contain no dot at all are first interpreted as a relative name 
-	 *     and then - if nothing is found - as an absolute name. This variant is only supported 
+	 * <li><i>legacy</i>: Names that contain no dot at all are first interpreted as a relative name
+	 *     and then - if nothing is found - as an absolute name. This variant is only supported
 	 *     for backward compatibility (example: <code>"myHandler"</code>)</li>
 	 * </ul>
 	 *
 	 * The returned settings will always use the given <code>oController</code> as context object ('this')
-	 * This should allow the implementation of generic global handlers that might need an easy back link 
-	 * to the controller/view in which they are currently used (e.g. to call createId/byId). It also makes 
+	 * This should allow the implementation of generic global handlers that might need an easy back link
+	 * to the controller/view in which they are currently used (e.g. to call createId/byId). It also makes
 	 * the development of global event handlers more consistent with controller local event handlers.
-	 * 
-	 * <strong>Note</strong>: It is not mandatory but improves readability of declarative views when 
+	 *
+	 * <strong>Note</strong>: It is not mandatory but improves readability of declarative views when
 	 * legacy names are converted to relative names where appropriate.
-	 * 
+	 *
 	 * @param {string} sName the name to resolve
 	 * @param {sap.ui.core.mvc.Controller} oController the controller to use as context
 	 * @return {any[]} an array with function and context object, suitable for applySettings.
@@ -539,10 +686,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					// no dot at all: first check for a controller local, then for a global handler
 					fnHandler = oController && oController[sName];
 					if ( fnHandler != null ) {
-						// if the name can be resolved, don't try to find a global handler (even if it is not a function) 
+						// if the name can be resolved, don't try to find a global handler (even if it is not a function)
 						break;
 					}
-					// falls through 
+					// falls through
 				default:
 					fnHandler = jQuery.sap.getObject(sName);
 			}
@@ -561,6 +708,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// return undefined
 	};
+
+	/**
+	 * Interface for Preprocessor implementations that can be hooked in the view life cycle.
+	 *
+	 * There are two possibilities to use the preprocessor. It can be either passed to the view via the mSettings.preprocessors object
+	 * where it is the executed only for this instance, or by the registerPreprocessor method of the view type. Currently this is
+	 * available only for XMLViews (as of version 1.30).
+	 *
+	 * @see sap.ui.view
+	 * @see sap.ui.core.mvc.View.registerPreprocessor (the method is available specialized for view types, so use the following)
+	 * @see sap.ui.core.mvc.XMLView.registerPreprocessor
+	 *
+	 * @author SAP SE
+	 * @since 1.30
+	 * @interface
+	 * @name sap.ui.core.mvc.View.Preprocessor
+	 * @public
+	 */
+
+	/**
+	 * Processing method that must be implemented by a Preprocessor.
+	 *
+	 * @name sap.ui.core.mvc.View.Preprocessor.process
+	 * @function
+	 * @public
+	 * @static
+	 * @abstract
+	 * @param {object} vSource the source to be processed
+	 * @param {object} oViewInfo identification information about the calling instance
+	 * @param {string} oViewInfo.id the id
+	 * @param {string} oViewInfo.name the name
+	 * @param {string} oViewInfo.caller
+	 * 		identifies the caller of this preprocessor; basis for log or exception messages
+	 * @param {object} [mSettings]
+	 * 		settings object which was provided with the preprocessor
+	 * @return {object|Promise}
+	 * 		the processed resource or a promise which resolves with the processed resource or an error according to the
+	 * 		declared preprocessor sync capability
+	 */
 
 	return View;
 

@@ -17,25 +17,19 @@
 			}
 		</style>
 		<script>
-			var oSwitchDefault = new sap.m.Switch({
+			var oSwitch = new sap.m.Switch({
 				change: function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' state property " + this.getState() + " on", this);
 				}
 			});
 
-			var oLabelDefault = new sap.m.Label({
+			var oLabel = new sap.m.Label({
 				text: "Airplane Mode",
-				labelFor: oSwitchDefault
+				labelFor: oSwitch
 			}).addStyleClass("customLabel");
 
 			var oSwitchDisabled = new sap.m.Switch({
 				enabled: false
-			});
-
-			var oSwitchCustomText = new sap.m.Switch({
-				state: true,
-				customTextOn: "I",
-				customTextOff: "O"
 			});
 
 			var oSwitchNoText = new sap.m.Switch({
@@ -48,28 +42,39 @@
 				type: sap.m.SwitchType.AcceptReject
 			});
 
+			var oSwitchAcceptRejectLabelled = new sap.m.Switch({
+				state: false,
+				type: sap.m.SwitchType.AcceptReject
+			});
+
+			var oLabelAcceptReject = new sap.m.Label({
+				text: "You agree, that we may use cookies",
+				labelFor: oSwitchAcceptRejectLabelled
+			}).addStyleClass("customLabel");
+
 			new sap.m.App().addPage(new sap.m.Page({
 				title: "sap.m.Switch",
 				content: [
 					new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
-					oLabelDefault,
-					oSwitchDefault,
+					oLabel,
+					oSwitch,
 					new sap.ui.core.HTML({ content: "<hr>" }),
 
 					new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
 					oSwitchDisabled,
 					new sap.ui.core.HTML({ content: "<hr>" }),
 
-					new sap.ui.core.HTML({ content: "<h3>Custom text</h3>" }),
-					oSwitchCustomText,
-					new sap.ui.core.HTML({ content: "<hr>" }),
-
 					new sap.ui.core.HTML({ content: "<h3>No text</h3>" }),
 					oSwitchNoText,
 					new sap.ui.core.HTML({ content: "<hr>" }),
 
-					new sap.ui.core.HTML({ content: "<h3>Type AcceptReject</h3>" }),
+					new sap.ui.core.HTML({ content: "<h3>Semantic</h3>" }),
 					oSwitchAcceptReject,
+					new sap.ui.core.HTML({ content: "<hr>" }),
+
+					new sap.ui.core.HTML({ content: "<h3>Semantic with label</h3>" }),
+					oLabelAcceptReject,
+					oSwitchAcceptRejectLabelled,
 					new sap.ui.core.HTML({ content: "<hr>" })
 				]
 			}).addStyleClass("sapUiContentPadding")).placeAt("body");

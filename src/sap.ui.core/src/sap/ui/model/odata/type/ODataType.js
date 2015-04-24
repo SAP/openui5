@@ -69,6 +69,8 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	function(SimpleType) {
 	"use strict";
 
+	var rAllWhitespace = /\s/g; // whitespace, globally
+
 	/**
 	 * Normalizes the given number to the fixed format.
 	 *
@@ -91,7 +93,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 			sSign = "";
 
 		// remove all whitespace
-		sText = sText.replace(/\s/g, "");
+		sText = sText.replace(rAllWhitespace, "");
 
 		// determine the sign
 		switch (sText.charAt(0)) {
@@ -130,9 +132,9 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *   true if given formatOptions are safe regarding our own parseValue.
 	 */
 	function isSafeFormatOptions(oFormatOptions) {
-		var bSafe = true;
+		var sKey;
 
-		jQuery.each(oFormatOptions || {}, function(sKey) {
+		for (sKey in oFormatOptions) {
 			switch (sKey) {
 				case "decimalSeparator":
 				case "decimals":
@@ -144,13 +146,13 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 				case "minIntegerDigits":
 				case "minusSign":
 				case "plusSign":
-					break;
+					break; // this format option is safe
 				default:
-					bSafe = false;
-					return false; //break
+					return false;
 			}
-		});
-		return bSafe;
+		}
+
+		return true;
 	}
 
 	/**

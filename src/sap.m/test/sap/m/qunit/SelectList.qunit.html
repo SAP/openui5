@@ -69,7 +69,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSelectList.getVisible(), true, "By default the Select control is visible");
 				strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
 				strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
@@ -124,7 +124,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
 				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-setsize"), "3");
 				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-setsize"), "3");
@@ -361,7 +361,7 @@
 					selectedItem: oExpectedItem
 				});
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id1");
 				strictEqual(oSelectList.getSelectedKey(), "0");
@@ -401,7 +401,7 @@
 					selectedItem: "item-id1"
 				});
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id1");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -444,7 +444,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -482,7 +482,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "1");
@@ -498,7 +498,7 @@
 					items: []
 				});
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -537,7 +537,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -575,7 +575,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -617,7 +617,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -643,7 +643,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -687,7 +687,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -731,7 +731,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "3");
@@ -770,7 +770,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "1");
@@ -790,7 +790,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -828,7 +828,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -866,7 +866,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -904,7 +904,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -943,7 +943,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "0");
@@ -973,7 +973,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1017,7 +1017,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -1061,7 +1061,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "3");
@@ -1100,7 +1100,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "1");
@@ -1116,7 +1116,7 @@
 					items: []
 				});
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1154,7 +1154,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1192,7 +1192,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1230,7 +1230,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1268,7 +1268,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1302,7 +1302,7 @@
 					selectedKey: ""
 				});
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1335,7 +1335,7 @@
 				oSelectList.setWidth("400px");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSelectList.$().outerWidth() + "px", "400px");
 
 				// cleanup
@@ -1366,7 +1366,7 @@
 				oSelectList.setEnabled(false);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), 'If the sap.m.SelectList control is disabled, it should have the CSS class "' + sap.m.SelectListRenderer.CSS_CLASS + "Disabled");
 
 				// cleanup
@@ -1392,7 +1392,7 @@
 				// act
 				oSelectList.addItem(oItem);
 
-				// assertions
+				// assert
 				ok(oSelectList.getFirstItem() === oItem);
 				ok(fnAddItemSpy.returned(oSelectList));
 
@@ -1420,7 +1420,7 @@
 				// act
 				oSelectList.insertItem(oItem, 0);
 
-				// assertions
+				// assert
 				ok(oSelectList.getFirstItem() === oItem);
 				ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
 				ok(fnInsertItem.returned(oSelectList), 'oSelectList.insertAggregation() method return the "this" reference');
@@ -1448,7 +1448,7 @@
 				// act
 				oSelectList.setSelectedItem({});
 
-				// assertions
+				// assert
 				strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.SelectList.prototype.setProperty() method was not called");
 				strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.SelectList.prototype.setAssociation() method was not called");
 				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
@@ -1496,7 +1496,7 @@
 				// act
 				oSelectList.setSelectedItem(oExpectedItem);
 
-				// assertions
+				// assert
 				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
 				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
 				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
@@ -1546,7 +1546,7 @@
 				// act
 				oSelectList.setSelectedItem("item-id");
 
-				// assertions
+				// assert
 				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
 				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
 				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
@@ -1593,7 +1593,7 @@
 				// act
 				oSelectList.setSelectedItem(oExpectedItem);
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -1635,7 +1635,7 @@
 				// act
 				oSelectList.setSelectedItem(null);
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1681,7 +1681,7 @@
 				// act
 				oSelectList.setSelectedItemId("item-id");
 
-				// assertions
+				// assert
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
 				ok(fnSetSelectedItemIdSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItemId() method return the "this" reference');
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
@@ -1723,7 +1723,7 @@
 				// act
 				oSelectList.setSelectedItemId("item-id");
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -1766,7 +1766,7 @@
 				// act
 				oSelectList.setSelectedItemId("")
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1787,7 +1787,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1829,7 +1829,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "2");
@@ -1865,7 +1865,7 @@
 					selectedKey: "1"
 				});
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oExpectedItem);
 				strictEqual(oSelectList.getSelectedItemId(), "item-id");
 				strictEqual(oSelectList.getSelectedKey(), "1");
@@ -1910,7 +1910,7 @@
 				// act
 				oSelectList.setSelectedKey("1");
 
-				// assertions
+				// assert
 				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
 				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
@@ -1959,7 +1959,7 @@
 				// act
 				oSelectList.setSelectedKey("");
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -1986,7 +1986,7 @@
 				// act
 				oSelectList.removeItem(undefined);
 
-				// assertions
+				// assert
 				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
 				ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event is not fired");
@@ -2076,7 +2076,7 @@
 				// act
 				oSelectList.removeItem(8);
 
-				// assertions
+				// assert
 				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
 				ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
 				strictEqual(oSelectList.getSelectedKey(), "");
@@ -2144,7 +2144,7 @@
 				oSelectList.removeItem(0);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedKey(), "");
 				strictEqual(oSelectList.getSelectedItemId(), "");
@@ -2174,7 +2174,7 @@
 				oSelectList.removeItem(0);
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSelectList.getSelectedKey(), "");
 				ok(oSelectList.getSelectedItem() === null);
 				strictEqual(oSelectList.getSelectedItemId(), "");
@@ -2222,7 +2222,7 @@
 				oSelectList.removeAllItems();
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.SelectList.prototype.removeAllAggregation() method was called with the expected argument");
 				ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.SelectList.prototype.removeAllItems() method returns an array of the removed items");
 				ok(oSelectList.getSelectedItem() === null);
@@ -2268,7 +2268,7 @@
 				oSelectList.destroyItems();
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
 				ok(oSelectList.getSelectedItem() === null);
 
@@ -2313,7 +2313,7 @@
 				// act
 				var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
 
-				// assertions
+				// assert
 				ok(oFirstEnabledItem === oExpectedItem);
 
 				// cleanup
@@ -2354,7 +2354,7 @@
 				// act
 				var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
 
-				// assertions
+				// assert
 				ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
 
 				// cleanup
@@ -2373,7 +2373,7 @@
 				// act
 				var oFirstEnabledItem = oSelectList.findFirstEnabledItem([]);
 
-				// assertions
+				// assert
 				ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
 
 				// cleanup
@@ -2418,7 +2418,7 @@
 				// act
 				var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
 
-				// assertions
+				// assert
 				ok(oLastEnabledItem === oExpectedItem);
 
 				// cleanup
@@ -2459,7 +2459,7 @@
 				// act
 				var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
 
-				// assertions
+				// assert
 				ok(oLastEnabledItem === null, 'The last enabled item is "null"');
 
 				// cleanup
@@ -2478,7 +2478,7 @@
 				// act
 				var oLastEnabledItem = oSelectList.findLastEnabledItem([]);
 
-				// assertions
+				// assert
 				ok(oLastEnabledItem === null, 'The last enabled item is "null"');
 
 				// cleanup
@@ -2498,7 +2498,7 @@
 					// act
 					oSelectList._setSelectedIndex(mOptions.input);
 
-					// assertions
+					// assert
 					ok(oSelectList.getSelectedItem() === mOptions.output, sTestName);
 
 					// cleanup
@@ -2619,7 +2619,7 @@
 				var oItem = oSelectList.getItemAt(2),
 					oItem1 = oSelectList.getItemAt(6);
 
-				// assertions
+				// assert
 				ok(oItem === oExpectedItem);
 				ok(oItem1 === null);
 
@@ -2663,7 +2663,7 @@
 				// act
 				var oItem = oSelectList.getFirstItem();
 
-				// assertions
+				// assert
 				ok(oItem === oExpectedItem);
 
 				// cleanup
@@ -2682,7 +2682,7 @@
 				// act
 				var oExpectedItem = oSelectList.getFirstItem();
 
-				// assertions
+				// assert
 				ok(oExpectedItem === null, "There are no items");
 
 				// cleanup
@@ -2725,7 +2725,7 @@
 				// act
 				var oItem = oSelectList.getLastItem();
 
-				// assertions
+				// assert
 				ok(oItem === oExpectedItem);
 
 				// cleanup
@@ -2744,7 +2744,7 @@
 				// act
 				var oItem = oSelectList.getLastItem();
 
-				// assertions
+				// assert
 				ok(oItem === null, "There are no items");
 
 				// cleanup
@@ -2792,7 +2792,7 @@
 					oItem2 = oSelectList.getItemByKey("2"),
 					oItem3 = oSelectList.getItemByKey("3");
 
-				// assertions
+				// assert
 				ok(oItem0 === oExpectedItem0);
 				ok(oItem1 === oExpectedItem1);
 				ok(oItem2 === oExpectedItem2);
@@ -2827,7 +2827,7 @@
 					items: aItems
 				});
 
-				// assertions + act
+				// assert + act
 				ok(oSelectList.getEnabledItems()[0] === oExpectedItem);
 
 				// cleanup
@@ -2926,7 +2926,7 @@
 				oSelectList.destroy();
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oSelectList.getItems().length, 0);
 				ok(oSelectList.getDomRef() === null);
 				ok(oSelectList._oItemNavigation === null);
@@ -2967,7 +2967,7 @@
 				// act
 				var aDomRefs = oSelectList._queryEnabledItemsDomRefs();
 
-				// assertions
+				// assert
 				strictEqual(aDomRefs.length, 1);
 				ok(oEnabledItem === sap.ui.getCore().byId(aDomRefs[0].id));
 
@@ -2990,7 +2990,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.$().length, "The list is rendered");
 				strictEqual(oSelectList.$().attr("tabindex"), "0", "The tabindex attribute is rendered with the correct value");
 				ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS), "The list css class is rendered");
@@ -3010,7 +3010,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), "The disabled css class is rendered");
 
 				// cleanup
@@ -3034,7 +3034,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item"), "The list item css class is rendered");
 
 				// cleanup
@@ -3059,7 +3059,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
 
 				// cleanup
@@ -3083,7 +3083,7 @@
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				// assertions
+				// assert
 				ok(!(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
 				ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "SeparatorItem"), "The list item separator css class is rendered");
 				strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
@@ -3387,7 +3387,7 @@
 					srcControl: oSelectList.getLastItem()
 				}));
 
-				// assertions
+				// assert
 				ok(oSelectList.getSelectedItem() === oSelectList.getLastItem());
 				strictEqual(oSelectList.getSelectedKey(), "CU");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');

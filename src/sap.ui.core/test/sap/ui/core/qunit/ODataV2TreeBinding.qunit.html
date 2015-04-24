@@ -998,8 +998,47 @@
 			
 		});
 	});
-	
-	
+
+
+	asyncTest("Application Filtering", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")],
+					{
+						rootLevel: 2
+					});
+
+			var oContext;
+
+			var handler1 = function (oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				oBinding.detachChange(handler1);
+
+				start();
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+
 	asyncTest("Tried filtering", function() {
 		oModel.attachMetadataLoaded(function() {
 			//stub error

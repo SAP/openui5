@@ -430,9 +430,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._$input.parent().addClass("sapMMultiInputMultiModeInputContainer");
 		}
 
-		// necessary to display expanded MultiInput which is inside SimpleForm
-		if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
-			this.$().parent('[class*="sapUiRespGridSpan"]').css("overflow", "visible");
+		// necessary to display expanded MultiInput which is inside layout
+		var $parent = this.$().parent('[class*="sapUiRespGridSpan"]') || this.$().parent('[class*="sapUiVlt"]');
+		if ($parent) {
+			$parent.css("overflow", "visible");
 		}
 		
 	};
@@ -449,10 +450,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				this._$input.parent().removeClass("sapMMultiInputMultiModeInputContainer");
 			}
 			
-			// set overflow of sapUiRespGridSpan back to hidden
-			if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
-				this.$().parent('[class*="sapUiRespGridSpan"]').css("overflow", "hidden");
-			}
 	};
 
 	/**
@@ -748,26 +745,31 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype.onpaste = function (oEvent) {
-		var sOriginalText;
-		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
-		if (window.clipboardData) {
-			//IE
-			sOriginalText = window.clipboardData.getData("Text");
-		} else {
-			// Chrome, Firefox, Safari
-			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
-		}
-
-		var aSeparatedText = this._tokenizer._parseString(sOriginalText);
-		setTimeout(function() {
-			if (aSeparatedText) {
-				var i = 0;
-				for ( i = 0; i < aSeparatedText.length; i++) {
-					this.setValue(aSeparatedText[i]);
-					this._validateCurrentText();
-				}
+		
+		var bHasSuggestionPopup = this.getShowSuggestion() && (this.getSuggestionItems().length !== 0 || this.getSuggestionRows().length !== 0 || this.getSuggestionColumns().length !== 0);
+		if (!bHasSuggestionPopup) {
+			var sOriginalText;
+			// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+			if (window.clipboardData) {
+				//IE
+				sOriginalText = window.clipboardData.getData("Text");
+			} else {
+				// Chrome, Firefox, Safari
+				sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
 			}
-		}.bind(this), 0);
+
+			var aSeparatedText = this._tokenizer._parseString(sOriginalText);
+			setTimeout(function() {
+				if (aSeparatedText) {
+					var i = 0;
+					for ( i = 0; i < aSeparatedText.length; i++) {
+						this.setValue(aSeparatedText[i]);
+						this._validateCurrentText();
+					}
+				}
+			}.bind(this), 0);
+		}
+		
 	};
 	
 	/**
@@ -943,8 +945,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					||  oEvent.target.className.indexOf("sapMToken") > -1 && oEvent.target.className.indexOf("sapMTokenIcon") < 0
 						||  oEvent.target.className.indexOf("sapMTokenText") > -1) {
 					
-					this._oSuggestionPopup.open();				
 					this.setValue("");
+					this._oSuggestionPopup.open();
 					this._tokenizerInPopup = this.cloneTokenizer(this._tokenizer);
 					this._setAllTokenVisible(this._tokenizerInPopup);
 					this._tokenizerInPopup._oScroller.setHorizontal(false);

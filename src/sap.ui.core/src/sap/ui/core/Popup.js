@@ -454,6 +454,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	// Begin of Popup-Stacking facilities
 	(function() {
 		var iLastZIndex = 0;
+		// TODO: Implement Number.SAFE_MAX_INTEGER (Math.pow(2, 53) -1) when ECMAScript 6 is mostly supported
+		var iMaxInteger = Math.pow(2, 32) - 1;
+
+		/**
+		 * Set an initial z-index that should be used by all Popup so all Popups start at least
+		 * with the set z-index.
+		 * If the given z-index is lower than any current available z-index the highest z-index will be used.
+		 *
+		 * @param {Number} iInitialZIndex is the initial z-index
+		 * @public
+		 * @since 1.30.0
+		 */
+		Popup.setInitialZIndex = function(iInitialZIndex){
+			if (iInitialZIndex >= iMaxInteger) {
+				throw new Error("Z-index can't be higher than Number.MAX_SAFE_INTEGER");
+			}
+
+			iLastZIndex = Math.max(iInitialZIndex, this.getLastZIndex());
+		};
 
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
@@ -483,6 +502,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		 */
 		Popup.getNextZIndex = function(){
 			iLastZIndex += 10;
+			if (iLastZIndex >= iMaxInteger) {
+				throw new Error("Z-index can't be higher than Number.MAX_SAFE_INTEGER");
+			}
 			return iLastZIndex;
 		};
 
@@ -680,6 +702,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			that.bOpen = true;
 			$Ref.css("display","block");
 
+
 			// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
 			if (that._bModal || that._bAutoClose || that._sInitialFocusId) {
 				var domRefToFocus = null;
@@ -707,7 +730,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			that._updateBlindLayer();
 
 			// notify that opening has completed
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9) {
+			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9) {
 				jQuery.sap.delayedCall(0,that,function(){
 					that.fireOpened();
 				});
@@ -756,6 +779,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		//  register resize handler for blindlayer resizing
 		if (this._oBlindLayer) {
 			this._resizeListenerId = sap.ui.core.ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
+		}
+
+		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
+		// preventScroll can be set to false in jQuery.sap.initMobile(),
+		// then the scrolling for popups content in iOS is also scrolling the page content
+		// issue reported in Incident ID: 1472005153
+		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+			jQuery(document).on("touchmove", this._fnPreventScroll);
 		}
 	};
 
@@ -826,6 +857,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				// focus/blur for handling autoclose is disabled for desktop browsers which are not in the touch simulation mode
 				// create timeout for closing the popup if there is no focus immediately returning to the popup
 				if (!this.touchEnabled && !this._sTimeoutId) {
+					// If Popup has focus and we click outside of the browser, in Chrome the blur event is fired, but the focused element is still in the Popup and is the same as the focused that triggers the blur event.
+					// if the dom element that fires the blur event is the same as the currently focused element, just return
+					// because in Chrome when the browser looses focus, it fires the blur event of the
+					// dom element that has the focus before, but document.activeElement is still this element
+					if (oEvent.target === document.activeElement) {
+						return;
+					}
+
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
 					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function(){
@@ -948,6 +987,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			if (!this._bModal && this._bAutoClose) {
 				jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
 			}
+		}
+
+		//stop listening for touchmove on the window for preventing the scroll
+		if (sap.ui.Device.os.ios && sap.ui.Device.support.touch) {
+			jQuery(document).off("touchmove", this._fnPreventScroll);
 		}
 
 		if (this.oContent instanceof sap.ui.core.Element) {
@@ -1679,6 +1723,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 
 		return this;
+	};
+
+	Popup.prototype._fnPreventScroll = function(oEvent) {
+		if (!oEvent.isMarked()) {
+			oEvent.preventDefault(); // prevent the rubber-band effect
+		}
 	};
 
 	Popup.CLOSE_ON_SCROLL = "close_Popup_if_of_is_moved";

@@ -166,5 +166,55 @@
         "references": []
       }
     ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "4c439e27cfb002da3c7478df5d979a000c2a7aeb",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataSet: Multiple setData calls now update Items correctly",
+        "references": []
+      },
+      {
+        "id": "2683b995926329bec48699dcd56ac060bf5ca78f",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ThingViewer: Long subtitle in header now has ellipsis (Internet Explorer)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "811230"
+          }
+        ]
+      },
+      {
+        "id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
+        "references": []
+      },
+      {
+        "id": "a98534ed73d6c6324ee07fe2ebd8a3cf9318815d",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Popup position after changing its size corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "d2233ccd9fb1d41879bfbff822facbabee01fab2",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "Overlay: Focus is now restored when closing Overlay",
+        "references": []
+      }
+    ]
   }
 }

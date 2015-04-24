@@ -43,16 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 */
 	var RouteMatchedHandler = BaseObject.extend("sap.m.routing.RouteMatchedHandler", {
 		constructor : function (oRouter, bCloseDialogs) {
-			//until we reverse the order of events fired by router we need to queue handleRouteMatched
-//			this._aQueue = [];
-
 			this._oTargetHandler = new TargetHandler(bCloseDialogs);
-
-			if (bCloseDialogs === undefined) {
-				this._bCloseDialogs = true;
-			} else {
-				this._bCloseDialogs = !!bCloseDialogs;
-			}
 
 			// Route matched is thrown for each container in the route hierarchy
 			oRouter.attachRouteMatched(this._onHandleRouteMatched, this);
@@ -101,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * @returns {sap.m.routing.RouteMatchedHandler} for chaining
 	 */
 	RouteMatchedHandler.prototype.setCloseDialogs = function (bCloseDialogs) {
-		this._bCloseDialogs = !!bCloseDialogs;
+		this._oTargetHandler.setCloseDialogs(bCloseDialogs);
 		return this;
 	};
 
@@ -113,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * @returns {boolean} a flag indication if dialogs will be closed
 	 */
 	RouteMatchedHandler.prototype.getCloseDialogs = function () {
-		return this._bCloseDialogs;
+		return this._oTargetHandler.getCloseDialogs();
 	};
 
 

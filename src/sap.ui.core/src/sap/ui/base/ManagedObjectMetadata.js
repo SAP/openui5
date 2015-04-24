@@ -956,11 +956,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 				oType = DataType.getType(this._mProperties[s].type);
 				if (oType instanceof DataType) {
 					mDefaults[s] = oType.getDefaultValue();
-				} else { // Enumeration
-					for (var i in oType) {
-						mDefaults[s] = oType[i];
-						break;
-					}
 				}
 			}
 		}

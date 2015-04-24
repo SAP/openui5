@@ -88,7 +88,7 @@ public class ConcatFilter implements Filter {
           
           if ("GET".equals(method)) {
             OutputStream os = response.getOutputStream();
-            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jquery/jquery-1.11.1.js"), os, "UTF-8");
+            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jquery.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");

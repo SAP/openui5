@@ -6,10 +6,8 @@
 
 // Provides class sap.ui.model.odata.ODataMetadata
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs'],
-	function(jQuery, EventProvider, datajs) {
+	function(jQuery, EventProvider, OData) {
 	"use strict";
-
-	/*global OData *///declare unusual global vars for JSLint/SAPUI5 validation
 
 	/**
 	 * Constructor for a new ODataMetadata.
@@ -309,6 +307,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			return null;
 		}
 		
+		if (this.mEntityTypes[sPath]) {
+			return this.mEntityTypes[sPath];
+		}
+		
 		// remove starting and trailing /
 		var sCandidate = sPath.replace(/^\/|\/$/g, ""),
 			aParts = sCandidate.split("/"),
@@ -374,7 +376,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			}
 		}
 	
-	
+		if (oEntityType) {
+			this.mEntityTypes[sPath] = oEntityType;
+		}
+		
 		//jQuery.sap.assert(oEntityType, "EntityType for path " + sPath + " could not be found!");
 		return oEntityType;
 	};
@@ -793,7 +798,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		//jQuery.sap.assert(oPropertyMetadata, "PropertyType for property "+ aParts[0]+ " of EntityType " + oEntityType.name + " not found!");
 		return oPropertyMetadata;
 	};
-	
 	
 	ODataMetadata.prototype.destroy = function() {
 		delete this.oMetadata;

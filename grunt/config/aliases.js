@@ -2,6 +2,8 @@
 
 var semver = require('semver');
 var async = require('async');
+var path = require('path');
+var cldr = require('../../lib/cldr-openui5/lib/index.js');
 
 module.exports = function(grunt, config) {
 
@@ -241,6 +243,58 @@ module.exports = function(grunt, config) {
 
 			}, this.async());
 
+		},
+		
+		'cldr': function() {
+			var done = this.async();
+			
+			var baseFolder = path.join(__dirname, "../../");
+			
+			var zipPath = grunt.option("zip"),
+				tempFolder = grunt.option("tmp") || "temp",
+				dryRun = grunt.option("dryrun"),
+				outputFolder = grunt.option("output"),
+				download = grunt.option("download"),
+				fileName = grunt.option("file");
+					
+			if (typeof dryRun !== "boolean") {
+				dryRun = true;
+			}
+					
+			if (!dryRun && !outputFolder) {
+				outputFolder = path.join(baseFolder, "src/sap.ui.core/src/sap/ui/core/cldr");
+			}
+			
+			if (zipPath && download) {
+				grunt.fail.warn("Parameter 'zip' and 'download' can't be given at the same time. If you have the zip file on hand, use 'zip' otherwise use download with the version of CLDR zip file.");
+			}
+
+			if ((zipPath || download) && outputFolder) {
+				cldr({
+					zip: zipPath,
+					tmp: tempFolder,
+					output: outputFolder,
+					download: download,
+					file: fileName
+				}).on("download", function(url) {
+					grunt.log.ok("Downloading CLDR zip file from", url);
+				}).on("downloaded", function() {
+					grunt.log.oklns("The CLDR zip file downloaded and saved to TEMP folder");
+				}).on("unzip", function() {
+					grunt.log.oklns("Extracting original CLDR JSON files to TEMP folder");
+				}).on("unzipped", function() {
+					grunt.log.oklns("Extracting finished. Generating the UI5 locale JSONs");
+				}).on("generated", function() {
+					grunt.log.ok("DONE", "Files saved to", outputFolder);
+				}).on("tempFolderDeleted", function() {
+					done();
+				}).on("error", function(err) {
+					grunt.log.error(err);
+					done(false);
+				}).start();
+			} else {
+				grunt.fail.fatal("grunt cldr requires 'zip' and 'output' options");
+			}	
 		},
 
 		// Default task (called when just running "grunt")

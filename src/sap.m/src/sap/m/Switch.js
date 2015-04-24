@@ -108,8 +108,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				iPosition = Switch._OFFPOSITION;
 			} else if (iPosition < Switch._ONPOSITION) {
 				iPosition = Switch._ONPOSITION;
-			} else {
-				iPosition = iPosition;
 			}
 
 			if (this._iCurrentPosition === iPosition) {
@@ -139,15 +137,9 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				return;
 			}
 
-			var sId = this.getId(),
-				$Switch = this.$("switch"),
-				oOnDomRef = this.getDomRef("texton"),
-				oOffDomRef = this.getDomRef("textoff"),
+			var $Switch = this.$("switch"),
 				oSwitchInnerDomRef = this.getDomRef("inner"),
 				oHandleDomRef = this.getDomRef("handle"),
-				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby"),
-				sTextOnId = sId + "-texton",
-				sTextOffId = sId + "-textoff",
 				oCheckboxDomRef = null;
 
 			if (this.getName()) {
@@ -161,15 +153,9 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			if (bState) {
 				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
 				oDomRef.setAttribute("aria-checked", "true");
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sTextOffId, sTextOnId));
-				oOnDomRef.removeAttribute("aria-hidden");
-				oOffDomRef.setAttribute("aria-hidden", "true");
 			} else {
 				$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
 				oDomRef.setAttribute("aria-checked", "false");
-				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sTextOnId, sTextOffId));
-				oOnDomRef.setAttribute("aria-hidden", "true");
-				oOffDomRef.removeAttribute("aria-hidden");
 			}
 
 			$Switch.addClass(CSS_CLASS + "Trans");
@@ -178,22 +164,40 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			oSwitchInnerDomRef.style.cssText = "";
 		};
 
-		Switch._getCssParameter = function(sParameter) {
-			var fnGetCssParameter = Parameters.get;
-			return fnGetCssParameter(sParameter) || fnGetCssParameter(sParameter + "-" + sap.ui.Device.os.name.toLowerCase());
+		Switch.prototype.getInvisibleElementId = function() {
+			return this.getId() + "-invisible";
 		};
 
-		var sParamTransitionTime = "sapMSwitch-TRANSITIONTIME",
-			sTransitionTime = Switch._getCssParameter(sParamTransitionTime);
+		Switch.prototype.getInvisibleElementText = function() {
+			var sText = "";
+
+			switch (this.getType()) {
+				case sap.m.SwitchType.Default:
+
+					if (!this.getCustomTextOn()) {
+						sText = "SWITCH_ON";
+					}
+
+					break;
+
+				case sap.m.SwitchType.AcceptReject:
+					sText = "SWITCH_ARIA_ACCEPT";
+					break;
+
+				// no default
+			}
+
+			return sText;
+		};
 
 		// the milliseconds takes the transition from one state to another
-		Switch._TRANSITIONTIME = Number(sTransitionTime) || 0;
+		Switch._TRANSITIONTIME = Number(Parameters.get("sapMSwitch-TRANSITIONTIME")) || 0;
 
 		// the position of the inner HTML element whether the switch is "ON"
-		Switch._ONPOSITION = Number(Switch._getCssParameter("sapMSwitch-ONPOSITION"));
+		Switch._ONPOSITION = Number(Parameters.get("sapMSwitch-ONPOSITION"));
 
 		// the position of the inner HTML element whether the switch is "OFF"
-		Switch._OFFPOSITION = Number(Switch._getCssParameter("sapMSwitch-OFFPOSITION"));
+		Switch._OFFPOSITION = Number(Parameters.get("sapMSwitch-OFFPOSITION"));
 
 		// swap point
 		Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);

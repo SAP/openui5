@@ -2,8 +2,8 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -11,15 +11,12 @@
 	jQuery.sap.require("sap.ui.thirdparty.datajs");
 
 	sinon.config.useFakeServer = true;
-
-	function onError(oError) {
-		start();
-		ok(false, oError.message + ", stack: " + oError.stack);
-	}
+	//TODO remove this workaround in IE9 for
+	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+	sinon.xhr.supportsCORS = true;
 
 	function onFailed(oEvent) {
 		var oParameters = oEvent.getParameters();
-		start();
 		while (oParameters.getParameters) { // drill down to avoid circular structure
 			oParameters = oParameters.getParameters();
 		}
@@ -41,10 +38,12 @@
 			<EntityType Name="BusinessPartner" sap:content-version="1">\
 				<Property Name="BusinessPartnerID" Type="Edm.String"\
 					Nullable="false" MaxLength="10" sap:label="Bus. Part. ID"\
-					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false">\
+					sap:creatable="false" sap:text="AnyProperty" sap:updatable="false" \
+					sap:sortable="false" sap:required-in-filter ="true">\
 					<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation" />\
 				</Property>\
-				<Property Name="AnyProperty" Type="Edm.String" sap:updatable="false"/>\
+				<Property Name="AnyProperty" Type="Edm.String" sap:field-control="UX_FC_READONLY" \
+					sap:updatable="false" sap:sortable="false"/>\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
 				<edmNs4:Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Label via inline annotation: Business Partner" />\
 			</EntityType>\
@@ -119,15 +118,16 @@
 	</Annotation>\
 </Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
-		<Annotation Term="Org.OData.Core.V1.Computed" Bool="true"/>\
+		<Annotation Term="Org.OData.Core.V1.Computed" Bool="false"/>\
 		<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="AnyProperty"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" Path="UX_FC_READONLY"/>\
 		<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/Price">\
 		<Annotation Term="Org.OData.Measures.V1.Scale" Path="PriceScale"/>\
-		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode"/>\
+		<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCodeFromAnnotation"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.Product/WeightMeasure">\
 		<Annotation Term="Org.OData.Measures.V1.Unit" Path="WeightUnit"/>\
@@ -136,11 +136,26 @@
 		<Annotation Term="Org.OData.Capabilities.V1.FilterRestrictions">\
 			<Record>\
 				<PropertyValue Property="RequiresFilter" Bool="true"/>\
+				<PropertyValue Property="RequiredProperties">\
+					<Collection>\
+						<PropertyPath>AnyProperty</PropertyPath>\
+					</Collection>\
+				</PropertyValue>\
 			</Record>\
 		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.SearchRestrictions">\
 			<Record>\
-				<PropertyValue Property="Searchable" Bool="false"/>\
+				<PropertyValue Property="Searchable" Bool="true"/>\
+			</Record>\
+		</Annotation>\
+		<Annotation Term="Org.OData.Capabilities.V1.SortRestrictions">\
+			<Record>\
+				<PropertyValue Property="NonSortableProperties">\
+					<Collection>\
+						<PropertyPath>BusinessPartnerID</PropertyPath>\
+						<PropertyPath>AnyProperty</PropertyPath>\
+					</Collection>\
+				</PropertyValue>\
 			</Record>\
 		</Annotation>\
 		<Annotation Term="Org.OData.Capabilities.V1.TopSupported" Bool="false" />\
@@ -289,7 +304,7 @@
 	 *   <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
 	 */
 	function setupSandbox(oSandbox) {
-		var oServer = oSandbox.useFakeServer();
+		var oServer = oSandbox.useFakeServer(), sUrl;
 
 		//TODO how to properly tear down this stuff?
 		sinon.FakeXMLHttpRequest.useFilters = true;
@@ -297,9 +312,9 @@
 			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
 		});
 
-		jQuery.each(mFixture, function (sUrl, vResponse) {
-			oServer.respondWith(sUrl, vResponse);
-		});
+		for (sUrl in mFixture) {
+			oServer.respondWith(sUrl, mFixture[sUrl]);
+		}
 		oServer.autoRespond = true;
 	}
 
@@ -309,6 +324,8 @@
 	 * @param {function} fnCodeUnderTest
 	 * @param {boolean} bImmediately
 	 *   whether to run the test immediately instead of waiting for the meta model to be loaded
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
 	function withMetaModel(fnCodeUnderTest, bImmediately) {
 		var oMetaModel,
@@ -323,7 +340,7 @@
 			var sCopy = oDataMetaModel.oModel.getJSON();
 
 			try {
-				fnCodeUnderTest(oDataMetaModel);
+				return fnCodeUnderTest(oDataMetaModel);
 			} finally {
 				oDataMetaModel.oModel.setJSON(sCopy);
 			}
@@ -331,8 +348,7 @@
 
 		// Note: bImmediately requires a fresh instance
 		if (oDataMetaModel && !bImmediately) {
-			call(fnCodeUnderTest, oDataMetaModel);
-			return;
+			return call(fnCodeUnderTest, oDataMetaModel);
 		}
 
 		try {
@@ -350,15 +366,13 @@
 
 			if (bImmediately) {
 				// no caching, no undo of modifications!
-				fnCodeUnderTest(oModel.getMetaModel());
+				return fnCodeUnderTest(oModel.getMetaModel());
 			} else {
 				// calls the code under test once the meta model has loaded
 				oDataMetaModel = oModel.getMetaModel();
-				stop();
-				oDataMetaModel.loaded().then(function () {
-					call(fnCodeUnderTest, oDataMetaModel);
-					start();
-				}, onError)["catch"](onError);
+				return oDataMetaModel.loaded().then(function () {
+					return call(fnCodeUnderTest, oDataMetaModel);
+				});
 			}
 		} finally {
 			oSandbox.restore();
@@ -367,10 +381,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.ODataMetaModel", {
-		setup : function () {
+		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
 		},
-		teardown : function () {
+		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox. verifyAndRestore();
 			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
@@ -378,8 +392,8 @@
 	});
 
 	//*********************************************************************************************
-	asyncTest("functions using 'this.oModel' directly", function () {
-		withMetaModel(function (oMetaModel) {
+	test("functions using 'this.oModel' directly", function () {
+		return withMetaModel(function (oMetaModel) {
 			// call functions before loaded() promise has been resolved
 			throws(function () {
 				oMetaModel._getObject("/");
@@ -410,31 +424,28 @@
 				oMetaModel.isList();
 			}, "isList")
 
-			oMetaModel.loaded().then(function () {
-				start();
-			}, onError)["catch"](onError);
+			return oMetaModel.loaded();
 		}, true);
 	});
 
 	//*********************************************************************************************
-	asyncTest("basics", function () {
+	test("basics", function () {
 		var oMetaModel = new sap.ui.model.odata.ODataMetaModel({
 				getServiceMetadata : function () { return {dataServices : {}}; },
 				isLoaded : function () { return true; }
 			});
 
-		oMetaModel.loaded().then(sinon.test(function () {
+		return oMetaModel.loaded().then(sinon.test(function () {
 			var oMetaModelMock = this.mock(oMetaModel),
 				oModelMock = this.mock(oMetaModel.oModel),
 				oResult = {};
 
-			start();
 			this.mock(sap.ui.model.Model.prototype).expects("destroy").once();
 			// do not mock/stub this or else "destroy" will not bubble up!
 			this.spy(sap.ui.model.MetaModel.prototype, "destroy");
 
 			// generic dispatching
-			jQuery.each(["destroy", "isList"], function (i, sName) {
+			["destroy", "isList"].forEach(function (sName) {
 				oModelMock.expects(sName).once().withExactArgs("foo", 0, false).returns(oResult);
 
 				strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
@@ -447,30 +458,30 @@
 
 			ok(sap.ui.model.MetaModel.prototype.destroy.calledOnce);
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.refresh();
 			}, /Unsupported operation: ODataMetaModel#refresh/);
 
 			oMetaModel.setLegacySyntax(); // allowed
 			oMetaModel.setLegacySyntax(false); // allowed
-			raises(function () {
+			throws(function () {
 				oMetaModel.setLegacySyntax(true);
 			}, /Legacy syntax not supported by ODataMetaModel/);
 
 			strictEqual(oMetaModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
 			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), sap.ui.model.BindingMode.OneTime);
-			raises(function () {
+			throws(function () {
 				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
 			});
-			raises(function () {
+			throws(function () {
 				oMetaModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 			});
-		}).apply({/*give Sinon a "this" to enrich*/}), onError)["catch"](onError);
+		}).apply({/*give Sinon a "this" to enrich*/}));
 	});
 
 	//*********************************************************************************************
 	test("bindings", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oBinding,
 				oContext = oMetaModel.createBindingContext("/foo"),
 				aFilters = [],
@@ -493,7 +504,7 @@
 			strictEqual(oBinding.getContext(), oContext);
 			strictEqual(oBinding.mParameters, mParameters);
 
-			raises(function () {
+			throws(function () {
 				oBinding.setValue("foo");
 			}, /Unsupported operation: ODataMetaModel#setProperty/);
 
@@ -518,7 +529,7 @@
 
 	//*********************************************************************************************
 	test("_getObject", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oContext;
 
 			// w/o context
@@ -552,7 +563,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true], function (i, bIsLoggable) {
+	[false, true].forEach(function (bIsLoggable) {
 		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
@@ -564,7 +575,7 @@
 				.withExactArgs("Invalid part: bar", "path: /foo/bar, context: undefined",
 					"sap.ui.model.odata.ODataMetaModel");
 
-			withMetaModel(function (oMetaModel) {
+			return withMetaModel(function (oMetaModel) {
 				strictEqual(oMetaModel._getObject("/foo/bar"), undefined);
 			});
 		});
@@ -581,7 +592,7 @@
 					"path: some/relative/path, context: /dataServices/schema/0/entityType/0",
 					"sap.ui.model.odata.ODataMetaModel");
 
-			withMetaModel(function (oMetaModel) {
+			return withMetaModel(function (oMetaModel) {
 				var oContext = oMetaModel.getContext("/dataServices/schema/0/entityType/0");
 				strictEqual(oMetaModel._getObject("some/relative/path", oContext), undefined);
 			});
@@ -599,7 +610,7 @@
 					"path: some/relative/path, context: [object Object]",
 					"sap.ui.model.odata.ODataMetaModel");
 
-			withMetaModel(function (oMetaModel) {
+			return withMetaModel(function (oMetaModel) {
 				var oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
 				strictEqual(oMetaModel._getObject("some/relative/path", oContext), undefined);
 			});
@@ -613,13 +624,13 @@
 			"some/relative/path",
 			"sap.ui.model.odata.ODataMetaModel");
 
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel._getObject("some/relative/path"), null);
 		});
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		annotationURI : null,
 		title : "no annotations"
 	}, {
@@ -628,8 +639,8 @@
 	}, {
 		annotationURI : ["/fake/annotations", "/fake/annotations2"],
 		title : "multiple annotation files"
-	}], function (i, oFixture) {
-		asyncTest("ODataMetaModel loaded: " + oFixture.title, function () {
+	}].forEach(function (oFixture, i) {
+		test("ODataMetaModel loaded: " + oFixture.title, function () {
 			var oMetaModel, oModel;
 
 			setupSandbox(this.sandbox);
@@ -644,7 +655,7 @@
 			oMetaModel = oModel.getMetaModel();
 			ok(oMetaModel instanceof sap.ui.model.odata.ODataMetaModel);
 
-			oMetaModel.loaded().then(function () {
+			return oMetaModel.loaded().then(function () {
 				var oAnnotations = oModel.getServiceAnnotations(),
 					oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
@@ -697,7 +708,6 @@
 					delete oVHSexSet["Org.OData.Capabilities.V1." + sCapability];
 				}
 
-				start();
 				strictEqual(oBusinessPartner.name, "BusinessPartner");
 				strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
 
@@ -883,7 +893,7 @@
 				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
 				deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
-					"Bool" : "true"
+					"Bool" : (i > 0 ? "false" : "true")
 				}, "sap:creatable=false and sap:updatable=false on property level");
 				delete oBusinessPartnerId["Org.OData.Core.V1.Computed"];
 
@@ -900,7 +910,7 @@
 				deepEqual(oVHSexSet["sap:searchable"], "true");
 				delete oVHSexSet["sap:searchable"];
 				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
-					"Searchable": {"Bool" : "false"}
+					"Searchable": {"Bool" : (i > 0 ? "true" : "false")}
 				}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
 
@@ -924,10 +934,11 @@
 				// sap:requires-filter
 				deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
 				delete oBusinessPartnerSet["sap:requires-filter"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
-					"RequiresFilter": {"Bool" : "true"}
-				}, "BusinessPartnerSet requires filter");
-				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
+				deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
+						RequiresFilter, {"Bool" : "true"}, "BusinessPartnerSet requires filter");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
+					RequiresFilter;
 
 				// sap:text
 				deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
@@ -949,7 +960,8 @@
 				deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
 				delete oProductCurrencyCode["sap:semantics"];
 				deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
-					{ "Path" : "CurrencyCode" }, "ProductPrice currency");
+					{ "Path" : (i > 0 ? "CurrencyCodeFromAnnotation" : "CurrencyCode") },
+					"ProductPrice currency");
 				delete oProductPrice["Org.OData.Measures.V1.ISOCurrency"];
 				// sap:unit - unit
 				deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
@@ -960,8 +972,39 @@
 					{ "Path" : "WeightUnit" }, "ProductWeightMeasure unit");
 				delete oProductWeightMeasure["Org.OData.Measures.V1.Unit"];
 
+				// sap:field-control
+				deepEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
+				delete oAnyProperty["sap:field-control"];
+				deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"],
+					{ "Path" : "UX_FC_READONLY" }, "AnyProperty FieldControl");
+				delete oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"];
+
+				// sap:sortable
+				deepEqual(oBusinessPartnerId["sap:sortable"], "false");
+				delete oBusinessPartnerId["sap:sortable"];
+				deepEqual(oAnyProperty["sap:sortable"], "false");
+				delete oAnyProperty["sap:sortable"];
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"], {
+					"NonSortableProperties": [
+						{"PropertyPath" : "BusinessPartnerID"},
+						{"PropertyPath" : "AnyProperty"}
+					]
+				}, "BusinessPartnerSet not searchable");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
+
+				// sap:required-in-filter
+				deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
+				delete oBusinessPartnerId["sap:required-in-filter"];
+				// check that v4 annotations win
+				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
+					"RequiredProperties": i === 0
+					? [ {"PropertyPath" : "BusinessPartnerID"} ]
+					: [ {"PropertyPath" : "AnyProperty"} ]
+				}, "BusinessPartnerSet filter restrictions");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
+
 				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
-			}, onError)["catch"](onError);
+			});
 		});
 	});
 
@@ -969,7 +1012,7 @@
 	// Note: http://www.html5rocks.com/en/tutorials/es6/promises/ says that
 	// "Any errors thrown in the constructor callback will be implicitly passed to reject()."
 	// We make sure the same happens even with our asynchronous constructor.
-	asyncTest("Errors thrown inside load()", function () {
+	test("Errors thrown inside load()", function () {
 		var oError = new Error("This call failed intentionally"),
 			oModel;
 
@@ -981,19 +1024,16 @@
 		});
 
 		// code under test
-		oModel.getMetaModel().loaded().then(function () {
-			start();
-			ok(false, "not expected");
+		return oModel.getMetaModel().loaded().then(function () {
+			throw new Error("Unexpected success");
 		}, function (ex) {
-			start();
 			strictEqual(ex, oError, ex.message);
-			ok(true, "error handler called as expected");
-		})["catch"](onError);
+		});
 	});
 
 	//*********************************************************************************************
-	jQuery.each([false, true, false, true], function (i, bAsync) {
-		asyncTest("Error loading" + (i < 2 ? " meta data" : " annotations" )
+	[false, true, false, true].forEach(function (bAsync, i) {
+		test("Error loading" + (i < 2 ? " meta data" : " annotations" )
 				+ ", async: " + bAsync, function () {
 			var oModel,
 				sMetadataURL = i < 2 ? "/invalid/service" : "/fake/service",
@@ -1009,23 +1049,20 @@
 			});
 
 			// code under test
-			oModel.getMetaModel().loaded().then(function () {
-				start();
-				ok(false, "not expected");
+			return oModel.getMetaModel().loaded().then(function () {
+				throw new Error("Unexpected success");
 			}, function (ex) {
-				start();
 				ok(ex instanceof Error);
 				ok(/Error loading meta model/.test(ex.message), ex.message);
-				ok(true, "error handler called as expected");
-			})["catch"](onError);
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["annotations", "emptyAnnotations"], function (i, sAnnotation) {
-		jQuery.each(["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"],
-			function (j, sPath) {
-				asyncTest(sAnnotation + ", " + sPath, function () {
+	["annotations", "emptyAnnotations"].forEach(function (sAnnotation) {
+		["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
+			function (sPath) {
+				test(sAnnotation + ", " + sPath, function () {
 					var oMetaModel, oModel;
 
 					setupSandbox(this.sandbox);
@@ -1037,10 +1074,7 @@
 
 					// code under test
 					oMetaModel = oModel.getMetaModel();
-					oMetaModel.loaded().then(function () {
-						start();
-						ok(true, "expected");
-
+					return oMetaModel.loaded().then(function () {
 						// check that no errors happen for empty/missing structures
 						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
 							null, "getODataEntityType");
@@ -1054,7 +1088,7 @@
 							null, "getODataFunctionImport");
 						strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
 							undefined, "getODataFunctionImport as path");
-					}, onError)["catch"](onError);
+					});
 				});
 			}
 		);
@@ -1062,7 +1096,7 @@
 
 	//*********************************************************************************************
 	test("getODataEntityContainer", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntityContainer(),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0"));
 		});
@@ -1070,7 +1104,7 @@
 
 	//*********************************************************************************************
 	test("getODataEntityContainer as path", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntityContainer(true),
 				"/dataServices/schema/0/entityContainer/0");
 		});
@@ -1078,7 +1112,7 @@
 
 	//*********************************************************************************************
 	test("getODataEntitySet", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/entitySet/1"));
 			strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
@@ -1088,7 +1122,7 @@
 
 	//*********************************************************************************************
 	test("getODataEntitySet as path", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
 				"/dataServices/schema/0/entityContainer/0/entitySet/1");
 			strictEqual(oMetaModel.getODataEntitySet("FooSet", true), undefined);
@@ -1098,7 +1132,7 @@
 
 	//*********************************************************************************************
 	test("getODataFunctionImport", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
 			strictEqual(oMetaModel.getODataFunctionImport("Foo"), null);
@@ -1108,7 +1142,7 @@
 
 	//*********************************************************************************************
 	test("getODataFunctionImport as path", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
 				"/dataServices/schema/0/entityContainer/0/functionImport/0");
 			strictEqual(oMetaModel.getODataFunctionImport("Foo", true), undefined);
@@ -1137,7 +1171,7 @@
 
 	//*********************************************************************************************
 	test("getODataComplexType", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
 					oMetaModel.getObject("/dataServices/schema/0/complexType/0"));
 			strictEqual(oMetaModel.getODataComplexType("FOO.CT_Address"), null);
@@ -1149,7 +1183,7 @@
 
 	//*********************************************************************************************
 	test("getODataEntityType", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
 				oMetaModel.getObject("/dataServices/schema/0/entityType/1"));
 			strictEqual(oMetaModel.getODataEntityType("FOO.Product"), null);
@@ -1166,7 +1200,7 @@
 
 	//*********************************************************************************************
 	test("getODataEntityType as path", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
 				"/dataServices/schema/0/entityType/1");
 			strictEqual(oMetaModel.getODataEntityType("FOO.Product", true), undefined);
@@ -1178,7 +1212,7 @@
 
 	//*********************************************************************************************
 	test("getODataAssociationEnd", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
 
 			strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToSupplier"),
@@ -1191,7 +1225,7 @@
 
 	//*********************************************************************************************
 	test("getODataAssociation*Set*End", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
 
 			strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToSupplier"),
@@ -1205,7 +1239,7 @@
 
 	//*********************************************************************************************
 	test("getODataProperty", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
 				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
 				aParts;
@@ -1248,7 +1282,7 @@
 
 	//*********************************************************************************************
 	test("getODataProperty as path", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
 				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
 				aParts;
@@ -1291,7 +1325,7 @@
 
 	//*********************************************************************************************
 	test("getMetaContext: empty data path", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			strictEqual(oMetaModel.getMetaContext(undefined), null);
 			strictEqual(oMetaModel.getMetaContext(null), null);
 			strictEqual(oMetaModel.getMetaContext(""), null);
@@ -1300,7 +1334,7 @@
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set only", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')");
 
 			ok(oMetaContext instanceof sap.ui.model.Context);
@@ -1310,13 +1344,13 @@
 			strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')"), oMetaContext,
 				"the context has been cached");
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("foo/bar");
 			}, /Not an absolute path: foo\/bar/);
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')");
 			}, /Entity set not found: FooSet\('123'\)/);
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/('123')");
 			}, /Entity set not found: \('123'\)/);
 		});
@@ -1324,7 +1358,7 @@
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set & navigation properties", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier");
 
 			ok(oMetaContext instanceof sap.ui.model.Context);
@@ -1334,11 +1368,11 @@
 			strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier"), oMetaContext,
 				"the context has been cached");
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToFoo(0)");
 			}, /Property not found: ToFoo\(0\)/);
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier('ABC')");
 			}, /Multiplicity is 1: ToSupplier\('ABC'\)/);
 
@@ -1352,7 +1386,7 @@
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set & property", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sPath = "/ProductSet('ABC')/ProductID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
@@ -1362,11 +1396,11 @@
 
 			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ProductID(0)");
 			}, /Property not found: ProductID\(0\)/);
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')/Bar");
 			}, /Entity set not found: FooSet/);
 		});
@@ -1374,7 +1408,7 @@
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set, navigation property & property", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sPath = "/ProductSet('ABC')/ToSupplier/BusinessPartnerID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
@@ -1384,7 +1418,7 @@
 
 			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Foo");
 			}, /Property not found: Foo/);
 		});
@@ -1392,7 +1426,7 @@
 
 	//*********************************************************************************************
 	test("getMetaContext: entity set & complex property", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sPath = "/ProductSet('ABC')/ToSupplier/Address/Street",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
@@ -1402,12 +1436,12 @@
 
 			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
 
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Foo");
 			}, /Property not found: Foo/);
 
 			//TODO "nested" complex types are supported, we just need an example
-			raises(function () {
+			throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Street/AndSoOn");
 			}, /Property not found: AndSoOn/);
 		});

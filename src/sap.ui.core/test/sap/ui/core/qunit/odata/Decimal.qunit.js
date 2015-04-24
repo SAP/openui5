@@ -2,8 +2,8 @@
  *{copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -13,10 +13,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Decimal", {
-		setup: function () {
+		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		afterEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -35,7 +35,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{i: {precision: 8, scale: 3}, o: {precision: 8, scale: 3}},
 		{i: {nullable: false, scale: 3}, o: {nullable: false, scale: 3}},
 		{i: {nullable: "foo"}, o: undefined,
@@ -52,7 +52,7 @@
 			warning: "Illegal precision: 0"},
 		{i: {precision: 2, scale: 3}, o: {precision: 2, scale: Infinity},
 			warning: "Illegal scale: must be less than precision (precision=2, scale=3)"}
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function () {
 			var oType = new sap.ui.model.odata.type.Decimal();
 
@@ -223,7 +223,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{value: false, error: "EnterNumber"},
 		{value: 42, error: "EnterNumber"},
 		{value: "a", error: "EnterNumber"},
@@ -240,7 +240,7 @@
 		// excess zeros are treated as error (parseValue removes them)
 		{value: "1.0", error: "EnterInt"},
 		{value: "012", constraints: {precision: 2}, error: "EnterNumberInteger 2"},
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("validate: " + oFixture.value, function () {
 			sap.ui.test.TestUtils.withNormalizedMessages(function () {
 				var oType = new sap.ui.model.odata.type.Decimal({}, oFixture.constraints);
@@ -257,15 +257,15 @@
 	}),
 
 	//*********************************************************************************************
-	test("validate success", 0, function () {
+	test("validate success", function () {
 		var oType = new sap.ui.model.odata.type.Decimal({}, {precision: 6, scale: 3});
 
-		jQuery.each(["+1.1", "+123.123", "-123.1", "+123.1", "1.123", "-1.123", "123.1", "1",
-					"-123"],
-			function (i, sValue) {
+		["+1.1", "+123.123", "-123.1", "+123.1", "1.123", "-1.123", "123.1", "1", "-123"].forEach(
+			function (sValue) {
 				oType.validateValue(sValue);
 			}
 		);
+		expect(0);
 	});
 
 	//*********************************************************************************************
@@ -285,12 +285,10 @@
 		this.mock(jQuery.sap.log).expects("warning").never();
 
 		oType= new sap.ui.model.odata.type.Decimal({}, {precision: 3, scale: "variable"});
-		jQuery.each(["123", "12.3", "-1.23"],
-			function (i, sValue) {
-				strictEqual(oType.formatValue(sValue, "string"), sValue);
-				oType.validateValue(sValue);
-			}
-		);
+		["123", "12.3", "-1.23"].forEach(function (sValue) {
+			strictEqual(oType.formatValue(sValue, "string"), sValue);
+			oType.validateValue(sValue);
+		});
 	});
 
 	//*********************************************************************************************
@@ -327,7 +325,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		set: {foo: "bar"},
 		expect: {foo: "bar", groupingEnabled: true, maxIntegerDigits: Infinity}
 	}, {
@@ -350,7 +348,7 @@
 		set: {minFractionDigits: 10}, scale: 13,
 		expect: {groupingEnabled: true, maxFractionDigits: 13, maxIntegerDigits: Infinity,
 			minFractionDigits: 10}
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 			var oSpy,
 				oType = new sap.ui.model.odata.type.Decimal(oFixture.set, {

@@ -384,7 +384,7 @@
         "id": "e4d23ffdcb48b7892ab8ad2c63b4b57038ccfc41",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.Input: ValueHelp icon on wrong position if description used",
+        "text": "sap.m.Input: ValueHelp icon displayed correctly if description is used",
         "references": []
       },
       {
@@ -417,14 +417,73 @@
         "id": "2276b93e3a03b8c0087c8e834fd6ae63892095b7",
         "author": "Wenqian Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.MultiInput: Fix placeholder covering ValueHelp button in IE",
+        "text": "sap.m.MultiInput: Placeholder no longer covers ValueHelp button in Internet Explorer",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "2d85de57fc396c083b3bc4c86e2018636ac6c84c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Hover state odd when transparent",
         "references": []
       },
       {
-        "id": "c6d7c561c72c55f6452815ce7febc53a7e9694bb",
-        "author": "Axel Warner \u003caxel.warner@sap.com\u003e",
+        "id": "84a691847ed6062efbffe25b7b99cd79f8f83fd7",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nColumnsPanel : CSS correction for phone \u0026 tablet",
+        "text": "sap.m.Input: F4 button width on compact mode adjusted",
+        "references": []
+      },
+      {
+        "id": "3e32e5e9ec6a6b9e11bacffb79f842f7d0d2e60b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Popup closed on first chosen token",
+        "references": []
+      },
+      {
+        "id": "b0653a8acd10aecd9be29ceaabc8fb818cf330a1",
+        "author": "Lidiya Bobeva \u003clidiya.bobeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text: Min-height is added when text in editable form is empty",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "5bd081f938e0f9843f2f03fc64ddee9c8027d78a",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Left padding is now correct",
+        "references": []
+      },
+      {
+        "id": "f4ffd57debdab5343b6e5ad04c386eb8e0b4b421",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Title, Label: Margin in transparent toolbar context for Bluecrystal and High Contrast Black themes corrected",
+        "references": []
+      },
+      {
+        "id": "f47c834c0ab29eb8b17ba61786ba1d75ca7d283a",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: Custom button outline CSS issue in Internet Explorer corrected",
+        "references": []
+      },
+      {
+        "id": "cc71e7b852bd95dbe12d6d10224c7d7ed2b74623",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Incorrect text alignment in Internet Explorer 10 corrected",
         "references": []
       }
     ]

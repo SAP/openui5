@@ -257,13 +257,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		
 		if (sType == mType.Navigation) {
 			aDescribedBy.push(this.getAriaAnnouncement("navigation"));
-		} else {
-			if (sType == mType.Active || sType == mType.DetailAndActive) {
-				aDescribedBy.push(this.getAriaAnnouncement("active"));
-			}
-			if (sType == mType.Detail || sType == mType.DetailAndActive) {
-				aDescribedBy.push(this.getAriaAnnouncement("detail"));
-			}
+		} else if (sType == mType.Detail || sType == mType.DetailAndActive) {
+			aDescribedBy.push(this.getAriaAnnouncement("detail"));
 		}
 		
 		return aDescribedBy.join(" ");
@@ -276,17 +271,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAccessibilityState = function(oLI) {
-		return {
-			role : this.getAriaRole(oLI),
-			labelledby : {
-				value : this.getAriaLabelledBy(oLI),
-				append : true
-			},
-			describedby : {
-				value : this.getAriaDescribedBy(oLI),
-				append : true
-			}
-		};
+		var sAriaLabelledBy = this.getAriaLabelledBy(oLI),
+			sAriaDescribedBy = this.getAriaDescribedBy(oLI),
+			mAccessibilityState = {
+				role: this.getAriaRole(oLI)
+			};
+
+		if (sAriaLabelledBy) {
+			mAccessibilityState.labelledby = {
+				value: sAriaLabelledBy.trim(),
+				append: true
+			};
+		}
+
+		if (sAriaDescribedBy) {
+			mAccessibilityState.describedby = {
+				value: sAriaDescribedBy.trim(),
+				append: true
+			};
+		}
+
+		return mAccessibilityState;
 	};
 	
 	/**
@@ -378,7 +383,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		this.renderTabIndex(rm, oLI);
 		
 		// handle accessibility states
-		rm.writeAccessibilityState(oLI, this.getAccessibilityState(oLI));
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAccessibilityState(oLI, this.getAccessibilityState(oLI));
+		}
 
 		// item attributes hook
 		this.renderLIAttributes(rm, oLI);

@@ -285,6 +285,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
+		 * Handle the virtual focus of items.
+		 *
+		 * @param {sap.ui.core.Item | null} vItem
+		 * @private
+		 * @since 1.30
+		 */
+		Select.prototype._handleAriaActiveDescendant = function(vItem) {
+			var oDomRef = this.getDomRef(),
+				oItemDomRef = vItem && vItem.getDomRef(),
+				sActivedescendant = "aria-activedescendant";
+
+			if (!oDomRef) {
+				return;
+			}
+
+			// the aria-activedescendant attribute is set when the item is rendered
+			if (oItemDomRef && this.isOpen()) {
+				oDomRef.setAttribute(sActivedescendant, vItem.getId());
+			} else {
+				oDomRef.removeAttribute(sActivedescendant);
+			}
+		};
+
+		/**
 		 * Getter for the Select's List.
 		 *
 		 * @returns {sap.m.List}
@@ -352,14 +376,25 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.onAfterOpen = function() {
-			var oDomRef = this.getFocusDomRef();
+			var oDomRef = this.getFocusDomRef(),
+				oItem = null;
 
-			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "true");
+			if (!oDomRef) {
+				return;
+			}
 
-				// expose a parent/child contextual relationship to assistive technologies
-				// note: the "aria-owns" attribute is set when the list is visible and in view
-				oDomRef.setAttribute("aria-owns", this.getList().getId());
+			oItem = this.getSelectedItem();
+			oDomRef.setAttribute("aria-expanded", "true");
+
+			// expose a parent/child contextual relationship to assistive technologies
+			// note: the "aria-owns" attribute is set when the list is visible and in view
+			oDomRef.setAttribute("aria-owns", this.getList().getId());
+
+			if (oItem) {
+
+				// note: the "aria-activedescendant" attribute is set
+				// when the currently active descendant is visible and in view
+				oDomRef.setAttribute("aria-activedescendant", oItem.getId());
 			}
 		};
 
@@ -369,6 +404,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.onBeforeClose = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			if (oDomRef) {
+
+				// note: the "aria-owns" attribute is removed when the list is not visible and in view
+				oDomRef.removeAttribute("aria-owns");
+
+				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
+				oDomRef.removeAttribute("aria-activedescendant");
+			}
 
 			// remove the active state of the Select's field
 			this.removeStyleClass(SelectRenderer.CSS_CLASS + "Pressed");
@@ -1025,7 +1070,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @function
 		 */
 		Select.prototype.setSelection = function(vItem) {
-			var oList = this.getList();
+			var oList = this.getList(),
+				sKey;
 
 			if (oList) {
 				oList.setSelection(vItem);
@@ -1038,7 +1084,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				vItem = sap.ui.getCore().byId(vItem);
 			}
 
-			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
+			sKey = vItem ? vItem.getKey() : "";
+			this.setProperty("selectedKey", sKey, true);
+			this._handleAriaActiveDescendant(vItem);
 		};
 
 		/*

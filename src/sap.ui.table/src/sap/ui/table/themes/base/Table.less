@@ -5,6 +5,7 @@
 @sapUiTableRowHeight: 23px;
 @sapUiTableColHdrHeight: 23px;
 @sapUiTableRowHdrWidth: 22px;
+@sapUiTableToolbarDesign: ~"Transparent"; /* should be one of the sap.m.ToolbarDesign enumeration */
 
 /*
  * BEHAVIOR CLASSES:
@@ -394,9 +395,14 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 	position: absolute;
 	top: 0px;
 	width: 5px;
+	margin-left: -4px;
 	bottom: 0px;
 	cursor: col-resize;
 	z-index: 1;
+}
+
+html[dir=rtl] .sapUiTableColRsz {
+	margin-right: -3px;
 }
 
 .sapUiTableHScr .sapUiTableColRsz {
@@ -429,13 +435,11 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 }
 
 /* Cozy Mode when sap.m. library is loaded */
-.sapUiTableM.sapUiTableCozy {
-	 @sapUiTableCozyColHdrHeight: 3rem;
-	 @sapUiTableCozyRowHeight: 3rem;
+.sapUiSizeCozy .sapUiTable {
 
 	/* Header */
 	& > .sapUiTableCnt > .sapUiTableColHdrCnt {
-		min-height: @sapUiTableCozyColHdrHeight;
+		min-height: 3rem;
 	}
 
 	/* Footer */
@@ -447,29 +451,40 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 
 	/* Row */
 	.sapUiTableCtrl tr {
-		height: @sapUiTableCozyRowHeight;
+		height: 3rem;
+	}
+	
+	/* Header */
+	.sapUiTableCol, .sapUiTableColRowHdr {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	
+	.sapUiTableColRowHdr {
+		margin-top: -1px;
+	}
+	
+	.sapUiTableColCell {
+		height: 3rem;
+	}
+	
+	.sapUiTableColCell > * {
+		height: 100%;
+		line-height: 3rem;
+	}
+	
+	.sapUiTableColRowHdrIco {
+		height:100%;
 	}
 
 	/* Cell Adjustments */
-	.sapUiTableColCell, .sapUiTableColRowHdrIco {
-		position: absolute;
-		display: block;
-		left: 0;
-		right: 0;
-		top: 50%;
-		transform: translateY(-50%);
-		-webkit-transform: translateY(-50%);
-		-ms-transform: translateY(-50%);
-	}
 	
 	.sapUiTableColIcons {
-		padding-top: 0px;
-	} 
+		padding-top: 0;
+	}
 
 	/* Group Header Adjustments */
 	div.sapUiTableGroupHeader div.sapUiTableGroupIcon {
-		height: 3rem;
-		line-height: 3rem;
 		background-color: transparent;
 	}
 
@@ -653,15 +668,17 @@ html[data-sap-ui-browser="ie8"] .sapUiTable {
 .sapUiTableRowHdr.sapUiTableGroupHeader > div {
 	position: absolute;
 	left: 3px;
-	margin-top: 5px;
+	
+	// vertical centering
+	top: 50%;
+	-moz-transform: translatey(-50%);
+	-ms-transform: translatey(-50%);
+	-webkit-transform: translatey(-50%);
+	transform: translatey(-50%);
+	
 	white-space: nowrap;
 	z-index: 1;
-	margin-top: 0;
-	position: absolute;
-	top: 0;
-	bottom: 0;
 	font-weight: normal;
-	padding-right: 15px;
 	color: @sapUiBaseText;
 	overflow: hidden;
 	text-overflow: ellipsis;

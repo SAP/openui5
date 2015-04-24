@@ -533,6 +533,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 	DropdownBox.prototype.oninput = function(oEvent) {
 
+		if (this.mobile) {
+			// as no real input is possible on mobile devices
+			return;
+		}
+
 		if (!this._realOninput(oEvent)) {
 			return;
 		}

@@ -354,12 +354,14 @@ sap.ui.define([
 			},
 
 			/**
-			 * A formatter function to be used in a complex binding inside an XML template view
-			 * in order to interpret OData v4 annotations, quite like {@link #.format format} but
-			 * with a simplified output aimed at design-time templating with smart controls.
-			 * It only knows about the dynamic "14.5.12 Expression edm:Path", which is turned into
-			 * a simple binding path, without type or constraint information (at least for those
-			 * simple cases where this is possible).
+			 * Formatter function that is used in a complex binding inside an XML template view.
+			 * The function is used to interpret OData v4 annotations, supporting the same
+			 * annotations as {@link #.format format} but with a simplified output aimed at
+			 * design-time templating with smart controls.
+			 *
+			 * In contrast to <code>format</code>, "14.5.12 Expression edm:Path" is turned into
+			 * a simple binding path without type or constraint information. In certain cases, a
+			 * complex binding is required to allow for proper escaping of the path.
 			 *
 			 * Example:
 			 * <pre>

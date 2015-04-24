@@ -336,6 +336,13 @@
 			},
 
 			{
+				"id" : "sap.m.MessageStrip",
+				"name" : "Message Strip",
+				"category" : "Container",
+				"since" : "1.27",
+				"samples" : [ "sap.m.sample.MessageStrip", "sap.m.sample.DynamicMessageStripGenerator" ]
+			},
+			{
 				"id" : "sap.m.MessagePopover",
 				"name" : "Message Popover",
 				"category" : "Popup",
@@ -1495,6 +1502,16 @@
 				"id": "sap.m.sample.MessagePopover",
 				"name": "MessagePopover",
 				"description": "MessagePopover is a control that displays a summarized list of different types of messages (errors, warnings, success and information). It provides a handy and systemized way to navigate and explore details for every message."
+			},
+			{
+				"id": "sap.m.sample.MessageStrip",
+				"name": "Message Strip",
+				"description": "MessageStrip for showing status messages."
+			},
+			{
+				"id": "sap.m.sample.DynamicMessageStripGenerator",
+				"name": "Dynamic Message Strip Generator",
+				"description": "Generates MessageStrips with random properties."
 			},
 			{
 				"id": "sap.m.sample.MessageToast",

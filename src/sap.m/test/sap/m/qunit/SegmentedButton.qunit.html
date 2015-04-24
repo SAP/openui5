@@ -1105,6 +1105,7 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b1", "When not set selectedKey property should be equal to the first key in the list 'b1'");
 
 		// Act
 		// Change selectedKey to "b2"
@@ -1112,6 +1113,7 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 
 		// Act
 		// Change selectedKey to non existing key
@@ -1119,6 +1121,39 @@
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be unchanged = 'b2'");
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be unchanged = 'b2'");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("selectedKey property on button press", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "b1",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "b2",
+					text: "Button 2"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// Click on the second button
+		oSegmentedButton.getButtons()[1].$().trigger("tap");
+
+		// Assert
+		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1575,6 +1610,44 @@
 
 		strictEqual(oButton1.$().attr("aria-checked"), "false", "Property 'aria-checked' of Button1 after deselect should be 'false'");
 		strictEqual(oButton2.$().attr("aria-checked"), "true", "Property 'aria-checked'  of Button2 after select should be 'true'");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("Check aria attributes on SegmentedButton with icons", function() {
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items : [
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://home",
+					text: "button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "button 3"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		var aButtons = oSegmentedButton.getButtons();
+
+		// Assert
+		strictEqual(aButtons[0].$().attr("aria-label"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://home").name + " button 1",
+				"Attribute aria-label on the first button should contain the generic icon name and the text of the button");
+
+		strictEqual(aButtons[1].$().attr("aria-label"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
+				"Attribute aria-label on the second button should contain only the icon generic name");
+
+		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
+				"If we don't have a SAP Icon we don't need the aria-label attribute");
 
 		// Cleanup
 		oSegmentedButton.destroy();

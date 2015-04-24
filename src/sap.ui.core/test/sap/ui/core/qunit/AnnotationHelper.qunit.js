@@ -5,8 +5,8 @@ sap.ui.require([
 	"sap/ui/base/BindingParser", "sap/ui/model/odata/AnnotationHelper",
 	"sap/ui/model/odata/_AnnotationHelperBasics", "sap/ui/model/odata/_AnnotationHelperExpression"
 ], function(BindingParser, AnnotationHelper, Basics, Expression) {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -120,6 +120,29 @@ sap.ui.require([
 								<String> </String>\
 								<Path>LegalForm</Path>\
 							</Apply>\
+						</Apply>\
+					</PropertyValue>\
+				</Record>\
+				<!-- concat w/ constants -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<Apply Function="odata.concat">\
+							<Bool>true</Bool>\
+							<String>|</String>\
+							<Date>2015-03-24</Date>\
+							<String>|</String>\
+							<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+							<String>|</String>\
+							<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+							<String>|</String>\
+							<Float>-7.4503e-36</Float>\
+							<String>|</String>\
+							<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+							<String>|</String>\
+							<!-- Number.MAX_SAFE_INTEGER + 1 -->\
+							<Int>9007199254740992</Int>\
+							<String>|</String>\
+							<TimeOfDay>13:57:06</TimeOfDay>\
 						</Apply>\
 					</PropertyValue>\
 				</Record>\
@@ -351,21 +374,18 @@ sap.ui.require([
 	 *
 	 * @param {string} [sAnnotationUrl="/GWSAMPLE_BASIC/annotations"]
 	 * @param {function} fnCodeUnderTest
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
 	function withMetaModel(sAnnotationUrl, fnCodeUnderTest) {
 		var oMetaModel,
 			oModel,
 			oSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-			oServer;
-
-		function onError(oError) {
-			start();
-			ok(false, oError.message + ", stack: " + oError.stack);
-		}
+			oServer,
+			sUrl;
 
 		function onFailed(oEvent) {
 			var oParameters = oEvent.getParameters();
-			start();
 			while (oParameters.getParameters) { // drill down to avoid circular structure
 				oParameters = oParameters.getParameters();
 			}
@@ -380,7 +400,7 @@ sap.ui.require([
 			var sCopy = JSON.stringify(oDataMetaModel.getObject("/"));
 
 			try {
-				fnCodeUnderTest(oDataMetaModel);
+				return fnCodeUnderTest(oDataMetaModel);
 			} finally {
 				oDataMetaModel.getObject("/").dataServices = JSON.parse(sCopy).dataServices;
 			}
@@ -392,14 +412,16 @@ sap.ui.require([
 		}
 
 		if (mDataMetaModel[sAnnotationUrl]) {
-			call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
-			return;
+			return call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
 		}
 
 		try {
 			// sets up a sandbox in order to use the URLs and responses defined in mFixture;
 			// leaves unknown URLs alone
 			sinon.config.useFakeServer = true;
+			//TODO remove this workaround in IE9 for
+			// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+			sinon.xhr.supportsCORS = true;
 			oSandbox = sinon.sandbox.create();
 			oServer = oSandbox.useFakeServer();
 
@@ -409,9 +431,9 @@ sap.ui.require([
 				return mFixture[sUrl] === undefined; // do not fake if URL is unknown
 			});
 
-			jQuery.each(mFixture, function(sUrl, vResponse) {
-				oServer.respondWith(sUrl, vResponse);
-			});
+			for (sUrl in mFixture) {
+				oServer.respondWith(sUrl, mFixture[sUrl]);
+			}
 			oServer.autoRespond = true;
 
 			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
@@ -425,11 +447,9 @@ sap.ui.require([
 			mDataMetaModel[sAnnotationUrl] = oModel.getMetaModel();
 
 			// calls the code under test once the meta model has loaded
-			stop();
-			mDataMetaModel[sAnnotationUrl].loaded().then(function() {
-				call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
-				start();
-			}, onError)["catch"](onError);
+			return mDataMetaModel[sAnnotationUrl].loaded().then(function() {
+				return call(fnCodeUnderTest, mDataMetaModel[sAnnotationUrl]);
+			});
 		} finally {
 			oSandbox.restore();
 			sap.ui.model.odata.v2.ODataModel.mServiceData = {}; // clear cache
@@ -443,7 +463,7 @@ sap.ui.require([
 	 * @param {function} fnCodeUnderTest
 	 */
 	function withTestModel(fnCodeUnderTest) {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			// evil, test code only: write into ODataMetaModel
 			oMetaModel.getObject("/").dataServices = oTestData.dataServices;
 
@@ -467,9 +487,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
+	["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'].forEach(function (sString) {
 		test("14.4.11 Expression edm:String: " + sString, function () {
-			withMetaModel(function (oMetaModel) {
+			return withMetaModel(function (oMetaModel) {
 				var sMetaPath = sPath2Product
 						+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
 					oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -485,7 +505,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.4.11 Expression edm:String: references", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2Product
 					+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -525,7 +545,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'], function (i, sPath) {
+	["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new sap.ui.model.json.JSONModel({
 					"Value" : {
@@ -542,8 +562,9 @@ sap.ui.require([
 			strictEqual(oSingleBindingInfo.type, undefined);
 		});
 	});
+
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		oBoolean,
 		oByte,
 		oDateTime,
@@ -560,12 +581,12 @@ sap.ui.require([
 		oString10,
 		oString80,
 		oTime
-	], function(i, oType) {
+	].forEach(function(oType, i) {
 		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i + "/Value";
 
 		test("14.5.12 Expression edm:Path w/ type, path = " + sPath + ", type = " + oType.name,
 			function () {
-				withTestModel(function (oMetaModel) {
+				return withTestModel(function (oMetaModel) {
 					var oCurrentContext = oMetaModel.getContext(sPath),
 						oRawValue = oTestModel.getObject(sPath),
 						sBinding,
@@ -593,7 +614,7 @@ sap.ui.require([
 	// A: rather not, we probably need complex bindings in many cases (e.g. for types)
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{Apply : null},
 		{Apply : "unsupported"},
 		{Apply : {Name : "unsupported"}},
@@ -610,11 +631,13 @@ sap.ui.require([
 		{Apply : {Name : "odata.uriEncode", Parameters : {}}},
 		{Apply : {Name : "odata.uriEncode", Parameters : []}},
 		{Apply : {Name : "odata.uriEncode", Parameters : [null]}}
-	], function (i, oApply) {
+	].forEach(function (oApply) {
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
 		test("14.5.3 Expression edm:Apply: " + sError, function () {
-			withMetaModel(function (oMetaModel) {
+			this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
+			return withMetaModel(function (oMetaModel) {
 				var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 					oCurrentContext = oMetaModel.getContext(sPath);
 
@@ -625,7 +648,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oRawValue = oMetaModel.getObject(sPath);
@@ -642,7 +665,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
-		withMetaModel(function (oMetaModel) {
+		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
+		return withMetaModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oParameter = {Type: "Int16", Value: 42},
@@ -662,7 +687,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: null parameter", function () {
-		withMetaModel(function (oMetaModel) {
+		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
+		return withMetaModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oRawValue = {
@@ -677,63 +704,29 @@ sap.ui.require([
 		});
 	});
 
-
 	//*********************************************************************************************
-	test("14.5.3.1.2 Function odata.fillUriTemplate: test data", function () {
-		withMetaModel(function (oMetaModel) {
+	test("14.5.3.1.1 Function odata.concat: various constants", function () {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/2/Url/UrlRef",
+					+ "/com.sap.vocabularies.UI.v1.Identification/3/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oUnsupported = {
-					Type: "Unsupported",
-					Value: "foo"
-				},
-				oRawValue = {
-					Apply: {
-						Name: "odata.fillUriTemplate",
-						Parameters: [{
-							Type: "String",
-							Value: "http://www.foo.com/\"/{decimal},{unknown},{unsupported},"
-									+ "{nullValue},{constant},{string}"
-						}, {
-							Name: "decimal",
-							Value: {
-								Type: "Path",
-								Value: "_Decimal"
-							}
-						}, {
-							Name: "string",
-							Value: {
-								Type: "Path",
-								Value: "_String"
-							}
-						}, {
-							Name: "unsupported",
-							Value: oUnsupported
-						}, {
-							Name: "nullValue",
-							Value: null
-						}, {
-							Name: "constant",
-							Value: {
-								Type: "String",
-								Value: "{'\\'}"
-							}
-						}]
-					}
-				};
-
-			// evil, test code only: write into ODataMetaModel
-			oCurrentContext.getObject("").Apply = oRawValue.Apply;
+				oRawValue = oMetaModel.getObject(sMetaPath);
 
 			strictEqual(formatAndParse(oRawValue, oCurrentContext),
-				"Unsupported: " + Basics.toErrorString(oRawValue));
+					"true|" +
+					"2015-03-24|" +
+					"2015-03-24T14:03:27Z|" +
+					"-123456789012345678901234567890.1234567890|" +
+					"-7.4503e-36|" +
+					"0050568D-393C-1ED4-9D97-E65F0F3FCC23|" +
+					"9007199254740992|" +
+					"13:57:06");
 		});
 	});
 
 	//*********************************************************************************************
 	test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
-		withMetaModel("/fake/annotations", function (oMetaModel) {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -747,12 +740,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{type: "String", value: "foo\\bar", result: "'foo\\bar'"},
 		{type: "Unsupported", value: "foo\\bar", error: true}
-	], function (iUnused, oFixture) {
+	].forEach(function (oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
-			withMetaModel(function (oMetaModel) {
+			if (oFixture.error) {
+				this.mock(Basics).expects("error").once().throws(new SyntaxError());
+			}
+
+			return withMetaModel(function (oMetaModel) {
 				var oExpectedResult,
 					sMetaPath = sPath2BusinessPartner
 						+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
@@ -777,7 +774,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3.1.3 Function odata.uriEncode", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/UrlRef/Apply/Parameters/1/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -795,7 +792,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -814,7 +811,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
-		withMetaModel(function (oMetaModel) {
+		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+
+		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -841,7 +840,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (concat embeds concat & uriEncode)", function () {
 		// This test is important to show that a nested concat must be expression
-		withMetaModel("/fake/annotations", function (oMetaModel) {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/1/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -856,7 +855,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (uriEncode embeds concat)", function () {
-		withMetaModel("/fake/annotations", function (oMetaModel) {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -885,8 +884,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'
-		], function (i, sPath) {
+	["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new sap.ui.model.json.JSONModel({
 					"Value" : {
@@ -916,7 +914,7 @@ sap.ui.require([
 	module("sap.ui.model.odata.AnnotationHelper.followPath");
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		// empty (annotation) path
 		AnnotationPath : "",
 		metaPath : sPath2Product + "/com.sap.vocabularies.UI.v1.Facets/0/Facets/0/Target",
@@ -1010,7 +1008,7 @@ sap.ui.require([
 		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
 		navigationPath : "",
 		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		var sPath, sTitle;
 
 		if (oFixture.hasOwnProperty("AnnotationPath")) {
@@ -1028,7 +1026,7 @@ sap.ui.require([
 		}
 
 		test(sTitle, function () {
-			withMetaModel(function (oMetaModel) {
+			return withMetaModel(function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
 					oSingleBindingInfo;
@@ -1082,7 +1080,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	jQuery.each([{
+	[{
 		// invalid meta path
 		metaPath : "/foo",
 		isMultiple : "",
@@ -1100,9 +1098,9 @@ sap.ui.require([
 		isMultiple : "",
 		navigationPath : undefined,
 		resolvedPath : undefined
-	}], function (i, oFixture) {
+	}].forEach(function (oFixture) {
 		test("Missing path expression, context: " + oFixture.metaPath, function () {
-			withMetaModel(function (oMetaModel) {
+			return withMetaModel(function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath);
 
@@ -1149,7 +1147,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("gotoEntityType called directly on the entity type's qualified name", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = "/dataServices/schema/0/entityContainer/0/entitySet/0/entityType",
 				sQualifiedName = "GWSAMPLE_BASIC.BusinessPartner",
 				oContext = oMetaModel.createBindingContext(sMetaPath);
@@ -1166,7 +1164,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("gotoEntitySet called directly on the entity set's name", function () {
-		withMetaModel(function (oMetaModel) {
+		return withMetaModel(function (oMetaModel) {
 			var sMetaPath
 					= "/dataServices/schema/0/entityContainer/0/associationSet/1/end/1/entitySet",
 				oContext = oMetaModel.createBindingContext(sMetaPath);

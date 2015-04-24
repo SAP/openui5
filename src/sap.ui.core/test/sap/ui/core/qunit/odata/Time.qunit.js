@@ -2,8 +2,8 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -41,10 +41,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Time", {
-		setup: function () {
+		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		afterEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -61,7 +61,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["false", false, "true", true, undefined], function (i, vNullable) {
+	["false", false, "true", true, undefined].forEach(function (vNullable, i) {
 		test("with nullable=" + JSON.stringify(vNullable), function () {
 			var oType;
 
@@ -99,7 +99,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["int", "boolean", "float", "foo"], function (i, sTargetType) {
+	["int", "boolean", "float", "foo"].forEach(function (sTargetType) {
 		test("format failure for target type " + sTargetType, function () {
 			var oType = new sap.ui.model.odata.type.Time();
 
@@ -115,12 +115,12 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		1,
 		{__edmType: "Edm.Time"},
 		{ms: 1},
 		{__edmType: "Edm.Time", ms: "foo"}
-	], function (i, oTime) {
+	].forEach(function (oTime) {
 		test("format failure for " + JSON.stringify(oTime), function () {
 			var oType = new sap.ui.model.odata.type.Time();
 
@@ -154,8 +154,8 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]],
-		function (i, aFixture) {
+	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]].forEach(
+		function (aFixture) {
 			test("parse failure for source type " + aFixture[1], function () {
 				var oType = new sap.ui.model.odata.type.Time();
 
@@ -172,14 +172,13 @@
 	);
 
 	//*********************************************************************************************
-	test("validate success", 0, function () {
+	test("validate success", function () {
 		var oType = new sap.ui.model.odata.type.Time();
 
-		jQuery.each([null, {__edmType: "Edm.Time", ms: 4711}],
-			function (i, sValue) {
-				oType.validateValue(sValue);
-			}
-		);
+		[null, {__edmType: "Edm.Time", ms: 4711}].forEach(function (sValue) {
+			oType.validateValue(sValue);
+		});
+		expect(0);
 	});
 
 	//*********************************************************************************************
@@ -197,12 +196,12 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{value: 1},
 		{value: {__edmType: "Edm.Time"}},
 		{value: {ms: 1}},
 		{value: oCircular, error: "[object Object]"}
-	], function (i, oFixture) {
+	].forEach(function (oFixture, i) {
 		test("validation failure for illegal model type #" + i, function () {
 			var oType = new sap.ui.model.odata.type.Time();
 
@@ -231,7 +230,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each([
+	[
 		{oFormatOptions: {}, oExpected: {UTC: true, strictParsing: true}},
 		{oFormatOptions: undefined, oExpected: {UTC: true, strictParsing: true}},
 		{oFormatOptions: {strictParsing: false}, oExpected: {UTC: true, strictParsing: false}},
@@ -239,7 +238,7 @@
 		{oFormatOptions: {foo: "bar"}, oExpected: {UTC: true, strictParsing: true, foo: "bar"}},
 		{oFormatOptions: {style: "medium"},
 			oExpected: {UTC: true, strictParsing: true, style: "medium"}}
-	], function (i, oFixture) {
+	].forEach(function (oFixture) {
 		test("with oFormatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			sinon.test(function () {
 				var oType = new sap.ui.model.odata.type.Time(oFixture.oFormatOptions),
@@ -251,6 +250,13 @@
 				ok(oSpy.calledWithExactly(oFixture.oExpected));
 			})
 		);
+	});
+
+	//*********************************************************************************************
+	test("parse milliseconds", function () {
+		var oType = new sap.ui.model.odata.type.Time({pattern: "HH:mm:ss.SSS"});
+
+		deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
 	});
 
 } ());

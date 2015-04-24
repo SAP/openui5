@@ -140,12 +140,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		return this;
 	};
 	
-	Table.prototype.setFixedLayout = function (bFixed) {
-		this.setProperty("fixedLayout", bFixed, true);
-		this.$("listUl").css("table-layout", this.getFixedLayout() ? "fixed" : "auto");
-		return this;
-	};
-	
 	/**
 	 * Getter for aggregation columns.
 	 *

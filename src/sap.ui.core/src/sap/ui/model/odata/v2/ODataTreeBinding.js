@@ -54,8 +54,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this._bRootMissing = false;
 			
 			this.aSorters = aSorters || [];
-			
-			// a queue containing all parallel running requests
+			this.sFilterParams = "";
+
+				// a queue containing all parallel running requests
 			// a request is identified by (node id, startindex, length)
 			this.mRequestHandles = {};
 			
@@ -147,21 +148,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		};
 		
 		var _handleError = function (oError) {
-			var sErrorMsg = "Request for root node failed: " + oError.message;
-			if (oError.response){
-				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+			//check if the error handler was executed because of an intentionally aborted request: 
+			if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+				var sErrorMsg = "Request for root node failed: " + oError.message;
+				if (oError.response){
+					sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+				}
+				jQuery.sap.log.fatal(sErrorMsg);
+				that.bNeedsUpdate = true;
+				that._bRootMissing = true;
+				delete that.mRequestHandles[sRequestKey];
+				
+				that.fireDataReceived();
 			}
-			jQuery.sap.log.fatal(sErrorMsg);
-			that.bNeedsUpdate = true;
-			that._bRootMissing = true;
-			delete that.mRequestHandles[sRequestKey];
-			
-			that.fireDataReceived();
 		};
 		
 		var aParams = [];
-		
-		aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-node-for"] + " eq '" + sRootNodeID + "'"));
+		var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
+		aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-node-for"] + " eq '" + sRootNodeID + "'") + sFilterParams);
 		// make sure to abort previous requests, with the same paging parameters
 		// this is necessary to make sure, that only the most recent request gets processed
 		// e.g. the (Tree)Table performs multiple calls to the binding (see BindingTimer in Table.js) 
@@ -211,11 +215,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				that.fireDataReceived();
 			},
 			error: function (oError) {
-				that.bNeedsUpdate = true;
-				that._bRootMissing = true;
-				delete that.mRequestHandles[sRequestKey];
+				//Only perform error handling if the request was not aborted intentionally
+				if (oError && oError.statusCode != 0 && oError.statusText != "abort") {
+					that.bNeedsUpdate = true;
+					that._bRootMissing = true;
+					delete that.mRequestHandles[sRequestKey];
 				
-				that.fireDataReceived();
+					that.fireDataReceived();
+				}
 			}
 		});
 	};
@@ -595,12 +602,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			if (aMissingSections.length > 0) {
 				var aParams = [];
 				if (this.bHasTreeAnnotations) {
+					var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
 					if (sNodeId) {
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'"));
+						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
 					} else {
 						// no root node id is given: sNodeId === null
 						// in this case we use the root level
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + iRootLevel));
+						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + iRootLevel) + sFilterParams);
 					}
 				}
 				/*else {
@@ -635,6 +643,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		}
 	
 		function _handleError(oError) {
+			//Only perform error handling if the request was not aborted intentionally
+			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
+				return;
+			}
 			var sErrorMsg = "Request for $count failed: " + oError.message;
 			if (oError.response){
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
@@ -645,21 +657,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		var sPath;
 		if (this.bHasTreeAnnotations) {
 			sPath = this.oModel.resolve(this.getPath(), this.getContext());
-			aParams.push("$filter=" + this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'");
+			var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
+			aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeId + "'") + sFilterParams);
 		} else {
 			sPath = sNodeId;
 		}
 	
 		// Only send request, if path is defined
 		if (sPath) {
-			//var sUrl = this.oModel._createRequestUrl(sPath + "/$count", null, aParams);
-			//var oRequest = this.oModel._createRequest(sUrl, "GET", false);
-			// count needs other accept header
-			//oRequest.headers["Accept"] = "text/plain, */*;q=0.5";
-		
-			// execute the request and use the metadata if available
-			// (since $count requests are synchronous we skip the withCredentials here)
-			//this.oModel._request(oRequest, _handleSuccess, _handleError, undefined, undefined, this.oModel.getServiceMetadata());
 			this.oModel.read(sPath + "/$count", {
 				urlParameters: aParams,
 				success: _handleSuccess,
@@ -793,7 +798,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			that.fireDataReceived();
 		}
 	
-		function fnError(oData) {
+		function fnError(oError) {
+			//Only perform error handling if the request was not aborted intentionally
+			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
+				return;
+			}
+			
 			that.oRequestHandle = null;
 			delete that.mRequestHandles[sRequestKey];
 			that.fireDataReceived();
@@ -869,6 +879,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.mRequestHandles = {};
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
+			this.sFilterParams = "";
 		}
 	};
 	
@@ -1172,6 +1183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.bInitial = false;
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this._processSelectParameters();
+			this.oEntityType = this._getEntityType();
 			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
 		}
 		return this;
@@ -1245,10 +1257,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		if (this.aSorters && this.aSorters.length > 0) {
 			aParams.push(ODataUtils.createSortParams(this.aSorters));
 		}
-		/*
-		if (this.sFilterParams) {
-			aParams.push(this.sFilterParams);
-		}*/
+
+		if (this.getFilterParams()) {
+			aParams.push("$filter=" + this.getFilterParams());
+		}
 		//also includes the selct parameters
 		//in hierarchy annotated trees, the mapping properties are mandatory
 		if (this.sCustomParams) {
@@ -1317,7 +1329,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	ODataTreeBinding.prototype.getRootLevel = function() {
 		return this.iRootLevel;
 	};
-	
+
+	ODataTreeBinding.prototype._getEntityType = function(){
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+		if (sResolvedPath) {
+			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
+			jQuery.sap.assert(oEntityType, "EntityType for path " + sResolvedPath + " could not be found!");
+			return oEntityType;
+		}
+
+		return undefined;
+	};
+
+	ODataTreeBinding.prototype.getFilterParams = function() {
+		if (this.aFilters && this.aFilters.length > 0) {
+			if (!this.sFilterParams) {
+				this.sFilterParams = ODataUtils._createFilterParams(this.aFilters, this.oModel.oMetadata, this.oEntityType);
+				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
+			}
+		} else {
+			this.sFilterParams = "";
+		}
+
+		return this.sFilterParams;
+	};
+
 	return ODataTreeBinding;
 
 }, /* bExport= */ true);

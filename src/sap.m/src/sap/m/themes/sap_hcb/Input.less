@@ -47,26 +47,24 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 .sapMInputValHelpInner {
-	speak:						none;
-	color:						@sapHCStandardFG;
+	speak: none;
+	color: @sapHCStandardFG;
 }
 
-.sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
-.sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
-	background-color:			@sapHCHighlightBG;
-	border-left:				0.0625rem solid @sapHCStandardFG;
-	margin-left:				-0.0625rem;
+.sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover{
+	background-color:	@sapHCHighlightBG;
+	border-left: 0.0625rem solid @sapHCStandardFG;
+	margin-left: -0.0625rem;
 }
 
-.sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
-	outline:					1px solid @sapHCStandardFG;
-	outline-offset:				-1px;
+.sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset:	-0.125rem;
 }
 
-.sapMInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
+.sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
 	/* works fine in desktop browsers, iOS6 and mobile Chrome; does not work well in older Android browser */
-	background-color:			@sapHCHighlightBG;
-	color:						@sapHCStandardFG;
+	background-color:	@sapHCHighlightBG;
 	outline:					none;
 }
 
@@ -80,15 +78,16 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 .sapMInputIE9 .sapMInputValHelp {
-	color: 				   @sapHCStandardFG;
-	background-color:	   @sapHCStandardBG;
-	border:		           0.0625rem solid @sapHCStandardFG;
-	border-left:		   none;
-	margin:                0;
-	line-height:		   normal;
-	height: 			   2.5rem;
-	top: 				   0.25rem;
-	right:				   0;
+	color: @sapHCStandardFG;
+	background-color:	@sapHCStandardBG;
+	border:	0.0625rem solid @sapHCStandardFG;
+	border-left: none;
+	margin: 0;
+	line-height: normal;
+	height: 2.5rem;
+	width: 2.4375rem;
+	top: 0.25rem;
+	right: 0;
 }
 
 .sapMInputIE9.sapMInputDescription.sapMInputVH > span > .sapMInputValHelp{
@@ -158,7 +157,7 @@ div.sapMInputSuggestionPopup {
 	.sapMInputValHelp {
 		top: 0.25rem;
 		height: 1.5rem;
-		width: 2rem;
+		width: 1.5rem;
 	}
 
 	.sapMInputDescription.sapMInputVH > span > .sapMInputValHelp{
@@ -166,9 +165,9 @@ div.sapMInputSuggestionPopup {
 	}
 
 	.sapMInputValHelp > .sapMInputValHelpInner {
-		font-size: 0.75rem;
+		font-size: 1rem;
 		height: 1.5rem;
-		width: 2rem;
+		width: 1.5rem;
 		line-height: 1.5rem;
 	}
 
@@ -182,6 +181,7 @@ div.sapMInputSuggestionPopup {
 
 	.sapMInputIE9 .sapMInputValHelp {
 		height: 1.625rem;
+		width: 1.5625rem;
 		top: 0.1875rem;
 	}
 

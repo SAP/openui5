@@ -253,7 +253,7 @@
 				
 				oBinding.attachChange(fnChangeHandler2);
 				var aContexts = oBinding.getContexts(0, 10);
-				debugger;
+				
 			}
 			
 			function fnChangeHandler2 () {
@@ -261,14 +261,14 @@
 				
 				oBinding.attachChange(fnChangeHandler3);
 				var aContexts = oBinding.getContexts(0, 10);
-				debugger;
+				
 			}
 			
 			function fnChangeHandler3 () {
 				oBinding.detachChange(fnChangeHandler3);
 				
 				var aContexts = oBinding.getContexts(0, 10);
-				debugger;
+				
 				var oContext;
 				
 				equal(aContexts.length, 9, "# of contexts after autoExpand = 2 should be 9");

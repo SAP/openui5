@@ -2,8 +2,8 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -11,10 +11,10 @@
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.Boolean", {
-		setup: function () {
+		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		afterEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -92,11 +92,9 @@
 	test("validate", function () {
 		var oType = new sap.ui.model.odata.type.Boolean();
 
-		jQuery.each([false, true, null],
-			function (i, sValue) {
-				oType.validateValue(sValue);
-			}
-		);
+		[false, true, null].forEach(function (sValue) {
+			oType.validateValue(sValue);
+		});
 
 		try {
 			oType.validateValue("foo");

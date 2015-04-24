@@ -32,7 +32,7 @@ function(jQuery) {
 	};
 
 	Utils.getControlFilter = function() {
-		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout"  ];
+		return [ "sap.m.SplitApp", "sap.m.App", "sap.ui.layout.form.FormLayout" ];
 	};
 
 	Utils.getAggregationValue = function(sAggregationName, oControl) {

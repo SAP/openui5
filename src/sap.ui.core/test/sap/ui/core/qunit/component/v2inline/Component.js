@@ -12,21 +12,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				"name": "sap.ui.test.v2inline.Component",
 			
 				"sap.app": {
-					"id": "sap.ui.test.v2inline.Component",
+					"id": "sap.ui.test.v2inline",
 					"applicationVersion": {
 						"version": "1.0.0"
-					}
+					},
+					"title": "{{title}}",
+					"description": "{{description}}"
 				},
 			
 				"sap.ui5": {
 				
 					"resources": {
-						"js": [{
-							"uri": "script.js"
-						}],
-						"css": [{
-							"uri": "style.css"
-						}]
+						"js": [
+							{
+								"uri": "script.js"
+							},
+							{}
+						],
+						"css": [
+							{
+								"uri": "style.css",
+								"id": "mystyle"
+							},
+							{}
+						]
 					},
 				
 					"dependencies": {
@@ -111,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							"sap.ui.viewModification": {
 								"sap.ui.test.view.Main": {
 									"myControlId": {
-										"text": "{i18n_custom>mytext}"
+										"text": "{{mytext}}"
 									}
 								}
 							}

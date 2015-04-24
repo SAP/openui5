@@ -21,6 +21,10 @@
 	width: @sapUiTableRowHdrWidth;
 }
 
+// No checkboxes should be shown in group header of Analytical Table
+.sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader::after {
+	display:none;
+}
 
 .sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiAnalyticalTable .sapUiTableRSel .sapUiTableCtrlScrFixed {
@@ -39,6 +43,15 @@
 	width: @sapUiTableRowHdrWidth;
 }
 
+.sapUiAnalyticalTable .sapUiTableGroupHeader td {
+	border-right: none;
+}
+
+// The cell under the first column cell of a group header is only allowed to show a measure label. Any other content should be hidden.
+.sapUiAnalyticalTable .sapUiTableGroupHeader .sapUiTableTdFirst:not(.sapUiTableMeasureCell) .sapUiTableCell {
+	display: none;
+}
+
 .sapUiAnalyticalTable .sapUiTableColCell > .sapUiLbl {
 	font-weight: bold;
 	font-size: 0.875rem;
@@ -47,10 +60,6 @@
 
 .sapUiAnalyticalTable .sapUiTableCell > .sapUiTv {
 	font-size: 0.875rem;
-}
-
-.sapUiAnalyticalTable .sapUiTableGroupIcon::before {
-	line-height: 27px;
 }
 
 /* Hierarchical Support */
@@ -72,6 +81,10 @@
 	color: @sapUiLightText;
 }
 
+.sapUiAnalyticalTable .sapUiTableColRsz {
+	z-index: 3;
+}
+
 .sapUiAnalyticalTable .sapUiTableCtrl tr.sapUiTableRowHvr,
 .sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiLbl,
 .sapUiAnalyticalTable tr.sapUiTableRowHvr .sapUiTf,
@@ -91,7 +104,6 @@
 .sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiAnalyticalTableSum.sapUiTableRowHdr::after {
 	display: none;
 }
-
 
 .sapUiAnalyticalTable .sapUiTableTr > td:focus {
 	outline: 1px dotted @sapUiFocus;

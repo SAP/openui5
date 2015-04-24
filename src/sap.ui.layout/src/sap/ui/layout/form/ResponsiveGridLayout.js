@@ -326,6 +326,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			this.onsapright(oEvent);
 		};
 
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists.
+		 * If the FormContainer has a title or is expandable a internal Panel is rendered.
+		 * In this case the Panels DOM reference is returned, otherwise the DOM reference
+		 * of the Grid rendering the containers content.
+		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveGridLayout.prototype.getContainerRenderedDomRef = function(oContainer) {
+
+			if (this.getDomRef()) {
+				var sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						var oPanel = this.mContainers[sContainerId][0];
+						return oPanel.getDomRef();
+					}else if (this.mContainers[sContainerId][1]){
+						// no panel used -> return Grid
+						var oGrid = this.mContainers[sContainerId][1];
+						return oGrid.getDomRef();
+					}
+				}
+			}
+
+			return null;
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists.
+		 * In this Layout a FormElement has no DOM representation,
+		 * so always null will be returned
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		ResponsiveGridLayout.prototype.getElementRenderedDomRef = function(oElement) {
+
+			return null;
+
+		};
+
 		function _createPanels( oLayout, oForm ) {
 
 			var aContainers = oForm.getFormContainers();

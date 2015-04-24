@@ -1,6 +1,6 @@
 sap.ui.require([
-		'sap/ui/test/Opa5',
-		'sap/ui/demo/worklist/test/integration/pages/Common'
+		"sap/ui/test/Opa5",
+		"sap/ui/demo/worklist/test/integration/pages/Common"
 	],
 	function(Opa5, Common) {
 		"use strict";
@@ -20,7 +20,7 @@ sap.ui.require([
 							errorMessage: "did not display the object not found text"
 						});
 					},
-					
+
 					iWaitUntilISeeResourceNotFoundPage : function () {
 						return this.waitFor({
 							id : "page",
@@ -32,7 +32,7 @@ sap.ui.require([
 							errorMessage: "did not display the object not found text"
 						});
 					},
-					
+
 					iPressTheObjectNotFoundShowWorklistLink : function () {
 						return this.waitFor({
 							id : "link",
@@ -43,7 +43,7 @@ sap.ui.require([
 							errorMessage : "Did not find the link on the not found page"
 						});
 					},
-					
+
 					iPressTheNotFoundShowWorklistLink : function () {
 						return this.waitFor({
 							id : "link",

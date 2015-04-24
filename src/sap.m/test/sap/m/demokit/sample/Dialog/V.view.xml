@@ -18,6 +18,18 @@
 				width="230px"
 				press="onDialogWithSizePress"
 				class="sapUiSmallMarginBottom" />
+
+			<Button
+					text="Dialog (Resizable)"
+					width="230px"
+					press="onResizableDialog"
+					class="sapUiSmallMarginBottom" />
+
+			<Button
+					text="Dialog (Draggable)"
+					width="230px"
+					press="onDraggableDialog"
+					class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

@@ -44,6 +44,37 @@
 				}
 			}).placeAt("event1");
 
+			oMonthPicker = new sap.ui.unified.calendar.MonthPicker("MP2",{
+				month: 5,
+				months: 4,
+				columns: 0,
+				select: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oMP = oEvent.oSource;
+					var iMonth = oMP.getMonth();
+					oTF.setValue(iMonth);
+				}
+			}).placeAt("sample2");
+
+			oLabel = new sap.ui.commons.Label({text: "selected month", labelFor: "TF2"}).placeAt("event2");
+			oInput = new sap.ui.commons.TextField("TF2",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oMP = sap.ui.getCore().byId("MP2");
+					if(sValue && !isNaN(sValue)){
+						var iMonth = parseInt(sValue);
+						if(iMonth > 11) {
+							iMonth = 11;
+						}else if(iMonth <0) {
+							iMonth = 0;
+						}
+						oMP.setMonth(iMonth);
+					}
+				}
+			}).placeAt("event2");
+
 		</script>
 
 	</head>
@@ -52,8 +83,12 @@
 		<h1>Test Page for <code>sap.ui.unified.calendar.MonthPicker</code></h1>
 		<br>
 		<div>
+		<h2>Default MonthPicker</h2>
 		<div id="sample1" style="display:inline-block;"></div>
 		<div id="event1" style="display:inline-block; vertical-align: top;"></div>
+		<h2>one line MonthPicker</h2>
+		<div id="sample2" style="display:inline-block;"></div>
+		<div id="event2" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 
 	</body>

@@ -36,7 +36,7 @@
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	color: @sapUiFooterText;
-	text-shadow: 0 0.0625rem 0 @sapUiBtnTextShadowFooter;
+	text-shadow: 0 0.0625rem 0 fade(@sapUiDarkShadowTint, 50);
 }
 
 .sapMIBar-CTX.sapMPageHeader .sapMLabel,
@@ -101,7 +101,6 @@
 
 /* Transparent Toolbar Context*/
 .sapMTB-Transparent-CTX .sapMLabel{
-	margin-right: 1rem;
 	font-weight: @sapUiFontHeaderWeight;
 	font-size: @sapMFontHeader5Size;
 	font-family: @sapUiFontHeaderFamily;

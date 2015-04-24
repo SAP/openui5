@@ -24,7 +24,7 @@
 			<UploadCollection
 				id="UploadCollection"
 				maximumFilenameLength="55"
-				maximumFileSize="100"
+				maximumFileSize="10"
 				multiple="true"
 				items="{/items}"
 				showSeparators="None"

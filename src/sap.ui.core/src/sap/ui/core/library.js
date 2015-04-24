@@ -1480,4 +1480,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 	return sap.ui.core;
 	
-}, /* bExport= */ false);
+});

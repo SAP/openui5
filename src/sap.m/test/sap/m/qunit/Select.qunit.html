@@ -19,13 +19,8 @@
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -1969,6 +1964,7 @@
 				ok(oSelect.getList().getSelectedItem() === null);
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.getList().getSelectedKey(), "");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2021,6 +2017,7 @@
 				strictEqual(oSelect.getList().getSelectedKey(), "1");
 				ok(fnSetSelectedItemSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItem() returns this to allow method chaining');
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2075,6 +2072,7 @@
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 				sap.ui.getCore().applyChanges();
 				strictEqual(oSelect.$("label").text(), "");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2121,6 +2119,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "2");
 				strictEqual(oSelect.$("label").text(), "item 2");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2169,6 +2168,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2218,6 +2218,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), oExpectedItem.getId());
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2272,6 +2273,7 @@
 				strictEqual(oSelect.getList().getSelectedKey(), "1");
 				sap.ui.getCore().applyChanges();
 				strictEqual(oSelect.$("label").text(), "");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2318,6 +2320,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "2");
 				strictEqual(oSelect.$("label").text(), "item 2");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2366,6 +2369,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2416,6 +2420,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), oExpectedItem.getId());
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2439,6 +2444,7 @@
 				ok(oSelect.getList().getSelectedItem() === null);
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2489,6 +2495,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "2");
 				strictEqual(oSelect.$("label").text(), "item 2");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2532,6 +2539,7 @@
 				oSelect.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				strictEqual(oSelect.$("label").text(), "item 1");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2588,6 +2596,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "1");
 				strictEqual(oSelect.$("label").text(), "item 1");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2636,6 +2645,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -2686,6 +2696,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), oExpectedItem.getId());
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -4212,6 +4223,35 @@
 
 				// cleanup
 				oSelect.destroy();
+			});
+
+			/* ------------------------------ */
+			/* ariaLabelledBy()               */
+			/* ------------------------------ */
+
+			test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the internal label element separated by a space", function() {
+
+				// system under test
+				var oLabel = new sap.m.Label({
+					id: "label"
+				});
+
+				var oSelect = new sap.m.Select({
+					ariaLabelledBy: oLabel
+				});
+
+				// arrange
+				oLabel.placeAt("content");
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var sExpectedLabelledBy = "label " + oSelect.getId() + "-label";
+
+				// assert
+				strictEqual(oSelect.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSelect.destroy();
+				oLabel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -6103,6 +6143,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "2");
 				strictEqual(oSelect.$("label").text(), "item 2");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6154,6 +6195,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.getList().getSelectedKey(), "");
 				strictEqual(oSelect.$("label").text(), "");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6206,6 +6248,37 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oSelect.destroy();
+			});
+	
+			test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item(),
+						oExpectedItem = new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+				this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6264,6 +6337,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6315,6 +6389,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.getList().getSelectedKey(), "");
 				strictEqual(oSelect.$("label").text(), "");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6369,6 +6444,41 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "2");
 				strictEqual(oSelect.$("label").text(), "item 2");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						oExpectedItem = new sap.ui.core.Item({
+							text: "Germany"
+						}),
+						new sap.ui.core.Item({
+							key: "AR",
+							text: "Argentina"
+						})
+					],
+					selectedKey: "AR"
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+				this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6438,6 +6548,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "0");
 				strictEqual(oSelect.$("label").text(), "item 0");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6502,6 +6613,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "1");
 				strictEqual(oSelect.$("label").text(), "item 1");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6567,6 +6679,48 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "1");
 				strictEqual(oSelect.$("label").text(), "item 1");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							enabled: false
+						}),
+
+						oExpectedItem = new sap.ui.core.Item({
+							text: "expected"
+						}),
+
+						new sap.ui.core.Item(),
+
+						new sap.ui.core.Item({
+							key: "3"
+						})
+					],
+
+					selectedKey: "3"
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
+
+				// assert
+				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-activedescendant"), oExpectedItem.getId());
 
 				// cleanup
 				oSelect.destroy();
@@ -6632,6 +6786,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "4");
 				strictEqual(oSelect.$("label").text(), "item 4");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6694,6 +6849,38 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 				strictEqual(oSelect.getList().getSelectedKey(), "4");
 				strictEqual(oSelect.$("label").text(), "item 4");
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item(),
+						new sap.ui.core.Item(),
+						oExpectedItem = new sap.ui.core.Item({
+							text: "expected"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.open();
+				this.clock.tick(1000);	// wait after the open animation is completed
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSelect.getFocusDomRef(), jQuery.sap.KeyCodes.END);
+
+				// assert
+				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-activedescendant"), oExpectedItem.getId());
 
 				// cleanup
 				oSelect.destroy();
@@ -6706,11 +6893,11 @@
 			test("onAfterOpen test case 1", function() {
 
 				// system under test
+				var oExpectedItem;
 				var oSelect = new sap.m.Select({
 					items: [
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany"
+						oExpectedItem = new sap.ui.core.Item({
+							text: "expected"
 						})
 					]
 				});
@@ -6727,6 +6914,35 @@
 				// assert
 				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
 				strictEqual(oSelect.getDomRef().getAttribute("aria-owns"), oSelect.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function() {
+
+				// system under test
+				var oExpectedItem;
+				var oSelect = new sap.m.Select({
+					items: [
+						oExpectedItem = new sap.ui.core.Item({
+							text: "expected"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+
+				// act
+				oSelect.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed and the list is rendered
+
+				// assert
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();
@@ -6741,10 +6957,7 @@
 				// system under test
 				var oSelect = new sap.m.Select({
 					items: [
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany"
-						})
+						new sap.ui.core.Item()
 					]
 				});
 
@@ -6762,7 +6975,7 @@
 
 				// assert
 				strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");
-				strictEqual(oSelect.$("inner").attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+				strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
 				oSelect.destroy();

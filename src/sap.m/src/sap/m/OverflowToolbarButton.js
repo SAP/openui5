@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.m.OverflowToolbarHelpers._OverflowToolbarButton.
+// Provides control sap.m.OverflowToolbarButton.
 sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	function(Button, ButtonRenderer) {
 	"use strict";
@@ -17,7 +17,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	 *
 	 * @class
 	 * OverflowToolbarButton is a version of Button that shows its text only when in the overflow area of a sap.m.OverflowToolbar.
-	 * This control is intended to be used exclusively in the context of OverflowToolbar, when it is required to have buttons that show only 
+	 * This control is intended to be used exclusively in the context of OverflowToolbar, when it is required to have buttons that show only
 	 * an icon in the toolbar, but icon and text in the overflow menu.
 	 * @extends sap.m.Button
 	 *
@@ -28,6 +28,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	 * @private
 	 * @since 1.28
 	 * @alias sap.m.OverflowToolbarButton
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var OverflowToolbarButton = Button.extend("sap.m.OverflowToolbarButton", /** @lends sap.m.OverflowToolbarButton.prototype */ {
 		renderer: ButtonRenderer.render
@@ -40,7 +41,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 
 			return "";
 	};
-		
+
 	return OverflowToolbarButton;
 
 }, /* bExport= */ true);

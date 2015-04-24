@@ -3,9 +3,11 @@
  */
 
 // Provides object sap.ui.core.util.XMLPreprocessor
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
-	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
-	function(jQuery, ManagedObject, XMLTemplateProcessor, CompositeBinding, Context) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject',
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/BindingMode',
+	'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
+	function(jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
+		CompositeBinding, Context) {
 		'use strict';
 
 		var oUNBOUND = {}, // @see getAny
@@ -53,6 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 * @param {number} [i]
 		 *   index of part in case of a composite binding
 		 * @returns {object}
+		 *   the callback interface
 		 */
 		function getInterface(oWithControl, mSettings, i) {
 			/*
@@ -167,24 +170,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 * Prepares the given binding info or part of it; makes it "one time" and binds its
 			 * formatter function (if opted in) to an interface object.
 			 *
-			 * @param {number} i
-			 *   index of binding info's part (if applicable)
 			 * @param {object} oInfo
 			 *   a binding info or a part of it
+			 * @param {number} i
+			 *   index of binding info's part (if applicable)
 			 */
-			function prepare(i, oInfo) {
+			function prepare(oInfo, i) {
 				var fnFormatter = oInfo.formatter;
 
-				oInfo.mode = sap.ui.model.BindingMode.OneTime;
+				oInfo.mode = BindingMode.OneTime;
 				if (fnFormatter && fnFormatter.requiresIContext === true) {
 					oInfo.formatter
-					= jQuery.proxy(fnFormatter, null, getInterface(oWithControl, mSettings, i));
+					= fnFormatter.bind(null, getInterface(oWithControl, mSettings, i));
 				}
 			}
 
 			try {
-				prepare(undefined, oBindingInfo);
-				jQuery.each(oBindingInfo.parts || [], prepare);
+				prepare(oBindingInfo);
+				if (oBindingInfo.parts) {
+					oBindingInfo.parts.forEach(prepare);
+				}
 
 				oWithControl.bindProperty("any", oBindingInfo);
 				return oWithControl.getBinding("any")
@@ -227,10 +232,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 		 * @returns {string} the serialization
 		 */
 		function serializeSingleElement(oElement) {
-			var sText = "<" + oElement.nodeName;
-			jQuery.each(oElement.attributes, function (i, oAttribute) {
+			var oAttribute,
+				oAttributesList = oElement.attributes,
+				sText = "<" + oElement.nodeName,
+				i, n;
+
+			for (i = 0, n = oAttributesList.length; i < n; i += 1) {
+				oAttribute = oAttributesList.item(i);
 				sText += " " + oAttribute.name + '="' + oAttribute.value + '"';
-			});
+			}
 			return sText + (oElement.childNodes.length ? ">" : "/>");
 		}
 
@@ -248,21 +258,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 			 *
 			 * @param {Element} oRootElement
 			 *   the DOM element to process
-			 * @param {object} mSettings
+			 * @param {object} oViewInfo
+			 *   info object of the calling instance
+			 * @param {string} oViewInfo.caller
+			 *   identifies the caller of this preprocessor; used as a prefix for log or
+			 *   exception messages
+			 * @param {object} [mSettings={}]
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
 			 *   binding contexts relevant for template pre-processing
 			 * @param {object} mSettings.models
 			 *   models relevant for template pre-processing
-			 * @param {string} sCaller
-			 *   identifies the caller of this preprocessor; used as a prefix for log or
-			 *   exception messages
 			 * @returns {Element}
 			 *   <code>oRootElement</code>
 			 *
 			 * @private
 			 */
-			process : function(oRootElement, mSettings, sCaller) {
+			process : function(oRootElement, oViewInfo, mSettings) {
+				var sCaller;
+
 				/**
 				 * Throws an error with the given message, prefixing it with the caller
 				 * identification (separated by a colon) and appending the serialization of the
@@ -293,10 +307,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					var oNodeList = oIfElement.childNodes,
 						oChild,
 						aChildren = [],
-						i,
+						i, n,
 						bFoundElse = false;
 
-					for (i = 0; i < oNodeList.length; i += 1) {
+					for (i = 0, n = oNodeList.length; i < n; i += 1) {
 						oChild = oNodeList.item(i);
 						if (oChild.nodeType === 1 /*ELEMENT_NODE*/) {
 							aChildren.push(oChild);
@@ -305,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					if (!aChildren.length || !isTemplateElement(aChildren[0], "then")) {
 						return null;
 					}
-					for (i = 1; i < aChildren.length; i += 1) {
+					for (i = 1, n = aChildren.length; i < n; i += 1) {
 						oChild = aChildren[i];
 						if (bFoundElse) {
 							error("Expected </" + oIfElement.prefix + ":if>, but instead saw ",
@@ -322,6 +336,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				}
 
 				/**
+				 * Interprets the given value as a binding and returns the resulting value; takes
+				 * care of unescaping and thus also of constant expressions.
+				 *
+				 * @param {string} sValue
+				 *   an XML attribute value
+				 * @param {Element} oElement
+				 *   the element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the "with" control
+				 * @param {boolean} bMandatory
+				 *   whether a binding is actually required (e.g. by a <code>template:if</code>)
+				 *   and not optional (e.g. for {@link resolveAttributeBinding}); if so, the
+				 *   binding parser unescapes the given value (which is a prerequisite for
+				 *   constant expressions) and warnings are logged for functions not found
+				 * @param {function} [fnCallIfConstant]
+				 *   optional function to be called in case the return value is obviously a
+				 *   constant, not influenced by any binding
+				 * @returns {string|object}
+				 *   the resulting value or <code>oUNBOUND</code> in case the binding is not ready
+				 *   (because it refers to a model which is not available)
+				 * @throws Error
+				 */
+				function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
+					fnCallIfConstant) {
+					var vBindingInfo
+						= BindingParser.complexParser(sValue, null, bMandatory, true)
+						|| sValue; // in case there is no binding and nothing to unescape
+
+					if (vBindingInfo.functionsNotFound) {
+						if (bMandatory) {
+							warn('Function name(s) ' + vBindingInfo.functionsNotFound.join(", ")
+								+ ' not found in ', oElement, null);
+						}
+						return oUNBOUND; // treat incomplete bindings as unrelated
+					}
+
+					if (typeof vBindingInfo === "object") {
+						vBindingInfo = getAny(oWithControl, vBindingInfo, mSettings);
+						if (vBindingInfo === oUNBOUND) {
+							warn('Binding not ready in ', oElement, null);
+						}
+					} else if (fnCallIfConstant) { // string
+						fnCallIfConstant();
+					}
+					return vBindingInfo;
+				}
+
+				/**
 				 * Visits the child nodes of the given parent element. Lifts them up by inserting
 				 * them before the target element.
 				 *
@@ -330,10 +392,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 * @param {Element} [oTarget=oParent] the target DOM element
 				 */
 				function liftChildNodes(oParent, oWithControl, oTarget) {
+					var oChild;
+
 					oTarget = oTarget || oParent;
 					visitChildNodes(oParent, oWithControl);
-					while (oParent.firstChild) {
-						oTarget.parentNode.insertBefore(oParent.firstChild, oTarget);
+					while ((oChild = oParent.firstChild)) {
+						oTarget.parentNode.insertBefore(oChild, oTarget);
 					}
 				}
 
@@ -348,39 +412,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 *   the test result
 				 */
 				function performTest(oElement, oWithControl) {
-					var vTest = oElement.getAttribute("test"),
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest);
+					// constant test conditions are suspicious, but useful during development
+					var fnCallIfConstant
+						= warn.bind(null, 'Constant test condition in ', oElement, null),
+						sTest = oElement.getAttribute("test"),
+						vTest;
 
-					/**
-					 * Outputs a warning; takes care not to serialize XML in vain.
-					 *
-					 * @param {string} sText
-					 *   the main text of the warning
-					 * @param {string} sDetails
-					 *   the details of the warning
-					 */
-					function warn(sText, sDetails) {
-						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-							jQuery.sap.log.warning(
-								sCaller + sText + serializeSingleElement(oElement),
-								sDetails, "sap.ui.core.util.XMLPreprocessor");
-						}
-					}
-
-					if (oBindingInfo) {
-						try {
-							vTest = getAny(oWithControl, oBindingInfo, mSettings);
-							if (vTest === oUNBOUND) {
-								warn(': Binding not ready in ', null);
-								vTest = false;
-							}
-						} catch (ex) {
-							warn(': Error in formatter of ', ex);
+					try {
+						vTest = getResolvedBinding(sTest, oElement, oWithControl, true,
+							fnCallIfConstant);
+						if (vTest === oUNBOUND) {
 							vTest = false;
 						}
-					} else {
-						// constant test conditions are suspicious, but useful during development
-						warn(': Constant test condition in ', null);
+					} catch (ex) {
+						warn('Error in formatter of ', oElement, ex);
+						vTest = false;
 					}
 					return vTest && vTest !== "false";
 				}
@@ -397,29 +443,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
 				 */
 				function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
-					var vAny,
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
+					var sValue = oAttribute.value,
+						vValue;
 
-					if (oBindingInfo) {
-						try {
-							vAny = getAny(oWithControl, oBindingInfo, mSettings);
-							if (vAny !== oUNBOUND) {
-								oAttribute.value = vAny;
-							}
-						} catch (ex) {
-							// just don't replace XML attribute value
-							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
-								jQuery.sap.log.debug(
-									sCaller + ': Error in formatter of '
-										+ serializeSingleElement(oElement),
-									ex, "sap.ui.core.util.XMLPreprocessor");
-							}
+					try {
+						vValue = getResolvedBinding(sValue, oElement, oWithControl, false);
+						if (vValue !== oUNBOUND) {
+							oAttribute.value = vValue;
+						}
+					} catch (ex) {
+						// just don't replace XML attribute value
+						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
+							jQuery.sap.log.debug(
+								sCaller + ': Error in formatter of '
+									+ serializeSingleElement(oElement),
+								ex, "sap.ui.core.util.XMLPreprocessor");
 						}
 					}
 				}
 
 				/**
-				 * Loads and inlines the content of a sap.ui.core:Fragment element.
+				 * Loads and inlines the content of a <sap.ui.core:Fragment> element.
+				 *
 				 * @param {Element} oElement
 				 *   the <sap.ui.core:Fragment> element
 				 * @param {sap.ui.core.util._with} oWithControl
@@ -427,31 +472,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 */
 				function templateFragment(oElement, oWithControl) {
 					var sFragmentName = oElement.getAttribute("fragmentName"),
-						oFragmentElement = XMLTemplateProcessor.loadTemplate(
-							sFragmentName, "fragment");
+						vFragmentName;
 
-					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
-					if (oWithControl.$mFragmentContexts[sFragmentName]) {
-						oElement.appendChild(oElement.ownerDocument.createTextNode(
-							"Error: Stopped due to cyclic fragment reference"));
-						jQuery.sap.log.error(
-							'Stopped due to cyclic reference in fragment ' + sFragmentName,
-							jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
-							"sap.ui.core.util.XMLPreprocessor");
-						return;
+					/**
+					 * Inserts the fragment with the given name in place of the <core:Fragment>
+					 * element.
+					 *
+					 * @param {string} sFragmentName
+					 *   the fragment's resolved name
+					 */
+					function insertFragment(sFragmentName) {
+						var oFragmentElement
+							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+
+						// Note: It is perfectly valid to include the very same fragment again, as long
+						// as the context is changed. So we check for cycles at the current "with"
+						// control. A context change will create a new one.
+						oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
+						if (oWithControl.$mFragmentContexts[sFragmentName]) {
+							oElement.appendChild(oElement.ownerDocument.createTextNode(
+								"Error: Stopped due to cyclic fragment reference"));
+							jQuery.sap.log.error(
+								'Stopped due to cyclic reference in fragment: ' + sFragmentName,
+								jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
+								"sap.ui.core.util.XMLPreprocessor");
+							return;
+						}
+
+						oWithControl.$mFragmentContexts[sFragmentName] = true;
+
+						if (localName(oFragmentElement) === "FragmentDefinition" &&
+								oFragmentElement.namespaceURI === "sap.ui.core") {
+							liftChildNodes(oFragmentElement, oWithControl, oElement);
+						} else {
+							oElement.appendChild(oFragmentElement);
+							liftChildNodes(oElement, oWithControl);
+						}
+						oElement.parentNode.removeChild(oElement);
+						oWithControl.$mFragmentContexts[sFragmentName] = false;
 					}
 
-					oWithControl.$mFragmentContexts[sFragmentName] = true;
-
-					if (localName(oFragmentElement) === "FragmentDefinition" &&
-							oFragmentElement.namespaceURI === "sap.ui.core") {
-						liftChildNodes(oFragmentElement, oWithControl, oElement);
-					} else {
-						oElement.appendChild(oFragmentElement);
-						liftChildNodes(oElement, oWithControl);
+					try {
+						vFragmentName
+							= getResolvedBinding(sFragmentName, oElement, oWithControl, true);
+						if (vFragmentName !== oUNBOUND) {
+							insertFragment(vFragmentName);
+						}
+					} catch (ex) {
+						warn('Error in formatter of ', oElement, ex);
 					}
-					oElement.parentNode.removeChild(oElement);
-					oWithControl.$mFragmentContexts[sFragmentName] = false;
 				}
 
 				/**
@@ -500,7 +569,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 */
 				function templateRepeat(oElement, oWithControl) {
 					var sList = oElement.getAttribute("list") || "",
-						oBindingInfo = sap.ui.base.BindingParser.complexParser(sList),
+						oBindingInfo = BindingParser.complexParser(sList),
 						aContexts,
 						oListBinding,
 						sModelName,
@@ -519,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					oWithControl.setChild(oNewWithControl);
 
 					// use a list binding to get an array of contexts
-					oBindingInfo.mode = sap.ui.model.BindingMode.OneTime;
+					oBindingInfo.mode = BindingMode.OneTime;
 					oNewWithControl.bindAggregation("list", oBindingInfo);
 					oListBinding = oNewWithControl.getBinding("list");
 					oNewWithControl.unbindAggregation("list", true);
@@ -527,14 +596,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					if (!oListBinding) {
 						error("Missing model '" + sModelName + "' in ", oElement);
 					}
-					aContexts = oListBinding.getContexts();
+					aContexts
+						= oListBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 
 					// set up the model for the loop variable
 					sVar = sVar || sModelName; // default loop variable is to keep the same model
 					oNewWithControl.setModel(oListBinding.getModel(), sVar);
 
 					// the actual loop
-					jQuery.each(aContexts, function (i, oContext) {
+					aContexts.forEach(function (oContext, i) {
 						var oSourceNode = (i === aContexts.length - 1) ?
 							oElement : oElement.cloneNode(true);
 						// Note: because sVar and sModelName refer to the same model instance, it
@@ -572,10 +642,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
+					//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
+					oBindingInfo = BindingParser.simpleParser("{" + sPath + "}");
+					sVar = sVar || oBindingInfo.model; // default variable is same model name
+
 					//TODO Simplify code once named contexts are supported by the core
 					if (sHelper || sVar) { // create a "named context"
-						//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
-						oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
 							error("Missing model '" + oBindingInfo.model + "' in ", oElement);
@@ -603,7 +675,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 								sResolvedPath = vHelperResult;
 							}
 						}
-						sVar = sVar || oBindingInfo.model; // default variable is same model name
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({ //TODO setBindingContext?!
 							model : sVar,
@@ -611,6 +682,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						});
 					} else {
 						oNewWithControl.bindObject(sPath);
+					}
+
+					if (oNewWithControl.getBindingContext(sVar)
+							=== oWithControl.getBindingContext(sVar)) {
+						// Warn and ignore the new "with" control when its binding context is
+						// the same as a previous one.
+						// We test identity because models cache and reuse binding contexts.
+						warn("Set unchanged path '" + sResolvedPath + "' in ", oElement, null);
+						oNewWithControl = oWithControl;
 					}
 
 					liftChildNodes(oElement, oNewWithControl);
@@ -624,11 +704,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
 				function visitAttributes(oNode, oWithControl) {
-					var i;
+					var i, n,
+						oAttributesList = oNode.attributes;
 
-					if (oNode.attributes) {
-						for (i = 0; i < oNode.attributes.length; i += 1) {
-							resolveAttributeBinding(oNode, oNode.attributes.item(i), oWithControl);
+					if (oAttributesList) { // only if oNode is an Element
+						for (i = 0, n = oAttributesList.length; i < n; i += 1) {
+							resolveAttributeBinding(oNode, oAttributesList.item(i), oWithControl);
 						}
 					}
 				}
@@ -641,11 +722,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 				 */
 				function visitChildNodes(oNode, oWithControl) {
 					var i,
-						oNodeList = oNode.childNodes;
+						oNodeList = oNode.childNodes,
+						n = oNodeList.length,
+						aChildren = new Array(n);
 
-					// iterate from the end so that removing a template node does not hurt
-					for (i = oNodeList.length - 1; i >= 0; i -= 1) {
-						visitNode(oNodeList.item(i), oWithControl);
+					// cache live collection so that removing a template node does not hurt
+					for (i = 0; i < n; i += 1) {
+						aChildren[i] = oNodeList.item(i);
+					}
+					for (i = 0; i < n; i += 1) {
+						visitNode(aChildren[i], oWithControl);
 					}
 				}
 
@@ -677,12 +763,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject',
 						&& localName(oNode) === "Fragment"
 						&& oNode.getAttribute("type") === "XML") {
 						templateFragment(oNode, oWithControl);
+						return;
 					}
 
 					visitAttributes(oNode, oWithControl);
 					visitChildNodes(oNode, oWithControl);
 				}
 
+				/**
+				 * Outputs a warning; takes care not to serialize XML in vain.
+				 *
+				 * @param {string} sText
+				 *   the main text of the warning
+				 * @param {Element} oElement
+				 *   a DOM element
+				 * @param {string} sDetails
+				 *   the details of the warning
+				 */
+				function warn(sText, oElement, sDetails) {
+					if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+						jQuery.sap.log.warning(
+							sCaller + ": " + sText + serializeSingleElement(oElement),
+							sDetails, "sap.ui.core.util.XMLPreprocessor");
+					}
+				}
+
+				//TODO remove this legacy compatibility for design time templating
+				if (typeof mSettings === "string") {
+					sCaller = mSettings;
+					mSettings = oViewInfo;
+				} else {
+					sCaller = oViewInfo.caller;
+				}
+				mSettings = mSettings || {};
 				visitNode(oRootElement, new With({
 					models : mSettings.models,
 					bindingContexts : mSettings.bindingContexts

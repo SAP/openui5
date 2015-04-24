@@ -25,6 +25,9 @@ sap.ui.define(['jquery.sap.global'],
 		var sTooltip = oYP.getTooltip_AsString();
 		var sId = oYP.getId();
 		var iCurrentYear = oYP.getYear();
+		var iYears = oYP.getYears();
+		var iColumns = oYP.getColumns();
+		var sWidth = "";
 
 		oRm.write("<div");
 		oRm.writeControlData(oYP);
@@ -43,16 +46,22 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.write(">"); // div element
 
-		var iYear = iCurrentYear - 10;
+		var iYear = iCurrentYear - Math.floor(iYears / 2);
 
-		if (iYear >= 9980) {
-			iYear = 9980;
+		if (iYear >= 10000 - iYears) {
+			iYear = 10000 - iYears;
 		}else if (iYear < 1) {
 			iYear = 1;
 		}
 
-		for ( var i = 0; i < 20; i++) {
-			if (i == 0 || i % oYP._iColumns == 0) {
+		if (iColumns > 0) {
+			sWidth = ( 100 / iColumns ) + "%";
+		} else {
+			sWidth = ( 100 / iYears ) + "%";
+		}
+
+		for ( var i = 0; i < iYears; i++) {
+			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row
 				oRm.write("<div");
 				oRm.writeAccessibilityState(null, {role: "row"});
@@ -66,14 +75,16 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass("sapUiCalYearSel");
 			}
 			oRm.writeAttribute("tabindex", "-1");
+			oRm.addStyle("width", sWidth);
 			oRm.writeClasses();
+			oRm.writeStyles();
 			oRm.writeAccessibilityState(null, {role: "gridcell"});
 			oRm.write(">"); // div element
 			oRm.write(iYear);
 			oRm.write("</div>");
 			iYear++;
 
-			if ((i + 1) % oYP._iColumns == 0) {
+			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
 				// end of row
 				oRm.write("</div>");
 			}

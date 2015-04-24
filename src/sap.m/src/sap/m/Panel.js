@@ -41,12 +41,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * The Panel width.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
+			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "100%"},
 
 			/**
 			 * The Panel height.
 			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : 'auto'},
+			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "auto"},
 
 			/**
 			 * Specifies whether the control is expandable.
@@ -68,7 +68,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * By default the animation is enabled.
 			 * @since 1.26
 			 */
-			expandAnimation : {type : "boolean", group : "Behavior", defaultValue : true}
+			expandAnimation : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * This property is used to set the background color of the Panel.
+			 * Depending on the theme you can change the state of the background from "Solid" over "Translucent" to "Transparent".
+			 * @since 1.30
+			 */
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Translucent}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -200,25 +207,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	Panel.prototype.onAfterRendering = function () {
+	Panel.prototype.onBeforeRendering = function () {
+		var sId;
 
-		var $this = this.$();
+		if (this.oIconCollapsed) {
+			sId = this._getLabellingElementId();
+			this.oIconCollapsed.addAriaLabelledBy(sId);
+		}
+	};
+
+	Panel.prototype.onAfterRendering = function () {
+		var $this = this.$(),
+			$icon;
 
 		this._setContentHeight();
 
 		if (this.getExpandable()) {
-			var $iconButton = this._getIcon().$();
-			$iconButton.attr("role", "button");
+			$icon = this.oIconCollapsed.$();
 			if (this.getExpanded()) {
 				// this is relevant when we create Panel specifying the expanded property as 'constructor parameter'
-				$this.find(".sapMPanelWrappingDiv").addClass("sapMPanelWrappingDivExpanded");
+				$this.children(".sapMPanelWrappingDiv").addClass("sapMPanelWrappingDivExpanded");
 				//ARIA
-				$iconButton.attr("aria-expanded", "true");
+				$icon.attr("aria-expanded", "true");
 			} else {
 				// hide those parts which are collapsible (w/o animation, otherwise initial loading doesn't look good ...)
-				$this.find(".sapMPanelExpandablePart").hide();
+				$this.children(".sapMPanelExpandablePart").hide();
 				//ARIA
-				$iconButton.attr("aria-expanded", "false");
+				$icon.attr("aria-expanded", "false");
 			}
 		}
 	};
@@ -263,14 +278,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (!oHeaderToolbar && this.getHeaderText() !== "") {
-			iHeight += parseInt($this.find(".sapMPanelHdr").outerHeight(), 10);
+			iHeight += parseInt($this.find(".sapMPanelHdr").first().outerHeight(), 10);
 		}
 
 		if (oInfoToolbar) {
 			iHeight += parseInt(oInfoToolbar.$().outerHeight(), 10);
 		}
 
-		$this.find(".sapMPanelContent").css("height", parseInt($this.outerHeight(), 10) - iHeight);
+		$this.children(".sapMPanelContent").css("height", parseInt($this.outerHeight(), 10) - iHeight);
 	};
 
 	Panel.prototype._toggleExpandCollapse = function () {
@@ -279,15 +294,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oOptions.duration = 0;
 		}
 
-		this.$().find(".sapMPanelExpandablePart").slideToggle(oOptions);
+		this.$().children(".sapMPanelExpandablePart").slideToggle(oOptions);
 	};
 
 	Panel.prototype._toggleCssClasses = function () {
 		var $this = this.$();
 
 		// for controlling the visibility of the border
-		$this.find(".sapMPanelWrappingDiv").toggleClass("sapMPanelWrappingDivExpanded");
-		$this.find(".sapMPanelExpandableIcon").toggleClass("sapMPanelExpandableIconExpanded");
+		$this.children(".sapMPanelWrappingDiv").toggleClass("sapMPanelWrappingDivExpanded");
+		$this.find(".sapMPanelExpandableIcon").first().toggleClass("sapMPanelExpandableIconExpanded");
+	};
+
+	Panel.prototype._getLabellingElementId = function () {
+		var headerToolbar = this.getHeaderToolbar(),
+			id;
+
+		if (headerToolbar) {
+			id = headerToolbar.getId();
+		} else {
+			id = this.getId() + "-header";
+		}
+
+		return id;
 	};
 
 	return Panel;

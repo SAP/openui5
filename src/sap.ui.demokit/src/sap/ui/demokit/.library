@@ -29,7 +29,7 @@
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
         <raw-module name="sap/ui/demokit/js/esprima.js" />
-        <raw-module name="sap/ui/demokit/js/highlight-query-terms.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js"/>
+        <raw-module name="sap/ui/demokit/js/highlight-query-terms.js" depends="sap/ui/thirdparty/jquery.js"/>
         <raw-module name="sap/ui/demokit/js/google-code-prettify/lang-css.js" depends="sap/ui/demokit/js/google-code-prettify/prettify.js" />
         <raw-module name="sap/ui/demokit/js/google-code-prettify/prettify.js"/>
         <raw-module name="sap/ui/demokit/js/google-code-prettify/run_prettify.js"/>

@@ -160,8 +160,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
 			case "boolean":
 				return vValue;
 			case "string":
-				// Do not use String#trim as it is not supported in IE8
-				sValue = jQuery.trim(vValue).toLowerCase();
+				sValue = vValue.trim().toLowerCase();
 				if (sValue === getText(true).toLowerCase()) {
 					return true;
 				}

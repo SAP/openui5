@@ -503,12 +503,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 	
-	ListItemBase.prototype.setUnread = function(bUnread) {
-		this.setProperty("unread", bUnread, true);
-		this.$().toggleClass("sapMLIBUnread", bUnread);
-		return this;
-	};
-	
 	ListItemBase.prototype.ontap = function(oEvent) {
 		
 		// do not handle already handled events

@@ -31,7 +31,7 @@ module.exports = function(grunt, config) {
 				footer:  '<%= concat.coreNoJQueryJS.options.footer %>'
 			},
 			src: [
-				sSourcesFolder + 'sap/ui/thirdparty/jquery/jquery-1.11.1.js',
+				sSourcesFolder + 'sap/ui/thirdparty/jquery.js',
 				sSourcesFolder + 'sap/ui/thirdparty/jqueryui/jquery-ui-position.js',
 				'<%= concat.coreNoJQueryJS.src %>'
 			],

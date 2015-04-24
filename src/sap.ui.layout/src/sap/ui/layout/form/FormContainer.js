@@ -169,6 +169,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		};
 
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormContainer has a DOM representation this function returns it,
+		 * independent from the ID of this DOM element
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		FormContainer.prototype.getRenderedDomRef = function(){
+
+			var that = this;
+			var oForm = this.getParent();
+
+			if (oForm && oForm.getContainerRenderedDomRef) {
+				return oForm.getContainerRenderedDomRef(that);
+			}else {
+				return null;
+			}
+
+		};
+
+		/**
+		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * If the FormElement has a DOM representation this function returns it,
+		 * independent from the ID of this DOM element
+		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @return {Element} The Element's DOM representation or null
+		 * @private
+		 */
+		FormContainer.prototype.getElementRenderedDomRef = function(oElement){
+
+			var oForm = this.getParent();
+
+			if (oForm && oForm.getElementRenderedDomRef) {
+				return oForm.getElementRenderedDomRef(oElement);
+			}else {
+				return null;
+			}
+
+		};
+
 		function _setExpanderIcon(oContainer){
 
 			if (!oContainer._oExpandButton) {

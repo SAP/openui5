@@ -9,9 +9,36 @@ sap.ui.define([
 ], function(jQuery, Basics, BindingParser) {
 	'use strict';
 
-	var // path to entity type ("/dataServices/schema/<i>/entityType/<j>")
+	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
+	var sDateValue = "[-]?\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+		sDecimalValue = "[-+]?\\d+(?:\\.\\d+)?",
+		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d{1,12})?)?",
+		mEdmType2RegExp = {
+			Bool : /^true$|^false$/i,
+			// Note: 'NaN' and 'INF' are case sensitive, "e" is not!
+			Float : new RegExp("^" + sDecimalValue + "(?:[eE][-+]?\\d+)?$|^NaN$|^-INF$|^INF$"),
+			Date : new RegExp("^" + sDateValue + "$"),
+			DateTimeOffset: new RegExp("^" + sDateValue + "T" + sTimeOfDayValue
+				+ "(?:Z|[-+](?:0\\d|1[0-3]):[0-5]\\d|[-+]14:00)$", "i"),
+			Decimal : new RegExp("^" + sDecimalValue + "$"),
+			Guid : /^[A-F0-9]{8}-(?:[A-F0-9]{4}-){3}[A-F0-9]{12}$/i,
+			Int : /^[-+]?\d{1,19}$/,
+			TimeOfDay : new RegExp("^" + sTimeOfDayValue + "$")
+		},
+		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
-		Expression;
+		Expression,
+		mType2Type = { // mapping of constant "edm:*" type to dynamic "Edm.*" type
+			Bool : "Edm.Boolean",
+			Float : "Edm.Double",
+			Date : "Edm.Date",
+			DateTimeOffset :"Edm.DateTimeOffset",
+			Decimal : "Edm.Decimal",
+			Guid : "Edm.Guid",
+			Int : "Edm.Int64",
+			String : "Edm.String",
+			TimeOfDay : "Edm.TimeOfDay"
+		};
 
 	/**
 	 * This object contains helper functions to process an expression in OData V4 annotations.
@@ -80,8 +107,7 @@ sap.ui.define([
 			Basics.expectType(oPathValue, "array");
 			oPathValue.value.forEach(function (oUnused, i) {
 				// an embedded concat must use expression binding
-				oResult = Expression.expression(oInterface, Basics.descend(oPathValue, i),
-					/*bExpression*/true);
+				oResult = Expression.parameter(oInterface, oPathValue, i);
 				// if any parameter is type expression, the concat must become expression, too
 				bExpression = bExpression || oResult.result === "expression";
 				aResults.push(oResult);
@@ -103,35 +129,54 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handling of "14.4.11 Expression edm:String".
+		 * Handling of "14.4 Constant Expressions", i.e.
+		 * <ul>
+		 *   <li>"14.4.2 Expression edm:Bool",</li>
+		 *   <li>"14.4.3 Expression edm:Date",</li>
+		 *   <li>"14.4.4 Expression edm:DateTimeOffset",</li>
+		 *   <li>"14.4.5 Expression edm:Decimal",</li>
+		 *   <li>"14.4.8 Expression edm:Float",</li>
+		 *   <li>"14.4.9 Expression edm:Guid",</li>
+		 *   <li>"14.4.10 Expression edm:Int",</li>
+		 *   <li>"14.4.11 Expression edm:String",</li>
+		 *   <li>"14.4.12 Expression edm:TimeOfDay".</li>
+		 * </ul>
 		 *
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
 		 *   a path/value pair pointing to the constant
+		 * @param {string} sEdmType
+		 *   the "edm:*" type of the constant, e.g. "Bool" or "Int"
 		 * @returns {object}
 		 *   the result object
 		 */
-		constant: function (oInterface, oPathValue) {
-			var oResult;
+		constant: function (oInterface, oPathValue, sEdmType) {
+			var sValue = oPathValue.value;
 
 			Basics.expectType(oPathValue, "string");
-			if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
-				// We want a model binding to the path in the metamodel (which is oPathValue.path)
-				// "/##" is prepended because it leads from model to metamodel
-				oResult = {
-					result : "binding",
-					value : "/##" + oPathValue.path
-				};
-				// No type; it would become part of the output
-			} else {
-				oResult = {
-					result : "constant",
-					value : oPathValue.value,
-					type : "Edm.String"
-				};
+
+			if (sEdmType === "String") {
+				if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
+					// We want a model binding to the path in the metamodel (which is
+					// oPathValue.path)
+					// "/##" is prepended because it leads from model to metamodel
+					return {
+						result : "binding",
+						// No type; it would become part of the output
+						value : "/##" + oPathValue.path
+					};
+				}
+			} else if (!mEdmType2RegExp[sEdmType].test(sValue)) {
+				Basics.error(oPathValue,
+					"Expected " + sEdmType + " value but instead saw '" + sValue + "'");
 			}
-			return oResult;
+
+			return {
+				result : "constant",
+				type : mType2Type[sEdmType],
+				value : sValue
+			};
 		},
 
 		/**
@@ -161,7 +206,9 @@ sap.ui.define([
 				sType = Basics.property(oPathValue, "Type", "string");
 				oSubPathValue = Basics.descend(oPathValue, "Value");
 			} else {
-				["Apply", "Path", "String"].forEach(function (sProperty) {
+				["Apply", "Bool", "Date", "DateTimeOffset", "Decimal", "Float", "Guid", "Int",
+					"Path", "String", "TimeOfDay"
+				].forEach(function (sProperty) {
 					if (oRawValue.hasOwnProperty(sProperty)) {
 						sType = sProperty;
 						oSubPathValue = Basics.descend(oPathValue, sProperty);
@@ -174,10 +221,18 @@ sap.ui.define([
 					return Expression.apply(oInterface, oSubPathValue, bExpression);
 				case "Path": // 14.5.12 Expression edm:Path
 					return Expression.path(oInterface, oSubPathValue);
+				case "Bool": // 14.4.2 Expression edm:Bool
+				case "Date": // 14.4.3 Expression edm:Date
+				case "DateTimeOffset": // 14.4.4 Expression edm:DateTimeOffset
+				case "Decimal": // 14.4.5 Expression edm:Decimal
+				case "Float": // 14.4.8 Expression edm:Float
+				case "Guid": // 14.4.9 Expression edm:Guid
+				case "Int": // 14.4.10 Expression edm:Int
 				case "String": // 14.4.11 Expression edm:String
-					return Expression.constant(oInterface, oSubPathValue);
+				case "TimeOfDay": // 14.4.12 Expression edm:TimeOfDay
+					return Expression.constant(oInterface, oSubPathValue, sType);
 				default:
-					Basics.error(oPathValue, "Expected 'Apply', 'Path' or 'String'");
+					Basics.error(oPathValue, "Unsupported OData expression");
 			}
 		},
 
@@ -229,15 +284,9 @@ sap.ui.define([
 				sPrefix = "",
 				oParameter,
 				aParameters = oPathValue.value,
-				oPathValueTemplate = Basics.descend(oPathValue, 0),
 				oResult,
-				oTemplate = Expression.expression(oInterface, oPathValueTemplate,
-					/*bExpression*/true);
+				oTemplate = Expression.parameter(oInterface, oPathValue, 0, "Edm.String");
 
-			if (oTemplate.type !== "Edm.String") {
-				Basics.error(oPathValueTemplate,
-					"fillUriTemplate: Expected Edm.String but instead saw " + oTemplate.type);
-			}
 			aParts.push('odata.fillUriTemplate(', Basics.resultToString(oTemplate, true), ',{');
 			for (i = 1; i < aParameters.length; i += 1) {
 				oParameter = Basics.descend(oPathValue, i, "object");
@@ -254,6 +303,36 @@ sap.ui.define([
 				value: aParts.join(""),
 				type: "Edm.String"
 			};
+		},
+
+		/**
+		 * Evaluates a parameter and ensures that the result is of the given EDM type.
+		 *
+		 * The function calls <code>expression</code> with <code>bExpression=true</code>. This will
+		 * cause any embedded <code>odata.concat</code> to generate an expression binding. This
+		 * should be correct in any case because only a standalone <code>concat</code> may generate
+		 * a composite binding.
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
+		 * @param {object} oPathValue
+		 *   a path/value pair pointing to the parameter array
+		 * @param {int} iIndex
+		 *   the parameter index
+		 * @param {string} [sEdmType]
+		 *   the expected EDM type or <code>undefined</code> if any type is allowed
+		 * @returns {object}
+		 *   the result object
+		 */
+		parameter: function (oInterface, oPathValue, iIndex, sEdmType) {
+			var oParameter = Basics.descend(oPathValue, iIndex),
+				oResult = Expression.expression(oInterface, oParameter, /*bExpression*/true);
+
+			if (sEdmType && sEdmType !== oResult.type) {
+				Basics.error(oParameter,
+					"Expected " + sEdmType + " but instead saw " + oResult.type);
+			}
+			return oResult;
 		},
 
 		/**
@@ -328,8 +407,8 @@ sap.ui.define([
 		 *   the result object
 		 */
 		uriEncode: function (oInterface, oPathValue) {
-			var oResult = Expression.expression(oInterface, Basics.descend(oPathValue, 0),
-					/*bExpression*/true);
+			var oResult = Expression.parameter(oInterface, oPathValue, 0);
+
 			return {
 				result: "expression",
 				value: 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","

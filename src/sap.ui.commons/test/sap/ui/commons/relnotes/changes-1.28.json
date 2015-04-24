@@ -417,13 +417,6 @@
     "date": "March 2015",
     "notes": [
       {
-        "id": "470f235dce80777cdd6800676f1cc9750bc54cd1",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
-        "type": "FIX",
-        "text": "Fix JSDoc issues as reported during nightly build",
-        "references": []
-      },
-      {
         "id": "57ffaa03d91c5a06750b03e436212c982184105e",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
@@ -440,6 +433,84 @@
         "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.ui.table.Table: Added cozy mode",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "aa4f726946641f66143b98fad9b47f834a13a52d",
+        "author": "Stefan Scherer \u003cstefan.scherer@sap.com\u003e",
+        "type": "FIX",
+        "text": "HCB-Theme: Outline-color for focus changed",
+        "references": []
+      },
+      {
+        "id": "47c4d60cceb7f52b8ccce89bfa6c5d162e480e55",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Dialog: Inital setting of focus corrected",
+        "references": []
+      },
+      {
+        "id": "950129ac028b5bcda26ab5fc6f1006e343232e62",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Saving of \"_followOfHandler\" corrected",
+        "references": []
+      },
+      {
+        "id": "3ef18fbc4817746ffdf8ab5973c259322e39ddde",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "RoadMap: Error is now avoided when scrolling to first visible step and the step is not yet rendered",
+        "references": []
+      },
+      {
+        "id": "a119a32261073b541a83448e5e13ef912c885e81",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "TextField, ComboBox, DropdownBox: liveChange event corrected",
+        "references": []
+      },
+      {
+        "id": "8fb9e6f2f92d9101e58afc22610dc8789c3f8355",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar: Updating toolbar during rendering phase ignored",
+        "references": []
+      },
+      {
+        "id": "d7c01dc45d13d9d8faedc05280aa804b64f06f17",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.SegmentedButton: No longer focusable when disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "172678"
+          }
+        ]
+      },
+      {
+        "id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "4a24f074c81329196f3a2051e603ba4df88a3bca",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: Selection after model change restored",
         "references": []
       }
     ]

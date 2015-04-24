@@ -328,32 +328,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		if (!oBinding) {
 			return;
 		}
-
-		var iFirstMeasureColumnIndex = this._getFirstMeasureColumnIndex(),
-			sMaxGroupHeaderWidth;
-		if (iFirstMeasureColumnIndex > -1) {
-			var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-			var $ths = this.$().find(".sapUiTableCtrlFirstCol > th");
-			if (bHasRowHeader) {
-				$ths = $ths.not(":nth-child(1)");
-			}
-			var $firstTh = $ths.get(0);
-			if (!$firstTh) {
-				//it might happen, that the first TH is not defined, because the table did not yet render any columns
-				//columns can be added asynchronously after the table was instantiated
-				return;
-			}
-			var iOffset = $firstTh.getBoundingClientRect().left;
-			var $FirstMeasureColumn = $ths.get(this._getFirstMeasureColumnIndex());
-			if ($FirstMeasureColumn) {
-				var iMaxGroupHeaderWidth = 32 + $FirstMeasureColumn.getBoundingClientRect().left - iOffset;
-				sMaxGroupHeaderWidth = iMaxGroupHeaderWidth + "px";
-			} else {
-				sMaxGroupHeaderWidth = "none";
-			}
-		} else {
-			sMaxGroupHeaderWidth = "none";
-		}
+		
+		var iFirstLabelWidth = 0;
 
 		var aRows = this.getRows();
 		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
@@ -364,24 +340,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				$row = oRow.$(),
 				$fixedRow = oRow.$("fixed"),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]"),
-				iLevel = oContextInfo ? oContextInfo.level : 0;
+				iLevel = oContextInfo ? oContextInfo.level : 0,
+				iFirstThPos = 0;
+
+				var $FirstCellLabel = $row.find(".sapUiTableTdFirst .sapUiTableCell > *");
+				$FirstCellLabel.width('auto');
+				// 40 is standard space between the group header content and the sum label
+				iFirstLabelWidth = $FirstCellLabel.outerWidth() + 40;
+				$FirstCellLabel.width('');
 
 			if (!oContextInfo || !oContextInfo.context) {
 				$row.removeAttr("data-sap-ui-level");
 				$row.removeAttr('aria-level');
 				$row.removeAttr('aria-expanded');
-				$row.removeClass("sapUiTableGroupHeader");
-				$row.removeClass("sapUiAnalyticalTableSum");
-				$row.removeClass("sapUiAnalyticalTableDummy");
+				$row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$fixedRow.removeAttr("data-sap-ui-level");
 				$fixedRow.removeAttr('aria-level');
 				$fixedRow.removeAttr('aria-expanded');
 				$fixedRow.removeClass("sapUiTableGroupHeader");
-				$rowHdr.removeClass("sapUiTableGroupHeader");
 				$rowHdr.html("");
 				$rowHdr.removeAttr("data-sap-ui-level");
-				$rowHdr.removeClass("sapUiAnalyticalTableSum");
-				$rowHdr.removeClass("sapUiAnalyticalTableDummy");
+				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
@@ -389,38 +368,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				}
 				continue;
 			}
+			
+			var iGroupHeaderBoundColumnIndex = 0;
+			// If group header is expanded, we grant the whole row space
+			if (oContextInfo.expanded && !this.getSumOnTop()) {
+				iFirstLabelWidth = 0;
+				iGroupHeaderBoundColumnIndex = this._getVisibleColumnCount() - 1;
+			}
+			
+			// if first measure column index is not the first column, we don't need to shrink the size about the sum text
+			if (this._getFirstMeasureColumnIndex() !== 0) {
+				iFirstLabelWidth = 0;
+			}
+			
+			if (iGroupHeaderBoundColumnIndex > -1) {
+				var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
+				var $ths = this.$().find(".sapUiTableCtrlFirstCol > th");
+				if (bHasRowHeader) {
+					$ths = $ths.not(":nth-child(1)");
+				}
+				var $firstTh = $ths.get(iGroupHeaderBoundColumnIndex);
+				if (!$firstTh) {
+					//it might happen, that the first TH is not defined, because the table did not yet render any columns
+					//columns can be added asynchronously after the table was instantiated
+					return;
+				}
+
+				if (this._bRtlMode) {
+					iFirstThPos = $firstTh.getBoundingClientRect().left;
+				} else {
+					iFirstThPos = $firstTh.getBoundingClientRect().right;
+				}
+			}
 
 			if (oBinding.indexHasChildren && oBinding.indexHasChildren(iRowIndex)) {
 				// modify the rows
 				$row.addClass("sapUiTableGroupHeader");
 				$fixedRow.addClass("sapUiTableGroupHeader");
-				var sClass = oContextInfo.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
+				
 				$row.attr('aria-expanded', oContextInfo.expanded);
 				$fixedRow.attr('aria-expanded', oContextInfo.expanded);
 				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\" style=\"max-width:"  + sMaxGroupHeaderWidth + "\">" + sGroupHeaderText + "</div>");
+
+				var sClass = oContextInfo.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
+
 				if (oContextInfo.expanded && !this.getSumOnTop()) {
 					$row.addClass("sapUiTableRowHidden");
+					$rowHdr.addClass("sapUiTableRowHidden");
 				}
-				$row.removeClass("sapUiAnalyticalTableSum");
-				$rowHdr.removeClass("sapUiAnalyticalTableSum");
-				$row.removeClass("sapUiAnalyticalTableDummy");
-				$rowHdr.removeClass("sapUiAnalyticalTableDummy");
+
+				$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>");
+				
+				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
 			} else {
 				$row.attr('aria-expanded', false);
-				$row.removeClass("sapUiTableGroupHeader");
-				$row.removeClass("sapUiTableRowHidden");
-				$row.removeClass("sapUiAnalyticalTableSum");
-				$row.removeClass("sapUiAnalyticalTableDummy");
+				$row.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 
 				$fixedRow.attr('aria-expanded', false);
 				$fixedRow.removeClass("sapUiTableGroupHeader");
 
 				$rowHdr.html("");
-				$rowHdr.removeClass("sapUiTableGroupHeader");
-				$rowHdr.removeClass("sapUiAnalyticalTableDummy");
-				$rowHdr.removeClass("sapUiAnalyticalTableSum");
+				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableDummy sapUiAnalyticalTableSum");
 
 				if (oContextInfo.sum && oContextInfo.context && oContextInfo.context.getObject()) {
 					$row.addClass("sapUiAnalyticalTableSum");
@@ -432,6 +442,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 			$rowHdr.attr("data-sap-ui-level", iLevel);
 			$row.attr('aria-level', iLevel + 1);
 			$fixedRow.attr('aria-level', iLevel + 1);
+			
+			// Shrink GroupIcon width from left bound to right bound of first column.
+
+			var iRowHeaderOffset, iRowHdrWidth;
+
+			// -2 because of Border
+			if (this._bRtlMode) {
+				iRowHeaderOffset = $rowHdr[0].getBoundingClientRect().right;
+				iRowHdrWidth = iRowHeaderOffset - iFirstThPos - iFirstLabelWidth - 2;
+			} else {
+				iRowHeaderOffset = $rowHdr[0].getBoundingClientRect().left;
+				iRowHdrWidth = iFirstThPos - iRowHeaderOffset - iFirstLabelWidth - 2;
+			}
+
+			$rowHdr.find(".sapUiTableGroupIcon").width(iRowHdrWidth + "px");
 
 			// show or hide the totals if not enabled - needs to be done by Table
 			// control since the model could be reused and thus the values cannot
@@ -443,14 +468,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 				var oCol = aCols[iCol];
 				var $td = jQuery(aCells[i].$().closest("td"));
 				if (oBinding.isMeasure(oCol.getLeadingProperty())) {
+					$td.addClass("sapUiTableMeasureCell");
 					if (!oContextInfo.sum || oCol.getSummed()) {
 						$td.removeClass("sapUiTableCellHidden");
 					} else {
 						$td.addClass("sapUiTableCellHidden");
 					}
+				} else {
+					$td.removeClass("sapUiTableMeasureCell");
 				}
 			}
-
 		}
 	};
 
@@ -458,7 +485,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
 			this._onNodeSelect(oEvent);
 		} else if (jQuery(oEvent.target).hasClass("sapUiAnalyticalTableSum")) {
-			//Summs connot be selected
+			// Sums cannot be selected
 			oEvent.preventDefault();
 			return;
 		} else {

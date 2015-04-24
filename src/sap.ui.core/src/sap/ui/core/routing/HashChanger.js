@@ -2,9 +2,8 @@
  * ${copyright}
  */
 
-/*global hasher */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/signals', 'sap/ui/thirdparty/hasher'],
-	function(jQuery, EventProvider, signals, hasher1) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/hasher'],
+	function(jQuery, EventProvider, hasher) {
 	"use strict";
 
 	/**
@@ -38,6 +37,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			return false;
 		}
 
+		this._initialized = true;
+
 		hasher.changed.add(this.fireHashChanged, this); //parse hash changes
 
 		if (!hasher.isActive()) {
@@ -47,7 +48,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			this.fireHashChanged(hasher.getHash());
 		}
 
-		this._initialized = true;
 		return this._initialized;
 	};
 

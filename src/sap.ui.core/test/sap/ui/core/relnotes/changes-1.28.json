@@ -1188,14 +1188,7 @@
         "id": "51b6ff7f75c69791b48fd145d425ca525534fc51",
         "author": "Patric Ksinsik \u003cp.ksinsik@sap.com\u003e",
         "type": "FIX",
-        "text": "ExpressionBinding operator -",
-        "references": []
-      },
-      {
-        "id": "470f235dce80777cdd6800676f1cc9750bc54cd1",
-        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
-        "type": "FIX",
-        "text": "Fix JSDoc issues as reported during nightly build",
+        "text": "ExpressionBinding operator - implemented",
         "references": []
       },
       {
@@ -1216,21 +1209,21 @@
         "id": "34bd690bfc364bc4013b27c58d96daa369c4884e",
         "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
-        "text": "ManagedObject: Support value \u0027true\u0027 for option \u0027bindable\u0027",
+        "text": "ManagedObject: Added support for value \u0027true\u0027 for option \u0027bindable\u0027",
         "references": []
       },
       {
         "id": "d54d9f670f992f92cfd9531b35984862be51d9f0",
         "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
         "type": "FIX",
-        "text": "TechnicalInfo: Limit disp. size of config, no re-opening",
+        "text": "TechnicalInfo: Limit display size of configuration, no re-opening",
         "references": []
       },
       {
         "id": "6f4c90018020d6462362b39476e422ada303af03",
         "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FIX",
-        "text": "core.InvisibleText: Should not invalidate static UIArea.",
+        "text": "core.InvisibleText: Static UIArea is no longer invalidated..",
         "references": []
       },
       {
@@ -1251,7 +1244,7 @@
         "id": "6425e41658c209ec4d47665bb14688864447eda3",
         "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.model.odata.ODataMetaModel: JsDoc of errors before loading",
+        "text": "sap.ui.model.odata.ODataMetaModel: Removed JSDoc errors before loading",
         "references": []
       },
       {
@@ -1340,7 +1333,7 @@
         "id": "0292305e2023b3cbf4e24d58c21a93a2538d2791",
         "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
-        "text": "ODataModel: Wrong dataRequested/dataReceived events in bindElement",
+        "text": "ODataModel: Corrected dataRequested/dataReceived events in bindElement",
         "references": []
       },
       {
@@ -1368,7 +1361,7 @@
         "id": "03bb763d26f57654eef7c72e86c3d94416b946ea",
         "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
         "type": "FIX",
-        "text": "refresh ODataContextBinding does not refresh dependant bindings",
+        "text": "Correctly refresh ODataContextBinding dependant bindings",
         "references": []
       },
       {
@@ -1382,7 +1375,7 @@
         "id": "b86a44ee48c7c24c966c861c9c5806853b83690b",
         "author": "Christoph Kraemer \u003cchr.kraemer@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.core.routing.Router: Do not try to parse  the hash if router is destroyed",
+        "text": "sap.ui.core.routing.Router: Avoid parsing the hash if router is destroyed",
         "references": []
       },
       {
@@ -1390,6 +1383,196 @@
         "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
         "type": "FIX",
         "text": "v2.ODataModel: Sent RequestCompleted for aborted requests",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "ab1022261a30937ef7c75eff1975bd2b3b64feaa",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Added native promise support to qUnit test for modern browsers",
+        "references": []
+      },
+      {
+        "id": "62da4fd4a91327cead394107e24709b6ade05fa6",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Currency: Unintialized/empty bindings correctly handled",
+        "references": []
+      },
+      {
+        "id": "e7c3cc88bc7fb5a48b082050890fa64f03c2743c",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Relative date parsing for daylight saving time corrected",
+        "references": []
+      },
+      {
+        "id": "aa4f726946641f66143b98fad9b47f834a13a52d",
+        "author": "Stefan Scherer \u003cstefan.scherer@sap.com\u003e",
+        "type": "FIX",
+        "text": "HCB-Theme: Outline-color for focus changed",
+        "references": []
+      },
+      {
+        "id": "77e195617205c427631f97e3c921b611d9300071",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageParser, ODataMessageParser: Public API corrected",
+        "references": []
+      },
+      {
+        "id": "1518ba0836c6ee690fe08b471d94de8ad3276c0d",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: Change event is fired if context is set to null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "700993"
+          }
+        ]
+      },
+      {
+        "id": "bff5ea2c709c811d3160be6a46fd2f8044b5f618",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Message targets set to absolute paths",
+        "references": []
+      },
+      {
+        "id": "97b3ca7a64e223b6cb69a23b3f2b9b85e14ba50b",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "OSS: UMD modules added into shim config of module loader / adopted LIBRARIES.txt",
+        "references": []
+      },
+      {
+        "id": "aecfdb5334fdc99379ef5938f3021d1fe8df6cb9",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "V2.ODataModel: Error when trying to submit unknown batch group resolved",
+        "references": []
+      },
+      {
+        "id": "966cb15a6fb1169652108b27c762c0d45c8f937f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: Declaration of binding events supported",
+        "references": []
+      },
+      {
+        "id": "d0f00d5c458a240e620d3043f12109938c8ade55",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "analytics.TreeBindingAdapter.js - Root Contexts requested only once",
+        "references": []
+      },
+      {
+        "id": "950129ac028b5bcda26ab5fc6f1006e343232e62",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Saving of \"_followOfHandler\" corrected",
+        "references": []
+      },
+      {
+        "id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
+        "references": []
+      },
+      {
+        "id": "def80fbc4a761b1c69a408abedae1d977aded0ab",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Always give original request to ODataMessageParser",
+        "references": []
+      },
+      {
+        "id": "cdea96edeeec46791041838e666da66f38f38485",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: URL parameters in callFunction encoded",
+        "references": []
+      },
+      {
+        "id": "87b6e4c89cc6c08307b77c74cd99086f159a167e",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Refresh requests included in same batch request",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "0073f25eea6f3a18c06f4bae03969e8c2a93ab5a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSONView: Exception when composite controls fill an association with an object instance corrected (e.g. a SearchField)",
+        "references": []
+      },
+      {
+        "id": "85fc15e0a310899e6cb0f59a649a2c999054acd0",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Public API corrected",
+        "references": []
+      },
+      {
+        "id": "03dfd05f18c468e33f0ada0839d497ab2b32c4c2",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Metadata is no longer destroyed when model is destroyed",
+        "references": []
+      },
+      {
+        "id": "7ce3c54d9c778a50964969d7e66d98cbf58eed7b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Promise Polyfill: Invalid argument case for functions all and race corrected; Unit test (Safari case only) corrected",
+        "references": []
+      },
+      {
+        "id": "5017bbf086abb1f4bf76d44000af0946d7fd633d",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Control: Events are now prevented if control is set to busy",
+        "references": []
+      },
+      {
+        "id": "46affa85e3caa61ff54f6086e08ac047010fa7d9",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ScrollEnablement: Growing is now only triggered for the vertical scrolling",
+        "references": []
+      },
+      {
+        "id": "1c3ad5465c48e14b42a96405b35300135726226e",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event fired but does not close corrected",
+        "references": []
+      },
+      {
+        "id": "a14d77ff90b82151b5f11f3ec7a4e60d58d0840a",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "RenderManager: Visible DOM elements in preserve area avoided",
+        "references": []
+      },
+      {
+        "id": "e95b4c40e75b9e204e4a92f2c918fc343119131a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: callFunction prameter is now recognized if mode not set in metadata",
         "references": []
       }
     ]

@@ -21,7 +21,6 @@
 
 		function handleChange(oEvent){
 			var oDP = oEvent.oSource;
-			var oInput = sap.ui.getCore().byId("I2");
 			var sValue = oEvent.getParameter("value");
 			var bValid = oEvent.getParameter("valid");
 			if (bValid) {
@@ -37,7 +36,7 @@
 				new sap.m.Label({text: "initial DatePicker", labelFor: "DP1"}),
 				new sap.m.DatePicker("DP1", { change: handleChange }),
 				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
-				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", change: handleChange }),
+				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", change: handleChange })
 			]
 		});
 

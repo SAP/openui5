@@ -2,8 +2,8 @@
  * ${copyright}
  */
 (function () {
-	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
-	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
+	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
 	*/
 	"use strict";
 
@@ -31,11 +31,11 @@
 
 		//*********************************************************************************************
 		module(sName, {
-			setup: function () {
+			beforeEach: function () {
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 				oType = createType();
 			},
-			teardown: function () {
+			afterEach: function () {
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
 		});
@@ -109,7 +109,7 @@
 
 		});
 
-		jQuery.each(["foo", "123.809"], function (i, oValue) {
+		["foo", "123.809"].forEach(function (oValue) {
 			test("parse invalid value from string: " + oValue, function () {
 				sap.ui.test.TestUtils.withNormalizedMessages(function () {
 					try {
@@ -124,7 +124,7 @@
 			});
 		});
 
-		jQuery.each(["123", undefined, false], function (i, iValue) {
+		["123", undefined, false].forEach(function (iValue) {
 			test("illegal values and value type: " + iValue,
 				function () {
 					try {
@@ -139,7 +139,7 @@
 			});
 		});
 
-		jQuery.each([undefined, false, true], function (i, bNullable) {
+		[undefined, false, true].forEach(function (bNullable) {
 			test("setConstraints: nullable=" + bNullable, function () {
 				var oExpectedConstraints = bNullable === false ? {nullable: false} : undefined;
 
@@ -149,10 +149,11 @@
 			});
 		});
 
-		test("validation success", 0, function () {
-			jQuery.each([iMin, iMax], function (i, iValue) {
+		test("validation success", function () {
+			[iMin, iMax].forEach(function (iValue) {
 				oType.validateValue(iValue);
 			});
+			expect(0);
 		});
 
 		test("validate w/ decimal", function () {
@@ -215,13 +216,13 @@
 			});
 		});
 
-		jQuery.each([{
+		[{
 			set: {foo: "bar"},
 			expect: {foo: "bar", groupingEnabled: true}
 		}, {
 			set: {decimals: 7, groupingEnabled: false},
 			expect: {decimals: 7, groupingEnabled: false}
-		}], function (i, oFixture) {
+		}].forEach(function (oFixture) {
 			test("formatOptions: " + JSON.stringify(oFixture.set), function () {
 				var oSpy,
 					oType = createType(oFixture.set);

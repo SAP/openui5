@@ -7,7 +7,7 @@
  *
  * @namespace
  * @name sap.m.semantic
- * 
+ *
  */
 
 // Provides class sap.m.semantic.ShareMenu
@@ -21,11 +21,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 * Encapsulates the functionality of a ShareMenu control.
 	 * ShareMenu is a special menu that is represented by (1) an actionSheet with the menu items and (2) a button that opens the actionSheet.
 	 * If the menu has only one item, then that item appears in place of the button that opens the actionSheet.
-	 * 
+	 *
 	 * @version ${version}
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.ShareMenu
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShareMenu = Metadata.createClass("sap.m.semantic.ShareMenu", {
 
@@ -48,24 +49,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	ShareMenu._Mode = {
 		/**
 		 * In "inital" mode, the menu is empty and hidden;
-		 */	
+		 */
 		initial: "initial",
 		/**
 		 * In "button" mode, the menu consists of a single button, that represents the only menu-item
-		 */	
+		 */
 		button: "button",
 		/**
 		 * In "actionSheet" mode, the menu consists of (1) an actionSheet containing all of the menu items and (2) a dedicated button that only opens the actionSheet.
-		 */	
+		 */
 		actionSheet: "actionSheet"
 	};
 
 	/**
-	 * Getter for the shareMenu button 
+	 * Getter for the shareMenu button
 	 * The functionality of this button depends on the ShareMenu mode:
-	 * (1) In actionSheet mode, it opens the menu 
+	 * (1) In actionSheet mode, it opens the menu
 	 * (2) In "button" mode (i.e. when the menu has a single menu-item) it represents the only menu-item
-	 * 
+	 *
 	 * @returns {sap.m.Button} the base button
 	 */
 	ShareMenu.prototype.getBaseButton = function () {
@@ -74,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Getter for the items of this menu
-	 * 
+	 *
 	 * @returns {Array} an array of controls that comprise the menu-items
 	 */
 	ShareMenu.prototype.getContent = function () {
@@ -90,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Adds an item to this menu
-	 * 
+	 *
 	 * @param {sap.m.Button} oButton - the new button to be added
 	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the added child are not marked as changed
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
@@ -108,10 +109,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		this._oActionSheet.addButton(oButton, bSuppressInvalidate);
 		return this;
 	};
-	
+
 	/**
 	 * Inserts an item to this menu
-	 * 
+	 *
 	 * @param {sap.m.Button} oButton - the new button to be inserted
 	 * @param {number} iIndex - the insert index
 	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
@@ -133,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Provides the 0-based item-index of given menu-item
-	 * 
+	 *
 	 * @param {sap.m.Button} oButton - the menu-item
 	 * @returns {number} the item-index
 	 */
@@ -150,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Removes the given item from the menu
-	 * 
+	 *
 	 * @param {sap.m.Button} oButton - the button to be removed
 	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @return {sap.m.Button} - the removed button
@@ -180,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Removes all of the items of the menu
-	 * 
+	 *
 	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @return {array} - an array of the removed buttons
 	 */
@@ -199,7 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Destroys the controls used internally for this menu
-	 * 
+	 *
 	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 */
 	ShareMenu.prototype.destroy = function(bSuppressInvalidate) {
@@ -214,9 +215,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	/**
 	 * Sets a new button as a base button for this menu
 	 * The base button is part of the shareMenu and its functionality is dependent on the shareMenu mode:
-	 * (1) In actionSheet mode, it opens the menu 
+	 * (1) In actionSheet mode, it opens the menu
 	 * (2) In "button" mode (i.e. when the menu has a single menu-item) it represents the only menu-item
-	 * 
+	 *
 	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @param {sap.m.Button} oButton - the new base button
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
@@ -254,7 +255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 * @param sMode - the new mode
 	 * @param bSuppressInvalidate - flag to suppress control invalidation upon change
 	 * @param oBaseButton - when the new mode is ShareMenu._Mode.button, a reference to that button
-	 * 
+	 *
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype._setMode = function (sMode, bSuppressInvalidate, oBaseButton) {

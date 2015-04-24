@@ -29,7 +29,6 @@
 }
 
 .sapUiTableColHdrCnt > .sapUiTableSelAllEnabled,
-.sapUiTableColHdrScr > .sapUiTableColHdr > .sapUiTableCol,
 .sapUiTableCell > .sapUiTv,
 .sapUiTableCell .sapUiTfComboIcon,
 .sapUiTableCell > .sapUiTfStd,
@@ -362,7 +361,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	color: @sapHCStandardFG;
 }
 
-.sapUiTableTr > td:focus {
+.sapUiTableTr > td:focus, .sapUiTableRowHdrScr > .sapUiTableRowHdr:focus, .sapUiTableColHdr *:focus, .sapUiTableColRowHdr:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 }

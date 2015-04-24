@@ -20,6 +20,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
+					"i18n": "i18n.properties",
+					"title": "{{title}}",
+					"description": "{{description}}",
 					"dataSources": {
 
 						"default": {
@@ -58,6 +61,16 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"type": "JSON"
 						},
 
+						"json-relative": {
+							"uri": "path/to/local/data.json",
+							"type": "JSON"
+						},
+
+						"xml-relative": {
+							"uri": "./path/to/local/data.xml",
+							"type": "XML"
+						},
+
 						"xml": {
 							"uri": "/path/to/data.xml",
 							"type": "XML"
@@ -65,6 +78,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"customType": {
 							"uri": "/path/to/custom.datatype",
+							"type": "SomeCustomType"
+						},
+
+						"customType-relative": {
+							"uri": "path/to/local/custom.datatype",
 							"type": "SomeCustomType"
 						},
 
@@ -78,7 +96,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"annotation-without-uri": {
 							"type": "ODataAnnotation"
-						}
+						},
+
+						"invalid": true
 
 					}
 				},
@@ -135,8 +155,10 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 
 						"json": "json",
+						"json-relative": "json-relative",
 
 						"xml": "xml",
+						"xml-relative": "xml-relative",
 
 						"resourceBundle-name": {
 							"type": "sap.ui.model.resource.ResourceModel",
@@ -153,6 +175,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"custom-uri-string": {
 							"type": "sap.ui.test.v2models.CustomModel",
 							"dataSource": "customType"
+						},
+
+						"custom-relative-uri-string": {
+							"type": "sap.ui.test.v2models.CustomModel",
+							"dataSource": "customType-relative"
 						},
 
 						"custom-uri-string-with-settings": {
@@ -200,7 +227,13 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 						"model-not-found": {
 							"type": "sap.ui.test.v2models.ModelNotDefined"
-						}
+						},
+						"dataSource-not-found": {
+							"dataSource": "does-not-exist"
+						},
+						"dataSource-invalid": {
+							"dataSource": "invalid"
+						},
 
 					}
 

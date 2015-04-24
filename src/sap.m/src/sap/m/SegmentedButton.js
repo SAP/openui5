@@ -494,11 +494,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		SegmentedButton.prototype.addButton = function (oButton) {
 			if (oButton) {
 				processButton(oButton, this);
-
 				this.addAggregation('buttons', oButton);
 				return this;
 			}
-
 		};
 
 		SegmentedButton.prototype.insertButton = function (oButton, iIndex) {
@@ -507,7 +505,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.insertAggregation('buttons', oButton, iIndex);
 				return this;
 			}
-
 		};
 
 		function processButton(oButton, oParent){
@@ -584,6 +581,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (aItems.length > 0) {
 			for (; i < aButtons.length; i++) {
 				if (aButtons[i] && aButtons[i].getId() === sSelectedButtonId) {
+					this.setProperty("selectedKey", aItems[i].getKey(), true);
 					return aItems[i].getKey();
 				}
 			}
@@ -608,24 +606,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (aItems.length > 0 && aButtons.length > 0) {
-
 			for (; i < aItems.length; i++) {
 				if (aItems[i] && aItems[i].getKey() === sKey) {
 					this.setSelectedButton(aButtons[i]);
 					break;
 				}
 			}
-
 		}
-
-		this.setProperty("selectedKey", sKey);
+		this.setProperty("selectedKey", sKey, true);
 	};
 
 
 	SegmentedButton.prototype.removeButton = function (oButton) {
-		if (oButton) {
-			delete oButton.setEnabled;
-			this.removeAggregation("buttons", oButton);
+		var oRemovedButton = this.removeAggregation("buttons", oButton);
+		if (oRemovedButton) {
+			delete oRemovedButton.setEnabled;
 		}
 	};
 
@@ -659,6 +654,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oButtonPressed.$().attr("aria-checked", true);
 
 			this.setAssociation('selectedButton', oButtonPressed, true);
+			this.setProperty("selectedKey", this.getSelectedKey(), true);
 			this.fireSelect({
 				button: oButtonPressed,
 				id: oButtonPressed.getId(),
@@ -737,6 +733,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SegmentedButton.prototype.onsappageup = function(oEvent) {
 		this._oItemNavigation.onsaphome(oEvent);
+	};
+
+	/**
+	 * Image does not have an onload event but we need to recalculate the button sizes after the image is loaded
+	 * we override the onload method once and call the calculation method after the original method is called
+	 * @param {sap.m.Image} oImage instance of the image
+	 * @private
+	 */
+	SegmentedButton.prototype._overwriteImageOnload = function (oImage) {
+		var that = this;
+
+		if (oImage.onload === sap.m.Image.prototype.onload) {
+			oImage.onload = function () {
+				if (sap.m.Image.prototype.onload) {
+					sap.m.Image.prototype.onload.apply(this, arguments);
+				}
+				window.setTimeout(function() {
+					that._fCalcBtnWidth();
+				}, 20);
+			};
+		}
+	};
+
+	/**
+	 * Get native SAP icon name
+	 * @param {sap.ui.core.Icon} oIcon icon object
+	 * @returns {string} the generic name of the icon
+	 * @private
+	 */
+	SegmentedButton.prototype._getIconAriaLabel = function (oIcon) {
+		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oIcon.getSrc()),
+			sResult = "";
+		if (oIconInfo && oIconInfo.name) {
+			sResult = oIconInfo.name;
+		}
+		return sResult;
 	};
 
 	return SegmentedButton;

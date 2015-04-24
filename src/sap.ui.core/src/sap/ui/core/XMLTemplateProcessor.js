@@ -396,8 +396,11 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						} else {
 							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
 						}
-					} else if ( !(oInfo && oInfo._iKind !== -1 /* SPECIAL_SETTING */) && sName !== 'xmlns' ) {
-						jQuery.sap.assert(false, oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+					} else {
+						jQuery.sap.assert(
+							(oInfo && oInfo._iKind === -1 /* SPECIAL_SETTING */) || sName === 'xmlns',
+							oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')"
+						);
 					}
 				}
 				if (aCustomData.length > 0) {

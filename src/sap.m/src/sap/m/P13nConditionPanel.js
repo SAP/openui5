@@ -463,7 +463,7 @@ sap.ui.define([
 		this.setProperty("alwaysShowAddIcon", bEnabled);
 
 		if (this._oConditionsGrid) {
-			this._oConditionsGrid.toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop" && !this.getAlwaysShowAddIcon());
+			this._oConditionsGrid.toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop"); // && !this.getAlwaysShowAddIcon());
 		}
 
 		return this;
@@ -483,10 +483,27 @@ sap.ui.define([
 		this.setProperty("layoutMode", sLayoutMode);
 
 		if (this._oConditionsGrid) {
-			this._oConditionsGrid.toggleStyleClass("conditionRootGrid", sLayoutMode !== "Desktop" && !this.getAlwaysShowAddIcon());
+			this._oConditionsGrid.toggleStyleClass("conditionRootGrid", sLayoutMode !== "Desktop"); // && !this.getAlwaysShowAddIcon());
 		}
 
 		this._updateConditionFieldSpans(sLayoutMode);
+
+		// we have to refill the content grids
+		this._clearConditions();
+		this._fillConditions();
+
+		return this;
+	};
+
+	/**
+	 * sets the ContainerQuery. defines if the mediaQuery or a ContainerResize will be used for layout update. When
+	 * the P13nConditionPanel is used on a dialog the property should be set to true!
+	 *
+	 * @public
+	 * @since 1.30.0
+	 */
+	P13nConditionPanel.prototype.setContainerQuery = function(bEnabled) {
+		this.setProperty("containerQuery", bEnabled);
 
 		// we have to refill the content grids
 		this._clearConditions();
@@ -507,23 +524,23 @@ sap.ui.define([
 		if (this._aConditionsFields) {
 			var bDesktop = sMode === "Desktop";
 			if (bDesktop) {
-				this._aConditionsFields[1].Span = "L1 M1 S1";
-				this._aConditionsFields[2].Span = "L3 M3 S3";
-				this._aConditionsFields[3].Span = "L1 M1 S1";
-				this._aConditionsFields[4].Span = "L2 M2 S2";
-				this._aConditionsFields[5].Span = "L3 M3 S3";
-				this._aConditionsFields[6].Span = "L2 M2 S2";
-				this._aConditionsFields[7].Span = "L1 M1 S1";
+				//this._aConditionsFields[1].SpanFilter = "L1 M1 S1";  Label
+				this._aConditionsFields[2].SpanFilter = "L3 M3 S3";
+				//this._aConditionsFields[3].SpanFilter = "L1 M1 S1"; Label
+				this._aConditionsFields[4].SpanFilter = "L2 M2 S2";
+				this._aConditionsFields[5].SpanFilter = "L3 M3 S3";
+				this._aConditionsFields[6].SpanFilter = "L2 M2 S2";
+				this._aConditionsFields[7].SpanFilter = "L1 M1 S1";
 			}
 			var bTablet = sMode === "Tablet";
 			if (bTablet) {
-				this._aConditionsFields[1].Span = "L1 M1 S1";
-				this._aConditionsFields[2].Span = "L5 M5 S5";
-				this._aConditionsFields[3].Span = "L1 M1 S1";
-				this._aConditionsFields[4].Span = "L5 M5 S5";
-				this._aConditionsFields[5].Span = "L10 M10 S10";
-				this._aConditionsFields[6].Span = "L10 M10 S10";
-				this._aConditionsFields[7].Span = "L1 M1 S1";
+				//this._aConditionsFields[1].SpanFilter = "L1 M1 S1"; Label
+				this._aConditionsFields[2].SpanFilter = "L5 M5 S5";
+				//this._aConditionsFields[3].SpanFilter = "L1 M1 S1"; Label
+				this._aConditionsFields[4].SpanFilter = "L5 M5 S5";
+				this._aConditionsFields[5].SpanFilter = "L10 M10 S10";
+				this._aConditionsFields[6].SpanFilter = "L10 M10 S10";
+				this._aConditionsFields[7].SpanFilter = "L1 M1 S1";
 			}
 		}
 	};
@@ -570,7 +587,7 @@ sap.ui.define([
 			defaultSpan: "L12 M12 S12",
 			hSpacing: 0,
 			vSpacing: 0
-		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop" && !this.getAlwaysShowAddIcon());
+		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop"); // && !this.getAlwaysShowAddIcon());
 
 		this.addAggregation("content", this._oConditionsGrid);
 
@@ -578,51 +595,72 @@ sap.ui.define([
 			{
 				"ID": "select",
 				"Label": "",
-				"Span": "L1 M1 S1",
+				"SpanFilter": "L1 M1 S1",
+				"SpanSort": "L1 M1 S1",
+				"SpanGroup": "L1 M1 S1",
 				"Control": "CheckBox",
 				"Value": ""
 			}, {
 				"ID": "keyFieldLabel",
 				"Text": "Sort By",
-				"Span": "L1 M1 S1",
+				"SpanFilter": "L1 M1 S1",
+				"SpanSort": "L1 M1 S1",
+				"SpanGroup": "L1 M1 S1",
 				"Control": "Label"
 			}, {
 				"ID": "keyField",
 				"Label": "",
-				"Span": "L3 M5 S10",
+				"SpanFilter": "L3 M5 S10",
+				"SpanSort": "L5 M5 S12",
+				"SpanGroup": "L4 M4 S12",
 				"Control": "ComboBox",
 				"SelectedKey": "0"
 			}, {
 				"ID": "operationLabel",
 				"Text": "Sort Order",
-				"Span": "L1 M1 S1",
+				"SpanFilter": "L1 M1 S1",
+				"SpanSort": "L1 M1 S1",
+				"SpanGroup": "L1 M1 S1",
 				"Control": "Label"
 			}, {
 				"ID": "operation",
 				"Label": "",
-				"Span": "L2 M5 S10",
+				"SpanFilter": "L2 M5 S10",
+				"SpanSort": "L5 M5 S9",
+				"SpanGroup": "L2 M5 S10",
 				"Control": "ComboBox",
 				"SelectedKey": "0"
 			}, {
 				"ID": "value1",
 				"Label": this._sFromLabelText,
-				"Span": "L3 M10 S10",
+				"SpanFilter": "L3 M10 S10",
+				"SpanSort": "L3 M10 S10",
+				"SpanGroup": "L3 M10 S10",
 				"Control": "TextField",
 				"Value": ""
 			}, {
 				"ID": "value2",
 				"Label": this._sToLabelText,
-				"Span": "L2 M10 S10",
+				"SpanFilter": "L2 M10 S10",
+				"SpanSort": "L2 M10 S10",
+				"SpanGroup": "L2 M10 S10",
 				"Control": "TextField",
 				"Value": ""
 			}, {
 				"ID": "showIfGrouped",
 				"Label": this._sShowIfGroupedLabelText,
-				"Span": "L1 M10 S10",
+				"SpanFilter": "L1 M10 S10",
+				"SpanSort": "L1 M10 S10",
+				"SpanGroup": "L3 M4 S9",
 				"Control": "CheckBox",
 				"Value": "false"
 			}
 		];
+		this._oButtonGroupSpan = {
+		                          "SpanFilter": "L1 M2 S2",
+		                          "SpanSort": "L2 M2 S3",
+		                          "SpanGroup": "L2 M2 S3"
+		};
 		this._updateConditionFieldSpans(this.getLayoutMode());
 
 		// fill/update the content "oConditionGrid"s
@@ -726,7 +764,7 @@ sap.ui.define([
 
 	P13nConditionPanel.prototype.onAfterRendering = function() {
 		if (this.getLayoutMode()) {
-			this._sLayoutMod = this.getLayoutMode();
+			this._sLayoutMode = this.getLayoutMode();
 			return;
 		}
 
@@ -842,7 +880,7 @@ sap.ui.define([
 						enabled: false,
 						visible: false,
 						layoutData: new sap.ui.layout.GridData({
-							span: field["Span"]
+							span: field["Span" + this._sConditionType]
 						})
 					});
 
@@ -883,7 +921,7 @@ sap.ui.define([
 							//forceSelection : true,
 							width: "100%",
 							layoutData: new sap.ui.layout.GridData({
-								span: field["Span"]
+								span: field["Span" + this._sConditionType]
 							})
 						});
 
@@ -940,7 +978,7 @@ sap.ui.define([
 							// autoAdjustWidth: true,
 							width: "100%",
 							layoutData: new sap.ui.layout.GridData({
-								span: field["Span"]
+								span: field["Span" + this._sConditionType]
 							})
 						});
 
@@ -1022,7 +1060,7 @@ sap.ui.define([
 						text: field["Text"] + ":",
 						visible: this.getShowLabel(),
 						layoutData: new sap.ui.layout.GridData({
-							span: field["Span"]
+							span: field["Span" + this._sConditionType]
 						})
 					}).addStyleClass("conditionLabel");
 
@@ -1038,7 +1076,7 @@ sap.ui.define([
 		// create a hLayout container for the remove and add buttons
 		oButtonContainer = new sap.ui.layout.HorizontalLayout({
 			layoutData: new sap.ui.layout.GridData({
-				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L1 M2 S2"
+				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : this._oButtonGroupSpan["Span" + this._sConditionType]
 			})
 		});
 		oConditionGrid.addContent(oButtonContainer);
@@ -1203,7 +1241,7 @@ sap.ui.define([
 				that._changeField(oConditionGrid);
 			},
 			layoutData: new sap.ui.layout.GridData({
-				span: oFieldInfo["Span"]
+				span: oFieldInfo["Span" + this._sConditionType]
 			})
 		};
 
@@ -1360,8 +1398,11 @@ sap.ui.define([
 			var oConditionGrid = oCtrl.getParent();
 			var sOldValue = oCtrl.getValue();
 
+			if (!oConditionGrid) {
+				return;
+			}
+			
 			oConditionGrid.removeContent(oCtrl);
-			//delete oConditionGrid.value1;
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
@@ -1420,7 +1461,15 @@ sap.ui.define([
 		}
 
 		var oSelItem = oConditionGrid.operation.getSelectedItem();
-
+		
+		this._sConditionType = "Filter";
+		if (aOperations[0] === sap.m.P13nConditionOperation.Ascending || aOperations[0] === sap.m.P13nConditionOperation.Descending) {
+			this._sConditionType = "Sort";
+		}
+		if (aOperations[0] === sap.m.P13nConditionOperation.GroupAscending || aOperations[0] === sap.m.P13nConditionOperation.GroupDescending) {
+			this._sConditionType = "Group";
+		}
+		
 		this._fillOperationItems(oConditionGrid.operation, aOperations, sType ? "_" + sType.toUpperCase() + "_" : "");
 
 		if (oSelItem) {
@@ -1525,7 +1574,7 @@ sap.ui.define([
 		var sOperation = oOperation.getSelectedKey();
 		var oValue1 = oConditionGrid.value1;
 		var oValue2 = oConditionGrid.value2;
-		var oShowIfGrouedvalue = oConditionGrid.showIfGrouped;
+		var oShowIfGroupedvalue = oConditionGrid.showIfGrouped;
 
 		if (!sOperation) {
 			return;
@@ -1542,43 +1591,36 @@ sap.ui.define([
 			if (sOperation === sap.m.P13nConditionOperation.GroupAscending || sOperation === sap.m.P13nConditionOperation.GroupDescending) {
 
 				// update visible of fields
-				oValue1.setVisible(false);
-				oValue2.setVisible(false);
+				oValue1.setVisible(false); //oValue1.getLayoutData().setVisibleL(false); // oValue1.getLayoutData().setVisibleM(false); oValue1.getLayoutData().setVisibleS(false);
+				oValue2.setVisible(false); //oValue2.getLayoutData().setVisibleL(false); // oValue2.getLayoutData().setVisibleM(false); oValue2.getLayoutData().setVisibleS(false);
 				oOperation.setVisible(false);
-				oShowIfGrouedvalue.setVisible(this._getMaxConditionsAsNumber() != 1);
-
-				// correct field span
-				// oKeyfield.getLayoutData().setSpan("L4 M4 S4");
-				// oOperation.getLayoutData().setSpan("L4 M4 S4");
-				// oShowIfGrouedvalue.getLayoutData().setSpan("L2 M2 S2");
-				oKeyfield.getLayoutData().setSpan("L5 M5 S5");
-				oOperation.getLayoutData().setSpan("L4 M4 S4");
-				oShowIfGrouedvalue.getLayoutData().setSpan("L4 M4 S4");
+				oShowIfGroupedvalue.setVisible(this._getMaxConditionsAsNumber() != 1);
+				
+				oConditionGrid.removeContent(oValue1);
+				oConditionGrid.removeContent(oValue2);
+				oConditionGrid.removeContent(oOperation);
 			} else {
 				if (sOperation === sap.m.P13nConditionOperation.Initial || sOperation === sap.m.P13nConditionOperation.Ascending || sOperation === sap.m.P13nConditionOperation.Descending || sOperation === sap.m.P13nConditionOperation.Total || sOperation === sap.m.P13nConditionOperation.Average || sOperation === sap.m.P13nConditionOperation.Minimum || sOperation === sap.m.P13nConditionOperation.Maximum) {
 
 					// for this operations we disable both value fields
-					oValue1.setVisible(false);
-					oValue2.setVisible(false);
-
+					oValue1.setVisible(false); //oValue1.getLayoutData().setVisibleL(false); //oValue1.getLayoutData().setVisibleM(false); oValue1.getLayoutData().setVisibleS(false);
+					oValue2.setVisible(false); //oValue2.getLayoutData().setVisibleL(false); //oValue2.getLayoutData().setVisibleM(false); oValue2.getLayoutData().setVisibleS(false);
+					
+					oConditionGrid.removeContent(oValue1);
+					oConditionGrid.removeContent(oValue2);
+					oConditionGrid.removeContent(oShowIfGroupedvalue);
+					
 					// correct the field span
 					if (sOperation !== sap.m.P13nConditionOperation.Initial) {
-						var iSpan = this.getShowLabel() ? 4 : 5;
 						if (this.getLayoutMode() === "Desktop") {
 							oKeyfield.getLayoutData().setSpan("L5 M5 S5");
 							oOperation.getLayoutData().setSpan("L4 M4 S4");
-						} else {
-							oKeyfield.getLayoutData().setSpanL(iSpan);
-							oOperation.getLayoutData().setSpanL(iSpan - 1);
-							// oKeyfield.getLayoutData().setSpan("L5 M5 S5");
-							// oOperation.getLayoutData().setSpan("L4 M4 S4");
 						}
 					}
 				} else {
 					// for all other operations we enable only the Value1 fields
 					oValue1.setPlaceholder(this._sValueLabelText);
 					oValue1.setVisible(true);
-
 					oValue2.setVisible(false);
 				}
 			}
@@ -1607,6 +1649,10 @@ sap.ui.define([
 		var fnFormatFieldValue = function(oCtrl) {
 			var oConditionGrid = oCtrl.getParent();
 			var sValue = oCtrl.getValue();
+			
+			if (!oConditionGrid) {
+				return;
+			}
 
 			if (this.getDisplayFormat() === "UpperCase" && sValue) {
 				sValue = sValue.toUpperCase();
@@ -1919,6 +1965,10 @@ sap.ui.define([
 				var oConditionGrid = oCtrl.getParent();
 				var sValue = oCtrl.getValue();
 
+				if (!oConditionGrid) {
+					return;
+				}
+				
 				if (this.getDisplayFormat() === "UpperCase" && sValue) {
 					sValue = sValue.toUpperCase();
 					oCtrl.setValue(sValue);
@@ -2074,9 +2124,9 @@ sap.ui.define([
 			return;
 		}
 
-		// if (window.console) {
-		// console.log(" ---> " + oRangeInfo.name);
-		// }
+		if (window.console) {
+			window.console.log(" ---> " + oRangeInfo.name);
+		}
 
 		var aGrids = this._oConditionsGrid.getContent();
 		var n = this._aConditionsFields.length;
@@ -2088,18 +2138,20 @@ sap.ui.define([
 			newIndex = 3;
 		}
 
-		for (var i = 0; i < aGrids.length; i++) {
-			var grid = aGrids[i];
-			grid.removeContent(grid.ButtonContainer);
-			grid.insertContent(grid.ButtonContainer, newIndex);
-
-			if (!this.getAlwaysShowAddIcon()) {
-				if (newIndex !== n) {
-					grid.ButtonContainer.removeContent(grid.add);
-					grid.addContent(grid.add);
-				} else {
-					grid.removeContent(grid.add);
-					grid.ButtonContainer.addContent(grid.add);
+		if (this._sConditionType === "Filter") {
+			for (var i = 0; i < aGrids.length; i++) {
+				var grid = aGrids[i];
+				grid.removeContent(grid.ButtonContainer);
+				grid.insertContent(grid.ButtonContainer, newIndex);
+	
+				if (!this.getAlwaysShowAddIcon()) {
+					if (newIndex !== n) {
+						grid.ButtonContainer.removeContent(grid.add);
+						grid.addContent(grid.add);
+					} else {
+						grid.removeContent(grid.add);
+						grid.ButtonContainer.addContent(grid.add);
+					}
 				}
 			}
 		}
@@ -2124,9 +2176,9 @@ sap.ui.define([
 			oRangeInfo.name = "Desktop";
 		}
 
-		// if (window.console) {
-		// console.log(w + " ---> " + oRangeInfo.name);
-		// }
+		if (window.console) {
+			window.console.log(w + " resize ---> " + oRangeInfo.name);
+		}
 
 		if (oRangeInfo.name === "Phone" && this._sLayoutMode !== oRangeInfo.name) {
 			this._updateLayout(oRangeInfo);

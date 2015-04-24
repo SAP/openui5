@@ -105,7 +105,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		return {
 			__edmType: "Edm.Time",
 			ms: ((oDate.getUTCHours() * 60 + oDate.getUTCMinutes()) * 60 + oDate.getUTCSeconds())
-				* 1000 // TODO + oDate.getUTCMilliseconds()
+				* 1000 + oDate.getUTCMilliseconds()
 		};
 	}
 

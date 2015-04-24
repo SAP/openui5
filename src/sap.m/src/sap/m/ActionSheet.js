@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		properties : {
 
 			/**
-			 * The ActionSheet behaves as a sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom. The default value is sap.m.PlacementType.Bottom.
+			 * The ActionSheet behaves as a sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
 			 */
 			placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : sap.m.PlacementType.Bottom},
 
@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							iHeaderHeight = $this.children("header.sapMIBar").outerHeight(true),
 							$content = this.$("cont");
 
-						$content.css("max-height", iHeight - iHeaderHeight);
+						$content.css("max-height", iHeight - (that.getTitle() ? iHeaderHeight : 0));
 						if (this._oScroller) {
 							this._oScroller.refresh();
 						}
@@ -492,6 +492,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.setProperty("title", sTitle, true);
 		if (this._parent && sap.ui.Device.system.phone) {
 			this._parent.setTitle(sTitle);
+			this._parent.toggleStyleClass("sapMDialog-NoHeader", !sTitle);
 		}
 
 		if (this._parent) {

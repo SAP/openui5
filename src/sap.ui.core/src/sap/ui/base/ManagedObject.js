@@ -1154,8 +1154,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
 						oType.getName() + " for property \"" + sPropertyName + "\" of " + this);
 			}
-		} else if (!(oValue in oType)) { // Enumeration
-			throw new Error("\"" + oValue + "\" is not a valid entry of the enumeration for property \"" + sPropertyName + "\" of " + this);
 		}
 
 		// Normalize the value (if a normalizer was set using the setNormalizer method on the type)
@@ -1523,9 +1521,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					if (oType.isValid(oObject)) {
 						return oObject;
 					}
-				} else if (oObject in oType) { // Enumeration
-					return oObject;
-				}
+				} 
 			}
 		}
 

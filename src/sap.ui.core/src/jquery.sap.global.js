@@ -1403,8 +1403,48 @@
 
 			mPreloadModules = {},
 
+		/* for future use 
 		/**
-		 * Information about third party modules that react on AMD loaders and need a workaround
+		 * Mapping from default AMD names to UI5 AMD names.
+		 * 
+		 * For simpler usage in requireModule, the names are already converted to 
+		 * normalized resource names.
+		 *     
+		 * /
+			mAMDAliases = {
+				'blanket.js': 'sap/ui/thirdparty/blanket.js',
+				'crossroads.js': 'sap/ui/thirdparty/crossroads.js',
+				'd3.js': 'sap/ui/thirdparty/d3.js',
+				'handlebars.js': 'sap/ui/thirdparty/handlebars.js',
+				'hasher.js': 'sap/ui/thirdparty/hasher.js',
+				'IPv6.js': 'sap/ui/thirdparty/IPv6.js',
+				'jquery.js': 'sap/ui/thirdparty/jquery.js',
+				'jszip.js': 'sap/ui/thirdparty/jszip.js',
+				'less.js': 'sap/ui/thirdparty/less.js',
+				'OData.js': 'sap/ui/thirdparty/datajs.js',
+				'punycode.js': 'sap/ui/thirdparty/punycode.js',
+				'SecondLevelDomains.js': 'sap/ui/thirdparty/SecondLevelDomains.js',
+				'sinon.js': 'sap/ui/thirdparty/sinon.js',
+				'signals.js': 'sap/ui/thirdparty/signals.js',
+				'URI.js': 'sap/ui/thirdparty/URI.js',
+				'URITemplate.js': 'sap/ui/thirdparty/URITemplate.js',
+				'esprima.js': 'sap/ui/demokit/js/esprima.js'
+			},
+		*/
+
+		/**
+		 * Information about third party modules that are delivered with the sap.ui.core library.
+		 * 
+		 * The information maps the name of the module (including extension '.js') to an info object with the 
+		 * following properties: 
+		 * 
+		 * <ul>
+		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading 
+		 *              such modules to force the modules to expose their content via global names.</li>
+		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined, 
+		 *              the first one will be read from the global object and will be used as value of the module.</li>
+		 * <li>deps:string[] : list of modules that the module depends on. The modules will be loaded first before loading the module itself.</li>
+		 * </ul>
 		 * to be able to work with jQuery.sap.require no matter whether an AMD loader is present or not.
 		 *
 		 * Note: this is a map for future extension
@@ -1412,31 +1452,132 @@
 		 * @private
 		 */
 			mAMDShim = {
-				'sap/ui/thirdparty/blanket.js': true,
-				'sap/ui/thirdparty/crossroads.js': true,
-				'sap/ui/thirdparty/d3.js': true,
-				'sap/ui/thirdparty/datajs.js': true,
-				'sap/ui/thirdparty/handlebars.js': true,
-				'sap/ui/thirdparty/hasher.js': true,
-				'sap/ui/thirdparty/IPv6.js': true,
-				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': true,
-				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': true,
-				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': true,
-				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': true,
-				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': true,
-				'sap/ui/thirdparty/jquery-mobile-custom.js': true,
-				'sap/ui/thirdparty/jszip.js': true,
-				'sap/ui/thirdparty/less.js': true,
-				'sap/ui/thirdparty/punycode.js': true,
-				'sap/ui/thirdparty/require.js': true,
-				'sap/ui/thirdparty/SecondLevelDomains.js': true,
-				'sap/ui/thirdparty/sinon.js': true,
-				'sap/ui/thirdparty/sinon-server.js': true,
-				'sap/ui/thirdparty/signals.js': true,
-				'sap/ui/thirdparty/URI.js' : true,
-				'sap/ui/thirdparty/URITemplate.js' : true,
-				'sap/ui/demokit/js/esprima.js' : true
-		  },
+				'sap/ui/thirdparty/blanket.js': {
+					amd: true,
+					exports: 'blanket' // '_blanket', 'esprima', 'falafel', 'inBrowser', 'parseAndModify'
+				},
+				'sap/ui/thirdparty/caja-html-sanitizer.js': {
+					amd: false,
+					exports: 'html' // 'html_sanitizer', 'html4'
+				},
+				'sap/ui/thirdparty/crossroads.js': {
+					amd: true,
+					exports: 'crossroads',
+					deps: ['sap/ui/thirdparty/signals.js']
+				},
+				'sap/ui/thirdparty/d3.js': {
+					amd: true,
+					exports: 'd3'
+				},
+				'sap/ui/thirdparty/datajs.js': {
+					amd: true,
+					exports: 'OData' // 'datajs'
+				},
+				'sap/ui/thirdparty/flexie.js': {
+					exports: 'Flexie'
+				},
+				'sap/ui/thirdparty/handlebars.js': {
+					amd: true,
+					exports: 'Handlebars'
+				},
+				'sap/ui/thirdparty/hasher.js': {
+					amd: true,
+					exports: 'hasher',
+					deps: ['sap/ui/thirdparty/signals.js']
+				},
+				'sap/ui/thirdparty/IPv6.js': {
+					amd: true,
+					exports: 'IPv6'
+				},
+				'sap/ui/thirdparty/iscroll-lite.js': {
+					exports: 'iScroll'
+				},
+				'sap/ui/thirdparty/iscroll.js': {
+					exports: 'iScroll'
+				},
+				'sap/ui/thirdparty/jquery.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery-mobile-custom.js': {
+					amd: true,
+					exports: 'jQuery.mobile'
+				},
+				'sap/ui/thirdparty/jszip.js': {
+					amd: true,
+					exports: 'JSZip'
+				},
+				'sap/ui/thirdparty/less.js': {
+					amd: true,
+					exports: 'less'
+				},
+				'sap/ui/thirdparty/mobify-carousel.js': {
+					exports: 'Mobify' // or Mobify.UI.Carousel?
+				},
+				'sap/ui/thirdparty/punycode.js': {
+					amd: true,
+					exports: 'punycode'
+				},
+				'sap/ui/thirdparty/require.js': {
+					exports: 'define' // 'require', 'requirejs'
+				},
+				'sap/ui/thirdparty/SecondLevelDomains.js': {
+					amd: true,
+					exports: 'SecondLevelDomains'
+				},
+				'sap/ui/thirdparty/signals.js': {
+					amd: true,
+					exports: 'signals'
+				},
+				'sap/ui/thirdparty/sinon.js': {
+					amd: true,
+					exports: 'sinon'
+				},
+				'sap/ui/thirdparty/sinon-server.js': {
+					amd: true,
+					exports: 'sinon' // really sinon! sinon-server is a subset of server and uses the same global for export
+				},
+				'sap/ui/thirdparty/unorm.js': {
+					exports: 'UNorm'
+				},
+				'sap/ui/thirdparty/unormdata.js': {
+					exports: 'UNorm', // really 'UNorm'! module extends UNorm
+					deps: ['sap/ui/thirdparty/unorm.js']
+				},
+				'sap/ui/thirdparty/URI.js' : { 
+					amd: true,
+					exports: 'URI'
+				},
+				'sap/ui/thirdparty/URITemplate.js' : {
+					amd: true,
+					exports: 'URITemplate',
+					deps: ['sap/ui/thirdparty/URI.js']
+				},
+				'sap/ui/thirdparty/vkbeautify.js' : {
+					exports: 'vkbeautify'
+				},
+				'sap/ui/thirdparty/zyngascroll.js' : {
+					exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
+				},
+				'sap/ui/demokit/js/esprima.js' : {
+					amd: true, 
+					exports: 'esprima'
+				}
+			},
 
 		/**
 		 * Stack of modules that are currently executed.
@@ -1620,7 +1761,12 @@
 		}
 
 		function requireModule(sModuleName) {
+			
+			// TODO enable when preload has been adapted:
+			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
+			
 			var m = rJSSubtypes.exec(sModuleName),
+				oShim = mAMDShim[sModuleName],
 				sBaseName, sType, oModule, aExtensions, i;
 
 			// only for robustness, should not be possible by design (all callers append '.js')
@@ -1629,9 +1775,21 @@
 				return;
 			}
 
+			if ( oShim && oShim.deps ) {
+				if ( log.isLoggable() ) {
+					log.debug("require dependencies of raw module " + sModuleName);
+				}
+				for (i = 0; i < oShim.deps.length; i++) {
+					if ( log.isLoggable() ) {
+						log.debug("  require " + oShim.deps[i]);
+					}
+					requireModule(oShim.deps[i]);
+				}
+			}
+			
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
-			sType = m[0];			// must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
+			sType = m[0]; // must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
 
 			oModule = mModules[sModuleName] || (mModules[sModuleName] = { state : INITIAL });
 
@@ -1702,12 +1860,13 @@
 		function execModule(sModuleName) {
 
 			var oModule = mModules[sModuleName],
+				oShim = mAMDShim[sModuleName],
 				sOldPrefix, sScript, vAMD;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
 
 				// check whether the module is known to use an existing AMD loader, remember the AMD flag
-				vAMD = mAMDShim[sModuleName] && typeof window.define === "function" && window.define.amd;
+				vAMD = (oShim === true || (oShim && oShim.amd)) && typeof window.define === "function" && window.define.amd;
 
 				try {
 
@@ -1727,6 +1886,8 @@
 					_execStack.push(sModuleName);
 					if ( typeof oModule.data === "function" ) {
 						oModule.data.call(window);
+					} else if ( jQuery.isArray(oModule.data) ) {
+						sap.ui.define.apply(sap.ui, oModule.data);
 					} else {
 
 						sScript = oModule.data;
@@ -1761,9 +1922,8 @@
 					_execStack.pop();
 					oModule.state = READY;
 					oModule.data = undefined;
-					// best guess for legacy modules that don't use sap.ui.define
-					// TODO implement fallback for raw modules
-					oModule.content = oModule.content || jQuery.sap.getObject(urnToUI5(sModuleName));
+					// best guess for raw and legacy modules that don't use sap.ui.define
+					oModule.content = oModule.content || jQuery.sap.getObject((oShim && oShim.exports) || urnToUI5(sModuleName));
 
 					if ( log.isLoggable() ) {
 						sLogPrefix = sOldPrefix;
@@ -2457,6 +2617,30 @@
 				}
 
 			});
+
+		};
+
+		/**
+		 * @private
+		 */
+		sap.ui.predefine = function(sModuleName, aDependencies, vFactory, bExport) {
+
+			if ( typeof sModuleName !== 'string' ) {
+				throw new Error("sap.ui.predefine requires a module name");
+			}
+
+			var sResourceName = sModuleName + '.js';
+			var oModule = mModules[sResourceName];
+			if ( !oModule ) {
+				mModules[sResourceName] = { state : PRELOADED, url : "TODO???/" + sModuleName, data : [sModuleName, aDependencies, vFactory, bExport], group: null };
+			}
+
+			// when a library file is preloaded, also mark its preload file as loaded
+			// for normal library preload, this is redundant, but for non-default merged entities
+			// like sap/fiori/core.js it avoids redundant loading of library preload files
+			if ( sResourceName.match(/\/library\.js$/) ) {
+				mPreloadModules[urnToUI5(sResourceName) + "-preload"] = true;
+			}
 
 		};
 

@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, Parameters) {
 	"use strict";
 
 
@@ -231,6 +231,11 @@ sap.ui.define(['jquery.sap.global'],
 		// toolbar has to be embedded (not standalone)!
 		if (typeof oToolbar.getStandalone === "function" && oToolbar.getStandalone()) {
 			oToolbar.setStandalone(false);
+		}
+
+		// set the default design of the toolbar
+		if (sap.m && sap.m.Toolbar && oToolbar instanceof sap.m.Toolbar) {
+			oToolbar.setDesign(Parameters.get("sapUiTableToolbarDesign"), true);
 		}
 
 		rm.renderControl(oToolbar);
@@ -769,17 +774,20 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.write("<tbody>");
 
+		var aVisibleColumns = oTable._getVisibleColumns();
+		var bHasOnlyFixedColumns = oTable._hasOnlyFixColumnWidths();
+		
 		// render the table rows
 		var aRows = oTable.getRows();
 		for (var row = iStartRow, count = iEndRow; row < count; row++) {
-			this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false);
+			this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bHasOnlyFixedColumns);
 		}
 
 		rm.write("</tbody>");
 		rm.write("</table>");
 	};
 
-	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow) {
+	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns) {
 
 		rm.write("<tr");
 		rm.addClass("sapUiTableTr");
@@ -858,17 +866,18 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("</td>");
 			}
 		}
+		
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
-			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn);
+			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns);
 		}
-		if (!bFixedTable && oTable._hasOnlyFixColumnWidths() && aCells.length > 0) {
+		if (!bFixedTable && bHasOnlyFixedColumns && aCells.length > 0) {
 			rm.write("<td></td>");
 		}
 		rm.write("</tr>");
 
 	};
 
-	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn) {
+	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns) {
 		var iColIndex = oCell.data("sap-ui-colindex");
 		var oColumn = oTable.getColumns()[iColIndex];
 		if (oColumn.shouldRender() && iStartColumn <= iColIndex && iEndColumn > iColIndex) {
@@ -900,7 +909,6 @@ sap.ui.define(['jquery.sap.global'],
 				rm.addStyle("text-align", sHAlign);
 			}
 			rm.writeStyles();
-			var aVisibleColumns = oTable._getVisibleColumns();
 			if (aVisibleColumns.length > 0 && aVisibleColumns[0] === oColumn) {
 				rm.addClass("sapUiTableTdFirst");
 			}

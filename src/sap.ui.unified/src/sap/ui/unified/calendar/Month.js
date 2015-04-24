@@ -31,7 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		library : "sap.ui.unified",
 		properties : {
-
 			/**
 			 * the month including this date is rendered and this date is initial focused (if no other focus set)
 			 */
@@ -106,6 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
 
+			this._iColumns = 7;
 		};
 
 		Month.prototype.exit = function(){
@@ -665,6 +665,108 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		Month.prototype._handleBorderReached = function(oControlEvent){
+
+			var oEvent = oControlEvent.getParameter("event");
+			var iMonth = 0;
+			var oOldDate = this._getDate();
+			var oFocusedDate = new Date(oOldDate.getTime());
+
+			if (oEvent.type) {
+				switch (oEvent.type) {
+				case "sapnext":
+				case "sapnextmodifiers":
+					// last day in month reached
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
+						//goto same day next week
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 7);
+					} else {
+						//go to next day
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 1);
+					}
+					break;
+
+				case "sapprevious":
+				case "sappreviousmodifiers":
+					// first day in month reached
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
+						//goto same day previous week
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 7);
+					} else {
+						//go to previous day
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+					}
+					break;
+
+				case "sappagedown":
+					// go to same day next month
+					iMonth = oFocusedDate.getUTCMonth() + 1;
+					oFocusedDate.setUTCMonth(iMonth);
+					// but if the day doesn't exist in this month, go to last day of the month
+					if (iMonth % 12 != oFocusedDate.getUTCMonth()) {
+						while (iMonth != oFocusedDate.getUTCMonth()) {
+							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+						}
+					}
+					break;
+
+				case "sappageup":
+					// go to same day previous month
+					iMonth = oFocusedDate.getUTCMonth() - 1;
+					oFocusedDate.setUTCMonth(iMonth);
+					if (iMonth < 0) {
+						iMonth = 11;
+					}
+					// but if the day doesn't exist in this month, go to last day of the month
+					if (iMonth != oFocusedDate.getUTCMonth()) {
+						while (iMonth != oFocusedDate.getUTCMonth()) {
+							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+						}
+					}
+					break;
+
+				default:
+					break;
+				}
+
+				this.fireFocus({date: oFocusedDate, otherMonth: true});
+
+			}
+
+		};
+
+		/**
+		 * checks if a date is focusable in the current rendered output.
+		 * So if not rendered or in other month it is not focusable.
+		 *
+		 * @param {object} oDate JavaScript date object for focused date.
+		 * @returns {boolean} flag if focusable
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		Month.prototype.checkDateFocusable = function(oDate){
+
+			var oMonthDate = this._getDate();
+
+			if (oDate.getUTCFullYear() == oMonthDate.getUTCFullYear() && oDate.getUTCMonth() == oMonthDate.getUTCMonth()) {
+				return true;
+			} else {
+				return false;
+			}
+
+		};
+
+		Month.prototype._renderHeader = function(){
+
+			if (this.getShowHeader()) {
+				var oDate = this._getDate();
+				var oLocaleData = this._getLocaleData();
+				var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+				this.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
+			}
+
+		};
+
 		function _initItemNavigation(oThis){
 
 			var oDate = oThis._getDate();
@@ -687,20 +789,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oThis._oItemNavigation = new ItemNavigation();
 				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, oThis);
 				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, oThis);
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, _handleBorderReached, oThis);
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, oThis._handleBorderReached, oThis);
 				oThis.addDelegate(oThis._oItemNavigation);
-				oThis._oItemNavigation.setHomeEndColumnMode(true, true);
+				if (oThis._iColumns > 1) {
+					oThis._oItemNavigation.setHomeEndColumnMode(true, true);
+				}
 				oThis._oItemNavigation.setDisabledModifiers({
 					sapnext : ["alt"],
 					sapprevious : ["alt"],
 					saphome : ["alt"],
 					sapend : ["alt"]
 				});
+				oThis._oItemNavigation.setCycling(false);
+				oThis._oItemNavigation.setColumns(oThis._iColumns, true);
 			}
 			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
 			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
-			oThis._oItemNavigation.setCycling(false);
-			oThis._oItemNavigation.setColumns(7, true);
 			oThis._oItemNavigation.setFocusedIndex(iIndex);
 			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
 
@@ -791,76 +895,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _handleBorderReached(oControlEvent){
-
-			var oEvent = oControlEvent.getParameter("event");
-			var iMonth = 0;
-			var oOldDate = this._getDate();
-			var oFocusedDate = new Date(oOldDate.getTime());
-
-			if (oEvent.type) {
-				switch (oEvent.type) {
-				case "sapnext":
-				case "sapnextmodifiers":
-					// last day in month reached
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
-						//goto same day next week
-						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 7);
-					} else {
-						//go to next day
-						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 1);
-					}
-					break;
-
-				case "sapprevious":
-				case "sappreviousmodifiers":
-					// first day in month reached
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
-						//goto same day previous week
-						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 7);
-					} else {
-						//go to previous day
-						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-					}
-					break;
-
-				case "sappagedown":
-					// go to same day next month
-					iMonth = oFocusedDate.getUTCMonth() + 1;
-					oFocusedDate.setUTCMonth(iMonth);
-					// but if the day doesn't exist in this month, go to last day of the month
-					if (iMonth % 12 != oFocusedDate.getUTCMonth()) {
-						while (iMonth != oFocusedDate.getUTCMonth()) {
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-						}
-					}
-					break;
-
-				case "sappageup":
-					// go to same day previous month
-					iMonth = oFocusedDate.getUTCMonth() - 1;
-					oFocusedDate.setUTCMonth(iMonth);
-					if (iMonth < 0) {
-						iMonth = 11;
-					}
-					// but if the day doesn't exist in this month, go to last day of the month
-					if (iMonth != oFocusedDate.getUTCMonth()) {
-						while (iMonth != oFocusedDate.getUTCMonth()) {
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-						}
-					}
-					break;
-
-				default:
-					break;
-				}
-
-				this.fireFocus({date: oFocusedDate, otherMonth: true});
-
-			}
-
-		}
-
 		function _handleMousedown(oThis, oEvent, oFocusedDate, iIndex){
 
 			_selectDay(oThis, oFocusedDate, oEvent.shiftKey);
@@ -886,13 +920,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + oThis);
 			}
 
-			var oOldDate = oThis._getDate();
+			var oUTCDate = CalendarUtils._createUTCDate(oDate);
+			var bFocusable = oThis.checkDateFocusable(oUTCDate);
 			oThis.setProperty("date", oDate, true);
-			oThis._oUTCDate = CalendarUtils._createUTCDate(oDate);
+			oThis._oUTCDate = oUTCDate;
 
 			if (oThis.getDomRef()) {
-				oDate = CalendarUtils._createUTCDate(oDate);
-				if (oThis._oUTCDate.getUTCFullYear() == oOldDate.getUTCFullYear() && oThis._oUTCDate.getUTCMonth() == oOldDate.getUTCMonth()) {
+				if (bFocusable) {
 					if (!bNoFocus) {
 					_focusDate(oThis, oThis._oUTCDate, true);
 					}
@@ -926,7 +960,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			oThis._sRenderMonth = undefined; // initialize delayed call
 
-			var oDate = oThis._getDate();
+			var oDate = oThis.getRenderer().getStartDate(oThis);
 			var $Container = oThis.$("days");
 
 			if ($Container.length > 0) {
@@ -936,11 +970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oRm.destroy();
 			}
 
-			if (oThis.getShowHeader()) {
-				var oLocaleData = oThis._getLocaleData();
-				var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
-				oThis.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
-			}
+			oThis._renderHeader();
 
 			// fire internal event for DatePicker for with number of rendered days. If Calendar becomes larger maybe popup must change position
 			oThis.fireEvent("_renderMonth", {days: $Container.children(".sapUiCalDay").length});

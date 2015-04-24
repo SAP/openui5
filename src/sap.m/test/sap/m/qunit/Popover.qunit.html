@@ -356,56 +356,81 @@
 			module("Position calculation");
 
 			test("vertical calculation of Popover positioning should be correct", function() {
-				var testCase = function(offset, outerHeight, height, expectedPlace) {
-					var stubOffset = sinon.stub(jQuery.fn, "offset").returns({top:offset});
+				var testCase = function(offset, outerHeight, height, placement, expectedPlace) {
+					var stubOffset = sinon.stub(Element.prototype, "getBoundingClientRect").returns({top:offset});
+
 					var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
 					var stubWindowHeight = sinon.stub(jQuery.fn, "height").returns(height);
 
 					var oPopover3 = new sap.m.Popover({
-						placement: sap.m.PlacementType.Vertical
+						placement: placement
 					});
+
+					var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 
 					oPopover3._calcPlacement();
 
 					strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
+					stubOpenByRef.restore();
 					stubOffset.restore();
 					stubOuterHeight.restore();
 					stubWindowHeight.restore();
-				}
+				};
 
-				testCase(50, 50, 500, sap.m.PlacementType.Bottom);
-				testCase(450, 50, 500, sap.m.PlacementType.Top);
+				testCase(50, 50, 500, sap.m.PlacementType.Vertical, sap.m.PlacementType.Bottom);
+				testCase(450, 50, 500, sap.m.PlacementType.Vertical, sap.m.PlacementType.Top);
 
+				// Prefered Top
+				testCase(400, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Top); // You have enough space to the Top and Top space is greater than the Bottom space
+				testCase(150, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Top); // You have enough space to the Top but Top space is smaller than the Bottom space
+				testCase(40, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Bottom); // You do not have enough space at the prefered position, so the position with more space is used
+
+				// Prefered Bottom
+				testCase(100, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Bottom); // You have enough space to the Bottom and Bottom space is greater than the Top space
+				testCase(350, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Bottom); // You have enough space to the Bottom but Bottom space is smaller than the Bottom space
+				testCase(450, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Top); // You do not have enough space at the prefered position, so the position with more space is used
 			});
 
 			test("horizontal calculation of Popover positioning should be correct", function() {
-				var testCase = function(offset, outerWidth, width, expectedPlace) {
-					var stubOffset = sinon.stub(jQuery.fn, "offset").returns({left:offset});
+				var testCase = function(offset, outerWidth, width, placement, expectedPlace) {
+					var stubOffset = sinon.stub(Element.prototype, "getBoundingClientRect").returns({left:offset});
+
 					var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
 					var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
 
 					var oPopover3 = new sap.m.Popover({
-						placement: sap.m.PlacementType.Horizontal
+						placement: placement
 					});
 
+					var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 					oPopover3._calcPlacement();
 
 					strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
+					stubOpenByRef.restore();
 					stubOffset.restore();
 					stubOuterWidth.restore();
 					stubWindowWidth.restore();
-				}
+				};
 
-				testCase(50, 50, 500, sap.m.PlacementType.Right);
-				testCase(450, 50, 500, sap.m.PlacementType.Left);
+				testCase(50, 50, 500, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Right);
+				testCase(450, 50, 500, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Left);
 
+				// Prefered Left
+				testCase(400, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Left); // You have enough space to the Left and Left space is greater than the Right space
+				testCase(100, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Left); // You have enough space to the Left but Left space is smaller than the Right space
+				testCase(40, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Right); // You do not have enough space at the prefered position, so the position with more space is used
+
+				// Prefered Right
+				testCase(100, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Right); // You have enough space to the Right and Right space is greater than the Left space
+				testCase(350, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Right); // You have enough space to the Right but Right space is smaller than the Left space
+				testCase(450, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Left); // You do not have enough space at the prefered position, so the position with more space is used
 			});
 
 			test("auto calculation of Popover positioning should be correct", function() {
 				var testCase = function(offsetLeft, offsetTop, outerWidth, outerHeight, width, height, expectedPlace) {
-					var stubOffset = sinon.stub(jQuery.fn, "offset").returns({left:offsetLeft, top:offsetTop});
+					var stubOffset = sinon.stub(Element.prototype, "getBoundingClientRect").returns({left:offsetLeft, top:offsetTop});
 					var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
 					var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
 					var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
@@ -418,10 +443,12 @@
 						placement: sap.m.PlacementType.Auto
 					});
 
+					var stubOpenByRef = sinon.stub(oPopover3, "_getOpenByDomRef").returns(document.createElement("div"));
 					oPopover3._calcPlacement();
 
 					strictEqual(oPopover3._oCalcedPos, expectedPlace);
 
+					stubOpenByRef.restore();
 					stubOffset.restore();
 					stubOuterWidth.restore();
 					stubWindowWidth.restore();

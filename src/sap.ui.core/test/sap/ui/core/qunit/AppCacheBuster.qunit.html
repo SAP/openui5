@@ -27,11 +27,14 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-server.js"></script>
 
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
 
+	// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage 
+	// of jQuery.ajax function / sinon also needs to be synchronized with this
+	// adoption by applying the CORS support flag from jQuery to sinon!
+	sinon.xhr.supportsCORS = jQuery.support.cors;
 
 	// some prerequisites ;-)
 	jQuery.sap.require("sap.ui.core.AppCacheBuster");

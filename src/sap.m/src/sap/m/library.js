@@ -114,6 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListItemBase",
 			"sap.m.MessagePage",
 			"sap.m.MessagePopover",
+			"sap.m.MessageStrip",
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
@@ -1193,10 +1194,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Vertical : "Vertical",
 
 		/**
+		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
+		 * top side if the space is greater than the Popover's height.
+		 * @public
+		 * @since 1.29
+		 */
+		VerticalPreferedTop : "VerticalPreferedTop",
+
+		/**
+		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
+		 * bottom side if the space is greater than the Popover's height.
+		 * @public
+		 * @since 1.29
+		 */
+		VerticalPreferedBottom : "VerticalPreferedBottom",
+
+		/**
 		 * Popover will be placed at the right or left side of the reference control.
 		 * @public
 		 */
 		Horizontal : "Horizontal",
+
+		/**
+		 * Popover will be placed at the right or left side of the reference control but will try to position on the
+		 * right side if the space is greater than the Popover's width.
+		 * @public
+		 * @since 1.29
+		 */
+		HorizontalPreferedRight : "HorizontalPreferedRight",
+
+		/**
+		 * Popover will be placed at the right or left side of the reference control but will try to position on the
+		 * left side if the space is greater than the Popover's width.
+		 * @public
+		 * @since 1.29
+		 */
+		HorizontalPreferedLeft : "HorizontalPreferedLeft",
 
 		/**
 		 * Popover will be placed automatically at the reference control.
@@ -2736,4 +2769,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	return sap.m;
 
-}, /* bExport= */ false);
+});

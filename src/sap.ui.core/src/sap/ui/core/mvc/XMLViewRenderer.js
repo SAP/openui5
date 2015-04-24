@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 */
 	var XMLViewRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -24,10 +24,9 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 * @param {sap.ui.core.mvc.XMLView} oControl an object representation of the control that should be rendered
 	 */
 	XMLViewRenderer.render = function(rm, oControl) {
-	
 		// write the HTML into the render manager
 		var $oldContent = oControl._$oldContent = sap.ui.core.RenderManager.findPreservedContent(oControl.getId());
-		if ( $oldContent.length === 0 ) {
+		if ( $oldContent.length === 0) {
 			// jQuery.sap.log.debug("rendering " + oControl + " anew");
 			var bSubView = oControl.isSubView();
 			if (!bSubView) {
@@ -36,8 +35,10 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 				rm.addClass("sapUiView");
 				rm.addClass("sapUiXMLView");
 				ViewRenderer.addDisplayClass(rm, oControl);
-				rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
-	
+				if (oControl._oAsyncState && !oControl._oAsyncState.suppressPreserve) {
+					// do not preserve when rendering initially in async mode
+					rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
+				}
 				if (oControl.getWidth()) {
 					rm.addStyle("width", oControl.getWidth());
 				}
@@ -45,32 +46,34 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 					rm.addStyle("height", oControl.getHeight());
 				}
 				rm.writeStyles();
-	
+
 				rm.writeClasses();
-	
+
 				rm.write(">");
 			}
-			for (var i = 0; i < oControl._aParsedContent.length; i++) {
-				var fragment = oControl._aParsedContent[i];
-				if (fragment && typeof (fragment) === "string") {
-					rm.write(fragment);
-				} else {
-					rm.renderControl(fragment);
-					// when the child control did not render anything (e.g. visible=false), we add a placeholder to know where to render the child later 
-					if ( !fragment.bOutput ) {
-						rm.write('<div id="' + sap.ui.core.RenderPrefixes.Dummy + fragment.getId() + '" class="sapUiHidden"/>');
+			if (oControl._aParsedContent) {
+				for (var i = 0; i < oControl._aParsedContent.length; i++) {
+					var fragment = oControl._aParsedContent[i];
+					if (fragment && typeof (fragment) === "string") {
+						rm.write(fragment);
+					} else {
+						rm.renderControl(fragment);
+						// when the child control did not render anything (e.g. visible=false), we add a placeholder to know where to render the child later
+						if ( !fragment.bOutput ) {
+							rm.write('<div id="' + sap.ui.core.RenderPrefixes.Dummy + fragment.getId() + '" class="sapUiHidden"/>');
+						}
 					}
 				}
 			}
 			if (!bSubView) {
 				rm.write("</div>");
 			}
-	
+
 		} else {
-	
+
 			// render dummy control for early after rendering notification
 			rm.renderControl(oControl.oAfterRenderingNotifier);
-			
+
 			// jQuery.sap.log.debug("rendering placeholder instead of " + oControl + " (preserved dom)");
 			// preserve mode: render only root tag and child controls
 			rm.write('<div id="' + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden">');
@@ -83,10 +86,10 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 				}
 			}
 			rm.write('</div>');
-	
+
 		}
 	};
-	
+
 
 	return XMLViewRenderer;
 
