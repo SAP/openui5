@@ -6,8 +6,7 @@
 		title="{i18n>notFoundTitle}"
 		text="{i18n>notFoundText}"
 		icon="{sap-icon://document}"
-		id="page"
-		description="">
+		id="page">
 		<customDescription>
 			<Link id="link" text="{i18n>backToWorklist}" press="myNavBack" />
 		</customDescription>
