@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		/*
 		 * Checks if a date is selected and what kind of selected
-		 * @return {int} iSelected 0: not selected; 1: single day selected, 2: interval start, 3: interval end, 4: interval between
+		 * @return {int} iSelected 0: not selected; 1: single day selected, 2: interval start, 3: interval end, 4: interval between, 5: one day interval (start = end)
 		 * @private
 		 */
 		Month.prototype._checkDateSelected = function(oDate){
@@ -1079,15 +1079,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
 			var $DomRef;
 			var i = 0;
+			var bStart = false;
+			var bEnd = false;
 
 			if (!oEndDate) {
 				// start of interval or single date
 				var sYyyymmdd = oThis._oFormatYyyymmdd.format(oStartDate, true);
 				for ( i = 0; i < aDomRefs.length; i++) {
 					$DomRef = jQuery(aDomRefs[i]);
+					bStart = false;
+					bEnd = false;
 					if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
 						$DomRef.addClass("sapUiCalDaySel");
 						$DomRef.attr("aria-selected", "true");
+						bStart = true;
 					} else if ($DomRef.hasClass("sapUiCalDaySel")) {
 						$DomRef.removeClass("sapUiCalDaySel");
 						$DomRef.attr("aria-selected", "false");
@@ -1099,19 +1104,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					} else if ($DomRef.hasClass("sapUiCalDaySelEnd")) {
 						$DomRef.removeClass("sapUiCalDaySelEnd");
 					}
+					_updateARIADesrcibedby(oThis, $DomRef, bStart, bEnd);
 				}
 			} else {
 				var oDay;
 				for ( i = 0; i < aDomRefs.length; i++) {
 					$DomRef = jQuery(aDomRefs[i]);
+					bStart = false;
+					bEnd = false;
 					oDay = oThis._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
 					if (oDay.getTime() == oStartDate.getTime()) {
 						$DomRef.addClass("sapUiCalDaySelStart");
+						bStart = true;
 						$DomRef.addClass("sapUiCalDaySel");
 						$DomRef.attr("aria-selected", "true");
 						if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
 							// start day and end day are the same
 							$DomRef.addClass("sapUiCalDaySelEnd");
+							bEnd = true;
 						}
 						$DomRef.removeClass("sapUiCalDaySelBetween");
 					} else if (oEndDate && oDay.getTime() > oStartDate.getTime() && oDay.getTime() < oEndDate.getTime()) {
@@ -1122,6 +1132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						$DomRef.removeClass("sapUiCalDaySelEnd");
 					} else if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
 						$DomRef.addClass("sapUiCalDaySelEnd");
+						bEnd = true;
 						$DomRef.addClass("sapUiCalDaySel");
 						$DomRef.attr("aria-selected", "true");
 						$DomRef.removeClass("sapUiCalDaySelStart");
@@ -1139,7 +1150,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 							$DomRef.removeClass("sapUiCalDaySelEnd");
 						}
 					}
+					_updateARIADesrcibedby(oThis, $DomRef, bStart, bEnd);
 				}
+			}
+
+		}
+
+		function _updateARIADesrcibedby(oThis, $DomRef, bStart, bEnd){
+
+			var sDescribedBy = "";
+			var aDescribedBy = [];
+			var sId = oThis.getId();
+			var bChanged = false;
+
+			sDescribedBy = $DomRef.attr("aria-describedby");
+			if (sDescribedBy) {
+				aDescribedBy = sDescribedBy.split(" ");
+			}
+
+			var iStartIndex = -1;
+			var iEndIndex = -1;
+			for (var i = 0; i < aDescribedBy.length; i++) {
+				var sDescrId = aDescribedBy[i];
+				if (sDescrId == (sId + "-Start")) {
+					iStartIndex = i;
+				}
+				if (sDescrId == (sId + "-End")) {
+					iEndIndex = i;
+				}
+			}
+
+			if (iStartIndex >= 0 && !bStart) {
+				aDescribedBy.splice(iStartIndex, 1);
+				bChanged = true;
+				if (iEndIndex > iStartIndex) {
+					iEndIndex--;
+				}
+			}
+			if (iEndIndex >= 0 && !bEnd) {
+				aDescribedBy.splice(iEndIndex, 1);
+				bChanged = true;
+			}
+
+			if (iStartIndex < 0 && bStart) {
+				aDescribedBy.push(sId + "-Start");
+				bChanged = true;
+			}
+			if (iEndIndex < 0 && bEnd) {
+				aDescribedBy.push(sId + "-End");
+				bChanged = true;
+			}
+
+			if (bChanged) {
+				sDescribedBy = aDescribedBy.join(" ");
+				$DomRef.attr("aria-describedby", sDescribedBy);
 			}
 
 		}
