@@ -800,9 +800,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var mDock = Popup.Dock;
 			var bIsRightAligned = $Input.css("text-align") === "right";
 
-			var sClass = (sState === sap.ui.core.ValueState.Success) ? "sapUiInvisibleText" : "sapMInputBaseMessage sapMInputBaseMessage" + sState;
+			var sClass = "sapMInputBaseMessage sapMInputBaseMessage" + sState;
 			var sTextClass = "sapMInputBaseMessageText";
 			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			if (sState === sap.ui.core.ValueState.Success) {
+				sClass = "sapUiInvisibleText";
+				sText = "";
+			}
+
 			var $Content = jQuery("<div>", {
 				"id": sMessageId,
 				"class": sClass,
