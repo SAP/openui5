@@ -2615,9 +2615,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var $Target = jQuery(oEvent.target);
 		var $Header = $Target.closest('.sapUiTableCol');
 		if ($Header.length > 0) {
-			var oColumn = $Header.control(0);
+			var oColumn = sap.ui.getCore().byId($Header.attr("data-sap-ui-colid"));
 			if (oColumn) {
-				oColumn._openMenu();
+				oColumn._openMenu($Header[0]);
 			}
 			oEvent.preventDefault();
 		} else {
@@ -2798,7 +2798,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (this._bShowMenu && $col.length === 1) {
 			var iIndex = parseInt($col.attr("data-sap-ui-colindex"), 10);
 			var oColumn = this.getColumns()[iIndex];
-			this._onColumnSelect(oColumn);
+			this._onColumnSelect(oColumn, $col[0]);
 			return;
 		}
 
@@ -2927,7 +2927,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * column select event => opens the column menu
 	 * @private
 	 */
-	Table.prototype._onColumnSelect = function(oColumn) {
+	Table.prototype._onColumnSelect = function(oColumn, oDomRef) {
 		// forward the event
 		var bExecuteDefault = this.fireColumnSelect({
 			column: oColumn
@@ -2936,7 +2936,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// if the default behavior should be prevented we suppress to open
 		// the column menu!
 		if (bExecuteDefault) {
-			oColumn._openMenu();
+			oColumn._openMenu(oDomRef);
 		}
 
 	};
