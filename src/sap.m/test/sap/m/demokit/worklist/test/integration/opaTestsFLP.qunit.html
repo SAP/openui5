@@ -5,6 +5,7 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
 
+		<!-- TODO: get rid of the src in the namespace -->
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-resourceroots='{
@@ -15,8 +16,8 @@
 	</script>
 
 	<script>
-		jQuery.sap.define("sap.ui.demo.worklist.test.integration.isFLP");
-		sap.ui.demo.masterdetail.test.worklist.isFLP = true;
+		sap.ui.namespace("sap.ui.demo.worklist.test.integration");
+		sap.ui.demo.worklist.test.integration.isFLP = true;
 		jQuery.sap.require("sap.ui.demo.worklist.test.integration.AllJourneys");
 		jQuery.sap.require("sap.ui.demo.worklist.test.integration.FLPJourneys");
 	</script>

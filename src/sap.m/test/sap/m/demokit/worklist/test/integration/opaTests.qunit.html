@@ -5,26 +5,26 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
 
-	<script id="sap-ui-bootstrap"
-		src="/resources/sap-ui-core.js"
-		data-sap-ui-resourceroots='{
-			"sap.ui.demo.worklist.test": "../",
-			"sap.ui.demo.app.test" : "../../testService"
-		}'
-		data-sap-ui-frameOptions='deny'>
-	</script>
+<!-- TODO: get rid of the src in the namespace -->
+<script id="sap-ui-bootstrap"
+	src="../resources/sap-ui-core.js"
+	data-sap-ui-resourceroots='{
+		"sap.ui.demo.worklist.test.integration": "./",
+		"sap.ui.demo.app.test" : "../../src/testService"
+	}'>
+</script>
 
 
-	<script>
-		jQuery.sap.require("sap.ui.demo.worklist.test.integration.AllJourneys");
-	</script>
+<script>
+	jQuery.sap.require("sap.ui.demo.worklist.test.integration.AllJourneys");
+</script>
 
 </head>
 <body>
-	<div id="content"></div>
-	<h1 id="qunit-header">Opa tests for Worklist</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
+<div id="content"></div>
+<h1 id="qunit-header">Opa tests for Worklist</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
 </body>
 </html>

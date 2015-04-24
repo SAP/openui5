@@ -22,7 +22,7 @@
          The sandbox platform is restricted to development or demo use cases and must NOT be used
          for productive scenarios.
     -->
-	<script>
+	<script type="text/javascript">
 		window["sap-ushell-config"] = {
 			defaultRenderer : "fiori2",
 			renderers: {
@@ -52,16 +52,16 @@
 		};
 	</script>
 
-	<script src="/test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
+	<script src="../../../../../../test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
 
 	<!-- Bootstrap the UI5 core library -->
 	<script id="sap-ui-bootstrap"
-			src="/resources/sap-ui-core.js"
+			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ushell"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"sap.ui.demo.worklist": "./src/", "sap.ui.demo.worklist.service": "./test/service/"}'
-			data-sap-ui-frameOptions='allow'> 	// NON-SECURE setting for testing environment
+			data-sap-ui-resourceroots='{"sap.ui.demo.worklist": "./", "sap.ui.demo.worklist.service": "../test/service/"}'
+			data-sap-ui-frameOptions='trusted'>
 	</script>
 
 	<script type="text/javascript">

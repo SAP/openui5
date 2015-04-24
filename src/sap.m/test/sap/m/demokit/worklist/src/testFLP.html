@@ -43,7 +43,7 @@
 							resolveTo : {
 								additionalInformation : "SAPUI5.Component=sap.ui.demo.worklist",
 								applicationType : "URL",
-								url : "./src" + window.location.search // pass URL query parameters to appplication
+								url : "./" + window.location.search // pass URL query parameters to appplication
 							}
 						}]
 					}
@@ -52,15 +52,15 @@
 		};
 	</script>
 
-	<script src="/test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
+	<script src="test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
 
 	<!-- Bootstrap the UI5 core library -->
 	<script id="sap-ui-bootstrap"
-			src="/resources/sap-ui-core.js"
+			src="resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ushell"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"sap.ui.demo.mdtemplate": "./src/", "sap.ui.demo.worklist.service": "./test/service/"}'
+			data-sap-ui-resourceroots='{"sap.ui.demo.mdtemplate": "./"}'
 			data-sap-ui-frameOptions='allow'> 	// NON-SECURE setting for testing environment
 	</script>
 
