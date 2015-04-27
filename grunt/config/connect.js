@@ -2,6 +2,11 @@ var fs = require('fs');
 
 module.exports = function(grunt, config) {
 
+	// set default option
+	if (typeof grunt.option('hostname') !== 'string') {
+		grunt.option('hostname', '*');
+	}
+
 	// set default port
 	if (typeof grunt.option('port') !== 'number') {
 		grunt.option('port', 8080);
@@ -12,7 +17,7 @@ module.exports = function(grunt, config) {
 		options: {
 
 			port: '<%= grunt.option("port") %>',
-			hostname: '*'
+			hostname: '<%= grunt.option("hostname") %>'
 
 		},
 
