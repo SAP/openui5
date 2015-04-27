@@ -44,6 +44,16 @@
 	/* 400ms is standard jQuery duration */
 	-webkit-transition: -webkit-transform 0.4s ease-out;
 	transition: transform 0.4s ease-out;
+
+	&:focus::after {
+		content: "";
+		position: absolute;
+		pointer-events: none;
+		top: 0.75rem;
+		right: 0.75rem;
+		bottom: 0.75rem;
+		left: 0.75rem;
+	}
 }
 
 .sapMPanelExpandableIconExpanded {
