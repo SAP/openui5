@@ -345,11 +345,6 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			case "Edm.Binary":
 				sValue = "binary'" + vValue + "'";
 				break;
-			case "Edm.Byte":
-				sValue = typeof vValue === "number"
-					? vValue.toString(16)
-					: String(vValue);
-				break;
 			default:
 				sValue = String(vValue);
 				break;
