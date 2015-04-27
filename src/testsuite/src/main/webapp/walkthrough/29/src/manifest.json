@@ -52,6 +52,13 @@
 	  "invoice": {
 		"dataSource": "invoiceRemote"
 	  }
+	},
+	"resources": {
+	  "css": [
+		{
+		  "uri": "css/style.css"
+		}
+	  ]
 	}
   }
 }

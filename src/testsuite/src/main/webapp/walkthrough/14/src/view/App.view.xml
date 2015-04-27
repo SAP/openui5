@@ -19,7 +19,7 @@
 							<Input
 								value="{/recipient/name}"
 								valueLiveUpdate="true"
-								width="60%" />
+								width="60%"/>
 							<Text
 								text="Hello {/recipient/name}"
 								class="sapUiSmallMargin sapThemeHighlight-asColor sapUiDemoWTmyCustomText"/>
