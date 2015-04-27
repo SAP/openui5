@@ -251,6 +251,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						mDefaults.icon = sap.m.MessageBox.Icon.INFORMATION;
 						mDefaults.actions = [Action.OK, Action.CANCEL];
 						mOptions = jQuery.extend({}, mDefaults, mOptions);
+						if (typeof mOptions.details == 'object') {//covers JSON case
+							mOptions.details = JSON.stringify(mOptions.details);
+						}
 						vMessage = getInformationLayout(mOptions, vMessage);
 					}
 
@@ -299,10 +302,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						}
 
 						var oTextArea = new sap.m.TextArea({
-							value: mOptions.details,
 							editable: false,
 							visible: false
-						});
+						}).setValue(mOptions.details);
+
 						var oLink = new sap.m.Link({
 							text: that._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
