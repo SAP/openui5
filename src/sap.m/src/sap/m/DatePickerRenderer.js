@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
 
-		if (sap.ui.Device.browser.mobile) {
+		if (oDP._bMobile) {
 			// prevent keyboard in mobile devices
 			oRm.writeAttribute("readonly", "readonly");
 		}
