@@ -464,6 +464,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		return this;
 	};
 
+	FileUploader.prototype.setTooltip = function(oTooltip) {
+		this._refreshTooltipBaseDelegate(oTooltip);
+		this.setAggregation("tooltip", oTooltip, true);
+		if (this.oFileUpload) {
+			if (typeof oTooltip  === "string") {
+				jQuery(this.oFileUpload).attr("title", jQuery.sap.escapeHTML(oTooltip));
+			}
+		}
+		return this;
+	};
+
 	/**
 	 * Helper to ensure, that the types (file or mime) are inside an array.
 	 * The FUP also accepts comma-separated strings for its fileType and mimeType property.
