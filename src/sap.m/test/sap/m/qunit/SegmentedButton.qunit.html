@@ -702,25 +702,6 @@
 			})]
 		});
 
-		var oButton = new sap.m.Button({
-			text : "Open Dialog",
-			press : function() {
-				oDialog.open();
-			}
-		});
-
-		var oPage = new sap.m.Page("myFirstPage", {
-			title : "Dialog Test",
-			showNavButton : true,
-			enableScrolling : true,
-			content : oButton
-		});
-
-		var oApp = new sap.m.App("myApp");
-
-		oApp.addPage(oPage).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oDialog = new sap.m.Dialog({
 			subHeader : oBar,
 			content : [new sap.m.Button({
@@ -729,8 +710,16 @@
 			})]
 		});
 
+		sap.ui.getCore().applyChanges();
+
 		// Assert
 		oDialog.attachAfterOpen(function () {
+			setTimeout(function() {
+				oDialog.close();
+			}, 1000);
+		});
+
+		oDialog.attachBeforeClose(function () {
 			// the implementation of the SegmentedButton sets a timeout for IE browsers
 			// to re-calculate the button width(SegmentedButton.js, 121), so we need to do this in the test as well
 			setTimeout(function () {
@@ -744,14 +733,13 @@
 
 				// Cleanup
 				oDialog.destroy();
-				oApp.destroy();
 
 				start();
 			}, 0);
 		});
 
 		// Act
-		oButton.firePress();
+		oDialog.open();
 	});
 
 	/* =========================================================== */
