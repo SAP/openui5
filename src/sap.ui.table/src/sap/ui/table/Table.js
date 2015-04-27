@@ -2203,7 +2203,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// Select only table headers (identified by data-sap-ui-headcolindex attribute). Not the row header.
 		var $colHeaderContainer = $this.find(".sapUiTableColHdr");
 		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th");
-		var $colRszs = $colHeaderContainer.find(".sapUiTableColRsz");
 
 		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
 		if (bHasRowHeader) {
@@ -2261,16 +2260,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					}
 				}
 			}
-
+			
+			var oColRsz = this.getDomRef().querySelector("#" + oVisibleColumn.getId() + "-rsz");
+			
 			mHeaders[iHeadColIndex] = {
 			   domRefColumnTh: oElement,
 			   domRefColumnDivs: [],
-			   domRefColumnResizer: $colRszs[iIndex],
+			   domRefColumnResizer: oColRsz,
 			   domRefColumnResizerPosition: undefined,
 			   rect: oRect,
 			   aHeaderWidths: aHeaderWidths
 			};
-		});
+		}.bind(this));
 		
 		// Map target column header divs to corresponding source table header.
 		var $cols = $colHeaderContainer.find(".sapUiTableCol");
