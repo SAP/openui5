@@ -566,6 +566,13 @@
         "type": "FIX",
         "text": "sap.ui.table.Table: Text view in sap.m context created",
         "references": []
+      },
+      {
+        "id": "7b91c6bc328417d9a786ebed559d07b3f78de683",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox, sap.ui.commons.DatePicker: Combi device",
+        "references": []
       }
     ]
   }

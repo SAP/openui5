@@ -1670,6 +1670,13 @@
         "type": "FIX",
         "text": "v2.ODataModel: Added eTag if data is refresehed",
         "references": []
+      },
+      {
+        "id": "80de27f036ac2d8fa42ac1ba760aa9d0cfdc2707",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component Manifest: sap.app/id defaults to component namespace",
+        "references": []
       }
     ]
   }
