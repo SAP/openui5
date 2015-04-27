@@ -9,13 +9,10 @@ sap.ui.define([], function () {
 			switch (sStatus) {
 				case "A":
 					return oResourceBundle.getText("invoiceStatusA");
-					break;
 				case "B":
 					return oResourceBundle.getText("invoiceStatusB");
-					break;
 				case "C":
 					return oResourceBundle.getText("invoiceStatusC");
-					break;
 				default:
 					return sStatus;
 			}

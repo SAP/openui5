@@ -5,14 +5,14 @@
 			title="{i18n>helloMsg}">
 		<content>
 			<core:Icon
-					src="sap-icon://hello-world"
-					size="8rem"
-					class="sapUiMediumMargin"/>
+				src="sap-icon://hello-world"
+				size="8rem"
+				class="sapUiMediumMargin"/>
 		</content>
 		<beginButton>
 			<Button
-					text="{i18n>dialogCloseButtonText}"
-					press="onCloseDialog"/>
+				text="{i18n>dialogCloseButtonText}"
+				press="onCloseDialog"/>
 		</beginButton>
 	</Dialog>
 </core:FragmentDefinition>

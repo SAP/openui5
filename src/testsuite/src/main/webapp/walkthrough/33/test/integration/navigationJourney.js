@@ -1,4 +1,6 @@
-sap.ui.require([], function () {
+sap.ui.require([
+	"sap/ui/test/opaQunit"
+], function () {
 	"use strict";
 
 	QUnit.module("Navigation");

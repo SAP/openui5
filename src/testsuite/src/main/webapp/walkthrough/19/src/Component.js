@@ -13,7 +13,7 @@ sap.ui.define([
 
 		init : function () {
 
-			// call the overridden init function
+			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set data model
@@ -22,8 +22,8 @@ sap.ui.define([
 					name : "World"
 				}
 			};
-			var oDataModel = new JSONModel(oData);
-			this.setModel(oDataModel);
+			var oModel = new JSONModel(oData);
+			this.setModel(oModel);
 
 			// set dialog
 			this.helloDialog = new HelloDialog();

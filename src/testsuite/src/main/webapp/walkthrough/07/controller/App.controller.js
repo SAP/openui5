@@ -15,8 +15,8 @@ sap.ui.define([
 					name : "World"
 				}
 			};
-			var oDataModel = new JSONModel(oData);
-			this.getView().setModel(oDataModel);
+			var oModel = new JSONModel(oData);
+			this.getView().setModel(oModel);
 		},
 
 		onShowHello : function () {
