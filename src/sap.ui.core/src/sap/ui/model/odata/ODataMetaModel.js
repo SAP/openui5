@@ -53,12 +53,19 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	 * <li><code>creatable</code>, <code>field-control</code>, <code>precision</code>,
 	 * <code>required-in-filter</code>, <code>sortable</code>, <code>text</code>, <code>unit</code>
 	 * and <code>updatable</code> on properties;</li>
-	 * <li><code>semantics</code>; following values for <code>sap:semantics</code> are supported:
+	 * <li><code>semantics</code>; the following values are supported:
 	 * <ul>
 	 * <li>"bday", "city", "country", "familyname", "givenname", "honorific", "middlename", "name",
 	 * "nickname", "note", "org", "org-unit", "org-role", "photo", "pobox", "region", "street",
-	 * "suffix", "title" and "zip" (mapped to V4 annotation
+	 * "suffix", "title" and "zip" (mapped to v4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Contact</code>);</li>
+	 * <li>"class", "dtend", "dtstart", "duration", "fbtype", "location", "status", "transp" and
+	 * "wholeday" (mapped to v4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Event</code>);</li>
+	 * <li>"body", "from", "received", "sender" and "subject" (mapped to v4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Message</code>).</li>
+	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to v4 annotation
+	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
 	 * </ul>
 	 * </ul>
 	 * For example:

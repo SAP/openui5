@@ -33,9 +33,33 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"role" : { "Path" :  "OrgRole" },
 			"title" : { "Path" :  "Title" }
 		},
+		oEventAnnotationFromV2 = {
+			"class" : { "Path" :  "Class" },
+			"dtend" : { "Path" :  "Dtend" },
+			"dtstart" : { "Path" :  "Dtstart" },
+			"duration" : { "Path" :  "Duration" },
+			"fbtype" : { "Path" :  "Fbtype" },
+			"location" : { "Path" :  "Location" },
+			"status" : { "Path" :  "Status" },
+			"transp" : { "Path" :  "Transp" },
+			"wholeday" : { "Path" :  "Wholeday" }
+		},
+		oMessageAnnotationFromV2 = {
+			"body" : { "Path" :  "Body" },
+			"from" : { "Path" :  "From" },
+			"received" : { "Path" :  "Received" },
+			"sender" : { "Path" :  "Sender" },
+			"subject" : { "Path" :  "Subject" }
+		},
+		oTaskAnnotationFromV2 = {
+			"completed" : { "Path" : "Completed" },
+			"due" : { "Path" : "Due" },
+			"percentcomplete" : { "Path" : "PercentComplete" },
+			"priority" : { "Path" : "Priority"}
+		},
 		sNamespace = "http://www.sap.com/Protocols/SAPData",
-		aTypeProperties = [{
-			"name" : "Birthday", "type" : "Edm.String",
+		aContactProperties = [{
+			"name" : "Birthday", "type" : "Edm.Date",
 			"extensions" : [{
 				"name" : "semantics" , "value" : "bday", "namespace" : sNamespace
 			}]
@@ -135,9 +159,114 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"name" : "semantics" , "value" : "zip", "namespace" : sNamespace
 			}]
 		}],
+		aEventProperties = [{
+			"name" : "Class", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "class", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Dtend", "type" : "Edm.DateTimeOffset",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "dtend", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Dtstart", "type" : "Edm.DateTimeOffset",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "dtstart", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Duration", "type" : "Edm.Duration",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "duration", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Fbtype", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "fbtype", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Location", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "location", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Status", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "status", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Transp", "type" : "Edm.Boolean",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "transp", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Wholeday", "type" : "Edm.Boolean",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "wholeday", "namespace" : sNamespace
+			}]
+		}],
+		aMessageProperties = [{
+			"name" : "Body", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "body", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "From", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "from", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Received", "type" : "Edm.DateTimeOffset",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "received", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Sender", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "sender", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Subject", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "subject", "namespace" : sNamespace
+			}]
+		}],
+		aTaskProperties = [{
+			"name" : "Completed", "type" : "Edm.DateTimeOffset",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "completed", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Due", "type" : "Edm.DateTimeOffset",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "due", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "PercentComplete", "type" : "Edm.Byte",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "percent-complete", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Priority", "type" : "Edm.Byte",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "priority", "namespace" : sNamespace
+			}]
+		}],
 		oContactType = {
 			"name" : "Contact",
-			"property" : aTypeProperties
+			"property" : aContactProperties
+		},
+		oEventType = {
+			"name" : "Event",
+			"property" : aEventProperties
+		},
+		oMessageType = {
+			"name" : "Message",
+			"property" : aMessageProperties
+		},
+		oTaskType = {
+			"name" : "Task",
+			"property" : aTaskProperties
 		},
 		oDataContact = {
 			"version" : "1.0" ,
@@ -146,10 +275,19 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"schema" : [{
 					"namespace" : "GWSAMPLE_BASIC",
 					"complexType" : [{
-						"name" : "ContactComplex",
-						"property" : aTypeProperties
+						"name" : "CT_Contact",
+						"property" : aContactProperties
+					}, {
+						"name" : "CT_Event",
+						"property" : aEventProperties
+					}, {
+						"name" : "CT_Message",
+						"property" : aMessageProperties
+					}, {
+						"name" : "CT_Task",
+						"property" : aTaskProperties
 					}],
-					"entityType" : [oContactType],
+					"entityType" : [oContactType, oEventType, oMessageType, oTaskType],
 					"entityContainer" : [{
 						"name" : "GWSAMPLE_BASIC_Entities",
 						"isDefaultEntityContainer" : "true",
@@ -163,7 +301,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				}]
 			}
 		},
-		// contains only a subset of possible annotations to be able to see that V4 annotations win
+		// contains only a subset of possible annotations to be able to see that v4 annotations win
 		oAnnotations = {
 			"GWSAMPLE_BASIC.Contact" : {
 				"com.sap.vocabularies.Communication.v1.Contact" : {
@@ -174,13 +312,23 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 					"nickname" : { "Path" : "NickNameFromAnnotation" }
 				}
 			},
-			"GWSAMPLE_BASIC.ContactComplex" : {
+			"GWSAMPLE_BASIC.CT_Contact" : {
 				"com.sap.vocabularies.Communication.v1.Contact" : {
 					"fn" : { "Path" : "NameFromAnnotation" },
 					"adr" : {
 						"code" : { "Path" :  "ZipFromAnnotation" },
 					},
 					"nickname" : { "Path" : "NickNameFromAnnotation" }
+				}
+			},
+			"GWSAMPLE_BASIC.Message" : {
+				"com.sap.vocabularies.Communication.v1.Message" : {
+					"from" : { "Path" : "FromFromAnnotation" }
+				}
+			},
+			"GWSAMPLE_BASIC.CT_Message" : {
+				"com.sap.vocabularies.Communication.v1.Message" : {
+					"from" : { "Path" : "FromFromAnnotation" }
 				}
 			},
 			"propertyAnnotations" : {},
@@ -199,47 +347,69 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	//*********************************************************************************************
 
 	//*********************************************************************************************
-	test("addSapSemantics contact information", function () {
-		var oType = clone(oContactType);
+	[{
+		expectedAnnotations: {"Contact": oContactAnnotationFromV2}, type: oContactType
+	}, {
+		expectedAnnotations: {"Event": oEventAnnotationFromV2}, type: oEventType
+	}, {
+		expectedAnnotations: {"Message": oMessageAnnotationFromV2}, type: oMessageType
+	}, {
+		expectedAnnotations: {"Task": oTaskAnnotationFromV2}, type: oTaskType
+	}].forEach(function (oFixture) {
+		var sTypeName = oFixture.type.name;
 
-		// ensure that sap:semantics properties are available
-		oType.property.forEach(function (oProperty) {
-			Utils.liftSAPData(oProperty, "Property");
+		test("addSapSemantics: " + sTypeName, function () {
+			var oType = clone(oFixture.type);
+
+			// ensure that sap:semantics properties are available
+			oType.property.forEach(function (oProperty) {
+				Utils.liftSAPData(oProperty, "Property");
+			});
+
+			// code under test
+			Utils.addSapSemantics(oType);
+
+			// verify results
+			["Contact", "Event", "Message", "Task"].forEach(function (sAnnotationTerm) {
+				deepEqual(oType["com.sap.vocabularies.Communication.v1." + sAnnotationTerm],
+					oFixture.expectedAnnotations[sAnnotationTerm],
+					"result as expected");
+			});
 		});
-		Utils.addSapSemantics(oType);
-		deepEqual(oType["com.sap.vocabularies.Communication.v1.Contact"], oContactAnnotationFromV2,
-			"result as expected");
 	});
 
+	//*********************************************************************************************
 	[{
-		test: "V4 wins", annotations: oAnnotations,
+		test: "and v4 wins", annotations: oAnnotations,
 		expectedTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.Contact"]
 			["com.sap.vocabularies.Communication.v1.Contact"],
-		expectedComplexTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.ContactComplex"]
+		expectedComplexTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.CT_Contact"]
 			["com.sap.vocabularies.Communication.v1.Contact"]
 	}, {
-		test: "no V4 annotations", annotations: {},
+		test: "without v4 annotations", annotations: {},
 		expectedTypeAnnotations: oContactAnnotationFromV2,
 		expectedComplexTypeAnnotations: oContactAnnotationFromV2
 	}].forEach(function (oFixture) {
-		test("merge: addSapSemantics called and " + oFixture.test, function () {
+		test("merge: addSapSemantics called " + oFixture.test, function () {
 			var oData = clone(oDataContact),
-				oType = oData.dataServices.schema[0].entityType[0],
-				oComplexType = oData.dataServices.schema[0].complexType[0];
+				oContact = oData.dataServices.schema[0].entityType[0],
+				oCTContact = oData.dataServices.schema[0].complexType[0];
 
 			this.spy(Utils, "addSapSemantics");
 
+			// code under test
 			Utils.merge(oFixture.annotations, oData);
 
-			deepEqual(oType["com.sap.vocabularies.Communication.v1.Contact"],
+			// verify results
+			deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"],
 				oFixture.expectedTypeAnnotations, "Contact annotations for EntityType");
-			deepEqual(oComplexType["com.sap.vocabularies.Communication.v1.Contact"],
+			deepEqual(oCTContact["com.sap.vocabularies.Communication.v1.Contact"],
 				oFixture.expectedComplexTypeAnnotations, "Contact annotations for ComplexType");
 
-			ok(Utils.addSapSemantics.calledTwice, "called addSapSemantics twice");
-			ok(Utils.addSapSemantics.calledWithExactly(oComplexType),
+			equals(Utils.addSapSemantics.callCount, 8);
+			ok(Utils.addSapSemantics.calledWithExactly(oCTContact),
 				"called addSapSemantics with ComplexType");
-			ok(Utils.addSapSemantics.calledWithExactly(oType),
+			ok(Utils.addSapSemantics.calledWithExactly(oContact),
 				"called addSapSemantics with EntityType");
 		});
 	});
