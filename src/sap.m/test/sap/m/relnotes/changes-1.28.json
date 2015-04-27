@@ -2695,6 +2695,13 @@
         "type": "FIX",
         "text": "sap.m.UploadCollection: Termination handling changed",
         "references": []
+      },
+      {
+        "id": "df29cb9c92497fde2dbf7cebd48041a036d8a1a9",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Input field text overflow over arrow button in Internet Explorer 10 fixed",
+        "references": []
       }
     ]
   }
