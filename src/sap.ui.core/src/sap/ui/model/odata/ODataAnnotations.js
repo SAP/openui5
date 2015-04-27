@@ -964,7 +964,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {Node} documentNode - The Node that should be searched for fitting child nodes
 	 * @private
 	 */
-	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode) {
+	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode, mAlias) {
 		var oValue = {};
 
 		var oValueNodes = this.xPath.selectNodes(xmlDoc, "./d:String | ./d:Path | ./d:Apply", documentNode);
@@ -974,7 +974,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 			switch (oValueNode.nodeName) {
 				case "Apply":
-					vValue = this.getApplyFunctions(xmlDoc, oValueNode, this.xPath);
+					vValue = this.getApplyFunctions(xmlDoc, oValueNode, mAlias);
 					break;
 
 				default:
@@ -1059,6 +1059,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 	};
 
+	/**
+	 * Returns the text value of a given node and does an alias replacement if neccessary.
+	 * 
+	 * @param {Node} oNode - The Node of which the text value should be determined
+	 * @param {map} mAlias - The alias map
+	 * @return {string} The text content
+	 */
+	ODataAnnotations.prototype._getTextValue = function(oNode, mAlias) {
+		var sValue = "";
+		if (oNode.nodeName in mAliasNodeWhitelist) {
+			sValue = this.replaceWithAlias(this.xPath.getNodeText(oNode), mAlias);
+		} else {
+			sValue = this.xPath.getNodeText(oNode);
+		}
+		if (oNode.nodeName !== "String") {
+			// Trim whitespace if it's not specified as string value
+			sValue = sValue.trim();
+		}
+		return sValue;
+	};
+
 	ODataAnnotations.prototype.getPropertyValue = function(oXmlDocument, oDocumentNode, mAlias) {
 		var vPropertyValue = {};
 
@@ -1086,9 +1107,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				if (oUrlValueNodes.length > 0) {
 					// Only use the first entry of the result since we only asked for the last entry in the XPath query
 					var oUrlValueNode = this.xPath.nextNode(oUrlValueNodes, 0);
-					vPropertyValue[oUrlValueNode.nodeName] = this.getSimpleNodeValue(oXmlDocument, oUrlValueNode); // TODO: Is nodeName correct or should we remove the namespace?
+					vPropertyValue[oUrlValueNode.nodeName] = this.getSimpleNodeValue(oXmlDocument, oUrlValueNode, mAlias); // TODO: Is nodeName correct or should we remove the namespace?
 				} else {
 					// No Url or UrlRef found, search for Collection with AnnotationPath or PropertyPath
+
 					var oCollectionNodes = this.xPath.selectNodes(oXmlDocument, "./d:Collection/d:AnnotationPath | ./d:Collection/d:PropertyPath", oDocumentNode);
 
 					if (oCollectionNodes.length > 0) {
@@ -1096,61 +1118,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					} else {
 						vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 
-						var oAnnotationNodes = this.xPath.selectNodes(oXmlDocument, "./d:Annotation", oDocumentNode);
-						this._enrichValueFromAttribute(/* ref: */ vPropertyValue, mAlias, oAnnotationNodes, "Term");
-
-						// Now get all values for child elements
 						var oChildNodes = this.xPath.selectNodes(oXmlDocument, "./d:*[not(local-name() = \"Annotation\")]", oDocumentNode);
-						for (var i = 0; i < oChildNodes.length; i++) {
-							var oChildNode = this.xPath.nextNode(oChildNodes, i);
-							var vValue;
-							if (oChildNode.hasChildNodes()) {
-								vValue = this.getPropertyValue(oXmlDocument, oChildNode, mAlias);
-							} else {
-								vValue = this.getPropertyValueAttributes(oChildNode, mAlias);
-							}
-							
-							var sNodeName = oChildNode.nodeName;
-							var sParentName = oChildNode.parentNode.nodeName;
-							
-							
-							// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
-							// their order within the document
-							if (mMultipleArgumentDynamicExpressions[sParentName]) {
-								if (!Array.isArray(vPropertyValue)) {
-									vPropertyValue = [];
-								}
-								
-								var mValue = {};
-								mValue[sNodeName] = vValue;
-								vPropertyValue.push(mValue);
-							} else {
-								if (vPropertyValue[sNodeName]) {
-									jQuery.sap.log.warning(
-										"Annotation contained multiple " + sNodeName + " values. Only the last " +
-										"one will be stored"
-									);
-								}
-								vPropertyValue[sNodeName] = vValue;
-							}
-							
-						}
+						if (oChildNodes.length > 0) {
+							var oAnnotationNodes = this.xPath.selectNodes(oXmlDocument, "./d:Annotation", oDocumentNode);
+							this._enrichValueFromAttribute(/* ref: */ vPropertyValue, mAlias, oAnnotationNodes, "Term");
 
-						if (oChildNodes.length === 0 && oDocumentNode.nodeName in mTextNodeWhitelist) {
-							// hasChildNodes, but selectNodes found nothing - it should be a text node
-							if (oDocumentNode.nodeName in mAliasNodeWhitelist) {
-								vPropertyValue = this.replaceWithAlias(this.xPath.getNodeText(oDocumentNode), mAlias);
-							} else {
-								vPropertyValue = this.xPath.getNodeText(oDocumentNode);
+							// Now get all values for child elements
+							for (var i = 0; i < oChildNodes.length; i++) {
+								var oChildNode = this.xPath.nextNode(oChildNodes, i);
+								var vValue;
+								
+								vValue = this.getPropertyValue(oXmlDocument, oChildNode, mAlias);
+								
+								var sNodeName = oChildNode.nodeName;
+								var sParentName = oChildNode.parentNode.nodeName;
+								
+								
+								// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+								// their order within the document
+								if (mMultipleArgumentDynamicExpressions[sParentName]) {
+									if (!Array.isArray(vPropertyValue)) {
+										vPropertyValue = [];
+									}
+									
+									var mValue = {};
+									mValue[sNodeName] = vValue;
+									vPropertyValue.push(mValue);
+								} else {
+									if (vPropertyValue[sNodeName]) {
+										jQuery.sap.log.warning(
+											"Annotation contained multiple " + sNodeName + " values. Only the last " +
+											"one will be stored"
+										);
+									}
+									vPropertyValue[sNodeName] = vValue;
+								}
 							}
-							if (oDocumentNode.nodeName !== "String") {
-								// Trim whitespace if it's not specified as string value
-								vPropertyValue = vPropertyValue.replace(/^[ \t\n\r]*(.*?)[ \t\n\r]*$/, "$1");
-							}
+						} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
+							vPropertyValue = this._getTextValue(oDocumentNode, mAlias);
 						}
 					}
 				}
 			}
+		} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
+			vPropertyValue = this._getTextValue(oDocumentNode, mAlias);
 		} else {
 			vPropertyValue = this.getPropertyValueAttributes(oDocumentNode, mAlias);
 		}
@@ -1179,7 +1190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					applyNode = this.xPath.nextNode(applyNodes, applyNodeIndex);
 					if (applyNode) {
 						properties[propertyName] = {};
-						properties[propertyName]['Apply'] = this.getApplyFunctions(xmlDoc, applyNode);
+						properties[propertyName]['Apply'] = this.getApplyFunctions(xmlDoc, applyNode, oAlias);
 					}
 				}
 			}
@@ -1189,7 +1200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		return properties;
 	};
 
-	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode) {
+	ODataAnnotations.prototype.getApplyFunctions = function(xmlDoc, applyNode, mAlias) {
 		var mApply = {
 			Name: applyNode.getAttribute('Function'),
 			Parameters: []
@@ -1202,17 +1213,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				Type:  oParameterNode.nodeName
 			};
 
-			switch (oParameterNode.nodeName) {
-				case "Apply" :
-					mParameter.Value = this.getApplyFunctions(xmlDoc, oParameterNode);
-					break;
-				case "LabeledElement" :
-					mParameter.Name = oParameterNode.getAttribute("Name");
-					mParameter.Value = this.getSimpleNodeValue(xmlDoc, oParameterNode);
-					break;
-				default :
-					mParameter.Value = this.xPath.getNodeText(oParameterNode);
-					break;
+			if (oParameterNode.nodeName === "Apply") {
+				mParameter.Value = this.getApplyFunctions(xmlDoc, oParameterNode);
+			} else if (oParameterNode.nodeName === "LabeledElement") {
+				mParameter.Name = oParameterNode.getAttribute("Name");
+				mParameter.Value = this.getSimpleNodeValue(xmlDoc, oParameterNode, mAlias);
+			
+			} else if (mMultipleArgumentDynamicExpressions[oParameterNode.nodeName]) {
+				mParameter.Value = this.getPropertyValue(xmlDoc, oParameterNode, mAlias);
+			} else {
+				mParameter.Value = this.xPath.getNodeText(oParameterNode);
 			}
 
 			mApply.Parameters.push(mParameter);
