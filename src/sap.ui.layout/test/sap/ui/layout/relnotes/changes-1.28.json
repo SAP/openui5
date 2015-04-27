@@ -132,5 +132,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "f70be3f80172a5c42347b36634a034929cac1e09",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Form: RadioButton in compact mode corrected",
+        "references": []
+      }
+    ]
   }
 }

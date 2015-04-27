@@ -514,5 +514,59 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "743eae05583196577c213af99ea3ec8d922ba4a8",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: Alignment fixed",
+        "references": []
+      },
+      {
+        "id": "b1927835fc1e223ce49d3cb8fadb8592547d2707",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: Alignment fixed in Chrome",
+        "references": []
+      },
+      {
+        "id": "dbd0cc7ac9e2a56eb10c075e2e38ecd11d85cfca",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: hAlign fixed",
+        "references": []
+      },
+      {
+        "id": "d1155953d31536d76cec280666021f3ce40e4f12",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree: onThemeChanged checks for existance of buttons",
+        "references": []
+      },
+      {
+        "id": "d40e887a59ff7f63fea36219b95d55094c8510de",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: Change event on mobile device added",
+        "references": []
+      },
+      {
+        "id": "d3cb70b17eb0c0d4b71153a3c2938d4a98ac02c5",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: Input now possible on mobile devices",
+        "references": []
+      },
+      {
+        "id": "da0d8b8ae63cac403b50e92c2b2ecc8667121295",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Text view in sap.m context created",
+        "references": []
+      }
+    ]
   }
 }

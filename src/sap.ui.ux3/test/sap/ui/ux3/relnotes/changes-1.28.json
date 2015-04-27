@@ -216,5 +216,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "f8d5997ee056b3c7d4dca7604ba80f6de66aa364",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after open corrected",
+        "references": []
+      }
+    ]
   }
 }
