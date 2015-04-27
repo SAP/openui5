@@ -60,13 +60,73 @@
 				id: "messagebox1",
 				styleClass: sClassName
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagebox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
 			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		test("show error", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.error(sMessageText, {
+				id: "messageboxError"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxError");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_CLOSE") , "Default action Cancel is set");
+			equal(oMessageBox.getTitle(), "Error", "The title should be Error");
+			oMessageBox.destroy();
+		});
+
+		test("show information", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.information(sMessageText, {
+				id: "messageboxInfo"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxInfo");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), "Information", "The title should be Info");
+			oMessageBox.destroy();
+		});
+
+		test("show warning", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.warning(sMessageText, {
+				id: "messageboxWarning"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxWarning");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), "Warning", "The title should be Warning");
+			oMessageBox.destroy();
+		});
+
+		test("show success", function () {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			sap.m.MessageBox.success(sMessageText, {
+				id: "messageboxSuccess"
+			});
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messageboxSuccess");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
+			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
+			equal(oMessageBox.getTitle(), "Success", "The title should be Success");
 			oMessageBox.destroy();
 		});
 
@@ -104,7 +164,7 @@
 			);
 
 
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messageBoxScrolling");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -128,12 +188,12 @@
 				styleClass: sClassName,
 				initialFocus: oButton
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			var oMessageBox = sap.ui.getCore().byId("messagebox2");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			equal(oMessageBox.getButtons().length, 4, "All three buttons are added to dialog");
+			equal(oMessageBox.getButtons().length, 4, "All four buttons are added to dialog");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			equal(oMessageBox.getInitialFocus(), oButton.sId, "InitialFocus is set correctly");
 			ok(oMessageBox.$().hasClass(sClassName));
@@ -149,7 +209,7 @@
 				styleClass: sClassName,
 				initialFocus: "Custom Text"
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			var oMessageBox = sap.ui.getCore().byId("messagebox3");
 			var aButtons = oMessageBox.getButtons();
@@ -184,7 +244,7 @@
 				styleClass: sClassName,
 				initialFocus: sap.m.MessageBox.Action.NO
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var oMessageBox = sap.ui.getCore().byId("messagebox4");
@@ -218,7 +278,7 @@
 				id: "alertbox1",
 				styleClass: sClassName
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("alertbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -236,7 +296,7 @@
 				id: "confirmbox1",
 				styleClass: sClassName
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -249,7 +309,7 @@
 
 		test("show with OLD API", function () {
 			sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Custom Text", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagebox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -262,7 +322,7 @@
 		test("alert with OLD API", function () {
 			// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 			sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("alertbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -275,7 +335,7 @@
 
 		test("confirm with OLD API", function () {
 			sap.m.MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
@@ -288,7 +348,7 @@
 
 		test("alert with message which contains curly bracket", function () {
 			sap.m.MessageBox.alert("I have {abc}");
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			equal(jQuery("span:contains('I have {abc}')").length, 1, "Text with curly bracket is rendered");
 			jQuery.sap.require("sap.m.InstanceManager");
 			sap.m.InstanceManager.getOpenDialogs()[0].destroy();
@@ -341,7 +401,7 @@
 				styleClass: sClassName,
 				initialFocus: "OK"
 			});
-			this.clock.tick(500);
+			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagedialog1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
