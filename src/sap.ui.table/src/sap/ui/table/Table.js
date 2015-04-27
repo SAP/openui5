@@ -1502,6 +1502,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			} else {
 				$sapUiTableHSb.css('padding-left', iScrollPadding + 'px');
 			}
+			
+			// When table has no fixed width, the scrollbar is not allowed to increase the width of the table.
+			// We define the max-width of the scrollbar to be limited by its parent width.
+			var iMaximumScrollBarWidth = $sapUiTableHSb.parent().width();
+			$sapUiTableHSb.css('max-width', iMaximumScrollBarWidth + "px");
 
 			this._oHSb.setContentSize(iColsWidth + "px");
 
