@@ -1576,5 +1576,101 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "1e9785b7f8b635a0befc38ab0ec78901c220ca05",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Databinding: Usage of model types with custom property types allowed",
+        "references": []
+      },
+      {
+        "id": "6a6d357e21bca6ad0274d7a181920b3342edcacb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "NumberFormat: Unnecessary leading zeros with parseAsString removed",
+        "references": []
+      },
+      {
+        "id": "e182bc765d55041edb42a4ab8cd176fd53785fba",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Alias replacement in AnnotationsPath collections",
+        "references": []
+      },
+      {
+        "id": "3424032a330106a68d9aef59068da39c636a6aae",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Multiple parameters in dynamic expressions added",
+        "references": []
+      },
+      {
+        "id": "d69dcdc22c07cbe6452d4d3ed16080b39a0e49d0",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "SorterProcesser: Order with undefined values fixed",
+        "references": []
+      },
+      {
+        "id": "e414db8a85f8d2893d15509583eeb14bda157591",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable/ODataTreeBinding:  Respect Application Filter corrected",
+        "references": []
+      },
+      {
+        "id": "5e0201cd9630790b9dca188244b11e0af5a06760",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLTemplateProcessor: Assert for unknown setting added",
+        "references": []
+      },
+      {
+        "id": "f8d5997ee056b3c7d4dca7604ba80f6de66aa364",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after open fixed",
+        "references": []
+      },
+      {
+        "id": "68e1193dc72536c6d9b7a2b163a3305f4662c5d5",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "odata4analytics.js: Property-Name used for DimensionAttribute",
+        "references": []
+      },
+      {
+        "id": "e5c13642969fe6d57a1fb3b0ec27a098b5c2adb4",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: Browser history checked earlier",
+        "references": []
+      },
+      {
+        "id": "4e78a3de28ada1afaadf142bc131a8993420db5c",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Either success or error handler must be called",
+        "references": []
+      },
+      {
+        "id": "1c43c3843ead0f683a632819c2bff25fbfdefd74",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Autorefresh with GET parameters fixed",
+        "references": []
+      },
+      {
+        "id": "da13effd123c95e60ae2f3da0c71d8ec4ac88934",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Added eTag if data is refresehed",
+        "references": []
+      }
+    ]
   }
 }
