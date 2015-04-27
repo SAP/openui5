@@ -51,8 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		}
 
 		if (sValueState !== sap.ui.core.ValueState.None) {
-			oRm.addClass("sapMInputBaseState");
-			oRm.addClass("sapMInputBase" + sValueState);
+			this.addValueStateClasses(oRm, oControl);
 		}
 
 		oRm.writeClasses();
@@ -411,6 +410,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.addPlaceholderStyles = function(oRm, oControl) {};
+
+	/**
+	 * Add the CSS value state classes to the control's root element using the provided {@link sap.ui.core.RenderManager}.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addValueStateClasses = function(oRm, oControl) {
+		oRm.addClass("sapMInputBaseState");
+		oRm.addClass("sapMInputBase" + oControl.getValueState());
+	};
 
 	return InputBaseRenderer;
 
