@@ -278,12 +278,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					this._parent.oPopup.setModal(true);
 					//doesn't need to react on content change because content is always 100%
 					this._parent._registerResizeHandler = this._parent._deregisterResizeHandler = function() {};
-					this._parent._setDimensions = function(){
+					this._parent._setDimensions = function() {
+						sap.m.Dialog.prototype._setDimensions.apply(this);
 						var $this = this.$(),
 							$content = this.$("cont");
 						//CSS reset
 						$this.css({
 							"width": "100%",
+							"max-width": "",
 							"max-height": "100%",
 							"left": "0px",
 							"right": "",
