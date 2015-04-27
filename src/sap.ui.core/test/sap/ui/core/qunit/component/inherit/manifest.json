@@ -3,7 +3,7 @@
 	"name": "sap.ui.test.inherit.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.inherit.Component",
+		"id": "sap.ui.test.inherit",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}

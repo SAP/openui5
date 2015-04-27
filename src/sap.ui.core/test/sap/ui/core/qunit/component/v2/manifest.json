@@ -3,7 +3,7 @@
 	"name": "sap.ui.test.v2.Component",
 	
 	"sap.app": {
-		"id": "sap.ui.test.v2.Component",
+		"id": "sap.ui.test.v2",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}

@@ -10,7 +10,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 			"name": "sap.ui.test.v2inline.Component",
 			
 			"sap.app": {
-				"id": "sap.ui.test.v2inline.Component",
+				"id": "sap.ui.test.v2inline",
 				"applicationVersion": {
 					"version": "1.0.0"
 				}
