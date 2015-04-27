@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", strictParsing: true});
 
-			if (sap.ui.Device.browser.mobile) {
+			if (!sap.ui.Device.system.desktop) {
 				this._bMobile = true;
 				this._oFormatMobile = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", strictParsing: true});
 			}
