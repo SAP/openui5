@@ -205,5 +205,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3e37f255acaab810948c651a5e4ab2d4427248c0",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Fileuploader is now vertically aligned with the other sap.m controls",
+        "references": []
+      }
+    ]
   }
 }

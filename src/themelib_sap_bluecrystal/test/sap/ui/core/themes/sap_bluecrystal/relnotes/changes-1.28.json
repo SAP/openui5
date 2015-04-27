@@ -487,5 +487,52 @@
         "references": []
       }
     ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "fd43cf91366d9b09346ff2b1ca20a73c6cc01690",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Cozy mode added",
+        "references": []
+      },
+      {
+        "id": "d141237a6e56f0ab6852622e652f28ac82b49298",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Long text over picker icon in Internet Explorer 9 and 10 corrected",
+        "references": []
+      },
+      {
+        "id": "9d1346510536d922173458b6ea377abfe1552cc9",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: ValueHelp icon size in compact mode changed",
+        "references": []
+      },
+      {
+        "id": "722f67418d309668ee6294b1395cdcae66297d6c",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Font size in tables aligned with design spec",
+        "references": []
+      },
+      {
+        "id": "f8c6cc7fe5a3d15e5b40595c90297fbb746fc1b5",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Arrow color corrected when NavContainer has a header",
+        "references": []
+      },
+      {
+        "id": "f70be3f80172a5c42347b36634a034929cac1e09",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: RadioButton in compact mode corrected",
+        "references": []
+      }
+    ]
   }
 }
