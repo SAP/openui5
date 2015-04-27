@@ -1,8 +1,6 @@
 <mvc:View
 	controllerName="sap.ui.demo.worklist.controller.Worklist"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
-	xmlns:footerbar="sap.ushell.ui.footerbar"
 	xmlns="sap.m">
 	<Page
 		id="page"
@@ -47,11 +45,11 @@
 							<ObjectIdentifier
 								title="{Name}"/>
 							<ObjectNumber
-									number="{
-										path: 'UnitNumber',
-										formatter: '.formatter.numberUnit'
-									}"
-									unit="{UnitOfMeasure}"/>
+								number="{
+									path: 'UnitNumber',
+									formatter: '.formatter.numberUnit'
+								}"
+								unit="{UnitOfMeasure}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
@@ -78,9 +76,6 @@
 						</ActionSheet>
 					</dependents>
 				</Button>
-				<dependents>
-
-				</dependents>
 			</Toolbar>
 		</footer>
 	</Page>
