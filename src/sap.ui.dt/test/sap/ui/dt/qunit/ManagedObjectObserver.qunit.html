@@ -54,9 +54,9 @@
 				}
 			});
 
-			test("when the property of the ManagedObject is changed", 1, function() {
-				this.oManagedObjectObserver.attachChanged(function(oEvent) {
-					ok(oEvent, 'then a "Changed" event is fired');
+			test("when the property of the ManagedObject is modified", 1, function() {
+				this.oManagedObjectObserver.attachModified(function(oEvent) {
+					ok(oEvent, 'then a "Modified" event is fired');
 				});
 				this.oManagedObject.setMyProperty(true);
 			});

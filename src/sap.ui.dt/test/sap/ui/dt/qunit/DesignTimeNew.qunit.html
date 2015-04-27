@@ -30,8 +30,7 @@
 
 		jQuery.sap.require("sap.ui.dt.Overlay");
 			jQuery.sap.require("sap.ui.dt.DesignTimeNew");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
+			jQuery.sap.require("sap.ui.dt.DragManagerNew");
 
 			module("Given that an DesignTimeNew is created for a root control", {
 				setup : function() {
@@ -44,31 +43,36 @@
 			});
 
 			test("when the DesignTimeNew is initialized ", function() {
-				ok(OverlayRegistry.getOverlay(this.oLayout.getId()), "overlay for layout exists");
-				ok(OverlayRegistry.getOverlay(this.oButton1.getId()), "overlay for button1 exists");
-				ok(OverlayRegistry.getOverlay(this.oButton2.getId()), "overlay for button2 exists");
+				var aOverlays = this.oDesignTime.getOverlays();
+
+				strictEqual(aOverlays.length, 4, "Overlays for 4 elements created");
+
+				ok(isOverlayForElementInDesignTime(this.oLayout, this.oDesignTime), "overlay for layout exists");
+				ok(isOverlayForElementInDesignTime(this.oInnerLayout, this.oDesignTime), "overlay for inner layout exists");
+				ok(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), "overlay for button1 exists");
+				ok(isOverlayForElementInDesignTime(this.oButton2, this.oDesignTime), "overlay for button2 exists");
 			});
 
 			test("... and new control without overlay is added to a root control aggregation", function() {
 				var oButton3 = new sap.m.Button();
 				this.oLayout.addContent(oButton3);
 
-				ok(OverlayRegistry.getOverlay(oButton3.getId()), "overlay for button3 exists");
+				ok(isOverlayForElementInDesignTime(oButton3, this.oDesignTime), "overlay for button3 exists");
 
 				oButton3.destroy();
 			});
 
 			test("... and the control is moved inside of root element", function() {
-				var oOldButtonOverlay = OverlayRegistry.getOverlay(this.oButton1.getId());
+				var oOldButtonOverlay = isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime);
 				this.oLayout.addContent(this.oButton1);
-				oNewButtonOverlay = OverlayRegistry.getOverlay(this.oButton1.getId());
+				oNewButtonOverlay = isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime);
 				strictEqual(oOldButtonOverlay, oNewButtonOverlay, "overlay for button1 is not changed");
 			});
 
 			test("... and the control is removed from root element", function() {
 				this.oInnerLayout.removeContent(this.oButton1);
 
-				strictEqual(OverlayRegistry.getOverlay(this.oButton1.getId()), undefined, "no overlay for button1");
+				strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "no overlay for button1");
 			});
 
 			module("Given that an DesignTimeNew is created for a root control", {
@@ -82,9 +86,9 @@
 
 			test("when the DesignTimeNew is destroyed", function() {
 				this.oDesignTime.destroy();
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout.getId()), undefined, "overlay for layout destroyed");
-				strictEqual(OverlayRegistry.getOverlay(this.oButton1.getId()), undefined, "overlay for button1 destroyed");
-				strictEqual(OverlayRegistry.getOverlay(this.oButton2.getId()), undefined, "overlay for button2 destroyed");
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout, this.oDesignTime), false, "overlay for layout destroyed");
+				strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "overlay for button1 destroyed");
+				strictEqual(isOverlayForElementInDesignTime(this.oButton2, this.oDesignTime), false, "overlay for button2 destroyed");
 			});
 
 			module("Given that an DesignTimeNew is created for two root controls", {
@@ -116,24 +120,44 @@
 			});
 
 			test("when the DesignTimeNew is initialized", function() {
-				ok(OverlayRegistry.getOverlay(this.oLayout1.getId()), "overlay for layout1 exists");
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout2.getId()), undefined, "overlay for layout2 not exists");
-				ok(OverlayRegistry.getOverlay(this.oLayout3.getId()), "overlay for layout3 exists");
+				ok(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), "overlay for layout1 exists");
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 not exists");
+				ok(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), "overlay for layout3 exists");
 			});
 
 			test("when the DesignTimeNew is initialized and one root element is removed", function() {
 				this.oDesignTime.removeRootElement(this.oLayout3);
-				ok(OverlayRegistry.getOverlay(this.oLayout1.getId()), "overlay for layout1 exists");
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout2.getId()), undefined, "overlay for layout2 doesn't exists");
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout3.getId()), undefined, "overlay for layout3 doesn't exists");
+				ok(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), "overlay for layout1 exists");
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exists");
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), false, "overlay for layout3 doesn't exists");
 			});
 
 			test("when the DesignTimeNew is initialized and one root element is removed", function() {
-				this.oDesignTime.removeAllRootElements();
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout1.getId()), undefined, "overlay for layout1 doesn't exists");
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout2.getId()), undefined, "overlay for layout2 doesn't exists");
-				strictEqual(OverlayRegistry.getOverlay(this.oLayout3.getId()), undefined, "overlay for layout3 doesn't exists");
+				this.oDesignTime.removeAllRootElement();
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout1, this.oDesignTime), false, "overlay for layout1 doesn't exists");
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout2, this.oDesignTime), false, "overlay for layout2 doesn't exists");
+				strictEqual(isOverlayForElementInDesignTime(this.oLayout3, this.oDesignTime), false, "overlay for layout3 doesn't exists");
 			});
+
+			module("Given that an DesignTimeNew is created with a drag manager", {
+				setup : function() {
+					this.oDragManager = new sap.ui.dt.DragManagerNew();
+					this.oDesignTime = new sap.ui.dt.DesignTimeNew({
+						managers : [this.oDragManager]
+					});
+				},
+				teardown : function() {
+					this.oDragManager.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			test("...", function() {
+				strictEqual(this.oDesignTime.getManagers().length, 1, "one manager is set");
+				strictEqual(this.oDesignTime.getManagers()[0], this.oDragManager, "manager is drag manager");
+			});
+
+			// TODO test all api methods!
 
 			var setupTest = function() {
 				this.oButton1 = new sap.m.Button();
@@ -154,6 +178,20 @@
 				});
 				sap.ui.getCore().applyChanges();
 			};		
+
+			var isOverlayForElementInDesignTime = function(oElement, oDesignTime) {
+				var bResult = false;
+
+				var aOverlays = oDesignTime.getOverlays();
+				var aFoundOverlay = jQuery.each(aOverlays, function(iIndex, oOverlay) {
+					if (oOverlay.getElementInstance() === oElement) {
+						bResult = true;
+						return false;
+					}
+				});
+
+				return bResult;
+			};
 
 		</script>
 	</head>

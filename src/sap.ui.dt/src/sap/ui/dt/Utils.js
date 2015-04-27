@@ -299,8 +299,7 @@ function(jQuery) {
 		if (oExpectedLayoutData) {
 			return getHiddenLayoutData(oControl)[oExpectedLayoutData.getMetadata().getName()];
 		}
-	}
-		
+	}		
 
 	return Utils;
 }, /* bExport= */ true);

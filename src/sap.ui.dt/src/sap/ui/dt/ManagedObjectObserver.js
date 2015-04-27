@@ -28,7 +28,7 @@ function(jQuery, ManagedObject) {
 	 * @public
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be modified in future.
 	 */
 	var ManagedObjectObserver = ManagedObject.extend("sap.ui.dt.ManagedObjectObserver", /** @lends sap.ui.dt.ManagedObjectObserver.prototype */ {
 		metadata : {
@@ -46,7 +46,7 @@ function(jQuery, ManagedObject) {
 				}
 			},
 			events : {
-				"changed" : {
+				"modified" : {
 					parameters : {
 						type : "string",
 						value : "any",
@@ -54,8 +54,7 @@ function(jQuery, ManagedObject) {
 						target : "sap.ui.core.Element"
 					}
 				},
-				"destroyed" : {},
-				"parentChanged" : {}
+				"destroyed" : {}
 			}
 		}
 	});
@@ -104,7 +103,7 @@ function(jQuery, ManagedObject) {
 	ManagedObjectObserver.prototype.observe = function(oTarget) {
 		var that = this;
 
-		oTarget.attachEvent("_change", this.fireChanged, this);
+		oTarget.attachEvent("_change", this.fireModified, this);
 
 		// Wrapper for the destroy method to recognize changes
 		var fnOriginalDestroy = this._fnOriginalDestroy = oTarget.destroy;
@@ -122,45 +121,45 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalBindProperty = oTarget.bindProperty;
 		oTarget.bindProperty = function() {
 			that._fnOriginalBindProperty.apply(this, arguments);
-			that.fireChanged();
+			that.fireModified();
 		};
 
 		// Wrapper for the unbindProperty method to recognize changes
 		this._fnOriginalUnBindProperty = oTarget.unbindProperty;
 		oTarget.unbindProperty = function() {
 			that._fnOriginalUnBindProperty.apply(this, arguments);
-			that.fireChanged();
+			that.fireModified();
 		};
 
 		// Wrapper for the bindAggregation method to recognize changes
 		this._fnOriginalBindAggregation = oTarget.bindAggregation;
 		oTarget.bindAggregation = function(sAggregationName) {
 			that._fnOriginalBindAggregation.apply(this, arguments);
-			that.fireChanged();
+			that.fireModified();
 		};
 
 		// Wrapper for the unbindAggregation method to recognize changes
 		this._fnOriginalUnBindAggregation = oTarget.unbindAggregation;
 		oTarget.unbindAggregation = function(sAggregationName) {
 			that._fnOriginalUnBindAggregation.apply(this, arguments);
-			that.fireChanged();
+			that.fireModified();
 		};
 
 		// We wrap the native setParent method of the control with our logic
 		this._fnOriginalSetParent = oTarget.setParent;
 		oTarget.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
-			var bFireChanged = false;
+			var bFireModified = false;
 			if (!this._bInSetParent) {
-				bFireChanged = true;
+				bFireModified = true;
 				this._bInSetParent = true;
 			}
 
 			var oCurrentParent = this.getParent();
 			that._fnOriginalSetParent.apply(this, arguments);
-			if (bFireChanged) {
+			if (bFireModified) {
 				this._bInSetParent = false;
 				if (oCurrentParent !== oParent) {
-					that.fireChanged({
+					that.fireModified({
 						type : "setParent",
 						value : oParent,
 						oldValue : oCurrentParent,
@@ -176,7 +175,7 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalAddAggregation = oTarget.addAggregation;
 		oTarget.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			that._fnOriginalAddAggregation.apply(this, arguments);
-			that.fireChanged({
+			that.fireModified({
 				type : "addAggregation",
 				value : oObject,
 				target : this
@@ -188,7 +187,7 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalRemoveAggregation = oTarget.removeAggregation;
 		oTarget.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
 			that._fnOriginalRemoveAggregation.apply(this, arguments);
-			that.fireChanged({
+			that.fireModified({
 				type : "removeAggregation",
 				value : vObject,
 				target : this
@@ -200,7 +199,7 @@ function(jQuery, ManagedObject) {
 		this._fnOriginalInsertAggregation = oTarget.insertAggregation;
 		oTarget.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 			that._fnOriginalInsertAggregation.apply(this, arguments);
-			that.fireChanged({
+			that.fireModified({
 				type : "insertAggregation",
 				value : oObject,
 				target : this
@@ -213,7 +212,7 @@ function(jQuery, ManagedObject) {
 		oTarget.removeAllAggregations = function(sAggregationName, bSuppressInvalidate) {
 			var aRemovedObjects = this.getAggregation(sAggregationName);
 			that._fnOriginalRemoveAllAggregations.apply(this, arguments);
-			that.fireChanged({
+			that.fireModified({
 				type : "removeAllAggregations",
 				value : aRemovedObjects,
 				target : this
@@ -226,7 +225,7 @@ function(jQuery, ManagedObject) {
 		oTarget.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 			var aRemovedObjects = this.getAggregation(sAggregationName);
 			that._fnOriginalDestroyAggregation.apply(this, arguments);
-			that.fireChanged({
+			that.fireModified({
 				type : "destroyAggregation",
 				value : aRemovedObjects,
 				target : this
@@ -267,7 +266,7 @@ function(jQuery, ManagedObject) {
 		oTarget.destroyAggregation = this._fnOriginalDestroyAggregation;
 		delete this._fnOriginalDestroyAggregation;
 
-		oTarget.detachEvent("_change", this.fireChanged, this);
+		oTarget.detachEvent("_change", this.fireModified, this);
 	};
 
 

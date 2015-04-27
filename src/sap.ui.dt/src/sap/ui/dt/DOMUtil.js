@@ -96,7 +96,7 @@ function(jQuery, Utils) {
 			}
 		});
 
-		if (minLeft) {
+		if (typeof minLeft === "number") {
 			return {
 				size : {
 					width : maxRight - minLeft,

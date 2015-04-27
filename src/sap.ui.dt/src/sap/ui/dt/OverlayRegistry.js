@@ -44,6 +44,10 @@ function(Element) {
 		delete mOverlays[sId];
 	};
 
+	OverlayRegistry.hasOverlays = function() {
+		return !jQuery.isEmptyObject(mOverlays);
+	};
+
 	function getElementId (vElementOrId) {
 		return (vElementOrId instanceof Element) ? vElementOrId.getId() : vElementOrId;
 	}

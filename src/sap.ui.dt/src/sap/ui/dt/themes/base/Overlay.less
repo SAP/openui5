@@ -1,7 +1,6 @@
 .sapUiDtOverlay {
 	position : absolute;
-	background:green;
-	opacity : 0.3;
+	box-shadow: inset 0 0 1px green;
 }
 
 #sap-ui-static > .sapUiDtOverlay {
@@ -9,5 +8,9 @@
 }
 
 .sapUiDtOverlaySelected {
-	border : 1px solid blue;
+	box-shadow: inset 0 0 2px blue;
+}
+
+.sapUiDtOverlay[draggable="true"] {
+	cursor: move;
 }

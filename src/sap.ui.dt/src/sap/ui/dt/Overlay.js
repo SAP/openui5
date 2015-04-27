@@ -19,6 +19,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 
 	var sOverlayContainerId = "overlay-container";
 	var oOverlayContainer;
+
 	/**
 	 * Constructor for a new Overlay.
 	 *
@@ -55,6 +56,10 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 					type : "boolean",
 					defaultValue : true
 				},
+				draggable : {
+					type : "boolean",
+					defaultValue : true
+				},
 				offset : {
 					type : "object"
 				}
@@ -83,23 +88,90 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 						}
 					}
 				},
-				elementDataChanged : {
+				elementModified : {
 					parameters : {
 						type : "string",
 						value : "any",
 						oldValue : "any",
 						target : "sap.ui.core.Element"
 					}
+				},
+				// dom events
+				dragStart : {
+					parameters : {}
+				},
+				dragStop : {
+					parameters : {}
+				},
+				drag : {
+					parameters : {}
+				},
+				dragEnter : {
+					parameters : {}
+				},
+				// aggregation events propagation
+				aggregationDragEnter : {
+					parameters : {
+						"aggregationName" : "string"						
+					}
+				},
+				aggregationDragOver : {
+					parameters : {
+						"aggregationName" : "string"
+					}
+				},
+				aggregationDragLeave : {
+					parameters : {
+						"aggregationName" : "string"
+					}
+				},
+				aggregationDrop : {
+					parameters : {
+						"aggregationName" : "string"
+					}
 				}
 			}
 		}
 	});
 
+	/** 
+	 * @static
+	*/
+	Overlay.getOverlayContainer = function() {
+		if (!oOverlayContainer) {
+			oOverlayContainer = jQuery("#" + sOverlayContainerId);
+			if (!oOverlayContainer.length) {
+				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").appendTo("body");
+			}
+		}
+
+		return oOverlayContainer.get(0);
+	};
+
+	/** 
+	 * @static
+	 */
+	Overlay.removeOverlayContainer = function() {
+		if (oOverlayContainer) {
+			oOverlayContainer.remove();
+		}
+
+		oOverlayContainer = null;
+	};
+
+	/** 
+	 * @private
+	 */
 	Overlay.prototype.init = function() {
 		this._oDefaultDesignTimeMetadata = null;
 		this._addToOverlayContainer();	
+
+		this.attachBrowserEvent("dragenter", this._onDragEnter, this);
 	};
 
+	/** 
+	 * @private
+	 */
 	Overlay.prototype.exit = function() {
 		this._destroyDefaultDesignTimeMetadata();
 
@@ -114,29 +186,18 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 			OverlayRegistry.deregister(this._elementId);
 		}
 
+		if (!OverlayRegistry.hasOverlays()) {
+			Overlay.removeOverlayContainer();
+		}
+
 		delete this._elementId;
 	};
 
-	Overlay.prototype._createAggregationOverlays = function() {
-		var oElement = this.getElementInstance();
-
-		if (oElement) {
-			var that = this;
-			Utils.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
-				var sAggregationName = oAggregation.name;
-				
-				var oAggregationOverlay = new AggregationOverlay({
-					aggregationName : sAggregationName
-				});
-
-				that._syncAggregationOverlay(oAggregationOverlay);
-
-				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
-
-			}, null, Utils.getAggregationFilter());
-		}
-	};
-
+	/** 
+	 * @public
+	 * @param {String|sap.ui.core.Element} element or element's id
+	 * @returns {sap.ui.dt.Overlay} returns itself
+	 */
 	Overlay.prototype.setElement = function(vElement) {
 
 		var oOldElement = this.getElementInstance();
@@ -176,12 +237,122 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		return this;
 	};
 
-	Overlay.prototype.onclick = function(oEvent) {
-		oEvent.stopPropagation();
-		oEvent.preventDefault();
-		this.setSelected(!this.getSelected());
+
+	/** 
+	 * @private
+	 */
+	Overlay.prototype._createAggregationOverlays = function() {
+		var oElement = this.getElementInstance();
+
+		if (oElement) {
+			var that = this;
+			Utils.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
+				var sAggregationName = oAggregation.name;
+				
+				var oAggregationOverlay = new AggregationOverlay({
+					aggregationName : sAggregationName
+				});
+
+				that._syncAggregationOverlay(oAggregationOverlay);
+
+				that._attachAggregationOverlayEvents(oAggregationOverlay);
+
+				that.addAggregation("_aggregationOverlays", oAggregationOverlay);
+
+			}, null, Utils.getAggregationFilter());
+		}
 	};
 
+	/** 
+	 * @private
+	 * @param {sap.ui.dt.AggregationOverlay}
+	 */
+	Overlay.prototype._attachAggregationOverlayEvents = function(oAggregationOverlay) {
+		oAggregationOverlay.attachEvent("dragEnter", this._onAggregationOverlayDragEvent, this);
+		oAggregationOverlay.attachEvent("dragLeave", this._onAggregationOverlayDragEvent, this);
+		oAggregationOverlay.attachEvent("dragOver", this._onAggregationOverlayDragEvent, this);
+		oAggregationOverlay.attachEvent("drop", this._onAggregationOverlayDragEvent, this);
+	};
+
+	/**
+	 * @protected
+	 */
+	Overlay.prototype.onAfterRendering = function() {
+		if (this.isDraggable()) {
+			this._enableDraggable();
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._enableDraggable = function() {
+		this.$().attr("draggable", true);
+	};
+
+	/**
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	Overlay.prototype.ondragstart = function(oEvent) {
+		this.fireDragStart(oEvent);
+
+		oEvent.stopPropagation();
+	};
+
+	/**
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	Overlay.prototype.ondrag = function(oEvent) {
+		this.fireDrag(oEvent);
+
+		oEvent.stopPropagation();
+	};
+
+	/**
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	Overlay.prototype.ondragstop = function(oEvent) {
+		this.fireDragStop(oEvent);
+
+		oEvent.stopPropagation();
+	};
+
+	/** 
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	Overlay.prototype._onDragEnter = function(oEvent) {
+		this.fireDragEnter();
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+		return false;
+	};
+
+	Overlay.prototype._onAggregationOverlayDragEvent = function(oEvent) {
+		var sEventType = oEvent.getId();
+
+		this["fireAggregation" + jQuery.sap.charToUpperCase(sEventType, 0)](oEvent.getParameters());
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.setSelectable = function(bSelectable) {
+		if (!bSelectable) {
+			this.setSelected(false);
+		}
+
+		this.setProperty("selectable", bSelectable);
+
+		return this;
+	};
+	/**
+	 * @public
+	 */
 	Overlay.prototype.setSelected = function(bSelected) {
 		if (this.isSelectable() && bSelected !== this.isSelected()) {
 			this.setProperty("selected", bSelected);
@@ -194,15 +365,9 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		return this;
 	};
 
-	Overlay.prototype.isSelected = function() {
-		return this.getSelected();
-	};
-
-
-	Overlay.prototype.isSelectable = function() {
-		return this.getSelectable();
-	};
-
+	/**
+	 * @public
+	 */
 	Overlay.prototype.getDesignTimeMetadata = function() {
 		var oDesignTimeMetdata = this.getAggregation("designTimeMetadata");
 		if (!oDesignTimeMetdata && !this._oDefaultDesignTimeMetadata) {
@@ -214,6 +379,9 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	};
 
 
+	/**
+	 * @private
+	 */
 	Overlay.prototype._destroyDefaultDesignTimeMetadata = function() {
 		if (this._oDefaultDesignTimeMetadata) {
 			this._oDefaultDesignTimeMetadata.destroy();
@@ -238,7 +406,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 		this._oControlObserver = new ControlObserver({
 			target : oControl
 		});
-		this._oControlObserver.attachChanged(this._onElementChanged, this);
+		this._oControlObserver.attachModified(this._onElementModified, this);
 		this._oControlObserver.attachAfterRendering(this._onElementRendered, this);
 		this._oControlObserver.attachDestroyed(this._onElementDestroyed, this);
 	};
@@ -255,20 +423,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	 * @private
 	 */
 	Overlay.prototype._addToOverlayContainer = function() {
-		this.ensureOverlayContainer();
-		this.placeAt(sOverlayContainerId);
-	};
-
-	/**
-	 * @private
-	 */
-	Overlay.prototype.ensureOverlayContainer = function() {
-		if (!oOverlayContainer) {
-			oOverlayContainer = jQuery("#" + sOverlayContainerId);
-			if (!oOverlayContainer.length) {
-				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").appendTo("body");
-			}
-		}
+		this.placeAt(Overlay.getOverlayContainer());
 	};
 
 	/**
@@ -287,7 +442,7 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	};
 
 	/**
-	 * @private
+	 * @public
 	 */
 	Overlay.prototype.sync = function() {
 		var that = this;
@@ -300,10 +455,10 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	/**
 	 * @private
 	 */
-	Overlay.prototype._onElementChanged = function(oEvent) {
+	Overlay.prototype._onElementModified = function(oEvent) {
 		this.sync();
 		this.invalidate();
-		this.fireElementDataChanged(oEvent.getParameters());
+		this.fireElementModified(oEvent.getParameters());
 	};
 
 	/**
@@ -325,6 +480,57 @@ function(jQuery, Control, ControlObserver, DesignTimeMetadata, AggregationOverla
 	 */
 	Overlay.prototype.getElementInstance = function() {
 		return sap.ui.getCore().byId(this.getElement());
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.getAggregationOverlays = function() {
+		return this.getAggregation("_aggregationOverlays");
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.isSelected = function() {
+		return this.getSelected();
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.isSelectable = function() {
+		return this.getSelectable();
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.isDraggable = function() {
+		return this.getDraggable();
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.getPublicParentAggregationName = function() {
+		var oParentAggregationOverlay = this.getParent();
+		if (oParentAggregationOverlay) { 
+			return oParentAggregationOverlay.getAggregationName();
+		}
+	};
+
+	/**
+	 * @public
+	 */
+	Overlay.prototype.getPublicParent = function() {
+		var oParentAggregationOverlay = this.getParent();
+		if (oParentAggregationOverlay) { 
+			var oPublicParentOverlay = oParentAggregationOverlay.getParent();
+			if (oPublicParentOverlay) {
+				return oPublicParentOverlay.getElementInstance();
+			}
+		}
 	};
 
 	return Overlay;

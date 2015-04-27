@@ -46,6 +46,10 @@ function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
 				},
 				offset : {
 					type : "object"
+				},
+				droppable : {
+					type : "boolean",
+					defaultValue : false
 				}
 			}, 
 			aggregations : {
@@ -53,15 +57,51 @@ function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
 					type : "sap.ui.dt.Overlay",
 					multiple : true
 				}
+			},
+			events : {
+				dragEnter : {
+					parameters : {
+						"aggregationName" : "string"
+					}
+				},
+				dragLeave: {
+					parameters : {
+						"aggregationName" : "string"
+					}
+				},
+				dragOver : {
+					parameters : {
+						"aggregationName" : "string"
+					}
+				},
+				drop : {
+					parameters : {
+						"aggregationName" : "string"
+					}
+				}
 			}
 		}
 	});
 
+	/** 
+	 * @protected
+	 */
 	AggregationOverlay.prototype.init = function() {
 		this._mGeometry = null;
 	};
 
+	/** 
+	 * @protected
+	 */
+	AggregationOverlay.prototype.exit = function() {
+		this.removeAllChildren();
+		this._mGeometry = null;
+		this.setOffset(null);
+	};
 
+	/** 
+	 * @public
+	 */
 	AggregationOverlay.prototype.getGeometry = function() {
 		if (this._mGeometry) {
 			return this._mGeometry;
@@ -91,26 +131,120 @@ function(jQuery, Control, DOMUtil, Utils, OverlayRegistry) {
 		return this._mGeometry;
 	};
 
+	/** 
+	 * @protected
+	 */
 	AggregationOverlay.prototype.onBeforeRendering = function() {
 		this._mGeometry = null;
 	};
 
+	/** 
+	 * @protected
+	 */
 	AggregationOverlay.prototype.onAfterRendering = function() {
+		this._attachScrollHandler();
+	};
+
+	/** 
+	 * @private
+	 */
+	AggregationOverlay.prototype._attachScrollHandler = function() {
 		var oAggregationDomRef = this.getGeometry().domRef;
 		if (oAggregationDomRef) {
 			var $this = this.$();
-			$this[0].addEventListener("scroll", function(oEvent) {
+			$this.get(0).addEventListener("scroll", function(oEvent) {
 				jQuery(oAggregationDomRef).scrollTop($this.scrollTop());
 				jQuery(oAggregationDomRef).scrollLeft($this.scrollLeft());
 			}, true);
 		}
 	};
 
+	/** 
+	 * @public
+	 */
+	AggregationOverlay.prototype.setDroppable = function(bDroppable) {
+		if (this.getDroppable() !== bDroppable) {
+			if (bDroppable) {
+				this._enableDroppable();
+			} else {
+				this._disableDroppable();
+			}
+			this.setProperty("droppable", bDroppable);
+		}
+	};	
 
-	AggregationOverlay.prototype.exit = function() {
-		this.removeAllChildren();
-		this._mGeometry = null;
-		this.setOffset(null);
+	/** 
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	AggregationOverlay.prototype._onDragEnter = function(oEvent) {
+		this.fireDragEnter({aggregationName : this.getAggregationName()});
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+		return false;
+	};
+
+	/** 
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	AggregationOverlay.prototype._onDragLeave = function(oEvent) {
+		this.fireDragLeave({aggregationName : this.getAggregationName()});
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+		return false;
+	};
+	
+	/** 
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	AggregationOverlay.prototype._onDragOver = function(oEvent) {
+		this.fireDragOver({aggregationName : this.getAggregationName()});
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+		return false;
+	};
+
+	/** 
+	 * @private
+	 * @param {jQuery.Event} The event object
+	 */
+	AggregationOverlay.prototype._onDrop = function(oEvent) {
+		this.fireDrop({aggregationName : this.getAggregationName()});
+
+		oEvent.stopPropagation();
+		return false;
+	};
+
+	/** 
+	 * @private
+	 */
+	AggregationOverlay.prototype._enableDroppable = function() {
+		this.attachBrowserEvent("dragenter", this._onDragEnter, this);
+		this.attachBrowserEvent("dragleave", this._onDragLeave, this);
+		this.attachBrowserEvent("dragover", this._onDragOver, this);
+		this.attachBrowserEvent("drop", this._onDrop, this);
+	};
+
+	/** 
+	 * @private
+	 */
+	AggregationOverlay.prototype._disableDroppable = function() {
+		this.detachBrowserEvent("dragenter", this._onDragEnter, this);
+		this.detachBrowserEvent("dragleave", this._onDragLeave, this);
+		this.detachBrowserEvent("dragover", this._onDragOver, this);
+		this.detachBrowserEvent("drop", this._onDrop, this);
+	};
+
+	/** 
+	 * @public
+	 */
+	AggregationOverlay.prototype.isDroppable = function() {
+		return this.getDroppable();
 	};
 
 	return AggregationOverlay;

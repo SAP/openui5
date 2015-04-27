@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>DesignTimeNew - sap.ui.dt</title>
+
+		<style>
+			html, body, #content {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;	
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				data-sap-ui-resourceroots='{"dt.view": "qunit/testdata/designtime/"}'
+				>
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.dt.DesignTimeNew");
+			jQuery.sap.require("sap.ui.dt.DragManagerNew");
+			jQuery.sap.require("sap.ui.dt.SelectionManager");
+			var oView = sap.ui.xmlview("testView", "dt.view.Test2");
+			oView.placeAt("content");
+
+
+			jQuery(function() {
+				var oDragManager = new sap.ui.dt.DragManagerNew();
+				var oSelectionManager = new sap.ui.dt.SelectionManager();
+				var oDesignTime = new sap.ui.dt.DesignTimeNew({
+					rootElements : [oView],
+					managers : [
+						oDragManager,
+						oSelectionManager
+					]
+				});
+			});
+
+
+			
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>
