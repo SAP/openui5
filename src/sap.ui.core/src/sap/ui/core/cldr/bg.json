@@ -1422,7 +1422,19 @@
 		"dayPeriods-standAlone-wide": [
 			"пр.об.",
 			"сл.об."
-		]
+		],
+		"era-wide": {
+			"0": "преди Христа",
+			"1": "след Христа"
+		},
+		"era-abbreviated": {
+			"0": "пр.Хр.",
+			"1": "сл.Хр."
+		},
+		"era-narrow": {
+			"0": "пр.Хр.",
+			"1": "сл.н.е."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d MMMM y 'г'. G",
@@ -1710,7 +1722,16 @@
 		"dayPeriods-standAlone-wide": [
 			"пр.об.",
 			"сл.об."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d MMMM y 'г'. G",
@@ -1998,7 +2019,16 @@
 		"dayPeriods-standAlone-wide": [
 			"пр.об.",
 			"сл.об."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "година",
 	"dateField-year-relative--1": "миналата година",

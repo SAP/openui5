@@ -1410,7 +1410,19 @@
 		"dayPeriods-standAlone-wide": [
 			"de.",
 			"du."
-		]
+		],
+		"era-wide": {
+			"0": "időszámításunk előtt",
+			"1": "időszámításunk szerint"
+		},
+		"era-abbreviated": {
+			"0": "i. e.",
+			"1": "i. sz."
+		},
+		"era-narrow": {
+			"0": "ie.",
+			"1": "isz."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "G y. MMMM d., EEEE",
@@ -1687,7 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"de.",
 			"du."
-		]
+		],
+		"era-wide": {
+			"0": "MF"
+		},
+		"era-abbreviated": {
+			"0": "MF"
+		},
+		"era-narrow": {
+			"0": "MF"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "G y. MMMM d., EEEE",
@@ -1964,7 +1985,16 @@
 		"dayPeriods-standAlone-wide": [
 			"de.",
 			"du."
-		]
+		],
+		"era-wide": {
+			"0": "MF"
+		},
+		"era-abbreviated": {
+			"0": "MF"
+		},
+		"era-narrow": {
+			"0": "MF"
+		}
 	},
 	"dateField-year-displayName": "év",
 	"dateField-year-relative--1": "előző év",

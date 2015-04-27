@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"π.μ.",
 			"μ.μ."
-		]
+		],
+		"era-wide": {
+			"0": "προ Χριστού",
+			"1": "μετά Χριστόν"
+		},
+		"era-abbreviated": {
+			"0": "π.Χ.",
+			"1": "μ.Χ."
+		},
+		"era-narrow": {
+			"0": "π.Χ.",
+			"1": "μ.Χ."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d MMMM y G",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"π.μ.",
 			"μ.μ."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d MMMM y G",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"π.μ.",
 			"μ.μ."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Έτος",
 	"dateField-year-relative--1": "προηγούμενο έτος",

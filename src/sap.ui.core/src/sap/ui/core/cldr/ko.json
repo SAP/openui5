@@ -1414,7 +1414,19 @@
 		"dayPeriods-standAlone-wide": [
 			"오전",
 			"오후"
-		]
+		],
+		"era-wide": {
+			"0": "기원전",
+			"1": "서기"
+		},
+		"era-abbreviated": {
+			"0": "기원전",
+			"1": "서기"
+		},
+		"era-narrow": {
+			"0": "기원전",
+			"1": "서기"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "G y년 M월 d일 EEEE",
@@ -1697,7 +1709,16 @@
 		"dayPeriods-standAlone-wide": [
 			"오전",
 			"오후"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "G y년 M월 d일 EEEE",
@@ -1980,7 +2001,16 @@
 		"dayPeriods-standAlone-wide": [
 			"오전",
 			"오후"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "년",
 	"dateField-year-relative--1": "작년",

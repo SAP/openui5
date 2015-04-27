@@ -1413,7 +1413,19 @@
 		"dayPeriods-standAlone-wide": [
 			"ص",
 			"م"
-		]
+		],
+		"era-wide": {
+			"0": "قبل الميلاد",
+			"1": "ميلادي"
+		},
+		"era-abbreviated": {
+			"0": "ق.م",
+			"1": "م"
+		},
+		"era-narrow": {
+			"0": "ق.م",
+			"1": "م"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE‏، ‎‏d ‏MMMM‏، y‏ G",
@@ -1691,7 +1703,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ص",
 			"م"
-		]
+		],
+		"era-wide": {
+			"0": "هـ"
+		},
+		"era-abbreviated": {
+			"0": "هـ"
+		},
+		"era-narrow": {
+			"0": "هـ"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE‏، ‎‏d ‏MMMM‏، y‏ G",
@@ -1969,7 +1990,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ص",
 			"م"
-		]
+		],
+		"era-wide": {
+			"0": "هـ"
+		},
+		"era-abbreviated": {
+			"0": "هـ"
+		},
+		"era-narrow": {
+			"0": "هـ"
+		}
 	},
 	"dateField-year-displayName": "السنة",
 	"dateField-year-relative--1": "السنة الماضية",

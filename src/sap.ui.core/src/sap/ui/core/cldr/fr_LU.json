@@ -1412,7 +1412,19 @@
 		"dayPeriods-standAlone-wide": [
 			"avant-midi",
 			"après-midi"
-		]
+		],
+		"era-wide": {
+			"0": "avant Jésus-Christ",
+			"1": "après Jésus-Christ"
+		},
+		"era-abbreviated": {
+			"0": "av. J.-C.",
+			"1": "ap. J.-C."
+		},
+		"era-narrow": {
+			"0": "av. J.-C.",
+			"1": "ap. J.-C."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE d MMMM y G",
@@ -1689,7 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"avant-midi",
 			"après-midi"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE d MMMM y G",
@@ -1966,7 +1987,16 @@
 		"dayPeriods-standAlone-wide": [
 			"avant-midi",
 			"après-midi"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "année",
 	"dateField-year-relative--1": "l’année dernière",

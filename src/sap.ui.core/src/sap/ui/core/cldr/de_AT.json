@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"vorm.",
 			"nachm."
-		]
+		],
+		"era-wide": {
+			"0": "v. Chr.",
+			"1": "n. Chr."
+		},
+		"era-abbreviated": {
+			"0": "v. Chr.",
+			"1": "n. Chr."
+		},
+		"era-narrow": {
+			"0": "v. Chr.",
+			"1": "n. Chr."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, dd. MMMM y G",
@@ -1689,7 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"vorm.",
 			"nachm."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, dd. MMMM y G",
@@ -1967,7 +1988,16 @@
 		"dayPeriods-standAlone-wide": [
 			"vorm.",
 			"nachm."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Jahr",
 	"dateField-year-relative--1": "letztes Jahr",

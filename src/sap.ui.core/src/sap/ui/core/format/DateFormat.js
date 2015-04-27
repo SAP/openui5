@@ -369,7 +369,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					}
 					break;
 				case "era":
-					aBuffer.push("AD");
+					if (oPart.iDigits <= 3) {
+						aBuffer.push(this.oLocaleData.getEra("abbreviated"));
+					} else if (oPart.iDigits === 4) {
+						aBuffer.push(this.oLocaleData.getEra("wide"));
+					} else {
+						aBuffer.push(this.oLocaleData.getEra("narrow"));
+					}
 					break;
 				case "year":
 				case "weekYear":
@@ -694,7 +700,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					}
 					break;
 				case "era":
-					// TODO
+					if (oPart.iDigits <= 3) {
+						sPart = "abbreviated";
+					} else if (oPart.iDigits === 4) {
+						sPart = "wide";
+					} else {
+						sPart = "narrow";
+					}
+					iIndex += (this.oLocaleData.getEra(sPart).length);
 					break;
 				case "year":
 				case "weekYear":

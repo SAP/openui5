@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"дп",
 			"пп"
-		]
+		],
+		"era-wide": {
+			"0": "до нашої ери",
+			"1": "нашої ери"
+		},
+		"era-abbreviated": {
+			"0": "до н.е.",
+			"1": "н.е."
+		},
+		"era-narrow": {
+			"0": "до н.е.",
+			"1": "н.е."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d MMMM y 'р'. G",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"дп",
 			"пп"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d MMMM y 'р'. G",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"дп",
 			"пп"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Рік",
 	"dateField-year-relative--1": "торік",

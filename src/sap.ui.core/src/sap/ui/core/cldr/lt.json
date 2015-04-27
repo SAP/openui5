@@ -1421,7 +1421,19 @@
 		"dayPeriods-standAlone-wide": [
 			"priešpiet",
 			"popiet"
-		]
+		],
+		"era-wide": {
+			"0": "prieš Kristų",
+			"1": "po Kristaus"
+		},
+		"era-abbreviated": {
+			"0": "pr. Kr.",
+			"1": "po Kr."
+		},
+		"era-narrow": {
+			"0": "pr. Kr.",
+			"1": "po Kr."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "y MMMM d G, EEEE",
@@ -1698,7 +1710,16 @@
 		"dayPeriods-standAlone-wide": [
 			"priešpiet",
 			"popiet"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "y MMMM d G, EEEE",
@@ -1975,7 +1996,16 @@
 		"dayPeriods-standAlone-wide": [
 			"priešpiet",
 			"popiet"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Metai",
 	"dateField-year-relative--1": "praėjusiais metais",

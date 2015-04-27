@@ -1410,7 +1410,19 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "př. n. l.",
+			"1": "n. l."
+		},
+		"era-abbreviated": {
+			"0": "př. n. l.",
+			"1": "n. l."
+		},
+		"era-narrow": {
+			"0": "př.n.l.",
+			"1": "n.l."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE d. MMMM y G",
@@ -1687,7 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE d. MMMM y G",
@@ -1964,7 +1985,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Rok",
 	"dateField-year-relative--1": "minulý rok",

@@ -66,6 +66,8 @@
 				"hh 'o''clock' a, zzzz": "12 o'clock PM, Pacific Daylight Time",
 				"K:mm a, z": "0:08 PM, PDT",
 				"yyyyy.MMMMM.dd GGG hh:mm aaa": "02001.July.04 AD 12:08 PM",
+				"yyyy.MMMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
+				"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
 				"EEE, d MMM yyyy HH:mm:ss Z": "Wed, 4 Jul 2001 12:08:56 +0700",
 				"yyMMddHHmmssZ": "010704120856+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235+0700",
@@ -229,6 +231,7 @@
 
 		var oCustomDatePatterns = {
 			"yyyy.MM.dd 'at' HH:mm:ss z": ["2001.07.04 at 12:08:56 GMT+02:00", 994241336000],
+			"yyyy.MM.dd GGGG 'at' HH:mm:ss z": ["2001.07.04 Anno Domini at 12:08:56 GMT+02:00", 994241336000],
 			"EEE, MMM d, ''yy Z": ["Wed, Jul 4, '01 +0200", 994197600000],
 			"h:mm a z": ["12:08 PM Z", 43680000],
 			"hh 'o''clock' a, X": ["12 o'clock PM, +07:00", 18000000],
@@ -239,6 +242,7 @@
 			"yyMMddHHmms": ["010704120856", inclTimezoneOffset(994248536000)],
 			"yyyy-MM-dd'T'HH:mm:ss.SSS": ["2001-07-04T12:08:56.235", inclTimezoneOffset(994248536235)],
 			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235],
+			"yyyy-MM-dd GGG 'T'HH:mm:ss.SSSX": ["2001-07-04 AD T12:08:56.235Z", 994248536235],
 			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09:00", 946774800000]
 		};
 

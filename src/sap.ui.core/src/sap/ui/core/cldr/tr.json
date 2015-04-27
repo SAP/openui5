@@ -1410,7 +1410,19 @@
 		"dayPeriods-standAlone-wide": [
 			"ÖÖ",
 			"ÖS"
-		]
+		],
+		"era-wide": {
+			"0": "Milattan Önce",
+			"1": "Milattan Sonra"
+		},
+		"era-abbreviated": {
+			"0": "MÖ",
+			"1": "MS"
+		},
+		"era-narrow": {
+			"0": "MÖ",
+			"1": "MS"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "G d MMMM y EEEE",
@@ -1687,7 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ÖÖ",
 			"ÖS"
-		]
+		],
+		"era-wide": {
+			"0": "Hicri"
+		},
+		"era-abbreviated": {
+			"0": "Hicri"
+		},
+		"era-narrow": {
+			"0": "Hicri"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "G d MMMM y EEEE",
@@ -1964,7 +1985,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ÖÖ",
 			"ÖS"
-		]
+		],
+		"era-wide": {
+			"0": "Hicri"
+		},
+		"era-abbreviated": {
+			"0": "Hicri"
+		},
+		"era-narrow": {
+			"0": "Hicri"
+		}
 	},
 	"dateField-year-displayName": "Yıl",
 	"dateField-year-relative--1": "geçen yıl",
