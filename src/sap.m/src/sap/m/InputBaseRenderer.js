@@ -23,7 +23,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.render = function(oRm, oControl) {
 		var sValueState = oControl.getValueState(),
 			sTextDir = oControl.getTextDirection(),
-			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir);
+			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
+			bAccessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -108,7 +109,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeAttribute("disabled", "disabled");
 			oRm.addClass("sapMInputBaseDisabledInner");
 		} else if (!oControl.getEditable()) {
-			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("readonly", "readonly");
 			oRm.addClass("sapMInputBaseReadonlyInner");
 		}
@@ -119,7 +119,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		}
 
 		this.writeInnerValue(oRm, oControl);
-		this.writeAccessibilityState(oRm, oControl);
+		
+		// accessibility states
+		if (bAccessibility) {
+			this.writeAccessibilityState(oRm, oControl);
+		}
+		
 		this.writeInnerAttributes(oRm, oControl);
 
 		// inner classes
@@ -146,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		this.closeInputTag(oRm, oControl);
 		
 		// render hidden aria nodes
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (bAccessibility) {
 			this.renderAriaLabelledBy(oRm, oControl);
 			this.renderAriaDescribedBy(oRm, oControl);
 		}
