@@ -12,11 +12,6 @@
 				class="sapUiSmallMarginBottom"
 				press="showCustomContent"
 				width="250px"/>
-			<Button
-				text="{/buttonDisabledScrollingText}"
-				class="sapUiSmallMarginBottom"
-				press="handleShowMessageBoxPress_Scrolling"
-				width="250px"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
