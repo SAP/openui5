@@ -139,6 +139,7 @@
 		ok(oLocaleData.getWeekendStart() >= 0 && oLocaleData.getWeekendStart() <7, "getWeekendStart()");
 		equal(typeof oLocaleData.getWeekendEnd(), "number", "getWeekendEnd()");
 		ok(oLocaleData.getWeekendEnd() >= 0 && oLocaleData.getWeekendEnd() <7, "getWeekendEnd()");
+		ok(oLocaleData.getPreferredCalendarType() in sap.ui.core.CalendarType, "getPreferredCalendar()");
 
 		// there's no currency symbol defined for EUR and USD in 'es_MX' locale in CLDR data version 26
 		if (sLocale !== "xx_XX" /*&& sLocale !== "es_MX"*/) {
@@ -293,8 +294,24 @@
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
-	
-	
+
+	test("Calendar type should use the value set in configuration when getting calendar related values", function() {
+		sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
+
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
+
+		deepEqual(oLocaleData.getMonths("narrow"), oLocaleData.getMonths("narrow", sap.ui.core.CalendarType.Islamic), "getMonths uses calendar type in configuration");
+		deepEqual(oLocaleData.getDays("narrow"), oLocaleData.getDays("narrow", sap.ui.core.CalendarType.Islamic), "getDays uses calendar type in configuration");
+		deepEqual(oLocaleData.getQuarters("narrow"), oLocaleData.getQuarters("narrow", sap.ui.core.CalendarType.Islamic), "getQuarters uses calendar type in configuration");
+		deepEqual(oLocaleData.getDayPeriods("narrow"), oLocaleData.getDayPeriods("narrow", sap.ui.core.CalendarType.Islamic), "getDayPeriods uses calendar type in configuration");
+		deepEqual(oLocaleData.getDatePattern("short"), oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Islamic), "getDatePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getTimePattern("short"), oLocaleData.getTimePattern("short", sap.ui.core.CalendarType.Islamic), "getTimePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", sap.ui.core.CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
+		deepEqual(oLocaleData.getEra("narrow"), oLocaleData.getEra("narrow", sap.ui.core.CalendarType.Islamic), "getEra uses calendar type in configuration");
+
+		sap.ui.getCore().getConfiguration().setCalendarType(null);
+	});
+
 </script>
 
 </head>

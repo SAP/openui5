@@ -19,6 +19,8 @@
 		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-calendarType="islamic"
+		data-sap-ui-language="en"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core">
 	</script>
@@ -66,6 +68,26 @@
 			ok(oFormatSettings, "FormatSettings object is created");
 			oFormatSettings.setLegacyDateCalendarCustomizing(aData);
 			strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+		});
+
+		test("getter and setter for option 'calendar'", function() {
+			var oCfg = new sap.ui.core.Configuration(),
+				oFormatSettings = oCfg.getFormatSettings();
+
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The bootstrap parameter is respected");
+
+			oCfg.setCalendarType(null);
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The default calendar type is determined using the current locale");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+
+			oCfg.setCalendarType(sap.ui.core.CalendarType.Gregorian);
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+
+			oCfg.setCalendarType(null);
+			oFormatSettings.setLegacyDateFormat("B");
+			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
 		});
 	</script>
   

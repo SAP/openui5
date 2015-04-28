@@ -68,6 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"theme"                 : { type : "string",   defaultValue : "base" },
 					"language"              : { type : "string",   defaultValue : detectLanguage() },
 					"formatLocale"          : { type : "string",   defaultValue : null },
+					"calendarType"          : { type : "string",   defaultValue : null },
 					// "timezone"              : "UTC",
 					"accessibility"         : { type : "boolean",  defaultValue : true },
 					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : true,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
@@ -519,6 +520,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		},
 
 		/**
+		 * Returns the calendar type which is being used in locale dependent functionalities.
+		 *
+		 * When it's explicitly set by calling <code>setCalendar</code>, the set calendar type is returned.
+		 * Otherwise, the calendar type is determined by checking the format settings and current locale.
+		 *
+		 * @return {sap.ui.core.CalendarType} the current calendar type
+		 * @since 1.28.6
+		 */
+		getCalendarType :  function() {
+			var sName;
+
+			if (this.calendarType) {
+				for (sName in sap.ui.core.CalendarType) {
+					if (sName.toLowerCase() === this.calendarType.toLowerCase()) {
+						this.calendarType = sName;
+						return this.calendarType;
+					}
+				}
+				jQuery.sap.log.warning("Parameter 'calendarType' is set to " + this.calendarType + " which isn't a valid value and therefore ignored. The calendar type is determined from format setting and current locale");
+			}
+
+			var sLegacyDateFormat = this.oFormatSettings.getLegacyDateFormat();
+			if (sLegacyDateFormat === "A" || sLegacyDateFormat === "B") {
+				return sap.ui.core.CalendarType.Islamic;
+			}
+
+			// synchornize loading of LocaleData because of cyclic dependency between Configuration.js and LocaleData.js
+			jQuery.sap.require("sap.ui.core.LocaleData");
+			return sap.ui.core.LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
+		},
+
+		/**
+		 * Sets the new calendar type to be used from now on in locale dependent functionalities (for example, 
+		 * formatting, translation texts, etc.).
+		 *
+		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
+		 *   and the calendar type is calculated based on the format settings and current locale.
+		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @since 1.28.6
+		 */
+		setCalendarType : function(sCalendarType) {
+			var mChanges;
+
+			if (this.calendarType !== sCalendarType) {
+				mChanges = this._collect();
+				this.calendarType = mChanges.calendarType = sCalendarType;
+				this._endCollect();
+			}
+			return this;
+		},
+
+		/**
 		 * Returns the format locale string with language and region code. Falls back to
 		 * language configuration, in case it has not been explicitly defined.
 		 *
@@ -941,8 +994,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		"7": {pattern: "Gyy.MM.dd", ignore:true},
 		"8": {pattern: "Gyy/MM/dd", ignore:true},
 		"9": {pattern: "Gyy-MM-dd", ignore:true},
-		"A": {pattern: "yyyy/MM/dd", ignore:true},
-		"B": {pattern: "yyyy/MM/dd", ignore:true},
+		"A": {pattern: "yyyy/MM/dd"},
+		"B": {pattern: "yyyy/MM/dd"},
 		"C": {pattern: "yyyy/MM/dd", ignore:true}
 	};
 
