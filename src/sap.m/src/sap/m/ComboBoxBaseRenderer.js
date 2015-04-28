@@ -102,6 +102,20 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		};
 
 		/**
+		 * Add the CSS value state classes to the control's root element using the provided {@link sap.ui.core.RenderManager}.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxBaseRenderer.addValueStateClasses = function(oRm, oControl) {
+			InputBaseRenderer.addValueStateClasses.apply(this, arguments);
+			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
+			oRm.addClass(CSS_CLASS + "State");
+			oRm.addClass(CSS_CLASS + oControl.getValueState());
+		};
+
+		/**
 		 * Renders the ComboBox's arrow, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
