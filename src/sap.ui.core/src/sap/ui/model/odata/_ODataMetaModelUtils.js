@@ -9,6 +9,18 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
+		// only if v4 name is different to v2 name
+		mSemantics2Contact = {
+			"city" : "locality",
+			"familyname" : "surname",
+			"givenname" : "given",
+			"honorific" : "prefix",
+			"middlename" : "additional",
+			"name" : "fn",
+			"org-role" : "role",
+			"org-unit" : "orgunit",
+			"zip" : "code"
+		},
 		// map from v2 to v4 for NON-DEFAULT cases only
 		mV2ToV4 = {
 			creatable : {
@@ -31,7 +43,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
 			}
 		},
-		// map from V2 annotation to an array of an annotation term and a name in that annotation
+		// map from v2 annotation to an array of an annotation term and a name in that annotation
 		// that holds a collection of property references
 		mV2ToV4PropertyCollection = {
 			"sap:sortable" : [ "Org.OData.Capabilities.V1.SortRestrictions",
@@ -50,13 +62,13 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 	Utils = {
 
 		/**
-		 * Adds EntitySet V4 annotation for current extension if extension value is equal to
+		 * Adds EntitySet v4 annotation for current extension if extension value is equal to
 		 * the given non-default value. Depending on bDeepCopy the annotation will be merged
 		 * with deep copy.
 		 * @param {object} o
 		 *   any object
 		 * @param {object} oExtension
-		 *   the SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added
+		 *   the SAP Annotation (OData Version 2.0) for which a v4 annotation needs to be added
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
@@ -80,11 +92,10 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
-		 * Adds current property to the property collection for given V2
-		 * annotation.
+		 * Adds current property to the property collection for given v2 annotation.
 		 *
 		 * @param {string} sV2AnnotationName
-		 *   V2 annotation name (key in map mV2ToV4PropertyCollection)
+		 *   v2 annotation name (key in map mV2ToV4PropertyCollection)
 		 * @param {object} oEntitySet
 		 *   the entity set
 		 * @param {object} oProperty
@@ -103,9 +114,64 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
+		 * Collects sap:semantics annotations of the given type's properties at the type.
+		 *
+		 * @param {object} oType
+		 *   the entity type or the complex type for which sap:semantics needs to be added
+		 */
+		addSapSemantics: function (oType) {
+			if (oType.property) {
+				oType.property.forEach(function (oProperty) {
+					var oContact = oType["com.sap.vocabularies.Communication.v1.Contact"] || {},
+						oTarget,
+						sV2Semantics = oProperty["sap:semantics"],
+						sTargetProperty = mSemantics2Contact[sV2Semantics] || sV2Semantics;
+
+					switch (sV2Semantics) {
+					case "city":
+					case "country":
+					case "pobox":
+					case "region":
+					case "street":
+					case "zip":
+						oContact.adr = oContact.adr || {};
+						oTarget = oContact.adr;
+					break;
+					case "familyname":
+					case "givenname":
+					case "honorific":
+					case "middlename":
+					case "suffix":
+						// n is complex type Communication.NameType
+						oContact.n = oContact.n || {};
+						oTarget = oContact.n;
+					break;
+					case "bday":
+					case "nickname":
+					case "name":
+					case "note":
+					case "org":
+					case "org-role":
+					case "org-unit":
+					case "photo":
+					case "title":
+						oTarget = oContact;
+						break;
+					default:
+						// not yet supported
+					}
+					if (oTarget) {
+						oTarget[sTargetProperty] = {"Path": oProperty.name};
+						oType["com.sap.vocabularies.Communication.v1.Contact"] = oContact;
+					}
+				});
+			}
+		},
+
+		/**
 		 * Adds corresponding unit annotation (Org.OData.Measures.V1.Unit or
 		 * Org.OData.Measures.V1.ISOCurrency)  to the given property based on the
-		 * sap:semantics V2 annotation of the referenced unit property.
+		 * sap:semantics v2 annotation of the referenced unit property.
 		 *
 		 * @param {object} oValueProperty
 		 *   the value property for which the unit annotation needs to be determined
@@ -130,13 +196,13 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		},
 
 		/**
-		 * Adds the corresponding V4 annotation to the given object based on the given SAP
+		 * Adds the corresponding v4 annotation to the given object based on the given SAP
 		 * extension.
 		 *
 		 * @param {object} o
 		 *   any object
 		 * @param {object} oExtension
-		 *   the SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added
+		 *   the SAP Annotation (OData Version 2.0) for which a v4 annotation needs to be added
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
@@ -145,17 +211,17 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			switch (oExtension.name) {
 				case "pageable":
 				case "topable":
-					// true is the default in V4 so add annotation only in case of false
+					// true is the default in v4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", false);
 					break;
 				case "creatable":
 				case "deletable":
 				case "updatable":
-					// true is the default in V4 so add annotation only in case of false
+					// true is the default in v4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
 					break;
 				case "requires-filter":
-					// false is the default in V4 so add annotation only in case of true
+					// false is the default in v4 so add annotation only in case of true
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "true", true);
 					break;
 				case "field-control":
@@ -172,7 +238,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 					o["com.sap.vocabularies.Common.v1.Text"] = { "Path" : oExtension.value };
 					break;
 				default:
-					// no transformation for V2 annotation supported or necessary
+					// no transformation for v2 annotation supported or necessary
 			}
 		},
 
@@ -257,6 +323,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 * name which lives inside the entity container as indicated.
 		 *
 		 * @param {sap.ui.model.odata.ODataAnnotations} oAnnotations
+		 *   the OData annotations
 		 * @param {string} sQualifiedName
 		 *   the parent's qualified name
 		 * @param {boolean} bInContainer
@@ -370,8 +437,8 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 					Utils.addV4Annotation(o, oExtension, sTypeClass);
 				}
 			});
-			// after all SAP V2 annotations are lifted up add V4 annotations that are calculated
-			// by multiple V2 annotations or that have a different default value
+			// after all SAP v2 annotations are lifted up add v4 annotations that are calculated
+			// by multiple v2 annotations or that have a different default value
 			switch (sTypeClass) {
 				case "Property":
 					if (o["sap:updatable"] === "false") {
@@ -430,8 +497,11 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		 * Calls the given error handler as soon as the given object is "failed".
 		 *
 		 * @param {object} o
+		 *    the OData metadata or the OData annotations to be loaded
 		 * @param {function(void)} fnSuccess
+		 *    the success handler
 		 * @param {function(Error)} fnError
+		 *    the error handler
 		 */
 		loaded: function (o, fnSuccess, fnError) {
 			if (!o || o.isLoaded()) {
@@ -471,17 +541,19 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 					function (oComplexType, mChildAnnotations) {
 						Utils.visitChildren(aSchemas, oComplexType.property, mChildAnnotations,
 							"Property");
+						Utils.addSapSemantics(oComplexType);
 				});
 
-				// visit all entity types before visiting the entity sets to ensure that V2
+				// visit all entity types before visiting the entity sets to ensure that v2
 				// annotations are already lifted up and can be used for calculating entity
-				// set annotations which are based on V2 annotations on entity properties
+				// set annotations which are based on v2 annotations on entity properties
 				Utils.visitParents(oSchema, i, oAnnotations, "entityType", false,
 					function (oEntityType, mChildAnnotations) {
 						Utils.visitChildren(aSchemas,
 							oEntityType.property, mChildAnnotations, "Property");
 						Utils.visitChildren(aSchemas, oEntityType.navigationProperty,
 							mChildAnnotations);
+						Utils.addSapSemantics(oEntityType);
 				});
 
 				Utils.visitParents(oSchema, i, oAnnotations, "entityContainer", true,
@@ -526,12 +598,12 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 				if (sTypeClass === "Property" && oChild["sap:unit"]) {
 					Utils.addUnitAnnotation(oChild, aChildren);
 				} else if (sTypeClass === "EntitySet") {
-					// calculated entity set annotations need to be added before V4
+					// calculated entity set annotations need to be added before v4
 					// annotations are merged
 					Utils.calculateEntitySetAnnotations(aSchemas, oChild);
 				}
 
-				// mix-in external V4 annotations
+				// mix-in external v4 annotations
 				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 				if (fnCallback) {
 					fnCallback(oChild);
@@ -600,11 +672,12 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 						sQualifiedName, bInContainer);
 
 				Utils.liftSAPData(oParent);
-				jQuery.extend(oParent, oAnnotations[sQualifiedName]);
 				oParent.$path = "/dataServices/schema/" + i + "/" + sArrayName + "/"
 					+ j;
 
 				fnCallback(oParent, mChildAnnotations);
+				// merge v4 annotations after child annotations are processed
+				jQuery.extend(oParent, oAnnotations[sQualifiedName]);
 			});
 		}
 
