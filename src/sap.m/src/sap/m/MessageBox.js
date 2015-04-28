@@ -303,7 +303,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 
 						var oTextArea = new sap.m.TextArea({
 							editable: false,
-							visible: false
+							visible: false,
+							rows: 3
 						}).setValue(mOptions.details);
 
 						var oLink = new sap.m.Link({
