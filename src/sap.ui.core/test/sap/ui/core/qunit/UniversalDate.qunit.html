@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<!-- Initialization -->
+	<script id="sap-ui-bootstrap" type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-language="en-US"
+			data-sap-ui-originInfo="true">
+	</script>
+
+	<link rel="stylesheet"
+		  href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+		  media="screen"/>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.core.date.UniversalDate");
+		jQuery.sap.require("sap.ui.core.date.IslamicDate");
+
+		//next values must not overlap each other!
+		var year = 1400,
+				month = 3,
+				date = 10,
+				hours = 13,
+				minutes = 10,
+				seconds = 1,
+				milliseconds = 110;
+		var testParameter1 = [year, month, date, hours, minutes, seconds, milliseconds], testParameter2 = {};
+		testParameter2[year] = "year";
+		testParameter2[month] = "month";
+		testParameter2[date] = "date";
+		testParameter2[hours] = "hours";
+		testParameter2[minutes] = "minutes";
+		testParameter2[seconds] = "seconds";
+		testParameter2[milliseconds] = "milliseconds";
+
+		function prepare() {
+			this.sandbox = sinon.sandbox.create();
+			this.oStubCalendarType = this.sandbox.stub(sap.ui.getCore().getConfiguration(), "getCalendarType");
+			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Gregorian);
+			this.dateSpy = this.sandbox.spy(window, 'Date');
+		}
+		function cleanup() {
+			this.sandbox.restore();
+		}
+		module("Constructor", {
+			beforeEach: function () {
+				prepare.call(this);
+			},
+			afterEach: function () {
+				cleanup.call(this);
+			}
+		});
+
+		test("with no arguments", function () {
+			new sap.ui.core.date.UniversalDate();
+			ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
+			equal(this.dateSpy.firstCall.args.length, 0, "InnerDate must be instantiated with no arguments");
+		});
+
+		test("with value parameter (timestamp)", function () {
+			new sap.ui.core.date.UniversalDate(1000);
+			ok(this.dateSpy.calledOnce, "InnerDate must be instantiated just ones");
+			equal(this.dateSpy.firstCall.args.length, 1, "Wrapped date must be instantiated with just one argument");
+			equal(this.dateSpy.firstCall.args[0], 1000, "Wrapped date must be instantiated with singe argument with particular value");
+		});
+
+		test("without 'new' keyword", function () {
+			this.dateSpy.restore();
+			this.dateSpy = this.sandbox.stub(window, 'Date').returns({
+				toString: function () {
+					return "some fake date info";
+				}
+			});
+			var oUniversalDate = sap.ui.core.date.UniversalDate();
+			equal(oUniversalDate, oUniversalDate.toString(), "When no 'new' keyword is used, the constructor must return a string corresponding to the current date");
+		});
+
+		test("with all 7 parameters", function () {
+			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes, seconds, milliseconds);
+			check.call(this, 7);
+		});
+
+		test("with 6 parameters", function () {
+			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes, seconds);
+			check.call(this, 6);
+		});
+
+		test("with 5 parameters", function () {
+			new sap.ui.core.date.UniversalDate(year, month, date, hours, minutes);
+			check.call(this, 5);
+		});
+
+		test("with 4 parameters", function () {
+			new sap.ui.core.date.UniversalDate(year, month, date, hours);
+			check.call(this, 4);
+		});
+
+		test("with 3 parameters", function () {
+			new sap.ui.core.date.UniversalDate(year, month, date);
+			check.call(this, 3);
+		});
+
+		test("with 2 parameters", function () {
+			new sap.ui.core.date.UniversalDate(year, month);
+			check.call(this, 2);
+		});
+
+
+		test("determineType with Islamic calendar", function () {
+			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Islamic);
+			var stub = this.sandbox.stub(sap.ui.core.date, 'IslamicDate');
+			var oUniversalDate = new sap.ui.core.date.UniversalDate();
+			ok(1, stub.callCount, "sap.ui.core.date.IslamicDate must be instantiated just ones");
+			equal(oUniversalDate.getCalendarType(), sap.ui.core.CalendarType.Islamic, "Universal date must report correct calendarType");
+		});
+
+		test("Method calls are forwarded to the inner instance", function () {
+			this.dateSpy.restore();
+
+			var returnValue = 111,
+					sMethodName,
+					oDateConstructorStub,
+					oMethodStub,
+					oUniversalDate,
+					bMethodHasArgs,
+					result,
+					aMethodCallArg = [10, 11];
+
+			var aMethods = [{name: "getFullYear"}, {name: "getYear"}, {name: "getMonth"}, {name: "getDate"}, {name: "getDay"}, {name: "getHours"}, {name: "getMinutes"}, {name: "getSeconds"}, {name: "getMilliseconds"}, {name: "getTime"}, {name: "valueOf"}, {name: "getTimezoneOffset"},
+				{name: "getUTCFullYear"}, {name: "getUTCMonth"}, {name: "getUTCDate"}, {name: "getUTCDay"}, {name: "getUTCHours"}, {name: "getUTCMinutes"}, {name: "getUTCSeconds"}, {name: "getUTCMilliseconds"}, {name: "toString"}, {name: "toDateString"}, {name: "toGMTString"},
+				{name: "toISOString"}, {name: "toJSON"}, {name: "toTimeString"}, {name: "toUTCString"},
+				{name: "setFullYear", hasArgs: true},
+				{name: "setYear", hasArgs: true},
+				{name: "setDate", hasArgs: true},
+				{name: "setMonth", hasArgs: true},
+				{name: "setHours", hasArgs: true},
+				{name: "setMinutes", hasArgs: true},
+				{name: "setSeconds", hasArgs: true},
+				{name: "setMilliseconds", hasArgs: true},
+				{name: "setUTCFullYear", hasArgs: true},
+				{name: "setUTCDate", hasArgs: true},
+				{name: "setUTCMonth", hasArgs: true},
+				{name: "setUTCHours", hasArgs: true},
+				{name: "setUTCMinutes", hasArgs: true},
+				{name: "setUTCSeconds", hasArgs: true},
+				{name: "setUTCMilliseconds", hasArgs: true},
+				{name: "toLocaleDateString", hasArgs: true},
+				{name: "toLocaleString", hasArgs: true},
+				{name: "toLocaleTimeString", hasArgs: true}
+			];
+
+			var oMockDate = null;
+			for (var i = 0; i < aMethods.length; i++) {
+				sMethodName = aMethods[i].name;
+				bMethodHasArgs = aMethods[i].hasArgs;
+				oMockDate = {};
+				oMockDate.prototype = Date.prototype;
+				oMockDate[sMethodName] = function () {
+				};
+
+				oDateConstructorStub = this.sandbox.stub(window, 'Date').returns(oMockDate);
+				oMethodStub = this.sandbox.stub(oMockDate, sMethodName).returns(returnValue);
+				Date.prototype[sMethodName] = oMockDate[sMethodName];
+
+				oUniversalDate = new sap.ui.core.date.UniversalDate();
+				if (bMethodHasArgs) {
+					result = oUniversalDate[sMethodName](aMethodCallArg[0], aMethodCallArg[1]);
+				} else {
+					result = oUniversalDate[sMethodName]();
+				}
+
+				equal(oMethodStub.callCount, 1, "Method [" + sMethodName + "] has to be called once");
+				equal(result, returnValue, "Method [" + sMethodName + "] call has to return a certain value");
+
+				if (bMethodHasArgs) {
+					deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
+				}
+
+				oMethodStub.restore();
+				oDateConstructorStub.restore();
+			}
+		});
+
+		test("Static methods call is forwarded to inner instance", function () {
+			this.dateSpy.restore();
+			var aStaticMethods = [
+						{name: "UTC", hasArgs: true},
+						{name: "now"},
+						{name: "parse"}],
+					returnValue = 111,
+					sMethodName,
+					oDateConstructorStub,
+					oMethodStub,
+					oUniversalDate,
+					bMethodHasArgs,
+					result,
+					aMethodCallArg = [10, 11];
+
+			for (var i = 0; i < aStaticMethods.length; i++) {
+				sMethodName = aStaticMethods[i].name;
+				bMethodHasArgs = aStaticMethods[i].hasArgs;
+				var MockDateClass = function () {
+				};
+				MockDateClass.prototype = Date.prototype;
+				MockDateClass.prototype[sMethodName] = function () {
+				};
+				MockDateClass[sMethodName] = function () {
+				};
+
+				var d = new MockDateClass();
+				oDateConstructorStub = this.sandbox.stub(window, 'Date').returns(d);
+				oMethodStub = this.sandbox.stub(d, sMethodName).returns(returnValue);
+				Date[sMethodName] = d[sMethodName];
+
+				if (bMethodHasArgs) {
+					result = sap.ui.core.date.UniversalDate[sMethodName](aMethodCallArg[0], aMethodCallArg[1]);
+				} else {
+					result = sap.ui.core.date.UniversalDate[sMethodName]();
+				}
+
+				equal(oMethodStub.callCount, 1, "Method [" + sMethodName + "] has to be called once");
+				if (bMethodHasArgs) {
+					deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
+				}
+
+				equal(result, returnValue, "Method [" + sMethodName + "] call has to return a certain value");
+
+				oMethodStub.restore();
+				oDateConstructorStub.restore();
+			}
+		});
+
+		module("Other", {
+			beforeEach: function () {
+				prepare.call(this);
+			},
+			afterEach: function () {
+				cleanup.call(this);
+			}
+		});
+		test("Universal objects do not interfere", function () {
+			this.dateSpy.restore();
+			var ud1 = new sap.ui.core.date.UniversalDate(2015, 0);
+			var ud2 = new sap.ui.core.date.UniversalDate();
+			ud2.setFullYear(2016);
+			equals(ud1.getFullYear(), 2015, "Verify year");
+			equals(ud2.getFullYear(), 2016, "Verify year");
+		});
+
+		//--- helpers ----------------------------------------------------------------------------------------------
+		function check(iArgsCount) {
+			ok(this.dateSpy.callCount, 1, "InnerDate must be instantiated just ones");
+			equal(this.dateSpy.firstCall.args.length, iArgsCount, "Wrapped date must be instantiated with certain amount of arguments");
+			for (var i = 0; i < iArgsCount; i++) {
+				equal(this.dateSpy.firstCall.args[i], testParameter1[i], "Wrapped date arguments:" + testParameter2[testParameter1[i]]);
+			}
+		}
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Islamic Calendar</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>
