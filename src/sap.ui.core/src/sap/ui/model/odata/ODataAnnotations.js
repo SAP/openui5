@@ -1118,7 +1118,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				
 			} else if (paraNode.nodeName === "LabeledElement") {
 				mParameter.Name = paraNode.getAttribute("Name");
-				mParameter.Value = this.getSimpleNodeValue(xmlDoc, paraNode, mAlias);
+				var vValue = this.getSimpleNodeValue(xmlDoc, paraNode, mAlias);
+				if (!vValue || Object.keys(vValue).length === 0) {
+					vValue = this.getPropertyValue(xmlDoc, paraNode, mAlias);
+				}				
+				
+				mParameter.Value = vValue;
 				
 			} else if (mMultipleArgumentDynamicExpressions[paraNode.nodeName]) {
 				mParameter.Value = this.getPropertyValue(xmlDoc, paraNode, mAlias);
