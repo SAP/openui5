@@ -122,6 +122,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.PullToRefresh",
+			"url": "../PullToRefresh.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.RadioButton",
 			"url": "../RadioButton.html",
 			"appComponent": "CA-UI5-CTR-SOF"
