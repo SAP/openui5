@@ -164,6 +164,16 @@ sap.ui.define(["sap/m/semantic/SemanticType", "sap/m/semantic/SemanticPage",  "s
 		oClone.setAggregation('_control', oPrivateControlClone);
 		return oClone;
 	};
+	
+	/**
+	 * Implementation of a commonly used function that adapts sap.ui.core.Element
+	 * to provide dom reference for opening popovers
+	 * @ return the dom reference of the actual wrapped control
+	 * @ public
+	 */
+	SemanticControl.prototype.getPopupAnchorDomRef = function() {
+		return this._getControl().getDomRef();
+	};
 
 	SemanticControl.prototype._getConfiguration = function () {
 		return this._oTypeConfigs[this.getType()];

@@ -17,6 +17,11 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+	<!-- use the sinon faketimers for this test -->
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+	</script>
+
 	<script>
 
 		jQuery.sap.require("sap.m.semantic.SemanticPage");
@@ -373,6 +378,44 @@
 			oRejectButton.destroy();
 			oEditButton.destroy();
 			fnErrorStub.restore();
+		});
+		
+		test("Popover can be opened by a semantic button", function() {
+			
+			var oSpy = this.spy();
+			
+			var oPopover = new sap.m.Popover({
+					content: new sap.m.Label({text: "Popover"}),
+					afterOpen: oSpy
+					});
+			
+			var oEditButton = new sap.m.semantic.SemanticButton({
+				type: sap.m.semantic.SemanticType.Edit,
+				press: function() {
+					oPopover.openBy(oEditButton);
+				}
+			});
+			
+			var oSemanticPage = new sap.m.semantic.DetailPage({
+				semanticControls: [oEditButton]
+			});
+			
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+			
+			// Act
+			oEditButton.firePress();
+			this.clock.tick(500);
+			
+			// Assert
+			strictEqual(oSpy.callCount, 1, "Popover was opened");
+			
+			oPopover.close();
+			
+			// Clean up
+			oPopover.destroy();
+			oSemanticPage.destroy();
+			
 		});
 
 	</script>
