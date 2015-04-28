@@ -603,7 +603,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		}
 
-		if (oXMLDoc.getElementsByTagName("parsererror").length > 0) {
+		if (
+			// All browsers including IE
+			oXMLDoc.getElementsByTagName("parsererror").length > 0 
+			// IE 11 special case
+			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
+		) {
 			// Malformed XML, notify application of the problem
 
 			// This seems to be needed since with some jQuery versions the XML document
