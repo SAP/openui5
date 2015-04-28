@@ -23,12 +23,31 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	 * Regular expression to escape potential binding chars
 	 */
 	var rBindingChars = /([\\\{\}])/g;
-	
+
+	/**
+	 * A simple "formatter" function which just returns its first argument.
+	 *
+	 * @param {object} o
+	 *   its first argument
+	 * @returns {object}
+	 *   its first argument
+	 */
+	function firstArgument(o) {
+		return o;
+	}
+
 	/**
 	 * Helper to create a formatter function. Only used to reduce the closure size of the formatter
+	 *
+	 * @param {number[]|string[]} aFragments
+	 *   array of fragments, either a literal text or the index of the binding's part
+	 * @param {function[]} [aFormatters]
+	 *   optional array of formatter functions for each index in <code>aFragments</code>
+	 * @returns {function}
+	 *   a formatter function
 	 */
-	function makeFormatter(aFragments) {
-		var fnFormatter = function(aValues) {
+	function makeFormatter(aFragments, aFormatters) {
+		var fnFormatter = function() {
 			var aResult = [],
 				l = aFragments.length,
 				i;
@@ -36,7 +55,11 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			for (i = 0; i < l; i++) {
 				if ( typeof aFragments[i] === "number" ) {
 					// a numerical fragment references the part with the same number 
-					aResult.push(arguments[aFragments[i]]);
+					if (aFormatters) {
+						aResult.push(aFormatters[aFragments[i]].apply(this, arguments));
+					} else {
+						aResult.push(arguments[aFragments[i]]);
+					}
 				} else {
 					// anything else is a string fragment 
 					aResult.push(aFragments[i]);
@@ -54,6 +77,11 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	 * If the path contains a model specifier (prefix separated with a '>'),
 	 * the <code>model</code> property is set as well and the prefix is 
 	 * removed from the path. 
+	 *
+	 * @param {string} sPath
+	 *   the given path
+	 * @returns {object}
+	 *   a binding info object
 	 */
 	function makeSimpleBindingInfo(sPath) {
 		var iPos = sPath.indexOf(">"),
@@ -66,7 +94,43 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 		
 		return oBindingInfo;
 	}
-	
+
+	/**
+	 * Merges the given binding info object's parts, which may have parts themselves, into a flat
+	 * list of parts, taking care of existing formatter functions and fragments.
+	 *
+	 * @param {object} oBindingInfo
+	 *   a binding info object
+	 * @param {number[]|string[]} aFragments
+	 *   array of fragments, either a literal text or the index of the binding's part
+	 */
+	function mergeParts(oBindingInfo, aFragments) {
+		var aFormatters = [],
+			aParts = [];
+
+		oBindingInfo.parts.forEach(function (oEmbeddedBinding) {
+			var iEnd,
+				fnFormatter = oEmbeddedBinding.formatter || firstArgument,
+				iStart = aParts.length;
+
+			if (oEmbeddedBinding.parts) {
+				aParts = aParts.concat(oEmbeddedBinding.parts);
+			} else {
+				aParts.push(oEmbeddedBinding);
+			}
+			iEnd = aParts.length;
+
+			aFormatters.push(function () {
+				// each formatter needs to operate on its own slice of the overall arguments
+				return fnFormatter.apply(this,
+					Array.prototype.slice.call(arguments, iStart, iEnd));
+			});
+		});
+
+		oBindingInfo.parts = aParts;
+		oBindingInfo.formatter = makeFormatter(aFragments, aFormatters);
+	}
+
 	/**
 	 * @static
 	 * @namespace
@@ -100,11 +164,14 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			oBindingInfo = {parts:[]},
 			aFragments = [],
 			aFunctionsNotFound,
+			// whether oBindingInfo.parts contains s.th. more complicated than an expression binding
+			bMoreThanExpression,
+			// whether oBindingInfo.parts contains s.th. other than just simple binding infos
+			bNotJustSimple,
 			bUnescaped,
 			p = 0,
 			m,
-			oEmbeddedBinding,
-			bContainsExpression;
+			oEmbeddedBinding;
 
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
@@ -188,7 +255,8 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 		 */
 		function resolveEmbeddedBinding(sInput, iStart) {
 			var oParseResult,
-				iEnd;
+				iEnd,
+				sName;
 			// an embedded binding: check for a property name that would indicate a complex object
 			if ( rObject.test(sInput.slice(iStart)) ) {
 				oParseResult = parseObject(sInput, iStart);
@@ -199,10 +267,16 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 				resolveRef(oParseResult.result,'formatter');
 				resolveRef(oParseResult.result,'factory'); // list binding
 				resolveRef(oParseResult.result,'groupHeaderFactory');
+				bNotJustSimple = true;
+				for (sName in oParseResult.result) {
+					if (sName !== "formatter" && sName !== "parts") {
+						bMoreThanExpression = true;
+						break;
+					}
+				}
 				return oParseResult;
 			}
 			// otherwise it must be a simple binding (path only)
-			// TODO find closing brace via regex as well?
 			iEnd = sInput.indexOf('}', iStart);
 			if ( iEnd < iStart ) {
 				throw new SyntaxError("no closing braces found in '" + sInput + "' after pos:" + iStart);
@@ -243,7 +317,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 					}
 					oEmbeddedBinding.at += 1;
 					if (oEmbeddedBinding.result) {
-						bContainsExpression = true;
+						bNotJustSimple = true;
 					} else {
 						aFragments[aFragments.length - 1] = String(oEmbeddedBinding.constant);
 						bUnescaped = true;
@@ -268,14 +342,13 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 
 		// only if a part has been found we can return a binding info
 		if (oBindingInfo.parts.length > 0) {
+			// Note: aFragments.length >= 1
 			if ( aFragments.length === 1 /* implies: && typeof aFragments[0] === "number" */ ) {
 				// special case: a single binding only
 				oBindingInfo = oBindingInfo.parts[0];
-			} else /* if ( aFragments.length > 1 ) */ {
-				if (bContainsExpression) {
-					throw new SyntaxError("Expression not allowed in composite binding: "
-						+ sString);
-				}
+			} else if (bNotJustSimple && !bMoreThanExpression) {
+				mergeParts(oBindingInfo, aFragments);
+			} else { //TODO bNotJustSimple && bMoreThanExpression --> error in ManagedObject!
 				// create the formatter function from the fragments
 				oBindingInfo.formatter = makeFormatter(aFragments);
 			}
