@@ -205,6 +205,12 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/simple-values-2.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
+		},
+		"If in Apply": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/if-in-apply.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
 		}
 	};
 
@@ -1765,4 +1771,72 @@ function runODataAnnotationTests() {
 			"Multiple String values as array: SimpleValues"
 		);
 	});
+	
+	
+	asyncTest("If in Apply", function() {
+		expect(57);
+		var mTest = mAdditionalTestsServices["If in Apply"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true
+		};
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+	
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["IfInApply"],
+				
+				{
+					"com.sap.vocabularies.Test.v1.Data": {
+						"Value": {
+							"Apply": {
+								"Parameters": [{
+									"Type": "If",
+									"Value": [{
+										"Eq": [
+											{"Path":"Sex"},
+											{"String":"M"}
+										]
+									}, {
+										"String": "Mr. "
+									}, {
+										"If": [{
+											"Eq": [{
+												"Path": "Sex"
+											}, {
+												"String": "F"
+											}]
+										}, {
+											"String": "Mrs. "
+										}, {
+											"String": ""
+										}]
+									}]
+								}, {
+									"Type": "Path",
+									"Value": "FirstName"
+								}, {
+									"Type": "String",
+									"Value": ""
+								}, {
+									"Type": "Path",
+									"Value": "LastName"
+								}]
+							}
+						}
+					}
+				}
+			);
+			
+			start();
+		});
+	});	
 }
