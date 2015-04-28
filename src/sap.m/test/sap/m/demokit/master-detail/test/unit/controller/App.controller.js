@@ -1,6 +1,6 @@
 /*global expect*/
 //declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/ui/demo/masterdetail/controller/App.controller",
 		"sap/ui/demo/masterdetail/controller/ListSelector",

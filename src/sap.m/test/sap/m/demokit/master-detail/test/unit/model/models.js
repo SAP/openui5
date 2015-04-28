@@ -1,4 +1,4 @@
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/ui/demo/masterdetail/model/models",
 		"sap/ui/thirdparty/sinon",

@@ -1,4 +1,4 @@
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/ui/demo/worklist/controller/Worklist.controller",
 		"sap/ui/demo/worklist/controller/BaseController",

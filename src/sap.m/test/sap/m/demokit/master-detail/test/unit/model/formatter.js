@@ -1,4 +1,4 @@
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/m/Text",
 		"sap/ui/demo/masterdetail/model/formatter"
