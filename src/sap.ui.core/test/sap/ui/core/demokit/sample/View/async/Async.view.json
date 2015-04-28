@@ -1,0 +1,28 @@
+{
+	"Type": "sap.ui.core.mvc.JSONView",
+	"controllerName": "sap.ui.core.sample.View.async.Sample",
+	"content": [{
+		"Type": "sap.m.ObjectHeader",
+		"icon": "{img>/products/screw}",
+		"iconDensityAware": false,
+		"title": "Deluxe Screw",
+		"statuses": [{
+			"Type": "sap.m.ObjectStatus",
+			"text": "In Stock",
+			"state": "Success"
+		}],
+		"attributes": [{
+			"Type": "sap.m.ObjectAttribute",
+			"text": "Weight: 10 gr"
+		}, {
+			"Type": "sap.m.ObjectAttribute",
+			"text": "Size: 1,4 x 1,8 x 0,8 inch"
+		}, {
+			"Type": "sap.m.ObjectAttribute",
+			"text": "Material: Adamantium"
+		}, {
+			"Type": "sap.m.ObjectAttribute",
+			"text": "Description: A really nice json screw."
+		}]
+	}]
+}

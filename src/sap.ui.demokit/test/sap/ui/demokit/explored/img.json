@@ -1,7 +1,8 @@
 {
-  "products" : {
-	"pic1" : "test-resources/sap/ui/demokit/explored/img/HT-7777-large.jpg",
-	"pic2" : "test-resources/sap/ui/demokit/explored/img/HT-6120-large.jpg",
-	"pic3" : "test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg"
-  }
+	"products": {
+		"pic1": "test-resources/sap/ui/demokit/explored/img/HT-7777-large.jpg",
+		"pic2": "test-resources/sap/ui/demokit/explored/img/HT-6120-large.jpg",
+		"pic3": "test-resources/sap/ui/demokit/explored/img/HT-6100-large.jpg",
+		"screw": "test-resources/sap/ui/demokit/explored/img/screw.jpg"
+	}
 }
