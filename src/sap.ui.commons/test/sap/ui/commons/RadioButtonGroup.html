@@ -37,7 +37,7 @@
 				}
 
 				oRBGroup.setSelectedIndex( parseInt(oText.getValue()) );
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handleTextChangeID(oEvent) {
@@ -59,20 +59,20 @@
 				}
 
 				oRBGroup.setSelectedItem( oItem );
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handleTextChangeText(oEvent) {
 				var oText = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.getSelectedItem().setText(oText.getValue());
+				oRBGroup.getSelectedItem().setText(oText.getValue());
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handleSelect(oEvent) {
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handlePressAdd(oEvent) {
@@ -81,10 +81,10 @@
 
 				iIndex++;
 				var oItem = new sap.ui.core.Item("RB5-" + iIndex); 
-	  	  oItem.setText("Option " + iIndex); 
-	    	oRBGroup.addItem(oItem);
+				oItem.setText("Option " + iIndex); 
+				oRBGroup.addItem(oItem);
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handlePressInsertBefore(oEvent) {
@@ -93,15 +93,15 @@
 
 				iIndex++;
 				var oItem = new sap.ui.core.Item("RB5-" + iIndex); 
-	  	  oItem.setText("Option " + iIndex); 
-	  	  if(iIndex > 1){
-		  	  var iIndexIns = oRBGroup.getSelectedIndex();
-	  	  }else{
-	  			var iIndexIns = 0;
-	  	  }
-	    	oRBGroup.insertItem(oItem, iIndexIns);
+				oItem.setText("Option " + iIndex); 
+				if(iIndex > 1){
+					var iIndexIns = oRBGroup.getSelectedIndex();
+				}else{
+					var iIndexIns = 0;
+				}
+				oRBGroup.insertItem(oItem, iIndexIns);
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handlePressInsertAfter(oEvent) {
@@ -110,12 +110,12 @@
 
 				iIndex++;
 				var oItem = new sap.ui.core.Item("RB5-" + iIndex); 
-	  	  oItem.setText("Option " + iIndex); 
-	  	  if(iIndex > 1){
-		  	  var iIndexIns = oRBGroup.getSelectedIndex() + 1;
-	  	  }else{
-	  			var iIndexIns = 0;
-	  	  }
+				oItem.setText("Option " + iIndex); 
+				if(iIndex > 1){
+					var iIndexIns = oRBGroup.getSelectedIndex() + 1;
+				}else{
+					var iIndexIns = 0;
+				}
 				oRBGroup.insertItem(oItem, iIndexIns);
 
 				updateInfo();
@@ -125,25 +125,25 @@
 				var oButton = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.removeItem(0);
+				oRBGroup.removeItem(0);
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handlePressRemoveAll(oEvent) {
 				var oButton = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.removeAllItems();
+				oRBGroup.removeAllItems();
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handlePressDestroy(oEvent) {
 				var oButton = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.destroyItems();
+				oRBGroup.destroyItems();
 
 				iIndex = 0;
 
@@ -154,37 +154,37 @@
 				var oButton = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.setEditable(!oRBGroup.getEditable());
-	    	if(oRBGroup.getEditable()){
-	    		oButton.setText("ReadOnly");
-	    	}else{
-	    		oButton.setText("Editable");
-	    	}
+				oRBGroup.setEditable(!oRBGroup.getEditable());
+				if(oRBGroup.getEditable()){
+					oButton.setText("ReadOnly");
+				}else{
+					oButton.setText("Editable");
+				}
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handlePressEnabled(oEvent) {
 				var oButton = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.setEnabled(!oRBGroup.getEnabled());
-	    	if(oRBGroup.getEnabled()){
-	    		oButton.setText("Disable");
-	    	}else{
-	    		oButton.setText("Enable");
-	    	}
+				oRBGroup.setEnabled(!oRBGroup.getEnabled());
+				if(oRBGroup.getEnabled()){
+					oButton.setText("Disable");
+				}else{
+					oButton.setText("Enable");
+				}
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function handleToggleEnabled(oEvent) {
 				var oCB = oEvent.oSource;
 				var oRBGroup = oCore.getControl("RBG5");
 
-	    	oRBGroup.getSelectedItem().setEnabled(oCB.getChecked());
+				oRBGroup.getSelectedItem().setEnabled(oCB.getChecked());
 
-	    	updateInfo();
+				updateInfo();
 			}
 
 			function updateInfo(){
@@ -194,247 +194,304 @@
 				var oText5 = oCore.getControl("TF5");
 				var oCB = oCore.getControl("CB1");
 				if(oRBGroup.getItems().length > 0){
-  				oText2.setValue(oRBGroup.getSelectedIndex());
-		  		oText3.setValue(oRBGroup.getSelectedItem().getId());
-	      	oCB.setChecked(oRBGroup.getSelectedItem().getEnabled());
-	      	oText5.setEnabled(true);
+					oText2.setValue(oRBGroup.getSelectedIndex());
+					oText3.setValue(oRBGroup.getSelectedItem().getId());
+					oCB.setChecked(oRBGroup.getSelectedItem().getEnabled());
+					oText5.setEnabled(true);
 				}else{
-	 				oText2.setValue("");
-		  		oText3.setValue("");
-	      	oCB.setChecked(false);
-	      	oText5.setEnabled(false);
+					oText2.setValue("");
+					oText3.setValue("");
+					oCB.setChecked(false);
+					oText5.setEnabled(false);
 				}
 			}
 
-			oCore.attachInitEvent(function () {
-				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+			// Simple RadioButtonGroup
+			var oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG1"); 
+			oRBGroup.setTooltip("Group 1");
 
-				// Simple RadioButtonGroup
-				var oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG1"); 
-				oRBGroup.setTooltip("Group 1");
+			var oItem = new sap.ui.core.Item("RB1-1"); 
+			oItem.setText("Option 1"); 
+			oItem.setTooltip("Tooltip 1");
+			oItem.setKey("Key1");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB1-2"); 
+			oItem.setText("Option 2"); 
+			oItem.setTooltip("Tooltip 2");
+			oItem.setKey("Key2"); 
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB1-3"); 
+			oItem.setText("Option 3"); 
+			oItem.setTooltip("Tooltip 3");
+			oItem.setKey("Key3"); 
+			oRBGroup.addItem(oItem);
 
-				var oItem = new sap.ui.core.Item("RB1-1"); 
-		    oItem.setText("Option 1"); 
-		    oItem.setTooltip("Tooltip 1");
-		    oItem.setKey("Key1");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB1-2"); 
-		    oItem.setText("Option 2"); 
-		    oItem.setTooltip("Tooltip 2");
-		    oItem.setKey("Key2"); 
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB1-3"); 
-		    oItem.setText("Option 3"); 
-		    oItem.setTooltip("Tooltip 3");
-		    oItem.setKey("Key3"); 
-		    oRBGroup.addItem(oItem);
+			oRBGroup.placeAt("target1");
+			var oLabel = new sap.ui.commons.Label({ text: "Simple group: ", labelFor: oRBGroup});
+			oLabel.placeAt("label1");
 
-		    oRBGroup.placeAt("target1");
-				var oLabel = new sap.ui.commons.Label({ text: "Simple group: ", labelFor: oRBGroup});
-	  	  oLabel.placeAt("label1");
+			// RadioButtonGroup with 2 colums
+			oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG2"); 
+			oRBGroup.setColumns(2);
 
-				// RadioButtonGroup with 2 colums
-				var oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG2"); 
-				oRBGroup.setColumns(2);
+			oItem = new sap.ui.core.Item("RB2-1");
+			oItem.setText("Option 1");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB2-2");
+			oItem.setText("Option 2");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB2-3");
+			oItem.setText("Option 3");
+			oRBGroup.addItem(oItem);
 
-				var oItem = new sap.ui.core.Item("RB2-1");
-		    oItem.setText("Option 1");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB2-2");
-	    	oItem.setText("Option 2");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB2-3");
-	  	  oItem.setText("Option 3");
-	    	oRBGroup.addItem(oItem);
+			oRBGroup.placeAt("target2");
+			oLabel = new sap.ui.commons.Label({ text: "Group with 2 colums: ", labelFor: oRBGroup});
+			oLabel.placeAt("label2");   
 
-		    oRBGroup.placeAt("target2");
-				var oLabel = new sap.ui.commons.Label({ text: "Group with 2 colums: ", labelFor: oRBGroup});
-	  	  oLabel.placeAt("label2");   
+			// RadioButtonGroup with 3 colums and differnt lengt but given width
+			oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG3"); 
+			oRBGroup.setColumns(3);
+			oRBGroup.setWidth("100%");
 
-				// RadioButtonGroup with 3 colums and differnt lengt but given width
-				var oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG3"); 
-				oRBGroup.setColumns(3);
-				oRBGroup.setWidth("100%");
+			oItem = new sap.ui.core.Item("RB3-1");
+			oItem.setText("Long Option Number 1");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB3-2");
+			oItem.setText("Option 2");
+			oItem.setEnabled(false);
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB3-3");
+			oItem.setText("Nr.3");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB3-4");
+			oItem.setText("Long Option 4");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB3-5");
+			oItem.setText("Option 5");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB3-6");
+			oItem.setText("Nr.6");
+			oRBGroup.addItem(oItem);
 
-				var oItem = new sap.ui.core.Item("RB3-1");
-		    oItem.setText("Long Option Number 1"); 
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB3-2"); 
-    		oItem.setText("Option 2");
-    		oItem.setEnabled(false);
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB3-3");
-  		  oItem.setText("Nr.3");
-    		oRBGroup.addItem(oItem);
-				var oItem = new sap.ui.core.Item("RB3-4");
-		    oItem.setText("Long Option 4");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB3-5");
-    		oItem.setText("Option 5");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB3-6");
-  		  oItem.setText("Nr.6");
-    		oRBGroup.addItem(oItem);
+			oRBGroup.placeAt("target3");
+			oLabel = new sap.ui.commons.Label({ text: "Group with 3 colums and width 250px - test for cutting: ", labelFor: oRBGroup});
+			oLabel.placeAt("label3");
 
-		    oRBGroup.placeAt("target3");
-				var oLabel = new sap.ui.commons.Label({ text: "Group with 3 colums and width 250px - test for cutting: ", labelFor: oRBGroup});
-  		  oLabel.placeAt("label3");
+			// RadioButtonGroup with 3 colums ans 1 row
+			oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG4");
+			oRBGroup.setColumns(3);
+			oRBGroup.setValueState(sap.ui.core.ValueState.Error);
 
-				// RadioButtonGroup with 3 colums ans 1 row
-				var oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG4");
-				oRBGroup.setColumns(3);
-				oRBGroup.setValueState(sap.ui.core.ValueState.Error);
+			oItem = new sap.ui.core.Item("RB4-1");
+			oItem.setText("Option 1");
+			oItem.setTooltip("Tooltip 1");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB4-2");
+			oItem.setText("Option 2");
+			oItem.setTooltip("Tooltip 2");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB4-3");
+			oItem.setText("Option 3");
+			oItem.setTooltip("Tooltip 3");
+			oRBGroup.addItem(oItem);
 
-				var oItem = new sap.ui.core.Item("RB4-1");
-		    oItem.setText("Option 1");
-		    oItem.setTooltip("Tooltip 1");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB4-2");
- 		   	oItem.setText("Option 2");
-		    oItem.setTooltip("Tooltip 2");
-	  	  oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB4-3");
-  	  	oItem.setText("Option 3");
-	    	oItem.setTooltip("Tooltip 3");
-    		oRBGroup.addItem(oItem);
+			oRBGroup.placeAt("target4");
+			oLabel = new sap.ui.commons.Label({ text: "Group with 3 RadioButtons in 1 Row: ", labelFor: oRBGroup});
+			oLabel.placeAt("label4");
 
-		    oRBGroup.placeAt("target4");
-				var oLabel = new sap.ui.commons.Label({ text: "Group with 3 RadioButtons in 1 Row: ", labelFor: oRBGroup});
-			  oLabel.placeAt("label4");
+			// test for methods
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
+			oLyt.setLayoutFixed(false);
+			oLyt.setColumns(4);
 
-	    	// test for methods
-				var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
-				oLyt.setLayoutFixed(false);
-				oLyt.setColumns(4);
+			oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG5");
+			oRBGroup.setColumns(2);
+			oRBGroup.setSelectedIndex(2);
+			oRBGroup.attachSelect(handleSelect);
+			oItem = new sap.ui.core.Item("RB5-1");
+			oItem.setText("Option 1");
+			oItem.setTooltip("Tooltip 1");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB5-2");
+			oItem.setText("Option 2");
+			oItem.setTooltip("Tooltip 2");
+			oRBGroup.addItem(oItem);
+			oItem = new sap.ui.core.Item("RB5-3");
+			oItem.setText("Option 3");
+			oItem.setTooltip("Tooltip 3");
+			oRBGroup.addItem(oItem);
 
-				var oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG5");
-				oRBGroup.setColumns(2);
-				oRBGroup.setSelectedIndex(2);
-				oRBGroup.attachSelect(handleSelect);
-				oItem = new sap.ui.core.Item("RB5-1");
-		    oItem.setText("Option 1");
-		    oItem.setTooltip("Tooltip 1");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB5-2");
-	    	oItem.setText("Option 2");
-		    oItem.setTooltip("Tooltip 2");
-		    oRBGroup.addItem(oItem);
-				oItem = new sap.ui.core.Item("RB5-3");
-	  	  oItem.setText("Option 3");
-		    oItem.setTooltip("Tooltip 3");
-	    	oRBGroup.addItem(oItem);
+			var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell("Cell1");
+			oCell1.addContent(oRBGroup);
+			oCell1.setVAlign(sap.ui.commons.layout.VAlign.Top);
+			oCell1.setColSpan(2);
+			oCell1.setRowSpan(5);
 
-				var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell("Cell1");
-				oCell1.addContent(oRBGroup);
-				oCell1.setVAlign(sap.ui.commons.layout.VAlign.Top);
-				oCell1.setColSpan(2);
-				oCell1.setRowSpan(5);
+			var oButton = new sap.ui.commons.Button("B1");
+			oButton.setText("Add");
+			oButton.setTooltip("Add a RadioButton");
+			oButton.attachPress(handlePressAdd);
 
-				var oButton = new sap.ui.commons.Button("B1");
-				oButton.setText("Add");
-				oButton.setTooltip("Add a RadioButton");
-				oButton.attachPress(handlePressAdd);
+			oLyt.createRow(oCell1, oButton);
 
-        oLyt.createRow(oCell1, oButton);
+			oButton = new sap.ui.commons.Button("B2");
+			oButton.setText("Insert Before");
+			oButton.setTooltip("Insert a RadioButton before selected one");
+			oButton.attachPress(handlePressInsertBefore);
 
-				oButton = new sap.ui.commons.Button("B2");
-				oButton.setText("Insert Before");
-				oButton.setTooltip("Insert a RadioButton before selected one");
-				oButton.attachPress(handlePressInsertBefore);
+			var oButton2 = new sap.ui.commons.Button("B3");
+			oButton2.setText("Insert After");
+			oButton2.setTooltip("Insert a RadioButton after selected one");
+			oButton2.attachPress(handlePressInsertAfter);
+			oLyt.createRow(oButton, oButton2);
 
-				var oButton2 = new sap.ui.commons.Button("B3");
-				oButton2.setText("Insert After");
-				oButton2.setTooltip("Insert a RadioButton after selected one");
-				oButton2.attachPress(handlePressInsertAfter);
-        oLyt.createRow(oButton, oButton2);
+			oButton = new sap.ui.commons.Button("B4");
+			oButton.setText("Remove");
+			oButton.setTooltip("Remove first RadioButton");
+			oButton.attachPress(handlePressRemove);
 
-				oButton = new sap.ui.commons.Button("B4");
-				oButton.setText("Remove");
-				oButton.setTooltip("Remove first RadioButton");
-				oButton.attachPress(handlePressRemove);
+			oButton2 = new sap.ui.commons.Button("B5");
+			oButton2.setText("Remove all");
+			oButton2.setTooltip("Remove all RadioButtons");
+			oButton2.attachPress(handlePressRemoveAll);
 
-				oButton2 = new sap.ui.commons.Button("B5");
-				oButton2.setText("Remove all");
-				oButton2.setTooltip("Remove all RadioButtons");
-				oButton2.attachPress(handlePressRemoveAll);
+			oLyt.createRow(oButton, oButton2);
 
-				oLyt.createRow(oButton, oButton2);
+			oButton = new sap.ui.commons.Button("B6");
+			oButton.setText("Destroy");
+			oButton.setTooltip("Destroy RadioButtons");
+			oButton.attachPress(handlePressDestroy);
 
-				oButton = new sap.ui.commons.Button("B6");
-				oButton.setText("Destroy");
-				oButton.setTooltip("Destroy RadioButtons");
-				oButton.attachPress(handlePressDestroy);
+			oLyt.createRow(oButton);
 
-				oLyt.createRow(oButton);
+			oButton = new sap.ui.commons.Button("B7");
+			oButton.setText("ReadOnly");
+			oButton.setTooltip("Toggle Editable");
+			oButton.attachPress(handlePressEditable);
 
-				oButton = new sap.ui.commons.Button("B7");
-				oButton.setText("ReadOnly");
-				oButton.setTooltip("Toggle Editable");
-				oButton.attachPress(handlePressEditable);
+			oButton2 = new sap.ui.commons.Button("B8");
+			oButton2.setText("Enabled");
+			oButton2.setTooltip("toggle Enabled");
+			oButton2.attachPress(handlePressEnabled);
 
-				oButton2 = new sap.ui.commons.Button("B8");
-				oButton2.setText("Enabled");
-				oButton2.setTooltip("toggle Enabled");
-				oButton2.attachPress(handlePressEnabled);
+			oLyt.createRow(oButton, oButton2);
 
-				oLyt.createRow(oButton, oButton2);
+			oLabel = new sap.ui.commons.Label("Label1");
+			oLabel.setText("Set Selected Index");
 
-				var oLabel = new sap.ui.commons.Label("Label1");
-      	oLabel.setText("Set Selected Index");
+			var oText = new sap.ui.commons.TextField("TF1");
+			oText.attachChange(handleTextChange);
+			oText.setWidth("5em");
+			oLabel.setLabelFor(oText);
 
-      	var oText = new sap.ui.commons.TextField("TF1");
-        oText.attachChange(handleTextChange);
-        oText.setWidth("5em");
-				oLabel.setLabelFor(oText);
+			var oLabel2 = new sap.ui.commons.Label("Label2");
+			oLabel2.setText("Selected Index");
 
-				var oLabel2 = new sap.ui.commons.Label("Label2");
-      	oLabel2.setText("Selected Index");
+			var oText2 = new sap.ui.commons.TextField("TF2");
+			oText2.setEditable(false);
+			oText2.setWidth("5em");
+			oText2.setValue(oRBGroup.getSelectedIndex());
+			oLabel2.setLabelFor(oText2);
+			oLyt.createRow(oLabel, oText, oLabel2, oText2);
 
-      	var oText2 = new sap.ui.commons.TextField("TF2");
-      	oText2.setEditable(false);
-        oText2.setWidth("5em");
-      	oText2.setValue(oRBGroup.getSelectedIndex());
-				oLabel2.setLabelFor(oText2);
-				oLyt.createRow(oLabel, oText, oLabel2, oText2);
+			oLabel = new sap.ui.commons.Label("Label3");
+			oLabel.setText("Set Selected ID");
 
-				oLabel = new sap.ui.commons.Label("Label3");
-		    oLabel.setText("Set Selected ID");
+			oText = new sap.ui.commons.TextField("TF3");
+			oText.attachChange(handleTextChangeID);
+			oText.setWidth("5em");
+			oLabel.setLabelFor(oText);
 
-      	oText = new sap.ui.commons.TextField("TF3");
-		    oText.attachChange(handleTextChangeID);
-		    oText.setWidth("5em");
-				oLabel.setLabelFor(oText);
+			oLabel2 = new sap.ui.commons.Label("Label4");
+			oLabel2.setText("Selected ID");
 
-				oLabel2 = new sap.ui.commons.Label("Label4");
-		    oLabel2.setText("Selected ID");
+			oText2 = new sap.ui.commons.TextField("TF4");
+			oText2.setEditable(false);
+			oText2.setWidth("5em");
+			oText2.setValue(oRBGroup.getSelectedItem().getId());
+			oLabel2.setLabelFor(oText2);
+			oLyt.createRow(oLabel, oText, oLabel2, oText2);
 
-		    var oText2 = new sap.ui.commons.TextField("TF4");
-		    oText2.setEditable(false);
-		    oText2.setWidth("5em");
-		    oText2.setValue(oRBGroup.getSelectedItem().getId());
-				oLabel2.setLabelFor(oText2);
-				oLyt.createRow(oLabel, oText, oLabel2, oText2);
+			oLabel = new sap.ui.commons.Label("Label5");
+			oLabel.setText("Text");
 
-				oLabel = new sap.ui.commons.Label("Label5");
-		    oLabel.setText("Text");
+			oText = new sap.ui.commons.TextField("TF5");
+			oText.attachChange(handleTextChangeText);
+			oLabel.setLabelFor(oText);
+			oText.setWidth("5em");
 
-      	oText = new sap.ui.commons.TextField("TF5");
-		    oText.attachChange(handleTextChangeText);
-				oLabel.setLabelFor(oText);
-		    oText.setWidth("5em");
+			var oCheckBox = new sap.ui.commons.CheckBox("CB1");
+			oCheckBox.setText("Enabled");
+			oCheckBox.setTooltip("Set Enabled for selected Radiobutton");
+			oCheckBox.setChecked(true);
+			oCheckBox.attachChange(handleToggleEnabled);
+			oLyt.createRow(oLabel, oText, oCheckBox);
 
-				var oCheckBox = new sap.ui.commons.CheckBox("CB1");
-	      oCheckBox.setText("Enabled");
-	      oCheckBox.setTooltip("Set Enabled for selected Radiobutton");
-	      oCheckBox.setChecked(true);
-	      oCheckBox.attachChange(handleToggleEnabled);
-				oLyt.createRow(oLabel, oText, oCheckBox);
+			oLyt.placeAt("target5");
+			oLabel = new sap.ui.commons.Label({ text: "Test for interaction: ", labelFor: oRBGroup});
+			oLabel.placeAt("label5");
 
-		    oLyt.placeAt("target5");
-				var oLabel = new sap.ui.commons.Label({ text: "Test for interaction: ", labelFor: oRBGroup});
-			  oLabel.placeAt("label5");
+			// Update binding on dialog test
+			var oItem1 = new sap.ui.core.Item("RB6-1", {text: "{model1>/text1}", key: "key1"});
+			var oItem2 = new sap.ui.core.Item("RB6-2", {text: "{model1>/text2}", key: "key2"});
+			oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG6", {
+				items: [oItem1, oItem2]
+			});
+
+			var oDialog = new sap.ui.commons.Dialog("D1", {
+				content: oRBGroup
+			});
+
+			jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+			var oModel1 = new sap.ui.model.json.JSONModel({
+				text1: "Text 1",
+				text2: "Text 2"
+				});
+			sap.ui.getCore().setModel(oModel1, "model1");
+
+			oButton = new sap.ui.commons.Button({
+				text:'open Dialog',
+				press:function(oEvent) {
+					oDialog.open();
 				}
-			);
+			}).placeAt("target6");
+
+			// Databinding test
+			var oModel2 = new sap.ui.model.json.JSONModel({
+				items:[{text: "Text 1", key: "I1"},
+				       {text: "Text 2", key: "I2"},
+				       {text: "Text 3", key: "I3"}],
+				key: "I2"
+				});
+			sap.ui.getCore().setModel(oModel2, "model2");
+			var oItemTemplate = new sap.ui.core.Item();
+			oItemTemplate.bindProperty("text", "model2>text").bindProperty("key", "key");
+
+			oRBGroup = new sap.ui.commons.RadioButtonGroup("RBG7").placeAt("target7");
+			oRBGroup.bindAggregation("items", "model2>/items", oItemTemplate);
+
+			var bUpdate = false;
+			oButton = new sap.ui.commons.Button({
+				text:'update model',
+				press:function(oEvent) {
+					if(!bUpdate) {
+						oModel2.setProperty("/key", "IC");
+						oModel2.oData.items = [{text: "Text A", key: "IA"},
+						                       {text: "Text B", key: "IB"},
+						                       {text: "Text C", key: "IC"},
+						                       {text: "Text D", key: "ID"}];
+						bUpdate = true;
+					}else {
+						oModel2.setProperty("/key", "I2");
+						oModel2.oData.items = [{text: "Text 1", key: "I1"},
+						                       {text: "Text 2", key: "I2"},
+						                       {text: "Text 3", key: "I3"}];
+						bUpdate = false;
+					}
+					oModel2.checkUpdate();				}
+			}).placeAt("target7");
+
 		</script>
 	</head>
 
@@ -456,5 +513,9 @@
 		<br> <!-- Test for interaction: -->
 		<div id="label5"></div>
 		<div id="target5"></div>
+		<br> <!-- Test for update data binding on dialog -->
+		<div id="target6"></div>
+		<br> <!-- Test for data binding -->
+		<div id="target7"></div>
 	</body>
 </html>
