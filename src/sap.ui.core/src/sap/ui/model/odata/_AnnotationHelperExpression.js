@@ -293,7 +293,7 @@ sap.ui.define([
 				sName = Basics.property(oParameter, "Name", "string");
 				oResult = Expression.expression(oInterface, Basics.descend(oParameter, "Value"),
 					/*bExpression*/true);
-				aParts.push(sPrefix, Basics.toJavaScript(sName), ":",
+				aParts.push(sPrefix, Basics.toJSON(sName), ":",
 					Basics.resultToString(oResult, true));
 				sPrefix = ",";
 			}
@@ -412,7 +412,7 @@ sap.ui.define([
 			return {
 				result: "expression",
 				value: 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","
-					+ Basics.toJavaScript(oResult.type) + ")",
+					+ Basics.toJSON(oResult.type) + ")",
 				type: "Edm.String"
 			};
 		}

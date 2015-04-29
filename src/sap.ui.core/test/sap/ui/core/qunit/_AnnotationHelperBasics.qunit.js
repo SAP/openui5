@@ -13,7 +13,7 @@ sap.ui.require([
 	module("sap.ui.model.odata._AnnotationHelperBasics");
 
 	//*********************************************************************************************
-	test("toJSON, toJavaScript, toErrorString", function () {
+	test("toJSON, toErrorString", function () {
 		var oCircular = {},
 			fnTestFunction = function () {};
 
@@ -41,13 +41,8 @@ sap.ui.require([
 				strictEqual(Basics.toJSON(oFixture.value), oFixture.json,
 					"toJSON:" + oFixture.json);
 			}
-			strictEqual(Basics.toJavaScript(oFixture.value), vJS, "toJavaScript:" + vJS);
 			strictEqual(Basics.toErrorString(oFixture.value), vJS, "toErrorString:" + vJS);
 		});
-
-		throws(function() {
-			Basics.toJavaScript(fnTestFunction);
-		}, /Cannot write a function to a Javascript string/, "toJavaScript: function");
 
 		oCircular.circle = oCircular;
 
@@ -146,6 +141,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Note: there is another test for resultToString in _AnnotationHelperExpressions.qunit.js
 	test("resultToString", function () {
 		[{
 			value: {result: "binding", value: "path"},
@@ -156,7 +152,7 @@ sap.ui.require([
 			binding: "{path:'{foo\\'bar}'}",
 			expression: "${path:'{foo\\'bar}'}"
 		}, {
-			value: {result: "constant", value: "{foo\\bar}"},
+			value: {result: "constant", type: "Edm.String", value: "{foo\\bar}"},
 			binding: "\\{foo\\\\bar\\}",
 			expression: "'{foo\\\\bar}'"
 		}, {
@@ -170,8 +166,6 @@ sap.ui.require([
 				oFixture.expression);
 		});
 
-		strictEqual(Basics.resultToString({result: "constant", value: Infinity}, true),
-			"Infinity", "non-JSON constant");
 		strictEqual(
 			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, false),
 			"{FirstName} {LastName}", "composite to binding");

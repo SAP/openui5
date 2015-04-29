@@ -146,6 +146,94 @@ sap.ui.require([
 						</Apply>\
 					</PropertyValue>\
 				</Record>\
+				<!-- fillUriTemplate w/ constants -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+					<PropertyValue Property="Url">\
+						<UrlRef>\
+							<Apply Function="odata.fillUriTemplate">\
+								<String><![CDATA[#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{String}/{TimeOfDay}]]></String>\
+								<LabeledElement Name="Bool">\
+									<Bool>true</Bool>\
+								</LabeledElement>\
+								<LabeledElement Name="Date">\
+									<Date>2015-03-24</Date>\
+								</LabeledElement>\
+								<LabeledElement Name="DateTimeOffset">\
+									<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+								</LabeledElement>\
+								<LabeledElement Name="Decimal">\
+									<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+								</LabeledElement>\
+								<LabeledElement Name="Float">\
+									<Float>-7.4503e-36</Float>\
+								</LabeledElement>\
+								<LabeledElement Name="Guid">\
+									<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+								</LabeledElement>\
+								<LabeledElement Name="Int">\
+									<Int>9007199254740992</Int>\
+								</LabeledElement>\
+								<LabeledElement Name="String">\
+									<String>hello, world</String>\
+								</LabeledElement>\
+								<LabeledElement Name="TimeOfDay">\
+									<TimeOfDay>13:57:06</TimeOfDay>\
+								</LabeledElement>\
+							</Apply>\
+						</UrlRef>\
+					</PropertyValue>\
+				</Record>\
+				<!-- uriEncode w/ constants -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataFieldWithUrl">\
+					<PropertyValue Property="Url">\
+						<UrlRef>\
+							<Apply Function="odata.fillUriTemplate">\
+								<String><![CDATA[{Bool}_{DateTimeOffset}_{Decimal}_{Float}_{Guid}_{Int}_{String}_{TimeOfDay}]]></String>\
+								<LabeledElement Name="Bool">\
+									<Apply Function="odata.uriEncode">\
+										<Bool>true</Bool>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="DateTimeOffset">\
+									<Apply Function="odata.uriEncode">\
+										<!-- TODO split seconds, e.g. ".123456789012" -->\
+										<DateTimeOffset>2015-03-24T14:03:27Z</DateTimeOffset>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="Decimal">\
+									<Apply Function="odata.uriEncode">\
+										<Decimal>-123456789012345678901234567890.1234567890</Decimal>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="Float">\
+									<Apply Function="odata.uriEncode">\
+										<Float>-7.4503e-36</Float>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="Guid">\
+									<Apply Function="odata.uriEncode">\
+										<Guid>0050568D-393C-1ED4-9D97-E65F0F3FCC23</Guid>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="Int">\
+									<Apply Function="odata.uriEncode">\
+										<Int>9007199254740992</Int>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="String">\
+									<Apply Function="odata.uriEncode">\
+										<String>hello, world</String>\
+									</Apply>\
+								</LabeledElement>\
+								<LabeledElement Name="TimeOfDay">\
+									<Apply Function="odata.uriEncode">\
+										<TimeOfDay>13:57:06.123456789012</TimeOfDay>\
+									</Apply>\
+								</LabeledElement>\
+							</Apply>\
+						</UrlRef>\
+					</PropertyValue>\
+				</Record>\
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
@@ -347,26 +435,26 @@ sap.ui.require([
 	}
 
 	/**
-	 * Tests that the given raw value actually leads to the expected binding.
+	 * Tests that the raw value for the given context actually leads to the expected binding.
 	 *
-	 * @param {object} oRawValue
-	 *   the raw value from the meta model
 	 * @param {sap.ui.model.Context} oCurrentContext
+	 *   the context pointing to the raw value
 	 * @param {any} vExpected
 	 *   the expected result from binding the <code>format</code> result against the model
 	 * @param {object} oModelData
 	 *   the data for the JSONModel to bind to
 	 */
-	function testBinding(oRawValue, oCurrentContext, vExpected, oModelData) {
+	function testBinding(oCurrentContext, vExpected, oModelData) {
 		var oModel = new sap.ui.model.json.JSONModel(oModelData),
 			oControl = new TestControl({
 				models: oModel,
 				bindingContexts: oModel.createBindingContext("/")
 			}),
+			oRawValue = oCurrentContext.getObject(),
 			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
 		oControl.bindProperty("text", oSingleBindingInfo);
-		strictEqual(oControl.getText(), vExpected);
+		strictEqual(oControl.getText(), vExpected, oSingleBindingInfo);
 	}
 
 	/**
@@ -545,6 +633,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[
+		{typeName: "Bool", result: "true"},
+		{typeName: "Date", result: "2015-03-24"},
+		{typeName: "DateTimeOffset", result: "2015-03-24T14:03:27Z"},
+		{typeName: "Decimal", result: "-123456789012345678901234567890.1234567890"},
+		{typeName: "Float", result: "-7.4503e-36"},
+		{typeName: "Guid", result: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
+		{typeName: "Int", result: "9007199254740992"},
+		{typeName: "TimeOfDay", result: "13:57:06"}
+	].forEach(function (oFixture, index) {
+		test("14.4.x Constant Expression edm:" + oFixture.typeName, function () {
+			return withMetaModel("/fake/annotations", function (oMetaModel) {
+				var sMetaPath = sPath2BusinessPartner
+						+ "/com.sap.vocabularies.UI.v1.Identification/3/Value/Apply/Parameters/"
+						+ (2 * index),
+					oCurrentContext = oMetaModel.getContext(sMetaPath),
+					oRawValue = oMetaModel.getObject(sMetaPath);
+
+				strictEqual(formatAndParse(oRawValue, oCurrentContext), oFixture.result);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
 			var oMetaModel = new sap.ui.model.json.JSONModel({
@@ -650,13 +762,12 @@ sap.ui.require([
 	test("14.5.3.1.1 Function odata.concat", function () {
 		return withMetaModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
-				oCurrentContext = oMetaModel.getContext(sPath),
 				oRawValue = oMetaModel.getObject(sPath);
 
 			//TODO remove this workaround to fix whitespace issue
 			oRawValue.Apply.Parameters[1].Value = " ";
 
-			testBinding(oRawValue, oCurrentContext, "John Doe", {
+			testBinding(oMetaModel.getContext(sPath), "John Doe", {
 				FirstName: "John",
 				LastName: "Doe"
 			});
@@ -713,14 +824,14 @@ sap.ui.require([
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
 			strictEqual(formatAndParse(oRawValue, oCurrentContext),
-					"true|" +
-					"2015-03-24|" +
-					"2015-03-24T14:03:27Z|" +
-					"-123456789012345678901234567890.1234567890|" +
-					"-7.4503e-36|" +
-					"0050568D-393C-1ED4-9D97-E65F0F3FCC23|" +
-					"9007199254740992|" +
-					"13:57:06");
+				"true|" +
+				"2015-03-24|" +
+				"2015-03-24T14:03:27Z|" +
+				"-123456789012345678901234567890.1234567890|" +
+				"-7.4503e-36|" +
+				"0050568D-393C-1ED4-9D97-E65F0F3FCC23|" +
+				"9007199254740992|" +
+				"13:57:06");
 		});
 	});
 
@@ -728,14 +839,33 @@ sap.ui.require([
 	test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
 		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef",
-				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oRawValue = oMetaModel.getObject(sMetaPath);
+					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url/UrlRef";
 
-			testBinding(oRawValue, oCurrentContext,
+			testBinding(oMetaModel.getContext(sMetaPath),
 				"#BusinessPartner-displayFactSheet?BusinessPartnerID=0815", {
 				BusinessPartnerID: "0815"
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3.1.2 odata.fillUriTemplate: various constants", function () {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/4/Url/UrlRef",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			// Note: theoretically, each piece inserted into the template needs to be URI encoded,
+			// this is only done where it actually makes a difference here
+			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+				"#true/2015-03-24/"
+				+ encodeURIComponent("2015-03-24T14:03:27Z")
+				+ "/-123456789012345678901234567890.1234567890/-7.4503e-36"
+				+ "/0050568D-393C-1ED4-9D97-E65F0F3FCC23/9007199254740992/"
+				+ encodeURIComponent("hello, world")
+				+ "/"
+				+ encodeURIComponent("13:57:06"));
 		});
 	});
 
@@ -776,12 +906,9 @@ sap.ui.require([
 	test("14.5.3.1.3 Function odata.uriEncode", function () {
 		return withMetaModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
-					+ "/Url/UrlRef/Apply/Parameters/1/Value",
-				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oRawValue = oMetaModel.getObject(sMetaPath),
-				oSingleBindingInfo;
+					+ "/Url/UrlRef/Apply/Parameters/1/Value";
 
-			testBinding(oRawValue, oCurrentContext, "'Domplatz'", {
+			testBinding(oMetaModel.getContext(sMetaPath), "'Domplatz'", {
 				Address: {
 					Street : "Domplatz",
 					City : "Speyer"
@@ -791,14 +918,61 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
-		return withMetaModel(function (oMetaModel) {
-			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
-					+ "/Url/UrlRef",
+	// Note: there is no Date type in v2, thus it cannot be encoded for URIs
+	[ // see http://www.odata.org/documentation/odata-version-2-0/overview/
+		{type: "Bool", result: "true"},
+		//TODO split seconds, e.g. ".123456789012"
+		{type: "DateTimeOffset", result: "datetimeoffset'2015-03-24T14:03:27Z'"},
+		{type: "Decimal", result: "-123456789012345678901234567890.1234567890M"},
+		{type: "Float", result: "-7.4503e-36d"},
+		{type: "Guid", result: "guid'0050568D-393C-1ED4-9D97-E65F0F3FCC23'"},
+		{type: "Int", result: "9007199254740992L"},
+		{type: "String", result: "'hello, world'"},
+		{type: "TimeOfDay", result: "time'13:57:06.123456789012'"}
+	].forEach(function (oFixture, index) {
+		test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function () {
+			return withMetaModel("/fake/annotations", function (oMetaModel) {
+				var sMetaPath = sPath2BusinessPartner
+						+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/UrlRef/Apply/"
+						+ "Parameters/" + (index + 1) + "/Value",
+					oCurrentContext = oMetaModel.getContext(sMetaPath),
+					oRawValue = oMetaModel.getObject(sMetaPath);
+
+				strictEqual(formatAndParse(oRawValue, oCurrentContext), oFixture.result);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3.1.3 odata.uriEncode: various constants", function () {
+		return withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/UrlRef",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
-			testBinding(oRawValue, oCurrentContext,
+			strictEqual(formatAndParse(oRawValue, oCurrentContext), encodeURIComponent(
+				// see http://www.odata.org/documentation/odata-version-2-0/overview/
+				"true_"
+				//TODO split seconds, e.g. ".123456789012"
+				+ "datetimeoffset'2015-03-24T14:03:27Z'_"
+				+ "-123456789012345678901234567890.1234567890M_"
+				+ "-7.4503e-36d_"
+				+ "guid'0050568D-393C-1ED4-9D97-E65F0F3FCC23'_"
+				+ "9007199254740992L_"
+				+ "'hello, world'_"
+				+ "time'13:57:06.123456789012'"
+			).replace(/'/g, "%27"));
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
+		return withMetaModel(function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
+					+ "/Url/UrlRef";
+
+			testBinding(oMetaModel.getContext(sMetaPath),
 				"https://www.google.de/maps/place/%27Domplatz%27,%27Speyer%27",
 				{
 					Address: {
@@ -842,11 +1016,9 @@ sap.ui.require([
 		// This test is important to show that a nested concat must be expression
 		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/1/Value",
-				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oRawValue = oMetaModel.getObject(sMetaPath);
+					+ "/com.sap.vocabularies.UI.v1.Identification/1/Value";
 
-			testBinding(oRawValue, oCurrentContext, "SAP 'SE'", {
+			testBinding(oMetaModel.getContext(sMetaPath), "SAP 'SE'", {
 				CompanyName: "SAP",
 				LegalForm: "SE",
 			});
@@ -857,11 +1029,9 @@ sap.ui.require([
 	test("14.5.3 Nested apply (uriEncode embeds concat)", function () {
 		return withMetaModel("/fake/annotations", function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
-					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value",
-				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oRawValue = oMetaModel.getObject(sMetaPath);
+					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value";
 
-			testBinding(oRawValue, oCurrentContext, "'SAP SE'", {
+			testBinding(oMetaModel.getContext(sMetaPath), "'SAP SE'", {
 				CompanyName: "SAP",
 				LegalForm: "SE",
 			});
