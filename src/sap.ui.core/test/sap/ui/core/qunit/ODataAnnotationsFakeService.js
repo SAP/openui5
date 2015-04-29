@@ -136,7 +136,11 @@ xhr.onCreate = function(request) {
 				break;			
 				
 			case "fakeService://testdata/odata/simple-values-2.xml":
-				sAnswer = sSimpleValuesTest2	;
+				sAnswer = sSimpleValuesTest2;
+				break;
+				
+			case "fakeService://testdata/odata/if-in-apply.xml":
+				sAnswer = sIfInApply;
 				break;
 				
 			default:
@@ -4045,6 +4049,47 @@ var sSimpleValuesTest2 = '\
 					<Int>2</Int>\
 					<Int>3</Int>\
 					<Int>4</Int>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+
+var sIfInApply = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="com.sap.vocabularies.Test.v1"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="IfInApply">\
+				<Annotation Term="Test.Data">\
+					<Record>\
+						<PropertyValue Property="Value">\
+							<Apply Function="odata.concat">\
+								<If>\
+									<Eq>\
+										<Path>Sex</Path>\
+										<String>M</String>\
+									</Eq>\
+									<String>Mr. </String>\
+									<If>\
+										<Eq>\
+											<Path>Sex</Path>\
+											<String>F</String>\
+										</Eq>\
+										<String>Mrs. </String>\
+										<String></String>\
+									</If>\
+								</If>\
+								<Path>FirstName</Path>\
+								<String/>\
+								<Path>LastName</Path>\
+							</Apply>\
+						</PropertyValue>\
+					</Record>\
 				</Annotation>\
 			</Annotations>\
 		</Schema>\
