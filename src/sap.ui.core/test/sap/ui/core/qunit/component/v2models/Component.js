@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 
 						"annotations2": {
-							"uri": "/path/to/odata/annotations/2",
+							"uri": "path/to/local/odata/annotations/2",
 							"type": "ODataAnnotation"
 						},
 
@@ -63,6 +63,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"json-relative": {
 							"uri": "path/to/local/data.json",
+							"type": "JSON"
+						},
+
+						"json-relative-2": {
+							"uri": "../../path/to/other/data.json",
 							"type": "JSON"
 						},
 
@@ -156,6 +161,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"json": "json",
 						"json-relative": "json-relative",
+						"json-relative-2": "json-relative-2",
 
 						"xml": "xml",
 						"xml-relative": "xml-relative",
