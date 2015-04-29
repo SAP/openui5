@@ -835,8 +835,6 @@
 					text : "button10"
 				}) ],
 				opener : oBtn1,
-				maxHeight : "200px",
-				maxWidth : "120px",
 				openDuration : 0,
 				closeDuration : 0
 			}).addStyleClass("highPopup"); // setting the height to 400px
@@ -844,6 +842,8 @@
 			oBtn1.press = function() {
 				oTPMaxHeight.open();
 			};
+
+			oBtn1.placeAt("uiArea1");
 		},
 		teardown : function() {
 			oTPMaxHeight.destroy();
@@ -867,6 +867,7 @@
 			}
 		};
 
+		oTPMaxHeight.setMaxHeight("200px");
 		oTPMaxHeight.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
@@ -884,6 +885,7 @@
 			ok(bTest, "ToolPopup's width of 120px");
 		};
 
+		oTPMaxHeight.setMaxWidth("120px");
 		oTPMaxHeight.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
@@ -911,6 +913,33 @@
 		oTPMaxHeight.attachClosed(fnClosed);
 
 		ok(!!!oTPMaxHeight._sResizeID, "No resize handler attached if ToolPopup is closed");
+		oBtn1.press();
+		sap.ui.getCore().applyChanges();
+	});
+
+	asyncTest("Check if ToolPopup exceeds window", function() {
+		var fnOpened = function() {
+			oTPMaxHeight.detachOpened(fnOpened);
+
+			var iWinHeight = jQuery(window).height();
+			var oRect = oTPMaxHeight.$().rect();
+
+			ok(oRect.top + oRect.height < iWinHeight, "ToolPopup isn't bigger than window");
+
+			oRect = oTPMaxHeight.$("content").rect();
+			ok(oRect.top + oRect.height < iWinHeight, "Content properly shrinked to ToolPopup size and not bigger than window");
+
+			start();
+		};
+
+		oTPMaxHeight.setMaxHeight("0px");
+		for (var i = 0; i < 100; i++) {
+			oTPMaxHeight.addContent(new sap.ui.commons.Button({
+				text : "Blow it up"
+			}));
+		}
+
+		oTPMaxHeight.attachOpened(fnOpened);
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
@@ -1016,14 +1045,15 @@
 
 </head>
 <body class="sapUiBody">
+	<div style="margin-top: 100px; margin-left: 200px;" id="uiArea1"></div>
+	<div style="margin-top: 20px; margin-right: 100px; text-align: right;" id="uiArea2"></div>
+	<div style="margin-top: 100px;" id="Placeholder" tabindex="0">Placeholder for space below</div>
+
 	<h1 id="qunit-header">qUnit Page for sap.ui.ux3.ToolPopup</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture">test markup, will be hidden</div>
 
-	<div style="margin-top: 250px; margin-left: 200px;" id="uiArea1"></div>
-	<div style="margin-top: 20px; margin-right: 100px; text-align: right;" id="uiArea2"></div>
-	<div style="margin-top: 100px;" id="Placeholder" tabindex="0">Placeholder for space below</div>
 </body>
 </html>

@@ -384,13 +384,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					jQuery.sap.log.warning(sMessage, "", "sap.ui.ux3.ToolPopup");
 				}
 			}
+
+			iMaxHeight = iMaxHeight ? iMaxHeight : iWinHeight - oThisRect.top;
 		}
 
-		if (!bTooHigh) {
-			$This.toggleClass("sapUiUx3TPLargeContent", false);
-		}
+		$This.toggleClass("sapUiUx3TPLargeContent", bTooHigh);
 
-		if (iMaxHeight > 0) {
+		if (iMaxHeight || bTooHigh) {
 			$This.css("max-height", iMaxHeight + "px");
 
 			var $Title = this.$("title");
