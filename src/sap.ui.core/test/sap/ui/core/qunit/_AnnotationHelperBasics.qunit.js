@@ -54,15 +54,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	test("error", function () {
-		var oPathValue = {path: "/path/to/foo", value: {foo: "bar"}};
+		var sErrorText = "Wrong! So wrong!",
+			oPathValue = {path: "/path/to/foo", value: {foo: "bar"}},
+			sMessage = oPathValue.path + ": " + sErrorText;
 
-		this.mock(jQuery.sap.log).expects("error").once().withExactArgs(
-			oPathValue.path + ": Wrong! So wrong!", Basics.toErrorString(oPathValue.value),
-			"sap.ui.model.odata.AnnotationHelper");
+		this.mock(jQuery.sap.log).expects("error").once().withExactArgs(sMessage,
+			Basics.toErrorString(oPathValue.value), "sap.ui.model.odata.AnnotationHelper");
 
 		throws(function () {
-			Basics.error(oPathValue, "Wrong! So wrong!");
-		}, SyntaxError);
+			Basics.error(oPathValue, sErrorText);
+		}, new SyntaxError(sMessage));
 	});
 
 	//*********************************************************************************************

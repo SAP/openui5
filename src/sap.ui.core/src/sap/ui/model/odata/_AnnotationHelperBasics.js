@@ -69,9 +69,10 @@ sap.ui.define([
 		 *   the message to log
 		 */
 		error: function (oPathValue, sMessage) {
-			jQuery.sap.log.error(oPathValue.path + ": " + sMessage,
-				Basics.toErrorString(oPathValue.value), "sap.ui.model.odata.AnnotationHelper");
-			throw new SyntaxError();
+			sMessage = oPathValue.path + ": " + sMessage;
+			jQuery.sap.log.error(sMessage, Basics.toErrorString(oPathValue.value),
+					"sap.ui.model.odata.AnnotationHelper");
+			throw new SyntaxError(sMessage);
 		},
 
 		/**
