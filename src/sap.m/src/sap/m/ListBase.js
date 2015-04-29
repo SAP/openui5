@@ -1447,23 +1447,20 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	// this gets called after navigation items are focused
-	ListBase.prototype.onNavigationItemFocus = function(oEvent, bHasHeader, bHasFooter) {
+	ListBase.prototype.onNavigationItemFocus = function(oEvent) {
 		var iIndex = oEvent.getParameter("index"),
 			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
 			oItemDomRef = aItemDomRefs[iIndex],
 			iSetSize = aItemDomRefs.length,
 			oBinding = this.getBinding("items");
-		
+
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
 			iSetSize = oBinding.getLength();
-		} else {
-			bHasHeader && iSetSize--;
-			bHasFooter && iSetSize--;
 		}
 
 		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
-		oItemDomRef.setAttribute("aria-posinset", bHasHeader ? iIndex : iIndex + 1);
+		oItemDomRef.setAttribute("aria-posinset", iIndex + 1);
 		oItemDomRef.setAttribute("aria-setsize", iSetSize);
 	};
 	

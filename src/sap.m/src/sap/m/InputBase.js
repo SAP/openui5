@@ -812,7 +812,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				"id": sMessageId,
 				"class": sClass,
 				"role": "tooltip",
-				"aria-live": "polite"
+				"aria-live": "assertive"
 			}).append(
 				jQuery("<span>", {
 					"aria-hidden": true,
