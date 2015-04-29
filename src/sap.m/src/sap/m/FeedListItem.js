@@ -325,13 +325,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	
 	/**
 	 * Checks if the text is expandable: If maxCharacters is empty the default values are used, which are 300 characters (
-	 * on mobile devices) and 500 characters ( on tablet and desktop). Otherwise maxCharacters is used as limit. Based on
-	 * this value, the text of the FeedListItem is collapsed once text reaches this limit.
+	 * on mobile devices) and 500 characters ( on tablet and desktop). Otherwise maxCharacters is used as a limit. Based on
+	 * this value, the text of the FeedListItem is collapsed once the text reaches this limit.
 	 *
 	 * @private
 	 */
 	FeedListItem.prototype._checkTextIsExpandable = function() {
-	
 		this._nMaxCollapsedLength = this.getMaxCharacters();
 		if (this._nMaxCollapsedLength === 0) {
 			if (sap.ui.Device.system.phone) {

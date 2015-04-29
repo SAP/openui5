@@ -178,11 +178,20 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 	
 	FeedListItemRenderer._writeCollapsedText = function(rm, oFeedListItem, sMyId) {
-		rm.writeEscaped(oFeedListItem._getCollapsedText(), true);
-		rm.write('</span>');
-		rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
-		rm.write("&#32&#46&#46&#46&#32"); // space + three dots + space
-		rm.write('</span>');
+		// 'oFeedListItem._bTextExpanded' is true if the text had been expanded and rendering needs to be done again.
+		if (oFeedListItem._bTextExpanded) {
+			rm.writeEscaped(oFeedListItem._sFullText, true);
+			rm.write('</span>');
+			rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
+			rm.write("&#32"); // space
+			rm.write('</span>');
+		} else {
+			rm.writeEscaped(oFeedListItem._getCollapsedText(), true);
+			rm.write('</span>');
+			rm.write('<span id="' + sMyId + '-threeDots" class ="sapMFeedListItemTextString">');
+			rm.write("&#32&#46&#46&#46&#32"); // space + three dots + space
+			rm.write('</span>');
+		}
 		var oLinkExpandCollapse = oFeedListItem._getLinkExpandCollapse();
 		oLinkExpandCollapse.addStyleClass("sapMFeedListItemLinkExpandCollapse");
 		rm.renderControl(oLinkExpandCollapse);
