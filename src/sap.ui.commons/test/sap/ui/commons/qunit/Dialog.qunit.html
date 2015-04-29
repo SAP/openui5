@@ -17,18 +17,17 @@
 
 </script>
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
+	sinon.config.useFakeTimers = false;
+
 	var oWidth = "300px", oHeight = "350px", iScrollLeft = 0, iScrollTop = 0, bMaximized = true, oTitle = null, bApplyContentPadding = true, bShowCloseButton = true, bResizable = true;
 
 	var iPopupDelay = 500; // Dialog now has a delay of 400ms
@@ -70,20 +69,32 @@
 
 	// open the Dialog
 	asyncTest("OpenDialog", function() {
-		oDialog1.open();
+		expect(5);
+		var oSpyInvalidate = sinon.spy(sap.ui.core.UIArea.prototype, "rerender");
 
-		setTimeout(function() {
+		var fnOpened = function() {
+			oDialog1.oPopup.detachOpened(fnOpened);
+
+			ok(!oSpyInvalidate.calledOnce, "UIArea wasn't rerendered when Dialog was opened");
+
 			ok(oDialog1.isOpen(), "Dialog should be open after opening!");
 			equals(jQuery("#Dialog1").css("visibility"), "visible", "Dialog should be visible after opening");
+
 			var oDomRef = oDialog1.getDomRef();
 			strictEqual(oDomRef.offsetWidth, parseInt(oWidth), "Width of the Dialog should be equal to the set value.");
+
 			var offsetHeight = oDomRef.offsetHeight;
 			if (sap.ui.Device.browser.chrome && offsetHeight == 351) { // a known issue in Chrome that sometimes happens
 				offsetHeight = 350;
 			}
+
 			strictEqual(offsetHeight, parseInt(oHeight), "Height of the Dialog should be equal to the set value.");
+
 			start();
-		}, iPopupDelay);
+		}
+
+		oDialog1.oPopup.attachOpened(fnOpened);
+		oDialog1.open();
 	});
 
 	// close the Dialog again
