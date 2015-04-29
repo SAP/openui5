@@ -339,6 +339,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			case "Edm.Double":
 				sValue = vValue + "d";
 				break;
+			case "Edm.Float":
 			case "Edm.Single":
 				sValue = vValue + "f";
 				break;
