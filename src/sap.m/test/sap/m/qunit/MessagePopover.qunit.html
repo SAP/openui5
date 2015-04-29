@@ -181,6 +181,24 @@
 				"callback should be called with correct argument");
 		});
 
+		QUnit.test("AfterOpen should always load control's overview screen", 2, function (assert) {
+			var done = assert.async(),
+				that = this,
+				fnAfterOpen = function() {
+					assert.ok(that.oMessagePopover._isListPage());
+					that.oMessagePopover._navContainer.to(that.oMessagePopover._detailsPage);
+					that.oMessagePopover.close();
+					that.clock.tick(500);
+				};
+
+				that.oMessagePopover.attachAfterOpen(fnAfterOpen);
+				that.oMessagePopover.openBy(that.oButton);
+				that.clock.tick(500);
+
+				assert.ok(that.oMessagePopover._isListPage());
+				done();
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
