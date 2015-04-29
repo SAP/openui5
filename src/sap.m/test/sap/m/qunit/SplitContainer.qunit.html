@@ -518,7 +518,7 @@
 			});
 
 			test("Call preventDefault on masterNavigate or detailNavigate events should prevent the navigation", function() {
-				var oPortrait = {
+				var oLandscape = {
 						landscape: true,
 						portrait: false
 					},
@@ -529,7 +529,7 @@
 					};
 
 				this.stub(sap.ui.Device, "system", oSystem);
-				this.stub(sap.ui.Device, "orientation", oPortrait);
+				this.stub(sap.ui.Device, "orientation", oLandscape);
 
 				var oMasterPage1 = new sap.m.Page("mp1"),
 					oMasterPage2 = new sap.m.Page("mp2"),
@@ -559,6 +559,46 @@
 
 				oSC.toDetail("dp2");
 				equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is still 'dp1'");
+
+				oSC.destroy();
+			});
+			
+			test("Show hamburger button when there's INVISIBLE back button in detail page's header", function() {
+				var oPortrait = {
+						landscape: false,
+						portrait: true
+					},
+					oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oMasterPage1 = new sap.m.Page("mp1"),
+					oDetailPage1 = new sap.m.Page("dp1", {
+						customHeader: new sap.m.Bar({
+							contentLeft: new sap.m.Button({
+								type: sap.m.ButtonType.Back,
+								text: "hidden button",
+								visible: false 
+							})
+						})
+					}),
+					oSC = new sap.m.SplitContainer({
+						masterPages: [oMasterPage1],
+						detailPages: [oDetailPage1]
+					});
+
+				oSC.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oMasterButton = oSC._oShowMasterBtn;
+
+				ok(oMasterButton, "Hamburger button is created");
+				ok(oMasterButton.$().closest("#dp1").length, "master button is in detail page");
 
 				oSC.destroy();
 			});
