@@ -234,7 +234,14 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/if-in-apply.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
-		}
+		},
+		"Other Elements in LabeledElement": {
+			service          : "fakeService://testdata/odata/sapdata01/",
+			annotations      : "fakeService://testdata/odata/labeledelement-other-values.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		
 	};
 
 
@@ -3571,7 +3578,6 @@ function runODataAnnotationTests() {
 			
 			deepContains(
 				oAnnotations["IfInApply"],
-				
 				{
 					"com.sap.vocabularies.Test.v1.Data": {
 						"Value": {
@@ -3611,9 +3617,123 @@ function runODataAnnotationTests() {
 							}
 						}
 					}
-				}
+				},
+				"IfInApply"
 			);
 			
+			start();
+		});
+	});
+	
+	
+	
+	asyncTest("Other Elements in LabeledElement", function() {
+		expect(113);
+		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
+		var sServiceURI = mTest.service;
+		var mModelOptions = {
+			annotationURI : mTest.annotations,
+			json : true
+		};
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+	
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["LabeledElement"], 
+				{
+					"com.sap.vocabularies.Test.v1.Data": {
+						"Url": {
+							"UrlRef": {
+								"Apply": {
+									"Name": "odata.fillUriTemplate",
+									"Parameters": [{
+										"Type": "String",
+										"Value":"#{Bool}/{Date}/{DateTimeOffset}/{Decimal}/{Float}/{Guid}/{Int}/{Path}/{String}/{TimeOfDay}"
+									}, {
+										"Type":"LabeledElement",
+										"Name":"Bool",
+										"Value": {
+											"Name": "Bool",
+											"Bool": "true"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Date",
+										"Value": {
+											"Name": "Date",
+											"Date": "2015-03-24"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "DateTimeOffset",
+										"Value": {
+											"Name": "DateTimeOffset",
+											"DateTimeOffset": "2015-03-24T14:03:27Z"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Decimal",
+										"Value": {
+											"Name":"Decimal",
+											"Decimal": "-123456789012345678901234567890.1234567890"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Float",
+										"Value": {
+											"Name": "Float",
+											"Float": "-7.4503e-36"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Guid",
+										"Value": {
+											"Name": "Guid",
+											"Guid": "0050568D-393C-1ED4-9D97-E65F0F3FCC23"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Int",
+										"Value": {
+											"Name": "Int",
+											"Int": "9007199254740992"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "Path",
+										"Value": {
+											"Path": "BusinessPartnerID"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "String",
+										"Value": {
+											"String": "hello, world"
+										}
+									}, {
+										"Type": "LabeledElement",
+										"Name": "TimeOfDay",
+										"Value": {
+											"Name": "TimeOfDay",
+											"TimeOfDay": "13:57:06"
+										}
+									}]
+								}
+							}
+						},
+						"RecordType": "com.sap.vocabularies.Test.v1.Data.DataFieldWithUrl"
+					},
+				},
+				"LabeledElement"
+			);
+
 			start();
 		});
 	});
