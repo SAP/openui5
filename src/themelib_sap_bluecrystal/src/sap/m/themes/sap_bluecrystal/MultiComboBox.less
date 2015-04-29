@@ -10,14 +10,17 @@
 /* ------------------------------ */
 /* BorderDiv                      */
 /* ------------------------------ */
-.sap-desktop .sapMMultiComboBoxFocused:not(.sapMInputBaseReadonly):not(.sapMInputBaseError):not(.sapMInputBaseWarning):not(.sapMInputBaseSuccess) .sapMMultiComboBoxBorder,
+.sap-desktop .sapMMultiComboBoxFocused:not(.sapMInputBaseReadonly):not(.sapMInputBaseError):not(.sapMInputBaseWarning):not(.sapMInputBaseSuccess) .sapMMultiComboBoxBorder {
+	border-color:  @sapUiFieldFocusBorderColor;
+}
+
 .sap-desktop .sapMMultiComboBox:not(.sapMInputBaseReadonly):not(.sapMInputBaseError):not(.sapMInputBaseWarning):not(.sapMInputBaseSuccess) > .sapMMultiComboBoxBorder:hover {
-	border-color:  @sapUiInputBaseFocus;
+	border-color:  @sapUiFieldHoverBorderColor;
 }
 
 .sapMMultiComboBox > .sapMMultiComboBoxBorder {
-	background: @sapUiLightestBG;
-	border: 1px solid @sapUiInputBaseBorder;
+	background: @sapUiFieldBackground;
+	border: 1px solid @sapUiFieldBorderColor;
 	padding-left: 0.75rem;
 	white-space: nowrap;
 	position: relative;
@@ -69,7 +72,7 @@
 	background: transparent;
 	height: 2.375rem;
 	font-size: @sapMFontMediumSize;
-	font-family: @sapUiInputBaseFont;
+	font-family: @sapUiFontFamily;
 }
 
 .sapMMultiComboBoxShadowDiv {
@@ -144,17 +147,17 @@
 }
 
 .sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder {
-	border-color: @sapUiInputBaseError;
+	border-color: @sapUiFieldInvalidColor;
 	height: 2.25rem;
 }
 
 .sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder {
-	border-color: @sapUiInputBaseWarning;
+	border-color: @sapUiFieldWarningColor;
 	height: 2.25rem;
 }
 
 .sapMMultiComboBox.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
-	border-color: @sapUiInputBaseSuccess;
+	border-color: @sapUiFieldSuccessColor;
 	height: 2.25rem;
 }
 	   
@@ -180,15 +183,15 @@
 	}
 	
 	.sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder {
-		border-color: @sapUiInputBaseError;
+		border-color: @sapUiFieldInvalidColor;
 	}
 
 	.sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder {
-		border-color: @sapUiInputBaseWarning;
+		border-color: @sapUiFieldWarningColor;
 	}
 
 	.sapMMultiComboBox.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
-		border-color: @sapUiInputBaseSuccess;
+		border-color: @sapUiFieldSuccessColor;
 	}
 
 	.sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxInputInner,
