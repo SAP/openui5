@@ -23,6 +23,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			encodeURIComponent: encodeURIComponent,
 			Math: Math,
 			odata: {
+				compare: function () {
+					var ODataUtils;
+
+					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
+					ODataUtils = sap.ui.model.odata.ODataUtils;
+					return ODataUtils.compare.apply(ODataUtils, arguments);
+				},
 				fillUriTemplate: function () {
 					if (!URI.expand) {
 						jQuery.sap.require("sap.ui.thirdparty.URITemplate");
