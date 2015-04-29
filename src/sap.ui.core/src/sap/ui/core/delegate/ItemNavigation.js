@@ -150,24 +150,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		BeforeFocus: "BeforeFocus",
 		AfterFocus: "AfterFocus",
 		BorderReached: "BorderReached",
-		FocusAgain: "FocusAgain"
+		FocusAgain: "FocusAgain",
+		FocusLeave: "FocusLeave"
 	};
 
 	/**
-	 * Sets the disabled modifiers 
+	 * Sets the disabled modifiers
 	 * These modifiers will not be handled by ItemNavigation
-	 * 
+	 *
 	 * <pre>
 	 * Example: Disable shift + up handling of ItemNavigation
-	 * 
+	 *
 	 * oItemNavigation.setDisabledModifiers({
 	 *     sapnext : ["shift"]
 	 * });
-	 * 
-	 * Possible keys are : "shift", "alt", "ctrl", "meta" 
+	 *
+	 * Possible keys are : "shift", "alt", "ctrl", "meta"
 	 * Possible events are : "sapnext", "sapprevious", "saphome", "sapend"
 	 * </pre>
-	 * 
+	 *
 	 * @param {Object} oDisabledModifiers Object that includes event type with disabled keys as an array
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
@@ -178,11 +179,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Returns disabled modifiers 
+	 * Returns disabled modifiers
 	 * These modifiers will not be handled by ItemNavigation
-	 * 
+	 *
 	 * @param {object} oDisabledModifiers
-	 * @return {object} 
+	 * @return {object}
 	 * @public
 	 */
 	ItemNavigation.prototype.getDisabledModifiers = function(oDisabledModifiers) {
@@ -191,9 +192,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Check whether given event has disabled modifier or not
-	 * 
+	 *
 	 * @param {jQuery.Event} oEvent jQuery event
-	 * @return {Boolean} 
+	 * @return {Boolean}
 	 * @public
 	 */
 	ItemNavigation.prototype.hasDisabledModifier = function(oEvent) {
@@ -736,6 +737,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				// if in action mode switch back to navigation mode
 				$DomRef.data("sap.InNavArea", true);
 			}
+
+			this.fireEvent(ItemNavigation.Events.FocusLeave, {
+				index: iIndex,
+				event: oEvent
+			});
 		}
 	};
 
@@ -912,7 +918,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 				// if item is not visible or a dummy item go to the next one
 				// !jQuery(this.aItemDomRefs[iIndex]).is(":visible") and jQuery(this.aItemDomRefs[iIndex]).css("visibility") === "hidden"
-				// - is not needed as .is(":sapFocusable") do these checks already	
+				// - is not needed as .is(":sapFocusable") do these checks already
 				} while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 			}
 
@@ -933,7 +939,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Ensure the sapnext event with modifiers is also handled
-	 * 
+	 *
 	 * @see #onsapnext
 	 * @private
 	 */
@@ -1053,7 +1059,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						}
 					}
 
-				// if item is not visible or a dummy item go to the next one	
+				// if item is not visible or a dummy item go to the next one
 				} while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 			}
 
