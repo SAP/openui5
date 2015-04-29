@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "до н. э.",
+			"1": "н. э."
+		},
+		"era-abbreviated": {
+			"0": "до н. э.",
+			"1": "н. э."
+		},
+		"era-narrow": {
+			"0": "до н.э.",
+			"1": "н.э."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d MMMM y 'г'. G",
@@ -1689,7 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d MMMM y 'г'. G",
@@ -1967,7 +1988,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Год",
 	"dateField-year-relative--1": "в прошлом году",

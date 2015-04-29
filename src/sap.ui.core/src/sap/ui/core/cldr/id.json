@@ -1412,7 +1412,19 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "Sebelum Masehi",
+			"1": "M"
+		},
+		"era-abbreviated": {
+			"0": "SM",
+			"1": "M"
+		},
+		"era-narrow": {
+			"0": "SM",
+			"1": "M"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, dd MMMM y G",
@@ -1689,7 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, dd MMMM y G",
@@ -1966,7 +1987,16 @@
 		"dayPeriods-standAlone-wide": [
 			"AM",
 			"PM"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Tahun",
 	"dateField-year-relative--1": "tahun lalu",

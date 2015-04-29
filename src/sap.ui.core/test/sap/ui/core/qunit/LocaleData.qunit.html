@@ -124,6 +124,9 @@
 			equal(typeof oLocaleData.getDateTimePattern("medium", aCalendarTypes[i]), "string", "getTimePattern(\"medium\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getDateTimePattern("long", aCalendarTypes[i]), "string", "getTimePattern(\"long\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getDateTimePattern("full", aCalendarTypes[i]), "string", "getTimePattern(\"full\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("wide", aCalendarTypes[i]), "string", "getEra(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("abbreviated", aCalendarTypes[i]), "string", "getEra(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getEra("narrow", aCalendarTypes[i]), "string", "getEra(\"narrow\", \"" + aCalendarTypes[i] + "\")");
 		}
 
 		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");
@@ -203,6 +206,8 @@
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+		equal(oLocaleData.getEra("abbreviated"), "AD", "Abbreviated Era Name");
+		equal(oLocaleData.getEra("abbreviated", 0), "BC", "Abbreviated Era Name");
 	}
 	
 	function customTests_en_ZA(oLocaleData) {

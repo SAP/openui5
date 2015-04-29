@@ -1409,7 +1409,19 @@
 		"dayPeriods-standAlone-wide": [
 			"formiddag",
 			"ettermiddag"
-		]
+		],
+		"era-wide": {
+			"0": "f.Kr.",
+			"1": "e.Kr."
+		},
+		"era-abbreviated": {
+			"0": "f.Kr.",
+			"1": "e.Kr."
+		},
+		"era-narrow": {
+			"0": "f.Kr.",
+			"1": "e.Kr."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE d. MMMM y G",
@@ -1686,7 +1698,16 @@
 		"dayPeriods-standAlone-wide": [
 			"formiddag",
 			"ettermiddag"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE d. MMMM y G",
@@ -1963,7 +1984,16 @@
 		"dayPeriods-standAlone-wide": [
 			"formiddag",
 			"ettermiddag"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "år",
 	"dateField-year-relative--1": "i fjor",

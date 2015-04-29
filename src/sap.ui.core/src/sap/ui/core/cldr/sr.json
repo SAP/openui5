@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"пре подне",
 			"по подне"
-		]
+		],
+		"era-wide": {
+			"0": "Пре нове ере",
+			"1": "Нове ере"
+		},
+		"era-abbreviated": {
+			"0": "п. н. е.",
+			"1": "н. е."
+		},
+		"era-narrow": {
+			"0": "п.н.е.",
+			"1": "н.е."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, dd. MMMM y. G",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"пре подне",
 			"по подне"
-		]
+		],
+		"era-wide": {
+			"0": "АХ"
+		},
+		"era-abbreviated": {
+			"0": "АХ"
+		},
+		"era-narrow": {
+			"0": "АХ"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, dd. MMMM y. G",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"пре подне",
 			"по подне"
-		]
+		],
+		"era-wide": {
+			"0": "АХ"
+		},
+		"era-abbreviated": {
+			"0": "АХ"
+		},
+		"era-narrow": {
+			"0": "АХ"
+		}
 	},
 	"dateField-year-displayName": "година",
 	"dateField-year-relative--1": "прошле године",

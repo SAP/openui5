@@ -1420,7 +1420,19 @@
 		"dayPeriods-standAlone-wide": [
 			"ap.",
 			"ip."
-		]
+		],
+		"era-wide": {
+			"0": "ennen Kristuksen syntymää",
+			"1": "jälkeen Kristuksen syntymän"
+		},
+		"era-abbreviated": {
+			"0": "eKr.",
+			"1": "jKr."
+		},
+		"era-narrow": {
+			"0": "eK",
+			"1": "jK"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "cccc d. MMMM y G",
@@ -1698,7 +1710,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ap.",
 			"ip."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "cccc d. MMMM y G",
@@ -1976,7 +1997,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ap.",
 			"ip."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "vuosi",
 	"dateField-year-relative--1": "viime vuonna",

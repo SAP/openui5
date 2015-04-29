@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"a.m.",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "înainte de Hristos",
+			"1": "după Hristos"
+		},
+		"era-abbreviated": {
+			"0": "î.Hr.",
+			"1": "d.Hr."
+		},
+		"era-narrow": {
+			"0": "î.Hr.",
+			"1": "d.Hr."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d MMMM y G",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"a.m.",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d MMMM y G",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"a.m.",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "An",
 	"dateField-year-relative--1": "anul trecut",

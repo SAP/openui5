@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"पूर्वाह्न",
 			"अपराह्न"
-		]
+		],
+		"era-wide": {
+			"0": "ईसा-पूर्व",
+			"1": "ईसवी सन"
+		},
+		"era-abbreviated": {
+			"0": "ईसा-पूर्व",
+			"1": "ईस्वी"
+		},
+		"era-narrow": {
+			"0": "ईसा-पूर्व",
+			"1": "ईस्वी"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "G EEEE, d MMMM y",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"पूर्वाह्न",
 			"अपराह्न"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "G EEEE, d MMMM y",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"पूर्वाह्न",
 			"अपराह्न"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "वर्ष",
 	"dateField-year-relative--1": "पिछला वर्ष",

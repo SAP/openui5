@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"a.m.",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "antes de Cristo",
+			"1": "depois de Cristo"
+		},
+		"era-abbreviated": {
+			"0": "a.C.",
+			"1": "d.C."
+		},
+		"era-narrow": {
+			"0": "a.C.",
+			"1": "d.C."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d 'de' MMMM 'de' y G",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"a.m.",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d 'de' MMMM 'de' y G",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"a.m.",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Ano",
 	"dateField-year-relative--1": "ano passado",

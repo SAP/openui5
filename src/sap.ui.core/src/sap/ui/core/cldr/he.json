@@ -1413,7 +1413,19 @@
 		"dayPeriods-standAlone-wide": [
 			"לפנה״צ",
 			"אחה״צ"
-		]
+		],
+		"era-wide": {
+			"0": "לפני הספירה",
+			"1": "לספירה"
+		},
+		"era-abbreviated": {
+			"0": "לפנה״ס",
+			"1": "לספירה"
+		},
+		"era-narrow": {
+			"0": "לפנה״ס",
+			"1": "לספירה"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, d בMMMM y G",
@@ -1691,7 +1703,16 @@
 		"dayPeriods-standAlone-wide": [
 			"לפנה״צ",
 			"אחה״צ"
-		]
+		],
+		"era-wide": {
+			"0": "שנת היג׳רה"
+		},
+		"era-abbreviated": {
+			"0": "שנת היג׳רה"
+		},
+		"era-narrow": {
+			"0": "שנת היג׳רה"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, d בMMMM y G",
@@ -1969,7 +1990,16 @@
 		"dayPeriods-standAlone-wide": [
 			"לפנה״צ",
 			"אחה״צ"
-		]
+		],
+		"era-wide": {
+			"0": "שנת היג׳רה"
+		},
+		"era-abbreviated": {
+			"0": "שנת היג׳רה"
+		},
+		"era-narrow": {
+			"0": "שנת היג׳רה"
+		}
 	},
 	"dateField-year-displayName": "שנה",
 	"dateField-year-relative--1": "השנה שעברה",

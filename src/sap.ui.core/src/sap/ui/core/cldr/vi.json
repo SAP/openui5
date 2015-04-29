@@ -1411,7 +1411,19 @@
 		"dayPeriods-standAlone-wide": [
 			"SA",
 			"CH"
-		]
+		],
+		"era-wide": {
+			"0": "tr. CN",
+			"1": "sau CN"
+		},
+		"era-abbreviated": {
+			"0": "tr. CN",
+			"1": "sau CN"
+		},
+		"era-narrow": {
+			"0": "tr. CN",
+			"1": "sau CN"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, 'ngày' dd MMMM 'năm' y G",
@@ -1688,7 +1700,16 @@
 		"dayPeriods-standAlone-wide": [
 			"SA",
 			"CH"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, 'ngày' dd MMMM 'năm' y G",
@@ -1965,7 +1986,16 @@
 		"dayPeriods-standAlone-wide": [
 			"SA",
 			"CH"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Năm",
 	"dateField-year-relative--1": "năm ngoái",

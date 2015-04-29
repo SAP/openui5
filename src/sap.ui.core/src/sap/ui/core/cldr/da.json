@@ -1412,7 +1412,19 @@
 		"dayPeriods-standAlone-wide": [
 			"formiddag",
 			"eftermiddag"
-		]
+		],
+		"era-wide": {
+			"0": "f.Kr.",
+			"1": "e.Kr."
+		},
+		"era-abbreviated": {
+			"0": "f.Kr.",
+			"1": "e.Kr."
+		},
+		"era-narrow": {
+			"0": "fKr",
+			"1": "eKr"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE d. MMMM y G",
@@ -1689,7 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"formiddag",
 			"eftermiddag"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE d. MMMM y G",
@@ -1966,7 +1987,16 @@
 		"dayPeriods-standAlone-wide": [
 			"formiddag",
 			"eftermiddag"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "År",
 	"dateField-year-relative--1": "sidste år",

@@ -1410,7 +1410,19 @@
 		"dayPeriods-standAlone-wide": [
 			"priekšpusdienā",
 			"pēcpusdienā"
-		]
+		],
+		"era-wide": {
+			"0": "pirms mūsu ēras",
+			"1": "mūsu ērā"
+		},
+		"era-abbreviated": {
+			"0": "p.m.ē.",
+			"1": "m.ē."
+		},
+		"era-narrow": {
+			"0": "p.m.ē.",
+			"1": "m.ē."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, y. 'gada' d. MMMM G",
@@ -1687,7 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"priekšpusdienā",
 			"pēcpusdienā"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, y. 'gada' d. MMMM G",
@@ -1964,7 +1985,16 @@
 		"dayPeriods-standAlone-wide": [
 			"priekšpusdienā",
 			"pēcpusdienā"
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Gads",
 	"dateField-year-relative--1": "pagājušajā gadā",

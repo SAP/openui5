@@ -1410,7 +1410,19 @@
 		"dayPeriods-standAlone-wide": [
 			"dop.",
 			"pop."
-		]
+		],
+		"era-wide": {
+			"0": "pred našim štetjem",
+			"1": "naše štetje"
+		},
+		"era-abbreviated": {
+			"0": "pr. n. št.",
+			"1": "po Kr."
+		},
+		"era-narrow": {
+			"0": "pr. n. št.",
+			"1": "po Kr."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE, dd. MMMM y G",
@@ -1687,7 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"dop.",
 			"pop."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE, dd. MMMM y G",
@@ -1964,7 +1985,16 @@
 		"dayPeriods-standAlone-wide": [
 			"dop.",
 			"pop."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "Leto",
 	"dateField-year-relative--1": "lani",

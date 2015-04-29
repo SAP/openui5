@@ -1412,7 +1412,19 @@
 		"dayPeriods-standAlone-wide": [
 			"voormiddag",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "voor Christus",
+			"1": "na Christus"
+		},
+		"era-abbreviated": {
+			"0": "v.Chr.",
+			"1": "n.Chr."
+		},
+		"era-narrow": {
+			"0": "v.C.",
+			"1": "n.C."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE d MMMM y G",
@@ -1690,7 +1702,16 @@
 		"dayPeriods-standAlone-wide": [
 			"voormiddag",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "Saʻna Hizjria"
+		},
+		"era-abbreviated": {
+			"0": "Saʻna Hizjria"
+		},
+		"era-narrow": {
+			"0": "Saʻna Hizjria"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE d MMMM y G",
@@ -1968,7 +1989,16 @@
 		"dayPeriods-standAlone-wide": [
 			"voormiddag",
 			"p.m."
-		]
+		],
+		"era-wide": {
+			"0": "Saʻna Hizjria"
+		},
+		"era-abbreviated": {
+			"0": "Saʻna Hizjria"
+		},
+		"era-narrow": {
+			"0": "Saʻna Hizjria"
+		}
 	},
 	"dateField-year-displayName": "Jaar",
 	"dateField-year-relative--1": "vorig jaar",

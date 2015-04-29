@@ -1409,7 +1409,19 @@
 		"dayPeriods-standAlone-wide": [
 			"A.M.",
 			"G.M."
-		]
+		],
+		"era-wide": {
+			"0": "BCE",
+			"1": "CE"
+		},
+		"era-abbreviated": {
+			"0": "BCE",
+			"1": "CE"
+		},
+		"era-narrow": {
+			"0": "BCE",
+			"1": "CE"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "G y MMMM d, EEEE",
@@ -1686,7 +1698,16 @@
 		"dayPeriods-standAlone-wide": [
 			"A.M.",
 			"G.M."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "G y MMMM d, EEEE",
@@ -1963,7 +1984,16 @@
 		"dayPeriods-standAlone-wide": [
 			"A.M.",
 			"G.M."
-		]
+		],
+		"era-wide": {
+			"0": "AH"
+		},
+		"era-abbreviated": {
+			"0": "AH"
+		},
+		"era-narrow": {
+			"0": "AH"
+		}
 	},
 	"dateField-year-displayName": "bloaz",
 	"dateField-year-relative--1": "warlene",

@@ -1410,7 +1410,19 @@
 		"dayPeriods-standAlone-wide": [
 			"上午",
 			"下午"
-		]
+		],
+		"era-wide": {
+			"0": "公元前",
+			"1": "公元"
+		},
+		"era-abbreviated": {
+			"0": "公元前",
+			"1": "公元"
+		},
+		"era-narrow": {
+			"0": "公元前",
+			"1": "公元"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "Gy年M月d日EEEE",
@@ -1687,7 +1699,16 @@
 		"dayPeriods-standAlone-wide": [
 			"上午",
 			"下午"
-		]
+		],
+		"era-wide": {
+			"0": "回历"
+		},
+		"era-abbreviated": {
+			"0": "回历"
+		},
+		"era-narrow": {
+			"0": "回历"
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "Gy年M月d日EEEE",
@@ -1964,7 +1985,16 @@
 		"dayPeriods-standAlone-wide": [
 			"上午",
 			"下午"
-		]
+		],
+		"era-wide": {
+			"0": "回历"
+		},
+		"era-abbreviated": {
+			"0": "回历"
+		},
+		"era-narrow": {
+			"0": "回历"
+		}
 	},
 	"dateField-year-displayName": "年",
 	"dateField-year-relative--1": "去年",

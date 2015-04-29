@@ -1412,7 +1412,19 @@
 		"dayPeriods-standAlone-wide": [
 			"ก่อนเที่ยง",
 			"หลังเที่ยง"
-		]
+		],
+		"era-wide": {
+			"0": "ปีก่อนคริสต์ศักราช",
+			"1": "คริสต์ศักราช"
+		},
+		"era-abbreviated": {
+			"0": "ปีก่อน ค.ศ.",
+			"1": "ค.ศ."
+		},
+		"era-narrow": {
+			"0": "ก่อน ค.ศ.",
+			"1": "ค.ศ."
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEEที่ d MMMM G y",
@@ -1689,7 +1701,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ก่อนเที่ยง",
 			"หลังเที่ยง"
-		]
+		],
+		"era-wide": {
+			"0": "ฮิจเราะห์ศักราช"
+		},
+		"era-abbreviated": {
+			"0": "ฮ.ศ."
+		},
+		"era-narrow": {
+			"0": "ฮ.ศ."
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEEที่ d MMMM G y",
@@ -1966,7 +1987,16 @@
 		"dayPeriods-standAlone-wide": [
 			"ก่อนเที่ยง",
 			"หลังเที่ยง"
-		]
+		],
+		"era-wide": {
+			"0": "ฮิจเราะห์ศักราช"
+		},
+		"era-abbreviated": {
+			"0": "ฮ.ศ."
+		},
+		"era-narrow": {
+			"0": "ฮ.ศ."
+		}
 	},
 	"dateField-year-displayName": "ปี",
 	"dateField-year-relative--1": "ปีที่แล้ว",

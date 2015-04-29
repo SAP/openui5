@@ -455,6 +455,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 			return sFormat;
 
+		},
+
+		/**
+		 * Returns the era name.
+		 *
+		 * @param {string} sStyle the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
+		 * @param {int} [iIndex] the index of the era name in era name set. If this isn't set, the last element in era name set is returned
+		 * @param {sap.ui.core.CalendarType} [sCalendarType=sap.ui.core.CalendarType.Gregorian] the type of calendar
+		 * @return {string} the era name
+		 * @public
+		 * @since 1.28.6
+		 */
+		getEra : function(sStyle, iIndex, sCalendarType) {
+			jQuery.sap.assert(sStyle == "wide" || sStyle == "abbreviated" || sStyle == "narrow" , "sStyle must be wide, abbreviate or narrow");
+
+			if (typeof iIndex === "string") {
+				sCalendarType = iIndex;
+				iIndex = undefined;
+			}
+
+			var oEras = this._getCalendarData("era-" + sStyle, sCalendarType),
+				sName, iMax = 0, iName;
+			if (iIndex !== undefined && iIndex !== null) {
+				return oEras["" + iIndex];
+			} else {
+				for (sName in oEras) {
+					iName = parseInt(sName, 10);
+					if (iName > iMax) {
+						iMax = iName;
+					}
+				}
+				return oEras["" + iMax];
+			}
 		}
 
 	});
@@ -503,7 +536,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"quarters-standAlone-wide":["1st quarter","2nd quarter","3rd quarter","4th quarter"],
 				"dayPeriods-format-narrow":["AM","PM"],
 				"dayPeriods-format-wide":["AM","PM"],
-				"dayPeriods-format-abbreviated":["AM","PM"]
+				"dayPeriods-format-abbreviated":["AM","PM"],
+				"era-wide":"Anno Domini",
+				"era-abbreviated":"AD",
+				"era-narrow":"A"
 			},
 			"decimalFormat": { "standard": "#,##0.###" },
 			"currencyFormat": { "standard": "¤#,##0.00"},

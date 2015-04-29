@@ -1414,7 +1414,19 @@
 		"dayPeriods-standAlone-wide": [
 			"قبل‌ازظهر",
 			"بعدازظهر"
-		]
+		],
+		"era-wide": {
+			"0": "قبل از میلاد",
+			"1": "میلادی"
+		},
+		"era-abbreviated": {
+			"0": "ق.م.",
+			"1": "م."
+		},
+		"era-narrow": {
+			"0": "ق",
+			"1": "م"
+		}
 	},
 	"ca-islamic-umalqura": {
 		"dateFormat-full": "EEEE d MMMM y GGGG",
@@ -1691,7 +1703,16 @@
 		"dayPeriods-standAlone-wide": [
 			"قبل‌ازظهر",
 			"بعدازظهر"
-		]
+		],
+		"era-wide": {
+			"0": "هجری قمری"
+		},
+		"era-abbreviated": {
+			"0": "ه‍.ق."
+		},
+		"era-narrow": {
+			"0": "ه‍.ق."
+		}
 	},
 	"ca-islamic-civil": {
 		"dateFormat-full": "EEEE d MMMM y GGGG",
@@ -1968,7 +1989,16 @@
 		"dayPeriods-standAlone-wide": [
 			"قبل‌ازظهر",
 			"بعدازظهر"
-		]
+		],
+		"era-wide": {
+			"0": "هجری قمری"
+		},
+		"era-abbreviated": {
+			"0": "ه‍.ق."
+		},
+		"era-narrow": {
+			"0": "ه‍.ق."
+		}
 	},
 	"dateField-year-displayName": "سال",
 	"dateField-year-relative--1": "سال گذشته",
