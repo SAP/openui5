@@ -46,8 +46,8 @@
 			.replace(/ \/>/g, '/>');
 		if (sap.ui.Device.browser.msie) {
 			// IE shuffles attribute order
-			// remove type and var, then no tag should have more that one attribute
-			sXml = sXml.replace(/ (type|var)=".*?"/g, "")
+			// remove helper, type and var, then no tag should have more that one attribute
+			sXml = sXml.replace(/ (helper|type|var)=".*?"/g, "")
 		}
 		return sXml;
 	}
@@ -269,7 +269,10 @@
 			process(oViewContent, mSettings);
 			ok(false);
 		} catch (ex) {
-			strictEqual(ex.message, "qux: " + sExpectedMessage.replace("{0}", sOffender));
+			strictEqual(
+				normalizeXml(ex.message),
+				normalizeXml("qux: " + sExpectedMessage.replace("{0}", sOffender))
+			);
 		}
 	}
 
