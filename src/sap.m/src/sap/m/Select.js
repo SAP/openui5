@@ -594,6 +594,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.onBeforeRendering = function() {
+			this._oSelectionOnFocus = this.getSelectedItem();
 			this.synchronizeSelection();
 		};
 
