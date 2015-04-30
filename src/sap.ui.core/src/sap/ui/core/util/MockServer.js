@@ -168,8 +168,7 @@ sap.ui
 					this._oServer = null;
 				}
 			};
-			
-			
+
 			/**
 			 * callback function for attachBefore
 			 * @param {string} event type according to HTTP Method
@@ -178,10 +177,10 @@ sap.ui
 			 * @public
 			 */
 			MockServer.prototype.attachBefore = function(sHttpMethod, fnCallback, sEntitySet) {
-			    sEntitySet = sEntitySet ? sEntitySet : "";
+				sEntitySet = sEntitySet ? sEntitySet : "";
 				this.attachEvent(sHttpMethod + sEntitySet + ":before", fnCallback);
 			};
-			
+
 			/**
 			 * callback function for attachBefore
 			 * @param {string} event type according to HTTP Method
@@ -190,10 +189,10 @@ sap.ui
 			 * @public
 			 */
 			MockServer.prototype.attachAfter = function(sHttpMethod, fnCallback, sEntitySet) {
-			    sEntitySet = sEntitySet ? sEntitySet : "";
+				sEntitySet = sEntitySet ? sEntitySet : "";
 				this.attachEvent(sHttpMethod + sEntitySet + ":after", fnCallback);
 			};
-			
+
 			/**
 			 * callback function for detachBefore
 			 * @param {string} event type according to HTTP Method
@@ -202,10 +201,10 @@ sap.ui
 			 * @public
 			 */
 			MockServer.prototype.detachBefore = function(sHttpMethod, fnCallback, sEntitySet) {
-			    sEntitySet = sEntitySet ? sEntitySet : "";
-			    this.detachEvent(sHttpMethod + sEntitySet + ":before", fnCallback);
+				sEntitySet = sEntitySet ? sEntitySet : "";
+				this.detachEvent(sHttpMethod + sEntitySet + ":before", fnCallback);
 			};
-			
+
 			/**
 			 * callback function for detachAfter
 			 * @param {string} event type according to HTTP Method
@@ -214,10 +213,10 @@ sap.ui
 			 * @public
 			 */
 			MockServer.prototype.detachAfter = function(sHttpMethod, fnCallback, sEntitySet) {
-			    sEntitySet = sEntitySet ? sEntitySet : "";
-			    this.detachEvent(sHttpMethod + sEntitySet + ":after", fnCallback);
+				sEntitySet = sEntitySet ? sEntitySet : "";
+				this.detachEvent(sHttpMethod + sEntitySet + ":after", fnCallback);
 			};
-			
+
 			/**
 			 * Returns whether the server is started or not.
 			 *
@@ -1730,6 +1729,76 @@ sap.ui
 					return sSetName;
 				};
 
+				//helper to handle url param value with '&'
+				var fnHandleAmpersandUrlParam = function(aUrlParams) {
+
+					var aUrlParamsNormalized = [];
+
+					var fnStartsWith = function(sValue) {
+						var apostLocation = sValue.indexOf("'");
+						var doubleQuotesLocation = sValue.indexOf("\"");
+						if (apostLocation === -1 && doubleQuotesLocation === -1) {
+							return null;
+						} else {
+							if (apostLocation > -1 && doubleQuotesLocation === -1) {
+								return "appost";
+							}
+							if (doubleQuotesLocation > -1 && apostLocation === -1) {
+								return "doublequotes";
+							}
+							if (apostLocation > -1 && doubleQuotesLocation > -1 && apostLocation < doubleQuotesLocation) {
+								return "appost";
+							}
+							if (apostLocation > -1 && doubleQuotesLocation > -1 && doubleQuotesLocation < apostLocation) {
+								return "doublequotes";
+							}
+						}
+
+					};
+
+					var fnAmpersandHandler = function(aParams, aParamsNorm, index, apostType) {
+						var stringAmpersand = aParams[index];
+						var j = index + 1;
+						while (j < aParams.length && aParams[j].indexOf(apostType) === -1) {
+							stringAmpersand = stringAmpersand + "&" + aParams[j];
+							j++;
+						}
+
+						stringAmpersand = stringAmpersand + "&" + aParams[j];
+
+						aParamsNorm.push(stringAmpersand);
+						index = j;
+						return index;
+					};
+
+					for (var i = 0; i < aUrlParams.length; i++) {
+					    // there is no ' and no " in param values
+						if (!fnStartsWith(aUrlParams[i])) {
+							aUrlParamsNormalized.push(aUrlParams[i]);
+						}
+						// there is ' in param value
+						if (fnStartsWith(aUrlParams[i]) === "appost") {
+							var firstLocation = aUrlParams[i].indexOf("'");
+							if (aUrlParams[i].indexOf("'", firstLocation + 1) === -1) {
+								i = fnAmpersandHandler(aUrlParams, aUrlParamsNormalized, i, "'");
+							} else {
+								aUrlParamsNormalized.push(aUrlParams[i]);
+							}
+						}
+						// there is " in param value
+						if (fnStartsWith(aUrlParams[i]) === "doublequotes") {
+							var firstQuotesLocation = aUrlParams[i].indexOf("\"");
+							if (aUrlParams[i].indexOf("\"", firstQuotesLocation + 1) === -1) {
+								i = fnAmpersandHandler(aUrlParams, aUrlParamsNormalized, i, "\"");
+							} else {
+								aUrlParamsNormalized.push(aUrlParams[i]);
+							}
+						}
+					}
+
+					return aUrlParamsNormalized;
+				};
+
 				var initNewEntity = function(oXhr, sTargetEntityName, sKeys, sUrlParams) {
 					var oEntity = JSON.parse(oXhr.requestBody);
 					if (oEntity) {
@@ -1818,8 +1887,8 @@ sap.ui
 							var fnBuildResponseString = function(oResponse, sContentType) {
 								var sResponseData = JSON.stringify(oResponse.data) || "";
 								if (!oResponse.success) {
-									    sResponseData = oResponse.errorResponse;
-								} 
+									sResponseData = oResponse.errorResponse;
+								}
 								if (sContentType) {
 									return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
 										sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
@@ -1976,8 +2045,14 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sUrlParams) {
 									jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {oXhr: oXhr, sUrlParams: sUrlParams});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {oXhr: oXhr, sUrlParams: sUrlParams});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+										oXhr: oXhr,
+										sUrlParams: sUrlParams
+									});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+										oXhr: oXhr,
+										sUrlParams: sUrlParams
+									});
 									var mHeaders = {
 										"Content-Type": "text/plain;charset=utf-8"
 									};
@@ -1992,6 +2067,7 @@ sap.ui
 											if (sUrlParams) {
 												// sUrlParams should not contains ?, but only & in its stead
 												var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
+												aUrlParams = fnHandleAmpersandUrlParam(aUrlParams);
 												if (aUrlParams.length > 1) {
 													aUrlParams = that._orderQueryOptions(aUrlParams);
 												}
@@ -2002,9 +2078,15 @@ sap.ui
 											}
 
 											//trigger the after callback funtion
-											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-											
+											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+												oXhr: oXhr,
+												oFilteredData: oFilteredData
+											});
+											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+												oXhr: oXhr,
+												oFilteredData: oFilteredData
+											});
+
 											oXhr.respond(200, mHeaders, "" + oFilteredData.results.length);
 
 											jQuery.sap.log.debug("MockServer: response sent with: 200, " +
@@ -2036,9 +2118,15 @@ sap.ui
 										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {oXhr: oXhr, sUrlParams: sUrlParams});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {oXhr: oXhr, sUrlParams: sUrlParams});
-										
+										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+											oXhr: oXhr,
+											sUrlParams: sUrlParams
+										});
+										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+											oXhr: oXhr,
+											sUrlParams: sUrlParams
+										});
+
 										var mHeaders = {
 											"Content-Type": "application/json;charset=utf-8"
 										};
@@ -2053,6 +2141,7 @@ sap.ui
 												if (sUrlParams) {
 													// sUrlParams should not contains ?, but only & in its stead
 													var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
+													aUrlParams = fnHandleAmpersandUrlParam(aUrlParams);
 													if (aUrlParams.length > 1) {
 														aUrlParams = that._orderQueryOptions(aUrlParams);
 													}
@@ -2063,8 +2152,14 @@ sap.ui
 												}
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+													oXhr: oXhr,
+													oFilteredData: oFilteredData
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+													oXhr: oXhr,
+													oFilteredData: oFilteredData
+												});
 												oXhr.respond(200, mHeaders, JSON.stringify({
 													d: oFilteredData
 												}));
@@ -2082,7 +2177,7 @@ sap.ui
 												oXhr.respond(parseInt(e.message || e.number, 10));
 											}
 										}
-									return true;
+										return true;
 									}
 								});
 
@@ -2096,8 +2191,16 @@ sap.ui
 										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {oXhr: oXhr, sKeys: sKeys, sUrlParams: sUrlParams});
-									    that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {oXhr: oXhr, sKeys: sKeys, sUrlParams: sUrlParams});
+										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+											oXhr: oXhr,
+											sKeys: sKeys,
+											sUrlParams: sUrlParams
+										});
+										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+											oXhr: oXhr,
+											sKeys: sKeys,
+											sUrlParams: sUrlParams
+										});
 										var mHeaders = {
 											"Content-Type": "application/json;charset=utf-8"
 										};
@@ -2108,6 +2211,7 @@ sap.ui
 												if (sUrlParams) {
 													// sUrlParams should not contains ?, but only & in its stead
 													var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
+													aUrlParams = fnHandleAmpersandUrlParam(aUrlParams);
 
 													if (aUrlParams.length > 1) {
 														aUrlParams = that._orderQueryOptions(aUrlParams);
@@ -2120,8 +2224,14 @@ sap.ui
 												}
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {oXhr: oXhr, oEntry: oEntry.entry});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {oXhr: oXhr, oEntry: oEntry.entry});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+													oXhr: oXhr,
+													oEntry: oEntry.entry
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+													oXhr: oXhr,
+													oEntry: oEntry.entry
+												});
 												oXhr.respond(200, mHeaders, JSON.stringify({
 													d: oEntry.entry
 												}));
@@ -2139,7 +2249,7 @@ sap.ui
 												oXhr.respond(parseInt(e.message || e.number, 10));
 											}
 										}
-									return true;	
+										return true;
 									}
 								});
 
@@ -2156,9 +2266,19 @@ sap.ui
 												jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 												//trigger the before callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {oXhr: oXhr, sKeys: sKeys, sNavProp: sNavProp, sUrlParams: sUrlParams});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {oXhr: oXhr, sKeys: sKeys, sNavProp: sNavProp, sUrlParams: sUrlParams});
-												
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+													oXhr: oXhr,
+													sKeys: sKeys,
+													sNavProp: sNavProp,
+													sUrlParams: sUrlParams
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+													oXhr: oXhr,
+													sKeys: sKeys,
+													sNavProp: sNavProp,
+													sUrlParams: sUrlParams
+												});
+
 												var mHeaders = {
 													"Content-Type": "text/plain;charset=utf-8"
 												};
@@ -2186,6 +2306,7 @@ sap.ui
 																// sUrlParams should not contains ?, but only & in its stead
 																var aUrlParams = decodeURIComponent(
 																	sUrlParams).replace("?", "&").split("&");
+																aUrlParams = fnHandleAmpersandUrlParam(aUrlParams);
 
 																if (aUrlParams.length > 1) {
 																	aUrlParams = that
@@ -2219,9 +2340,15 @@ sap.ui
 														}
 
 														//trigger the after callback funtion
-														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-														
+														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+															oXhr: oXhr,
+															oFilteredData: oFilteredData
+														});
+														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+															oXhr: oXhr,
+															oFilteredData: oFilteredData
+														});
+
 														oXhr
 															.respond(
 																200,
@@ -2229,7 +2356,7 @@ sap.ui
 
 														jQuery.sap.log
 															.debug("MockServer: response sent with: 200, " + oFilteredData.results.length);
-														
+
 													} else {
 														that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND);
 													}
@@ -2241,7 +2368,7 @@ sap.ui
 														oXhr.respond(parseInt(e.message || e.number, 10));
 													}
 												}
-											return true;
+												return true;
 											}
 										});
 
@@ -2256,8 +2383,18 @@ sap.ui
 														.debug("MockServer: incoming request for url: " + oXhr.url);
 
 													//trigger the before callback funtion
-													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {oXhr: oXhr, sKeys: sKeys, sNavProp: sNavProp, sUrlParams: sUrlParams});
-													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {oXhr: oXhr, sKeys: sKeys, sNavProp: sNavProp, sUrlParams: sUrlParams});
+													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+														oXhr: oXhr,
+														sKeys: sKeys,
+														sNavProp: sNavProp,
+														sUrlParams: sUrlParams
+													});
+													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+														oXhr: oXhr,
+														sKeys: sKeys,
+														sNavProp: sNavProp,
+														sUrlParams: sUrlParams
+													});
 													var mHeaders = {
 														"Content-Type": "application/json;charset=utf-8"
 													};
@@ -2284,6 +2421,7 @@ sap.ui
 																	// sUrlParams should not contains ?, but only & in its stead
 																	var aUrlParams = decodeURIComponent(
 																		sUrlParams).replace("?", "&").split("&");
+																	aUrlParams = fnHandleAmpersandUrlParam(aUrlParams);
 
 																	if (aUrlParams.length > 1) {
 																		aUrlParams = that
@@ -2317,9 +2455,15 @@ sap.ui
 															}
 
 															//trigger the after callback funtion
-															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {oXhr: oXhr, oFilteredData: oFilteredData});
-															
+															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+																oXhr: oXhr,
+																oFilteredData: oFilteredData
+															});
+															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+																oXhr: oXhr,
+																oFilteredData: oFilteredData
+															});
+
 															oXhr
 																.respond(
 																	200,
@@ -2362,8 +2506,16 @@ sap.ui
 									}
 									jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {oXhr: oXhr, sKeys: sKeys, sNavName: sNavName});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":before", {oXhr: oXhr, sKeys: sKeys, sNavName: sNavName});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
 									var sRespondData = null;
 									var sRespondContentType = null;
 									var iResult = 405; // default: method not allowed
@@ -2376,11 +2528,17 @@ sap.ui
 												sRespondContentType = {
 													"Content-Type": "application/json;charset=utf-8"
 												};
-												
+
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":after", {oXhr: oXhr, oEntity: oEntity});
-		                                        that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":after",  {oXhr: oXhr, oEntity: oEntity});
-		                                        
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
+
 												if (bMerge) {
 													var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 													if (oExistingEntry) {
@@ -2400,11 +2558,11 @@ sap.ui
 												}
 											}
 										}
-                                        
+
 										oXhr.respond(iResult, sRespondContentType, sRespondData);
 										jQuery.sap.log
 											.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
-										
+
 									} catch (e) {
 										if (e.error) {
 											var mHeaders = {
@@ -2417,7 +2575,7 @@ sap.ui
 												.debug("MockServer: response sent with: " + parseInt(e.message || e.number,
 													10));
 										}
-										
+
 									}
 									return true;
 								}
@@ -2431,8 +2589,16 @@ sap.ui
 									jQuery.sap.log.debug("MockServer: incoming update request for url: " + oXhr.url);
 
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {oXhr: oXhr,sKeys: sKeys,sNavName: sNavName});
-                                    that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":before", {oXhr: oXhr,sKeys: sKeys,sNavName: sNavName});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
 									var iResult = 405; // default: method not allowed
 									var sRespondData = null;
 									var sRespondContentType = null;
@@ -2446,8 +2612,14 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":after", {oXhr: oXhr, oEntity: oEntity});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":after", {oXhr: oXhr, oEntity: oEntity});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
 												var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 												if (oExistingEntry) { // Overwrite existing
 													that._oMockdata[sEntitySetName][oExistingEntry.index] = oEntity;
@@ -2483,8 +2655,16 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
 									jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {oXhr: oXhr,sKeys: sKeys,sNavName: sNavName});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":before", {oXhr: oXhr,sKeys: sKeys,sNavName: sNavName});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
 									var iResult = 405; // default: method not allowed
 									var sRespondData = null;
 									var sRespondContentType = null;
@@ -2498,8 +2678,14 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":after", {oXhr: oXhr, oEntity: oEntity});
-		                                        that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":after", {oXhr: oXhr, oEntity: oEntity});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
 												var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 												if (oExistingEntry) {
 													jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
@@ -2533,8 +2719,16 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
 									jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {oXhr: oXhr,sKeys: sKeys,sNavName: sNavName});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":before", {oXhr: oXhr,sKeys: sKeys,sNavName: sNavName});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":before", {
+										oXhr: oXhr,
+										sKeys: sKeys,
+										sNavName: sNavName
+									});
 									var iResult = 405; // default: method not allowed
 									var sRespondData = null;
 									var sRespondContentType = null;
@@ -2548,8 +2742,14 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":after", {oXhr: oXhr, oEntity: oEntity});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":after", {oXhr: oXhr, oEntity: oEntity});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
+												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":after", {
+													oXhr: oXhr,
+													oEntity: oEntity
+												});
 												var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 												if (oExistingEntry) {
 													jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
@@ -2585,8 +2785,12 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sUrlParams) {
 									jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {oXhr: oXhr});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":before", {oXhr: oXhr});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {
+										oXhr: oXhr
+									});
+									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":before", {
+										oXhr: oXhr
+									});
 									var iResult = 204;
 									try {
 										var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
@@ -2597,8 +2801,12 @@ sap.ui
 										}
 
 										//trigger the after callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":after", {oXhr: oXhr});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":after", {oXhr: oXhr});
+										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":after", {
+											oXhr: oXhr
+										});
+										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":after", {
+											oXhr: oXhr
+										});
 										oXhr.respond(iResult, null, null);
 										jQuery.sap.log.debug("MockServer: response sent with: " + iResult);
 									} catch (e) {
@@ -3011,19 +3219,19 @@ sap.ui
 				}
 			};
 
-            /**
+			/**
 			 * Enum for the method.
 			 * @public
 			 */
-			 MockServer.HTTPMETHOD = { 
-				    GET: "GET",
-					POST: "POST",
-					DELETE: "DELETE",
-					PUT: "PUT",
-					MERGE: "MERGE",
-					PATCH: "PATCH"
+			MockServer.HTTPMETHOD = {
+				GET: "GET",
+				POST: "POST",
+				DELETE: "DELETE",
+				PUT: "PUT",
+				MERGE: "MERGE",
+				PATCH: "PATCH"
 			};
-			
+
 			/**
 			 * Adds a filter function. The filter determines whether to fake a response or not. When the filter function
 			 * returns true, the request will be faked.
@@ -3074,7 +3282,7 @@ sap.ui
 			// ================================
 
 			window.sinon.FakeXMLHttpRequest.useFilters = true;
-			
+
 			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage 
 			// of jQuery.ajax function / sinon also needs to be synchronized with this
 			// adoption by applying the CORS support flag from jQuery to sinon!
