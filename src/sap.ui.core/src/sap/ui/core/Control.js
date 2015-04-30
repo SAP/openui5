@@ -560,7 +560,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
 					if (this.getProperty("busy") === true && this.$()) {
-						fnAppendBusyIndicator.apply(this);
+						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
+						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
 					}
 				}
 			},
