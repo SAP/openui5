@@ -772,6 +772,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 				that._fnOrientationChange();
 			}
 			that._sResizeTimer = null;
+			that._reapplyPosition();
 		}, 0);
 	};
 
