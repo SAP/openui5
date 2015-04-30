@@ -9,10 +9,10 @@
 				<headerContent>
 					<Button
 						icon="sap-icon://hello-world"
-					 	press="onOpenDialog" />
+						press="onOpenDialog"/>
 				</headerContent>
 				<content>
-					<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel" />
+					<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>
 				</content>
 			</Page>
 		</pages>

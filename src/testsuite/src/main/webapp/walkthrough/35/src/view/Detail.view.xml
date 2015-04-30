@@ -1,25 +1,25 @@
 <mvc:View
-		controllerName="sap.ui.demo.wt.controller.Detail"
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:wt="sap.ui.demo.wt.control">
+	controllerName="sap.ui.demo.wt.controller.Detail"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:wt="sap.ui.demo.wt.control">
 	<Page
-			title="{i18n>detailPageTitle}"
-			showNavButton="true"
-			navButtonPress="onNavBack">
+		title="{i18n>detailPageTitle}"
+		showNavButton="true"
+		navButtonPress="onNavBack">
 		<ObjectHeader
-				responsive="true"
-				fullScreenOptimized="true"
-				number="{
+			responsive="true"
+			fullScreenOptimized="true"
+			number="{
 					parts: [{path: 'invoice>ExtendedPrice'}, {path: 'view>/currency'}],
 					type: 'sap.ui.model.type.Currency',
 					formatOptions: {
 						showMeasure: false
 					}
 				}"
-				numberUnit="{view>/currency}"
-				intro="{invoice>ShipperName}"
-				title="{invoice>ProductName}">
+			numberUnit="{view>/currency}"
+			intro="{invoice>ShipperName}"
+			title="{invoice>ProductName}">
 			<attributes>
 				<ObjectAttribute title="{i18n>quantityTitle}" text="{invoice>Quantity}"></ObjectAttribute>
 				<ObjectAttribute title="{i18n>dateTitle}" text="{

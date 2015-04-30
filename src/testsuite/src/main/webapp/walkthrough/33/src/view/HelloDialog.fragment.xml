@@ -1,6 +1,6 @@
 <core:FragmentDefinition
-		xmlns="sap.m"
-		xmlns:core="sap.ui.core">
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
 	<Dialog
 		title="{i18n>helloMsg}">
 		<content>
