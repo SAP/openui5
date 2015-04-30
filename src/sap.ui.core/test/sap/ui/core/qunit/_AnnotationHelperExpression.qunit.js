@@ -580,6 +580,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("uriEncode edm:Date constant", function () {
+		var oInterface = {},
+			oPathValue = {};
+
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0)
+			.returns({
+				result: "constant",
+				value: "2015-03-24",
+				type: "Edm.Date"
+			});
+
+		deepEqual(Expression.uriEncode(oInterface, oPathValue), {
+			result: "expression",
+			value: "odata.uriEncode('2015-03-24T00:00:00Z','Edm.DateTime')",
+			type: "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
+	test("uriEncode edm:TimeOfDay constant", function () {
+		var oInterface = {},
+			oPathValue = {};
+
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(oInterface, oPathValue, 0)
+			.returns({
+				result: "constant",
+				value: "13:57:06.123456789012",
+				type: "Edm.TimeOfDay"
+			});
+
+		deepEqual(Expression.uriEncode(oInterface, oPathValue), {
+			result: "expression",
+			value: "odata.uriEncode('PT13H57M06S','Edm.Time')", //TODO split seconds
+			type: "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		title: "composite binding",
 		bExpression: false,
