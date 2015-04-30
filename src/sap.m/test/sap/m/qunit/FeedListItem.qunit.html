@@ -3,25 +3,21 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta charset="UTF-8" />
-		<title>FeedListItem - sap.m</title>
-		
-		<link rel="stylesheet"
-			href="../../../../resources/sap/ui/thirdparty/qunit.css"
-			type="text/css" media="screen" />
-		
+		<title>Test Page for sap.m.FeedListItem</title>
+
 		<!-- UI5 Bootstrap -->
 		<script id="sap-ui-bootstrap" type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
-		
+
 		<!-- QUnit libraries -->
-		
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript"
-			src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		
 		<script language="javascript">
+		
 			var oList2 = new sap.m.List({
 				inset : true
 			});
@@ -397,7 +393,22 @@
 			
 			test("Press X Key on MORE", function() {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.X, false, false, false);
-				notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
+				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
+			});
+
+			module("Rendering behavior", {
+				setup : function() {
+					//Does nothing yet
+				}
+			});
+
+			test("Expanded text should be appear also after rerendering.", function() {
+				oFeedList.getItems()[10]._toggleTextExpanded();
+				oFeedList.getItems()[10].invalidate();
+				equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowLess);
+				oFeedList.getItems()[10]._toggleTextExpanded();
+				oFeedList.getItems()[10].invalidate();
+				equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
 			});
 		</script>
 	</head>
