@@ -17,6 +17,15 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"street" : { "Path" :  "Street" }
 			},
 			"bday" : { "Path" :  "Birthday" },
+			"email" : [{
+				"address" : { "Path" :  "EMail" },
+				"type" : {
+					"EnumMember": "com.sap.vocabularies.Communication.v1.ContactInformationType/"
+						+ "preferred"
+				}
+			}, {
+				"address" : { "Path" :  "EMail2" }
+			}],
 			"fn" : { "Path" :  "Name" },
 			"n" : {
 				"additional" : { "Path" :  "MiddleName" },
@@ -31,6 +40,22 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"orgunit" : { "Path" :  "OrgUnit" },
 			"photo" : { "Path" :  "Photo" },
 			"role" : { "Path" :  "OrgRole" },
+			"tel" : [{
+				"type" : {
+					"EnumMember": "com.sap.vocabularies.Communication.v1.PhoneType/work "
+						+ "com.sap.vocabularies.Communication.v1.PhoneType/cell"
+				},
+				"uri" : { "Path" :  "Tel" }
+			}, {
+				"type" : {
+					"EnumMember": "com.sap.vocabularies.Communication.v1.PhoneType/fax"
+				},
+				"uri" : { "Path" :  "Tel2" }
+			}, {
+				"uri" : { "Path" :  "Tel3" }
+			}, {
+				"uri" : { "Path" :  "Tel4" }
+			}],
 			"title" : { "Path" :  "Title" }
 		},
 		oEventAnnotationFromV2 = {
@@ -72,6 +97,16 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"name" : "Country", "type" : "Edm.String",
 			"extensions" : [{
 				"name" : "semantics" , "value" : "country", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "EMail", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "email;type=pref", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "EMail2", "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "email", "namespace" : sNamespace
 			}]
 		}, {
 			"name" : "FirstName", "type" : "Edm.String",
@@ -147,6 +182,26 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			"name" : "Suffix" , "type" : "Edm.String",
 			"extensions" : [{
 				"name" : "semantics" , "value" : "suffix", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Tel" , "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "tel;type=work,cell", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Tel2" , "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "tel;type=fax", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Tel3" , "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "tel", "namespace" : sNamespace
+			}]
+		}, {
+			"name" : "Tel4" , "type" : "Edm.String",
+			"extensions" : [{
+				"name" : "semantics" , "value" : "tel;type=foo", "namespace" : sNamespace
 			}]
 		}, {
 			"name" : "Title" , "type" : "Edm.String",
@@ -331,7 +386,20 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 					"from" : { "Path" : "FromFromAnnotation" }
 				}
 			},
-			"propertyAnnotations" : {},
+			"propertyAnnotations" : {
+				"GWSAMPLE_BASIC.Contact" : {
+					"EMail" : {
+						"com.sap.vocabularies.Communication.v1.IsEmailAddress" : {
+							"Bool" : "false"
+						}
+					},
+					"Tel" : {
+						"com.sap.vocabularies.Communication.v1.IsPhoneNumber" : {
+							"Bool" : "false"
+						}
+					}
+				}
+			},
 			"EntityContainer" : {
 				"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" : {}
 			}
@@ -345,6 +413,132 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	//*********************************************************************************************
 	module("sap.ui.model.odata._ODataMetaModelUtils");
 	//*********************************************************************************************
+
+	//*********************************************************************************************
+	[
+		// supported "tel" types
+		{
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/cell",
+			sSemantics : "tel",
+			sTypes : "cell"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/fax",
+			sSemantics : "tel",
+			sTypes : "fax"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/home",
+			sSemantics : "tel",
+			sTypes : "home"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/preferred",
+			sSemantics : "tel",
+			sTypes : "pref"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/video",
+			sSemantics : "tel",
+			sTypes : "video"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/voice",
+			sSemantics : "tel",
+			sTypes : "voice"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/work",
+			sSemantics : "tel",
+			sTypes : "work"
+		},
+		// v2 types which are not supported in v4
+		{
+			oExpectedMessage : "pager",
+			sOutput : "",
+			sSemantics : "tel",
+			sTypes : "pager"
+		}, {
+			oExpectedMessage : "text",
+			sOutput : "",
+			sSemantics : "tel",
+			sTypes : "text"
+		}, {
+			oExpectedMessage : "textphone",
+			sOutput : "",
+			sSemantics : "tel",
+			sTypes : "textphone"
+		},
+		// combination of multiple types
+		{
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/cell"
+				+ " com.sap.vocabularies.Communication.v1.PhoneType/home"
+				+ " com.sap.vocabularies.Communication.v1.PhoneType/work",
+			sSemantics : "tel",
+			sTypes : "cell,home,work"
+		},
+		// combination of multiple types with invalid types
+		{
+			oExpectedMessage : "xyz",
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/cell"
+				+ " com.sap.vocabularies.Communication.v1.PhoneType/work",
+			sSemantics : "tel",
+			sTypes : "cell,xyz,work"
+		}, {
+			oExpectedMessage : "xyz",
+			sOutput : "com.sap.vocabularies.Communication.v1.PhoneType/home",
+			sSemantics : "tel",
+			sTypes : "xyz,home"
+		},
+		// supported "email" types
+		{
+			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/home",
+			sSemantics : "email",
+			sTypes : "home"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred",
+			sSemantics : "email",
+			sTypes : "pref"
+		}, {
+			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/work",
+			sSemantics : "email",
+			sTypes : "work"
+		},
+		// combination of multiple types
+		{
+			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred"
+				+ " com.sap.vocabularies.Communication.v1.ContactInformationType/work",
+			sSemantics : "email",
+			sTypes : "pref,work"
+		},
+		// combination of multiple types with invalid types
+		{
+			oExpectedMessage : "xyz",
+			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred"
+				+ " com.sap.vocabularies.Communication.v1.ContactInformationType/work",
+			sSemantics : "email",
+			sTypes : "pref,xyz,work"
+		}, {
+			oExpectedMessage : "xyz",
+			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/home",
+			sSemantics : "email",
+			sTypes : "xyz,home"
+		},
+	].forEach(function (oFixture) {
+		var sSemanticsValue = oFixture.sSemantics + ";type=" + oFixture.sTypes;
+		test("getV4TypesForV2Semantics: " + sSemanticsValue, function () {
+			var oLogMock = this.mock(jQuery.sap.log),
+				bLogExpected = oFixture.sOutput === "" || oFixture.oExpectedMessage,
+				oType = { "name" : "Foo" },
+				oProperty = { "name" : "bar", "sap:semantics" : sSemanticsValue };
+
+			oLogMock.expects("isLoggable").exactly(bLogExpected ? 1 : 0)
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(true);
+			oLogMock.expects("warning").exactly(bLogExpected ? 1 : 0)
+				.withExactArgs("Unsupported type for sap:semantics: "
+						+ oFixture.oExpectedMessage,
+					"Foo.bar",
+					"sap.ui.model.odata._ODataMetaModelUtils");
+
+			strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
+				oProperty, oType), oFixture.sOutput, sSemanticsValue);
+		});
+	});
 
 	//*********************************************************************************************
 	[{
@@ -373,9 +567,45 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			["Contact", "Event", "Message", "Task"].forEach(function (sAnnotationTerm) {
 				deepEqual(oType["com.sap.vocabularies.Communication.v1." + sAnnotationTerm],
 					oFixture.expectedAnnotations[sAnnotationTerm],
-					"result as expected");
+					sAnnotationTerm + " is as expected");
 			});
+			if (sTypeName === "Contact") {
+				deepEqual(oType.property[3/*EMail*/]
+						["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
+					{ "Bool" : "true" });
+				deepEqual(oType.property[20/*Tel*/]
+						["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+					{ "Bool" : "true" });
+			}
 		});
+	});
+
+	//*********************************************************************************************
+	test("addSapSemantics: unsupported sap:semantics", function () {
+		var oLogMock = this.mock(jQuery.sap.log),
+			oType = {
+				"name" : "Foo",
+				"property" : [
+					{
+						"name" : "Bar",
+						"extensions" : [{
+							"name" : "semantics", "value" : "*", "namespace" : sNamespace
+						}]
+					}
+				]
+			};
+
+		// ensure that sap:semantics properties are available
+		oType.property.forEach(function (oProperty) {
+			Utils.liftSAPData(oProperty, "Property");
+		});
+
+		oLogMock.expects("warning").once().withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
+			"sap.ui.model.odata._ODataMetaModelUtils");
+
+		// code under test
+		Utils.addSapSemantics(oType);
+
 	});
 
 	//*********************************************************************************************
@@ -386,7 +616,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		expectedComplexTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.CT_Contact"]
 			["com.sap.vocabularies.Communication.v1.Contact"]
 	}, {
-		test: "without v4 annotations", annotations: {},
+		test: "without v4 annotations",
 		expectedTypeAnnotations: oContactAnnotationFromV2,
 		expectedComplexTypeAnnotations: oContactAnnotationFromV2
 	}].forEach(function (oFixture) {
@@ -398,7 +628,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			this.spy(Utils, "addSapSemantics");
 
 			// code under test
-			Utils.merge(oFixture.annotations, oData);
+			Utils.merge(oFixture.annotations || {}, oData);
 
 			// verify results
 			deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"],
@@ -411,6 +641,14 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"called addSapSemantics with ComplexType");
 			ok(Utils.addSapSemantics.calledWithExactly(oContact),
 				"called addSapSemantics with EntityType");
+
+			// verify email and tel
+			deepEqual(oContact.property[3/*EMail*/]
+					["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
+				{ "Bool" : (oFixture.annotations ? "false" : "true") });
+			deepEqual(oContact
+					.property[20/*Tel*/]["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+				{ "Bool" : (oFixture.annotations ? "false" : "true") });
 		});
 	});
 
