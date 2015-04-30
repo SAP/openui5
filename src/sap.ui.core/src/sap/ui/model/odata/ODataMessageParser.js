@@ -111,15 +111,13 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		);
 	}
 
-	if (aMessages.length > 0) {
-		if (!this._processor) {
-			// In case no message processor is attached, at least log to console.
-			// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
-			this._outputMesages(aMessages);
-		}
-
-		this._propagateMessages(aMessages, oResponse, oRequest, mGetEntities, mChangeEntities);
+	if (!this._processor) {
+		// In case no message processor is attached, at least log to console.
+		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
+		this._outputMesages(aMessages);
 	}
+
+	this._propagateMessages(aMessages, sRequestUri, mGetEntities, mChangeEntities);
 };
 
 
@@ -128,34 +126,51 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
+
+ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
+	var mAffectedTargets = jQuery.extend({
+		"": true // Allow global messages by default
+	}, mGetEntities, mChangeEntities);
+
+
+	// Get EntitySet for Requested resource
+	var sRequestTarget = stripURI(sRequestUri).substr(this._serviceUrl.length + 1);
+	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
+	if (mEntitySet) {
+		mAffectedTargets[mEntitySet.name] = true;
+	}
+	
+	
+	// Get the EntitySet for every single target
+	for (var i = 0; i < aMessages.length; ++i) {
+		var sTarget = aMessages[i].getTarget();
+
+		if (sTarget) {
+			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
+			if (mEntitySet) {
+				mAffectedTargets[mEntitySet.name] = true;
+			}
+		}
+	}
+	
+	return mAffectedTargets;
+};
+
 /**
  * This method calculates the message delta and gives it to the MessageProcessor (fires the
  * messageChange-event) based on the entities belonging to this request.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
  * @param {object} oResponse - The response from the back-end
- * @param {object} oRequest - The request that lead to this response
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @return {void}
  */
-ODataMessageParser.prototype._propagateMessages = function(aMessages, oResponse, oRequest, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype._propagateMessages = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
 	var i, sTarget;
 
-	var mAffectedTargets = jQuery.extend({
-		"": true // Allow global messages by default
-	}, mGetEntities, mChangeEntities);
-
-	// Add parent EntitySet to accepted targets
-	sTarget = aMessages[0].getTarget();
-
-	if (sTarget) {
-		var mEntitySet = this._metadata._getEntitySetByPath(sTarget);
-		if (mEntitySet) {
-			mAffectedTargets[mEntitySet.name] = true;
-		}
-	}
-
+	var mAffectedTargets = this._getAffectedTargets(aMessages, sRequestUri, mGetEntities, mChangeEntities);
+	
 	// All messages with targets are part of the changed targets by definition. All Messages that
 	// come back from the server belong to affected entities/sets
 	// TODO: Check if this is necessary, since only messages for requested entities/sets should be returned from the service...
