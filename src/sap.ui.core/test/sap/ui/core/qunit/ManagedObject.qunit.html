@@ -132,6 +132,7 @@
 
 			var oModel = new sap.ui.model.json.JSONModel({
 				value: "testvalue",
+				value2: "testvalue2",
 				objectValue: { model: true },
 				list: [
 					{value: "testvalue1"},
@@ -246,6 +247,90 @@
 				this.obj.bindProperty("value", "/value");
 				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
 				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+			});
+
+			test("Bind property OneTime", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "OneTime"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "testvalue", "New model value must not be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property OneWay", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "OneWay"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with formatter", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					formatter: function(sValue) {
+						return sValue;
+					}
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property Composite with mixed binding modes", function() {
+				this.obj.bindProperty("value", {
+					parts: [
+						{
+							path: "/value",
+							mode: "OneWay"
+						},
+						{
+							path: "/value",
+							mode: "OneTime"
+						}
+					],
+					formatter: function(value1, value2) {
+						return value1 + "/" + value2;
+					}
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue/testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue/testvalue", "New model value must be reflected in oneway part only");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
+				oModel.setProperty("/value", "testvalue");
 			});
 
 			test("Bind property in settings", function() {
