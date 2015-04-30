@@ -1673,12 +1673,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description Tigger of the link which will be executed when the icon/image was clicked
-	 * @param {Object} oEvent of the click/press of the icon/image
+	 * @description Trigger of the link which will be executed when the icon or image was clicked
+	 * @param {Object} oEvent when clicking or pressing of the icon or image
 	 * @private
 	 */
 	UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
 		var iLine = null;
+		var aId;
 
 		if (oContext.editModeItem) {
 			//In case there is a list item in edit mode, the edit mode has to be finished first.
@@ -1689,7 +1690,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}
 			oContext.sFocusId = oEvent.getParameter("id");
 		}
-		iLine = oEvent.oSource.getId().split("-")[2];
+		aId = oEvent.oSource.getId().split("-");
+		iLine = aId[aId.length - 2];
 		sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
 	};
 
@@ -1697,7 +1699,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	// Keyboard activities
 	// ================================================================================
 	/**
-	 * @description Keyboard support: Handling of different key activity
+	 * @description Keyboard support: Handling of different key activities
 	 * @param {Object} oEvent Event of the key activity
 	 * @returns {void}
 	 * @private
