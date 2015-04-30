@@ -234,6 +234,56 @@ sap.ui.require([
 						</UrlRef>\
 					</PropertyValue>\
 				</Record>\
+				<!-- Comparison Operators -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<And>\
+							<Eq>\
+								<Lt>\
+									<Path>p1</Path>\
+									<Path>p2</Path>\
+								</Lt>\
+								<Gt>\
+									<Path>p4</Path>\
+									<Path>p5</Path>\
+								</Gt>\
+							</Eq>\
+							<Ne>\
+								<Ge>\
+									<Path>p6</Path>\
+									<Path>p7</Path>\
+								</Ge>\
+								<Le>\
+									<Path>p8</Path>\
+									<Path>p9</Path>\
+								</Le>\
+							</Ne>\
+						</And>\
+					</PropertyValue>\
+				</Record>\
+				<!-- Logical Operators -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<Or>\
+							<Not>\
+								<Eq>\
+									<Path>p1</Path>\
+									<Path>p2</Path>\
+								</Eq>\
+							</Not>\
+							<And>\
+								<Eq>\
+									<Path>p3</Path>\
+									<Path>p4</Path>\
+								</Eq>\
+								<Eq>\
+									<Path>p5</Path>\
+									<Path>p6</Path>\
+								</Eq>\
+							</And>\
+						</Or>\
+					</PropertyValue>\
+				</Record>\
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
@@ -451,10 +501,11 @@ sap.ui.require([
 				bindingContexts: oModel.createBindingContext("/")
 			}),
 			oRawValue = oCurrentContext.getObject(),
-			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
+			sBinding = format(oRawValue, oCurrentContext),
+			oSingleBindingInfo = parse(sBinding);
 
 		oControl.bindProperty("text", oSingleBindingInfo);
-		strictEqual(oControl.getText(), vExpected, oSingleBindingInfo);
+		strictEqual(oControl.getText(), vExpected, sBinding);
 	}
 
 	/**
@@ -1035,6 +1086,32 @@ sap.ui.require([
 				CompanyName: "SAP",
 				LegalForm: "SE",
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.1 Comparison and Logical Operators: part 1, comparison", function () {
+		withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/6/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			strictEqual(format(oRawValue, oCurrentContext),
+				"{=((${p1}<${p2})===(${p4}>${p5}))&&((${p6}>=${p7})!==(${p8}<=${p9}))}");
+		});
+	});
+
+	//*********************************************************************************************
+	test("14.5.1 Comparison and Logical Operators: part 2, logical", function () {
+		withMetaModel("/fake/annotations", function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/7/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			strictEqual(format(oRawValue, oCurrentContext),
+				"{=(!(${p1}===${p2}))||((${p3}===${p4})&&(${p5}===${p6}))}");
 		});
 	});
 

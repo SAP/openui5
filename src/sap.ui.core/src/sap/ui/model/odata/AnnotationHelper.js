@@ -142,6 +142,8 @@ sap.ui.define([
 			 *   been started with the setting <code>bindTexts : true</code>. The purpose is to
 			 *   reference translatable texts from OData v4 annotations, especially for XML
 			 *   template processing at design time.
+			 *   <li> the dynamic "14.5.1 Comparison and Logical Operators": This is turned into an
+			 *   expression binding to perform the operation at run-time.
 			 *   <li> the dynamic "14.5.3 Expression edm:Apply":
 			 *   <ul>
 			 *     <li> "14.5.3.1.1 Function odata.concat": This is turned into a data binding

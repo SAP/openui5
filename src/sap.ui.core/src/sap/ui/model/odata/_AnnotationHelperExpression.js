@@ -28,6 +28,17 @@ sap.ui.define([
 		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		Expression,
+		mOperators = {
+			And: "&&",
+			Eq: "===",
+			Ge: ">=",
+			Gt: ">",
+			Le: "<=",
+			Lt: "<",
+			Ne: "!==",
+			Not: "!",
+			Or: "||"
+		},
 		mType2Type = { // mapping of constant "edm:*" type to dynamic "Edm.*" type
 			Bool : "Edm.Boolean",
 			Float : "Edm.Double",
@@ -39,6 +50,23 @@ sap.ui.define([
 			String : "Edm.String",
 			TimeOfDay : "Edm.TimeOfDay"
 		};
+
+	/**
+	 * Wrap the result's value with "()" in case it is an expression because the result will be
+	 * become a parameter of an infix operator and we have to ensure that the operator precedence
+	 * remains correct.
+	 *
+	 * @param {object} oResult
+	 *   a result object
+	 * @returns {object}
+	 *   the given result object (for chaining)
+	 */
+	function wrapExpression(oResult) {
+		if (oResult.result === "expression") {
+			oResult.value = "(" + oResult.value + ")";
+		}
+		return oResult;
+	}
 
 	/**
 	 * This object contains helper functions to process an expression in OData V4 annotations.
@@ -114,12 +142,11 @@ sap.ui.define([
 			});
 			// convert the results to strings after we know whether the result is expression
 			aResults.forEach(function (oResult) {
-				var sValue = Basics.resultToString(oResult, bExpression, true);
-				if (bExpression && oResult.result === "expression") {
+				if (bExpression) {
 					// the expression might have a lower operator precedence than '+'
-					sValue = "(" + sValue + ")";
+					wrapExpression(oResult);
 				}
-				aParts.push(sValue);
+				aParts.push(Basics.resultToString(oResult, bExpression, true));
 			});
 			oResult = bExpression
 				? {result: "expression", value: aParts.join("+")}
@@ -206,8 +233,9 @@ sap.ui.define([
 				sType = Basics.property(oPathValue, "Type", "string");
 				oSubPathValue = Basics.descend(oPathValue, "Value");
 			} else {
-				["Apply", "Bool", "Date", "DateTimeOffset", "Decimal", "Float", "Guid", "Int",
-					"Path", "String", "TimeOfDay"
+				["And", "Apply", "Bool", "Date", "DateTimeOffset", "Decimal", "Float", "Eq", "Ge",
+					"Gt", "Guid", "Int", "Le", "Lt", "Ne", "Not", "Or", "Path", "String",
+					"TimeOfDay"
 				].forEach(function (sProperty) {
 					if (oRawValue.hasOwnProperty(sProperty)) {
 						sType = sProperty;
@@ -231,6 +259,19 @@ sap.ui.define([
 				case "String": // 14.4.11 Expression edm:String
 				case "TimeOfDay": // 14.4.12 Expression edm:TimeOfDay
 					return Expression.constant(oInterface, oSubPathValue, sType);
+				case "And":
+				case "Eq":
+				case "Ge":
+				case "Gt":
+				case "Le":
+				case "Lt":
+				case "Ne":
+				case "Or":
+					// 14.5.1 Comparison and Logical Operators
+					return Expression.operator(oInterface, oSubPathValue, sType);
+				case "Not":
+					// 14.5.1 Comparison and Logical Operators
+					return Expression.not(oInterface, oSubPathValue);
 				default:
 					Basics.error(oPathValue, "Unsupported OData expression");
 			}
@@ -302,6 +343,57 @@ sap.ui.define([
 				result: "expression",
 				value: aParts.join(""),
 				type: "Edm.String"
+			};
+		},
+
+		/**
+		 * Handling of "14.5.1 Comparison and Logical Operators": <code>edm:Not</code>.
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
+		 * @param {object} oPathValue
+		 *   a path/value pair pointing to the parameter
+		 * @returns {object}
+		 *   the result object
+		 */
+		not: function (oInterface, oPathValue, sType) {
+			var oParameter = Expression.expression(oInterface, oPathValue, true);
+
+			return {
+				result: "expression",
+				value: "!" + Basics.resultToString(wrapExpression(oParameter), true),
+				type: "Edm.Boolean"
+			};
+		},
+
+		/**
+		 * Handling of "14.5.1 Comparison and Logical Operators" except <code>edm:Not</code>.
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call
+		 * @param {object} oPathValue
+		 *   a path/value pair pointing to the parameter array
+		 * @param {string} sType
+		 *   the operator as text (like "And" or "Or")
+		 * @returns {object}
+		 *   the result object
+		 */
+		operator: function (oInterface, oPathValue, sType) {
+			var sExpectedEdmType = sType == "And" || sType == "Or" ? "Edm.Boolean" : undefined,
+				oResult0 = Expression.parameter(oInterface, oPathValue, 0,  sExpectedEdmType),
+				oResult1 = Expression.parameter(oInterface, oPathValue, 1, sExpectedEdmType);
+
+			if (oResult0.type !== oResult1.type) {
+				Basics.error(oPathValue,
+					"Expected two parameters of the same type but instead saw " + oResult0.type
+					+ " and " + oResult1.type);
+			}
+			return {
+				result: "expression",
+				value: Basics.resultToString(wrapExpression(oResult0), true)
+					+ mOperators[sType]
+					+ Basics.resultToString(wrapExpression(oResult1), true),
+				type: "Edm.Boolean"
 			};
 		},
 
