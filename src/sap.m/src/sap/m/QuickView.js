@@ -4,8 +4,9 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'jquery.sap.global', 'sap/m/library', 'sap/ui/core/Control', 'sap/m/ResponsivePopover', 'sap/m/NavContainer'],
-	function(jQuery, library, Control, ResponsivePopover, NavContainer) {
+	'jquery.sap.global', './library', 'sap/ui/core/Control', './ResponsivePopover', './NavContainer',
+			'./PlacementType', './Page'],
+	function(jQuery, library, Control, ResponsivePopover, NavContainer, PlacementType, Page) {
 	"use strict";
 
 	/**
@@ -36,7 +37,7 @@ sap.ui.define([
 						placement : {
 							type : "sap.m.PlacementType",
 							group : "Misc",
-							defaultValue : sap.m.PlacementType.Right
+							defaultValue : PlacementType.Right
 						}
 					},
 					defaultAggregation: "cards",
@@ -62,10 +63,8 @@ sap.ui.define([
 	 */
 	QuickView.prototype.init = function() {
 
-		jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-
 		var oNavConfig = {
-			pages: [new sap.m.Page()],
+			pages: [new Page()],
 			afterNavigate: this._afterNavigate.bind(this)
 		};
 
@@ -96,7 +95,7 @@ sap.ui.define([
 			oPopupControl._fnSetArrowPosition = function () {
 				fnSetArrowPosition.apply(oPopupControl, arguments);
 
-				that._afterReposition();
+				that._adjustContainerHeight();
 			};
 		}
 
@@ -124,20 +123,14 @@ sap.ui.define([
 			oQuickViewCard._oNavContainer = oNavContainer;
 
 			var oCard = oQuickViewCard._createCard();
-			oCard.addStyleClass('sapMQuickViewCard');
-
 			this._oNavContainer.addPage(oCard);
 		}
 	};
 
 	QuickView.prototype.exit = function() {
-
 		if (this._oPopover) {
 			this._oPopover.destroy();
-			this._oPopover = null;
 		}
-
-		this._oNavContainer = null;
 	};
 
 	QuickView.prototype._onPopupKeyDown = function(oEvent) {
@@ -148,7 +141,6 @@ sap.ui.define([
 			}
 
 			oEvent.preventDefault();
-			oEvent.setMarked();
 		}
 	};
 
@@ -158,7 +150,7 @@ sap.ui.define([
 		}
 	};
 
-	QuickView.prototype._afterReposition = function() {
+	QuickView.prototype._adjustContainerHeight = function() {
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		var $container = oPopupControl.$().find('.sapMPopoverCont');
 
