@@ -105,6 +105,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
+					"xx-domPatching"        : { type : "boolean",  defaultValue : false },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
 					"xx-designMode"         : { type : "boolean",  defaultValue : false },
 					"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
@@ -889,6 +890,17 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		 */
 		getDisableCustomizing : function() {
 			return this["xx-disableCustomizing"];
+		},
+		
+		/**
+		 * Determines whether DOM patching is enabled or not.
+		 * 
+		 * @see {jQuery.sap#replaceDOM}
+		 * @returns {boolean}
+		 * @private
+		 */
+		getDomPatching : function() {
+			return this["xx-domPatching"];
 		},
 
 		/**

@@ -545,6 +545,8 @@ sap.ui.define([
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(sHTML);
+								} else if (this._isDomPathingEnabled()) {
+									jQuery.sap.replaceDOM(oldDomNode, sHTML, true);
 								} else {
 									jQuery(oldDomNode).replaceWith(sHTML);
 								}
@@ -1292,6 +1294,22 @@ sap.ui.define([
 		this.write(bIconURI ? "></span>" : "/>");
 
 		return this;
+	};
+
+	/**
+	 * Determines whether Dom Patching is enabled or not
+	 * @returns {Boolean} 
+	 * @private
+	 */
+	RenderManager.prototype._isDomPathingEnabled = function() {
+		if (this._bDomPathing === undefined) {
+			this._bDomPathing = this.getConfiguration().getDomPatching();
+			if (this._bDomPathing) {
+				jQuery.sap.log.warning("DOM Patching is enabled: This feature should be used only for the testing purposes!");
+			}
+		}
+
+		return this._bDomPathing;
 	};
 
 	/**

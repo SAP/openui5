@@ -127,6 +127,9 @@
 			equal(jQuery(oSearchField.getFocusDomRef()).val(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (HTML)");
 			equal(oSearchField.getValue(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (Property)");
 			checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus after user action", !bReadOnly);
+			
+			// focus is removed for the next test
+			document.activeElement.blur();
 		}, 10);
 	};
 	
