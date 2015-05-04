@@ -922,33 +922,35 @@
 	});
 	
 	asyncTest("Custom Header test", function(){
-		var oModel = initModel(sURI);
-		
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
-		oModel.read("/Categories", {
-			success: function() {
-				equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
-				equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
-			}
+		var oModel = initModel(sURI,{headers: {"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"}});
+		oModel.oMetadata.loaded().then(function() {
+			equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
+			equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
+			oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['myCustomHeader1'], "value1", "spy check custom header");
+					equal(spy.args[1][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
+				}
+			});
+			
+			// override headers
+			oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});		
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[2][0].headers['myCustomHeader1'], "666", "spy check custom header");
+					equal(spy.args[2][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
+					equal(spy.args[2][0].headers['TesT'], "new Header", "spy check custom header");
+					equal(spy.callCount, 3, "spy read count");
+					start();
+				}
+			});
+			var aHeaders = oModel.getHeaders();
+			equal(aHeaders['myCustomHeader1'], "666", "model check custom header");
+			equal(aHeaders['MyCustomHeader2'], "blubb", "model check custom header");
+			equal(aHeaders['TesT'], "new Header", "model check custom header");
 		});
-		
-		// override headers
-		oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});		
-		oModel.read("/Categories", {
-			success: function() {
-				equal(spy.args[1][0].headers['myCustomHeader1'], "666", "spy check custom header");
-				equal(spy.args[1][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
-				equal(spy.args[1][0].headers['TesT'], "new Header", "spy check custom header");
-				equal(spy.callCount, 2, "spy read count");
-				start();
-			}
-		});
-		var aHeaders = oModel.getHeaders();
-		equal(aHeaders['myCustomHeader1'], "666", "model check custom header");
-		equal(aHeaders['MyCustomHeader2'], "blubb", "model check custom header");
-		equal(aHeaders['TesT'], "new Header", "model check custom header");
-		
 	});
 
 	asyncTest("async metadata request check", function(){
