@@ -98,6 +98,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		};
 		
 		/**
+		 * If the given control is the last known focused control, the stored focusInfo is updated.
+		 * 
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
+		 * @param {string} oControl the control
+		 * @private
+		 */
+		FocusHandler.prototype.updateControlFocusInfo = function(oControl){
+			if (oControl && this.oLastFocusedControlInfo && this.oLastFocusedControlInfo.control === oControl) {
+				var sControlId = oControl.getId();
+				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
+				jQuery.sap.log.debug("Update focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
+			}
+		};
+		
+		/**
 		 * Restores the focus to the last known focused control or to the given focusInfo, if possible.
 		 * 
 		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
