@@ -22,7 +22,7 @@
 				width="60%" />
 			<Text
 				text="Hello {/recipient/name}"
-				class="sapUiSmallMargin sapThemeHighlight-asColor sapUiDemoWTmyCustomText"/>
+				class="sapUiSmallMargin sapThemeHighlight-asColor myCustomText"/>
 		</content>
 	</Panel>
 </mvc:View>
