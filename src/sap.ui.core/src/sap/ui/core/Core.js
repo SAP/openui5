@@ -194,6 +194,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			Element.prototype.deregister = function() {
 				that.deregisterElement(this);
 			};
+			
+			// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
+			Element._updateFocusInfo = function(oElement) {
+				if (that.oFocusHandler) {
+					that.oFocusHandler.updateControlFocusInfo(oElement);
+				}
+			};
 
 			// grant Component "friend" access to Core for (de-)registration
 			Component.prototype.register = function() {
