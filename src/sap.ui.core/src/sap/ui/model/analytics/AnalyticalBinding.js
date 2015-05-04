@@ -3545,9 +3545,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// naive implementation follows
 		var aKeyIndex = this.mKeyIndex[sGroupId];
 		var aServiceKey = this.mServiceKey[sGroupId];
+		var aMultiUnitKey = this.mMultiUnitKey[sGroupId];
 		for (var i = 0; i < this.mLength[sGroupId]; i++) {
 			if (aKeyIndex[i] < 0) {
-				if (this.mMultiUnitKey[i] == sKey) {
+				if (aMultiUnitKey[i] == sKey) {
 					return i;
 				}
 			} else if (aServiceKey[aKeyIndex[i]] == sKey) {
