@@ -47,6 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			this.id = mParameters.id ? mParameters.id : jQuery.sap.uid();
 			this.message = mParameters.message;
 			this.description = mParameters.description;
+			this.descriptionUrl = mParameters.descriptionUrl;
 			this.type = mParameters.type;
 			this.code = mParameters.code;
 			this.target = mParameters.target;
@@ -101,6 +102,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		return this.description;
 	};
 	
+	/**
+	 * Returns the message description URL which should be used to download the description content
+	 * 
+	 *  @returns {string} The URL pointing to the description long text
+	 */
+	Message.prototype.getDescriptionUrl = function() {
+		return this.descriptionUrl;
+	};
+	
+	/**
+	 * Set message description URL which should be used to download the description content
+	 * 
+	 * @param {string} sDescription The URL pointing to the description long text
+	 */
+	Message.prototype.setDescriptionUrl = function(sDescriptionUrl) {
+		this.descriptionUrl = sDescriptionUrl;
+	};
+
 	/**
 	 * Set message type
 	 * 
