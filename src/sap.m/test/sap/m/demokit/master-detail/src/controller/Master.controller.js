@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+/*global history */
 sap.ui.define([
 		"sap/ui/demo/masterdetail/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
@@ -276,6 +277,29 @@ sap.ui.define([
 				title: oGroup.text,
 				upperCase: false
 			});
+		},
+
+		/**
+		 * Navigates back in the browser history, if the entry was created by this app.
+		 * If not, it navigates to the Fiori Launchpad home page
+		 *
+		 * @public
+		 */
+		onNavBack : function () {
+			var oHistory = sap.ui.core.routing.History.getInstance(),
+				sPreviousHash = oHistory.getPreviousHash(),
+				oCrossAppNavigator = sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("CrossApplicationNavigation");
+
+			if (sPreviousHash !== undefined || !oCrossAppNavigator) {
+				// The history contains a previous entry
+				window.history.go(-1);
+			} else if (oCrossAppNavigator) {
+				// Navigate back to FLP home
+				// TODO: Test this in a working sandbox, with the current version it is not possible
+				oCrossAppNavigator.toExternal({
+					target: {shellHash: "#"}
+				});
+			}
 		},
 
 		/* =========================================================== */

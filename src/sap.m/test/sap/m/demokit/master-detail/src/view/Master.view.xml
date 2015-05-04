@@ -5,7 +5,9 @@
 	xmlns="sap.m">
 	<Page
 		id="page"
-		title="{masterView>/title}">
+		title="{masterView>/title}"
+		navButtonPress="onNavBack"
+		showNavButton="true">
 		<subHeader>
 			<Bar id="headerBar">
 				<contentMiddle>

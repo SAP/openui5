@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * ${copyright}
  */
 
@@ -33,7 +33,11 @@ sap.ui.define([
 			// detail page is busy indication immediately so there is no break in
 			// between the busy indication for loading the view's meta data
 			oViewModel = new JSONModel({
-				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading")
+				lineItemListTitle : this.getResourceBundle().getText("detailLineItemTableHeading"),
+				shareSaveAsTileTitle: "",
+				shareOnJamTitle: "",
+				shareSendEmailSubject: "",
+				shareSendEmailMessage: ""
 			});
 
 			this.setModel(oViewModel, "detailView");
@@ -63,6 +67,37 @@ sap.ui.define([
 			);
 		},
 
+		/* =========================================================== */
+		/* event handlers                                              */
+		/* =========================================================== */
+
+		/**
+		 * Event handler when the share button has been clicked
+		 * @param {sap.ui.base.Event} oEvent the butten press event
+		 * @public
+		 * @returns
+		 */
+		onSharePress : function (oEvent) {
+			var oShareSheet = this.getView().byId("shareSheet");
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), oShareSheet);
+			oShareSheet.openBy(this.byId("shareButton"));
+		},
+
+		/**
+		 * Event handler when the share by E-Mail button has been clicked
+		 * @param {sap.ui.base.Event} oEvent the button press event
+		 * @public
+		 * @returns
+		 */
+		onShareEmailPress: function () {
+			var oViewModel = this.getModel("detailView");
+
+			sap.m.URLHelper.triggerEmail(
+				null,
+				oViewModel.getProperty("/shareSendEmailSubject"),
+				oViewModel.getProperty("/shareSendEmailMessage")
+			);
+		},
 
 		/* =========================================================== */
 		/* begin: internal methods                                     */
@@ -94,6 +129,7 @@ sap.ui.define([
 			// Set busy indicator during view binding
 			var oView,
 				oViewModel = this.getModel("detailView");
+
 			// Busy indicator on view should only be set if metadata is loaded,
 			// otherwise there may be two busy indications next to each other on the
 			// screen. This happens because route matched handler already calls '_bindView'
@@ -107,8 +143,20 @@ sap.ui.define([
 
 			promise.whenThereIsDataForTheElementBinding(oView.getElementBinding()).then(
 				function (sPath) {
+					var oResourceBundle = this.getResourceBundle(),
+						oObject = oView.getModel().getObject(oView.getElementBinding().getPath()),
+						sObjectId = oObject.ObjectID,
+						sObjectName = oObject.Name;
+
 					oViewModel.setProperty("/busy", false);
 					this.getOwnerComponent().oListSelector.selectAListItem(sPath);
+
+					oViewModel.setProperty("/saveAsTileTitle", oResourceBundle.getText("shareSaveTileAppTitle", [sObjectName]));
+					oViewModel.setProperty("/shareOnJamTitle", sObjectName);
+					oViewModel.setProperty("/shareSendEmailSubject",
+						oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
+					oViewModel.setProperty("/shareSendEmailMessage",
+						oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, window.location.href]));
 				}.bind(this),
 				function () {
 					oViewModel.setProperty("/busy", false);
