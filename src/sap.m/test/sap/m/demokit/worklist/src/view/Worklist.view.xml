@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.worklist.controller.Worklist"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns:semantic="sap.m.semantic">
 	<semantic:FullscreenPage
 		id="page"
@@ -47,11 +46,11 @@
 							<ObjectIdentifier
 								title="{Name}"/>
 							<ObjectNumber
-									number="{
-										path: 'UnitNumber',
-										formatter: '.formatter.numberUnit'
-									}"
-									unit="{UnitOfMeasure}"/>
+								number="{
+									path: 'UnitNumber',
+									formatter: '.formatter.numberUnit'
+								}"
+								unit="{UnitOfMeasure}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
@@ -78,9 +77,6 @@
 						</ActionSheet>
 					</dependents>
 				</Button>
-				<dependents>
-
-				</dependents>
 			</Toolbar>
 		</semantic:customFooterContent>
 	</semantic:FullscreenPage>

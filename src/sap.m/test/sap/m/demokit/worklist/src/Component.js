@@ -42,6 +42,19 @@ sap.ui.define([
 		},
 
 		/**
+		 * The component is destroyed by UI5 automatically.
+		 * In this method, the ErrorHandler are destroyed.
+		 * @public
+		 * @override
+		 */
+		destroy : function () {
+			this._oErrorHandler.destroy();
+			// call the base component's destroy function
+			UIComponent.prototype.destroy.apply(this, arguments);
+		},
+
+
+		/**
 		 * In this function, the rootView is initialized and stored.
 		 * @public
 		 * @override
