@@ -7,6 +7,7 @@ sap.ui.define([
 		"sap/m/MessageBox"
 	], function (BaseObject, MessageBox) {
 	"use strict";
+	var sLineBreak = "\r\n";
 
 	return BaseObject.extend("sap.ui.demo.worklist.controller.ErrorHandler", {
 
@@ -26,17 +27,18 @@ sap.ui.define([
 			this._sErrorTitle = this._oResourceBundle.getText("errorTitle");
 			this._sErrorText = this._oResourceBundle.getText("errorText");
 
-			this._oModel.attachEvent("metadataFailed", function (oEvent) {
+			this._oModel.attachMetadataFailed(function (oEvent) {
 				var oParams = oEvent.getParameters();
 
 				this._showMetadataError(
-					oParams.statusCode + " (" + oParams.statusText + ")\r\n" +
-					oParams.message + "\r\n" +
-					oParams.responseText + "\r\n"
+					oParams.statusCode + " (" + oParams.statusText + ")" + sLineBreak +
+					oParams.message + sLineBreak +
+					oParams.responseText + sLineBreak
 				);
+
 			}, this);
 
-			this._oModel.attachEvent("requestFailed", function (oEvent) {
+			this._oModel.attachRequestFailed(function (oEvent) {
 				var oParams = oEvent.getParameters();
 
 				// An entity that was not found in the service is also throwing a 404 error in oData.
@@ -44,11 +46,12 @@ sap.ui.define([
 				// A request that cannot be sent to the server is a technical error that we have to handle though
 				if (oParams.response.statusCode !== "404" || (oParams.response.statusCode === 404 && oParams.response.responseText.indexOf("Cannot POST") === 0)) {
 					this._showServiceError(
-						oParams.response.statusCode + " (" + oParams.response.statusText + ")\r\n" +
-						oParams.response.message + "\r\n" +
-						oParams.response.responseText + "\r\n"
+						oParams.response.statusCode + " (" + oParams.response.statusText + ")" + sLineBreak +
+						oParams.response.message + sLineBreak +
+						oParams.response.responseText + sLineBreak
 					);
 				}
+
 			}, this);
 		},
 

@@ -26,8 +26,7 @@ sap.ui.define([
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			};
 
-			this.getOwnerComponent().oWhenMetadataIsLoaded
-				.then(fnSetAppNotBusy, fnSetAppNotBusy);
+			this.getOwnerComponent().getModel().metadataLoaded().then(fnSetAppNotBusy, fnSetAppNotBusy);
 		}
 	});
 

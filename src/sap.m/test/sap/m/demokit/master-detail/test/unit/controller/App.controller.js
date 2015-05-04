@@ -7,10 +7,12 @@ sap.ui.require(
 		"sap/m/SplitApp",
 		"sap/m/List",
 		"sap/ui/base/EventProvider",
+		"sap/ui/core/Control",
+		'sap/ui/model/json/JSONModel',
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/thirdparty/sinon-qunit"
 	],
-	function(AppController, ListSelector, SplitApp, List, EventProvider) {
+	function(AppController, ListSelector, SplitApp, List, EventProvider, Control, JSONModel) {
 		"use strict";
 
 		QUnit.module("Hide master");
@@ -18,7 +20,21 @@ sap.ui.require(
 		QUnit.test("Should hide the master of a SplitApp when selection in the list changes", function (assert) {
 			// Arrange
 			var oList = new List(),
-				oListSelector = new ListSelector();
+				oListSelector = new ListSelector(),
+				oViewStub = new Control(),
+				oODataModelStub = new JSONModel(),
+				oComponentStub = new Control();
+
+
+			oComponentStub.oListSelector = oListSelector;
+			oComponentStub.getCompactCozyClass = jQuery.noop;
+
+			oODataModelStub.metadataLoaded = function () {
+				return {
+					then: jQuery.noop
+				};
+			};
+			oComponentStub.setModel(oODataModelStub);
 
 			// Don't resolve the list
 			//oListSelector._fnResolveListHasBeenSet = jQuery.noop;
@@ -31,16 +47,8 @@ sap.ui.require(
 			// System under Test
 			var oAppController = new AppController();
 
-			this.stub(oAppController, "getView").returns({
-				addStyleClass: jQuery.noop,
-				getBusyIndicatorDelay: jQuery.noop,
-				setModel: jQuery.noop
-			});
-			this.stub(oAppController, "getOwnerComponent").returns({
-				oListSelector : oListSelector,
-				getCompactCozyClass : jQuery.noop,
-				oWhenMetadataIsLoaded : new Promise(function (fnResolveMetaDataLoaded) {})
-			});
+			this.stub(oAppController, "getView").returns(oViewStub);
+			this.stub(oAppController, "getOwnerComponent").returns(oComponentStub);
 
 
 			// Act
