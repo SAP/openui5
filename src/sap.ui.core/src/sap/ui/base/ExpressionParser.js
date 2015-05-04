@@ -52,7 +52,15 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 			"IDENTIFIER": {
 				led: unexpected,
 				nud: function (oToken, oParser) {
-					return CONSTANT.bind(null, oParser.globals[oToken.value]);
+					var vGlobal = oParser.globals[oToken.value];
+
+					if (vGlobal === undefined) {
+						jQuery.sap.log.warning("Unsupported global identifier '" + oToken.value
+								+ "' in expression parser input '" + oParser.input + "'",
+							undefined,
+							"sap.ui.base.ExpressionParser");
+					}
+					return CONSTANT.bind(null, vGlobal);
 				}
 			},
 			"CONSTANT": {
@@ -539,7 +547,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery/* , j
 				advance: advance,
 				current: current,
 				expression: expression,
-				globals: mGlobals
+				globals: mGlobals,
+				input: sInput
 			},
 			oToken;
 
