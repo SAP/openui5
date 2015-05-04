@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	BusyDialogRenderer.render = function(oRm, oControl){
 		// write the HTML into the render manager
-		oRm.write("<div");
+		oRm.write("<div tabindex='-1'");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMBusyDialog sapMCommonDialog");
 		if (jQuery.device.is.iphone) {
