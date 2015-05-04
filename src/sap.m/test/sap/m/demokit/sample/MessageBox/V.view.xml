@@ -19,6 +19,27 @@
 				class="sapUiSmallMarginBottom"
 				press="handleAlertMessageBoxPress"
 				width="250px"/>
+			<Button
+				text="Error"
+				class="sapUiSmallMarginBottom"
+				press="handleErrorMessageBoxPress"
+				width="250px"/>
+			<Button
+				text="Info"
+				class="sapUiSmallMarginBottom"
+				press="handleInfoMessageBoxPress"
+				width="250px"/>
+			<Button
+				text="Warning"
+				class="sapUiSmallMarginBottom"
+				press="handleWarningMessageBoxPress"
+				width="250px"/>
+			<Button
+				text="Success"
+				class="sapUiSmallMarginBottom"
+				press="handleSuccessMessageBoxPress"
+				width="250px"/>
+
 			<Text
 				text="Different Ways of Setting Initial Focus"/>
 			<Button

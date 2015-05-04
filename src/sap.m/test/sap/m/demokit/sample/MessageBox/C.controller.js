@@ -38,6 +38,46 @@ sap.ui.define([
 			);
 		},
 
+		handleErrorMessageBoxPress: function(oEvent) {
+			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+			MessageBox.error(
+				"This is an error message!",
+				{
+					styleClass: bCompact? "sapUiSizeCompact" : ""
+				}
+			);
+		},
+
+		handleInfoMessageBoxPress: function(oEvent) {
+			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+			MessageBox.information(
+				"This is an info message!",
+				{
+					styleClass: bCompact? "sapUiSizeCompact" : ""
+				}
+			);
+		},
+
+		handleWarningMessageBoxPress: function(oEvent) {
+			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+			MessageBox.warning(
+				"This is a warning message!",
+				{
+					styleClass: bCompact? "sapUiSizeCompact" : ""
+				}
+			);
+		},
+
+		handleSuccessMessageBoxPress: function(oEvent) {
+			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+			MessageBox.success(
+				"This is a success message!",
+				{
+					styleClass: bCompact? "sapUiSizeCompact" : ""
+				}
+			);
+		},
+
 		handleConfirmMessageBoxPress_InitialFocus: function(oEvent) {
 			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
 			MessageBox.confirm(

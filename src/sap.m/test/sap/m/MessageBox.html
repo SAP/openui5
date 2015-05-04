@@ -458,6 +458,33 @@
 			}
 		}));
 
+		oVL.addContent(new sap.m.Button({
+			text: "Error",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.error("This is an error message!")
+		}}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Information",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.information("This is an info message!")
+			}}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Warning",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.warning("This is a warning message!")
+			}}));
+
+		oVL.addContent(new sap.m.Button({
+			text: "Success",
+			width: "270px",
+			press: function () {
+				sap.m.MessageBox.success("This is a success message!")
+			}}));
 
 		oVL.addContent(new sap.m.Text("heading", {
 			text: "\n Below are examples for testing the right-to-left special cases such as numerals, phone numbers, etc. To switch the page direction to right-to-left, please paste the following parameter at the end of the URL -> &sap-ui-rtl=true"
