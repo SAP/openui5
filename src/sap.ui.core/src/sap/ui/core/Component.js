@@ -860,6 +860,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			return oClass;
 		} 
 
+		function registerPath(vObj) {
+			if ( typeof vObj === 'object' && vObj.url ) {
+				jQuery.sap.registerModulePath(vObj.name, vObj.url);
+				return vObj.name;
+			}
+			return vObj;
+		}
+
 		function preload(sComponentName, bAsync) {
 			
 			var sController = sComponentName + '.Component',
@@ -895,7 +903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 			// preload required libraries 
 			if ( hints.libs ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs ));
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
 			}
 
 			if ( bComponentPreload ) {
@@ -903,8 +911,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 
 				// if a hint about "used" components is given, preload those components
 				if ( hints.components ) {
-					jQuery.each(hints.components, function(i, sCompName) {
-						collect(preload(sCompName, true));
+					jQuery.each(hints.components, function(i, vComp) {
+						collect(preload(registerPath(vComp), true));
 					});
 				}
 			}
