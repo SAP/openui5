@@ -286,7 +286,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientContextBinding',
 	};
 
 	/**
-	 * Returns the OData association <b>set</b> end corresponding to the given entity type's
+	 * Returns the OData association <em>set</em> end corresponding to the given entity type's
 	 * navigation property of given name.
 	 *
 	 * @param {object} oEntityType
