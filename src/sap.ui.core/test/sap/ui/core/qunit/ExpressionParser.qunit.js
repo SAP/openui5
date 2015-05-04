@@ -411,4 +411,15 @@
 		{ expression: "'PI' in Math", result: "true" },
 		{ expression: "'foo' in {}", result: "false" }
 	]);
+
+
+	//*********************************************************************************************
+	test("Warning for global identifier with value undefined", function () {
+		this.mock(jQuery.sap.log).expects("warning")
+			.withExactArgs(
+				"Unsupported global identifier 'foo' in expression parser input '{=42 === foo}'",
+				undefined, "sap.ui.base.ExpressionParser");
+
+		check("{=42 === foo}", "false");
+	});
 } ());
