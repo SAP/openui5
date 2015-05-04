@@ -9,8 +9,54 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
-		// only if v4 name is different to v2 name
-		mSemantics2Contact = {
+		// maps v2 sap semantics annotations to a v4 annotations relative to
+		// com.sap.vocabularies.Communication.v1.
+		mSemanticsToV4AnnotationPath = {
+			// contact annotations
+			"bday" : "Contact",
+			"city" : "Contact/adr",
+			"country" : "Contact/adr",
+			"familyname" : "Contact/n",
+			"givenname" : "Contact/n",
+			"honorific" : "Contact/n",
+			"middlename" : "Contact/n",
+			"name" : "Contact",
+			"nickname" : "Contact",
+			"note" : "Contact",
+			"org" : "Contact",
+			"org-role" : "Contact",
+			"org-unit" : "Contact",
+			"photo" : "Contact",
+			"pobox" : "Contact/adr",
+			"region" : "Contact/adr",
+			"street" : "Contact/adr",
+			"suffix" : "Contact/n",
+			"title" : "Contact",
+			"zip" : "Contact/adr",
+			// event annotations
+			"class" : "Event",
+			"dtend" : "Event",
+			"dtstart" : "Event",
+			"duration" : "Event",
+			"fbtype" : "Event",
+			"location" : "Event",
+			"status" : "Event",
+			"transp" : "Event",
+			"wholeday" : "Event",
+			// message annotations
+			"body" : "Message",
+			"from" : "Message",
+			"received" : "Message",
+			"sender" : "Message",
+			"subject" : "Message",
+			// task annotations
+			"completed" : "Task",
+			"due" : "Task",
+			"percent-complete" : "Task",
+			"priority" : "Task"
+		},
+		// only if v4 name is different than v2 name
+		mV2ToV4Attribute = {
 			"city" : "locality",
 			"familyname" : "surname",
 			"givenname" : "given",
@@ -19,6 +65,7 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 			"name" : "fn",
 			"org-role" : "role",
 			"org-unit" : "orgunit",
+			"percent-complete" : "percentcomplete",
 			"zip" : "code"
 		},
 		// map from v2 to v4 for NON-DEFAULT cases only
@@ -122,47 +169,26 @@ sap.ui.define(["jquery.sap.global", 'sap/ui/model/json/JSONModel'], function (jQ
 		addSapSemantics: function (oType) {
 			if (oType.property) {
 				oType.property.forEach(function (oProperty) {
-					var oContact = oType["com.sap.vocabularies.Communication.v1.Contact"] || {},
-						oTarget,
+					var aAnnotationParts,
+						sV4Annotation,
+						oV4Annotation,
+						sSubStructure,
 						sV2Semantics = oProperty["sap:semantics"],
-						sTargetProperty = mSemantics2Contact[sV2Semantics] || sV2Semantics;
+						sV4AnnotationPath = mSemanticsToV4AnnotationPath[sV2Semantics];
 
-					switch (sV2Semantics) {
-					case "city":
-					case "country":
-					case "pobox":
-					case "region":
-					case "street":
-					case "zip":
-						oContact.adr = oContact.adr || {};
-						oTarget = oContact.adr;
-					break;
-					case "familyname":
-					case "givenname":
-					case "honorific":
-					case "middlename":
-					case "suffix":
-						// n is complex type Communication.NameType
-						oContact.n = oContact.n || {};
-						oTarget = oContact.n;
-					break;
-					case "bday":
-					case "nickname":
-					case "name":
-					case "note":
-					case "org":
-					case "org-role":
-					case "org-unit":
-					case "photo":
-					case "title":
-						oTarget = oContact;
-						break;
-					default:
-						// not yet supported
-					}
-					if (oTarget) {
-						oTarget[sTargetProperty] = {"Path": oProperty.name};
-						oType["com.sap.vocabularies.Communication.v1.Contact"] = oContact;
+					if (sV4AnnotationPath) {
+						aAnnotationParts = sV4AnnotationPath.split("/");
+						sV4Annotation = "com.sap.vocabularies.Communication.v1."
+							+ aAnnotationParts[0];
+						oType[sV4Annotation] = oType[sV4Annotation] || {};
+						oV4Annotation = oType[sV4Annotation];
+						sSubStructure = aAnnotationParts[1];
+						if (sSubStructure) {
+							oV4Annotation[sSubStructure] = oV4Annotation[sSubStructure] || {};
+							oV4Annotation = oV4Annotation[sSubStructure];
+						}
+						oV4Annotation[mV2ToV4Attribute[sV2Semantics] || sV2Semantics]
+							= {"Path": oProperty.name};
 					}
 				});
 			}
