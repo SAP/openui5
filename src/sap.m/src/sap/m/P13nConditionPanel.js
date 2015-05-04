@@ -1402,11 +1402,12 @@ sap.ui.define([
 				return;
 			}
 			
+			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
 			oConditionGrid.removeContent(oCtrl);
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
-			oConditionGrid.insertContent(oCtrl, index);
+			oConditionGrid.insertContent(oCtrl, ctrlIndex);
 
 			var oValue, sValue;
 			if (oConditionGrid.oFormatter && sOldValue) {
