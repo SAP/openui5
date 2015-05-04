@@ -560,16 +560,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		Gregorian: "Gregorian",
 
 		/**
-		 * The civil variant of Islamic calendar
+		 * The Islamic calendar
 		 * @public
 		 */
-		IslamicCivil: "IslamicCivil",
+		Islamic: "Islamic"
 
-		/**
-		 * The Umm al-Qura variant of Islamic calendar
-		 * @public
-		 */
-		IslamicUmalqura: "IslamicUmalqura"
 	};
 
 	/**

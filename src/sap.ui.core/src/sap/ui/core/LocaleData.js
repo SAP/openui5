@@ -591,23 +591,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	var mLocaleDatas = {};
 
 	/**
-	 * Mapping bewteen the sap.ui.core.CalendarType and the CLDR calendar name
-	 *
-	 * @private
-	 */
-	var mCLDRCalendarNames = {
-		IslamicCivil: "islamic-civil",
-		IslamicUmalqura: "islamic-umalqura"
-	};
-
-	/**
 	 * Returns the corresponding calendar name in CLDR of the given calendar type
 	 *
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type defined in {@link sap.ui.core.CalendarType}.
 	 * @private
 	 */
 	function getCLDRCalendarName(sCalendarType) {
-		return "ca-" + (mCLDRCalendarNames[sCalendarType] || sCalendarType.toLowerCase());
+		return "ca-" + sCalendarType.toLowerCase();
 	}
 
 	/**
